@@ -3909,7 +3909,7 @@ namespace PsdzClient
             }
         }
 
-        public bool SaveVehicleSeriesInfo(ClientContext clientContext)
+        public bool SaveVehicleSeriesInfo(ClientContext clientContext, ProgressDelegate progressHandler)
         {
             try
             {
@@ -3970,6 +3970,12 @@ namespace PsdzClient
 
                 if (vehicleSeriesInfoData == null || !dataValid)
                 {
+                    if (progressHandler.Invoke(true))
+                    {
+                        log.InfoFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo ExtractVehicleSeriesInfo aborted");
+                        return false;
+                    }
+
                     vehicleSeriesInfoData = ExtractVehicleSeriesInfo(clientContext);
                     if (vehicleSeriesInfoData == null)
                     {
@@ -4599,7 +4605,7 @@ namespace PsdzClient
             }
         }
 
-        public bool SaveFaultRulesInfo(ClientContext clientContext)
+        public bool SaveFaultRulesInfo(ClientContext clientContext, ProgressDelegate progressHandler)
         {
             try
             {
@@ -4625,6 +4631,12 @@ namespace PsdzClient
                 if (rulesInfoData != null && dataValid)
                 {
                     return true;
+                }
+
+                if (progressHandler.Invoke(true))
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo ExtractFaultRulesInfo aborted");
+                    return false;
                 }
 
                 SerializableDictionary<string, VehicleStructsBmw.RuleInfo> faultRulesDict = ExtractFaultRulesInfo(clientContext);

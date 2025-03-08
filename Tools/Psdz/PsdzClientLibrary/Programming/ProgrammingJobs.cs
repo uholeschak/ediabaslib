@@ -520,7 +520,21 @@ namespace PsdzClient.Programming
                     bool executeDirect = _executionMode == ExecutionMode.GenerateModulesDirect;
                     if (ProgrammingService.PsdzDatabase.IsExecutable())
                     {
-                        if (!ProgrammingService.PsdzDatabase.SaveVehicleSeriesInfo(ClientContext))
+                        if (!ProgrammingService.PsdzDatabase.SaveVehicleSeriesInfo(ClientContext,
+                                (startConvert, progress, failures) =>
+                                {
+                                    if (startConvert)
+                                    {
+                                        sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                                        UpdateStatus(sbResult.ToString());
+                                    }
+
+                                    if (cts != null)
+                                    {
+                                        return cts.Token.IsCancellationRequested;
+                                    }
+                                    return false;
+                                }))
                         {
                             log.ErrorFormat("SaveVehicleSeriesInfo failed");
                             sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
@@ -528,7 +542,21 @@ namespace PsdzClient.Programming
                             return false;
                         }
 
-                        if (!ProgrammingService.PsdzDatabase.SaveFaultRulesInfo(ClientContext))
+                        if (!ProgrammingService.PsdzDatabase.SaveFaultRulesInfo(ClientContext,
+                                (startConvert, progress, failures) =>
+                                {
+                                    if (startConvert)
+                                    {
+                                        sbResult.AppendLine(Strings.GeneratingInfoFiles);
+                                        UpdateStatus(sbResult.ToString());
+                                    }
+
+                                    if (cts != null)
+                                    {
+                                        return cts.Token.IsCancellationRequested;
+                                    }
+                                    return false;
+                                }))
                         {
                             log.ErrorFormat("SaveFaultRulesInfo failed");
                             sbResult.AppendLine(Strings.GenerateInfoFilesFailed);
