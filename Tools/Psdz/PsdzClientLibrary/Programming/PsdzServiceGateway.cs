@@ -81,7 +81,7 @@ namespace PsdzClientLibrary.Programming
             PsdzServiceType = ((ConfigSettings.getConfigString("BMW.Rheingold.Programming.PsdzServiceType", "PsdzServiceHost") == "PsdzWebService") ? Type.PsdzWebService : Type.PsdzServiceHost);
         }
 
-        public void StartIfNotRunning(IVehicle vehicle = null)
+        public bool StartIfNotRunning(IVehicle vehicle = null)
         {
             Log.Info(Log.CurrentMethod(), "Start.");
 #if false
@@ -89,7 +89,7 @@ namespace PsdzClientLibrary.Programming
             {
                 _psdzWebServiceWrapper.StartIfNotRunning();
                 Log.Info(Log.CurrentMethod(), "End.");
-                return;
+                return true;
             }
 #endif
             if (ClientContext.EnablePsdzMultiSession())
@@ -104,8 +104,14 @@ namespace PsdzClientLibrary.Programming
             {
                 _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
             }
-            WaitForPsdzServiceHostInitialization();
+
+            if (!WaitForPsdzServiceHostInitialization())
+            {
+                return false;
+            }
             Log.Info(Log.CurrentMethod(), "End.");
+
+            return true;
         }
 
         public void CloseConnectionsToPsdz()
@@ -118,7 +124,7 @@ namespace PsdzClientLibrary.Programming
                     _psdzWebServiceWrapper.Shutdown();
                 }
 #endif
-                if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.PsdzService.MultiSession", defaultValue: false))
+                if (!ClientContext.EnablePsdzMultiSession())
                 {
                     _psdzServiceHostWrapper.Shutdown();
                 }
@@ -133,7 +139,7 @@ namespace PsdzClientLibrary.Programming
             }
         }
 
-        private void WaitForPsdzServiceHostInitialization()
+        private bool WaitForPsdzServiceHostInitialization()
         {
             int num = 40;
             DateTime dateTime = DateTime.Now.AddSeconds(num);
@@ -142,11 +148,13 @@ namespace PsdzClientLibrary.Programming
                 if (DateTime.Now > dateTime)
                 {
                     Log.Error(Log.CurrentMethod(), $"PsdzServiceHost failed to start in {num} seconds. The method will stop waiting for it.");
-                    return;
+                    return false;
                 }
                 Task.Delay(500).Wait();
             }
             _psdzServiceHostWrapper.DoInitSettings();
+
+            return true;
         }
 
         public void SetLogLevel(PsdzLoglevel psdzLoglevel, ProdiasLoglevel prodiasLoglevel)

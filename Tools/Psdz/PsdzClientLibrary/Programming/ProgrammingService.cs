@@ -7,20 +7,40 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
+using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
+using PsdzClient.Core.Container;
 using PsdzClientLibrary.Core;
+using PsdzClientLibrary.Programming;
 
 namespace PsdzClient.Programming
 {
 	public class ProgrammingService : IDisposable
 	{
+        public IPsdzProgressListener PsdzProgressListener { get; private set; }
+
+        public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
+
+        public ProgrammingEventManager EventManager { get; private set; }
+
+        public EcuProgrammingInfos ProgrammingInfos { get; private set; }
+
+        public PsdzDatabase PsdzDatabase { get; private set; }
+
+
+        private readonly PsdzServiceGateway psdzServiceGateway;
+
+        private readonly PsdzConfig psdzConfig;
+
+        public string BackupDataPath { get; private set; }
+
+        public IPsdz Psdz => psdzServiceGateway.Psdz;
+
         public ProgrammingService(string istaFolder, string dealerId)
         {
-            this.PsdzLoglevel = PsdzLoglevel.FINE;
-            this.ProdiasLoglevel = ProdiasLoglevel.ERROR;
             this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
-            this.psdz = new PsdzServiceWrapper(this.psdzConfig);
-            this.psdz.SetLogLevel(PsdzLoglevel, ProdiasLoglevel);
+            psdzServiceGateway = new PsdzServiceGateway(psdzConfig);
+            SetLogLevelToNormal();
 
             this.EventManager = new ProgrammingEventManager();
             this.PsdzDatabase = new PsdzDatabase(istaFolder);
@@ -41,71 +61,106 @@ namespace PsdzClient.Programming
         }
 
         public bool CollectPsdzLog(string targetLogFilePath)
-		{
-			if (!this.psdz.IsPsdzInitialized)
-			{
-				return false;
-			}
-			string text = this.psdz.LogService.ClosePsdzLog();
-			if (!string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(targetLogFilePath))
-			{
-				bool flag = false;
-				try
-				{
-					File.Move(text, targetLogFilePath);
-					flag = true;
-				}
-				catch (Exception exception)
-				{
-					Log.WarningException("ProgrammingService.CollectPsdzLog", exception);
-				}
-				if (!flag)
-				{
-					File.Copy(text, targetLogFilePath, true);
-				}
-				return true;
-			}
-			return false;
-		}
+        {
+            if (!Psdz.IsPsdzInitialized)
+            {
+                return false;
+            }
+            string text = Psdz.LogService.ClosePsdzLog();
+            if (!string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(targetLogFilePath))
+            {
+                bool flag = false;
+                try
+                {
+                    File.Move(text, targetLogFilePath);
+                    flag = true;
+                }
+                catch (Exception exception)
+                {
+                    Log.WarningException("ProgrammingService.CollectPsdzLog", exception);
+                }
+                if (!flag)
+                {
+                    File.Copy(text, targetLogFilePath, overwrite: true);
+                }
+                return true;
+            }
+            return false;
+        }
 
-		public void SetLogLevelToMax()
-		{
-			this.psdz.SetLogLevel(PsdzLoglevel.TRACE, ProdiasLoglevel.INFO);
-		}
+        public void SetLogLevelToMax()
+        {
+            psdzServiceGateway.SetLogLevel(PsdzLoglevel.TRACE, ProdiasLoglevel.INFO);
+        }
 
-		public void SetLogLevelToNormal()
-		{
-			this.psdz.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
-		}
+        public void SetLogLevelToNormal()
+        {
+            psdzServiceGateway.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
+        }
 #if false
-		public IProgrammingSessionExt Start(ProgrammingParam programmingParam)
-		{
-			this.StartPsdzServiceHost(programmingParam.Vehicle);
-			ProgrammingSession programmingSession = new ProgrammingSession(this.psdz, programmingParam, this.programmingWorker);
-			IFscValidationService fscValidationService = this.InitializeFscValidationService(programmingParam.FscValidationConfig);
-			programmingSession.FscValidationService = fscValidationService;
-			programmingSession.Start();
-			return programmingSession;
-		}
+        public IProgrammingSessionExt Start(ProgrammingParam programmingParam)
+        {
+            StartPsdzService(programmingParam.Vehicle);
+            ProgrammingSession programmingSession = new ProgrammingSession(Psdz, programmingParam, programmingWorker);
+            IFscValidationService fscValidationService = InitializeFscValidationService(programmingParam.FscValidationConfig);
+            programmingSession.FscValidationService = fscValidationService;
+            if (programmingParam.IsPretest)
+            {
+                FillAdditionalDataForPretestConfig(programmingSession, programmingParam.PretestConfig);
+            }
+            else
+            {
+                programmingSession.Start();
+            }
+            return programmingSession;
+        }
 
-		public FcFnActivationResult StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc, IEcuKom ecuKom)
-		{
-			FscService fscService = new FscService();
-			this.StartPsdzServiceHost(vehicle);
-			return fscService.StoreAndActivateFcFn(this.psdz, vehicle, appNo, upgradeIdx, fsc, ecuKom, this.programmingWorker);
-		}
+        private void FillAdditionalDataForPretestConfig(ProgrammingSession session, PretestProgrammingPlanParams pretestParams)
+        {
+            try
+            {
+                Log.Info(Log.CurrentMethod(), "Gathering the minimum data for token requests...");
+                IPsdzIstufe iStufe = Psdz.ObjectBuilder.BuildIstufe(session.Vehicle.ILevelWerk);
+                session.PsdzContext.TargetSelectors = Psdz.ConnectionFactoryService.GetTargetSelectors();
+                IPsdzConnection psdzConnection = ConnectToBn2020VehicleState.TryGetPsdzConnection(session);
+                if (psdzConnection == null)
+                {
+                    Log.Warning(Log.CurrentMethod(), "Unable to get a PSdZ conneciton here => Retrieving ECU list from PSdZ without PSdZ Connection...");
+                    session.PsdzContext.EcuListActual = Psdz.MacrosService.GetInstalledEcuList(pretestParams.Fa, iStufe);
+                }
+                else
+                {
+                    session.PsdzProg.ConnectionManager.SwitchFromEDIABASToPSdZIfConnectedViaPTTOrENET(session.PsdzContext);
+                    session.PsdzContext.EcuListActual = Psdz.MacrosService.GetInstalledEcuListWithConnection(psdzConnection, pretestParams.Fa, iStufe);
+                }
+                session.PsdzContext.SetSvtActual(pretestParams.Svt);
+                new RetrieveEcuUIDState().Handle(session);
+                Log.Info(Log.CurrentMethod(), "Setup specific to pretest programming sessions is concluded (not necessarily to satisfaction).");
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException(Log.CurrentMethod(), "Failed to completely set up pretest programming session! Expect things like token request without vehicle test not to work correctly.", exception);
+            }
+            finally
+            {
+                session.PsdzProg.ConnectionManager.SwitchFromPSdZToEDIABASIfConnectedViaPTTOrENET(session.PsdzContext);
+                session.TryClosePSdZConnection();
+            }
+        }
+
+        public FcFnActivationResult StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc, IEcuKom ecuKom, IProtocolBasic protocoller, IICOMHandler icomHandler)
+        {
+            FscService fscService = new FscService();
+            StartPsdzService(vehicle);
+            return fscService.StoreAndActivateFcFn(Psdz, vehicle, appNo, upgradeIdx, fsc, ecuKom, programmingWorker, protocoller, icomHandler);
+        }
 #endif
-		public void CloseConnectionsToPsdzHost()
-		{
-			try
-			{
-				this.psdz.CloseConnectionsToPsdzHost();
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException("ProgrammingService.CloseConnectionsToPsdzHost()", exception);
-			}
-		}
+        public void CloseConnectionsToPsdz()
+        {
+            Log.Info(Log.CurrentMethod(), "Start.");
+            psdzServiceGateway.CloseConnectionsToPsdz();
+            Log.Info(Log.CurrentMethod(), "End.");
+        }
 
         public string GetPsdzServiceHostLogDir()
         {
@@ -122,7 +177,26 @@ namespace PsdzClient.Programming
 			return this.psdzConfig.PsdzLogFilePath;
 		}
 
-		private void PreparePsdzBackupDataPath(string istaFolder)
+        public bool StartPsdzService(IVehicle vehicle = null)
+        {
+            Log.Info(Log.CurrentMethod(), "Start.");
+            try
+            {
+                if (!psdzServiceGateway.StartIfNotRunning(vehicle))
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(Log.CurrentMethod(), ex);
+            }
+            Log.Info(Log.CurrentMethod(), "End.");
+
+            return true;
+        }
+
+        private void PreparePsdzBackupDataPath(string istaFolder)
 		{
             string pathString = PsdzContext.GetBackupBasePath(istaFolder);
 			try
@@ -142,36 +216,9 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		public bool StartPsdzServiceHost(IVehicle vehicle = null)
-		{
-            this.psdz.StartHostIfNotRunning(vehicle);
-            if (!this.WaitForPsdzServiceHostInitialization())
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool WaitForPsdzServiceHostInitialization()
-		{
-			DateTime t = DateTime.Now.AddSeconds((double)40f);
-			while (!this.psdz.IsPsdzInitialized)
-			{
-				if (DateTime.Now > t)
-				{
-					return false;
-				}
-				Thread.Sleep(500);
-			}
-			this.psdz.DoInitSettings();
-
-            return true;
-        }
-
         public bool IsPsdzPsdzServiceHostInitialized()
         {
-            return this.psdz.IsPsdzInitialized;
+            return this.Psdz.IsPsdzInitialized;
         }
 
         public void CreateEcuProgrammingInfos(IVehicle vehicle, IFFMDynamicResolver ffmResolver = null)
@@ -183,21 +230,21 @@ namespace PsdzClient.Programming
         {
             RemoveListener();
             this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);
-            this.psdz.AddPsdzProgressListener(this.PsdzProgressListener);
+            this.Psdz.AddPsdzProgressListener(this.PsdzProgressListener);
             this.VehicleProgrammingEventHandler = new VehicleProgrammingEventHandler(ProgrammingInfos, psdzContext);
-            this.psdz.AddPsdzEventListener(this.VehicleProgrammingEventHandler);
+            this.Psdz.AddPsdzEventListener(this.VehicleProgrammingEventHandler);
         }
 
 		public void RemoveListener()
         {
             if (PsdzProgressListener != null)
             {
-                this.psdz.RemovePsdzProgressListener(this.PsdzProgressListener);
+                this.Psdz.RemovePsdzProgressListener(this.PsdzProgressListener);
                 this.PsdzProgressListener = null;
             }
             if (VehicleProgrammingEventHandler != null)
             {
-                this.psdz.RemovePsdzEventListener(this.VehicleProgrammingEventHandler);
+                this.Psdz.RemovePsdzEventListener(this.VehicleProgrammingEventHandler);
                 this.VehicleProgrammingEventHandler = null;
             }
         }
@@ -205,35 +252,12 @@ namespace PsdzClient.Programming
         public void Dispose()
         {
             RemoveListener();
-			this.psdz.Dispose();
+			this.psdzServiceGateway.Dispose();
             if (this.PsdzDatabase != null)
             {
                 this.PsdzDatabase.Dispose();
                 this.PsdzDatabase = null;
             }
 		}
-
-        public IPsdzProgressListener PsdzProgressListener { get; private set; }
-
-		public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
-        
-        public ProgrammingEventManager EventManager { get; private set; }
-
-        public EcuProgrammingInfos ProgrammingInfos { get; private set; }
-
-        public PsdzDatabase PsdzDatabase { get; private set; }
-
-        public PsdzServiceWrapper Psdz => psdz;
-
-        private readonly PsdzConfig psdzConfig;
-
-		private readonly PsdzServiceWrapper psdz;
-
-		public PsdzLoglevel PsdzLoglevel { get; set; }
-
-        public ProdiasLoglevel ProdiasLoglevel { get; set; }
-
-        public string BackupDataPath { get; private set; }
-
 	}
 }

@@ -839,7 +839,7 @@ namespace PsdzClient.Programming
                 if (!PsdzServiceStarter.IsThisServerInstanceRunning())
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Starting host");
-                    if (!ProgrammingService.StartPsdzServiceHost())
+                    if (!ProgrammingService.StartPsdzService())
                     {
                         sbResult.AppendLine(Strings.HostStartFailed);
                         UpdateStatus(sbResult.ToString());
@@ -892,8 +892,7 @@ namespace PsdzClient.Programming
 
                 if (ProgrammingService != null)
                 {
-                    ProgrammingService.Psdz.Shutdown();
-                    ProgrammingService.CloseConnectionsToPsdzHost();
+                    ProgrammingService.CloseConnectionsToPsdz();
                     ProgrammingService.Dispose();
                     ProgrammingService = null;
                     ClientContext.Database = null;
