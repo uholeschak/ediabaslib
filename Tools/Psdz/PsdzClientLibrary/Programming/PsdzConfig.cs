@@ -35,13 +35,13 @@ namespace PsdzClient.Programming
             {
                 Directory.CreateDirectory(PsdzServiceHostLogDir);
             }
-            PsdzServiceArgs = CreateServiceArgs(istaFolder, PsdzLogFilePath, dealerId);
+            PsdzServiceArgs = CreateServiceArgs(false, istaFolder, PsdzLogFilePath, dealerId);
             Log.Info("PsdzConfig.PsdzConfig()", "Hostpath:               {0}", HostPath);
             Log.Info("PsdzConfig.PsdzConfig()", "PSdZ Logging directory: {0}", PsdzServiceHostLogDir);
             Log.Info("PsdzConfig.PsdzConfig()", "PsdzServiceArgs: \n{0}", PsdzServiceArgs);
         }
 
-        private static PsdzServiceArgs CreateServiceArgs(string istaFolder, string psdzLogFilePath, string dealerId)
+        private static PsdzServiceArgs CreateServiceArgs(bool? isTestRun, string istaFolder, string psdzLogFilePath = null, string dealerId = null)
         {
             string psdzSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\binx64" : @"PSdZ\bin";
             string psdzBinaryPath = Path.Combine(istaFolder, psdzSubDir);
@@ -51,7 +51,7 @@ namespace PsdzClient.Programming
             psdzServiceArgs.PsdzBinaryPath = psdzBinaryPath;
             psdzServiceArgs.PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
             psdzServiceArgs.EdiabasBinPath = Path.Combine(istaFolder, @"Ediabas\BIN");
-            psdzServiceArgs.IsTestRun = false;
+            psdzServiceArgs.IsTestRun = (isTestRun.HasValue ? isTestRun.Value : false);
             psdzServiceArgs.IdleTimeout = ConfigSettings.getConfigint("BMW.Rheingold.Programming.PsdzService.HostIdleTimeout", 10000);
             psdzServiceArgs.ClientConfigArgs = new ClientConfigArgs();
             psdzServiceArgs.ClientConfigArgs.DealerID = dealerId;

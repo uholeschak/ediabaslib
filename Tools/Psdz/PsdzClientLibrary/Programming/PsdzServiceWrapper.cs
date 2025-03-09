@@ -16,6 +16,35 @@ namespace BMW.Rheingold.Programming
 {
 	public class PsdzServiceWrapper : IPsdz, IPsdzService, IPsdzInfo, IDisposable
 	{
+        private readonly PsdzServiceArgs psdzServiceArgs;
+
+        private readonly PsdzServiceClient psdzServiceClient;
+
+        private ProdiasLoglevel? prodiasLoglevel = ProdiasLoglevel.ERROR;
+
+        private PsdzLoglevel? psdzLoglevel = PsdzLoglevel.FINE;
+
+        private readonly string psdzHostPath;
+
+        private readonly string psdzServiceHostLogDir;
+
+        private readonly string psdzServiceHostLogFilePath;
+
+        private readonly string psdzLogFilePath;
+
+        public IConfigurationService ConfigurationService => psdzServiceClient.ConfigurationService;
+
+        public IConnectionFactoryService ConnectionFactoryService => psdzServiceClient.ConnectionFactoryService;
+
+        public IConnectionManagerService ConnectionManagerService => psdzServiceClient.ConnectionManagerService;
+
+        public IEcuService EcuService => psdzServiceClient.EcuService;
+
+        public IEventManagerService EventManagerService => psdzServiceClient.EventManagerService;
+
+        public string ExpectedPsdzVersion { get; private set; }
+
+
         public PsdzServiceWrapper(PsdzConfig psdzConfig)
         {
             if (psdzConfig == null)
@@ -25,6 +54,8 @@ namespace BMW.Rheingold.Programming
             psdzHostPath = psdzConfig.HostPath;
             psdzServiceArgs = psdzConfig.PsdzServiceArgs;
             psdzServiceHostLogDir = psdzConfig.PsdzServiceHostLogDir;
+            psdzServiceHostLogFilePath = psdzConfig.PsdzServiceHostLogFilePath;
+            psdzLogFilePath = psdzConfig.PsdzLogFilePath;
             if (ClientContext.EnablePsdzMultiSession())
             {
                 psdzServiceClient = new PsdzServiceClient(psdzConfig.ClientLogPath, Process.GetCurrentProcess().Id);
@@ -35,48 +66,6 @@ namespace BMW.Rheingold.Programming
             }
             ObjectBuilder = new PsdzObjectBuilder(psdzServiceClient.ObjectBuilderService);
         }
-
-		public IConfigurationService ConfigurationService
-		{
-			get
-			{
-				return this.psdzServiceClient.ConfigurationService;
-			}
-		}
-
-		public IConnectionFactoryService ConnectionFactoryService
-		{
-			get
-			{
-				return this.psdzServiceClient.ConnectionFactoryService;
-			}
-		}
-
-		public IConnectionManagerService ConnectionManagerService
-		{
-			get
-			{
-				return this.psdzServiceClient.ConnectionManagerService;
-			}
-		}
-
-		public IEcuService EcuService
-		{
-			get
-			{
-				return this.psdzServiceClient.EcuService;
-			}
-		}
-
-		public IEventManagerService EventManagerService
-		{
-			get
-			{
-				return this.psdzServiceClient.EventManagerService;
-			}
-		}
-
-		public string ExpectedPsdzVersion { get; private set; }
 
         public bool IsPsdzInitialized
         {
@@ -90,137 +79,61 @@ namespace BMW.Rheingold.Programming
         {
             get
             {
+                Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "Check installed PSdZ-Version ...");
+                if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.IgnorePsdzCheckAtOwnRisk", defaultValue: false))
+                {
+                    Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "PSdZ Version check was diabled at own risk");
+                    Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "Used PSdZ version:  {0}", PsdzVersion);
+                    return true;
+                }
+                Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "Expected: {0}", ExpectedPsdzVersion);
+                Log.Info("PsdzServiceWrapper.IsValidPsdzVersion()", "Current:  {0}", PsdzVersion);
                 if (!string.Equals(ExpectedPsdzVersion, PsdzVersion, StringComparison.Ordinal))
                 {
+                    Log.Error("PsdzServiceWrapper.IsValidPsdzVersion()", "Installed PSdZ (ver. {0}) is invalid! You have to use PSdZ ver. {1}!", PsdzVersion, ExpectedPsdzVersion);
                     return false;
                 }
                 return true;
             }
         }
 
-		public ILogService LogService
-		{
-			get
-			{
-				return this.psdzServiceClient.LogService;
-			}
-		}
+        public ILogService LogService => psdzServiceClient.LogService;
 
-		public ILogicService LogicService
-		{
-			get
-			{
-				return this.psdzServiceClient.LogicService;
-			}
-		}
+        public ILogicService LogicService => psdzServiceClient.LogicService;
 
-		public IMacrosService MacrosService
-		{
-			get
-			{
-				return this.psdzServiceClient.MacrosService;
-			}
-		}
+        public IMacrosService MacrosService => psdzServiceClient.MacrosService;
 
-		public IPsdzObjectBuilder ObjectBuilder { get; private set; }
+        public IPsdzObjectBuilder ObjectBuilder { get; private set; }
 
-		public IObjectBuilderService ObjectBuilderService
-		{
-			get
-			{
-				return this.psdzServiceClient.ObjectBuilderService;
-			}
-		}
+        public IObjectBuilderService ObjectBuilderService => psdzServiceClient.ObjectBuilderService;
 
-		public BMW.Rheingold.Psdz.IProgrammingService ProgrammingService
-		{
-			get
-			{
-				return this.psdzServiceClient.ProgrammingService;
-			}
-		}
+        public BMW.Rheingold.Psdz.IProgrammingService ProgrammingService => psdzServiceClient.ProgrammingService;
 
-		public string PsdzDataPath
-		{
-			get
-			{
-				return this.psdzServiceClient.ConfigurationService.GetRootDirectory();
-			}
-		}
+        public string PsdzDataPath => psdzServiceClient.ConfigurationService.GetRootDirectory();
 
-		public string PsdzVersion { get; private set; }
+        public string PsdzVersion { get; private set; }
 
-		public ITalExecutionService TalExecutionService
-		{
-			get
-			{
-				return this.psdzServiceClient.TalExecutionService;
-			}
-		}
+        public ITalExecutionService TalExecutionService => psdzServiceClient.TalExecutionService;
 
-		public IVcmService VcmService
-		{
-			get
-			{
-				return this.psdzServiceClient.VcmService;
-			}
-		}
+        public IVcmService VcmService => psdzServiceClient.VcmService;
 
-		public ICbbTlsConfiguratorService CbbTlsConfiguratorService
-		{
-			get
-			{
-				return this.psdzServiceClient.CbbTlsConfiguratorService;
-			}
-		}
+        public ICbbTlsConfiguratorService CbbTlsConfiguratorService => psdzServiceClient.CbbTlsConfiguratorService;
 
-		public ICertificateManagementService CertificateManagementService
-		{
-			get
-			{
-				return this.psdzServiceClient.CertificateManagementService;
-			}
-		}
+        public ICertificateManagementService CertificateManagementService => psdzServiceClient.CertificateManagementService;
 
-		public IIndividualDataRestoreService IndividualDataRestoreService
-		{
-			get
-			{
-				return this.psdzServiceClient.IndividualDataRestoreService;
-			}
-		}
+        public IIndividualDataRestoreService IndividualDataRestoreService => psdzServiceClient.IndividualDataRestoreService;
 
-		public ISecureFeatureActivationService SecureFeatureActivationService
-		{
-			get
-			{
-				return this.psdzServiceClient.SecureFeatureActivationService;
-			}
-		}
+        public ISecureFeatureActivationService SecureFeatureActivationService => psdzServiceClient.SecureFeatureActivationService;
 
-		public ISecurityManagementService SecurityManagementService
-		{
-			get
-			{
-				return this.psdzServiceClient.SecurityManagementService;
-			}
-		}
+        public ISecurityManagementService SecurityManagementService => psdzServiceClient.SecurityManagementService;
 
-		public ISecureCodingService SecureCodingService
-		{
-			get
-			{
-				return this.psdzServiceClient.SecureCodingService;
-			}
-		}
+        public ISecureCodingService SecureCodingService => psdzServiceClient.SecureCodingService;
 
-		public IKdsService KdsService
-		{
-			get
-			{
-				return this.psdzServiceClient.KdsService;
-			}
-		}
+        public IKdsService KdsService => psdzServiceClient.KdsService;
+
+        public string PsdzServiceLogFilePath => psdzServiceHostLogFilePath;
+
+        public string PsdzLogFilePath => psdzLogFilePath;
 
 		public void AddPsdzEventListener(IPsdzEventListener psdzEventListener)
 		{
@@ -277,6 +190,10 @@ namespace BMW.Rheingold.Programming
                 {
                     DoSettingsForInitializedPsdz();
                     return true;
+                }
+                if (psdzServiceArgs.IsTestRun)
+                {
+                    psdzServiceArgs.TestRunParams = BuildTestRunParams(vehicle);
                 }
                 Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "Initialize PSdZ ...");
                 PsdzServiceStarter psdzServiceStarter = new PsdzServiceStarter(psdzHostPath, psdzServiceHostLogDir, psdzServiceArgs);
@@ -343,17 +260,17 @@ namespace BMW.Rheingold.Programming
 			this.ExpectedPsdzVersion = this.psdzServiceClient.ConfigurationService.GetExpectedPsdzVersion();
 			this.PsdzVersion = this.psdzServiceClient.ConfigurationService.GetPsdzVersion();
 		}
-
-		private readonly PsdzServiceArgs psdzServiceArgs;
-
-		private readonly PsdzServiceClient psdzServiceClient;
-
-		private ProdiasLoglevel? prodiasLoglevel = ProdiasLoglevel.ERROR;
-
-		private PsdzLoglevel? psdzLoglevel = PsdzLoglevel.FINE;
-
-		private readonly string psdzHostPath;
-
-		private readonly string psdzServiceHostLogDir;
+        private TestRunParams BuildTestRunParams(IVehicle vehicle)
+        {
+            return new TestRunParams
+            {
+                StandardFa = ObjectBuilder.BuildFaActualFromVehicleContext(vehicle),
+                SvtCurrent = ObjectBuilder.BuildStandardSvtActualFromVehicleContext(vehicle),
+                IstufeCurrent = ObjectBuilder.BuildIstufe(vehicle.ILevel),
+                DurationTalLineExecution = 1000,
+                InitNoGeneratedTal = 0,
+                IncNoGeneratedTal = 1
+            };
+        }
     }
 }
