@@ -114,7 +114,7 @@ namespace PsdzClientLibrary.Programming
             return true;
         }
 
-        public void CloseConnectionsToPsdz()
+        public void CloseConnectionsToPsdz(bool force = false)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace PsdzClientLibrary.Programming
                     _psdzWebServiceWrapper.Shutdown();
                 }
 #endif
-                if (!ClientContext.EnablePsdzMultiSession())
+                if (!ClientContext.EnablePsdzMultiSession() || force)
                 {
                     _psdzServiceHostWrapper.Shutdown();
                 }

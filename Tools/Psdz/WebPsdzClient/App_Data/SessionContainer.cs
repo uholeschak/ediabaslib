@@ -2708,7 +2708,8 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            StopProgrammingServiceTask(istaFolder).ContinueWith(task =>
+            bool force = DeepObdVersion <= 0;
+            StopProgrammingServiceTask(istaFolder, force).ContinueWith(task =>
             {
                 TaskActive = false;
                 StopTcpListener();
@@ -2720,9 +2721,9 @@ namespace WebPsdzClient.App_Data
             UpdateDisplay();
         }
 
-        public async Task<bool> StopProgrammingServiceTask(string istaFolder)
+        public async Task<bool> StopProgrammingServiceTask(string istaFolder, bool force)
         {
-            return await Task.Run(() => ProgrammingJobs.StopProgrammingService(Cts, istaFolder)).ConfigureAwait(false);
+            return await Task.Run(() => ProgrammingJobs.StopProgrammingService(Cts, istaFolder, force)).ConfigureAwait(false);
         }
 
         public void ConnectVehicle(string istaFolder)

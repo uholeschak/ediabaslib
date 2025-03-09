@@ -877,7 +877,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        public bool StopProgrammingService(CancellationTokenSource cts, string istaFolder)
+        public bool StopProgrammingService(CancellationTokenSource cts, string istaFolder, bool force = false)
         {
             StringBuilder sbResult = new StringBuilder();
             try
@@ -892,7 +892,7 @@ namespace PsdzClient.Programming
 
                 if (ProgrammingService != null)
                 {
-                    ProgrammingService.CloseConnectionsToPsdz();
+                    ProgrammingService.CloseConnectionsToPsdz(force);
                     ProgrammingService.Dispose();
                     ProgrammingService = null;
                     ClientContext.Database = null;

@@ -155,10 +155,10 @@ namespace PsdzClient.Programming
             return fscService.StoreAndActivateFcFn(Psdz, vehicle, appNo, upgradeIdx, fsc, ecuKom, programmingWorker, protocoller, icomHandler);
         }
 #endif
-        public void CloseConnectionsToPsdz()
+        public void CloseConnectionsToPsdz(bool force = false)
         {
             Log.Info(Log.CurrentMethod(), "Start.");
-            psdzServiceGateway.CloseConnectionsToPsdz();
+            psdzServiceGateway.CloseConnectionsToPsdz(force);
             Log.Info(Log.CurrentMethod(), "End.");
         }
 
