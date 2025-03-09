@@ -28,7 +28,7 @@ namespace BMW.Rheingold.Psdz
 
         IObjectBuilderService ObjectBuilderService { get; }
 
-        Psdz.IProgrammingService ProgrammingService { get; }
+        IProgrammingService ProgrammingService { get; }
 
         ITalExecutionService TalExecutionService { get; }
 
