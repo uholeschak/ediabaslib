@@ -756,6 +756,7 @@ namespace AssemblyPatcher
 
                         if (noIcomVerCheck)
                         {
+                            // more checks in InteractionConnectionManagerViewModel constructor vCIDevice?.DevTypeExt
                             try
                             {
                                 Target target = new Target
