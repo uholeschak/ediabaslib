@@ -214,6 +214,7 @@ namespace BMW.Rheingold.Psdz.Client
             EventWaitHandle eventWaitHandle3 = new EventWaitHandle(false, EventResetMode.AutoReset, HostFailedEventMemErrorName);
             Process.Start(processStartInfo);
             int num = WaitHandle.WaitAny(new WaitHandle[3] { eventWaitHandle, eventWaitHandle2, eventWaitHandle3 }, new TimeSpan(0, 0, 5, 0));
+            File.Delete(tempFileName);
             switch (num)
             {
                 case 0:

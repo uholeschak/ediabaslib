@@ -17,7 +17,7 @@ namespace BMW.Rheingold.Psdz
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.AppendFormat(CultureInfo.InvariantCulture, "{0}:             {1}\n", "DealerID", this.DealerID);
+            stringBuilder.AppendFormat(CultureInfo.InvariantCulture, "{0}:             {1}\n", "DealerID", DealerID);
             return stringBuilder.ToString();
         }
     }
