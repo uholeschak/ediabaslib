@@ -312,6 +312,8 @@
     <Compile Include="DetectVehicle.cs" />
     <Compile Include="Core\DiagnosticsBusinessData.cs" />
     <Compile Include="Core\Container\HeaderAdapter.cs" />
+    <Compile Include="Programming\IPsdzServiceGateway.cs" />
+    <Compile Include="Programming\PsdzServiceGateway.cs" />
     <Compile Include="PsdzDatabase.cs" />
     <Compile Include="Programming\AsamJobInputDictionary.cs" />
     <Compile Include="Programming\BindingDetailsStatus.cs" />
