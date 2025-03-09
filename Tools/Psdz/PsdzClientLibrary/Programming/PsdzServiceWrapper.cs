@@ -10,6 +10,7 @@ using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
 using PsdzClient;
 using PsdzClient.Programming;
+using PsdzClientLibrary.Core;
 
 namespace BMW.Rheingold.Programming
 {
@@ -277,13 +278,16 @@ namespace BMW.Rheingold.Programming
                     DoSettingsForInitializedPsdz();
                     return true;
                 }
+                Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "Initialize PSdZ ...");
                 PsdzServiceStarter psdzServiceStarter = new PsdzServiceStarter(psdzHostPath, psdzServiceHostLogDir, psdzServiceArgs);
                 PsdzServiceStarter.PsdzServiceStartResult psdzServiceStartResult = !ClientContext.EnablePsdzMultiSession() ? psdzServiceStarter.StartIfNotRunning() : psdzServiceStarter.StartIfNotRunning(Process.GetCurrentProcess().Id);
+                Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "Result: {0}", psdzServiceStartResult);
                 switch (psdzServiceStartResult)
                 {
                     case PsdzServiceStarter.PsdzServiceStartResult.PsdzStillRunning:
                     case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartOk:
                         DoSettingsForInitializedPsdz();
+                        Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "PSdZ initialized! Has valid version: {0}", IsValidPsdzVersion);
                         break;
                     default:
                         return false;

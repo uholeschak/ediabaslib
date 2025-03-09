@@ -76,20 +76,18 @@ namespace BMW.Rheingold.Psdz.Client
 
         public static bool IsServerInstanceRunning(int istaProcessId = 0)
         {
-            bool result;
             using (Mutex mutex = new Mutex(false, PsdzServiceStarterMutex))
             {
                 try
                 {
                     mutex.WaitOne();
-                    result = IsPsdzServiceHostRunning(istaProcessId);
+                    return IsPsdzServiceHostRunning(istaProcessId);
                 }
                 finally
                 {
                     mutex.ReleaseMutex();
                 }
             }
-            return result;
         }
 
         private static bool IsPsdzServiceHostRunning(int istaProcessId)

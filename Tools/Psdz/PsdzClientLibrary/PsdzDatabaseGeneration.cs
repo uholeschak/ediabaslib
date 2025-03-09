@@ -3142,6 +3142,7 @@ namespace PsdzClient
                             {
                                 log.ErrorFormat("ReadServiceModule Method timeout, aborting: {0}, Module: {1}, Aborting", simpleMethod.Name, moduleName);
                                 moduleThread.Abort();
+                                failure = true;
                             }
                         }
 
