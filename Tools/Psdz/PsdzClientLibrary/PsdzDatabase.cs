@@ -1541,9 +1541,8 @@ namespace PsdzClient
 
             SqliteConnectionStringBuilder sqliteConnectionString = new SqliteConnectionStringBuilder
             {
-                DataSource = "file:" + databaseFile + "?cipher=rc4",
+                DataSource = "file:" + databaseFile + "?cipher=rc4&key=" + DatabaseFunctions.DatabasePassword,
                 Mode = SqliteOpenMode.ReadOnly,
-                Password = DatabaseFunctions.DatabasePassword,
             };
 
             _mDbConnection = new SqliteConnection(sqliteConnectionString.ConnectionString);
