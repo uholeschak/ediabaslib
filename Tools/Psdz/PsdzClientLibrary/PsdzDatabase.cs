@@ -1533,6 +1533,12 @@ namespace PsdzClient
             }
 
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
+            if (!File.Exists(databaseFile))
+            {
+                log.ErrorFormat("PsdzDatabase: Database file not existing: {0}", databaseFile);
+                throw new Exception(string.Format("Database file not existing: {0}", databaseFile));
+            }
+
             SqliteConnectionStringBuilder sqliteConnectionString = new SqliteConnectionStringBuilder
             {
                 DataSource = "file:" + databaseFile + "?cipher=rc4",
