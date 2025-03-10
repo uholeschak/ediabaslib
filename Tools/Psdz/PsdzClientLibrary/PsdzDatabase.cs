@@ -1539,9 +1539,10 @@ namespace PsdzClient
                 throw new Exception(string.Format("Database file not existing: {0}", databaseFile));
             }
 
+            string hexKey = BitConverter.ToString(Encoding.ASCII.GetBytes(DatabaseFunctions.DatabasePassword)).Replace("-", "");
             SqliteConnectionStringBuilder sqliteConnectionString = new SqliteConnectionStringBuilder
             {
-                DataSource = "file:" + databaseFile + "?cipher=rc4&key=" + DatabaseFunctions.DatabasePassword,
+                DataSource = "file:" + databaseFile + "?cipher=rc4&hexkey=" + hexKey,
                 Mode = SqliteOpenMode.ReadOnly,
             };
 
