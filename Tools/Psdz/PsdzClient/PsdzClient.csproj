@@ -179,7 +179,7 @@
       <Version>9.0.2</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc">
-      <Version>2.1.10</Version>
+      <Version>2.1.11</Version>
     </PackageReference>
     <PackageReference Include="System.Memory">
       <Version>4.6.0</Version>
