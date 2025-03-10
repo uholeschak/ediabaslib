@@ -769,7 +769,7 @@ namespace AssemblyPatcher
                                 if (instructions != null)
                                 {
                                     Console.WriteLine("SLP.ScanDeviceFromAttrList found");
-                                    int patchIndex = -1;
+                                    int patchIndex1 = -1;
                                     for (int index = 0; index < instructions.Count; index++)
                                     {
                                         Instruction instruction = instructions[index];
@@ -792,20 +792,68 @@ namespace AssemblyPatcher
                                                 continue;
                                             }
 
-                                            patchIndex = index + 3;
+                                            patchIndex1 = index + 3;
                                             break;
                                         }
                                     }
 
-                                    if (patchIndex >= 0)
+                                    if (patchIndex1 >= 0)
                                     {
-                                        instructions[patchIndex] = Instruction.Create(OpCodes.Ldc_I4_0);    // DeviceTypeDetail = Undefined
+                                        instructions[patchIndex1] = Instruction.Create(OpCodes.Ldc_I4_0);    // DeviceTypeDetail = Undefined
                                         patched = true;
                                     }
                                     else
                                     {
                                         Console.WriteLine("Patching ICOM type failed");
                                     }
+
+                                    int patchIndex2 = -1;
+                                    for (int index = 0; index < instructions.Count; index++)
+                                    {
+                                        Instruction instruction = instructions[index];
+                                        if (instruction.OpCode == OpCodes.Ldloc_0 &&
+                                            index + 4 < instructions.Count)
+                                        {
+                                            if (instructions[index + 1].OpCode != OpCodes.Ldstr)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (string.Compare(instructions[index + 1].Operand.ToString(), "DevTypeExt", StringComparison.OrdinalIgnoreCase) != 0)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (instructions[index + 1].OpCode != OpCodes.Callvirt)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (instructions[index + 2].OpCode != OpCodes.Callvirt)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (instructions[index + 3].OpCode != OpCodes.Br)
+                                            {
+                                                continue;
+                                            }
+
+                                            patchIndex2 = index + 0;
+                                            break;
+                                        }
+                                    }
+
+                                    if (patchIndex2 >= 0)
+                                    {
+                                        //instructions[patchIndex1] = Instruction.Create(OpCodes.Ldc_I4_0);    // DeviceTypeDetail = Undefined
+                                        patched = true;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Patching ICOM DevTypeExt failed");
+                                    }
+
                                 }
                             }
                             catch (Exception)
