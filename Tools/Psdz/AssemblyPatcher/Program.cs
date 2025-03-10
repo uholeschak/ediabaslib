@@ -756,7 +756,6 @@ namespace AssemblyPatcher
 
                         if (noIcomVerCheck)
                         {
-                            // more checks in InteractionConnectionManagerViewModel constructor vCIDevice?.DevTypeExt
                             try
                             {
                                 Target target = new Target
@@ -807,6 +806,7 @@ namespace AssemblyPatcher
                                         Console.WriteLine("Patching ICOM type failed");
                                     }
 
+                                    // InteractionConnectionManagerViewModel constructor checks vCIDevice?.DevTypeExt
                                     int patchIndex2 = -1;
                                     for (int index = 0; index < instructions.Count; index++)
                                     {
@@ -814,17 +814,8 @@ namespace AssemblyPatcher
                                         if (instruction.OpCode == OpCodes.Ldloc_0 &&
                                             index + 4 < instructions.Count)
                                         {
-                                            if (instructions[index + 1].OpCode != OpCodes.Ldstr)
-                                            {
-                                                continue;
-                                            }
-
-                                            if (string.Compare(instructions[index + 1].Operand.ToString(), "DevTypeExt", StringComparison.OrdinalIgnoreCase) != 0)
-                                            {
-                                                continue;
-                                            }
-
-                                            if (instructions[index + 1].OpCode != OpCodes.Callvirt)
+                                            if (instructions[index + 1].OpCode != OpCodes.Ldstr ||
+                                                string.Compare(instructions[index + 1].Operand.ToString(), "DevTypeExt", StringComparison.OrdinalIgnoreCase) != 0)
                                             {
                                                 continue;
                                             }
@@ -834,7 +825,12 @@ namespace AssemblyPatcher
                                                 continue;
                                             }
 
-                                            if (instructions[index + 3].OpCode != OpCodes.Br)
+                                            if (instructions[index + 3].OpCode != OpCodes.Callvirt)
+                                            {
+                                                continue;
+                                            }
+
+                                            if (instructions[index + 4].OpCode != OpCodes.Br)
                                             {
                                                 continue;
                                             }
@@ -846,14 +842,15 @@ namespace AssemblyPatcher
 
                                     if (patchIndex2 >= 0)
                                     {
-                                        //instructions[patchIndex1] = Instruction.Create(OpCodes.Ldc_I4_0);    // DeviceTypeDetail = Undefined
+                                        instructions.RemoveAt(patchIndex2); // OpCodes.Ldloc_0
+                                        instructions[patchIndex2].Operand = "ICOM-Next";
+                                        instructions.RemoveAt(patchIndex2 + 1); // OpCodes.Callvirt
                                         patched = true;
                                     }
                                     else
                                     {
                                         Console.WriteLine("Patching ICOM DevTypeExt failed");
                                     }
-
                                 }
                             }
                             catch (Exception)
