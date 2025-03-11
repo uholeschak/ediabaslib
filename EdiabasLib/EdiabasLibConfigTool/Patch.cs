@@ -41,6 +41,9 @@ namespace EdiabasLibConfigTool
         public const string IniFileName = @"EDIABAS.INI";
         public const string RegKeyReingold = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
         public const string RegKeyFtdiBus = @"SYSTEM\CurrentControlSet\Enum\FTDIBUS";
+        public const string RegKeyVcRuntime14Base = @"SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes";
+        public const string RegKeyVcRuntime14X86 = RegKeyVcRuntime14Base + @"\x86";
+        public const string RegKeyVcRuntime14X64 = RegKeyVcRuntime14Base + @"\x64";
         public const string RegValueFtdiLatencyTimer = @"LatencyTimer";
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegKeyRheingoldNameStart = @"BMW.Rheingold.";
@@ -51,7 +54,8 @@ namespace EdiabasLibConfigTool
         public const string RegKeyIstaOpMode = @"BMW.Rheingold.OperationalMode";
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
-        public const string VcRedistLink = @"https://learn.microsoft.com/de-de/cpp/windows/latest-supported-vc-redist?view=msvc-170";
+        public const string VcRedistX32Link = @"https://aka.ms/vs/17/release/vc_redist.x86.exe";
+        public const string VcRedistX64Link = @"https://aka.ms/vs/17/release/vc_redist.x64.exe";
         public const string DcanKlineLink = @"https://uholeschak.github.io/ediabaslib/docs/Build_Bluetooth_D-CAN_adapter.html";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
@@ -524,10 +528,27 @@ namespace EdiabasLibConfigTool
                     if (string.IsNullOrEmpty(version32))
                     {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName, VcRedistLink));
+                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName));
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchVCRuntimeInstalled, VcRedistX32Link));
                         return false;
                     }
                 }
+
+                if (!IsVcRedistRegPresent(false))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Resources.Strings.PatchVCRuntimeInstalled, VcRedistX32Link));
+                    return false;
+                }
+
+                if (!IsVcRedistRegPresent(true))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Resources.Strings.PatchVCRuntimeInstalled, VcRedistX64Link));
+                    return false;
+                }
+
                 sr.Append("\r\n");
                 sr.Append(string.Format(Resources.Strings.PatchApiVersion, version32));
 
@@ -1291,6 +1312,49 @@ namespace EdiabasLibConfigTool
             }
 
             return patchRegType;
+        }
+
+        public static bool IsVcRedistRegPresent(bool check64Bit)
+        {
+            bool majorValid = false;
+            bool minorValid = false;
+            try
+            {
+                using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+                {
+                    string subKeyName = check64Bit ? RegKeyVcRuntime14X64 : RegKeyVcRuntime14X86;
+                    using (RegistryKey key = localMachine.OpenSubKey(subKeyName, false))
+                    {
+                        if (key != null)
+                        {
+                            object majorObject = key.GetValue("Major");
+                            if (majorObject is int majorValue)
+                            {
+                                if (majorValue == 14)
+                                {
+                                    majorValid = true;
+                                }
+                            }
+
+                            object minorObject = key.GetValue("Minor");
+                            if (minorObject is int minorValue)
+                            {
+                                if (minorValue >= 13)
+                                {
+                                    minorValid = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                majorValid = false;
+                minorValid = false;
+            }
+
+            return majorValid && minorValid;
         }
     }
 }

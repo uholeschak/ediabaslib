@@ -509,10 +509,7 @@ namespace EdiabasLibConfigTool.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Unable to load {0}.
-        ///Has the archive been extracted correctly?
-        ///Is the VC++ runtime
-        ///&apos;{1}&apos;
-        ///istalled? ähnelt.
+        ///Has the archive been extracted correctly? ähnelt.
         /// </summary>
         internal static string PatchLoadApiDllFailed {
             get {
@@ -555,6 +552,17 @@ namespace EdiabasLibConfigTool.Resources {
         internal static string PatchVaspcInfo {
             get {
                 return ResourceManager.GetString("PatchVaspcInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Is the VC++ runtime
+        ///&apos;{1}&apos;
+        ///istalled? ähnelt.
+        /// </summary>
+        internal static string PatchVCRuntimeInstalled {
+            get {
+                return ResourceManager.GetString("PatchVCRuntimeInstalled", resourceCulture);
             }
         }
         

@@ -255,9 +255,7 @@
   </data>
   <data name="PatchLoadApiDllFailed" xml:space="preserve">
     <value>Не удалось загрузить {0}.
-Распаковка архива прошла успешно?
-Установлена ​​ли среда выполнения VC++
-'{1}'?</value>
+Распаковка архива прошла успешно?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>{0} файл резервной копии повреждён или не является таковым.</value>
@@ -356,5 +354,9 @@
   </data>
   <data name="LatencyTime" xml:space="preserve">
     <value>Время задержки: {0} мс</value>
+  </data>
+  <data name="PatchVCRuntimeInstalled" xml:space="preserve">
+    <value>Установлена ​​ли среда выполнения VC++
+'{1}'?</value>
   </data>
 </root>

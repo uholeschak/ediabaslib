@@ -255,10 +255,7 @@ Das Standard root Password ist {0}.</value>
   </data>
   <data name="PatchLoadApiDllFailed" xml:space="preserve">
     <value>Kann {0} nicht laden.
-Wurde das Archiv korrekt extrahiert?
-Ist die VC++ Runtime
-'{1}'
-installiert?</value>
+Wurde das Archiv korrekt extrahiert?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>Die {0} Backup-Datei ist ungültig.</value>
@@ -360,5 +357,10 @@ Hier klicken um die System App zu öffnen: {0}</value>
   </data>
   <data name="LatencyTime" xml:space="preserve">
     <value>Wartezeit: {0} ms</value>
+  </data>
+  <data name="PatchVCRuntimeInstalled" xml:space="preserve">
+    <value>Ist die VC++ Runtime
+'{1}'
+installiert?</value>
   </data>
 </root>
