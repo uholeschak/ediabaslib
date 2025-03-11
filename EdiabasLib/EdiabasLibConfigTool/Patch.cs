@@ -511,30 +511,6 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                string sourceDir = Path.Combine(AssemblyDirectory, ApiDirName);
-
-                // 32 bit
-                string sourceDll32 = Path.Combine(sourceDir, Api32DllName);
-                if (!File.Exists(sourceDll32))
-                {
-                    sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchApiDllMissing, Api32DllName));
-                    return false;
-                }
-                string version32 = EdiabasLibVersion(sourceDll32, false);
-                if (string.IsNullOrEmpty(version32))
-                {
-                    version32 = EdiabasLibVersion(sourceDll32, true);
-                    if (string.IsNullOrEmpty(version32))
-                    {
-                        sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName));
-                        sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchVCRuntimeInstalled, VcRedistX32Link));
-                        return false;
-                    }
-                }
-
                 if (!IsVcRedistRegPresent(false))
                 {
                     sr.Append("\r\n");
@@ -547,6 +523,28 @@ namespace EdiabasLibConfigTool
                     sr.Append("\r\n");
                     sr.Append(string.Format(Resources.Strings.PatchVCRuntimeInstalled, VcRedistX64Link));
                     return false;
+                }
+
+                string sourceDir = Path.Combine(AssemblyDirectory, ApiDirName);
+                // 32 bit
+                string sourceDll32 = Path.Combine(sourceDir, Api32DllName);
+                if (!File.Exists(sourceDll32))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Resources.Strings.PatchApiDllMissing, Api32DllName));
+                    return false;
+                }
+
+                string version32 = EdiabasLibVersion(sourceDll32, false);
+                if (string.IsNullOrEmpty(version32))
+                {
+                    version32 = EdiabasLibVersion(sourceDll32, true);
+                    if (string.IsNullOrEmpty(version32))
+                    {
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName));
+                        return false;
+                    }
                 }
 
                 sr.Append("\r\n");
