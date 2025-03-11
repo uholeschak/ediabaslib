@@ -359,8 +359,8 @@ Hier klicken um die System App zu öffnen: {0}</value>
     <value>Wartezeit: {0} ms</value>
   </data>
   <data name="PatchVCRuntimeInstalled" xml:space="preserve">
-    <value>Ist die VC++ Runtime
-'{1}'
-installiert?</value>
+    <value>VC++ Runtime nicht gefunden.
+Installieren Sie zuerst die VC++ Runtime
+'{1}'.</value>
   </data>
 </root>

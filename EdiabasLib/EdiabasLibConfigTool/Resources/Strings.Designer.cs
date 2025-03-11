@@ -556,9 +556,10 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Is the VC++ runtime
+        ///   Sucht eine lokalisierte Zeichenfolge, die VC++ runtime not found.
+        ///Install the VC++ runtime
         ///&apos;{1}&apos;
-        ///istalled? ähnelt.
+        ///first. ähnelt.
         /// </summary>
         internal static string PatchVCRuntimeInstalled {
             get {
