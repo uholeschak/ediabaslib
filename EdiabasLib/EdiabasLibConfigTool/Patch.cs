@@ -1314,8 +1314,6 @@ namespace EdiabasLibConfigTool
 
         public static bool IsVcRedistRegPresent(bool check64Bit)
         {
-            bool majorValid = false;
-            bool minorValid = false;
             try
             {
                 using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
@@ -1325,6 +1323,7 @@ namespace EdiabasLibConfigTool
                     {
                         if (key != null)
                         {
+                            bool majorValid = false;
                             object majorObject = key.GetValue("Major");
                             if (majorObject is int majorValue)
                             {
@@ -1334,13 +1333,22 @@ namespace EdiabasLibConfigTool
                                 }
                             }
 
-                            object minorObject = key.GetValue("Minor");
-                            if (minorObject is int minorValue)
+                            bool minorValid = false;
+                            if (majorValid)
                             {
-                                if (minorValue >= 13)
+                                object minorObject = key.GetValue("Minor");
+                                if (minorObject is int minorValue)
                                 {
-                                    minorValid = true;
+                                    if (minorValue >= 13)
+                                    {
+                                        minorValid = true;
+                                    }
                                 }
+                            }
+
+                            if (majorValid && minorValid)
+                            {
+                                return true;
                             }
                         }
                     }
@@ -1348,11 +1356,10 @@ namespace EdiabasLibConfigTool
             }
             catch (Exception)
             {
-                majorValid = false;
-                minorValid = false;
+                // ignored
             }
 
-            return majorValid && minorValid;
+            return false;
         }
     }
 }
