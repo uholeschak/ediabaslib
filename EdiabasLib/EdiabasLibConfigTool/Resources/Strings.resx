@@ -358,9 +358,9 @@ Click here to open the system app: {0}</value>
     <value>Delay time: {0} ms</value>
   </data>
   <data name="PatchVCRuntimeInstalled" xml:space="preserve">
-    <value>VC++ runtime not found.
+    <value>The VC++ runtime has not been found.
 Install the VC++ runtime
-'{1}'
+'{0}'
 first.</value>
   </data>
 </root>
