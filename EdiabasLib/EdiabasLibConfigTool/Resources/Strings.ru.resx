@@ -358,6 +358,6 @@
   <data name="PatchVCRuntimeInstalled" xml:space="preserve">
     <value>Среда выполнения VC++ не найдена.
 Сначала установите среду выполнения VC++
-'{1}'.</value>
+'{0}'.</value>
   </data>
 </root>
