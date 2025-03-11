@@ -255,10 +255,7 @@ The default root password is {0}.</value>
   </data>
   <data name="PatchLoadApiDllFailed" xml:space="preserve">
     <value>Unable to load {0}.
-Has the archive been extracted correctly?
-Is the VC++ runtime
-'{1}'
-istalled?</value>
+Has the archive been extracted correctly?</value>
   </data>
   <data name="PatchNoValidBackupFile" xml:space="preserve">
     <value>The {0} backup file is not valid.</value>
@@ -359,5 +356,10 @@ Click here to open the system app: {0}</value>
   </data>
   <data name="LatencyTime" xml:space="preserve">
     <value>Delay time: {0} ms</value>
+  </data>
+  <data name="PatchVCRuntimeInstalled" xml:space="preserve">
+    <value>Is the VC++ runtime
+'{1}'
+istalled?</value>
   </data>
 </root>

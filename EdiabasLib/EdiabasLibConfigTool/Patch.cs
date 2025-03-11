@@ -54,7 +54,8 @@ namespace EdiabasLibConfigTool
         public const string RegKeyIstaOpMode = @"BMW.Rheingold.OperationalMode";
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
-        public const string VcRedistLink = @"https://learn.microsoft.com/de-de/cpp/windows/latest-supported-vc-redist?view=msvc-170";
+        public const string VcRedistX32Link = @"https://aka.ms/vs/17/release/vc_redist.x86.exe";
+        public const string VcRedistX64Link = @"https://aka.ms/vs/17/release/vc_redist.x64.exe";
         public const string DcanKlineLink = @"https://uholeschak.github.io/ediabaslib/docs/Build_Bluetooth_D-CAN_adapter.html";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
@@ -527,15 +528,24 @@ namespace EdiabasLibConfigTool
                     if (string.IsNullOrEmpty(version32))
                     {
                         sr.Append("\r\n");
-                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName, VcRedistLink));
+                        sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName));
+                        sr.Append("\r\n");
+                        sr.Append(string.Format(Resources.Strings.PatchVCRuntimeInstalled, VcRedistX32Link));
                         return false;
                     }
                 }
 
-                if (!IsVcRedistRegPresent(false) || !IsVcRedistRegPresent(true))
+                if (!IsVcRedistRegPresent(false))
                 {
                     sr.Append("\r\n");
-                    sr.Append(string.Format(Resources.Strings.PatchLoadApiDllFailed, Api32DllName, VcRedistLink));
+                    sr.Append(string.Format(Resources.Strings.PatchVCRuntimeInstalled, VcRedistX32Link));
+                    return false;
+                }
+
+                if (!IsVcRedistRegPresent(true))
+                {
+                    sr.Append("\r\n");
+                    sr.Append(string.Format(Resources.Strings.PatchVCRuntimeInstalled, VcRedistX64Link));
                     return false;
                 }
 
