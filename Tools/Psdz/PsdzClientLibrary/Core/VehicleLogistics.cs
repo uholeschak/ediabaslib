@@ -277,7 +277,6 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
         {
-            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             int customHashCode = vecInfo.GetCustomHashCode();
             if (ecuCharacteristics.TryGetValue(customHashCode, out var value))
             {
@@ -298,6 +297,7 @@ namespace PsdzClient.Core
                         return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                 }
             }
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             if (!string.IsNullOrEmpty(vecInfo.Ereihe))
             {
                 switch (vecInfo.Ereihe.ToUpper())
