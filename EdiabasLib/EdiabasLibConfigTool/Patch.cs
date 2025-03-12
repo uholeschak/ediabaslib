@@ -41,6 +41,8 @@ namespace EdiabasLibConfigTool
         public const string IniFileName = @"EDIABAS.INI";
         public const string RegKeyReingold = @"SOFTWARE\BMWGroup\ISPI\Rheingold";
         public const string RegKeyFtdiBus = @"SYSTEM\CurrentControlSet\Enum\FTDIBUS";
+        public const int VcRuntimeMajor = 14;
+        public const int VcRuntimeMinor = 42;
         public const string RegKeyVcRuntime14Base = @"SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes";
         public const string RegKeyVcRuntime14X86 = RegKeyVcRuntime14Base + @"\x86";
         public const string RegKeyVcRuntime14X64 = RegKeyVcRuntime14Base + @"\x64";
@@ -1327,7 +1329,7 @@ namespace EdiabasLibConfigTool
                             object majorObject = key.GetValue("Major");
                             if (majorObject is int majorValue)
                             {
-                                if (majorValue == 14)
+                                if (majorValue == VcRuntimeMajor)
                                 {
                                     majorValid = true;
                                 }
@@ -1339,7 +1341,7 @@ namespace EdiabasLibConfigTool
                                 object minorObject = key.GetValue("Minor");
                                 if (minorObject is int minorValue)
                                 {
-                                    if (minorValue >= 13)
+                                    if (minorValue >= VcRuntimeMinor)
                                     {
                                         minorValid = true;
                                     }
