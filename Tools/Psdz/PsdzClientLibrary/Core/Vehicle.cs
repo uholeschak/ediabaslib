@@ -1954,18 +1954,18 @@ namespace PsdzClient.Core
                 case "PL5-ALT":
                 case "PL3-ALT":
                     return false;
-                default:
-                    return null;
-                case "PL5":
                 case "PL2":
                 case "PL3":
-                case "PL7":
                 case "PL4":
-                case "35LG":
+                case "PL5":
                 case "PL6":
+                case "PL7":
+                case "35LG":
                 case "PLLI":
                 case "PLLU":
                     return true;
+                default:
+                    return null;
             }
         }
 
@@ -2004,24 +2004,22 @@ namespace PsdzClient.Core
                     object obj = null;
                     switch (resultName)
                     {
-                        case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/Fahrzeugauftrag":
-                            obj = base.FA.STANDARD_FA;
-                            break;
                         case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/BaureihenVerbund":
                             obj = BasisEReihe;
-                            break;
-                        case "/Result/Baustand":
-                            obj = base.FA.C_DATE;
                             break;
                         case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/IStufe":
                             obj = base.ILevel;
                             break;
-                        case "/Result/HOWortListe":
+                        case "/VehicleConfiguration.RootNode/GetGroupListEx/Arguments/Fahrzeugauftrag":
+                            obj = base.FA.STANDARD_FA;
+                            break;
+                        case "/Result/DList":
+                        case "/Result/GruppenListe":
                             {
                                 string text4 = string.Empty;
-                                foreach (string item in base.FA.HO_WORT)
+                                foreach (ECU item in base.ECU)
                                 {
-                                    text4 = text4 + item + ",";
+                                    text4 = text4 + item.ECU_GRUPPE + ",";
                                 }
                                 text4 = text4.TrimEnd(',');
                                 obj = text4;
@@ -2038,25 +2036,21 @@ namespace PsdzClient.Core
                                 obj = text3;
                                 break;
                             }
-                        case "/Result/GruppenListe":
-                        case "/Result/DList":
+                        case "/Result/EWortListe":
                             {
                                 string text2 = string.Empty;
-                                foreach (ECU item3 in base.ECU)
+                                foreach (string item3 in base.FA.E_WORT)
                                 {
-                                    text2 = text2 + item3.ECU_GRUPPE + ",";
+                                    text2 = text2 + item3 + ",";
                                 }
                                 text2 = text2.TrimEnd(',');
                                 obj = text2;
                                 break;
                             }
-                        default:
-                            Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", resultName);
-                            break;
-                        case "/Result/EWortListe":
+                        case "/Result/HOWortListe":
                             {
                                 string text = string.Empty;
-                                foreach (string item4 in base.FA.E_WORT)
+                                foreach (string item4 in base.FA.HO_WORT)
                                 {
                                     text = text + item4 + ",";
                                 }
@@ -2064,6 +2058,12 @@ namespace PsdzClient.Core
                                 obj = text;
                                 break;
                             }
+                        case "/Result/Baustand":
+                            obj = base.FA.C_DATE;
+                            break;
+                        default:
+                            Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", resultName);
+                            break;
                     }
                     if (obj != null)
                     {
@@ -2081,6 +2081,7 @@ namespace PsdzClient.Core
             }
             return default(T);
         }
+
 #if false
 		public void AddDiagCode(string diagCodeString, string diagCodeSuffixString, string originatingAblauf, IList<string> reparaturPaketList, bool teileClearingFlag)
         {
@@ -2151,17 +2152,17 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public bool IsRRSeries2()
         {
-            if (!"RR1".Equals(base.Ereihe) && !"RR2".Equals(base.Ereihe) && !"RR3".Equals(base.Ereihe))
+            if ("RR1".Equals(base.Ereihe) || "RR2".Equals(base.Ereihe) || "RR3".Equals(base.Ereihe))
             {
+                if ("RR1_2020".Equals(base.MainSeriesSgbd))
+                {
+                    return true;
+                }
+                if (C_DATETIME.HasValue)
+                {
+                    return C_DATETIME > lciRRS2;
+                }
                 return false;
-            }
-            if ("RR1_2020".Equals(base.MainSeriesSgbd))
-            {
-                return true;
-            }
-            if (C_DATETIME.HasValue)
-            {
-                return C_DATETIME > lciRRS2;
             }
             return false;
         }
