@@ -888,7 +888,6 @@ namespace PsdzClient.Core
             return (BNType)GetBordnetType(vecInfo.Baureihenverbund, vecInfo.Prodart, vecInfo.Ereihe, new NugetLogger());
         }
 
-
         public void BN2000HandleKMMFixes(IVehicle vecInfo, IEcuKom ecuKom, bool resetMOSTDone, IProgressMonitor monitor, int retryCount, DoECUIdentDelegate doECUIdentDelegate)
         {
             if ((vecInfo.hasSA("6VC") || vecInfo.hasSA("612") || vecInfo.hasSA("633")) && vecInfo.getECU(54L) == null)
@@ -943,7 +942,6 @@ namespace PsdzClient.Core
             }
         }
 
-
         public void HandleECUGroups(IVehicle vecInfo, IEcuKom ecuKom, List<IEcu> ecusToRemoveKMM)
         {
             IEcu eCUbyECU_GRUPPE = vecInfo.getECUbyECU_GRUPPE("D_RLS");
@@ -991,30 +989,34 @@ namespace PsdzClient.Core
         {
             if (vehicle.BrandName == BrandName.BMWMOTORRAD)
             {
-                if (vehicle.BNType != BNType.BN2000_MOTORBIKE && vehicle.BNType != BNType.BNK01X_MOTORBIKE)
-                {
-                    ExecuteVehicleLifeStartDateJobAndProcessResults("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", 3, "STAT_SYSTEMZEIT_WERT", ecuKom, vehicle);
-                }
-                else
+                if (vehicle.BNType == BNType.BN2000_MOTORBIKE || vehicle.BNType == BNType.BNK01X_MOTORBIKE)
                 {
                     Log.Warning(Log.CurrentMethod(), "Found BN2000 Motorbike. VehicleLifeStartdate cannot be read out of the vehicle");
                 }
+                else
+                {
+                    ExecuteVehicleLifeStartDateJobAndProcessResults("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", 3, "STAT_SYSTEMZEIT_WERT", ecuKom, vehicle);
+                }
+            }
+            else if (IsEES25Vehicle(vehicle))
+            {
+                ExecuteVehicleLifeStartDateJobAndProcessResults("IPB_APP1", "STATUS_LESEN", "ARG;SYSTEM_TIME_SUPREME", 3, "SECONDS", ecuKom, vehicle, null, "MILLISECONDS");
             }
             else if (!ExecuteVehicleLifeStartDateJobAndProcessResults("G_ZGW", "STATUS_LESEN", "ID;0x1701", 3, "STAT_SYSTEMZEIT_WERT", ecuKom, vehicle))
             {
-                ExecuteVehicleLifeStartDateJobAndProcessResults("BCP_SP21", "STATUS_LESEN", "ID;0x1769", 3, "STAT_SYSTIME_SECONDS_WERT", ecuKom, vehicle, "STAT_SYSTIME_SECONDS");
+                ExecuteVehicleLifeStartDateJobAndProcessResults("BCP_SP21", "STATUS_LESEN", "ID;0x1769", 3, "STAT_SYSTIME_SECONDS_WERT", ecuKom, vehicle, "STAT_SYSTIME_SECONDS", "STAT_SYSTIME_MILLISECONDS_WERT", "STAT_SYSTIME_MILLISECONDS");
             }
         }
 
         public bool IsEPMEnabled(IVehicle vehicle)
         {
-            if (vehicle != null && !string.IsNullOrEmpty(vehicle.Produktlinie))
+            if (vehicle == null || string.IsNullOrEmpty(vehicle.Produktlinie))
             {
-                if (vehicle.BrandName != BrandName.BMWMOTORRAD)
-                {
-                    return !ProductLinesEpmBlacklist.Contains(vehicle.Produktlinie);
-                }
                 return false;
+            }
+            if (vehicle.BrandName != BrandName.BMWMOTORRAD)
+            {
+                return !ProductLinesEpmBlacklist.Contains(vehicle.Produktlinie);
             }
             return false;
         }
@@ -1031,10 +1033,10 @@ namespace PsdzClient.Core
         public void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob)
         {
             MaskResultFASTARelevant(ecuJob, 1, 1, new List<string>
-        {
-            "F_ORT_NR", "F_EREIGNIS_DTC", "F_UEBERLAUF", "F_VORHANDEN_NR", "F_READY_NR", "F_WARNUNG_NR", "F_HFK", "F_HLZ", "F_SAE_CODE_STRING", "F_HEX_CODE",
-            "F_FEHLERKLASSE"
-        });
+            {
+                "F_ORT_NR", "F_EREIGNIS_DTC", "F_UEBERLAUF", "F_VORHANDEN_NR", "F_READY_NR", "F_WARNUNG_NR", "F_HFK", "F_HLZ", "F_SAE_CODE_STRING", "F_HEX_CODE",
+                "F_FEHLERKLASSE"
+            });
             MaskResultFASTARelevant(ecuJob, 1, -2, new List<string> { "F_UW_KM", "F_UW_KM_SUPREME", "F_UW_ZEIT", "F_UW_ZEIT_SUPREME", "F_UW_ANZ", "F_UW*_NR", "F_UW*_WERT", "F_UW_BN", "F_UW_TN" });
         }
 
@@ -1064,31 +1066,117 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-        public void ShowAdapterHintMotorCycle(IProgressMonitor monitor, IOperationServices services, string eReihe, string basicType)
+        public List<string> RemoveFirstDigitOfSalapaIfLengthIs4(List<string> salapa)
         {
-            switch (eReihe)
+            string text = salapa.FirstOrDefault();
+            if (text != null && text.Length == 4)
             {
-                case "K16":
-                    if (!monitor.RequestConfirmation(ProgressRequestConfirmationType.Information, FormatedData.Localize("#Warning"), FormatedData.Localize("#064")))
-                    {
-                        Log.Info("CommandVINVehicleData.DoExecute()", "No adapter confirmed for motorcycle {0}", eReihe);
-                    }
-                    break;
-                case "259S":
-                case "R22":
-                case "R21":
-                case "R28":
-                case "259C":
-                case "K589":
-                case "K30":
-                case "K41":
-                    if ("0308,0309,0318,0319,0329,0362,0379,0391,0405,0414,0415,0417,0419,0421,0422,0424,0428,0429,0431,0432,0433,0434,0438,0439,0441,0442,0447,0477,0492,0495,0496,0498,0499,0544,0545,0547,0548,0549,0554,0555,0557,0558,0559".Contains(basicType))
-                    {
-                        InteractionMotorcycleMRMA24Model model = new InteractionMotorcycleMRMA24Model();
-                        services.InteractionService.Register(model);
-                    }
-                    break;
+                salapa = salapa.Select((string x) => x.Substring(1)).ToList();
             }
+            return salapa;
+        }
+
+        public void Add14DigitFakeSerialNumberToFstdat(IVehicle vecInfo, IEnumerable<IEcuJob> jobList)
+        {
+            IEnumerable<IEcu> enumerable = vecInfo.ECU.Where((IEcu x) => VarianteListFor14DigitSerialNumber.Contains(x.VARIANTE) && x.SERIENNUMMER != null && x.SERIENNUMMER.Length == 14);
+            IEnumerable<IEcuJob> source = jobList.Where((IEcuJob x) => x.JobName.Equals("SERIENNUMMER_LESEN"));
+            Dictionary<IEcu, ECUJob> dictionary = new Dictionary<IEcu, ECUJob>();
+            foreach (IEcu ecu in enumerable)
+            {
+                IEnumerable<IEcuJob> source2 = source.Where((IEcuJob job) => job.EcuName.Equals(ecu.ECU_SGBD, StringComparison.OrdinalIgnoreCase) || job.EcuName.Equals(ecu.ECU_GRUPPE, StringComparison.OrdinalIgnoreCase));
+                if (source2.Count() != 0)
+                {
+                    dictionary.Add(ecu, (ECUJob)source2.First());
+                }
+            }
+            foreach (KeyValuePair<IEcu, ECUJob> item in dictionary)
+            {
+                IEcu key = item.Key;
+                ECUJob value = item.Value;
+                ECUResult eCUResult = value.JobResult.FirstOrDefault((ECUResult x) => x.Name == "SERIENNUMMER");
+                if (eCUResult != null)
+                {
+                    ECUResult eCUResult2 = new ECUResult();
+                    eCUResult2.Name = "SERIENNUMMER14";
+                    eCUResult2.Value = key.SERIENNUMMER;
+                    eCUResult2.Set = eCUResult.Set;
+                    eCUResult2.Format = 6;
+                    eCUResult2.Length = 0u;
+                    eCUResult2.FASTARelevant = true;
+                    value.JobResult.Add(eCUResult2);
+                }
+            }
+        }
+
+        public void CheckEcusFor14DigitSerialNumber(IEcuKom ecuKom, IEnumerable<IEcu> ecus)
+        {
+            foreach (IEcu ecu in ecus)
+            {
+                if (!(ecu is ECU eCU) || !VarianteListFor14DigitSerialNumber.Contains(eCU.VARIANTE))
+                {
+                    continue;
+                }
+                IEcuJob ecuJob = ecuKom.ApiJob(eCU.VARIANTE, "STATUS_LESEN", "ID;0xD019", string.Empty, 3);
+                if (ecuJob.IsOkay())
+                {
+                    string sERIENNUMMER = eCU.SERIENNUMMER;
+                    string stringResult = ecuJob.getStringResult("STAT_SER_NR_DOM_WERT");
+                    stringResult = ((stringResult == null) ? ecuJob.getStringResult("STAT_SER_NR_DOM_TEXT") : stringResult);
+                    if (stringResult == null)
+                    {
+                        Log.Info("SerialNumberUtility.CheckEcusFor14DigitSerialNumber()", "The 14 digit serialnumber for the ecu with the variante '{0}' is null.", ecu.VARIANTE);
+                    }
+                    else if (stringResult.Length != 14)
+                    {
+                        Log.Warning("SerialNumberUtility.CheckEcusFor14DigitSerialNumber()", "The serialnumber for ecu variante '{0}' has '{1}' digits, expectet 14.", ecu.VARIANTE, stringResult.Length);
+                    }
+                    else
+                    {
+                        eCU.SERIENNUMMER = stringResult;
+                        Log.Info("SerialNumberUtility.CheckEcusFor14DigitSerialNumber()", "The serialnumber for the ecu with the variante '{0}' was changed from '{1}' to '{2}'.", ecu.VARIANTE, sERIENNUMMER, stringResult);
+                    }
+                }
+                else
+                {
+                    Log.Warning("SerialNumberUtility.CheckEcusFor14DigitSerialNumber()", "Changing the serialnumber to 14-digits for the ecu with the variante '{0}' fails.", ecu.VARIANTE);
+                }
+            }
+        }
+
+        public bool ShouldNotValidateFAForOldCars(string ereihe, DateTime constructionDate)
+        {
+            if (ereiheWithoutFA.Contains(ereihe) || (ereihe == "E46" && constructionDate < new DateTime(2004, 4, 1)))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public string GetServiceProgramName(TestModuleName testmoduleName)
+        {
+            switch (testmoduleName)
+            {
+                case TestModuleName.CheckVoltage:
+                    return "ABL-LIF-FAHRZEUGDATEN__BATTERIE";
+                case TestModuleName.RsuStart:
+                    return "ABL-DIT-AG6510_RSU_START";
+                case TestModuleName.RsuStop:
+                    return "ABL-DIT-AG6510_RSU_STOP";
+                case TestModuleName.RequestApplicationNumberAndUpgrade:
+                    return "ABL-GEN-DETERMINE_REFURBISH_SWID";
+                case TestModuleName.ServiceHistoryAction:
+                    return "ABL-WAR-AS6100_SERVICEHISTORIE_AIR";
+                default:
+                    return null;
+            }
+        }
+
+        private void MaskResultFASTARelevant(IEcuJob ecuJob, ushort startSet, int stopSet, IList<string> fsLesenExpertResultNames)
+        {
+            fsLesenExpertResultNames.ForEach(delegate (string x)
+            {
+                ecuJob.maskResultFASTARelevant(startSet, stopSet, x);
+            });
         }
 
         private void SetVehicleLifeStartDateWithJobResult(IVehicle vehicle, long seconds, long? milliseconds)
@@ -1100,14 +1188,6 @@ namespace PsdzClient.Core
             }
             vehicle.VehicleLifeStartDate = vehicleLifeStartDate;
             vehicle.VehicleSystemTime = (double)seconds + (milliseconds.HasValue ? ((double)milliseconds.Value / 1000.0) : 0.0);
-        }
-
-        private void MaskResultFASTARelevant(IEcuJob ecuJob, ushort startSet, int stopSet, IList<string> fsLesenExpertResultNames)
-        {
-            fsLesenExpertResultNames.ForEach(delegate (string x)
-            {
-                ecuJob.maskResultFASTARelevant(startSet, stopSet, x);
-            });
         }
 
         private bool ExecuteVehicleLifeStartDateJobAndProcessResults(string sgbd, string jobName, string jobParams, int retryCount, string resultname, IEcuKom ecuKom, IVehicle vehicle, string alternativeResult = null, string supremeResultName = null, string alternativeSupremeResultName = null)
