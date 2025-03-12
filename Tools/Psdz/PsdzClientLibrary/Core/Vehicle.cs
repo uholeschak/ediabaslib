@@ -430,43 +430,42 @@ namespace PsdzClient.Core
                     {
                         return VINRangeType;
                     }
-                    string text = base.VIN17.Substring(3, 4);
-                    if (!string.IsNullOrEmpty(text))
+                    if (!string.IsNullOrEmpty(VINType))
                     {
-                        string text2 = text.Substring(0, 3);
-                        switch (text[3])
+                        string text = VINType.Substring(0, 3);
+                        switch (VINType[3])
                         {
                             case 'A':
-                                text2 += "1";
+                                text += "1";
                                 break;
                             case 'B':
-                                text2 += "2";
+                                text += "2";
                                 break;
                             case 'C':
-                                text2 += "3";
+                                text += "3";
                                 break;
                             case 'D':
-                                text2 += "4";
+                                text += "4";
                                 break;
                             case 'E':
-                                text2 += "5";
+                                text += "5";
                                 break;
                             case 'F':
-                                text2 += "6";
+                                text += "6";
                                 break;
                             case 'G':
-                                text2 += "7";
+                                text += "7";
                                 break;
                             case 'H':
-                                text2 += "8";
+                                text += "8";
+                                break;
+                            case 'J':
+                                text += "9";
                                 break;
                             default:
-                                return text;
-                            case 'J':
-                                text2 += "9";
-                                break;
+                                return VINType;
                         }
-                        return text2;
+                        return text;
                     }
                 }
                 catch (Exception exception)
@@ -1006,23 +1005,23 @@ namespace PsdzClient.Core
             string[] source = new string[2] { "HU_MGU", "ENAVEVO" };
             try
             {
-                int num2 = Convert.ToInt32(updateIndex, 16);
+                int num = Convert.ToInt32(updateIndex, 16);
                 if (source.Any((string x) => huVariante.Equals(x)))
                 {
                     string text = updateIndex.Substring(0, 2);
                     return updateIndex.Substring(2, 2) + "-" + text;
                 }
-                if (num2 > 45)
+                if (num > 45)
                 {
-                    int months = num2 - 54;
+                    int months = num - 54;
                     DateTime dateTime = new DateTime(2018, 7, 1).AddMonths(months);
                     new DateTime(2017, 10, 1);
                     return dateTime.Month + "-" + dateTime.Year;
                 }
-                if (num2 > 33)
+                if (num > 33)
                 {
-                    int num3 = 46 - num2;
-                    int months2 = -1 * (num3 * 3 - 3);
+                    int num2 = 46 - num;
+                    int months2 = -1 * (num2 * 3 - 3);
                     DateTime dateTime2 = new DateTime(2017, 10, 1).AddMonths(months2);
                     return dateTime2.Month + "-" + dateTime2.Year;
                 }
@@ -1034,6 +1033,7 @@ namespace PsdzClient.Core
                 return "-";
             }
         }
+
         public object Clone()
         {
             return MemberwiseClone();
@@ -1063,29 +1063,110 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public bool IsVINLessEReihe()
         {
-            switch (base.Ereihe)
+            string ereihe = base.Ereihe;
+            if (ereihe != null)
             {
-                default:
-                    return false;
-                case "247":
-                case "K599":
-                case "248":
-                case "259":
-                case "259R":
-                case "259S":
-                case "R22":
-                case "R21":
-                case "R28":
-                case "259C":
-                case "K30":
-                case "K41":
-                case "247E":
-                case "K569":
-                case "E169":
-                case "E189":
-                case "K589":
-                    return true;
+                int length = ereihe.Length;
+                if (length != 3)
+                {
+                    if (length != 4)
+                    {
+                        return false;
+                    }
+                    char c = ereihe[3];
+                    if (c <= 'C')
+                    {
+                        if (c != '9')
+                        {
+                            if (c != 'C')
+                            {
+                                return false;
+                            }
+                            if (!(ereihe == "259C"))
+                            {
+                                return false;
+                            }
+                        }
+                        else if (!(ereihe == "K569") && !(ereihe == "K589") && !(ereihe == "K599") && !(ereihe == "E169") && !(ereihe == "E189"))
+                        {
+                            return false;
+                        }
+                    }
+                    else if (c != 'E')
+                    {
+                        if (c != 'R')
+                        {
+                            if (c != 'S')
+                            {
+                                return false;
+                            }
+                            if (!(ereihe == "259S"))
+                            {
+                                return false;
+                            }
+                        }
+                        else if (!(ereihe == "259R"))
+                        {
+                            return false;
+                        }
+                    }
+                    else if (!(ereihe == "247E"))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    switch (ereihe[2])
+                    {
+                        case '0':
+                            if (!(ereihe == "K30"))
+                            {
+                                return false;
+                            }
+                            break;
+                        case '1':
+                            if (!(ereihe == "K41") && !(ereihe == "R21"))
+                            {
+                                return false;
+                            }
+                            break;
+                        case '2':
+                            if (!(ereihe == "R22"))
+                            {
+                                return false;
+                            }
+                            break;
+                        case '3':
+                        case '4':
+                        case '5':
+                        case '6':
+                            return false;
+                        case '7':
+                            if (!(ereihe == "247"))
+                            {
+                                return false;
+                            }
+                            break;
+                        case '8':
+                            if (!(ereihe == "R28") && !(ereihe == "248"))
+                            {
+                                return false;
+                            }
+                            break;
+                        case '9':
+                            if (!(ereihe == "259"))
+                            {
+                                return false;
+                            }
+                            break;
+                        default:
+                            return false;
+                    }
+                }
+                return true;
             }
+            return false;
         }
 
         public bool IsEreiheValid()
@@ -1800,6 +1881,13 @@ namespace PsdzClient.Core
                     {
                         switch (array2[0])
                         {
+                            case ">":
+                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))
+                                {
+                                    Log.Info("Vehicle.evalILevelExpression()", "> was true");
+                                }
+                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))));
+                                break;
                             case "<":
                                 if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))
                                 {
@@ -1820,13 +1908,6 @@ namespace PsdzClient.Core
                                     Log.Info("Vehicle.evalILevelExpression()", ">= was true");
                                 }
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))));
-                                break;
-                            case ">":
-                                if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))
-                                {
-                                    Log.Info("Vehicle.evalILevelExpression()", "> was true");
-                                }
-                                flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "<=":
                                 if (CoreFramework.DebugLevel > 0 && FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))
