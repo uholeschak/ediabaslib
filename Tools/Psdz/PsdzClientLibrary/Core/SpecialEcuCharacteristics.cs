@@ -339,68 +339,6 @@ namespace PsdzClient.Core
         }
     }
 
-    public class E83EcuCharacteristics : BaseEcuCharacteristics
-    {
-        // ToDo: Check on update
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
-        {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-            HashSet<int> hashSet = new HashSet<int>();
-            HashSet<int> hashSet2 = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
-            {
-                hashSet.Add(50);
-                hashSet.Add(24);
-            }
-            if (vecInfo.hasSA("508"))
-            {
-                hashSet.Add(96);
-            }
-            if (vecInfo.hasSA("403"))
-            {
-                hashSet.Add(21);
-            }
-            if (vecInfo.hasSA("602"))
-            {
-                hashSet.Add(240);
-            }
-            if (vecInfo.hasSA("265"))
-            {
-                hashSet.Add(112);
-            }
-            if (vecInfo.hasSA("549"))
-            {
-                hashSet.Add(40);
-            }
-            if (vecInfo.hasSA("540"))
-            {
-                hashSet.Add(166);
-            }
-            if (vecInfo.hasSA("536"))
-            {
-                hashSet.Add(107);
-            }
-            if (vecInfo.hasSA("609"))
-            {
-                hashSet.Add(127);
-                hashSet.Add(70);
-            }
-            if (vecInfo.hasSA("644"))
-            {
-                hashSet.Add(200);
-            }
-            if ("M54".Equals(vecInfo.Motor, StringComparison.OrdinalIgnoreCase))
-            {
-                hashSet2.Add(101);
-            }
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, hashSet2);
-        }
-    }
-
     public class F15EcuCharacteristics : BaseEcuCharacteristics
     {
         // ToDo: Check on update
@@ -462,17 +400,16 @@ namespace PsdzClient.Core
             {
                 foreach (ECU item in eCU)
                 {
-                    if (!item.ECU_GROBNAME.Equals("EMA_LI"))
+                    if (item.ECU_GROBNAME.Equals("EMA_LI"))
                     {
-                        if (item.ECU_GROBNAME.Equals("EMA_RE"))
-                        {
-                            hashSet.AddIfNotContains(77);
-                            break;
-                        }
-                        continue;
+                        hashSet.AddIfNotContains(78);
+                        break;
                     }
-                    hashSet.AddIfNotContains(78);
-                    break;
+                    if (item.ECU_GROBNAME.Equals("EMA_RE"))
+                    {
+                        hashSet.AddIfNotContains(77);
+                        break;
+                    }
                 }
             }
             CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
