@@ -485,8 +485,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-
-        public void ReadILevelBn2020(Vehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
             // [UH] get reactor from vehicle
             Reactor instance = (vecInfo as Vehicle)?.Reactor;
