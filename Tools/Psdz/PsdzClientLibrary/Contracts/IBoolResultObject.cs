@@ -26,4 +26,13 @@ namespace PsdzClient.Contracts
 
         void SetValues(bool result, string errorCode, string errorMessage);
     }
+
+    [AuthorAPI(SelectableTypeDeclaration = true)]
+    public interface IBoolResultObject<T> : IBoolResultObject
+    {
+        T ResultObject { get; }
+
+        void CopyBoolObjectResultValues(IBoolResultObject boolResultObject);
+    }
+
 }

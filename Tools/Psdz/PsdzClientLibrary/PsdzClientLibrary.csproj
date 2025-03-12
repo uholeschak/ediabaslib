@@ -145,6 +145,8 @@
     <Compile Include="Core\IConfigSettingsRuleEvaluation.cs" />
     <Compile Include="Core\IDataContext.cs" />
     <Compile Include="Core\IEMotor.cs" />
+    <Compile Include="Core\IError.cs" />
+    <Compile Include="Core\IErrorManager.cs" />
     <Compile Include="Core\IFARuleEvaluation.cs" />
     <Compile Include="Core\IFasta2Service.cs" />
     <Compile Include="Core\IFfmResultRuleEvaluation.cs" />

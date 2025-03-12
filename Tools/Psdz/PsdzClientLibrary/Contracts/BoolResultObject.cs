@@ -43,4 +43,30 @@ namespace PsdzClient.Contracts
             ErrorMessage = errorMessage;
         }
     }
+
+    public class BoolResultObject<T> : BoolResultObject, IBoolResultObject<T>, IBoolResultObject
+    {
+        public T ResultObject { get; set; }
+
+        public BoolResultObject()
+        {
+        }
+
+        public BoolResultObject(IBoolResultObject boolResultObject, T result)
+        {
+            CopyBoolObjectResultValues(boolResultObject);
+            ResultObject = result;
+        }
+
+        public void CopyBoolObjectResultValues(IBoolResultObject boolResultObject)
+        {
+            base.ErrorCode = boolResultObject.ErrorCode;
+            base.ErrorMessage = boolResultObject.ErrorMessage;
+            base.Result = boolResultObject.Result;
+            base.Context = boolResultObject.Context;
+            base.Time = boolResultObject.Time;
+            base.StatusCode = boolResultObject.StatusCode;
+        }
+    }
+
 }
