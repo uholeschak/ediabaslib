@@ -62,9 +62,28 @@ namespace PsdzClient.Core
             if (!string.IsNullOrEmpty(vehicle.Ereihe) && "E65 E66 E67 E68".Contains(vehicle.Ereihe))
             {
                 vehicle.Getriebe = "AUT";
-                return;
             }
-            if (!HasVehicleGearboxECU(vehicle) && vehicle.getECU(24L) == null)
+            else if (HasVehicleGearboxECU(vehicle) || vehicle.getECU(24L) != null)
+            {
+                ECU eCU = vehicle.getECU(24L);
+                if ((eCU == null && (vehicle.VehicleIdentLevel == IdentificationLevel.VINVehicleReadout || vehicle.VehicleIdentLevel == IdentificationLevel.VINVehicleReadoutOnlineUpdated)) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "DKG", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "GSGE", 0, 4, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "SMG", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "SSG", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "GSD", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || vehicle.hasSA("2MK") || vehicle.hasSA("206") || vehicle.hasSA("2TC"))
+                {
+                    if ("AUT".Equals(vehicle.Getriebe, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Log.Info("VehicleIdent.doVehicleIdent()", "found DKG ECU in vehicle with recognized automatic gearbox; will be overwritten");
+                    }
+                    vehicle.Getriebe = "MECH";
+                }
+                else
+                {
+                    if ("MECH".Equals(vehicle.Getriebe, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Log.Info("VehicleIdent.doVehicleIdent()", "found EGS ECU in vehicle with recognized manual gearbox; will be overwritten");
+                    }
+                    vehicle.Getriebe = "AUT";
+                }
+            }
+            else
             {
                 if (vehicle.FA != null && vehicle.FA.SA != null && vehicle.FA.SA.Count > 0 && !vehicle.FA.SA.Contains("205"))
                 {
@@ -76,24 +95,6 @@ namespace PsdzClient.Core
                     Log.Info("VehicleIdent.doVehicleIdent()", "gearbox set to manual, because vehicle has no D_EGS or G_EGS");
                     vehicle.Getriebe = "MECH";
                 }
-                return;
-            }
-            ECU eCU = vehicle.getECU(24L);
-            if ((eCU != null || (vehicle.VehicleIdentLevel != IdentificationLevel.VINVehicleReadout && vehicle.VehicleIdentLevel != IdentificationLevel.VINVehicleReadoutOnlineUpdated)) && (eCU == null || string.IsNullOrEmpty(eCU.VARIANTE) || string.Compare(eCU.VARIANTE, 0, "DKG", 0, 3, StringComparison.OrdinalIgnoreCase) != 0) && (eCU == null || string.IsNullOrEmpty(eCU.VARIANTE) || string.Compare(eCU.VARIANTE, 0, "GSGE", 0, 4, StringComparison.OrdinalIgnoreCase) != 0) && (eCU == null || string.IsNullOrEmpty(eCU.VARIANTE) || string.Compare(eCU.VARIANTE, 0, "SMG", 0, 3, StringComparison.OrdinalIgnoreCase) != 0) && (eCU == null || string.IsNullOrEmpty(eCU.VARIANTE) || string.Compare(eCU.VARIANTE, 0, "SSG", 0, 3, StringComparison.OrdinalIgnoreCase) != 0) && (eCU == null || string.IsNullOrEmpty(eCU.VARIANTE) || string.Compare(eCU.VARIANTE, 0, "GSD", 0, 3, StringComparison.OrdinalIgnoreCase) != 0) && !vehicle.hasSA("2MK") && !vehicle.hasSA("206") && !vehicle.hasSA("2TC"))
-            {
-                if ("MECH".Equals(vehicle.Getriebe, StringComparison.OrdinalIgnoreCase))
-                {
-                    Log.Info("VehicleIdent.doVehicleIdent()", "found EGS ECU in vehicle with recognized manual gearbox; will be overwritten");
-                }
-                vehicle.Getriebe = "AUT";
-            }
-            else
-            {
-                if ("AUT".Equals(vehicle.Getriebe, StringComparison.OrdinalIgnoreCase))
-                {
-                    Log.Info("VehicleIdent.doVehicleIdent()", "found DKG ECU in vehicle with recognized automatic gearbox; will be overwritten");
-                }
-                vehicle.Getriebe = "MECH";
             }
         }
 
@@ -108,28 +109,11 @@ namespace PsdzClient.Core
             {
                 return true;
             }
-            if (!vehicle.hasSA("205") && !vehicle.hasSA("206") && !vehicle.hasSA("2TB") && !vehicle.hasSA("2TC") && !vehicle.hasSA("2MK"))
+            if (vehicle.hasSA("205") || vehicle.hasSA("206") || vehicle.hasSA("2TB") || vehicle.hasSA("2TC") || vehicle.hasSA("2MK"))
             {
-                return false;
+                return true;
             }
-            return true;
-        }
-
-        // [UH] Characteristics replaced
-        public static void SetGearboxTypeFromCharacteristics(Vehicle vehicle, PsdzDatabase.Characteristics gearboxCharacteristic)
-        {
-            string name = gearboxCharacteristic.Name;
-            Log.Info("GearboxUtility.SetGearboxTypeFromCharacteristics()", "Gearbox type: '" + name + "' found in the xep_characteristics table.");
-            // [UH] reactor replaced
-            vehicle?.Reactor?.SetGetriebe(name, DataSource.Database);
-        }
-
-        public static void SetServiceCodeIfGearboxIsNotDetected(Vehicle vehicle, IFasta2Service fasta)
-        {
-            if (vehicle.Getriebe == "X")
-            {
-                fasta.AddServiceCode(ServiceCodes.NVI04_Gearbox_X, vehicle.Ereihe + ", " + vehicle.Typ, LayoutGroup.D);
-            }
+            return false;
         }
     }
 }
