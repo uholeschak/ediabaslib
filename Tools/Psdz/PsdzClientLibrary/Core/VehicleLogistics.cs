@@ -259,9 +259,13 @@ namespace PsdzClient.Core
             }
         }
 
+        // ToDo: Check on update
         public static void ShapeECUConfiguration(Vehicle vecInfo)
         {
-            GetCharacteristics(vecInfo)?.ShapeECUConfiguration(vecInfo);
+            if ("E36,E38,E46,E53,E83,E85,R50".Contains(vecInfo.Ereihe))
+            {
+                GetCharacteristics(vecInfo)?.ShapeECUConfiguration(vecInfo);
+            }
         }
 
         public static ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
