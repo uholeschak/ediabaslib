@@ -4,7 +4,7 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using PsdzClient.Contracts;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public enum Sec4DiagCertificateState
     {

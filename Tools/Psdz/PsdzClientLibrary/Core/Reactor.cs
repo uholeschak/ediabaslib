@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public enum DataSource
     {

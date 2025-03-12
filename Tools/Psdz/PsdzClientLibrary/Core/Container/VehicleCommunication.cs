@@ -1,5 +1,4 @@
-﻿using PsdzClientLibrary.Core;
-
+﻿
 namespace PsdzClient.Core.Container
 {
     public sealed class VehicleCommunication

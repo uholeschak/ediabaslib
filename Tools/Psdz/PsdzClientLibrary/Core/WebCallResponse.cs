@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class WebCallResponse
     {

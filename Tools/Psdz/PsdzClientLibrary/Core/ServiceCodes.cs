@@ -1,4 +1,4 @@
-﻿namespace PsdzClientLibrary.Core
+﻿namespace PsdzClient.Core
 {
     public static class ServiceCodes
     {

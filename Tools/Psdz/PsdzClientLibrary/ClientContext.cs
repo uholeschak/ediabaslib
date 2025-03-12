@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using log4net;
 using PsdzClient.Core;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient
 {

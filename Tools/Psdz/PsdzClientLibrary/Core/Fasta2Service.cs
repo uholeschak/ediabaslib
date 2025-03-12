@@ -1,6 +1,6 @@
 ﻿using PsdzClient.Core;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     // [UH] dummy class
     public class Fasta2Service : IFasta2Service

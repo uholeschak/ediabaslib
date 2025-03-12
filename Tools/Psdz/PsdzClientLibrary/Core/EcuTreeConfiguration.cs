@@ -10,7 +10,6 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using BmwFileReader;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

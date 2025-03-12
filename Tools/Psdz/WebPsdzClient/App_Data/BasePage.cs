@@ -1,5 +1,4 @@
 ﻿using log4net;
-using PsdzClientLibrary.Core;
 using System;
 using System.Globalization;
 using System.Threading;

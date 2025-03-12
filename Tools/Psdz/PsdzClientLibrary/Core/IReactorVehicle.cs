@@ -3,7 +3,7 @@ using PsdzClient.Core;
 using System.ComponentModel;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public interface IReactorVehicle : INotifyPropertyChanged
     {

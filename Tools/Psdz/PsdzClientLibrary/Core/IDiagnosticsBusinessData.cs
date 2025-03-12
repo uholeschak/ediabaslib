@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System;
 using PsdzClient.Core.Container;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

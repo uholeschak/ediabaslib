@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Utility;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

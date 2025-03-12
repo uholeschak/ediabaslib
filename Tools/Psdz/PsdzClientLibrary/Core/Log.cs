@@ -17,7 +17,7 @@ using System.Text;
 using PsdzClient;
 using PsdzClient.Core;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public enum EventKind
     {

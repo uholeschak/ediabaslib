@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using PsdzClientLibrary;
 
-
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class DataHolder
     {

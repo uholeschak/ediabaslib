@@ -3,7 +3,7 @@ using System.Globalization;
 using System;
 using PsdzClient.Core;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class DiagnosticsBusinessDataCore
     {

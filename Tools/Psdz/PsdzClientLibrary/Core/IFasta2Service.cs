@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     // [UH] dummy interface
     public interface IFasta2Service

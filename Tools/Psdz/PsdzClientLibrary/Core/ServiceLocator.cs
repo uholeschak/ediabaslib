@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public sealed class ServiceLocator : IServiceLocator
     {

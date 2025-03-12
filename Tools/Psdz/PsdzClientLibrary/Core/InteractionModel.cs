@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     [DataContract]
     public abstract class InteractionModel : INotifyPropertyChanged, IInteractionModel

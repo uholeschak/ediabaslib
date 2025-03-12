@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using BMW.Rheingold.CoreFramework;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {

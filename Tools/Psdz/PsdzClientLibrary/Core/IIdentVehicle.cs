@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public interface IIdentVehicle : IReactorVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation
     {

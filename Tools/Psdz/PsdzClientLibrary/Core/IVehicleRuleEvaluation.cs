@@ -3,7 +3,7 @@ using PsdzClient.Core;
 using System.Collections.Generic;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public interface IVehicleRuleEvaluation
     {

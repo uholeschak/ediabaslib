@@ -17,7 +17,6 @@ using Ediabas;
 using EdiabasLib;
 using PsdzClient.Contracts;
 using PsdzClient.Utility;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {

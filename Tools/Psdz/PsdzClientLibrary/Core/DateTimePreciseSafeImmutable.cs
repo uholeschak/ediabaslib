@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     internal sealed class DateTimePreciseSafeImmutable
     {

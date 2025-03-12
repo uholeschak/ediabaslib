@@ -1,6 +1,6 @@
 ﻿using PsdzClient.Core;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     using System;
     using System.Collections.Concurrent;

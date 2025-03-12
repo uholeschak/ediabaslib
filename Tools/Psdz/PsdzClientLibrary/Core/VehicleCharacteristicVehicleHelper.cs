@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

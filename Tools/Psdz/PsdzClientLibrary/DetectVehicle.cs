@@ -11,7 +11,6 @@ using log4net;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient
 {

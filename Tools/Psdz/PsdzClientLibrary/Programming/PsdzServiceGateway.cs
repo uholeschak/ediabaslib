@@ -3,10 +3,10 @@ using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz;
 using PsdzClient.Programming;
-using PsdzClientLibrary.Core;
 using System.Threading.Tasks;
 using System;
 using PsdzClient;
+using PsdzClient.Core;
 
 namespace PsdzClientLibrary.Programming
 {

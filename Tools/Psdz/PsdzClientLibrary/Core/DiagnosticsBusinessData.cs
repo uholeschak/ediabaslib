@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

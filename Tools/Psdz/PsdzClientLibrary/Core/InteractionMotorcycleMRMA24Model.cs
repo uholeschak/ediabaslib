@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     [DataContract]
     public class InteractionMotorcycleMRMA24Model : InteractionModel, IInteractionMotorcycleMRMA24Model

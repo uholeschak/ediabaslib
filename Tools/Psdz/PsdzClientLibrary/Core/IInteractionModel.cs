@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public interface IInteractionModel : INotifyPropertyChanged
     {

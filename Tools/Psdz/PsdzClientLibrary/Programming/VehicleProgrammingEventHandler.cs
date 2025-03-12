@@ -7,7 +7,7 @@ using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Events;
 using BMW.Rheingold.Psdz.Model.Tal;
-using PsdzClientLibrary.Core;
+using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {

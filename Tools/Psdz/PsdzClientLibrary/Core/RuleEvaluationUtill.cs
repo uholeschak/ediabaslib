@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using PsdzClient;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class RuleEvaluationUtill
     {

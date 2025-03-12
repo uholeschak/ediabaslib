@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public interface ILogger
     {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Crmf;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class Sec4DiagRequestData
     {

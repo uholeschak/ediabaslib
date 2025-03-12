@@ -1,7 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System.Collections.Generic;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class ConfigSettingsRuleEvaluation : IConfigSettingsRuleEvaluation
     {

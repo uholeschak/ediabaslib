@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public interface IEMotor : INotifyPropertyChanged
     {

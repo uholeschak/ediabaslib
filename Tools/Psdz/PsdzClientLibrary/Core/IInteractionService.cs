@@ -1,4 +1,4 @@
-﻿namespace PsdzClientLibrary.Core
+﻿namespace PsdzClient.Core
 {
     // [UH] dummy file
     public interface IInteractionService

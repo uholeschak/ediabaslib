@@ -2,7 +2,7 @@
 using System.Net;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public enum BackendServiceType
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class MultisourceLogic
     {

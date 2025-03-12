@@ -5,7 +5,6 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

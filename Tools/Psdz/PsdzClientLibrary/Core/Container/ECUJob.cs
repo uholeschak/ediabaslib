@@ -8,7 +8,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
 using PsdzClient.Utility;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core.Container
 {

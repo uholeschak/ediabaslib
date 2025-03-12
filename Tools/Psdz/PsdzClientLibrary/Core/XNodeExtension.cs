@@ -1,6 +1,5 @@
 ﻿using System.Xml.Linq;
 using System;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

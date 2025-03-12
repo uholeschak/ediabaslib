@@ -12,7 +12,6 @@ using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Programming
 {

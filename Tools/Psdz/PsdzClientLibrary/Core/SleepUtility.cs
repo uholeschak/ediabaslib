@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Threading;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class SleepUtility
     {

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     [DataContract]
     public abstract class InteractionResponse

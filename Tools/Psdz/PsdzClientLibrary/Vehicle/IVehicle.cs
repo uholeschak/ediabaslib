@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using PsdzClient.Contracts;
 using PsdzClient.Core;
-using PsdzClientLibrary.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {

@@ -15,7 +15,6 @@ using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
-using PsdzClientLibrary.Core;
 
 namespace BMW.Rheingold.Programming.API
 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public interface IVciDeviceRuleEvaluation
     {

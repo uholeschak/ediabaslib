@@ -34,7 +34,6 @@ using EdiabasLib;
 using log4net;
 using log4net.Config;
 using PsdzClient.Core;
-using PsdzClientLibrary.Core;
 using PsdzClientLibrary.Resources;
 using VCIDeviceType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType;
 

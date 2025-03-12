@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class FFMResultRuleEvaluation : IFfmResultRuleEvaluation
     {

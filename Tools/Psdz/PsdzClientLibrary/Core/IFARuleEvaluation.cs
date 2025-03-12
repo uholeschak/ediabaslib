@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public interface IFARuleEvaluation
     {

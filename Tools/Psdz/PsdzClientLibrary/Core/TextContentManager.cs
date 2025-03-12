@@ -8,7 +8,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using BmwFileReader;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

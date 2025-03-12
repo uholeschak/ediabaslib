@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography.X509Certificates;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public interface ISec4DiagCertificates
     {

@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows.Interop;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class NugetLogger : ILogger
     {

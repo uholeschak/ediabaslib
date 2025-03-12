@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class Sec4DiagResponseData
     {

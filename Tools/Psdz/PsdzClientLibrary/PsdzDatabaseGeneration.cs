@@ -20,7 +20,6 @@ using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.Data.Sqlite;
 using PsdzClient.Core;
 using PsdzClient.Programming;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient
 {

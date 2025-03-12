@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public sealed class CoreFramework
     {

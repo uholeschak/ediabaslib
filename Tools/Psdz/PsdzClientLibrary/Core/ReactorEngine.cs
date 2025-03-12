@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System;
 using System.Linq;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class ReactorEngine
     {

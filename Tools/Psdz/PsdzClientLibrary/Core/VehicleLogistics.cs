@@ -11,7 +11,6 @@ using BmwFileReader;
 using PsdzClient.Core;
 using PsdzClient.Utility;
 using PsdzClientLibrary;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class DateTimePrecise
     {

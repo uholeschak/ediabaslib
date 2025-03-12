@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using PsdzClientLibrary.Core;
+using PsdzClient.Core;
 
 namespace PsdzClient.Utility
 {
@@ -105,7 +105,7 @@ namespace PsdzClient.Utility
                             case '\uffff':
                                 array[i] = ' ';
                                 continue;
-                            case '￼':
+                            case ' ':
                                 array[i] = 'ü';
                                 continue;
                             case '\ufff6':

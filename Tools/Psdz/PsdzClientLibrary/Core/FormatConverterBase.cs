@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System;
 
-namespace PsdzClientLibrary.Core
+namespace PsdzClient.Core
 {
     public class FormatConverterBase
     {

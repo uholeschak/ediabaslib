@@ -10,7 +10,6 @@ using System.Xml.Schema;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BmwFileReader;
 using PsdzClient.Utility;
-using PsdzClientLibrary.Core;
 
 namespace PsdzClient.Core
 {
