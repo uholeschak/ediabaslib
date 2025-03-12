@@ -918,8 +918,8 @@ namespace PsdzClient.Programming
                         {
                             VecInfo.BaustandsJahr = VecInfo.ILevelWerk.Substring(5, 2);
                             VecInfo.BaustandsMonat = VecInfo.ILevelWerk.Substring(8, 2);
-                            int num2 = Convert.ToInt32(VecInfo.ILevelWerk.Substring(5, 2), CultureInfo.InvariantCulture);
-                            VecInfo.Modelljahr = ((num2 <= 50) ? (num2 + 2000) : (num2 + 1900)).ToString(CultureInfo.InvariantCulture);
+                            int num = Convert.ToInt32(VecInfo.ILevelWerk.Substring(5, 2), CultureInfo.InvariantCulture);
+                            VecInfo.Modelljahr = ((num <= 50) ? (num + 2000) : (num + 1900)).ToString(CultureInfo.InvariantCulture);
                             VecInfo.Modellmonat = VecInfo.ILevelWerk.Substring(8, 2);
                             VecInfo.Modelltag = "01";
                             Log.Info("Missing construction date (year: {0}, month: {1}) retrieved from iLevel plant ('{2}')", VecInfo.Modelljahr, VecInfo.Modellmonat, VecInfo.ILevelWerk);
