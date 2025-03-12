@@ -632,13 +632,13 @@ namespace PsdzClient.Core
                     text = "";
                 }
             }
-            if (!vecInfo.Sp2021Enabled && !text.Equals("BCP_SP21", StringComparison.OrdinalIgnoreCase))
+            if (vecInfo.Sp2021Enabled || text.Equals("BCP_SP21", StringComparison.OrdinalIgnoreCase))
             {
-                Log.Info(Log.CurrentMethod(), "Vehicle gateway is not bcp_sp21!");
-                return false;
+                Log.Info(Log.CurrentMethod(), "Vehicle gateway is bcp_sp21!");
+                return true;
             }
-            Log.Info(Log.CurrentMethod(), "Vehicle gateway is bcp_sp21!");
-            return true;
+            Log.Info(Log.CurrentMethod(), "Vehicle gateway is not bcp_sp21!");
+            return false;
         }
 
         public string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo)
