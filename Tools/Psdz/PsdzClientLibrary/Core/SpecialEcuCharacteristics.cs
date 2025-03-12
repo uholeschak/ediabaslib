@@ -88,17 +88,16 @@ namespace PsdzClient.Core
             {
                 foreach (ECU item in eCU)
                 {
-                    if (!item.ECU_GROBNAME.Equals("EMA_LI"))
+                    if (item.ECU_GROBNAME.Equals("EMA_LI"))
                     {
-                        if (item.ECU_GROBNAME.Equals("EMA_RE"))
-                        {
-                            hashSet.AddIfNotContains(77);
-                            break;
-                        }
-                        continue;
+                        hashSet.AddIfNotContains(78);
+                        break;
                     }
-                    hashSet.AddIfNotContains(78);
-                    break;
+                    if (item.ECU_GROBNAME.Equals("EMA_RE"))
+                    {
+                        hashSet.AddIfNotContains(77);
+                        break;
+                    }
                 }
             }
             CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
