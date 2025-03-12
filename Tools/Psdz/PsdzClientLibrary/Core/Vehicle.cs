@@ -2200,61 +2200,40 @@ namespace PsdzClient.Core
                 if (eCU != null && eCU.IDENT_SUCCESSFULLY)
                 {
                     string[] array2 = array;
-                    int num2 = 0;
-                    while (true)
+                    for (int i = 0; i < array2.Length; i++)
                     {
-                        if (num2 < array2.Length)
+                        if (array2[i].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
                         {
-                            if (array2[num2].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
-                            {
-                                break;
-                            }
-                            num2++;
-                            continue;
+                            return true;
                         }
-                        return false;
                     }
-                    return true;
+                    return false;
                 }
                 eCU = getECU(41L, null);
                 if (eCU != null && eCU.IDENT_SUCCESSFULLY)
                 {
                     string[] array2 = array;
-                    int num2 = 0;
-                    while (true)
+                    for (int i = 0; i < array2.Length; i++)
                     {
-                        if (num2 < array2.Length)
+                        if (array2[i].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
                         {
-                            if (array2[num2].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
-                            {
-                                break;
-                            }
-                            num2++;
-                            continue;
+                            return true;
                         }
-                        return false;
                     }
-                    return true;
+                    return false;
                 }
                 eCU = getECU(54L, null);
                 if (eCU != null && eCU.IDENT_SUCCESSFULLY)
                 {
                     string[] array2 = array;
-                    int num2 = 0;
-                    while (true)
+                    for (int i = 0; i < array2.Length; i++)
                     {
-                        if (num2 < array2.Length)
+                        if (array2[i].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
                         {
-                            if (array2[num2].Equals(eCU.VARIANTE, StringComparison.OrdinalIgnoreCase))
-                            {
-                                break;
-                            }
-                            num2++;
-                            continue;
+                            return true;
                         }
-                        return false;
                     }
-                    return true;
+                    return false;
                 }
             }
             return null;
@@ -2435,7 +2414,7 @@ namespace PsdzClient.Core
         {
             int num = 37;
             int num2 = 327;
-            num = 37 * GetHashCode();
+            num *= GetHashCode();
             if (!string.IsNullOrWhiteSpace(base.VIN17))
             {
                 num += base.VIN17.GetHashCode();
@@ -2486,13 +2465,13 @@ namespace PsdzClient.Core
 
         private static readonly DateTime LciDateE36 = DateTime.Parse("1998-03-01", CultureInfo.InvariantCulture);
 
-		private static readonly DateTime LciDateE60 = DateTime.Parse("2005-09-01", CultureInfo.InvariantCulture);
+        private static readonly DateTime LciDateE60 = DateTime.Parse("2005-09-01", CultureInfo.InvariantCulture);
 
-		//private readonly ObservableCollectionEx<Fault> pKodeList;
+        //private readonly ObservableCollectionEx<Fault> pKodeList;
 
-		//private readonly ParameterContainer sessionDataStore;
+        //private readonly ParameterContainer sessionDataStore;
 
-		private string vinRangeType;
+        private string vinRangeType;
 
 		private string vinRangeTypeLastResolvedType;
 
