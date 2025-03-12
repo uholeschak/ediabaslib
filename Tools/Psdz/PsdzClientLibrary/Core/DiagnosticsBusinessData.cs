@@ -254,6 +254,7 @@ namespace PsdzClient.Core
             dictionary.Add("KOMB87", new EcuKomConfig("KOMB87", "STATUS_GWSZ_ANZEIGE", string.Empty, 1, "STAT_GWSZ_ANZEIGE_WERT"));
             dictionary.Add("D_KOMBI_FB1", new EcuKomConfig("D_KOMBI", "STATUS_ANGEZEIGTER_GWSZ", string.Empty, 1, "STAT_GWSZ"));
             dictionary.Add("D_KOMBI_FB2", new EcuKomConfig("D_KOMBI", "STATUS_GWSZ_ANZEIGE", string.Empty, 1, "STAT_GWSZ_ANZEIGE_WERT"));
+            dictionary.Add("D_KOMBI", new EcuKomConfig("D_KOMBI", "STATUS_ANGEZEIGTER_GWSZ", string.Empty, 1, "STAT_GWSZ"));
             dictionary.Add("D_0080", new EcuKomConfig("D_0080", "GWSZ_MINUS_OFFSET_LESEN", string.Empty, 1, "STAT_GWSZ_MINUS_OFFSET_WERT"));
             dictionary.Add("KOMBI36C", new EcuKomConfig("KOMBI36C", "AIF_GWSZ_LESEN", string.Empty, 1, "STAT_GWSZ_WERT"));
             dictionary.Add("KOMBI85", new EcuKomConfig("KOMBI85", "STATUS_AIF_GWSZ_LESEN", string.Empty, 1, "STAT_GWSZ_WERT"));
@@ -262,12 +263,13 @@ namespace PsdzClient.Core
             {
                 if (vecInfo.BNType == BNType.BN2020)
                 {
-                    if (vecInfo.Produktlinie == "PL5-alt")
+                    if (vecInfo.Produktlinie.Equals("PL5-alt", StringComparison.InvariantCultureIgnoreCase))
                     {
                         IEcu eCUbyECU_GRUPPE = vecInfo.getECUbyECU_GRUPPE("D_KOMBI");
                         if (eCUbyECU_GRUPPE != null && eCUbyECU_GRUPPE.VARIANTE.ToUpper() == "KOMBRR_2")
                         {
                             list.Add(dictionary["KOMBRR_2"]);
+                            list.Add(dictionary["D_KOMBI"]);
                         }
                     }
                     if (vecInfo.Sp2021Enabled)
