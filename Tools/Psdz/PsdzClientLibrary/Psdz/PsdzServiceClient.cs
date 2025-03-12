@@ -42,6 +42,8 @@ namespace BMW.Rheingold.Psdz.Client
 
         private readonly IndividualDataRestoreServiceClient individualDataRestoreService;
 
+        private readonly SecureDiagnosticsServiceClient secureDiagnosticsService;
+
         private readonly SecureFeatureActivationServiceClient secureFeatureActivationService;
 
         private readonly SecurityManagementServiceClient securityManagementService;
@@ -80,6 +82,7 @@ namespace BMW.Rheingold.Psdz.Client
                 kdsService = new KdsServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/KdsService", clientId, clientLogDir));
                 securityManagementService = new SecurityManagementServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecurityManagementService", clientId, clientLogDir));
                 secureCodingService = new SecureCodingServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureCodingService", clientId, clientLogDir));
+                secureDiagnosticsService = new SecureDiagnosticsServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureDiagnosticsService", clientId, clientLogDir));
                 individualDataRestoreService = new IndividualDataRestoreServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/IndividualDataRestoreService", clientId, clientLogDir));
             }
             else
@@ -102,6 +105,7 @@ namespace BMW.Rheingold.Psdz.Client
                 kdsService = new KdsServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/KdsService", clientId, clientLogDir));
                 securityManagementService = new SecurityManagementServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/SecurityManagementService", clientId, clientLogDir));
                 secureCodingService = new SecureCodingServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/SecureCodingService", clientId, clientLogDir));
+                secureDiagnosticsService = new SecureDiagnosticsServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/SecureDiagnosticsService", clientId, clientLogDir));
                 individualDataRestoreService = new IndividualDataRestoreServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/IndividualDataRestoreService", clientId, clientLogDir));
             }
         }
@@ -141,6 +145,8 @@ namespace BMW.Rheingold.Psdz.Client
         public IKdsService KdsService => kdsService;
 
         public ISecurityManagementService SecurityManagementService => securityManagementService;
+
+        public ISecureDiagnosticsService SecureDiagnosticsService => secureDiagnosticsService;
 
         public ISecureCodingService SecureCodingService => secureCodingService;
 

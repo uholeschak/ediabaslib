@@ -42,6 +42,8 @@ namespace BMW.Rheingold.Programming
 
         public IEventManagerService EventManagerService => psdzServiceClient.EventManagerService;
 
+        public ISecureDiagnosticsService SecureDiagnosticsService => psdzServiceClient.SecureDiagnosticsService;
+
         public string ExpectedPsdzVersion { get; private set; }
 
 

@@ -40,6 +40,9 @@
     <AssemblyOriginatorKeyFile>PsdzClientLibrary.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="jni4net.n-0.8.8.0">
+      <HintPath>.\jni4net.n-0.8.8.0.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -313,7 +316,12 @@
     <Compile Include="Core\DiagnosticsBusinessData.cs" />
     <Compile Include="Core\Container\HeaderAdapter.cs" />
     <Compile Include="Programming\IPsdzServiceGateway.cs" />
+    <Compile Include="Programming\ISecureDiagnosticsService.cs" />
     <Compile Include="Programming\PsdzServiceGateway.cs" />
+    <Compile Include="Programming\Sec4DiagPoowHandler.cs" />
+    <Compile Include="Programming\SecureDiagnosticsCallback.cs" />
+    <Compile Include="Programming\SecureDiagnosticsCallbackHandler.cs" />
+    <Compile Include="Programming\SecureDiagnosticsServiceClient.cs" />
     <Compile Include="PsdzDatabase.cs" />
     <Compile Include="Programming\AsamJobInputDictionary.cs" />
     <Compile Include="Programming\BindingDetailsStatus.cs" />
