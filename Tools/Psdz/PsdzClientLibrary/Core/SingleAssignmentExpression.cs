@@ -29,17 +29,14 @@ namespace PsdzClient.Core
             SingleAssignmentExpression singleAssignmentExpression;
             switch (type)
             {
-                case EExpressionType.ISTUFE:
-                    singleAssignmentExpression = new IStufeExpression();
-                    break;
-                case EExpressionType.VALID_FROM:
-                    singleAssignmentExpression = new ValidFromExpression();
-                    break;
-                case EExpressionType.VALID_TO:
-                    singleAssignmentExpression = new ValidToExpression();
-                    break;
                 case EExpressionType.COUNTRY:
                     singleAssignmentExpression = new CountryExpression();
+                    break;
+                case EExpressionType.ECUCLIQUE:
+                    singleAssignmentExpression = new EcuCliqueExpression();
+                    break;
+                case EExpressionType.ECUREPRESENTATIVE:
+                    singleAssignmentExpression = new EcuRepresentativeExpression();
                     break;
                 case EExpressionType.ECUGROUP:
                     singleAssignmentExpression = new EcuGroupExpression();
@@ -47,11 +44,14 @@ namespace PsdzClient.Core
                 case EExpressionType.ECUVARIANT:
                     singleAssignmentExpression = new EcuVariantExpression();
                     break;
-                case EExpressionType.ECUCLIQUE:
-                    singleAssignmentExpression = new EcuCliqueExpression();
+                case EExpressionType.ECUPROGRAMMINGVARIANT:
+                    singleAssignmentExpression = new EcuProgrammingVariantExpression();
                     break;
                 case EExpressionType.EQUIPMENT:
                     singleAssignmentExpression = new EquipmentExpression();
+                    break;
+                case EExpressionType.ISTUFE:
+                    singleAssignmentExpression = new IStufeExpression();
                     break;
                 case EExpressionType.SALAPA:
                     singleAssignmentExpression = new SaLaPaExpression();
@@ -59,18 +59,18 @@ namespace PsdzClient.Core
                 case EExpressionType.SIFA:
                     singleAssignmentExpression = new SiFaExpression();
                     break;
-                case EExpressionType.ECUREPRESENTATIVE:
-                    singleAssignmentExpression = new EcuRepresentativeExpression();
+                case EExpressionType.VALID_FROM:
+                    singleAssignmentExpression = new ValidFromExpression();
                     break;
-                case EExpressionType.ECUPROGRAMMINGVARIANT:
-                    singleAssignmentExpression = new EcuProgrammingVariantExpression();
+                case EExpressionType.VALID_TO:
+                    singleAssignmentExpression = new ValidToExpression();
                     break;
                 default:
                     Log.Warning("SingleAssignmentExpression.Deserialize()", "unhandled SingleAssignmentExpression found: {0}", type.ToString());
                     throw new Exception("Unknown expression type");
             }
             singleAssignmentExpression.value = num;
-            singleAssignmentExpression.vecInfo = vec;
+            singleAssignmentExpression.vecInfo = vec;   // [UH] added
             return singleAssignmentExpression;
         }
 
