@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -14,6 +15,7 @@ using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using Ediabas;
 using EdiabasLib;
+using PsdzClient.Contracts;
 using PsdzClient.Utility;
 using PsdzClientLibrary.Core;
 
@@ -192,9 +194,9 @@ namespace PsdzClient.Core.Container
             return EdiabasIniFilePath(iniFilename);
         }
 
-        public bool InitVCI(IVciDevice vciDevice, bool isDoIP)
+        public BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP)
         {
-            bool result = InitVCI(vciDevice, logging: true, isDoIP);
+            BoolResultObject result = InitVCI(vciDevice, logging: true, isDoIP);
             if (isProblemHandlingTraceRunning)
             {
                 SetLogLevelToMax();
@@ -243,7 +245,7 @@ namespace PsdzClient.Core.Container
             bool result = false;
             try
             {
-                result = InitVCI(VCI, isDoIP);
+                result = InitVCI(VCI, isDoIP).Result;
             }
             catch (Exception exception)
             {
@@ -447,39 +449,56 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        public bool InitVCI(IVciDevice device, bool logging, bool isDoIP)
+        public BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP)
         {
-            bool flag = false;
-            bool flag2 = false;
+            BoolResultObject boolResultObject = new BoolResultObject();
+            BoolResultObject boolResultObject2 = new BoolResultObject();
             if (device == null)
             {
                 Log.Warning("ECUKom.InitVCI()", "failed because device was null");
-                return false;
+                boolResultObject.Result = false;
+                boolResultObject.ErrorMessage = "failed because device was nul";
+                boolResultObject.Time = DateTime.Now;
+                return boolResultObject;
             }
             bool isDoIP2 = device.IsDoIP;
             try
             {
                 string pathString = ConfigSettings.getPathString("BMW.Rheingold.Logging.Directory.Current", "..\\..\\..\\logs");
+                if (isDoIP2 || isDoIP)
+                {
+                    CreateEdiabasPublicKeyIfNotExist(device);
+                    boolResultObject2 = HandleS29Authentication(device);
+                    if (!boolResultObject2.Result)
+                    {
+                        boolResultObject.Result = boolResultObject2.Result;
+                        boolResultObject.ErrorMessage = boolResultObject2.ErrorMessage;
+                        boolResultObject.Time = DateTime.Now;
+                        boolResultObject.ErrorCode = boolResultObject2.ErrorCode;
+                        boolResultObject.ErrorCodeInt = boolResultObject2.ErrorCodeInt;
+                        return boolResultObject;
+                    }
+                }
                 switch (device.VCIType)
                 {
                     case VCIDeviceType.ICOM:
-                        if (isDoIP2 && flag2)
+                        if (isDoIP2 && boolResultObject2.Result)
                         {
-                            flag = InitEdiabasForDoIP(device);
+                            boolResultObject.Result = InitEdiabasForDoIP(device);
                             break;
                         }
                         if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
                         {
-                            flag = api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
+                            boolResultObject.Result = api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
                             break;
                         }
                         if (!isDoIP)
                         {
-                            flag = api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
+                            boolResultObject.Result = api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
                         }
-                        if (isDoIP && flag2)
+                        if (isDoIP && boolResultObject2.Result)
                         {
-                            flag = InitEdiabasForDoIP(device);
+                            boolResultObject.Result = InitEdiabasForDoIP(device);
                         }
                         break;
                     case VCIDeviceType.ENET:
@@ -487,29 +506,30 @@ namespace PsdzClient.Core.Container
                         {
                             if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
                             {
-                                flag = api.apiInitExt("ENET", "_", "Rheingold",  "selectCertificate=" + service.CertificateFilePathWithoutEnding + ";remotehost=" + device.IPAddress );
+                                string reserved = $"RemoteHost={device.IPAddress};selectCertificate={service.CertificateFilePathWithoutEnding};SSLPort={3496};Authentication=S29;NetworkProtocol=SSL";
+                                boolResultObject.Result = api.apiInitExt("ENET", "_", "Rheingold", reserved);
                             }
                         }
                         else
                         {
-                            flag = api.apiInitExt("ENET", "_", "Rheingold", "remotehost=" + device.IPAddress);
+                            boolResultObject.Result = api.apiInitExt("ENET", "_", "Rheingold", "");
                         }
                         break;
                     case VCIDeviceType.TELESERVICE:
                         {
                             string text = string.Format(CultureInfo.InvariantCulture, "CompoundID={0};UsePdmResult={1}", device.DevId, device.UsePdmResult ? "true" : "false");
                             Log.Info("ECUKom.InitVCI()", "calling TELESERVICE api init with parameter: {0}", text);
-                            flag = api.apiInitExt("TELE", "_", "Rheingold", text);
+                            boolResultObject.Result = api.apiInitExt("TELE", "_", "Rheingold", text);
                             break;
                         }
                     case VCIDeviceType.PTT:
-                        flag = false;
+                        boolResultObject.Result = false;
                         break;
                     case VCIDeviceType.SIM:
-                        flag = true;
+                        boolResultObject.Result = true;
                         break;
                     default:
-                        flag = api.apiInit();
+                        boolResultObject.Result = api.apiInit();
                         break;
                 }
                 if (api.apiErrorCode() != 0)
@@ -517,7 +537,7 @@ namespace PsdzClient.Core.Container
                     Log.Warning("ECUKom.InitVCI()", "failed when init IFH with : {0} / {1}", api.apiErrorCode(), api.apiErrorText());
                 }
                 api.apiSetConfig("TracePath", Path.GetFullPath(pathString));
-                if (flag)
+                if (boolResultObject.Result)
                 {
                     vci = device as VCIDevice;
                     if (logging)
@@ -535,25 +555,52 @@ namespace PsdzClient.Core.Container
                     }
                     SetEcuPath(logging);
                 }
-                return flag;
+                if (!boolResultObject.Result)
+                {
+                    int num = api.apiErrorCode();
+                    boolResultObject.ErrorCode = num.ToString();
+                    boolResultObject.ErrorMessage = api.apiErrorText();
+                    if (num >= 350 && num <= 395)
+                    {
+                        boolResultObject.ErrorCodeInt = 0;
+                    }
+                    else
+                    {
+                        boolResultObject.ErrorCodeInt = 2;
+                    }
+                }
+                if (boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState())
+                {
+                    boolResultObject.Result = false;
+                    boolResultObject.ErrorCodeInt = 0;
+                    boolResultObject.ErrorMessage = "Authentifation failed with Vehicle!";
+                }
+                return boolResultObject;
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Log.WarningException("ECUKom.InitVCI()", exception);
+                Log.WarningException("ECUKom.InitVCI()", ex);
+                boolResultObject.ErrorMessage = ex.Message;
+                boolResultObject.Result = true;
+                return boolResultObject;
             }
-            return true;
         }
 
-        private bool CheckAuthentificationState(bool doip)
+        private bool CheckAuthentificationState()
         {
-            if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var _) && doip)
+            if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
             {
                 IEcuJob ecuJob = ApiJob("IPB_APP2", "STATUS_LESEN", "ARG;SEC4DIAG_READ_AUTH_MODE");
                 if (ecuJob.IsOkay())
                 {
-                    ecuJob.getuintResult("STAT_ROLL_MASK_WERT");
-                    ecuJob.getStringResult("AuthenticationReturnParameter_TEXT");
-                    return true;
+                    uint? num = ecuJob.getuintResult("STAT_ROLL_MASK_WERT");
+                    string stringResult = ecuJob.getStringResult("AuthenticationReturnParameter_TEXT");
+                    if (num == service.RoleMaskAsInt)
+                    {
+                        Log.Info("S29-Authentification-Ediabas", "Authentification: $" + stringResult);
+                        return true;
+                    }
+                    return false;
                 }
             }
             return false;
@@ -569,10 +616,10 @@ namespace PsdzClient.Core.Container
             switch (device.VCIType)
             {
                 case VCIDeviceType.ICOM:
-                    reserved = $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162};";
+                    reserved = $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162};SSLPort={50163};Authentication=S29;NetworkProtocol=SSL";
                     break;
                 case VCIDeviceType.ENET:
-                    reserved = "RemoteHost=" + device.IPAddress;
+                    reserved = $"RemoteHost={device.IPAddress};SSLPort={3496};Authentication=S29;NetworkProtocol=SSL";
                     break;
                 case VCIDeviceType.PTT:
                     reserved = "RPLUS:ICOM_P:remotehost=127.0.0.1;Port=6408";
@@ -581,18 +628,20 @@ namespace PsdzClient.Core.Container
             if (ApiInitExt("ENET", "_", "Rheingold", reserved))
             {
                 SetEcuPath(logging: false);
-                ApiJob("IPB_APP2", "IDENT", string.Empty, string.Empty);
+                ApiJob("F01", "IDENT", string.Empty, string.Empty);
                 while (api.apiState() == 0)
                 {
-                    SleepUtility.TaskDelay(200, "ECUKom.CreateEdiabasPubglickeyIfNotExist - IPB_APP2, IDENT").GetAwaiter().GetResult();
+                    SleepUtility.ThreadSleep(200, "ECUKom.CreateEdiabasPubglickeyIfNotExist - F01, IDENT");
                 }
                 api.apiSetConfig("EDIABASUnload", "1");
                 api.apiEnd();
             }
         }
 
-        private bool HandleS29Authentication(IVciDevice device)
+        private BoolResultObject HandleS29Authentication(IVciDevice device)
         {
+            BoolResultObject boolResultObject = new BoolResultObject();
+            string method = Log.CurrentMethod();
             try
             {
                 if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service) && ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out var service2))
@@ -600,44 +649,107 @@ namespace PsdzClient.Core.Container
                     service.EdiabasPublicKey = service.GetPublicKeyFromEdiabas();
                     string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
                     string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
+                    Log.Info(method, "caThumbPrint: {0}, subCaThumbprint: {1}", configString, configString2);
                     if (string.IsNullOrEmpty(configString) || string.IsNullOrEmpty(configString2))
                     {
-                        return RequestCaAndSubCACertificates(device, service, service2);
+                        Log.Info(method, "caThumbPrint or subCaThumbPrint is empty. Requesting new Certificates");
+                        WebCallResponse<Sec4DiagResponseData> webCallResponse = RequestCaAndSubCACertificates(device, service, service2);
+                        if (webCallResponse.IsSuccessful)
+                        {
+                            Log.Info(method, "Request was succesfull. Using new Certificates");
+                            boolResultObject.Result = webCallResponse.IsSuccessful;
+                        }
+                        else
+                        {
+                            Log.Info(method, "Request was not succesfull. Aborting Session");
+                            boolResultObject.Result = webCallResponse.IsSuccessful;
+                            boolResultObject.StatusCode = (int)(webCallResponse.HttpStatus.HasValue ? webCallResponse.HttpStatus.Value : ((HttpStatusCode)0));
+                            boolResultObject.ErrorCodeInt = 1;
+                            boolResultObject.ErrorMessage = webCallResponse.Error;
+                        }
+                        return boolResultObject;
                     }
+                    Log.Info(method, "caThumbPrint and subCaThumbPrint are not empty. Searching for Certificates in Windows Store");
                     X509Certificate2Collection subCaCertificate = new X509Certificate2Collection();
                     X509Certificate2Collection caCertificate = new X509Certificate2Collection();
-                    if (!service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate) || subCaCertificate.Count == 0 || caCertificate.Count == 0)
+                    Sec4DiagCertificateState sec4DiagCertificateState = service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate);
+                    if (sec4DiagCertificateState == Sec4DiagCertificateState.Valid && subCaCertificate.Count == 1 && caCertificate.Count == 1)
                     {
-                        return RequestCaAndSubCACertificates(device, service, service2);
+                        Log.Info(method, "Certificates are found and are valid");
+                        boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
+                        return boolResultObject;
                     }
-                    if (subCaCertificate.Count == 1 || caCertificate.Count == 1)
+                    switch (sec4DiagCertificateState)
                     {
-                        service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
-                        return true;
+                        case Sec4DiagCertificateState.NotYetExpired:
+                            {
+                                Log.Info(method, "Certificates are valid valid (even if the 3 weeks are over) but we are trying to request new once.");
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2);
+                                if (webCallResponse3.IsSuccessful)
+                                {
+                                    Log.Info(method, "Certificates are found and are valid (even if they where 3 Weeks overtime). Requesting new Certificates was successful");
+                                    boolResultObject.Result = webCallResponse3.IsSuccessful;
+                                }
+                                else
+                                {
+                                    Log.Info(method, "Certificates are found but are not valid. Requesting new Certificates failed. Using old Certificates");
+                                    boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
+                                }
+                                return boolResultObject;
+                            }
+                        case Sec4DiagCertificateState.Expired:
+                        case Sec4DiagCertificateState.NotFound:
+                            {
+                                Log.Info(method, "Not Certificates are found or the max time of 4 Weeks are over. Requesting new certificates");
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2);
+                                if (webCallResponse2.IsSuccessful)
+                                {
+                                    Log.Info(method, "Request was successfl. using new Certificates");
+                                    boolResultObject.Result = webCallResponse2.IsSuccessful;
+                                }
+                                else
+                                {
+                                    Log.Info(method, "Request was not sucessfull. Aborting Session");
+                                    boolResultObject.Result = webCallResponse2.IsSuccessful;
+                                    boolResultObject.StatusCode = (int)webCallResponse2.HttpStatus.Value;
+                                    boolResultObject.ErrorCodeInt = 1;
+                                    boolResultObject.ErrorMessage = webCallResponse2.Error;
+                                }
+                                return boolResultObject;
+                            }
+                        default:
+                            Log.Info(method, "No Certificestes are found. Aborting Session");
+                            boolResultObject.Result = false;
+                            return boolResultObject;
                     }
-                    return false;
                 }
                 Log.Error("HandleS29Authentication", "ISec4DiagHandler or IBackendCallsWatchDog not found");
-                return false;
+                boolResultObject.Result = false;
+                boolResultObject.ErrorMessage = "ISec4DiagHandler or IBackendCallsWatchDog not found";
+                boolResultObject.ErrorCodeInt = 1;
+                return boolResultObject;
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Log.ErrorException("HandleS29Authentication", exception);
-                return false;
+                Log.ErrorException("HandleS29Authentication", ex);
+                boolResultObject.Result = false;
+                boolResultObject.ErrorMessage = ex.Message;
+                boolResultObject.ErrorCodeInt = 1;
+                return boolResultObject;
             }
         }
 
-        private bool RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
+        private WebCallResponse<Sec4DiagResponseData> RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
+            WebCallResponse<Sec4DiagResponseData> webCallResponse = new WebCallResponse<Sec4DiagResponseData>();
             if (ServiceLocator.Current.TryGetService<IDataContext>(out var service))
             {
-                WebCallResponse<Sec4DiagResponseData> webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.Sec4Diag, service.AccessToken);
+                webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.Sec4Diag, service.AccessToken);
                 if (webCallResponse.IsSuccessful)
                 {
                     sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0]);
-                    return true;
                 }
-                return false;
+                return webCallResponse;
             }
             throw new InvalidOperationException("IDataContext service not found.");
         }

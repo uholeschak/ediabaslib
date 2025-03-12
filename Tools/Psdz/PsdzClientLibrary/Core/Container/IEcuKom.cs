@@ -1,5 +1,6 @@
 ﻿// BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication.IEcuKom
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient.Contracts;
 
 namespace PsdzClient.Core.Container
 {
@@ -28,7 +29,7 @@ namespace PsdzClient.Core.Container
 
         string GetEdiabasIniFilePath(string iniFilename);
 
-        bool InitVCI(IVciDevice vciDevice, bool isDoIP);
+        BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP);
 
         bool Refresh(bool isDoIP);
 

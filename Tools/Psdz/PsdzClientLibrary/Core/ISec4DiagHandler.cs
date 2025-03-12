@@ -2,11 +2,22 @@
 using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
+using PsdzClient.Contracts;
 
 namespace PsdzClientLibrary.Core
 {
+    public enum Sec4DiagCertificateState
+    {
+        Valid,
+        Expired,
+        NotYetExpired,
+        NotFound
+    }
+
     public interface ISec4DiagHandler
     {
+        int RoleMaskAsInt { get; }
+
         AsymmetricCipherKeyPair IstaKeyPair { get; set; }
 
         AsymmetricCipherKeyPair Service29KeyPair { get; set; }
@@ -20,9 +31,11 @@ namespace PsdzClientLibrary.Core
         void InstallCertificate(X509Certificate2 cert);
 
         AsymmetricCipherKeyPair LoadKeyPairFromFile(string filePath, string password);
+
         Sec4DiagRequestData BuildRequestModel(string vin17);
 
         X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, string vin);
+
         AsymmetricCipherKeyPair GenerateKeyPair();
 
         string SignData(string message, ECPrivateKeyParameters privateKey);
@@ -41,12 +54,14 @@ namespace PsdzClientLibrary.Core
 
         AsymmetricKeyParameter GetPublicKeyFromEdiabas();
 
-        bool SearchForCertificatesInWindowsStore(string caThumbPrint, string subCaThumbPrint, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate);
+        Sec4DiagCertificateState SearchForCertificatesInWindowsStore(string caThumbPrint, string subCaThumbPrint, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate);
 
         void CreateS29CertificateInstallCertificatesAndWriteToFile(IVciDevice device, string subCa, string ca);
 
-        void CertificatesAreFoundAndValid(IVciDevice device, X509Certificate2Collection subCaCertificate, X509Certificate2Collection caCertificate);
+        BoolResultObject CertificatesAreFoundAndValid(IVciDevice device, X509Certificate2Collection subCaCertificate, X509Certificate2Collection caCertificate);
 
         bool CheckIfEdiabasPublicKeyExists();
+
+        string ReadoutExpirationTime();
     }
 }

@@ -83,6 +83,7 @@
       <Link>DatabaseFunctions.cs</Link>
     </Compile>
     <Compile Include="ClientContext.cs" />
+    <Compile Include="Contracts\BoolResultObject.cs" />
     <Compile Include="Contracts\IAPISecurity.cs" />
     <Compile Include="Contracts\IBoolResultObject.cs" />
     <Compile Include="Contracts\ICertType.cs" />
