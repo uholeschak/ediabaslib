@@ -92,7 +92,7 @@ namespace PsdzClientLibrary.Programming
                 return true;
             }
 #endif
-            if (ClientContext.EnablePsdzMultiSession())
+            if (ConfigSettings.GetActivateSdpOnlinePatch())
             {
                 _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
             }

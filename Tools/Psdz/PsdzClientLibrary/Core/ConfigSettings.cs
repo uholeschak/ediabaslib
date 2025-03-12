@@ -1333,6 +1333,7 @@ namespace PsdzClient.Core
             }
             return false;
         }
+#endif
 
         public static bool GetActivateSdpOnlinePatch()
         {
@@ -1341,6 +1342,7 @@ namespace PsdzClient.Core
             {
                 return result;
             }
+#if false
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
             {
                 if (istaIcsServiceClient.IsAvailable())
@@ -1352,9 +1354,9 @@ namespace PsdzClient.Core
                     }
                 }
             }
+#endif
             return false;
         }
-#endif
 
         public static T EnumParseConfig<T>(string key, T defaultValue)
         {
