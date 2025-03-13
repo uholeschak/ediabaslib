@@ -102,173 +102,167 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
-        public string GetMainSeriesSgbd(IIdentVehicle vecInfo)
+        public string GetMainSeriesSgbd(Vehicle vecInfo)
         {
+            BordnetType bordnetType = vecInfo.BordnetType;
+            if (bordnetType == BordnetType.IBUS)
+            {
+                return "-";
+            }
+            if (bordnetType == BordnetType.BEV2010)
+            {
+                return "E89X";
+            }
+            if (vecInfo.Prodart == "P")
+            {
+                if (!string.IsNullOrEmpty(vecInfo.Produktlinie))
+                {
+                    string text = vecInfo.Produktlinie.ToUpper();
+                    if (text != null)
+                    {
+                        int length = text.Length;
+                        if (length != 3)
+                        {
+                            if (length == 7)
+                            {
+                                switch (text[2])
+                                {
+                                    case '3':
+                                        if (text == "PL3-ALT")
+                                        {
+                                            return "ZCS_ALL";
+                                        }
+                                        break;
+                                    case '5':
+                                        if (text == "PL5-ALT")
+                                        {
+                                            return "RR1";
+                                        }
+                                        break;
+                                    case '6':
+                                        if (text == "PL6-ALT")
+                                        {
+                                            return "E60";
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            switch (text[2])
+                            {
+                                case '0':
+                                    if (text == "PL0")
+                                    {
+                                        if (vecInfo.Ereihe == "E38" || vecInfo.Ereihe == "E46" || vecInfo.Ereihe == "E83" || vecInfo.Ereihe == "E85" || vecInfo.Ereihe == "E86" || vecInfo.Ereihe == "E36" || vecInfo.Ereihe == "E39" || vecInfo.Ereihe == "E52" || vecInfo.Ereihe == "E53")
+                                        {
+                                            return "ZCS_ALL";
+                                        }
+                                        if (vecInfo.Ereihe == "E65" || vecInfo.Ereihe == "E66" || vecInfo.Ereihe == "E67" || vecInfo.Ereihe == "E68")
+                                        {
+                                            return "E65";
+                                        }
+                                        goto IL_0272;
+                                    }
+                                    break;
+                                case '2':
+                                    if (text == "PL2")
+                                    {
+                                        return "E89X";
+                                    }
+                                    break;
+                                case '3':
+                                    if (text == "PL3")
+                                    {
+                                        return "R56";
+                                    }
+                                    break;
+                                case '4':
+                                    if (text == "PL4")
+                                    {
+                                        return "E70";
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                    return "F01";
+                }
+            IL_0272:
+                return "-";
+            }
+            if (!(vecInfo.Prodart == "M"))
+            {
+                return "";
+            }
             switch (vecInfo.BordnetType)
             {
-                case BordnetType.BEV2010:
-                    return "E89X";
-                case BordnetType.IBUS:
-                    return "-";
-                default:
+                case BordnetType.BN2000_MOTORBIKE:
+                case BordnetType.BNK01X_MOTORBIKE:
+                    return "MRK24";
+                case BordnetType.BN2020_MOTORBIKE:
                     {
-                        if (((IReactorVehicle)vecInfo).Prodart == "P")
+                        string text = vecInfo.Baureihenverbund;
+                        if (text == "K001" || text == "KE01")
                         {
-                            if (!string.IsNullOrEmpty(((IReactorVehicle)vecInfo).Produktlinie))
-                            {
-                                string text = ((IReactorVehicle)vecInfo).Produktlinie.ToUpper();
-                                if (text != null)
-                                {
-                                    int length = text.Length;
-                                    if (length != 3)
-                                    {
-                                        if (length == 7)
-                                        {
-                                            switch (text[2])
-                                            {
-                                                case '3':
-                                                    if (!(text == "PL3-ALT"))
-                                                    {
-                                                        break;
-                                                    }
-                                                    return "ZCS_ALL";
-                                                case '5':
-                                                    if (!(text == "PL5-ALT"))
-                                                    {
-                                                        break;
-                                                    }
-                                                    return "RR1";
-                                                case '6':
-                                                    if (!(text == "PL6-ALT"))
-                                                    {
-                                                        break;
-                                                    }
-                                                    return "E60";
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        switch (text[2])
-                                        {
-                                            case '0':
-                                                break;
-                                            case '2':
-                                                if (!(text == "PL2"))
-                                                {
-                                                    goto IL_026c;
-                                                }
-                                                return "E89X";
-                                            case '3':
-                                                if (!(text == "PL3"))
-                                                {
-                                                    goto IL_026c;
-                                                }
-                                                return "R56";
-                                            case '4':
-                                                if (!(text == "PL4"))
-                                                {
-                                                    goto IL_026c;
-                                                }
-                                                return "E70";
-                                            default:
-                                                goto IL_026c;
-                                        }
-                                        if (text == "PL0")
-                                        {
-                                            if (((IReactorVehicle)vecInfo).Ereihe == "E38" || ((IReactorVehicle)vecInfo).Ereihe == "E46" || ((IReactorVehicle)vecInfo).Ereihe == "E83" || ((IReactorVehicle)vecInfo).Ereihe == "E85" || ((IReactorVehicle)vecInfo).Ereihe == "E86" || ((IReactorVehicle)vecInfo).Ereihe == "E36" || ((IReactorVehicle)vecInfo).Ereihe == "E39" || ((IReactorVehicle)vecInfo).Ereihe == "E52" || ((IReactorVehicle)vecInfo).Ereihe == "E53")
-                                            {
-                                                return "ZCS_ALL";
-                                            }
-                                            if (((IReactorVehicle)vecInfo).Ereihe == "E65" || ((IReactorVehicle)vecInfo).Ereihe == "E66" || ((IReactorVehicle)vecInfo).Ereihe == "E67" || ((IReactorVehicle)vecInfo).Ereihe == "E68")
-                                            {
-                                                return "E65";
-                                            }
-                                            goto IL_0272;
-                                        }
-                                    }
-                                }
-                                goto IL_026c;
-                            }
-                            goto IL_0272;
+                            return "X_K001";
                         }
-                        if (((IReactorVehicle)vecInfo).Prodart == "M")
+                        if (text == "X001" || text == "XS01")
                         {
-                            switch (vecInfo.BordnetType)
-                            {
-                                case BordnetType.BN2000_MOTORBIKE:
-                                case BordnetType.BNK01X_MOTORBIKE:
-                                    return "MRK24";
-                                case BordnetType.BN2020_MOTORBIKE:
-                                    switch (((IReactorVehicle)vecInfo).Baureihenverbund)
-                                    {
-                                        case "K001":
-                                        case "KE01":
-                                            return "X_K001";
-                                        case "X001":
-                                        case "XS01":
-                                            return "X_X001";
-                                        case "KS01":
-                                            return "X_KS01";
-                                        default:
-                                            return "X_X001";
-                                    }
-                                default:
-                                    return "-";
-                            }
+                            return "X_X001";
                         }
-                        return "";
+                        if (!(text == "KS01"))
+                        {
+                            return "X_X001";
+                        }
+                        return "X_KS01";
                     }
-                IL_026c:
-                    return "F01";
-                IL_0272:
+                default:
                     return "-";
             }
         }
 
         // ToDo: Check on update
-        public string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo, ILogger logger)
+        public string GetMainSeriesSgbdAdditional(Vehicle vecInfo, ILogger logger)
         {
-            logger.Info(logger.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional");
-            if (((IReactorVehicle)vecInfo).Prodart == "P")
+            logger.Info(logger.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional", Array.Empty<object>());
+            if (vecInfo.Prodart == "P")
             {
-                if (!string.IsNullOrEmpty(((IReactorVehicle)vecInfo).Produktlinie))
+                if (!string.IsNullOrEmpty(vecInfo.Produktlinie))
                 {
-                    string text = ((IReactorVehicle)vecInfo).Produktlinie.ToUpper();
+                    string text = vecInfo.Produktlinie.ToUpper();
                     if (!(text == "PL5-ALT"))
                     {
-                        if (text == "PL6")
+                        if (!(text == "PL6"))
                         {
-                            if (!vecInfo.C_DATETIME.HasValue)
+                            logger.Info(logger.CurrentMethod(), "Reached default block, produck line: " + vecInfo.Produktlinie, Array.Empty<object>());
+                        }
+                        else if (vecInfo.C_DATETIME == null)
+                        {
+                            logger.Info(logger.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null", Array.Empty<object>());
+                            if (vecInfo.Ereihe == "F01" || vecInfo.Ereihe == "F02" || vecInfo.Ereihe == "F03" || vecInfo.Ereihe == "F04" || vecInfo.Ereihe == "F06" || vecInfo.Ereihe == "F07" || vecInfo.Ereihe == "F10" || vecInfo.Ereihe == "F11" || vecInfo.Ereihe == "F12" || vecInfo.Ereihe == "F13" || vecInfo.Ereihe == "F18")
                             {
-                                logger.Info(logger.CurrentMethod(), "Product line: " + ((IReactorVehicle)vecInfo).Produktlinie + ", C_DATETIME is null");
-                                if (((IReactorVehicle)vecInfo).Ereihe == "F01" || ((IReactorVehicle)vecInfo).Ereihe == "F02" || ((IReactorVehicle)vecInfo).Ereihe == "F03" || ((IReactorVehicle)vecInfo).Ereihe == "F04" || ((IReactorVehicle)vecInfo).Ereihe == "F06" || ((IReactorVehicle)vecInfo).Ereihe == "F07" || ((IReactorVehicle)vecInfo).Ereihe == "F10" || ((IReactorVehicle)vecInfo).Ereihe == "F11" || ((IReactorVehicle)vecInfo).Ereihe == "F12" || ((IReactorVehicle)vecInfo).Ereihe == "F13" || ((IReactorVehicle)vecInfo).Ereihe == "F18")
-                                {
-                                    logger.Info(logger.CurrentMethod(), "Ereihe: " + ((IReactorVehicle)vecInfo).Ereihe + ", returning F01BN2K");
-                                    return "F01BN2K";
-                                }
-                            }
-                            else if (vecInfo.C_DATETIME < DTimeF01Lci)
-                            {
-                                logger.Info(logger.CurrentMethod(), "Product line: " + ((IReactorVehicle)vecInfo).Produktlinie + ", C_DATETIME is earlier than DTimeF01Lci");
+                                logger.Info(logger.CurrentMethod(), "Ereihe: " + vecInfo.Ereihe + ", returning F01BN2K", Array.Empty<object>());
                                 return "F01BN2K";
                             }
                         }
-                        else
+                        else if (vecInfo.C_DATETIME < DiagnosticsBusinessDataCore.DTimeF01Lci)
                         {
-                            logger.Info(logger.CurrentMethod(), "Reached default block, produck line: " + ((IReactorVehicle)vecInfo).Produktlinie);
+                            logger.Info(logger.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is earlier than DTimeF01Lci", Array.Empty<object>());
+                            return "F01BN2K";
                         }
                     }
                     else
                     {
-                        if (!vecInfo.C_DATETIME.HasValue)
+                        if (vecInfo.C_DATETIME == null)
                         {
-                            logger.Info(logger.CurrentMethod(), "Product line: " + ((IReactorVehicle)vecInfo).Produktlinie + ", C_DATETIME is null");
+                            logger.Info(logger.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is null", Array.Empty<object>());
                             return "RR1_2020";
                         }
-                        if (vecInfo.C_DATETIME >= DTimeRR_S2)
+                        if (vecInfo.C_DATETIME >= DiagnosticsBusinessDataCore.DTimeRR_S2)
                         {
-                            logger.Info(logger.CurrentMethod(), "Product line: " + ((IReactorVehicle)vecInfo).Produktlinie + ", C_DATETIME is later than DTimeRR_S2");
+                            logger.Info(logger.CurrentMethod(), "Product line: " + vecInfo.Produktlinie + ", C_DATETIME is later than DTimeRR_S2", Array.Empty<object>());
                             return "RR1_2020";
                         }
                     }
@@ -276,9 +270,9 @@ namespace PsdzClient.Core
             }
             else
             {
-                _ = ((IReactorVehicle)vecInfo).Prodart == "M";
+                _ = vecInfo.Prodart == "M";
             }
-            logger.Info(logger.CurrentMethod(), "Returning null for product line: " + ((IReactorVehicle)vecInfo)?.Produktlinie + ", ereihe: " + ((IReactorVehicle)vecInfo).Ereihe);
+            logger.Info(logger.CurrentMethod(), "Returning null for product line: " + ((vecInfo != null) ? vecInfo.Produktlinie : null) + ", ereihe: " + vecInfo.Ereihe, Array.Empty<object>());
             return null;
         }
     }

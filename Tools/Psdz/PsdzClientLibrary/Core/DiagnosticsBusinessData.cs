@@ -641,7 +641,7 @@ namespace PsdzClient.Core
             return false;
         }
 
-        public string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo)
+        public string GetMainSeriesSgbdAdditional(Vehicle vecInfo)
         {
             return GetMainSeriesSgbdAdditional(vecInfo, new NugetLogger());
         }
