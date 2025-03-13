@@ -281,7 +281,7 @@ namespace ApkUploader
 
                 Regex regex = new Regex(@"08000000([0-9a-z]{16})[0-9a-z]{2}", RegexOptions.IgnoreCase);
                 List<SerialInfo> serialInfos = new List<SerialInfo>();
-                using (StreamReader sr = new StreamReader(fileName))
+                using (StreamReader sr = new StreamReader(new FileStream(fileName, FileMode.Open)))
                 {
                     string line;
                     while ((line = sr.ReadLine()) != null)
