@@ -1393,6 +1393,22 @@ namespace PsdzClient
             }
         }
 
+        public class VinRangeQuerySettings
+        {
+            public string ProductionYearColumnName { get; }
+
+            public string ProductionMonthColumnName { get; }
+
+            public string TableName { get; }
+
+            public VinRangeQuerySettings(bool isPrerelease)
+            {
+                ProductionMonthColumnName = (isPrerelease ? "PACKAGINGDATEMONTH" : "PRODUCTIONDATEMONTH");
+                ProductionYearColumnName = (isPrerelease ? "PACKAGINGDATEYEAR" : "PRODUCTIONDATEYEAR");
+                TableName = (isPrerelease ? "VINRANGES_CKDALL" : "VINRANGES");
+            }
+        }
+
         private const string TestModulesXmlFile = "TestModules.xml";
         private const string TestModulesZipFile = "TestModules.zip";
         private const string ServiceModulesXmlFile = "ServiceModules.xml";
@@ -2897,10 +2913,26 @@ namespace PsdzClient
             return null;
         }
 
-        public VinRanges GetVinRangesByVin17(string vin17_4_7, string vin7, bool returnFirstEntryWithoutCheck, bool vehicleHasOnlyVin7)
+        public VinRanges GetVinRangesByVin17(string vin17_4_7, string vin7, bool returnFirstEntryWithoutCheck, bool vehicleHasOnlyVin7, bool isPrerelease = false)
         {
-            log.InfoFormat("GetVinRangesByVin17 Vin17_4_7: {0}, Vin7: {1}, FirstEntry: {2}, OnlyVin7: {3}",
-                vin17_4_7 ?? string.Empty, vin7 ?? string.Empty, returnFirstEntryWithoutCheck, vehicleHasOnlyVin7);
+            VinRanges vinRanges = DoGetVinRangesByVin17(vin17_4_7, vin7, returnFirstEntryWithoutCheck, vehicleHasOnlyVin7, false);
+            if (vinRanges != null)
+            {
+                return vinRanges;
+            }
+
+            if (isPrerelease)
+            {
+                vinRanges = DoGetVinRangesByVin17(vin17_4_7, vin7, returnFirstEntryWithoutCheck, vehicleHasOnlyVin7, true);
+            }
+
+            return vinRanges;
+        }
+
+        public VinRanges DoGetVinRangesByVin17(string vin17_4_7, string vin7, bool returnFirstEntryWithoutCheck, bool vehicleHasOnlyVin7, bool isPrerelease)
+        {
+            log.InfoFormat("GetVinRangesByVin17 Vin17_4_7: {0}, Vin7: {1}, FirstEntry: {2}, OnlyVin7: {3}, PreRelase: {4}",
+                vin17_4_7 ?? string.Empty, vin7 ?? string.Empty, returnFirstEntryWithoutCheck, vehicleHasOnlyVin7, isPrerelease);
             if (string.IsNullOrEmpty(vin17_4_7) || string.IsNullOrEmpty(vin7))
             {
                 log.ErrorFormat("GetVinRangesByVin17 Empty Vin");
@@ -2908,11 +2940,13 @@ namespace PsdzClient
             }
 
             List<VinRanges> vinRangesList = new List<VinRanges>();
+            VinRangeQuerySettings vinRangeQuerySettings = new VinRangeQuerySettings(isPrerelease);
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
-                    @" FROM VINRANGES WHERE ('{0}' BETWEEN VINBANDFROM AND VINBANDTO) AND (VIN17_4_7 = '{1}')",
+                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, {0}, {1}, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
+                    @" FROM {2} WHERE ('{3}' BETWEEN VINBANDFROM AND VINBANDTO) AND (VIN17_4_7 = '{4}')",
+                    vinRangeQuerySettings.ProductionYearColumnName, vinRangeQuerySettings.ProductionMonthColumnName, vinRangeQuerySettings.TableName,
                     vin7.ToUpper(CultureInfo.InvariantCulture), vin17_4_7.ToUpper(CultureInfo.InvariantCulture));
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
@@ -2935,7 +2969,7 @@ namespace PsdzClient
 
             if (vinRangesList.Count > 1)
             {
-                log.InfoFormat("GetVinRangesByVin17 Found more than one entry: {0}", vinRangesList.Count);
+                log.InfoFormat("GetVinRangesByVin17 Found more than one entry: {0} in {1}", vinRangesList.Count, vinRangeQuerySettings.TableName);
             }
 
             IComparer<string> comparer = new EbcdicVIN7Comparer();
@@ -2967,16 +3001,16 @@ namespace PsdzClient
 
             if (returnFirstEntryWithoutCheck)
             {
-                return GetVinRangesByVin17_4_7(vin17_4_7);
+                return GetVinRangesByVin17_4_7(vin17_4_7, isPrerelease);
             }
 
             log.ErrorFormat("GetVinRangesByVin17 Not found: {0}", vin17_4_7);
             return null;
         }
 
-        public VinRanges GetVinRangesByVin17_4_7(string vin17_4_7)
+        public VinRanges GetVinRangesByVin17_4_7(string vin17_4_7, bool isPrerelease)
         {
-            log.InfoFormat("GetVinRangesByVin17_4_7 Vin17_4_7: {0}", vin17_4_7 ?? string.Empty);
+            log.InfoFormat("GetVinRangesByVin17_4_7 Vin17_4_7: {0}, PreRelease: {1}", vin17_4_7 ?? string.Empty, isPrerelease);
             if (string.IsNullOrEmpty(vin17_4_7))
             {
                 log.ErrorFormat("GetVinRangesByVin17_4_7 Empty Vin");
@@ -2984,11 +3018,14 @@ namespace PsdzClient
             }
 
             List<VinRanges> vinRangesList = new List<VinRanges>();
+            VinRangeQuerySettings vinRangeQuerySettings = new VinRangeQuerySettings(isPrerelease);
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture,
-                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, PRODUCTIONDATEYEAR, PRODUCTIONDATEMONTH, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
-                    @" FROM VINRANGES WHERE (VIN17_4_7 = '{0}')", vin17_4_7.ToUpper(CultureInfo.InvariantCulture));
+                    @"SELECT VINBANDFROM, VINBANDTO, TYPSCHLUESSEL, {0}, {1}, RELEASESTATE, CHANGEDATE, GEARBOX_TYPE, VIN17_4_7" +
+                    @" FROM {2} WHERE (VIN17_4_7 = '{3}')",
+                    vinRangeQuerySettings.ProductionYearColumnName, vinRangeQuerySettings.ProductionMonthColumnName, vinRangeQuerySettings.TableName,
+                    vin17_4_7.ToUpper(CultureInfo.InvariantCulture));
                 using (SqliteCommand command = _mDbConnection.CreateCommand())
                 {
                     command.CommandText = sql;
@@ -3010,7 +3047,7 @@ namespace PsdzClient
 
             if (vinRangesList.Count > 1)
             {
-                log.InfoFormat("GetVinRangesByVin17_4_7 List count: {0}", vinRangesList.Count);
+                log.InfoFormat("GetVinRangesByVin17_4_7 List count: {0} in {1}", vinRangesList.Count, vinRangeQuerySettings.TableName);
             }
 
             if (vinRangesList.Count >= 1)
@@ -3020,7 +3057,7 @@ namespace PsdzClient
                 return vinRanges;
             }
 
-            log.ErrorFormat("GetVinRangesByVin17_4_7 Not found: {0}", vin17_4_7);
+            log.ErrorFormat("GetVinRangesByVin17_4_7 Not found: {0} in {1}", vin17_4_7, vinRangeQuerySettings.TableName);
             return null;
         }
 
