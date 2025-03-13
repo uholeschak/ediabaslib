@@ -139,6 +139,7 @@ namespace BmwFileReader
         public static Regex VinRegex = new Regex(@"^(?!0{7,})([a-zA-Z0-9]{7,})$");
         public static Regex ILevelRegex = new Regex(@"([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}");
 
+        // ToDo: Check on update
         // from ReadVinForGroupCars, ReadVinForMotorcycles
         public static readonly List<JobInfo> ReadVinJobsBmwFast = new List<JobInfo>
         {
@@ -146,7 +147,7 @@ namespace BmwFileReader
             new JobInfo("G_ZGW", "STATUS_VIN_LESEN", string.Empty, "STAT_VIN", "BN2020", "STATUS_VCM_GET_ECU_LIST_ALL"),
             new JobInfo("G_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "STAT_FGNR17_WERT", "BN2020"),
             new JobInfo("G_FRM", "STATUS_VCM_VIN", string.Empty, "STAT_VIN_EINH", "BN2020"),
-            // BN2000
+            // BN2000, BEV2010
             new JobInfo("D_CAS", "STATUS_FAHRGESTELLNUMMER", string.Empty, "FGNUMMER", "BN2000"),
             new JobInfo("D_LM", "READ_FVIN", string.Empty, "FVIN", "BN2000"),
             new JobInfo("FRM_87", "READ_FVIN", string.Empty, "FVIN", "BN2000"),
@@ -160,6 +161,7 @@ namespace BmwFileReader
             new JobInfo("X_KS01", "PROG_FG_NR_LESEN_FUNKTIONAL", "18", "FG_NR_LANG", "BN2020_MOTORBIKE"),
         };
 
+        // from FA_BN2000, FA_BN2020, BN2000_MOTORBIKE, BN2020_MOTORBIKE
         public static readonly List<JobInfo> ReadFaJobsBmwFast = new List<JobInfo>
         {
             // BN2020
@@ -179,9 +181,11 @@ namespace BmwFileReader
             new JobInfo("X_KS01", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2020_MOTORBIKE"),
         };
 
+        // from ReadILevelBn2020, HandleReadILevelForSp2021Fallback
         public static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
         {
             new JobInfo("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
+            // BN2021 fallback
             new JobInfo("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", null, null, null, null, "BCP_SP21"),
             new JobInfo("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
             new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
@@ -215,6 +219,7 @@ namespace BmwFileReader
             new JobInfo("D_00D0", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", "IBUS"),
         };
 
+        // from SetVehicleLifeStartDate
         public static readonly JobInfoLifeStartDate[] LifeStartDateJobs =
         {
             new JobInfoLifeStartDate("G_ZGW", "STATUS_LESEN", "ID;0x1701", new List<string>() {"STAT_SYSTEMZEIT_WERT"}),
