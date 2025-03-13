@@ -181,9 +181,11 @@ namespace BmwFileReader
             new JobInfo("X_KS01", "FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2020_MOTORBIKE"),
         };
 
+        // from ReadILevelBn2020, HandleReadILevelForSp2021Fallback
         public static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
         {
             new JobInfo("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
+            // BN2021 fallback
             new JobInfo("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", null, null, null, null, "BCP_SP21"),
             new JobInfo("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
             new JobInfo("G_FRM", "STATUS_VCM_I_STUFE_LESEN"),
@@ -217,6 +219,7 @@ namespace BmwFileReader
             new JobInfo("D_00D0", "C_FA_LESEN", null, "FAHRZEUGAUFTRAG", "IBUS"),
         };
 
+        // from SetVehicleLifeStartDate
         public static readonly JobInfoLifeStartDate[] LifeStartDateJobs =
         {
             new JobInfoLifeStartDate("G_ZGW", "STATUS_LESEN", "ID;0x1701", new List<string>() {"STAT_SYSTEMZEIT_WERT"}),
