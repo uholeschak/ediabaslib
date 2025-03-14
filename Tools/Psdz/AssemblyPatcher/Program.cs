@@ -674,7 +674,7 @@ namespace AssemblyPatcher
                             {
                                 Console.WriteLine("VehicleIdent.ClearAndReadErrorInfoMemory found");
                                 int patchIndex = -1;
-                                uint brOffset = 0;
+                                object operand = null;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
                                     Instruction instruction = instructions[index];
@@ -705,25 +705,30 @@ namespace AssemblyPatcher
                                             continue;
                                         }
 
-                                        if (instructions[index + 6].OpCode != OpCodes.Call)
+                                        if (instructions[index + 6].OpCode != OpCodes.Ldloca_S)
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 7].OpCode != OpCodes.Brfalse_S)
+                                        if (instructions[index + 7].OpCode != OpCodes.Call)
                                         {
                                             continue;
                                         }
 
-                                        patchIndex = index + 7;
-                                        brOffset = instructions[index + 5].Offset;
+                                        if (instructions[index + 8].OpCode != OpCodes.Brfalse_S)
+                                        {
+                                            continue;
+                                        }
+
+                                        patchIndex = index + 8;
+                                        operand = instructions[index + 5].Operand;
                                         break;
                                     }
                                 }
 
-                                if (patchIndex >= 0)
+                                if (patchIndex >= 0 && operand != null)
                                 {
-                                    instructions[patchIndex].Offset = brOffset;
+                                    instructions[patchIndex].Operand = operand;
                                     patched = true;
                                     Console.WriteLine("Disabled NoClamp15ForErrorMemory message if clamp15 is not readable");
                                 }
