@@ -533,7 +533,7 @@ namespace AssemblyPatcher
                                         }
 
                                         Console.WriteLine("\"ENET\", \"_\", \"Rheingold\", \"\" found at index: {0}", index);
-                                        patchIndex = index;
+                                        patchIndex = index + 3;
                                         break;
                                     }
                                 }
@@ -543,8 +543,8 @@ namespace AssemblyPatcher
                                 {
                                     Instruction instruction = instructions[index];
                                     if (instruction.OpCode == OpCodes.Ldstr &&
-                                        string.Compare(instruction.Operand.ToString(), "RemoteHost={0};selectCertificate={1};SSLPort={2};Authentication=S29;NetworkProtocol=SSL", StringComparison.OrdinalIgnoreCase) == 0
-                                        && index + 3 < instructions.Count)
+                                        string.Compare(instruction.Operand.ToString(), "RPLUS:ICOM_P:Remotehost=", StringComparison.OrdinalIgnoreCase) == 0
+                                        && index + 4 < instructions.Count)
                                     {
                                         if (instructions[index + 1].OpCode != OpCodes.Ldarg_1)
                                         {
@@ -554,7 +554,11 @@ namespace AssemblyPatcher
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 7].OpCode != OpCodes.Call)     // Format()
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldstr)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 4].OpCode != OpCodes.Call)         // Conact()
                                         {
                                             continue;
                                         }
@@ -568,14 +572,19 @@ namespace AssemblyPatcher
                                 if (patchIndex >= 0 && templateIndex >= 0)
                                 {
                                     List<Instruction> insertInstructions = new List<Instruction>();
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, "RemoteHost={0}"));
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, "RemoteHost="));
                                     insertInstructions.Add(new Instruction(OpCodes.Ldarg_1));
                                     insertInstructions.Add(instructions[templateIndex + 2].Clone());    // get_IPAddress()
-                                    insertInstructions.Add(instructions[templateIndex + 7].Clone());    // Format()
-                                    insertInstructions.Add(new Instruction(OpCodes.Stloc_S, 17));   // reserved
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, "RemoteHost={0}"));
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, ""));
+                                    insertInstructions.Add(instructions[templateIndex + 4].Clone());    // Concat()
 
-                                    instructions[patchIndex + 3] = new Instruction(OpCodes.Ldloc, 17);
+                                    instructions.RemoveAt(patchIndex);
+                                    int offset = 0;
+                                    foreach (Instruction insertInstruction in insertInstructions)
+                                    {
+                                        instructions.Insert(patchIndex + offset, insertInstruction);
+                                        offset++;
+                                    }
                                 }
                                 else
                                 {
