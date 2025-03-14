@@ -567,6 +567,15 @@ namespace AssemblyPatcher
 
                                 if (patchIndex >= 0 && templateIndex >= 0)
                                 {
+                                    List<Instruction> insertInstructions = new List<Instruction>();
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, "RemoteHost={0}"));
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldarg_1));
+                                    insertInstructions.Add(instructions[templateIndex + 2].Clone());    // get_IPAddress()
+                                    insertInstructions.Add(instructions[templateIndex + 7].Clone());    // Format()
+                                    insertInstructions.Add(new Instruction(OpCodes.Stloc_S, 17));   // reserved
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, "RemoteHost={0}"));
+
+                                    instructions[patchIndex + 3] = new Instruction(OpCodes.Ldloc, 17);
                                 }
                                 else
                                 {
