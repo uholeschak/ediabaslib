@@ -661,6 +661,83 @@ namespace AssemblyPatcher
                             // ignored
                         }
 
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.Diagnostics",
+                                Class = "VehicleIdent",
+                                Method = "ClearAndReadErrorInfoMemory",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("VehicleIdent.ClearAndReadErrorInfoMemory found");
+                                int patchIndex = -1;
+                                uint brOffset = 0;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Call && index + 7 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Callvirt)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 2].OpCode != OpCodes.Callvirt)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 3].OpCode != OpCodes.Stloc_S)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 4].OpCode != OpCodes.Ldloc_S)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 5].OpCode != OpCodes.Brfalse_S)    // copy offset from here
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 6].OpCode != OpCodes.Call)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 7].OpCode != OpCodes.Brfalse_S)
+                                        {
+                                            continue;
+                                        }
+
+                                        patchIndex = index + 7;
+                                        brOffset = instructions[index + 5].Offset;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    instructions[patchIndex].Offset = brOffset;
+                                    patched = true;
+                                    Console.WriteLine("Disabled NoClamp15ForErrorMemory message if clamp15 is not readable");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Patching ClearAndReadErrorInfoMemory failed");
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
 #if false
                         try
                         {
