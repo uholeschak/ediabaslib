@@ -427,14 +427,112 @@ namespace AssemblyPatcher
                             if (instructions != null)
                             {
                                 Console.WriteLine("ECUKom.InitVCI found");
+                                if (fileVersion != null && fileVersion.Value < FileVersion450)
+                                {
+                                    int patchIndex = -1;
+                                    int index = 0;
+                                    foreach (Instruction instruction in instructions)
+                                    {
+                                        if (instruction.OpCode == OpCodes.Ldstr &&
+                                            string.Compare(instruction.Operand.ToString(), "ENET::remotehost=", StringComparison.OrdinalIgnoreCase) == 0)
+                                        {
+                                            Console.WriteLine("'ENET::remotehost=' found at index: {0}", index);
+                                            patchIndex = index;
+                                            break;
+                                        }
+
+                                        index++;
+                                    }
+
+                                    if (patchIndex >= 0)
+                                    {
+                                        if ((instructions[patchIndex + 1].OpCode != OpCodes.Ldarg_1) ||     // ldarg.1
+                                            (instructions[patchIndex + 2].OpCode != OpCodes.Callvirt) ||    // callvirt    instance string[RheingoldCoreContracts] BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+                                            (instructions[patchIndex + 3].OpCode != OpCodes.Call) ||        // call	string [mscorlib]System.String::Concat(string, string)
+                                            (instructions[patchIndex + 4].OpCode != OpCodes.Ldstr) ||       // ldstr	"_"
+                                            (instructions[patchIndex + 5].OpCode != OpCodes.Ldstr) ||       // ldstr	"Rheingold"
+                                            (instructions[patchIndex + 6].OpCode != OpCodes.Ldsfld) ||      // ldsfld	string [mscorlib]System.String::Empty
+                                            (instructions[patchIndex + 7].OpCode != OpCodes.Ldarg_2) ||     // ldarg.2
+                                            (instructions[patchIndex + 8].OpCode != OpCodes.Callvirt))      // callvirt	instance bool BMW.Rheingold.VehicleCommunication.Ediabas.API::apiInitExt(string, string, string, string, bool)
+                                        {
+                                            Console.WriteLine("InitVCI patch location invalid");
+                                        }
+                                        else
+                                        {
+                                            /*
+                                            Change:
+                                                flag = this.api.apiInitExt("ENET::remotehost=" + device.IPAddress, "_", "Rheingold", string.Empty, logging);
+                                            to:
+                                                flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
+                                            */
+
+                                            instructions.RemoveAt(patchIndex);  // ldstr	"ENET::remotehost="
+                                            instructions.Insert(patchIndex, Instruction.Create(OpCodes.Ldstr, "ENET"));
+                                            instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Ldstr, "_"));
+                                            instructions.Insert(patchIndex + 2, Instruction.Create(OpCodes.Ldstr, "Rheingold"));
+                                            instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Ldstr, "RemoteHost="));
+                                            // Index 4: ldarg.1
+                                            // Index 5: callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
+                                            instructions.RemoveAt(patchIndex + 6);  // call	string [mscorlib]System.String::Concat(string, string)
+                                            instructions.RemoveAt(patchIndex + 6);  // ldstr	"_"
+                                            instructions.RemoveAt(patchIndex + 6);  // ldstr	"Rheingold"
+                                            instructions.RemoveAt(patchIndex + 6);  // ldsfld	string [mscorlib]System.String::Empty
+                                            instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, ";DiagnosticPort=50160;ControlPort=50161"));
+                                            instructions.Insert(patchIndex + 7,
+                                                Instruction.Create(OpCodes.Call,
+                                                    patcher.BuildCall(typeof(System.String), "Concat", typeof(string),
+                                                        new[] { typeof(string), typeof(string), typeof(string) })));
+                                            patched = true;
+                                            //patcher.Save(file.Replace(".dll", "Test.dll"));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("'ENET::remotehost=' appears to have already been patched or is not existing");
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.VehicleCommunication",
+                                Class = "ECUKom",
+                                Method = "InitVCI",
+                                Parameters = new[] { "ECUKom", "IVciDevice", "Boolean", "Boolean" },
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("ECUKom.InitVCI isDoIP found");
                                 int patchIndex = -1;
                                 int index = 0;
                                 foreach (Instruction instruction in instructions)
                                 {
                                     if (instruction.OpCode == OpCodes.Ldstr &&
-                                        string.Compare(instruction.Operand.ToString(), "ENET::remotehost=", StringComparison.OrdinalIgnoreCase) == 0)
+                                        string.Compare(instruction.Operand.ToString(), "ENET", StringComparison.OrdinalIgnoreCase) == 0
+                                        && index + 3 < instructions.Count)
                                     {
-                                        Console.WriteLine("'ENET::remotehost=' found at index: {0}", index);
+                                        if (instructions[index + 1].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 1].Operand.ToString(), "_", StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 2].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 2].Operand.ToString(), "Rheingold", StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 3].Operand.ToString(), "", StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            continue;
+                                        }
+
+                                        Console.WriteLine("\"ENET\", \"_\", \"Rheingold\", \"\" found at index: {0}", index);
                                         patchIndex = index;
                                         break;
                                     }
@@ -444,52 +542,10 @@ namespace AssemblyPatcher
 
                                 if (patchIndex >= 0)
                                 {
-                                    if ((instructions[patchIndex + 1].OpCode != OpCodes.Ldarg_1) ||     // ldarg.1
-                                        (instructions[patchIndex + 2].OpCode != OpCodes.Callvirt) ||    // callvirt    instance string[RheingoldCoreContracts] BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
-                                        (instructions[patchIndex + 3].OpCode != OpCodes.Call) ||        // call	string [mscorlib]System.String::Concat(string, string)
-                                        (instructions[patchIndex + 4].OpCode != OpCodes.Ldstr) ||       // ldstr	"_"
-                                        (instructions[patchIndex + 5].OpCode != OpCodes.Ldstr) ||       // ldstr	"Rheingold"
-                                        (instructions[patchIndex + 6].OpCode != OpCodes.Ldsfld) ||      // ldsfld	string [mscorlib]System.String::Empty
-                                        (instructions[patchIndex + 7].OpCode != OpCodes.Ldarg_2) ||     // ldarg.2
-                                        (instructions[patchIndex + 8].OpCode != OpCodes.Callvirt))      // callvirt	instance bool BMW.Rheingold.VehicleCommunication.Ediabas.API::apiInitExt(string, string, string, string, bool)
-                                    {
-                                        Console.WriteLine("InitVCI patch location invalid");
-                                    }
-                                    else
-                                    {
-                                        /*
-                                        Change:
-                                            flag = this.api.apiInitExt("ENET::remotehost=" + device.IPAddress, "_", "Rheingold", string.Empty, logging);
-                                        to:
-                                            flag = this.api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=50160;ControlPort=50161", logging);
-                                        */
-
-                                        instructions.RemoveAt(patchIndex);  // ldstr	"ENET::remotehost="
-                                        instructions.Insert(patchIndex, Instruction.Create(OpCodes.Ldstr, "ENET"));
-                                        instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Ldstr, "_"));
-                                        instructions.Insert(patchIndex + 2, Instruction.Create(OpCodes.Ldstr, "Rheingold"));
-                                        instructions.Insert(patchIndex + 3, Instruction.Create(OpCodes.Ldstr, "RemoteHost="));
-                                        // Index 4: ldarg.1
-                                        // Index 5: callvirt	instance string [RheingoldCoreContracts]BMW.Rheingold.CoreFramework.Contracts.Vehicle.IVciDevice::get_IPAddress()
-                                        instructions.RemoveAt(patchIndex + 6);  // call	string [mscorlib]System.String::Concat(string, string)
-                                        instructions.RemoveAt(patchIndex + 6);  // ldstr	"_"
-                                        instructions.RemoveAt(patchIndex + 6);  // ldstr	"Rheingold"
-                                        instructions.RemoveAt(patchIndex + 6);  // ldsfld	string [mscorlib]System.String::Empty
-                                        instructions.Insert(patchIndex + 6, Instruction.Create(OpCodes.Ldstr, ";DiagnosticPort=50160;ControlPort=50161"));
-                                        instructions.Insert(patchIndex + 7,
-                                            Instruction.Create(OpCodes.Call,
-                                                patcher.BuildCall(typeof(System.String), "Concat", typeof(string),
-                                                    new[] { typeof(string), typeof(string), typeof(string) })));
-                                        patched = true;
-                                        //patcher.Save(file.Replace(".dll", "Test.dll"));
-                                    }
                                 }
                                 else
                                 {
-                                    if (fileVersion == null || fileVersion.Value < FileVersion450)
-                                    {
-                                        Console.WriteLine("'ENET::remotehost=' appears to have already been patched or is not existing");
-                                    }
+                                    Console.WriteLine("\"ENET\", \"_\", \"Rheingold\", \"\" appears to have already been patched or is not existing");
                                 }
                             }
                         }
@@ -742,99 +798,6 @@ namespace AssemblyPatcher
                         {
                             // ignored
                         }
-
-#if false
-                        try
-                        {
-                            Target target = new Target
-                            {
-                                Namespace = "BMW.Rheingold.Diagnostics",
-                                Class = "VehicleIdent",
-                                Method = "ECUIdentShortTest",
-                            };
-                            IList<Instruction> instructions = patcher.GetInstructionList(target);
-                            if (instructions != null)
-                            {
-                                Console.WriteLine("VehicleIdent.ECUIdentShortTest found");
-                                int patchIndex = -1;
-                                Instruction[] switchInstructions = null;
-                                for (int index = 0; index < instructions.Count; index++)
-                                {
-                                    Instruction instruction = instructions[index];
-                                    if (instruction.OpCode == OpCodes.Switch && index + 1 < instructions.Count)
-                                    {
-                                        switchInstructions = instruction.Operand as Instruction[];
-                                        if (switchInstructions == null)
-                                        {
-                                            continue;
-                                        }
-
-                                        if (switchInstructions.Length < 7)
-                                        {
-                                            continue;
-                                        }
-
-                                        if (instructions[index + 1].OpCode != OpCodes.Ret)     // false
-                                        {
-                                            continue;
-                                        }
-
-                                        patchIndex = index;
-                                        break;
-                                    }
-                                }
-
-                                if (patchIndex >= 0)
-                                {
-                                    int motorbikeInst = instructions.IndexOf(switchInstructions[5]);
-                                    if (motorbikeInst < 0)
-                                    {
-                                        Console.WriteLine("Patching ECUIdentShortTest switch BNK01X_MOTORBIKE not valid");
-                                    }
-                                    else
-                                    {
-                                        int instructCount = instructions.Count;
-                                        int insertIndex = instructCount;
-                                        for (int pos = 0; ; pos++)
-                                        {
-                                            if (motorbikeInst + pos >= instructCount)
-                                            {
-                                                break;
-                                            }
-
-                                            Instruction instruction = instructions[motorbikeInst + pos];
-                                            Instruction insertInstruction;
-                                            if (instruction.OpCode == OpCodes.Ldarg_1)
-                                            {
-                                                insertInstruction = new Instruction(OpCodes.Ldstr, "");
-                                            }
-                                            else
-                                            {
-                                                insertInstruction = instruction.Clone();
-                                            }
-                                            instructions.Insert(insertIndex + pos, insertInstruction);
-                                            if (instruction.OpCode == OpCodes.Ret)
-                                            {
-                                                break;
-                                            }
-                                        }
-
-                                        switchInstructions[2] = instructions[insertIndex];  // point to copied instructions
-                                        instructions[patchIndex] = Instruction.Create(OpCodes.Switch, switchInstructions);
-                                        patched = true;
-                                    }
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Patching ECUIdentShortTest failed");
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-#endif
 
                         if (noIcomVerCheck)
                         {
