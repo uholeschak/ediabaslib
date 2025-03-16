@@ -468,6 +468,7 @@ namespace EdiabasLib
             {
                 base.Ediabas = value;
 
+                string assemblyPath = EdiabasNet.AssemblyDirectory;
                 string prop = EdiabasProtected?.GetConfigProperty("EnetNetworkProtocol");
                 if (prop != null)
                 {
@@ -618,6 +619,15 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     DoIpSslSecurityPath = prop;
+                }
+
+                if (!string.IsNullOrEmpty(assemblyPath))
+                {
+                    string sslSecurityPath = Path.Combine(assemblyPath, "Security", "S29", "Certificates");
+                    if (Directory.Exists(sslSecurityPath))
+                    {
+                        DoIpS29Path = sslSecurityPath;
+                    }
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("S29Path");
