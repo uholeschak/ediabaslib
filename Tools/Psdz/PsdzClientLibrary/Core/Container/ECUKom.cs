@@ -511,7 +511,8 @@ namespace PsdzClient.Core.Container
                         }
                         else
                         {
-                            boolResultObject.Result = api.apiInitExt("ENET", "_", "Rheingold", "");
+                            string config = $"RemoteHost={device.IPAddress}";
+                            boolResultObject.Result = api.apiInitExt("ENET", "_", "Rheingold", config);
                         }
                         break;
                     case VCIDeviceType.TELESERVICE:
