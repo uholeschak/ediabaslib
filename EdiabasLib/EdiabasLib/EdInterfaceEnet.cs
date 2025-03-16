@@ -623,10 +623,14 @@ namespace EdiabasLib
 
                 if (!string.IsNullOrEmpty(assemblyPath))
                 {
-                    string sslSecurityPath = Path.Combine(assemblyPath, "Security", "S29", "Certificates");
-                    if (Directory.Exists(sslSecurityPath))
+                    string parentDir = Directory.GetParent(assemblyPath)?.FullName;
+                    if (!string.IsNullOrEmpty(parentDir))
                     {
-                        DoIpS29Path = sslSecurityPath;
+                        string sslSecurityPath = Path.Combine(parentDir, "Security", "S29", "Certificates");
+                        if (Directory.Exists(sslSecurityPath))
+                        {
+                            DoIpS29Path = sslSecurityPath;
+                        }
                     }
                 }
 
