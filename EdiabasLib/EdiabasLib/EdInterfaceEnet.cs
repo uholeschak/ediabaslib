@@ -427,6 +427,7 @@ namespace EdiabasLib
         protected int DoIpSslPort = 3496;
         protected string DoIpSslSecurityPath = string.Empty;
         protected string DoIpS29Path = string.Empty;
+        protected string DoIpS29SelectCert = string.Empty;
         protected int ConnectTimeout = 5000;
         protected int BatteryVoltageValue = 12000;
         protected int IgnitionVoltageValue = 12000;
@@ -638,6 +639,12 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     DoIpS29Path = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("selectCertificate");
+                if (prop != null)
+                {
+                    DoIpS29SelectCert = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutConnect");
@@ -1283,9 +1290,9 @@ namespace EdiabasLib
                                 continue;
                             }
 
-                            if (!GetS29Certs(SharedDataActive, DoIpS29Path))
+                            if (!GetS29Certs(SharedDataActive, DoIpS29Path, DoIpS29SelectCert))
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}", DoIpS29Path);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}, select cert: {1}", DoIpS29Path, DoIpS29SelectCert);
                                 //continue;
                             }
                         }
@@ -2904,7 +2911,7 @@ namespace EdiabasLib
             }
         }
 
-        protected bool GetS29Certs(SharedData sharedData, string certPath)
+        protected bool GetS29Certs(SharedData sharedData, string certPath, string selectCert = null)
         {
             try
             {
@@ -2928,6 +2935,15 @@ namespace EdiabasLib
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
                 {
+                    if (!string.IsNullOrEmpty(selectCert))
+                    {
+                        string baseFileName = Path.GetFileNameWithoutExtension(certFile);
+                        if (string.Compare(baseFileName, selectCert, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            continue;
+                        }
+                    }
+
                     try
                     {
 #if NET9_0_OR_GREATER
