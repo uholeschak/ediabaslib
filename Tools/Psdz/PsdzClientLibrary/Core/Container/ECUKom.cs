@@ -758,7 +758,7 @@ namespace PsdzClient.Core.Container
         {
             if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
             {
-                string reserved = $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162};selectCertificate={service.CertificateFilePathWithoutEnding};SSLPort={50163}";
+                string reserved = $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162};selectCertificate={service.CertificateFilePathWithoutEnding};SSLPort={50163};Authentication=S29;NetworkProtocol=SSL";
                 return ApiInitExt("ENET", "_", "Rheingold", reserved);
             }
             return false;

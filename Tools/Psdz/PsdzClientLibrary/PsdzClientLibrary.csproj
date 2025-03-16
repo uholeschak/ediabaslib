@@ -94,6 +94,7 @@
     <Compile Include="Contracts\INavFSCProvided.cs" />
     <Compile Include="Contracts\ITransmissionDataType.cs" />
     <Compile Include="Core\BaseFormatedData.cs" />
+    <Compile Include="Core\CertReqProfile.cs" />
     <Compile Include="Core\ConfigSettings.cs" />
     <Compile Include="Core\ConfigSettingsRuleEvaluation.cs" />
     <Compile Include="Core\ConfigValue.cs" />
@@ -253,6 +254,7 @@
     <Compile Include="Core\Container\Range.cs" />
     <Compile Include="Core\Container\RangeConstraint.cs" />
     <Compile Include="Core\Container\Reference.cs" />
+    <Compile Include="Core\ProofOfPossession.cs" />
     <Compile Include="Core\PropertyData.cs" />
     <Compile Include="Core\Reactor.cs" />
     <Compile Include="Core\ReactorEngine.cs" />
@@ -262,6 +264,8 @@
     <Compile Include="Core\SaLaPaExpression.cs" />
     <Compile Include="Core\SALAPALocalizedEntry.cs" />
     <Compile Include="Core\Container\Sequence.cs" />
+    <Compile Include="Core\Sec4DiagCertificates.cs" />
+    <Compile Include="Core\Sec4DiagHandler.cs" />
     <Compile Include="Core\Sec4DiagProcessor.cs" />
     <Compile Include="Core\Sec4DiagProcessorFactory.cs" />
     <Compile Include="Core\Sec4DiagProcessorImplFactory.cs" />
