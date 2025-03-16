@@ -856,7 +856,8 @@ namespace AssemblyPatcher
                                 if (instructions != null)
                                 {
                                     Console.WriteLine("SLP.ScanDeviceFromAttrList found");
-                                    int patchIndex1 = -1;
+#if false
+                                    int patchIndexType = -1;
                                     for (int index = 0; index < instructions.Count; index++)
                                     {
                                         Instruction instruction = instructions[index];
@@ -879,23 +880,23 @@ namespace AssemblyPatcher
                                                 continue;
                                             }
 
-                                            patchIndex1 = index + 3;
+                                            patchIndexType = index + 3;
                                             break;
                                         }
                                     }
 
-                                    if (patchIndex1 >= 0)
+                                    if (patchIndexType >= 0)
                                     {
-                                        instructions[patchIndex1] = Instruction.Create(OpCodes.Ldc_I4_0);    // DeviceTypeDetail = Undefined
+                                        instructions[patchIndexType] = Instruction.Create(OpCodes.Ldc_I4_0);    // DeviceTypeDetail = Undefined
                                         patched = true;
                                     }
                                     else
                                     {
                                         Console.WriteLine("Patching ICOM type failed");
                                     }
-
+#endif
                                     // InteractionConnectionManagerViewModel constructor checks vCIDevice?.DevTypeExt
-                                    int patchIndex2 = -1;
+                                    int patchIndexExtType = -1;
                                     for (int index = 0; index < instructions.Count; index++)
                                     {
                                         Instruction instruction = instructions[index];
@@ -923,16 +924,16 @@ namespace AssemblyPatcher
                                                 continue;
                                             }
 
-                                            patchIndex2 = index + 0;
+                                            patchIndexExtType = index + 0;
                                             break;
                                         }
                                     }
 
-                                    if (patchIndex2 >= 0)
+                                    if (patchIndexExtType >= 0)
                                     {
-                                        instructions.RemoveAt(patchIndex2); // OpCodes.Ldloc_0
-                                        instructions[patchIndex2].Operand = "ICOM-Next";
-                                        instructions.RemoveAt(patchIndex2 + 1); // OpCodes.Callvirt
+                                        instructions.RemoveAt(patchIndexExtType); // OpCodes.Ldloc_0
+                                        instructions[patchIndexExtType].Operand = "ICOM-Next";
+                                        instructions.RemoveAt(patchIndexExtType + 1); // OpCodes.Callvirt
                                         patched = true;
                                     }
                                     else
