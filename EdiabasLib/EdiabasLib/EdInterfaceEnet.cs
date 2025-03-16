@@ -426,7 +426,7 @@ namespace EdiabasLib
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
         protected string DoIpSslSecurityPath = string.Empty;
-        protected string DoIpS29CertPath = string.Empty;
+        protected string DoIpS29Path = string.Empty;
         protected int ConnectTimeout = 5000;
         protected int BatteryVoltageValue = 12000;
         protected int IgnitionVoltageValue = 12000;
@@ -468,6 +468,7 @@ namespace EdiabasLib
             {
                 base.Ediabas = value;
 
+                string assemblyPath = EdiabasNet.AssemblyDirectory;
                 string prop = EdiabasProtected?.GetConfigProperty("EnetNetworkProtocol");
                 if (prop != null)
                 {
@@ -620,10 +621,19 @@ namespace EdiabasLib
                     DoIpSslSecurityPath = prop;
                 }
 
-                prop = EdiabasProtected?.GetConfigProperty("S29CertPath");
+                if (!string.IsNullOrEmpty(assemblyPath))
+                {
+                    string sslSecurityPath = Path.Combine(assemblyPath, "Security", "S29", "Certificates");
+                    if (Directory.Exists(sslSecurityPath))
+                    {
+                        DoIpS29Path = sslSecurityPath;
+                    }
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("S29Path");
                 if (prop != null)
                 {
-                    DoIpS29CertPath = prop;
+                    DoIpS29Path = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutConnect");
@@ -1269,9 +1279,9 @@ namespace EdiabasLib
                                 continue;
                             }
 
-                            if (!GetS29Certs(SharedDataActive, DoIpS29CertPath))
+                            if (!GetS29Certs(SharedDataActive, DoIpS29Path))
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}", DoIpS29CertPath);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}", DoIpS29Path);
                                 //continue;
                             }
                         }
