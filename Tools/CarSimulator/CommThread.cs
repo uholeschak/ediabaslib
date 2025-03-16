@@ -1025,6 +1025,7 @@ namespace CarSimulator
                             // openssl x509 -inform pem -noout -text -in client.crt
                             // cat client.crt rootCA.crt > client_full.crt
                             // openssl pkcs12 -export -out client.pfx -inkey client.key -in client_full.crt -passout pass:
+                            // copy file to EDIABAS.ini [SSL] S29Path property location.
 
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
                             _serverCertificate = new X509Certificate2(ServerCertFile, ServerCertPwd);
