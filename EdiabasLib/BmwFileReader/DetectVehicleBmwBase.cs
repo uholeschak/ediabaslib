@@ -61,13 +61,13 @@ namespace BmwFileReader
             {
             }
 
-            public EcuInfo(string name, Int64 address, string grp, string sgbd)
+            public EcuInfo(string name, Int64 address, string grp, string sgbd, string description = null)
             {
                 Name = name;
                 Address = address;
                 Grp = grp;
                 Sgbd = sgbd;
-                Description = null;
+                Description = description;
             }
 
             public EcuInfo Clone()
