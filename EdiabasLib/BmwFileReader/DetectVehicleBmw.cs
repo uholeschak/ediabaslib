@@ -549,6 +549,7 @@ namespace BmwFileReader
                                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                     {
                                         string groupSgbd = null;
+                                        string sgbd = null;
                                         if (vehicleSeriesInfo != null && vehicleSeriesInfo.EcuList != null)
                                         {
                                             foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in vehicleSeriesInfo.EcuList)
@@ -556,6 +557,7 @@ namespace BmwFileReader
                                                 if (vehicleEcuInfo.DiagAddr == ecuAdr)
                                                 {
                                                     groupSgbd = vehicleEcuInfo.GroupSgbd;
+                                                    sgbd = vehicleEcuInfo.Sgbd;
                                                     break;
                                                 }
                                             }
@@ -563,7 +565,7 @@ namespace BmwFileReader
 
                                         if (!string.IsNullOrEmpty(groupSgbd))
                                         {
-                                            EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd);
+                                            EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd, sgbd);
                                             EcuList.Add(ecuInfo);
                                         }
                                     }
