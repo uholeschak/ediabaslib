@@ -669,24 +669,27 @@ namespace PsdzClient.Programming
                 foreach (PsdzDatabase.EcuInfo ecuInfo in DetectVehicle.EcuListPsdz)
                 {
                     ECU ecu = programmingObjectBuilder.Build(ecuInfo.PsdzEcu);
-                    if (ecu != null)
+                    if (ecu == null)
                     {
-                        if (string.IsNullOrEmpty(ecu.ECU_NAME))
-                        {
-                            ecu.ECU_NAME = ecuInfo.Name;
-                        }
-
-                        if (string.IsNullOrEmpty(ecu.ECU_SGBD))
-                        {
-                            ecu.ECU_SGBD = ecuInfo.Sgbd;
-                        }
-
-                        if (string.IsNullOrEmpty(ecu.ECU_GRUPPE))
-                        {
-                            ecu.ECU_GRUPPE = ecuInfo.Grp;
-                        }
-                        EcuList.Add(ecu);
+                        ecu = new ECU();
+                        ecu.ID_SG_ADR = ecuInfo.Address;
                     }
+
+                    if (string.IsNullOrEmpty(ecu.ECU_NAME))
+                    {
+                        ecu.ECU_NAME = ecuInfo.Name;
+                    }
+
+                    if (string.IsNullOrEmpty(ecu.ECU_SGBD))
+                    {
+                        ecu.ECU_SGBD = ecuInfo.Sgbd;
+                    }
+
+                    if (string.IsNullOrEmpty(ecu.ECU_GRUPPE))
+                    {
+                        ecu.ECU_GRUPPE = ecuInfo.Grp;
+                    }
+                    EcuList.Add(ecu);
                 }
 
                 VecInfo.ECU = EcuList;
