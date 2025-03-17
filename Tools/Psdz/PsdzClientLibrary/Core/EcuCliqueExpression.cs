@@ -20,7 +20,7 @@ namespace PsdzClient.Core
 			this.value = ecuCliqueId;
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
 		{
 			bool flag = false;
 			PsdzDatabase database = ClientContext.GetDatabase(vec);
@@ -38,7 +38,7 @@ namespace PsdzClient.Core
 			{
 				return true;
 			}
-            RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationUtils, database);
+            RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
             if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuClique.Id, ffmResolver))
             {
                 return false;
@@ -46,11 +46,12 @@ namespace PsdzClient.Core
             List<PsdzDatabase.EcuVar> ecuVariantsByEcuCliquesId = ClientContext.GetDatabase(vec)?.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
 			if (ecuVariantsByEcuCliquesId == null || ecuVariantsByEcuCliquesId.Count == 0)
 			{
+                ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Unable to find ECU variants for ECU clique id: {0}", ecuClique.Id);
 				return false;
 			}
-			if (vec.VCI != null && vec.VCI.VCIType == VCIDeviceType.INFOSESSION && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && (vec.ECU == null || (vec.ECU != null && vec.ECU.Count == 0))) || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
+            if (vec.VCI != null && vec.VCI.VCIType == VCIDeviceType.INFOSESSION && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && (vec.ECU == null || (vec.ECU != null && !vec.ECU.Any()))) || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
 			{
-				foreach (PsdzDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
+                foreach (PsdzDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
 				{
 					flag = database.EvaluateXepRulesById(ecuVar.Id, vec, ffmResolver, null);
 					if (flag && !string.IsNullOrEmpty(ecuVar.EcuGroupId))
@@ -62,9 +63,10 @@ namespace PsdzClient.Core
 						}
 					}
 				}
-				return flag;
+                ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
+                return flag;
 			}
-			foreach (PsdzDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
+            foreach (PsdzDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
             {
                 flag = vec.getECUbyECU_SGBD(ecuVar.Name) != null;
 				if (flag)
@@ -72,6 +74,7 @@ namespace PsdzClient.Core
 					break;
 				}
 			}
+            ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
 			return flag;
 		}
 
