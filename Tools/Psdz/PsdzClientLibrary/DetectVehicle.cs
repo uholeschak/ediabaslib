@@ -496,7 +496,7 @@ namespace PsdzClient
                                 {
                                     if (EcuList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                                     {
-                                        EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuGroup);
+                                        EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, ecuGroup, ecuSgbd);
                                         EcuList.Add(ecuInfo);
                                     }
                                 }
@@ -1102,6 +1102,7 @@ namespace PsdzClient
                     ecuInfoAddList.All(ecuInfo => ecuInfo.Address != ecuAdr))
                 {
                     string groupSgbd = null;
+                    string sgbd = null;
                     if (VehicleSeriesInfo.EcuList != null)
                     {
                         foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in VehicleSeriesInfo.EcuList)
@@ -1112,6 +1113,7 @@ namespace PsdzClient
                                 {
                                     groupSgbd = vehicleEcuInfo.GroupSgbd;
                                     ecuName = vehicleEcuInfo.Name;
+                                    sgbd = vehicleEcuInfo.Sgbd;
                                     break;
                                 }
                             }
@@ -1120,7 +1122,7 @@ namespace PsdzClient
 
                     if (!string.IsNullOrEmpty(groupSgbd))
                     {
-                        EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd);
+                        EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd, sgbd);
                         ecuInfoAddList.Add(ecuInfo);
                     }
                 }
