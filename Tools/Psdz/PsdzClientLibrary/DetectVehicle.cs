@@ -1103,7 +1103,6 @@ namespace PsdzClient
                 {
                     string groupSgbd = null;
                     string sgbd = null;
-                    string description = null;
                     if (VehicleSeriesInfo.EcuList != null)
                     {
                         foreach (VehicleStructsBmw.VehicleEcuInfo vehicleEcuInfo in VehicleSeriesInfo.EcuList)
@@ -1115,7 +1114,6 @@ namespace PsdzClient
                                     groupSgbd = vehicleEcuInfo.GroupSgbd;
                                     ecuName = vehicleEcuInfo.Name;
                                     sgbd = vehicleEcuInfo.Sgbd;
-                                    description = vehicleEcuInfo.GetTitleTranslated(_clientContext.Language);
                                     break;
                                 }
                             }
@@ -1124,7 +1122,7 @@ namespace PsdzClient
 
                     if (!string.IsNullOrEmpty(groupSgbd))
                     {
-                        EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd, sgbd, description);
+                        EcuInfo ecuInfo = new EcuInfo(ecuName, ecuAdr, groupSgbd, sgbd);
                         ecuInfoAddList.Add(ecuInfo);
                     }
                 }
