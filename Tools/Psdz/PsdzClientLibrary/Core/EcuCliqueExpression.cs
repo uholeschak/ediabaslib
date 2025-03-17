@@ -53,16 +53,21 @@ namespace PsdzClient.Core
 			{
                 foreach (PsdzDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
 				{
-					flag = database.EvaluateXepRulesById(ecuVar.Id, vec, ffmResolver, null);
-					if (flag && !string.IsNullOrEmpty(ecuVar.EcuGroupId))
-					{
-						flag = database.EvaluateXepRulesById(ecuVar.EcuGroupId, vec, ffmResolver, null);
-						if (flag)
-						{
-							break;
-						}
-					}
-				}
+                    flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuVar.Id, ffmResolver);
+                    if (!flag)
+                    {
+                        continue;
+                    }
+
+                    if (!string.IsNullOrEmpty(ecuVar.EcuGroupId))
+                    {
+                        flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuVar.EcuGroupId, ffmResolver);
+                        if (flag)
+                        {
+                            break;
+                        }
+                    }
+                }
                 ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
                 return flag;
 			}
