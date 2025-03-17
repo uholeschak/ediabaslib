@@ -61,12 +61,12 @@ namespace BmwFileReader
             {
             }
 
-            public EcuInfo(string name, Int64 address, string grp)
+            public EcuInfo(string name, Int64 address, string grp, string sgbd)
             {
                 Name = name;
                 Address = address;
                 Grp = grp;
-                Sgbd = null;
+                Sgbd = sgbd;
                 Description = null;
             }
 
@@ -915,7 +915,7 @@ namespace BmwFileReader
                         bool addEcu = HasSa("521") || !string.IsNullOrEmpty(GetEcuNameByIdentCached(groupRls));
                         if (addEcu)
                         {
-                            EcuInfo ecuInfoAdd = new EcuInfo("RLS", addressRls, groupRls);
+                            EcuInfo ecuInfoAdd = new EcuInfo("RLS", addressRls, groupRls, null);
                             LogInfoFormat("HandleSpecialEcus Adding ECU: Name={0}, Address={1}, Group={2}", ecuInfoAdd.Name, ecuInfoAdd.Address, ecuInfoAdd.Grp);
                             EcuList.Add(ecuInfoAdd);
                         }
