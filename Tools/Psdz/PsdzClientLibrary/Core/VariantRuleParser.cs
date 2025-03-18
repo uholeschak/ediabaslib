@@ -203,11 +203,7 @@ namespace PsdzClient.Core
 
         private static bool IsExpression(Symbol op)
         {
-            if (op.Type != RuleExpression.ESymbolType.CompareExpression && op.Type != RuleExpression.ESymbolType.AndExpression && op.Type != RuleExpression.ESymbolType.OrExpression && op.Type != RuleExpression.ESymbolType.NotExpression)
-            {
-                return op.Type == RuleExpression.ESymbolType.DateExpression;
-            }
-            return true;
+            return op.Type == RuleExpression.ESymbolType.CompareExpression || op.Type == RuleExpression.ESymbolType.AndExpression || op.Type == RuleExpression.ESymbolType.OrExpression || op.Type == RuleExpression.ESymbolType.NotExpression || op.Type == RuleExpression.ESymbolType.DateExpression;
         }
-	}
+    }
 }
