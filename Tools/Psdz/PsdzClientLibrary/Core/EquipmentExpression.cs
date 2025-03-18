@@ -20,76 +20,70 @@ namespace PsdzClient.Core
 			this.value = equipmentId;
 		}
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
 		{
-            PsdzDatabase database = ClientContext.GetDatabase(vec);
-            if (database == null)
+            ILogger logger = ruleEvaluationServices.Logger;
+            if (vec == null)
+            {
+                logger.Error("EquipmentExpression.Evaluate()", "vec was null");
+                return false;
+            }
+            if (vec.VehicleIdentLevel == IdentificationLevel.None)
             {
                 return false;
             }
-			if (vec == null)
-			{
-				Log.Error("EquipmentExpression.Evaluate()", "vec was null", Array.Empty<object>());
-				return false;
-			}
-			if (vec.VehicleIdentLevel == IdentificationLevel.None)
-			{
-				return false;
-			}
+            PsdzDatabase database = ClientContext.GetDatabase(vec);
+            if (database == null)
+            {
+                logger.Error("EquipmentExpression.Evaluate()", "database connection invalid");
+                return false;
+            }
             PsdzDatabase.Equipment equipmentById = database.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
-			if (equipmentById == null)
-			{
-				return false;
-			}
-			object obj = EquipmentExpression.evaluationLockObject;
-			bool result;
-			lock (obj)
-			{
-				bool? flag2 = vec.hasFFM(equipmentById.Name);
-				if (flag2 != null)
-				{
-					result = flag2.Value;
-				}
-				else
-				{
-                    RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationUtils, database);
-                    bool flag3 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, this.value.ToString(CultureInfo.InvariantCulture), ffmResolver);
+            if (equipmentById == null)
+            {
+                logger.Warning("EquipmentExpression.Evaluate()", "unable to lookup equipment by id: {0}", value);
+                return false;
+            }
+            lock (evaluationLockObject)
+            {
+                bool? flag = vec.hasFFM(equipmentById.Name);
+                if (flag.HasValue)
+                {
+                    logger.Debug("EquipmentExpression.Evaluate()", "rule: {0} result: {1} [original rule: {2}]", equipmentById.Name, flag, value);
+                    return flag.Value;
+                }
+                RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
+                bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, this.value.ToString(CultureInfo.InvariantCulture), ffmResolver);
+                logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.Name, value, flag2);
 #if false
-					if (ffmResolver != null && flag3)
-					{
-                        List<SwiInfoObj> infoObjectsByDiagObjectControlId = database.GetInfoObjectsByDiagObjectControlId(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver, true, null);
-						if (infoObjectsByDiagObjectControlId != null && infoObjectsByDiagObjectControlId.Count != 0)
-						{
-							bool? flag4 = ffmResolver.Resolve(this.value, infoObjectsByDiagObjectControlId.First<IXepInfoObject>());
-							vec.AddOrUpdateFFM(new FFMResult(equipmentById.Id, equipmentById.Name, "FFMResolver", flag4, false));
-							if (flag4 != null)
-							{
-								result = flag4.Value;
-							}
-							else
-							{
-								result = true;
-							}
-						}
-						else
-						{
-							result = false;
-						}
-					}
-					else
+                if (ffmResolver != null && flag2)
+                {
+                    IEnumerable<IXepInfoObjectRuleEvaluation> infoObjectsByDiagObjectControlId = dataProvider.GetInfoObjectsByDiagObjectControlId(value, vec, ffmResolver, getHidden: true, null);
+                    if (infoObjectsByDiagObjectControlId == null || !infoObjectsByDiagObjectControlId.Any())
+                    {
+                        logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to no fitting test modules found)", equipmentById.NAME, value);
+                        return false;
+                    }
+                    bool? flag3 = ffmResolver.Resolve(value, infoObjectsByDiagObjectControlId.First());
+                    vec.AddOrUpdateFFM(new FFMResultRuleEvaluation(equipmentById.ID, equipmentById.NAME, "FFMResolver", flag3, reeval: false));
+                    if (flag3.HasValue)
+                    {
+                        logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: {2}", equipmentById.NAME, value, flag3);
+                        return flag3.Value;
+                    }
+                    logger.Warning("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: True (due to result is unknown)", equipmentById.NAME, value);
+                    return true;
+                }
 #endif
-					if (flag3)
-					{
-						result = true;
-					}
-					else
-					{
-						result = false;
-					}
-				}
-			}
-			return result;
-		}
+                if (flag2)
+                {
+                    logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1}) result: true (due to rule evaluation returned true even so ffmResolver result is unknown because ffmResolver was null)", equipmentById.Name, value);
+                    return true;
+                }
+                logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to ffmResolver was null and rule evalauation was false)", equipmentById.Name, value);
+                return false;
+            }
+        }
 
 		public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
 		{
