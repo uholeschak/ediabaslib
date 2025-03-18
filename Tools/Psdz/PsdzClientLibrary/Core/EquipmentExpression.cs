@@ -55,26 +55,24 @@ namespace PsdzClient.Core
                 RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
                 bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, this.value.ToString(CultureInfo.InvariantCulture), ffmResolver);
                 logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.Name, value, flag2);
-#if false
                 if (ffmResolver != null && flag2)
                 {
-                    IEnumerable<IXepInfoObjectRuleEvaluation> infoObjectsByDiagObjectControlId = dataProvider.GetInfoObjectsByDiagObjectControlId(value, vec, ffmResolver, getHidden: true, null);
+                    List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = database.GetInfoObjectsByDiagObjectControlId(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver, getHidden: true, null);
                     if (infoObjectsByDiagObjectControlId == null || !infoObjectsByDiagObjectControlId.Any())
                     {
-                        logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to no fitting test modules found)", equipmentById.NAME, value);
+                        logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to no fitting test modules found)", equipmentById.Name, value);
                         return false;
                     }
                     bool? flag3 = ffmResolver.Resolve(value, infoObjectsByDiagObjectControlId.First());
-                    vec.AddOrUpdateFFM(new FFMResultRuleEvaluation(equipmentById.ID, equipmentById.NAME, "FFMResolver", flag3, reeval: false));
+                    vec.AddOrUpdateFFM(new FFMResultRuleEvaluation(Convert.ToDecimal(equipmentById.Id), equipmentById.Name, "FFMResolver", flag3, reeval: false));
                     if (flag3.HasValue)
                     {
-                        logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: {2}", equipmentById.NAME, value, flag3);
+                        logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: {2}", equipmentById.Name, value, flag3);
                         return flag3.Value;
                     }
-                    logger.Warning("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: True (due to result is unknown)", equipmentById.NAME, value);
+                    logger.Warning("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: True (due to result is unknown)", equipmentById.Name, value);
                     return true;
                 }
-#endif
                 if (flag2)
                 {
                     logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1}) result: true (due to rule evaluation returned true even so ffmResolver result is unknown because ffmResolver was null)", equipmentById.Name, value);

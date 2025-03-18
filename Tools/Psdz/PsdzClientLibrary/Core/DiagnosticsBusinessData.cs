@@ -441,7 +441,6 @@ namespace PsdzClient.Core
             return null;
         }
 
-
         internal decimal? ReadGwszFromEcus(IEcuKom ecuKom, List<EcuKomConfig> ecuKomconfigs)
         {
             foreach (EcuKomConfig ecuKomconfig in ecuKomconfigs)
