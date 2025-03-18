@@ -85,31 +85,31 @@ namespace PsdzClient.Core
 
 		public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
 		{
-			if (ecus.EcuCliques.ToList<long>().BinarySearch(this.value) >= 0)
-			{
-				return EEvaluationResult.VALID;
-			}
-			if (ecus.UnknownEcuCliques.ToList<long>().BinarySearch(this.value) >= 0)
-			{
-				return EEvaluationResult.MISSING_VARIANT;
-			}
-			return EEvaluationResult.INVALID;
+            if (ecus.EcuCliques.ToList().BinarySearch(value) >= 0)
+            {
+                return EEvaluationResult.VALID;
+            }
+            if (ecus.UnknownEcuCliques.ToList().BinarySearch(value) >= 0)
+            {
+                return EEvaluationResult.MISSING_VARIANT;
+            }
+            return EEvaluationResult.INVALID;
 		}
 
-		public override IList<long> GetUnknownVariantIds(EcuConfiguration ecus)
+        public override IList<long> GetUnknownVariantIds(EcuConfiguration ecus)
 		{
-			List<long> list = new List<long>();
-			if (ecus.UnknownEcuCliques.ToList<long>().BinarySearch(this.value) >= 0)
-			{
-				list.Add(this.value);
-			}
-			return list;
+            List<long> list = new List<long>();
+            if (ecus.UnknownEcuCliques.ToList().BinarySearch(value) >= 0)
+            {
+                list.Add(value);
+            }
+            return list;
 		}
 
-		public override void Serialize(MemoryStream ms)
+        public override void Serialize(MemoryStream ms)
 		{
-			ms.WriteByte(12);
-			base.Serialize(ms);
+            ms.WriteByte(12);
+            base.Serialize(ms);
 		}
 
         public override string ToFormula(FormulaConfig formulaConfig)
@@ -131,9 +131,9 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-		public override string ToString()
-		{
-			return "EcuClique=" + this.value.ToString(CultureInfo.InvariantCulture);
-		}
-	}
+        public override string ToString()
+        {
+            return "EcuClique=" + value.ToString(CultureInfo.InvariantCulture);
+        }
+    }
 }
