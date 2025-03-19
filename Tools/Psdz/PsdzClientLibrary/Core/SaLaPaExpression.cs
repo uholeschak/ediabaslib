@@ -11,20 +11,20 @@ namespace PsdzClient.Core
 {
 	public class SaLaPaExpression : SingleAssignmentExpression
 	{
-		public SaLaPaExpression()
-		{
-		}
+        public SaLaPaExpression()
+        {
+        }
 
-		public SaLaPaExpression(long saLaPaId)
-		{
-			this.value = saLaPaId;
-		}
+        public SaLaPaExpression(long saLaPaId)
+        {
+            value = saLaPaId;
+        }
 
-		public override void Serialize(MemoryStream ms)
-		{
-			ms.WriteByte(14);
-			base.Serialize(ms);
-		}
+        public override void Serialize(MemoryStream ms)
+        {
+            ms.WriteByte(14);
+            base.Serialize(ms);
+        }
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
@@ -45,46 +45,49 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-		public override string ToString()
-		{
-			return "SALAPA=" + this.value.ToString(CultureInfo.InvariantCulture);
-		}
+        public override string ToString()
+        {
+            return "SALAPA=" + value.ToString(CultureInfo.InvariantCulture);
+        }
 
-		public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
-		{
-			if (ecus.SaLaPas.Count != 0 && ecus.SaLaPas.ToList<long>().BinarySearch(this.value) < 0)
-			{
-				return EEvaluationResult.INVALID;
-			}
-			return EEvaluationResult.VALID;
-		}
+        public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
+        {
+            if (ecus.SaLaPas.Count == 0 || ecus.SaLaPas.ToList().BinarySearch(value) >= 0)
+            {
+                return EEvaluationResult.VALID;
+            }
+            return EEvaluationResult.INVALID;
+        }
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
-		{
-			if (vec == null)
-			{
-				return false;
-			}
-			PsdzDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
-			if (saLaPaById == null)
-			{
-				return false;
-			}
-			if (saLaPaById.ProductType != vec.Prodart)
-			{
-				return false;
-			}
-			bool flag;
-			if (vec.FA != null && vec.VehicleIdentLevel != IdentificationLevel.BasicFeatures && vec.VehicleIdentLevel != IdentificationLevel.VINOnly)
-			{
-				if (vec.VehicleIdentLevel != IdentificationLevel.VINBasedFeatures)
-				{
-					flag = vec.hasSA(saLaPaById.Name);
-					return flag;
-				}
-			}
-			flag = true;
-			return flag;
-		}
-	}
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+        {
+            if (vec == null)
+            {
+                return false;
+            }
+            PsdzDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
+            if (saLaPaById == null)
+            {
+                return false;
+            }
+            ILogger logger = ruleEvaluationServices.Logger;
+            if (saLaPaById.ProductType != vec.Prodart)
+            {
+                logger.Info("SaLaPaExpression.Evaluate()", "SALAPA: {0} result:false by non fitting product type [original rule: {1}]", saLaPaById.Name, value);
+                return false;
+            }
+            bool flag;
+            if (vec.FA == null || vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINOnly || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures)
+            {
+                flag = true;
+                logger.Info("SaLaPaExpression.Evaluate()", "SALAPA: {0} result:{1} by missing context [original rule: {2}]", saLaPaById.Name, flag, value);
+            }
+            else
+            {
+                flag = vec.hasSA(saLaPaById.Name);
+                logger.Debug("SaLaPaExpression.Evaluate()", "SALAPA: {0} result:{1} [original rule: {2}]", saLaPaById.Name, flag, value);
+            }
+            return flag;
+        }
+    }
 }
