@@ -56,11 +56,11 @@ namespace PsdzClient.Core
 
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
         {
-            if (ecus.IStufe != this.value && ecus.IStufe != 0L)
+            if (ecus.IStufe == value || ecus.IStufe == 0)
             {
-                return EEvaluationResult.INVALID;
+                return EEvaluationResult.VALID;
             }
-            return EEvaluationResult.VALID;
+            return EEvaluationResult.INVALID;
         }
 
         public override void Serialize(MemoryStream ms)
@@ -85,14 +85,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            return string.Concat(new object[]
-            {
-                "I-Stufe=",
-                this.IStufe,
-                " [",
-                this.value,
-                "]"
-            });
+            return "I-Stufe=" + IStufe + " [" + value + "]";
         }
 
         private string iStufe;

@@ -33,29 +33,30 @@ namespace PsdzClient.Core
             }
         }
 
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             this.vecInfo = vec;
             bool flag = false;
             try
             {
                 string outletCountry = ClientContext.GetCountry(this.vecInfo);
-                flag = (outletCountry == this.CountryCode);
+                flag = outletCountry == CountryCode;
+                ruleEvaluationServices.Logger.Debug("CountryExpression.Evaluate()", "Country: {0} result: {1} (session context: {2}) [original rule: {3}])", CountryCode, flag, outletCountry, value);
             }
             catch (Exception exception)
             {
-                Log.WarningException("CountryExpression.Evaluate()", exception);
+                ruleEvaluationServices.Logger.WarningException("CountryExpression.Evaluate()", exception);
             }
             return flag;
         }
 
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
         {
-            if (client.CountryId != this.value && client.CountryId != 0L)
+            if (client.CountryId == value || client.CountryId == 0)
             {
-                return EEvaluationResult.INVALID;
+                return EEvaluationResult.VALID;
             }
-            return EEvaluationResult.VALID;
+            return EEvaluationResult.INVALID;
         }
 
         public override void Serialize(MemoryStream ms)
@@ -78,14 +79,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            return string.Concat(new string[]
-            {
-                "Country=",
-                this.CountryCode,
-                " [",
-                this.value.ToString(CultureInfo.InvariantCulture),
-                "]"
-            });
+            return "Country=" + CountryCode + " [" + value.ToString(CultureInfo.InvariantCulture) + "]";
         }
 
         private string countryCode;
