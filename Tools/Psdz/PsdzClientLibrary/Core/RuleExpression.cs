@@ -90,6 +90,14 @@ namespace PsdzClient.Core
             VariableExpression
         }
 
+        public static IList<string> RuleEvaluationProtocol;
+
+        public const long MISSING_DATE_EXPRESSION = -1L;
+
+        protected const long MEMORYSIZE_OBJECT = 8L;
+
+        protected const long MEMORYSIZE_REFERENCE = 8L;
+
         // [UH] vec added
         // ToDo: Check on update
         public static RuleExpression Deserialize(Stream ms, Vehicle vec)
@@ -135,13 +143,13 @@ namespace PsdzClient.Core
 
         public static bool Evaluate(Vehicle vec, IRuleExpression exp, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils = null, ValidationRuleInternalResults internalResult = null)
         {
+            if (ruleEvaluationUtils == null)
+            {   // [UH] added
+                ruleEvaluationUtils = new RuleEvaluationServices(vec);
+            }
             if (internalResult == null)
             {
                 internalResult = new ValidationRuleInternalResults();
-            }
-            if (ruleEvaluationUtils == null)
-            {
-                ruleEvaluationUtils = new RuleEvaluationServices(vec);
             }
             if (exp is AndExpression || exp is OrExpression || exp is CharacteristicExpression || exp is DateExpression || exp is EcuCliqueExpression || exp is NotExpression || exp is SaLaPaExpression || exp is CountryExpression || exp is IStufeExpression || exp is IStufeXExpression || exp is EquipmentExpression || exp is ValidFromExpression || exp is ValidToExpression || exp is SiFaExpression || exp is EcuRepresentativeExpression || exp is ManufactoringDateExpression || exp is EcuVariantExpression || exp is EcuProgrammingVariantExpression)
             {
@@ -241,13 +249,5 @@ namespace PsdzClient.Core
         }
 
 		public abstract void Serialize(MemoryStream ms);
-
-		public static IList<string> RuleEvaluationProtocol;
-
-		public const long MISSING_DATE_EXPRESSION = -1L;
-
-		protected const long MEMORYSIZE_OBJECT = 8L;
-
-		protected const long MEMORYSIZE_REFERENCE = 8L;
 	}
 }
