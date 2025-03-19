@@ -13,54 +13,41 @@ namespace PsdzClient.Core
     {
         public SiFaExpression()
         {
-            this.value = -1L;
+            value = -1L;
         }
 
         public SiFaExpression(long accessSiFa)
         {
-            this.value = accessSiFa;
+            value = accessSiFa;
         }
 
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
             {
                 return false;
             }
 
-            if (!ClientContext.GetProtectionVehicleService(this.vecInfo))
-            {
-                return false;
-            }
-#if false
-            Dealer instance = Dealer.Instance;
-            if (instance != null && vec.BrandName != null)
-            {
-                bool flag = instance.HasProtectionVehicleService(vec.BrandName.Value);
-                return flag;
-            }
-#endif
-            return false;
+            bool flag = ClientContext.GetProtectionVehicleService(this.vecInfo);
+            ruleEvaluationServices.Logger.Debug("SiFaExpression.Evaluate()", "SiFa: {0}", flag);
+            return flag;
         }
 
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
         {
             if (client.AccessSiFa)
             {
-                if (this.value == 0L)
+                if (value == 0)
                 {
                     return EEvaluationResult.INVALID;
                 }
                 return EEvaluationResult.VALID;
             }
-            else
+            if (value == 0)
             {
-                if (this.value == 0L)
-                {
-                    return EEvaluationResult.VALID;
-                }
-                return EEvaluationResult.INVALID;
+                return EEvaluationResult.VALID;
             }
+            return EEvaluationResult.INVALID;
         }
 
         public override void Serialize(MemoryStream ms)
@@ -83,9 +70,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            string str = "SiFa=";
-            bool value = this.value != 0L;
-            return str + value.ToString();
+            return "SiFa=" + ((value != 0L) ? true : false);
         }
     }
 }
