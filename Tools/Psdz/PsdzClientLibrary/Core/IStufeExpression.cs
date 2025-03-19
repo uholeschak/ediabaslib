@@ -32,22 +32,24 @@ namespace PsdzClient.Core
             }
         }
 
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
             {
                 return false;
             }
 
-            this.vecInfo = vec;
+            this.vecInfo = vec; // [UH] added
             bool flag;
-            if (!string.IsNullOrEmpty(vec.ILevel) && !(vec.ILevel == "0"))
+            if (string.IsNullOrEmpty(vec.ILevel) || vec.ILevel == "0")
             {
-                flag = (vec.ILevel == this.IStufe);
+                flag = true;
+                ruleEvaluationServices.Logger.Info("IStufeExpression.Evaluate()", "IStufe: {0} result: {1} by missing context [original rule: {2}]", IStufe, flag, value);
             }
             else
             {
-                flag = true;
+                flag = vec.ILevel == IStufe;
+                ruleEvaluationServices.Logger.Debug("IStufeExpression.Evaluate()", "IStufe: {0} result: {1} [original rule: {2}]", IStufe, flag, value);
             }
             return flag;
         }
