@@ -11,7 +11,9 @@ namespace PsdzClient.Core
 {
 	public class EcuVariantExpression : SingleAssignmentExpression
 	{
-		public EcuVariantExpression()
+        public string VariantName { get; private set; }
+        
+        public EcuVariantExpression()
 		{
 		}
 
@@ -20,29 +22,13 @@ namespace PsdzClient.Core
 			this.value = ecuVariantId;
 		}
 
-		public string VariantName
-		{
-			get
-			{
-				if (string.IsNullOrEmpty(this.variantName))
-				{
-                    PsdzDatabase.EcuVar ecuVariantById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
-					if (ecuVariantById != null)
-					{
-						this.variantName = ecuVariantById.Name;
-					}
-					else
-					{
-						this.variantName = string.Empty;
-					}
-					return this.variantName;
-				}
-				return this.variantName;
-			}
-		}
-
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
+            if (vec == null)
+            {
+                ruleEvaluationServices.Logger.Warning("EcuVariantExpression.Evaluate()", "vec was null");
+                return false;
+            }
             this.vecInfo = vec;
             PsdzDatabase database = ClientContext.GetDatabase(this.vecInfo);
             if (database == null)
@@ -50,52 +36,45 @@ namespace PsdzClient.Core
                 return false;
             }
             PsdzDatabase.EcuVar ecuVariantById = database.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
-			if (ecuVariantById == null)
-			{
-				return false;
-			}
-			if (vec.VCI != null && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
-			{
-                RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationUtils, database);
-                if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuVariantById.Id, ffmResolver))
+            if (ecuVariantById == null)
+            {
+                ruleEvaluationServices.Logger.Warning("EcuVariantExpression.Evaluate()", "no valid variant information found for id: {0}", value);
+                return false;
+            }
+            VariantName = ecuVariantById.Name;
+            if (vec.VCI != null && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
+            {
+                RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
+                if (ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuVariantById.Id, ffmResolver))
                 {
-                    return false;
+                    PsdzDatabase.EcuGroup ecuGroupById = database.GetEcuGroupById(ecuVariantById.EcuGroupId);
+                    if (ecuGroupById != null)
+                    {
+                        if (ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuGroupById.Id, ffmResolver))
+                        {
+                            ruleEvaluationServices.Logger.Info("EcuVariantExpression.Evaluate()", "Infosession and manual VIN input => no ECU variant evaluation for {0} due to VehicleIdentLevel: {1} but found valid variant and valid group => true", VariantName, vec.VehicleIdentLevel);
+                            return true;
+                        }
+                        ruleEvaluationServices.Logger.Info("EcuVariantExpression.Evaluate()", "Infosession and manual VIN input => no ECU variant evaluation for {0} due to VehicleIdentLevel: {1} and found valid variant found without a valid group => false", VariantName, vec.VehicleIdentLevel);
+                        return false;
+                    }
+                    ruleEvaluationServices.Logger.Info("EcuVariantExpression.Evaluate()", "Infosession and manual VIN input => no ECU variant evaluation for {0} due to VehicleIdentLevel: {1} and found valid variant found without a group", VariantName, vec.VehicleIdentLevel);
+                    return true;
                 }
-				IEcuVariantLocator ecuVariantLocator = new EcuVariantLocator(ecuVariantById, vec, ffmResolver);
-				if (ecuVariantLocator == null)
-				{
-					return true;
-				}
-				if (ecuVariantLocator.Parents != null && ecuVariantLocator.Parents.Any<ISPELocator>())
-				{
-					foreach (ISPELocator ispelocator in ecuVariantLocator.Parents)
-					{
-						IEcuGroupLocator ecuGroupLocator = ispelocator as IEcuGroupLocator;
-						if (ecuGroupLocator != null)
-						{
-							if (database.EvaluateXepRulesById(ecuGroupLocator.SignedId, vec, ffmResolver, null))
-							{
-								return true;
-							}
-						}
-					}
-					return false;
-				}
-				return true;
-			}
-			else
-			{
-				if (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && vec.ECU != null && vec.ECU.Count == 0)
-				{
-					return true;
-				}
-                bool flag = vec.getECUbyECU_SGBD(VariantName) != null;
-                // Log.Debug("EcuVariantExpression.Evaluate()", "EcuVariantId: {0} (original rule: {1})  result: {2}", value, VariantName, flag);
-                return flag;
-			}
-		}
+                ruleEvaluationServices.Logger.Info("EcuVariantExpression.Evaluate()", "Infosession and manual VIN input => no ECU variant evaluation for {0} due to VehicleIdentLevel: {1} and found NO valid variant and NO valid group", VariantName, vec.VehicleIdentLevel);
+                return false;
+            }
+            if (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && vec.ECU != null && !vec.ECU.Any())
+            {
+                ruleEvaluationServices.Logger.Info("EcuVariantExpression.Evaluate()", "Infosession and manual VIN input => no ECU variant evaluation for {0} due to VehicleIdentLevel: {1}", VariantName, vec.VehicleIdentLevel);
+                return true;
+            }
+            bool flag = vec.getECUbyECU_SGBD(VariantName) != null;
+            ruleEvaluationServices.Logger.Debug("EcuVariantExpression.Evaluate()", "EcuVariantId: {0} (original rule: {1})  result: {2}", value, VariantName, flag);
+            return flag;
+        }
 
-		public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
+        public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
 		{
 			if (ecus.EcuVariants.ToList<long>().BinarySearch(this.value) >= 0)
 			{
