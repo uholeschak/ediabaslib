@@ -18,18 +18,16 @@ namespace PsdzClient.Core
             this.value = date.ToBinary();
         }
 
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             bool flag = ((DateTime.Now <= DateTime.FromBinary(value)) ? true : false);
-            if (CoreFramework.DebugLevel > 1)
-            {
-                Trace.TraceInformation("{0} ValidToExpression.Evaluate() - ValidTo: {1} (original value: {2}) result: {3}", DateTime.Now, DateTime.FromBinary(value), value, flag);
-            }
+            ruleEvaluationServices.Logger.Debug(ruleEvaluationServices.Logger.CurrentMethod(), "{0} ValidToExpression.Evaluate() - ValidTo: {1} (original value: {2}) result: {3}", DateTime.Now, DateTime.FromBinary(value), value, flag);
             return flag;
         }
+
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
         {
-            if (client.ClientDate <= DateTime.FromBinary(this.value))
+            if (client.ClientDate <= DateTime.FromBinary(value))
             {
                 return EEvaluationResult.VALID;
             }
@@ -58,7 +56,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            return "ValidTo=" + DateTime.FromBinary(this.value).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
+            return "ValidTo=" + DateTime.FromBinary(value).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
         }
     }
 }

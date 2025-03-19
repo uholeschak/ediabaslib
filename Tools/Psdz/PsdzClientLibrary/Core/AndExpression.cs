@@ -44,38 +44,42 @@ namespace PsdzClient.Core
 
 		public new static AndExpression Deserialize(Stream ms, Vehicle vec)
 		{
-			byte[] bytes = BitConverter.GetBytes(0);
-			ms.Read(bytes, 0, bytes.Length);
-			int num = BitConverter.ToInt32(bytes, 0);
-			AndExpression andExpression = new AndExpression();
-			for (int i = 0; i < num; i++)
-			{
-				andExpression.AddOperand(RuleExpression.Deserialize(ms, vec));
-			}
-			return andExpression;
-		}
+            int value = 0;
+            byte[] bytes = BitConverter.GetBytes(value);
+            ms.Read(bytes, 0, bytes.Length);
+            value = BitConverter.ToInt32(bytes, 0);
+            AndExpression andExpression = new AndExpression();
+            for (int i = 0; i < value; i++)
+            {
+                andExpression.AddOperand(RuleExpression.Deserialize(ms, vec));
+            }
+            return andExpression;
+        }
 
-		public void AddOperand(RuleExpression operand)
-		{
-			RuleExpression[] array = new RuleExpression[this.operands.Length + 1];
-			Array.Copy(this.operands, array, this.operands.Length);
-			array[array.Length - 1] = operand;
-			this.operands = array;
-		}
+        public void AddOperand(RuleExpression operand)
+        {
+            RuleExpression[] array = new RuleExpression[operands.Length + 1];
+            Array.Copy(operands, array, operands.Length);
+            array[array.Length - 1] = operand;
+            operands = array;
+        }
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
 		{
-			internalResult.RuleExpression = this;
-			foreach (RuleExpression ruleExpression in this.operands)
-			{
-				bool flag = RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
-				if (!flag)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
+            internalResult.RuleExpression = this;
+            RuleExpression[] array = operands;
+            foreach (RuleExpression ruleExpression in array)
+            {
+                ruleEvaluationServices.Logger.Debug("AndExpression.Evaluate()", "operand: {0}", ruleExpression);
+                bool flag = RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationServices, internalResult);
+                ruleEvaluationServices.Logger.Debug("AndExpression.Evaluate()", "validity: {0} for operand: {1}", flag, ruleExpression);
+                if (!flag)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
 		public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)
 		{
@@ -107,119 +111,123 @@ namespace PsdzClient.Core
 
 		public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
 		{
-			bool flag = false;
-			this.missingCharacteristics.Clear();
-			this.missingVariants.Clear();
-			EEvaluationResult result = EEvaluationResult.VALID;
-			foreach (RuleExpression ruleExpression in this.operands)
-			{
-				EEvaluationResult eevaluationResult = ruleExpression.EvaluateVariantRule(client, baseConfiguration, ecus);
-				switch (eevaluationResult)
-				{
-					case EEvaluationResult.VALID:
-						break;
-					case EEvaluationResult.INVALID:
-						this.missingCharacteristics.Clear();
-						this.missingVariants.Clear();
-						return eevaluationResult;
-					case EEvaluationResult.MISSING_CHARACTERISTIC:
-						this.missingCharacteristics.AddRange(ruleExpression.GetUnknownCharacteristics(baseConfiguration));
-						if (!flag)
-						{
-							flag = true;
-							result = eevaluationResult;
-						}
-						break;
-					case EEvaluationResult.MISSING_VARIANT:
-						this.missingVariants.AddRange(ruleExpression.GetUnknownVariantIds(ecus));
-						if (!flag)
-						{
-							flag = true;
-							result = eevaluationResult;
-						}
-						break;
-					default:
-						throw new Exception("Unknown result");
-				}
-			}
-			return result;
-		}
+            bool flag = false;
+            missingCharacteristics.Clear();
+            missingVariants.Clear();
+            EEvaluationResult result = EEvaluationResult.VALID;
+            RuleExpression[] array = operands;
+            foreach (RuleExpression ruleExpression in array)
+            {
+                EEvaluationResult eEvaluationResult = ruleExpression.EvaluateVariantRule(client, baseConfiguration, ecus);
+                switch (eEvaluationResult)
+                {
+                    case EEvaluationResult.INVALID:
+                        missingCharacteristics.Clear();
+                        missingVariants.Clear();
+                        return eEvaluationResult;
+                    case EEvaluationResult.MISSING_CHARACTERISTIC:
+                        missingCharacteristics.AddRange(ruleExpression.GetUnknownCharacteristics(baseConfiguration));
+                        if (!flag)
+                        {
+                            flag = true;
+                            result = eEvaluationResult;
+                        }
+                        break;
+                    case EEvaluationResult.MISSING_VARIANT:
+                        missingVariants.AddRange(ruleExpression.GetUnknownVariantIds(ecus));
+                        if (!flag)
+                        {
+                            flag = true;
+                            result = eEvaluationResult;
+                        }
+                        break;
+                    default:
+                        throw new Exception("Unknown result");
+                    case EEvaluationResult.VALID:
+                        break;
+                }
+            }
+            return result;
+        }
 
-		public override long GetExpressionCount()
-		{
-			long num = 1L;
-			foreach (RuleExpression ruleExpression in this.operands)
-			{
-				num += ruleExpression.GetExpressionCount();
-			}
-			return num;
-		}
+        public override long GetExpressionCount()
+        {
+            long num = 1L;
+            RuleExpression[] array = operands;
+            foreach (RuleExpression ruleExpression in array)
+            {
+                num += ruleExpression.GetExpressionCount();
+            }
+            return num;
+        }
 
-		public override long GetMemorySize()
-		{
-			long num = (long)this.operands.Length * 8L + 8L;
-			foreach (RuleExpression ruleExpression in this.operands)
-			{
-				num += ruleExpression.GetMemorySize();
-			}
-			return num;
-		}
+        public override long GetMemorySize()
+        {
+            long num = (long)operands.Length * 8L + 8;
+            RuleExpression[] array = operands;
+            foreach (RuleExpression ruleExpression in array)
+            {
+                num += ruleExpression.GetMemorySize();
+            }
+            return num;
+        }
 
-		public override IList<long> GetUnknownCharacteristics(CharacteristicSet baseConfiguration)
-		{
-			return this.missingCharacteristics;
-		}
+        public override IList<long> GetUnknownCharacteristics(CharacteristicSet baseConfiguration)
+        {
+            return missingCharacteristics;
+        }
 
-		public override IList<long> GetUnknownVariantIds(EcuConfiguration ecus)
-		{
-			return this.missingVariants;
-		}
+        public override IList<long> GetUnknownVariantIds(EcuConfiguration ecus)
+        {
+            return missingVariants;
+        }
 
-		public override void Optimize()
-		{
-			List<RuleExpression> list = new List<RuleExpression>();
-			foreach (RuleExpression ruleExpression in this.operands)
-			{
-				ruleExpression.Optimize();
-				if (ruleExpression is OrExpression)
-				{
-					OrExpression orExpression = (OrExpression)ruleExpression;
-					if (orExpression.Length == 1)
-					{
-						list.Add(orExpression[0]);
-					}
-					else
-					{
-						list.Add(orExpression);
-					}
-				}
-				else if (ruleExpression is AndExpression)
-				{
-					AndExpression andExpression = (AndExpression)ruleExpression;
-					if (andExpression.operands.Length != 0)
-					{
-						list.AddRange(andExpression.operands);
-					}
-				}
-				else
-				{
-					list.Add(ruleExpression);
-				}
-			}
-			this.operands = list.ToArray();
-		}
+        public override void Optimize()
+        {
+            List<RuleExpression> list = new List<RuleExpression>();
+            RuleExpression[] array = operands;
+            foreach (RuleExpression ruleExpression in array)
+            {
+                ruleExpression.Optimize();
+                if (ruleExpression is OrExpression)
+                {
+                    OrExpression orExpression = (OrExpression)ruleExpression;
+                    if (orExpression.Length == 1)
+                    {
+                        list.Add(orExpression[0]);
+                    }
+                    else
+                    {
+                        list.Add(orExpression);
+                    }
+                }
+                else if (ruleExpression is AndExpression)
+                {
+                    AndExpression andExpression = (AndExpression)ruleExpression;
+                    if (andExpression.operands.Length != 0)
+                    {
+                        list.AddRange(andExpression.operands);
+                    }
+                }
+                else
+                {
+                    list.Add(ruleExpression);
+                }
+            }
+            operands = list.ToArray();
+        }
 
-		public override void Serialize(MemoryStream ms)
-		{
-			ms.WriteByte(1);
-			byte[] bytes = BitConverter.GetBytes(this.operands.Length);
-			ms.Write(bytes, 0, bytes.Length);
-			RuleExpression[] array = this.operands;
-			for (int i = 0; i < array.Length; i++)
-			{
-				array[i].Serialize(ms);
-			}
-		}
+        public override void Serialize(MemoryStream ms)
+        {
+            ms.WriteByte(1);
+            byte[] bytes = BitConverter.GetBytes(operands.Length);
+            ms.Write(bytes, 0, bytes.Length);
+            RuleExpression[] array = operands;
+            foreach (RuleExpression ruleExpression in array)
+            {
+                ruleExpression.Serialize(ms);
+            }
+        }
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
@@ -237,23 +245,23 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-		public override string ToString()
-		{
-			StringBuilder stringBuilder = new StringBuilder();
-			stringBuilder.Append("(");
-			for (int i = 0; i < this.operands.Length; i++)
-			{
-				if (i > 0)
-				{
-					stringBuilder.Append(" AND ");
-				}
-				stringBuilder.Append(this.operands[i]);
-			}
-			stringBuilder.Append(")");
-			return stringBuilder.ToString();
-		}
+        public override string ToString()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("(");
+            for (int i = 0; i < operands.Length; i++)
+            {
+                if (i > 0)
+                {
+                    stringBuilder.Append(" AND ");
+                }
+                stringBuilder.Append(operands[i]);
+            }
+            stringBuilder.Append(")");
+            return stringBuilder.ToString();
+        }
 
-		private readonly List<long> missingCharacteristics = new List<long>();
+        private readonly List<long> missingCharacteristics = new List<long>();
 
 		private readonly List<long> missingVariants = new List<long>();
 
