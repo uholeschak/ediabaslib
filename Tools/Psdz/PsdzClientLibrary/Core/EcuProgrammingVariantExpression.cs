@@ -9,54 +9,50 @@ namespace PsdzClient.Core
 {
 	public class EcuProgrammingVariantExpression : SingleAssignmentExpression
 	{
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
-		{
-			bool result;
-			try
-			{
-				if (vec == null)
-				{
-					Log.Warning("EcuProgrammingVariantExpression.Evaluate()", "vec was null", Array.Empty<object>());
-					result = false;
-				}
-				else
+        private PsdzDatabase.EcuPrgVar programmingVariant;
+
+        private PsdzDatabase.EcuVar ecuVariant;
+
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+        {
+            ILogger logger = ruleEvaluationServices.Logger; 
+            try
+            {
+                if (vec == null)
                 {
-					this.programmingVariant = ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
-                    if (this.programmingVariant == null)
-					{
-						result = false;
-					}
-					else
-					{
-						this.ecuVariant = ClientContext.GetDatabase(vec)?.GetEcuVariantById(this.programmingVariant.EcuVarId);
-						if (this.ecuVariant == null)
-						{
-							result = false;
-						}
-						else if ((from c in vec.ECU
-								  where c.ProgrammingVariantName != null && c.VARIANTE != null && c.ProgrammingVariantName.Equals(this.programmingVariant.Name, StringComparison.OrdinalIgnoreCase) && c.VARIANTE.Equals(this.ecuVariant.Name, StringComparison.OrdinalIgnoreCase)
-								  select c).Any<ECU>())
-						{
-							result = true;
-						}
-						else
-						{
-							result = false;
-						}
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException("EcuProgrammingVariantExpression.Evaluate()", exception);
-				result = false;
-			}
-			finally
-			{
-				Log.Info(Log.CurrentMethod(), this.ToString(), Array.Empty<object>());
-			}
-			return result;
-		}
+                    logger.Warning(logger.CurrentMethod(), "vec was null");
+                    return false;
+                }
+
+                this.programmingVariant = ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
+                if (programmingVariant == null)
+                {
+                    logger.Warning(logger.CurrentMethod(), "no valid programming variant information found for id: {0}", value);
+                    return false;
+                }
+                this.ecuVariant = ClientContext.GetDatabase(vec)?.GetEcuVariantById(this.programmingVariant.EcuVarId);
+                if (ecuVariant == null)
+                {
+                    logger.Warning(logger.CurrentMethod(), "no valid EcuVariant information found for id: {0}", value);
+                    return false;
+                }
+                IEnumerable<IIdentEcu> source = vec.ECU.Where((IIdentEcu c) => c.ProgrammingVariantName != null && c.VARIANTE != null && c.ProgrammingVariantName.Equals(programmingVariant.Name, StringComparison.OrdinalIgnoreCase) && c.VARIANTE.Equals(ecuVariant.Name, StringComparison.OrdinalIgnoreCase));
+                if (source.Any())
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception exception)
+            {
+                logger.WarningException(logger.CurrentMethod(), exception);
+                return false;
+            }
+            finally
+            {
+                logger.Info(logger.CurrentMethod(), ToString());
+            }
+        }
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
@@ -109,17 +105,13 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-		public override string ToString()
-		{
-			if (this.programmingVariant != null && this.ecuVariant != null)
-			{
-				return "EcuProgrammingVariant: ProgrammingVariantName= " + this.programmingVariant.Name + " And VARIANTE= " + this.ecuVariant.Name;
-			}
-			return string.Format("EcuProgrammingVariant: ID= {0}", this.value);
-		}
-
-		private PsdzDatabase.EcuPrgVar programmingVariant;
-
-		private PsdzDatabase.EcuVar ecuVariant;
-	}
+        public override string ToString()
+        {
+            if (programmingVariant != null && ecuVariant != null)
+            {
+                return "EcuProgrammingVariant: ProgrammingVariantName= " + programmingVariant.Name + " And VARIANTE= " + ecuVariant.Name;
+            }
+            return $"EcuProgrammingVariant: ID= {value}";
+        }
+    }
 }
