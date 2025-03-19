@@ -38,7 +38,6 @@ namespace PsdzClient.Core
 			{
 				return true;
 			}
-            this.vecInfo = vec; // [UH] added
             RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
             if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuClique.Id, ffmResolver))
             {

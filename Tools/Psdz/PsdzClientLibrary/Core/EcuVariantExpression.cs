@@ -29,8 +29,7 @@ namespace PsdzClient.Core
                 ruleEvaluationServices.Logger.Warning("EcuVariantExpression.Evaluate()", "vec was null");
                 return false;
             }
-            this.vecInfo = vec;
-            PsdzDatabase database = ClientContext.GetDatabase(this.vecInfo);
+            PsdzDatabase database = ClientContext.GetDatabase(vec);
             if (database == null)
             {
                 return false;
