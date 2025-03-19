@@ -22,13 +22,13 @@ namespace PsdzClient.Core
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
 		{
-			bool flag = false;
 			PsdzDatabase database = ClientContext.GetDatabase(vec);
             if (database == null)
             {
                 return false;
             }
 
+            bool flag = false;
             PsdzDatabase.EcuClique ecuClique = database.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture));
 			if (vec == null)
 			{
@@ -38,6 +38,7 @@ namespace PsdzClient.Core
 			{
 				return true;
 			}
+            this.vecInfo = vec; // [UH] added
             RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
             if (!ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuClique.Id, ffmResolver))
             {
