@@ -20,7 +20,7 @@ namespace PsdzClient.Core
 
         // [UH] vec added
         // ToDo: Check on update
-        public static RuleExpression Deserialize(Stream ms, EExpressionType type, Vehicle vec)
+        public static RuleExpression Deserialize(Stream ms, EExpressionType type, ILogger logger, Vehicle vec)
         {
             byte[] buffer = new byte[8];
             ms.Read(buffer, 0, 8);
@@ -65,7 +65,7 @@ namespace PsdzClient.Core
                     singleAssignmentExpression = new ValidToExpression();
                     break;
                 default:
-                    Log.Warning("SingleAssignmentExpression.Deserialize()", "unhandled SingleAssignmentExpression found: {0}", type.ToString());
+                    logger.Warning("SingleAssignmentExpression.Deserialize()", "unhandled SingleAssignmentExpression found: {0}", type.ToString());
                     throw new Exception("Unknown expression type");
             }
             singleAssignmentExpression.value = num;

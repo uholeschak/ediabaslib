@@ -100,7 +100,7 @@ namespace PsdzClient.Core
 
         // [UH] vec added
         // ToDo: Check on update
-        public static RuleExpression Deserialize(Stream ms, Vehicle vec)
+        public static RuleExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();
             EExpressionType eExpressionType = (EExpressionType)b;
@@ -109,17 +109,17 @@ namespace PsdzClient.Core
                 case EExpressionType.COMP:
                     return CompareExpression.Deserialize(ms, vec);
                 case EExpressionType.AND:
-                    return AndExpression.Deserialize(ms, vec);
+                    return AndExpression.Deserialize(ms, logger, vec);
                 case EExpressionType.OR:
-                    return OrExpression.Deserialize(ms, vec);
+                    return OrExpression.Deserialize(ms, logger, vec);
                 case EExpressionType.NOT:
-                    return NotExpression.Deserialize(ms, vec);
+                    return NotExpression.Deserialize(ms, logger, vec);
                 case EExpressionType.DATE:
                     return DateExpression.Deserialize(ms, vec);
                 case EExpressionType.CHARACTERISTIC:
                     return CharacteristicExpression.Deserialize(ms, vec);
                 case EExpressionType.MANUFACTORINGDATE:
-                    return ManufactoringDateExpression.Deserialize(ms, vec);
+                    return ManufactoringDateExpression.Deserialize(ms, logger, vec);
                 case EExpressionType.ISTUFEX:
                     return IStufeXExpression.Deserialize(ms, vec);
                 case EExpressionType.ISTUFE:
@@ -134,7 +134,7 @@ namespace PsdzClient.Core
                 case EExpressionType.SIFA:
                 case EExpressionType.ECUREPRESENTATIVE:
                 case EExpressionType.ECUPROGRAMMINGVARIANT:
-                    return SingleAssignmentExpression.Deserialize(ms, eExpressionType, vec);
+                    return SingleAssignmentExpression.Deserialize(ms, eExpressionType, logger, vec);
                 default:
                     Log.Error("RuleExpression.Deserialize()", "Unknown Expression-Type");
                     throw new Exception("Unknown Expression-Type");

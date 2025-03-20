@@ -1257,7 +1257,7 @@ namespace PsdzClient
                     try
                     {
                         log.InfoFormat("EvaluateRule Create expression");
-                        RuleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), vehicle);
+                        RuleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), new NugetLogger(), vehicle);
                     }
                     catch (Exception e)
                     {
@@ -1292,7 +1292,7 @@ namespace PsdzClient
 
                 try
                 {
-                    RuleExpression ruleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), vehicle);
+                    RuleExpression ruleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), new NugetLogger(), vehicle);
                     return ruleExpression.ToString();
                 }
                 catch (Exception e)
@@ -1313,7 +1313,7 @@ namespace PsdzClient
 
                 try
                 {
-                    RuleExpression ruleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), vehicle);
+                    RuleExpression ruleExpression = RuleExpression.Deserialize(new MemoryStream(Rule), new NugetLogger(), vehicle);
                     RuleExpression.FormulaConfig formulaConfigCurrent = formulaConfig;
                     if (formulaConfigCurrent == null)
                     {

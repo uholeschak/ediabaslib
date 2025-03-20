@@ -27,9 +27,9 @@ namespace PsdzClient.Core
 			}
 		}
 
-		public new static NotExpression Deserialize(Stream ms, Vehicle vec)
+		public new static NotExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
 		{
-			return new NotExpression(RuleExpression.Deserialize(ms, vec));
+			return new NotExpression(RuleExpression.Deserialize(ms, logger, vec));
 		}
 
 		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
