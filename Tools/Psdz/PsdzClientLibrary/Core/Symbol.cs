@@ -6,27 +6,21 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-    public class Symbol
+    internal class Symbol
     {
-        public Symbol()
-        {
-            this.type = RuleExpression.ESymbolType.Unknown;
-        }
+        private RuleExpression.ESymbolType type;
 
-        public Symbol(RuleExpression.ESymbolType type)
-        {
-            this.type = type;
-        }
+        private object value;
 
         public RuleExpression.ESymbolType Type
         {
             get
             {
-                return this.type;
+                return type;
             }
             set
             {
-                this.type = value;
+                type = value;
             }
         }
 
@@ -34,7 +28,7 @@ namespace PsdzClient.Core
         {
             get
             {
-                return this.value;
+                return value;
             }
             set
             {
@@ -42,8 +36,14 @@ namespace PsdzClient.Core
             }
         }
 
-        private RuleExpression.ESymbolType type;
+        public Symbol()
+        {
+            type = RuleExpression.ESymbolType.Unknown;
+        }
 
-        private object value;
+        public Symbol(RuleExpression.ESymbolType type)
+        {
+            this.type = type;
+        }
     }
 }
