@@ -13,72 +13,71 @@ namespace PsdzClient.Core
 	[Serializable]
 	public class CharacteristicExpression : RuleExpression
 	{
-        public CharacteristicExpression(long dataclassId, long datavalueId, Vehicle vec)
-		{
-			this.dataclassId = dataclassId;
-			this.datavalueId = datavalueId;
-            this.vecInfo = vec;
-            this.CharacteristicRoot = this.GetCharacteristicRootFromDb();
-            this.CharacteristicValue = this.GetCharacteristicValueFromDb();
+        private readonly long dataclassId;
+
+        private readonly long datavalueId;
+
+        private string characteristicRoot;
+
+        private string characteristicValue;
+
+        private readonly PsdzDatabase dataProvider;
+
+        private ILogger logger;
+
+        public long DataClassId => dataclassId;
+
+        public long DataValueId => datavalueId;
+
+        private string CharacteristicRoot
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(characteristicRoot))
+                {
+                    CharacteristicRoot = GetCharacteristicRootFromDb(dataProvider);
+                }
+                return characteristicRoot;
+            }
+            set
+            {
+                characteristicRoot = value;
+            }
         }
 
-		public long DataClassId
-		{
-			get
-			{
-				return this.dataclassId;
-			}
-		}
+        private string CharacteristicValue
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(characteristicValue))
+                {
+                    CharacteristicValue = GetCharacteristicValueFromDb(dataProvider);
+                    return characteristicValue;
+                }
+                return characteristicValue;
+            }
+            set
+            {
+                characteristicValue = value;
+            }
+        }
+        public CharacteristicExpression(long dataclassId, long datavalueId, Vehicle vec)
+        {
+            this.dataclassId = dataclassId;
+            this.datavalueId = datavalueId;
+            this.dataProvider = ClientContext.GetDatabase(vec);
+            CharacteristicRoot = GetCharacteristicRootFromDb(this.dataProvider);
+            CharacteristicValue = GetCharacteristicValueFromDb(this.dataProvider);
+        }
 
-		public long DataValueId
-		{
-			get
-			{
-				return this.datavalueId;
-			}
-		}
-
-		private string CharacteristicRoot
-		{
-			get
-			{
-				if (string.IsNullOrEmpty(this.characteristicRoot))
-				{
-					this.CharacteristicRoot = this.GetCharacteristicRootFromDb();
-				}
-				return this.characteristicRoot;
-			}
-			set
-			{
-				this.characteristicRoot = value;
-			}
-		}
-
-		private string CharacteristicValue
-		{
-			get
-			{
-				if (string.IsNullOrEmpty(this.characteristicValue))
-				{
-					this.CharacteristicValue = this.GetCharacteristicValueFromDb();
-					return this.characteristicValue;
-				}
-				return this.characteristicValue;
-			}
-			set
-			{
-				this.characteristicValue = value;
-			}
-		}
-
-		public new static CharacteristicExpression Deserialize(Stream ms, Vehicle vec)
-		{
-			byte[] array = new byte[16];
-			ms.Read(array, 0, 16);
-			long num = BitConverter.ToInt64(array, 0);
-			long num2 = BitConverter.ToInt64(array, 8);
-			return new CharacteristicExpression(num, num2, vec);
-		}
+        public new static CharacteristicExpression Deserialize(Stream ms, Vehicle vec)
+        {
+            byte[] array = new byte[16];
+            ms.Read(array, 0, 16);
+            long num = BitConverter.ToInt64(array, 0);
+            long num2 = BitConverter.ToInt64(array, 8);
+            return new CharacteristicExpression(num, num2, vec);
+        }
 
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
@@ -111,7 +110,7 @@ namespace PsdzClient.Core
         }
 
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
-		{
+        {
             if (baseConfiguration.Characteristics.TryGetValue(dataclassId, out var value))
             {
                 if (value == datavalueId)
@@ -121,34 +120,33 @@ namespace PsdzClient.Core
                 return EEvaluationResult.INVALID;
             }
             return EEvaluationResult.MISSING_CHARACTERISTIC;
-		}
+        }
 
         public override long GetExpressionCount()
-		{
-			return 1L;
-		}
+        {
+            return 1L;
+        }
 
-		public override long GetMemorySize()
-		{
-			return 24L;
-		}
+        public override long GetMemorySize()
+        {
+            return 24L;
+        }
 
-		public override IList<long> GetUnknownCharacteristics(CharacteristicSet baseConfiguration)
-		{
-			List<long> list = new List<long>();
-			if (!baseConfiguration.Characteristics.ContainsKey(this.dataclassId))
-			{
-				list.Add(this.dataclassId);
-			}
-			return list;
-		}
+        public override IList<long> GetUnknownCharacteristics(CharacteristicSet baseConfiguration)
+        {
+            List<long> list = new List<long>();
+            if (!baseConfiguration.Characteristics.ContainsKey(dataclassId))
+            {
+                list.Add(dataclassId);
+            }
+            return list;
+        }
 
-		public override void Serialize(MemoryStream ms)
-		{
-			ms.WriteByte(17);
-			ms.Write(BitConverter.GetBytes(this.dataclassId), 0, 8);
-			ms.Write(BitConverter.GetBytes(this.datavalueId), 0, 8);
-		}
+        public override void Serialize(MemoryStream ms)
+        {
+            ms.WriteByte(17);
+            ms.Write(BitConverter.GetBytes(datavalueId), 0, 8);
+        }
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
@@ -168,36 +166,33 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-		public override string ToString()
-		{
-			return string.Concat(new string[]
-			{
-				this.CharacteristicRoot,
-				"=",
-				this.CharacteristicValue,
-				" [",
-				this.dataclassId.ToString(CultureInfo.InvariantCulture),
-				"=",
-				this.datavalueId.ToString(CultureInfo.InvariantCulture),
-				"]"
-			});
-		}
+        public override string ToString()
+        {
+            string[] obj = new string[8] { CharacteristicRoot, "=", CharacteristicValue, " [", null, null, null, null };
+            long num = dataclassId;
+            obj[4] = num.ToString(CultureInfo.InvariantCulture);
+            obj[5] = "=";
+            num = datavalueId;
+            obj[6] = num.ToString(CultureInfo.InvariantCulture);
+            obj[7] = "]";
+            return string.Concat(obj);
+        }
 
-		private string GetCharacteristicRootFromDb()
-		{
-			string result = string.Empty;
-            PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this.vecInfo)?.GetCharacteristicRootsById(this.dataclassId.ToString(CultureInfo.InvariantCulture));
-			if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
-			{
-				result = characteristicRootsById.EcuTranslation.TextDe;
-			}
-			return result;
-		}
+        private string GetCharacteristicRootFromDb(PsdzDatabase database)
+        {
+            string result = string.Empty;
+            PsdzDatabase.CharacteristicRoots characteristicRootsById = database?.GetCharacteristicRootsById(this.dataclassId.ToString(CultureInfo.InvariantCulture));
+            if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
+            {
+                result = characteristicRootsById.EcuTranslation.TextDe;
+            }
+            return result;
+        }
 
-		private string GetCharacteristicValueFromDb()
-		{
-			return ClientContext.GetDatabase(this.vecInfo)?.LookupVehicleCharDeDeById(this.datavalueId.ToString(CultureInfo.InvariantCulture));
-		}
+        private string GetCharacteristicValueFromDb(PsdzDatabase database)
+        {
+            return database?.LookupVehicleCharDeDeById(this.datavalueId.ToString(CultureInfo.InvariantCulture));
+        }
 
         private string GetBrandNameAsString(BrandName brand)
         {
@@ -224,17 +219,5 @@ namespace PsdzClient.Core
                     return string.Empty;
             }
         }
-
-        private readonly long dataclassId;
-
-		private readonly long datavalueId;
-
-		private string characteristicRoot;
-
-		private string characteristicValue;
-
-        private ILogger logger;
-
-        private Vehicle vecInfo;
     }
 }
