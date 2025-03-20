@@ -10,40 +10,40 @@ namespace PsdzClient.Core
 	[Serializable]
 	public class AndExpression : RuleExpression
 	{
+        private readonly List<long> missingCharacteristics = new List<long>();
+
+        private readonly List<long> missingVariants = new List<long>();
+
+        private RuleExpression[] operands;
+
+        public int Length => operands.Length;
+
+        public RuleExpression this[int index]
+        {
+            get
+            {
+                return operands[index];
+            }
+            set
+            {
+                operands[index] = value;
+            }
+        }
+
         public AndExpression()
-		{
-			this.operands = new RuleExpression[0];
-		}
+        {
+            operands = new RuleExpression[0];
+        }
 
-		public AndExpression(RuleExpression firstOperand, RuleExpression secondOperand)
-		{
-			this.operands = new RuleExpression[2];
-			this.operands[0] = firstOperand;
-			this.operands[1] = secondOperand;
-		}
+        public AndExpression(RuleExpression firstOperand, RuleExpression secondOperand)
+        {
+            operands = new RuleExpression[2];
+            operands[0] = firstOperand;
+            operands[1] = secondOperand;
+        }
 
-		public int Length
-		{
-			get
-			{
-				return this.operands.Length;
-			}
-		}
-
-		public RuleExpression this[int index]
-		{
-			get
-			{
-				return this.operands[index];
-			}
-			set
-			{
-				this.operands[index] = value;
-			}
-		}
-
-		public new static AndExpression Deserialize(Stream ms, Vehicle vec)
-		{
+        public new static AndExpression Deserialize(Stream ms, Vehicle vec)
+        {
             int value = 0;
             byte[] bytes = BitConverter.GetBytes(value);
             ms.Read(bytes, 0, bytes.Length);
@@ -65,7 +65,7 @@ namespace PsdzClient.Core
         }
 
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
-		{
+        {
             internalResult.RuleExpression = this;
             RuleExpression[] array = operands;
             foreach (RuleExpression ruleExpression in array)
@@ -81,36 +81,36 @@ namespace PsdzClient.Core
             return true;
         }
 
-		public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)
-		{
-			RuleExpression[] array = this.operands;
-			for (int i = 0; i < array.Length; i++)
-			{
-				EEvaluationResult eevaluationResult = array[i].EvaluateEmpiricalRule(premises);
-				if (eevaluationResult != EEvaluationResult.VALID)
-				{
-					return eevaluationResult;
-				}
-			}
-			return EEvaluationResult.VALID;
-		}
+        public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)
+        {
+            RuleExpression[] array = operands;
+            foreach (RuleExpression ruleExpression in array)
+            {
+                EEvaluationResult eEvaluationResult = ruleExpression.EvaluateEmpiricalRule(premises);
+                if (eEvaluationResult != 0)
+                {
+                    return eEvaluationResult;
+                }
+            }
+            return EEvaluationResult.VALID;
+        }
 
-		public override EEvaluationResult EvaluateFaultClassRule(Dictionary<string, List<double>> variables)
-		{
-			RuleExpression[] array = this.operands;
-			for (int i = 0; i < array.Length; i++)
-			{
-				EEvaluationResult eevaluationResult = array[i].EvaluateFaultClassRule(variables);
-				if (eevaluationResult != EEvaluationResult.VALID)
-				{
-					return eevaluationResult;
-				}
-			}
-			return EEvaluationResult.VALID;
-		}
+        public override EEvaluationResult EvaluateFaultClassRule(Dictionary<string, List<double>> variables)
+        {
+            RuleExpression[] array = operands;
+            foreach (RuleExpression ruleExpression in array)
+            {
+                EEvaluationResult eEvaluationResult = ruleExpression.EvaluateFaultClassRule(variables);
+                if (eEvaluationResult != 0)
+                {
+                    return eEvaluationResult;
+                }
+            }
+            return EEvaluationResult.VALID;
+        }
 
-		public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
-		{
+        public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
+        {
             bool flag = false;
             missingCharacteristics.Clear();
             missingVariants.Clear();
@@ -260,11 +260,5 @@ namespace PsdzClient.Core
             stringBuilder.Append(")");
             return stringBuilder.ToString();
         }
-
-        private readonly List<long> missingCharacteristics = new List<long>();
-
-		private readonly List<long> missingVariants = new List<long>();
-
-		private RuleExpression[] operands;
-	}
+    }
 }
