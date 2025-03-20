@@ -1,4 +1,5 @@
 ﻿using PsdzClient.Core;
+using System;
 
 namespace PsdzClient.Core
 {
@@ -10,7 +11,7 @@ namespace PsdzClient.Core
 
         }
 
-        public void AddServiceCode(string name, string value, LayoutGroup layoutGroup, bool allowMultipleEntries = false)
+        public void AddServiceCode(string name, string value, LayoutGroup layoutGroup, bool allowMultipleEntries = false, bool bufferIfSessionNotStarted = false, DateTime? timeStamp = null)
         {
 
         }

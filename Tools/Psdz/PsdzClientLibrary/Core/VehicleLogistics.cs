@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BmwFileReader;
 using PsdzClient.Core;
+using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 using PsdzClientLibrary;
 
@@ -16,219 +18,11 @@ namespace PsdzClient.Core
 {
     public class VehicleLogistics
     {
-        private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics;
+        private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
 
-        static VehicleLogistics()
-        {
-            ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
-        }
+        private static Lazy<bool> isGui = new Lazy<bool>(() => Process.GetCurrentProcess().ProcessName.ToLower() == "istagui");
 
-        public static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
-        {
-            return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
-        }
-
-        public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
-        {
-            Log.Info(Log.CurrentMethod(), $"Reading bordnet configuration with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}, target type: {typeof(T).Name}. The fallback xml file is: {storedXmlFileName}");
-            PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
-            if (database == null)
-            {
-                return null;
-            }
-
-            PsdzDatabase.BordnetsData bordnetsData = database.GetBordnetFromDatabase(vecInfo);
-            if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
-            {
-                BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
-                if (baseEcuCharacteristics != null)
-                {
-                    return baseEcuCharacteristics;
-                }
-            }
-
-            if (!string.IsNullOrEmpty(storedXmlFileName))
-            {
-                string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
-                if (!string.IsNullOrWhiteSpace(xml))
-                {
-                    BaseEcuCharacteristics ecuCharacteristicsFromFallback = GetEcuCharacteristicsFromFallback<T>(storedXmlFileName, vecInfo);
-                    if (ecuCharacteristicsFromFallback != null)
-                    {
-                        return ecuCharacteristicsFromFallback;
-                    }
-                }
-            }
-            Log.Error(Log.CurrentMethod(), "No bordnet could be loaded.");
-            return null;
-        }
-
-        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback(string storedXmlFileName, Vehicle vecInfo)
-        {
-            Log.Info(Log.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
-            return CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, storedXmlFileName, storedXmlFileName);
-        }
-
-        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
-        {
-            Log.Info(Log.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
-            return CreateCharacteristicsInstance<T>(vecInfo, storedXmlFileName, storedXmlFileName);
-        }
-
-        public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name) where T : BaseEcuCharacteristics
-        {
-            try
-            {
-                Type typeFromHandle = typeof(T);
-                object[] args = new string[1] { xml };
-                T val = (T)Activator.CreateInstance(typeFromHandle, args);
-                if (val != null)
-                {
-                    ecuCharacteristics.TryAdd(vehicle.GetCustomHashCode(), val);
-                    val.BordnetName = name;
-                    Log.Info(Log.CurrentMethod(), "Found characteristics with group sgdb: " + val.brSgbd);
-                }
-                return val;
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException(Log.CurrentMethod(), exception);
-                return null;
-            }
-        }
-
-        public static void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
-        {
-            if (vecInfo == null)
-            {
-                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-            if (vecInfo.BNType == BNType.UNKNOWN)
-            {
-                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
-                return;
-            }
-            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
-            if (characteristics != null)
-            {
-                characteristics.CalculateMaxAssembledECUList(vecInfo, ffmResolver);
-            }
-            else
-            {
-                Log.Warning("VehicleLogistics.CalculateMaxAssembledECUList()", "no fitting BaseEcuCharacteristics found");
-            }
-        }
-
-        public static void DecodeVCMBackupFA(byte[] faAsByteArray, Vehicle vehicle)
-        {
-            if (faAsByteArray == null || faAsByteArray.Length < 160)
-            {
-                Log.Warning("VehicleLogistics.DecodeVCMBackupFA()", "fa byte stream was null or too short");
-                return;
-            }
-            FA fA = new FA();
-            try
-            {
-                fA.C_DATE = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 1u);
-                fA.BR = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 4u);
-                fA.TYPE = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 7u);
-                fA.LACK = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 10u);
-                fA.POLSTER = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 13u);
-                string text = string.Empty;
-                for (int i = 16; i < faAsByteArray.Length; i++)
-                {
-                    text += Convert.ToString(faAsByteArray[i], 2).PadLeft(8, '0');
-                }
-                string value = text.Substring(0, 4);
-                string text2 = text;
-                if ("1000".Equals(value))
-                {
-                    text2 = text.Substring(4, text.Length - 4);
-                    int j;
-                    for (j = 0; j < text2.Length; j += 18)
-                    {
-                        byte b = Convert.ToByte(text2.Substring(j, 6), 2);
-                        if ((b & 0xF0) == 0)
-                        {
-                            j += 2;
-                            break;
-                        }
-                        byte inChar = Convert.ToByte(text2.Substring(j + 6, 6), 2);
-                        byte inChar2 = Convert.ToByte(text2.Substring(j + 12, 6), 2);
-                        string item = $"{FormatConverter.DecodeFAChar((char)b)}{FormatConverter.DecodeFAChar((char)inChar)}{FormatConverter.DecodeFAChar((char)inChar2)}";
-                        fA.SA.AddIfNotContains(item);
-                    }
-                    text2 = text2.Substring(j, text2.Length - j);
-                }
-                value = text2.Substring(0, 4);
-                text2 = text2.Substring(4, text2.Length - 4);
-                if ("0100".Equals(value))
-                {
-                    int j;
-                    for (j = 0; j < text2.Length; j += 24)
-                    {
-                        byte b2 = Convert.ToByte(text2.Substring(j, 6), 2);
-                        if ((b2 & 0xF0) == 0)
-                        {
-                            j += 2;
-                            break;
-                        }
-                        byte inChar3 = Convert.ToByte(text2.Substring(j + 6, 6), 2);
-                        byte inChar4 = Convert.ToByte(text2.Substring(j + 12, 6), 2);
-                        byte inChar5 = Convert.ToByte(text2.Substring(j + 18, 6), 2);
-                        string item2 = $"{FormatConverter.DecodeFAChar((char)b2)}{FormatConverter.DecodeFAChar((char)inChar3)}{FormatConverter.DecodeFAChar((char)inChar4)}{FormatConverter.DecodeFAChar((char)inChar5)}";
-                        fA.E_WORT.AddIfNotContains(item2);
-                    }
-                    text2 = text2.Substring(j, text2.Length - j);
-                }
-                value = text2.Substring(0, 4);
-                text2 = text2.Substring(4, text2.Length - 4);
-                if ("1100".Equals(value))
-                {
-                    int j;
-                    for (j = 0; j < text2.Length; j += 24)
-                    {
-                        byte b3 = Convert.ToByte(text2.Substring(j, 6), 2);
-                        if ((b3 & 0xF0) == 0)
-                        {
-                            j += 2;
-                            break;
-                        }
-                        byte inChar6 = Convert.ToByte(text2.Substring(j + 6, 6), 2);
-                        byte inChar7 = Convert.ToByte(text2.Substring(j + 12, 6), 2);
-                        byte inChar8 = Convert.ToByte(text2.Substring(j + 18, 6), 2);
-                        string item3 = $"{FormatConverter.DecodeFAChar((char)b3)}{FormatConverter.DecodeFAChar((char)inChar6)}{FormatConverter.DecodeFAChar((char)inChar7)}{FormatConverter.DecodeFAChar((char)inChar8)}";
-                        fA.HO_WORT.AddIfNotContains(item3);
-                    }
-                    text2 = text2.Substring(j, text2.Length - j);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("VehicleLogistics.DecodeVCMBackupFA()", exception);
-            }
-            string text3 = string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}", fA.BR, fA.C_DATE, fA.TYPE, fA.LACK, fA.POLSTER);
-            foreach (string item4 in fA.SA)
-            {
-                text3 += string.Format(CultureInfo.InvariantCulture, "${0}", item4);
-            }
-            foreach (string item5 in fA.E_WORT)
-            {
-                text3 += string.Format(CultureInfo.InvariantCulture, "-{0}", item5);
-            }
-            foreach (string item6 in fA.HO_WORT)
-            {
-                text3 += string.Format(CultureInfo.InvariantCulture, "+{0}", item6);
-            }
-            fA.STANDARD_FA = text3;
-            fA.SA_ANZ = (short)fA.SA.Count;
-            fA.E_WORT_ANZ = (short)fA.HO_WORT.Count;
-            fA.HO_WORT_ANZ = (short)fA.E_WORT.Count;
-            fA.ZUSBAU_ANZ = 0;
-            fA.AlreadyDone = true;
-            vehicle.FA = fA;
-        }
+        public const string FallbackBordnetName = "BNT-XML-FALLBACK.xml";
 
         public static BaseEcuCharacteristics CallGetCharacteristics(Vehicle vecInfo)
         {
@@ -653,6 +447,270 @@ namespace PsdzClient.Core
                     return null;
                 }
             }
+        }
+
+        public static void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            if (vecInfo == null)
+            {
+                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            if (vecInfo.BNType == BNType.UNKNOWN)
+            {
+                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
+                return;
+            }
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                characteristics.CalculateMaxAssembledECUList(vecInfo, ffmResolver);
+            }
+            else
+            {
+                Log.Warning("VehicleLogistics.CalculateMaxAssembledECUList()", "no fitting BaseEcuCharacteristics found");
+            }
+        }
+
+        public static void DecodeVCMBackupFA(byte[] faAsByteArray, Vehicle vehicle)
+        {
+            if (faAsByteArray == null || faAsByteArray.Length < 160)
+            {
+                Log.Warning("VehicleLogistics.DecodeVCMBackupFA()", "fa byte stream was null or too short");
+                return;
+            }
+            FA fA = new FA();
+            try
+            {
+                fA.C_DATE = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 1u);
+                fA.BR = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 4u);
+                fA.TYPE = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 7u);
+                fA.LACK = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 10u);
+                fA.POLSTER = FormatConverter.Convert6BitNibblesTo4DigitString(faAsByteArray, 13u);
+                string text = string.Empty;
+                for (int i = 16; i < faAsByteArray.Length; i++)
+                {
+                    text += Convert.ToString(faAsByteArray[i], 2).PadLeft(8, '0');
+                }
+                string value = text.Substring(0, 4);
+                string text2 = text;
+                if ("1000".Equals(value))
+                {
+                    text2 = text.Substring(4, text.Length - 4);
+                    int j;
+                    for (j = 0; j < text2.Length; j += 18)
+                    {
+                        byte b = Convert.ToByte(text2.Substring(j, 6), 2);
+                        if ((b & 0xF0) == 0)
+                        {
+                            j += 2;
+                            break;
+                        }
+                        byte inChar = Convert.ToByte(text2.Substring(j + 6, 6), 2);
+                        byte inChar2 = Convert.ToByte(text2.Substring(j + 12, 6), 2);
+                        string item = $"{FormatConverter.DecodeFAChar((char)b)}{FormatConverter.DecodeFAChar((char)inChar)}{FormatConverter.DecodeFAChar((char)inChar2)}";
+                        fA.SA.AddIfNotContains(item);
+                    }
+                    text2 = text2.Substring(j, text2.Length - j);
+                }
+                value = text2.Substring(0, 4);
+                text2 = text2.Substring(4, text2.Length - 4);
+                if ("0100".Equals(value))
+                {
+                    int j;
+                    for (j = 0; j < text2.Length; j += 24)
+                    {
+                        byte b2 = Convert.ToByte(text2.Substring(j, 6), 2);
+                        if ((b2 & 0xF0) == 0)
+                        {
+                            j += 2;
+                            break;
+                        }
+                        byte inChar3 = Convert.ToByte(text2.Substring(j + 6, 6), 2);
+                        byte inChar4 = Convert.ToByte(text2.Substring(j + 12, 6), 2);
+                        byte inChar5 = Convert.ToByte(text2.Substring(j + 18, 6), 2);
+                        string item2 = $"{FormatConverter.DecodeFAChar((char)b2)}{FormatConverter.DecodeFAChar((char)inChar3)}{FormatConverter.DecodeFAChar((char)inChar4)}{FormatConverter.DecodeFAChar((char)inChar5)}";
+                        fA.E_WORT.AddIfNotContains(item2);
+                    }
+                    text2 = text2.Substring(j, text2.Length - j);
+                }
+                value = text2.Substring(0, 4);
+                text2 = text2.Substring(4, text2.Length - 4);
+                if ("1100".Equals(value))
+                {
+                    int j;
+                    for (j = 0; j < text2.Length; j += 24)
+                    {
+                        byte b3 = Convert.ToByte(text2.Substring(j, 6), 2);
+                        if ((b3 & 0xF0) == 0)
+                        {
+                            j += 2;
+                            break;
+                        }
+                        byte inChar6 = Convert.ToByte(text2.Substring(j + 6, 6), 2);
+                        byte inChar7 = Convert.ToByte(text2.Substring(j + 12, 6), 2);
+                        byte inChar8 = Convert.ToByte(text2.Substring(j + 18, 6), 2);
+                        string item3 = $"{FormatConverter.DecodeFAChar((char)b3)}{FormatConverter.DecodeFAChar((char)inChar6)}{FormatConverter.DecodeFAChar((char)inChar7)}{FormatConverter.DecodeFAChar((char)inChar8)}";
+                        fA.HO_WORT.AddIfNotContains(item3);
+                    }
+                    text2 = text2.Substring(j, text2.Length - j);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("VehicleLogistics.DecodeVCMBackupFA()", exception);
+            }
+            string text3 = string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}", fA.BR, fA.C_DATE, fA.TYPE, fA.LACK, fA.POLSTER);
+            foreach (string item4 in fA.SA)
+            {
+                text3 += string.Format(CultureInfo.InvariantCulture, "${0}", item4);
+            }
+            foreach (string item5 in fA.E_WORT)
+            {
+                text3 += string.Format(CultureInfo.InvariantCulture, "-{0}", item5);
+            }
+            foreach (string item6 in fA.HO_WORT)
+            {
+                text3 += string.Format(CultureInfo.InvariantCulture, "+{0}", item6);
+            }
+            fA.STANDARD_FA = text3;
+            fA.SA_ANZ = (short)fA.SA.Count;
+            fA.E_WORT_ANZ = (short)fA.HO_WORT.Count;
+            fA.HO_WORT_ANZ = (short)fA.E_WORT.Count;
+            fA.ZUSBAU_ANZ = 0;
+            fA.AlreadyDone = true;
+            vehicle.FA = fA;
+        }
+
+        public static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
+        {
+            return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
+        }
+
+        public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
+        {
+            Log.Info(Log.CurrentMethod(), $"Reading bordnet configuration with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}, target type: {typeof(T).Name}. The fallback xml file is: {storedXmlFileName}");
+            PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
+            if (database == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                PsdzDatabase.BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
+                if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
+                {
+                    BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
+                    if (baseEcuCharacteristics != null)
+                    {
+                        vecInfo.BordnetsData = bordnetsData;
+                        return baseEcuCharacteristics;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMissingDatabaseBordnet(vecInfo, ex.Message);
+            }
+            if (!string.IsNullOrEmpty(storedXmlFileName))
+            {
+                string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
+                if (!string.IsNullOrWhiteSpace(xml))
+                {
+                    BaseEcuCharacteristics ecuCharacteristicsFromFallback = GetEcuCharacteristicsFromFallback<T>(storedXmlFileName, vecInfo);
+                    if (ecuCharacteristicsFromFallback != null)
+                    {
+                        return ecuCharacteristicsFromFallback;
+                    }
+                }
+            }
+            Log.Error(Log.CurrentMethod(), "No bordnet could be loaded.");
+            return null;
+        }
+
+        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback(string storedXmlFileName, Vehicle vecInfo)
+        {
+            Log.Info(Log.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
+            return CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, storedXmlFileName, storedXmlFileName);
+        }
+
+        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
+        {
+            Log.Info(Log.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
+            return CreateCharacteristicsInstance<T>(vecInfo, storedXmlFileName, storedXmlFileName);
+        }
+
+        public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name) where T : BaseEcuCharacteristics
+        {
+            try
+            {
+                Type typeFromHandle = typeof(T);
+                object[] args = new string[1] { xml };
+                T val = (T)Activator.CreateInstance(typeFromHandle, args);
+                if (val != null)
+                {
+                    ecuCharacteristics.TryAdd(vehicle.GetCustomHashCode(), val);
+                    val.BordnetName = name;
+                    Log.Info(Log.CurrentMethod(), "Found characteristics with group sgdb: " + val.brSgbd);
+                }
+                return val;
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException(Log.CurrentMethod(), exception);
+                return null;
+            }
+        }
+
+        private static void LogMissingDatabaseBordnet(Vehicle vec, string error)
+        {
+            string text = (ConfigSettings.IsOssModeActive ? "JA" : "NEIN");
+            string text2 = "BRV: " + vec.Baureihenverbund + ", E-Reihe: " + vec.Ereihe + ", Error: " + error + ", AOS: " + text;
+            string bNT01_BnTopologieNotFound_nu_LF = ServiceCodes.BNT01_BnTopologieNotFound_nu_LF;
+            Log.Info(Log.CurrentMethod(), bNT01_BnTopologieNotFound_nu_LF + ": " + text2);
+            IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
+            if (service != null)
+            {
+                service.AddServiceCode(bNT01_BnTopologieNotFound_nu_LF, text2, LayoutGroup.X, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null);
+            }
+            else
+            {
+                Log.Error(Log.CurrentMethod(), "IFasta2Service could not be fetched from the ServiceLocator");
+            }
+        }
+
+        private static PsdzDatabase.BordnetsData GetBordnetXmlFromDatabase(Vehicle vecInfo)
+        {
+            Log.Info(Log.CurrentMethod(), "Reading bordnet configuration from the database");
+            string text = "Es gibt zu viele gültige Bordnetze: ";
+            try
+            {
+                PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
+                if (database == null)
+                {
+                    return null;
+                }
+                List<PsdzDatabase.BordnetsData> collection = database.LoadBordnetsData(vecInfo);
+                if (collection != null && collection.Count == 1)
+                {
+                    return collection.First();
+                }
+                if (collection != null && collection.Count > 1)
+                {
+                    foreach (PsdzDatabase.BordnetsData item in collection)
+                    {
+                        text = text + item.InfoObjIdent + " ";
+                    }
+                    throw new Exception(text);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(Log.CurrentMethod(), $"Reading bordnet configuration from the database failed: {ex}");
+                throw;
+            }
+            return null;
         }
 
         public static string getBrSgbd(Vehicle vecInfo)
