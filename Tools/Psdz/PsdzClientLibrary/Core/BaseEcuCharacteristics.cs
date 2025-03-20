@@ -306,7 +306,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public virtual BusType getBus(long? sgAdr, string group = null)
+        public virtual BusType getBus(long? sgAdr, VCIDeviceType? deviceType, string group = null)
         {
             ValidateIfDiagnosticsHasValidLicense();
             if (!sgAdr.HasValue)
@@ -314,15 +314,10 @@ namespace PsdzClient.Core
                 Log.Info(GetType().Name + ".getBus()", "sgAdr was null");
                 return BusType.UNKNOWN;
             }
-            long? num2 = sgAdr;
-            if (num2 < 0L)
+            if (sgAdr < 0 && sgAdr > 255)
             {
-                num2 = sgAdr;
-                if (num2 > 255L)
-                {
-                    Log.Info(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
-                    return BusType.UNKNOWN;
-                }
+                Log.Info(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+                return BusType.UNKNOWN;
             }
             try
             {
@@ -338,12 +333,12 @@ namespace PsdzClient.Core
             {
                 Log.WarningException(GetType().Name + ".getBus()", exception);
             }
-            LogMissingBus(group, sgAdr);
+            LogMissingBus(group, sgAdr, deviceType);
             Log.Info(GetType().Name + ".getBus()", "no bus found for ecu address: {0}", sgAdr.Value.ToString("X2"));
             return BusType.UNKNOWN;
         }
 
-        public BusType getBus(long? sgAdr, long? subAdr, string group = null)
+        public BusType getBus(long? sgAdr, long? subAdr, VCIDeviceType? deviceType, string group = null)
         {
             ValidateIfDiagnosticsHasValidLicense();
             if (!sgAdr.HasValue)
@@ -351,7 +346,7 @@ namespace PsdzClient.Core
                 Log.Warning(GetType().Name + ".getBus()", "sgAdr was null");
                 return BusType.UNKNOWN;
             }
-            if (sgAdr < 0L && sgAdr > 255L)
+            if (sgAdr < 0 && sgAdr > 255)
             {
                 Log.Warning(GetType().Name + ".getBus()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
                 return BusType.UNKNOWN;
@@ -360,19 +355,19 @@ namespace PsdzClient.Core
             {
                 foreach (IEcuLogisticsEntry item in ecuTable)
                 {
-                    if (subAdr.HasValue && !(subAdr < 0L))
+                    if (!subAdr.HasValue || subAdr < 0)
                     {
-                        if (item.DiagAddress == sgAdr && item.SubDiagAddress == subAdr)
+                        if (item.DiagAddress == sgAdr)
                         {
                             return item.Bus;
                         }
                     }
-                    else if (item.DiagAddress == sgAdr)
+                    else if (item.DiagAddress == sgAdr && item.SubDiagAddress == subAdr)
                     {
                         return item.Bus;
                     }
                 }
-                LogMissingBus(group, sgAdr);
+                LogMissingBus(group, sgAdr, deviceType);
                 Log.Warning(GetType().Name + ".getBus()", "no bus found for ecu address/subaddress: {0:X2} {1:X2}", sgAdr, subAdr);
             }
             catch (Exception exception)
@@ -381,31 +376,6 @@ namespace PsdzClient.Core
             }
             return BusType.UNKNOWN;
         }
-
-        public int getECUAdrByECU_GRUPPE(string grp)
-		{
-			ValidateIfDiagnosticsHasValidLicense();
-			if (string.IsNullOrEmpty(grp))
-			{
-				Log.Info("iBusEcuCharacteristics.getSgAdr()", "grp was null or empty.");
-				return -1;
-			}
-			try
-			{
-				foreach (IEcuLogisticsEntry item in ecuTable)
-				{
-					if (item.GroupSgbd.ToLower().Contains(grp.ToLower()))
-					{
-						return item.DiagAddress;
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException("iBusEcuCharacteristics.getSgAdr()", exception);
-			}
-			return -1;
-		}
 
         public virtual string getECU_GROBNAME(long? sgAdr)
         {
@@ -604,63 +574,64 @@ namespace PsdzClient.Core
 			return false;
 		}
 
-		public void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
-		{
-			ValidateIfDiagnosticsHasValidLicense();
-			if (vecInfo == null)
-			{
-				Log.Warning(GetType().Name + ".CalculateMaxAssembledECUList()", "vecInfo was null");
-				return;
-			}
-			if (vecInfo.ECU == null)
-			{
-				vecInfo.ECU = new ObservableCollection<ECU>();
-			}
-			try
-			{
-				if (sitInfo == null)
-				{
-					return;
-				}
-				string[] array = sitInfo.Split('\n');
-				foreach (string text in array)
-				{
-					try
-					{
-						if (string.IsNullOrEmpty(text) || text.StartsWith("#", StringComparison.Ordinal))
-						{
-							continue;
-						}
-						string[] array2 = text.Split(';');
-						int num2 = Convert.ToInt32(array2[0], 16);
-						if (vecInfo.getECU(num2) == null)
-						{
-							string ecuVariant = array2[1];
+        public void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            if (vecInfo == null)
+            {
+                Log.Warning(GetType().Name + ".CalculateMaxAssembledECUList()", "vecInfo was null");
+                return;
+            }
+            if (vecInfo.ECU == null)
+            {
+                vecInfo.ECU = new ObservableCollection<ECU>();
+            }
+            try
+            {
+                if (sitInfo == null)
+                {
+                    return;
+                }
+                string[] array = sitInfo.Split('\n');
+                foreach (string text in array)
+                {
+                    try
+                    {
+                        if (string.IsNullOrEmpty(text) || text.StartsWith("#", StringComparison.Ordinal))
+                        {
+                            continue;
+                        }
+                        string[] array2 = text.Split(';');
+                        int num = Convert.ToInt32(array2[0], 16);
+                        if (vecInfo.getECU(num) == null)
+                        {
+                            string ecuVariant = array2[1];
                             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
                             if (database != null)
                             {
                                 PsdzDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(ecuVariant);
                                 if (ecuVariantByName != null && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && !string.IsNullOrEmpty(ecuVariantByName.EcuGroupId) && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
                                 {
-                                    ECU item = CreateECU(num2, array2[2]);
+                                    ECU item = CreateECU(num, array2[2], vecInfo.VCI?.VCIType);
                                     vecInfo.ECU.Add(item);
                                 }
                             }
                         }
-					}
-					catch (Exception exception)
-					{
-						Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception);
-					}
-				}
-			}
-			catch (Exception exception2)
-			{
-				Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception2);
-			}
-		}
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception);
+                    }
+                }
+            }
+            catch (Exception exception2)
+            {
+                Log.WarningException(GetType().Name + ".CalculateMaxAssembledECUList()", exception2);
+            }
+        }
 
-		internal string GetBusAlias(BusType bus)
+
+        internal string GetBusAlias(BusType bus)
 		{
 			if (busNameTable != null)
 			{
@@ -691,103 +662,103 @@ namespace PsdzClient.Core
 			return false;
 		}
 
-		protected ECU CreateECU(long adr, string group)
-		{
-			return new ECU
-			{
-				ID_SG_ADR = adr,
-				IDENT_SUCCESSFULLY = false,
-				BUS = getBus(adr, group),
-				ECU_GRUPPE = group,
-				ECU_GROBNAME = getECU_GROBNAME(adr)
-			};
-		}
+        protected ECU CreateECU(long adr, string group, VCIDeviceType? deviceType)
+        {
+            return new ECU
+            {
+                ID_SG_ADR = adr,
+                IDENT_SUCCESSFULLY = false,
+                BUS = getBus(adr, deviceType, group),
+                ECU_GRUPPE = group,
+                ECU_GROBNAME = getECU_GROBNAME(adr)
+            };
+        }
 
-		protected ECU CreateECU(long adr)
-		{
-			ECU eCU = new ECU();
-			eCU.ID_SG_ADR = adr;
-			eCU.IDENT_SUCCESSFULLY = false;
-			eCU.ECU_GRUPPE = getECU_GRUPPE(adr);
-			eCU.BUS = getBus(adr, eCU.ECU_GRUPPE);
-			eCU.ECU_GROBNAME = getECU_GROBNAME(adr);
-			return eCU;
-		}
+        protected ECU CreateECU(long adr, VCIDeviceType? deviceType)
+        {
+            ECU eCU = new ECU();
+            eCU.ID_SG_ADR = adr;
+            eCU.IDENT_SUCCESSFULLY = false;
+            eCU.ECU_GRUPPE = getECU_GRUPPE(adr);
+            eCU.BUS = getBus(adr, deviceType, eCU.ECU_GRUPPE);
+            eCU.ECU_GROBNAME = getECU_GROBNAME(adr);
+            return eCU;
+        }
 
-		protected void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver, ICollection<int> sgList, ICollection<int> removeList)
-		{
-			if (vecInfo == null)
-			{
-				Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-				return;
-			}
-			if (vecInfo.ECU == null)
-			{
-				vecInfo.ECU = new ObservableCollection<ECU>();
-			}
-			if (sgList != null)
-			{
-				foreach (int sg in sgList)
-				{
-					ECU item = CreateECU(sg);
-					vecInfo.ECU.AddIfNotContains(item);
-				}
-			}
-			CalculateECUConfigurationConfigured(vecInfo);
-			if (removeList == null)
-			{
-				return;
-			}
-			foreach (int remove in removeList)
-			{
-				ECU eCU = vecInfo.getECU(remove);
-				if (eCU != null)
-				{
-					Log.Info(GetType().Name + ".CalculateECUConfiguration()", "Removing ECU: {0}", eCU);
-					vecInfo.ECU.Remove(eCU);
-				}
-			}
-		}
+        protected void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver, ICollection<int> sgList, ICollection<int> removeList)
+        {
+            if (vecInfo == null)
+            {
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            if (vecInfo.ECU == null)
+            {
+                vecInfo.ECU = new ObservableCollection<ECU>();
+            }
+            if (sgList != null)
+            {
+                foreach (int sg in sgList)
+                {
+                    ECU item = CreateECU(sg, vecInfo.VCI?.VCIType);
+                    vecInfo.ECU.AddIfNotContains(item);
+                }
+            }
+            CalculateECUConfigurationConfigured(vecInfo);
+            if (removeList == null)
+            {
+                return;
+            }
+            foreach (int remove in removeList)
+            {
+                ECU eCU = vecInfo.getECU(remove);
+                if (eCU != null)
+                {
+                    Log.Info(GetType().Name + ".CalculateECUConfiguration()", "Removing ECU: {0}", eCU);
+                    vecInfo.ECU.Remove(eCU);
+                }
+            }
+        }
 
-		private void CalculateECUConfigurationConfigured(Vehicle vecInfo)
-		{
-			if (vecInfo == null)
-			{
-				Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
-				return;
-			}
-			if (vecInfo.ECU == null)
-			{
-				vecInfo.ECU = new ObservableCollection<ECU>();
-			}
-			try
-			{
-				if (!string.IsNullOrEmpty(compatibilityInfo))
-				{
-					ProcessCompatibilityInfo(vecInfo, compatibilityInfo);
-				}
-				SetupMinimalECUConfiguration(vecInfo);
-				if (excludedConfiguration != null)
-				{
-					foreach (int item in excludedConfiguration)
-					{
-						ECU eCU = vecInfo.getECU(item);
-						if (eCU != null)
-						{
-							vecInfo.ECU.Remove(eCU);
-						}
-					}
-				}
-				foreach (ECU item2 in vecInfo.ECU)
-				{
-					Log.Info(GetType().Name + ".CalculateECUConfigurationConfigured()", "Expected ecu at address: {0:X2} / '{1}'", item2.ID_SG_ADR, item2.ECU_GRUPPE);
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException(GetType().Name + ".CalculateECUConfigurationConfigured()", exception);
-			}
-		}
+        private void CalculateECUConfigurationConfigured(Vehicle vecInfo)
+        {
+            if (vecInfo == null)
+            {
+                Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
+                return;
+            }
+            if (vecInfo.ECU == null)
+            {
+                vecInfo.ECU = new ObservableCollection<ECU>();
+            }
+            try
+            {
+                if (!string.IsNullOrEmpty(compatibilityInfo))
+                {
+                    ProcessCompatibilityInfo(vecInfo, compatibilityInfo);
+                }
+                SetupMinimalECUConfiguration(vecInfo);
+                if (excludedConfiguration != null)
+                {
+                    foreach (int item in excludedConfiguration)
+                    {
+                        ECU eCU = vecInfo.getECU(item);
+                        if (eCU != null)
+                        {
+                            vecInfo.ECU.Remove(eCU);
+                        }
+                    }
+                }
+                foreach (ECU item2 in vecInfo.ECU)
+                {
+                    Log.Info(GetType().Name + ".CalculateECUConfigurationConfigured()", "Expected ecu at address: {0:X2} / '{1}'", item2.ID_SG_ADR, item2.ECU_GRUPPE);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(GetType().Name + ".CalculateECUConfigurationConfigured()", exception);
+            }
+        }
 
         private void ProcessCompatibilityInfo(Vehicle vecInfo, string compatibilityInfo)
         {
@@ -832,15 +803,15 @@ namespace PsdzClient.Core
                     Log.Info(GetType().Name + ".ProcessCompatibilityInfo()", "checking production date from: '{0}' to '{1}'", array3[5], array3[6]);
                     if (string.IsNullOrEmpty(array3[5]) || array3[5].Length != 6)
                     {
-                        goto IL_01ce;
+                        goto IL_01cb;
                     }
                     DateTime dateTime = DateTime.ParseExact(array3[5], "MMyyyy", CultureInfo.InvariantCulture);
                     if (!vecInfo.ProductionDateSpecified || !(vecInfo.ProductionDate < dateTime))
                     {
-                        goto IL_01ce;
+                        goto IL_01cb;
                     }
-                    goto end_IL_004a;
-                    IL_0219:
+                    goto end_IL_0039;
+                IL_0219:
                     string[] array4 = array3[3].Split('&');
                     bool flag = true;
                     string[] array5 = array4;
@@ -853,11 +824,11 @@ namespace PsdzClient.Core
                     }
                     if (flag)
                     {
-                        ECU item = CreateECU(result, group);
+                        ECU item = CreateECU(result, group, vecInfo.VCI?.VCIType);
                         vecInfo.ECU.AddIfNotContains(item);
                     }
-                    goto end_IL_004a;
-                    IL_01ce:
+                    goto end_IL_0039;
+                IL_01cb:
                     if (string.IsNullOrEmpty(array3[6]) || array3[6].Length != 6)
                     {
                         goto IL_0219;
@@ -867,7 +838,7 @@ namespace PsdzClient.Core
                     {
                         goto IL_0219;
                     }
-                    end_IL_004a:;
+                end_IL_0039:;
                 }
                 catch (Exception exception)
                 {
@@ -877,40 +848,51 @@ namespace PsdzClient.Core
         }
 
         private void SetupMinimalECUConfiguration(Vehicle vecInfo)
+        {
+            if (vecInfo == null)
+            {
+                Log.Warning(GetType().Name + ".SetupMinimalECUConfiguration()", "vecInfo was null");
+                return;
+            }
+            if (vecInfo.ECU == null)
+            {
+                vecInfo.ECU = new ObservableCollection<ECU>();
+            }
+            if (minimalConfiguration == null)
+            {
+                return;
+            }
+            foreach (int item in minimalConfiguration)
+            {
+                if (vecInfo.getECU(item) == null)
+                {
+                    ECU eCU = CreateECU(item, vecInfo.VCI?.VCIType);
+                    eCU.ID_SG_ADR = item;
+                    eCU.IDENT_SUCCESSFULLY = false;
+                    eCU.ECU_GRUPPE = getECU_GRUPPE(item);
+                    eCU.BUS = getBus(item, vecInfo.VCI?.VCIType, eCU.ECU_GRUPPE);
+                    vecInfo.ECU.AddIfNotContains(eCU);
+                }
+            }
+        }
+
+        private void ValidateIfDiagnosticsHasValidLicense()
 		{
-			if (vecInfo == null)
-			{
-				Log.Warning(GetType().Name + ".SetupMinimalECUConfiguration()", "vecInfo was null");
-				return;
-			}
-			if (vecInfo.ECU == null)
-			{
-				vecInfo.ECU = new ObservableCollection<ECU>();
-			}
-			if (minimalConfiguration == null)
-			{
-				return;
-			}
-			foreach (int item in minimalConfiguration)
-			{
-				if (vecInfo.getECU(item) == null)
-				{
-					ECU eCU = CreateECU(item);
-					eCU.ID_SG_ADR = item;
-					eCU.IDENT_SUCCESSFULLY = false;
-					eCU.ECU_GRUPPE = getECU_GRUPPE(item);
-					eCU.BUS = getBus(item, eCU.ECU_GRUPPE);
-					vecInfo.ECU.AddIfNotContains(eCU);
-				}
-			}
 		}
 
-		private void ValidateIfDiagnosticsHasValidLicense()
-		{
-		}
-
-		private void LogMissingBus(string ecuGroup, long? ecuAddress)
-		{
-		}
+        private void LogMissingBus(string ecuGroup, long? ecuAddress, VCIDeviceType? deviceType)
+        {
+            if (!(BordnetName == "BNT-XML-FALLBACK.xml"))
+            {
+                if (string.IsNullOrWhiteSpace(ecuGroup))
+                {
+                    _ = $"EcuAddress: {ecuAddress:X2}, BNT-Filename: {BordnetName}";
+                }
+                else
+                {
+                    _ = "EcuGroup: " + ecuGroup + ", BNT-Filename: " + BordnetName;
+                }
+            }
+        }
 	}
 }

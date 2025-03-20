@@ -20,7 +20,8 @@ namespace PsdzClient.Core
     {
         private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
 
-        private static Lazy<bool> isGui = new Lazy<bool>(() => Process.GetCurrentProcess().ProcessName.ToLower() == "istagui");
+        //private static Lazy<bool> isGui = new Lazy<bool>(() => Process.GetCurrentProcess().ProcessName.ToLower() == "istagui");
+        private static Lazy<bool> isGui = new Lazy<bool>(false);
 
         public const string FallbackBordnetName = "BNT-XML-FALLBACK.xml";
 
@@ -69,6 +70,87 @@ namespace PsdzClient.Core
                 return characteristics.GetAvailableSALAPAs(vecInfo);
             }
             return new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
+        }
+
+        public static ICollection<IBusLogisticsEntry> GetBusTable(Vehicle vecInfo)
+        {
+            return GetCharacteristics(vecInfo)?.GetBusTable();
+        }
+
+        public static string GetBusAlias(Vehicle vecInfo, BusType bus)
+        {
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                return characteristics.GetBusAlias(bus);
+            }
+            return bus.ToString();
+        }
+
+        public static ICollection<ICombinedEcuHousingEntry> GetCombinedEcuHousingTable(Vehicle vecInfo)
+        {
+            return GetCharacteristics(vecInfo)?.GetCombinedEcuHousingTable();
+        }
+
+        public static double? GetRootHorizontalBusStep(Vehicle vecInfo)
+        {
+            return GetCharacteristics(vecInfo)?.rootHorizontalBusStep;
+        }
+
+        public static bool CasNeedsZgmRepair(Vehicle vecInfo)
+        {
+            string baureihenverbund = vecInfo.Baureihenverbund;
+            string[] source = new string[3] { "F001", "F010", "F025" };
+            bool flag = !string.IsNullOrEmpty(baureihenverbund) && source.Contains(baureihenverbund);
+            Log.Info("VehicleLogistics.CasNeedsZgmRepair()", "Return {0} for BRV=\"{1}\".", flag, baureihenverbund);
+            return flag;
+        }
+
+        public static IEcuLogisticsEntry GetEcuLogisticsEntry(Vehicle vecInfo, IEcu ecu)
+        {
+            return GetCharacteristics(vecInfo)?.GetEcuLogisticsEntry(vecInfo, ecu);
+        }
+
+        public static ICollection<IBusInterConnectionEntry> GetInterConnectionTable(Vehicle vecInfo)
+        {
+            return GetCharacteristics(vecInfo)?.GetInterConnectionTable();
+        }
+
+        public static bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        {
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (vecInfo == null)
+            {
+                Log.Warning("VehicleLogistics.HasBus()", "vecInfo was null");
+                return false;
+            }
+            if (ecu == null)
+            {
+                Log.Warning("VehicleLogistics.HasBus()", "ecu was null");
+                return false;
+            }
+            if (busType.Equals(ecu.BUS) || (ecu.SubBUS != null && ecu.SubBUS.Contains(busType)))
+            {
+                return true;
+            }
+            return characteristics?.HasBus(busType, vecInfo, ecu) ?? false;
+        }
+
+        public static string getBrSgbd(Vehicle vecInfo)
+        {
+            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
+            ValidateIfDiagnosticsHasValidLicense();
+            string text = service.GetMainSeriesSgbd(vecInfo);
+            if (string.IsNullOrEmpty(text))
+            {
+                text = GetCharacteristics(vecInfo)?.brSgbd;
+            }
+            return text;
+        }
+
+        public static BusType getECUBus(Vehicle vecInfo, long? ID_SG_ADR, string ecuGroup = null)
+        {
+            return GetCharacteristics(vecInfo)?.getBus(ID_SG_ADR, vecInfo.VCI?.VCIType, ecuGroup) ?? BusType.UNKNOWN;
         }
 
         // ToDo: Check on update
@@ -713,17 +795,6 @@ namespace PsdzClient.Core
             return null;
         }
 
-        public static string getBrSgbd(Vehicle vecInfo)
-        {
-            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
-            string text = service.GetMainSeriesSgbd(vecInfo);
-            if (string.IsNullOrEmpty(text))
-            {
-                text = GetCharacteristics(vecInfo)?.brSgbd;
-            }
-            return text;
-        }
-
         public static string getECU_GROBNAME(Vehicle vecInfo, long? sgAdr)
         {
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
@@ -742,6 +813,9 @@ namespace PsdzClient.Core
                 return characteristics.getECU_GROBNAMEByEcuGroup(ecuGroup);
             }
             return string.Empty;
+        }
+        private static void ValidateIfDiagnosticsHasValidLicense()
+        {
         }
     }
 }
