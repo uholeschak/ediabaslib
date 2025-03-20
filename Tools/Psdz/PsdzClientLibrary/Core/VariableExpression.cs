@@ -9,87 +9,87 @@ using System.Threading.Tasks;
 namespace PsdzClient.Core
 {
 	[Serializable]
-	public class VariableExpression : RuleExpression
-	{
-		public VariableExpression(string variableName, CompareExpression.ECompareOperator compareOperator, double variableValue)
-		{
-			this.variableName = variableName;
-			this.variableValue = variableValue;
-			this.compareOperator = compareOperator;
-		}
+    public class VariableExpression : RuleExpression
+    {
+        private readonly CompareExpression.ECompareOperator compareOperator;
 
-		public override EEvaluationResult EvaluateFaultClassRule(Dictionary<string, List<double>> variables)
-		{
-			List<double> list;
-			if (variables.TryGetValue(this.variableName, out list))
-			{
-				using (List<double>.Enumerator enumerator = list.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						double num = enumerator.Current;
-						switch (this.compareOperator)
-						{
-							case CompareExpression.ECompareOperator.EQUAL:
-								if (num == this.variableValue)
-								{
-									return EEvaluationResult.VALID;
-								}
-								break;
-							case CompareExpression.ECompareOperator.NOT_EQUAL:
-								if (num != this.variableValue)
-								{
-									return EEvaluationResult.VALID;
-								}
-								break;
-							case CompareExpression.ECompareOperator.GREATER:
-								if (num > this.variableValue)
-								{
-									return EEvaluationResult.VALID;
-								}
-								break;
-							case CompareExpression.ECompareOperator.GREATER_EQUAL:
-								if (num >= this.variableValue)
-								{
-									return EEvaluationResult.VALID;
-								}
-								break;
-							case CompareExpression.ECompareOperator.LESS:
-								if (num < this.variableValue)
-								{
-									return EEvaluationResult.VALID;
-								}
-								break;
-							case CompareExpression.ECompareOperator.LESS_EQUAL:
-								if (num <= this.variableValue)
-								{
-									return EEvaluationResult.VALID;
-								}
-								break;
-							default:
-								throw new Exception("Unknown compare operator");
-						}
-					}
-					return EEvaluationResult.INVALID;
-				}
-			}
-			return EEvaluationResult.INVALID;
-		}
+        private readonly string variableName;
 
-		public override long GetExpressionCount()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        private readonly double variableValue;
 
-		public override long GetMemorySize()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public VariableExpression(string variableName, CompareExpression.ECompareOperator compareOperator, double variableValue)
+        {
+            this.variableName = variableName;
+            this.variableValue = variableValue;
+            this.compareOperator = compareOperator;
+        }
 
-		public override void Serialize(MemoryStream ms)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public override EEvaluationResult EvaluateFaultClassRule(Dictionary<string, List<double>> variables)
+        {
+            if (variables.TryGetValue(variableName, out var value))
+            {
+                foreach (double item in value)
+                {
+                    switch (compareOperator)
+                    {
+                        case CompareExpression.ECompareOperator.EQUAL:
+                            if (item == variableValue)
+                            {
+                                return EEvaluationResult.VALID;
+                            }
+                            break;
+                        case CompareExpression.ECompareOperator.GREATER:
+                            if (item > variableValue)
+                            {
+                                return EEvaluationResult.VALID;
+                            }
+                            break;
+                        case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                            if (item >= variableValue)
+                            {
+                                return EEvaluationResult.VALID;
+                            }
+                            break;
+                        case CompareExpression.ECompareOperator.LESS:
+                            if (item < variableValue)
+                            {
+                                return EEvaluationResult.VALID;
+                            }
+                            break;
+                        case CompareExpression.ECompareOperator.LESS_EQUAL:
+                            if (item <= variableValue)
+                            {
+                                return EEvaluationResult.VALID;
+                            }
+                            break;
+                        case CompareExpression.ECompareOperator.NOT_EQUAL:
+                            if (item != variableValue)
+                            {
+                                return EEvaluationResult.VALID;
+                            }
+                            break;
+                        default:
+                            throw new Exception("Unknown compare operator");
+                    }
+                }
+            }
+            return EEvaluationResult.INVALID;
+        }
+
+        public override long GetExpressionCount()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public override long GetMemorySize()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public override void Serialize(MemoryStream ms)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
         public override string ToFormula(FormulaConfig formulaConfig)
         {
@@ -105,43 +105,40 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-		public override string ToString()
-		{
-			return string.Concat(new string[]
-			{
-				this.variableName.ToString(CultureInfo.InvariantCulture),
-				" ",
-				this.GetOperator(),
-				" ",
-				this.variableValue.ToString(CultureInfo.InvariantCulture)
-			});
-		}
+        public override string ToString()
+        {
+            string[] obj = new string[5]
+            {
+                variableName.ToString(CultureInfo.InvariantCulture),
+                " ",
+                GetOperator(),
+                " ",
+                null
+            };
+            double num = variableValue;
+            obj[4] = num.ToString(CultureInfo.InvariantCulture);
+            return string.Concat(obj);
+        }
 
-		private string GetOperator()
-		{
-			switch (this.compareOperator)
-			{
-				case CompareExpression.ECompareOperator.EQUAL:
-					return "=";
-				case CompareExpression.ECompareOperator.NOT_EQUAL:
-					return "!=";
-				case CompareExpression.ECompareOperator.GREATER:
-					return ">";
-				case CompareExpression.ECompareOperator.GREATER_EQUAL:
-					return ">=";
-				case CompareExpression.ECompareOperator.LESS:
-					return "<";
-				case CompareExpression.ECompareOperator.LESS_EQUAL:
-					return "<=";
-				default:
-					throw new Exception("Unknown operator");
-			}
-		}
-
-		private readonly CompareExpression.ECompareOperator compareOperator;
-
-		private readonly string variableName;
-
-		private readonly double variableValue;
-	}
+        private string GetOperator()
+        {
+            switch (compareOperator)
+            {
+                case CompareExpression.ECompareOperator.EQUAL:
+                    return "=";
+                case CompareExpression.ECompareOperator.GREATER:
+                    return ">";
+                case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                    return ">=";
+                case CompareExpression.ECompareOperator.LESS:
+                    return "<";
+                case CompareExpression.ECompareOperator.LESS_EQUAL:
+                    return "<=";
+                case CompareExpression.ECompareOperator.NOT_EQUAL:
+                    return "!=";
+                default:
+                    throw new Exception("Unknown operator");
+            }
+        }
+    }
 }
