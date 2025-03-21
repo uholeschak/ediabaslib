@@ -7,6 +7,7 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
+    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum Bus
     {
@@ -24,6 +25,7 @@ namespace PsdzClient.Programming
         SCan,
         LeCan,
         LpCan,
+        LrCan,
         IkCan,
         SfCan,
         ZsgCan,
@@ -36,7 +38,16 @@ namespace PsdzClient.Programming
         ApCanFd,
         FasCanFd,
         UssCanFd,
-        SrrCanFd
+        SrrCanFd,
+        Ipb11CanFd,
+        Ipb12CanFd,
+        Ipb13CanFd,
+        Ipb14CanFd,
+        Ipb15CanFd,
+        Ipb16CanFd,
+        Ipb17CanFd,
+        Zim11CanFd,
+        Zim12CanFd
     }
 
     [AuthorAPI(SelectableTypeDeclaration = true)]
