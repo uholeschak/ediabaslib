@@ -37,6 +37,7 @@ namespace BMW.Rheingold.Psdz.Client
         SCan,
         LeCan,
         LpCan,
+        LrCan,
         IkCan,
         SfCan,
         ZsgCan,
@@ -49,7 +50,16 @@ namespace BMW.Rheingold.Psdz.Client
         ApCanFd,
         FasCanFd,
         UssCanFd,
-        SrrCanFd
+        SrrCanFd,
+        Ipb11CanFd,
+        Ipb12CanFd,
+        Ipb13CanFd,
+        Ipb14CanFd,
+        Ipb15CanFd,
+        Ipb16CanFd,
+        Ipb17CanFd,
+        Zim11CanFd,
+        Zim12CanFd
     }
 
     public enum ProdiasLoglevel
@@ -86,24 +96,24 @@ namespace BMW.Rheingold.Psdz.Client
             });
         }
 
-        public IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe)
+        public IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe, bool tlsAllowed)
         {
-            return CallFunction((IConnectionManagerService m) => m.ConnectOverBus(project, vehicleInfo, bus, interfaceType, baureihe, bauIstufe));
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverBus(project, vehicleInfo, bus, interfaceType, baureihe, bauIstufe, tlsAllowed));
         }
 
-        public IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe)
+        public IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe, bool tlsAllowed)
         {
-            return CallFunction((IConnectionManagerService m) => m.ConnectOverEthernet(project, vehicleInfo, url, baureihe, bauIstufe));
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverEthernet(project, vehicleInfo, url, baureihe, bauIstufe, tlsAllowed));
         }
 
-        public IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan)
+        public IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan, bool tlsAllowed)
         {
-            return CallFunction((IConnectionManagerService m) => m.ConnectOverIcom(project, vehicleInfo, url, additionalTransmissionTimeout, baureihe, bauIstufe, connectionType, shouldSetLinkPropertiesToDCan));
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverIcom(project, vehicleInfo, url, additionalTransmissionTimeout, baureihe, bauIstufe, connectionType, shouldSetLinkPropertiesToDCan, tlsAllowed));
         }
 
-        public IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe)
+        public IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe, bool tlsAllowed)
         {
-            return CallFunction((IConnectionManagerService m) => m.ConnectOverVin(project, vehicleInfo, vin, baureihe, bauIstufe));
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverVin(project, vehicleInfo, vin, baureihe, bauIstufe, tlsAllowed));
         }
 
         public void SetProdiasLogLevel(ProdiasLoglevel prodiasLoglevel)
@@ -127,9 +137,9 @@ namespace BMW.Rheingold.Psdz.Client
             return CallFunction((IConnectionManagerService service) => service.GetHttpServerPort());
         }
 
-        public IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe)
+        public IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe, bool tlsAllowed)
         {
-            return CallFunction((IConnectionManagerService m) => m.ConnectOverPtt(project, vehicleInfo, bus, baureihe, bauIstufe));
+            return CallFunction((IConnectionManagerService m) => m.ConnectOverPtt(project, vehicleInfo, bus, baureihe, bauIstufe, tlsAllowed));
         }
     }
 }

@@ -1112,6 +1112,7 @@ namespace PsdzClient.Programming
                 UpdateStatus(sbResult.ToString());
                 cts?.Token.ThrowIfCancellationRequested();
 
+                // From GetVehicleSvtUsingPsdz
                 string mainSeries = ProgrammingService.Psdz.ConfigurationService.RequestBaureihenverbund(series);
                 IEnumerable<IPsdzTargetSelector> targetSelectors =
                     ProgrammingService.Psdz.ConnectionFactoryService.GetTargetSelectors();
@@ -1133,6 +1134,7 @@ namespace PsdzClient.Programming
                     psdzTargetSelectorNewest.Baureihenverbund);
                 cts?.Token.ThrowIfCancellationRequested();
 
+                // From ConnectionManager.ConnectToProject
                 string bauIStufe = PsdzContext.DetectVehicle.ILevelShip;
                 string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, diagPort);
                 IPsdzConnection psdzConnection;

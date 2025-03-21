@@ -31,27 +31,27 @@ namespace BMW.Rheingold.Psdz
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(PsdzRuntimeException))]
-        IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe);
+        IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe, bool tlsAllowed = false);
 
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(PsdzRuntimeException))]
-        IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe);
+        IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe, bool tlsAlloed = false);
 
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(PsdzRuntimeException))]
-        IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan);
+        IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan, bool tlsAlloed = false);
 
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(PsdzRuntimeException))]
-        IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe);
+        IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe, bool tlsAlloed = false);
 
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(PsdzRuntimeException))]
-        IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe);
+        IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe, bool tlsAlloed = false);
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
