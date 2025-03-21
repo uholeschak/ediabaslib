@@ -32,6 +32,11 @@ namespace BMW.Rheingold.Psdz.Client
             return CallFunction((IEcuService m) => m.RequestSvtWithSmacs(connection, installedEcus));
         }
 
+        public IPsdzSvt RequestSVTwithSmAcAndMirror(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus)
+        {
+            return CallFunction((IEcuService m) => m.RequestSVTwithSmAcAndMirror(connection, installedEcus));
+        }
+
         public IEnumerable<IPsdzEcuContextInfo> RequestEcuContextInfos(IPsdzConnection connection, IEnumerable<IPsdzEcuIdentifier> installedEcus)
         {
             return CallFunction((IEcuService m) => m.RequestEcuContextInfos(connection, installedEcus));

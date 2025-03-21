@@ -2377,6 +2377,7 @@ namespace PsdzClient.Programming
                 }
                 cts?.Token.ThrowIfCancellationRequested();
 
+                // From GetVehicleSvtUsingPsdz
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Svt");
                 IPsdzStandardSvt psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifiers);
                 if (psdzStandardSvt == null)
