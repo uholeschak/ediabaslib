@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
+using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -43,37 +44,53 @@ namespace PsdzClient.Programming
 			this.ExecutionOrderBottom = new Dictionary<string, IList<string>>();
 		}
 
-		public bool IsEmptyBackupTal
-		{
-			get
-			{
-				return !this.IsValidBackupTal || !this.IndividualDataBackupTal.TalLines.Any<IPsdzTalLine>();
-			}
-		}
+        public bool IsEmptyBackupTal
+        {
+            get
+            {
+                if (IsValidBackupTal)
+                {
+                    return !IndividualDataBackupTal.TalLines.Any();
+                }
+                return true;
+            }
+        }
 
-		public bool IsEmptyPrognosisTal
-		{
-			get
-			{
-				return !this.IsValidRestorePrognosisTal || !this.IndividualDataRestorePrognosisTal.TalLines.Any<IPsdzTalLine>();
-			}
-		}
+        public bool IsEmptyPrognosisTal
+        {
+            get
+            {
+                if (IsValidRestorePrognosisTal)
+                {
+                    return !IndividualDataRestorePrognosisTal.TalLines.Any();
+                }
+                return true;
+            }
+        }
 
-		public bool IsEmptyRestoreTal
-		{
-			get
-			{
-				return !this.IsValidRestoreTal || !this.IndividualDataRestoreTal.TalLines.Any<IPsdzTalLine>();
-			}
-		}
+        public bool IsEmptyRestoreTal
+        {
+            get
+            {
+                if (IsValidRestoreTal)
+                {
+                    return !IndividualDataRestoreTal.TalLines.Any();
+                }
+                return true;
+            }
+        }
 
-		public bool IsEmptyTal
-		{
-			get
-			{
-				return !this.IsValidTal || !this.Tal.TalLines.Any<IPsdzTalLine>();
-			}
-		}
+        public bool IsEmptyTal
+        {
+            get
+            {
+                if (IsValidTal)
+                {
+                    return !Tal.TalLines.Any();
+                }
+                return true;
+            }
+        }
 
         public BackupTalResult CheckBackupTal()
         {
@@ -94,102 +111,94 @@ namespace PsdzClient.Programming
 
 		public string IstufeShipment { get; private set; }
 
-		public bool IsValidBackupTal
-		{
-			get
-			{
-				return this.IndividualDataBackupTal != null;
-			}
-		}
+        public bool IsValidBackupTal => IndividualDataBackupTal != null;
 
-		public bool IsValidEcuListActual
-		{
-			get
-			{
-				return this.EcuListActual != null && this.EcuListActual.Any<IPsdzEcuIdentifier>();
-			}
-		}
+        public byte[] VpcCrc { get; set; }
 
-		public bool IsValidFaActual
-		{
-			get
-			{
-				return this.FaActual != null && this.FaActual.IsValid;
-			}
-		}
+        public bool IsValidEcuListActual
+        {
+            get
+            {
+                if (EcuListActual != null)
+                {
+                    return EcuListActual.Any();
+                }
+                return false;
+            }
+        }
 
-		public bool IsValidFaTarget
-		{
-			get
-			{
-				return this.FaTarget != null && this.FaTarget.IsValid;
-			}
-		}
+        public bool IsValidFaActual
+        {
+            get
+            {
+                if (FaActual != null)
+                {
+                    return FaActual.IsValid;
+                }
+                return false;
+            }
+        }
 
-		public bool IsValidRestorePrognosisTal
-		{
-			get
-			{
-				return this.IndividualDataRestorePrognosisTal != null;
-			}
-		}
+        public bool IsValidFaTarget
+        {
+            get
+            {
+                if (FaTarget != null)
+                {
+                    return FaTarget.IsValid;
+                }
+                return false;
+            }
+        }
 
-		public bool IsValidRestoreTal
-		{
-			get
-			{
-				return this.IndividualDataRestoreTal != null;
-			}
-		}
+        public bool IsValidRestorePrognosisTal => IndividualDataRestorePrognosisTal != null;
 
-		public bool IsValidSollverbauung
-		{
-			get
-			{
-				return this.Sollverbauung != null;
-			}
-		}
+        public bool IsValidRestoreTal => IndividualDataRestoreTal != null;
 
-		public bool IsValidSvtActual
-		{
-			get
-			{
-				return this.SvtActual != null && this.SvtActual.IsValid;
-			}
-		}
+        public bool IsValidSollverbauung => Sollverbauung != null;
 
-		public bool IsValidTal
-		{
-			get
-			{
-				return this.Tal != null;
-			}
-		}
+        public bool IsValidSvtActual
+        {
+            get
+            {
+                if (SvtActual != null)
+                {
+                    return SvtActual.IsValid;
+                }
+                return false;
+            }
+        }
 
-		public string LatestPossibleIstufeTarget
-		{
-			get
-			{
-				IEnumerable<IPsdzIstufe> enumerable = this.possibleIstufenTarget;
-				if (enumerable != null && enumerable.Any<IPsdzIstufe>())
-				{
-					return enumerable.Last<IPsdzIstufe>().Value;
-				}
-				return null;
-			}
-		}
+        public bool IsValidTal => Tal != null;
 
-		public string ProjectName { get; set; }
+        public string LatestPossibleIstufeTarget
+        {
+            get
+            {
+                IEnumerable<IPsdzIstufe> enumerable = possibleIstufenTarget;
+                if (enumerable == null || !enumerable.Any())
+                {
+                    return null;
+                }
+                return enumerable.Last().Value;
+            }
+        }
 
-		public IPsdzSwtAction SwtAction { get; set; }
+        public string ProjectName { get; set; }
 
-		public string VehicleInfo { get; set; }
+        public SFASessionData SFASessionData { get; set; }
 
-		public string PathToBackupData { get; set; }
+        public IPsdzSwtAction SwtAction { get; internal set; }
+
+        public string VehicleInfo { get; set; }
+
+        public string PathToBackupData { get; set; }
 
         public bool PsdZBackUpModeSet { get; set; }
 
-		public IPsdzTalFilter TalFilterForIndividualDataTal { get; private set; }
+        public IPsdzTalFilter TalFilterForIndividualDataTal { get; private set; }
+
+        public RequestJson NCDLastCalculationRequest { get; internal set; }
 
         public IPsdzConnection Connection { get; set; }
 
@@ -243,6 +252,58 @@ namespace PsdzClient.Programming
 			}
 			return string.Empty;
 		}
+
+        public IEnumerable<ISgbmIdChange> GetDifferentSgbmIds(int diagnosticAddress)
+        {
+            List<ISgbmIdChange> list = new List<ISgbmIdChange>();
+            if (SvtActual != null && Sollverbauung != null)
+            {
+                try
+                {
+                    IPsdzEcu psdzEcu = SvtActual.Ecus.Single((IPsdzEcu ecu) => diagnosticAddress == ecu.PrimaryKey.DiagAddrAsInt);
+                    IPsdzEcu psdzEcu2 = Sollverbauung.Svt.Ecus.Single((IPsdzEcu ecu) => diagnosticAddress == ecu.PrimaryKey.DiagAddrAsInt);
+                    List<IPsdzSgbmId> list2 = psdzEcu.StandardSvk.SgbmIds.ToList();
+                    List<IPsdzSgbmId> list3 = psdzEcu2.StandardSvk.SgbmIds.ToList();
+                    foreach (IPsdzSgbmId currentSgbmId in list2)
+                    {
+                        if (!list3.Remove(currentSgbmId))
+                        {
+                            IPsdzSgbmId psdzSgbmId = list3.FirstOrDefault((IPsdzSgbmId targetSgbmId) => targetSgbmId.Id == currentSgbmId.Id && targetSgbmId.ProcessClass == currentSgbmId.ProcessClass);
+                            list.Add(new SgbmIdChange(currentSgbmId.HexString, psdzSgbmId?.HexString));
+                            if (psdzSgbmId != null && !list3.Remove(psdzSgbmId))
+                            {
+                                Log.Warning("PsdzContext.GetDifferntSgbmIds()", "Couldn't remove SgbmId '{0}' although it existed.", psdzSgbmId);
+                            }
+                        }
+                    }
+                    list.AddRange(list3.Select((IPsdzSgbmId x) => new SgbmIdChange(null, x.HexString)));
+                }
+                catch (InvalidOperationException exception)
+                {
+                    Log.Error("PsdzContext.GetDifferntSgbmIds()", "There doesn't exist an ECU with the diagnosticAddress '{0}'.", diagnosticAddress);
+                    Log.ErrorException("PsdzContext.GetDifferntSgbmIds()", exception);
+                    list = null;
+                }
+                catch (Exception exception2)
+                {
+                    Log.ErrorException("PsdzContext.GetDifferntSgbmIds()", exception2);
+                    list = null;
+                }
+            }
+            else
+            {
+                Log.Warning("PsdzContext.GetDifferntSgbmIds()", "Parameter ecuId is null.");
+            }
+            return list;
+        }
+
+        public bool? IsSoftwareUpToDate(int diagnosticAddress)
+        {
+            bool? result = false;
+            IEnumerable<ISgbmIdChange> differentSgbmIds = GetDifferentSgbmIds(diagnosticAddress);
+            result = ((differentSgbmIds != null) ? new bool?(!differentSgbmIds.Where((ISgbmIdChange a) => a.Actual != null && !a.Actual.StartsWith("NAVD-") && !a.Actual.StartsWith("ENTD-")).Any()) : ((bool?)null));
+            return result;
+        }
 
         public ICombinedEcuHousingEntry GetEcuHousingEntry(int diagnosticAddress)
         {

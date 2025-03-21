@@ -733,6 +733,7 @@
     <Compile Include="Psdz\SecureCodingServiceClient.cs" />
     <Compile Include="Psdz\SecureFeatureActivationServiceClient.cs" />
     <Compile Include="Psdz\SecurityManagementServiceClient.cs" />
+    <Compile Include="Psdz\SFASessionData.cs" />
     <Compile Include="Psdz\SmartActuatorECU.cs" />
     <Compile Include="Psdz\SmartActuatorMasterECU.cs" />
     <Compile Include="Psdz\TalExecutionServiceClient.cs" />

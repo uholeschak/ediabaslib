@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 
 namespace PsdzClient.Programming
@@ -22,6 +23,14 @@ namespace PsdzClient.Programming
 
         string VehicleInfo { get; }
 
+        byte[] VpcCrc { get; }
+
+        IPsdzTal Tal { get; set; }
+
+        bool? IsSoftwareUpToDate(int diagnosticAddress);
+
         string GetBaseVariant(int diagnosticAddress);
+
+        IEnumerable<ISgbmIdChange> GetDifferentSgbmIds(int diagnosticAddress);
     }
 }
