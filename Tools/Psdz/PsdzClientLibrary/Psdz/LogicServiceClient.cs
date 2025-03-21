@@ -33,9 +33,9 @@ namespace BMW.Rheingold.Psdz.Client
             return CallFunction((ILogicService m) => m.GenerateTalForSfa(svt, istSfa, sollSfa, calculationStrategy, featureActivationTokens, diagAddressCtos, featureIdWhiteList, featureIdBlackList, suppressCreationOfSfaWriteTA));
         }
 
-        public IPsdzSollSfaCto GenerateSfaSollStand(IEnumerable<IPsdzSecureTokenEto> tokenPack)
+        public IPsdzSollSfaCto GenerateSfaSollStand(IPsdzSvt svt, IEnumerable<IPsdzSecureTokenEto> tokenPack)
         {
-            return CallFunction((ILogicService m) => m.GenerateSfaSollStand(tokenPack));
+            return CallFunction((ILogicService m) => m.GenerateSfaSollStand(svt, tokenPack));
         }
 
         public IPsdzTal ChangeSwtActionType(IPsdzTal tal, IEnumerable<IPsdzSwtApplicationId> swtApplicationIds, IEnumerable<PsdzSwtActionType> swtActionTypes)

@@ -133,7 +133,7 @@ namespace BMW.Rheingold.Psdz
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
-        IPsdzSollSfaCto GenerateSfaSollStand(IEnumerable<IPsdzSecureTokenEto> tokenPack);
+        IPsdzSollSfaCto GenerateSfaSollStand(IPsdzSvt svt, IEnumerable<IPsdzSecureTokenEto> tokenPack);
 
         [OperationContract(Name = "GenerateTalForSfaUsingTal")]
         [FaultContract(typeof(PsdzRuntimeException))]
