@@ -52,7 +52,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public new static CompareExpression Deserialize(Stream ms, Vehicle vec)
+        public static CompareExpression Deserialize(Stream ms, Vehicle vec)
         {
             throw new Exception("Class CompExpression is only an intermediate class. Use special classes instead before serializing the rule!");
         }

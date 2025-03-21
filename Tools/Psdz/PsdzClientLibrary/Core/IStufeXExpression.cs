@@ -20,7 +20,7 @@ namespace PsdzClient.Core
             this.vecInfo = vec;
 		}
 
-		public new static IStufeXExpression Deserialize(Stream ms, Vehicle vec)
+		public static IStufeXExpression Deserialize(Stream ms, Vehicle vec)
 		{
 			CompareExpression.ECompareOperator ecompareOperator = (CompareExpression.ECompareOperator)((byte)ms.ReadByte());
 			IStufeXExpression.ILevelyType levelyType = (IStufeXExpression.ILevelyType)ms.ReadByte();

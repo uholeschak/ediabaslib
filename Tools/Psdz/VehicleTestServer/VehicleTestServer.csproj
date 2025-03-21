@@ -35,6 +35,6 @@
       <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.SystemWebAdapters" Version="2.0.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.1" />
   </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@ namespace PsdzClient.Core
 			this.compareOperator = compareOperator;
 		}
 
-		public new static DateExpression Deserialize(Stream ms, Vehicle vec)
+		public static DateExpression Deserialize(Stream ms, Vehicle vec)
 		{
 			CompareExpression.ECompareOperator ecompareOperator = (CompareExpression.ECompareOperator)((byte)ms.ReadByte());
 			byte[] array = new byte[8];

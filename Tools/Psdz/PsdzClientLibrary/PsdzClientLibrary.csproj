@@ -836,13 +836,13 @@
       <Version>2.1.11</Version>
     </PackageReference>
     <PackageReference Include="System.Memory">
-      <Version>4.6.0</Version>
+      <Version>4.6.2</Version>
     </PackageReference>
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
-      <Version>6.1.0</Version>
+      <Version>6.1.1</Version>
     </PackageReference>
     <PackageReference Include="System.Threading.Tasks.Extensions">
-      <Version>4.6.0</Version>
+      <Version>4.6.2</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

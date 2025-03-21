@@ -132,7 +132,5 @@ namespace PsdzClient.Core
 				")"
 			});
 		}
-
-		private string variantName;
     }
 }

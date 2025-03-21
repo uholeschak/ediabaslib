@@ -70,7 +70,7 @@ namespace PsdzClient.Core
             CharacteristicValue = GetCharacteristicValueFromDb(this.dataProvider);
         }
 
-        public new static CharacteristicExpression Deserialize(Stream ms, Vehicle vec)
+        public static CharacteristicExpression Deserialize(Stream ms, Vehicle vec)
         {
             byte[] array = new byte[16];
             ms.Read(array, 0, 16);
