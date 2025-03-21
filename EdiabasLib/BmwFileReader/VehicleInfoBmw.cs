@@ -1285,11 +1285,13 @@ namespace BmwFileReader
                 }
             }
 
+            // ToDo: Check on update
             switch (key[0])
             {
                 case 'F':
                 case 'G':
                 case 'I':
+                case 'J':
                 case 'U':
                 {
                     string brSgbd = "F01";
