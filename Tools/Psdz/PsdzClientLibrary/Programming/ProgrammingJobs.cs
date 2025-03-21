@@ -1063,6 +1063,7 @@ namespace PsdzClient.Programming
                     string bnType = PsdzContext.DetectVehicle.BnType;
                     if (!string.IsNullOrEmpty(bnType))
                     {
+                        // ToDo: Check on update
                         if (bnType.IndexOf("2020", StringComparison.OrdinalIgnoreCase) < 0)
                         {
                             sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.VehicleSeriesInvalid, series));
