@@ -246,12 +246,13 @@ namespace PsdzClient.Programming
 
         public ICombinedEcuHousingEntry GetEcuHousingEntry(int diagnosticAddress)
         {
-            if (EcuCharacteristics == null || EcuCharacteristics.GetCombinedEcuHousingTable() == null)
+            ICollection<ICombinedEcuHousingEntry> combinedEcuHousingTable = EcuCharacteristics?.GetCombinedEcuHousingTable();
+            if (combinedEcuHousingTable == null)
             {
                 return null;
             }
 
-            foreach (ICombinedEcuHousingEntry combinedEcuHousingEntry in EcuCharacteristics.GetCombinedEcuHousingTable())
+            foreach (ICombinedEcuHousingEntry combinedEcuHousingEntry in combinedEcuHousingTable)
             {
                 int[] requiredEcuAddresses = combinedEcuHousingEntry.RequiredEcuAddresses;
                 if (requiredEcuAddresses != null)
