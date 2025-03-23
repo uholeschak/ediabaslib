@@ -36,13 +36,6 @@ namespace PsdzClient.Programming
             Undefined,
             SuccessEmpty
         }
-		
-        public PsdzContext(string istaFolder)
-        {
-            this.IstaFolder = istaFolder;
-			this.ExecutionOrderTop = new Dictionary<string, IList<string>>();
-			this.ExecutionOrderBottom = new Dictionary<string, IList<string>>();
-		}
 
         public bool IsEmptyBackupTal
         {
@@ -202,14 +195,6 @@ namespace PsdzClient.Programming
 
         public IPsdzConnection Connection { get; set; }
 
-        public DetectVehicle DetectVehicle { get; set; }    // [UH] added
-
-        public Vehicle VecInfo { get; set; }    // [UH] added
-
-        public ISvt SvtTarget { get; private set; }    // [UH] added
-
-        public ISvt SvtCurrent { get; private set; }    // [UH] added
-
         internal IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
 
         internal IDictionary<string, IList<string>> ExecutionOrderBottom { get; private set; }
@@ -232,26 +217,44 @@ namespace PsdzClient.Programming
 
         public IPsdzTal Tal { get; set; }
 
-        public IPsdzTalFilter TalFilter { get; private set; }
+        internal IPsdzTalFilter TalFilter { get; private set; }
 
-        public IPsdzTalFilter TalFilterForECUWithIDRClassicState { get; private set; }
+        internal IPsdzTalFilter TalFilterForECUWithIDRClassicState { get; private set; }
 
-        public IPsdzTal TalForECUWithIDRClassicState { get; set; }
+        internal IPsdzTal TalForECUWithIDRClassicState { get; set; }
 
-        public IEnumerable<IPsdzTargetSelector> TargetSelectors { get; set; }
+        internal IEnumerable<IPsdzTargetSelector> TargetSelectors { get; set; }
 
-        public string IstaFolder { get; private set; }
+        public DetectVehicle DetectVehicle { get; set; }    // [UH] added
 
-        public BaseEcuCharacteristics EcuCharacteristics { get; private set; }
+        public Vehicle VecInfo { get; set; }    // [UH] added
+
+        public ISvt SvtTarget { get; private set; }    // [UH] added
+
+        public ISvt SvtCurrent { get; private set; }    // [UH] added
+
+        public string IstaFolder { get; private set; }    // [UH] added
+
+        public BaseEcuCharacteristics EcuCharacteristics { get; private set; }    // [UH] added
+
+        public PsdzContext(string istaFolder)
+        {
+            this.IstaFolder = istaFolder;
+            ExecutionOrderTop = new Dictionary<string, IList<string>>();
+            ExecutionOrderBottom = new Dictionary<string, IList<string>>();
+            SFASessionData = new SFASessionData();
+            //ServiceLocator.Current.TryGetService<IPsdzCentralConnectionService>(out service);
+        }
 
         public string GetBaseVariant(int diagnosticAddress)
-		{
-			if (this.SvtActual.Ecus.Any((IPsdzEcu ecu) => diagnosticAddress == ecu.PrimaryKey.DiagAddrAsInt))
-			{
-				return this.SvtActual.Ecus.Single((IPsdzEcu ecu) => diagnosticAddress == ecu.PrimaryKey.DiagAddrAsInt).BaseVariant;
-			}
-			return string.Empty;
-		}
+        {
+            if (SvtActual.Ecus.Any((IPsdzEcu ecu) => diagnosticAddress == ecu.PrimaryKey.DiagAddrAsInt))
+            {
+                return SvtActual.Ecus.Single((IPsdzEcu ecu) => diagnosticAddress == ecu.PrimaryKey.DiagAddrAsInt).BaseVariant;
+            }
+            Log.Warning("PsdzContext.GetBaseVariant", "Ecu with DiagAdr:{0} was not found.", diagnosticAddress);
+            return string.Empty;
+        }
 
         public IEnumerable<ISgbmIdChange> GetDifferentSgbmIds(int diagnosticAddress)
         {
@@ -371,48 +374,42 @@ namespace PsdzClient.Programming
             return pathString;
         }
 
+        // [UH] return value added
         public bool SetPathToBackupData(string vin17)
-		{
-			this.hasVinBackupDataFolder = false;
-            string pathString = GetBackupBasePath(IstaFolder);
-
-			if (string.IsNullOrEmpty(pathString))
-			{
+        {
+            hasVinBackupDataFolder = false;
+            string pathString = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", null);
+            if (string.IsNullOrEmpty(pathString))
+            {
                 Log.Warning("PsdzContext.SetPathToBackupData()", "Backup data path (\"BMW.Rheingold.Programming.PsdzBackupDataPath\") is not set. Thus data recovery is disabled.");
-				this.PathToBackupData = null;
-				return false;
-			}
-			if (string.IsNullOrEmpty(vin17))
-			{
-				this.PathToBackupData = Path.GetFullPath(pathString);
-			}
-            else
-			{
-				this.hasVinBackupDataFolder = true;
-                this.PathToBackupData = Path.GetFullPath(Path.Combine(pathString, vin17));
+                PathToBackupData = null;
+                return false;
             }
-
+            if (string.IsNullOrEmpty(vin17))
+            {
+                PathToBackupData = Path.GetFullPath(pathString);
+            }
+            else
+            {
+                hasVinBackupDataFolder = true;
+                PathToBackupData = Path.GetFullPath(Path.Combine(pathString, vin17));
+            }
             if (!Directory.Exists(PathToBackupData))
             {
                 Log.Info("PsdzContext.SetPathToBackupData()", "Backup data path (\"{0}\") is not an existing directory. Try to create...", PathToBackupData);
                 Directory.CreateDirectory(PathToBackupData);
             }
             Log.Info("PsdzContext.SetPathToBackupData()", "Backup data path: \"{0}\"", PathToBackupData);
-
             return true;
         }
 
-        public void CleanupBackupData()
+        internal void CleanupBackupData()
         {
-            if (!string.IsNullOrEmpty(PathToBackupData) && this.hasVinBackupDataFolder &&
-                Directory.Exists(PathToBackupData) && !Directory.EnumerateFileSystemEntries(PathToBackupData).Any<string>())
+            if (!string.IsNullOrEmpty(PathToBackupData) && hasVinBackupDataFolder && !Directory.EnumerateFileSystemEntries(PathToBackupData).Any())
             {
                 Directory.Delete(PathToBackupData);
-            }
-
-            if (!HasBackupDataDir())
-            {
-                this.hasVinBackupDataFolder = false;
+                Log.Info("PsdzContext.CleanupBackupData()", "Empty backup folder ('{0}') deleted!", PathToBackupData);
+                hasVinBackupDataFolder = false;
             }
         }
 
