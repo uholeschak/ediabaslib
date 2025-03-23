@@ -202,33 +202,33 @@ namespace PsdzClient.Programming
 
         public IPsdzConnection Connection { get; set; }
 
-        public DetectVehicle DetectVehicle { get; set; }
+        public DetectVehicle DetectVehicle { get; set; }    // [UH] added
 
-        public Vehicle VecInfo { get; set; }
+        public Vehicle VecInfo { get; set; }    // [UH] added
 
-        public ISvt SvtTarget { get; private set; }
+        public ISvt SvtTarget { get; private set; }    // [UH] added
 
-        public ISvt SvtCurrent { get; private set; }
+        public ISvt SvtCurrent { get; private set; }    // [UH] added
 
-        public IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
+        internal IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
 
-        public IDictionary<string, IList<string>> ExecutionOrderBottom { get; private set; }
+        internal IDictionary<string, IList<string>> ExecutionOrderBottom { get; private set; }
 
-        public IDictionary<string, IList<string>> ExecutionOrderTop { get; private set; }
+        internal IDictionary<string, IList<string>> ExecutionOrderTop { get; private set; }
 
-        public IPsdzFa FaActual { get; private set; }
+        internal IPsdzFa FaActual { get; private set; }
 
-        public IPsdzFa FaTarget { get; private set; }
+        internal IPsdzFa FaTarget { get; private set; }
 
-        public IPsdzTal IndividualDataBackupTal { get; set; }
+        internal IPsdzTal IndividualDataBackupTal { get; set; }
 
-        public IPsdzTal IndividualDataRestorePrognosisTal { get; set; }
+        internal IPsdzTal IndividualDataRestorePrognosisTal { get; set; }
 
-        public IPsdzTal IndividualDataRestoreTal { get; set; }
+        internal IPsdzTal IndividualDataRestoreTal { get; set; }
 
-        public IPsdzSollverbauung Sollverbauung { get; private set; }
+        internal IPsdzSollverbauung Sollverbauung { get; private set; }
 
-        public IPsdzSvt SvtActual { get; private set; }
+        internal IPsdzSvt SvtActual { get; private set; }
 
         public IPsdzTal Tal { get; set; }
 
