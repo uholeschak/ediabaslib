@@ -64,6 +64,10 @@ namespace BMW.Rheingold.Psdz
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
+        IPsdzTalFilter DefineFilterForSwes(int diagAddress, IPsdzTa ta, string processClass, PsdzTalFilterAction talFilterAction, IDictionary<string, PsdzTalFilterAction> sweFilter, PsdzTaCategories taCategory, IPsdzTalFilter filter);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzTal UpdateTalEcus(IPsdzTal psdzTal, IEnumerable<IPsdzEcuIdentifier> installedEcuListIst, IEnumerable<IPsdzEcuIdentifier> installedEcuListSoll);
 
         [OperationContract]

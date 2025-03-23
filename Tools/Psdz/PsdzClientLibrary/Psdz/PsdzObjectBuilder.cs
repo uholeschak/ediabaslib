@@ -367,152 +367,144 @@ namespace BMW.Rheingold.Psdz
         }
 
         public IPsdzSgbmId BuildPsdzSgbmId(string processClass, long id, int mainVersion, int subVersion, int patchVersion)
-		{
-			return new PsdzSgbmId
-			{
-				ProcessClass = processClass,
-				IdAsLong = id,
-				Id = id.ToString("X8", CultureInfo.InvariantCulture),
-				MainVersion = mainVersion,
-				SubVersion = subVersion,
-				PatchVersion = patchVersion,
-				HexString = string.Format(CultureInfo.InvariantCulture, "{0}-{1:X8}-{2:X2}.{3:X2}.{4:X2}", new object[]
-				{
-					processClass,
-					id,
-					mainVersion,
-					subVersion,
-					patchVersion
-				})
-			};
-		}
-
-		public IPsdzSvt BuildSvt(IPsdzStandardSvt svtInput, string vin17)
-		{
-			if (svtInput == null)
-			{
-				return null;
-			}
-			return new PsdzSvt
-			{
-				Vin = vin17,
-				AsString = svtInput.AsString,
-				IsValid = true,
-				Version = svtInput.Version,
-				Ecus = svtInput.Ecus,
-				HoSignature = svtInput.HoSignature,
-				HoSignatureDate = svtInput.HoSignatureDate
-			};
-		}
-
-		public IPsdzSvt BuildSvt(ISvt svtInput, string vin17)
-		{
-			if (svtInput == null)
-			{
-				return null;
-			}
-			return new PsdzSvt
-			{
-				Vin = vin17,
-				Version = svtInput.Version,
-				HoSignature = svtInput.HoSignature,
-				HoSignatureDate = svtInput.HoSignatureDate,
-				Ecus = ((svtInput.Ecus != null) ? svtInput.Ecus.Select(new Func<IEcuObj, IPsdzEcu>(this.CreateEcu)) : Enumerable.Empty<IPsdzEcu>()),
-				IsValid = true
-			};
-		}
-
-		public IPsdzSwtAction BuildSwtAction(ISwt swt)
-		{
-			if (swt == null)
-			{
-				return null;
-			}
-			return new PsdzSwtAction
-			{
-				SwtEcus = ((swt.Ecus != null) ? swt.Ecus.Select(new Func<ISwtEcu, IPsdzSwtEcu>(this.BuildSwtEcu)) : Enumerable.Empty<IPsdzSwtEcu>())
-			};
-		}
-
-		public IPsdzSwtApplication BuildSwtApplication(IFSCProvided fscProvided)
-		{
-			if (fscProvided != null && fscProvided.FscItem != null && fscProvided.FscItem.SwID != null)
-			{
-				IFscItemType fscItem = fscProvided.FscItem;
-				int appNo = int.Parse(fscItem.SwID.ApplicationNo, NumberStyles.AllowHexSpecifier);
-				int upgradeIdx = int.Parse(fscItem.SwID.UpgradeIndex, NumberStyles.AllowHexSpecifier);
-				byte[] fsc = (fscProvided.FscItem.Fsc != null) ? fscProvided.FscItem.Fsc.GetBinaryValue() : null;
-				byte[] fscCertificate = (fscProvided.Certificate != null) ? fscProvided.Certificate.GetBinaryValue() : null;
-				return this.BuildSwtApplication(appNo, upgradeIdx, fsc, fscCertificate, null);
-			}
-			return null;
-		}
-
-		public IPsdzSwtApplication BuildSwtApplication(int appNo, int upgradeIdx, byte[] fsc, byte[] fscCertificate, SwtActionType? swtActionType)
-		{
-			IPsdzSwtApplicationId swtApplicationId = this.BuildSwtApplicationId(appNo, upgradeIdx);
-			return new PsdzSwtApplication
-			{
-				SwtApplicationId = swtApplicationId,
-				Fsc = fsc,
-				FscCert = fscCertificate,
-				SwtActionType = ((swtActionType != null) ? new PsdzSwtActionType?(this.swtActionTypeEnumMapper.GetValue(swtActionType.Value)) : null)
-			};
-		}
-
-		public IPsdzSwtApplicationId BuildSwtApplicationId(ISwtApplicationId swtApplicationId)
-		{
-			if (swtApplicationId == null)
-			{
-				return null;
-			}
-			return this.BuildSwtApplicationId(swtApplicationId.AppNo, swtApplicationId.UpgradeIdx);
-		}
-
-		public IPsdzSwtApplicationId BuildSwtApplicationId(int appNo, int upgradeIdx)
-		{
-			return new PsdzSwtApplicationId
-			{
-				ApplicationNumber = appNo,
-				UpgradeIndex = upgradeIdx
-			};
-		}
-
-		public IPsdzTalFilter BuildTalFilter()
-		{
-			IPsdzTalFilter ecuTaCategoriesAsMustNot = this.objectBuilderService.BuildEmptyTalFilter();
-			return this.SetEcuTaCategoriesAsMustNot(ecuTaCategoriesAsMustNot);
-		}
-
-		private IPsdzTalFilter SetEcuTaCategoriesAsMustNot(IPsdzTalFilter talFilter)
         {
-			TaCategories[] taCategories = new TaCategories[]
+            PsdzSgbmId psdzSgbmId = new PsdzSgbmId();
+            psdzSgbmId.ProcessClass = processClass;
+            psdzSgbmId.IdAsLong = id;
+            psdzSgbmId.Id = id.ToString("X8", CultureInfo.InvariantCulture);
+            psdzSgbmId.MainVersion = mainVersion;
+            psdzSgbmId.SubVersion = subVersion;
+            psdzSgbmId.PatchVersion = patchVersion;
+            psdzSgbmId.HexString = string.Format(CultureInfo.InvariantCulture, "{0}-{1:X8}-{2:X2}.{3:X2}.{4:X2}", processClass, id, mainVersion, subVersion, patchVersion);
+            return psdzSgbmId;
+        }
+
+        public IPsdzSvt BuildSvt(IPsdzStandardSvt svtInput, string vin17)
+        {
+            if (svtInput == null)
+            {
+                return null;
+            }
+            return new PsdzSvt
+            {
+                Vin = vin17,
+                AsString = svtInput.AsString,
+                IsValid = true,
+                Version = svtInput.Version,
+                Ecus = svtInput.Ecus,
+                HoSignature = svtInput.HoSignature,
+                HoSignatureDate = svtInput.HoSignatureDate
+            };
+        }
+
+        public IPsdzSvt BuildSvt(ISvt svtInput, string vin17)
+        {
+            if (svtInput == null)
+            {
+                return null;
+            }
+            return new PsdzSvt
+            {
+                Vin = vin17,
+                Version = svtInput.Version,
+                HoSignature = svtInput.HoSignature,
+                HoSignatureDate = svtInput.HoSignatureDate,
+                Ecus = ((svtInput.Ecus != null) ? svtInput.Ecus.Select(CreateEcu) : Enumerable.Empty<IPsdzEcu>()),
+                IsValid = true
+            };
+        }
+
+        public IPsdzSwtAction BuildSwtAction(ISwt swt)
+        {
+            if (swt == null)
+            {
+                return null;
+            }
+            return new PsdzSwtAction
+            {
+                SwtEcus = ((swt.Ecus != null) ? swt.Ecus.Select(BuildSwtEcu) : Enumerable.Empty<IPsdzSwtEcu>())
+            };
+        }
+
+        public IPsdzSwtApplication BuildSwtApplication(IFSCProvided fscProvided)
+        {
+            if (fscProvided == null || fscProvided.FscItem == null || fscProvided.FscItem.SwID == null)
+            {
+                return null;
+            }
+            IFscItemType fscItem = fscProvided.FscItem;
+            int appNo = int.Parse(fscItem.SwID.ApplicationNo, NumberStyles.AllowHexSpecifier);
+            int upgradeIdx = int.Parse(fscItem.SwID.UpgradeIndex, NumberStyles.AllowHexSpecifier);
+            byte[] fsc = ((fscProvided.FscItem.Fsc != null) ? fscProvided.FscItem.Fsc.GetBinaryValue() : null);
+            byte[] fscCertificate = ((fscProvided.Certificate != null) ? fscProvided.Certificate.GetBinaryValue() : null);
+            return BuildSwtApplication(appNo, upgradeIdx, fsc, fscCertificate, null);
+        }
+
+        public IPsdzSwtApplication BuildSwtApplication(int appNo, int upgradeIdx, byte[] fsc, byte[] fscCertificate, SwtActionType? swtActionType)
+        {
+            IPsdzSwtApplicationId swtApplicationId = BuildSwtApplicationId(appNo, upgradeIdx);
+            return new PsdzSwtApplication
+            {
+                SwtApplicationId = swtApplicationId,
+                Fsc = fsc,
+                FscCert = fscCertificate,
+                SwtActionType = (swtActionType.HasValue ? new PsdzSwtActionType?(swtActionTypeEnumMapper.GetValue(swtActionType.Value)) : ((PsdzSwtActionType?)null))
+            };
+        }
+
+        public IPsdzSwtApplicationId BuildSwtApplicationId(ISwtApplicationId swtApplicationId)
+        {
+            if (swtApplicationId == null)
+            {
+                return null;
+            }
+            return BuildSwtApplicationId(swtApplicationId.AppNo, swtApplicationId.UpgradeIdx);
+        }
+
+        public IPsdzSwtApplicationId BuildSwtApplicationId(int appNo, int upgradeIdx)
+        {
+            return new PsdzSwtApplicationId
+            {
+                ApplicationNumber = appNo,
+                UpgradeIndex = upgradeIdx
+            };
+        }
+
+        public IPsdzTalFilter BuildTalFilter()
+        {
+            IPsdzTalFilter ecuTaCategoriesAsMustNot = objectBuilderService.BuildEmptyTalFilter();
+            return SetEcuTaCategoriesAsMustNot(ecuTaCategoriesAsMustNot);
+        }
+
+        private IPsdzTalFilter SetEcuTaCategoriesAsMustNot(IPsdzTalFilter talFilter)
+        {
+            TaCategories[] taCategories = new TaCategories[3]
             {
                 TaCategories.EcuActivate,
                 TaCategories.EcuPoll,
                 TaCategories.EcuMirrorDeploy
             };
-			talFilter = this.DefineFilterForAllEcus(taCategories, TalFilterOptions.MustNot, talFilter);
-			return talFilter;
-		}
+            talFilter = DefineFilterForAllEcus(taCategories, TalFilterOptions.MustNot, talFilter);
+            return talFilter;
+        }
 
-		public IPsdzTal BuildTalFromXml(string xml)
-		{
-			return this.objectBuilderService.BuildTalFromXml(xml);
-		}
+        public IPsdzTal BuildTalFromXml(string xml)
+        {
+            return objectBuilderService.BuildTalFromXml(xml);
+        }
 
-		public IPsdzTal BuildEmptyTal()
-		{
-			return this.objectBuilderService.BuildEmptyTal();
-		}
+        public IPsdzTal BuildEmptyTal()
+        {
+            return objectBuilderService.BuildEmptyTal();
+        }
 
-		public IPsdzVin BuildVin(string vin17)
-		{
-			return new PsdzVin
-			{
-				Value = vin17
-			};
-		}
+        public IPsdzVin BuildVin(string vin17)
+        {
+            return new PsdzVin
+            {
+                Value = vin17
+            };
+        }
 
         public IPsdzTalFilter DefineFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions, IPsdzTalFilter filter)
         {
@@ -522,12 +514,33 @@ namespace BMW.Rheingold.Psdz
             return objectBuilderService.DefineFilterForAllEcus(psdzTaCategories, talFilterAction, filter);
         }
 
-        public IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter filter)
+        public IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter filter, IDictionary<string, TalFilterOptions> smacFilter = null)
         {
             taCategories = RemoveIdDeleteAndLogOccurence(taCategories);
             PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
             PsdzTaCategories[] psdzTaCategories = taCategories?.Select(taCategoriesEnumMapper.GetValue).ToArray();
-            return objectBuilderService.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, filter);
+            Dictionary<string, PsdzTalFilterAction> smacFilter2 = null;
+            if (smacFilter != null)
+            {
+                smacFilter2 = smacFilter.Select((KeyValuePair<string, TalFilterOptions> x) => new KeyValuePair<string, PsdzTalFilterAction>(x.Key, ConvertTalFilterOptionToTalFilterAction(x.Value))).ToDictionary((KeyValuePair<string, PsdzTalFilterAction> x) => x.Key, (KeyValuePair<string, PsdzTalFilterAction> y) => y.Value);
+            }
+            return objectBuilderService.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, filter, smacFilter2);
+        }
+
+        public IPsdzTalFilter DefineFilterForSWEs(IPsdzTa ta, int diagAddress, string processClass, TalFilterOptions talFilterOptions, List<string> sgbmIds, List<TalFilterOptions> sweTalFilterOptions, TaCategories taCategory, IPsdzTalFilter filter)
+        {
+            PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
+            if (sgbmIds.Count != sweTalFilterOptions.Count)
+            {
+                throw new ArgumentException("Sgbmids does not match swe tal filter options in length");
+            }
+            Dictionary<string, PsdzTalFilterAction> dictionary = new Dictionary<string, PsdzTalFilterAction>();
+            for (int i = 0; i < sgbmIds.Count; i++)
+            {
+                dictionary.Add(sgbmIds[i], ConvertTalFilterOptionToTalFilterAction(sweTalFilterOptions[i]));
+            }
+            PsdzTaCategories value = taCategoriesEnumMapper.GetValue(taCategory);
+            return objectBuilderService.DefineFilterForSwes(diagAddress, ta, processClass, talFilterAction, dictionary, value, filter);
         }
 
         private static PsdzTalFilterAction ConvertTalFilterOptionToTalFilterAction(TalFilterOptions talFilterOptions)

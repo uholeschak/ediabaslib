@@ -50,72 +50,74 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
         Only
     }
 
-	public interface IPsdzObjectBuilder
-	{
-		IPsdzDiagAddress BuildDiagAddress(int diagAddress);
+    public interface IPsdzObjectBuilder
+    {
+        IPsdzDiagAddress BuildDiagAddress(int diagAddress);
 
-		IPsdzSgbmId BuildPsdzSgbmId(string processClass, long id, int mainVersion, int subVersion, int patchVersion);
+        IPsdzSgbmId BuildPsdzSgbmId(string processClass, long id, int mainVersion, int subVersion, int patchVersion);
 
-		IPsdzEcu BuildEcu(IEcuObj ecu);
+        IPsdzEcu BuildEcu(IEcuObj ecu);
 
-		IPsdzEcuIdentifier BuildEcuIdentifier(IEcuIdentifier ecuIdentifier);
+        IPsdzEcuIdentifier BuildEcuIdentifier(IEcuIdentifier ecuIdentifier);
 
-		IPsdzEcuIdentifier BuildEcuIdentifier(int diagAddrAsInt, string baseVariant);
+        IPsdzEcuIdentifier BuildEcuIdentifier(int diagAddrAsInt, string baseVariant);
 
-		IPsdzFa BuildEmptyFa();
+        IPsdzFa BuildEmptyFa();
 
-		IPsdzFa BuildFa(Programming.IFa fa, string vin17);
+        IPsdzFa BuildFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa, string vin17);
 
-		IPsdzFa BuildFa(IPsdzStandardFa fa, string vin17);
+        IPsdzFa BuildFa(IPsdzStandardFa fa, string vin17);
 
-		IPsdzFa BuildFaFromXml(string xml);
+        IPsdzFa BuildFaFromXml(string xml);
 
-		IPsdzStandardFa BuildFaActualFromVehicleContext(IVehicle vehicleContext);
+        IPsdzStandardFa BuildFaActualFromVehicleContext(IVehicle vehicleContext);
 
-		IPsdzFp BuildFp(IVehicleProfile vehicleProfile);
+        IPsdzFp BuildFp(IVehicleProfile vehicleProfile);
 
-		IPsdzIstufenTriple BuildIStufenTripleActualFromVehicleContext(IVehicle vehicleContext);
+        IPsdzIstufenTriple BuildIStufenTripleActualFromVehicleContext(IVehicle vehicleContext);
 
-		IPsdzIstufe BuildIstufe(string istufe);
+        IPsdzIstufe BuildIstufe(string istufe);
 
-		IPsdzIstufenTriple BuildIstufenTriple(string shipment, string last, string current);
+        IPsdzIstufenTriple BuildIstufenTriple(string shipment, string last, string current);
 
-		IPsdzStandardSvt BuildStandardSvtActualFromVehicleContext(IVehicle vehicleContext, IEnumerable<IPsdzEcuIdentifier> ecuListFromPsdz = null);
+        IPsdzStandardSvt BuildStandardSvtActualFromVehicleContext(IVehicle vehicleContext, IEnumerable<IPsdzEcuIdentifier> ecuListFromPsdz = null);
 
-		IPsdzSvt BuildSvt(IPsdzStandardSvt svtInput, string vin17);
+        IPsdzSvt BuildSvt(IPsdzStandardSvt svtInput, string vin17);
 
-		IPsdzSvt BuildSvt(ISvt svt, string vin17);
+        IPsdzSvt BuildSvt(ISvt svt, string vin17);
 
-		IPsdzSwtAction BuildSwtAction(ISwt swt);
+        IPsdzSwtAction BuildSwtAction(ISwt swt);
 
-		IPsdzSwtApplication BuildSwtApplication(IFSCProvided fscProvided);
+        IPsdzSwtApplication BuildSwtApplication(IFSCProvided fscProvided);
 
-		IPsdzSwtApplication BuildSwtApplication(int appNo, int upgradeIdx, byte[] fsc, byte[] fscCertificate, SwtActionType? swtActionType);
+        IPsdzSwtApplication BuildSwtApplication(int appNo, int upgradeIdx, byte[] fsc, byte[] fscCertificate, SwtActionType? swtActionType);
 
-		IPsdzSwtApplicationId BuildSwtApplicationId(ISwtApplicationId swtApplicationId);
+        IPsdzSwtApplicationId BuildSwtApplicationId(ISwtApplicationId swtApplicationId);
 
-		IPsdzSwtApplicationId BuildSwtApplicationId(int appNo, int upgradeIdx);
+        IPsdzSwtApplicationId BuildSwtApplicationId(int appNo, int upgradeIdx);
 
-		IPsdzTalFilter BuildTalFilter();
+        IPsdzTalFilter BuildTalFilter();
 
-		IPsdzTal BuildTalFromXml(string xml);
+        IPsdzTal BuildTalFromXml(string xml);
 
-		IPsdzTal BuildEmptyTal();
+        IPsdzTal BuildEmptyTal();
 
-		IPsdzVin BuildVin(string vin17);
+        IPsdzVin BuildVin(string vin17);
 
-		IPsdzTalFilter DefineFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter);
+        IPsdzTalFilter DefineFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter);
 
-		IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter);
+        IPsdzTalFilter DefineFilterForSWEs(IPsdzTa ta, int diagAddress, string processClass, TalFilterOptions talFilterOptions, List<string> sgbmIds, List<TalFilterOptions> sweTalFilterOptions, TaCategories taCategory, IPsdzTalFilter filter);
 
-		PsdzFetchEcuCertCheckingResult BuildFetchEcuCertCheckingResult(IFetchEcuCertCheckingResult ecuCertCheckingResult);
+        IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter, IDictionary<string, TalFilterOptions> smacFilter = null);
 
-		IList<IPsdzFeatureSpecificFieldCto> BuildFeatureSpecificFieldsCto(IList<IFeatureSpecificField> featureSpecificFields);
+        PsdzFetchEcuCertCheckingResult BuildFetchEcuCertCheckingResult(IFetchEcuCertCheckingResult ecuCertCheckingResult);
 
-		IList<IPsdzValidityConditionCto> BuildValidityConditionsCto(IList<IValidityCondition> validityConditions);
+        IList<IPsdzFeatureSpecificFieldCto> BuildFeatureSpecificFieldsCto(IList<IFeatureSpecificField> featureSpecificFields);
 
-		PsdzConditionTypeEtoEnum BuildConditionTypeEnum(ConditionTypeEnum conditionType);
+        IList<IPsdzValidityConditionCto> BuildValidityConditionsCto(IList<IValidityCondition> validityConditions);
 
-		IPsdzAsamJobInputDictionary BuildAsamJobInputDictionary(IAsamJobInputDictionary inputDictionary);
-	}
+        PsdzConditionTypeEtoEnum BuildConditionTypeEnum(ConditionTypeEnum conditionType);
+
+        IPsdzAsamJobInputDictionary BuildAsamJobInputDictionary(IAsamJobInputDictionary inputDictionary);
+    }
 }
