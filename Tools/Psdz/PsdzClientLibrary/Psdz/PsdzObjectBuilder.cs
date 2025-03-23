@@ -19,6 +19,7 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using PsdzClient.Utility;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -181,197 +182,191 @@ namespace BMW.Rheingold.Psdz
         }
 
         public IPsdzFa BuildFa(IPsdzStandardFa faInput, string vin17)
-		{
-			if (faInput == null)
-			{
-				return null;
-			}
-			PsdzFa fa = new PsdzFa
-			{
-				Vin = vin17,
-				IsValid = faInput.IsValid,
-				FaVersion = faInput.FaVersion,
-				Entwicklungsbaureihe = faInput.Entwicklungsbaureihe,
-				Lackcode = faInput.Lackcode,
-				Polstercode = faInput.Polstercode,
-				Type = faInput.Type,
-				Zeitkriterium = faInput.Zeitkriterium,
-				EWords = faInput.EWords,
-				HOWords = faInput.HOWords,
-				Salapas = faInput.Salapas,
-				AsString = faInput.AsString
-			};
-			return this.ValidateBuiltFaObjectViaPsdz(fa);
-		}
+        {
+            if (faInput == null)
+            {
+                return null;
+            }
+            PsdzFa fa = new PsdzFa
+            {
+                Vin = vin17,
+                IsValid = faInput.IsValid,
+                FaVersion = faInput.FaVersion,
+                Entwicklungsbaureihe = faInput.Entwicklungsbaureihe,
+                Lackcode = faInput.Lackcode,
+                Polstercode = faInput.Polstercode,
+                Type = faInput.Type,
+                Zeitkriterium = faInput.Zeitkriterium,
+                EWords = faInput.EWords,
+                HOWords = faInput.HOWords,
+                Salapas = faInput.Salapas,
+                AsString = faInput.AsString
+            };
+            return ValidateBuiltFaObjectViaPsdz(fa);
+        }
 
-		public IPsdzFa BuildFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faInput, string vin17)
-		{
-			if (faInput == null)
-			{
-				return null;
-			}
-			PsdzFa fa = new PsdzFa
-			{
-				Vin = vin17,
-				FaVersion = faInput.FaVersion,
-				Entwicklungsbaureihe = faInput.Entwicklungsbaureihe,
-				Lackcode = faInput.Lackcode,
-				Polstercode = faInput.Polstercode,
-				Type = faInput.Type,
-				Zeitkriterium = faInput.Zeitkriterium,
-				EWords = faInput.EWords,
-				HOWords = faInput.HOWords,
-				Salapas = faInput.Salapas
-			};
-			return this.ValidateBuiltFaObjectViaPsdz(fa);
-		}
+        public IPsdzFa BuildFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faInput, string vin17)
+        {
+            if (faInput == null)
+            {
+                return null;
+            }
+            PsdzFa fa = new PsdzFa
+            {
+                Vin = vin17,
+                FaVersion = faInput.FaVersion,
+                Entwicklungsbaureihe = faInput.Entwicklungsbaureihe,
+                Lackcode = faInput.Lackcode,
+                Polstercode = faInput.Polstercode,
+                Type = faInput.Type,
+                Zeitkriterium = faInput.Zeitkriterium,
+                EWords = faInput.EWords,
+                HOWords = faInput.HOWords,
+                Salapas = faInput.Salapas
+            };
+            return ValidateBuiltFaObjectViaPsdz(fa);
+        }
 
-		public IPsdzFa BuildFaFromXml(string xml)
-		{
-			return this.objectBuilderService.BuildFaFromXml(xml);
-		}
+        public IPsdzFa BuildFaFromXml(string xml)
+        {
+            return objectBuilderService.BuildFaFromXml(xml);
+        }
 
-		public IPsdzStandardFa BuildFaActualFromVehicleContext(IVehicle vehicleContext)
-		{
-			//MethodBase currentMethod = MethodBase.GetCurrentMethod();
-			IPsdzStandardFa result;
-			try
-			{
-				PsdzStandardFa psdzStandardFa = new PsdzStandardFa();
-				if (vehicleContext.FA != null)
-				{
-					string entwicklungsbaureihe = PsdzClient.Utility.FormatConverter.ConvertToBn2020ConformModelSeries(vehicleContext.FA.BR);
-					psdzStandardFa.Entwicklungsbaureihe = entwicklungsbaureihe;
-					psdzStandardFa.Type = vehicleContext.FA.TYPE;
-					psdzStandardFa.Zeitkriterium = vehicleContext.FA.C_DATE;
-					psdzStandardFa.Lackcode = vehicleContext.FA.LACK;
-					psdzStandardFa.Polstercode = vehicleContext.FA.POLSTER;
-					IList<string> list = new List<string>();
-					foreach (string item in vehicleContext.FA.E_WORT)
-					{
-						list.Add(item);
-					}
-					psdzStandardFa.EWords = list;
-					IList<string> list2 = new List<string>();
-					foreach (string item2 in vehicleContext.FA.HO_WORT)
-					{
-						list2.Add(item2);
-					}
-					psdzStandardFa.HOWords = list2;
-					IList<string> list3 = new List<string>();
-					foreach (string item3 in vehicleContext.FA.SA)
-					{
-						list3.Add(item3);
-					}
-					psdzStandardFa.Salapas = list3;
-					psdzStandardFa.AsString = vehicleContext.FA.STANDARD_FA;
-					psdzStandardFa.IsValid = vehicleContext.FA.AlreadyDone;
-					psdzStandardFa.FaVersion = 3;
-				}
-				result = psdzStandardFa;
-			}
-			catch (Exception)
-			{
-				result = null;
-			}
-			return result;
-		}
+        public IPsdzStandardFa BuildFaActualFromVehicleContext(IVehicle vehicleContext)
+        {
+            MethodBase currentMethod = MethodBase.GetCurrentMethod();
+            try
+            {
+                PsdzStandardFa psdzStandardFa = new PsdzStandardFa();
+                if (vehicleContext.FA != null)
+                {
+                    string entwicklungsbaureihe = FormatConverter.ConvertToBn2020ConformModelSeries(vehicleContext.FA.BR);
+                    psdzStandardFa.Entwicklungsbaureihe = entwicklungsbaureihe;
+                    psdzStandardFa.Type = vehicleContext.FA.TYPE;
+                    psdzStandardFa.Zeitkriterium = vehicleContext.FA.C_DATE;
+                    psdzStandardFa.Lackcode = vehicleContext.FA.LACK;
+                    psdzStandardFa.Polstercode = vehicleContext.FA.POLSTER;
+                    IList<string> list = new List<string>();
+                    foreach (string item in vehicleContext.FA.E_WORT)
+                    {
+                        list.Add(item);
+                    }
+                    psdzStandardFa.EWords = list;
+                    IList<string> list2 = new List<string>();
+                    foreach (string item2 in vehicleContext.FA.HO_WORT)
+                    {
+                        list2.Add(item2);
+                    }
+                    psdzStandardFa.HOWords = list2;
+                    IList<string> list3 = new List<string>();
+                    foreach (string item3 in vehicleContext.FA.SA)
+                    {
+                        list3.Add(item3);
+                    }
+                    psdzStandardFa.Salapas = list3;
+                    psdzStandardFa.AsString = vehicleContext.FA.STANDARD_FA;
+                    psdzStandardFa.IsValid = vehicleContext.FA.AlreadyDone;
+                    psdzStandardFa.FaVersion = 3;
+                }
+                return psdzStandardFa;
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(currentMethod.Name, exception);
+                return null;
+            }
+        }
 
-		public IPsdzFp BuildFp(IVehicleProfile vehicleProfile)
-		{
-			if (vehicleProfile == null)
-			{
-				return null;
-			}
-			return new PsdzFp
-			{
-				AsString = vehicleProfile.AsString,
-				Entwicklungsbaureihe = vehicleProfile.Entwicklungsbaureihe,
-				Baureihenverbund = vehicleProfile.Baureihenverbund
-			};
-		}
+        public IPsdzFp BuildFp(IVehicleProfile vehicleProfile)
+        {
+            if (vehicleProfile == null)
+            {
+                return null;
+            }
+            return new PsdzFp
+            {
+                AsString = vehicleProfile.AsString,
+                Entwicklungsbaureihe = vehicleProfile.Entwicklungsbaureihe,
+                Baureihenverbund = vehicleProfile.Baureihenverbund
+            };
+        }
 
-		public IPsdzIstufenTriple BuildIStufenTripleActualFromVehicleContext(IVehicle vehicleContext)
-		{
-			string ilevelWerk = vehicleContext.ILevelWerk;
-			string ilevel = vehicleContext.ILevel;
-			string ilevel2 = vehicleContext.ILevel;
-			return this.BuildIstufenTriple(ilevelWerk, ilevel, ilevel2);
-		}
+        public IPsdzIstufenTriple BuildIStufenTripleActualFromVehicleContext(IVehicle vehicleContext)
+        {
+            string iLevelWerk = vehicleContext.ILevelWerk;
+            string iLevel = vehicleContext.ILevel;
+            string iLevel2 = vehicleContext.ILevel;
+            return BuildIstufenTriple(iLevelWerk, iLevel, iLevel2);
+        }
 
-		public IPsdzIstufe BuildIstufe(string istufe)
-		{
-			return new PsdzIstufe
-			{
-				IsValid = true,
-				Value = istufe
-			};
-		}
+        public IPsdzIstufe BuildIstufe(string istufe)
+        {
+            return new PsdzIstufe
+            {
+                IsValid = true,
+                Value = istufe
+            };
+        }
 
-		public IPsdzIstufenTriple BuildIstufenTriple(string shipment, string last, string current)
-		{
-			return new PsdzIstufenTriple
-			{
-				Shipment = shipment,
-				Last = last,
-				Current = current
-			};
-		}
+        public IPsdzIstufenTriple BuildIstufenTriple(string shipment, string last, string current)
+        {
+            return new PsdzIstufenTriple
+            {
+                Shipment = shipment,
+                Last = last,
+                Current = current
+            };
+        }
 
-		public IPsdzStandardSvt BuildStandardSvtActualFromVehicleContext(IVehicle vehicleContext, IEnumerable<IPsdzEcuIdentifier> ecuListFromPsdz = null)
-		{
-			MethodBase currentMethod = MethodBase.GetCurrentMethod();
-			IPsdzStandardSvt result;
-			try
-			{
-				PsdzStandardSvt psdzStandardSvt = null;
-				if (vehicleContext != null && vehicleContext.ECU != null)
-				{
-					psdzStandardSvt = new PsdzStandardSvt();
-					IList<IPsdzEcu> list = new List<IPsdzEcu>();
-					using (IEnumerator<IEcu> enumerator = vehicleContext.ECU.GetEnumerator())
-					{
-						while (enumerator.MoveNext())
-						{
-							IEcu srcEcu = enumerator.Current;
-							PsdzEcu psdzEcu = new PsdzEcu();
-							IPsdzEcuIdentifier psdzEcuIdentifier = (ecuListFromPsdz == null) ? null : ecuListFromPsdz.FirstOrDefault((IPsdzEcuIdentifier e) => e.DiagAddrAsInt == (int)srcEcu.ID_SG_ADR);
-							if (psdzEcuIdentifier != null)
-							{
-								psdzEcu.PrimaryKey = this.BuildEcuIdentifier((int)srcEcu.ID_SG_ADR, psdzEcuIdentifier.BaseVariant);
-							}
-							else
-							{
-								psdzEcu.PrimaryKey = this.BuildEcuIdentifier((int)srcEcu.ID_SG_ADR, srcEcu.ECU_GROBNAME);
-							}
-							PsdzStandardSvk psdzStandardSvk = new PsdzStandardSvk();
-                            PsdzClient.Utility.SgbmIdParser sgbmIdParser = new PsdzClient.Utility.SgbmIdParser();
-							IList<IPsdzSgbmId> list2 = new List<IPsdzSgbmId>();
-							foreach (string sgbmId in srcEcu.SVK.XWE_SGBMID)
-							{
-								if (sgbmIdParser.ParseDec(sgbmId))
-								{
-									IPsdzSgbmId item = this.BuildPsdzSgbmId(sgbmIdParser.ProcessClass, sgbmIdParser.Id, sgbmIdParser.MainVersion, sgbmIdParser.SubVersion, sgbmIdParser.PatchVersion);
-									list2.Add(item);
-								}
-							}
-							psdzStandardSvk.SgbmIds = list2;
-							psdzEcu.StandardSvk = psdzStandardSvk;
-							list.Add(psdzEcu);
-						}
-					}
-					psdzStandardSvt.Ecus = list;
-				}
-				result = psdzStandardSvt;
-			}
-			catch (Exception)
-			{
-				result = null;
-			}
-			return result;
-		}
+        public IPsdzStandardSvt BuildStandardSvtActualFromVehicleContext(IVehicle vehicleContext, IEnumerable<IPsdzEcuIdentifier> ecuListFromPsdz = null)
+        {
+            MethodBase currentMethod = MethodBase.GetCurrentMethod();
+            try
+            {
+                PsdzStandardSvt psdzStandardSvt = null;
+                if (vehicleContext != null && vehicleContext.ECU != null)
+                {
+                    psdzStandardSvt = new PsdzStandardSvt();
+                    IList<IPsdzEcu> list = new List<IPsdzEcu>();
+                    foreach (IEcu srcEcu in vehicleContext.ECU)
+                    {
+                        PsdzEcu psdzEcu = new PsdzEcu();
+                        IPsdzEcuIdentifier psdzEcuIdentifier = ecuListFromPsdz?.FirstOrDefault((IPsdzEcuIdentifier e) => e.DiagAddrAsInt == (int)srcEcu.ID_SG_ADR);
+                        if (psdzEcuIdentifier != null)
+                        {
+                            psdzEcu.PrimaryKey = BuildEcuIdentifier((int)srcEcu.ID_SG_ADR, psdzEcuIdentifier.BaseVariant);
+                        }
+                        else
+                        {
+                            psdzEcu.PrimaryKey = BuildEcuIdentifier((int)srcEcu.ID_SG_ADR, srcEcu.ECU_GROBNAME);
+                        }
+                        PsdzStandardSvk psdzStandardSvk = new PsdzStandardSvk();
+                        SgbmIdParser sgbmIdParser = new SgbmIdParser();
+                        IList<IPsdzSgbmId> list2 = new List<IPsdzSgbmId>();
+                        foreach (string item2 in srcEcu.SVK.XWE_SGBMID)
+                        {
+                            if (sgbmIdParser.ParseDec(item2))
+                            {
+                                IPsdzSgbmId item = BuildPsdzSgbmId(sgbmIdParser.ProcessClass, sgbmIdParser.Id, sgbmIdParser.MainVersion, sgbmIdParser.SubVersion, sgbmIdParser.PatchVersion);
+                                list2.Add(item);
+                            }
+                        }
+                        psdzStandardSvk.SgbmIds = list2;
+                        psdzEcu.StandardSvk = psdzStandardSvk;
+                        list.Add(psdzEcu);
+                    }
+                    psdzStandardSvt.Ecus = list;
+                }
+                return psdzStandardSvt;
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(currentMethod.Name, exception);
+                return null;
+            }
+        }
 
-		public IPsdzSgbmId BuildPsdzSgbmId(string processClass, long id, int mainVersion, int subVersion, int patchVersion)
+        public IPsdzSgbmId BuildPsdzSgbmId(string processClass, long id, int mainVersion, int subVersion, int patchVersion)
 		{
 			return new PsdzSgbmId
 			{
