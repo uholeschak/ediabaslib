@@ -438,6 +438,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
+        // [UH] added, keep directory
         public bool RemoveBackupData()
         {
             if (!string.IsNullOrEmpty(PathToBackupData) && this.hasVinBackupDataFolder)
@@ -467,7 +468,8 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public bool SaveIDRFilesToPuk()
+        // From ProgrammingSession.AddIdividualDataFilesToPuk
+        public bool AddIdividualDataFilesToPuk()
         {
             try
             {
@@ -495,11 +497,12 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        public bool GetIDRFilesFromPuk()
+        // From ProgrammingSession.DownloadIndividualDataFromPuk
+        public bool DownloadIndividualDataFromPuk()
         {
             try
             {
-                if (!HasIDRFilesInPuk())
+                if (!HasIndividualDataFilesInPuk())
                 {
                     return false;
                 }
@@ -523,7 +526,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        public bool HasIDRFilesInPuk()
+        public bool HasIndividualDataFilesInPuk()
         {
             try
             {
@@ -549,7 +552,8 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        public bool DeleteIDRFilesFromPuk()
+        // From ProgrammingSession.DeleteIndividualDataFromPuk
+        public bool DeleteIndividualDataFromPuk()
         {
             try
             {

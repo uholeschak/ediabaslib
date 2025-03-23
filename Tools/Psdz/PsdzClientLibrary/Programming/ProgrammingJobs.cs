@@ -1822,7 +1822,7 @@ namespace PsdzClient.Programming
                             PsdzContext.Tal = null;
                             if (!backupFailed)
                             {
-                                PsdzContext.SaveIDRFilesToPuk();
+                                PsdzContext.AddIdividualDataFilesToPuk();
                             }
 
                             RegisterGroup = PsdzDatabase.SwiRegisterGroup.HwInstall;
@@ -1862,14 +1862,14 @@ namespace PsdzClient.Programming
                                 }
 
                                 log.InfoFormat(CultureInfo.InvariantCulture, "Checking IDR in PUK");
-                                if (!PsdzContext.HasIDRFilesInPuk())
+                                if (!PsdzContext.HasIndividualDataFilesInPuk())
                                 {
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "No IDR in PUK present");
                                     break;
                                 }
 
                                 PsdzContext.RemoveBackupData();
-                                if (!PsdzContext.GetIDRFilesFromPuk())
+                                if (!PsdzContext.DownloadIndividualDataFromPuk())
                                 {
                                     log.ErrorFormat(CultureInfo.InvariantCulture, "Getting IDR from PUK failed");
                                     break;
@@ -3749,7 +3749,7 @@ namespace PsdzClient.Programming
         {
             OperationState = new OperationStateData();
             SaveOperationState();
-            PsdzContext.DeleteIDRFilesFromPuk();
+            PsdzContext.DeleteIndividualDataFromPuk();
         }
 
         public bool InitProgrammingObjects(string istaFolder)
