@@ -352,6 +352,7 @@ namespace PsdzClient.Programming
             return null;
         }
 
+        // [UH] added
         public static string GetBackupBasePath(string istaFolder)
         {
             string pathConfig = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", "%ISPIDATA%\\BMW\\ISPI\\data\\TRIC\\ISTA\\Temp\\");
@@ -378,7 +379,7 @@ namespace PsdzClient.Programming
         public bool SetPathToBackupData(string vin17)
         {
             hasVinBackupDataFolder = false;
-            string pathString = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", null);
+            string pathString = GetBackupBasePath(IstaFolder);
             if (string.IsNullOrEmpty(pathString))
             {
                 Log.Warning("PsdzContext.SetPathToBackupData()", "Backup data path (\"BMW.Rheingold.Programming.PsdzBackupDataPath\") is not set. Thus data recovery is disabled.");
@@ -407,7 +408,10 @@ namespace PsdzClient.Programming
         {
             if (!string.IsNullOrEmpty(PathToBackupData) && hasVinBackupDataFolder && !Directory.EnumerateFileSystemEntries(PathToBackupData).Any())
             {
-                Directory.Delete(PathToBackupData);
+                if (Directory.Exists(PathToBackupData))
+                {
+                    Directory.Delete(PathToBackupData);
+                }
                 Log.Info("PsdzContext.CleanupBackupData()", "Empty backup folder ('{0}') deleted!", PathToBackupData);
                 hasVinBackupDataFolder = false;
             }
