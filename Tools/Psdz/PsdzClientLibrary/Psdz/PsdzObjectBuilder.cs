@@ -17,6 +17,7 @@ using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Contracts;
+using PsdzClient.Core;
 using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Psdz
@@ -41,46 +42,75 @@ namespace BMW.Rheingold.Psdz
 			return this.CreateEcu(ecuInput);
 		}
 
-		private IPsdzEcu CreateEcu(IEcuObj ecuInput)
-		{
-			if (ecuInput == null)
-			{
-				return null;
-			}
-			PsdzEcu psdzEcu = new PsdzEcu();
-			psdzEcu.PrimaryKey = this.BuildEcuIdentifier(ecuInput.EcuIdentifier);
-			psdzEcu.BaseVariant = ecuInput.BaseVariant;
-			psdzEcu.EcuVariant = ecuInput.EcuVariant;
-			psdzEcu.BnTnName = ecuInput.BnTnName;
-			if (ecuInput.GatewayDiagAddrAsInt != null)
-			{
-				psdzEcu.GatewayDiagAddr = this.BuildDiagAddress(ecuInput.GatewayDiagAddrAsInt.Value);
-			}
-			psdzEcu.DiagnosticBus = this.busEnumMapper.GetValue(ecuInput.DiagnosticBus);
-			psdzEcu.SerialNumber = ecuInput.SerialNumber;
-			if (ecuInput.EcuDetailInfo != null)
-			{
-				psdzEcu.EcuDetailInfo = new PsdzEcuDetailInfo
-				{
-					ByteValue = ecuInput.EcuDetailInfo.Value
-				};
-			}
-			if (ecuInput.EcuStatusInfo != null)
-			{
-				psdzEcu.EcuStatusInfo = new PsdzEcuStatusInfo
-				{
-					ByteValue = ecuInput.EcuStatusInfo.Value,
-					HasIndividualData = ecuInput.EcuStatusInfo.HasIndividualData
-				};
-			}
-			psdzEcu.BusConnections = ((ecuInput.BusConnections != null) ? ecuInput.BusConnections.Select(new Func<Bus, PsdzBus>(this.busEnumMapper.GetValue)) : null);
-			IPsdzStandardSvk standardSvk = this.BuildSvk(ecuInput.StandardSvk);
-			psdzEcu.StandardSvk = standardSvk;
-			psdzEcu.PsdzEcuPdxInfo = this.BuildPdxInfo(ecuInput.EcuPdxInfo);
-			return psdzEcu;
-		}
-
-		private IPsdzEcuPdxInfo BuildPdxInfo(IEcuPdxInfo ecuPdxInfo)
+        private IPsdzEcu CreateEcu(IEcuObj ecuInput)
+        {
+            if (ecuInput == null)
+            {
+                return null;
+            }
+            PsdzEcu psdzEcu = new PsdzEcu();
+            if (psdzEcu.PrimaryKey != null)
+            {
+                psdzEcu.PrimaryKey = BuildEcuIdentifier(ecuInput.EcuIdentifier);
+            }
+            psdzEcu.BaseVariant = ecuInput.BaseVariant;
+            psdzEcu.EcuVariant = ecuInput.EcuVariant;
+            psdzEcu.BnTnName = ecuInput.BnTnName;
+            if (ecuInput.GatewayDiagAddrAsInt.HasValue)
+            {
+                psdzEcu.GatewayDiagAddr = BuildDiagAddress(ecuInput.GatewayDiagAddrAsInt.Value);
+            }
+            psdzEcu.DiagnosticBus = busEnumMapper.GetValue(ecuInput.DiagnosticBus);
+            psdzEcu.SerialNumber = ecuInput.SerialNumber;
+            if (ecuInput.EcuDetailInfo != null)
+            {
+                psdzEcu.EcuDetailInfo = new PsdzEcuDetailInfo
+                {
+                    ByteValue = ecuInput.EcuDetailInfo.Value
+                };
+            }
+            if (ecuInput.EcuStatusInfo != null)
+            {
+                psdzEcu.EcuStatusInfo = new PsdzEcuStatusInfo
+                {
+                    ByteValue = ecuInput.EcuStatusInfo.Value,
+                    HasIndividualData = ecuInput.EcuStatusInfo.HasIndividualData
+                };
+            }
+            psdzEcu.BusConnections = ((ecuInput.BusConnections != null) ? ecuInput.BusConnections.Select(busEnumMapper.GetValue) : null);
+            IPsdzStandardSvk standardSvk = BuildSvk(ecuInput.StandardSvk);
+            psdzEcu.StandardSvk = standardSvk;
+            psdzEcu.PsdzEcuPdxInfo = BuildPdxInfo(ecuInput.EcuPdxInfo);
+            if (psdzEcu.IsSmartActuator)
+            {
+                if (!(ecuInput is SmartActuatorECU smartActuatorECU))
+                {
+                    Log.Error(Log.CurrentMethod(), $"{ecuInput} is not a SmartActuatorECU");
+                    return psdzEcu;
+                }
+                return new PsdzSmartActuatorEcu(psdzEcu)
+                {
+                    SmacID = smartActuatorECU.SmacID,
+                    SmacMasterDiagAddress = BuildDiagAddress(smartActuatorECU.SmacMasterDiagAddressAsInt.Value)
+                };
+            }
+            IPsdzEcuPdxInfo psdzEcuPdxInfo = psdzEcu.PsdzEcuPdxInfo;
+            if (psdzEcuPdxInfo != null && psdzEcuPdxInfo.IsSmartActuatorMaster)
+            {
+                SmartActuatorMasterECU smartActuatorMasterECU = ecuInput as SmartActuatorMasterECU;
+                if (smartActuatorMasterECU == null)
+                {
+                    Log.Error(Log.CurrentMethod(), $"{ecuInput} is not a SmartActuatorMasterECU");
+                }
+                return new PsdzSmartActuatorMasterEcu(psdzEcu)
+                {
+                    SmacMasterSVK = BuildSvk(smartActuatorMasterECU.SmacMasterSVK),
+                    SmartActuatorEcus = smartActuatorMasterECU.SmartActuators.Select((ISmartActuatorEcu x) => CreateEcu(x))
+                };
+            }
+            return psdzEcu;
+        }
+        private IPsdzEcuPdxInfo BuildPdxInfo(IEcuPdxInfo ecuPdxInfo)
 		{
 			if (ecuPdxInfo != null)
 			{
