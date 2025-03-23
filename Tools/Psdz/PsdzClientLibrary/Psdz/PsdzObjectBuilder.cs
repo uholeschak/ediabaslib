@@ -24,23 +24,41 @@ namespace BMW.Rheingold.Psdz
 {
 	class PsdzObjectBuilder : IPsdzObjectBuilder
 	{
-		public PsdzObjectBuilder(IObjectBuilderService objectBuilderService)
-		{
-			this.objectBuilderService = objectBuilderService;
-		}
+        private readonly IObjectBuilderService objectBuilderService;
 
-		public IPsdzDiagAddress BuildDiagAddress(int diagAddress)
-		{
-			return new PsdzDiagAddress
-			{
-				Offset = diagAddress
-			};
-		}
+        private readonly BusEnumMapper busEnumMapper = new BusEnumMapper();
 
-		public IPsdzEcu BuildEcu(IEcuObj ecuInput)
-		{
-			return this.CreateEcu(ecuInput);
-		}
+        private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
+
+        private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
+
+        private readonly FscStateEnumMapper fscStateEnumMapper = new FscStateEnumMapper();
+
+        private readonly SwtTypeEnumMapper swtTypeEnumMapper = new SwtTypeEnumMapper();
+
+        private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
+
+        private readonly SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new SoftwareSigStateEnumMapper();
+
+        private readonly TaCategoriesEnumMapper taCategoriesEnumMapper = new TaCategoriesEnumMapper();
+
+        public PsdzObjectBuilder(IObjectBuilderService objectBuilderService)
+        {
+            this.objectBuilderService = objectBuilderService;
+        }
+
+        public IPsdzDiagAddress BuildDiagAddress(int diagAddress)
+        {
+            return new PsdzDiagAddress
+            {
+                Offset = diagAddress
+            };
+        }
+
+        public IPsdzEcu BuildEcu(IEcuObj ecuInput)
+        {
+            return CreateEcu(ecuInput);
+        }
 
         private IPsdzEcu CreateEcu(IEcuObj ecuInput)
         {
@@ -111,51 +129,58 @@ namespace BMW.Rheingold.Psdz
             return psdzEcu;
         }
         private IPsdzEcuPdxInfo BuildPdxInfo(IEcuPdxInfo ecuPdxInfo)
-		{
-			if (ecuPdxInfo != null)
-			{
-				return new PsdzEcuPdxInfo
-				{
-					CertVersion = ecuPdxInfo.CertVersion,
-					IsCert2018 = ecuPdxInfo.IsCert2018,
-					IsCert2021 = ecuPdxInfo.IsCert2021,
-					IsCertEnabled = ecuPdxInfo.IsCertEnabled,
-					IsSecOcEnabled = ecuPdxInfo.IsSecOcEnabled,
-					IsSfaEnabled = ecuPdxInfo.IsSfaEnabled
-				};
-			}
-			return null;
-		}
+        {
+            if (ecuPdxInfo != null)
+            {
+                return new PsdzEcuPdxInfo
+                {
+                    CertVersion = ecuPdxInfo.CertVersion,
+                    IsCert2018 = ecuPdxInfo.IsCert2018,
+                    IsCert2021 = ecuPdxInfo.IsCert2021,
+                    IsCertEnabled = ecuPdxInfo.IsCertEnabled,
+                    IsSecOcEnabled = ecuPdxInfo.IsSecOcEnabled,
+                    IsSfaEnabled = ecuPdxInfo.IsSfaEnabled,
+                    IsIPSecEnabled = ecuPdxInfo.IsIPSecEnabled,
+                    IsLcsServicePackSupported = ecuPdxInfo.IsLcsServicePackSupported,
+                    IsLcsSystemTimeSwitchSupported = ecuPdxInfo.IsLcsSystemTimeSwitchSupported,
+                    IsMirrorProtocolSupported = ecuPdxInfo.IsMirrorProtocolSupported,
+                    IsEcuAuthEnabled = ecuPdxInfo.IsEcuAuthEnabled,
+                    IsIPsecBitmaskSupported = ecuPdxInfo.IsIPsecBitmaskSupported,
+                    ProgrammingProtectionLevel = ecuPdxInfo.ProgrammingProtectionLevel
+                };
+            }
+            return null;
+        }
 
-		public IPsdzEcuIdentifier BuildEcuIdentifier(IEcuIdentifier ecuIdentifier)
-		{
-			if (ecuIdentifier != null)
-			{
-				return this.BuildEcuIdentifier(ecuIdentifier.DiagAddrAsInt, ecuIdentifier.BaseVariant);
-			}
-			return null;
-		}
+        public IPsdzEcuIdentifier BuildEcuIdentifier(IEcuIdentifier ecuIdentifier)
+        {
+            if (ecuIdentifier != null)
+            {
+                return BuildEcuIdentifier(ecuIdentifier.DiagAddrAsInt, ecuIdentifier.BaseVariant);
+            }
+            return null;
+        }
 
-		public IPsdzEcuIdentifier BuildEcuIdentifier(int diagAddrAsInt, string baseVariant)
-		{
-			return new PsdzEcuIdentifier
-			{
-				BaseVariant = baseVariant,
-				DiagnosisAddress = this.BuildDiagAddress(diagAddrAsInt)
-			};
-		}
+        public IPsdzEcuIdentifier BuildEcuIdentifier(int diagAddrAsInt, string baseVariant)
+        {
+            return new PsdzEcuIdentifier
+            {
+                BaseVariant = baseVariant,
+                DiagnosisAddress = BuildDiagAddress(diagAddrAsInt)
+            };
+        }
 
-		public IPsdzFa BuildEmptyFa()
-		{
-			return new PsdzFa
-			{
-				EWords = Enumerable.Empty<string>(),
-				HOWords = Enumerable.Empty<string>(),
-				Salapas = Enumerable.Empty<string>()
-			};
-		}
+        public IPsdzFa BuildEmptyFa()
+        {
+            return new PsdzFa
+            {
+                EWords = Enumerable.Empty<string>(),
+                HOWords = Enumerable.Empty<string>(),
+                Salapas = Enumerable.Empty<string>()
+            };
+        }
 
-		public IPsdzFa BuildFa(IPsdzStandardFa faInput, string vin17)
+        public IPsdzFa BuildFa(IPsdzStandardFa faInput, string vin17)
 		{
 			if (faInput == null)
 			{
@@ -814,51 +839,33 @@ namespace BMW.Rheingold.Psdz
 			return list;
 		}
 
-		public PsdzConditionTypeEtoEnum BuildConditionTypeEnum(ConditionTypeEnum conditionType)
-		{
-			switch (conditionType)
-			{
-				case ConditionTypeEnum.DAYS_AFTER_ACTIVATION:
-					return PsdzConditionTypeEtoEnum.DAYS_AFTER_ACTIVATION;
-				case ConditionTypeEnum.END_OF_CONDITIONS:
-					return PsdzConditionTypeEtoEnum.END_OF_CONDITIONS;
-				case ConditionTypeEnum.EXPIRATION_DATE:
-					return PsdzConditionTypeEtoEnum.EXPIRATION_DATE;
-				case ConditionTypeEnum.KM_AFTER_ACTIVATION:
-					return PsdzConditionTypeEtoEnum.KM_AFTER_ACTIVATION;
-				case ConditionTypeEnum.LOCAL_RELATIVE_TIME:
-					return PsdzConditionTypeEtoEnum.LOCAL_RELATIVE_TIME;
-				case ConditionTypeEnum.NUMBER_OF_DRIVING_CYCLES:
-					return PsdzConditionTypeEtoEnum.NUMBER_OF_EXECUTIONS;
-				case ConditionTypeEnum.SPEED_TRESHOLD:
-					return PsdzConditionTypeEtoEnum.SPEED_TRESHOLD;
-				case ConditionTypeEnum.START_AND_END_ODOMETER_READING:
-					return PsdzConditionTypeEtoEnum.START_AND_END_ODOMETER_READING;
-				case ConditionTypeEnum.TIME_PERIOD:
-					return PsdzConditionTypeEtoEnum.TIME_PERIOD;
-				case ConditionTypeEnum.UNLIMITED:
-					return PsdzConditionTypeEtoEnum.UNLIMITED;
-			}
-			throw new ArgumentException(string.Format("'{0}' is not a valid value.", conditionType));
-		}
-
-		private readonly IObjectBuilderService objectBuilderService;
-
-		private readonly BusEnumMapper busEnumMapper = new BusEnumMapper();
-
-		private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
-
-		private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
-
-		private readonly FscStateEnumMapper fscStateEnumMapper = new FscStateEnumMapper();
-
-		private readonly SwtTypeEnumMapper swtTypeEnumMapper = new SwtTypeEnumMapper();
-
-		private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
-
-		private readonly SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new SoftwareSigStateEnumMapper();
-
-		private readonly TaCategoriesEnumMapper taCategoriesEnumMapper = new TaCategoriesEnumMapper();
-
-	}
+        public PsdzConditionTypeEtoEnum BuildConditionTypeEnum(ConditionTypeEnum conditionType)
+        {
+            switch (conditionType)
+            {
+                case ConditionTypeEnum.DAYS_AFTER_ACTIVATION:
+                    return PsdzConditionTypeEtoEnum.DAYS_AFTER_ACTIVATION;
+                case ConditionTypeEnum.END_OF_CONDITIONS:
+                    return PsdzConditionTypeEtoEnum.END_OF_CONDITIONS;
+                case ConditionTypeEnum.EXPIRATION_DATE:
+                    return PsdzConditionTypeEtoEnum.EXPIRATION_DATE;
+                case ConditionTypeEnum.KM_AFTER_ACTIVATION:
+                    return PsdzConditionTypeEtoEnum.KM_AFTER_ACTIVATION;
+                case ConditionTypeEnum.LOCAL_RELATIVE_TIME:
+                    return PsdzConditionTypeEtoEnum.LOCAL_RELATIVE_TIME;
+                case ConditionTypeEnum.NUMBER_OF_DRIVING_CYCLES:
+                    return PsdzConditionTypeEtoEnum.NUMBER_OF_EXECUTIONS;
+                case ConditionTypeEnum.SPEED_TRESHOLD:
+                    return PsdzConditionTypeEtoEnum.SPEED_TRESHOLD;
+                case ConditionTypeEnum.START_AND_END_ODOMETER_READING:
+                    return PsdzConditionTypeEtoEnum.START_AND_END_ODOMETER_READING;
+                case ConditionTypeEnum.TIME_PERIOD:
+                    return PsdzConditionTypeEtoEnum.TIME_PERIOD;
+                case ConditionTypeEnum.UNLIMITED:
+                    return PsdzConditionTypeEtoEnum.UNLIMITED;
+                default:
+                    throw new ArgumentException($"'{conditionType}' is not a valid value.");
+            }
+        }
+    }
 }
