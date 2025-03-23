@@ -547,279 +547,317 @@ namespace BMW.Rheingold.Psdz
         {
             switch (talFilterOptions)
             {
-                default:
-                    return PsdzTalFilterAction.OnlyToBeTreatedAndBlockCategoryInAllEcu;
-                case TalFilterOptions.MustNot:
-                    return PsdzTalFilterAction.MustNotBeTreated;
-                case TalFilterOptions.Must:
-                    return PsdzTalFilterAction.MustBeTreated;
                 case TalFilterOptions.Allowed:
                     return PsdzTalFilterAction.AllowedToBeTreated;
+                case TalFilterOptions.Must:
+                    return PsdzTalFilterAction.MustBeTreated;
+                case TalFilterOptions.MustNot:
+                    return PsdzTalFilterAction.MustNotBeTreated;
+                case TalFilterOptions.Only:
+                    return PsdzTalFilterAction.OnlyToBeTreatedAndBlockCategoryInAllEcu;
+                default:
+                    return PsdzTalFilterAction.Empty;
             }
         }
 
-		private TaCategories[] RemoveIdDeleteAndLogOccurence(TaCategories[] taCategories)
-		{
+        private TaCategories[] RemoveIdDeleteAndLogOccurence(TaCategories[] taCategories)
+        {
             if (taCategories != null && taCategories.ToList().Any((TaCategories a) => a == TaCategories.IdDelete))
             {
                 List<TaCategories> list = new List<TaCategories>(taCategories);
                 list.Remove(TaCategories.IdDelete);
+                Log.Info("PsdzObjectBuilder.RemoveIdDeleteAndLogOccurence()", "IdDelete got removed from the TaCategories");
                 return list.ToArray();
             }
             return taCategories;
         }
 
-		public IPsdzAsamJobInputDictionary BuildAsamJobInputDictionary(IAsamJobInputDictionary inputDictionary)
-		{
-			if (inputDictionary == null)
-			{
-				return null;
-			}
-			IPsdzAsamJobInputDictionary psdzAsamJobInputDictionary = new PsdzAsamJobInputDictionary();
-			foreach (KeyValuePair<string, object> keyValuePair in inputDictionary.GetCopy())
-			{
-				string text = keyValuePair.Value as string;
-				if (text != null)
-				{
-					psdzAsamJobInputDictionary.Add(keyValuePair.Key, text);
-				}
-				else
-				{
-					byte[] array = keyValuePair.Value as byte[];
-					if (array != null)
-					{
-						psdzAsamJobInputDictionary.Add(keyValuePair.Key, array);
-					}
-					else
-					{
-						Type type = keyValuePair.Value.GetType();
-						if (type == typeof(int))
-						{
-							psdzAsamJobInputDictionary.Add(keyValuePair.Key, (int)keyValuePair.Value);
-						}
-						else if (type == typeof(long))
-						{
-							psdzAsamJobInputDictionary.Add(keyValuePair.Key, (long)keyValuePair.Value);
-						}
-						else if (type == typeof(float))
-						{
-							psdzAsamJobInputDictionary.Add(keyValuePair.Key, (float)keyValuePair.Value);
-						}
-						else if (type == typeof(double))
-						{
-							psdzAsamJobInputDictionary.Add(keyValuePair.Key, (double)keyValuePair.Value);
-						}
-						else
-						{
-						}
-					}
-				}
-			}
-			return psdzAsamJobInputDictionary;
-		}
+        public IPsdzAsamJobInputDictionary BuildAsamJobInputDictionary(IAsamJobInputDictionary inputDictionary)
+        {
+            if (inputDictionary == null)
+            {
+                return null;
+            }
+            IPsdzAsamJobInputDictionary psdzAsamJobInputDictionary = new PsdzAsamJobInputDictionary();
+            foreach (KeyValuePair<string, object> item in inputDictionary.GetCopy())
+            {
+                if (item.Value is string value)
+                {
+                    psdzAsamJobInputDictionary.Add(item.Key, value);
+                    continue;
+                }
+                if (item.Value is byte[] value2)
+                {
+                    psdzAsamJobInputDictionary.Add(item.Key, value2);
+                    continue;
+                }
+                Type type = item.Value.GetType();
+                if (type == typeof(int))
+                {
+                    psdzAsamJobInputDictionary.Add(item.Key, (int)item.Value);
+                    continue;
+                }
+                if (type == typeof(long))
+                {
+                    psdzAsamJobInputDictionary.Add(item.Key, (long)item.Value);
+                    continue;
+                }
+                if (type == typeof(float))
+                {
+                    psdzAsamJobInputDictionary.Add(item.Key, (float)item.Value);
+                    continue;
+                }
+                if (type == typeof(double))
+                {
+                    psdzAsamJobInputDictionary.Add(item.Key, (double)item.Value);
+                    continue;
+                }
+                Log.Warning("PsdzObjectBuilder.BuildAsamJobInputDictionary()", "Type {0} is not supported.", type);
+            }
+            return psdzAsamJobInputDictionary;
+        }
 
-		private IPsdzFa ValidateBuiltFaObjectViaPsdz(PsdzFa fa)
-		{
-			return this.objectBuilderService.BuildFa(fa);
-		}
+        private IPsdzFa ValidateBuiltFaObjectViaPsdz(PsdzFa fa)
+        {
+            return objectBuilderService.BuildFa(fa);
+        }
 
-		private IPsdzStandardSvk BuildSvk(IStandardSvk svkInput)
-		{
-			PsdzStandardSvk psdzStandardSvk = new PsdzStandardSvk();
-			if (svkInput != null)
-			{
-				psdzStandardSvk.SvkVersion = svkInput.SvkVersion;
-				psdzStandardSvk.ProgDepChecked = svkInput.ProgDepChecked;
-				psdzStandardSvk.SgbmIds = ((svkInput.SgbmIds != null) ? svkInput.SgbmIds.Select(new Func<ISgbmId, IPsdzSgbmId>(PsdzObjectBuilder.BuildPsdzSgbmId)) : null);
-			}
-			return psdzStandardSvk;
-		}
+        private IPsdzStandardSvk BuildSvk(IStandardSvk svkInput)
+        {
+            PsdzStandardSvk psdzStandardSvk = new PsdzStandardSvk();
+            if (svkInput != null)
+            {
+                psdzStandardSvk.SvkVersion = svkInput.SvkVersion;
+                psdzStandardSvk.ProgDepChecked = svkInput.ProgDepChecked;
+                psdzStandardSvk.SgbmIds = ((svkInput.SgbmIds != null) ? svkInput.SgbmIds.Select(BuildPsdzSgbmId) : null);
+            }
+            return psdzStandardSvk;
+        }
 
-		private static IPsdzSgbmId BuildPsdzSgbmId(ISgbmId sgbmId)
-		{
-			return new PsdzSgbmId
-			{
-				Id = sgbmId.Id.ToString("X8", CultureInfo.InvariantCulture),
-				IdAsLong = sgbmId.Id,
-				MainVersion = sgbmId.MainVersion,
-				SubVersion = sgbmId.SubVersion,
-				PatchVersion = sgbmId.PatchVersion,
-				ProcessClass = sgbmId.ProcessClass,
-				HexString = sgbmId.HexString
-			};
-		}
+        private static IPsdzSgbmId BuildPsdzSgbmId(ISgbmId sgbmId)
+        {
+            return new PsdzSgbmId
+            {
+                Id = sgbmId.Id.ToString("X8", CultureInfo.InvariantCulture),
+                IdAsLong = sgbmId.Id,
+                MainVersion = sgbmId.MainVersion,
+                SubVersion = sgbmId.SubVersion,
+                PatchVersion = sgbmId.PatchVersion,
+                ProcessClass = sgbmId.ProcessClass,
+                HexString = sgbmId.HexString
+            };
+        }
 
-		private IPsdzSwtApplication BuildSwtApplication(ISwtApplication swtApplication)
-		{
-			if (swtApplication == null)
-			{
-				throw new ArgumentNullException("swtApplication");
-			}
-			PsdzSwtApplication psdzSwtApplication = new PsdzSwtApplication();
-			psdzSwtApplication.Fsc = swtApplication.Fsc;
-			psdzSwtApplication.FscCert = swtApplication.FscCertificate;
-			psdzSwtApplication.FscCertState = this.fscCertificateStateEnumMapper.GetValue(swtApplication.FscCertificateState);
-			psdzSwtApplication.FscState = this.fscStateEnumMapper.GetValue(swtApplication.FscState);
-			psdzSwtApplication.Position = swtApplication.Position;
-			psdzSwtApplication.SwtType = this.swtTypeEnumMapper.GetValue(swtApplication.SwtType);
-			psdzSwtApplication.SwtActionType = ((swtApplication.SwtActionType != null) ? new PsdzSwtActionType?(new SwtActionTypeEnumMapper().GetValue(swtApplication.SwtActionType.Value)) : null);
-			psdzSwtApplication.IsBackupPossible = swtApplication.IsBackupPossible;
-			IPsdzSwtApplicationId swtApplicationId = this.BuildSwtApplicationId(swtApplication.Id);
-			psdzSwtApplication.SwtApplicationId = swtApplicationId;
-			return psdzSwtApplication;
-		}
+        private IPsdzSwtApplication BuildSwtApplication(ISwtApplication swtApplication)
+        {
+            if (swtApplication == null)
+            {
+                throw new ArgumentNullException("swtApplication");
+            }
+            PsdzSwtApplication obj = new PsdzSwtApplication
+            {
+                Fsc = swtApplication.Fsc,
+                FscCert = swtApplication.FscCertificate,
+                FscCertState = fscCertificateStateEnumMapper.GetValue(swtApplication.FscCertificateState),
+                FscState = fscStateEnumMapper.GetValue(swtApplication.FscState),
+                Position = swtApplication.Position,
+                SwtType = swtTypeEnumMapper.GetValue(swtApplication.SwtType),
+                SwtActionType = (swtApplication.SwtActionType.HasValue ? new PsdzSwtActionType?(new SwtActionTypeEnumMapper().GetValue(swtApplication.SwtActionType.Value)) : ((PsdzSwtActionType?)null)),
+                IsBackupPossible = swtApplication.IsBackupPossible
+            };
+            IPsdzSwtApplicationId swtApplicationId = BuildSwtApplicationId(swtApplication.Id);
+            obj.SwtApplicationId = swtApplicationId;
+            return obj;
+        }
 
-		private IPsdzSwtEcu BuildSwtEcu(ISwtEcu swtEcuInput)
-		{
-			if (swtEcuInput == null)
-			{
-				return null;
-			}
-			PsdzSwtEcu psdzSwtEcu = new PsdzSwtEcu();
-			IPsdzEcuIdentifier ecuIdentifier = this.BuildEcuIdentifier(swtEcuInput.EcuIdentifier);
-			psdzSwtEcu.EcuIdentifier = ecuIdentifier;
-			psdzSwtEcu.RootCertState = this.rootCertificateStateEnumMapper.GetValue(swtEcuInput.RootCertificateState);
-			psdzSwtEcu.SoftwareSigState = this.softwareSigStateEnumMapper.GetValue(swtEcuInput.SoftwareSigState);
-			IList<IPsdzSwtApplication> list = new List<IPsdzSwtApplication>();
-			foreach (ISwtApplication swtApplication in swtEcuInput.SwtApplications)
-			{
-				IPsdzSwtApplication item = this.BuildSwtApplication(swtApplication);
-				list.Add(item);
-			}
-			psdzSwtEcu.SwtApplications = list;
-			return psdzSwtEcu;
-		}
+        private IPsdzSwtEcu BuildSwtEcu(ISwtEcu swtEcuInput)
+        {
+            if (swtEcuInput == null)
+            {
+                return null;
+            }
+            PsdzSwtEcu psdzSwtEcu = new PsdzSwtEcu();
+            IPsdzEcuIdentifier ecuIdentifier = BuildEcuIdentifier(swtEcuInput.EcuIdentifier);
+            psdzSwtEcu.EcuIdentifier = ecuIdentifier;
+            psdzSwtEcu.RootCertState = rootCertificateStateEnumMapper.GetValue(swtEcuInput.RootCertificateState);
+            psdzSwtEcu.SoftwareSigState = softwareSigStateEnumMapper.GetValue(swtEcuInput.SoftwareSigState);
+            IList<IPsdzSwtApplication> list = new List<IPsdzSwtApplication>();
+            foreach (ISwtApplication swtApplication in swtEcuInput.SwtApplications)
+            {
+                IPsdzSwtApplication item = BuildSwtApplication(swtApplication);
+                list.Add(item);
+            }
+            psdzSwtEcu.SwtApplications = list;
+            return psdzSwtEcu;
+        }
 
-		public PsdzFetchEcuCertCheckingResult BuildFetchEcuCertCheckingResult(IFetchEcuCertCheckingResult fetchEcuCertCheckingResult)
-		{
-			return this.CreateFetchEcuCertCheckingResult(fetchEcuCertCheckingResult);
-		}
+        public PsdzFetchEcuCertCheckingResult BuildFetchEcuCertCheckingResult(IFetchEcuCertCheckingResult fetchEcuCertCheckingResult)
+        {
+            return CreateFetchEcuCertCheckingResult(fetchEcuCertCheckingResult);
+        }
 
-		private PsdzFetchEcuCertCheckingResult CreateFetchEcuCertCheckingResult(IFetchEcuCertCheckingResult fetchEcuCertCheckingResult)
-		{
-			if (fetchEcuCertCheckingResult == null)
-			{
-				return null;
-			}
-			return new PsdzFetchEcuCertCheckingResult
-			{
-				FailedEcus = this.BuildEcuCertCheckingResultFailedEcus(fetchEcuCertCheckingResult.FailedEcus),
-				Results = this.BuildEcuCertCheckingResults(fetchEcuCertCheckingResult.Results)
-			};
-		}
+        private PsdzFetchEcuCertCheckingResult CreateFetchEcuCertCheckingResult(IFetchEcuCertCheckingResult fetchEcuCertCheckingResult)
+        {
+            if (fetchEcuCertCheckingResult == null)
+            {
+                return null;
+            }
+            return new PsdzFetchEcuCertCheckingResult
+            {
+                FailedEcus = BuildEcuCertCheckingResultFailedEcus(fetchEcuCertCheckingResult.FailedEcus),
+                Results = BuildEcuCertCheckingResults(fetchEcuCertCheckingResult.Results)
+            };
+        }
 
-		private IEnumerable<PsdzEcuFailureResponse> BuildEcuCertCheckingResultFailedEcus(IEnumerable<IEcuFailureResponse> failedEcus)
-		{
-			List<PsdzEcuFailureResponse> list = new List<PsdzEcuFailureResponse>();
-			if (failedEcus != null && failedEcus.Count<IEcuFailureResponse>() > 0)
-			{
-				foreach (IEcuFailureResponse ecuFailureResponse in failedEcus)
-				{
-					list.Add(new PsdzEcuFailureResponse
-					{
-						Ecu = this.BuildEcuIdentifier(ecuFailureResponse.Ecu),
-						Reason = ecuFailureResponse.Reason
-					});
-				}
-			}
-			return list;
-		}
+        private IEnumerable<PsdzEcuFailureResponse> BuildEcuCertCheckingResultFailedEcus(IEnumerable<IEcuFailureResponse> failedEcus)
+        {
+            List<PsdzEcuFailureResponse> list = new List<PsdzEcuFailureResponse>();
+            if (failedEcus != null && failedEcus.Count() > 0)
+            {
+                foreach (IEcuFailureResponse failedEcu in failedEcus)
+                {
+                    list.Add(new PsdzEcuFailureResponse
+                    {
+                        Ecu = BuildEcuIdentifier(failedEcu.Ecu),
+                        Reason = failedEcu.Reason
+                    });
+                }
+            }
+            return list;
+        }
 
-		private IEnumerable<PsdzEcuCertCheckingResponse> BuildEcuCertCheckingResults(IEnumerable<IEcuCertCheckingResponse> results)
-		{
-			List<PsdzEcuCertCheckingResponse> list = new List<PsdzEcuCertCheckingResponse>();
-			if (results != null && results.Count<IEcuCertCheckingResponse>() > 0)
-			{
-				foreach (IEcuCertCheckingResponse ecuCertCheckingResponse in results)
-				{
-					list.Add(new PsdzEcuCertCheckingResponse
-					{
-						BindingDetailStatus = this.BuildDetailStatus(ecuCertCheckingResponse.BindingDetailStatus),
-						BindingsStatus = this.BuildEcuCertCheckingStatus(ecuCertCheckingResponse.BindingsStatus),
-						CertificateStatus = this.BuildEcuCertCheckingStatus(ecuCertCheckingResponse.CertificateStatus),
-						Ecu = this.BuildEcuIdentifier(ecuCertCheckingResponse.Ecu),
-						OtherBindingDetailStatus = this.BuildOtherBindingDetailStatus(ecuCertCheckingResponse.OtherBindingDetailStatus),
-						OtherBindingsStatus = this.BuildEcuCertCheckingStatus(ecuCertCheckingResponse.OtherBindingsStatus)
-					});
-				}
-			}
-			return list;
-		}
+        private IEnumerable<PsdzEcuCertCheckingResponse> BuildEcuCertCheckingResults(IEnumerable<IEcuCertCheckingResponse> results)
+        {
+            List<PsdzEcuCertCheckingResponse> list = new List<PsdzEcuCertCheckingResponse>();
+            if (results != null && results.Count() > 0)
+            {
+                foreach (IEcuCertCheckingResponse result in results)
+                {
+                    list.Add(new PsdzEcuCertCheckingResponse
+                    {
+                        BindingDetailStatus = BuildDetailStatus(result.BindingDetailStatus),
+                        BindingsStatus = BuildEcuCertCheckingStatus(result.BindingsStatus),
+                        CertificateStatus = BuildEcuCertCheckingStatus(result.CertificateStatus),
+                        Ecu = BuildEcuIdentifier(result.Ecu),
+                        OtherBindingDetailStatus = BuildOtherBindingDetailStatus(result.OtherBindingDetailStatus),
+                        OtherBindingsStatus = BuildEcuCertCheckingStatus(result.OtherBindingsStatus),
+                        KeyPackStatus = BuildEcuCertCheckingStatus(result.KeypackStatus),
+                        OnlineBindingsStatus = BuildEcuCertCheckingStatus(result.OnlineBindingsStatus),
+                        OnlineBindingDetailStatus = BuildDetailStatus(result.OnlineBindingDetailStatus),
+                        OnlineCertificateStatus = BuildEcuCertCheckingStatus(result.OnlineCertificateStatus),
+                        KeyPackDatailedStatus = BuildKeypackDetailStatus(result.KeyPackDetailedStatus),
+                        CreationTimestamp = result.CreationTimestamp
+                    });
+                }
+            }
+            return list;
+        }
 
-		private PsdzOtherBindingDetailsStatus[] BuildOtherBindingDetailStatus(IOtherBindingDetailsStatus[] arrOtherBindingDetailStatus)
-		{
-			List<PsdzOtherBindingDetailsStatus> list = new List<PsdzOtherBindingDetailsStatus>();
-			if (arrOtherBindingDetailStatus != null && arrOtherBindingDetailStatus.Count<IOtherBindingDetailsStatus>() > 0)
-			{
-				foreach (IOtherBindingDetailsStatus otherBindingDetailsStatus in arrOtherBindingDetailStatus)
-				{
-					list.Add(new PsdzOtherBindingDetailsStatus
-					{
-						EcuName = otherBindingDetailsStatus.EcuName,
-						OtherBindingStatus = this.BuildEcuCertCheckingStatus(otherBindingDetailsStatus.OtherBindingStatus),
-						RollenName = otherBindingDetailsStatus.RollenName
-					});
-				}
-			}
-			if (list != null && list.Count<PsdzOtherBindingDetailsStatus>() > 0)
-			{
-				return list.ToArray();
-			}
-			return null;
-		}
+        private PsdzOtherBindingDetailsStatus[] BuildOtherBindingDetailStatus(IOtherBindingDetailsStatus[] arrOtherBindingDetailStatus)
+        {
+            List<PsdzOtherBindingDetailsStatus> list = new List<PsdzOtherBindingDetailsStatus>();
+            if (arrOtherBindingDetailStatus != null && arrOtherBindingDetailStatus.Count() > 0)
+            {
+                foreach (IOtherBindingDetailsStatus otherBindingDetailsStatus in arrOtherBindingDetailStatus)
+                {
+                    list.Add(new PsdzOtherBindingDetailsStatus
+                    {
+                        EcuName = otherBindingDetailsStatus.EcuName,
+                        OtherBindingStatus = BuildEcuCertCheckingStatus(otherBindingDetailsStatus.OtherBindingStatus),
+                        RollenName = otherBindingDetailsStatus.RollenName
+                    });
+                }
+            }
+            if (list != null && list.Count() > 0)
+            {
+                return list.ToArray();
+            }
+            return null;
+        }
 
-		private PsdzEcuCertCheckingStatus? BuildEcuCertCheckingStatus(EcuCertCheckingStatus? bindingStatus)
-		{
-			if (bindingStatus != null)
-			{
-				switch (bindingStatus.GetValueOrDefault())
-				{
-					case EcuCertCheckingStatus.CheckStillRunning:
-						return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.CheckStillRunning);
-					case EcuCertCheckingStatus.Empty:
-						return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.Empty);
-					case EcuCertCheckingStatus.Incomplete:
-						return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.Incomplete);
-					case EcuCertCheckingStatus.Malformed:
-						return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.Malformed);
-					case EcuCertCheckingStatus.Ok:
-						return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.Ok);
-					case EcuCertCheckingStatus.Other:
-						return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.Other);
-					case EcuCertCheckingStatus.SecurityError:
-						return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.SecurityError);
-					case EcuCertCheckingStatus.Unchecked:
-						return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.Unchecked);
-					case EcuCertCheckingStatus.WrongVin17:
-						return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.WrongVin17);
-				}
-			}
-			return new PsdzEcuCertCheckingStatus?(PsdzEcuCertCheckingStatus.Empty);
-		}
+        private PsdzEcuCertCheckingStatus? BuildEcuCertCheckingStatus(EcuCertCheckingStatus? bindingStatus)
+        {
+            switch (bindingStatus)
+            {
+                case EcuCertCheckingStatus.CheckStillRunning:
+                    return PsdzEcuCertCheckingStatus.CheckStillRunning;
+                case EcuCertCheckingStatus.Empty:
+                    return PsdzEcuCertCheckingStatus.Empty;
+                case EcuCertCheckingStatus.Incomplete:
+                    return PsdzEcuCertCheckingStatus.Incomplete;
+                case EcuCertCheckingStatus.Malformed:
+                    return PsdzEcuCertCheckingStatus.Malformed;
+                case EcuCertCheckingStatus.Ok:
+                    return PsdzEcuCertCheckingStatus.Ok;
+                case EcuCertCheckingStatus.Other:
+                    return PsdzEcuCertCheckingStatus.Other;
+                case EcuCertCheckingStatus.SecurityError:
+                    return PsdzEcuCertCheckingStatus.SecurityError;
+                case EcuCertCheckingStatus.Unchecked:
+                    return PsdzEcuCertCheckingStatus.Unchecked;
+                case EcuCertCheckingStatus.WrongVin17:
+                    return PsdzEcuCertCheckingStatus.WrongVin17;
+                case EcuCertCheckingStatus.Decryption_Error:
+                    return PsdzEcuCertCheckingStatus.Decryption_Error;
+                case EcuCertCheckingStatus.IssuerCertError:
+                    return PsdzEcuCertCheckingStatus.IssuerCertError;
+                case EcuCertCheckingStatus.Outdated:
+                    return PsdzEcuCertCheckingStatus.Outdated;
+                case EcuCertCheckingStatus.OwnCertNotPresent:
+                    return PsdzEcuCertCheckingStatus.OwnCertNotPresent;
+                case EcuCertCheckingStatus.Undefined:
+                    return PsdzEcuCertCheckingStatus.Undefined;
+                case EcuCertCheckingStatus.WrongEcuUid:
+                    return PsdzEcuCertCheckingStatus.WrongEcuUid;
+                default:
+                    return PsdzEcuCertCheckingStatus.Empty;
+            }
+        }
 
-		private PsdzBindingDetailsStatus[] BuildDetailStatus(IBindingDetailsStatus[] arrBindingDetailStatus)
-		{
-			List<PsdzBindingDetailsStatus> list = new List<PsdzBindingDetailsStatus>();
-			if (arrBindingDetailStatus != null && arrBindingDetailStatus.Count<IBindingDetailsStatus>() > 0)
-			{
-				foreach (IBindingDetailsStatus bindingDetailsStatus in arrBindingDetailStatus)
-				{
-					list.Add(new PsdzBindingDetailsStatus
-					{
-						BindingStatus = this.BuildEcuCertCheckingStatus(bindingDetailsStatus.BindingStatus),
-						CertificateStatus = this.BuildEcuCertCheckingStatus(bindingDetailsStatus.CertificateStatus),
-						RollenName = bindingDetailsStatus.RollenName
-					});
-				}
-			}
-			if (list != null && list.Count<PsdzBindingDetailsStatus>() > 0)
-			{
-				return list.ToArray();
-			}
-			return null;
-		}
+        private PsdzBindingDetailsStatus[] BuildDetailStatus(IBindingDetailsStatus[] arrBindingDetailStatus)
+        {
+            List<PsdzBindingDetailsStatus> list = new List<PsdzBindingDetailsStatus>();
+            if (arrBindingDetailStatus != null && arrBindingDetailStatus.Count() > 0)
+            {
+                foreach (IBindingDetailsStatus bindingDetailsStatus in arrBindingDetailStatus)
+                {
+                    list.Add(new PsdzBindingDetailsStatus
+                    {
+                        BindingStatus = BuildEcuCertCheckingStatus(bindingDetailsStatus.BindingStatus),
+                        CertificateStatus = BuildEcuCertCheckingStatus(bindingDetailsStatus.CertificateStatus),
+                        RollenName = bindingDetailsStatus.RollenName
+                    });
+                }
+            }
+            if (list != null && list.Count() > 0)
+            {
+                return list.ToArray();
+            }
+            return null;
+        }
 
-		public IList<IPsdzFeatureSpecificFieldCto> BuildFeatureSpecificFieldsCto(IList<IFeatureSpecificField> featureSpecificFields)
+        private PsdzKeypackDetailStatus[] BuildKeypackDetailStatus(IKeypackDetailStatus[] keypackDetailStatuses)
+        {
+            if (keypackDetailStatuses == null || keypackDetailStatuses.Length == 0)
+            {
+                return null;
+            }
+            PsdzKeypackDetailStatus[] array = new PsdzKeypackDetailStatus[keypackDetailStatuses.Length];
+            for (int i = 0; i < keypackDetailStatuses.Length; i++)
+            {
+                if (keypackDetailStatuses[i] != null)
+                {
+                    array[i] = new PsdzKeypackDetailStatus
+                    {
+                        KeyPackStatus = BuildEcuCertCheckingStatus(keypackDetailStatuses[i].KeyPackStatus),
+                        KeyId = keypackDetailStatuses[i].KeyId
+                    };
+                }
+            }
+            return array;
+        }
+
+        public IList<IPsdzFeatureSpecificFieldCto> BuildFeatureSpecificFieldsCto(IList<IFeatureSpecificField> featureSpecificFields)
 		{
 			List<IPsdzFeatureSpecificFieldCto> list = new List<IPsdzFeatureSpecificFieldCto>();
 			foreach (IFeatureSpecificField featureSpecificField in featureSpecificFields)
