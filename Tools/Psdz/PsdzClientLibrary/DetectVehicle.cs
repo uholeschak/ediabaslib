@@ -48,7 +48,7 @@ namespace PsdzClient
             _pdszDatabase = pdszDatabase;
             _clientContext = clientContext;
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
-            _ediabas = new EdiabasNet
+            _ediabas = new EdiabasNet(null, true)
             {
                 EdInterfaceClass = edInterfaceEnet,
                 AbortJobFunc = AbortEdiabasJob
