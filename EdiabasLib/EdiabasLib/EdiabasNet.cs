@@ -3095,7 +3095,7 @@ namespace EdiabasLib
         {
         }
 
-        public EdiabasNet(string config)
+        public EdiabasNet(string config, bool isHosted = false)
         {
             lock (SharedDataLock)
             {
@@ -3183,7 +3183,8 @@ namespace EdiabasLib
             SetConfigProperty("EcuPath", assemblyPath);
 
             string tracePath = Path.Combine(assemblyPath, TraceDirName);
-            if (!IsDirectoryWritable(tracePath, true))
+
+            if (isHosted || !IsDirectoryWritable(tracePath, true))
             {
                 tracePath = GetEdiabasLibUserDir();
                 if (!string.IsNullOrEmpty(tracePath))
