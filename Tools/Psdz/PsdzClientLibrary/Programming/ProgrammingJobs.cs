@@ -3677,6 +3677,7 @@ namespace PsdzClient.Programming
             }
 
             PsdzContext.Tal = null;
+            UpdateTargetFa();
             UpdateOptionSelections(swiRegisterEnum);
             return true;
         }
