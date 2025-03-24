@@ -858,32 +858,30 @@ namespace BMW.Rheingold.Psdz
         }
 
         public IList<IPsdzFeatureSpecificFieldCto> BuildFeatureSpecificFieldsCto(IList<IFeatureSpecificField> featureSpecificFields)
-		{
-			List<IPsdzFeatureSpecificFieldCto> list = new List<IPsdzFeatureSpecificFieldCto>();
-			foreach (IFeatureSpecificField featureSpecificField in featureSpecificFields)
-			{
-				list.Add(new PsdzFeatureSpecificFieldCto
-				{
-					FieldType = featureSpecificField.FieldType,
-					FieldValue = featureSpecificField.FieldValue
-				});
-			}
-			return list;
-		}
+        {
+            List<IPsdzFeatureSpecificFieldCto> list = new List<IPsdzFeatureSpecificFieldCto>();
+            foreach (IFeatureSpecificField featureSpecificField in featureSpecificFields)
+            {
+                PsdzFeatureSpecificFieldCto psdzFeatureSpecificFieldCto = new PsdzFeatureSpecificFieldCto();
+                psdzFeatureSpecificFieldCto.FieldType = featureSpecificField.FieldType;
+                psdzFeatureSpecificFieldCto.FieldValue = featureSpecificField.FieldValue;
+                list.Add(psdzFeatureSpecificFieldCto);
+            }
+            return list;
+        }
 
-		public IList<IPsdzValidityConditionCto> BuildValidityConditionsCto(IList<IValidityCondition> validityConditions)
-		{
-			List<IPsdzValidityConditionCto> list = new List<IPsdzValidityConditionCto>();
-			foreach (IValidityCondition validityCondition in validityConditions)
-			{
-				list.Add(new PsdzValidityConditionCto
-				{
-					ConditionType = this.BuildConditionTypeEnum(validityCondition.ConditionType),
-					ValidityValue = validityCondition.ValidityValue
-				});
-			}
-			return list;
-		}
+        public IList<IPsdzValidityConditionCto> BuildValidityConditionsCto(IList<IValidityCondition> validityConditions)
+        {
+            List<IPsdzValidityConditionCto> list = new List<IPsdzValidityConditionCto>();
+            foreach (IValidityCondition validityCondition in validityConditions)
+            {
+                PsdzValidityConditionCto psdzValidityConditionCto = new PsdzValidityConditionCto();
+                psdzValidityConditionCto.ConditionType = BuildConditionTypeEnum(validityCondition.ConditionType);
+                psdzValidityConditionCto.ValidityValue = validityCondition.ValidityValue;
+                list.Add(psdzValidityConditionCto);
+            }
+            return list;
+        }
 
         public PsdzConditionTypeEtoEnum BuildConditionTypeEnum(ConditionTypeEnum conditionType)
         {
