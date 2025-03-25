@@ -929,8 +929,14 @@ namespace PsdzClient.Programming
 
         public bool ConnectVehicle(CancellationTokenSource cts, string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
         {
-            log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Start - Ip: {0}, ICOM: {1}", remoteHost, useIcom);
+            log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Start - IstaFolder: {0}, Ip: {1}, ICOM: {2}", istaFolder, remoteHost, useIcom);
             StringBuilder sbResult = new StringBuilder();
+
+            if (string.IsNullOrEmpty(istaFolder) || !Directory.Exists(istaFolder))
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "Invalid IstaFolder: {0}", istaFolder);
+                return false;
+            }
 
             if (ProgrammingService == null)
             {

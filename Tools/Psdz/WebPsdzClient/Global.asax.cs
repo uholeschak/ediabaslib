@@ -183,6 +183,11 @@ namespace WebPsdzClient
 
         private void SetupLog4Net()
         {
+            if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
+            {
+                return;
+            }
+
             string logDir = Path.Combine(IstaFolder, @"logs\client");
             string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
             string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzClient-{0}.log", dateString);
