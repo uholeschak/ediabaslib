@@ -593,7 +593,7 @@ namespace WebPsdzClient.App_Data
 
 #if EDIABAS_CONNECTION
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
-            _ediabas = new EdiabasNet
+            _ediabas = new EdiabasNet(null, true)
             {
                 EdInterfaceClass = edInterfaceEnet,
                 AbortJobFunc = AbortEdiabasJob
