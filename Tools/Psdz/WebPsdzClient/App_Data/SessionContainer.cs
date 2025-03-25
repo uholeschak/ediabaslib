@@ -588,6 +588,7 @@ namespace WebPsdzClient.App_Data
             ProgrammingJobs.UpdateOptionsEvent += UpdateOptions;
             ProgrammingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
             ProgrammingJobs.ShowMessageEvent += ShowMessageEvent;
+            ProgrammingJobs.GenServiceModules = false;
             StatusText = string.Empty;
             ProgressText = string.Empty;
 
