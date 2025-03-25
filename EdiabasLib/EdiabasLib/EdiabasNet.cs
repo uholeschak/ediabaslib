@@ -3182,20 +3182,23 @@ namespace EdiabasLib
             string assemblyPath = AssemblyDirectory ?? string.Empty;
             SetConfigProperty("EcuPath", assemblyPath);
 
-            string tracePath = Path.Combine(assemblyPath, TraceDirName);
-
-            if (isHosted || !IsDirectoryWritable(tracePath, true))
+            string tracePath = string.Empty;
+            if (!isHosted && Environment.OSVersion.Platform == PlatformID.Win32NT)
             {
-                tracePath = GetEdiabasLibUserDir();
-                if (!string.IsNullOrEmpty(tracePath))
+                tracePath = Path.Combine(assemblyPath, TraceDirName);
+                if (!IsDirectoryWritable(tracePath, true))
                 {
-                    tracePath = Path.Combine(tracePath, TraceDirName);
+                    tracePath = GetEdiabasLibUserDir();
+                    if (!string.IsNullOrEmpty(tracePath))
+                    {
+                        tracePath = Path.Combine(tracePath, TraceDirName);
+                    }
                 }
-            }
 
-            if (!IsDirectoryWritable(tracePath, true))
-            {
-                tracePath = null;
+                if (!IsDirectoryWritable(tracePath, true))
+                {
+                    tracePath = null;
+                }
             }
 
             if (!string.IsNullOrEmpty(tracePath))
