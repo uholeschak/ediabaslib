@@ -547,7 +547,7 @@ namespace Ediabas
             }
             buffer = (char)int64Buffer;
 
-            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, buffer);
+            logFormat(ApiLogLevel.Normal, "={0} ({1})", true, (int) buffer);
             return true;
         }
 
