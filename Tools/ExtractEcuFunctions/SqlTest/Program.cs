@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.Sqlite;
 using System;
 using System.IO;
+using System.Text;
 
 namespace SqlTest
 {
@@ -24,11 +25,11 @@ namespace SqlTest
                 }
 
                 // https://www.bricelam.net/2023/11/10/more-sqlite-encryption.html
+                string hexKey = BitConverter.ToString(Encoding.ASCII.GetBytes(DatabaseFunctions.DatabasePassword)).Replace("-", "");
                 SqliteConnectionStringBuilder connectionBuilder = new SqliteConnectionStringBuilder
                 {
-                    DataSource = "file:" + databaseFile + "?cipher=rc4",
+                    DataSource = "file:" + databaseFile + "?cipher=rc4&hexkey=" + hexKey,
                     Mode = SqliteOpenMode.ReadOnly,
-                    Password = DatabaseFunctions.DatabasePassword,
                 };
 
                 using (SqliteConnection sqliteConnection = new SqliteConnection(connectionBuilder.ConnectionString))

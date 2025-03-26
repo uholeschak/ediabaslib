@@ -133,11 +133,11 @@ namespace ExtractEcuFunctions
                     // ignored
                 }
 
+                string hexKey = BitConverter.ToString(Encoding.ASCII.GetBytes(DatabaseFunctions.DatabasePassword)).Replace("-", "");
                 SqliteConnectionStringBuilder connectionBuilder = new SqliteConnectionStringBuilder
                 {
-                    DataSource = "file:" + args[0] + "?cipher=rc4",
+                    DataSource = "file:" + args[0] + "?cipher=rc4&hexkey=" + hexKey,
                     Mode = SqliteOpenMode.ReadOnly,
-                    Password = DatabaseFunctions.DatabasePassword,
                 };
 
                 string connection = connectionBuilder.ConnectionString;
