@@ -344,7 +344,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        public static void UpdateConfigNode(XElement settingsNode, string key, string value, bool onlyExisting = false)
+        public static void UpdateConfigNode(XElement settingsNode, string key, string value = null, bool onlyExisting = false)
         {
             XElement node = (from addNode in settingsNode.Elements("add")
                              let keyAttrib = addNode.Attribute("key")
@@ -353,7 +353,7 @@ namespace EdiabasLibConfigTool
                              select addNode).FirstOrDefault();
             if (node == null)
             {
-                if (onlyExisting)
+                if (value == null || onlyExisting)
                 {
                     return;
                 }
@@ -361,6 +361,15 @@ namespace EdiabasLibConfigTool
                 node.Add(new XAttribute("key", key));
                 settingsNode.AddFirst(node);
             }
+            else
+            {
+                if (value == null)
+                {
+                    node.Remove();
+                    return;
+                }
+            }
+
             XAttribute valueAttrib = node.Attribute("value");
             if (valueAttrib == null)
             {
@@ -447,8 +456,10 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
                         UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                         UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
-                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", string.Empty);
-                        UpdateConfigNode(settingsNode, @"EnetControlPort", string.Empty);
+
+                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort");
+                        UpdateConfigNode(settingsNode, @"EnetControlPort");
+                        UpdateConfigNode(settingsNode, @"EnetIcomAllocate");
                     }
                     else
                     {
@@ -495,11 +506,13 @@ namespace EdiabasLibConfigTool
                     {
                         UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
                         UpdateConfigNode(settingsNode, @"EnetControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
+                        UpdateConfigNode(settingsNode, @"EnetIcomAllocate", "1");
                     }
                     else
                     {
-                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", string.Empty);
-                        UpdateConfigNode(settingsNode, @"EnetControlPort", string.Empty);
+                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort");
+                        UpdateConfigNode(settingsNode, @"EnetControlPort");
+                        UpdateConfigNode(settingsNode, @"EnetIcomAllocate");
                     }
                 }
                 else if (usbInfo != null)
