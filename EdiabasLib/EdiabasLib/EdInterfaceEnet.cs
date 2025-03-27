@@ -2173,11 +2173,11 @@ namespace EdiabasLib
 
                         if (attrDict.TryGetValue("DEVTYPE", out string devType))
                         {
-                            if (string.Compare(devType, "ENET", StringComparison.OrdinalIgnoreCase) == 0)
+                            if (devType.StartsWith("ENET", StringComparison.OrdinalIgnoreCase))
                             {
                                 isEnet = true;
                             }
-                            else if (string.Compare(devType, "ICOM", StringComparison.OrdinalIgnoreCase) == 0)
+                            else if (devType.StartsWith("ICOM", StringComparison.OrdinalIgnoreCase))
                             {
                                 isIcom = true;
                             }
