@@ -447,6 +447,8 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
                         UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                         UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
+                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", string.Empty);
+                        UpdateConfigNode(settingsNode, @"EnetControlPort", string.Empty);
                     }
                     else
                     {
@@ -488,6 +490,17 @@ namespace EdiabasLibConfigTool
                     UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                     UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
+                    if (enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom &&
+                        enetConnection.DiagPort > 0 && enetConnection.ControlPort > 0)
+                    {
+                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
+                        UpdateConfigNode(settingsNode, @"EnetControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
+                    }
+                    else
+                    {
+                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", string.Empty);
+                        UpdateConfigNode(settingsNode, @"EnetControlPort", string.Empty);
+                    }
                 }
                 else if (usbInfo != null)
                 {
