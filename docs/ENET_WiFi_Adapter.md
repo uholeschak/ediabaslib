@@ -49,7 +49,7 @@ and [VS C++ Runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [
 * For Windows 11: Allow location access for all apps in the system settings to enable WiFi access. ![Location Settings](Location_Settings_Win11.png)
 * Optionally connect the ENET adapter with the PC. The PC automatically gets an IP address from the adapter DHCP server.
 * If the vehicle is connected directly to your local network (with a DHCP server present) the vehicle will get an IP address from the DHCP server.
-* Download the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package and extract the .zip file. Start `Api32\EdiabasLibConfigTool.exe` and follow the instructions in the status window: Search the adapter, select it, optionally click `Connect`, click `Check Connection` and patch the required EDIABAS installations.
+* Download the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package and extract the .zip file. Start `EdiabasLibConfigTool\EdiabasLibConfigTool.exe` and follow the instructions in the status window: Search the adapter, select it, optionally click `Connect`, click `Check Connection` and patch the required EDIABAS installations.
 * For ISTA-D: You have to select the `EDIABAS\bin` directory inside ISTA-D first.
 * Optionally you could also open the adapter configuration page in the web browser.
 * For ISTA-D: In `Administration` -> `VCI Config` select as `Interface type`: `Ediabas default settings (ediabas.ini)`  
