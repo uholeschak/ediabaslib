@@ -443,7 +443,9 @@ namespace EdiabasLibConfigTool
                     interfaceValue = @"EDIC";
                 }
 
+                bool keepConnectionConfigured = false;
                 bool icomConfigured = false;
+
                 if (wlanIface != null)
                 {
                     WlanConnectionAttributes conn = wlanIface.CurrentConnection;
@@ -464,7 +466,6 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
                         UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
                     }
-                    UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else if (devInfo != null)
                 {
@@ -487,6 +488,7 @@ namespace EdiabasLibConfigTool
                             break;
                     }
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", keepConnectionValue);
+                    keepConnectionConfigured = true;
                 }
                 else if (enetConnection != null)
                 {
@@ -497,7 +499,7 @@ namespace EdiabasLibConfigTool
                     UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
                     UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                     UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
-                    UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
+
                     if (enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom &&
                         enetConnection.DiagPort > 0 && enetConnection.ControlPort > 0)
                     {
@@ -512,11 +514,15 @@ namespace EdiabasLibConfigTool
                     UpdateConfigNode(settingsNode, @"ObdComPort", usbInfo.ComPortName);
                     UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
                     UpdateIniFile(iniFile, SectionConfig, KeyInterface, interfaceValue, true);
-                    UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen", "0");
                 }
                 else
                 {
                     return false;
+                }
+
+                if (!keepConnectionConfigured)
+                {
+                    UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen");
                 }
 
                 if (!icomConfigured)
