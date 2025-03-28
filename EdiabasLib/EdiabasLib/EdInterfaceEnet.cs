@@ -421,8 +421,8 @@ namespace EdiabasLib
         protected string HostIdentServiceProtected = "255.255.255.255";
         protected int UdpIdentPort = 6811;
         protected int UdpSrvLocPort = 427;
-        protected int ControlPort = 6811;
         protected int DiagnosticPort = 6801;
+        protected int ControlPort = 6811;
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
         protected string DoIpSslSecurityPath = string.Empty;
@@ -568,18 +568,6 @@ namespace EdiabasLib
                     DoIpGatewayAddress = (int)EdiabasNet.StringToValue(propTrim);
                 }
 
-                prop = EdiabasProtected?.GetConfigProperty("EnetControlPort");
-                if (prop != null)
-                {
-                    ControlPort = (int)EdiabasNet.StringToValue(prop);
-                }
-
-                prop = EdiabasProtected?.GetConfigProperty("ControlPort");
-                if (prop != null)
-                {
-                    ControlPort = (int)EdiabasNet.StringToValue(prop);
-                }
-
                 prop = EdiabasProtected?.GetConfigProperty("EnetDiagnosticPort");
                 if (prop != null)
                 {
@@ -590,6 +578,18 @@ namespace EdiabasLib
                 if (prop != null)
                 {
                     DiagnosticPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetControlPort");
+                if (prop != null)
+                {
+                    ControlPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("ControlPort");
+                if (prop != null)
+                {
+                    ControlPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetDoIPPort");
@@ -723,18 +723,18 @@ namespace EdiabasLib
 
                         if (hostValid)
                         {
-                            string iniControlPort = ediabasIni.GetValue(IniFileEnetSection, "ControlPort", string.Empty);
-                            if (!string.IsNullOrEmpty(iniControlPort))
-                            {
-                                ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
-                            }
-
                             string iniDiagnosticPort = ediabasIni.GetValue(IniFileEnetSection, "DiagnosticPort", string.Empty);
                             if (!string.IsNullOrEmpty(iniDiagnosticPort))
                             {
                                 DiagnosticPort = (int)EdiabasNet.StringToValue(iniDiagnosticPort);
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using diagnostic port from ini file: {0}", DiagnosticPort);
+                            }
+
+                            string iniControlPort = ediabasIni.GetValue(IniFileEnetSection, "ControlPort", string.Empty);
+                            if (!string.IsNullOrEmpty(iniControlPort))
+                            {
+                                ControlPort = (int)EdiabasNet.StringToValue(iniControlPort);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using control port from ini file: {0}", ControlPort);
                             }
 
                             string iniPortDoIP = ediabasIni.GetValue(IniFileEnetSection, "PortDoIP", string.Empty);
@@ -807,8 +807,8 @@ namespace EdiabasLib
                 }
 
                 EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, CommParameterProtected, 0, CommParameterProtected.Length,
-                    string.Format(Culture, "{0} CommParameter Host={1}, Tester=0x{2:X02}, ControlPort={3}, DiagPort={4}",
-                            InterfaceName, RemoteHostProtected, TesterAddress, ControlPort, DiagnosticPort));
+                    string.Format(Culture, "{0} CommParameter Host={1}, Tester=0x{2:X02}, DiagPort={3}, ControlPort={4}",
+                            InterfaceName, RemoteHostProtected, TesterAddress, DiagnosticPort, ControlPort));
 
                 uint concept = CommParameterProtected[0];
                 switch (concept)
