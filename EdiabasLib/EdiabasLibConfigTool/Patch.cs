@@ -443,6 +443,7 @@ namespace EdiabasLibConfigTool
                     interfaceValue = @"EDIC";
                 }
 
+                bool icomConfigured = false;
                 if (wlanIface != null)
                 {
                     WlanConnectionAttributes conn = wlanIface.CurrentConnection;
@@ -456,10 +457,6 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
                         UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                         UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
-
-                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort");
-                        UpdateConfigNode(settingsNode, @"EnetControlPort");
-                        UpdateConfigNode(settingsNode, @"EnetIcomAllocate");
                     }
                     else
                     {
@@ -507,12 +504,7 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
                         UpdateConfigNode(settingsNode, @"EnetControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
                         UpdateConfigNode(settingsNode, @"EnetIcomAllocate", "1");
-                    }
-                    else
-                    {
-                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort");
-                        UpdateConfigNode(settingsNode, @"EnetControlPort");
-                        UpdateConfigNode(settingsNode, @"EnetIcomAllocate");
+                        icomConfigured = true;
                     }
                 }
                 else if (usbInfo != null)
@@ -526,6 +518,14 @@ namespace EdiabasLibConfigTool
                 {
                     return false;
                 }
+
+                if (!icomConfigured)
+                {
+                    UpdateConfigNode(settingsNode, @"EnetDiagnosticPort");
+                    UpdateConfigNode(settingsNode, @"EnetControlPort");
+                    UpdateConfigNode(settingsNode, @"EnetIcomAllocate");
+                }
+
                 xDocument.Save(configFile);
             }
             catch (Exception)
