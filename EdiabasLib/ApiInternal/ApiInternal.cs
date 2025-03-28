@@ -372,7 +372,7 @@ namespace Ediabas
                             if (validConfig)
                             {
                                 ifh = string.Format(CultureInfo.InvariantCulture, "ENET:{0}:50160:50161", remoteHost);
-                                _ediabas.SetConfigProperty("EnetIcomAllocate", "0");
+                                _ediabas.SetConfigProperty("EnetIcomAllocate", "1");
                                 logFormat(ApiLogLevel.Normal, "redirecting RPLUS:ICOM_P to ENET: {0}", ifh);
                             }
                         }
