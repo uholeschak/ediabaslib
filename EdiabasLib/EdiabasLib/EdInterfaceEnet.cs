@@ -360,6 +360,8 @@ namespace EdiabasLib
         public const int MaxDoIpAckLength = 5;
         public const int DoIpProtoVer = 0x03;
         public const int DoIpGwAddrDefault = 0x0010;
+        public const int DiagPortDefault = 6801;
+        public const int ControlPortDefault = 6811;
         public const string NetworkProtocolTcp = "TCP";
         public const string NetworkProtocolSsl = "SSL";
         public const string AutoIp = "auto";
@@ -409,6 +411,7 @@ namespace EdiabasLib
         protected object UdpRecListLock = new object();
         protected int UdpMaxResponses;
         protected IPAddress UdpIpFilter;
+        protected int? UdpDiagPortFilter;
         protected AutoResetEvent UdpEvent;
         protected AutoResetEvent IcomEvent;
 
@@ -419,10 +422,10 @@ namespace EdiabasLib
         protected int DoIpTesterAddress = 0x0EF3;
         protected int DoIpGatewayAddress = DoIpGwAddrDefault;
         protected string HostIdentServiceProtected = "255.255.255.255";
-        protected int UdpIdentPort = 6811;
+        protected int UdpIdentPort = ControlPortDefault;
         protected int UdpSrvLocPort = 427;
-        protected int DiagnosticPort = 6801;
-        protected int ControlPort = 6811;
+        protected int DiagnosticPort = DiagPortDefault;
+        protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
         protected string DoIpSslSecurityPath = string.Empty;
@@ -1390,7 +1393,7 @@ namespace EdiabasLib
 
                         int readLen = SharedDataActive.DiagDoIp ? 8 : 6;
                         StartReadTcpDiag(readLen);
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress.ToString(), diagPort);
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
                         SharedDataActive.ReconnectRequired = false;
                         SharedDataActive.DoIpRoutingState = DoIpRoutingState.None;
 
@@ -1820,6 +1823,23 @@ namespace EdiabasLib
                 }
                 UdpMaxResponses = maxVehicles;
                 UdpIpFilter = hostIpAddress;
+
+                UdpDiagPortFilter = null;
+                if (DiagnosticPort != DiagPortDefault)
+                {
+                    UdpDiagPortFilter = DiagnosticPort;
+                }
+
+                if (UdpIpFilter != null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: UDP IP filter: {0}", UdpIpFilter);
+                }
+
+                if (UdpDiagPortFilter != null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: UDP diag port filter: {0}", UdpDiagPortFilter.Value);
+                }
+
                 StartUdpListen();
 
                 int retryCount = 0;
@@ -2244,7 +2264,7 @@ namespace EdiabasLib
 
                             if (gatewayAddr >= 0 && enetChannel && isFree)
                             {
-                                addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, 50000 + gatewayAddr * 10, 50001 + gatewayAddr * 10);
+                                addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, 50160, 50161);
                             }
                         }
                     }
@@ -2258,6 +2278,14 @@ namespace EdiabasLib
                         {
                             addListConn = null;
                         }
+                    }
+                }
+
+                if (addListConn != null)
+                {
+                    if (UdpDiagPortFilter != null && UdpDiagPortFilter != addListConn.DiagPort)
+                    {
+                        addListConn = null;
                     }
                 }
 
