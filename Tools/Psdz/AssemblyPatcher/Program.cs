@@ -932,7 +932,7 @@ namespace AssemblyPatcher
                                     if (patchIndexExtType >= 0)
                                     {
                                         instructions.RemoveAt(patchIndexExtType); // OpCodes.Ldloc_0
-                                        instructions[patchIndexExtType].Operand = "ICOM-Next";
+                                        instructions[patchIndexExtType].Operand = "ICOM_Next_A";
                                         instructions.RemoveAt(patchIndexExtType + 1); // OpCodes.Callvirt
                                         patched = true;
                                     }
