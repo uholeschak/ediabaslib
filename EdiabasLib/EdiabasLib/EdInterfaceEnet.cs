@@ -474,61 +474,61 @@ namespace EdiabasLib
 
                 string assemblyPath = EdiabasNet.AssemblyDirectory;
                 string prop = EdiabasProtected?.GetConfigProperty("EnetNetworkProtocol");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     NetworkProtocol = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("NetworkProtocol");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     NetworkProtocol = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     RemoteHostProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("RemoteHost");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     RemoteHostProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetVehicleProtocol");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     VehicleProtocolProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("VehicleProtocol");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     VehicleProtocolProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetHostIdentService");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     HostIdentServiceProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("HostIdentService");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     HostIdentServiceProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetTesterAddress");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     TesterAddress = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetDoIPTesterAddress");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     string propTrim = prop.Trim();
                     if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
@@ -539,7 +539,7 @@ namespace EdiabasLib
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("DoIPTesterAddress");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     string propTrim = prop.Trim();
                     if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
@@ -550,7 +550,7 @@ namespace EdiabasLib
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetDoipGatewayAddress");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     string propTrim = prop.Trim();
                     if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
@@ -561,7 +561,7 @@ namespace EdiabasLib
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("DoipGatewayAddress");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     string propTrim = prop.Trim();
                     if (!propTrim.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
@@ -572,55 +572,55 @@ namespace EdiabasLib
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetDiagnosticPort");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DiagnosticPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("DiagnosticPort");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DiagnosticPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetControlPort");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     ControlPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("ControlPort");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     ControlPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetDoIPPort");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("PortDoIP");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetSslPort");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpSslPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("SslPort");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpSslPort = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("SslSecurityPath");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpSslSecurityPath = prop;
                 }
@@ -639,61 +639,61 @@ namespace EdiabasLib
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("S29Path");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpS29Path = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("selectCertificate");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpS29SelectCert = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutConnect");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("TimeoutConnect");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     ConnectTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetBatteryVoltage");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     BatteryVoltageValue = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetIgnitionVoltage");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     IgnitionVoltageValue = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutAcknowledge");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpTimeoutAcknowledge = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("TimeoutAcknowledge");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpTimeoutAcknowledge = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetAddRecTimeout");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     AddRecTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetAddRecTimeoutIcom");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     AddRecTimeoutIcom = (int)EdiabasNet.StringToValue(prop);
                 }
@@ -703,7 +703,7 @@ namespace EdiabasLib
                 IcomAllocate = false;
 #endif
                 prop = EdiabasProtected?.GetConfigProperty("EnetIcomAllocate");
-                if (prop != null)
+                if (!string.IsNullOrEmpty(prop))
                 {
                     IcomAllocate = EdiabasNet.StringToValue(prop) != 0;
                 }
