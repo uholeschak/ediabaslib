@@ -575,7 +575,7 @@ namespace AssemblyPatcher
                                     insertInstructions.Add(new Instruction(OpCodes.Ldstr, "RemoteHost="));
                                     insertInstructions.Add(new Instruction(OpCodes.Ldarg_1));
                                     insertInstructions.Add(instructions[templateIndex + 2].Clone());    // get_IPAddress()
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, ""));
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, ";DiagnosticPort=6801;ControlPort=6811"));
                                     insertInstructions.Add(instructions[templateIndex + 4].Clone());    // Concat()
 
                                     instructions.RemoveAt(patchIndex);
