@@ -191,7 +191,22 @@ Export before if required:
 [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup]
 [HKEY_CURRENT_USER\SOFTWARE\BMWGroup\ISPI\Rheingold]
 
+Copy ISTA-D Installion:
+=================
+Install and register Admin client.
+
+Copy directories:
+C:\Program Files\BMW
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
+
+Copy Registry:
+[HKEY_LOCAL_MACHINE\SOFTWARE\BMWGroup]
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup]
+[HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMW]
+[HKEY_CURRENT_USER\Software\BMWGroup]
+
 Debugging:
+=================
 Disable debugger detection in dnSpy (uncheck System.Diagnostics.Debugger option)!
 After message box has been shown, attach to process IstaOperation.exe
 
