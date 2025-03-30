@@ -425,7 +425,7 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        public static bool UpdateConfigFile(string configFile, string iniFile, int adapterType,
+        public static bool UpdateConfigFile(PatchType patchType, string configFile, string iniFile, int adapterType,
             BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
         {
             try
@@ -445,6 +445,7 @@ namespace EdiabasLibConfigTool
 
                 bool keepConnectionConfigured = false;
                 bool icomConfigured = false;
+                bool portsConfigured = false;
 
                 if (wlanIface != null)
                 {
@@ -503,10 +504,21 @@ namespace EdiabasLibConfigTool
                     if (enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom &&
                         enetConnection.DiagPort > 0 && enetConnection.ControlPort > 0)
                     {
-                        UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
-                        UpdateConfigNode(settingsNode, @"EnetControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
                         UpdateConfigNode(settingsNode, @"EnetIcomAllocate", "1");
                         icomConfigured = true;
+
+                        switch (patchType)
+                        {
+                            case PatchType.Istad:
+                            case PatchType.IstadExt:
+                                break;
+
+                            default:
+                                UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
+                                UpdateConfigNode(settingsNode, @"EnetControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
+                                portsConfigured = true;
+                                break;
+                        }
                     }
                 }
                 else if (usbInfo != null)
@@ -525,10 +537,14 @@ namespace EdiabasLibConfigTool
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen");
                 }
 
-                if (!icomConfigured)
+                if (!portsConfigured)
                 {
                     UpdateConfigNode(settingsNode, @"EnetDiagnosticPort");
                     UpdateConfigNode(settingsNode, @"EnetControlPort");
+                }
+
+                if (!icomConfigured)
+                {
                     UpdateConfigNode(settingsNode, @"EnetIcomAllocate");
                 }
 
@@ -1115,7 +1131,7 @@ namespace EdiabasLibConfigTool
                 }
 
                 string configFile = Path.Combine(dirName, ConfigFileName);
-                if (!UpdateConfigFile(configFile, null, adapterType, devInfo, wlanIface, enetConnection, usbInfo, pin))
+                if (!UpdateConfigFile(patchType, configFile, null, adapterType, devInfo, wlanIface, enetConnection, usbInfo, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
