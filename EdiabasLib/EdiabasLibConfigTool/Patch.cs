@@ -445,6 +445,7 @@ namespace EdiabasLibConfigTool
 
                 bool keepConnectionConfigured = false;
                 bool icomConfigured = false;
+                bool portsConfigured = false;
 
                 if (wlanIface != null)
                 {
@@ -503,6 +504,9 @@ namespace EdiabasLibConfigTool
                     if (enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom &&
                         enetConnection.DiagPort > 0 && enetConnection.ControlPort > 0)
                     {
+                        UpdateConfigNode(settingsNode, @"EnetIcomAllocate", "1");
+                        icomConfigured = true;
+
                         switch (patchType)
                         {
                             case PatchType.Istad:
@@ -512,8 +516,7 @@ namespace EdiabasLibConfigTool
                             default:
                                 UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
                                 UpdateConfigNode(settingsNode, @"EnetControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
-                                UpdateConfigNode(settingsNode, @"EnetIcomAllocate", "1");
-                                icomConfigured = true;
+                                portsConfigured = true;
                                 break;
                         }
                     }
@@ -534,10 +537,14 @@ namespace EdiabasLibConfigTool
                     UpdateConfigNode(settingsNode, @"ObdKeepConnectionOpen");
                 }
 
-                if (!icomConfigured)
+                if (!portsConfigured)
                 {
                     UpdateConfigNode(settingsNode, @"EnetDiagnosticPort");
                     UpdateConfigNode(settingsNode, @"EnetControlPort");
+                }
+
+                if (!icomConfigured)
+                {
                     UpdateConfigNode(settingsNode, @"EnetIcomAllocate");
                 }
 
