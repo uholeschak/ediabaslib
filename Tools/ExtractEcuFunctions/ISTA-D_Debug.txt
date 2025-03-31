@@ -199,7 +199,10 @@ Copy directories:
 C:\Program Files\BMW
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
 Create directories:
+C:\ProgramData\BMW\ISPI\logs\TRIC\FscValidation\
 C:\ProgramData\BMW\ISPI\logs\TRIC\ISTA\
+C:\ProgramData\BMW\ISPI\logs\TRIC\ISTALauncher\
+C:\ProgramData\BMW\ISPI\logs\TRIC\PsdzServiceHost\
 
 Copy Registry:
 [HKEY_LOCAL_MACHINE\SOFTWARE\BMWGroup]
