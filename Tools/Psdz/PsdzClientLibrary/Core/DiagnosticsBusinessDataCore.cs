@@ -226,6 +226,7 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
+        // vecInfo type changed to Vehicle
         public string GetMainSeriesSgbdAdditional(Vehicle vecInfo, ILogger logger)
         {
             logger.Info(logger.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional", Array.Empty<object>());
@@ -272,7 +273,7 @@ namespace PsdzClient.Core
             }
             else
             {
-                _ = vecInfo.Prodart == "M";
+                _ = vecInfo.Prodart == "M"; // [UH] Unused variable
             }
             logger.Info(logger.CurrentMethod(), "Returning null for product line: " + ((vecInfo != null) ? vecInfo.Produktlinie : null) + ", ereihe: " + vecInfo.Ereihe, Array.Empty<object>());
             return null;
