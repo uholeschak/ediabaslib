@@ -138,10 +138,6 @@ namespace PsdzClient.Core.Container
         }
 
         [XmlIgnore]
-        public uint EdiabasHandle => 0;
-        //public uint EdiabasHandle => api.Handle;
-
-        [XmlIgnore]
         public bool IsInSimulationMode => CommunicationMode == CommMode.Simulation;
 
         public bool IsProblemHandlingTraceRunning => isProblemHandlingTraceRunning;
