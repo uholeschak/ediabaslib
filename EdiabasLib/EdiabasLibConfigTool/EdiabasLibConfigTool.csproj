@@ -33,7 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="InTheHand.Net.Bluetooth">
-      <Version>4.2.0</Version>
+      <Version>4.2.1</Version>
     </PackageReference>
     <PackageReference Include="SimpleWifi.netstandard.Lsh" Version="2.1.1" />
     <PackageReference Include="System.IO.Ports" Version="9.0.3" />
