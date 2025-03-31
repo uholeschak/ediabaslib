@@ -102,6 +102,8 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
+        // Use IlSpy to decompile the method
+        // vecInfo type changed to Vehicle
         public string GetMainSeriesSgbd(Vehicle vecInfo)
         {
             BordnetType bordnetType = vecInfo.BordnetType;
