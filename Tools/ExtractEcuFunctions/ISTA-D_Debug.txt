@@ -198,6 +198,8 @@ Install and register Admin client.
 Copy directories:
 C:\Program Files\BMW
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
+Create directories:
+C:\ProgramData\BMW\ISPI\logs\TRIC\ISTA\
 
 Copy Registry:
 [HKEY_LOCAL_MACHINE\SOFTWARE\BMWGroup]
