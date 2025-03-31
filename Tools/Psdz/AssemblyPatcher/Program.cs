@@ -418,6 +418,28 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.ISTAGUI.Controller",
+                                Class = "IstaInstallationRequirements",
+                                Method = "CheckInstallationStatus",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("IstaInstallationRequirements.CheckInstallationStatus found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_1));
+                                instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.VehicleCommunication",
                                 Class = "ECUKom",
                                 Method = "InitVCI",
