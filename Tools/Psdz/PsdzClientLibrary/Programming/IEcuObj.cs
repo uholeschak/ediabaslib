@@ -8,6 +8,7 @@ using PsdzClient.Core;
 namespace PsdzClient.Programming
 {
     // ToDo: Check on update
+    // BMW.Rheingold.CoreFramework.Contracts.Programming.Bus
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum Bus
     {

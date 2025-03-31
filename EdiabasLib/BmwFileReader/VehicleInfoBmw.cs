@@ -1285,7 +1285,7 @@ namespace BmwFileReader
                 }
             }
 
-            // ToDo: Check on update
+            // ToDo: Check on update using VehicleSeries.zip
             switch (key[0])
             {
                 case 'F':

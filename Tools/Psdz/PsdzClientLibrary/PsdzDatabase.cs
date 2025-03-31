@@ -1419,6 +1419,7 @@ namespace PsdzClient
         private static readonly ILog log = LogManager.GetLogger(typeof(PsdzDatabase));
 
         // ToDo: Check on update
+        // convert to string
         private static List<string> engineRootNodeClasses = new List<string>
         {
             "40141570",
@@ -1594,13 +1595,12 @@ namespace PsdzClient
         }
 
         // ToDo: Check on update
-        public static string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegister, Vehicle vehicle)
+        // SwiRegister -> SwiRegisterEnum, vehicle added
+        private string SwiRegisterEnumerationNameConverter(SwiRegisterEnum swiRegister, Vehicle vehicle)
         {
             string arg;
             switch (swiRegister)
             {
-                default:
-                    throw new ArgumentException("Unknown SWI Register!");
                 case SwiRegisterEnum.SoftwareUpdateExtended:
                     arg = "ERWEITERT";
                     break;
@@ -1638,19 +1638,24 @@ namespace PsdzClient
                     arg = "ALLGEMEIN";
                     break;
                 case SwiRegisterEnum.Immediatactions:
-                    if (vehicle != null)
-                    {
-                        if (vehicle.IsMotorcycle())
-                        {
-                            arg = "SOFORTMASSNAHMEN_PROGRAMMIERUNG_MOTORRAD";
-                            break;
-                        }
-                    }
-                    arg = "SOFORTMASSNAHMEN_PROGRAMMIERUNG_PKW";
+                    arg = GetImmediatactionsIdentifier(vehicle);
                     break;
+                default:
+                    throw new ArgumentException("Unknown SWI Register!");
             }
             return $"REG|{arg}";
         }
+
+        private string GetImmediatactionsIdentifier(Vehicle vehicle)
+        {
+            if (vehicle != null && vehicle.IsMotorcycle())
+            {
+                return "SOFORTMASSNAHMEN_PROGRAMMIERUNG_MOTORRAD";
+            }
+
+            return "SOFORTMASSNAHMEN_PROGRAMMIERUNG_PKW";
+        }
+
 
         public static SwiRegisterGroup GetSwiRegisterGroup(SwiRegisterEnum swiRegisterEnum)
         {
