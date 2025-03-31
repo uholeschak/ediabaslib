@@ -3172,16 +3172,16 @@ namespace PsdzClient
             if (new List<string>
                 {
                     "F80", "F82", "F83", "F90", "F91", "F92", "F93", "G80", "G81", "G82",
-                    "G83", "G90"
-                }.Contains(vecInfo.Ereihe))
+                    "G83"
+                }.Contains(vecInfo.Ereihe) || (vecInfo.Ereihe.StartsWith("N", StringComparison.OrdinalIgnoreCase) && vecInfo.IsBev()))
             {
                 return BatteryEnum.LFP;
             }
-            if (!vecInfo.IsBev() && !vecInfo.IsPhev() && !vecInfo.IsHybr() && !vecInfo.IsErex() && !vecInfo.Ereihe.Equals("I01") && !vecInfo.hasSA("1CE"))
+            if (vecInfo.IsBev() || vecInfo.IsPhev() || vecInfo.IsHybr() || vecInfo.IsErex() || vecInfo.Ereihe.Equals("I01") || vecInfo.hasSA("1CE"))
             {
-                return BatteryEnum.Pb;
+                return BatteryEnum.PbNew;
             }
-            return BatteryEnum.PbNew;
+            return BatteryEnum.Pb;
         }
 
         public static bool IsVehicleAnAlpina(Vehicle vehicle)
@@ -3190,6 +3190,7 @@ namespace PsdzClient
         }
 
         // ToDo: Check on update
+        // from VehicleIdent
         public static string GetProdArt(Vehicle vecInfo)
         {
             string result = "P";

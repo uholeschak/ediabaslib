@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
@@ -51,13 +52,28 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BrandName
     {
-        [XmlEnum("BMW PKW")] BMWPKW,
-        [XmlEnum("MINI PKW")] MINIPKW,
-        [XmlEnum("ROLLS-ROYCE PKW")] ROLLSROYCEPKW,
-        [XmlEnum("BMW MOTORRAD")] BMWMOTORRAD,
-        [XmlEnum("BMW M GmbH PKW")] BMWMGmbHPKW,
-        [XmlEnum("BMW USA PKW")] BMWUSAPKW,
-        [XmlEnum("BMW i")] BMWi,
+        [EnumMember]
+        [XmlEnum("BMW PKW")]
+        BMWPKW,
+        [EnumMember]
+        [XmlEnum("MINI PKW")]
+        MINIPKW,
+        [EnumMember]
+        [XmlEnum("ROLLS-ROYCE PKW")]
+        ROLLSROYCEPKW,
+        [EnumMember]
+        [XmlEnum("BMW MOTORRAD")]
+        BMWMOTORRAD,
+        [EnumMember]
+        [XmlEnum("BMW M GmbH PKW")]
+        BMWMGmbHPKW,
+        [EnumMember]
+        [XmlEnum("BMW USA PKW")]
+        BMWUSAPKW,
+        [EnumMember]
+        [XmlEnum("BMW i")]
+        BMWi,
+        [EnumMember]
         TOYOTA
     }
 
