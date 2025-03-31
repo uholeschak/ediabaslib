@@ -1060,58 +1060,86 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
+        // Use IlSpy to decompile the method
         public bool IsVINLessEReihe()
         {
             string ereihe = base.Ereihe;
-            if (ereihe != null)
+            bool flag = ereihe != null;
+            bool flag21;
+            if (flag)
             {
                 int length = ereihe.Length;
-                if (length != 3)
+                bool flag2 = length != 3;
+                if (flag2)
                 {
-                    if (length != 4)
+                    bool flag3 = length != 4;
+                    if (flag3)
                     {
                         return false;
                     }
                     char c = ereihe[3];
-                    if (c <= 'C')
+                    bool flag4 = c <= 'C';
+                    if (flag4)
                     {
-                        if (c != '9')
+                        bool flag5 = c != '9';
+                        if (flag5)
                         {
-                            if (c != 'C')
+                            bool flag6 = c != 'C';
+                            if (flag6)
                             {
                                 return false;
                             }
-                            if (!(ereihe == "259C"))
+                            bool flag7 = !(ereihe == "259C");
+                            if (flag7)
                             {
                                 return false;
                             }
                         }
-                        else if (!(ereihe == "K569") && !(ereihe == "K589") && !(ereihe == "K599") && !(ereihe == "E169") && !(ereihe == "E189"))
+                        else
                         {
-                            return false;
+                            bool flag8 = !(ereihe == "K569") && !(ereihe == "K589") && !(ereihe == "K599") && !(ereihe == "E169") && !(ereihe == "E189");
+                            if (flag8)
+                            {
+                                return false;
+                            }
                         }
                     }
-                    else if (c != 'E')
+                    else
                     {
-                        if (c != 'R')
+                        bool flag9 = c != 'E';
+                        if (flag9)
                         {
-                            if (c != 'S')
+                            bool flag10 = c != 'R';
+                            if (flag10)
                             {
-                                return false;
+                                bool flag11 = c != 'S';
+                                if (flag11)
+                                {
+                                    return false;
+                                }
+                                bool flag12 = !(ereihe == "259S");
+                                if (flag12)
+                                {
+                                    return false;
+                                }
                             }
-                            if (!(ereihe == "259S"))
+                            else
+                            {
+                                bool flag13 = !(ereihe == "259R");
+                                if (flag13)
+                                {
+                                    return false;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            bool flag14 = !(ereihe == "247E");
+                            if (flag14)
                             {
                                 return false;
                             }
                         }
-                        else if (!(ereihe == "259R"))
-                        {
-                            return false;
-                        }
-                    }
-                    else if (!(ereihe == "247E"))
-                    {
-                        return false;
                     }
                 }
                 else
@@ -1119,53 +1147,75 @@ namespace PsdzClient.Core
                     switch (ereihe[2])
                     {
                         case '0':
-                            if (!(ereihe == "K30"))
                             {
-                                return false;
+                                bool flag15 = !(ereihe == "K30");
+                                if (flag15)
+                                {
+                                    return false;
+                                }
+                                break;
                             }
-                            break;
                         case '1':
-                            if (!(ereihe == "K41") && !(ereihe == "R21"))
                             {
-                                return false;
+                                bool flag16 = !(ereihe == "K41") && !(ereihe == "R21");
+                                if (flag16)
+                                {
+                                    return false;
+                                }
+                                break;
                             }
-                            break;
                         case '2':
-                            if (!(ereihe == "R22"))
                             {
-                                return false;
+                                bool flag17 = !(ereihe == "R22");
+                                if (flag17)
+                                {
+                                    return false;
+                                }
+                                break;
                             }
-                            break;
                         case '3':
                         case '4':
                         case '5':
                         case '6':
                             return false;
                         case '7':
-                            if (!(ereihe == "247"))
                             {
-                                return false;
+                                bool flag18 = !(ereihe == "247");
+                                if (flag18)
+                                {
+                                    return false;
+                                }
+                                break;
                             }
-                            break;
                         case '8':
-                            if (!(ereihe == "R28") && !(ereihe == "248"))
                             {
-                                return false;
+                                bool flag19 = !(ereihe == "R28") && !(ereihe == "248");
+                                if (flag19)
+                                {
+                                    return false;
+                                }
+                                break;
                             }
-                            break;
                         case '9':
-                            if (!(ereihe == "259"))
                             {
-                                return false;
+                                bool flag20 = !(ereihe == "259");
+                                if (flag20)
+                                {
+                                    return false;
+                                }
+                                break;
                             }
-                            break;
                         default:
                             return false;
                     }
                 }
-                return true;
+                flag21 = true;
             }
-            return false;
+            else
+            {
+                flag21 = false;
+            }
+            return flag21;
         }
 
         public bool IsEreiheValid()
