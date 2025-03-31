@@ -70,7 +70,7 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
-        public enum ESymbolType
+        internal enum ESymbolType
         {
             Unknown,
             Value,
@@ -98,8 +98,8 @@ namespace PsdzClient.Core
 
         protected const long MEMORYSIZE_REFERENCE = 8L;
 
-        // [UH] vec added
         // ToDo: Check on update
+        // [UH] dataProvider replaced by vec
         public static RuleExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();

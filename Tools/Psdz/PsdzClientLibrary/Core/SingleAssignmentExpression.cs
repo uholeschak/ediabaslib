@@ -18,8 +18,8 @@ namespace PsdzClient.Core
 			}
 		}
 
-        // [UH] vec added
         // ToDo: Check on update
+        // [UH] dataProvider replaced by vec
         public static RuleExpression Deserialize(Stream ms, EExpressionType type, ILogger logger, Vehicle vec)
         {
             byte[] buffer = new byte[8];
