@@ -247,12 +247,6 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        private bool IsWinVistaOrHigher()
-        {
-            OperatingSystem os = Environment.OSVersion;
-            return (os.Platform == PlatformID.Win32NT) && (os.Version.Major >= 6);
-        }
-
         private void GetDirectories()
         {
             string dirBmw = Environment.GetEnvironmentVariable("ediabas_config_dir");
