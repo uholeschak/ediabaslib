@@ -328,7 +328,7 @@ namespace EdiabasLibConfigTool
 
                     using (RegistryKey key = localMachine32.OpenSubKey(Patch.RegKeyIsta))
                     {
-                        string path = key?.GetValue("InstallLocation", null) as string;
+                        string path = key?.GetValue(Patch.RegValueIstaLocation, null) as string;
                         if (!string.IsNullOrEmpty(path))
                         {
                             string dirIstad = Path.Combine(path, Patch.EdiabasDirName, Patch.EdiabasBinDirName);
@@ -344,7 +344,7 @@ namespace EdiabasLibConfigTool
                 {
                     using (RegistryKey key = localMachine64.OpenSubKey(Patch.RegKeyIsta))
                     {
-                        string path = key?.GetValue("InstallLocation", null) as string;
+                        string path = key?.GetValue(Patch.RegValueIstaLocation, null) as string;
                         if (!string.IsNullOrEmpty(path))
                         {
                             string dirIstad = Path.Combine(path, Patch.EdiabasDirName, Patch.EdiabasBinDirName);

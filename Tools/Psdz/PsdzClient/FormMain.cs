@@ -9,7 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BMW.Rheingold.Psdz.Client;
 using EdiabasLib;
+using HarmonyLib;
 using log4net;
+using Microsoft.Win32;
 using PsdzClient.Programming;
 using PsdzClient.Properties;
 
@@ -21,6 +23,9 @@ namespace PsdzClient
 
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
+        private const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
+        private const string RegValueIstaLocation = @"InstallLocation";
+
         private readonly ProgrammingJobs _programmingJobs;
         private readonly object _lockObject = new object();
         private bool _taskActive;
@@ -63,6 +68,7 @@ namespace PsdzClient
         private bool _ignoreCheck = false;
         private bool _ignoreChange = false;
         private CancellationTokenSource _cts;
+        private string _istaInstallLocation = null;
         private readonly ProgrammingJobs.ExecutionMode _executionMode;
 
         public FormMain(string[] args = null)
@@ -94,6 +100,8 @@ namespace PsdzClient
             _programmingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
             _programmingJobs.ShowMessageEvent += ShowMessageEvent;
             _programmingJobs.ServiceInitializedEvent += ServiceInitialized;
+
+            _istaInstallLocation = GetIstaInstallLocation();
         }
 
         private void UpdateDisplay()
@@ -148,7 +156,7 @@ namespace PsdzClient
             try
             {
                 _ignoreChange = true;
-                textBoxIstaFolder.Text = Properties.Settings.Default.IstaFolder;
+                string istaFolder = Properties.Settings.Default.IstaFolder;
                 comboBoxLanguage.SelectedIndex = Properties.Settings.Default.LanguageIndex;
                 ipAddressControlVehicleIp.Text = Properties.Settings.Default.VehicleIp;
                 checkBoxIcom.Checked = Properties.Settings.Default.IcomConnection;
@@ -158,6 +166,12 @@ namespace PsdzClient
                     ipAddressControlVehicleIp.Text = DefaultIp;
                     checkBoxIcom.Checked = false;
                 }
+
+                if (string.IsNullOrEmpty(istaFolder) || !Directory.Exists(istaFolder))
+                {
+                    istaFolder = _istaInstallLocation;
+                }
+                textBoxIstaFolder.Text = istaFolder;
 
                 string language = comboBoxLanguage.SelectedItem.ToString();
                 SetLanguage(language);
@@ -209,6 +223,41 @@ namespace PsdzClient
                     log.ErrorFormat("InitializeCulture Exception: {0}", ex.Message);
                 }
             }
+        }
+
+        private string GetIstaInstallLocation()
+        {
+            using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+            {
+                using (RegistryKey key = localMachine64.OpenSubKey(RegKeyIsta))
+                {
+                    string path = key?.GetValue(RegValueIstaLocation, null) as string;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        if (Directory.Exists(path))
+                        {
+                            return path;
+                        }
+                    }
+                }
+            }
+
+            using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+            {
+                using (RegistryKey key = localMachine32.OpenSubKey(RegKeyIsta))
+                {
+                    string path = key?.GetValue(RegValueIstaLocation, null) as string;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        if (Directory.Exists(path))
+                        {
+                            return path;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
         private void UpdateStatus(string message = null)
