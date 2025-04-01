@@ -191,8 +191,13 @@ Export before if required:
 [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup]
 [HKEY_CURRENT_USER\SOFTWARE\BMWGroup\ISPI\Rheingold]
 
-Copy ISTA-D Installion:
-=================
+Copy ISTA-D Installation:
+========================
+Disable sleep states:
+https://www.dell.com/community/en/conversations/xps-desktops/xps-8940-solution-to-freezing-when-idle/6682096b83d4d23a6f10db24
+- C-States
+- Block Sleep
+
 Install and register Admin client.
 
 Copy directories:
