@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BMW.Rheingold.Psdz.Client;
 using EdiabasLib;
-using HarmonyLib;
 using log4net;
 using Microsoft.Win32;
 using PsdzClient.Programming;
