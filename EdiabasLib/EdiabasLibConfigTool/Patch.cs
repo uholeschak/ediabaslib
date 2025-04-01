@@ -48,6 +48,7 @@ namespace EdiabasLibConfigTool
         public const string RegKeyVcRuntime14X64 = RegKeyVcRuntime14Base + @"\x64";
         public const string RegValueFtdiLatencyTimer = @"LatencyTimer";
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
+        public const string RegValueIstaLocation = @"InstallLocation";
         public const string RegKeyRheingoldNameStart = @"BMW.Rheingold.";
         public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
         public const string RegKeyIstaIdesBinPath = @"BMW.Rheingold.ISTAGUI.EdiabasIDESBinPathModifications";

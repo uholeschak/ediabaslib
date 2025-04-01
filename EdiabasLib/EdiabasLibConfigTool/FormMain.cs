@@ -247,12 +247,6 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        private bool IsWinVistaOrHigher()
-        {
-            OperatingSystem os = Environment.OSVersion;
-            return (os.Platform == PlatformID.Win32NT) && (os.Version.Major >= 6);
-        }
-
         private void GetDirectories()
         {
             string dirBmw = Environment.GetEnvironmentVariable("ediabas_config_dir");
@@ -334,7 +328,7 @@ namespace EdiabasLibConfigTool
 
                     using (RegistryKey key = localMachine32.OpenSubKey(Patch.RegKeyIsta))
                     {
-                        string path = key?.GetValue("InstallLocation", null) as string;
+                        string path = key?.GetValue(Patch.RegValueIstaLocation, null) as string;
                         if (!string.IsNullOrEmpty(path))
                         {
                             string dirIstad = Path.Combine(path, Patch.EdiabasDirName, Patch.EdiabasBinDirName);
@@ -350,7 +344,7 @@ namespace EdiabasLibConfigTool
                 {
                     using (RegistryKey key = localMachine64.OpenSubKey(Patch.RegKeyIsta))
                     {
-                        string path = key?.GetValue("InstallLocation", null) as string;
+                        string path = key?.GetValue(Patch.RegValueIstaLocation, null) as string;
                         if (!string.IsNullOrEmpty(path))
                         {
                             string dirIstad = Path.Combine(path, Patch.EdiabasDirName, Patch.EdiabasBinDirName);
