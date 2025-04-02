@@ -1169,12 +1169,16 @@ namespace EdiabasLibConfigTool
                     case PatchType.Istad:
                     case PatchType.IstadExt:
                         sr.Append("\r\n");
-                        sr.Append(Resources.Strings.PatchInstadInfo);
+                        sr.Append(Resources.Strings.PatchIstadInfoHint);
                         if (enetConnection != null)
                         {
                             sr.Append("\r\n");
                             sr.Append(Resources.Strings.PatchIstadInfoEnet);
+                            break;
                         }
+
+                        sr.Append("\r\n");
+                        sr.Append(Resources.Strings.PatchIstadInfoEdiabas);
                         break;
 
                     case PatchType.VasPc:
