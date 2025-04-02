@@ -47,6 +47,7 @@ namespace WebPsdzClient
 
             SetupLog4Net();
             log.InfoFormat("Application_Start");
+            log.InfoFormat("Ista folder: {0}", IstaFolder);
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
