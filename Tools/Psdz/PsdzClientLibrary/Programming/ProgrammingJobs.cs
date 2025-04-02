@@ -33,6 +33,7 @@ using BmwFileReader;
 using EdiabasLib;
 using log4net;
 using log4net.Config;
+using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClientLibrary.Resources;
 using VCIDeviceType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType;
@@ -55,6 +56,8 @@ namespace PsdzClient.Programming
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
         private static extern IntPtr SetWindowLongPtr64(IntPtr hWnd, int nIndex, IntPtr dwNewLong);
 
+        public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
+        public const string RegValueIstaLocation = @"InstallLocation";
         public const string ArgumentGenerateModulesDirect = "-GenerateModulesDirect";
         public const string ArgumentGenerateServiceModules = "-GenerateServiceModules";
         public const string ArgumentGenerateTestModules = "-GenerateTestModules";
@@ -3835,6 +3838,42 @@ namespace PsdzClient.Programming
                 // ignored
             }
         }
+
+        public static string GetIstaInstallLocation()
+        {
+            using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+            {
+                using (RegistryKey key = localMachine64.OpenSubKey(RegKeyIsta))
+                {
+                    string path = key?.GetValue(RegValueIstaLocation, null) as string;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        if (Directory.Exists(path))
+                        {
+                            return path;
+                        }
+                    }
+                }
+            }
+
+            using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+            {
+                using (RegistryKey key = localMachine32.OpenSubKey(RegKeyIsta))
+                {
+                    string path = key?.GetValue(RegValueIstaLocation, null) as string;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        if (Directory.Exists(path))
+                        {
+                            return path;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
 
         private bool ExecuteSubProcess(CancellationTokenSource cts, string arguments, string mutexName)
         {

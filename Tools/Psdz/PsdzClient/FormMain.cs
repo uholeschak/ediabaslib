@@ -22,8 +22,6 @@ namespace PsdzClient
 
         private const string DealerId = "32395";
         private const string DefaultIp = @"127.0.0.1";
-        private const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
-        private const string RegValueIstaLocation = @"InstallLocation";
 
         private readonly ProgrammingJobs _programmingJobs;
         private readonly object _lockObject = new object();
@@ -100,7 +98,7 @@ namespace PsdzClient
             _programmingJobs.ShowMessageEvent += ShowMessageEvent;
             _programmingJobs.ServiceInitializedEvent += ServiceInitialized;
 
-            _istaInstallLocation = GetIstaInstallLocation();
+            _istaInstallLocation = ProgrammingJobs.GetIstaInstallLocation();
         }
 
         private void UpdateDisplay()
@@ -222,41 +220,6 @@ namespace PsdzClient
                     log.ErrorFormat("InitializeCulture Exception: {0}", ex.Message);
                 }
             }
-        }
-
-        private string GetIstaInstallLocation()
-        {
-            using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
-            {
-                using (RegistryKey key = localMachine64.OpenSubKey(RegKeyIsta))
-                {
-                    string path = key?.GetValue(RegValueIstaLocation, null) as string;
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        if (Directory.Exists(path))
-                        {
-                            return path;
-                        }
-                    }
-                }
-            }
-
-            using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
-            {
-                using (RegistryKey key = localMachine32.OpenSubKey(RegKeyIsta))
-                {
-                    string path = key?.GetValue(RegValueIstaLocation, null) as string;
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        if (Directory.Exists(path))
-                        {
-                            return path;
-                        }
-                    }
-                }
-            }
-
-            return null;
         }
 
         private void UpdateStatus(string message = null)
