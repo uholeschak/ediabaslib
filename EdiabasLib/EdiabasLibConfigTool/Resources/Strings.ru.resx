@@ -272,9 +272,8 @@
   <data name="LanguageFr" xml:space="preserve">
     <value>Français</value>
   </data>
-  <data name="PatchInstadInfo" xml:space="preserve">
-    <value>Указание: В ISTA-D администрировании -&gt; VCI конфигурация выберите тип интерфейса:
-'Ediabas настройки по умолчанию (ediabas.ini)'</value>
+  <data name="PatchIstadInfoEdiabas" xml:space="preserve">
+    <value>'Ediabas настройки по умолчанию (ediabas.ini)'</value>
   </data>
   <data name="PatchVaspcInfo" xml:space="preserve">
     <value>В VAS-PC с EdiabasLib поддерживаются только "Вед. поиск неисправн." и "Ведомые функции".</value>
@@ -331,8 +330,7 @@
 Нажмите здесь, чтобы открыть системное приложение: {0}</value>
   </data>
   <data name="PatchIstadInfoEnet" xml:space="preserve">
-    <value>Для программирования необходимо выбрать:
-'HO-ICOM / ENET local network'</value>
+    <value>'HO-ICOM / ENET local network'</value>
   </data>
   <data name="SupportedUsbAdapters" xml:space="preserve">
     <value>Поддерживаются только USB-адаптеры с прошивкой EdiabasLib.</value>
@@ -359,5 +357,8 @@
     <value>Среда выполнения VC++ не найдена.
 Сначала установите среду выполнения VC++
 '{0}'.</value>
+  </data>
+  <data name="PatchIstadInfoHint" xml:space="preserve">
+    <value>Указание: В ISTA-D администрировании -&gt; VCI конфигурация выберите тип интерфейса:</value>
   </data>
 </root>

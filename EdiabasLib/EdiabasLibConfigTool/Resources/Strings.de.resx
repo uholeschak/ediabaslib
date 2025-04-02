@@ -272,9 +272,8 @@ Wurde das Archiv korrekt extrahiert?</value>
   <data name="LanguageFr" xml:space="preserve">
     <value>Français</value>
   </data>
-  <data name="PatchInstadInfo" xml:space="preserve">
-    <value>Hinweis: In ISTA-D Administration -&gt; VCI Konfiguration als Interface Typ auswählen:
-'Ediabas Standardeinstellungen (ediabas.ini)'</value>
+  <data name="PatchIstadInfoEdiabas" xml:space="preserve">
+    <value>'Ediabas Standardeinstellungen (ediabas.ini)'</value>
   </data>
   <data name="PatchVaspcInfo" xml:space="preserve">
     <value>Hinweis: In VAS-PC werden nur "Geführte Fehlerkennung" und "Geführte Funktionen"
@@ -334,8 +333,7 @@ Erlauben Sie den Standortzugriff für diese Applikation im System.
 Hier klicken um die System App zu öffnen: {0}</value>
   </data>
   <data name="PatchIstadInfoEnet" xml:space="preserve">
-    <value>Zum Programmieren müssen Sie wählen:
-'HO-ICOM / ENET lokales Netzwerk'</value>
+    <value>'HO-ICOM / ENET lokales Netzwerk'</value>
   </data>
   <data name="SupportedUsbAdapters" xml:space="preserve">
     <value>Es werden nur USB Adapter mit EdiabasLib Firmware unterstützt.</value>
@@ -362,5 +360,8 @@ Hier klicken um die System App zu öffnen: {0}</value>
     <value>Die VC++ Runtime wurde nicht gefunden.
 Installieren Sie zuerst die VC++ Runtime
 '{0}'.</value>
+  </data>
+  <data name="PatchIstadInfoHint" xml:space="preserve">
+    <value>Hinweis: In ISTA-D Administration -&gt; VCI Konfiguration als Interface Typ auswählen:</value>
   </data>
 </root>

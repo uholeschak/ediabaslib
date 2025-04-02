@@ -488,22 +488,29 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type:
-        ///&apos;Ediabas default settings (ediabas.ini)&apos; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die &apos;Ediabas default settings (ediabas.ini)&apos; ähnelt.
         /// </summary>
-        internal static string PatchInstadInfo {
+        internal static string PatchIstadInfoEdiabas {
             get {
-                return ResourceManager.GetString("PatchInstadInfo", resourceCulture);
+                return ResourceManager.GetString("PatchIstadInfoEdiabas", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die For programming you have to select:
-        ///&apos;HO-ICOM / ENET local network&apos; ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die &apos;HO-ICOM / ENET local network&apos; ähnelt.
         /// </summary>
         internal static string PatchIstadInfoEnet {
             get {
                 return ResourceManager.GetString("PatchIstadInfoEnet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type: ähnelt.
+        /// </summary>
+        internal static string PatchIstadInfoHint {
+            get {
+                return ResourceManager.GetString("PatchIstadInfoHint", resourceCulture);
             }
         }
         

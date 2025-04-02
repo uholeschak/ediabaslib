@@ -272,9 +272,8 @@ Has the archive been extracted correctly?</value>
   <data name="LanguageFr" xml:space="preserve">
     <value>French</value>
   </data>
-  <data name="PatchInstadInfo" xml:space="preserve">
-    <value>Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type:
-'Ediabas default settings (ediabas.ini)'</value>
+  <data name="PatchIstadInfoEdiabas" xml:space="preserve">
+    <value>'Ediabas default settings (ediabas.ini)'</value>
   </data>
   <data name="PatchVaspcInfo" xml:space="preserve">
     <value>Hint: In VAS-PC only "Guided Fault Finding" and "Guided Functions"
@@ -333,8 +332,7 @@ Enable location access for this app in the system.
 Click here to open the system app: {0}</value>
   </data>
   <data name="PatchIstadInfoEnet" xml:space="preserve">
-    <value>For programming you have to select:
-'HO-ICOM / ENET local network'</value>
+    <value>'HO-ICOM / ENET local network'</value>
   </data>
   <data name="SupportedUsbAdapters" xml:space="preserve">
     <value>Only USB adapters with EdiabasLib firmware are supported.</value>
@@ -362,5 +360,8 @@ Click here to open the system app: {0}</value>
 Install the VC++ runtime
 '{0}'
 first.</value>
+  </data>
+  <data name="PatchIstadInfoHint" xml:space="preserve">
+    <value>Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type:</value>
   </data>
 </root>
