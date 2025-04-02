@@ -203,6 +203,9 @@ Install and register Admin client.
 Copy directories:
 C:\Program Files\BMW
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
+Exclude directories:
+C:\Program Files\BMW\ISPI\data\TRIC\ISTA\Logs
+
 Create directories:
 C:\ProgramData\BMW\ISPI\logs\TRIC\FscValidation\
 C:\ProgramData\BMW\ISPI\logs\TRIC\ISTA\
