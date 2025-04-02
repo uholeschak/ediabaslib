@@ -40,6 +40,11 @@ namespace WebPsdzClient
             TestLicenses = ConfigurationManager.AppSettings["TestLicenses"];
             DisplayOptions = ConfigurationManager.AppSettings["DisplayOptions"];
 
+            if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
+            {
+                IstaFolder = ProgrammingJobs.GetIstaInstallLocation();
+            }
+
             SetupLog4Net();
             log.InfoFormat("Application_Start");
 

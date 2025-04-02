@@ -65,7 +65,6 @@ namespace PsdzClient
         private bool _ignoreCheck = false;
         private bool _ignoreChange = false;
         private CancellationTokenSource _cts;
-        private string _istaInstallLocation = null;
         private readonly ProgrammingJobs.ExecutionMode _executionMode;
 
         public FormMain(string[] args = null)
@@ -97,8 +96,6 @@ namespace PsdzClient
             _programmingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
             _programmingJobs.ShowMessageEvent += ShowMessageEvent;
             _programmingJobs.ServiceInitializedEvent += ServiceInitialized;
-
-            _istaInstallLocation = ProgrammingJobs.GetIstaInstallLocation();
         }
 
         private void UpdateDisplay()
@@ -166,7 +163,7 @@ namespace PsdzClient
 
                 if (string.IsNullOrEmpty(istaFolder) || !Directory.Exists(istaFolder))
                 {
-                    istaFolder = _istaInstallLocation;
+                    istaFolder = ProgrammingJobs.GetIstaInstallLocation();
                 }
                 textBoxIstaFolder.Text = istaFolder;
 
