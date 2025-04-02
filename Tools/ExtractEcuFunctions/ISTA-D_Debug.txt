@@ -204,7 +204,10 @@ Copy directories:
 C:\Program Files\BMW
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
 Exclude directories:
-C:\Program Files\BMW\ISPI\data\TRIC\ISTA\Logs
+C:\Program Files\BMW\ISPI\data\TRIC\ISTA\Logs\*
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Temp\*
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Transactions\*
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\FASTAOut\*
 
 Create directories:
 C:\ProgramData\BMW\ISPI\logs\TRIC\FscValidation\
