@@ -86,6 +86,7 @@
     <ProjectReference Include="..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
     <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.1" />
     <PackageReference Include="SimpleWifi.netstandard.Lsh" Version="2.1.1" />
     <PackageReference Include="Singulink.Net.Dhcp" Version="1.0.3" />
