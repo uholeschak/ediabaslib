@@ -272,13 +272,28 @@ namespace CarSimulator
         public class BcTlsServer : DefaultTlsServer
         {
             private readonly X509Certificate2 _serverCertificate;
+            private TlsCredentials _serverCredentials;
 
             public BcTlsServer(X509Certificate2 serverCertificate) : base(new BcTlsCrypto(new SecureRandom()))
             {
                 _serverCertificate = serverCertificate;
+                _serverCredentials = CreateCredentials(serverCertificate);
             }
 
             public override TlsCredentials GetCredentials()
+            {
+                return _serverCredentials;
+            }
+
+            public override ProtocolVersion[] GetProtocolVersions()
+            {
+                return new[]
+                {
+                    ProtocolVersion.TLSv13
+                };
+            }
+
+            private TlsCredentials CreateCredentials(X509Certificate2 serverCertificate)
             {
                 BcTlsCrypto crypto = new BcTlsCrypto(new SecureRandom());
                 BcTlsCertificate tlsCertificate = new BcTlsCertificate(crypto, DotNetUtilities.FromX509Certificate(_serverCertificate).CertificateStructure);
@@ -295,23 +310,10 @@ namespace CarSimulator
                 AsymmetricCipherKeyPair keyPair = DotNetUtilities.GetKeyPair(privateKey);
                 SignatureAndHashAlgorithm algo = new SignatureAndHashAlgorithm(Org.BouncyCastle.Tls.HashAlgorithm.sha384, SignatureAlgorithm.ecdsa);
                 TlsCryptoParameters cryptoParams = new TlsCryptoParameters(this.m_context);
-                return new BcDefaultTlsCredentialedSigner(
-                    cryptoParams,
-                    crypto,
-                    keyPair.Private,
-                    bcCertificate,
-                    algo);
-            }
-
-            public override ProtocolVersion[] GetProtocolVersions()
-            {
-                return new[]
-                {
-                    ProtocolVersion.TLSv12,
-                    ProtocolVersion.TLSv13
-                };
+                return new BcDefaultTlsCredentialedSigner(cryptoParams, crypto, keyPair.Private, bcCertificate, algo);
             }
         }
+
         public enum ConceptType
         {
             ConceptBwmFast,
