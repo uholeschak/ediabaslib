@@ -297,16 +297,8 @@ namespace CarSimulator
             {
                 BcTlsCrypto crypto = new BcTlsCrypto(new SecureRandom());
                 BcTlsCertificate tlsCertificate = new BcTlsCertificate(crypto, DotNetUtilities.FromX509Certificate(_serverCertificate).CertificateStructure);
-                Certificate bcCertificate = new Certificate(
-                    CertificateType.X509,
-                    TlsUtilities.EmptyBytes,
-                    new CertificateEntry[]
-                    {
-                        new CertificateEntry(tlsCertificate, null)
-                    });
-
+                Certificate bcCertificate = new Certificate(CertificateType.X509, TlsUtilities.EmptyBytes, new [] { new CertificateEntry(tlsCertificate, null) });
                 ECDsa privateKey = _serverCertificate.GetECDsaPrivateKey();
-
                 AsymmetricCipherKeyPair keyPair = DotNetUtilities.GetKeyPair(privateKey);
                 SignatureAndHashAlgorithm algo = new SignatureAndHashAlgorithm(Org.BouncyCastle.Tls.HashAlgorithm.sha384, SignatureAlgorithm.ecdsa);
                 TlsCryptoParameters cryptoParams = new TlsCryptoParameters(this.m_context);
