@@ -301,6 +301,7 @@ namespace CarSimulator
             {
                 if (serverCertificate == null)
                 {
+                    Debug.WriteLine("CreateCredentials No certificate");
                     return null;
                 }
 
@@ -310,6 +311,12 @@ namespace CarSimulator
                     BcTlsCertificate tlsCertificate = new BcTlsCertificate(crypto, DotNetUtilities.FromX509Certificate(serverCertificate).CertificateStructure);
                     Certificate bcCertificate = new Certificate(CertificateType.X509, TlsUtilities.EmptyBytes, new[] { new CertificateEntry(tlsCertificate, null) });
                     ECDsa privateKey = serverCertificate.GetECDsaPrivateKey();
+                    if (privateKey == null)
+                    {
+                        Debug.WriteLine("CreateCredentials No private key");
+                        return null;
+                    }
+
                     AsymmetricCipherKeyPair keyPair = DotNetUtilities.GetKeyPair(privateKey);
                     SignatureAndHashAlgorithm algo = new SignatureAndHashAlgorithm(Org.BouncyCastle.Tls.HashAlgorithm.sha384, SignatureAlgorithm.ecdsa);
                     TlsCryptoParameters cryptoParams = new TlsCryptoParameters(this.m_context);
@@ -317,7 +324,7 @@ namespace CarSimulator
                 }
                 catch (Exception e)
                 {
-                    Debug.WriteLine("CreateCredentials exception: {0}", e.Message);
+                    Debug.WriteLine("CreateCredentials exception: {0}", (object)e.Message);
                     return null;
                 }
             }
@@ -1090,6 +1097,7 @@ namespace CarSimulator
 
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
                             _serverCertificate = new X509Certificate2(ServerCertFile, ServerCertPwd);
+                            //BcTlsServer tlsServer = new BcTlsServer(_serverCertificate);
                         }
                         catch (Exception e)
                         {
