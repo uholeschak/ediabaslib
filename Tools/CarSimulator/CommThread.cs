@@ -3611,6 +3611,33 @@ namespace CarSimulator
             }
         }
 
+        private Stream CreateBcSslStream(TcpClient client, X509Certificate2 serverCertificate)
+        {
+            if (serverCertificate == null)
+            {
+                return null;
+            }
+
+            Stream sslStream = null;
+            try
+            {
+                TlsServerProtocol tlsProtocol = new TlsServerProtocol(client.GetStream());
+                sslStream = tlsProtocol.Stream;
+                BcTlsServer tlsServer = new BcTlsServer(serverCertificate);
+                tlsProtocol.Accept(tlsServer);
+
+                // Authenticate the server but don't require the client to authenticate.
+                sslStream.ReadTimeout = TcpSendTimeout;
+                return sslStream;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("CreateBcSslStream Exception: {0}", e.Message);
+                sslStream?.Close();
+                throw;
+            }
+        }
+
         private bool ReceiveCan(byte[] receiveData)
         {
 #if CAN_DEBUG
