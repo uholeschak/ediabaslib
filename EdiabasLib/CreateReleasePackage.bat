@@ -27,16 +27,8 @@ copy "!BATPATH!EdiabasTest\bin\Release\EdiabasLib.config" "!EDIABASTESTPATH!" ||
 
 mkdir "!TOOLPATH!" || EXIT /b 1
 copy "!TOOLSRCPATH!*.dll" "!TOOLPATH!" || EXIT /b 1
-copy "!TOOLSRCPATH!EdiabasLibConfigTool.*" "!TOOLPATH!" || EXIT /b 1
-
-mkdir "!TOOLPATH!de" || EXIT /b 1
-copy "!TOOLSRCPATH!de\*.dll" "!TOOLPATH!de" || EXIT /b 1
-
-mkdir "!TOOLPATH!ru" || EXIT /b 1
-copy "!TOOLSRCPATH!ru\*.dll" "!TOOLPATH!ru" || EXIT /b 1
-
-mkdir "!TOOLPATH!Api32" || EXIT /b 1
-copy "!TOOLSRCPATH!Api32\*.*" "!TOOLPATH!Api32" || EXIT /b 1
+xcopy /y /e "!TOOLSRCPATH!\*.*" "!TOOLPATH!" || EXIT /b 1
+del "!TOOLPATH!*.pdb"
 
 mkdir "!LOGCONVPATH!" || EXIT /b 1
 copy "!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\*.*" "!LOGCONVPATH!" || EXIT /b 1
