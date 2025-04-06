@@ -26,6 +26,7 @@ using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
+using Org.BouncyCastle.Utilities.Encoders;
 using Peak.Can.Basic;
 // ReSharper disable RedundantAssignment
 // ReSharper disable RedundantCast
@@ -332,6 +333,16 @@ namespace CarSimulator
                     m_firstFatalAlertConnectionEnd = ConnectionEnd.server;
                     m_firstFatalAlertDescription = alertDescription;
                 }
+
+                Debug.WriteLine("TLS server raised alert: " + AlertLevel.GetText(alertLevel) + ", " + AlertDescription.GetText(alertDescription));
+                if (message != null)
+                {
+                    Debug.WriteLine("> " + message);
+                }
+                if (cause != null)
+                {
+                    Debug.WriteLine(cause);
+                }
             }
 
             public override void NotifyAlertReceived(short alertLevel, short alertDescription)
@@ -341,6 +352,8 @@ namespace CarSimulator
                     m_firstFatalAlertConnectionEnd = ConnectionEnd.client;
                     m_firstFatalAlertDescription = alertDescription;
                 }
+
+                Debug.WriteLine("TLS server received alert: " + AlertLevel.GetText(alertLevel) + ", " + AlertDescription.GetText(alertDescription));
             }
 
             public override void NotifyHandshakeComplete()
@@ -356,6 +369,9 @@ namespace CarSimulator
 
                 m_tlsServerEndPoint = m_context.ExportChannelBinding(ChannelBinding.tls_server_end_point);
                 m_tlsUnique = m_context.ExportChannelBinding(ChannelBinding.tls_unique);
+
+                Debug.WriteLine("TLS server reports 'tls-server-end-point' = " + ToHexString(m_tlsServerEndPoint));
+                Debug.WriteLine("TLS server reports 'tls-unique' = " + ToHexString(m_tlsUnique));
             }
 
             public override Org.BouncyCastle.Tls.CertificateRequest GetCertificateRequest()
@@ -394,6 +410,85 @@ namespace CarSimulator
                 }
             }
 
+            public override void NotifyClientCertificate(Certificate clientCertificate)
+            {
+                bool isEmpty = (clientCertificate == null || clientCertificate.IsEmpty);
+
+#if false
+                if (isEmpty)
+                {
+                    short alertDescription = TlsUtilities.IsTlsV13(m_context)
+                        ? AlertDescription.certificate_required
+                        : AlertDescription.handshake_failure;
+
+                    throw new TlsFatalAlert(alertDescription);
+                }
+#endif
+
+                TlsCertificate[] chain = clientCertificate.GetCertificateList();
+
+                Debug.WriteLine("TLS server received client certificate chain of length " + chain.Length);
+                for (int i = 0; i < chain.Length; ++i)
+                {
+                    X509CertificateStructure entry = X509CertificateStructure.GetInstance(chain[0].GetEncoded());
+                    // TODO Create fingerprint based on certificate signature algorithm digest
+                    Debug.WriteLine("    fingerprint:SHA-256 " + Fingerprint(entry) + " (" + entry.Subject + ")");
+                }
+            }
+
+            public override void ProcessClientExtensions(IDictionary<int, byte[]> clientExtensions)
+            {
+                if (m_context.SecurityParameters.ClientRandom == null)
+                    throw new TlsFatalAlert(AlertDescription.internal_error);
+
+                base.ProcessClientExtensions(clientExtensions);
+            }
+
+            public override IDictionary<int, byte[]> GetServerExtensions()
+            {
+                if (m_context.SecurityParameters.ServerRandom == null)
+                    throw new TlsFatalAlert(AlertDescription.internal_error);
+
+                return base.GetServerExtensions();
+            }
+
+            public override void GetServerExtensionsForConnection(IDictionary<int, byte[]> serverExtensions)
+            {
+                if (m_context.SecurityParameters.ServerRandom == null)
+                    throw new TlsFatalAlert(AlertDescription.internal_error);
+
+                base.GetServerExtensionsForConnection(serverExtensions);
+            }
+
+            protected virtual IList<SignatureAndHashAlgorithm> GetSupportedSignatureAlgorithms()
+            {
+                return m_context.SecurityParameters.ClientSigAlgs;
+            }
+
+            protected override TlsCredentialedSigner GetDsaSignerCredentials()
+            {
+                return LoadSignerCredentials(SignatureAlgorithm.dsa);
+            }
+
+            protected override TlsCredentialedSigner GetECDsaSignerCredentials()
+            {
+                // TODO[RFC 8422] Code should choose based on client's supported sig algs?
+                return LoadSignerCredentials(SignatureAlgorithm.ecdsa);
+                //return LoadSignerCredentials(SignatureAlgorithm.ed25519);
+                //return LoadSignerCredentials(SignatureAlgorithm.ed448);
+            }
+
+            protected override TlsCredentialedDecryptor GetRsaEncryptionCredentials()
+            {
+                return LoadEncryptionCredentials(m_context,
+                    new string[] { "x509-server-rsa-enc.pem", "x509-ca-rsa.pem" }, "x509-server-key-rsa-enc.pem");
+            }
+
+            protected override TlsCredentialedSigner GetRsaSignerCredentials()
+            {
+                return LoadSignerCredentials(SignatureAlgorithm.rsa);
+            }
+
             protected override int[] GetSupportedCipherSuites()
             {
                 return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsV3CipherSuites);
@@ -429,6 +524,67 @@ namespace CarSimulator
                     Debug.WriteLine("CreateCredentials exception: {0}", (object)e.Message);
                     return null;
                 }
+            }
+
+            public static string Fingerprint(X509CertificateStructure c)
+            {
+                byte[] der = c.GetEncoded();
+                byte[] hash = Sha256DigestOf(der);
+                byte[] hexBytes = Hex.Encode(hash);
+                string hex = Encoding.ASCII.GetString(hexBytes).ToUpperInvariant();
+
+                StringBuilder fp = new StringBuilder();
+                int i = 0;
+                fp.Append(hex.Substring(i, 2));
+                while ((i += 2) < hex.Length)
+                {
+                    fp.Append(':');
+                    fp.Append(hex.Substring(i, 2));
+                }
+                return fp.ToString();
+            }
+
+            public static byte[] Sha256DigestOf(byte[] input)
+            {
+                return DigestUtilities.CalculateDigest("SHA256", input);
+            }
+
+            public virtual string ToHexString(byte[] data)
+            {
+                return data == null ? "(null)" : Hex.ToHexString(data);
+            }
+
+            private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm)
+            {
+#if false
+                return LoadSignerCredentialsServer(m_context, GetSupportedSignatureAlgorithms(),
+                    signatureAlgorithm);
+#else
+                return null;
+#endif
+            }
+
+            private static TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
+                string keyResource)
+            {
+#if false
+                TlsCrypto crypto = context.Crypto;
+                Certificate certificate = LoadCertificateChain(context, certResources);
+
+                // TODO[tls-ops] Need to have TlsCrypto construct the credentials from the certs/key (as raw data)
+                if (crypto is BcTlsCrypto)
+                {
+                    AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
+
+                    return new BcDefaultTlsCredentialedDecryptor((BcTlsCrypto)crypto, certificate, privateKey);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+#else
+                throw new NotSupportedException();
+#endif
             }
         }
 
