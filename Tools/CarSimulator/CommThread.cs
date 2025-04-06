@@ -271,6 +271,16 @@ namespace CarSimulator
 
         public class BcTlsServer : DefaultTlsServer
         {
+            private static readonly int[] TlsV3CipherSuites = new int[]
+            {
+                /*
+                 * TLS 1.3
+                 */
+                CipherSuite.TLS_AES_256_GCM_SHA384,
+                CipherSuite.TLS_AES_128_GCM_SHA256,
+                CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
+            };
+
             private readonly X509Certificate2 _serverCertificate;
             private readonly TlsCredentials _serverCredentials;
 
@@ -289,12 +299,9 @@ namespace CarSimulator
                 return _serverCredentials;
             }
 
-            public override ProtocolVersion[] GetProtocolVersions()
+            protected override int[] GetSupportedCipherSuites()
             {
-                return new[]
-                {
-                    ProtocolVersion.TLSv13
-                };
+                return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsV3CipherSuites);
             }
 
             private TlsCredentials CreateCredentials(X509Certificate2 serverCertificate)
