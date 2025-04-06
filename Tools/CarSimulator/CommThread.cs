@@ -14,19 +14,18 @@ using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using BmwFileReader;
 using EdiabasLib;
 using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using Org.BouncyCastle.Utilities.Encoders;
+using Org.BouncyCastle.Utilities.IO.Pem;
 using Peak.Can.Basic;
 // ReSharper disable RedundantAssignment
 // ReSharper disable RedundantCast
@@ -285,12 +284,14 @@ namespace CarSimulator
 
             private string m_privateCert = null;
             private string m_publicCert = null;
+            private string m_CaFile = null;
             private string m_certPassword = null;
 
-            public BcTlsServer(string publicCert, string privateCert, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
+            public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
             {
-                m_publicCert = publicCert;
-                m_privateCert = privateCert;
+                m_publicCert = Path.ChangeExtension(certBaseFile, ".crt");
+                m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
+                m_CaFile = Path.Combine(Path.GetDirectoryName(certBaseFile) ?? string.Empty, "rootCA.crt");
                 m_certPassword = certPassword;
             }
 
@@ -342,12 +343,7 @@ namespace CarSimulator
                 }
 
                 var certificateAuthorities = new List<X509Name>();
-                //certificateAuthorities.Add(TlsTestUtilities.LoadBcCertificateResource("x509-ca-dsa.pem").Subject);
-                //certificateAuthorities.Add(TlsTestUtilities.LoadBcCertificateResource("x509-ca-ecdsa.pem").Subject);
-                //certificateAuthorities.Add(TlsTestUtilities.LoadBcCertificateResource("x509-ca-rsa.pem").Subject);
-
-                // All the CA certificates are currently configured with this subject
-                certificateAuthorities.Add(new X509Name("CN=BouncyCastle TLS Test CA"));
+                certificateAuthorities.Add(LoadBcCertificateResource(m_CaFile).Subject);
 
                 if (TlsUtilities.IsTlsV13(m_context))
                 {
@@ -479,6 +475,24 @@ namespace CarSimulator
             public virtual string ToHexString(byte[] data)
             {
                 return data == null ? "(null)" : Hex.ToHexString(data);
+            }
+
+            private static X509CertificateStructure LoadBcCertificateResource(string resource)
+            {
+                PemObject pem = LoadPemResource(resource);
+                if (pem.Type.EndsWith("CERTIFICATE"))
+                {
+                    return X509CertificateStructure.GetInstance(pem.Content);
+                }
+                throw new ArgumentException("doesn't specify a valid certificate", "resource");
+            }
+
+            private static PemObject LoadPemResource(string resource)
+            {
+                using (var p = new PemReader(new StreamReader(resource)))
+                {
+                    return p.ReadPemObject();
+                }
             }
 
             private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm)
@@ -1284,9 +1298,7 @@ namespace CarSimulator
                             string pfxFile = Path.ChangeExtension(ServerCertFile, ".pfx");
                             _serverCertificate = new X509Certificate2(pfxFile, ServerCertPwd);
 #if false
-                            string publicCert = Path.ChangeExtension(ServerCertFile, ".crt");
-                            string privateCert = Path.ChangeExtension(ServerCertFile, ".key");
-                            BcTlsServer tlsServer = new BcTlsServer(publicCert, privateCert, ServerCertPwd);
+                            BcTlsServer tlsServer = new BcTlsServer(ServerCertFile, ServerCertPwd);
 #endif
                         }
                         catch (Exception e)
@@ -3840,9 +3852,7 @@ namespace CarSimulator
             {
                 TlsServerProtocol tlsProtocol = new TlsServerProtocol(client.GetStream());
                 sslStream = tlsProtocol.Stream;
-                string publicCert = Path.ChangeExtension(ServerCertFile, ".crt");
-                string privateCert = Path.ChangeExtension(ServerCertFile, ".key");
-                BcTlsServer tlsServer = new BcTlsServer(publicCert, privateCert, ServerCertPwd);
+                BcTlsServer tlsServer = new BcTlsServer(serverCertFile, ServerCertPwd);
                 tlsProtocol.Accept(tlsServer);
 
                 // Authenticate the server but don't require the client to authenticate.
