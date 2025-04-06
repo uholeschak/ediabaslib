@@ -283,6 +283,8 @@ namespace CarSimulator
                 CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
             };
 
+            private string m_privateCert = null;
+            private string m_publicCert = null;
             protected int m_firstFatalAlertConnectionEnd = -1;
             protected short m_firstFatalAlertDescription = -1;
 
@@ -291,11 +293,10 @@ namespace CarSimulator
             private byte[] m_tlsServerEndPoint = null;
             private byte[] m_tlsUnique = null;
 
-            private readonly X509Certificate2 _serverCertificate;
-
-            public BcTlsServer(X509Certificate2 serverCertificate) : base(new BcTlsCrypto(new SecureRandom()))
+            public BcTlsServer(string publicCert, string privateCert) : base(new BcTlsCrypto(new SecureRandom()))
             {
-                _serverCertificate = serverCertificate;
+                m_publicCert = publicCert;
+                m_privateCert = privateCert;
             }
 
             private int FirstFatalAlertConnectionEnd
@@ -1316,8 +1317,13 @@ namespace CarSimulator
                             // copy file to EDIABAS.ini [SSL] S29Path property location.
 
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
-                            _serverCertificate = new X509Certificate2(ServerCertFile, ServerCertPwd);
-                            //BcTlsServer tlsServer = new BcTlsServer(_serverCertificate);
+                            string pfxFile = Path.ChangeExtension(ServerCertFile, ".pfx");
+                            _serverCertificate = new X509Certificate2(pfxFile, ServerCertPwd);
+#if false
+                            string publicCert = Path.ChangeExtension(ServerCertFile, ".crt");
+                            string privateCert = Path.ChangeExtension(ServerCertFile, ".key");
+                            BcTlsServer tlsServer = new BcTlsServer(publicCert, privateCert);
+#endif
                         }
                         catch (Exception e)
                         {
@@ -3369,7 +3375,7 @@ namespace CarSimulator
                     {
                         if (useBcSsl)
                         {
-                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, _serverCertificate);
+                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, ServerCertFile);
                         }
                         else
                         {
@@ -3858,9 +3864,9 @@ namespace CarSimulator
             }
         }
 
-        private Stream CreateBcSslStream(TcpClient client, X509Certificate2 serverCertificate)
+        private Stream CreateBcSslStream(TcpClient client, string serverCertFile)
         {
-            if (serverCertificate == null)
+            if (string.IsNullOrEmpty(serverCertFile))
             {
                 return null;
             }
@@ -3870,7 +3876,9 @@ namespace CarSimulator
             {
                 TlsServerProtocol tlsProtocol = new TlsServerProtocol(client.GetStream());
                 sslStream = tlsProtocol.Stream;
-                BcTlsServer tlsServer = new BcTlsServer(serverCertificate);
+                string publicCert = Path.ChangeExtension(ServerCertFile, ".crt");
+                string privateCert = Path.ChangeExtension(ServerCertFile, ".key");
+                BcTlsServer tlsServer = new BcTlsServer(publicCert, privateCert);
                 tlsProtocol.Accept(tlsServer);
 
                 // Authenticate the server but don't require the client to authenticate.
