@@ -20,6 +20,7 @@ using System.Text;
 using System.Threading;
 using BmwFileReader;
 using EdiabasLib;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
@@ -321,6 +322,76 @@ namespace CarSimulator
                 }
 
                 return base.GetCredentials();
+            }
+
+            public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message,
+                Exception cause)
+            {
+                if (alertLevel == AlertLevel.fatal && m_firstFatalAlertConnectionEnd == -1)
+                {
+                    m_firstFatalAlertConnectionEnd = ConnectionEnd.server;
+                    m_firstFatalAlertDescription = alertDescription;
+                }
+            }
+
+            public override void NotifyAlertReceived(short alertLevel, short alertDescription)
+            {
+                if (alertLevel == AlertLevel.fatal && m_firstFatalAlertConnectionEnd == -1)
+                {
+                    m_firstFatalAlertConnectionEnd = ConnectionEnd.client;
+                    m_firstFatalAlertDescription = alertDescription;
+                }
+            }
+
+            public override void NotifyHandshakeComplete()
+            {
+                base.NotifyHandshakeComplete();
+
+                SecurityParameters securityParameters = m_context.SecurityParameters;
+                if (securityParameters.IsExtendedMasterSecret)
+                {
+                    m_tlsKeyingMaterial1 = m_context.ExportKeyingMaterial("BC_TLS_TESTS_1", null, 16);
+                    m_tlsKeyingMaterial2 = m_context.ExportKeyingMaterial("BC_TLS_TESTS_2", new byte[8], 16);
+                }
+
+                m_tlsServerEndPoint = m_context.ExportChannelBinding(ChannelBinding.tls_server_end_point);
+                m_tlsUnique = m_context.ExportChannelBinding(ChannelBinding.tls_unique);
+            }
+
+            public override Org.BouncyCastle.Tls.CertificateRequest GetCertificateRequest()
+            {
+                IList<SignatureAndHashAlgorithm> serverSigAlgs = null;
+                if (TlsUtilities.IsSignatureAlgorithmsExtensionAllowed(m_context.ServerVersion))
+                {
+                    serverSigAlgs = TlsUtilities.GetDefaultSupportedSignatureAlgorithms(m_context);
+                }
+
+                var certificateAuthorities = new List<X509Name>();
+                //certificateAuthorities.Add(TlsTestUtilities.LoadBcCertificateResource("x509-ca-dsa.pem").Subject);
+                //certificateAuthorities.Add(TlsTestUtilities.LoadBcCertificateResource("x509-ca-ecdsa.pem").Subject);
+                //certificateAuthorities.Add(TlsTestUtilities.LoadBcCertificateResource("x509-ca-rsa.pem").Subject);
+
+                // All the CA certificates are currently configured with this subject
+                certificateAuthorities.Add(new X509Name("CN=BouncyCastle TLS Test CA"));
+
+                if (TlsUtilities.IsTlsV13(m_context))
+                {
+                    // TODO[tls13] Support for non-empty request context
+                    byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
+
+                    // TODO[tls13] Add TlsTestConfig.serverCertReqSigAlgsCert
+                    IList<SignatureAndHashAlgorithm> serverSigAlgsCert = null;
+
+                    return new Org.BouncyCastle.Tls.CertificateRequest(certificateRequestContext, serverSigAlgs, serverSigAlgsCert,
+                        certificateAuthorities);
+                }
+                else
+                {
+                    short[] certificateTypes = new short[]{ ClientCertificateType.rsa_sign,
+                    ClientCertificateType.dss_sign, ClientCertificateType.ecdsa_sign };
+
+                    return new Org.BouncyCastle.Tls.CertificateRequest(certificateTypes, serverSigAlgs, certificateAuthorities);
+                }
             }
 
             protected override int[] GetSupportedCipherSuites()
