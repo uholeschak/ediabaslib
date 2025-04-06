@@ -281,6 +281,14 @@ namespace CarSimulator
                 CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
             };
 
+            protected int m_firstFatalAlertConnectionEnd = -1;
+            protected short m_firstFatalAlertDescription = -1;
+
+            private byte[] m_tlsKeyingMaterial1 = null;
+            private byte[] m_tlsKeyingMaterial2 = null;
+            private byte[] m_tlsServerEndPoint = null;
+            private byte[] m_tlsUnique = null;
+
             private readonly X509Certificate2 _serverCertificate;
             private readonly TlsCredentials _serverCredentials;
 
@@ -294,9 +302,25 @@ namespace CarSimulator
                 }
             }
 
+            private int FirstFatalAlertConnectionEnd
+            {
+                get { return m_firstFatalAlertConnectionEnd; }
+            }
+
+            private short FirstFatalAlertDescription
+            {
+                get { return m_firstFatalAlertDescription; }
+            }
+
+
             public override TlsCredentials GetCredentials()
             {
-                return _serverCredentials;
+                if (TlsUtilities.IsTlsV13(m_context))
+                {
+                    return GetRsaSignerCredentials();
+                }
+
+                return base.GetCredentials();
             }
 
             protected override int[] GetSupportedCipherSuites()
