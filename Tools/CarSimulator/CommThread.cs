@@ -285,6 +285,7 @@ namespace CarSimulator
 
             private string m_privateCert = null;
             private string m_publicCert = null;
+            private string m_certPassword = null;
             protected int m_firstFatalAlertConnectionEnd = -1;
             protected short m_firstFatalAlertDescription = -1;
 
@@ -293,10 +294,11 @@ namespace CarSimulator
             private byte[] m_tlsServerEndPoint = null;
             private byte[] m_tlsUnique = null;
 
-            public BcTlsServer(string publicCert, string privateCert) : base(new BcTlsCrypto(new SecureRandom()))
+            public BcTlsServer(string publicCert, string privateCert, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
             {
                 m_publicCert = publicCert;
                 m_privateCert = privateCert;
+                m_certPassword = certPassword;
             }
 
             private int FirstFatalAlertConnectionEnd
@@ -1322,7 +1324,7 @@ namespace CarSimulator
 #if false
                             string publicCert = Path.ChangeExtension(ServerCertFile, ".crt");
                             string privateCert = Path.ChangeExtension(ServerCertFile, ".key");
-                            BcTlsServer tlsServer = new BcTlsServer(publicCert, privateCert);
+                            BcTlsServer tlsServer = new BcTlsServer(publicCert, privateCert, ServerCertPwd);
 #endif
                         }
                         catch (Exception e)
@@ -3878,7 +3880,7 @@ namespace CarSimulator
                 sslStream = tlsProtocol.Stream;
                 string publicCert = Path.ChangeExtension(ServerCertFile, ".crt");
                 string privateCert = Path.ChangeExtension(ServerCertFile, ".key");
-                BcTlsServer tlsServer = new BcTlsServer(publicCert, privateCert);
+                BcTlsServer tlsServer = new BcTlsServer(publicCert, privateCert, ServerCertPwd);
                 tlsProtocol.Accept(tlsServer);
 
                 // Authenticate the server but don't require the client to authenticate.
