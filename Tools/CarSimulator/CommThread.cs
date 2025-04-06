@@ -286,13 +286,6 @@ namespace CarSimulator
             private string m_privateCert = null;
             private string m_publicCert = null;
             private string m_certPassword = null;
-            protected int m_firstFatalAlertConnectionEnd = -1;
-            protected short m_firstFatalAlertDescription = -1;
-
-            private byte[] m_tlsKeyingMaterial1 = null;
-            private byte[] m_tlsKeyingMaterial2 = null;
-            private byte[] m_tlsServerEndPoint = null;
-            private byte[] m_tlsUnique = null;
 
             public BcTlsServer(string publicCert, string privateCert, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
             {
@@ -300,17 +293,6 @@ namespace CarSimulator
                 m_privateCert = privateCert;
                 m_certPassword = certPassword;
             }
-
-            private int FirstFatalAlertConnectionEnd
-            {
-                get { return m_firstFatalAlertConnectionEnd; }
-            }
-
-            private short FirstFatalAlertDescription
-            {
-                get { return m_firstFatalAlertDescription; }
-            }
-
 
             public override TlsCredentials GetCredentials()
             {
@@ -322,15 +304,8 @@ namespace CarSimulator
                 return base.GetCredentials();
             }
 
-            public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message,
-                Exception cause)
+            public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message, Exception cause)
             {
-                if (alertLevel == AlertLevel.fatal && m_firstFatalAlertConnectionEnd == -1)
-                {
-                    m_firstFatalAlertConnectionEnd = ConnectionEnd.server;
-                    m_firstFatalAlertDescription = alertDescription;
-                }
-
                 Debug.WriteLine("TLS server raised alert: " + AlertLevel.GetText(alertLevel) + ", " + AlertDescription.GetText(alertDescription));
                 if (message != null)
                 {
@@ -344,12 +319,6 @@ namespace CarSimulator
 
             public override void NotifyAlertReceived(short alertLevel, short alertDescription)
             {
-                if (alertLevel == AlertLevel.fatal && m_firstFatalAlertConnectionEnd == -1)
-                {
-                    m_firstFatalAlertConnectionEnd = ConnectionEnd.client;
-                    m_firstFatalAlertDescription = alertDescription;
-                }
-
                 Debug.WriteLine("TLS server received alert: " + AlertLevel.GetText(alertLevel) + ", " + AlertDescription.GetText(alertDescription));
             }
 
@@ -357,18 +326,11 @@ namespace CarSimulator
             {
                 base.NotifyHandshakeComplete();
 
-                SecurityParameters securityParameters = m_context.SecurityParameters;
-                if (securityParameters.IsExtendedMasterSecret)
-                {
-                    m_tlsKeyingMaterial1 = m_context.ExportKeyingMaterial("BC_TLS_TESTS_1", null, 16);
-                    m_tlsKeyingMaterial2 = m_context.ExportKeyingMaterial("BC_TLS_TESTS_2", new byte[8], 16);
-                }
+                byte[] tlsServerEndPoint = m_context.ExportChannelBinding(ChannelBinding.tls_server_end_point);
+                byte[] tlsUnique = m_context.ExportChannelBinding(ChannelBinding.tls_unique);
 
-                m_tlsServerEndPoint = m_context.ExportChannelBinding(ChannelBinding.tls_server_end_point);
-                m_tlsUnique = m_context.ExportChannelBinding(ChannelBinding.tls_unique);
-
-                Debug.WriteLine("TLS server reports 'tls-server-end-point' = " + ToHexString(m_tlsServerEndPoint));
-                Debug.WriteLine("TLS server reports 'tls-unique' = " + ToHexString(m_tlsUnique));
+                Debug.WriteLine("TLS server reports 'tls-server-end-point' = " + ToHexString(tlsServerEndPoint));
+                Debug.WriteLine("TLS server reports 'tls-unique' = " + ToHexString(tlsUnique));
             }
 
             public override Org.BouncyCastle.Tls.CertificateRequest GetCertificateRequest()
