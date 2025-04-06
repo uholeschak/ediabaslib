@@ -293,6 +293,14 @@ namespace CarSimulator
                 m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
                 m_CaFile = Path.Combine(Path.GetDirectoryName(certBaseFile) ?? string.Empty, "rootCA.crt");
                 m_certPassword = certPassword;
+                if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
+                {
+                    throw new FileNotFoundException("Certificate files not found", certBaseFile);
+                }
+                if (!File.Exists(m_CaFile))
+                {
+                    throw new FileNotFoundException("CA file not found", m_CaFile);
+                }
             }
 
             public override TlsCredentials GetCredentials()
