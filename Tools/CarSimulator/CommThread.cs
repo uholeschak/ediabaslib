@@ -292,16 +292,10 @@ namespace CarSimulator
             private byte[] m_tlsUnique = null;
 
             private readonly X509Certificate2 _serverCertificate;
-            private readonly TlsCredentials _serverCredentials;
 
             public BcTlsServer(X509Certificate2 serverCertificate) : base(new BcTlsCrypto(new SecureRandom()))
             {
                 _serverCertificate = serverCertificate;
-                _serverCredentials = CreateCredentials(serverCertificate);
-                if (_serverCredentials == null)
-                {
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate);
-                }
             }
 
             private int FirstFatalAlertConnectionEnd
@@ -492,38 +486,6 @@ namespace CarSimulator
             protected override int[] GetSupportedCipherSuites()
             {
                 return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsV3CipherSuites);
-            }
-
-            private TlsCredentials CreateCredentials(X509Certificate2 serverCertificate)
-            {
-                if (serverCertificate == null)
-                {
-                    Debug.WriteLine("CreateCredentials No certificate");
-                    return null;
-                }
-
-                try
-                {
-                    BcTlsCrypto crypto = new BcTlsCrypto(new SecureRandom());
-                    BcTlsCertificate tlsCertificate = new BcTlsCertificate(crypto, DotNetUtilities.FromX509Certificate(serverCertificate).CertificateStructure);
-                    Certificate bcCertificate = new Certificate(CertificateType.X509, TlsUtilities.EmptyBytes, new[] { new CertificateEntry(tlsCertificate, null) });
-                    ECDsa privateKey = serverCertificate.GetECDsaPrivateKey();
-                    if (privateKey == null)
-                    {
-                        Debug.WriteLine("CreateCredentials No private key");
-                        return null;
-                    }
-
-                    AsymmetricCipherKeyPair keyPair = DotNetUtilities.GetKeyPair(privateKey);
-                    SignatureAndHashAlgorithm algo = new SignatureAndHashAlgorithm(Org.BouncyCastle.Tls.HashAlgorithm.sha384, SignatureAlgorithm.ecdsa);
-                    TlsCryptoParameters cryptoParams = new TlsCryptoParameters(this.m_context);
-                    return new BcDefaultTlsCredentialedSigner(cryptoParams, crypto, keyPair.Private, bcCertificate, algo);
-                }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("CreateCredentials exception: {0}", (object)e.Message);
-                    return null;
-                }
             }
 
             public static string Fingerprint(X509CertificateStructure c)
