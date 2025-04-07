@@ -10,6 +10,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Asn1.Pkcs;
+using Org.BouncyCastle.Asn1.Sec;
+using Org.BouncyCastle.Asn1.X9;
+using Org.BouncyCastle.Crypto.Parameters;
 
 namespace CarSimulator;
 
@@ -238,6 +243,34 @@ public class BcTlsServer : DefaultTlsServer
         throw new ArgumentException("doesn't specify a valid certificate", "resource");
     }
 
+    private static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource)
+    {
+        PemObject pem = LoadPemResource(resource);
+        if (pem.Type.Equals("PRIVATE KEY"))
+        {
+            return PrivateKeyFactory.CreateKey(pem.Content);
+        }
+        if (pem.Type.Equals("ENCRYPTED PRIVATE KEY"))
+        {
+            throw new NotSupportedException("Encrypted PKCS#8 keys not supported");
+        }
+        if (pem.Type.Equals("RSA PRIVATE KEY"))
+        {
+            RsaPrivateKeyStructure rsa = RsaPrivateKeyStructure.GetInstance(pem.Content);
+            return new RsaPrivateCrtKeyParameters(rsa.Modulus, rsa.PublicExponent,
+                rsa.PrivateExponent, rsa.Prime1, rsa.Prime2, rsa.Exponent1,
+                rsa.Exponent2, rsa.Coefficient);
+        }
+        if (pem.Type.Equals("EC PRIVATE KEY"))
+        {
+            ECPrivateKeyStructure pKey = ECPrivateKeyStructure.GetInstance(pem.Content);
+            AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, pKey.Parameters);
+            PrivateKeyInfo privInfo = new PrivateKeyInfo(algId, pKey);
+            return PrivateKeyFactory.CreateKey(privInfo);
+        }
+        throw new ArgumentException("doesn't specify a valid private key", "resource");
+    }
+
     private static PemObject LoadPemResource(string resource)
     {
         using (var p = new PemReader(new StreamReader(resource)))
@@ -254,7 +287,6 @@ public class BcTlsServer : DefaultTlsServer
     private static TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
         string keyResource)
     {
-#if false
         TlsCrypto crypto = context.Crypto;
         Certificate certificate = LoadCertificateChain(context, certResources);
 
@@ -269,9 +301,6 @@ public class BcTlsServer : DefaultTlsServer
         {
             throw new NotSupportedException();
         }
-#else
-        throw new NotSupportedException();
-#endif
     }
 
     private static TlsCredentialedSigner LoadSignerCredentials(TlsContext context,
@@ -298,7 +327,80 @@ public class BcTlsServer : DefaultTlsServer
         if (signatureAndHashAlgorithm == null)
             return null;
 
-        //return LoadSignerCredentials(context, new string[] { certResource }, keyResource, signatureAndHashAlgorithm);
-        return null;
+        return LoadSignerCredentials(context, new string[] { certResource }, keyResource, signatureAndHashAlgorithm);
+    }
+
+    private static TlsCredentialedSigner LoadSignerCredentials(TlsContext context, string[] certResources,
+        string keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm)
+    {
+        TlsCrypto crypto = context.Crypto;
+        TlsCryptoParameters cryptoParams = new TlsCryptoParameters(context);
+
+        return LoadSignerCredentials(cryptoParams, crypto, certResources, keyResource, signatureAndHashAlgorithm);
+    }
+
+    public static TlsCredentialedSigner LoadSignerCredentials(TlsCryptoParameters cryptoParams, TlsCrypto crypto,
+        string[] certResources, string keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm)
+    {
+        Certificate certificate = LoadCertificateChain(cryptoParams.ServerVersion, crypto, certResources);
+
+        // TODO[tls-ops] Need to have TlsCrypto construct the credentials from the certs/key (as raw data)
+        if (crypto is BcTlsCrypto)
+        {
+            AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
+
+            return new BcDefaultTlsCredentialedSigner(cryptoParams, (BcTlsCrypto)crypto, privateKey, certificate, signatureAndHashAlgorithm);
+        }
+        else
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    private static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto,
+        string[] resources)
+    {
+        if (TlsUtilities.IsTlsV13(protocolVersion))
+        {
+            CertificateEntry[] certificateEntryList = new CertificateEntry[resources.Length];
+            for (int i = 0; i < resources.Length; ++i)
+            {
+                TlsCertificate certificate = LoadCertificateResource(crypto, resources[i]);
+
+                // TODO[tls13] Add possibility of specifying e.g. CertificateStatus 
+                IDictionary<int, byte[]> extensions = null;
+
+                certificateEntryList[i] = new CertificateEntry(certificate, extensions);
+            }
+
+            // TODO[tls13] Support for non-empty request context
+            byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
+
+            return new Certificate(certificateRequestContext, certificateEntryList);
+        }
+        else
+        {
+            TlsCertificate[] chain = new TlsCertificate[resources.Length];
+            for (int i = 0; i < resources.Length; ++i)
+            {
+                chain[i] = LoadCertificateResource(crypto, resources[i]);
+            }
+            return new Certificate(chain);
+        }
+    }
+
+    private static Certificate LoadCertificateChain(TlsContext context, string[] resources)
+    {
+        return LoadCertificateChain(context.ServerVersion, context.Crypto, resources);
+    }
+
+    private static TlsCertificate LoadCertificateResource(TlsCrypto crypto, string resource)
+    {
+        PemObject pem = LoadPemResource(resource);
+        if (pem.Type.EndsWith("CERTIFICATE"))
+        {
+            return crypto.CreateCertificate(pem.Content);
+        }
+        throw new ArgumentException("doesn't specify a valid certificate", "resource");
     }
 }
