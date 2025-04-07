@@ -203,6 +203,7 @@ Install and register Admin client.
 Copy directories:
 C:\Program Files\BMW
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
+
 Exclude directories:
 C:\Program Files\BMW\ISPI\data\TRIC\ISTA\Logs\*
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Temp\*
@@ -214,6 +215,9 @@ C:\ProgramData\BMW\ISPI\logs\TRIC\FscValidation\
 C:\ProgramData\BMW\ISPI\logs\TRIC\ISTA\
 C:\ProgramData\BMW\ISPI\logs\TRIC\ISTALauncher\
 C:\ProgramData\BMW\ISPI\logs\TRIC\PsdzServiceHost\
+
+Allow write access for all users in:
+C:\Program Files\BMW\ISPI\data\TRIC\ISTA\Logs
 
 Copy Registry:
 [HKEY_LOCAL_MACHINE\SOFTWARE\BMWGroup]
