@@ -56,14 +56,18 @@ public class BcTlsServer : DefaultTlsServer
     private string m_privateCert = null;
     private string m_publicCert = null;
     private string m_CaFile = null;
-    private string m_certPassword = null;
 
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
     {
+        if (!string.IsNullOrEmpty(certPassword))
+        {
+            throw new NotSupportedException("Password protected certificates not supported");
+        }
+
         m_publicCert = Path.ChangeExtension(certBaseFile, ".crt");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
         m_CaFile = Path.Combine(Path.GetDirectoryName(certBaseFile) ?? string.Empty, "rootCA.crt");
-        m_certPassword = certPassword;
+
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
         {
             throw new FileNotFoundException("Certificate files not found", certBaseFile);
