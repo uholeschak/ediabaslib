@@ -22,6 +22,8 @@ namespace CarSimulator;
 
 public class BcTlsServer : DefaultTlsServer
 {
+    public const string RootCaFileName = "rootCA.crt";
+
     private static readonly int[] TlsCipherSuites = new int[]
     {
         /*
@@ -75,11 +77,31 @@ public class BcTlsServer : DefaultTlsServer
 
         m_publicCert = Path.ChangeExtension(certBaseFile, ".crt");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
-        m_CaFile = Path.Combine(certDir, "rootCA.crt");
+        m_CaFile = Path.Combine(certDir, RootCaFileName);
 
-        List<string> trustedCertList = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly).ToList();
-        trustedCertList.Remove(m_publicCert);
-        trustedCertList.Remove(m_CaFile);
+        string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
+        List<string> trustedCertList = new List<string>();
+        foreach (string trustedFile in trustedFiles)
+        {
+            string certFileName = Path.GetFileName(trustedFile);
+            if (string.IsNullOrEmpty(certFileName))
+            {
+                continue;
+            }
+
+            if (string.Compare(certFileName, RootCaFileName, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                continue;
+            }
+
+            if (certFileName.EndsWith("_full.crt", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            trustedCertList.Add(trustedFile);
+        }
+
         m_trustedCertResources = trustedCertList.ToArray();
 
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
