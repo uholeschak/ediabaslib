@@ -147,7 +147,6 @@ public class BcTlsServer : DefaultTlsServer
     {
         bool isEmpty = (clientCertificate == null || clientCertificate.IsEmpty);
 
-#if false
         if (isEmpty)
         {
             short alertDescription = TlsUtilities.IsTlsV13(m_context)
@@ -156,7 +155,6 @@ public class BcTlsServer : DefaultTlsServer
 
             throw new TlsFatalAlert(alertDescription);
         }
-#endif
 
         TlsCertificate[] chain = clientCertificate.GetCertificateList();
 
