@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System;
+using System.Linq;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;
@@ -72,10 +73,14 @@ public class BcTlsServer : DefaultTlsServer
             throw new ArgumentException("Certificate base file must contain a directory", nameof(certBaseFile));
         }
 
-        m_trustedCertResources = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
         m_publicCert = Path.ChangeExtension(certBaseFile, ".crt");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
         m_CaFile = Path.Combine(certDir, "rootCA.crt");
+
+        List<string> trustedCertList = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly).ToList();
+        trustedCertList.Remove(m_publicCert);
+        trustedCertList.Remove(m_CaFile);
+        m_trustedCertResources = trustedCertList.ToArray();
 
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
         {
