@@ -206,6 +206,8 @@ public class BcTlsServer : DefaultTlsServer
 
         if (null == certPath)
             throw new TlsFatalAlert(AlertDescription.bad_certificate);
+
+        TlsUtilities.CheckPeerSigAlgs(m_context, certPath);
     }
 
     public override void ProcessClientExtensions(IDictionary<int, byte[]> clientExtensions)
