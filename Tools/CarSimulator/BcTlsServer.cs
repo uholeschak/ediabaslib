@@ -20,14 +20,37 @@ namespace CarSimulator;
 
 public class BcTlsServer : DefaultTlsServer
 {
-    private static readonly int[] TlsV3CipherSuites = new int[]
+    private static readonly int[] TlsCipherSuites = new int[]
     {
-                /*
-                 * TLS 1.3
-                 */
-                CipherSuite.TLS_AES_256_GCM_SHA384,
-                CipherSuite.TLS_AES_128_GCM_SHA256,
-                CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
+        /*
+         * TLS 1.3
+         */
+        CipherSuite.TLS_AES_256_GCM_SHA384,
+        CipherSuite.TLS_AES_128_GCM_SHA256,
+        CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
+        /*
+         * pre-TLS 1.3
+         */
+        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+        CipherSuite.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
+        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
+        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+        CipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,
+        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+        CipherSuite.TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
+        CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,
+        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
+        CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA,
+        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
+        CipherSuite.TLS_RSA_WITH_AES_256_GCM_SHA384,
+        CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256,
+        CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256,
+        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
+        CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA,
+        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
     };
 
     private string m_privateCert = null;
@@ -90,7 +113,7 @@ public class BcTlsServer : DefaultTlsServer
         Debug.WriteLine("TLS server reports 'tls-unique' = " + ToHexString(tlsUnique));
     }
 
-    public override Org.BouncyCastle.Tls.CertificateRequest GetCertificateRequest()
+    public override CertificateRequest GetCertificateRequest()
     {
         IList<SignatureAndHashAlgorithm> serverSigAlgs = null;
         if (TlsUtilities.IsSignatureAlgorithmsExtensionAllowed(m_context.ServerVersion))
@@ -109,8 +132,7 @@ public class BcTlsServer : DefaultTlsServer
             // TODO[tls13] Add TlsTestConfig.serverCertReqSigAlgsCert
             IList<SignatureAndHashAlgorithm> serverSigAlgsCert = null;
 
-            return new CertificateRequest(certificateRequestContext, serverSigAlgs, serverSigAlgsCert,
-                certificateAuthorities);
+            return new CertificateRequest(certificateRequestContext, serverSigAlgs, serverSigAlgsCert, certificateAuthorities);
         }
         else
         {
@@ -201,7 +223,7 @@ public class BcTlsServer : DefaultTlsServer
 
     protected override int[] GetSupportedCipherSuites()
     {
-        return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsV3CipherSuites);
+        return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsCipherSuites);
     }
 
     public static string Fingerprint(X509CertificateStructure c)
