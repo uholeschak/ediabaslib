@@ -121,14 +121,14 @@ public class BcTlsServer : DefaultTlsServer
         bool isEmpty = (clientCertificate == null || clientCertificate.IsEmpty);
 
 #if false
-                if (isEmpty)
-                {
-                    short alertDescription = TlsUtilities.IsTlsV13(m_context)
-                        ? AlertDescription.certificate_required
-                        : AlertDescription.handshake_failure;
+        if (isEmpty)
+        {
+            short alertDescription = TlsUtilities.IsTlsV13(m_context)
+                ? AlertDescription.certificate_required
+                : AlertDescription.handshake_failure;
 
-                    throw new TlsFatalAlert(alertDescription);
-                }
+            throw new TlsFatalAlert(alertDescription);
+        }
 #endif
 
         TlsCertificate[] chain = clientCertificate.GetCertificateList();
@@ -248,34 +248,57 @@ public class BcTlsServer : DefaultTlsServer
 
     private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm)
     {
-#if false
-                return LoadSignerCredentialsServer(m_context, GetSupportedSignatureAlgorithms(),
-                    signatureAlgorithm);
-#else
-        return null;
-#endif
+        return LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_publicCert, m_privateCert);
     }
 
     private static TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
         string keyResource)
     {
 #if false
-                TlsCrypto crypto = context.Crypto;
-                Certificate certificate = LoadCertificateChain(context, certResources);
+        TlsCrypto crypto = context.Crypto;
+        Certificate certificate = LoadCertificateChain(context, certResources);
 
-                // TODO[tls-ops] Need to have TlsCrypto construct the credentials from the certs/key (as raw data)
-                if (crypto is BcTlsCrypto)
-                {
-                    AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
+        // TODO[tls-ops] Need to have TlsCrypto construct the credentials from the certs/key (as raw data)
+        if (crypto is BcTlsCrypto)
+        {
+            AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
 
-                    return new BcDefaultTlsCredentialedDecryptor((BcTlsCrypto)crypto, certificate, privateKey);
-                }
-                else
-                {
-                    throw new NotSupportedException();
-                }
+            return new BcDefaultTlsCredentialedDecryptor((BcTlsCrypto)crypto, certificate, privateKey);
+        }
+        else
+        {
+            throw new NotSupportedException();
+        }
 #else
         throw new NotSupportedException();
 #endif
+    }
+
+    private static TlsCredentialedSigner LoadSignerCredentials(TlsContext context,
+        IList<SignatureAndHashAlgorithm> supportedSignatureAlgorithms, short signatureAlgorithm,
+        string certResource, string keyResource)
+    {
+        if (supportedSignatureAlgorithms == null)
+        {
+            supportedSignatureAlgorithms = TlsUtilities.GetDefaultSignatureAlgorithms(signatureAlgorithm);
+        }
+
+        SignatureAndHashAlgorithm signatureAndHashAlgorithm = null;
+
+        foreach (SignatureAndHashAlgorithm alg in supportedSignatureAlgorithms)
+        {
+            if (alg.Signature == signatureAlgorithm)
+            {
+                // Just grab the first one we find
+                signatureAndHashAlgorithm = alg;
+                break;
+            }
+        }
+
+        if (signatureAndHashAlgorithm == null)
+            return null;
+
+        //return LoadSignerCredentials(context, new string[] { certResource }, keyResource, signatureAndHashAlgorithm);
+        return null;
     }
 }
