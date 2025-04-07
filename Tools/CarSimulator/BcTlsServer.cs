@@ -15,6 +15,7 @@ using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Utilities;
 
 namespace CarSimulator;
 
@@ -56,6 +57,7 @@ public class BcTlsServer : DefaultTlsServer
     private string m_privateCert = null;
     private string m_publicCert = null;
     private string m_CaFile = null;
+    private string[] m_trustedCertResources;
 
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
     {
@@ -64,9 +66,16 @@ public class BcTlsServer : DefaultTlsServer
             throw new NotSupportedException("Password protected certificates not supported");
         }
 
+        string certDir = Path.GetDirectoryName(certBaseFile);
+        if (string.IsNullOrEmpty(certDir))
+        {
+            throw new ArgumentException("Certificate base file must contain a directory", nameof(certBaseFile));
+        }
+
+        m_trustedCertResources = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
         m_publicCert = Path.ChangeExtension(certBaseFile, ".crt");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
-        m_CaFile = Path.Combine(Path.GetDirectoryName(certBaseFile) ?? string.Empty, "rootCA.crt");
+        m_CaFile = Path.Combine(certDir, "rootCA.crt");
 
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
         {
@@ -165,6 +174,11 @@ public class BcTlsServer : DefaultTlsServer
             // TODO Create fingerprint based on certificate signature algorithm digest
             Debug.WriteLine("    fingerprint:SHA-256 " + Fingerprint(entry) + " (" + entry.Subject + ")");
         }
+
+        TlsCertificate[] certPath = GetTrustedCertPath(m_context.Crypto, chain[0], m_trustedCertResources);
+
+        if (null == certPath)
+            throw new TlsFatalAlert(AlertDescription.bad_certificate);
     }
 
     public override void ProcessClientExtensions(IDictionary<int, byte[]> clientExtensions)
@@ -421,5 +435,28 @@ public class BcTlsServer : DefaultTlsServer
             return crypto.CreateCertificate(pem.Content);
         }
         throw new ArgumentException("doesn't specify a valid certificate", "resource");
+    }
+
+    private static bool AreSameCertificate(TlsCertificate a, TlsCertificate b)
+    {
+        // TODO[tls-ops] Support equals on TlsCertificate?
+        return Arrays.AreEqual(a.GetEncoded(), b.GetEncoded());
+    }
+
+    private TlsCertificate[] GetTrustedCertPath(TlsCrypto crypto, TlsCertificate cert, string[] resources)
+    {
+        foreach (string eeCertResource in resources)
+        {
+            TlsCertificate eeCert = LoadCertificateResource(crypto, eeCertResource);
+            if (AreSameCertificate(cert, eeCert))
+            {
+                TlsCertificate caCert = LoadCertificateResource(crypto, m_CaFile);
+                if (null != caCert)
+                {
+                    return new TlsCertificate[] { eeCert, caCert };
+                }
+            }
+        }
+        return null;
     }
 }
