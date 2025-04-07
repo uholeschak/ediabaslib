@@ -72,6 +72,7 @@ public class BcTlsServer : DefaultTlsServer
         {
             throw new FileNotFoundException("Certificate files not found", certBaseFile);
         }
+
         if (!File.Exists(m_CaFile))
         {
             throw new FileNotFoundException("CA file not found", m_CaFile);
@@ -130,18 +131,13 @@ public class BcTlsServer : DefaultTlsServer
 
         if (TlsUtilities.IsTlsV13(m_context))
         {
-            // TODO[tls13] Support for non-empty request context
             byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
 
-            // TODO[tls13] Add TlsTestConfig.serverCertReqSigAlgsCert
-            IList<SignatureAndHashAlgorithm> serverSigAlgsCert = null;
-
-            return new CertificateRequest(certificateRequestContext, serverSigAlgs, serverSigAlgsCert, certificateAuthorities);
+            return new CertificateRequest(certificateRequestContext, serverSigAlgs, null, certificateAuthorities);
         }
         else
         {
-            short[] certificateTypes = new short[]{ ClientCertificateType.rsa_sign,
-                    ClientCertificateType.dss_sign, ClientCertificateType.ecdsa_sign };
+            short[] certificateTypes = new []{ ClientCertificateType.rsa_sign, ClientCertificateType.dss_sign, ClientCertificateType.ecdsa_sign };
 
             return new CertificateRequest(certificateTypes, serverSigAlgs, certificateAuthorities);
         }
