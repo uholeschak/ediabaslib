@@ -109,7 +109,7 @@ public class BcTlsServer : DefaultTlsServer
             // TODO[tls13] Add TlsTestConfig.serverCertReqSigAlgsCert
             IList<SignatureAndHashAlgorithm> serverSigAlgsCert = null;
 
-            return new Org.BouncyCastle.Tls.CertificateRequest(certificateRequestContext, serverSigAlgs, serverSigAlgsCert,
+            return new CertificateRequest(certificateRequestContext, serverSigAlgs, serverSigAlgsCert,
                 certificateAuthorities);
         }
         else
@@ -117,7 +117,7 @@ public class BcTlsServer : DefaultTlsServer
             short[] certificateTypes = new short[]{ ClientCertificateType.rsa_sign,
                     ClientCertificateType.dss_sign, ClientCertificateType.ecdsa_sign };
 
-            return new Org.BouncyCastle.Tls.CertificateRequest(certificateTypes, serverSigAlgs, certificateAuthorities);
+            return new CertificateRequest(certificateTypes, serverSigAlgs, certificateAuthorities);
         }
     }
 
@@ -191,8 +191,7 @@ public class BcTlsServer : DefaultTlsServer
 
     protected override TlsCredentialedDecryptor GetRsaEncryptionCredentials()
     {
-        return LoadEncryptionCredentials(m_context,
-            new string[] { "x509-server-rsa-enc.pem", "x509-ca-rsa.pem" }, "x509-server-key-rsa-enc.pem");
+        return LoadEncryptionCredentials(m_context, new [] { m_publicCert, m_CaFile }, m_privateCert);
     }
 
     protected override TlsCredentialedSigner GetRsaSignerCredentials()
