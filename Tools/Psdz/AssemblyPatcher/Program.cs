@@ -623,6 +623,47 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.Psdz.Client",
+                                Class = "PsdzServiceStarter",
+                                Method = "StartServerInstance",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("PsdzServiceStarter.StartServerInstance found");
+                                int patchIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldstr &&
+                                        string.Compare(instruction.Operand.ToString(), "\"{0}\" {1} \"{2}\"", StringComparison.OrdinalIgnoreCase) == 0
+                                        && index + 3 < instructions.Count)
+                                    {
+                                        Console.WriteLine("Arguments three param found at index: {0}", index);
+                                        patchIndex = index;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    instructions[patchIndex].Operand = "\"{0}\" \"{1}\" \"{2}\"";
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Arguments three param appears to have already been patched or is not existing");
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.Diagnostics",
                                 Class = "VehicleIdent",
                                 Method = "doVehicleShortTest",
