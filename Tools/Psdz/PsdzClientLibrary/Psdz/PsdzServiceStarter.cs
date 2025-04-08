@@ -32,7 +32,7 @@ namespace BMW.Rheingold.Psdz.Client
 
         private const string istaPIDfileName = "PsdzInstances.txt";
 
-        private static string istaPIDfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ISTA", "PsdzInstances.txt");
+        private static string istaPIDfilePath;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PsdzServiceStarter));
 
@@ -44,6 +44,10 @@ namespace BMW.Rheingold.Psdz.Client
 
         private readonly string psdzServiceHostLogDir;
 
+        static PsdzServiceStarter()
+        {
+            istaPIDfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ISTA", "PsdzInstances.txt");
+        }
 
         public PsdzServiceStarter(string psdzHostDir, string psdzServiceHostLogDir, PsdzServiceArgs psdzServiceArgs)
         {
@@ -189,13 +193,14 @@ namespace BMW.Rheingold.Psdz.Client
 
             if (pidFileSupport)
             {
+                checkForPsdzInstancesLogFile();
                 if (istaProcessId == 0)
                 {
                     processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\"", tempFileName, istaPIDfilePath);
                 }
                 else
                 {
-                    processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\" {1} \"{2}\"", tempFileName, istaPIDfilePath, istaProcessId);
+                    processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\" \"{2}\"", tempFileName, istaPIDfilePath, istaProcessId);
                 }
             }
             else
