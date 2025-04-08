@@ -219,6 +219,7 @@ namespace BMW.Rheingold.Psdz.Client
                     processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\" {1}", tempFileName, istaProcessId);
                 }
             }
+            Logger.Info($"PsdzServiceHost start arguments: {processStartInfo.Arguments}");
             EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, HostReadyEventName);
             EventWaitHandle eventWaitHandle2 = new EventWaitHandle(false, EventResetMode.AutoReset, HostFailedEventName);
             EventWaitHandle eventWaitHandle3 = new EventWaitHandle(false, EventResetMode.AutoReset, HostFailedEventMemErrorName);
