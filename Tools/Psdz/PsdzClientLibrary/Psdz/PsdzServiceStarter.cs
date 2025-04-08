@@ -105,25 +105,32 @@ namespace BMW.Rheingold.Psdz.Client
             {
                 checkForPsdzInstancesLogFile();
                 Logger.Info($"Checking for already running PsdzServiceHost instances for ISTA Process ID {istaProcessId} ...");
-                using (FileStream stream = new FileStream(istaPIDfilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                try
                 {
-                    using (StreamReader streamReader = new StreamReader(stream))
+                    using (FileStream stream = new FileStream(istaPIDfilePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        string text;
-                        while ((text = streamReader.ReadLine()) != null)
+                        using (StreamReader streamReader = new StreamReader(stream))
                         {
-                            Logger.Info("Found instance of PsdzServiceHost with ISTA Process ID " + text + ".");
-                            if (int.Parse(text) == istaProcessId)
+                            string text;
+                            while ((text = streamReader.ReadLine()) != null)
                             {
-                                Logger.Info($"Another instance of PsdzServiceHost is already running for the ISTA Process ID {istaProcessId}.");
-                                Logger.Info("Start of a second instance is cancelled.");
-                                return true;
+                                Logger.Info("Found instance of PsdzServiceHost with ISTA Process ID " + text + ".");
+                                if (int.Parse(text) == istaProcessId)
+                                {
+                                    Logger.Info($"Another instance of PsdzServiceHost is already running for the ISTA Process ID {istaProcessId}.");
+                                    Logger.Info("Start of a second instance is cancelled.");
+                                    return true;
+                                }
                             }
                         }
                     }
+                    Logger.Info($"No other instance of PsdzServiceHost is running for ISTA Process ID {istaProcessId}.");
+                    return false;
                 }
-                Logger.Info($"No other instance of PsdzServiceHost is running for ISTA Process ID {istaProcessId}.");
-                return false;
+                catch (Exception e)
+                {
+                    Logger.Error($"Failed check ISTA Process ID: {e.Message}");
+                }
             }
 
             Process[] processesByName = Process.GetProcessesByName(PsdzServiceHostProcessName);
@@ -139,10 +146,13 @@ namespace BMW.Rheingold.Psdz.Client
                     int num2 = int.Parse(array[2]);
                     if (istaProcessId == num2)
                     {
+                        Logger.Info($"Another instance of PsdzServiceHost is already.");
+                        Logger.Info("Start of a second instance is cancelled.");
                         return true;
                     }
                 }
             }
+            Logger.Info($"No other instance of PsdzServiceHost is running.");
             return false;
         }
 
@@ -200,6 +210,18 @@ namespace BMW.Rheingold.Psdz.Client
             if (pidFileSupport)
             {
                 checkForPsdzInstancesLogFile();
+                if (!File.Exists(istaPIDfilePath))
+                {
+                    try
+                    {
+                        File.Create(istaPIDfilePath).Close();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Error($"Failed to create PID file: {istaPIDfilePath} - {e.Message}");
+                    }
+                }
+
                 if (istaProcessId == 0)
                 {
                     processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\"", tempFileName, istaPIDfilePath);
@@ -234,9 +256,16 @@ namespace BMW.Rheingold.Psdz.Client
                     if (pidFileSupport)
                     {
                         checkForPsdzInstancesLogFile();
-                        using (StreamWriter streamWriter = new StreamWriter(istaPIDfilePath, append: true))
+                        try
                         {
-                            streamWriter.WriteLine(istaProcessId);
+                            using (StreamWriter streamWriter = new StreamWriter(istaPIDfilePath, append: true))
+                            {
+                                streamWriter.WriteLine(istaProcessId);
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Logger.Error($"Failed to append PID file: {istaPIDfilePath} - {e.Message}");
                         }
                     }
                     Logger.Info("Start of new PsdzServiceHost instance successful!");
