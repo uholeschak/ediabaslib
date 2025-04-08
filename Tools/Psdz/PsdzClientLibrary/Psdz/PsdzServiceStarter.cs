@@ -46,7 +46,12 @@ namespace BMW.Rheingold.Psdz.Client
 
         static PsdzServiceStarter()
         {
-            istaPIDfilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ISTA", "PsdzInstances.txt");
+            string basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            if (string.IsNullOrEmpty(basePath))
+            {
+                basePath = Path.GetTempPath();
+            }
+            istaPIDfilePath = Path.Combine(basePath, "ISTA", "PsdzInstances.txt");
         }
 
         public PsdzServiceStarter(string psdzHostDir, string psdzServiceHostLogDir, PsdzServiceArgs psdzServiceArgs)
