@@ -174,6 +174,7 @@ namespace BMW.Rheingold.Psdz.Client
         private PsdzServiceStartResult StartServerInstance(int istaProcessId)
         {
             Logger.Info("Starting new PsdzServiceHost instance...");
+            Logger.Info($"PID file path: {istaPIDfilePath}");
             string tempFileName = Path.GetTempFileName();
             PsdzServiceArgs.Serialize(tempFileName, psdzServiceArgs);
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
