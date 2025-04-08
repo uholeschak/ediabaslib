@@ -210,17 +210,6 @@ namespace BMW.Rheingold.Psdz.Client
             if (pidFileSupport)
             {
                 checkForPsdzInstancesLogFile();
-                if (!File.Exists(istaPIDfilePath))
-                {
-                    try
-                    {
-                        File.Create(istaPIDfilePath).Close();
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Error($"Failed to create PID file: {istaPIDfilePath} - {e.Message}");
-                    }
-                }
 
                 if (istaProcessId == 0)
                 {
@@ -294,7 +283,8 @@ namespace BMW.Rheingold.Psdz.Client
             }
             if (!File.Exists(istaPIDfilePath))
             {
-                File.Create(istaPIDfilePath);
+                // [UH] Close the file handle to avoid file sharing violation
+                File.Create(istaPIDfilePath).Close();
             }
         }
 	}
