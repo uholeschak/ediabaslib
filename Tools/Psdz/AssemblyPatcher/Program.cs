@@ -607,6 +607,7 @@ namespace AssemblyPatcher
                                         instructions.Insert(patchIndex + offset, insertInstruction);
                                         offset++;
                                     }
+                                    patched = true;
                                 }
                                 else
                                 {
@@ -636,8 +637,7 @@ namespace AssemblyPatcher
                                 {
                                     Instruction instruction = instructions[index];
                                     if (instruction.OpCode == OpCodes.Ldstr &&
-                                        string.Compare(instruction.Operand.ToString(), "\"{0}\" {1} \"{2}\"", StringComparison.OrdinalIgnoreCase) == 0
-                                        && index + 3 < instructions.Count)
+                                        string.Compare(instruction.Operand.ToString(), "\"{0}\" {1} \"{2}\"", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         Console.WriteLine("Arguments three param found at index: {0}", index);
                                         patchIndex = index;
@@ -648,10 +648,66 @@ namespace AssemblyPatcher
                                 if (patchIndex >= 0)
                                 {
                                     instructions[patchIndex].Operand = "\"{0}\" \"{1}\" \"{2}\"";
+                                    patched = true;
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Arguments three param appears to have already been patched or is not existing");
+                                    Console.WriteLine("Patching Arguments three param failed");
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.Psdz.Client",
+                                Class = "PsdzServiceStarter",
+                                Method = "checkForPsdzInstancesLogFile",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("PsdzServiceStarter.checkForPsdzInstancesLogFile found");
+                                int patchIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldsfld &&
+                                        index + 2 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Call)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 2].OpCode != OpCodes.Pop)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 3].OpCode != OpCodes.Ret)
+                                        {
+                                            continue;
+                                        }
+
+                                        Console.WriteLine("File.Create found at index: {0}", index);
+                                        patchIndex = index + 2;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    instructions[patchIndex] = Instruction.Create(OpCodes.Callvirt,
+                                        patcher.BuildCall(typeof(System.IO.Stream), "Close", typeof(void), null));
+                                    patched = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Pathing File.Create failed");
                                 }
                             }
                         }
