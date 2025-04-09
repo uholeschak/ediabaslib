@@ -140,20 +140,27 @@ namespace BMW.Rheingold.Psdz.Client
             }
             foreach (ManagementObject item in new ManagementObjectSearcher(string.Format("select CommandLine from Win32_Process where Name='{0}.exe'", PsdzServiceHostProcessName)).Get())
             {
-                string[] array = item["CommandLine"].ToString().Split(' ');
-                if (array.Length >= 2)
+                string[] array = item["CommandLine"].ToString().Split('\"');
+                foreach (string entry in array)
                 {
-                    if (int.TryParse(array[2], out int num))
+                    string argument = entry.Trim();
+                    if (string.IsNullOrEmpty(argument))
+                    {
+                        continue;
+                    }
+
+                    if (int.TryParse(argument, out int num))
                     {
                         if (istaProcessId == num)
                         {
-                            Logger.Info($"Another instance of PsdzServiceHost is already.");
+                            Logger.Info($"Another instance of PsdzServiceHost is already running.");
                             Logger.Info("Start of a second instance is cancelled.");
                             return true;
                         }
                     }
                 }
             }
+
             Logger.Info($"No other instance of PsdzServiceHost is running.");
             return false;
         }
