@@ -11,6 +11,7 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.UI;
+using BMW.Rheingold.Psdz.Client;
 using log4net;
 using PsdzClient;
 using PsdzClient.Programming;
@@ -48,6 +49,7 @@ namespace WebPsdzClient
             SetupLog4Net();
             log.InfoFormat("Application_Start");
             log.InfoFormat("Ista folder: {0}", IstaFolder);
+            PsdzServiceStarter.ClearIstaPIDsFile();
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

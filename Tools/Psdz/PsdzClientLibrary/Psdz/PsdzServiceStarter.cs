@@ -293,9 +293,16 @@ namespace BMW.Rheingold.Psdz.Client
         // [UH] from App.ClearIstaPIDsFile
         public static void ClearIstaPIDsFile()
         {
-            checkForPsdzInstancesLogFile();
-            File.WriteAllText(istaPIDfilePath, string.Empty);
-            Logger.Info("PsdzInstances file successfully cleared!");
+            try
+            {
+                checkForPsdzInstancesLogFile();
+                File.WriteAllText(istaPIDfilePath, string.Empty);
+                Logger.Info("PsdzInstances file successfully cleared!");
+            }
+            catch (Exception e)
+            {
+                Logger.Info($"PsdzInstances file clear exception: {e.Message}");
+            }
         }
     }
 }
