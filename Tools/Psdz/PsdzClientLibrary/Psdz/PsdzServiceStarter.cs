@@ -295,6 +295,13 @@ namespace BMW.Rheingold.Psdz.Client
         {
             try
             {
+                Process[] processesByName = Process.GetProcessesByName(PsdzServiceHostProcessName);
+                if (processesByName.Length > 0)
+                {
+                    Logger.Info($"PsdzInstances file not cleared, active processes: {processesByName.Length}");
+                    return;
+                }
+
                 checkForPsdzInstancesLogFile();
                 File.WriteAllText(istaPIDfilePath, string.Empty);
                 Logger.Info("PsdzInstances file successfully cleared!");

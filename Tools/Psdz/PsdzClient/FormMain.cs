@@ -271,6 +271,7 @@ namespace PsdzClient
 
             string logFile = Path.Combine(programmingService.GetPsdzServiceHostLogDir(), logFileName);
             ProgrammingJobs.SetupLog4Net(logFile);
+            PsdzServiceStarter.ClearIstaPIDsFile();
         }
 
         private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
