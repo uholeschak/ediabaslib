@@ -138,13 +138,24 @@ namespace BMW.Rheingold.Psdz.Client
             {
                 return processesByName.Any();
             }
-            foreach (ManagementObject item in new ManagementObjectSearcher(string.Format("select CommandLine from Win32_Process where Name='{0}.exe'", PsdzServiceHostProcessName)).Get())
+            foreach (ManagementBaseObject baseItem in new ManagementObjectSearcher(string.Format("select CommandLine from Win32_Process where Name='{0}.exe'", PsdzServiceHostProcessName)).Get())
             {
+                ManagementObject item = baseItem as ManagementObject;
+                if (item == null)
+                {
+                    continue;
+                }
+
                 string[] array = item["CommandLine"].ToString().Split('\"');
                 foreach (string entry in array)
                 {
                     string argument = entry.Trim();
                     if (string.IsNullOrEmpty(argument))
+                    {
+                        continue;
+                    }
+
+                    if (!argument.All(char.IsDigit))
                     {
                         continue;
                     }
