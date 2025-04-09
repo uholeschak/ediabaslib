@@ -289,5 +289,13 @@ namespace BMW.Rheingold.Psdz.Client
                 File.Create(istaPIDfilePath).Close();
             }
         }
-	}
+
+        // [UH] from App.ClearIstaPIDsFile
+        public static void ClearIstaPIDsFile()
+        {
+            checkForPsdzInstancesLogFile();
+            File.WriteAllText(istaPIDfilePath, string.Empty);
+            Logger.Info("PsdzInstances file successfully cleared!");
+        }
+    }
 }
