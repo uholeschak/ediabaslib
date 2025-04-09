@@ -302,8 +302,11 @@ namespace BMW.Rheingold.Psdz.Client
                     return;
                 }
 
-                checkForPsdzInstancesLogFile();
-                File.WriteAllText(istaPIDfilePath, string.Empty);
+                if (File.Exists(istaPIDfilePath))
+                {
+                    File.Delete(istaPIDfilePath);
+                }
+
                 Logger.Info("PsdzInstances file successfully cleared!");
             }
             catch (Exception e)
