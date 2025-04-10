@@ -62,7 +62,7 @@ public class BcTlsServer : DefaultTlsServer
     private string m_CaFile = null;
     private string[] m_trustedCertResources;
 
-    public BcTlsServer(string certBaseFile, string certPassword, ProtocolVersion protocolVersion = null) : base(new BcTlsCrypto(new SecureRandom()))
+    public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
     {
         if (!string.IsNullOrEmpty(certPassword))
         {
