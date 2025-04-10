@@ -165,6 +165,11 @@ public class BcTlsServer : DefaultTlsServer
 
     public override TlsCredentials GetCredentials()
     {
+        if (m_context.ServerVersion == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.protocol_version);
+        }
+
         if (TlsUtilities.IsTlsV13(m_context))
         {
             return GetRsaSignerCredentials();
@@ -204,6 +209,11 @@ public class BcTlsServer : DefaultTlsServer
 
     public override CertificateRequest GetCertificateRequest()
     {
+        if (m_context.ServerVersion == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.protocol_version);
+        }
+
         IList<SignatureAndHashAlgorithm> serverSigAlgs = null;
         if (TlsUtilities.IsSignatureAlgorithmsExtensionAllowed(m_context.ServerVersion))
         {
@@ -229,6 +239,11 @@ public class BcTlsServer : DefaultTlsServer
 
     public override void NotifyClientCertificate(Certificate clientCertificate)
     {
+        if (m_context.ServerVersion == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.protocol_version);
+        }
+
         bool isEmpty = (clientCertificate == null || clientCertificate.IsEmpty);
 
         if (isEmpty)
@@ -452,6 +467,11 @@ public class BcTlsServer : DefaultTlsServer
     public TlsCredentialedSigner LoadSignerCredentials(TlsCryptoParameters cryptoParams, TlsCrypto crypto,
         string[] certResources, string keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm)
     {
+        if (cryptoParams?.ServerVersion == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.protocol_version);
+        }
+
         Certificate certificate = LoadCertificateChain(cryptoParams.ServerVersion, crypto, certResources);
 
         // TODO[tls-ops] Need to have TlsCrypto construct the credentials from the certs/key (as raw data)
@@ -467,9 +487,13 @@ public class BcTlsServer : DefaultTlsServer
         }
     }
 
-    private static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto,
-        string[] resources)
+    private static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto, string[] resources)
     {
+        if (protocolVersion == null)
+        {
+            throw new TlsFatalAlert(AlertDescription.protocol_version);
+        }
+
         if (TlsUtilities.IsTlsV13(protocolVersion))
         {
             CertificateEntry[] certificateEntryList = new CertificateEntry[resources.Length];
