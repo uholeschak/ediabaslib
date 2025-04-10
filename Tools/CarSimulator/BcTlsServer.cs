@@ -143,6 +143,13 @@ public class BcTlsServer : DefaultTlsServer
             Debug.WriteLine("Failed to load RSA encryption credentials");
             return false;
         }
+
+        TlsCredentialedSigner credentialedSigner = GetRsaSignerCredentials();
+        if (credentialedSigner == null)
+        {
+            Debug.WriteLine("Failed to load RSA signer credentials");
+            return false;
+        }
         return true;
     }
 
