@@ -1034,6 +1034,7 @@ namespace CarSimulator
                             _serverCertificate = new X509Certificate2(pfxFile, ServerCertPwd);
 #if false
                             BcTlsServer tlsServer = new BcTlsServer(ServerCertFile, ServerCertPwd);
+                            tlsServer.Test1();
 #endif
                         }
                         catch (Exception e)

@@ -115,6 +115,17 @@ public class BcTlsServer : DefaultTlsServer
         }
     }
 
+    public bool Test1()
+    {
+        TlsCredentialedDecryptor credentialedDecryptor = GetRsaEncryptionCredentials();
+        if (credentialedDecryptor == null)
+        {
+            Debug.WriteLine("Failed to load RSA encryption credentials");
+            return false;
+        }
+        return true;
+    }
+
     public override TlsCredentials GetCredentials()
     {
         if (TlsUtilities.IsTlsV13(m_context))
