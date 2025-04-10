@@ -316,16 +316,19 @@ namespace BMW.Rheingold.Psdz.Client
                 Process[] processesByName = Process.GetProcessesByName(PsdzServiceHostProcessName);
                 if (processesByName.Length > 0)
                 {
-                    Logger.Info($"PsdzInstances file not cleared, active processes: {processesByName.Length}");
+                    Logger.Info($"PsdzInstances file {istaPIDfilePath} not cleared, active processes: {processesByName.Length}");
                     return;
                 }
 
                 if (File.Exists(istaPIDfilePath))
                 {
                     File.Delete(istaPIDfilePath);
+                    Logger.Info($"PsdzInstances file {istaPIDfilePath} successfully cleared!");
                 }
-
-                Logger.Info("PsdzInstances file successfully cleared!");
+                else
+                {
+                    Logger.Info($"PsdzInstances file {istaPIDfilePath} not present");
+                }
             }
             catch (Exception e)
             {
