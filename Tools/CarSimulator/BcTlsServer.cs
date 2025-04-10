@@ -22,6 +22,23 @@ namespace CarSimulator;
 
 public class BcTlsServer : DefaultTlsServer
 {
+    private class ServerTlsCryptoParameters
+        : TlsCryptoParameters
+    {
+        private readonly ProtocolVersion m_serverVersion;
+
+        internal ServerTlsCryptoParameters(TlsContext context, ProtocolVersion serverVersion)
+            : base(context)
+        {
+            this.m_serverVersion = serverVersion;
+        }
+
+        public override ProtocolVersion ServerVersion
+        {
+            get { return m_serverVersion; }
+        }
+    }
+
     public const string RootCaFileName = "rootCA.crt";
 
     private static readonly int[] TlsCipherSuites = new int[]
@@ -61,8 +78,9 @@ public class BcTlsServer : DefaultTlsServer
     private string m_publicCert = null;
     private string m_CaFile = null;
     private string[] m_trustedCertResources;
+    private readonly ProtocolVersion m_serverVersion;
 
-    public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
+    public BcTlsServer(string certBaseFile, string certPassword, ProtocolVersion protocolVersion = null) : base(new BcTlsCrypto(new SecureRandom()))
     {
         if (!string.IsNullOrEmpty(certPassword))
         {
@@ -113,6 +131,8 @@ public class BcTlsServer : DefaultTlsServer
         {
             throw new FileNotFoundException("CA file not found", m_CaFile);
         }
+
+        m_serverVersion = protocolVersion ?? ProtocolVersion.TLSv13;
     }
 
     public bool Test1()
@@ -128,7 +148,7 @@ public class BcTlsServer : DefaultTlsServer
 
     public override TlsCredentials GetCredentials()
     {
-        if (TlsUtilities.IsTlsV13(m_context))
+        if (TlsUtilities.IsTlsV13(m_serverVersion))
         {
             return GetRsaSignerCredentials();
         }
@@ -168,7 +188,7 @@ public class BcTlsServer : DefaultTlsServer
     public override CertificateRequest GetCertificateRequest()
     {
         IList<SignatureAndHashAlgorithm> serverSigAlgs = null;
-        if (TlsUtilities.IsSignatureAlgorithmsExtensionAllowed(m_context.ServerVersion))
+        if (TlsUtilities.IsSignatureAlgorithmsExtensionAllowed(m_serverVersion))
         {
             serverSigAlgs = TlsUtilities.GetDefaultSupportedSignatureAlgorithms(m_context);
         }
@@ -176,7 +196,7 @@ public class BcTlsServer : DefaultTlsServer
         var certificateAuthorities = new List<X509Name>();
         certificateAuthorities.Add(LoadBcCertificateResource(m_CaFile).Subject);
 
-        if (TlsUtilities.IsTlsV13(m_context))
+        if (TlsUtilities.IsTlsV13(m_serverVersion))
         {
             byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
 
@@ -196,7 +216,7 @@ public class BcTlsServer : DefaultTlsServer
 
         if (isEmpty)
         {
-            short alertDescription = TlsUtilities.IsTlsV13(m_context)
+            short alertDescription = TlsUtilities.IsTlsV13(m_serverVersion)
                 ? AlertDescription.certificate_required
                 : AlertDescription.handshake_failure;
 
@@ -357,7 +377,7 @@ public class BcTlsServer : DefaultTlsServer
         return LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_publicCert, m_privateCert);
     }
 
-    private static TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
+    private TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
         string keyResource)
     {
         TlsCrypto crypto = context.Crypto;
@@ -376,7 +396,7 @@ public class BcTlsServer : DefaultTlsServer
         }
     }
 
-    private static TlsCredentialedSigner LoadSignerCredentials(TlsContext context,
+    private TlsCredentialedSigner LoadSignerCredentials(TlsContext context,
         IList<SignatureAndHashAlgorithm> supportedSignatureAlgorithms, short signatureAlgorithm,
         string certResource, string keyResource)
     {
@@ -403,16 +423,16 @@ public class BcTlsServer : DefaultTlsServer
         return LoadSignerCredentials(context, new string[] { certResource }, keyResource, signatureAndHashAlgorithm);
     }
 
-    private static TlsCredentialedSigner LoadSignerCredentials(TlsContext context, string[] certResources,
+    private TlsCredentialedSigner LoadSignerCredentials(TlsContext context, string[] certResources,
         string keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm)
     {
         TlsCrypto crypto = context.Crypto;
-        TlsCryptoParameters cryptoParams = new TlsCryptoParameters(context);
+        TlsCryptoParameters cryptoParams = new ServerTlsCryptoParameters(context, m_serverVersion);
 
         return LoadSignerCredentials(cryptoParams, crypto, certResources, keyResource, signatureAndHashAlgorithm);
     }
 
-    public static TlsCredentialedSigner LoadSignerCredentials(TlsCryptoParameters cryptoParams, TlsCrypto crypto,
+    public TlsCredentialedSigner LoadSignerCredentials(TlsCryptoParameters cryptoParams, TlsCrypto crypto,
         string[] certResources, string keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm)
     {
         Certificate certificate = LoadCertificateChain(cryptoParams.ServerVersion, crypto, certResources);
@@ -456,9 +476,9 @@ public class BcTlsServer : DefaultTlsServer
         }
     }
 
-    private static Certificate LoadCertificateChain(TlsContext context, string[] resources)
+    private Certificate LoadCertificateChain(TlsContext context, string[] resources)
     {
-        return LoadCertificateChain(context.ServerVersion, context.Crypto, resources);
+        return LoadCertificateChain(m_serverVersion, context.Crypto, resources);
     }
 
     private static TlsCertificate LoadCertificateResource(TlsCrypto crypto, string resource)
