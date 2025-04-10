@@ -150,6 +150,16 @@ public class BcTlsServer : DefaultTlsServer
             Debug.WriteLine("Failed to load RSA signer credentials");
             return false;
         }
+
+        CertificateRequest certificateRequest = GetCertificateRequest();
+        if (certificateRequest == null)
+        {
+            Debug.WriteLine("Failed to get certificate request");
+            return false;
+        }
+
+        Certificate certificate = LoadCertificateChain(m_context, new[] { m_publicCert, m_CaFile });
+        NotifyClientCertificate(certificate);
         return true;
     }
 
