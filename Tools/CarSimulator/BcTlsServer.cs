@@ -127,6 +127,14 @@ public class BcTlsServer : DefaultTlsServer
         }
         fieldVersion.SetValue(securityParameters, ProtocolVersion.TLSv13);
 
+        FieldInfo fieldAlgCert = securityParameters.GetType().GetField("m_serverSigAlgsCert", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (fieldAlgCert == null)
+        {
+            Debug.WriteLine("Failed to get serverSigAlgsCert field");
+            return false;
+        }
+        fieldAlgCert.SetValue(securityParameters, new SignatureAndHashAlgorithm[] { new SignatureAndHashAlgorithm(HashAlgorithm.sha256, SignatureAlgorithm.rsa) });
+
         TlsCredentialedDecryptor credentialedDecryptor = GetRsaEncryptionCredentials();
         if (credentialedDecryptor == null)
         {
