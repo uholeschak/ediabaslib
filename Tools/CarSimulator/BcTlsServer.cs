@@ -17,6 +17,7 @@ using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Utilities;
+using System.Reflection;
 
 namespace CarSimulator;
 
@@ -117,6 +118,15 @@ public class BcTlsServer : DefaultTlsServer
 
     public bool Test1()
     {
+        SecurityParameters securityParameters = m_context.SecurityParameters;
+        FieldInfo fieldVersion = securityParameters.GetType().GetField("m_negotiatedVersion", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (fieldVersion == null)
+        {
+            Debug.WriteLine("Failed to get negotiated version field");
+            return false;
+        }
+        fieldVersion.SetValue(securityParameters, ProtocolVersion.TLSv13);
+
         TlsCredentialedDecryptor credentialedDecryptor = GetRsaEncryptionCredentials();
         if (credentialedDecryptor == null)
         {
