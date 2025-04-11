@@ -133,6 +133,15 @@ public class BcTlsServer : DefaultTlsServer
         }
         fieldAlgCert.SetValue(securityParameters, new SignatureAndHashAlgorithm[] { new SignatureAndHashAlgorithm(HashAlgorithm.sha256, SignatureAlgorithm.rsa) });
 
+        FieldInfo fieldServerRandom = securityParameters.GetType().GetField("m_serverRandom", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (fieldServerRandom == null)
+        {
+            Debug.WriteLine("Failed to get serverRandom field");
+            return false;
+        }
+        byte[] serverRandom = m_context.NonceGenerator.GenerateNonce(32);
+        fieldServerRandom.SetValue(securityParameters, serverRandom);
+
         TlsCredentialedDecryptor credentialedDecryptor = GetRsaEncryptionCredentials();
         if (credentialedDecryptor == null)
         {
@@ -144,6 +153,13 @@ public class BcTlsServer : DefaultTlsServer
         if (credentialedSigner == null)
         {
             Debug.WriteLine("Failed to load RSA signer credentials");
+            return false;
+        }
+
+        IDictionary<int, byte[]> serverExtensions = GetServerExtensions();
+        if (serverExtensions == null)
+        {
+            Debug.WriteLine("Failed to get server extensions");
             return false;
         }
 
