@@ -23,8 +23,6 @@ namespace CarSimulator;
 
 public class BcTlsServer : DefaultTlsServer
 {
-    public const string RootCaFileName = "rootCA.crt";
-
     private static readonly int[] TlsCipherSuites = new int[]
     {
         /*
@@ -78,7 +76,6 @@ public class BcTlsServer : DefaultTlsServer
 
         m_publicCert = Path.ChangeExtension(certBaseFile, ".crt");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
-        m_CaFile = Path.Combine(certDir, RootCaFileName);
 
         string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
         List<string> trustedCertList = new List<string>();
@@ -90,8 +87,9 @@ public class BcTlsServer : DefaultTlsServer
                 continue;
             }
 
-            if (string.Compare(certFileName, RootCaFileName, StringComparison.OrdinalIgnoreCase) == 0)
+            if (certFileName.EndsWith("CA.crt", StringComparison.OrdinalIgnoreCase))
             {
+                m_CaFile = trustedFile;
                 continue;
             }
 
