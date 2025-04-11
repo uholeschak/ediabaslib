@@ -2701,6 +2701,10 @@ namespace EdiabasLib
                 return null;
             }
 
+            byte[] serverDnsBytes = Encoding.ASCII.GetBytes(serverDnsName);
+            serverDnsBytes[serverDnsBytes.Length - 1]--;
+            string serverDnsName2 = Encoding.ASCII.GetString(serverDnsBytes);
+
             SslStream sslStream = new SslStream(sharedData.TcpDiagClient.GetStream(), false,
                 (sender, certificate, chain, errors) =>
                 {
@@ -2714,6 +2718,7 @@ namespace EdiabasLib
                         }
 
                         if (string.Compare(hostDnsName.Trim(), serverDnsName.Trim(), StringComparison.OrdinalIgnoreCase) != 0 &&
+                            string.Compare(hostDnsName.Trim(), serverDnsName2.Trim(), StringComparison.OrdinalIgnoreCase) != 0 &&
                             string.Compare(hostDnsName.Trim(), serverIpAddress.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
                         {
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream DNS name not matching: {0} != {1}, {2}",
