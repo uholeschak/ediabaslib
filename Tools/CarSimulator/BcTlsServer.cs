@@ -163,6 +163,13 @@ public class BcTlsServer : DefaultTlsServer
             return false;
         }
 
+        int[] cipherSuites = GetSupportedCipherSuites();
+        if (cipherSuites == null)
+        {
+            Debug.WriteLine("Failed to get supported cipher suites");
+            return false;
+        }
+
         CertificateRequest certificateRequest = GetCertificateRequest();
         if (certificateRequest == null)
         {
