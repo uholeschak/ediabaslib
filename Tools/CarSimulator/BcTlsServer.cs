@@ -330,6 +330,33 @@ public class BcTlsServer : DefaultTlsServer
         return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsCipherSuites);
     }
 
+    public virtual string ToHexString(byte[] data)
+    {
+        return data == null ? "(null)" : Hex.ToHexString(data);
+    }
+
+    private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm)
+    {
+        return LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_publicCert, m_privateCert);
+    }
+
+    private TlsCertificate[] GetTrustedCertPath(TlsCrypto crypto, TlsCertificate cert, string[] resources)
+    {
+        foreach (string eeCertResource in resources)
+        {
+            TlsCertificate eeCert = LoadCertificateResource(crypto, eeCertResource);
+            if (AreSameCertificate(cert, eeCert))
+            {
+                TlsCertificate caCert = LoadCertificateResource(crypto, m_CaFile);
+                if (null != caCert)
+                {
+                    return new TlsCertificate[] { eeCert, caCert };
+                }
+            }
+        }
+        return null;
+    }
+
     public static string Fingerprint(X509CertificateStructure c)
     {
         byte[] der = c.GetEncoded();
@@ -351,11 +378,6 @@ public class BcTlsServer : DefaultTlsServer
     public static byte[] Sha256DigestOf(byte[] input)
     {
         return DigestUtilities.CalculateDigest("SHA256", input);
-    }
-
-    public virtual string ToHexString(byte[] data)
-    {
-        return data == null ? "(null)" : Hex.ToHexString(data);
     }
 
     public static X509CertificateStructure LoadBcCertificateResource(string resource)
@@ -402,11 +424,6 @@ public class BcTlsServer : DefaultTlsServer
         {
             return p.ReadPemObject();
         }
-    }
-
-    private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm)
-    {
-        return LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_publicCert, m_privateCert);
     }
 
     public static TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
@@ -487,7 +504,7 @@ public class BcTlsServer : DefaultTlsServer
         }
     }
 
-    private static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto, string[] resources)
+    public static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto, string[] resources)
     {
         if (protocolVersion == null)
         {
@@ -536,22 +553,5 @@ public class BcTlsServer : DefaultTlsServer
     {
         // TODO[tls-ops] Support equals on TlsCertificate?
         return Arrays.AreEqual(a.GetEncoded(), b.GetEncoded());
-    }
-
-    private TlsCertificate[] GetTrustedCertPath(TlsCrypto crypto, TlsCertificate cert, string[] resources)
-    {
-        foreach (string eeCertResource in resources)
-        {
-            TlsCertificate eeCert = LoadCertificateResource(crypto, eeCertResource);
-            if (AreSameCertificate(cert, eeCert))
-            {
-                TlsCertificate caCert = LoadCertificateResource(crypto, m_CaFile);
-                if (null != caCert)
-                {
-                    return new TlsCertificate[] { eeCert, caCert };
-                }
-            }
-        }
-        return null;
     }
 }
