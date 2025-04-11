@@ -3589,6 +3589,7 @@ namespace CarSimulator
             try
             {
                 TlsServerProtocol tlsProtocol = new TlsServerProtocol(client.GetStream());
+                tlsProtocol.IsResumableHandshake = true;
                 sslStream = tlsProtocol.Stream;
                 BcTlsServer tlsServer = new BcTlsServer(serverCertFile, ServerCertPwd);
                 tlsProtocol.Accept(tlsServer);
