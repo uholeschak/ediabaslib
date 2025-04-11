@@ -2703,7 +2703,12 @@ namespace EdiabasLib
 
             byte[] serverDnsBytes = Encoding.ASCII.GetBytes(serverDnsName);
             serverDnsBytes[serverDnsBytes.Length - 1]--;
-            string serverDnsName2 = Encoding.ASCII.GetString(serverDnsBytes);
+            string serverDnsName2 = serverDnsName;
+            string patchedName = Encoding.ASCII.GetString(serverDnsBytes);
+            if (patchedName.All(char.IsLetterOrDigit))
+            {
+                serverDnsName2 = patchedName;
+            }
 
             SslStream sslStream = new SslStream(sharedData.TcpDiagClient.GetStream(), false,
                 (sender, certificate, chain, errors) =>
