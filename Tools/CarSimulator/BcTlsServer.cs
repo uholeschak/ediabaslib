@@ -358,7 +358,7 @@ public class BcTlsServer : DefaultTlsServer
         return data == null ? "(null)" : Hex.ToHexString(data);
     }
 
-    private static X509CertificateStructure LoadBcCertificateResource(string resource)
+    public static X509CertificateStructure LoadBcCertificateResource(string resource)
     {
         PemObject pem = LoadPemResource(resource);
         if (pem.Type.EndsWith("CERTIFICATE"))
@@ -368,7 +368,7 @@ public class BcTlsServer : DefaultTlsServer
         throw new ArgumentException("doesn't specify a valid certificate", "resource");
     }
 
-    private static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource)
+    public static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource)
     {
         PemObject pem = LoadPemResource(resource);
         if (pem.Type.Equals("PRIVATE KEY"))
@@ -396,7 +396,7 @@ public class BcTlsServer : DefaultTlsServer
         throw new ArgumentException("doesn't specify a valid private key", "resource");
     }
 
-    private static PemObject LoadPemResource(string resource)
+    public static PemObject LoadPemResource(string resource)
     {
         using (var p = new PemReader(new StreamReader(resource)))
         {
@@ -409,7 +409,7 @@ public class BcTlsServer : DefaultTlsServer
         return LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_publicCert, m_privateCert);
     }
 
-    private TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
+    public static TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
         string keyResource)
     {
         TlsCrypto crypto = context.Crypto;
@@ -428,7 +428,7 @@ public class BcTlsServer : DefaultTlsServer
         }
     }
 
-    private TlsCredentialedSigner LoadSignerCredentials(TlsContext context,
+    public static TlsCredentialedSigner LoadSignerCredentials(TlsContext context,
         IList<SignatureAndHashAlgorithm> supportedSignatureAlgorithms, short signatureAlgorithm,
         string certResource, string keyResource)
     {
@@ -455,7 +455,7 @@ public class BcTlsServer : DefaultTlsServer
         return LoadSignerCredentials(context, new string[] { certResource }, keyResource, signatureAndHashAlgorithm);
     }
 
-    private TlsCredentialedSigner LoadSignerCredentials(TlsContext context, string[] certResources,
+    public static TlsCredentialedSigner LoadSignerCredentials(TlsContext context, string[] certResources,
         string keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm)
     {
         TlsCrypto crypto = context.Crypto;
@@ -464,7 +464,7 @@ public class BcTlsServer : DefaultTlsServer
         return LoadSignerCredentials(cryptoParams, crypto, certResources, keyResource, signatureAndHashAlgorithm);
     }
 
-    public TlsCredentialedSigner LoadSignerCredentials(TlsCryptoParameters cryptoParams, TlsCrypto crypto,
+    public static TlsCredentialedSigner LoadSignerCredentials(TlsCryptoParameters cryptoParams, TlsCrypto crypto,
         string[] certResources, string keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm)
     {
         if (cryptoParams?.ServerVersion == null)
@@ -517,12 +517,12 @@ public class BcTlsServer : DefaultTlsServer
         }
     }
 
-    private Certificate LoadCertificateChain(TlsContext context, string[] resources)
+    public static Certificate LoadCertificateChain(TlsContext context, string[] resources)
     {
         return LoadCertificateChain(context.ServerVersion, context.Crypto, resources);
     }
 
-    private static TlsCertificate LoadCertificateResource(TlsCrypto crypto, string resource)
+    public static TlsCertificate LoadCertificateResource(TlsCrypto crypto, string resource)
     {
         PemObject pem = LoadPemResource(resource);
         if (pem.Type.EndsWith("CERTIFICATE"))
@@ -532,7 +532,7 @@ public class BcTlsServer : DefaultTlsServer
         throw new ArgumentException("doesn't specify a valid certificate", "resource");
     }
 
-    private static bool AreSameCertificate(TlsCertificate a, TlsCertificate b)
+    public static bool AreSameCertificate(TlsCertificate a, TlsCertificate b)
     {
         // TODO[tls-ops] Support equals on TlsCertificate?
         return Arrays.AreEqual(a.GetEncoded(), b.GetEncoded());
