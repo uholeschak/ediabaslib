@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using Org.BouncyCastle.Tls;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -436,6 +437,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
+        protected bool UseBcSsl = false;
         protected string DoIpSslSecurityPath = string.Empty;
         protected string DoIpS29Path = string.Empty;
         protected string DoIpS29SelectCert = string.Empty;
@@ -1385,7 +1387,14 @@ namespace EdiabasLib
 
                         if (SharedDataActive.DiagDoIpSsl)
                         {
-                            SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive);
+                            if (UseBcSsl)
+                            {
+                                SharedDataActive.TcpDiagStream = CreateBcSslStream(SharedDataActive);
+                            }
+                            else
+                            {
+                                SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive);
+                            }
                         }
                         else
                         {
@@ -2908,6 +2917,47 @@ namespace EdiabasLib
             }
         }
 
+        protected Stream CreateBcSslStream(SharedData sharedData)
+        {
+            if (sharedData == null)
+            {
+                return null;
+            }
+
+            string serverDnsName = sharedData.EnetHostConn.Vin;
+            string serverIpAddress = sharedData.EnetHostConn.IpAddress.ToString();
+
+            if (string.IsNullOrEmpty(serverDnsName))
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream Empty server name");
+                return null;
+            }
+
+            if (sharedData.S29CertKeys == null || sharedData.S29CertKeys.Count == 0)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream No client keys");
+                return null;
+            }
+
+            string publicCert = sharedData.S29CertKeys[0].Item2;
+            string privateCert = sharedData.S29CertKeys[0].Item1;
+
+            try
+            {
+                TlsClientProtocol clientProtocol = new TlsClientProtocol(sharedData.TcpDiagClient.GetStream());
+                clientProtocol.IsResumableHandshake = true;
+                EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, publicCert, privateCert);
+                clientProtocol.Connect(tlsClient);
+                Stream sslStream = clientProtocol.Stream;
+                return sslStream;
+            }
+            catch (Exception ex)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream exception: " + EdiabasNet.GetExceptionText(ex));
+                throw;
+            }
+        }
+
         protected bool GetTrustedCAs(SharedData sharedData, string certPath)
         {
             try
@@ -3018,7 +3068,7 @@ namespace EdiabasLib
                         string publicCert = Path.ChangeExtension(certFile, ".crt");
                         if (File.Exists(publicCert))
                         {
-                            certKeyList.Add(new Tuple<string, string>(publicCert, certFile));
+                            certKeyList.Add(new Tuple<string, string>(certFile, publicCert));
                         }
                     }
                 }
