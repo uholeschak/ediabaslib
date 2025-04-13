@@ -112,11 +112,14 @@ namespace EdiabasLib
         {
             base.NotifyHandshakeComplete();
 
-            byte[] tlsServerEndPoint = m_context.ExportChannelBinding(ChannelBinding.tls_server_end_point);
-            byte[] tlsUnique = m_context.ExportChannelBinding(ChannelBinding.tls_unique);
+            if (!TlsUtilities.IsTlsV13(m_context))
+            {
+                byte[] tlsServerEndPoint = m_context.ExportChannelBinding(ChannelBinding.tls_server_end_point);
+                byte[] tlsUnique = m_context.ExportChannelBinding(ChannelBinding.tls_unique);
 
-            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "tls-server-end-point: {0}", ToHexString(tlsServerEndPoint));
-            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "tls-unique: {0}", ToHexString(tlsUnique));
+                m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "tls-server-end-point: {0}", ToHexString(tlsServerEndPoint));
+                m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "tls-unique: {0}", ToHexString(tlsUnique));
+            }
         }
 
         public override void NotifyServerVersion(ProtocolVersion serverVersion)
