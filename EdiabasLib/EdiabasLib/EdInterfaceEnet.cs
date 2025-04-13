@@ -14,6 +14,7 @@ using System.Net.Http;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using Org.BouncyCastle.Tls;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -344,7 +345,7 @@ namespace EdiabasLib
             public Timer TcpControlTimer;
             public List<X509Certificate2> TrustedCAs;
             public List<X509Certificate2> S29Certs;
-            public List<string> S29CertKeys;
+            public List<Tuple<string, string>> S29CertKeys;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -436,6 +437,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
+        protected bool UseBcSsl = false;
         protected string DoIpSslSecurityPath = string.Empty;
         protected string DoIpS29Path = string.Empty;
         protected string DoIpS29SelectCert = string.Empty;
@@ -1385,7 +1387,14 @@ namespace EdiabasLib
 
                         if (SharedDataActive.DiagDoIpSsl)
                         {
-                            SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive);
+                            if (UseBcSsl)
+                            {
+                                SharedDataActive.TcpDiagStream = CreateBcSslStream(SharedDataActive);
+                            }
+                            else
+                            {
+                                SharedDataActive.TcpDiagStream = CreateSslStream(SharedDataActive);
+                            }
                         }
                         else
                         {
@@ -2908,6 +2917,47 @@ namespace EdiabasLib
             }
         }
 
+        protected Stream CreateBcSslStream(SharedData sharedData)
+        {
+            if (sharedData == null)
+            {
+                return null;
+            }
+
+            string serverDnsName = sharedData.EnetHostConn.Vin;
+            string serverIpAddress = sharedData.EnetHostConn.IpAddress.ToString();
+
+            if (string.IsNullOrEmpty(serverDnsName))
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream Empty server name");
+                return null;
+            }
+
+            if (sharedData.S29CertKeys == null || sharedData.S29CertKeys.Count == 0)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream No client keys");
+                return null;
+            }
+
+            string publicCert = sharedData.S29CertKeys[0].Item2;
+            string privateCert = sharedData.S29CertKeys[0].Item1;
+
+            try
+            {
+                TlsClientProtocol clientProtocol = new TlsClientProtocol(sharedData.TcpDiagClient.GetStream());
+                clientProtocol.IsResumableHandshake = true;
+                EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, publicCert, privateCert);
+                clientProtocol.Connect(tlsClient);
+                Stream sslStream = clientProtocol.Stream;
+                return sslStream;
+            }
+            catch (Exception ex)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream exception: " + EdiabasNet.GetExceptionText(ex));
+                throw;
+            }
+        }
+
         protected bool GetTrustedCAs(SharedData sharedData, string certPath)
         {
             try
@@ -2978,7 +3028,7 @@ namespace EdiabasLib
                 }
 
                 List<X509Certificate2> certList = new List<X509Certificate2>();
-                List<string> certKeyList = new List<string>();
+                List<Tuple<string, string>> certKeyList = new List<Tuple<string, string>>();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
                 {
@@ -3015,7 +3065,11 @@ namespace EdiabasLib
                     }
                     else if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        certKeyList.Add(certFile);
+                        string publicCert = Path.ChangeExtension(certFile, ".crt");
+                        if (File.Exists(publicCert))
+                        {
+                            certKeyList.Add(new Tuple<string, string>(certFile, publicCert));
+                        }
                     }
                 }
 
