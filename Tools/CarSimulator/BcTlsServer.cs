@@ -240,11 +240,14 @@ public class BcTlsServer : DefaultTlsServer
     {
         base.NotifyHandshakeComplete();
 
-        byte[] tlsServerEndPoint = m_context.ExportChannelBinding(ChannelBinding.tls_server_end_point);
-        byte[] tlsUnique = m_context.ExportChannelBinding(ChannelBinding.tls_unique);
+        if (!TlsUtilities.IsTlsV13(m_context))
+        {
+            byte[] tlsServerEndPoint = m_context.ExportChannelBinding(ChannelBinding.tls_server_end_point);
+            byte[] tlsUnique = m_context.ExportChannelBinding(ChannelBinding.tls_unique);
 
-        Debug.WriteLine("TLS server reports 'tls-server-end-point' = " + ToHexString(tlsServerEndPoint));
-        Debug.WriteLine("TLS server reports 'tls-unique' = " + ToHexString(tlsUnique));
+            Debug.WriteLine("TLS server reports 'tls-server-end-point' = " + ToHexString(tlsServerEndPoint));
+            Debug.WriteLine("TLS server reports 'tls-unique' = " + ToHexString(tlsUnique));
+        }
     }
 
     public override CertificateRequest GetCertificateRequest()
