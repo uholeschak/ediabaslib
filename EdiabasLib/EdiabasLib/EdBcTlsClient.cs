@@ -128,12 +128,10 @@ namespace EdiabasLib
                 if (isEmpty)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
+#if false
                 string[] trustedCertResources = new string[]
                 {
-                    "x509-server-dsa.pem", "x509-server-ecdh.pem",
-                    "x509-server-ecdsa.pem", "x509-server-ed25519.pem", "x509-server-ed448.pem",
-                    "x509-server-rsa_pss_256.pem", "x509-server-rsa_pss_384.pem", "x509-server-rsa_pss_512.pem",
-                    "x509-server-rsa-enc.pem", "x509-server-rsa-sign.pem"
+                    // trusted server certs
                 };
 
                 TlsCertificate[] certPath = EdBcTlsUtilities.GetTrustedCertPath(m_context.Crypto, chain[0], trustedCertResources, m_outer.m_caFile);
@@ -142,6 +140,7 @@ namespace EdiabasLib
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
                 TlsUtilities.CheckPeerSigAlgs(m_context, certPath);
+#endif
             }
 
             public virtual TlsCredentials GetClientCredentials(CertificateRequest certificateRequest)
@@ -155,17 +154,16 @@ namespace EdiabasLib
                         return null;
                 }
 
-                var supportedSigAlgs = certificateRequest.SupportedSignatureAlgorithms;
+                IList<SignatureAndHashAlgorithm> supportedSigAlgs = certificateRequest.SupportedSignatureAlgorithms;
 
                 TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context,
-                    supportedSigAlgs, SignatureAlgorithm.rsa, "x509-client-rsa.pem", "x509-client-key-rsa.pem");
+                    supportedSigAlgs, SignatureAlgorithm.rsa, m_outer.m_publicCert, m_outer.m_privateCert);
                 if (signerCredentials == null && supportedSigAlgs != null)
                 {
                     SignatureAndHashAlgorithm pss = SignatureAndHashAlgorithm.rsa_pss_rsae_sha256;
                     if (TlsUtilities.ContainsSignatureAlgorithm(supportedSigAlgs, pss))
                     {
-                        signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context,
-                            new string[] { "x509-client-rsa.pem" }, "x509-client-key-rsa.pem", pss);
+                        signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, new string[] { m_outer.m_publicCert }, m_outer.m_privateCert, pss);
                     }
                 }
 
