@@ -40,6 +40,9 @@
     <AssemblyOriginatorKeyFile>EdiabasLib.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)\packages\BouncyCastle.Cryptography.2.5.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
     <Reference Include="InTheHand.Net.Bluetooth, Version=4.2.1.0, Culture=neutral, PublicKeyToken=ea38caa273134499, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)\packages\InTheHand.Net.Bluetooth.4.2.1\lib\net462\InTheHand.Net.Bluetooth.dll</HintPath>
     </Reference>
@@ -89,6 +92,11 @@
   <ItemGroup>
     <EmbeddedResource Include="$(SolutionDir)packages\InTheHand.Net.Bluetooth.*\lib\net462\InTheHand.Net.Bluetooth.dll">
       <Link>InTheHand.Net.Bluetooth.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(SolutionDir)packages\BouncyCastle.Cryptography.*\lib\net461\BouncyCastle.Cryptography.dll">
+      <Link>BouncyCastle.Cryptography.dll</Link>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
