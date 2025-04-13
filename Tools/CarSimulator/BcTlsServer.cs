@@ -113,6 +113,24 @@ public class BcTlsServer : DefaultTlsServer
         {
             throw new FileNotFoundException("CA file not found", m_caFile);
         }
+
+        AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(m_privateCert);
+        if (privateKeyResource == null)
+        {
+            throw new FileNotFoundException("Private key file not valid", m_privateCert);
+        }
+
+        X509CertificateStructure publicKeyResource = EdBcTlsUtilities.LoadBcCertificateResource(m_publicCert);
+        if (publicKeyResource == null)
+        {
+            throw new FileNotFoundException("Public key file not valid", m_publicCert);
+        }
+
+        X509CertificateStructure caResourceResource = EdBcTlsUtilities.LoadBcCertificateResource(m_caFile);
+        if (caResourceResource == null)
+        {
+            throw new FileNotFoundException("CA file not valid", m_caFile);
+        }
     }
 
     public bool Test1()
