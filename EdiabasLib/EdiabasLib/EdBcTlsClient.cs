@@ -2,11 +2,13 @@
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using System.IO;
 using System;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 using System.Collections.Generic;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Utilities;
+using Org.BouncyCastle.Ocsp;
+using Org.BouncyCastle.Utilities.Encoders;
+using System.Text;
 
 namespace EdiabasLib
 {
@@ -44,14 +46,14 @@ namespace EdiabasLib
         private EdiabasNet m_ediabasNet = null;
         private string m_privateCert = null;
         private string m_publicCert = null;
-        private string m_CaFile = null;
+        private string m_caFile = null;
 
         public EdBcTlsClient(EdiabasNet ediabasNet, string privateCert, string publicCert, string caFile) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
             m_privateCert = privateCert;
             m_publicCert = publicCert;
-            m_CaFile = caFile;
+            m_caFile = caFile;
         }
 
         public override IDictionary<int, byte[]> GetClientExtensions()
@@ -83,31 +85,41 @@ namespace EdiabasLib
             return new EdBcTlsAuthentication(this, m_context);
         }
 
+        public override void ProcessServerExtensions(IDictionary<int, byte[]> serverExtensions)
+        {
+            if (m_context.SecurityParameters.ServerRandom == null)
+                throw new TlsFatalAlert(AlertDescription.internal_error);
+
+            base.ProcessServerExtensions(serverExtensions);
+        }
+
+        protected override int[] GetSupportedCipherSuites()
+        {
+            return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsCipherSuites);
+        }
+
         private class EdBcTlsAuthentication : TlsAuthentication
         {
             private readonly EdBcTlsClient m_outer;
             private readonly TlsContext m_context;
+            private EdiabasNet m_ediabasNet = null;
 
             internal EdBcTlsAuthentication(EdBcTlsClient outer, TlsContext context)
             {
-                this.m_outer = outer;
-                this.m_context = context;
+                m_outer = outer;
+                m_context = context;
+                m_ediabasNet = outer.m_ediabasNet;
             }
 
             public virtual void NotifyServerCertificate(TlsServerCertificate serverCertificate)
             {
                 TlsCertificate[] chain = serverCertificate.Certificate.GetCertificateList();
 
-                if (TlsTestConfig.Debug)
+                m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client server cain length: {0}", chain.Length);
+                for (int i = 0; i < chain.Length; ++i)
                 {
-                    Console.WriteLine("TLS client received server certificate chain of length " + chain.Length);
-                    for (int i = 0; i < chain.Length; ++i)
-                    {
-                        X509CertificateStructure entry = X509CertificateStructure.GetInstance(chain[i].GetEncoded());
-                        // TODO Create fingerprint based on certificate signature algorithm digest
-                        Console.WriteLine("    fingerprint:SHA-256 " + TlsTestUtilities.Fingerprint(entry) + " ("
-                                          + entry.Subject + ")");
-                    }
+                    X509CertificateStructure entry = X509CertificateStructure.GetInstance(chain[i].GetEncoded());
+                    m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "fingerprint:SHA-256: {0} ({1})", EdBcTlsUtilities.Fingerprint(entry), entry.Subject);
                 }
 
                 bool isEmpty = serverCertificate == null || serverCertificate.Certificate == null
@@ -124,16 +136,12 @@ namespace EdiabasLib
                     "x509-server-rsa-enc.pem", "x509-server-rsa-sign.pem"
                 };
 
-                TlsCertificate[] certPath = TlsTestUtilities.GetTrustedCertPath(m_context.Crypto, chain[0],
-                    trustedCertResources);
+                TlsCertificate[] certPath = EdBcTlsUtilities.GetTrustedCertPath(m_context.Crypto, chain[0], trustedCertResources, m_outer.m_caFile);
 
                 if (null == certPath)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
-                if (m_outer.m_config.clientCheckSigAlgOfServerCerts)
-                {
-                    TlsUtilities.CheckPeerSigAlgs(m_context, certPath);
-                }
+                TlsUtilities.CheckPeerSigAlgs(m_context, certPath);
             }
 
             public virtual TlsCredentials GetClientCredentials(CertificateRequest certificateRequest)
@@ -148,21 +156,15 @@ namespace EdiabasLib
                 }
 
                 var supportedSigAlgs = certificateRequest.SupportedSignatureAlgorithms;
-                if (supportedSigAlgs != null && config.clientAuthSigAlg != null)
-                {
-                    supportedSigAlgs = TlsUtilities.VectorOfOne(config.clientAuthSigAlg);
-                }
 
-                // TODO[tls13] Check also supportedSigAlgsCert against the chain signature(s)
-
-                TlsCredentialedSigner signerCredentials = TlsTestUtilities.LoadSignerCredentials(m_context,
+                TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context,
                     supportedSigAlgs, SignatureAlgorithm.rsa, "x509-client-rsa.pem", "x509-client-key-rsa.pem");
                 if (signerCredentials == null && supportedSigAlgs != null)
                 {
                     SignatureAndHashAlgorithm pss = SignatureAndHashAlgorithm.rsa_pss_rsae_sha256;
                     if (TlsUtilities.ContainsSignatureAlgorithm(supportedSigAlgs, pss))
                     {
-                        signerCredentials = TlsTestUtilities.LoadSignerCredentials(m_context,
+                        signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context,
                             new string[] { "x509-client-rsa.pem" }, "x509-client-key-rsa.pem", pss);
                     }
                 }

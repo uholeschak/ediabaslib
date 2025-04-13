@@ -18,6 +18,7 @@ using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Utilities;
 using System.Reflection;
+using EdiabasLib;
 
 namespace CarSimulator;
 
@@ -58,7 +59,7 @@ public class BcTlsServer : DefaultTlsServer
 
     private string m_privateCert = null;
     private string m_publicCert = null;
-    private string m_CaFile = null;
+    private string m_caFile = null;
     private string[] m_trustedCertResources;
 
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
@@ -89,7 +90,7 @@ public class BcTlsServer : DefaultTlsServer
 
             if (certFileName.EndsWith("CA.crt", StringComparison.OrdinalIgnoreCase))
             {
-                m_CaFile = trustedFile;
+                m_caFile = trustedFile;
                 continue;
             }
 
@@ -108,9 +109,9 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("Certificate files not found", certBaseFile);
         }
 
-        if (!File.Exists(m_CaFile))
+        if (!File.Exists(m_caFile))
         {
-            throw new FileNotFoundException("CA file not found", m_CaFile);
+            throw new FileNotFoundException("CA file not found", m_caFile);
         }
     }
 
@@ -177,9 +178,9 @@ public class BcTlsServer : DefaultTlsServer
             return false;
         }
 
-        string certDir = Path.GetDirectoryName(m_CaFile);
+        string certDir = Path.GetDirectoryName(m_caFile);
         string clientCert = Path.Combine(certDir, "client.crt");
-        Certificate certificate = LoadCertificateChain(m_context, new[] { clientCert, m_CaFile });
+        Certificate certificate = EdBcTlsUtilities.LoadCertificateChain(m_context, new[] { clientCert, m_caFile });
         NotifyClientCertificate(certificate);
         return true;
     }
@@ -242,7 +243,7 @@ public class BcTlsServer : DefaultTlsServer
         }
 
         var certificateAuthorities = new List<X509Name>();
-        certificateAuthorities.Add(LoadBcCertificateResource(m_CaFile).Subject);
+        certificateAuthorities.Add(EdBcTlsUtilities.LoadBcCertificateResource(m_caFile).Subject);
 
         if (TlsUtilities.IsTlsV13(m_context))
         {
@@ -283,10 +284,10 @@ public class BcTlsServer : DefaultTlsServer
         {
             X509CertificateStructure entry = X509CertificateStructure.GetInstance(chain[i].GetEncoded());
             // TODO Create fingerprint based on certificate signature algorithm digest
-            Debug.WriteLine("    fingerprint:SHA-256 " + Fingerprint(entry) + " (" + entry.Subject + ")");
+            Debug.WriteLine("    fingerprint:SHA-256 " + EdBcTlsUtilities.Fingerprint(entry) + " (" + entry.Subject + ")");
         }
 
-        TlsCertificate[] certPath = GetTrustedCertPath(m_context.Crypto, chain[0], m_trustedCertResources);
+        TlsCertificate[] certPath = EdBcTlsUtilities.GetTrustedCertPath(m_context.Crypto, chain[0], m_trustedCertResources, m_caFile);
 
         if (null == certPath)
             throw new TlsFatalAlert(AlertDescription.bad_certificate);
@@ -338,7 +339,7 @@ public class BcTlsServer : DefaultTlsServer
 
     protected override TlsCredentialedDecryptor GetRsaEncryptionCredentials()
     {
-        return LoadEncryptionCredentials(m_context, new [] { m_publicCert, m_CaFile }, m_privateCert);
+        return EdBcTlsUtilities.LoadEncryptionCredentials(m_context, new [] { m_publicCert, m_caFile }, m_privateCert);
     }
 
     protected override TlsCredentialedSigner GetRsaSignerCredentials()
@@ -358,221 +359,6 @@ public class BcTlsServer : DefaultTlsServer
 
     private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm)
     {
-        return LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_publicCert, m_privateCert);
-    }
-
-    private TlsCertificate[] GetTrustedCertPath(TlsCrypto crypto, TlsCertificate cert, string[] resources)
-    {
-        foreach (string eeCertResource in resources)
-        {
-            TlsCertificate eeCert = LoadCertificateResource(crypto, eeCertResource);
-            if (AreSameCertificate(cert, eeCert))
-            {
-                TlsCertificate caCert = LoadCertificateResource(crypto, m_CaFile);
-                if (null != caCert)
-                {
-                    return new TlsCertificate[] { eeCert, caCert };
-                }
-            }
-        }
-        return null;
-    }
-
-    public static string Fingerprint(X509CertificateStructure c)
-    {
-        byte[] der = c.GetEncoded();
-        byte[] hash = Sha256DigestOf(der);
-        byte[] hexBytes = Hex.Encode(hash);
-        string hex = Encoding.ASCII.GetString(hexBytes).ToUpperInvariant();
-
-        StringBuilder fp = new StringBuilder();
-        int i = 0;
-        fp.Append(hex.Substring(i, 2));
-        while ((i += 2) < hex.Length)
-        {
-            fp.Append(':');
-            fp.Append(hex.Substring(i, 2));
-        }
-        return fp.ToString();
-    }
-
-    public static byte[] Sha256DigestOf(byte[] input)
-    {
-        return DigestUtilities.CalculateDigest("SHA256", input);
-    }
-
-    public static X509CertificateStructure LoadBcCertificateResource(string resource)
-    {
-        PemObject pem = LoadPemResource(resource);
-        if (pem.Type.EndsWith("CERTIFICATE"))
-        {
-            return X509CertificateStructure.GetInstance(pem.Content);
-        }
-        throw new ArgumentException("doesn't specify a valid certificate", "resource");
-    }
-
-    public static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource)
-    {
-        PemObject pem = LoadPemResource(resource);
-        if (pem.Type.Equals("PRIVATE KEY"))
-        {
-            return PrivateKeyFactory.CreateKey(pem.Content);
-        }
-        if (pem.Type.Equals("ENCRYPTED PRIVATE KEY"))
-        {
-            throw new NotSupportedException("Encrypted PKCS#8 keys not supported");
-        }
-        if (pem.Type.Equals("RSA PRIVATE KEY"))
-        {
-            RsaPrivateKeyStructure rsa = RsaPrivateKeyStructure.GetInstance(pem.Content);
-            return new RsaPrivateCrtKeyParameters(rsa.Modulus, rsa.PublicExponent,
-                rsa.PrivateExponent, rsa.Prime1, rsa.Prime2, rsa.Exponent1,
-                rsa.Exponent2, rsa.Coefficient);
-        }
-        if (pem.Type.Equals("EC PRIVATE KEY"))
-        {
-            ECPrivateKeyStructure pKey = ECPrivateKeyStructure.GetInstance(pem.Content);
-            AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, pKey.Parameters);
-            PrivateKeyInfo privInfo = new PrivateKeyInfo(algId, pKey);
-            return PrivateKeyFactory.CreateKey(privInfo);
-        }
-        throw new ArgumentException("doesn't specify a valid private key", "resource");
-    }
-
-    public static PemObject LoadPemResource(string resource)
-    {
-        using (var p = new PemReader(new StreamReader(resource)))
-        {
-            return p.ReadPemObject();
-        }
-    }
-
-    public static TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
-        string keyResource)
-    {
-        TlsCrypto crypto = context.Crypto;
-        Certificate certificate = LoadCertificateChain(context, certResources);
-
-        // TODO[tls-ops] Need to have TlsCrypto construct the credentials from the certs/key (as raw data)
-        if (crypto is BcTlsCrypto)
-        {
-            AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
-
-            return new BcDefaultTlsCredentialedDecryptor((BcTlsCrypto)crypto, certificate, privateKey);
-        }
-        else
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    public static TlsCredentialedSigner LoadSignerCredentials(TlsContext context,
-        IList<SignatureAndHashAlgorithm> supportedSignatureAlgorithms, short signatureAlgorithm,
-        string certResource, string keyResource)
-    {
-        if (supportedSignatureAlgorithms == null)
-        {
-            supportedSignatureAlgorithms = TlsUtilities.GetDefaultSignatureAlgorithms(signatureAlgorithm);
-        }
-
-        SignatureAndHashAlgorithm signatureAndHashAlgorithm = null;
-
-        foreach (SignatureAndHashAlgorithm alg in supportedSignatureAlgorithms)
-        {
-            if (alg.Signature == signatureAlgorithm)
-            {
-                // Just grab the first one we find
-                signatureAndHashAlgorithm = alg;
-                break;
-            }
-        }
-
-        if (signatureAndHashAlgorithm == null)
-            return null;
-
-        return LoadSignerCredentials(context, new string[] { certResource }, keyResource, signatureAndHashAlgorithm);
-    }
-
-    public static TlsCredentialedSigner LoadSignerCredentials(TlsContext context, string[] certResources,
-        string keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm)
-    {
-        TlsCrypto crypto = context.Crypto;
-        TlsCryptoParameters cryptoParams = new TlsCryptoParameters(context);
-
-        return LoadSignerCredentials(cryptoParams, crypto, certResources, keyResource, signatureAndHashAlgorithm);
-    }
-
-    public static TlsCredentialedSigner LoadSignerCredentials(TlsCryptoParameters cryptoParams, TlsCrypto crypto,
-        string[] certResources, string keyResource, SignatureAndHashAlgorithm signatureAndHashAlgorithm)
-    {
-        if (cryptoParams?.ServerVersion == null)
-        {
-            throw new TlsFatalAlert(AlertDescription.protocol_version);
-        }
-
-        Certificate certificate = LoadCertificateChain(cryptoParams.ServerVersion, crypto, certResources);
-
-        // TODO[tls-ops] Need to have TlsCrypto construct the credentials from the certs/key (as raw data)
-        if (crypto is BcTlsCrypto)
-        {
-            AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
-
-            return new BcDefaultTlsCredentialedSigner(cryptoParams, (BcTlsCrypto)crypto, privateKey, certificate, signatureAndHashAlgorithm);
-        }
-        else
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    public static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto, string[] resources)
-    {
-        if (protocolVersion == null)
-        {
-            throw new TlsFatalAlert(AlertDescription.protocol_version);
-        }
-
-        if (TlsUtilities.IsTlsV13(protocolVersion))
-        {
-            CertificateEntry[] certificateEntryList = new CertificateEntry[resources.Length];
-            for (int i = 0; i < resources.Length; ++i)
-            {
-                TlsCertificate certificate = LoadCertificateResource(crypto, resources[i]);
-                certificateEntryList[i] = new CertificateEntry(certificate, null);
-            }
-
-            byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
-            return new Certificate(certificateRequestContext, certificateEntryList);
-        }
-        else
-        {
-            TlsCertificate[] chain = new TlsCertificate[resources.Length];
-            for (int i = 0; i < resources.Length; ++i)
-            {
-                chain[i] = LoadCertificateResource(crypto, resources[i]);
-            }
-            return new Certificate(chain);
-        }
-    }
-
-    public static Certificate LoadCertificateChain(TlsContext context, string[] resources)
-    {
-        return LoadCertificateChain(context.ServerVersion, context.Crypto, resources);
-    }
-
-    public static TlsCertificate LoadCertificateResource(TlsCrypto crypto, string resource)
-    {
-        PemObject pem = LoadPemResource(resource);
-        if (pem.Type.EndsWith("CERTIFICATE"))
-        {
-            return crypto.CreateCertificate(pem.Content);
-        }
-        throw new ArgumentException("doesn't specify a valid certificate", "resource");
-    }
-
-    public static bool AreSameCertificate(TlsCertificate a, TlsCertificate b)
-    {
-        // TODO[tls-ops] Support equals on TlsCertificate?
-        return Arrays.AreEqual(a.GetEncoded(), b.GetEncoded());
+        return EdBcTlsUtilities.LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_publicCert, m_privateCert);
     }
 }
