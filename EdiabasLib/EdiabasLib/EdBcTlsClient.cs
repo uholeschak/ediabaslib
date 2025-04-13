@@ -48,7 +48,7 @@ namespace EdiabasLib
         private string m_publicCert = null;
         private string m_caFile = null;
 
-        public EdBcTlsClient(EdiabasNet ediabasNet, string privateCert, string publicCert, string caFile) : base(new BcTlsCrypto())
+        public EdBcTlsClient(EdiabasNet ediabasNet, string privateCert, string publicCert, string caFile = null) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
             m_privateCert = privateCert;
@@ -96,6 +96,13 @@ namespace EdiabasLib
             m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "tls-unique: {0}", ToHexString(tlsUnique));
         }
 
+        public override void NotifyServerVersion(ProtocolVersion serverVersion)
+        {
+            base.NotifyServerVersion(serverVersion);
+
+            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client negotiated : {0}", serverVersion);
+        }
+
         public override TlsAuthentication GetAuthentication()
         {
             return new EdBcTlsAuthentication(this, m_context);
@@ -125,7 +132,7 @@ namespace EdiabasLib
             private readonly TlsContext m_context;
             private EdiabasNet m_ediabasNet = null;
 
-            internal EdBcTlsAuthentication(EdBcTlsClient outer, TlsContext context)
+            public EdBcTlsAuthentication(EdBcTlsClient outer, TlsContext context)
             {
                 m_outer = outer;
                 m_context = context;
@@ -136,7 +143,7 @@ namespace EdiabasLib
             {
                 TlsCertificate[] chain = serverCertificate.Certificate.GetCertificateList();
 
-                m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client server cain length: {0}", chain.Length);
+                m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client server chain length: {0}", chain.Length);
                 for (int i = 0; i < chain.Length; ++i)
                 {
                     X509CertificateStructure entry = X509CertificateStructure.GetInstance(chain[i].GetEncoded());
@@ -164,7 +171,7 @@ namespace EdiabasLib
 #endif
             }
 
-            public virtual TlsCredentials GetClientCredentials(CertificateRequest certificateRequest)
+            public TlsCredentials GetClientCredentials(CertificateRequest certificateRequest)
             {
                 bool isTlsV13 = TlsUtilities.IsTlsV13(m_context);
 
