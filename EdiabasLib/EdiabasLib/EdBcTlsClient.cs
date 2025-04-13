@@ -168,6 +168,8 @@ namespace EdiabasLib
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
                 TlsUtilities.CheckPeerSigAlgs(m_context, certPath);
+#else
+                TlsUtilities.CheckPeerSigAlgs(m_context, chain);
 #endif
             }
 

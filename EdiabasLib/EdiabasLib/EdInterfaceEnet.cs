@@ -240,6 +240,7 @@ namespace EdiabasLib
                 TcpControlTimer = new Timer(TcpControlTimeout, this, Timeout.Infinite, Timeout.Infinite);
                 TrustedCAs = null;
                 S29Certs = null;
+                S29CertKeys = null;
                 TcpControlTimerLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
                 TcpDiagRecLen = 0;
@@ -272,6 +273,12 @@ namespace EdiabasLib
 
                     S29Certs.Clear();
                     S29Certs = null;
+                }
+
+                if (S29CertKeys != null)
+                {
+                    S29CertKeys.Clear();
+                    S29CertKeys = null;
                 }
             }
 
@@ -337,6 +344,7 @@ namespace EdiabasLib
             public Timer TcpControlTimer;
             public List<X509Certificate2> TrustedCAs;
             public List<X509Certificate2> S29Certs;
+            public List<string> S29CertKeys;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -2970,9 +2978,16 @@ namespace EdiabasLib
                 }
 
                 List<X509Certificate2> certList = new List<X509Certificate2>();
+                List<string> certKeyList = new List<string>();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
                 {
+                    string certExtension = Path.GetExtension(certFile);
+                    if (string.IsNullOrEmpty(certExtension))
+                    {
+                        continue;
+                    }
+
                     if (!string.IsNullOrEmpty(selectCert))
                     {
                         string baseFileName = Path.GetFileNameWithoutExtension(certFile);
@@ -2982,23 +2997,31 @@ namespace EdiabasLib
                         }
                     }
 
-                    try
+                    if (string.Compare(certExtension, ".pfx", StringComparison.OrdinalIgnoreCase) == 0)
                     {
+                        try
+                        {
 #if NET9_0_OR_GREATER
-                        X509Certificate2 cert = X509CertificateLoader.LoadCertificateFromFile(certFile);
+                            X509Certificate2 cert = X509CertificateLoader.LoadCertificateFromFile(certFile);
 #else
-                        X509Certificate2 cert = new X509Certificate2(certFile);
+                            X509Certificate2 cert = new X509Certificate2(certFile);
 #endif
-                        certList.Add(cert);
+                            certList.Add(cert);
+                        }
+                        catch (Exception ex)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
+                        }
                     }
-                    catch (Exception ex)
+                    else if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
+                        certKeyList.Add(certFile);
                     }
                 }
 
                 sharedData.S29Certs = certList;
-                return certList.Count > 0;
+                sharedData.S29CertKeys = certKeyList;
+                return certList.Count > 0 || certKeyList.Count > 0;
             }
             catch (Exception ex)
             {
