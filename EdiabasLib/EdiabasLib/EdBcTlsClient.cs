@@ -80,6 +80,22 @@ namespace EdiabasLib
             }
         }
 
+        public override void NotifyAlertReceived(short alertLevel, short alertDescription)
+        {
+            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client received alert: {0} {1}", AlertLevel.GetText(alertLevel), AlertDescription.GetText(alertDescription));
+        }
+
+        public override void NotifyHandshakeComplete()
+        {
+            base.NotifyHandshakeComplete();
+
+            byte[] tlsServerEndPoint = m_context.ExportChannelBinding(ChannelBinding.tls_server_end_point);
+            byte[] tlsUnique = m_context.ExportChannelBinding(ChannelBinding.tls_unique);
+
+            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "tls-server-end-point: {0}", ToHexString(tlsServerEndPoint));
+            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "tls-unique: {0}", ToHexString(tlsUnique));
+        }
+
         public override TlsAuthentication GetAuthentication()
         {
             return new EdBcTlsAuthentication(this, m_context);
@@ -96,6 +112,11 @@ namespace EdiabasLib
         protected override int[] GetSupportedCipherSuites()
         {
             return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsCipherSuites);
+        }
+
+        protected virtual string ToHexString(byte[] data)
+        {
+            return data == null ? "(null)" : Hex.ToHexString(data);
         }
 
         private class EdBcTlsAuthentication : TlsAuthentication
