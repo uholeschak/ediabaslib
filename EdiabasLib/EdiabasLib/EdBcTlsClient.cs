@@ -9,6 +9,7 @@ using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Ocsp;
 using Org.BouncyCastle.Utilities.Encoders;
 using System.Text;
+using Org.BouncyCastle.Crypto;
 
 namespace EdiabasLib
 {
@@ -44,16 +45,38 @@ namespace EdiabasLib
 
 
         private EdiabasNet m_ediabasNet = null;
-        private string m_privateCert = null;
         private string m_publicCert = null;
+        private string m_privateCert = null;
         private string m_caFile = null;
 
-        public EdBcTlsClient(EdiabasNet ediabasNet, string privateCert, string publicCert, string caFile = null) : base(new BcTlsCrypto())
+        public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, string caFile = null) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
-            m_privateCert = privateCert;
             m_publicCert = publicCert;
+            m_privateCert = privateCert;
             m_caFile = caFile;
+
+            if (!File.Exists(m_publicCert))
+            {
+                throw new FileNotFoundException("Public cert file not found: {0}", m_publicCert);
+            }
+
+            if (!File.Exists(m_privateCert))
+            {
+                throw new FileNotFoundException("Private cert file not found: {0}", m_privateCert);
+            }
+
+            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(m_privateCert);
+            if (privateKeyResource == null)
+            {
+                throw new FileNotFoundException("Private key file not valid", m_privateCert);
+            }
+
+            X509CertificateStructure publicKeyResource = EdBcTlsUtilities.LoadBcCertificateResource(m_publicCert);
+            if (publicKeyResource == null)
+            {
+                throw new FileNotFoundException("Public key file not valid", m_publicCert);
+            }
         }
 
         public override IDictionary<int, byte[]> GetClientExtensions()
