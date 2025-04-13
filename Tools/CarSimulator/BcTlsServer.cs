@@ -287,12 +287,19 @@ public class BcTlsServer : DefaultTlsServer
             Debug.WriteLine("    fingerprint:SHA-256 " + EdBcTlsUtilities.Fingerprint(entry) + " (" + entry.Subject + ")");
         }
 
-        TlsCertificate[] certPath = EdBcTlsUtilities.GetTrustedCertPath(m_context.Crypto, chain[0], m_trustedCertResources, m_caFile);
+        if (m_trustedCertResources?.Length > 0)
+        {
+            TlsCertificate[] certPath = EdBcTlsUtilities.GetTrustedCertPath(m_context.Crypto, chain[0], m_trustedCertResources, m_caFile);
 
-        if (null == certPath)
-            throw new TlsFatalAlert(AlertDescription.bad_certificate);
+            if (null == certPath)
+                throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
-        TlsUtilities.CheckPeerSigAlgs(m_context, certPath);
+            TlsUtilities.CheckPeerSigAlgs(m_context, certPath);
+        }
+        else
+        {
+            TlsUtilities.CheckPeerSigAlgs(m_context, chain);
+        }
     }
 
     public override void ProcessClientExtensions(IDictionary<int, byte[]> clientExtensions)
