@@ -344,7 +344,7 @@ namespace EdiabasLib
             public Timer TcpControlTimer;
             public List<X509Certificate2> TrustedCAs;
             public List<X509Certificate2> S29Certs;
-            public List<string> S29CertKeys;
+            public List<Tuple<string, string>> S29CertKeys;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -2978,7 +2978,7 @@ namespace EdiabasLib
                 }
 
                 List<X509Certificate2> certList = new List<X509Certificate2>();
-                List<string> certKeyList = new List<string>();
+                List<Tuple<string, string>> certKeyList = new List<Tuple<string, string>>();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
                 {
@@ -3015,7 +3015,11 @@ namespace EdiabasLib
                     }
                     else if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        certKeyList.Add(certFile);
+                        string publicCert = Path.ChangeExtension(certFile, ".crt");
+                        if (File.Exists(publicCert))
+                        {
+                            certKeyList.Add(new Tuple<string, string>(publicCert, certFile));
+                        }
                     }
                 }
 
