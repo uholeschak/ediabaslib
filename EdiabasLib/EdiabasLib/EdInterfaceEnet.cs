@@ -437,7 +437,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
-        protected bool UseBcSsl = false;
+        protected bool UseBcSsl = true;
         protected string DoIpSslSecurityPath = string.Empty;
         protected string DoIpS29Path = string.Empty;
         protected string DoIpS29SelectCert = string.Empty;
