@@ -16,6 +16,8 @@
   <ItemGroup>
     <Compile Include="..\EdiabasLib\BtLeGattSpp.cs" Link="BtLeGattSpp.cs" />
     <Compile Include="..\EdiabasLib\EdBase32.cs" Link="EdBase32.cs" />
+    <Compile Include="..\EdiabasLib\EdBcTlsClient.cs" Link="EdBcTlsClient.cs" />
+    <Compile Include="..\EdiabasLib\EdBcTlsUtilities.cs" Link="EdBcTlsUtilities.cs" />
     <Compile Include="..\EdiabasLib\EdBluetoothInterfaceAndroid.cs" Link="EdBluetoothInterfaceAndroid.cs" />
     <Compile Include="..\EdiabasLib\EdCustomAdapterCommon.cs" Link="EdCustomAdapterCommon.cs" />
     <Compile Include="..\EdiabasLib\EdCustomWiFiInterface.cs" Link="EdCustomWiFiInterface.cs" />
@@ -39,6 +41,7 @@
     <Compile Include="..\EdiabasLib\TcpClientWithTimeout.cs" Link="TcpClientWithTimeout.cs" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
   </ItemGroup>
   <ItemGroup>
