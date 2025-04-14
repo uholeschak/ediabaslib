@@ -240,8 +240,9 @@ namespace EdiabasLib
                 TcpDiagStreamRecLock = new object();
                 TcpControlTimer = new Timer(TcpControlTimeout, this, Timeout.Infinite, Timeout.Infinite);
                 TrustedCAs = null;
+                TrustedCAFiles = null;
                 S29Certs = null;
-                S29CertKeys = null;
+                S29CertFiles = null;
                 TcpControlTimerLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
                 TcpDiagRecLen = 0;
@@ -261,6 +262,12 @@ namespace EdiabasLib
                     TrustedCAs.Clear();
                     TrustedCAs = null;
                 }
+
+                if (TrustedCAFiles != null)
+                {
+                    TrustedCAFiles.Clear();
+                    TrustedCAFiles = null;
+                }
             }
 
             public void DisposeS29Certs()
@@ -276,10 +283,10 @@ namespace EdiabasLib
                     S29Certs = null;
                 }
 
-                if (S29CertKeys != null)
+                if (S29CertFiles != null)
                 {
-                    S29CertKeys.Clear();
-                    S29CertKeys = null;
+                    S29CertFiles.Clear();
+                    S29CertFiles = null;
                 }
             }
 
@@ -344,8 +351,9 @@ namespace EdiabasLib
             public Stream TcpControlStream;
             public Timer TcpControlTimer;
             public List<X509Certificate2> TrustedCAs;
+            public List<string> TrustedCAFiles;
             public List<X509Certificate2> S29Certs;
-            public List<Tuple<string, string>> S29CertKeys;
+            public List<Tuple<string, string>> S29CertFiles;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -437,7 +445,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
-        protected bool UseBcSsl = false;
+        protected bool UseBcSsl = true;
         protected string DoIpSslSecurityPath = string.Empty;
         protected string DoIpS29Path = string.Empty;
         protected string DoIpS29SelectCert = string.Empty;
@@ -2933,20 +2941,20 @@ namespace EdiabasLib
                 return null;
             }
 
-            if (sharedData.S29CertKeys == null || sharedData.S29CertKeys.Count == 0)
+            if (sharedData.S29CertFiles == null || sharedData.S29CertFiles.Count == 0)
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream No client keys");
                 return null;
             }
 
-            string publicCert = sharedData.S29CertKeys[0].Item2;
-            string privateCert = sharedData.S29CertKeys[0].Item1;
+            string publicCert = sharedData.S29CertFiles[0].Item2;
+            string privateCert = sharedData.S29CertFiles[0].Item1;
 
             try
             {
                 TlsClientProtocol clientProtocol = new TlsClientProtocol(sharedData.TcpDiagClient.GetStream());
                 clientProtocol.IsResumableHandshake = true;
-                EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, publicCert, privateCert);
+                EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, publicCert, privateCert, sharedData.TrustedCAFiles);
                 clientProtocol.Connect(tlsClient);
                 Stream sslStream = clientProtocol.Stream;
                 return sslStream;
@@ -2979,6 +2987,7 @@ namespace EdiabasLib
                 }
 
                 List<X509Certificate2> caList = new List<X509Certificate2>();
+                List<string> caFileList = new List<string>();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
                 {
@@ -2990,6 +2999,7 @@ namespace EdiabasLib
                         X509Certificate2 cert = new X509Certificate2(certFile);
 #endif
                         caList.Add(cert);
+                        caFileList.Add(certFile);
                     }
                     catch (Exception ex)
                     {
@@ -2998,7 +3008,8 @@ namespace EdiabasLib
                 }
 
                 sharedData.TrustedCAs = caList;
-                return caList.Count > 0;
+                sharedData.TrustedCAFiles = caFileList;
+                return caList.Count > 0 | caFileList.Count > 0;
             }
             catch (Exception ex)
             {
@@ -3074,7 +3085,7 @@ namespace EdiabasLib
                 }
 
                 sharedData.S29Certs = certList;
-                sharedData.S29CertKeys = certKeyList;
+                sharedData.S29CertFiles = certKeyList;
                 return certList.Count > 0 || certKeyList.Count > 0;
             }
             catch (Exception ex)

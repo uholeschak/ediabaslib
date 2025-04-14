@@ -47,14 +47,14 @@ namespace EdiabasLib
         private EdiabasNet m_ediabasNet = null;
         private string m_publicCert = null;
         private string m_privateCert = null;
-        private string m_caFile = null;
+        private List<string> m_trustedCaList = null;
 
-        public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, string caFile = null) : base(new BcTlsCrypto())
+        public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, List<string> trustedCaList = null) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
             m_publicCert = publicCert;
             m_privateCert = privateCert;
-            m_caFile = caFile;
+            m_trustedCaList = trustedCaList;
 
             if (!File.Exists(m_publicCert))
             {
