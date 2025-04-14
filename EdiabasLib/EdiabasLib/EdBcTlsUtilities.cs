@@ -110,7 +110,7 @@ namespace EdiabasLib
 
         public static TlsCredentialedSigner LoadSignerCredentials(TlsContext context,
             IList<SignatureAndHashAlgorithm> supportedSignatureAlgorithms, short signatureAlgorithm,
-            string certResource, string keyResource)
+            string[] certResources, string keyResource)
         {
             if (supportedSignatureAlgorithms == null)
             {
@@ -132,7 +132,7 @@ namespace EdiabasLib
             if (signatureAndHashAlgorithm == null)
                 return null;
 
-            return LoadSignerCredentials(context, new string[] { certResource }, keyResource, signatureAndHashAlgorithm);
+            return LoadSignerCredentials(context, certResources, keyResource, signatureAndHashAlgorithm);
         }
 
         public static TlsCredentialedSigner LoadSignerCredentials(TlsContext context, string[] certResources,
