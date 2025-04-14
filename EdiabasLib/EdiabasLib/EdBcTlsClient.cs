@@ -42,19 +42,18 @@ namespace EdiabasLib
         };
 
 
-        private EdiabasNet m_ediabasNet = null;
-        private string m_publicCert = null;
-        private string m_privateCert = null;
-        private string m_caFile = null;
-        private List<string> m_trustedCaList = null;
-        private List<X509Name> m_certificateAuthorities = null;
+        private readonly EdiabasNet m_ediabasNet;
+        private readonly string m_publicCert;
+        private readonly string m_privateCert;
+        private readonly string m_caFile;
+        private readonly string[] m_certResources;
+        private readonly List<X509Name> m_certificateAuthorities;
 
         public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, List<string> trustedCaList = null) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
             m_publicCert = publicCert;
             m_privateCert = privateCert;
-            m_trustedCaList = trustedCaList;
 
             if (!File.Exists(m_publicCert))
             {
@@ -108,6 +107,8 @@ namespace EdiabasLib
             {
                 throw new FileNotFoundException("No valid CA found for", m_publicCert);
             }
+
+            m_certResources = new string[] { m_publicCert, m_caFile };
         }
 
         public override IDictionary<int, byte[]> GetClientExtensions()
@@ -244,13 +245,13 @@ namespace EdiabasLib
                 IList<SignatureAndHashAlgorithm> supportedSigAlgs = certificateRequest.SupportedSignatureAlgorithms;
 
                 TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context,
-                    supportedSigAlgs, SignatureAlgorithm.rsa, new string[] { m_outer.m_publicCert, m_outer.m_caFile }, m_outer.m_privateCert);
+                    supportedSigAlgs, SignatureAlgorithm.rsa, m_outer.m_certResources, m_outer.m_privateCert);
                 if (signerCredentials == null && supportedSigAlgs != null)
                 {
                     SignatureAndHashAlgorithm pss = SignatureAndHashAlgorithm.rsa_pss_rsae_sha256;
                     if (TlsUtilities.ContainsSignatureAlgorithm(supportedSigAlgs, pss))
                     {
-                        signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, new string[] { m_outer.m_publicCert, m_outer.m_caFile }, m_outer.m_privateCert, pss);
+                        signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, m_outer.m_certResources, m_outer.m_privateCert, pss);
                     }
                 }
 

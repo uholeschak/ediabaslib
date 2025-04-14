@@ -51,10 +51,11 @@ public class BcTlsServer : DefaultTlsServer
         CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
     };
 
-    private string m_privateCert = null;
-    private string m_publicCert = null;
-    private string m_caFile = null;
-    private string[] m_trustedCertResources;
+    private readonly string m_privateCert = null;
+    private readonly string m_publicCert = null;
+    private readonly string m_caFile = null;
+    private readonly string[] m_certResources;
+    private readonly string[] m_trustedCertResources;
 
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
     {
@@ -96,6 +97,7 @@ public class BcTlsServer : DefaultTlsServer
             trustedCertList.Add(trustedFile);
         }
 
+        m_certResources = new string[] { m_publicCert, m_caFile };
         m_trustedCertResources = trustedCertList.ToArray();
 
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
@@ -361,7 +363,7 @@ public class BcTlsServer : DefaultTlsServer
 
     protected override TlsCredentialedDecryptor GetRsaEncryptionCredentials()
     {
-        return EdBcTlsUtilities.LoadEncryptionCredentials(m_context, new [] { m_publicCert, m_caFile }, m_privateCert);
+        return EdBcTlsUtilities.LoadEncryptionCredentials(m_context, m_certResources, m_privateCert);
     }
 
     protected override TlsCredentialedSigner GetRsaSignerCredentials()
@@ -381,6 +383,6 @@ public class BcTlsServer : DefaultTlsServer
 
     private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm)
     {
-        return EdBcTlsUtilities.LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_publicCert, m_privateCert);
+        return EdBcTlsUtilities.LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_certResources, m_privateCert);
     }
 }
