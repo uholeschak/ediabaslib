@@ -194,56 +194,29 @@ namespace EdiabasLib
                 throw new TlsFatalAlert(AlertDescription.protocol_version);
             }
 
-            if (TlsUtilities.IsTlsV13(protocolVersion))
-            {
-                CertificateEntry[] certificateEntryList = new CertificateEntry[resources.Length];
-                for (int i = 0; i < resources.Length; ++i)
-                {
-                    TlsCertificate certificate = LoadCertificateResource(crypto, resources[i]);
-                    certificateEntryList[i] = new CertificateEntry(certificate, null);
-                }
-
-                byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
-                return new Certificate(certificateRequestContext, certificateEntryList);
-            }
-            else
-            {
-                TlsCertificate[] chain = new TlsCertificate[resources.Length];
-                for (int i = 0; i < resources.Length; ++i)
-                {
-                    chain[i] = LoadCertificateResource(crypto, resources[i]);
-                }
-                return new Certificate(chain);
-            }
-        }
-
-        public static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto, string resources)
-        {
-            if (protocolVersion == null)
-            {
-                throw new TlsFatalAlert(AlertDescription.protocol_version);
-            }
-
-            List<TlsCertificate> resourceCerts = LoadCertificateResources(crypto, resources);
             List<TlsCertificate> certificates = new List<TlsCertificate>();
-            foreach (TlsCertificate resourceCert in resourceCerts)
+            foreach (string resource in resources)
             {
-                bool existing = false;
-                foreach (TlsCertificate cert in certificates)
+                List<TlsCertificate> resourceCerts = LoadCertificateResources(crypto, resource);
+                foreach (TlsCertificate resourceCert in resourceCerts)
                 {
-                    if (AreSameCertificate(resourceCert, cert))
+                    bool existing = false;
+                    foreach (TlsCertificate cert in certificates)
                     {
-                        existing = true;
-                        break;
+                        if (AreSameCertificate(resourceCert, cert))
+                        {
+                            existing = true;
+                            break;
+                        }
                     }
-                }
 
-                if (existing)
-                {
-                    continue;
-                }
+                    if (existing)
+                    {
+                        continue;
+                    }
 
-                certificates.Add(resourceCert);
+                    certificates.Add(resourceCert);
+                }
             }
 
             if (TlsUtilities.IsTlsV13(protocolVersion))
