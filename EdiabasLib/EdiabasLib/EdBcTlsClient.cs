@@ -77,6 +77,23 @@ namespace EdiabasLib
             {
                 throw new FileNotFoundException("Public key file not valid", m_publicCert);
             }
+
+            if (trustedCaList != null)
+            {
+                foreach (string caFile in trustedCaList)
+                {
+                    if (!File.Exists(caFile))
+                    {
+                        throw new FileNotFoundException("Trusted CA file not found: {0}", caFile);
+                    }
+
+                    X509CertificateStructure caResource = EdBcTlsUtilities.LoadBcCertificateResource(caFile);
+                    if (caResource == null)
+                    {
+                        throw new FileNotFoundException("Trusted CA file not valid: {0}", caFile);
+                    }
+                }
+            }
         }
 
         public override IDictionary<int, byte[]> GetClientExtensions()
