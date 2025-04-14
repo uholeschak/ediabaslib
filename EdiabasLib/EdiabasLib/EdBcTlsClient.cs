@@ -8,6 +8,7 @@ using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.X509;
 
 namespace EdiabasLib
 {
@@ -71,14 +72,19 @@ namespace EdiabasLib
                 throw new FileNotFoundException("Private key file not valid", m_privateCert);
             }
 
-            X509CertificateStructure publicKeyResource = EdBcTlsUtilities.LoadBcCertificateResource(m_publicCert);
-            if (publicKeyResource == null)
+            IList<X509Certificate> publicCerts;
+            using (Stream fileStream = new FileStream(m_publicCert, FileMode.Open, FileAccess.Read, FileShare.Read))
             {
-                throw new FileNotFoundException("Public key file not valid", m_publicCert);
+                publicCerts = new X509CertificateParser().ReadCertificates(fileStream);
             }
 
-            X509Name publicIssuer = publicKeyResource.Issuer;
-            X509Name publicSubject = publicKeyResource.Subject;
+            if (publicCerts == null || publicCerts.Count == 0)
+            {
+                throw new FileNotFoundException("Public cert file not valid", m_publicCert);
+            }
+
+            X509Name publicIssuer = publicCerts[0].IssuerDN;
+            X509Name publicSubject = publicCerts[0].SubjectDN;
 
             m_certificateAuthorities = new List<X509Name>();
             if (trustedCaList != null)

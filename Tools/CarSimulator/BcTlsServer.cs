@@ -89,11 +89,6 @@ public class BcTlsServer : DefaultTlsServer
                 continue;
             }
 
-            if (certFileName.EndsWith("_full.crt", StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
             trustedCertList.Add(trustedFile);
         }
 

@@ -1014,8 +1014,8 @@ namespace CarSimulator
                             // openssl req -new -nodes -out vin1.csr -newkey rsa:4096 -keyout vin1.key
                             // openssl x509 -req -in vin1.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out vin1.crt -days 36500 -sha256
                             // openssl x509 -inform pem -noout -text -in vin1.crt
-                            // cat vin1.crt rootCA.crt > vin1_full.crt
-                            // openssl pkcs12 -export -out vin1.pfx -inkey vin1.key -in vin1_full.crt -passout pass:
+                            // cat vin1.crt rootCA.crt > vin1.pem
+                            // openssl pkcs12 -export -out vin1.pfx -inkey vin1.key -in vin1.pem -passout pass:
                             // generate hash name:
                             // openssl x509 -hash -noout -in rootCA.crt
                             // cp rootCA.crt <hash>.0
@@ -1025,8 +1025,8 @@ namespace CarSimulator
                             // openssl req -new -nodes -out client.csr -newkey rsa:4096 -keyout client.key
                             // openssl x509 -req -in client.csr -CA rootCA.crt -CAkey rootCA.key -CAcreateserial -out client.crt -days 36500 -sha256
                             // openssl x509 -inform pem -noout -text -in client.crt
-                            // cat client.crt rootCA.crt > client_full.crt
-                            // openssl pkcs12 -export -out client.pfx -inkey client.key -in client_full.crt -passout pass:
+                            // cat client.crt rootCA.crt > client.pem
+                            // openssl pkcs12 -export -out client.pfx -inkey client.key -in client.pem -passout pass:
                             // copy file to EDIABAS.ini [SSL] S29Path property location.
 
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
