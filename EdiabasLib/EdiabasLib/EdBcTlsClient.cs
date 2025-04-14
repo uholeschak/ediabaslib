@@ -83,38 +83,45 @@ namespace EdiabasLib
                 throw new FileNotFoundException("Public cert file not valid", m_publicCert);
             }
 
-            X509Name publicIssuer = publicCerts[0].IssuerDN;
-            X509Name publicSubject = publicCerts[0].SubjectDN;
-
-            m_certificateAuthorities = new List<X509Name>();
-            if (trustedCaList != null)
+            if (publicCerts.Count > 1)
+            {   // is chained cert
+                m_certResources = new string[] { m_publicCert };
+            }
+            else
             {
-                foreach (string caFile in trustedCaList)
+                X509Name publicIssuer = publicCerts[0].IssuerDN;
+                X509Name publicSubject = publicCerts[0].SubjectDN;
+
+                m_certificateAuthorities = new List<X509Name>();
+                if (trustedCaList != null)
                 {
-                    if (!File.Exists(caFile))
+                    foreach (string caFile in trustedCaList)
                     {
-                        throw new FileNotFoundException("Trusted CA file not found: {0}", caFile);
-                    }
-
-                    X509CertificateStructure caResource = EdBcTlsUtilities.LoadBcCertificateResource(caFile);
-                    if (caResource != null && caResource.Subject != null)
-                    {
-                        m_certificateAuthorities.Add(caResource.Subject);
-
-                        if (publicIssuer.Equivalent(caResource.Subject))
+                        if (!File.Exists(caFile))
                         {
-                            m_caFile = caFile;
+                            throw new FileNotFoundException("Trusted CA file not found: {0}", caFile);
+                        }
+
+                        X509CertificateStructure caResource = EdBcTlsUtilities.LoadBcCertificateResource(caFile);
+                        if (caResource != null && caResource.Subject != null)
+                        {
+                            m_certificateAuthorities.Add(caResource.Subject);
+
+                            if (publicIssuer.Equivalent(caResource.Subject))
+                            {
+                                m_caFile = caFile;
+                            }
                         }
                     }
                 }
-            }
 
-            if (m_caFile == null)
-            {
-                throw new FileNotFoundException("No valid CA found for", m_publicCert);
-            }
+                if (m_caFile == null)
+                {
+                    throw new FileNotFoundException("No valid CA found for", m_publicCert);
+                }
 
-            m_certResources = new string[] { m_publicCert, m_caFile };
+                m_certResources = new string[] { m_publicCert, m_caFile };
+            }
         }
 
         public override IDictionary<int, byte[]> GetClientExtensions()
