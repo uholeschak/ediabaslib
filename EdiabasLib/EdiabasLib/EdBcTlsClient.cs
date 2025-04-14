@@ -103,6 +103,11 @@ namespace EdiabasLib
                     }
                 }
             }
+
+            if (m_caFile == null)
+            {
+                throw new FileNotFoundException("No valid CA found for", m_publicCert);
+            }
         }
 
         public override IDictionary<int, byte[]> GetClientExtensions()
