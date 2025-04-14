@@ -194,40 +194,34 @@ namespace EdiabasLib
                 throw new TlsFatalAlert(AlertDescription.protocol_version);
             }
 
-            if (TlsUtilities.IsTlsV13(protocolVersion))
+            List<TlsCertificate> certificates = new List<TlsCertificate>();
+            foreach (string resource in resources)
             {
-                CertificateEntry[] certificateEntryList = new CertificateEntry[resources.Length];
-                for (int i = 0; i < resources.Length; ++i)
+                List<TlsCertificate> resourceCerts = LoadCertificateResources(crypto, resource);
+                foreach (TlsCertificate resourceCert in resourceCerts)
                 {
-                    TlsCertificate certificate = LoadCertificateResource(crypto, resources[i]);
-                    certificateEntryList[i] = new CertificateEntry(certificate, null);
-                }
+                    bool existing = false;
+                    foreach (TlsCertificate cert in certificates)
+                    {
+                        if (AreSameCertificate(resourceCert, cert))
+                        {
+                            existing = true;
+                            break;
+                        }
+                    }
 
-                byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
-                return new Certificate(certificateRequestContext, certificateEntryList);
-            }
-            else
-            {
-                TlsCertificate[] chain = new TlsCertificate[resources.Length];
-                for (int i = 0; i < resources.Length; ++i)
-                {
-                    chain[i] = LoadCertificateResource(crypto, resources[i]);
-                }
-                return new Certificate(chain);
-            }
-        }
+                    if (existing)
+                    {
+                        continue;
+                    }
 
-        public static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto, string resources)
-        {
-            if (protocolVersion == null)
-            {
-                throw new TlsFatalAlert(AlertDescription.protocol_version);
+                    certificates.Add(resourceCert);
+                }
             }
 
             if (TlsUtilities.IsTlsV13(protocolVersion))
             {
                 List<CertificateEntry> certificateEntryList = new List<CertificateEntry>();
-                List<TlsCertificate> certificates = LoadCertificateResources(crypto, resources);
                 foreach (TlsCertificate certificate in certificates)
                 {
                     certificateEntryList.Add(new CertificateEntry(certificate, null));
@@ -236,11 +230,8 @@ namespace EdiabasLib
                 byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
                 return new Certificate(certificateRequestContext, certificateEntryList.ToArray());
             }
-            else
-            {
-                List<TlsCertificate> certificates = LoadCertificateResources(crypto, resources);
-                return new Certificate(certificates.ToArray());
-            }
+
+            return new Certificate(certificates.ToArray());
         }
 
         public static Certificate LoadCertificateChain(TlsContext context, string[] resources)
