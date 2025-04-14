@@ -344,7 +344,7 @@ namespace CarSimulator
         private readonly List<DynamicUdsEntry> _dynamicUdsEntries;
         private readonly Dictionary<byte, byte[]> _codingStampDict;
         private readonly List<BmwTcpChannel> _bmwTcpChannels;
-        private bool useBcSsl = false;
+        private bool useBcSsl = true;
         private X509Certificate2 _serverCertificate;
         private UdpClient _udpClient;
         private bool _udpError;
