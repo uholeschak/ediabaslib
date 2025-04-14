@@ -89,6 +89,26 @@ namespace EdiabasLib
             }
         }
 
+        public static List<PemObject> LoadPemResources(string resource)
+        {
+            List <PemObject> pemObjects = new List<PemObject>();
+            using (PemReader p = new PemReader(new StreamReader(resource)))
+            {
+                for (;;)
+                {
+                    PemObject pemObject = p.ReadPemObject();
+                    if (pemObject == null)
+                    {
+                        break;
+                    }
+
+                    pemObjects.Add(pemObject);
+                }
+            }
+
+            return pemObjects;
+        }
+
         public static TlsCredentialedDecryptor LoadEncryptionCredentials(TlsContext context, string[] certResources,
             string keyResource)
         {
@@ -197,6 +217,32 @@ namespace EdiabasLib
             }
         }
 
+        public static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto, string resources)
+        {
+            if (protocolVersion == null)
+            {
+                throw new TlsFatalAlert(AlertDescription.protocol_version);
+            }
+
+            if (TlsUtilities.IsTlsV13(protocolVersion))
+            {
+                List<CertificateEntry> certificateEntryList = new List<CertificateEntry>();
+                List<TlsCertificate> certificates = LoadCertificateResources(crypto, resources);
+                foreach (TlsCertificate certificate in certificates)
+                {
+                    certificateEntryList.Add(new CertificateEntry(certificate, null));
+                }
+
+                byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
+                return new Certificate(certificateRequestContext, certificateEntryList.ToArray());
+            }
+            else
+            {
+                List<TlsCertificate> certificates = LoadCertificateResources(crypto, resources);
+                return new Certificate(certificates.ToArray());
+            }
+        }
+
         public static Certificate LoadCertificateChain(TlsContext context, string[] resources)
         {
             return LoadCertificateChain(context.ServerVersion, context.Crypto, resources);
@@ -210,6 +256,25 @@ namespace EdiabasLib
                 return crypto.CreateCertificate(pem.Content);
             }
             throw new ArgumentException("doesn't specify a valid certificate", "resource");
+        }
+
+        public static List<TlsCertificate> LoadCertificateResources(TlsCrypto crypto, string resource)
+        {
+            List<TlsCertificate> certificates = new List<TlsCertificate>();
+            List<PemObject> pemObjects = LoadPemResources(resource);
+            foreach (PemObject pem in pemObjects)
+            {
+                if (pem.Type.EndsWith("CERTIFICATE"))
+                {
+                    certificates.Add(crypto.CreateCertificate(pem.Content));
+                }
+                else
+                {
+                    throw new ArgumentException("doesn't specify a valid certificate", "resource");
+                }
+            }
+
+            return certificates;
         }
 
         public static bool AreSameCertificate(TlsCertificate a, TlsCertificate b)
