@@ -3076,7 +3076,7 @@ namespace EdiabasLib
                     }
                     else if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
                     {
-                        string publicCert = Path.ChangeExtension(certFile, ".crt");
+                        string publicCert = Path.ChangeExtension(certFile, ".pem");
                         if (File.Exists(publicCert))
                         {
                             certKeyList.Add(new Tuple<string, string>(certFile, publicCert));
