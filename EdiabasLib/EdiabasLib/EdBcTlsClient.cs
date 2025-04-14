@@ -48,6 +48,7 @@ namespace EdiabasLib
         private string m_publicCert = null;
         private string m_privateCert = null;
         private List<string> m_trustedCaList = null;
+        private List<X509Name> m_certificateAuthorities = null;
 
         public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, List<string> trustedCaList = null) : base(new BcTlsCrypto())
         {
@@ -78,6 +79,7 @@ namespace EdiabasLib
                 throw new FileNotFoundException("Public key file not valid", m_publicCert);
             }
 
+            m_certificateAuthorities = new List<X509Name>();
             if (trustedCaList != null)
             {
                 foreach (string caFile in trustedCaList)
@@ -88,9 +90,9 @@ namespace EdiabasLib
                     }
 
                     X509CertificateStructure caResource = EdBcTlsUtilities.LoadBcCertificateResource(caFile);
-                    if (caResource == null)
+                    if (caResource != null)
                     {
-                        throw new FileNotFoundException("Trusted CA file not valid: {0}", caFile);
+                        m_certificateAuthorities.Add(caResource.Subject);
                     }
                 }
             }
