@@ -6,9 +6,7 @@ using System.Collections.Generic;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Utilities;
-using Org.BouncyCastle.Ocsp;
 using Org.BouncyCastle.Utilities.Encoders;
-using System.Text;
 using Org.BouncyCastle.Crypto;
 
 namespace EdiabasLib
@@ -47,6 +45,7 @@ namespace EdiabasLib
         private EdiabasNet m_ediabasNet = null;
         private string m_publicCert = null;
         private string m_privateCert = null;
+        private string m_caFile = null;
         private List<string> m_trustedCaList = null;
         private List<X509Name> m_certificateAuthorities = null;
 
@@ -79,6 +78,9 @@ namespace EdiabasLib
                 throw new FileNotFoundException("Public key file not valid", m_publicCert);
             }
 
+            X509Name publicIssuer = publicKeyResource.Issuer;
+            X509Name publicSubject = publicKeyResource.Subject;
+
             m_certificateAuthorities = new List<X509Name>();
             if (trustedCaList != null)
             {
@@ -90,11 +92,21 @@ namespace EdiabasLib
                     }
 
                     X509CertificateStructure caResource = EdBcTlsUtilities.LoadBcCertificateResource(caFile);
-                    if (caResource != null)
+                    if (caResource != null && caResource.Subject != null)
                     {
                         m_certificateAuthorities.Add(caResource.Subject);
+
+                        if (publicIssuer.Equivalent(caResource.Subject))
+                        {
+                            m_caFile = caFile;
+                        }
                     }
                 }
+            }
+
+            if (m_caFile == null)
+            {
+                throw new FileNotFoundException("No valid CA found for", m_publicCert);
             }
         }
 
