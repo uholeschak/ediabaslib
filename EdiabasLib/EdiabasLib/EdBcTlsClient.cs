@@ -119,6 +119,16 @@ namespace EdiabasLib
             return clientExtensions;
         }
 
+        protected override IList<X509Name> GetCertificateAuthorities()
+        {
+            List<X509Name> certificateAuthorities = new List<X509Name>();
+            foreach (string trustedCA in m_trustedCAs)
+            {
+                certificateAuthorities.Add(EdBcTlsUtilities.LoadBcCertificateResource(trustedCA).Subject);
+            }
+            return certificateAuthorities;
+        }
+
         public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message, Exception cause)
         {
             m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client alert: {0} {1}", AlertLevel.GetText(alertLevel), AlertDescription.GetText(alertDescription));
