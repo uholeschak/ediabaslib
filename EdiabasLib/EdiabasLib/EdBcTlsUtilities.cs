@@ -187,7 +187,7 @@ namespace EdiabasLib
             }
         }
 
-        public static bool CheckCertificateChainCa(TlsCrypto crypto, TlsCertificate[] chain, string[] trustedCas)
+        public static bool CheckCertificateChainCa(TlsCrypto crypto, TlsCertificate[] chain, X509Name[] trustedIssuers)
         {
             if (chain.Length < 2)
             {
@@ -209,15 +209,9 @@ namespace EdiabasLib
                     continue;
                 }
 
-                foreach (string trustedCa in trustedCas)
+                foreach (X509Name trustedIssuer in trustedIssuers)
                 {
-                    X509CertificateStructure caCertificate = LoadBcCertificateResource(trustedCa);
-                    if (caCertificate == null)
-                    {
-                        continue;
-                    }
-
-                    if (issuer.Equivalent(caCertificate.Subject))
+                    if (issuer.Equivalent(trustedIssuer))
                     {
                         return true;
                     }

@@ -3,6 +3,7 @@ using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using System.IO;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Utilities;
@@ -47,7 +48,7 @@ namespace EdiabasLib
         private readonly EdiabasNet m_ediabasNet;
         private readonly string m_publicCert;
         private readonly string m_privateCert;
-        private readonly List<string> m_trustedCAs = null;
+        private readonly IList<X509Name> m_certificateAuthorities = null;
         private readonly string[] m_certResources;
 
         public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, List<string> trustedCaList) : base(new BcTlsCrypto())
@@ -88,19 +89,23 @@ namespace EdiabasLib
                 throw new FileNotFoundException("Public cert file contains no CA", m_publicCert);
             }
 
-            m_trustedCAs = new List<string>();
+            m_certificateAuthorities = new List<X509Name>();
             if (trustedCaList != null)
             {
                 foreach (string trustedCa in trustedCaList)
                 {
                     if (File.Exists(trustedCa))
                     {
-                        m_trustedCAs.Add(trustedCa);
+                        X509Name trustedIssuer = EdBcTlsUtilities.LoadBcCertificateResource(trustedCa)?.Subject;
+                        if (trustedIssuer != null)
+                        {
+                            m_certificateAuthorities.Add(trustedIssuer);
+                        }
                     }
                 }
             }
 
-            if (m_trustedCAs.Count == 0)
+            if (m_certificateAuthorities.Count == 0)
             {
                 throw new FileNotFoundException("No trusted CA files not found");
             }
@@ -121,12 +126,7 @@ namespace EdiabasLib
 
         protected override IList<X509Name> GetCertificateAuthorities()
         {
-            List<X509Name> certificateAuthorities = new List<X509Name>();
-            foreach (string trustedCA in m_trustedCAs)
-            {
-                certificateAuthorities.Add(EdBcTlsUtilities.LoadBcCertificateResource(trustedCA).Subject);
-            }
-            return certificateAuthorities;
+            return m_certificateAuthorities;
         }
 
         public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message, Exception cause)
@@ -221,7 +221,7 @@ namespace EdiabasLib
                 if (isEmpty)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
-                if (!EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, chain, m_outer.m_trustedCAs.ToArray()))
+                if (!EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, chain, m_outer.m_certificateAuthorities.ToArray()))
                 {
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
                 }
