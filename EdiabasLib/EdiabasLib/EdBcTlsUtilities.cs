@@ -194,17 +194,32 @@ namespace EdiabasLib
                 return false;
             }
 
-            foreach (string trustedCa in trustedCas)
+            BcTlsCrypto bcTlsCrypto = crypto as BcTlsCrypto;
+            if (bcTlsCrypto == null)
             {
-                TlsCertificate caCertificate = LoadCertificateResource(crypto, trustedCa);
-                if (caCertificate == null)
+                return false;
+            }
+
+            foreach (TlsCertificate tlsCertificate in chain)
+            {
+                X509Name issuer = BcTlsCertificate.Convert(bcTlsCrypto, tlsCertificate)?.X509CertificateStructure?.Issuer;
+                if (issuer == null)
                 {
                     continue;
                 }
 
-                if (AreSameCertificate(caCertificate, chain[chain.Length - 1]))
+                foreach (string trustedCa in trustedCas)
                 {
-                    return true;
+                    X509CertificateStructure caCertificate = LoadBcCertificateResource(trustedCa);
+                    if (caCertificate == null)
+                    {
+                        continue;
+                    }
+
+                    if (issuer.Equivalent(caCertificate.Subject))
+                    {
+                        return true;
+                    }
                 }
             }
 
