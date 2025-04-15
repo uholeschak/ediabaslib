@@ -13,6 +13,7 @@ using System.Linq;
 using Org.BouncyCastle.Crypto;
 using System.Reflection;
 using EdiabasLib;
+using Org.BouncyCastle.X509;
 
 namespace CarSimulator;
 
@@ -55,7 +56,6 @@ public class BcTlsServer : DefaultTlsServer
     private readonly string m_publicCert = null;
     private readonly string m_caFile = null;
     private readonly string[] m_certResources;
-    private readonly string[] m_trustedCertResources;
 
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
     {
@@ -70,11 +70,10 @@ public class BcTlsServer : DefaultTlsServer
             throw new ArgumentException("Certificate base file must contain a directory", nameof(certBaseFile));
         }
 
-        m_publicCert = Path.ChangeExtension(certBaseFile, ".crt");
+        m_publicCert = Path.ChangeExtension(certBaseFile, ".pem");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
 
         string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
-        List<string> trustedCertList = new List<string>();
         foreach (string trustedFile in trustedFiles)
         {
             string certFileName = Path.GetFileName(trustedFile);
@@ -86,14 +85,9 @@ public class BcTlsServer : DefaultTlsServer
             if (certFileName.EndsWith("CA.crt", StringComparison.OrdinalIgnoreCase))
             {
                 m_caFile = trustedFile;
-                continue;
+                break;
             }
-
-            trustedCertList.Add(trustedFile);
         }
-
-        m_certResources = new string[] { m_publicCert, m_caFile };
-        m_trustedCertResources = trustedCertList.ToArray();
 
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
         {
@@ -111,16 +105,29 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("Private key file not valid", m_privateCert);
         }
 
-        X509CertificateStructure publicKeyResource = EdBcTlsUtilities.LoadBcCertificateResource(m_publicCert);
-        if (publicKeyResource == null)
+        IList<X509Certificate> publicCerts;
+        using (Stream fileStream = new FileStream(m_publicCert, FileMode.Open, FileAccess.Read, FileShare.Read))
         {
-            throw new FileNotFoundException("Public key file not valid", m_publicCert);
+            publicCerts = new X509CertificateParser().ReadCertificates(fileStream);
+        }
+        if (publicCerts == null || publicCerts.Count == 0)
+        {
+            throw new FileNotFoundException("Public certificate file not valid", m_publicCert);
         }
 
         X509CertificateStructure caResourceResource = EdBcTlsUtilities.LoadBcCertificateResource(m_caFile);
         if (caResourceResource == null)
         {
             throw new FileNotFoundException("CA file not valid", m_caFile);
+        }
+
+        if (publicCerts.Count > 1)
+        {   // is chained cert
+            m_certResources = new string[] { m_publicCert };
+        }
+        else
+        {
+            m_certResources = new string[] { m_publicCert, m_caFile };
         }
     }
 
@@ -188,8 +195,8 @@ public class BcTlsServer : DefaultTlsServer
         }
 
         string certDir = Path.GetDirectoryName(m_caFile);
-        string clientCert = Path.Combine(certDir, "client.crt");
-        Certificate certificate = EdBcTlsUtilities.LoadCertificateChain(m_context, new[] { clientCert, m_caFile });
+        string clientCert = Path.Combine(certDir, "client.pem");
+        Certificate certificate = EdBcTlsUtilities.LoadCertificateChain(m_context, new[] { clientCert });
         NotifyClientCertificate(certificate);
         return true;
     }
@@ -299,19 +306,7 @@ public class BcTlsServer : DefaultTlsServer
             Debug.WriteLine("    fingerprint:SHA-256 " + EdBcTlsUtilities.Fingerprint(entry) + " (" + entry.Subject + ")");
         }
 
-        if (m_trustedCertResources?.Length > 0)
-        {
-            TlsCertificate[] certPath = EdBcTlsUtilities.GetTrustedCertPath(m_context.Crypto, chain[0], m_trustedCertResources, m_caFile);
-
-            if (null == certPath)
-                throw new TlsFatalAlert(AlertDescription.bad_certificate);
-
-            TlsUtilities.CheckPeerSigAlgs(m_context, certPath);
-        }
-        else
-        {
-            TlsUtilities.CheckPeerSigAlgs(m_context, chain);
-        }
+        TlsUtilities.CheckPeerSigAlgs(m_context, chain);
     }
 
     public override void ProcessClientExtensions(IDictionary<int, byte[]> clientExtensions)
