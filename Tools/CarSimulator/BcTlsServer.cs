@@ -54,7 +54,7 @@ public class BcTlsServer : DefaultTlsServer
 
     private readonly string m_privateCert = null;
     private readonly string m_publicCert = null;
-    private readonly string m_caFile = null;
+    private readonly List<string> m_trustedCAs = null;
     private readonly string[] m_certResources;
 
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
@@ -73,6 +73,7 @@ public class BcTlsServer : DefaultTlsServer
         m_publicCert = Path.ChangeExtension(certBaseFile, ".pem");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
 
+        m_trustedCAs = new List<string>();
         string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
         foreach (string trustedFile in trustedFiles)
         {
@@ -84,8 +85,7 @@ public class BcTlsServer : DefaultTlsServer
 
             if (certFileName.EndsWith("CA.crt", StringComparison.OrdinalIgnoreCase))
             {
-                m_caFile = trustedFile;
-                break;
+                m_trustedCAs.Add(trustedFile);
             }
         }
 
@@ -94,9 +94,9 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("Certificate files not found", certBaseFile);
         }
 
-        if (!File.Exists(m_caFile))
+        if (m_trustedCAs.Count == 0)
         {
-            throw new FileNotFoundException("CA file not found", m_caFile);
+            throw new FileNotFoundException("No trusted CA files found", certBaseFile);
         }
 
         AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(m_privateCert);
@@ -115,20 +115,12 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("Public certificate file not valid", m_publicCert);
         }
 
-        X509CertificateStructure caResourceResource = EdBcTlsUtilities.LoadBcCertificateResource(m_caFile);
-        if (caResourceResource == null)
+        if (publicCerts.Count < 2)
         {
-            throw new FileNotFoundException("CA file not valid", m_caFile);
+            throw new FileNotFoundException("Public certificate file does not contain CA certificate", m_publicCert);
         }
 
-        if (publicCerts.Count > 1)
-        {   // is chained cert
-            m_certResources = new string[] { m_publicCert };
-        }
-        else
-        {
-            m_certResources = new string[] { m_publicCert, m_caFile };
-        }
+        m_certResources = new string[] { m_publicCert };
     }
 
     public bool Test1()
@@ -194,7 +186,7 @@ public class BcTlsServer : DefaultTlsServer
             return false;
         }
 
-        string certDir = Path.GetDirectoryName(m_caFile);
+        string certDir = Path.GetDirectoryName(m_publicCert);
         string clientCert = Path.Combine(certDir, "client.pem");
         Certificate certificate = EdBcTlsUtilities.LoadCertificateChain(m_context, new[] { clientCert });
         NotifyClientCertificate(certificate);
@@ -261,8 +253,11 @@ public class BcTlsServer : DefaultTlsServer
             serverSigAlgs = TlsUtilities.GetDefaultSupportedSignatureAlgorithms(m_context);
         }
 
-        var certificateAuthorities = new List<X509Name>();
-        certificateAuthorities.Add(EdBcTlsUtilities.LoadBcCertificateResource(m_caFile).Subject);
+        List<X509Name> certificateAuthorities = new List<X509Name>();
+        foreach (string trustedCA in m_trustedCAs)
+        {
+            certificateAuthorities.Add(EdBcTlsUtilities.LoadBcCertificateResource(trustedCA).Subject);
+        }
 
         if (TlsUtilities.IsTlsV13(m_context))
         {
@@ -306,7 +301,7 @@ public class BcTlsServer : DefaultTlsServer
             Debug.WriteLine("    fingerprint:SHA-256 " + EdBcTlsUtilities.Fingerprint(entry) + " (" + entry.Subject + ")");
         }
 
-        if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, chain, new[] { m_caFile }))
+        if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, chain, m_trustedCAs.ToArray()))
         {
             throw new TlsFatalAlert(AlertDescription.bad_certificate);
         }
