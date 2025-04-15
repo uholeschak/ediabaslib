@@ -193,7 +193,7 @@ namespace EdiabasLib
                 m_ediabasNet = outer.m_ediabasNet;
             }
 
-            public virtual void NotifyServerCertificate(TlsServerCertificate serverCertificate)
+            public void NotifyServerCertificate(TlsServerCertificate serverCertificate)
             {
                 TlsCertificate[] chain = serverCertificate.Certificate.GetCertificateList();
 
