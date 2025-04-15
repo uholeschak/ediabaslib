@@ -46,11 +46,10 @@ namespace EdiabasLib
         private readonly EdiabasNet m_ediabasNet;
         private readonly string m_publicCert;
         private readonly string m_privateCert;
-        private readonly string m_caFile;
+        private readonly List<string> m_trustedCAs = null;
         private readonly string[] m_certResources;
-        private readonly List<X509Name> m_certificateAuthorities;
 
-        public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, List<string> trustedCaList = null) : base(new BcTlsCrypto())
+        public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, List<string> trustedCaList) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
             m_publicCert = publicCert;
@@ -83,45 +82,29 @@ namespace EdiabasLib
                 throw new FileNotFoundException("Public cert file not valid", m_publicCert);
             }
 
-            if (publicCerts.Count > 1)
-            {   // is chained cert
-                m_certResources = new string[] { m_publicCert };
-            }
-            else
+            if (publicCerts.Count < 2)
             {
-                X509Name publicIssuer = publicCerts[0].IssuerDN;
-                X509Name publicSubject = publicCerts[0].SubjectDN;
+                throw new FileNotFoundException("Public cert file contains no CA", m_publicCert);
+            }
 
-                m_certificateAuthorities = new List<X509Name>();
-                if (trustedCaList != null)
+            m_trustedCAs = new List<string>();
+            if (trustedCaList != null)
+            {
+                foreach (string trustedCa in trustedCaList)
                 {
-                    foreach (string caFile in trustedCaList)
+                    if (File.Exists(trustedCa))
                     {
-                        if (!File.Exists(caFile))
-                        {
-                            throw new FileNotFoundException("Trusted CA file not found: {0}", caFile);
-                        }
-
-                        X509CertificateStructure caResource = EdBcTlsUtilities.LoadBcCertificateResource(caFile);
-                        if (caResource != null && caResource.Subject != null)
-                        {
-                            m_certificateAuthorities.Add(caResource.Subject);
-
-                            if (publicIssuer.Equivalent(caResource.Subject))
-                            {
-                                m_caFile = caFile;
-                            }
-                        }
+                        m_trustedCAs.Add(trustedCa);
                     }
                 }
-
-                if (m_caFile == null)
-                {
-                    throw new FileNotFoundException("No valid CA found for", m_publicCert);
-                }
-
-                m_certResources = new string[] { m_publicCert, m_caFile };
             }
+
+            if (m_trustedCAs.Count == 0)
+            {
+                throw new FileNotFoundException("No trusted CA files not found");
+            }
+
+            m_certResources = new string[] { m_publicCert };
         }
 
         public override IDictionary<int, byte[]> GetClientExtensions()
@@ -227,21 +210,12 @@ namespace EdiabasLib
                 if (isEmpty)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
-#if false
-                string[] trustedCertResources = new string[]
+                if (!EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, chain, m_outer.m_trustedCAs.ToArray()))
                 {
-                    // trusted server certs
-                };
-
-                TlsCertificate[] certPath = EdBcTlsUtilities.GetTrustedCertPath(m_context.Crypto, chain[0], trustedCertResources, m_outer.m_caFile);
-
-                if (null == certPath)
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
+                }
 
-                TlsUtilities.CheckPeerSigAlgs(m_context, certPath);
-#else
                 TlsUtilities.CheckPeerSigAlgs(m_context, chain);
-#endif
             }
 
             public TlsCredentials GetClientCredentials(CertificateRequest certificateRequest)
