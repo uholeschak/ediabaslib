@@ -187,6 +187,30 @@ namespace EdiabasLib
             }
         }
 
+        public static bool CheckCertificateChainCa(TlsCrypto crypto, TlsCertificate[] chain, string[] trustedCas)
+        {
+            if (chain.Length < 2)
+            {
+                return false;
+            }
+
+            foreach (string trustedCa in trustedCas)
+            {
+                TlsCertificate caCertificate = LoadCertificateResource(crypto, trustedCa);
+                if (caCertificate == null)
+                {
+                    continue;
+                }
+
+                if (AreSameCertificate(caCertificate, chain[chain.Length - 1]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public static Certificate LoadCertificateChain(ProtocolVersion protocolVersion, TlsCrypto crypto, string[] resources)
         {
             if (protocolVersion == null)
