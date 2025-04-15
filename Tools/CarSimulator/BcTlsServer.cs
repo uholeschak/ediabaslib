@@ -231,6 +231,11 @@ public class BcTlsServer : DefaultTlsServer
         Debug.WriteLine("TLS server received alert: " + AlertLevel.GetText(alertLevel) + ", " + AlertDescription.GetText(alertDescription));
     }
 
+    public override void NotifyConnectionClosed()
+    {
+        m_clientTrustedIssuers = null;
+    }
+
     public override void NotifyHandshakeComplete()
     {
         base.NotifyHandshakeComplete();
