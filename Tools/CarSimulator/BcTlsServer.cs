@@ -54,8 +54,8 @@ public class BcTlsServer : DefaultTlsServer
 
     private readonly string m_privateCert = null;
     private readonly string m_publicCert = null;
-    private readonly List<string> m_trustedCAs = null;
     private readonly string[] m_certResources;
+    private readonly IList<X509Name> m_certificateAuthorities = null;
     private IList<X509Name> m_clientTrustedIssuers = null;
 
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
@@ -74,7 +74,7 @@ public class BcTlsServer : DefaultTlsServer
         m_publicCert = Path.ChangeExtension(certBaseFile, ".pem");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
 
-        m_trustedCAs = new List<string>();
+        m_certificateAuthorities = new List<X509Name>();
         string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
         foreach (string trustedFile in trustedFiles)
         {
@@ -86,7 +86,11 @@ public class BcTlsServer : DefaultTlsServer
 
             if (certFileName.EndsWith("CA.crt", StringComparison.OrdinalIgnoreCase))
             {
-                m_trustedCAs.Add(trustedFile);
+                X509Name trustedIssuer = EdBcTlsUtilities.LoadBcCertificateResource(trustedFile)?.Subject;
+                if (trustedIssuer != null)
+                {
+                    m_certificateAuthorities.Add(trustedIssuer);
+                }
             }
         }
 
@@ -95,7 +99,7 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("Certificate files not found", certBaseFile);
         }
 
-        if (m_trustedCAs.Count == 0)
+        if (m_certificateAuthorities.Count == 0)
         {
             throw new FileNotFoundException("No trusted CA files found", certBaseFile);
         }
@@ -254,23 +258,17 @@ public class BcTlsServer : DefaultTlsServer
             serverSigAlgs = TlsUtilities.GetDefaultSupportedSignatureAlgorithms(m_context);
         }
 
-        List<X509Name> certificateAuthorities = new List<X509Name>();
-        foreach (string trustedCA in m_trustedCAs)
-        {
-            certificateAuthorities.Add(EdBcTlsUtilities.LoadBcCertificateResource(trustedCA).Subject);
-        }
-
         if (TlsUtilities.IsTlsV13(m_context))
         {
             byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
 
-            return new CertificateRequest(certificateRequestContext, serverSigAlgs, null, certificateAuthorities);
+            return new CertificateRequest(certificateRequestContext, serverSigAlgs, null, m_certificateAuthorities);
         }
         else
         {
             short[] certificateTypes = new []{ ClientCertificateType.rsa_sign, ClientCertificateType.dss_sign, ClientCertificateType.ecdsa_sign };
 
-            return new CertificateRequest(certificateTypes, serverSigAlgs, certificateAuthorities);
+            return new CertificateRequest(certificateTypes, serverSigAlgs, m_certificateAuthorities);
         }
     }
 
@@ -302,7 +300,7 @@ public class BcTlsServer : DefaultTlsServer
             Debug.WriteLine("    fingerprint:SHA-256 " + EdBcTlsUtilities.Fingerprint(entry) + " (" + entry.Subject + ")");
         }
 
-        if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, chain, m_trustedCAs.ToArray()))
+        if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, chain, m_certificateAuthorities.ToArray()))
         {
             throw new TlsFatalAlert(AlertDescription.bad_certificate);
         }
