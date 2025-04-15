@@ -56,6 +56,7 @@ public class BcTlsServer : DefaultTlsServer
     private readonly string m_publicCert = null;
     private readonly List<string> m_trustedCAs = null;
     private readonly string[] m_certResources;
+    private IList<X509Name> m_clientTrustedIssuers = null;
 
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
     {
@@ -315,6 +316,7 @@ public class BcTlsServer : DefaultTlsServer
             throw new TlsFatalAlert(AlertDescription.internal_error);
 
         base.ProcessClientExtensions(clientExtensions);
+        m_clientTrustedIssuers = TlsExtensionsUtilities.GetCertificateAuthoritiesExtension(clientExtensions);
     }
 
     public override IDictionary<int, byte[]> GetServerExtensions()

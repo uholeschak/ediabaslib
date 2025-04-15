@@ -19,6 +19,7 @@ namespace EdiabasLib
             /*
              * TLS 1.3
              */
+            CipherSuite.TLS_AES_256_GCM_SHA384,
             CipherSuite.TLS_AES_128_GCM_SHA256,
             CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
 
@@ -116,6 +117,16 @@ namespace EdiabasLib
 
             IDictionary<int, byte[]> clientExtensions = base.GetClientExtensions();
             return clientExtensions;
+        }
+
+        protected override IList<X509Name> GetCertificateAuthorities()
+        {
+            List<X509Name> certificateAuthorities = new List<X509Name>();
+            foreach (string trustedCA in m_trustedCAs)
+            {
+                certificateAuthorities.Add(EdBcTlsUtilities.LoadBcCertificateResource(trustedCA).Subject);
+            }
+            return certificateAuthorities;
         }
 
         public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message, Exception cause)
