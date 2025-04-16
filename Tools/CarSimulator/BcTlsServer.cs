@@ -218,7 +218,7 @@ public class BcTlsServer : DefaultTlsServer
         base.ProcessClientExtensions(clientExtensions);
         m_clientTrustedIssuers = TlsExtensionsUtilities.GetCertificateAuthoritiesExtension(clientExtensions);
 
-        if (m_clientTrustedIssuers?.Count > 0)
+        if (m_clientTrustedIssuers != null && m_clientTrustedIssuers.Count > 0)
         {
             List<TlsCertificate> publicCertChain = EdBcTlsUtilities.LoadCertificateResources(Crypto, m_publicCert);
             if (publicCertChain == null || publicCertChain.Count == 0)
@@ -247,11 +247,6 @@ public class BcTlsServer : DefaultTlsServer
             throw new TlsFatalAlert(AlertDescription.internal_error);
 
         base.GetServerExtensionsForConnection(serverExtensions);
-    }
-
-    protected virtual IList<SignatureAndHashAlgorithm> GetSupportedSignatureAlgorithms()
-    {
-        return m_context.SecurityParameters.ClientSigAlgs;
     }
 
     protected override TlsCredentialedSigner GetDsaSignerCredentials()
@@ -284,6 +279,7 @@ public class BcTlsServer : DefaultTlsServer
 
     private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm)
     {
-        return EdBcTlsUtilities.LoadSignerCredentials(m_context, GetSupportedSignatureAlgorithms(), signatureAlgorithm, m_certResources, m_privateCert);
+        IList<SignatureAndHashAlgorithm> clientSignatureAlgorithms = m_context.SecurityParameters?.ClientSigAlgs;
+        return EdBcTlsUtilities.LoadSignerCredentials(m_context, clientSignatureAlgorithms, signatureAlgorithm, m_certResources, m_privateCert);
     }
 }
