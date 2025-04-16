@@ -324,6 +324,11 @@ public class BcTlsServer : DefaultTlsServer
         if (m_clientTrustedIssuers?.Count > 0)
         {
             List<TlsCertificate> publicCertChain = EdBcTlsUtilities.LoadCertificateResources(Crypto, m_publicCert);
+            if (publicCertChain == null || publicCertChain.Count == 0)
+            {
+                throw new TlsFatalAlert(AlertDescription.internal_error);
+            }
+
             if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, publicCertChain.ToArray(), m_clientTrustedIssuers.ToArray()))
             {
                 throw new TlsFatalAlert(AlertDescription.bad_certificate);
