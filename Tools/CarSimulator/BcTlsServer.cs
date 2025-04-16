@@ -320,6 +320,15 @@ public class BcTlsServer : DefaultTlsServer
 
         base.ProcessClientExtensions(clientExtensions);
         m_clientTrustedIssuers = TlsExtensionsUtilities.GetCertificateAuthoritiesExtension(clientExtensions);
+
+        if (m_clientTrustedIssuers?.Count > 0)
+        {
+            List<TlsCertificate> publicCertChain = EdBcTlsUtilities.LoadCertificateResources(Crypto, m_publicCert);
+            if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, publicCertChain.ToArray(), m_clientTrustedIssuers.ToArray()))
+            {
+                throw new TlsFatalAlert(AlertDescription.bad_certificate);
+            }
+        }
     }
 
     public override IDictionary<int, byte[]> GetServerExtensions()
