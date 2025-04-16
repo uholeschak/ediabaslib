@@ -19,6 +19,7 @@ namespace EdiabasLib
         private readonly string m_publicCert;
         private readonly string m_privateCert;
         private readonly IList<X509Name> m_certificateAuthorities = null;
+        private IList<X509Name> m_serverTrustedIssuers = null;
         private readonly string[] m_certResources;
 
         public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, List<string> trustedCaList) : base(new BcTlsCrypto())
@@ -115,6 +116,11 @@ namespace EdiabasLib
         public override void NotifyAlertReceived(short alertLevel, short alertDescription)
         {
             m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client received alert: {0} {1}", AlertLevel.GetText(alertLevel), AlertDescription.GetText(alertDescription));
+        }
+
+        public override void NotifyConnectionClosed()
+        {
+            m_serverTrustedIssuers = null;
         }
 
         public override void NotifyHandshakeComplete()
