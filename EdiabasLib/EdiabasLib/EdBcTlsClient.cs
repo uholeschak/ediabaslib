@@ -155,6 +155,7 @@ namespace EdiabasLib
                 throw new TlsFatalAlert(AlertDescription.internal_error);
 
             base.ProcessServerExtensions(serverExtensions);
+            m_serverTrustedIssuers = TlsExtensionsUtilities.GetCertificateAuthoritiesExtension(serverExtensions);
         }
 
         protected virtual string ToHexString(byte[] data)
