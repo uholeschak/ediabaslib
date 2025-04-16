@@ -1032,12 +1032,6 @@ namespace CarSimulator
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
                             string pfxFile = Path.ChangeExtension(ServerCertFile, ".pfx");
                             _serverCertificate = new X509Certificate2(pfxFile, ServerCertPwd);
-#if false
-                            BcTlsServer tlsServer = new BcTlsServer(ServerCertFile, ServerCertPwd);
-                            TlsServerProtocol tlsProtocol = new TlsServerProtocol();
-                            tlsProtocol.Accept(tlsServer);
-                            tlsServer.Test1();
-#endif
                         }
                         catch (Exception e)
                         {
