@@ -19,39 +19,6 @@ namespace CarSimulator;
 
 public class BcTlsServer : DefaultTlsServer
 {
-    private static readonly int[] TlsCipherSuites = new int[]
-    {
-        /*
-         * TLS 1.3
-         */
-        CipherSuite.TLS_AES_256_GCM_SHA384,
-        CipherSuite.TLS_AES_128_GCM_SHA256,
-        CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
-        /*
-         * pre-TLS 1.3
-         */
-        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-        CipherSuite.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
-        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-        CipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,
-        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
-        CipherSuite.TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-        CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,
-        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
-        CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA,
-        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
-        CipherSuite.TLS_RSA_WITH_AES_256_GCM_SHA384,
-        CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256,
-        CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256,
-        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
-        CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA,
-        CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-    };
-
     private readonly string m_privateCert = null;
     private readonly string m_publicCert = null;
     private readonly string[] m_certResources;
@@ -126,76 +93,6 @@ public class BcTlsServer : DefaultTlsServer
         }
 
         m_certResources = new string[] { m_publicCert };
-    }
-
-    public bool Test1()
-    {
-        SecurityParameters securityParameters = m_context.SecurityParameters;
-        FieldInfo fieldVersion = securityParameters.GetType().GetField("m_negotiatedVersion", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        if (fieldVersion == null)
-        {
-            Debug.WriteLine("Failed to get negotiated version field");
-            return false;
-        }
-        fieldVersion.SetValue(securityParameters, ProtocolVersion.TLSv13);
-
-        FieldInfo fieldAlgCert = securityParameters.GetType().GetField("m_serverSigAlgsCert", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        if (fieldAlgCert == null)
-        {
-            Debug.WriteLine("Failed to get serverSigAlgsCert field");
-            return false;
-        }
-        fieldAlgCert.SetValue(securityParameters, new SignatureAndHashAlgorithm[] { new SignatureAndHashAlgorithm(HashAlgorithm.sha256, SignatureAlgorithm.rsa) });
-
-        FieldInfo fieldServerRandom = securityParameters.GetType().GetField("m_serverRandom", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        if (fieldServerRandom == null)
-        {
-            Debug.WriteLine("Failed to get serverRandom field");
-            return false;
-        }
-        byte[] serverRandom = m_context.NonceGenerator.GenerateNonce(32);
-        fieldServerRandom.SetValue(securityParameters, serverRandom);
-
-        TlsCredentialedDecryptor credentialedDecryptor = GetRsaEncryptionCredentials();
-        if (credentialedDecryptor == null)
-        {
-            Debug.WriteLine("Failed to load RSA encryption credentials");
-            return false;
-        }
-
-        TlsCredentialedSigner credentialedSigner = GetRsaSignerCredentials();
-        if (credentialedSigner == null)
-        {
-            Debug.WriteLine("Failed to load RSA signer credentials");
-            return false;
-        }
-
-        IDictionary<int, byte[]> serverExtensions = GetServerExtensions();
-        if (serverExtensions == null)
-        {
-            Debug.WriteLine("Failed to get server extensions");
-            return false;
-        }
-
-        int[] cipherSuites = GetSupportedCipherSuites();
-        if (cipherSuites == null)
-        {
-            Debug.WriteLine("Failed to get supported cipher suites");
-            return false;
-        }
-
-        CertificateRequest certificateRequest = GetCertificateRequest();
-        if (certificateRequest == null)
-        {
-            Debug.WriteLine("Failed to get certificate request");
-            return false;
-        }
-
-        string certDir = Path.GetDirectoryName(m_publicCert);
-        string clientCert = Path.Combine(certDir, "client.pem");
-        Certificate certificate = EdBcTlsUtilities.LoadCertificateChain(m_context, new[] { clientCert });
-        NotifyClientCertificate(certificate);
-        return true;
     }
 
     public override TlsCredentials GetCredentials()
@@ -378,11 +275,6 @@ public class BcTlsServer : DefaultTlsServer
     protected override TlsCredentialedSigner GetRsaSignerCredentials()
     {
         return LoadSignerCredentials(SignatureAlgorithm.rsa);
-    }
-
-    protected override int[] GetSupportedCipherSuites()
-    {
-        return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsCipherSuites);
     }
 
     public virtual string ToHexString(byte[] data)
