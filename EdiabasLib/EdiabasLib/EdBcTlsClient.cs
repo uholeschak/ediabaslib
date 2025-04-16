@@ -15,40 +15,6 @@ namespace EdiabasLib
 {
     public class EdBcTlsClient : DefaultTlsClient
     {
-        private static readonly int[] TlsCipherSuites = new int[]
-        {
-            /*
-             * TLS 1.3
-             */
-            CipherSuite.TLS_AES_256_GCM_SHA384,
-            CipherSuite.TLS_AES_128_GCM_SHA256,
-            CipherSuite.TLS_CHACHA20_POLY1305_SHA256,
-            /*
-             * pre-TLS 1.3
-             */
-            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-            CipherSuite.TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
-            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,
-            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-            CipherSuite.TLS_DHE_RSA_WITH_AES_256_GCM_SHA384,
-            CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
-            CipherSuite.TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256,
-            CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,
-            CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,
-            CipherSuite.TLS_DHE_RSA_WITH_AES_256_CBC_SHA,
-            CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA,
-            CipherSuite.TLS_RSA_WITH_AES_256_GCM_SHA384,
-            CipherSuite.TLS_RSA_WITH_AES_128_GCM_SHA256,
-            CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA256,
-            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
-            CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA,
-            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-        };
-
-
         private readonly EdiabasNet m_ediabasNet;
         private readonly string m_publicCert;
         private readonly string m_privateCert;
@@ -183,11 +149,6 @@ namespace EdiabasLib
                 throw new TlsFatalAlert(AlertDescription.internal_error);
 
             base.ProcessServerExtensions(serverExtensions);
-        }
-
-        protected override int[] GetSupportedCipherSuites()
-        {
-            return TlsUtilities.GetSupportedCipherSuites(Crypto, TlsCipherSuites);
         }
 
         protected virtual string ToHexString(byte[] data)
