@@ -233,6 +233,17 @@ public class BcTlsServer : DefaultTlsServer
         }
     }
 
+    public override int[] GetSupportedGroups()
+    {
+        // prefer secp256r1
+        return new int[]
+        {
+            NamedGroup.secp256r1, NamedGroup.secp384r1,
+            NamedGroup.x25519, NamedGroup.x448,
+            NamedGroup.ffdhe2048, NamedGroup.ffdhe3072, NamedGroup.ffdhe4096
+        };
+    }
+
     public override IDictionary<int, byte[]> GetServerExtensions()
     {
         if (m_context.SecurityParameters.ServerRandom == null)
