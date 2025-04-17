@@ -2947,14 +2947,11 @@ namespace EdiabasLib
                 return null;
             }
 
-            string publicCert = sharedData.S29CertFiles[0].Item2;
-            string privateCert = sharedData.S29CertFiles[0].Item1;
-
             try
             {
                 TlsClientProtocol clientProtocol = new TlsClientProtocol(sharedData.TcpDiagClient.GetStream());
                 clientProtocol.IsResumableHandshake = true;
-                EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, publicCert, privateCert, sharedData.TrustedCAFiles);
+                EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, sharedData.S29CertFiles, sharedData.TrustedCAFiles);
                 clientProtocol.Connect(tlsClient);
                 Stream sslStream = clientProtocol.Stream;
                 return sslStream;
