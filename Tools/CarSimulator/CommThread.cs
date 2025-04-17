@@ -3566,7 +3566,7 @@ namespace CarSimulator
             }
             catch (AuthenticationException e)
             {
-                Debug.WriteLine("CreateSslStream Exception: {0}", e.Message);
+                Debug.WriteLine("CreateSslStream Exception: {0}", (object)EdiabasNet.GetExceptionText(e));
                 sslStream.Close();
                 throw;
             }
