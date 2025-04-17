@@ -120,6 +120,33 @@ namespace EdiabasLib
             m_certResources = new string[] { m_publicCert };
         }
 
+        protected override IList<int> GetSupportedGroups(IList<int> namedGroupRoles)
+        {
+            TlsCrypto crypto = Crypto;
+            IList<int> supportedGroups = new List<int>();
+
+            if (namedGroupRoles.Contains(NamedGroupRole.ecdh) ||
+                namedGroupRoles.Contains(NamedGroupRole.ecdsa))
+            {
+                TlsUtilities.AddIfSupported(supportedGroups, crypto,
+                    new int[] { NamedGroup.secp256r1, NamedGroup.secp384r1 });
+            }
+
+            if (namedGroupRoles.Contains(NamedGroupRole.ecdh))
+            {
+                TlsUtilities.AddIfSupported(supportedGroups, crypto,
+                    new int[] { NamedGroup.x25519, NamedGroup.x448 });
+            }
+
+            if (namedGroupRoles.Contains(NamedGroupRole.dh))
+            {
+                TlsUtilities.AddIfSupported(supportedGroups, crypto,
+                    new int[] { NamedGroup.ffdhe2048, NamedGroup.ffdhe3072, NamedGroup.ffdhe4096 });
+            }
+
+            return supportedGroups;
+        }
+
         public override IDictionary<int, byte[]> GetClientExtensions()
         {
             if (m_context.SecurityParameters.ClientRandom == null)
