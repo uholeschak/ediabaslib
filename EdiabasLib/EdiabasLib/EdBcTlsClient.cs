@@ -268,7 +268,13 @@ namespace EdiabasLib
                         return null;
                 }
 
-                if (m_certificateAuthorities == null || m_certificateAuthorities.Count == 0)
+                IList<X509Name> certificateAuthorities = m_outer.m_serverTrustedIssuers;
+                if (certificateAuthorities == null || certificateAuthorities.Count == 0)
+                {
+                    certificateAuthorities = m_certificateAuthorities;
+                }
+
+                if (certificateAuthorities == null || certificateAuthorities.Count == 0)
                 {
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
                 }
