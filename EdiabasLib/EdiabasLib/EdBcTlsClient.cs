@@ -216,6 +216,13 @@ namespace EdiabasLib
 
             public void NotifyServerCertificate(TlsServerCertificate serverCertificate)
             {
+                bool isEmpty = serverCertificate?.Certificate == null || serverCertificate.Certificate.IsEmpty;
+
+                if (isEmpty)
+                {
+                    throw new TlsFatalAlert(AlertDescription.bad_certificate);
+                }
+
                 TlsCertificate[] chain = serverCertificate.Certificate.GetCertificateList();
 
                 m_certificateAuthorities = new List<X509Name>();
@@ -242,12 +249,6 @@ namespace EdiabasLib
                     X509CertificateStructure entry = X509CertificateStructure.GetInstance(chain[i].GetEncoded());
                     m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "fingerprint:SHA-256: {0} ({1})", EdBcTlsUtilities.Fingerprint(entry), entry.Subject);
                 }
-
-                bool isEmpty = serverCertificate == null || serverCertificate.Certificate == null
-                                                         || serverCertificate.Certificate.IsEmpty;
-
-                if (isEmpty)
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate);
 
                 if (!EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, chain, m_outer.m_certificateAuthorities.ToArray()))
                 {
