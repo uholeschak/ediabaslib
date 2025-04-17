@@ -120,11 +120,28 @@ namespace EdiabasLib
             m_certResources = new string[] { m_publicCert };
         }
 
+        public override IDictionary<int, byte[]> GetClientExtensions()
+        {
+            if (m_context.SecurityParameters.ClientRandom == null)
+            {
+                throw new TlsFatalAlert(AlertDescription.internal_error);
+            }
+
+            IDictionary<int, byte[]> clientExtensions = base.GetClientExtensions();
+            return clientExtensions;
+        }
+
+        protected override IList<X509Name> GetCertificateAuthorities()
+        {
+            return m_certificateAuthorities;
+        }
+
         protected override IList<int> GetSupportedGroups(IList<int> namedGroupRoles)
         {
             TlsCrypto crypto = Crypto;
             IList<int> supportedGroups = new List<int>();
 
+            // prefer secp256r1
             if (namedGroupRoles.Contains(NamedGroupRole.ecdh) ||
                 namedGroupRoles.Contains(NamedGroupRole.ecdsa))
             {
@@ -145,22 +162,6 @@ namespace EdiabasLib
             }
 
             return supportedGroups;
-        }
-
-        public override IDictionary<int, byte[]> GetClientExtensions()
-        {
-            if (m_context.SecurityParameters.ClientRandom == null)
-            {
-                throw new TlsFatalAlert(AlertDescription.internal_error);
-            }
-
-            IDictionary<int, byte[]> clientExtensions = base.GetClientExtensions();
-            return clientExtensions;
-        }
-
-        protected override IList<X509Name> GetCertificateAuthorities()
-        {
-            return m_certificateAuthorities;
         }
 
         public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message, Exception cause)
