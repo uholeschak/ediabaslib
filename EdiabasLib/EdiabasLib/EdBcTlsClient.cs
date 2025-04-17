@@ -52,48 +52,18 @@ namespace EdiabasLib
         };
 
         private readonly EdiabasNet m_ediabasNet;
-        private readonly string m_publicCert;
-        private readonly string m_privateCert;
+        private readonly List<Tuple<string, string>> m_privatePublicCertList;
         private readonly IList<X509Name> m_certificateAuthorities = null;
         private IList<X509Name> m_serverTrustedIssuers = null;
-        private readonly string[] m_certResources;
 
-        public EdBcTlsClient(EdiabasNet ediabasNet, string publicCert, string privateCert, List<string> trustedCaList) : base(new BcTlsCrypto())
+        public EdBcTlsClient(EdiabasNet ediabasNet, List<Tuple<string, string>> privatePublicCertList, List<string> trustedCaList) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
-            m_publicCert = publicCert;
-            m_privateCert = privateCert;
+            m_privatePublicCertList = privatePublicCertList;
 
-            if (!File.Exists(m_publicCert))
+            if (m_privatePublicCertList == null || m_privatePublicCertList.Count == 0)
             {
-                throw new FileNotFoundException("Public cert file not found: {0}", m_publicCert);
-            }
-
-            if (!File.Exists(m_privateCert))
-            {
-                throw new FileNotFoundException("Private cert file not found: {0}", m_privateCert);
-            }
-
-            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(m_privateCert);
-            if (privateKeyResource == null)
-            {
-                throw new FileNotFoundException("Private key file not valid", m_privateCert);
-            }
-
-            IList<X509Certificate> publicCerts;
-            using (Stream fileStream = new FileStream(m_publicCert, FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                publicCerts = new X509CertificateParser().ReadCertificates(fileStream);
-            }
-
-            if (publicCerts == null || publicCerts.Count == 0)
-            {
-                throw new FileNotFoundException("Public cert file not valid", m_publicCert);
-            }
-
-            if (publicCerts.Count < 2)
-            {
-                throw new FileNotFoundException("Public cert file contains no CA", m_publicCert);
+                throw new ArgumentNullException("Private/Public cert list is empty");
             }
 
             m_certificateAuthorities = new List<X509Name>();
@@ -116,8 +86,6 @@ namespace EdiabasLib
             {
                 throw new FileNotFoundException("No trusted CA files not found");
             }
-
-            m_certResources = new string[] { m_publicCert };
         }
 
         public override IDictionary<int, byte[]> GetClientExtensions()
@@ -237,6 +205,7 @@ namespace EdiabasLib
             private readonly EdBcTlsClient m_outer;
             private readonly TlsContext m_context;
             private EdiabasNet m_ediabasNet = null;
+            private IList<X509Name> m_certificateAuthorities = null;
 
             public EdBcTlsAuthentication(EdBcTlsClient outer, TlsContext context)
             {
@@ -248,6 +217,24 @@ namespace EdiabasLib
             public void NotifyServerCertificate(TlsServerCertificate serverCertificate)
             {
                 TlsCertificate[] chain = serverCertificate.Certificate.GetCertificateList();
+
+                m_certificateAuthorities = new List<X509Name>();
+                BcTlsCrypto bcTlsCrypto = m_outer.Crypto as BcTlsCrypto;
+                if (bcTlsCrypto != null)
+                {
+                    for (int i = chain.Length - 1; i >= 0; i--)
+                    {
+                        TlsCertificate tlsCertificate = chain[i];
+                        X509Name issuer = BcTlsCertificate.Convert(bcTlsCrypto, tlsCertificate)?.X509CertificateStructure?.Issuer;
+                        if (issuer != null)
+                        {
+                            if (!m_certificateAuthorities.Contains(issuer))
+                            {
+                                m_certificateAuthorities.Add(issuer);
+                            }
+                        }
+                    }
+                }
 
                 m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client server chain length: {0}", chain.Length);
                 for (int i = 0; i < chain.Length; ++i)
@@ -281,16 +268,42 @@ namespace EdiabasLib
                         return null;
                 }
 
+                if (m_certificateAuthorities == null || m_certificateAuthorities.Count == 0)
+                {
+                    throw new TlsFatalAlert(AlertDescription.bad_certificate);
+                }
+
+                string selectedPrivateCert = null;
+                string selectedPublicCert = null;
+
+                foreach (Tuple<string, string> privatePublicCert in m_outer.m_privatePublicCertList)
+                {
+                    string privateCert = privatePublicCert.Item1;
+                    string publicCert = privatePublicCert.Item2;
+                    List<TlsCertificate> publicCerts = EdBcTlsUtilities.LoadCertificateResources(m_outer.Crypto, publicCert);
+                    if (EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, publicCerts.ToArray(), m_certificateAuthorities.ToArray()))
+                    {
+                        selectedPrivateCert = privateCert;
+                        selectedPublicCert = publicCert;
+                        break;
+                    }
+                }
+
+                if (selectedPrivateCert == null || selectedPublicCert == null)
+                {
+                    throw new TlsFatalAlert(AlertDescription.bad_certificate);
+                }
+
                 IList<SignatureAndHashAlgorithm> supportedSigAlgs = certificateRequest.SupportedSignatureAlgorithms;
 
                 TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context,
-                    supportedSigAlgs, SignatureAlgorithm.rsa, m_outer.m_certResources, m_outer.m_privateCert);
+                    supportedSigAlgs, SignatureAlgorithm.rsa, new []{ selectedPublicCert }, selectedPrivateCert);
                 if (signerCredentials == null && supportedSigAlgs != null)
                 {
                     SignatureAndHashAlgorithm pss = SignatureAndHashAlgorithm.rsa_pss_rsae_sha256;
                     if (TlsUtilities.ContainsSignatureAlgorithm(supportedSigAlgs, pss))
                     {
-                        signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, m_outer.m_certResources, m_outer.m_privateCert, pss);
+                        signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, new[] { selectedPublicCert }, selectedPrivateCert, pss);
                     }
                 }
 
