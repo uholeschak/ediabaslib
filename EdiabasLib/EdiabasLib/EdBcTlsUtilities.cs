@@ -181,10 +181,8 @@ namespace EdiabasLib
 
                 return new BcDefaultTlsCredentialedSigner(cryptoParams, (BcTlsCrypto)crypto, privateKey, certificate, signatureAndHashAlgorithm);
             }
-            else
-            {
-                throw new NotSupportedException();
-            }
+
+            throw new NotSupportedException();
         }
 
         public static bool CheckCertificateChainCa(TlsCrypto crypto, TlsCertificate[] chain, X509Name[] trustedIssuers)

@@ -116,34 +116,6 @@ namespace EdiabasLib
             return m_certificateAuthorities;
         }
 
-        protected override IList<int> GetSupportedGroups(IList<int> namedGroupRoles)
-        {
-            TlsCrypto crypto = Crypto;
-            IList<int> supportedGroups = new List<int>();
-
-            // prefer secp256r1
-            if (namedGroupRoles.Contains(NamedGroupRole.ecdh) ||
-                namedGroupRoles.Contains(NamedGroupRole.ecdsa))
-            {
-                TlsUtilities.AddIfSupported(supportedGroups, crypto,
-                    new int[] { NamedGroup.secp256r1, NamedGroup.secp384r1 });
-            }
-
-            if (namedGroupRoles.Contains(NamedGroupRole.ecdh))
-            {
-                TlsUtilities.AddIfSupported(supportedGroups, crypto,
-                    new int[] { NamedGroup.x25519, NamedGroup.x448 });
-            }
-
-            if (namedGroupRoles.Contains(NamedGroupRole.dh))
-            {
-                TlsUtilities.AddIfSupported(supportedGroups, crypto,
-                    new int[] { NamedGroup.ffdhe2048, NamedGroup.ffdhe3072, NamedGroup.ffdhe4096 });
-            }
-
-            return supportedGroups;
-        }
-
         public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message, Exception cause)
         {
             m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client alert: {0} {1}", AlertLevel.GetText(alertLevel), AlertDescription.GetText(alertDescription));
