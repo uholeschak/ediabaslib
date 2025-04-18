@@ -189,7 +189,7 @@ namespace EdiabasLib
 
         public static bool CheckCertificateChainCa(TlsCrypto crypto, TlsCertificate[] chain, X509Name[] trustedIssuers)
         {
-            if (chain.Length < 2)
+            if (chain.Length < 1)
             {
                 return false;
             }
