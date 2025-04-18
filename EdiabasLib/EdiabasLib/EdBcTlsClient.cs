@@ -297,13 +297,11 @@ namespace EdiabasLib
 
                 foreach (CertInfo certInfo in m_outer.m_privatePublicCertList)
                 {
-                    string privateCert = certInfo.PrivateCert;
-                    string publicCert = certInfo.PublicCert;
-                    List<TlsCertificate> publicCerts = EdBcTlsUtilities.LoadCertificateResources(m_outer.Crypto, publicCert);
+                    List<TlsCertificate> publicCerts = EdBcTlsUtilities.LoadCertificateResources(m_outer.Crypto, certInfo.PublicCert);
                     if (EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, publicCerts.ToArray(), m_certificateAuthorities.ToArray()))
                     {
-                        selectedPrivateCert = privateCert;
-                        selectedPublicCert = publicCert;
+                        selectedPrivateCert = certInfo.PrivateCert;
+                        selectedPublicCert = certInfo.PublicCert;
                         break;
                     }
                 }
