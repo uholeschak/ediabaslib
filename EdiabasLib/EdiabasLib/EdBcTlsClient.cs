@@ -15,6 +15,18 @@ namespace EdiabasLib
 {
     public class EdBcTlsClient : DefaultTlsClient
     {
+        public class CertInfo
+        {
+            public CertInfo(string privateCert, string publicCert)
+            {
+                PrivateCert = privateCert;
+                PublicCert = publicCert;
+            }
+
+            public string PrivateCert { get; }
+            public string PublicCert { get; }
+        }
+
         private static readonly int[] ClientCipherSuites = new int[]
         {
             /*
@@ -52,14 +64,14 @@ namespace EdiabasLib
         };
 
         private readonly EdiabasNet m_ediabasNet;
-        private readonly List<Tuple<string, string>> m_privatePublicCertList;
+        private readonly List<CertInfo> m_privatePublicCertList;
         private readonly IList<X509Name> m_certificateAuthorities = null;
         private IList<X509Name> m_serverTrustedIssuers = null;
 
-        public EdBcTlsClient(EdiabasNet ediabasNet, List<Tuple<string, string>> privatePublicCertList, List<string> trustedCaList) : base(new BcTlsCrypto())
+        public EdBcTlsClient(EdiabasNet ediabasNet, List<CertInfo> certInfoList, List<string> trustedCaList) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
-            m_privatePublicCertList = privatePublicCertList;
+            m_privatePublicCertList = certInfoList;
 
             if (m_privatePublicCertList == null || m_privatePublicCertList.Count == 0)
             {
@@ -283,10 +295,10 @@ namespace EdiabasLib
                 string selectedPrivateCert = null;
                 string selectedPublicCert = null;
 
-                foreach (Tuple<string, string> privatePublicCert in m_outer.m_privatePublicCertList)
+                foreach (CertInfo certInfo in m_outer.m_privatePublicCertList)
                 {
-                    string privateCert = privatePublicCert.Item1;
-                    string publicCert = privatePublicCert.Item2;
+                    string privateCert = certInfo.PrivateCert;
+                    string publicCert = certInfo.PublicCert;
                     List<TlsCertificate> publicCerts = EdBcTlsUtilities.LoadCertificateResources(m_outer.Crypto, publicCert);
                     if (EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, publicCerts.ToArray(), m_certificateAuthorities.ToArray()))
                     {
