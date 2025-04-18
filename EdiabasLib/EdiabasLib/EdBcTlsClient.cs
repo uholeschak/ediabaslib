@@ -66,7 +66,6 @@ namespace EdiabasLib
         private readonly EdiabasNet m_ediabasNet;
         private readonly List<CertInfo> m_privatePublicCertList;
         private readonly IList<X509Name> m_certificateAuthorities = null;
-        private IList<X509Name> m_serverTrustedIssuers = null;
 
         public EdBcTlsClient(EdiabasNet ediabasNet, List<CertInfo> certInfoList, List<string> trustedCaList) : base(new BcTlsCrypto())
         {
@@ -134,11 +133,6 @@ namespace EdiabasLib
             m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client received alert: {0} {1}", AlertLevel.GetText(alertLevel), AlertDescription.GetText(alertDescription));
         }
 
-        public override void NotifyConnectionClosed()
-        {
-            m_serverTrustedIssuers = null;
-        }
-
         public override void NotifyHandshakeComplete()
         {
             base.NotifyHandshakeComplete();
@@ -171,7 +165,6 @@ namespace EdiabasLib
                 throw new TlsFatalAlert(AlertDescription.internal_error);
 
             base.ProcessServerExtensions(serverExtensions);
-            m_serverTrustedIssuers = TlsExtensionsUtilities.GetCertificateAuthoritiesExtension(serverExtensions);
         }
 
         protected override int[] GetSupportedCipherSuites()
@@ -253,12 +246,7 @@ namespace EdiabasLib
                         return null;
                 }
 
-                IList<X509Name> certificateAuthorities = m_outer.m_serverTrustedIssuers;
-                if (certificateAuthorities == null || certificateAuthorities.Count == 0)
-                {
-                    certificateAuthorities = m_certificateAuthorities;
-                }
-
+                IList<X509Name> certificateAuthorities = m_certificateAuthorities;
                 if (certificateAuthorities == null || certificateAuthorities.Count == 0)
                 {
                     throw new TlsFatalAlert(AlertDescription.bad_certificate);
