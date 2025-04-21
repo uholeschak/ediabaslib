@@ -63,6 +63,13 @@ namespace EdiabasLib
             CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
         };
 
+        private static readonly SignatureAndHashAlgorithm[] RsaSignatureAndHashAlgorithms =
+        {
+            SignatureAndHashAlgorithm.rsa_pss_rsae_sha256,
+            SignatureAndHashAlgorithm.rsa_pss_rsae_sha384,
+            SignatureAndHashAlgorithm.rsa_pss_rsae_sha512,
+        };
+
         private readonly EdiabasNet m_ediabasNet;
         private readonly List<CertInfo> m_privatePublicCertList;
         private readonly IList<X509Name> m_certificateAuthorities = null;
@@ -276,24 +283,7 @@ namespace EdiabasLib
                 TlsCredentialedSigner signerCredentials = null;
                 if (supportedSigAlgs != null)
                 {
-                    List<SignatureAndHashAlgorithm> rsaSignatureAndHashAlgorithms = new List<SignatureAndHashAlgorithm>
-                        {
-                            SignatureAndHashAlgorithm.rsa_pss_rsae_sha256,
-                            SignatureAndHashAlgorithm.rsa_pss_rsae_sha384,
-                            SignatureAndHashAlgorithm.rsa_pss_rsae_sha512,
-                        };
-
-                    foreach (SignatureAndHashAlgorithm pss in rsaSignatureAndHashAlgorithms)
-                    {
-                        if (TlsUtilities.ContainsSignatureAlgorithm(supportedSigAlgs, pss))
-                        {
-                            signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, new[] { selectedPublicCert }, selectedPrivateCert, pss);
-                            if (signerCredentials != null)
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, new[] { selectedPublicCert }, selectedPrivateCert, RsaSignatureAndHashAlgorithms);
                 }
 
                 if (signerCredentials == null)
