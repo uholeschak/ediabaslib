@@ -9,7 +9,6 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
@@ -447,7 +446,7 @@ namespace PsdzClient.Core.Container
         public BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP)
         {
             BoolResultObject boolResultObject = new BoolResultObject();
-            BoolResultObject boolResultObject2 = new BoolResultObject();
+            BoolResultObject isS29Successful = new BoolResultObject();
             if (device == null)
             {
                 Log.Warning("ECUKom.InitVCI()", "failed because device was null");
@@ -463,21 +462,43 @@ namespace PsdzClient.Core.Container
                 if (isDoIP2 || isDoIP)
                 {
                     CreateEdiabasPublicKeyIfNotExist(device);
-                    boolResultObject2 = HandleS29Authentication(device);
-                    if (!boolResultObject2.Result)
+                    isS29Successful = HandleS29Authentication(device);
+                    if (!isS29Successful.Result)
                     {
-                        boolResultObject.Result = boolResultObject2.Result;
-                        boolResultObject.ErrorMessage = boolResultObject2.ErrorMessage;
+                        boolResultObject.Result = isS29Successful.Result;
+                        boolResultObject.ErrorMessage = isS29Successful.ErrorMessage;
                         boolResultObject.Time = DateTime.Now;
-                        boolResultObject.ErrorCode = boolResultObject2.ErrorCode;
-                        boolResultObject.ErrorCodeInt = boolResultObject2.ErrorCodeInt;
+                        boolResultObject.ErrorCode = isS29Successful.ErrorCode;
+                        boolResultObject.ErrorCodeInt = isS29Successful.ErrorCodeInt;
                         return boolResultObject;
                     }
                 }
+#if false
+                else
+                {
+                    IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient();
+                    if (istaIcsServiceClient.IsAvailable())
+                    {
+                        if (!istaIcsServiceClient.GetSec4DiagEnabledInBackground())
+                        {
+                            Log.Warning(Log.CurrentMethod(), "Sec4DiagEnbaledInBackground is false");
+                        }
+                        else
+                        {
+                            Task.Run(delegate
+                            {
+                                isS29Successful = TestSubCACall(device);
+                            });
+                        }
+                    }
+                }
+#else
+                isS29Successful.Result = true;
+#endif
                 switch (device.VCIType)
                 {
                     case VCIDeviceType.ICOM:
-                        if (isDoIP2 && boolResultObject2.Result)
+                        if (isDoIP2 && isS29Successful.Result)
                         {
                             boolResultObject.Result = InitEdiabasForDoIP(device);
                             break;
@@ -491,7 +512,7 @@ namespace PsdzClient.Core.Container
                         {
                             boolResultObject.Result = api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
                         }
-                        if (isDoIP && boolResultObject2.Result)
+                        if (isDoIP && isS29Successful.Result)
                         {
                             boolResultObject.Result = InitEdiabasForDoIP(device);
                         }
@@ -507,8 +528,7 @@ namespace PsdzClient.Core.Container
                         }
                         else
                         {
-                            string config = $"RemoteHost={device.IPAddress}";
-                            boolResultObject.Result = api.apiInitExt("ENET", "_", "Rheingold", config);
+                            boolResultObject.Result = api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=6801;ControlPort=6811");
                         }
                         break;
                     case VCIDeviceType.TELESERVICE:
@@ -565,7 +585,7 @@ namespace PsdzClient.Core.Container
                         boolResultObject.ErrorCodeInt = 2;
                     }
                 }
-                if (boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState())
+                if (boolResultObject.Result && isS29Successful.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState())
                 {
                     boolResultObject.Result = false;
                     boolResultObject.ErrorCodeInt = 0;
