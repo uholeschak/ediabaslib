@@ -280,18 +280,16 @@ namespace EdiabasLib
 
                 IList<SignatureAndHashAlgorithm> supportedSigAlgs = certificateRequest.SupportedSignatureAlgorithms;
 
-                TlsCredentialedSigner signerCredentials = null;
                 if (supportedSigAlgs != null)
                 {
-                    signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, new[] { selectedPublicCert }, selectedPrivateCert, RsaSignatureAndHashAlgorithms);
+                    TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, new[] { selectedPublicCert }, selectedPrivateCert, RsaSignatureAndHashAlgorithms);
+                    if (signerCredentials != null)
+                    {
+                        return signerCredentials;
+                    }
                 }
 
-                if (signerCredentials == null)
-                {
-                    signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, SignatureAlgorithm.rsa, new[] { selectedPublicCert }, selectedPrivateCert);
-                }
-
-                return signerCredentials;
+                return EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, SignatureAlgorithm.rsa, new[] { selectedPublicCert }, selectedPrivateCert);
             }
         }
     }
