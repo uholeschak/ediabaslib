@@ -19,6 +19,13 @@ namespace CarSimulator;
 
 public class BcTlsServer : DefaultTlsServer
 {
+    private static readonly SignatureAndHashAlgorithm[] RsaSignatureAndHashAlgorithms =
+    {
+        SignatureAndHashAlgorithm.rsa_pss_rsae_sha256,
+        SignatureAndHashAlgorithm.rsa_pss_rsae_sha384,
+        SignatureAndHashAlgorithm.rsa_pss_rsae_sha512,
+    };
+
     private readonly string m_privateCert = null;
     private readonly string m_publicCert = null;
     private readonly string[] m_certResources;
@@ -280,7 +287,7 @@ public class BcTlsServer : DefaultTlsServer
 
     protected override TlsCredentialedSigner GetRsaSignerCredentials()
     {
-        return LoadSignerCredentials(SignatureAlgorithm.rsa);
+        return LoadSignerCredentials(SignatureAlgorithm.rsa, RsaSignatureAndHashAlgorithms);
     }
 
     public virtual string ToHexString(byte[] data)
@@ -288,9 +295,18 @@ public class BcTlsServer : DefaultTlsServer
         return data == null ? "(null)" : Hex.ToHexString(data);
     }
 
-    private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm)
+    private TlsCredentialedSigner LoadSignerCredentials(short signatureAlgorithm, SignatureAndHashAlgorithm[] signatureAndHashAlgorithms = null)
     {
         IList<SignatureAndHashAlgorithm> clientSignatureAlgorithms = m_context.SecurityParameters?.ClientSigAlgs;
+        if (signatureAndHashAlgorithms != null)
+        {
+            TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, clientSignatureAlgorithms, m_certResources, m_privateCert, RsaSignatureAndHashAlgorithms);
+            if (signerCredentials != null)
+            {
+                return signerCredentials;
+            }
+        }
+
         return EdBcTlsUtilities.LoadSignerCredentials(m_context, clientSignatureAlgorithms, signatureAlgorithm, m_certResources, m_privateCert);
     }
 }
