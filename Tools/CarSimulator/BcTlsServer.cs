@@ -103,6 +103,11 @@ public class BcTlsServer : DefaultTlsServer
         m_certResources = new string[] { m_publicCert };
     }
 
+    public override int GetHandshakeTimeoutMillis()
+    {
+        return 5000;
+    }
+
     public override TlsCredentials GetCredentials()
     {
         if (m_context.ServerVersion == null)
