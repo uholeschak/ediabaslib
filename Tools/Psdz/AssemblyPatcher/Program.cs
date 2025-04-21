@@ -1231,6 +1231,7 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.OnlineMode\"", "    <add key=\"BMW.Rheingold.OnlineMode\" value=\"false\" />"),
                     ("\"BMW.Rheingold.UseIdentNuget\"", "    <add key=\"BMW.Rheingold.UseIdentNuget\" value=\"false\" />"),
                     ("\"BMW.Rheingold.Programming.PsdzWebservice.Enabled\"", "    <add key=\"BMW.Rheingold.Programming.PsdzWebservice.Enabled\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.Programming.Programming.Sdp.Patch.Enabled\"", "    <add key=\"BMW.Rheingold.Programming.Programming.Sdp.Patch.Enabled\" value=\"false\" />"),
                     ("\"BMW.Rheingold.Diagnostics.EnableRsuProcessHandling\"", "    <add key=\"BMW.Rheingold.Diagnostics.EnableRsuProcessHandling\" value=\"false\" />"),
                     ("\"BMW.Rheingold.ISTAGUI.Dialogs.AdministrationDialog.ShowPTTSelection\"", "    <add key=\"BMW.Rheingold.ISTAGUI.Dialogs.AdministrationDialog.ShowPTTSelection\" value=\"true\" />"),
                     ("\"BMW.Rheingold.CoreFramework.TRICZentralActive\"", "    <add key=\"BMW.Rheingold.CoreFramework.TRICZentralActive\" value=\"false\" />"),
