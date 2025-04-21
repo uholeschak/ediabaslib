@@ -595,21 +595,25 @@ namespace AssemblyPatcher
                                     Instruction instruction = instructions[index];
                                     if (instruction.OpCode == OpCodes.Ldstr &&
                                         string.Compare(instruction.Operand.ToString(), "RPLUS:ICOM_P:Remotehost=", StringComparison.OrdinalIgnoreCase) == 0
-                                        && index + 4 < instructions.Count)
+                                        && index + 5 < instructions.Count)
                                     {
-                                        if (instructions[index + 1].OpCode != OpCodes.Ldarg_1)
+                                        if (instructions[index + 1].OpCode != OpCodes.Ldloc_0)
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 2].OpCode != OpCodes.Callvirt)     // get_IPAddress()
+                                        if (instructions[index + 2].OpCode != OpCodes.Ldfld)
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 3].OpCode != OpCodes.Ldstr)
+                                        if (instructions[index + 3].OpCode != OpCodes.Callvirt)     // get_IPAddress()
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 4].OpCode != OpCodes.Call)         // Conact()
+                                        if (instructions[index + 4].OpCode != OpCodes.Ldstr)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 5].OpCode != OpCodes.Call)         // Conact()
                                         {
                                             continue;
                                         }
@@ -620,14 +624,20 @@ namespace AssemblyPatcher
                                     }
                                 }
 
+                                if (templateIndex < 0)
+                                {
+                                    Console.WriteLine("Format template not found");
+                                }
+
                                 if (patchIndex >= 0 && templateIndex >= 0)
                                 {
                                     List<Instruction> insertInstructions = new List<Instruction>();
                                     insertInstructions.Add(new Instruction(OpCodes.Ldstr, "RemoteHost="));
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldarg_1));
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldloc_0));
                                     insertInstructions.Add(instructions[templateIndex + 2].Clone());    // get_IPAddress()
+                                    insertInstructions.Add(instructions[templateIndex + 3].Clone());    // get_IPAddress()
                                     insertInstructions.Add(new Instruction(OpCodes.Ldstr, ";DiagnosticPort=6801;ControlPort=6811"));
-                                    insertInstructions.Add(instructions[templateIndex + 4].Clone());    // Concat()
+                                    insertInstructions.Add(instructions[templateIndex + 5].Clone());    // Concat()
 
                                     instructions.RemoveAt(patchIndex);
                                     int offset = 0;
@@ -825,6 +835,11 @@ namespace AssemblyPatcher
                                     }
                                 }
 
+                                if (removeIndex < 0 || getBnTypeIndex < 0)
+                                {
+                                    Console.WriteLine("HandleMissingEcus not found");
+                                }
+
                                 int insertIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
@@ -869,6 +884,11 @@ namespace AssemblyPatcher
                                         insertIndex = index + 2;
                                         break;
                                     }
+                                }
+
+                                if (insertIndex < 0)
+                                {
+                                    Console.WriteLine("set_IDENT_SUCCESSFULLY not found");
                                 }
 
                                 if (removeIndex >= 0 && insertIndex >= 0)
