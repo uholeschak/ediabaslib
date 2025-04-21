@@ -1023,96 +1023,15 @@ namespace AssemblyPatcher
                                 {
                                     Namespace = "BMW.Rheingold.xVM",
                                     Class = "SLP",
-                                    Method = "ScanDeviceFromAttrList",
+                                    Method = "IsIcomUnsupported",
                                 };
                                 IList<Instruction> instructions = patcher.GetInstructionList(target);
                                 if (instructions != null)
                                 {
-                                    Console.WriteLine("SLP.ScanDeviceFromAttrList found");
-#if false
-                                    int patchIndexType = -1;
-                                    for (int index = 0; index < instructions.Count; index++)
-                                    {
-                                        Instruction instruction = instructions[index];
-                                        if (instruction.OpCode == OpCodes.Ldstr &&
-                                            string.Compare(instruction.Operand.ToString(), "ICOM", StringComparison.OrdinalIgnoreCase) == 0 &&
-                                            index + 3 < instructions.Count)
-                                        {
-                                            if (instructions[index + 1].OpCode != OpCodes.Callvirt)
-                                            {
-                                                continue;
-                                            }
-
-                                            if (instructions[index + 2].OpCode != OpCodes.Ldloc_1)
-                                            {
-                                                continue;
-                                            }
-
-                                            if (instructions[index + 3].OpCode != OpCodes.Ldc_I4_1)
-                                            {
-                                                continue;
-                                            }
-
-                                            patchIndexType = index + 3;
-                                            break;
-                                        }
-                                    }
-
-                                    if (patchIndexType >= 0)
-                                    {
-                                        instructions[patchIndexType] = Instruction.Create(OpCodes.Ldc_I4_0);    // DeviceTypeDetail = Undefined
-                                        patched = true;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Patching ICOM type failed");
-                                    }
-#endif
-                                    // InteractionConnectionManagerViewModel constructor checks vCIDevice?.DevTypeExt
-                                    int patchIndexExtType = -1;
-                                    for (int index = 0; index < instructions.Count; index++)
-                                    {
-                                        Instruction instruction = instructions[index];
-                                        if (instruction.OpCode == OpCodes.Ldloc_0 &&
-                                            index + 4 < instructions.Count)
-                                        {
-                                            if (instructions[index + 1].OpCode != OpCodes.Ldstr ||
-                                                string.Compare(instructions[index + 1].Operand.ToString(), "DevTypeExt", StringComparison.OrdinalIgnoreCase) != 0)
-                                            {
-                                                continue;
-                                            }
-
-                                            if (instructions[index + 2].OpCode != OpCodes.Callvirt)
-                                            {
-                                                continue;
-                                            }
-
-                                            if (instructions[index + 3].OpCode != OpCodes.Callvirt)
-                                            {
-                                                continue;
-                                            }
-
-                                            if (instructions[index + 4].OpCode != OpCodes.Br)
-                                            {
-                                                continue;
-                                            }
-
-                                            patchIndexExtType = index + 0;
-                                            break;
-                                        }
-                                    }
-
-                                    if (patchIndexExtType >= 0)
-                                    {
-                                        instructions.RemoveAt(patchIndexExtType); // OpCodes.Ldloc_0
-                                        instructions[patchIndexExtType].Operand = "ICOM_Next_A";
-                                        instructions.RemoveAt(patchIndexExtType + 1); // OpCodes.Callvirt
-                                        patched = true;
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("Patching ICOM DevTypeExt failed");
-                                    }
+                                    Console.WriteLine("SLP.IsIcomUnsupported found");
+                                    instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
+                                    instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                    patched = true;
                                 }
                             }
                             catch (Exception)
