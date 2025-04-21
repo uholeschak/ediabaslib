@@ -772,65 +772,70 @@ namespace AssemblyPatcher
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
                                     Instruction instruction = instructions[index];
-                                    if (instruction.OpCode == OpCodes.Ldarg_0 && index + 11 < instructions.Count)
+                                    if (instruction.OpCode == OpCodes.Ldarg_0 && index + 12 < instructions.Count)
                                     {
-                                        if (instructions[index + 1].OpCode != OpCodes.Call)
+                                        if (instructions[index + 1].OpCode != OpCodes.Call)         // get_VecInfo
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 2].OpCode != OpCodes.Callvirt)     // IsPreDS2Vehicle
+                                        if (instructions[index + 2].OpCode != OpCodes.Callvirt)     // get_Classification
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 3].OpCode != OpCodes.Brtrue_S)
+                                        if (instructions[index + 3].OpCode != OpCodes.Callvirt)     // IsPreDS2Vehicle
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 4].OpCode != OpCodes.Ldarg_0)
+                                        if (instructions[index + 4].OpCode != OpCodes.Brtrue_S)
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 5].OpCode != OpCodes.Call)
+                                        if (instructions[index + 5].OpCode != OpCodes.Ldarg_0)
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 6].OpCode != OpCodes.Callvirt)     // get_BNType
+                                        if (instructions[index + 6].OpCode != OpCodes.Call)         // get_VecInfo
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 7].OpCode != OpCodes.Ldc_I4_2)
+                                        if (instructions[index + 7].OpCode != OpCodes.Callvirt)     // get_BNType
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 8].OpCode != OpCodes.Bne_Un_S)
+                                        if (instructions[index + 8].OpCode != OpCodes.Ldc_I4_2)
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 9].OpCode != OpCodes.Ldarg_0)
+                                        if (instructions[index + 9].OpCode != OpCodes.Bne_Un_S)
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 10].OpCode != OpCodes.Ldc_I4_0)     // false
+                                        if (instructions[index + 10].OpCode != OpCodes.Ldarg_0)
                                         {
                                             continue;
                                         }
 
-                                        if (instructions[index + 11].OpCode != OpCodes.Call)     // HandleMissingEcus
+                                        if (instructions[index + 11].OpCode != OpCodes.Ldc_I4_0)     // false
+                                        {
+                                            continue;
+                                        }
+
+                                        if (instructions[index + 12].OpCode != OpCodes.Call)     // HandleMissingEcus
                                         {
                                             continue;
                                         }
 
                                         removeIndex = index;
-                                        getBnTypeIndex = index + 4;
+                                        getBnTypeIndex = index + 5;
                                         break;
                                     }
                                 }
@@ -910,7 +915,7 @@ namespace AssemblyPatcher
                                         offset++;
                                     }
 
-                                    for (int idx = 0; idx < 12; idx++)
+                                    for (int idx = 0; idx < 13; idx++)
                                     {
                                         instructions.RemoveAt(removeIndex + offset);
                                     }
