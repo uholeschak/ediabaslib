@@ -276,10 +276,23 @@ namespace EdiabasLib
                 TlsCredentialedSigner signerCredentials = null;
                 if (supportedSigAlgs != null)
                 {
-                    SignatureAndHashAlgorithm pss = SignatureAndHashAlgorithm.rsa_pss_rsae_sha256;
-                    if (TlsUtilities.ContainsSignatureAlgorithm(supportedSigAlgs, pss))
+                    List<SignatureAndHashAlgorithm> rsaSignatureAndHashAlgorithms = new List<SignatureAndHashAlgorithm>
+                        {
+                            SignatureAndHashAlgorithm.rsa_pss_rsae_sha256,
+                            SignatureAndHashAlgorithm.rsa_pss_rsae_sha384,
+                            SignatureAndHashAlgorithm.rsa_pss_rsae_sha512,
+                        };
+
+                    foreach (SignatureAndHashAlgorithm pss in rsaSignatureAndHashAlgorithms)
                     {
-                        signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, new[] { selectedPublicCert }, selectedPrivateCert, pss);
+                        if (TlsUtilities.ContainsSignatureAlgorithm(supportedSigAlgs, pss))
+                        {
+                            signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, new[] { selectedPublicCert }, selectedPrivateCert, pss);
+                            if (signerCredentials != null)
+                            {
+                                break;
+                            }
+                        }
                     }
                 }
 
