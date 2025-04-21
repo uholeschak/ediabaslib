@@ -241,6 +241,12 @@ namespace AssemblyPatcher
                         continue;
                     }
 
+                    if (baseName.StartsWith("Google", StringComparison.OrdinalIgnoreCase) ||
+                        baseName.StartsWith("Grpc", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
                     if (baseName.EndsWith("interop", StringComparison.OrdinalIgnoreCase) ||
                         baseName.EndsWith("IDESKernel", StringComparison.OrdinalIgnoreCase) ||
                         baseName.EndsWith("procdump", StringComparison.OrdinalIgnoreCase) ||
