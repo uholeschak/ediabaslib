@@ -107,6 +107,11 @@ namespace EdiabasLib
             }
         }
 
+        public override int GetHandshakeTimeoutMillis()
+        {
+            return 5000;
+        }
+
         public override IDictionary<int, byte[]> GetClientExtensions()
         {
             if (m_context.SecurityParameters.ClientRandom == null)
