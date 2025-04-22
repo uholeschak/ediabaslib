@@ -2954,6 +2954,7 @@ namespace EdiabasLib
                 TlsClientProtocol clientProtocol = new TlsClientProtocol(clientStream);
                 clientProtocol.IsResumableHandshake = true;
                 EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, sharedData.S29CertFiles, sharedData.TrustedCAFiles);
+                tlsClient.HandshakeTimeout = SslAuthTimeout;
                 clientProtocol.Connect(tlsClient);
                 Stream sslStream = clientProtocol.Stream;
                 return sslStream;
