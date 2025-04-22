@@ -363,7 +363,7 @@ namespace EdiabasLib
             }
             return null;
         }
-        public static bool CreatePkcs12File(string certResource, string keyResource, string fileName)
+        public static byte[] CreatePkcs12Data(string certResource, string keyResource, string fileName)
         {
             try
             {
@@ -371,7 +371,7 @@ namespace EdiabasLib
                 List<X509CertificateStructure> certificateStructures = LoadBcCertificateResources(certResource);
                 if (certificateStructures.Count == 0)
                 {
-                    return false;
+                    return null;
                 }
 
                 List<X509CertificateEntry> certificateEntries = new List<X509CertificateEntry>();
@@ -390,22 +390,21 @@ namespace EdiabasLib
 
                 if (string.IsNullOrEmpty(friendlyName))
                 {
-                    return false;
+                    return null;
                 }
 
                 AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
                 AsymmetricKeyEntry keyEntry = new AsymmetricKeyEntry(privateKey);
                 store.SetKeyEntry(friendlyName + "_key", keyEntry, certificateEntries.ToArray());
-                using (FileStream fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+                using (MemoryStream stream = new MemoryStream())
                 {
-                    store.Save(fs, null, new SecureRandom());
+                    store.Save(stream, null, new SecureRandom());
+                    return stream.ToArray();
                 }
-
-                return true;
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
         }
     }
