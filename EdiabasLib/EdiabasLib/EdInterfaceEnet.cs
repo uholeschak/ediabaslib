@@ -3080,6 +3080,23 @@ namespace EdiabasLib
                         if (File.Exists(publicCert))
                         {
                             certKeyList.Add(new EdBcTlsClient.CertInfo(certFile, publicCert));
+                            byte[] pkcs12Data = EdBcTlsUtilities.CreatePkcs12Data(publicCert, certFile);
+                            if (pkcs12Data != null)
+                            {
+                                try
+                                {
+#if NET9_0_OR_GREATER
+                                    X509Certificate2 cert = X509CertificateLoader.LoadCertificate(pkcs12Data);
+#else
+                                    X509Certificate2 cert = new X509Certificate2(pkcs12Data);
+#endif
+                                    //certList.Add(cert);
+                                }
+                                catch (Exception ex)
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
+                                }
+                            }
                         }
                     }
                 }

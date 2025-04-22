@@ -363,7 +363,7 @@ namespace EdiabasLib
             }
             return null;
         }
-        public static byte[] CreatePkcs12Data(string certResource, string keyResource, string fileName)
+        public static byte[] CreatePkcs12Data(string certResource, string keyResource)
         {
             try
             {
