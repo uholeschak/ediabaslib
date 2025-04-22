@@ -3058,23 +3058,7 @@ namespace EdiabasLib
                         }
                     }
 
-                    if (string.Compare(certExtension, ".pfx", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        try
-                        {
-#if NET9_0_OR_GREATER
-                            X509Certificate2 cert = X509CertificateLoader.LoadCertificateFromFile(certFile);
-#else
-                            X509Certificate2 cert = new X509Certificate2(certFile);
-#endif
-                            certList.Add(cert);
-                        }
-                        catch (Exception ex)
-                        {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
-                        }
-                    }
-                    else if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         string publicCert = Path.ChangeExtension(certFile, ".pem");
                         if (File.Exists(publicCert))
@@ -3090,7 +3074,7 @@ namespace EdiabasLib
 #else
                                     X509Certificate2 cert = new X509Certificate2(pkcs12Data);
 #endif
-                                    //certList.Add(cert);
+                                    certList.Add(cert);
                                 }
                                 catch (Exception ex)
                                 {

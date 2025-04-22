@@ -381,7 +381,6 @@ namespace EdiabasLib
                     X509Certificate certificate = new X509Certificate(certificateStructure);
                     X509CertificateEntry certificateEntry = new X509CertificateEntry(certificate);
                     certificateEntries.Add(certificateEntry);
-                    store.SetCertificateEntry(certificate.SubjectDN.ToString(), certificateEntry);
                     if (friendlyName == null)
                     {
                         friendlyName = certificate.SubjectDN.ToString();
@@ -395,7 +394,7 @@ namespace EdiabasLib
 
                 AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
                 AsymmetricKeyEntry keyEntry = new AsymmetricKeyEntry(privateKey);
-                store.SetKeyEntry(friendlyName + "_key", keyEntry, certificateEntries.ToArray());
+                store.SetKeyEntry(friendlyName, keyEntry, certificateEntries.ToArray());
                 using (MemoryStream stream = new MemoryStream())
                 {
                     store.Save(stream, null, new SecureRandom());
