@@ -53,6 +53,24 @@ namespace EdiabasLib
             throw new ArgumentException("doesn't specify a valid certificate", "resource");
         }
 
+        public static List<X509CertificateStructure> LoadBcCertificateResources(string resource)
+        {
+            List<X509CertificateStructure> certificates = new List<X509CertificateStructure>();
+            List<PemObject> pemObjects = LoadPemResources(resource);
+            foreach (PemObject pem in pemObjects)
+            {
+                if (pem.Type.EndsWith("CERTIFICATE"))
+                {
+                    certificates.Add(X509CertificateStructure.GetInstance(pem.Content));
+                }
+                else
+                {
+                    throw new ArgumentException("doesn't specify a valid certificate", "resource");
+                }
+            }
+            return certificates;
+        }
+
         public static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource)
         {
             PemObject pem = LoadPemResource(resource);
