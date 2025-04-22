@@ -2949,9 +2949,9 @@ namespace EdiabasLib
 
             try
             {
-                NetworkStream clientStream = sharedData.TcpDiagClient.GetStream();
-                clientStream.ReadTimeout = SslAuthTimeout;
-                TlsClientProtocol clientProtocol = new TlsClientProtocol(clientStream);
+                NetworkStream serverStream = sharedData.TcpDiagClient.GetStream();
+                serverStream.ReadTimeout = SslAuthTimeout;
+                TlsClientProtocol clientProtocol = new TlsClientProtocol(serverStream);
                 clientProtocol.IsResumableHandshake = true;
                 EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, sharedData.S29CertFiles, sharedData.TrustedCAFiles);
                 tlsClient.HandshakeTimeout = SslAuthTimeout;
