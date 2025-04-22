@@ -310,6 +310,7 @@ namespace CarSimulator
         private const int MaxBufferLength = 0x10000;
         private const int TcpSendBufferSize = 1400;
         private const int TcpSendTimeout = 5000;
+        private const int SslAuthTimeout = 5000;
         private const int Kwp2000Nr2123Retries = 3;
         private const int ResetAdaptionChannel = 0;
         private const int DefaultAdaptionChannelValue = 0x1234;
@@ -3582,9 +3583,12 @@ namespace CarSimulator
             Stream sslStream = null;
             try
             {
+                NetworkStream clientStream = client.GetStream();
+                clientStream.ReadTimeout = SslAuthTimeout;
                 TlsServerProtocol tlsProtocol = new TlsServerProtocol(client.GetStream());
                 tlsProtocol.IsResumableHandshake = true;
                 BcTlsServer tlsServer = new BcTlsServer(serverCertFile, ServerCertPwd);
+                tlsServer.HandshakeTimeout = SslAuthTimeout;
                 tlsProtocol.Accept(tlsServer);
                 sslStream = tlsProtocol.Stream;
                 return sslStream;

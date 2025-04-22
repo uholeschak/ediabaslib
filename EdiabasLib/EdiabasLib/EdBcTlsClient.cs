@@ -75,6 +75,8 @@ namespace EdiabasLib
         private readonly List<CertInfo> m_privatePublicCertList;
         private readonly IList<X509Name> m_certificateAuthorities = null;
 
+        public int HandshakeTimeout { get; set; } = 0;
+
         public EdBcTlsClient(EdiabasNet ediabasNet, List<CertInfo> certInfoList, List<string> trustedCaList) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
@@ -109,7 +111,7 @@ namespace EdiabasLib
 
         public override int GetHandshakeTimeoutMillis()
         {
-            return 5000;
+            return HandshakeTimeout;
         }
 
         public override IDictionary<int, byte[]> GetClientExtensions()

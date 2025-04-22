@@ -33,6 +33,8 @@ public class BcTlsServer : DefaultTlsServer
     private readonly IList<X509Name> m_certificateAuthorities = null;
     private IList<X509Name> m_clientTrustedIssuers = null;
 
+    public int HandshakeTimeout { get; set; } = 0;
+
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
     {
         if (!string.IsNullOrEmpty(certPassword))
@@ -105,7 +107,7 @@ public class BcTlsServer : DefaultTlsServer
 
     public override int GetHandshakeTimeoutMillis()
     {
-        return 5000;
+        return HandshakeTimeout;
     }
 
     public override TlsCredentials GetCredentials()
