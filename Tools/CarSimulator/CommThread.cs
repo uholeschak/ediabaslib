@@ -1035,7 +1035,7 @@ namespace CarSimulator
                             string privateCert = Path.ChangeExtension(ServerCertFile, ".key");
                             if (File.Exists(publicCert) && File.Exists(privateCert))
                             {
-                                byte[] pkcs12Data = EdBcTlsUtilities.CreatePkcs12Data(publicCert, privateCert);
+                                byte[] pkcs12Data = EdBcTlsUtilities.CreatePkcs12Data(publicCert, privateCert, ServerCertPwd);
                                 if (pkcs12Data != null)
                                 {
 #if NET9_0_OR_GREATER

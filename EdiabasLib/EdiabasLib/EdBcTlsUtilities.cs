@@ -368,7 +368,7 @@ namespace EdiabasLib
             }
             return null;
         }
-        public static byte[] CreatePkcs12Data(string certResource, string keyResource)
+        public static byte[] CreatePkcs12Data(string certResource, string keyResource, string password = null)
         {
             try
             {
@@ -397,7 +397,7 @@ namespace EdiabasLib
                     return null;
                 }
 
-                AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
+                AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource, password);
                 AsymmetricKeyEntry keyEntry = new AsymmetricKeyEntry(privateKey);
                 store.SetKeyEntry(friendlyName, keyEntry, certificateEntries.ToArray());
                 using (MemoryStream stream = new MemoryStream())
