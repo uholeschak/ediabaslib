@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System;
+using Org.BouncyCastle.X509;
+using Org.BouncyCastle.Pkcs;
 
 namespace EdiabasLib
 {
@@ -51,6 +53,24 @@ namespace EdiabasLib
                 return X509CertificateStructure.GetInstance(pem.Content);
             }
             throw new ArgumentException("doesn't specify a valid certificate", "resource");
+        }
+
+        public static List<X509CertificateStructure> LoadBcCertificateResources(string resource)
+        {
+            List<X509CertificateStructure> certificates = new List<X509CertificateStructure>();
+            List<PemObject> pemObjects = LoadPemResources(resource);
+            foreach (PemObject pem in pemObjects)
+            {
+                if (pem.Type.EndsWith("CERTIFICATE"))
+                {
+                    certificates.Add(X509CertificateStructure.GetInstance(pem.Content));
+                }
+                else
+                {
+                    throw new ArgumentException("doesn't specify a valid certificate", "resource");
+                }
+            }
+            return certificates;
         }
 
         public static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource)
@@ -342,6 +362,49 @@ namespace EdiabasLib
                 }
             }
             return null;
+        }
+        public static byte[] CreatePkcs12Data(string certResource, string keyResource)
+        {
+            try
+            {
+                Pkcs12Store store = new Pkcs12StoreBuilder().Build();
+                List<X509CertificateStructure> certificateStructures = LoadBcCertificateResources(certResource);
+                if (certificateStructures.Count == 0)
+                {
+                    return null;
+                }
+
+                List<X509CertificateEntry> certificateEntries = new List<X509CertificateEntry>();
+                string friendlyName = null;
+                foreach (X509CertificateStructure certificateStructure in certificateStructures)
+                {
+                    X509Certificate certificate = new X509Certificate(certificateStructure);
+                    X509CertificateEntry certificateEntry = new X509CertificateEntry(certificate);
+                    certificateEntries.Add(certificateEntry);
+                    if (friendlyName == null)
+                    {
+                        friendlyName = certificate.SubjectDN.ToString();
+                    }
+                }
+
+                if (string.IsNullOrEmpty(friendlyName))
+                {
+                    return null;
+                }
+
+                AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
+                AsymmetricKeyEntry keyEntry = new AsymmetricKeyEntry(privateKey);
+                store.SetKeyEntry(friendlyName, keyEntry, certificateEntries.ToArray());
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    store.Save(stream, null, new SecureRandom());
+                    return stream.ToArray();
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }
