@@ -1013,7 +1013,17 @@ namespace CarSimulator
 
         private void buttonServerCert_Click(object sender, EventArgs e)
         {
-            openCertFileDialog.FileName = textBoxServerCert.Text;
+            string initDir = _appDir;
+            string certFile = textBoxServerCert.Text;
+            string fileName = string.Empty;
+            if (File.Exists(certFile))
+            {
+                fileName = Path.GetFileName(certFile);
+                initDir = Path.GetDirectoryName(certFile);
+            }
+
+            openCertFileDialog.FileName = fileName;
+            openCertFileDialog.InitialDirectory = initDir ?? string.Empty;
             DialogResult result = openCertFileDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
