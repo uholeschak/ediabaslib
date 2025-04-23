@@ -73,7 +73,7 @@ namespace EdiabasLib
             return certificates;
         }
 
-        public static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource)
+        public static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource, string password = null)
         {
             PemObject pem = LoadPemResource(resource);
             if (pem.Type.Equals("PRIVATE KEY"))
@@ -82,7 +82,12 @@ namespace EdiabasLib
             }
             if (pem.Type.Equals("ENCRYPTED PRIVATE KEY"))
             {
-                throw new NotSupportedException("Encrypted PKCS#8 keys not supported");
+                if (string.IsNullOrEmpty(password))
+                {
+                    throw new ArgumentException("password is required for encrypted private key", "password");
+                }
+
+                return PrivateKeyFactory.DecryptKey(password.ToCharArray(), EncryptedPrivateKeyInfo.GetInstance(pem.Content));
             }
             if (pem.Type.Equals("RSA PRIVATE KEY"))
             {

@@ -29,6 +29,7 @@ public class BcTlsServer : DefaultTlsServer
 
     private readonly string m_privateCert = null;
     private readonly string m_publicCert = null;
+    private readonly string m_certPassword = null;
     private readonly string[] m_certResources;
     private readonly IList<X509Name> m_certificateAuthorities = null;
     private IList<X509Name> m_clientTrustedIssuers = null;
@@ -37,11 +38,6 @@ public class BcTlsServer : DefaultTlsServer
 
     public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
     {
-        if (!string.IsNullOrEmpty(certPassword))
-        {
-            throw new NotSupportedException("Password protected certificates not supported");
-        }
-
         string certDir = Path.GetDirectoryName(certBaseFile);
         if (string.IsNullOrEmpty(certDir))
         {
@@ -50,6 +46,7 @@ public class BcTlsServer : DefaultTlsServer
 
         m_publicCert = Path.ChangeExtension(certBaseFile, ".pem");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
+        m_certPassword = certPassword;
 
         m_certificateAuthorities = new List<X509Name>();
         string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
@@ -81,7 +78,7 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("No trusted CA files found", certBaseFile);
         }
 
-        AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(m_privateCert);
+        AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(m_privateCert, m_certPassword);
         if (privateKeyResource == null)
         {
             throw new FileNotFoundException("Private key file not valid", m_privateCert);
