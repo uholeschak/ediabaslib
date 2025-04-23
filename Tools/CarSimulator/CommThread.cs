@@ -345,7 +345,6 @@ namespace CarSimulator
         private readonly List<DynamicUdsEntry> _dynamicUdsEntries;
         private readonly Dictionary<byte, byte[]> _codingStampDict;
         private readonly List<BmwTcpChannel> _bmwTcpChannels;
-        private bool useBcSsl = true;
         private X509Certificate2 _serverCertificate;
         private UdpClient _udpClient;
         private bool _udpError;
@@ -786,6 +785,12 @@ namespace CarSimulator
         }
 
         public int ServerSslPort
+        {
+            get;
+            set;
+        }
+
+        public bool ServerUseBcSsl
         {
             get;
             set;
@@ -3094,7 +3099,7 @@ namespace CarSimulator
                     bmwTcpClientData.TcpClientConnection.NoDelay = true;
                     if (bmwTcpClientData.DoIpSsl)
                     {
-                        if (useBcSsl)
+                        if (ServerUseBcSsl)
                         {
                             bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, ServerCertFile);
                         }

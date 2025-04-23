@@ -17,5 +17,8 @@
     <Setting Name="ServerSslPort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">3496</Value>
     </Setting>
+    <Setting Name="ServerUseBcSsl" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

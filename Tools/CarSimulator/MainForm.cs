@@ -39,6 +39,7 @@ namespace CarSimulator
         private string _serverCertFile;
         private string _serverCertPwd;
         private int _serverSslPort = DefaultSslPort;
+        private bool _serverUseBcSsl = true;
         private CommThread _commThread;
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
@@ -74,6 +75,7 @@ namespace CarSimulator
             {
                 _serverSslPort = DefaultSslPort;
             }
+            _serverUseBcSsl = Properties.Settings.Default.ServerUseBcSsl;
 
             _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
@@ -144,6 +146,7 @@ namespace CarSimulator
             Properties.Settings.Default.ServerCertFile = _serverCertFile;
             Properties.Settings.Default.ServerCertPwd = _serverCertPwd;
             Properties.Settings.Default.ServerSslPort = _serverSslPort;
+            Properties.Settings.Default.ServerUseBcSsl = _serverUseBcSsl;
             Properties.Settings.Default.Save();
         }
 
@@ -856,6 +859,7 @@ namespace CarSimulator
                 _commThread.ServerCertFile = _serverCertFile;
                 _commThread.ServerCertPwd = _serverCertPwd;
                 _commThread.ServerSslPort = _serverSslPort;
+                _commThread.ServerUseBcSsl = _serverUseBcSsl;
                 _commThread.StartThread(selectedPort, conceptType, checkBoxAdsAdapter.Checked, checkBoxKLineResponder.Checked, responseType, _configData, enetCommType);
             }
 
