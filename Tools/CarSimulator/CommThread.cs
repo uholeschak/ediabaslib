@@ -1031,8 +1031,20 @@ namespace CarSimulator
                             // copy file to EDIABAS.ini [SSL] S29Path property location.
 
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
-                            string pfxFile = Path.ChangeExtension(ServerCertFile, ".pfx");
-                            _serverCertificate = new X509Certificate2(pfxFile, ServerCertPwd);
+                            string publicCert = Path.ChangeExtension(ServerCertFile, ".pem");
+                            string privateCert = Path.ChangeExtension(ServerCertFile, ".key");
+                            if (File.Exists(publicCert) && File.Exists(privateCert))
+                            {
+                                byte[] pkcs12Data = EdBcTlsUtilities.CreatePkcs12Data(publicCert, privateCert);
+                                if (pkcs12Data != null)
+                                {
+#if NET9_0_OR_GREATER
+                                    _serverCertificate = X509CertificateLoader.LoadCertificate(pkcs12Data);
+#else
+                                    _serverCertificate = new X509Certificate2(pkcs12Data);
+#endif
+                                }
+                            }
                         }
                         catch (Exception e)
                         {
@@ -3561,7 +3573,7 @@ namespace CarSimulator
             try
             {
                 // Authenticate the server but don't require the client to authenticate.
-                sslStream.ReadTimeout = TcpSendTimeout;
+                sslStream.ReadTimeout = SslAuthTimeout;
                 sslStream.AuthenticateAsServer(serverCertificate, true, false);
                 return sslStream;
             }

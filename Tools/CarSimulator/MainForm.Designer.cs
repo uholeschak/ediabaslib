@@ -456,9 +456,8 @@
             // 
             // openCertFileDialog
             // 
-            openCertFileDialog.DefaultExt = "pfx";
-            openCertFileDialog.Filter = "Cert|*.pfx|All files|*.*";
-            openCertFileDialog.Multiselect = true;
+            openCertFileDialog.DefaultExt = "key";
+            openCertFileDialog.Filter = "Cert|*.key|All files|*.*";
             openCertFileDialog.Title = "Select server cert";
             // 
             // textBoxCertPwd
