@@ -762,7 +762,11 @@ namespace CarSimulator
             textBoxEcuFolder.Text = _ecuFolder ?? string.Empty;
             textBoxServerCert.Text = _serverCertFile ?? string.Empty;
             textBoxCertPwd.Text = _serverCertPwd ?? string.Empty;
+            textBoxCertPwd.Enabled = !active;
             textBoxSslPort.Text = _serverSslPort.ToString(CultureInfo.InvariantCulture);
+            textBoxSslPort.Enabled = !active;
+            checkBoxBcSsl.Checked = _serverUseBcSsl;
+            checkBoxBcSsl.Enabled = !active;
             textBoxCertPwd.Enabled = !active;
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
@@ -1044,6 +1048,11 @@ namespace CarSimulator
         private void textBoxSslPort_TextChanged(object sender, EventArgs e)
         {
             _serverSslPort = int.TryParse(textBoxSslPort.Text, out int value) ? value : DefaultSslPort;
+        }
+
+        private void checkBoxBcSsl_CheckedChanged(object sender, EventArgs e)
+        {
+            _serverUseBcSsl = checkBoxBcSsl.Checked;
         }
 
         private void richTextBoxTestResults_LinkClicked(object sender, LinkClickedEventArgs e)

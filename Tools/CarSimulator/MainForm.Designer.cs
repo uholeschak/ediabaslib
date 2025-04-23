@@ -69,6 +69,7 @@
             labelSslPort = new System.Windows.Forms.Label();
             textBoxSslPort = new System.Windows.Forms.TextBox();
             richTextBoxTestResults = new System.Windows.Forms.RichTextBox();
+            checkBoxBcSsl = new System.Windows.Forms.CheckBox();
             groupBoxConcepts.SuspendLayout();
             SuspendLayout();
             // 
@@ -492,7 +493,7 @@
             textBoxSslPort.Location = new System.Drawing.Point(323, 225);
             textBoxSslPort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             textBoxSslPort.Name = "textBoxSslPort";
-            textBoxSslPort.Size = new System.Drawing.Size(180, 23);
+            textBoxSslPort.Size = new System.Drawing.Size(55, 23);
             textBoxSslPort.TabIndex = 27;
             textBoxSslPort.TextChanged += textBoxSslPort_TextChanged;
             // 
@@ -508,11 +509,26 @@
             richTextBoxTestResults.Text = "";
             richTextBoxTestResults.LinkClicked += richTextBoxTestResults_LinkClicked;
             // 
+            // checkBoxBcSsl
+            // 
+            checkBoxBcSsl.AutoSize = true;
+            checkBoxBcSsl.Checked = true;
+            checkBoxBcSsl.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxBcSsl.Location = new System.Drawing.Point(392, 227);
+            checkBoxBcSsl.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            checkBoxBcSsl.Name = "checkBoxBcSsl";
+            checkBoxBcSsl.Size = new System.Drawing.Size(71, 19);
+            checkBoxBcSsl.TabIndex = 29;
+            checkBoxBcSsl.Text = "BcCastle";
+            checkBoxBcSsl.UseVisualStyleBackColor = true;
+            checkBoxBcSsl.CheckedChanged += checkBoxBcSsl_CheckedChanged;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(764, 618);
+            Controls.Add(checkBoxBcSsl);
             Controls.Add(richTextBoxTestResults);
             Controls.Add(textBoxSslPort);
             Controls.Add(labelSslPort);
@@ -597,6 +613,7 @@
         private System.Windows.Forms.Label labelSslPort;
         private System.Windows.Forms.TextBox textBoxSslPort;
         private System.Windows.Forms.RichTextBox richTextBoxTestResults;
+        private System.Windows.Forms.CheckBox checkBoxBcSsl;
     }
 }
 
