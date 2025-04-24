@@ -469,6 +469,69 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.RheingoldISPINext.ICS",
+                                Class = "CommonServiceWrapper",
+                                Method = "GetFeatureEnabledStatus",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("CommonServiceWrapper.GetFeatureEnabledStatus found");
+
+                                int patchIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldloc_2
+                                        && index + 4 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Ldarg_0)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 2].OpCode != OpCodes.Ldarg_1)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldloc_2)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 4].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 4].Operand.ToString(), "DEFAULT VALUE", StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            continue;
+                                        }
+
+                                        Console.WriteLine("'DEFAULT VALUE' found at index: {0}", index);
+                                        patchIndex = index;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    int removeCount = patchIndex;
+                                    for (int i = 0; i < removeCount; i++)
+                                    {
+                                        instructions.RemoveAt(0);
+                                    }
+                                    patched = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("'DEFAULT VALUE' appears to have already been patched or is not existing");
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.VehicleCommunication",
                                 Class = "ECUKom",
                                 Method = "InitVCI",
