@@ -483,7 +483,7 @@ namespace AssemblyPatcher
                                 {
                                     Instruction instruction = instructions[index];
                                     if (instruction.OpCode == OpCodes.Ldloc_2
-                                        && index + 4 < instructions.Count)
+                                        && index + 7 < instructions.Count)
                                     {
                                         if (instructions[index + 1].OpCode != OpCodes.Ldarg_0)
                                         {
@@ -497,12 +497,24 @@ namespace AssemblyPatcher
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 4].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 4].Operand.ToString(), "DEFAULT VALUE", StringComparison.OrdinalIgnoreCase) != 0)
+                                        if (instructions[index + 4].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 4].Operand.ToString(), "MISSING CLIENT CONFIGURATION - RETURN DEFAULT VALUE", StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 5].OpCode != OpCodes.Call)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 6].OpCode != OpCodes.Newobj)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 7].OpCode != OpCodes.Ret)
                                         {
                                             continue;
                                         }
 
-                                        Console.WriteLine("'DEFAULT VALUE' found at index: {0}", index);
+                                        Console.WriteLine("'MISSING CLIENT CONFIGURATION - RETURN DEFAULT VALUE' found at index: {0}", index);
                                         patchIndex = index;
                                         break;
                                     }
@@ -510,10 +522,9 @@ namespace AssemblyPatcher
 
                                 if (patchIndex >= 0)
                                 {
-                                    int removeCount = patchIndex;
-                                    for (int i = 0; i < removeCount; i++)
+                                    for (int i = 0; i < 8; i++)
                                     {
-                                        instructions.RemoveAt(0);
+                                        instructions.RemoveAt(patchIndex);
                                     }
                                     patched = true;
                                 }
