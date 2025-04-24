@@ -482,34 +482,39 @@ namespace AssemblyPatcher
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
                                     Instruction instruction = instructions[index];
-                                    if (instruction.OpCode == OpCodes.Ldloc_2
-                                        && index + 7 < instructions.Count)
+                                    if (instruction.OpCode == OpCodes.Brtrue_S
+                                        && index + 8 < instructions.Count)
                                     {
-                                        if (instructions[index + 1].OpCode != OpCodes.Ldarg_0)
+                                        if (instructions[index + 1].OpCode != OpCodes.Ldloc_2)
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 2].OpCode != OpCodes.Ldarg_1)
+                                        if (instructions[index + 2].OpCode != OpCodes.Ldarg_0)
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 3].OpCode != OpCodes.Ldloc_2)
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldarg_1)
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 4].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 4].Operand.ToString(), "MISSING CLIENT CONFIGURATION - RETURN DEFAULT VALUE", StringComparison.OrdinalIgnoreCase) != 0)
+                                        if (instructions[index + 4].OpCode != OpCodes.Ldloc_2)
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 5].OpCode != OpCodes.Call)
+                                        if (instructions[index + 5].OpCode != OpCodes.Ldstr ||
+                                            string.Compare(instructions[index + 5].Operand.ToString(), "MISSING CLIENT CONFIGURATION - RETURN DEFAULT VALUE", StringComparison.OrdinalIgnoreCase) != 0)
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 6].OpCode != OpCodes.Newobj)
+                                        if (instructions[index + 6].OpCode != OpCodes.Call)
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 7].OpCode != OpCodes.Ret)
+                                        if (instructions[index + 7].OpCode != OpCodes.Newobj)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 8].OpCode != OpCodes.Ret)
                                         {
                                             continue;
                                         }
@@ -520,11 +525,38 @@ namespace AssemblyPatcher
                                     }
                                 }
 
+                                int templateIndex = -1;
                                 if (patchIndex >= 0)
                                 {
+                                    for (int index = patchIndex; index < instructions.Count; index++)
+                                    {
+                                        Instruction instruction = instructions[index];
+                                        if (instruction.OpCode == OpCodes.Call
+                                            && index + 1 < instructions.Count)
+                                        {
+                                            if (instructions[index + 1].OpCode != OpCodes.Brfalse)
+                                            {
+                                                continue;
+                                            }
+
+                                            Console.WriteLine("Template branch found at index: {0}", index);
+                                            templateIndex = index + 1;
+                                            break;
+                                        }
+                                    }
+
+                                    if (templateIndex < 0)
+                                    {
+                                        Console.WriteLine("Template branch not found");
+                                    }
+                                }
+
+                                if (patchIndex >= 0 && templateIndex >= 0)
+                                {
+                                    instructions[patchIndex] = instructions[templateIndex].Clone();
                                     for (int i = 0; i < 8; i++)
                                     {
-                                        instructions.RemoveAt(patchIndex);
+                                        instructions.RemoveAt(patchIndex + 1);
                                     }
                                     patched = true;
                                 }
