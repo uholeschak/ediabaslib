@@ -445,7 +445,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
-        protected bool UseBcSsl = true;
+        protected bool DoIpBcSsl = true;
         protected string DoIpSslSecurityPath = string.Empty;
         protected string DoIpS29Path = string.Empty;
         protected string DoIpS29SelectCert = string.Empty;
@@ -635,6 +635,12 @@ namespace EdiabasLib
                 if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpSslPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("SslBC");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    DoIpBcSsl = (int)EdiabasNet.StringToValue(prop) != 0;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("SslSecurityPath");
@@ -1395,7 +1401,7 @@ namespace EdiabasLib
 
                         if (SharedDataActive.DiagDoIpSsl)
                         {
-                            if (UseBcSsl)
+                            if (DoIpBcSsl)
                             {
                                 SharedDataActive.TcpDiagStream = CreateBcSslStream(SharedDataActive);
                             }
