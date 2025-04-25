@@ -306,7 +306,7 @@ namespace PsdzClient.Core
             return Sec4DiagCertificateState.Expired;
         }
 
-        public void CreateS29CertificateInstallCertificatesAndWriteToFile(IVciDevice device, string subCa, string ca)
+        public void CreateS29CertificateInstallCertificatesAndWriteToFile(IVciDevice device, string subCa, string ca, bool testRun)
         {
             Org.BouncyCastle.X509.X509Certificate x509Certificate = CreateCertificateFromBase64(subCa);
             Org.BouncyCastle.X509.X509Certificate x509Certificate2 = CreateCertificateFromBase64(ca);
@@ -317,12 +317,23 @@ namespace PsdzClient.Core
                 CaCert = new X509Certificate2(x509Certificate2.GetEncoded()),
                 S29Cert = s29Cert
             };
+            if (!CoreFramework.OSSModeActive)
+            {
+                InstallCertificates(Sec4DiagCertificates);
+            }
+            if (!testRun)
+            {
+                WriteCertificateToFile(Sec4DiagCertificates);
+            }
+            Log.Info(Log.CurrentMethod(), "Certificates installed and written to file. Thumbprint added to Registry.");
+        }
+
+        private void InstallCertificates(ISec4DiagCertificates sec4DiagCertificates)
+        {
             ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", Sec4DiagCertificates.CaCert.Thumbprint, overrideIsMaster: true);
             ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", Sec4DiagCertificates.SubCaCert.Thumbprint, overrideIsMaster: true);
             InstallCertificate(Sec4DiagCertificates.SubCaCert);
             InstallCertificate(Sec4DiagCertificates.CaCert);
-            WriteCertificateToFile(Sec4DiagCertificates);
-            Log.Info(Log.CurrentMethod(), "Certificates installed and written to file. Thumbprint added to Registry.");
         }
 
         public BoolResultObject CertificatesAreFoundAndValid(IVciDevice device, X509Certificate2Collection subCaCertificate, X509Certificate2Collection caCertificate)

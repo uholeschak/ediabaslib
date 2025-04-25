@@ -56,7 +56,7 @@ namespace PsdzClient.Core
 
         Sec4DiagCertificateState SearchForCertificatesInWindowsStore(string caThumbPrint, string subCaThumbPrint, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate);
 
-        void CreateS29CertificateInstallCertificatesAndWriteToFile(IVciDevice device, string subCa, string ca);
+        void CreateS29CertificateInstallCertificatesAndWriteToFile(IVciDevice device, string subCa, string ca, bool testRun);
 
         BoolResultObject CertificatesAreFoundAndValid(IVciDevice device, X509Certificate2Collection subCaCertificate, X509Certificate2Collection caCertificate);
 
