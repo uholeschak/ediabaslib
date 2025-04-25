@@ -107,15 +107,16 @@ namespace PsdzClient.Programming
 
         public static string GetJrePath(string istaFolder)
         {
-            bool configStringAsBoolean = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.PsdzWebservice.Enabled", defaultValue: false);
-            string text = (configStringAsBoolean ? "WebService\\" : string.Empty);
+            CommonServiceWrapper commonServiceWrapper = new CommonServiceWrapper();
+            bool psdzWebService = commonServiceWrapper.GetFeatureEnabledStatus("PsdzWebservice").IsActive;
+            string text = (psdzWebService ? "WebService\\" : string.Empty);
             string tlsPath = Path.Combine(istaFolder, "Tls13");
             if (Directory.Exists(tlsPath))
             {
                 text = "Tls13\\" + text;
             }
             string defaultValue = (Environment.Is64BitOperatingSystem ? (text + "OpenJREx64") : (text + "OpenJREx86"));
-            string configPath = ConfigSettings.getPathString(configStringAsBoolean ? "BMW.Rheingold.Programming.PsdzJrePath.WebService" : "BMW.Rheingold.Programming.PsdzJrePath", string.Empty);
+            string configPath = ConfigSettings.getPathString(psdzWebService ? "BMW.Rheingold.Programming.PsdzJrePath.WebService" : "BMW.Rheingold.Programming.PsdzJrePath", string.Empty);
             if (!string.IsNullOrEmpty(configPath))
             {
                 return Path.GetFullPath(configPath);
