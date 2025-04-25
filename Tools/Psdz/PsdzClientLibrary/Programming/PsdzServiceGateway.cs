@@ -94,22 +94,30 @@ namespace PsdzClientLibrary.Programming
                 });
             }
 #endif
+            bool started;
             if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
             {
-                _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
+                started = PsdzStarterGuard.Instance.TryInitialize(delegate
+                {
+                    _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
+                    WaitForPsdzServiceHostInitialization();
+                    return _psdzServiceHostWrapper.IsPsdzInitialized;
+                });
             }
             else
             {
-                _psdzServiceHostStarter();
+                started = PsdzStarterGuard.Instance.TryInitialize(delegate
+                {
+                    _psdzServiceHostStarter();
+                    WaitForPsdzServiceHostInitialization();
+                    return _psdzServiceHostWrapper.IsPsdzInitialized;
+                });
             }
 
-            if (!WaitForPsdzServiceHostInitialization())
-            {
-                return false;
-            }
+            Log.Info(Log.CurrentMethod(), "Started: {0}", started);
             Log.Info(Log.CurrentMethod(), "End.");
 
-            return true;
+            return started;
         }
 
         public void CloseConnectionsToPsdz(bool force = false)

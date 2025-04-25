@@ -329,6 +329,7 @@
     <Compile Include="Programming\IPsdzServiceGateway.cs" />
     <Compile Include="Programming\ISecureDiagnosticsService.cs" />
     <Compile Include="Programming\PsdzServiceGateway.cs" />
+    <Compile Include="Programming\PsdzStarterGuard.cs" />
     <Compile Include="Programming\Sec4DiagPoowHandler.cs" />
     <Compile Include="Programming\SecureDiagnosticsCallback.cs" />
     <Compile Include="Programming\SecureDiagnosticsCallbackHandler.cs" />
