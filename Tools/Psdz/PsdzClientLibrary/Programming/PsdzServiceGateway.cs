@@ -85,24 +85,22 @@ namespace PsdzClientLibrary.Programming
         {
             Log.Info(Log.CurrentMethod(), "Start.");
 #if false
-            if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.PsdzWebservice.Enabled", defaultValue: false))
+            if (new CommonServiceWrapper().GetFeatureEnabledStatus("PsdzWebservice").IsActive)
             {
-                _psdzWebServiceWrapper.StartIfNotRunning();
-                Log.Info(Log.CurrentMethod(), "End.");
-                return true;
+                PsdzStarterGuard.Instance.TryInitialize(delegate
+                {
+                    _psdzWebServiceWrapper.StartIfNotRunning();
+                    return _psdzWebServiceWrapper.IsPsdzInitialized;
+                });
             }
 #endif
-            if (ConfigSettings.GetActivateSdpOnlinePatch())
+            if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
             {
                 _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
-            }
-            else if (_psdzServiceHostStarter != null)
-            {
-                _psdzServiceHostStarter();
             }
             else
             {
-                _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
+                _psdzServiceHostStarter();
             }
 
             if (!WaitForPsdzServiceHostInitialization())
@@ -119,12 +117,12 @@ namespace PsdzClientLibrary.Programming
             try
             {
 #if false
-                if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.PsdzWebservice.Enabled", defaultValue: false))
+                if (new CommonServiceWrapper().GetFeatureEnabledStatus("PsdzWebservice").IsActive)
                 {
                     _psdzWebServiceWrapper.Shutdown();
                 }
 #endif
-                if (!ClientContext.EnablePsdzMultiSession() || force)
+                if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
                 {
                     _psdzServiceHostWrapper.Shutdown();
                 }
