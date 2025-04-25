@@ -319,6 +319,7 @@
     <Compile Include="Core\VehicleCharacteristicVCIDeviceHelper.cs" />
     <Compile Include="Core\VehicleCharacteristicVehicleHelper.cs" />
     <Compile Include="Core\WebCallResponse.cs" />
+    <Compile Include="Core\WebCallUtility.cs" />
     <Compile Include="Core\XGBMBusLogisticsEntry.cs" />
     <Compile Include="Core\XNodeExtension.cs" />
     <Compile Include="DataHolderItem.cs" />

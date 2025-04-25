@@ -665,23 +665,38 @@ namespace PsdzClient.Core.Container
                     service.EdiabasPublicKey = service.GetPublicKeyFromEdiabas();
                     string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
                     string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
-                    Log.Info(method, "caThumbPrint: {0}, subCaThumbprint: {1}", configString, configString2);
-                    if (string.IsNullOrEmpty(configString) || string.IsNullOrEmpty(configString2))
+                    if (ConfigSettings.IsOssModeActive)
                     {
-                        Log.Info(method, "caThumbPrint or subCaThumbPrint is empty. Requesting new Certificates");
-                        WebCallResponse<Sec4DiagResponseData> webCallResponse = RequestCaAndSubCACertificates(device, service, service2);
+                        WebCallResponse<Sec4DiagResponseData> webCallResponse = RequestCertificate(device, service, service2, testRun: false);
                         if (webCallResponse.IsSuccessful)
                         {
-                            Log.Info(method, "Request was succesfull. Using new Certificates");
                             boolResultObject.Result = webCallResponse.IsSuccessful;
                         }
                         else
                         {
-                            Log.Info(method, "Request was not succesfull. Aborting Session");
-                            boolResultObject.Result = webCallResponse.IsSuccessful;
-                            boolResultObject.StatusCode = (int)(webCallResponse.HttpStatus.HasValue ? webCallResponse.HttpStatus.Value : ((HttpStatusCode)0));
-                            boolResultObject.ErrorCodeInt = 1;
+                            boolResultObject.Result = false;
+                            boolResultObject.StatusCode = (int)webCallResponse.HttpStatus.Value;
                             boolResultObject.ErrorMessage = webCallResponse.Error;
+                            boolResultObject.ErrorCodeInt = 1;
+                        }
+                        return boolResultObject;
+                    }
+                    if (string.IsNullOrEmpty(configString) || string.IsNullOrEmpty(configString2))
+                    {
+                        Log.Info(method, "caThumbPrint or subCaThumbPrint is empty. Requesting new Certificates");
+                        WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
+                        if (webCallResponse2.IsSuccessful)
+                        {
+                            Log.Info(method, "Request was succesfull. Using new Certificates");
+                            boolResultObject.Result = webCallResponse2.IsSuccessful;
+                        }
+                        else
+                        {
+                            Log.Info(method, "Request was not succesfull. Aborting Session");
+                            boolResultObject.Result = webCallResponse2.IsSuccessful;
+                            boolResultObject.StatusCode = (int)(webCallResponse2.HttpStatus.HasValue ? webCallResponse2.HttpStatus.Value : ((HttpStatusCode)0));
+                            boolResultObject.ErrorCodeInt = 1;
+                            boolResultObject.ErrorMessage = webCallResponse2.Error;
                         }
                         return boolResultObject;
                     }
@@ -700,15 +715,16 @@ namespace PsdzClient.Core.Container
                         case Sec4DiagCertificateState.NotYetExpired:
                             {
                                 Log.Info(method, "Certificates are valid valid (even if the 3 weeks are over) but we are trying to request new once.");
-                                WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2);
-                                if (webCallResponse3.IsSuccessful)
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse4 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
+                                if (webCallResponse4.IsSuccessful)
                                 {
                                     Log.Info(method, "Certificates are found and are valid (even if they where 3 Weeks overtime). Requesting new Certificates was successful");
-                                    boolResultObject.Result = webCallResponse3.IsSuccessful;
+                                    boolResultObject.Result = webCallResponse4.IsSuccessful;
                                 }
                                 else
                                 {
-                                    Log.Info(method, "Certificates are found but are not valid. Requesting new Certificates failed. Using old Certificates");
+                                    //TimeSpan subCAZertifikateRemainingTime2 = GetSubCAZertifikateRemainingTime();
+                                    //interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.SubCaBackendErrorButTokenStillValid", subCAZertifikateRemainingTime2.Days).Localize());
                                     boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
                                 }
                                 return boolResultObject;
@@ -717,19 +733,19 @@ namespace PsdzClient.Core.Container
                         case Sec4DiagCertificateState.NotFound:
                             {
                                 Log.Info(method, "Not Certificates are found or the max time of 4 Weeks are over. Requesting new certificates");
-                                WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2);
-                                if (webCallResponse2.IsSuccessful)
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
+                                if (webCallResponse3.IsSuccessful)
                                 {
-                                    Log.Info(method, "Request was successfl. using new Certificates");
-                                    boolResultObject.Result = webCallResponse2.IsSuccessful;
+                                    Log.Info(method, "Request was successfull. using new Certificates");
+                                    boolResultObject.Result = webCallResponse3.IsSuccessful;
                                 }
                                 else
                                 {
                                     Log.Info(method, "Request was not sucessfull. Aborting Session");
-                                    boolResultObject.Result = webCallResponse2.IsSuccessful;
-                                    boolResultObject.StatusCode = (int)webCallResponse2.HttpStatus.Value;
+                                    boolResultObject.Result = webCallResponse3.IsSuccessful;
+                                    boolResultObject.StatusCode = (int)(webCallResponse3.HttpStatus.HasValue ? webCallResponse3.HttpStatus.Value : ((HttpStatusCode)0));
                                     boolResultObject.ErrorCodeInt = 1;
-                                    boolResultObject.ErrorMessage = webCallResponse2.Error;
+                                    boolResultObject.ErrorMessage = webCallResponse3.Error;
                                 }
                                 return boolResultObject;
                             }
@@ -755,20 +771,151 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        private WebCallResponse<Sec4DiagResponseData> RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
+        private BoolResultObject TestSubCACall(IVciDevice device)
+        {
+            BoolResultObject boolResultObject = new BoolResultObject();
+            string method = Log.CurrentMethod();
+            try
+            {
+                if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service) && ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out var service2))
+                {
+                    string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
+                    string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
+                    if (ConfigSettings.IsOssModeActive)
+                    {
+                        WebCallResponse<Sec4DiagResponseData> webCallResponse = RequestCertificate(device, service, service2, testRun: true);
+                        if (webCallResponse.IsSuccessful)
+                        {
+                            boolResultObject.Result = webCallResponse.IsSuccessful;
+                        }
+                        else
+                        {
+                            boolResultObject.Result = false;
+                            boolResultObject.StatusCode = (int)webCallResponse.HttpStatus.Value;
+                            boolResultObject.ErrorMessage = webCallResponse.Error;
+                            boolResultObject.ErrorCodeInt = 1;
+                        }
+                        return boolResultObject;
+                    }
+                    if (string.IsNullOrEmpty(configString) || string.IsNullOrEmpty(configString2))
+                    {
+                        Log.Info(method, "caThumbPrint or subCaThumbPrint is empty. Requesting new Certificates");
+                        WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2, testRun: true);
+                        if (webCallResponse2.IsSuccessful)
+                        {
+                            Log.Info(method, "Request was succesfull. Using new Certificates");
+                            boolResultObject.Result = webCallResponse2.IsSuccessful;
+                        }
+                        else
+                        {
+                            Log.Info(method, "Request was not succesfull. Aborting Session");
+                            boolResultObject.Result = webCallResponse2.IsSuccessful;
+                            boolResultObject.StatusCode = (int)(webCallResponse2.HttpStatus.HasValue ? webCallResponse2.HttpStatus.Value : ((HttpStatusCode)0));
+                            boolResultObject.ErrorCodeInt = 1;
+                            boolResultObject.ErrorMessage = webCallResponse2.Error;
+                        }
+                        return boolResultObject;
+                    }
+                    Log.Info(method, "caThumbPrint and subCaThumbPrint are not empty. Searching for Certificates in Windows Store");
+                    X509Certificate2Collection subCaCertificate = new X509Certificate2Collection();
+                    X509Certificate2Collection caCertificate = new X509Certificate2Collection();
+                    Sec4DiagCertificateState sec4DiagCertificateState = service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate);
+                    if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection() && sec4DiagCertificateState == Sec4DiagCertificateState.NotYetExpired)
+                    {
+                        boolResultObject.Result = true;
+                        return boolResultObject;
+                    }
+                    if (sec4DiagCertificateState == Sec4DiagCertificateState.Valid && subCaCertificate.Count == 1 && caCertificate.Count == 1)
+                    {
+                        boolResultObject.Result = true;
+                        return boolResultObject;
+                    }
+                    switch (sec4DiagCertificateState)
+                    {
+                        case Sec4DiagCertificateState.NotYetExpired:
+                            boolResultObject.Result = true;
+                            return boolResultObject;
+                        case Sec4DiagCertificateState.Expired:
+                        case Sec4DiagCertificateState.NotFound:
+                            {
+                                Log.Info(method, "Not Certificates are found or the max time of 4 Weeks are over. Requesting new certificates");
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2, testRun: true);
+                                if (webCallResponse3.IsSuccessful)
+                                {
+                                    Log.Info(method, "Request was successfl. using new Certificates");
+                                    boolResultObject.Result = webCallResponse3.IsSuccessful;
+                                }
+                                else
+                                {
+                                    Log.Info(method, "Request was not sucessfull. Aborting Session");
+                                    boolResultObject.Result = webCallResponse3.IsSuccessful;
+                                    boolResultObject.StatusCode = (int)webCallResponse3.HttpStatus.Value;
+                                    boolResultObject.ErrorCodeInt = 1;
+                                    boolResultObject.ErrorMessage = webCallResponse3.Error;
+                                }
+                                return boolResultObject;
+                            }
+                        default:
+                            Log.Info(method, "No Certificestes are found. Aborting Session");
+                            boolResultObject.Result = false;
+                            return boolResultObject;
+                    }
+                }
+                Log.Error("HandleS29Authentication", "ISec4DiagHandler or IBackendCallsWatchDog not found");
+                boolResultObject.Result = false;
+                boolResultObject.ErrorMessage = "ISec4DiagHandler or IBackendCallsWatchDog not found";
+                boolResultObject.ErrorCodeInt = 1;
+                return boolResultObject;
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException("HandleS29Authentication", ex);
+                boolResultObject.Result = false;
+                boolResultObject.ErrorMessage = ex.Message;
+                boolResultObject.ErrorCodeInt = 1;
+                return boolResultObject;
+            }
+        }
+
+        private WebCallResponse<Sec4DiagResponseData> RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog, bool testRun)
         {
             WebCallResponse<Sec4DiagResponseData> webCallResponse = new WebCallResponse<Sec4DiagResponseData>();
-            if (ServiceLocator.Current.TryGetService<IDataContext>(out var service))
+#if false
+            if (ServiceLocator.Current.TryGetService<IstaLoginServiceClient>(out var service))
             {
-                webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.Sec4Diag, service.AccessToken);
+                webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.Sec4Diag, service.GetUserTokenByOperationId()?.UserToken);
                 if (webCallResponse.IsSuccessful)
                 {
-                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0]);
+                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0], testRun);
+                }
+                if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service2))
+                {
+                    string value = $"Successfull: {webCallResponse.IsSuccessful}, HTTPStatusCode: {(webCallResponse.HttpStatus.HasValue ? webCallResponse.HttpStatus : new HttpStatusCode?(HttpStatusCode.ServiceUnavailable))}, Certificates exist: {!string.IsNullOrEmpty(webCallResponse.Response?.Certificate)}";
+                    service2.AddServiceCode(ServiceCodes.S4D01_CallSec4DiagInBackground_nu_LF, value, LayoutGroup.D, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
                 }
                 return webCallResponse;
             }
+#endif
             throw new InvalidOperationException("IDataContext service not found.");
         }
+
+        private WebCallResponse<Sec4DiagResponseData> RequestCertificate(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog, bool testRun)
+        {
+#if false
+            WebCallResponse<Sec4DiagResponseData> webCallResponse = new WebCallResponse<Sec4DiagResponseData>();
+            if (ServiceLocator.Current.TryGetService<IstaLoginServiceClient>(out var service))
+            {
+                webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.AosSec4Diag, service.GetUserTokenByOperationId()?.UserToken);
+                if (webCallResponse.IsSuccessful)
+                {
+                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0], testRun);
+                }
+                return webCallResponse;
+            }
+#endif
+            throw new InvalidOperationException("IDataContext service not found.");
+        }
+
 
         private bool InitEdiabasForDoIP(IVciDevice device)
         {
