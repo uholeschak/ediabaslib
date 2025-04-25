@@ -16,7 +16,6 @@ namespace PsdzClient.Core
         SfaTokenRequest,
         SecureCoding,
         BrokerMonitor,
-        DOM,
         ServiceHistory,
         NOP,
         SWT,
@@ -26,7 +25,7 @@ namespace PsdzClient.Core
         CVS,
         VPS,
         OTDLSC,
-        DOMVin7Resolver,
+        SVMDVin7Resolver,
         TechnicalCampaignsv030400,
         VehicleTagsService,
         SfaNewFeatureForVehicle,
@@ -37,12 +36,12 @@ namespace PsdzClient.Core
         SmartMaintenanceNew,
         AIR,
         CalibrationValue,
-        DOMOrderData,
         VehicleEmissionService,
         ServiceRide,
         EDGEPDI,
         AosDocumentXmlData,
         AosDocumentStreamData,
+        AosSec4Diag,
         ServiceStateLayer2,
         VehicleBasic,
         ProtocolUploadState,
@@ -53,7 +52,12 @@ namespace PsdzClient.Core
         SCCDeleteFileByName,
         SCCPostVehicleSession,
         SCCGetVehicleSession,
-        OrderData
+        OrderData,
+        AIRTeileClearingRelevant,
+        KAISendMaintenanceEntry,
+        KAIGetServiceHistory,
+        AIRForkService,
+        BatteryService
     }
 
     public interface IBackendCallsWatchDog
