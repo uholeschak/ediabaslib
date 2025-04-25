@@ -95,6 +95,7 @@
     <Compile Include="Contracts\ITransmissionDataType.cs" />
     <Compile Include="Core\BaseFormatedData.cs" />
     <Compile Include="Core\CertReqProfile.cs" />
+    <Compile Include="Core\CommonServiceWrapper.cs" />
     <Compile Include="Core\ConfigSettings.cs" />
     <Compile Include="Core\ConfigSettingsRuleEvaluation.cs" />
     <Compile Include="Core\ConfigValue.cs" />
@@ -235,6 +236,7 @@
     <Compile Include="Core\IVehicleRuleEvaluation.cs" />
     <Compile Include="Core\IVinValidatorVehicle.cs" />
     <Compile Include="Core\IXGBMBusLogisticsEntry.cs" />
+    <Compile Include="Core\LBPFeatureSwitches.cs" />
     <Compile Include="Core\Localization.cs" />
     <Compile Include="Core\LocalizedText.cs" />
     <Compile Include="Core\Log.cs" />
