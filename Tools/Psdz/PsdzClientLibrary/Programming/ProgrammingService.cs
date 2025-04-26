@@ -178,6 +178,11 @@ namespace PsdzClient.Programming
 
         public bool StartPsdzService(IVehicle vehicle = null)
         {
+            if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
+            {
+                Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
+                return true;
+            }
             Log.Info(Log.CurrentMethod(), "Start.");
             try
             {

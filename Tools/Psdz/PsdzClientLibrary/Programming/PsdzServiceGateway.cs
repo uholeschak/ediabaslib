@@ -83,6 +83,11 @@ namespace PsdzClientLibrary.Programming
 
         public bool StartIfNotRunning(IVehicle vehicle = null)
         {
+            if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
+            {
+                Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
+                return true;
+            }
             Log.Info(Log.CurrentMethod(), "Start.");
 #if false
             if (new CommonServiceWrapper().GetFeatureEnabledStatus("PsdzWebservice").IsActive)

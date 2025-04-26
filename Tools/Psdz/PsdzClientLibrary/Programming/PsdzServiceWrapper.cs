@@ -11,6 +11,7 @@ using BMW.Rheingold.Psdz.Client;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using PsdzClientLibrary.Programming;
 
 namespace BMW.Rheingold.Programming
 {
@@ -73,7 +74,15 @@ namespace BMW.Rheingold.Programming
         {
             get
             {
-                return PsdzServiceStarter.IsThisServerInstanceRunning();
+                if (PsdzStarterGuard.Instance.CanCheckAvailability())
+                {
+                    if (!ConfigSettings.GetActivateSdpOnlinePatch())
+                    {
+                        return PsdzServiceStarter.IsServerInstanceRunning();
+                    }
+                    return PsdzServiceStarter.IsServerInstanceRunning(Process.GetCurrentProcess().Id);
+                }
+                return false;
             }
         }
 
