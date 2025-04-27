@@ -31,7 +31,13 @@ namespace PsdzClient.Core.Container
     {
         private const int STANDARD_EDIABAS_LOGLEVEL = 0;
 
-        private const int DEFAULT_EDIABAS_TRACELEVEL = 5;
+        private const int DEFAULT_EDIABAS_TRACELEVEL = 6;
+
+        private const int DEFAULT_IFH_TRACELEVEL = 3;
+
+        private const int DEFAULT_SYSTEM_IFH_TRACELEVEL = 6;
+
+        private const int DEFAULT_SYSTEM_NET_TRACELEVEL = 6;
 
         private const int DEFAULT_EDIABAS_TRACE_SIZE = 32767;
 
@@ -42,6 +48,8 @@ namespace PsdzClient.Core.Container
         private const int _portDoIP = 50162;
 
         private const int _sslPort = 50163;
+
+        private const int _sslPortDirect = 3496;
 
         private const int _diagnosticPortW2V = 51560;
 
@@ -67,7 +75,20 @@ namespace PsdzClient.Core.Container
 
         private bool m_FromFastaConfig;
 
+        //private ServiceController sc;
+
+        //private ServiceControllerPermission scp;
+
+        private bool serviceIsRunning;
+
+        private readonly IInteractionService interactionService;
+
+        private readonly IBackendCallsWatchDog backendCallsWatchDog;
+
+        private readonly ISec4DiagHandler sec4DiagHandler;
+
         public List<ECUJob> jobList = new List<ECUJob>();
+
 
         public string APP
         {
@@ -169,6 +190,7 @@ namespace PsdzClient.Core.Container
             APP = app;
             FromFastaConfig = false;
             CacheHitCounter = 0;
+            ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
         }
 
         public void End()
@@ -610,6 +632,7 @@ namespace PsdzClient.Core.Container
                     string stringResult = ecuJob.getStringResult("AuthenticationReturnParameter_TEXT");
                     if (num == service.RoleMaskAsInt)
                     {
+                        //ImportantLoggingItem.AddMessagesToLog("S29-Authentification-Ediabas", "Authentification: $" + stringResult);
                         Log.Info("S29-Authentification-Ediabas", "Authentification: $" + stringResult);
                         return true;
                     }
@@ -680,6 +703,11 @@ namespace PsdzClient.Core.Container
                     }
                     if (string.IsNullOrEmpty(configString) || string.IsNullOrEmpty(configString2))
                     {
+                        if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection())
+                        {
+                            boolResultObject.ErrorCodeInt = 3;
+                            return boolResultObject;
+                        }
                         Log.Info(method, "caThumbPrint or subCaThumbPrint is empty. Requesting new Certificates");
                         WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
                         if (webCallResponse2.IsSuccessful)
@@ -701,6 +729,13 @@ namespace PsdzClient.Core.Container
                     X509Certificate2Collection subCaCertificate = new X509Certificate2Collection();
                     X509Certificate2Collection caCertificate = new X509Certificate2Collection();
                     Sec4DiagCertificateState sec4DiagCertificateState = service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate);
+                    if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection() && sec4DiagCertificateState == Sec4DiagCertificateState.NotYetExpired)
+                    {
+                        TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
+                        //interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
+                        boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
+                        return boolResultObject;
+                    }
                     if (sec4DiagCertificateState == Sec4DiagCertificateState.Valid && subCaCertificate.Count == 1 && caCertificate.Count == 1)
                     {
                         Log.Info(method, "Certificates are found and are valid");
@@ -720,7 +755,7 @@ namespace PsdzClient.Core.Container
                                 }
                                 else
                                 {
-                                    //TimeSpan subCAZertifikateRemainingTime2 = GetSubCAZertifikateRemainingTime();
+                                    TimeSpan subCAZertifikateRemainingTime2 = GetSubCAZertifikateRemainingTime();
                                     //interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.SubCaBackendErrorButTokenStillValid", subCAZertifikateRemainingTime2.Days).Localize());
                                     boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
                                 }
@@ -872,6 +907,13 @@ namespace PsdzClient.Core.Container
                 boolResultObject.ErrorCodeInt = 1;
                 return boolResultObject;
             }
+        }
+
+        private TimeSpan GetSubCAZertifikateRemainingTime()
+        {
+            DateTime dateTime = DateTime.ParseExact(sec4DiagHandler.ReadoutExpirationTime(), "dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+            DateTime now = DateTime.Now;
+            return dateTime - now;
         }
 
         private WebCallResponse<Sec4DiagResponseData> RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog, bool testRun)
