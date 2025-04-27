@@ -507,7 +507,7 @@ namespace PsdzClient.Core
                     HandleReadILevelForSp2021Fallback(instance, vecInfo, ecuKom, retryCount);
                 }
             }
-            else if (IsEES25Vehicle(vecInfo))
+            else if (vecInfo.Classification.IsNCar)
             {
                 ecuJob = ecuKom.ApiJobWithRetries("IPB_APP2", "STATUS_LESEN", "ARG;VCM_DID_ISTUFE", string.Empty, retryCount);
                 if (ecuJob.IsOkay())
@@ -528,6 +528,7 @@ namespace PsdzClient.Core
                 }
             }
         }
+
 
         public bool ProcessILevelJobResultsEES25(Reactor reactor, IVehicle vecInfo, IEcuJob iJob)
         {
@@ -1024,7 +1025,7 @@ namespace PsdzClient.Core
                     ExecuteVehicleLifeStartDateJobAndProcessResults("G_MRKOMB", "STATUS_LESEN", "ID;0x1701", 3, "STAT_SYSTEMZEIT_WERT", ecuKom, vehicle);
                 }
             }
-            else if (IsEES25Vehicle(vehicle))
+            else if (vehicle.Classification.IsNCar)
             {
                 ExecuteVehicleLifeStartDateJobAndProcessResults("IPB_APP1", "STATUS_LESEN", "ARG;SYSTEM_TIME_SUPREME", 3, "SECONDS", ecuKom, vehicle, null, "MILLISECONDS");
             }
