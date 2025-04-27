@@ -132,6 +132,7 @@
     <Compile Include="Core\Container\EDIABASAdapterDeviceResult.cs" />
     <Compile Include="Core\Container\IEcuKom.cs" />
     <Compile Include="Core\Container\IEcuKomApi.cs" />
+    <Compile Include="Core\IstaIcsServiceClient.cs" />
     <Compile Include="Core\Container\VehicleCommunication.cs" />
     <Compile Include="Core\CoreFramework.cs" />
     <Compile Include="Core\DataHolder.cs" />

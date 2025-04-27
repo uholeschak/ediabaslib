@@ -1291,7 +1291,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-#if false
         public static string GetHyphenedDbVersionForOnlinePatches(string dataBaseVersion)
         {
             if (dataBaseVersion == null)
@@ -1333,7 +1332,6 @@ namespace PsdzClient.Core
             }
             return false;
         }
-#endif
 
         public static bool GetActivateSdpOnlinePatch()
         {
@@ -1365,7 +1363,6 @@ namespace PsdzClient.Core
             {
                 return configString;
             }
-#if false
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
             {
                 if (istaIcsServiceClient.IsAvailable())
@@ -1377,13 +1374,11 @@ namespace PsdzClient.Core
                     }
                 }
             }
-#endif
             return "PROD";
         }
 
         public static bool GetActivateICOMReboot()
         {
-#if false
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
             {
                 if (istaIcsServiceClient.IsAvailable())
@@ -1395,13 +1390,11 @@ namespace PsdzClient.Core
                     }
                 }
             }
-#endif
             return true;
         }
 
         public static (bool IsActive, string Message) GetFeatureEnabledStatus(string feature)
         {
-#if false
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
             {
                 if (istaIcsServiceClient.IsAvailable())
@@ -1409,7 +1402,6 @@ namespace PsdzClient.Core
                     return istaIcsServiceClient.GetFeatureEnabledStatus(feature);
                 }
             }
-#endif
             return (IsActive: false, Message: "Could not get " + feature + " from IstaIcsServiceClient, return default value");
         }
 

@@ -9,6 +9,7 @@ using System.Net;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
@@ -473,7 +474,6 @@ namespace PsdzClient.Core.Container
                         return boolResultObject;
                     }
                 }
-#if false
                 else
                 {
                     IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient();
@@ -492,9 +492,6 @@ namespace PsdzClient.Core.Container
                         }
                     }
                 }
-#else
-                isS29Successful.Result = true;
-#endif
                 switch (device.VCIType)
                 {
                     case VCIDeviceType.ICOM:
