@@ -422,7 +422,7 @@ namespace PsdzClient.Programming
 
         private bool ProgrammingInfoCanBeAdded(IEcuProgrammingInfoData ecuProgrammingInfoData)
         {
-            if (!OnlyAddECUsWithIndividualData() || vehicle.IsMotorcycle())
+            if (!OnlyAddECUsWithIndividualData() || vehicle.Classification.IsMotorcycle())
             {
                 return true;
             }

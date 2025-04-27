@@ -869,7 +869,7 @@ namespace PsdzClient.Core
         // ToDo: Check on update
         public bool IsEES25Vehicle(IVehicle vecInfo)
         {
-            if (vecInfo.Sp2025Enabled)
+            if (vecInfo.Classification.IsSp2025)
             {
                 return true;
             }

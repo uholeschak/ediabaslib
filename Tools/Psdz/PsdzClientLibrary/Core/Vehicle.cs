@@ -16,6 +16,7 @@ using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Contracts;
 using PsdzClient.Utility;
+using static PsdzClient.PsdzDatabase;
 
 namespace PsdzClient.Core
 {
@@ -203,32 +204,6 @@ namespace PsdzClient.Core
             }
         }
 
-        [XmlIgnore]
-        public bool Sp2021Enabled
-        {
-            get
-            {
-                return sp2021Enabled;
-            }
-            set
-            {
-                sp2021Enabled = value;
-            }
-        }
-
-        [XmlIgnore]
-        public bool Sp2025Enabled
-        {
-            get
-            {
-                return sp2025Enabled;
-            }
-            set
-            {
-                sp2025Enabled = value;
-            }
-        }
-
         public string HmiVersion
         {
             get
@@ -335,7 +310,7 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         [IgnoreDataMember]
-        public string DisplayGwsz => base.Gwsz.ToMileageDisplayFormat(IsNewFaultMemoryActive);
+        public string DisplayGwsz => base.Gwsz.ToMileageDisplayFormat(Classification.IsNewFaultMemoryActive);
 
         public string SetVINRangeTypeFromVINRanges()
         {
@@ -776,29 +751,16 @@ namespace PsdzClient.Core
             }
         }
 
-        public bool IsNewFaultMemoryActive
+        public bool IsNewIdentActive
         {
             get
             {
-                return isNewFaultMemoryActiveField;
+                return isNewIdentActiveField;
             }
             set
             {
-                isNewFaultMemoryActiveField = value;
-                OnPropertyChanged("IsNewFaultMemoryActive");
-            }
-        }
-
-        public bool IsNewFaultMemoryExpertModeActive
-        {
-            get
-            {
-                return isNewFaultMemoryExpertModeActiveField;
-            }
-            set
-            {
-                isNewFaultMemoryExpertModeActiveField = value;
-                OnPropertyChanged("IsNewFaultMemoryExpertModeActive");
+                isNewIdentActiveField = value;
+                OnPropertyChanged("IsNewIdentActive");
             }
         }
 
@@ -2538,6 +2500,11 @@ namespace PsdzClient.Core
             return new FA();
         }
 
+        bool IIdentVehicle.IsPreE65Vehicle()
+        {
+            return Classification.IsPreE65Vehicle();
+        }
+
         // [UH] local reactor
         public Reactor Reactor { get; private set; }
 
@@ -2608,17 +2575,11 @@ namespace PsdzClient.Core
 
 		private const int indexOfFirsHDDAboUpdateInDecimal = 54;
 
-		private bool isNewFaultMemoryActiveField;
+        private bool isNewIdentActiveField;
 
-		private bool isNewFaultMemoryExpertModeActiveField;
+        //private BlockingCollection<VirtualFaultInfo> virtualFaultInfoList;
 
-		//private BlockingCollection<VirtualFaultInfo> virtualFaultInfoList;
-
-		private string hmiVersion;
-
-		private bool sp2021Enabled;
-
-        private bool sp2025Enabled;
+        private string hmiVersion;
 
         private string kraftstoffartEinbaulage;
 
@@ -2636,7 +2597,7 @@ namespace PsdzClient.Core
 
         private string sportausfuehrung;
 
-        private PsdzDatabase.BordnetsData bordnetsData;
+        private BordnetsData bordnetsData;
 
         private VehicleClassification classification;
 

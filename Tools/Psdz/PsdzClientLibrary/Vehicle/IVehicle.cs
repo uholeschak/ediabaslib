@@ -317,10 +317,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         ITransmissionDataType TransmissionDataType { get; }
 
-        bool Sp2021Enabled { get; set; }
-
-        bool Sp2025Enabled { get; set; }
-
         DateTime? C_DATETIME { get; }
 
         DateTime VehicleLifeStartDate { get; set; }
@@ -340,8 +336,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         bool IsDoIP { get; set; }
 
         IVehicleClassification Classification { get; set; }
-
-        bool IsMotorcycle();
 
         IEcu getECU(long? sgAdr);
 
