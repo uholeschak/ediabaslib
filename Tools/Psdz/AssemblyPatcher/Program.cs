@@ -1311,6 +1311,7 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.UseIdentNuget\"", "    <add key=\"BMW.Rheingold.UseIdentNuget\" value=\"false\" />"),
                     ("\"BMW.Rheingold.Programming.PsdzWebservice.Enabled\"", "    <add key=\"BMW.Rheingold.Programming.PsdzWebservice.Enabled\" value=\"false\" />"),
                     ("\"BMW.Rheingold.PsdzWebservice_Activate\"", "    <add key=\"BMW.Rheingold.PsdzWebservice_Activate\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.UseJreWithTLS13Support_Activate\"", "    <add key=\"BMW.Rheingold.UseJreWithTLS13Support_Activate\" value=\"true\" />"),
                     ("\"BMW.Rheingold.Programming.Sdp.Patch.Enabled\"", "    <add key=\"BMW.Rheingold.Programming.Sdp.Patch.Enabled\" value=\"false\" />"),
                     ("\"BMW.Rheingold.Diagnostics.EnableRsuProcessHandling\"", "    <add key=\"BMW.Rheingold.Diagnostics.EnableRsuProcessHandling\" value=\"false\" />"),
                     ("\"BMW.Rheingold.ISTAGUI.Dialogs.AdministrationDialog.ShowPTTSelection\"", "    <add key=\"BMW.Rheingold.ISTAGUI.Dialogs.AdministrationDialog.ShowPTTSelection\" value=\"true\" />"),
