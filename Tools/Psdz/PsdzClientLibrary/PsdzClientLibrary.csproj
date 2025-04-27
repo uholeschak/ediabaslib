@@ -327,8 +327,12 @@
     <Compile Include="DetectVehicle.cs" />
     <Compile Include="Core\DiagnosticsBusinessData.cs" />
     <Compile Include="Core\Container\HeaderAdapter.cs" />
+    <Compile Include="Programming\BusMapper.cs" />
+    <Compile Include="Programming\BusObject.cs" />
+    <Compile Include="Programming\IBusObject.cs" />
     <Compile Include="Programming\IPsdzServiceGateway.cs" />
     <Compile Include="Programming\ISecureDiagnosticsService.cs" />
+    <Compile Include="Programming\PsdzBus.cs" />
     <Compile Include="Programming\PsdzServiceGateway.cs" />
     <Compile Include="Programming\PsdzStarterGuard.cs" />
     <Compile Include="Programming\Sec4DiagPoowHandler.cs" />
@@ -338,7 +342,6 @@
     <Compile Include="PsdzDatabase.cs" />
     <Compile Include="Programming\AsamJobInputDictionary.cs" />
     <Compile Include="Programming\BindingDetailsStatus.cs" />
-    <Compile Include="Programming\BusEnumMapper.cs" />
     <Compile Include="Programming\EcuCertCheckingResponse.cs" />
     <Compile Include="Programming\EcuData.cs" />
     <Compile Include="Programming\EcuFailureResponse.cs" />
@@ -794,6 +797,7 @@
     <EmbeddedResource Include="..\..\..\EdiabasLib\BmwFileReader\VehicleSeries.zip">
       <Link>Resources\VehicleSeries.zip</Link>
     </EmbeddedResource>
+    <None Include="Directory.Build.targets" />
     <None Include="PsdzClientLibrary.snk" />
   </ItemGroup>
   <ItemGroup>

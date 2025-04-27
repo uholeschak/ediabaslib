@@ -79,11 +79,11 @@ namespace PsdzClient.Core.Container
 
         //private ServiceControllerPermission scp;
 
-        private bool serviceIsRunning;
+        //private bool serviceIsRunning;
 
-        private readonly IInteractionService interactionService;
+        //private readonly IInteractionService interactionService;
 
-        private readonly IBackendCallsWatchDog backendCallsWatchDog;
+        //private readonly IBackendCallsWatchDog backendCallsWatchDog;
 
         private readonly ISec4DiagHandler sec4DiagHandler;
 

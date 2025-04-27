@@ -21,6 +21,9 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
         public bool IsCert2021 { get; set; }
 
         [DataMember]
+        public bool IsCert2025 { get; set; }
+
+        [DataMember]
         public bool IsCertEnabled { get; set; }
 
         [DataMember]
@@ -89,6 +92,7 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
             IsLcsSystemTimeSwitchSupported = model.IsLcsSystemTimeSwitchSupported;
             IsCert2018 = model.IsCert2018;
             IsCert2021 = model.IsCert2021;
+            IsCert2025 = model.IsCert2025;
             IsCertEnabled = model.IsCertEnabled;
             IsMirrorProtocolSupported = model.IsMirrorProtocolSupported;
             IsEcuAuthEnabled = model.IsEcuAuthEnabled;

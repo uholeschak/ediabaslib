@@ -20,6 +20,8 @@
 
         public bool IsCert2021 { get; set; }
 
+        public bool IsCert2025 { get; set; }
+
         public bool IsCertEnabled { get; set; }
 
         public bool IsMirrorProtocolSupported { get; set; }

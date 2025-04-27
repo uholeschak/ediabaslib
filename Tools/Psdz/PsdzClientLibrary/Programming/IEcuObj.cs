@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
     // ToDo: Check on update
     // BMW.Rheingold.CoreFramework.Contracts.Programming.Bus
+    //[Obsolete("use IBusObject instead")]
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum Bus
     {
@@ -62,11 +64,17 @@ namespace PsdzClient.Programming
 
         string BnTnName { get; }
 
+        //[Obsolete("use BusCons instead")]
         IList<Bus> BusConnections { get; }
+
+        IList<IBusObject> BusCons { get; }
 
         IList<string> BusConnectionsAsString { get; }
 
+        //[Obsolete("use DiagBus instead")]
         Bus DiagnosticBus { get; }
+
+        IBusObject DiagBus { get; }
 
         IEcuDetailInfo EcuDetailInfo { get; }
 

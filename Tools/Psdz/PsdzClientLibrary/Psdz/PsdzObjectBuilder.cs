@@ -27,8 +27,6 @@ namespace BMW.Rheingold.Psdz
 	{
         private readonly IObjectBuilderService objectBuilderService;
 
-        private readonly BusEnumMapper busEnumMapper = new BusEnumMapper();
-
         private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
 
         private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
@@ -79,7 +77,7 @@ namespace BMW.Rheingold.Psdz
             {
                 psdzEcu.GatewayDiagAddr = BuildDiagAddress(ecuInput.GatewayDiagAddrAsInt.Value);
             }
-            psdzEcu.DiagnosticBus = busEnumMapper.GetValue(ecuInput.DiagnosticBus);
+            psdzEcu.DiagnosticBus = BusMapper.MapToPsdzBus(ecuInput.DiagBus);
             psdzEcu.SerialNumber = ecuInput.SerialNumber;
             if (ecuInput.EcuDetailInfo != null)
             {
@@ -96,7 +94,7 @@ namespace BMW.Rheingold.Psdz
                     HasIndividualData = ecuInput.EcuStatusInfo.HasIndividualData
                 };
             }
-            psdzEcu.BusConnections = ((ecuInput.BusConnections != null) ? ecuInput.BusConnections.Select(busEnumMapper.GetValue) : null);
+            psdzEcu.BusConnections = ((ecuInput.BusCons != null) ? ecuInput.BusCons.Select(BusMapper.MapToPsdzBus) : null);
             IPsdzStandardSvk standardSvk = BuildSvk(ecuInput.StandardSvk);
             psdzEcu.StandardSvk = standardSvk;
             psdzEcu.PsdzEcuPdxInfo = BuildPdxInfo(ecuInput.EcuPdxInfo);
@@ -129,6 +127,7 @@ namespace BMW.Rheingold.Psdz
             }
             return psdzEcu;
         }
+
         private IPsdzEcuPdxInfo BuildPdxInfo(IEcuPdxInfo ecuPdxInfo)
         {
             if (ecuPdxInfo != null)

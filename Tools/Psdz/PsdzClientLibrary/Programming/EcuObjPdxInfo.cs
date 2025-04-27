@@ -51,5 +51,23 @@ namespace PsdzClient.Programming
 
         [DataMember]
         public bool IsSmartActuatorMaster { get; internal set; }
+
+        [DataMember]
+        public bool IsCert2025 { get; internal set; }
+
+        [DataMember]
+        public bool IsLcsIntegrityProtectionOCSupported { get; internal set; }
+
+        [DataMember]
+        public bool IsLcsIukCluster { get; internal set; }
+
+        [DataMember]
+        public bool IsMACsecEnabled { get; internal set; }
+
+        [DataMember]
+        public int ServicePack { get; internal set; }
+
+        [DataMember]
+        public bool IsAclEnabled { get; internal set; }
     }
 }

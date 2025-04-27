@@ -1,7 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz;
 
-namespace PsdzClientLibrary.Programming
+namespace PsdzClient.Programming
 {
     public interface IPsdzServiceGateway
     {

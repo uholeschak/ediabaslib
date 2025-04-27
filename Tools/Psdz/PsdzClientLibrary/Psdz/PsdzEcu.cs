@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model.Comparer;
+using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Psdz.Model.Ecu
 {

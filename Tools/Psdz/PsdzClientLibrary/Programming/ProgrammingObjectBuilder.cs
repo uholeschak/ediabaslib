@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -25,8 +26,6 @@ namespace BMW.Rheingold.Programming.API
         private readonly Vehicle vehicle;
 
         //private readonly VehicleDataConverter vdc;
-
-        private readonly BusEnumMapper busEnumMapper = new BusEnumMapper();
 
         private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
 
@@ -304,11 +303,11 @@ namespace BMW.Rheingold.Programming.API
             eCU.EcuVariant = ecuInput.EcuVariant;
             eCU.BnTnName = ecuInput.BnTnName;
             eCU.GatewayDiagAddrAsInt = ((ecuInput.GatewayDiagAddr != null) ? new int?(ecuInput.GatewayDiagAddr.Offset) : ((int?)null));
-            eCU.DiagnosticBus = busEnumMapper.GetValue(ecuInput.DiagnosticBus);
+            eCU.DiagBus = BusMapper.MapToBus(ecuInput.DiagnosticBus);
             eCU.SerialNumber = ecuInput.SerialNumber;
             eCU.EcuIdentifier = Build(ecuInput.PrimaryKey);
             eCU.StandardSvk = Build(ecuInput.StandardSvk);
-            eCU.BusConnections = ((ecuInput.BusConnections != null) ? ecuInput.BusConnections.Select(busEnumMapper.GetValue).ToList() : null);
+            eCU.BusCons = ((ecuInput.BusConnections != null) ? ecuInput.BusConnections.Select(BusMapper.MapToBus).ToList() : null);
             eCU.EcuDetailInfo = ((ecuInput.EcuDetailInfo != null) ? new EcuObjDetailInfo(ecuInput.EcuDetailInfo.ByteValue) : null);
             eCU.EcuStatusInfo = ((ecuInput.EcuStatusInfo != null) ? new EcuObjStatusInfo(ecuInput.EcuStatusInfo.ByteValue, ecuInput.EcuStatusInfo.HasIndividualData) : null);
             eCU.EcuPdxInfo = Build(ecuInput.PsdzEcuPdxInfo);
@@ -354,6 +353,7 @@ namespace BMW.Rheingold.Programming.API
                 }
                 return new SmartActuatorECU(eCU)
                 {
+                    ID_HW_NR = "n/a",
                     SmacMasterDiagAddressAsInt = ((psdzSmartActuatorEcu.SmacMasterDiagAddress != null) ? new int?(psdzSmartActuatorEcu.SmacMasterDiagAddress.Offset) : ((int?)null)),
                     SmacID = psdzSmartActuatorEcu.SmacID
                 };
@@ -393,7 +393,13 @@ namespace BMW.Rheingold.Programming.API
                     IsEcuAuthEnabled = psdzEcuPdxInfo.IsEcuAuthEnabled,
                     IsIPsecBitmaskSupported = psdzEcuPdxInfo.IsIPsecBitmaskSupported,
                     ProgrammingProtectionLevel = psdzEcuPdxInfo.ProgrammingProtectionLevel,
-                    IsSmartActuatorMaster = psdzEcuPdxInfo.IsSmartActuatorMaster
+                    IsSmartActuatorMaster = psdzEcuPdxInfo.IsSmartActuatorMaster,
+                    IsCert2025 = psdzEcuPdxInfo.IsCert2025,
+                    IsLcsIntegrityProtectionOCSupported = psdzEcuPdxInfo.LcsIntegrityProtectionOCSupported,
+                    IsLcsIukCluster = psdzEcuPdxInfo.LcsIukCluster,
+                    IsMACsecEnabled = psdzEcuPdxInfo.IsMACsecEnabled,
+                    ServicePack = psdzEcuPdxInfo.ServicePack,
+                    IsAclEnabled = psdzEcuPdxInfo.AclEnabled
                 };
             }
             return null;
@@ -604,7 +610,6 @@ namespace BMW.Rheingold.Programming.API
             return array;
         }
 
-
         private IEnumerable<IEcuFailureResponse> BuildEcuCertCheckingResultFailedEcus(IEnumerable<PsdzEcuFailureResponse> psdzFailedEcus)
         {
             List<EcuFailureResponse> list = new List<EcuFailureResponse>();
@@ -631,7 +636,7 @@ namespace BMW.Rheingold.Programming.API
 			return new IntegrationLevelTriple(istufenTriple.Shipment, istufenTriple.Last, istufenTriple.Current);
 		}
 
-        internal SystemVerbauKennung Build(CoreFramework.Contracts.Vehicle.ISvk svkInput)
+        internal SystemVerbauKennung Build(ISvk svkInput)
         {
             if (svkInput == null)
             {

@@ -14,6 +14,8 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
 
         bool IsCert2021 { get; }
 
+        bool IsCert2025 { get; }
+
         bool IsCertEnabled { get; }
 
         bool IsSecOcEnabled { get; }

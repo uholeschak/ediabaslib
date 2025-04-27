@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 
 namespace PsdzClient.Programming
 {
@@ -20,11 +21,25 @@ namespace PsdzClient.Programming
 
         public string BnTnName { get; internal set; }
 
-        public IList<Bus> BusConnections { get; internal set; }
+        public IList<Bus> BusConnections => BusCons?.Select((IBusObject x) => x.ConvertToBus()).ToList();
+
+        public IList<IBusObject> BusCons { get; internal set; }
 
         public IList<string> BusConnectionsAsString => ((List<Bus>)BusConnections).ConvertAll((Bus x) => x.ToString("G"));
 
-        public Bus DiagnosticBus { get; internal set; }
+        public Bus DiagnosticBus
+        {
+            get
+            {
+                if (DiagBus != null)
+                {
+                    return DiagBus.ConvertToBus();
+                }
+                return Bus.Unknown;
+            }
+        }
+
+        public IBusObject DiagBus { get; internal set; }
 
         public IEcuDetailInfo EcuDetailInfo { get; internal set; }
 

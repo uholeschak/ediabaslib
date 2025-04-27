@@ -6,6 +6,8 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Psdz.Client
 {
@@ -19,49 +21,6 @@ namespace BMW.Rheingold.Psdz.Client
     {
         Ip,
         DCan
-    }
-
-    // ToDo: Check on update
-    // BMW.Rheingold.Psdz.Model.Ecu.PsdzBus
-    public enum PsdzBus
-    {
-        ACan,
-        BodyCan,
-        DCan,
-        FaCan,
-        KCan,
-        Unknown,
-        Unbekannt,
-        Most,
-        FlexRay,
-        B2Can,
-        Ethernet,
-        SCan,
-        LeCan,
-        LpCan,
-        LrCan,
-        IkCan,
-        SfCan,
-        ZsgCan,
-        ZgwCan,
-        Le2Can,
-        InfraCan,
-        B3Can,
-        SystemBusEthernet,
-        AeCanFd,
-        ApCanFd,
-        FasCanFd,
-        UssCanFd,
-        SrrCanFd,
-        Ipb11CanFd,
-        Ipb12CanFd,
-        Ipb13CanFd,
-        Ipb14CanFd,
-        Ipb15CanFd,
-        Ipb16CanFd,
-        Ipb17CanFd,
-        Zim11CanFd,
-        Zim12CanFd
     }
 
     public enum ProdiasLoglevel

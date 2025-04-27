@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Client;
+using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Psdz.Model.Ecu
 {

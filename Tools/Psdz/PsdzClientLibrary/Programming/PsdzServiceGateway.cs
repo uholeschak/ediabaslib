@@ -2,13 +2,12 @@
 using BMW.Rheingold.Programming;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz;
-using PsdzClient.Programming;
 using System.Threading.Tasks;
 using System;
 using PsdzClient;
 using PsdzClient.Core;
 
-namespace PsdzClientLibrary.Programming
+namespace PsdzClient.Programming
 {
     public class PsdzServiceGateway : IPsdzServiceGateway, IDisposable
     {

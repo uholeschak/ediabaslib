@@ -1,7 +1,7 @@
 ﻿using PsdzClient.Core;
 using System;
 
-namespace PsdzClientLibrary.Programming
+namespace PsdzClient.Programming
 {
     internal sealed class PsdzStarterGuard
     {

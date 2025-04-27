@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using PsdzClient.Programming;
 
 namespace PsdzClient.Core
@@ -337,14 +338,11 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
-        public IList<Bus> BusConnections { get; set; }
-
-        [XmlIgnore]
-        public IList<string> BusConnectionsAsString
+        public IList<Bus> BusConnections
         {
             get
             {
-                return BusConnections?.Select((Bus x) => x.ToString("G")).ToList();
+                return BusCons?.Select((IBusObject x) => x.ConvertToBus()).ToList();
             }
             private set
             {
@@ -353,7 +351,40 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
-        public Bus DiagnosticBus { get; set; }
+        public IList<IBusObject> BusCons { get; set; }
+
+        [XmlIgnore]
+        public IList<string> BusConnectionsAsString
+        {
+            get
+            {
+                return BusCons?.Select((IBusObject x) => x.ToString()).ToList();
+            }
+            private set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [XmlIgnore]
+        public Bus DiagnosticBus
+        {
+            get
+            {
+                if (DiagBus != null)
+                {
+                    return DiagBus.ConvertToBus();
+                }
+                return Bus.Unknown;
+            }
+            private set
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        [XmlIgnore]
+        public IBusObject DiagBus { get; set; }
 
         [XmlIgnore]
         public IEcuDetailInfo EcuDetailInfo { get; set; }
