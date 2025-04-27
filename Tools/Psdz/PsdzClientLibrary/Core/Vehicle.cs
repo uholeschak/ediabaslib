@@ -1933,35 +1933,6 @@ namespace PsdzClient.Core
             }
         }
 
-        // ToDo: Check on update
-        public bool? HasMSAButton()
-        {
-            switch (Produktlinie.ToUpper())
-            {
-                case "PL6-ALT":
-                    if (base.FA != null && base.FA.C_DATETIME.HasValue && base.FA.C_DATETIME > LciDateE60)
-                    {
-                        return true;
-                    }
-                    return false;
-                case "PL5-ALT":
-                case "PL3-ALT":
-                    return false;
-                case "PL2":
-                case "PL3":
-                case "PL4":
-                case "PL5":
-                case "PL6":
-                case "PL7":
-                case "35LG":
-                case "PLLI":
-                case "PLLU":
-                    return true;
-                default:
-                    return null;
-            }
-        }
-
         public bool isECUAlreadyScanned(ECU checkSG)
         {
             try
@@ -2105,60 +2076,6 @@ namespace PsdzClient.Core
             }
         }
 #endif
-        // ToDo: Check on update
-        public bool IsPreE65Vehicle()
-        {
-            if (!string.IsNullOrEmpty(base.Ereihe) && (Regex.Match(base.Ereihe, "^E[0-5][0-9]$").Success || Regex.Match(base.Ereihe, "^E6[0-4]$").Success))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        // ToDo: Check on update
-        public bool IsPreDS2Vehicle()
-        {
-            if (!string.IsNullOrEmpty(base.Ereihe))
-            {
-                if (Regex.Match(base.Ereihe, "^E[0-3][0-5]$").Success)
-                {
-                    return true;
-                }
-                if ("E36".Equals(base.Ereihe))
-                {
-                    return C_DATETIME < LciDateE36;
-                }
-            }
-            return false;
-        }
-
-        // ToDo: Check on update
-        public bool IsMotorcycle()
-        {
-            if (base.BNType != BNType.BN2000_MOTORBIKE && base.BNType != BNType.BN2020_MOTORBIKE)
-            {
-                return base.BNType == BNType.BNK01X_MOTORBIKE;
-            }
-            return true;
-        }
-
-        // ToDo: Check on update
-        public bool IsRRSeries2()
-        {
-            if ("RR1".Equals(base.Ereihe) || "RR2".Equals(base.Ereihe) || "RR3".Equals(base.Ereihe))
-            {
-                if ("RR1_2020".Equals(base.MainSeriesSgbd))
-                {
-                    return true;
-                }
-                if (C_DATETIME.HasValue)
-                {
-                    return C_DATETIME > lciRRS2;
-                }
-                return false;
-            }
-            return false;
-        }
 
         IEcu IVehicle.getECU(long? sgAdr)
 		{

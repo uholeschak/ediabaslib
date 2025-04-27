@@ -720,7 +720,7 @@ namespace PsdzClient.Programming
             ClientContext clientContext = ClientContext.GetClientContext(VecInfo);
             SetFa(programmingService);
             UiBrand brand = UiBrand.BMWBMWiMINI;
-            if (VecInfo.IsMotorcycle())
+            if (VecInfo.Classification.IsMotorcycle())
             {
                 brand = UiBrand.BMWMotorrad;
             }
@@ -908,7 +908,7 @@ namespace PsdzClient.Programming
                 }
                 if (string.IsNullOrEmpty(VecInfo.Prodart))
                 {
-                    if (!VecInfo.IsMotorcycle())
+                    if (!VecInfo.Classification.IsMotorcycle())
                     {
                         VecInfo.Prodart = "P";
                     }
@@ -1062,7 +1062,7 @@ namespace PsdzClient.Programming
                 {
                     if (individualOnly)
                     {
-                        if (VecInfo.IsMotorcycle() || ecuInfo.HasIndividualData)
+                        if (VecInfo.Classification.IsMotorcycle() || ecuInfo.HasIndividualData)
                         {
                             ecuList.Add(ecuInfo);
                         }

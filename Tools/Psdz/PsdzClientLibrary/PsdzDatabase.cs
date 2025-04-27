@@ -1648,7 +1648,7 @@ namespace PsdzClient
 
         private string GetImmediatactionsIdentifier(Vehicle vehicle)
         {
-            if (vehicle != null && vehicle.IsMotorcycle())
+            if (vehicle != null && vehicle.Classification.IsMotorcycle())
             {
                 return "SOFORTMASSNAHMEN_PROGRAMMIERUNG_MOTORRAD";
             }
