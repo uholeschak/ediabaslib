@@ -226,6 +226,7 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
+        // Use IlSpy to decompile the method
         // vecInfo type changed to Vehicle
         public string GetMainSeriesSgbdAdditional(Vehicle vecInfo, ILogger logger)
         {
