@@ -136,7 +136,7 @@ namespace PsdzClient.Core
                 case EExpressionType.ECUPROGRAMMINGVARIANT:
                     return SingleAssignmentExpression.Deserialize(ms, eExpressionType, logger, vec);
                 default:
-                    Log.Error("RuleExpression.Deserialize()", "Unknown Expression-Type");
+                    logger.Error("RuleExpression.Deserialize()", "Unknown Expression-Type");
                     throw new Exception("Unknown Expression-Type");
             }
         }
