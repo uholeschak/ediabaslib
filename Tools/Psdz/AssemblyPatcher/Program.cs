@@ -447,6 +447,48 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.ISPI.IstaServices.Client",
+                                Class = "IstaIcsServiceClient",
+                                Method = "ValidateHost",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("IstaIcsServiceClient.ValidateHost found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.ISPI.IstaServices.Client",
+                                Class = "IstaIcsServiceClient",
+                                Method = "VerifyLicense",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("IstaIcsServiceClient.VerifyLicense found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.ISTAGUI.Controller",
                                 Class = "IstaInstallationRequirements",
                                 Method = "CheckInstallationStatus",
@@ -465,6 +507,7 @@ namespace AssemblyPatcher
                             // ignored
                         }
 
+#if false
                         try
                         {
                             Target target = new Target
@@ -570,6 +613,7 @@ namespace AssemblyPatcher
                         {
                             // ignored
                         }
+#endif
 
                         try
                         {
