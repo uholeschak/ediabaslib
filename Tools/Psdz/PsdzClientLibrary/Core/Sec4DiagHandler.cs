@@ -72,6 +72,16 @@ namespace PsdzClient.Core
         public Sec4DiagRequestData BuildRequestModel(string vin17)
         {
             string empty = string.Empty;
+            if (ConfigSettings.IsOssModeActive)
+            {
+                empty = CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly.ToString();
+                return new Sec4DiagRequestData
+                {
+                    CertReqProfile = empty,
+                    Vin17 = vin17,
+                    PublicKey = ConvertToPEM(EdiabasPublicKey)
+                };
+            }
             empty = ((!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Sec4Diag.Only.Use.TIS", defaultValue: false)) ? CertReqProfile.EnumType.crp_subCA_4ISTA.ToString() : CertReqProfile.EnumType.crp_subCA_4ISTA_TISonly.ToString());
             Sec4DiagRequestData sec4DiagRequestData = new Sec4DiagRequestData();
             sec4DiagRequestData.CertReqProfile = empty;
@@ -220,12 +230,14 @@ namespace PsdzClient.Core
             using (StringWriter stringWriter = new StringWriter())
             {
                 PemWriter pemWriter = new PemWriter(stringWriter);
-                pemWriter.WriteObject(publicKey);
-                pemWriter.Writer.Flush();
-                return stringWriter.ToString().Replace("-----BEGIN PUBLIC KEY-----", "").Replace("-----END PUBLIC KEY-----", "")
-                    .Replace("\r", "")
-                    .Replace("\n", "")
-                    .Trim();
+                {
+                    pemWriter.WriteObject(publicKey);
+                    pemWriter.Writer.Flush();
+                    return stringWriter.ToString().Replace("-----BEGIN PUBLIC KEY-----", "").Replace("-----END PUBLIC KEY-----", "")
+                        .Replace("\r", "")
+                        .Replace("\n", "")
+                        .Trim();
+                }
             }
         }
 
@@ -248,7 +260,9 @@ namespace PsdzClient.Core
             using (StreamReader reader = File.OpenText(Path.Combine(_ediabaasS29Path, Environment.MachineName + "_public.pem")))
             {
                 PemReader pemReader = new PemReader(reader);
-                return pemReader.ReadObject() as AsymmetricKeyParameter;
+                {
+                    return pemReader.ReadObject() as AsymmetricKeyParameter;
+                }
             }
         }
 
@@ -373,12 +387,13 @@ namespace PsdzClient.Core
             string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa");
             X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
             x509Store.Open(OpenFlags.ReadWrite);
-            X509Certificate2Collection certificates = x509Store.Certificates;
-            if (certificates.Find(X509FindType.FindByThumbprint, configString, validOnly: false).Count == 0)
+            X509Certificate2Collection x509Certificate2Collection = x509Store.Certificates.Find(X509FindType.FindByThumbprint, configString, validOnly: false);
+            if (x509Certificate2Collection.Count == 0)
             {
                 Log.Info("ReadoutExpirationTime", "Not Certification for given Thumbprint found");
+                return string.Empty;
             }
-            return certificates[0].GetExpirationDateString();
+            return x509Certificate2Collection[0].GetExpirationDateString();
         }
 
         private bool AreKeyPairsEqual(AsymmetricKeyParameter subCaKeyPair, AsymmetricCipherKeyPair istaKeyPair)

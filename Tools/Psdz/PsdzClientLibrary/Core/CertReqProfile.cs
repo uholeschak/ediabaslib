@@ -12,7 +12,7 @@ namespace PsdzClient.Core
             [EnumMember]
             crp_subCA_4ISTA_TISonly,
             [EnumMember]
-            crp_PERS_ISTADeveloper_4_DEV_Programming
+            crp_M2M_3dParty_4_CUST_ControlOnly
         }
     }
 }
