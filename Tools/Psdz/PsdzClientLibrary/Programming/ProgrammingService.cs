@@ -183,6 +183,7 @@ namespace PsdzClient.Programming
                 Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
                 return true;
             }
+            //TimeMetricsUtility.Instance.InitializePsdzStart();
             Log.Info(Log.CurrentMethod(), "Start.");
             try
             {
@@ -194,9 +195,10 @@ namespace PsdzClient.Programming
             catch (Exception ex)
             {
                 Log.ErrorException(Log.CurrentMethod(), ex);
+                return false;
             }
             Log.Info(Log.CurrentMethod(), "End.");
-
+            //TimeMetricsUtility.Instance.InitializePsdzStop();
             return true;
         }
 

@@ -1358,6 +1358,61 @@ namespace PsdzClient.Core
             return false;
         }
 
+        public static string GetWebEAMNextStage()
+        {
+            string configString = getConfigString("BMW.Rheingold.Auth.WebEamNextStage");
+            if (!string.IsNullOrEmpty(configString) && (configString.Equals("PROD", StringComparison.InvariantCultureIgnoreCase) || configString.Equals("INT", StringComparison.InvariantCultureIgnoreCase)))
+            {
+                return configString;
+            }
+#if false
+            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
+            {
+                if (istaIcsServiceClient.IsAvailable())
+                {
+                    string webEAMNextStage = istaIcsServiceClient.GetWebEAMNextStage();
+                    if (!string.IsNullOrEmpty(webEAMNextStage) && (webEAMNextStage.Equals("PROD", StringComparison.InvariantCultureIgnoreCase) || webEAMNextStage.Equals("INT", StringComparison.InvariantCultureIgnoreCase)))
+                    {
+                        return webEAMNextStage;
+                    }
+                }
+            }
+#endif
+            return "PROD";
+        }
+
+        public static bool GetActivateICOMReboot()
+        {
+#if false
+            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
+            {
+                if (istaIcsServiceClient.IsAvailable())
+                {
+                    string activateICOMReboot = istaIcsServiceClient.GetActivateICOMReboot();
+                    if (!string.IsNullOrEmpty(activateICOMReboot) && bool.TryParse(activateICOMReboot, out var result))
+                    {
+                        return result;
+                    }
+                }
+            }
+#endif
+            return true;
+        }
+
+        public static (bool IsActive, string Message) GetFeatureEnabledStatus(string feature)
+        {
+#if false
+            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
+            {
+                if (istaIcsServiceClient.IsAvailable())
+                {
+                    return istaIcsServiceClient.GetFeatureEnabledStatus(feature);
+                }
+            }
+#endif
+            return (IsActive: false, Message: "Could not get " + feature + " from IstaIcsServiceClient, return default value");
+        }
+
         public static T EnumParseConfig<T>(string key, T defaultValue)
         {
             try
