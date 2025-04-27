@@ -154,6 +154,7 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
+        // [UH] changed to public
         public static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
         {
             int customHashCode = vecInfo.GetCustomHashCode();
@@ -519,15 +520,15 @@ namespace PsdzClient.Core
                 case BNType.IBUS:
                     return GetEcuCharacteristics("iBusEcuCharacteristics.xml", vecInfo);
                 default:
-                {
-                    BaseEcuCharacteristics baseEcuCharacteristics = GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                    if (baseEcuCharacteristics != null)
                     {
-                        return baseEcuCharacteristics;
+                        BaseEcuCharacteristics baseEcuCharacteristics = GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                        if (baseEcuCharacteristics != null)
+                        {
+                            return baseEcuCharacteristics;
+                        }
+                        Log.Warning("VehicleLogistics.GetCharacteristics()", $"No configuration found for vehicle with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}");
+                        return null;
                     }
-                    Log.Warning("VehicleLogistics.GetCharacteristics()", $"No configuration found for vehicle with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}");
-                    return null;
-                }
             }
         }
 
