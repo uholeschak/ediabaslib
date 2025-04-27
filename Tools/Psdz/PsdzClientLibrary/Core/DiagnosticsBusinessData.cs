@@ -116,6 +116,10 @@ namespace PsdzClient.Core
 
         private const string ILevelBN2020RegexPattern = "([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}";
 
+        private static readonly DateTime LciDateE36 = DateTime.Parse("1998-03-01", CultureInfo.InvariantCulture);
+
+        private static readonly DateTime LciDateE60 = DateTime.Parse("2005-09-01", CultureInfo.InvariantCulture);
+
         //private string ServiceCodeValuePattern = "{0}_{1}";
 
         //private LayoutGroup layoutGroup = LayoutGroup.D;
@@ -123,7 +127,7 @@ namespace PsdzClient.Core
         private readonly List<string> fsLesenExpertVariants = new List<string>
         {
             "PCU48", "DME9FF_R", "DME98_R", "D94BX7A0", "DME98_L", "IB_I20", "IB_G70", "GSMA02QZ", "GSMA02PU", "GSZF04GD",
-            "GSZF04GF", "SCR04", "SCR05", "CCU_P1", "HVS_02"
+            "GSZF04GF", "SCR04", "SCR05", "CCU_P1", "HVS_02", "GSMA02PL", "GSZF04GA"
         };
 
         private readonly List<string> specificModelsNoPopUp = new List<string>
@@ -152,50 +156,50 @@ namespace PsdzClient.Core
 
         private string[] maxGrpListMINI = new string[31]
         {
-            "D_0008", "D_0012", "D_0013", "D_0031", "D_003B", "D_0044", "D_0050", "D_0057", "D_005B", "D_0060",
-            "D_0068", "D_006A", "D_0070", "D_0074", "D_0076", "D_007F", "D_0080", "D_0081", "D_009A", "D_009C",
-            "D_00A4", "D_00BB", "D_00C8", "D_00CE", "D_00E8", "D_00ED", "D_00F0", "D_ABSKWP", "D_EGS", "D_MOTOR",
-            "D_ZKE_GM"
+        "D_0008", "D_0012", "D_0013", "D_0031", "D_003B", "D_0044", "D_0050", "D_0057", "D_005B", "D_0060",
+        "D_0068", "D_006A", "D_0070", "D_0074", "D_0076", "D_007F", "D_0080", "D_0081", "D_009A", "D_009C",
+        "D_00A4", "D_00BB", "D_00C8", "D_00CE", "D_00E8", "D_00ED", "D_00F0", "D_ABSKWP", "D_EGS", "D_MOTOR",
+        "D_ZKE_GM"
         };
 
         private string[] maxGrpListBMWRest = new string[60]
         {
-            "D_0014", "D_009A", "D_0022", "D_0040", "D_0013", "D_0000", "D_0008", "D_0012", "D_0032", "D_003B",
-            "D_0044", "D_0048", "D_0050", "D_0056", "D_0057", "D_005B", "D_0060", "D_0065", "D_0066", "D_0068",
-            "D_006A", "D_0070", "D_0072", "D_0074", "D_0076", "D_007F", "D_0080", "D_0081", "D_009C", "D_009B",
-            "D_00A4", "D_00B0", "D_00BB", "D_00C0", "D_00C2", "D_00C8", "D_00CE", "D_00D0", "D_00E8", "D_00EA",
-            "D_00ED", "D_00F0", "D_ABSKWP", "D_AHM", "D_BFS", "D_CID", "D_EGS", "D_EKP", "D_EPS", "D_FAS",
-            "D_FLA", "D_MOTOR", "D_SIM", "D_STVL2", "D_STVR2", "D_SZM", "D_VGSG", "D_VVT", "D_ZKE_GM", "D_ZUHEIZ"
+        "D_0014", "D_009A", "D_0022", "D_0040", "D_0013", "D_0000", "D_0008", "D_0012", "D_0032", "D_003B",
+        "D_0044", "D_0048", "D_0050", "D_0056", "D_0057", "D_005B", "D_0060", "D_0065", "D_0066", "D_0068",
+        "D_006A", "D_0070", "D_0072", "D_0074", "D_0076", "D_007F", "D_0080", "D_0081", "D_009C", "D_009B",
+        "D_00A4", "D_00B0", "D_00BB", "D_00C0", "D_00C2", "D_00C8", "D_00CE", "D_00D0", "D_00E8", "D_00EA",
+        "D_00ED", "D_00F0", "D_ABSKWP", "D_AHM", "D_BFS", "D_CID", "D_EGS", "D_EKP", "D_EPS", "D_FAS",
+        "D_FLA", "D_MOTOR", "D_SIM", "D_STVL2", "D_STVR2", "D_SZM", "D_VGSG", "D_VVT", "D_ZKE_GM", "D_ZUHEIZ"
         };
 
         private List<string> ereiheForGrpListBMWRest = new List<string>
-        {
-            "E30", "E31", "E32", "E34", "E36", "E38", "E39", "E46", "E83", "E85",
-            "E86"
-        };
+    {
+        "E30", "E31", "E32", "E34", "E36", "E38", "E39", "E46", "E83", "E85",
+        "E86"
+    };
 
         private string[] maxGrpListBMW = new string[37]
         {
-            "D_0000", "D_0012", "D_0032", "D_003B", "D_0044", "D_0056", "D_0057", "D_005B", "D_0068", "D_006A",
-            "D_0070", "D_0072", "D_0074", "D_007F", "D_0081", "D_0080", "D_009C", "D_00A4", "D_00B0", "D_00BB",
-            "D_00C0", "D_00C8", "D_00CE", "D_00D0", "D_00E8", "D_00EA", "D_00ED", "D_00F0", "D_ABSKWP", "D_EGS",
-            "D_MOTOR", "D_SZM", "D_VGSG", "D_VVT", "D_VVT2", "D_ZKE_GM", "D_ZUHEIZ"
+        "D_0000", "D_0012", "D_0032", "D_003B", "D_0044", "D_0056", "D_0057", "D_005B", "D_0068", "D_006A",
+        "D_0070", "D_0072", "D_0074", "D_007F", "D_0081", "D_0080", "D_009C", "D_00A4", "D_00B0", "D_00BB",
+        "D_00C0", "D_00C8", "D_00CE", "D_00D0", "D_00E8", "D_00EA", "D_00ED", "D_00F0", "D_ABSKWP", "D_EGS",
+        "D_MOTOR", "D_SZM", "D_VGSG", "D_VVT", "D_VVT2", "D_ZKE_GM", "D_ZUHEIZ"
         };
 
         private List<string> ereiheForGrpListBMW = new List<string> { "E52", "E53" };
 
         private string[] maxGrpListFull = new string[96]
         {
-            "d_egs", "d_0000", "d_0008", "d_000d", "d_0010", "d_0011", "d_0012", "d_motor", "d_0013", "d_0014",
-            "d_0015", "d_0016", "d_0020", "d_0021", "d_0022", "d_0024", "d_0028", "d_002c", "d_002e", "d_0030",
-            "d_0032", "d_0035", "d_0036", "d_003b", "d_0040", "d_0044", "d_0045", "d_0050", "d_0056", "d_0057",
-            "d_0059", "d_005a", "d_005b", "d_0060", "d_0068", "d_0069", "d_006a", "d_006c", "d_0070", "d_0071",
-            "d_0072", "d_007f", "d_0080", "d_0086", "d_0099", "d_009a", "d_009b", "d_009c", "d_009d", "d_009e",
-            "d_00a0", "d_00a4", "d_00a6", "d_00a7", "d_00ac", "d_00b0", "d_00b9", "d_00bb", "d_00c0", "d_00c8",
-            "d_00cd", "d_00d0", "d_00da", "d_00e0", "d_00e8", "d_00ed", "d_00f0", "d_00f5", "d_00ff", "d_b8_d0",
-            "", "d_m60_10", "d_m60_12", "d_spmbt", "d_spmft", "d_szm", "d_zke3bt", "d_zke3ft", "d_zke3pm", "d_zke3sb",
-            "d_zke3sd", "d_zke_gm", "d_zuheiz", "d_sitz_f", "d_sitz_b", "d_0047", "d_0048", "d_00ce", "d_00ea", "d_abskwp",
-            "d_0031", "d_0019", "d_smac", "d_0081", "d_xen_l", "d_xen_r"
+        "d_egs", "d_0000", "d_0008", "d_000d", "d_0010", "d_0011", "d_0012", "d_motor", "d_0013", "d_0014",
+        "d_0015", "d_0016", "d_0020", "d_0021", "d_0022", "d_0024", "d_0028", "d_002c", "d_002e", "d_0030",
+        "d_0032", "d_0035", "d_0036", "d_003b", "d_0040", "d_0044", "d_0045", "d_0050", "d_0056", "d_0057",
+        "d_0059", "d_005a", "d_005b", "d_0060", "d_0068", "d_0069", "d_006a", "d_006c", "d_0070", "d_0071",
+        "d_0072", "d_007f", "d_0080", "d_0086", "d_0099", "d_009a", "d_009b", "d_009c", "d_009d", "d_009e",
+        "d_00a0", "d_00a4", "d_00a6", "d_00a7", "d_00ac", "d_00b0", "d_00b9", "d_00bb", "d_00c0", "d_00c8",
+        "d_00cd", "d_00d0", "d_00da", "d_00e0", "d_00e8", "d_00ed", "d_00f0", "d_00f5", "d_00ff", "d_b8_d0",
+        "", "d_m60_10", "d_m60_12", "d_spmbt", "d_spmft", "d_szm", "d_zke3bt", "d_zke3ft", "d_zke3pm", "d_zke3sb",
+        "d_zke3sd", "d_zke_gm", "d_zuheiz", "d_sitz_f", "d_sitz_b", "d_0047", "d_0048", "d_00ce", "d_00ea", "d_abskwp",
+        "d_0031", "d_0019", "d_smac", "d_0081", "d_xen_l", "d_xen_r"
         };
 
         private string[] newFaultMemoryEnabledESeriesLifeCycles = new string[8] { "F95-1", "F96-1", "G05-1", "G06-1", "G07-1", "G09-0", "G18-1", "RR25-0" };
@@ -216,8 +220,7 @@ namespace PsdzClient.Core
             { "CBS_INFO", "STATUS_CBS_INFO" }
         };
 
-
-        public List<string> ProductLinesEpmBlacklist => new List<string> { "PL0", "PL2", "PL3", "PL3-alt", "PL4", "PL5", "PL5-alt", "PL6", "PL6-alt", "PL7" };
+        public List<string> ProductLinesEpmBlacklist => new List<string> { "PL0", "PL2", "PL3", "PL3-ALT", "PL4", "PL5", "PL5-ALT", "PL6", "PL6-ALT", "PL7" };
 
         public DateTime DTimeF25Lci => DateTime.ParseExact("01.04.2014", "dd.MM.yyyy", new CultureInfo("de-DE"));
 
@@ -271,12 +274,12 @@ namespace PsdzClient.Core
                             list.Add(dictionary["D_KOMBI"]);
                         }
                     }
-                    if (vecInfo.Sp2021Enabled)
+                    if (vecInfo.Classification.IsSp2021)
                     {
                         list.Add(dictionary["G_VIP"]);
                         list.Add(dictionary["G_ZGW"]);
                     }
-                    if (IsEES25Vehicle(vecInfo))
+                    if (vecInfo.Classification.IsNCar)
                     {
                         list.Add(dictionary["IPF1_FAR"]);
                     }
@@ -609,13 +612,18 @@ namespace PsdzClient.Core
             return true;
         }
 
-        public void SetSp2021Enabled(IVehicle vecInfo)
+        public string GetMainSeriesSgbdAdditional(Vehicle vecInfo)
         {
-            if (string.IsNullOrEmpty(vecInfo.Produktlinie) && ClientContext.GetBrand((Vehicle) vecInfo) == UiBrand.BMWMotorrad)
+            return GetMainSeriesSgbdAdditional(vecInfo, new NugetLogger());
+        }
+
+        public bool IsSp2021Enabled(IVehicle vecInfo)
+        {
+            if (string.IsNullOrEmpty(vecInfo.Produktlinie) && ConfigSettings.SelectedBrand == UiBrand.BMWMotorrad)
             {
                 vecInfo.Produktlinie = "-";
             }
-            vecInfo.Sp2021Enabled = vecInfo.Produktlinie.StartsWith("21");
+            return vecInfo.Produktlinie?.StartsWith("21") ?? false;
         }
 
         // ToDo: Check on update
@@ -631,7 +639,7 @@ namespace PsdzClient.Core
                     text = "";
                 }
             }
-            if (vecInfo.Sp2021Enabled || text.Equals("BCP_SP21", StringComparison.OrdinalIgnoreCase))
+            if (vecInfo.Classification.IsSp2021 || text.Equals("BCP_SP21", StringComparison.OrdinalIgnoreCase))
             {
                 Log.Info(Log.CurrentMethod(), "Vehicle gateway is bcp_sp21!");
                 return true;
@@ -640,31 +648,28 @@ namespace PsdzClient.Core
             return false;
         }
 
-        public string GetMainSeriesSgbdAdditional(Vehicle vecInfo)
+        public bool IsSp2025Enabled(IVehicle vecInfo)
         {
-            return GetMainSeriesSgbdAdditional(vecInfo, new NugetLogger());
-        }
-
-        public string[] GetMaxEcuList(BrandName brand, string ereihe)
-        {
-            switch (brand)
+            if (ConfigSettings.SelectedBrand == UiBrand.BMWMotorrad && string.IsNullOrEmpty(vecInfo.Produktlinie))
             {
-                case BrandName.MINIPKW:
-                    return maxGrpListMINI;
-                case BrandName.BMWPKW:
-                    if (ereiheForGrpListBMWRest.Contains(ereihe))
-                    {
-                        return maxGrpListBMWRest;
-                    }
-                    if (ereiheForGrpListBMW.Contains(ereihe))
-                    {
-                        return maxGrpListBMW;
-                    }
-                    break;
+                vecInfo.Produktlinie = "-";
             }
-            return maxGrpListFull;
+            return vecInfo.Produktlinie?.StartsWith("25") ?? false;
         }
 
+        public bool IsNewFaultMemoryEnabled(IVehicle vecInfo)
+        {
+            if (!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.NewFaultMemory.NewActivationCondition", defaultValue: true))
+            {
+                Log.Info(Log.CurrentMethod(), "New condition for enabling new fault memory is disabled. Using old method (sp2021).");
+                return vecInfo.Classification.IsSp2021;
+            }
+            if (!vecInfo.Classification.IsSp2021 && !vecInfo.Classification.IsSp2025)
+            {
+                return newFaultMemoryEnabledESeriesLifeCycles.Any((string eslc) => eslc.Equals(vecInfo.ESeriesLifeCycle, StringComparison.InvariantCultureIgnoreCase));
+            }
+            return true;
+        }
 
         // ToDo: Check on update
         public List<int> GetGatewayEcuAdresses(IVehicle vecInfo)
@@ -819,7 +824,7 @@ namespace PsdzClient.Core
                         case "21LU":
                         case "21LG":
                             list.Add(16);
-                            if (IsEES25Vehicle(vecInfo))
+                            if (vecInfo.Classification.IsNCar)
                             {
                                 list.Add(64);
                             }
@@ -941,6 +946,26 @@ namespace PsdzClient.Core
                 vecInfo.AddEcu(eCU5);
                 doECUIdentDelegate(vecInfo, eCU5, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
+        }
+
+        public string[] GetMaxEcuList(BrandName brand, string ereihe)
+        {
+            switch (brand)
+            {
+                case BrandName.MINIPKW:
+                    return maxGrpListMINI;
+                case BrandName.BMWPKW:
+                    if (ereiheForGrpListBMWRest.Contains(ereihe))
+                    {
+                        return maxGrpListBMWRest;
+                    }
+                    if (ereiheForGrpListBMW.Contains(ereihe))
+                    {
+                        return maxGrpListBMW;
+                    }
+                    break;
+            }
+            return maxGrpListFull;
         }
 
         public void HandleECUGroups(IVehicle vecInfo, IEcuKom ecuKom, List<IEcu> ecusToRemoveKMM)
@@ -1151,6 +1176,59 @@ namespace PsdzClient.Core
                 return true;
             }
             return false;
+        }
+
+        public bool IsPreDS2Vehicle(string ereihe, DateTime? c_DateTime)
+        {
+            if (!string.IsNullOrEmpty(ereihe))
+            {
+                if (Regex.Match(ereihe, "^E[0-3][0-5]$").Success)
+                {
+                    return true;
+                }
+                if ("E36".Equals(ereihe))
+                {
+                    return c_DateTime < LciDateE36;
+                }
+            }
+            return false;
+        }
+
+        public bool IsPreE65Vehicle(string ereihe)
+        {
+            if (!string.IsNullOrEmpty(ereihe) && (Regex.Match(ereihe, "^E[0-5][0-9]$").Success || Regex.Match(ereihe, "^E6[0-4]$").Success))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool? HasMSAButton(FA fa, DateTime? c_DateTime, string productLine)
+        {
+            switch (productLine.ToUpper())
+            {
+                case "PL6-ALT":
+                    if (fa != null && fa != null && c_DateTime > LciDateE60)
+                    {
+                        return true;
+                    }
+                    return false;
+                case "PL5-ALT":
+                case "PL3-ALT":
+                    return false;
+                case "PL2":
+                case "PL3":
+                case "PL4":
+                case "PL5":
+                case "PL6":
+                case "PL7":
+                case "35LG":
+                case "PLLI":
+                case "PLLU":
+                    return true;
+                default:
+                    return null;
+            }
         }
 
         public string GetServiceProgramName(TestModuleName testmoduleName)

@@ -339,6 +339,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool IsDoIP { get; set; }
 
+        IVehicleClassification Classification { get; set; }
+
         bool IsMotorcycle();
 
         IEcu getECU(long? sgAdr);

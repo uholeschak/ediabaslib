@@ -32,11 +32,11 @@ namespace PsdzClient.Core
 
         DateTime DTime2023_07 { get; }
 
-        void SetSp2021Enabled(IVehicle vecInfo);
+        bool IsSp2021Enabled(IVehicle vecInfo);
 
-        //void SetSp2025Enabled(IVehicle vecInfo);
+        bool IsSp2025Enabled(IVehicle vecInfo);
 
-        //bool IsNewFaultMemoryEnabled(IVehicle vecInfo);
+        bool IsNewFaultMemoryEnabled(IVehicle vecInfo);
 
         string GetMainSeriesSgbd(Vehicle vecInfo);
 
@@ -101,5 +101,11 @@ namespace PsdzClient.Core
         //bool ShouldNotValidateFAForOldCars(string ereihe, DateTime constructionDate);
 
         bool IsEES25Vehicle(IVehicle vecInfo);
+
+        bool IsPreE65Vehicle(string ereihe);
+
+        bool IsPreDS2Vehicle(string ereihe, DateTime? c_DateTime);
+
+        bool? HasMSAButton(FA fa, DateTime? c_DateTime, string productLine);
     }
 }

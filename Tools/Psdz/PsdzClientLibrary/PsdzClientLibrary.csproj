@@ -784,9 +784,11 @@
     <Compile Include="Vehicle\ITechnicalCampaign.cs" />
     <Compile Include="Vehicle\IVciDevice.cs" />
     <Compile Include="Vehicle\IVehicle.cs" />
+    <Compile Include="Vehicle\IVehicleClassification.cs" />
     <Compile Include="Vehicle\IZfsResult.cs" />
     <Compile Include="Vehicle\LocalizedSAItem.cs" />
     <Compile Include="Core\VehicleLogistics.cs" />
+    <Compile Include="Vehicle\VehicleClassification.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\..\..\EdiabasLib\BmwFileReader\VehicleSeries.zip">

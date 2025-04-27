@@ -84,6 +84,36 @@ namespace PsdzClient.Core
             }
         }
 
+        [XmlIgnore]
+        public VehicleClassification Classification
+        {
+            get
+            {
+                return classification;
+            }
+            set
+            {
+                if (classification != value)
+                {
+                    classification = value;
+                    OnPropertyChanged("Classification");
+                }
+            }
+        }
+
+        [XmlIgnore]
+        IVehicleClassification IVehicle.Classification
+        {
+            get
+            {
+                return Classification;
+            }
+            set
+            {
+                Classification = (VehicleClassification)value;
+            }
+        }
+
         public Vehicle(ClientContext clientContext) : base(clientContext)
         {
             TransmissionDataType = new TransmissionDataType();
@@ -103,6 +133,7 @@ namespace PsdzClient.Core
             clamp15MinValue = 0.0;
             clamp30MinValue = 9.95; //new VoltageThreshold(BatteryEnum.Pb).MinError;
             //RxSwin = new RxSwinData();
+            Classification = new VehicleClassification(this);
             Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
         }
 
@@ -2606,6 +2637,8 @@ namespace PsdzClient.Core
         private string sportausfuehrung;
 
         private PsdzDatabase.BordnetsData bordnetsData;
+
+        private VehicleClassification classification;
 
         private static readonly DateTime lciRRS2 = DateTime.Parse("2012-05-31", CultureInfo.InvariantCulture);
     }
