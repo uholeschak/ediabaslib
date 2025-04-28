@@ -25,7 +25,7 @@ namespace PsdzClient.Programming
 
         public IList<IBusObject> BusCons { get; internal set; }
 
-        public IList<string> BusConnectionsAsString => ((List<Bus>)BusConnections).ConvertAll((Bus x) => x.ToString("G"));
+        public IList<string> BusConnectionsAsString => BusCons?.Select((IBusObject x) => x.ToString()).ToList();
 
         public Bus DiagnosticBus
         {

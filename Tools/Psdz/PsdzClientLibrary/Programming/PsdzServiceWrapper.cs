@@ -143,7 +143,7 @@ namespace BMW.Rheingold.Programming
 
         public string PsdzLogFilePath => psdzLogFilePath;
 
-		public void AddPsdzEventListener(IPsdzEventListener psdzEventListener)
+        public void AddPsdzEventListener(IPsdzEventListener psdzEventListener)
 		{
 			this.psdzServiceClient.AddPsdzEventListener(psdzEventListener);
 		}
