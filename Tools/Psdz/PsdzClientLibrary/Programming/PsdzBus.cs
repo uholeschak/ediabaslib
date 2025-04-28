@@ -4,6 +4,7 @@ using System;
 namespace BMW.Rheingold.Psdz.Model.Ecu
 {
 #if OLD_PSDZ_HOST
+#warning OLD_PSDZ_HOST avtivated!
     public enum PsdzBus
     {
         Unknown = -1,
