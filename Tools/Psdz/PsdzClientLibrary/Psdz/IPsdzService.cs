@@ -34,8 +34,6 @@ namespace BMW.Rheingold.Psdz
 
         IVcmService VcmService { get; }
 
-        ICbbTlsConfiguratorService CbbTlsConfiguratorService { get; }
-
         ICertificateManagementService CertificateManagementService { get; }
 
         ISecureFeatureActivationService SecureFeatureActivationService { get; }

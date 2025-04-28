@@ -445,14 +445,12 @@
     <Compile Include="Programming\VehicleProgrammingEventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PsdzDatabaseGeneration.cs" />
-    <Compile Include="Psdz\CbbTlsConfiguratorServiceClient.cs" />
     <Compile Include="Psdz\CertificateManagementServiceClient.cs" />
     <Compile Include="Psdz\ClientConfigArgs.cs" />
     <Compile Include="Psdz\ConfigurationServiceClient.cs" />
     <Compile Include="Psdz\ConnectionFactoryServiceClient.cs" />
     <Compile Include="Psdz\ConnectionManagerServiceClient.cs" />
     <Compile Include="Psdz\EcuServiceClient.cs" />
-    <Compile Include="Psdz\ICbbTlsConfiguratorService.cs" />
     <Compile Include="Psdz\ICertificateManagementService.cs" />
     <Compile Include="Psdz\IConfigurationService.cs" />
     <Compile Include="Psdz\IConnectionFactoryService.cs" />

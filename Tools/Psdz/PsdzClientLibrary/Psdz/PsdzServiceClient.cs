@@ -36,8 +36,6 @@ namespace BMW.Rheingold.Psdz.Client
 
         private readonly VcmServiceClient vcmService;
 
-        private readonly CbbTlsConfiguratorServiceClient cbbTlsConfiguratorService;
-
         private readonly ICertificateManagementService certificateManagementService;
 
         private readonly IndividualDataRestoreServiceClient individualDataRestoreService;
@@ -76,7 +74,6 @@ namespace BMW.Rheingold.Psdz.Client
                 talExecutionService = new TalExecutionServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/TalExecutionService", clientId, clientLogDir));
                 logService = new LogServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/LogService", clientId, clientLogDir));
                 macrosService = new MacrosServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/MacrosService", clientId, clientLogDir));
-                cbbTlsConfiguratorService = new CbbTlsConfiguratorServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CbbTlsConfiguratorService", clientId, clientLogDir));
                 certificateManagementService = new CertificateManagementServiceClient(netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/CertificateManagementService", clientId, clientLogDir));
                 secureFeatureActivationService = new SecureFeatureActivationServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/SecureFeatureActivationService", clientId, clientLogDir));
                 kdsService = new KdsServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress("net.pipe://localhost/PsdzServiceHost/KdsService", clientId, clientLogDir));
@@ -99,7 +96,6 @@ namespace BMW.Rheingold.Psdz.Client
                 talExecutionService = new TalExecutionServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/TalExecutionService", clientId, clientLogDir));
                 logService = new LogServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/LogService", clientId, clientLogDir));
                 macrosService = new MacrosServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/MacrosService", clientId, clientLogDir));
-                cbbTlsConfiguratorService = new CbbTlsConfiguratorServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/CbbTlsConfiguratorService", clientId, clientLogDir));
                 certificateManagementService = new CertificateManagementServiceClient(netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/CertificateManagementService", clientId, clientLogDir));
                 secureFeatureActivationService = new SecureFeatureActivationServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/SecureFeatureActivationService", clientId, clientLogDir));
                 kdsService = new KdsServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/KdsService", clientId, clientLogDir));
@@ -133,8 +129,6 @@ namespace BMW.Rheingold.Psdz.Client
         public ITalExecutionService TalExecutionService => talExecutionService;
 
         public IVcmService VcmService => vcmService;
-
-        public ICbbTlsConfiguratorService CbbTlsConfiguratorService => cbbTlsConfiguratorService;
 
         public ICertificateManagementService CertificateManagementService => certificateManagementService;
 

@@ -127,8 +127,6 @@ namespace BMW.Rheingold.Programming
 
         public IVcmService VcmService => psdzServiceClient.VcmService;
 
-        public ICbbTlsConfiguratorService CbbTlsConfiguratorService => psdzServiceClient.CbbTlsConfiguratorService;
-
         public ICertificateManagementService CertificateManagementService => psdzServiceClient.CertificateManagementService;
 
         public IIndividualDataRestoreService IndividualDataRestoreService => psdzServiceClient.IndividualDataRestoreService;
