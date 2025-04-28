@@ -43,10 +43,6 @@ namespace BMW.Rheingold.Psdz
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
-        IPsdzCalculationNcdResultCto RequestCalculationNcdWithPartialSuccess(IList<IPsdzRequestNcdEto> cafsForNcdCalculationEto, IPsdzFa fa, IPsdzSecureCodingConfigCto secureCodingConfigCto, PsdzCodingTypeEnum codingType);
-
-        [OperationContract]
-        [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzNcd ReadNcdFromFile(string ncdDirectory, IPsdzVin vin, IPsdzSgbmId cafdSgbmid, string btldSgbmNumber);
 
         [OperationContract]
@@ -56,9 +52,5 @@ namespace BMW.Rheingold.Psdz
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzRequestNcdSignatureResponseCto RequestSignatureOnline(IList<IPsdzRequestNcdEto> sgbmidsForNcdCalculation, IPsdzSecureCodingConfigCto secureCodingConfigCto, IPsdzVin vin);
-
-        [OperationContract]
-        [FaultContract(typeof(PsdzRuntimeException))]
-        bool SaveNCD(IPsdzNcd ncd, string btldSgbmNumber, IPsdzSgbmId cafdSgbmid, string ncdDirectory, IPsdzVin vin);
     }
 }

@@ -25,11 +25,6 @@ namespace BMW.Rheingold.Psdz.Client
             return CallFunction((ISecureCodingService service) => service.CheckNcdAvailabilityForGivenTal(tal, ncdDirectory, vin));
         }
 
-        public IPsdzCalculationNcdResultCto RequestCalculationNcdWithPartialSuccess(IList<IPsdzRequestNcdEto> cafsForNcdCalculationEto, IPsdzFa fa, IPsdzSecureCodingConfigCto secureCodingConfigCto, PsdzCodingTypeEnum codingType)
-        {
-            return CallFunction((ISecureCodingService service) => service.RequestCalculationNcdWithPartialSuccess(cafsForNcdCalculationEto, fa, secureCodingConfigCto, codingType));
-        }
-
         public IList<IPsdzSecurityBackendRequestFailureCto> RequestCalculationNcdAndSignatureOffline(IList<IPsdzRequestNcdEto> sgbmidsForNcdCalculation, string jsonRequestFilePath, IPsdzSecureCodingConfigCto secureCodingConfigCto, IPsdzVin vin, IPsdzFa fa)
         {
             return CallFunction((ISecureCodingService service) => service.RequestCalculationNcdAndSignatureOffline(sgbmidsForNcdCalculation, jsonRequestFilePath, secureCodingConfigCto, vin, fa));
@@ -38,11 +33,6 @@ namespace BMW.Rheingold.Psdz.Client
         public IPsdzRequestNcdSignatureResponseCto RequestSignatureOnline(IList<IPsdzRequestNcdEto> sgbmidsForNcdCalculation, IPsdzSecureCodingConfigCto secureCodingConfigCto, IPsdzVin vin)
         {
             return CallFunction((ISecureCodingService service) => service.RequestSignatureOnline(sgbmidsForNcdCalculation, secureCodingConfigCto, vin));
-        }
-
-        public bool SaveNCD(IPsdzNcd ncd, string btldSgbmNumber, IPsdzSgbmId cafdSgbmid, string ncdDirectory, IPsdzVin vin)
-        {
-            return CallFunction((ISecureCodingService service) => service.SaveNCD(ncd, btldSgbmNumber, cafdSgbmid, ncdDirectory, vin));
         }
 
         public IPsdzNcd ReadNcdFromFile(string ncdDirectory, IPsdzVin vin, IPsdzSgbmId cafdSgbmid, string btldSgbmNumber)
