@@ -43,7 +43,7 @@ namespace BMW.Rheingold.Psdz
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
-        [Obsolete]
+        //[Obsolete]
         IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackage(IEnumerable<string> backendUrlList, IEnumerable<string> crl, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest);
 
         [OperationContract]
@@ -52,7 +52,7 @@ namespace BMW.Rheingold.Psdz
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
-        IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackageWithoutCrlFilesWithReturnToken(IEnumerable<string> backendUrlList, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest, bool returnToken);
+        IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackageWithoutCrlFilesWithReturnToken(IEnumerable<string> backendUrlList, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest);
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
@@ -102,5 +102,13 @@ namespace BMW.Rheingold.Psdz
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzEcuFailureResponseCto> DeleteSecureToken(IPsdzConnection pConnection, IPsdzEcuIdentifier psdzEcuIdentifier, IPsdzFeatureIdCto psdzFeatureId);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzEcuFailureResponseCto> ResetEcus(IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecusToBeReset);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzEcuFailureResponseCto> ResetEcusFlashMode(IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecusToBeReset, bool performWithFlashMode);
     }
 }
