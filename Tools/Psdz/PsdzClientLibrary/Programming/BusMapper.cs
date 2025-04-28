@@ -14,8 +14,8 @@ namespace PsdzClient.Programming
         {
 #if OLD_PSDZ_HOST
             int id = (int)psdzBus;
-            string name = Enum.GetName(typeof(PsdzBus), psdzBus) ?? "-";
-            return new BusObject(BusObject.ACan.Id + id, name);
+            string name = Enum.GetName(typeof(PsdzBus), psdzBus) ?? "UNKNOWN";
+            return new BusObject(id, name);
 #else
             if (psdzBus == null)
             {
@@ -31,12 +31,12 @@ namespace PsdzClient.Programming
 #if OLD_PSDZ_HOST
             if (bus == null)
             {
-                return PsdzBus.ACan;
+                return PsdzBus.Unknown;
             }
 
             if (!Enum.TryParse(bus.Name, true, out PsdzBus result))
             {
-                return PsdzBus.ACan;
+                return PsdzBus.Unknown;
             }
             return result;
 #else
