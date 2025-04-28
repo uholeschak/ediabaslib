@@ -58,6 +58,7 @@ namespace BMW.Rheingold.Programming
             psdzServiceHostLogDir = psdzConfig.PsdzServiceHostLogDir;
             psdzServiceHostLogFilePath = psdzConfig.PsdzServiceHostLogFilePath;
             psdzLogFilePath = psdzConfig.PsdzLogFilePath;
+            // [UH] GetActivateSdpOnlinePatch replaced with EnablePsdzMultiSession
             if (ClientContext.EnablePsdzMultiSession())
             {
                 psdzServiceClient = new PsdzServiceClient(psdzConfig.ClientLogPath, Process.GetCurrentProcess().Id);
@@ -75,7 +76,8 @@ namespace BMW.Rheingold.Programming
             {
                 if (PsdzStarterGuard.Instance.CanCheckAvailability())
                 {
-                    if (!ConfigSettings.GetActivateSdpOnlinePatch())
+                    // [UH] GetActivateSdpOnlinePatch replaced with EnablePsdzMultiSession
+                    if (!ClientContext.EnablePsdzMultiSession())
                     {
                         return PsdzServiceStarter.IsServerInstanceRunning();
                     }

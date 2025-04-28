@@ -99,7 +99,8 @@ namespace PsdzClient.Programming
             }
 #endif
             bool started;
-            if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
+            // [UH] GetActivateSdpOnlinePatch replaced with EnablePsdzMultiSession
+            if (ClientContext.EnablePsdzMultiSession() || _psdzServiceHostStarter == null)
             {
                 started = PsdzStarterGuard.Instance.TryInitialize(delegate
                 {
@@ -134,7 +135,8 @@ namespace PsdzClient.Programming
                     _psdzWebServiceWrapper.Shutdown();
                 }
 #endif
-                if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
+                // [UH] GetActivateSdpOnlinePatch replaced with EnablePsdzMultiSession
+                if (ClientContext.EnablePsdzMultiSession() || force)
                 {
                     _psdzServiceHostWrapper.Shutdown();
                 }
