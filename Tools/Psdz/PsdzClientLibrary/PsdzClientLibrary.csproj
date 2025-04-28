@@ -455,6 +455,7 @@
     <Compile Include="Psdz\IConfigurationService.cs" />
     <Compile Include="Psdz\IConnectionFactoryService.cs" />
     <Compile Include="Psdz\IConnectionManagerService.cs" />
+    <Compile Include="Psdz\IEcuFilterOnSweLevel.cs" />
     <Compile Include="Psdz\IEcuService.cs" />
     <Compile Include="Psdz\IEventManagerService.cs" />
     <Compile Include="Psdz\IIndividualDataRestoreService.cs" />
@@ -554,6 +555,7 @@
     <Compile Include="Psdz\IPsdzStandardSvk.cs" />
     <Compile Include="Psdz\IPsdzStandardSvt.cs" />
     <Compile Include="Psdz\IPsdzSvt.cs" />
+    <Compile Include="Psdz\IPsdzSweTalFilterOptions.cs" />
     <Compile Include="Psdz\IPsdzSwtAction.cs" />
     <Compile Include="Psdz\IPsdzSwtApplication.cs" />
     <Compile Include="Psdz\IPsdzSwtApplicationId.cs" />
@@ -575,6 +577,7 @@
     <Compile Include="Psdz\ISecurityManagementService.cs" />
     <Compile Include="Psdz\ISmartActuatorEcu.cs" />
     <Compile Include="Psdz\ISmartActuatorMasterEcu.cs" />
+    <Compile Include="Psdz\ISweTalFilterOptions.cs" />
     <Compile Include="Psdz\ITalExecutionService.cs" />
     <Compile Include="Psdz\IVcmService.cs" />
     <Compile Include="Psdz\KdsServiceClient.cs" />
@@ -720,6 +723,7 @@
     <Compile Include="Psdz\PsdzSwDelete.cs" />
     <Compile Include="Psdz\PsdzSwDeploy.cs" />
     <Compile Include="Psdz\PsdzSwDeployTa.cs" />
+    <Compile Include="Psdz\PsdzSweTalFilterOptions.cs" />
     <Compile Include="Psdz\PsdzSwtAction.cs" />
     <Compile Include="Psdz\PsdzSwtApplication.cs" />
     <Compile Include="Psdz\PsdzSwtApplicationId.cs" />

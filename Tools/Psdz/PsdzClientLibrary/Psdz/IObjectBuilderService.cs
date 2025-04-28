@@ -28,6 +28,7 @@ namespace BMW.Rheingold.Psdz
     [ServiceKnownType(typeof(PsdzFa))]
     [ServiceKnownType(typeof(PsdzSwtAction))]
     [ServiceKnownType(typeof(PsdzEcuIdentifier))]
+    [ServiceKnownType(typeof(PsdzSweTalFilterOptions))]
     public interface IObjectBuilderService
     {
         [OperationContract]
@@ -64,7 +65,7 @@ namespace BMW.Rheingold.Psdz
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
-        IPsdzTalFilter DefineFilterForSwes(int diagAddress, IPsdzTa ta, string processClass, PsdzTalFilterAction talFilterAction, IDictionary<string, PsdzTalFilterAction> sweFilter, PsdzTaCategories taCategory, IPsdzTalFilter filter);
+        IPsdzTalFilter DefineFilterForSwes(int diagAddress, PsdzTalFilterAction talFilterAction, PsdzTaCategories category, IList<IPsdzSweTalFilterOptions> sweTaFilters, IPsdzTalFilter filter);
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]

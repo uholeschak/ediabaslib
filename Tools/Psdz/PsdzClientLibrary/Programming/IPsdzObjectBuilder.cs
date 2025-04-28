@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -106,7 +107,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         IPsdzTalFilter DefineFilterForAllEcus(TaCategories[] taCategories, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter);
 
-        IPsdzTalFilter DefineFilterForSWEs(IPsdzTa ta, int diagAddress, string processClass, TalFilterOptions talFilterOptions, List<string> sgbmIds, List<TalFilterOptions> sweTalFilterOptions, TaCategories taCategory, IPsdzTalFilter filter);
+        IPsdzTalFilter DefineFilterForSWEs(IEcuFilterOnSweLevel ecuFilter, IPsdzTalFilter talFilter);
 
         IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter, IDictionary<string, TalFilterOptions> smacFilter = null);
 

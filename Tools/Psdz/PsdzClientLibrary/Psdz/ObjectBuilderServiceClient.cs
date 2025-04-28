@@ -55,9 +55,9 @@ namespace BMW.Rheingold.Psdz.Client
             return CallFunction((IObjectBuilderService service) => service.DefineFilterForAllEcus(psdzTaCategories, talFilterAction, filter));
         }
 
-        public IPsdzTalFilter DefineFilterForSwes(int diagAddress, IPsdzTa ta, string processClass, PsdzTalFilterAction talFilterAction, IDictionary<string, PsdzTalFilterAction> sweFilter, PsdzTaCategories taCategory, IPsdzTalFilter filter)
+        public IPsdzTalFilter DefineFilterForSwes(int diagAddress, PsdzTalFilterAction talFilterAction, PsdzTaCategories category, IList<IPsdzSweTalFilterOptions> sweTalFilters, IPsdzTalFilter filter)
         {
-            return CallFunction((IObjectBuilderService service) => service.DefineFilterForSwes(diagAddress, ta, processClass, talFilterAction, sweFilter, taCategory, filter));
+            return CallFunction((IObjectBuilderService service) => service.DefineFilterForSwes(diagAddress, talFilterAction, category, sweTalFilters, filter));
         }
 
         public IPsdzTalFilter DefineFilterForSelectedEcus(PsdzTaCategories[] psdzTaCategories, int[] diagAddress, PsdzTalFilterAction talFilterAction, IPsdzTalFilter filter, IDictionary<string, PsdzTalFilterAction> smacFilter = null)

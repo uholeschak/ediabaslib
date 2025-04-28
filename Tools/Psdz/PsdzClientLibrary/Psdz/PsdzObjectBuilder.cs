@@ -526,20 +526,29 @@ namespace BMW.Rheingold.Psdz
             return objectBuilderService.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, filter, smacFilter2);
         }
 
-        public IPsdzTalFilter DefineFilterForSWEs(IPsdzTa ta, int diagAddress, string processClass, TalFilterOptions talFilterOptions, List<string> sgbmIds, List<TalFilterOptions> sweTalFilterOptions, TaCategories taCategory, IPsdzTalFilter filter)
+        public IPsdzTalFilter DefineFilterForSWEs(IEcuFilterOnSweLevel ecuFilter, IPsdzTalFilter talFilter)
         {
-            PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
-            if (sgbmIds.Count != sweTalFilterOptions.Count)
+            List<IPsdzSweTalFilterOptions> list = new List<IPsdzSweTalFilterOptions>();
+            foreach (ISweTalFilterOptions sweTalFilterOption in ecuFilter.SweTalFilterOptions)
             {
-                throw new ArgumentException("Sgbmids does not match swe tal filter options in length");
+                if (sweTalFilterOption.Ta != null)
+                {
+                    Dictionary<string, PsdzTalFilterAction> dictionary = new Dictionary<string, PsdzTalFilterAction>();
+                    for (int i = 0; i < sweTalFilterOption.SgbmIds.Count; i++)
+                    {
+                        dictionary.Add(sweTalFilterOption.SgbmIds[i], ConvertTalFilterOptionToTalFilterAction(sweTalFilterOption.SweFilter[i]));
+                    }
+                    list.Add(new PsdzSweTalFilterOptions
+                    {
+                        ProcessClass = sweTalFilterOption.ProcessClass,
+                        SweFilter = dictionary,
+                        Ta = sweTalFilterOption.Ta
+                    });
+                }
             }
-            Dictionary<string, PsdzTalFilterAction> dictionary = new Dictionary<string, PsdzTalFilterAction>();
-            for (int i = 0; i < sgbmIds.Count; i++)
-            {
-                dictionary.Add(sgbmIds[i], ConvertTalFilterOptionToTalFilterAction(sweTalFilterOptions[i]));
-            }
-            PsdzTaCategories value = taCategoriesEnumMapper.GetValue(taCategory);
-            return objectBuilderService.DefineFilterForSwes(diagAddress, ta, processClass, talFilterAction, dictionary, value, filter);
+            PsdzTaCategories value = taCategoriesEnumMapper.GetValue(ecuFilter.TaCategory);
+            PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(ecuFilter.TalFilterOptions);
+            return objectBuilderService.DefineFilterForSwes(ecuFilter.DiagAddress, talFilterAction, value, list, talFilter);
         }
 
         private static PsdzTalFilterAction ConvertTalFilterOptionToTalFilterAction(TalFilterOptions talFilterOptions)
