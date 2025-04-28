@@ -11,8 +11,8 @@ namespace BMW.Rheingold.Psdz
     [ServiceContract(SessionMode = SessionMode.Required)]
     public interface IConfigurationService
     {
-        [FaultContract(typeof(PsdzRuntimeException))]
         [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         string GetExpectedPsdzVersion();
 
         [OperationContract]
@@ -32,12 +32,12 @@ namespace BMW.Rheingold.Psdz
         [FaultContract(typeof(PsdzRuntimeException))]
         string RequestBaureihenverbund(string baureihe);
 
-        [FaultContract(typeof(PsdzRuntimeException))]
         [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         void SetRootDirectory(string rootDir);
 
-        [FaultContract(typeof(PsdzRuntimeException))]
         [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         void UnsetRootDirectory();
     }
 }

@@ -9,12 +9,12 @@ using BMW.Rheingold.Psdz.Model.Exceptions;
 
 namespace BMW.Rheingold.Psdz
 {
-    [ServiceKnownType(typeof(PsdzTargetSelector))]
     [ServiceContract(SessionMode = SessionMode.Required)]
+    [ServiceKnownType(typeof(PsdzTargetSelector))]
     public interface IConnectionFactoryService
     {
-        [FaultContract(typeof(PsdzRuntimeException))]
         [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzTargetSelector> GetTargetSelectors();
     }
 }
