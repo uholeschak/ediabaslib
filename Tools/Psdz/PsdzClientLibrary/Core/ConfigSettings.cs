@@ -130,11 +130,13 @@ namespace PsdzClient.Core
 
         private static bool runIstaRsuRepairMode;
 
-        public static string patchDbVersion { get; set; }
+        public static string hypenedDatabaseVersionForOnlinePatches { get; set; }
 
         public static CultureInfo CurrentCultureInfo => currentCultureInfo;
 
         public static bool IsVerificationMode => getConfigStringAsBoolean("BMW.Rheingold.VerificationMode", defaultValue: false);
+
+        public static bool IsTestModuleDebugMode => getConfigStringAsBoolean("BMW.Rheingold.Diagnostics.Module.DebugMode", defaultValue: false);
 
         public static string CurrentUICulture
         {
