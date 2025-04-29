@@ -1333,14 +1333,17 @@ namespace PsdzClient.Core
             return false;
         }
 
+        // replaced by EnablePsdzMultiSession
         public static bool GetActivateSdpOnlinePatch()
         {
+#if true
+            return ClientContext.EnablePsdzMultiSession();
+#else
             string configString = getConfigString("BMW.Rheingold.Programming.Sdp.Patch.Enabled");
             if (!string.IsNullOrEmpty(configString) && bool.TryParse(configString, out var result))
             {
                 return result;
             }
-#if false
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
             {
                 if (istaIcsServiceClient.IsAvailable())
@@ -1353,7 +1356,6 @@ namespace PsdzClient.Core
                 }
             }
 #endif
-            return false;
         }
 
         public static string GetWebEAMNextStage()

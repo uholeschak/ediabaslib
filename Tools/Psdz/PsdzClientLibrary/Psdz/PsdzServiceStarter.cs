@@ -5,23 +5,21 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Threading;
-using BMW.Rheingold.Psdz;
 using log4net;
-using log4net.Repository.Hierarchy;
-using PsdzClient;
+using PsdzClient.Core;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    public enum PsdzServiceStartResult
+    {
+        PsdzStillRunning,
+        PsdzStartFailed,
+        PsdzStartFailedMemError,
+        PsdzStartOk
+    }
+
     public class PsdzServiceStarter
     {
-        public enum PsdzServiceStartResult
-        {
-            PsdzStillRunning,
-            PsdzStartFailed,
-            PsdzStartFailedMemError,
-            PsdzStartOk
-        }
-
         private const string PsdzServiceStarterMutex = "Global\\PsdzServiceStarterMutex";
 
         private const string HostReadyEventName = "Global\\PsdzServiceHostReadyEvent";
@@ -76,7 +74,7 @@ namespace BMW.Rheingold.Psdz.Client
         // [UH] added
         public static bool IsThisServerInstanceRunning()
         {
-            if (ClientContext.EnablePsdzMultiSession())
+            if (ConfigSettings.GetActivateSdpOnlinePatch())
             {
                 return IsServerInstanceRunning(Process.GetCurrentProcess().Id);
             }

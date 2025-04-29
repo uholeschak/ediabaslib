@@ -58,8 +58,7 @@ namespace BMW.Rheingold.Programming
             psdzServiceHostLogDir = psdzConfig.PsdzServiceHostLogDir;
             psdzServiceHostLogFilePath = psdzConfig.PsdzServiceHostLogFilePath;
             psdzLogFilePath = psdzConfig.PsdzLogFilePath;
-            // [UH] GetActivateSdpOnlinePatch replaced with EnablePsdzMultiSession
-            if (ClientContext.EnablePsdzMultiSession())
+            if (ConfigSettings.GetActivateSdpOnlinePatch())
             {
                 psdzServiceClient = new PsdzServiceClient(psdzConfig.ClientLogPath, Process.GetCurrentProcess().Id);
             }
@@ -76,8 +75,7 @@ namespace BMW.Rheingold.Programming
             {
                 if (PsdzStarterGuard.Instance.CanCheckAvailability())
                 {
-                    // [UH] GetActivateSdpOnlinePatch replaced with EnablePsdzMultiSession
-                    if (!ClientContext.EnablePsdzMultiSession())
+                    if (!ConfigSettings.GetActivateSdpOnlinePatch())
                     {
                         return PsdzServiceStarter.IsServerInstanceRunning();
                     }
@@ -207,18 +205,18 @@ namespace BMW.Rheingold.Programming
                 }
                 Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "Initialize PSdZ ...");
                 PsdzServiceStarter psdzServiceStarter = new PsdzServiceStarter(psdzHostPath, psdzServiceHostLogDir, psdzServiceArgs);
-                PsdzServiceStarter.PsdzServiceStartResult psdzServiceStartResult = !ClientContext.EnablePsdzMultiSession() ? psdzServiceStarter.StartIfNotRunning() : psdzServiceStarter.StartIfNotRunning(Process.GetCurrentProcess().Id);
+                PsdzServiceStartResult psdzServiceStartResult = (ConfigSettings.GetActivateSdpOnlinePatch() ? psdzServiceStarter.StartIfNotRunning(Process.GetCurrentProcess().Id) : psdzServiceStarter.StartIfNotRunning());
                 Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "Result: {0}", psdzServiceStartResult);
                 switch (psdzServiceStartResult)
                 {
-                    case PsdzServiceStarter.PsdzServiceStartResult.PsdzStillRunning:
-                    case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartOk:
+                    case PsdzServiceStartResult.PsdzStillRunning:
+                    case PsdzServiceStartResult.PsdzStartOk:
                         DoSettingsForInitializedPsdz();
                         Log.Info("PsdzServiceWrapper.StartHostIfNotRunning()", "PSdZ initialized! Has valid version: {0}", IsValidPsdzVersion);
                         break;
                     default:
                         return false;
-                    case PsdzServiceStarter.PsdzServiceStartResult.PsdzStartFailedMemError:
+                    case PsdzServiceStartResult.PsdzStartFailedMemError:
                         return false;
                 }
             }

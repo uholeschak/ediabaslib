@@ -494,7 +494,7 @@ namespace PsdzClient.Programming
                 }
                 else
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Starting programming service MultiSession={0}", ClientContext.EnablePsdzMultiSession());
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Starting programming service MultiSession={0}", ConfigSettings.GetActivateSdpOnlinePatch());
                     ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
                     ClientContext.Database = ProgrammingService.PsdzDatabase;
                     if (ServiceInitializedEvent != null)
