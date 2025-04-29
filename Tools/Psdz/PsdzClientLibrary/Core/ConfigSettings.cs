@@ -220,7 +220,17 @@ namespace PsdzClient.Core
             }
         }
 
-        public static bool IsISTAModeHO => OperationalMode == OperationalMode.ISTA;
+        public static bool IsISTAModeHO
+        {
+            get
+            {
+                if (OperationalMode != 0)
+                {
+                    return OperationalMode == OperationalMode.ISTA_PLUS;
+                }
+                return true;
+            }
+        }
 
         public static bool IsISTAModeTS => OperationalMode == OperationalMode.TELESERVICE;
 #pragma warning restore CS0618 // Type or member is obsolete
@@ -247,11 +257,25 @@ namespace PsdzClient.Core
 
         public static string AppBaseDirectory { get; set; }
 
+        public static bool IsIRAPMode { get; set; }
+
         public static bool IsOssModeActive => getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.OSSModeActive", defaultValue: false);
 
         public static bool IsLightModeActive => getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.LightModeActive", defaultValue: false);
 
         public static bool IsMaster => isMaster;
+
+        public static bool? IgnoreRegKeys
+        {
+            get
+            {
+                return ignoreRegKeys;
+            }
+            set
+            {
+                ignoreRegKeys = value;
+            }
+        }
 
         public static bool IsILeanActive
         {
