@@ -139,6 +139,9 @@ namespace BMW.Rheingold.Programming
 
         public IKdsService KdsService => psdzServiceClient.KdsService;
 
+        // [UH] added
+        public string PsdzServiceLogDir => psdzServiceHostLogDir;
+
         public string PsdzServiceLogFilePath => psdzServiceHostLogFilePath;
 
         public string PsdzLogFilePath => psdzLogFilePath;

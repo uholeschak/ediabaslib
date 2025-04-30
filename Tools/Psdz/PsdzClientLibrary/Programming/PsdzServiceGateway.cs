@@ -43,6 +43,15 @@ namespace PsdzClient.Programming
             }
         }
 
+        // [UH] added
+        public string PsdzServiceLogDir
+        {
+            get
+            {
+                return _psdzServiceHostWrapper.PsdzServiceLogDir;
+            }
+        }
+
         public string PsdzServiceLogFilePath
         {
             get

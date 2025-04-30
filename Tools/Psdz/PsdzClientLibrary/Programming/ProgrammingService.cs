@@ -169,20 +169,21 @@ namespace PsdzClient.Programming
             Log.Info(Log.CurrentMethod(), "End.");
         }
 
+        // [UH] added
         public string GetPsdzServiceHostLogDir()
         {
-            return this.psdzConfig.PsdzServiceHostLogDir;
+            return psdzServiceGateway.PsdzServiceLogDir;
         }
 
-		public string GetPsdzServiceHostLogFilePath()
-		{
-			return this.psdzConfig.PsdzServiceHostLogFilePath;
-		}
+        public string GetPsdzServiceLogFilePath()
+        {
+            return psdzServiceGateway.PsdzServiceLogFilePath;
+        }
 
-		public string GetPsdzLogFilePath()
-		{
-			return this.psdzConfig.PsdzLogFilePath;
-		}
+        public string GetPsdzLogFilePath()
+        {
+            return psdzServiceGateway.PsdzLogFilePath;
+        }
 
         public bool StartPsdzService(IVehicle vehicle = null)
         {
