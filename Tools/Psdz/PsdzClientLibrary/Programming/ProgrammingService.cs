@@ -15,6 +15,12 @@ namespace PsdzClient.Programming
 {
 	public class ProgrammingService : IDisposable
 	{
+        private readonly PsdzServiceGateway psdzServiceGateway;
+
+        //private readonly IProgrammingWorker programmingWorker;
+
+        private readonly PsdzConfig psdzConfig;
+
         public IPsdzProgressListener PsdzProgressListener { get; private set; }
 
         public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
@@ -24,11 +30,6 @@ namespace PsdzClient.Programming
         public EcuProgrammingInfos ProgrammingInfos { get; private set; }
 
         public PsdzDatabase PsdzDatabase { get; private set; }
-
-
-        private readonly PsdzServiceGateway psdzServiceGateway;
-
-        private readonly PsdzConfig psdzConfig;
 
         public string BackupDataPath { get; private set; }
 
@@ -43,8 +44,9 @@ namespace PsdzClient.Programming
             this.EventManager = new ProgrammingEventManager();
             this.PsdzDatabase = new PsdzDatabase(istaFolder);
             PreparePsdzBackupDataPath(istaFolder);
+            //programmingWorker = CreateProgrammingWorker();
 
-            // [UH] create services
+            // [UH] added: create services
             IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
             if (fasta2Service == null)
             {
@@ -85,6 +87,13 @@ namespace PsdzClient.Programming
             }
             return false;
         }
+
+#if false
+        public IEnumerable<IProgrammingTask> RetrieveAvailableProgrammingTasks(IVehicle vehicle)
+        {
+            return programmingWorker.GetProgrammingTasks(vehicle);
+        }
+#endif
 
         public void SetLogLevelToMax()
         {
