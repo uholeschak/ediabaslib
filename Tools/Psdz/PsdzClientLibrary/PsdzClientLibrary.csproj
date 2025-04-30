@@ -330,6 +330,7 @@
     <Compile Include="Programming\BusMapper.cs" />
     <Compile Include="Programming\BusObject.cs" />
     <Compile Include="Programming\IBusObject.cs" />
+    <Compile Include="Programming\IProgrammingService.cs" />
     <Compile Include="Programming\IPsdzServiceGateway.cs" />
     <Compile Include="Programming\ISecureDiagnosticsService.cs" />
     <Compile Include="Programming\PsdzBus.cs" />

@@ -13,8 +13,8 @@ using PsdzClient.Core.Container;
 
 namespace PsdzClient.Programming
 {
-	public class ProgrammingService : IDisposable
-	{
+	public class ProgrammingService : IProgrammingService, IDisposable
+    {
         private readonly PsdzServiceGateway psdzServiceGateway;
 
         //private readonly IProgrammingWorker programmingWorker;
