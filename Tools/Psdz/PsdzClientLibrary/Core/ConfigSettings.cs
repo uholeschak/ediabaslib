@@ -635,7 +635,7 @@ namespace PsdzClient.Core
 
         public static string InitCulture()
         {
-            string configString = getConfigString("TesterGUI.Language", null);
+            string configString = getConfigString("TesterGUI.Language", "en-GB");
             try
             {
 #if false
@@ -681,6 +681,56 @@ namespace PsdzClient.Core
             }
             return currentUiCulture;
         }
+
+#if false
+        private static void SetCurrentUICultureFromPortalConfig()
+        {
+            IIstaPortalParameters portalParameters = OSSPortal.PortalParameters;
+            if (portalParameters != null && !string.IsNullOrEmpty(portalParameters.Language))
+            {
+                LogInfo("ConfigSettings.InitCulture()", "set UI culture based on portal settings to {0}", portalParameters.Language);
+                CurrentUICulture = portalParameters.Language;
+            }
+            else
+            {
+                SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "Failed to retrieve UI culture based on portal settings; switch to default: en-GB");
+            }
+        }
+
+        private static void SetCurrentUICultureFromDB(IDatabaseProvider databaseConnector)
+        {
+            IDatabaseInformationObject diaDoc = databaseConnector.DatabaseMetaData.FirstOrDefault((IDatabaseInformationObject item) => item.DatabaseType == DatabaseTypes.DiagDocDb);
+            if (diaDoc == null)
+            {
+                SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "no sqlite database properly configured; diadoc not found");
+                return;
+            }
+            IEnumerable<IDatabaseInformationObject> enumerable = databaseConnector.DatabaseMetaData.Where((IDatabaseInformationObject item) => (item.DatabaseType == DatabaseTypes.StreamDataPrimitive || item.DatabaseType == DatabaseTypes.XmlValuePrimitive) && item.IsAccessible && item.MajorVersion == diaDoc.MajorVersion && item.MinorVersion == diaDoc.MinorVersion);
+            if (enumerable != null && enumerable.Count() > 0)
+            {
+                LogInfo("ConfigSettings.InitCulture()", "Checking for engb,dede,...");
+                if (enumerable.Count((IDatabaseInformationObject item) => "ENGB".Equals(item.Language, StringComparison.OrdinalIgnoreCase)) == 2)
+                {
+                    LogInfo("ConfigSettings.InitCulture()", "engb found; set for first startup");
+                    CurrentUICulture = getConfigString("TesterGUI.Language", "en-GB");
+                }
+                else if (enumerable.Count((IDatabaseInformationObject item) => "DEDE".Equals(item.Language, StringComparison.OrdinalIgnoreCase)) == 2)
+                {
+                    LogInfo("ConfigSettings.InitCulture()", "dede found; set for first startup");
+                    CurrentUICulture = getConfigString("TesterGUI.Language", "de-DE");
+                }
+                else
+                {
+                    SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "neither engb nor dede found; set engb for first startup");
+                }
+            }
+            else
+            {
+                Log.Warning("ConfigSettings.InitCulture()", "no sqlite database properly configured; not even a valid xml/streamdata database found");
+                CurrentUICulture = getConfigString("TesterGUI.Language", "en-GB");
+            }
+        }
+#endif
 
         private static void SetCurrentUICultureToDefault(string callingMethod, string logMessage)
         {
@@ -1199,7 +1249,6 @@ namespace PsdzClient.Core
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool WritePrivateProfileString(string section, string key, string val, string filePath);
 
-
         public static bool IsProgrammingEnabled()
         {
             if (IsProgrammingLocked)
@@ -1212,6 +1261,17 @@ namespace PsdzClient.Core
             }
             return getConfigStringAsBoolean("BMW.Rheingold.Programming.Enabled");
         }
+
+#if false
+        public static bool IsInRdpSession()
+        {
+            if (SystemInformation.TerminalServerSession)
+            {
+                return true;
+            }
+            return false;
+        }
+#endif
 
         public static bool IsLogisticBaseEnabled()
         {
