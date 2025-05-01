@@ -1419,34 +1419,14 @@ namespace PsdzClient
         private static readonly ILog log = LogManager.GetLogger(typeof(PsdzDatabase));
 
         // ToDo: Check on update
-        // convert to string
-        private static List<string> engineRootNodeClasses = new List<string>
+        public static List<decimal> EngineRootNodeClasses = new List<decimal>
         {
-            "40141570",
-            "40142338",
-            "40142722",
-            "40143106",
-            "40145794",
-            "99999999866",
-            "99999999868",
-            "99999999870",
-            "99999999872",
-            "99999999874",
-            "99999999876",
-            "99999999878",
-            "99999999880",
-            "99999999909",
-            "99999999910",
-            "99999999918",
-            "99999999701",
-            "99999999702",
-            "99999999703",
-            "99999999704",
-            "99999999705",
-            "99999999706",
-            "99999999707",
-            "99999999708"
+            40141570m, 40142338m, 40142722m, 40143106m, 40145794m, 99999999866m, 99999999868m, 99999999870m, 99999999872m, 99999999874m,
+            99999999876m, 99999999878m, 99999999880m, 99999999909m, 99999999910m, 99999999918m, 99999999701m, 99999999702m, 99999999703m, 99999999704m,
+            99999999705m, 99999999706m, 99999999707m, 99999999708m
         };
+
+        private static List<string> engineRootNodeClasses = EngineRootNodeClasses.ConvertAll<string>(d => d.ToString());
 
         private bool _disposed;
         private string _databasePath;
