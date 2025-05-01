@@ -1,10 +1,13 @@
 ﻿<Project>
-  <ItemGroup>
-    <EmbeddedResource Include="$(NuGetPackageRoot)\inthehand.net.bluetooth\4.2.1\lib\net462\InTheHand.Net.Bluetooth.dll">
-      <Link>InTheHand.Net.Bluetooth.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(NuGetPackageRoot)\bouncycastle.cryptography\2.5.1\lib\net461\BouncyCastle.Cryptography.dll">
-      <Link>BouncyCastle.Cryptography.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
+  <Target Name="EmbedNugetPackages" BeforeTargets="PrepareForBuild">
+    <Message Text="Embedding NuGet packages" Importance="High" />
+    <ItemGroup>
+      <EmbeddedResource Include="$(NuGetPackageRoot)\inthehand.net.bluetooth\4.2.1\lib\net462\InTheHand.Net.Bluetooth.dll">
+        <Link>InTheHand.Net.Bluetooth.dll</Link>
+      </EmbeddedResource>
+      <EmbeddedResource Include="$(NuGetPackageRoot)\bouncycastle.cryptography\2.5.1\lib\net461\BouncyCastle.Cryptography.dll">
+        <Link>BouncyCastle.Cryptography.dll</Link>
+      </EmbeddedResource>
+    </ItemGroup>
+  </Target>
 </Project>
