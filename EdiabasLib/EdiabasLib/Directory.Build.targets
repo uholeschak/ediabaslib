@@ -1,0 +1,10 @@
+﻿<Project>
+  <ItemGroup>
+    <EmbeddedResource Include="$(SolutionDir)packages\InTheHand.Net.Bluetooth.*\lib\net462\InTheHand.Net.Bluetooth.dll">
+      <Link>InTheHand.Net.Bluetooth.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(SolutionDir)packages\BouncyCastle.Cryptography.*\lib\net461\BouncyCastle.Cryptography.dll">
+      <Link>BouncyCastle.Cryptography.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+</Project>

@@ -84,22 +84,13 @@
     <Compile Include="TcpClientWithTimeout.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Directory.Build.targets" />
     <None Include="EdiabasLib.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </None>
     <None Include="EdiabasLib.snk" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="$(SolutionDir)packages\InTheHand.Net.Bluetooth.*\lib\net462\InTheHand.Net.Bluetooth.dll">
-      <Link>InTheHand.Net.Bluetooth.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="$(SolutionDir)packages\BouncyCastle.Cryptography.*\lib\net461\BouncyCastle.Cryptography.dll">
-      <Link>BouncyCastle.Cryptography.dll</Link>
-    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
