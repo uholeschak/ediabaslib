@@ -86,10 +86,10 @@
     <None Include="EdiabasLib.snk" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography">
+    <PackageReference Include="BouncyCastle.Cryptography" GeneratePathProperty="true">
       <Version>2.5.1</Version>
     </PackageReference>
-    <PackageReference Include="InTheHand.Net.Bluetooth">
+    <PackageReference Include="InTheHand.Net.Bluetooth" GeneratePathProperty="true">
       <Version>4.2.1</Version>
     </PackageReference>
   </ItemGroup>
