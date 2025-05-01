@@ -829,9 +829,6 @@
     <EmbeddedResource Include="Resources\BMW.Rheingold.CoreFramework.DatabaseProvider.Text.Spe_Text_2.0.xsl" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" GeneratePathProperty="true">
-      <Version>2.5.1</Version>
-    </PackageReference>
     <PackageReference Include="Lib.Harmony" GeneratePathProperty="true">
       <Version>2.3.6</Version>
     </PackageReference>
