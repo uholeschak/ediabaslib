@@ -1,9 +1,9 @@
 ﻿<Project>
   <ItemGroup>
-    <EmbeddedResource Include="$(SolutionDir)packages\InTheHand.Net.Bluetooth.*\lib\net462\InTheHand.Net.Bluetooth.dll">
+    <EmbeddedResource Include="$(NuGetPackageRoot)\inthehand.net.bluetooth\4.2.1\lib\net462\InTheHand.Net.Bluetooth.dll">
       <Link>InTheHand.Net.Bluetooth.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(SolutionDir)packages\BouncyCastle.Cryptography.*\lib\net461\BouncyCastle.Cryptography.dll">
+    <EmbeddedResource Include="$(NuGetPackageRoot)\bouncycastle.cryptography\2.5.1\lib\net461\BouncyCastle.Cryptography.dll">
       <Link>BouncyCastle.Cryptography.dll</Link>
     </EmbeddedResource>
   </ItemGroup>
