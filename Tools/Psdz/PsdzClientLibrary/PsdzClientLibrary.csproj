@@ -829,34 +829,34 @@
     <EmbeddedResource Include="Resources\BMW.Rheingold.CoreFramework.DatabaseProvider.Text.Spe_Text_2.0.xsl" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography">
+    <PackageReference Include="BouncyCastle.Cryptography" GeneratePathProperty="true">
       <Version>2.5.1</Version>
     </PackageReference>
-    <PackageReference Include="Lib.Harmony">
+    <PackageReference Include="Lib.Harmony" GeneratePathProperty="true">
       <Version>2.3.6</Version>
     </PackageReference>
-    <PackageReference Include="log4net">
+    <PackageReference Include="log4net" GeneratePathProperty="true">
       <Version>3.0.4</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" GeneratePathProperty="true">
       <Version>9.0.4</Version>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
+    <PackageReference Include="Newtonsoft.Json" GeneratePathProperty="true">
       <Version>13.0.3</Version>
     </PackageReference>
-    <PackageReference Include="SharpZipLib">
+    <PackageReference Include="SharpZipLib" GeneratePathProperty="true">
       <Version>1.4.2</Version>
     </PackageReference>
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc">
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" GeneratePathProperty="true">
       <Version>2.1.11</Version>
     </PackageReference>
-    <PackageReference Include="System.Memory">
+    <PackageReference Include="System.Memory" GeneratePathProperty="true">
       <Version>4.6.3</Version>
     </PackageReference>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" GeneratePathProperty="true">
       <Version>6.1.2</Version>
     </PackageReference>
-    <PackageReference Include="System.Threading.Tasks.Extensions">
+    <PackageReference Include="System.Threading.Tasks.Extensions" GeneratePathProperty="true">
       <Version>4.6.3</Version>
     </PackageReference>
   </ItemGroup>
