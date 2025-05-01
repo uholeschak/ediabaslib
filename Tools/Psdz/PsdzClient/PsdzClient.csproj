@@ -170,6 +170,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography">
+      <Version>2.5.1</Version>
+    </PackageReference>
     <PackageReference Include="IPAddressControl">
       <Version>1.2.4446.28646</Version>
     </PackageReference>
