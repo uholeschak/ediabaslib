@@ -58,9 +58,6 @@
     <Reference Include="apiNET464">
       <HintPath>$(EDIABAS_PATH)\Bin\apiNET464.dll</HintPath>
     </Reference>
-    <Reference Include="NDesk.Options">
-      <HintPath>.\NDesk.Options.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -75,6 +72,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NDesk.Options.Fork">
+      <Version>0.2.4</Version>
+    </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
