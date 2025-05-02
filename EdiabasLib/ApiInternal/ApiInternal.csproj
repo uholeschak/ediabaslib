@@ -61,11 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ApiInternal.snk" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\EdiabasLib\bin\$(Configuration)\EdiabasLib.dll">
-      <Link>EdiabasLib.dll</Link>
-    </EmbeddedResource>
+    <None Include="Directory.Build.targets" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
