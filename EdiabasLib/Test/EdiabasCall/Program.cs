@@ -8,8 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using Ediabas;
-using NDesk.Options.Fork;
-using NDesk.Options.Fork.Common;
+using NDesk.Options;
 
 namespace EdiabasCall
 {
