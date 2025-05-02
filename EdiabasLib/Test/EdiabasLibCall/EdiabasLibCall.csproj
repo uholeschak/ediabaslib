@@ -61,8 +61,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NDesk.Options.Fork">
-      <Version>0.2.4</Version>
+    <PackageReference Include="NDesk.Options.Core">
+      <Version>1.2.8</Version>
+    </PackageReference>
+    <PackageReference Include="Ranges">
+      <Version>1.0.5</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
