@@ -2,7 +2,7 @@
   <Target Name="EmbedProjectOutputs" BeforeTargets="PrepareForBuild">
     <Message Text="Embedding EdiabasLib" Importance="High" />
     <ItemGroup>
-        <EmbeddedResource Include="..\EdiabasLib\bin\$(Configuration)\EdiabasLib.dll">
+        <EmbeddedResource Include="$(SolutionDir)\EdiabasLib\bin\$(Configuration)\EdiabasLib.dll">
           <Link>EdiabasLib.dll</Link>
         </EmbeddedResource>
     </ItemGroup>
