@@ -829,31 +829,34 @@
     <EmbeddedResource Include="Resources\BMW.Rheingold.CoreFramework.DatabaseProvider.Text.Spe_Text_2.0.xsl" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lib.Harmony" GeneratePathProperty="true">
+    <PackageReference Include="BouncyCastle.Cryptography">
+      <Version>2.5.1</Version>
+    </PackageReference>
+    <PackageReference Include="Lib.Harmony">
       <Version>2.3.6</Version>
     </PackageReference>
-    <PackageReference Include="log4net" GeneratePathProperty="true">
+    <PackageReference Include="log4net">
       <Version>3.0.4</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" GeneratePathProperty="true">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core">
       <Version>9.0.4</Version>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" GeneratePathProperty="true">
+    <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.3</Version>
     </PackageReference>
-    <PackageReference Include="SharpZipLib" GeneratePathProperty="true">
+    <PackageReference Include="SharpZipLib">
       <Version>1.4.2</Version>
     </PackageReference>
-    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" GeneratePathProperty="true">
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc">
       <Version>2.1.11</Version>
     </PackageReference>
-    <PackageReference Include="System.Memory" GeneratePathProperty="true">
+    <PackageReference Include="System.Memory">
       <Version>4.6.3</Version>
     </PackageReference>
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" GeneratePathProperty="true">
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe">
       <Version>6.1.2</Version>
     </PackageReference>
-    <PackageReference Include="System.Threading.Tasks.Extensions" GeneratePathProperty="true">
+    <PackageReference Include="System.Threading.Tasks.Extensions">
       <Version>4.6.3</Version>
     </PackageReference>
   </ItemGroup>
