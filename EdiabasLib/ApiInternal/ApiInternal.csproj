@@ -30,9 +30,4 @@
   <ItemGroup>
     <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="obj\DebugModule\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
-    <Compile Remove="obj\ReleaseModule\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
-    <Compile Remove="obj\x64\Debug\.NETFramework,Version=v4.8.AssemblyAttributes.cs" />
-  </ItemGroup>
 </Project>
