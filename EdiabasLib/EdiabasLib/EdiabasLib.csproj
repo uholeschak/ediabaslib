@@ -41,7 +41,4 @@
     <Compile Remove="MemoryStreamReaderAndroid.cs" />
     <Compile Remove="MemoryStreamReaderCe.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
 </Project>
