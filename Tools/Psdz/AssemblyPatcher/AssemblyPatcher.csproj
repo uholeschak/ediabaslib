@@ -1,88 +1,53 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>AssemblyPatcher</RootNamespace>
-    <AssemblyName>AssemblyPatcher</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net48</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Deterministic>true</Deterministic>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
+    <AssemblyTitle>AssemblyPatcher</AssemblyTitle>
+    <Product>AssemblyPatcher</Product>
+    <Copyright>Copyright ©  2022</Copyright>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+    <None Remove="User.log" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="User.csx">
-      <Generator>CodegenCS</Generator>
-      <LastGenOutput>User.log</LastGenOutput>
-    </None>
+    <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CodegenCSOutput" />
+    <AdditionalFiles Include="User.csx" CodegenCSOutput="File" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="User.config">
+    <ProjectReference Include="..\dnpatch\dnpatch.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CodegenCS.SourceGenerator" Version="3.5.2" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="dnlib" Version="4.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="User.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <DependentUpon>User.csx</DependentUpon>
     </None>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\dnpatch\dnpatch.csproj">
-      <Project>{14ca7a28-7fa8-40a0-abc6-81e9f36318de}</Project>
-      <Name>dnpatch</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CommandLineParser">
-      <Version>2.9.1</Version>
-    </PackageReference>
-    <PackageReference Include="dnlib">
-      <Version>4.4.0</Version>
-    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\License.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
