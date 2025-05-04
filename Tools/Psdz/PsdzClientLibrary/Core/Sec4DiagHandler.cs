@@ -229,7 +229,7 @@ namespace PsdzClient.Core
         {
             using (StringWriter stringWriter = new StringWriter())
             {
-                PemWriter pemWriter = new PemWriter(stringWriter);
+                using (PemWriter pemWriter = new PemWriter(stringWriter))
                 {
                     pemWriter.WriteObject(publicKey);
                     pemWriter.Writer.Flush();
@@ -259,7 +259,7 @@ namespace PsdzClient.Core
         {
             using (StreamReader reader = File.OpenText(Path.Combine(_ediabaasS29Path, Environment.MachineName + "_public.pem")))
             {
-                PemReader pemReader = new PemReader(reader);
+                using (PemReader pemReader = new PemReader(reader))
                 {
                     return pemReader.ReadObject() as AsymmetricKeyParameter;
                 }
