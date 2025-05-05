@@ -4,7 +4,12 @@
       "commandName": "Project",
       "remoteDebugEnabled": true,
       "remoteDebugMachine": "VM-WIN11",
-      "authenticationMode": "Windows"
+      "authenticationMode": "Windows",
+      "nativeDebugging": false
+    },
+    "Local": {
+      "commandName": "Project",
+      "nativeDebugging": true
     }
   }
 }
