@@ -1,0 +1,5 @@
+﻿<Project>
+   <PropertyGroup>
+     <DefineConstants>$(DefineConstants);EDIABAS</DefineConstants>
+   </PropertyGroup>
+</Project>
