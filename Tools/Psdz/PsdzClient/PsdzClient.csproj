@@ -22,7 +22,6 @@
     <AssemblyTitle>PsdzClient</AssemblyTitle>
     <Product>PsdzClient</Product>
     <Copyright>Copyright ©  2021</Copyright>
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <Platforms>AnyCPU;x86</Platforms>
   </PropertyGroup>
   <ItemGroup>
