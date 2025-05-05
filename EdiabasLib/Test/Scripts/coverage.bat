@@ -44,7 +44,7 @@ set COVERAGE=1
 goto argsok
 )
 if "%1"=="ediabas" (
-set "EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\EdiabasCall.exe"
+set "EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\net48\EdiabasCall.exe"
 set "OUTFILE=output_ediabas.log"
 set ADD_ARGS=-o "!OUTFILE!" --ifh="!IFH!" --device="_" -a -c
 set ADD_ARGS=!ADD_ARGS! --cfg="RemoteHost=127.0.0.1"
