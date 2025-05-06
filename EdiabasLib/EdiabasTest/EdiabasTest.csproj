@@ -7,7 +7,6 @@
     <AssemblyTitle>EdiabasTest</AssemblyTitle>
     <Product>EdiabasTest</Product>
     <Copyright>Copyright ©  2014</Copyright>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />
