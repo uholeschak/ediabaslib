@@ -9,7 +9,6 @@
     <Copyright>Ulrich Holeschak</Copyright>
     <AssemblyVersion>7.6.0.500</AssemblyVersion>
     <FileVersion>7.6.0.500</FileVersion>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugType>full</DebugType>
