@@ -14,12 +14,6 @@
     <Nullable>disable</Nullable>
     <Authors>Ulrich Holeschak</Authors>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn />
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn />
-  </PropertyGroup>
   <ItemGroup>
     <None Remove="User.log" />
   </ItemGroup>
