@@ -7,14 +7,9 @@
     <Copyright>Copyright ©  2021</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-  </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>PsdzClientLibrary.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>True</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0">
