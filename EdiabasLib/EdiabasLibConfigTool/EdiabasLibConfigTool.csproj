@@ -6,18 +6,10 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
     <Configurations>CodeAnalysis;Debug;Release</Configurations>
+    <Platforms>x86</Platforms>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>AppIcon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <OutputPath>bin\x86\Debug\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <OutputPath>bin\x86\Release\</OutputPath>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -78,13 +70,13 @@
     <PlatformTarget>x86</PlatformTarget>
     <Nullable>disable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|x86'">
     <NoWarn>1701;1702;NU1702</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <NoWarn>1701;1702;NU1702</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <NoWarn>1701;1702;NU1702</NoWarn>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
