@@ -7,10 +7,6 @@
     <Copyright>Copyright ©  2021</Copyright>
     <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>PsdzClientLibrary.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>False</SignAssembly>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0">
       <HintPath>.\jni4net.n-0.8.8.0.dll</HintPath>
@@ -50,7 +46,6 @@
       <Link>Resources\VehicleSeries.zip</Link>
     </EmbeddedResource>
     <None Include="Directory.Build.targets" />
-    <None Include="PsdzClientLibrary.snk" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\EdiabasLib\ApiInternal\ApiInternal.csproj" />
