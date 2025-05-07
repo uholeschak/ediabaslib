@@ -7,7 +7,6 @@
     <AssemblyTitle>AssemblyPatcher</AssemblyTitle>
     <Product>AssemblyPatcher</Product>
     <Copyright>Copyright ©  2022</Copyright>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <ScriptyContinueOnError>false</ScriptyContinueOnError>

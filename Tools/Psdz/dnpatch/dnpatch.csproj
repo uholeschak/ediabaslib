@@ -5,7 +5,6 @@
     <AssemblyTitle>dnpatch</AssemblyTitle>
     <Product>dnpatch</Product>
     <Copyright>Copyright ©  2016</Copyright>
-    <OutputPath>bin\$(Configuration)\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
