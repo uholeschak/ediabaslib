@@ -487,7 +487,6 @@
     <None Include="packages.config" />
     <None Include="User.config">
       <DependentUpon>User.csx</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="Scripts\umd\popper.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />
