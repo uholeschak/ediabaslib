@@ -577,13 +577,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets'))" />
   </Target>
-  <Target Name="CopyPublishFiles" AfterTargets="AfterPublish">
-    <Message Text="Copy files for publishing" Importance="High" />
-    <ItemGroup>
-      <UserConfigFiles Include="$(ProjectDir)User.config" />
-    </ItemGroup>
-    <Copy SourceFiles="@(UserConfigFiles)" DestinationFolder="$(PublishDir)" SkipUnchangedFiles="false" />
-  </Target>
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.11\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.11\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets')" />
   <PropertyGroup>
