@@ -579,7 +579,7 @@
   </Target>
   <Target Name="CopyCustomFiles" Condition=" '$(Configuration)' == 'Release' " BeforeTargets="AfterBuild">
     <Message Text="Inside CopyCustomFiles" Importance="high" />
-    <Copy SourceFiles="User.config" DestinationFolder="publish" />
+    <Copy SourceFiles="User.config" DestinationFolder="$(ProjectDir)publish" />
   </Target>
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.11\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.11\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets')" />
