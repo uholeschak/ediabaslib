@@ -578,7 +578,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets'))" />
   </Target>
   <Target Name="CopyCustomFiles" Condition=" '$(Configuration)' == 'Release' And '$(PublishURL)' != '' " BeforeTargets="AfterBuild">
-    <Message Text="Inside CopyCustomFiles to '$(PublishURL)'" Importance="high" />
+    <Message Text="CopyCustomFiles to '$(PublishURL)'" Importance="high" />
     <Copy SourceFiles="User.config" DestinationFolder="$(PublishURL)" />
   </Target>
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
