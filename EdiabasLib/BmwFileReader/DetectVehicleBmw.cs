@@ -424,6 +424,10 @@ namespace BmwFileReader
                         _ediabas.ResolveSgbdFile(jobInfo.SgdbName);
 
                         _ediabas.ArgString = string.Empty;
+                        if (!string.IsNullOrEmpty(jobInfo.JobArgs))
+                        {
+                            _ediabas.ArgString = jobInfo.JobArgs;
+                        }
                         _ediabas.ArgBinaryStd = null;
                         _ediabas.ResultsRequests = string.Empty;
                         _ediabas.ExecuteJob(jobInfo.JobName);
