@@ -168,6 +168,7 @@ namespace BmwFileReader
             new JobInfo("G_ZGW", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE", "BN2020"),
             new JobInfo("ZGW_01", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE", "BN2020"),
             new JobInfo("G_CAS", "STATUS_FAHRZEUGAUFTRAG", string.Empty, "STAT_FAHRZEUGAUFTRAG_KOMPLETT_WERT", "BN2020"),
+            new JobInfo("IPB_APP2", "STATUS_VCM_GET_FA", string.Empty, "STAT_BAUREIHE", "BN2020"),
             // BN2000
             new JobInfo("D_CAS", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000"),
             new JobInfo("D_LM", "C_FA_LESEN", string.Empty, "FAHRZEUGAUFTRAG", "BN2000"),
@@ -185,6 +186,7 @@ namespace BmwFileReader
         public static readonly List<JobInfo> ReadILevelJobsBmwFast = new List<JobInfo>
         {
             new JobInfo("G_ZGW", "STATUS_I_STUFE_LESEN_MIT_SIGNATUR"),
+            new JobInfo("IPB_APP2", "STATUS_LESEN", "ARG;VCM_DID_ISTUFE"),
             // BN2021 fallback
             new JobInfo("G_KOMBI", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", null, null, null, null, "BCP_SP21"),
             new JobInfo("G_ZGW", "STATUS_VCM_I_STUFE_LESEN"),
