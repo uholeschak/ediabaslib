@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="Current" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props" Condition="Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -577,7 +577,7 @@
     <Error Condition="!Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets'))" />
   </Target>
-  <Target Name="CopyCustomFiles" Condition=" '$(Configuration)' == 'Release' And '$(PublishURL)' != '' " BeforeTargets="AfterBuild">
+  <Target Name="CopyCustomFiles" Condition=" '$(Configuration)' == 'Release' And '$(PublishURL)' != '' " AfterTargets="GatherAllFilesToPublish">
     <Message Text="CopyCustomFiles to '$(PublishURL)'" Importance="high" />
     <Copy SourceFiles="User.config" DestinationFolder="$(PublishURL)" />
   </Target>
