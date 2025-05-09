@@ -197,16 +197,19 @@ namespace PsdzClient
 
                         if (!string.IsNullOrEmpty(vehicleIdent.Getriebe))
                         {
+                            LogInfoFormat("VehicleIdent transmission: {0}", vehicleIdent.Getriebe);
                             TransmissionType = vehicleIdent.Getriebe;
                         }
 
                         if (!string.IsNullOrEmpty(vehicleIdent.Motor))
                         {
+                            LogInfoFormat("VehicleIdent motor: {0}", vehicleIdent.Motor);
                             Motor = vehicleIdent.Motor;
                         }
 
                         if (!string.IsNullOrEmpty(vehicleIdent.Ereihe))
                         {
+                            LogInfoFormat("VehicleIdent vehicle series: {0}", vehicleIdent.Ereihe);
                             Series = vehicleIdent.Ereihe;
                         }
                     }
