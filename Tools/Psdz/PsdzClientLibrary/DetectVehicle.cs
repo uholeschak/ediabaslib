@@ -204,6 +204,11 @@ namespace PsdzClient
                         {
                             Motor = vehicleIdent.Motor;
                         }
+
+                        if (!string.IsNullOrEmpty(vehicleIdent.Ereihe))
+                        {
+                            Series = vehicleIdent.Ereihe;
+                        }
                     }
                 }
 
