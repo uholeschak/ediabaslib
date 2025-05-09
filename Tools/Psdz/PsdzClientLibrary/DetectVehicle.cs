@@ -383,6 +383,7 @@ namespace PsdzClient
                     return DetectResult.NoResponse;
                 }
 
+                LogInfoFormat("Series: {0}, BnType: {1}", Series ?? string.Empty, BnType ?? string.Empty);
                 VehicleStructsBmw.VehicleSeriesInfo vehicleSeriesInfo = VehicleInfoBmw.GetVehicleSeriesInfo(this);
                 if (vehicleSeriesInfo == null)
                 {
