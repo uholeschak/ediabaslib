@@ -144,7 +144,13 @@ namespace BMW.Rheingold.Psdz.Client
                     continue;
                 }
 
-                string[] array = item["CommandLine"].ToString().Split('\"');
+                string commandLine = item["CommandLine"]?.ToString();
+                if (commandLine == null)
+                {
+                    continue;
+                }
+
+                string[] array = commandLine.Split('\"');
                 foreach (string entry in array)
                 {
                     string argument = entry.Trim();
