@@ -145,7 +145,7 @@ namespace BMW.Rheingold.Psdz.Client
                 }
 
                 string commandLine = item["CommandLine"]?.ToString();
-                if (commandLine == null)
+                if (string.IsNullOrEmpty(commandLine))
                 {
                     continue;
                 }
