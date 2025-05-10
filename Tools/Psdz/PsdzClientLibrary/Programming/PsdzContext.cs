@@ -406,14 +406,23 @@ namespace PsdzClient.Programming
 
         internal void CleanupBackupData()
         {
-            if (!string.IsNullOrEmpty(PathToBackupData) && hasVinBackupDataFolder && !Directory.EnumerateFileSystemEntries(PathToBackupData).Any())
+            try
             {
-                if (Directory.Exists(PathToBackupData))
+                if (string.IsNullOrEmpty(PathToBackupData) || !Directory.Exists(PathToBackupData))
+                {
+                    Log.Info("PsdzContext.CleanupBackupData()", "Missing backup folder: '{0}'", PathToBackupData);
+                    return;
+                }
+                if (!string.IsNullOrEmpty(PathToBackupData) && hasVinBackupDataFolder && !Directory.EnumerateFileSystemEntries(PathToBackupData).Any())
                 {
                     Directory.Delete(PathToBackupData);
+                    Log.Info("PsdzContext.CleanupBackupData()", "Empty backup folder ('{0}') deleted!", PathToBackupData);
+                    hasVinBackupDataFolder = false;
                 }
-                Log.Info("PsdzContext.CleanupBackupData()", "Empty backup folder ('{0}') deleted!", PathToBackupData);
-                hasVinBackupDataFolder = false;
+            }
+            catch (Exception e)
+            {
+                Log.Error("PsdzContext.CleanupBackupData() Exception: {0}", e.Message);
             }
         }
 
