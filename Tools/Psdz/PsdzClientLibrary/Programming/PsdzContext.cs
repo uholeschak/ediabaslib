@@ -583,7 +583,7 @@ namespace PsdzClient.Programming
 		{
 			this.FaActual = fa;
             if (VecInfo != null)
-            {
+            {   // [UH] added
                 VecInfo.FA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.BrName);
             }
 		}
@@ -592,7 +592,7 @@ namespace PsdzClient.Programming
 		{
 			this.FaTarget = fa;
             if (VecInfo != null)
-            {
+            {   // [UH] added
                 VecInfo.TargetFA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.BrName);
             }
 		}
@@ -1176,9 +1176,9 @@ namespace PsdzClient.Programming
 
         public void FillSaLocalizedItems(ProgrammingService programmingService, string language, List<string> source, string prodArt)
         {
-            foreach (string text in source)
+            foreach (string item in source)
             {
-                string key = FormatConverter.FillWithZeros(text, 4);
+                string key = FormatConverterBase.FillWithZeros(item, 4, new NugetLogger());
                 if (VecInfo.FA.SaLocalizedItems.FirstOrDefault(x => x.Id == key) == null)
                 {
                     PsdzDatabase.SaLaPa saLaPa = programmingService.PsdzDatabase.GetSaLaPaByProductTypeAndSalesKey(prodArt, key);

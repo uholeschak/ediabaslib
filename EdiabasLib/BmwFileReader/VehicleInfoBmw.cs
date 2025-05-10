@@ -909,10 +909,11 @@ namespace BmwFileReader
         public static string GetVehicleSeriesFromBrName(string brName, EdiabasNet ediabas)
         {
             ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetVehicleSeriesFromBrName: {0}", brName ?? "No name");
-            if (brName == null)
+            if (string.IsNullOrEmpty(brName) || brName.Length != 4)
             {
                 return null;
             }
+
             if (string.Compare(brName, ResultUnknown, StringComparison.OrdinalIgnoreCase) == 0)
             {
                 return null;

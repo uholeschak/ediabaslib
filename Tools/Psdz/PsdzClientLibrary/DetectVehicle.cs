@@ -11,6 +11,7 @@ using log4net;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
+using PsdzClient.Utility;
 
 namespace PsdzClient
 {
@@ -197,20 +198,21 @@ namespace PsdzClient
 
                         if (!string.IsNullOrEmpty(vehicleIdent.Getriebe))
                         {
-                            LogInfoFormat("VehicleIdent transmission: {0}", vehicleIdent.Getriebe);
                             TransmissionType = vehicleIdent.Getriebe;
+                            LogInfoFormat("VehicleIdent transmission: {0}", TransmissionType);
                         }
 
                         if (!string.IsNullOrEmpty(vehicleIdent.Motor))
                         {
-                            LogInfoFormat("VehicleIdent motor: {0}", vehicleIdent.Motor);
                             Motor = vehicleIdent.Motor;
+                            LogInfoFormat("VehicleIdent motor: {0}", Motor);
                         }
 
                         if (!string.IsNullOrEmpty(vehicleIdent.Ereihe))
                         {
-                            LogInfoFormat("VehicleIdent vehicle series: {0}", vehicleIdent.Ereihe);
                             Series = vehicleIdent.Ereihe;
+                            BrName = FormatConverter.ConvertToBn2020ConformModelSeries(vehicleIdent.Ereihe);
+                            LogInfoFormat("VehicleIdent vehicle series: {0}, BR :{1}", Series, BrName);
                         }
                     }
                 }
