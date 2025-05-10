@@ -735,6 +735,7 @@ namespace BmwFileReader
                     string br = matchBr.Groups["BR"]?.Value;
                     if (!string.IsNullOrEmpty(br))
                     {
+                        LogInfoFormat("Detected BR: {0}", br);
                         string vSeries = VehicleInfoBmw.GetVehicleSeriesFromBrName(br, Ediabas);
                         if (!string.IsNullOrEmpty(vSeries))
                         {
@@ -752,6 +753,7 @@ namespace BmwFileReader
                     string dateStr = matchDate.Groups["C_DATE"]?.Value;
                     if (!string.IsNullOrEmpty(dateStr))
                     {
+                        LogInfoFormat("Detected Construct date: {0}", dateStr);
                         DateTime? dateTime = VehicleInfoBmw.ConvertConstructionDate(dateStr);
                         SetConstructDate(dateTime);
                     }
