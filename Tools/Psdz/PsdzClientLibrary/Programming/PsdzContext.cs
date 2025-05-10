@@ -410,7 +410,7 @@ namespace PsdzClient.Programming
             {
                 if (string.IsNullOrEmpty(PathToBackupData) || !Directory.Exists(PathToBackupData))
                 {
-                    Log.Info("PsdzContext.CleanupBackupData()", "Missing backup folder: '{0}'", PathToBackupData);
+                    Log.Info("PsdzContext.CleanupBackupData()", "Missing backup folder: '{0}'", PathToBackupData ?? string.Empty);
                     return;
                 }
                 if (!string.IsNullOrEmpty(PathToBackupData) && hasVinBackupDataFolder && !Directory.EnumerateFileSystemEntries(PathToBackupData).Any())
