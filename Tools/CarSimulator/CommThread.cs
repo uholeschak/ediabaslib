@@ -1096,8 +1096,9 @@ namespace CarSimulator
                     UdpDoIpConnect();
                     SrvLocConnect();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Debug.WriteLine("Connect Exception: {0}", (object)EdiabasNet.GetExceptionText(ex));
                     Disconnect();
                     return false;
                 }
