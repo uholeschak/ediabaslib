@@ -577,9 +577,9 @@
     <Error Condition="!Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets'))" />
   </Target>
-  <Target Name="CopyCustomFiles" Condition=" '$(Configuration)' == 'Release' And '$(PublishURL)' != '' " AfterTargets="GatherAllFilesToPublish">
-    <Message Text="CopyCustomFiles to '$(PublishURL)'" Importance="high" />
-    <Copy SourceFiles="User.config" DestinationFolder="$(PublishURL)" />
+  <Target Name="CopyCustomFiles" Condition=" '$(Configuration)' == 'Release' And '$(WPPAllFilesInSingleFolder)' != '' " AfterTargets="GatherAllFilesToPublish">
+    <Message Text="CopyCustomFiles to '$(WPPAllFilesInSingleFolder)'" Importance="high" />
+    <Copy SourceFiles="User.config" DestinationFolder="$(WPPAllFilesInSingleFolder)" />
   </Target>
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.11\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.11\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets')" />
