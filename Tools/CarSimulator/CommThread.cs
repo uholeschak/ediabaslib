@@ -1098,7 +1098,9 @@ namespace CarSimulator
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Connect Exception: {0}", (object)EdiabasNet.GetExceptionText(ex));
+                    Debug.WriteLine("Connect Exception: {0}", (object)ex.Message);
+                    Debug.WriteLine("Print excluded ports: netsh interface ipv4 show excludedportrange protocol=tcp");
+                    Debug.WriteLine("Free port: netsh int ipv4 add excludedportrange protocol=tcp startport=xxxx numberofports=1");
                     Disconnect();
                     return false;
                 }
