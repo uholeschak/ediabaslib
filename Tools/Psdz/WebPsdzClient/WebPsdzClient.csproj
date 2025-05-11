@@ -577,8 +577,8 @@
     <Error Condition="!Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.TypeScript.MSBuild.5.8.3\build\Microsoft.TypeScript.MSBuild.targets'))" />
   </Target>
-  <Target Name="CopyCustomFiles" Condition=" '$(Configuration)' == 'Release' And '$(WPPAllFilesInSingleFolder)' != '' " AfterTargets="GatherAllFilesToPublish">
-    <Message Text="Copy custom files to publish temp folder: '$(WPPAllFilesInSingleFolder)'%0aFinal publish folder: '$(PublishURL)'%0aUsing publish profile: '$(WebPublishProfileFile)'" Importance="high" />
+  <Target Name="CopyCustomFiles" Condition=" '$(WPPAllFilesInSingleFolder)' != '' And '$(PublishURL)' != '' " AfterTargets="GatherAllFilesToPublish">
+    <Message Text="Copy custom files to publish temp folder: '$(WPPAllFilesInSingleFolder)'%0aFinal publish folder: '$(PublishURL)'%0aPublish profile: '$(WebPublishProfileFile)'" Importance="high" />
     <Copy SourceFiles="User.config" DestinationFolder="$(WPPAllFilesInSingleFolder)" />
   </Target>
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
