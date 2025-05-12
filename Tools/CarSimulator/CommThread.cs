@@ -996,6 +996,7 @@ namespace CarSimulator
             Disconnect();
             if (_comPort.StartsWith("ENET", StringComparison.OrdinalIgnoreCase))
             {
+                int? exceptionPort = null;
                 try
                 {
                     switch (_conceptType)
@@ -1065,19 +1066,43 @@ namespace CarSimulator
                     {
                         if ((_enetCommType & EnetCommType.Hsfz) == EnetCommType.Hsfz)
                         {
-                            bmwTcpChannel.TcpServerDiag = new TcpListener(IPAddress.Any, bmwTcpChannel.DiagPort);
-                            bmwTcpChannel.TcpServerDiag.Start();
+                            try
+                            {
+                                bmwTcpChannel.TcpServerDiag = new TcpListener(IPAddress.Any, bmwTcpChannel.DiagPort);
+                                bmwTcpChannel.TcpServerDiag.Start();
+                            }
+                            catch (Exception)
+                            {
+                                exceptionPort = bmwTcpChannel.DiagPort;
+                                throw;
+                            }
                         }
 
-                        bmwTcpChannel.TcpServerControl = new TcpListener(IPAddress.Any, bmwTcpChannel.ControlPort);
-                        bmwTcpChannel.TcpServerControl.Start();
+                        try
+                        {
+                            bmwTcpChannel.TcpServerControl = new TcpListener(IPAddress.Any, bmwTcpChannel.ControlPort);
+                            bmwTcpChannel.TcpServerControl.Start();
+                        }
+                        catch (Exception)
+                        {
+                            exceptionPort = bmwTcpChannel.ControlPort;
+                            throw;
+                        }
 
                         if (bmwTcpChannel.DoIpPort > 0)
                         {
                             if ((_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp)
                             {
-                                bmwTcpChannel.TcpServerDoIp = new TcpListener(IPAddress.Any, bmwTcpChannel.DoIpPort);
-                                bmwTcpChannel.TcpServerDoIp.Start();
+                                try
+                                {
+                                    bmwTcpChannel.TcpServerDoIp = new TcpListener(IPAddress.Any, bmwTcpChannel.DoIpPort);
+                                    bmwTcpChannel.TcpServerDoIp.Start();
+                                }
+                                catch (Exception)
+                                {
+                                    exceptionPort = bmwTcpChannel.DoIpPort;
+                                    throw;
+                                }
                             }
                         }
 
@@ -1085,8 +1110,16 @@ namespace CarSimulator
                         {
                             if ((_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp)
                             {
-                                bmwTcpChannel.TcpServerDoIpSsl = new TcpListener(IPAddress.Any, bmwTcpChannel.DoIpSslPort);
-                                bmwTcpChannel.TcpServerDoIpSsl.Start();
+                                try
+                                {
+                                    bmwTcpChannel.TcpServerDoIpSsl = new TcpListener(IPAddress.Any, bmwTcpChannel.DoIpSslPort);
+                                    bmwTcpChannel.TcpServerDoIpSsl.Start();
+                                }
+                                catch (Exception)
+                                {
+                                    exceptionPort = bmwTcpChannel.DoIpSslPort;
+                                    throw;
+                                }
                             }
                         }
                     }
@@ -1098,10 +1131,15 @@ namespace CarSimulator
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine("Connect Exception: {0}", (object)ex.Message);
-                    Debug.WriteLine("Print excluded ports: netsh interface ipv4 show excludedportrange protocol=tcp");
-                    Debug.WriteLine("Free port: netsh int ipv4 add excludedportrange protocol=tcp startport=xxxx numberofports=1");
                     Disconnect();
+
+                    Debug.WriteLine("Connect Exception: {0}", (object)ex.Message);
+                    if (exceptionPort != null)
+                    {
+                        Debug.WriteLine("Exception port: {0}", (object)exceptionPort);
+                        Debug.WriteLine("Print excluded system ports: netsh interface ipv4 show excludedportrange protocol=tcp");
+                        Debug.WriteLine("Exclude specific port: netsh int ipv4 add excludedportrange protocol=tcp startport=xxxx numberofports=1");
+                    }
                     return false;
                 }
 
