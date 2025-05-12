@@ -673,3 +673,11 @@ Connection: Close
 <data>
 </data>
 </wddxPacket>
+
+Free windows reserved ports:
+============================
+List ports:
+netsh interface ipv4 show excludedportrange protocol=tcp
+Exclude port 3496:
+Reboot in safe mode (restart + shift)
+netsh int ipv4 add excludedportrange protocol=tcp startport=3496 numberofports=1
