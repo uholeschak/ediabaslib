@@ -46,12 +46,10 @@ The standard ICOM configuration page could be found at: `http://XXXX:58000` (no 
 * `EnetIcomAllocate`: 1=Allocate ICOM before connecting, default is 0. This parameter is only used, if the diagnostic port has been set.
 
 ## FTDI D2XX driver properties
-For improved timing (especially required for ADS adapter) it's possible to access the FTDI D2XX driver directly. Android also supports access to FTDI USB D-CAN/K-Line adapters. To activate this mode use FTDI instead of COM in the com port name for _ObdComPort_ or _AdsComPort_. There are multiply ways the select the USB device:
+Android supports access to FTDI USB D-CAN/K-Line adapters directly. For the PC platform use the COM port to access the adapter.  
+There are the following ways the select the USB device:
 * `FTDIx`: select device by index x (starting with 0)
 * `FTDI:SER=[serial number](serial-number)`: select device by serial number
-* `FTDI:DESC=[description](description)`: select device by description (not supported for Android)
-* `FTDI:LOC=[location](location)`: select device by location id (either decimal or hex with 0x) (not supported for Android)
-To get the device location information you could use FT Prog from the FTDI web site.
 
 ## Bluetooth (Android)
 Since Android devices normally have no COM ports, it's possible to connect via Bluetooth using the Bluetooth Serial Port Protocol (SPP).

@@ -1317,33 +1317,7 @@ namespace EdiabasLib
                 return true;
             }
 
-            if (ComPortProtected.ToUpper(Culture).StartsWith(EdFtdiInterface.PortId))
-            {   // automtatic hook of FTDI functions
-                EdFtdiInterface.Ediabas = Ediabas;
-                InterfaceConnectFuncInt = EdFtdiInterface.InterfaceConnect;
-                InterfaceDisconnectFuncInt = EdFtdiInterface.InterfaceDisconnect;
-                InterfaceTransmitCancelFuncInt = EdFtdiInterface.InterfaceTransmitCancel;
-                InterfaceSetConfigFuncInt = EdFtdiInterface.InterfaceSetConfig;
-                InterfaceSetDtrFuncInt = EdFtdiInterface.InterfaceSetDtr;
-                InterfaceSetRtsFuncInt = EdFtdiInterface.InterfaceSetRts;
-                InterfaceGetDsrFuncInt = EdFtdiInterface.InterfaceGetDsr;
-                InterfaceSetBreakFuncInt = EdFtdiInterface.InterfaceSetBreak;
-                InterfaceSetInterByteTimeFuncInt = null;
-                InterfaceSetCanIdsFuncInt = null;
-                InterfacePurgeInBufferFuncInt = EdFtdiInterface.InterfacePurgeInBuffer;
-                InterfaceAdapterEchoFuncInt = null;
-                InterfaceHasPreciseTimeoutFuncInt = null;
-                InterfaceHasAutoBaudRateFuncInt = null;
-                InterfaceHasAutoKwp1281FuncInt = null;
-                InterfaceAdapterVersionFuncInt = null;
-                InterfaceAdapterSerialFuncInt = null;
-                InterfaceAdapterVoltageFuncInt = null;
-                InterfaceHasIgnitionStatusFuncInt = null;
-                InterfaceSendDataFuncInt = EdFtdiInterface.InterfaceSendData;
-                InterfaceReceiveDataFuncInt = EdFtdiInterface.InterfaceReceiveData;
-                InterfaceSendPulseFuncInt = null;
-            }
-            else if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
+            if (ComPortProtected.ToUpper(Culture).StartsWith(EdBluetoothInterface.PortId))
             {   // automtatic hook of bluetooth functions
                 EdBluetoothInterface.Ediabas = Ediabas;
                 InterfaceConnectFuncInt = EdBluetoothInterface.InterfaceConnect;
