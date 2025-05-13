@@ -1137,8 +1137,10 @@ namespace CarSimulator
                     if (exceptionPort != null)
                     {
                         Debug.WriteLine("Exception port: {0}", (object)exceptionPort);
-                        Debug.WriteLine("Print excluded system ports: netsh interface ipv4 show excludedportrange protocol=tcp");
-                        Debug.WriteLine("Exclude specific port: netsh int ipv4 add excludedportrange protocol=tcp startport=xxxx numberofports=1");
+                        Debug.WriteLine("Print excluded system ports:");
+                        Debug.WriteLine("netsh interface ipv4 show excludedportrange protocol=tcp");
+                        Debug.WriteLine($"If excluded, reboot in safe mode (with shift pressed) and exclude the port {exceptionPort}:");
+                        Debug.WriteLine($"netsh int ipv4 add excludedportrange protocol=tcp startport={exceptionPort} numberofports=1");
                     }
                     return false;
                 }
