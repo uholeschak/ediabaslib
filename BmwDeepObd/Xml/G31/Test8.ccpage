@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<fragment xmlns="http://www.holeschak.de/BmwDeepObd"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://www.holeschak.de/BmwDeepObd ../BmwDeepObd.xsd">
+  <page name="tab_test" weight="0.3">
+    <strings>
+      <string name="tab_test">Ident F01</string>
+      <string name="sg_addr">Address:</string>
+    </strings>
+    <strings lang="de">
+      <string name="tab_test">Ident F01</string>
+      <string name="sg_addr">Adresse:</string>
+    </strings>
+    <jobs sgbd="F01">
+      <job id="0" name="IDENT" >
+        <display name="sg_addr" result="ID_SG_ADR" format="3L" display-order="0" />
+      </job>
+    </jobs>
+  </page>
+</fragment>
