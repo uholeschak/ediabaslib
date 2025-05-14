@@ -13,5 +13,6 @@
     <include filename="Test5.ccpage"/>
     <include filename="Test6.ccpage"/>
     <include filename="Test7.ccpage"/>
+    <include filename="Test8.ccpage"/>
   </pages>
 </fragment>
