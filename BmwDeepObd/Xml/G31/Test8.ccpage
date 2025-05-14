@@ -5,15 +5,18 @@
   <page name="tab_test" weight="0.3">
     <strings>
       <string name="tab_test">Ident F01</string>
+      <string name="variant">Variant:</string>
       <string name="sg_addr">Address:</string>
     </strings>
     <strings lang="de">
       <string name="tab_test">Ident F01</string>
+      <string name="variant">Variante:</string>
       <string name="sg_addr">Adresse:</string>
     </strings>
     <jobs sgbd="F01">
       <job id="0" name="IDENT" >
-        <display name="sg_addr" result="ID_SG_ADR" format="3L" display-order="0" />
+        <display name="variant" result="VARIANTE" format="T" display-order="0" />
+        <display name="sg_addr" result="ID_SG_ADR" format="3L" display-order="1" />
       </job>
     </jobs>
   </page>
