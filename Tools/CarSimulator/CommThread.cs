@@ -6498,6 +6498,41 @@ namespace CarSimulator
 
                 if (!found)
                 {
+                    int offset = _receiveData[0] == 0x80 ? 1 : 0;
+                    if (offset > 0 && _receiveData[3] == 0x00)
+                    {
+                        offset += 2;
+                    }
+                    if (_receiveData.Length >= 6 && (_receiveData[0] & 0x80) == 0x80 && _receiveData[3 + offset] == 0x29)
+                    {   // service 29 (authentication)
+                        found = true;
+
+                        byte subFunction = _receiveData[4 + offset];
+                        bool authConf = false;
+                        switch (subFunction)
+                        {
+                            case 0x08:
+                                authConf = true;
+                                break;
+                        }
+
+                        if (authConf)
+                        {
+                            Debug.WriteLine("Authentication Configuration -> PKI certificate");
+                            byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x69, _receiveData[4 + offset], 0x02, 0x00 };   // PKI certificate
+                            ObdSend(dummyResponse, bmwTcpClientData);
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Dummy service 29: SubFunc: {0:X02}", (object)subFunction);
+                            byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x69, subFunction, 0x00 };   // positive ACK
+                            ObdSend(dummyResponse, bmwTcpClientData);
+                        }
+                    }
+                }
+
+                if (!found)
+                {
                     if (
                         (_receiveData[0] & 0xC0) == 0x80 &&
                         (_receiveData[0] & 0x3F) >= 3 &&
