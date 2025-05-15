@@ -12,6 +12,10 @@
     "StatusCsf": {
       "commandName": "Project",
       "commandLineArgs": "--ifh=\"ENET\" -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\" -j \"STATUS_REGENERATION_CSF\""
+    },
+    "GetTLSCert": {
+      "commandName": "Project",
+      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"RemoteHost=127.0.0.1;SSLPort=3496;Authentication=S29;NetworkProtocol=SSL\" -s \"C:\\EDIABAS\\Ecu\\F01\" -j \"IDENT_FUNKTIONAL\""
     }
   }
 }
