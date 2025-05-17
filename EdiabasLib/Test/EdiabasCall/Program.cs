@@ -17,6 +17,9 @@ namespace EdiabasCall
         public const string Api32DllName = "api32.dll";
         public const string Api64DllName = "api64.dll";
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        private static extern bool SetDllDirectory(string lpPathName);
+
         [DllImport(Api32DllName, EntryPoint = "__apiResultText")]
         private static extern bool __api32ResultText(uint handle, byte[] buf, string result, ushort set, string format);
 
@@ -59,6 +62,7 @@ namespace EdiabasCall
             string cfgString = null;
             string sgbdFile = null;
             string outFile = null;
+            string searchPath = null;
             string ifhName = string.Empty;
             string deviceName = string.Empty;
             bool appendFile = false;
@@ -76,6 +80,8 @@ namespace EdiabasCall
                   v => sgbdFile = v },
                 { "o|out=", "output file name.",
                   v => outFile = v },
+                { "p|path=", "dll search path.",
+                  v => searchPath = v },
                 { "a|append", "append output file.",
                   v => appendFile = v != null },
                 { "ifh=", "interface handler.",
@@ -127,6 +133,11 @@ namespace EdiabasCall
                 {
                     _outputWriter.WriteLine("No jobs specified");
                     return 1;
+                }
+
+                if (!string.IsNullOrEmpty(searchPath) && Directory.Exists(searchPath))
+                {
+                    SetDllDirectory(searchPath);
                 }
 
                 _api6 = false;
