@@ -1450,6 +1450,16 @@ namespace EdiabasLib
             IdxRegLenReg = 15,
         }
 
+        public class EdiabasNetException : Exception
+        {
+            public EdiabasNetException(string message, ErrorCodes errorCode) : base(message)
+            {
+                ErrorCode = errorCode;
+            }
+
+            public ErrorCodes ErrorCode { get; private set; }
+        }
+
         private class StringData
         {
             public StringData(EdiabasNet ediabas, EdValueType length)
@@ -4107,7 +4117,7 @@ namespace EdiabasLib
             {
                 errorFunc(errorCode);
             }
-            throw new Exception(string.Format(Culture, "Error occurred: {0}", errorCode));
+            throw new EdiabasNetException(string.Format(Culture, "Error occurred: {0}", errorCode), errorCode);
         }
 
         public static string GetErrorDescription(ErrorCodes errorCode)
