@@ -197,11 +197,16 @@ public class BcTlsServer : DefaultTlsServer
 
         if (isEmpty)
         {
+            Debug.WriteLine("TLS server received no client certificate");
+#if false
             short alertDescription = TlsUtilities.IsTlsV13(m_context)
                 ? AlertDescription.certificate_required
                 : AlertDescription.handshake_failure;
 
             throw new TlsFatalAlert(alertDescription);
+#else
+            return;
+#endif
         }
 
         TlsCertificate[] chain = clientCertificate.GetCertificateList();
