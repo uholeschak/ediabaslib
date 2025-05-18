@@ -246,7 +246,6 @@ namespace EdiabasLib
                 {
                     throw new TlsFatalAlert(AlertDescription.unknown_ca);
                 }
-                throw new TlsFatalAlert(AlertDescription.unknown_ca);
 
                 TlsUtilities.CheckPeerSigAlgs(m_context, chain);
             }
