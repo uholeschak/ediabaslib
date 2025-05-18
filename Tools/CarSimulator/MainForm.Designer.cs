@@ -58,7 +58,6 @@
             buttonAbortTest = new System.Windows.Forms.Button();
             buttonEcuFolder = new System.Windows.Forms.Button();
             textBoxEcuFolder = new System.Windows.Forms.TextBox();
-            checkBoxEnetHsfz = new System.Windows.Forms.CheckBox();
             checkBoxEnetDoIp = new System.Windows.Forms.CheckBox();
             checkBoxHighTestVoltage = new System.Windows.Forms.CheckBox();
             buttonServerCert = new System.Windows.Forms.Button();
@@ -398,25 +397,12 @@
             textBoxEcuFolder.Size = new System.Drawing.Size(241, 23);
             textBoxEcuFolder.TabIndex = 18;
             // 
-            // checkBoxEnetHsfz
-            // 
-            checkBoxEnetHsfz.AutoSize = true;
-            checkBoxEnetHsfz.Checked = true;
-            checkBoxEnetHsfz.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkBoxEnetHsfz.Location = new System.Drawing.Point(262, 138);
-            checkBoxEnetHsfz.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            checkBoxEnetHsfz.Name = "checkBoxEnetHsfz";
-            checkBoxEnetHsfz.Size = new System.Drawing.Size(54, 19);
-            checkBoxEnetHsfz.TabIndex = 19;
-            checkBoxEnetHsfz.Text = "HSFZ";
-            checkBoxEnetHsfz.UseVisualStyleBackColor = true;
-            // 
             // checkBoxEnetDoIp
             // 
             checkBoxEnetDoIp.AutoSize = true;
             checkBoxEnetDoIp.Checked = true;
             checkBoxEnetDoIp.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkBoxEnetDoIp.Location = new System.Drawing.Point(392, 138);
+            checkBoxEnetDoIp.Location = new System.Drawing.Point(262, 138);
             checkBoxEnetDoIp.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkBoxEnetDoIp.Name = "checkBoxEnetDoIp";
             checkBoxEnetDoIp.Size = new System.Drawing.Size(51, 19);
@@ -538,7 +524,6 @@
             Controls.Add(buttonServerCert);
             Controls.Add(checkBoxHighTestVoltage);
             Controls.Add(checkBoxEnetDoIp);
-            Controls.Add(checkBoxEnetHsfz);
             Controls.Add(textBoxEcuFolder);
             Controls.Add(buttonEcuFolder);
             Controls.Add(buttonAbortTest);
@@ -602,7 +587,6 @@
         private System.Windows.Forms.Button buttonAbortTest;
         private System.Windows.Forms.Button buttonEcuFolder;
         private System.Windows.Forms.TextBox textBoxEcuFolder;
-        private System.Windows.Forms.CheckBox checkBoxEnetHsfz;
         private System.Windows.Forms.CheckBox checkBoxEnetDoIp;
         private System.Windows.Forms.CheckBox checkBoxHighTestVoltage;
         private System.Windows.Forms.Button buttonServerCert;

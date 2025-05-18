@@ -76,6 +76,7 @@ namespace CarSimulator
                 _serverSslPort = DefaultSslPort;
             }
             _serverUseBcSsl = Properties.Settings.Default.ServerUseBcSsl;
+            checkBoxEnetDoIp.Checked = Properties.Settings.Default.ServerDoIP;
 
             _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
@@ -147,6 +148,7 @@ namespace CarSimulator
             Properties.Settings.Default.ServerCertPwd = _serverCertPwd;
             Properties.Settings.Default.ServerSslPort = _serverSslPort;
             Properties.Settings.Default.ServerUseBcSsl = _serverUseBcSsl;
+            Properties.Settings.Default.ServerDoIP = checkBoxEnetDoIp.Checked;
             Properties.Settings.Default.Save();
         }
 
@@ -784,7 +786,6 @@ namespace CarSimulator
             checkBoxKLineResponder.Enabled = !active;
             checkBoxHighTestVoltage.Enabled = !active;
             checkBoxBtNameStd.Enabled = !active;
-            checkBoxEnetHsfz.Enabled = !active;
             checkBoxEnetDoIp.Enabled = !active;
             groupBoxConcepts.Enabled = !active;
         }
@@ -821,8 +822,14 @@ namespace CarSimulator
                 if (radioButtonTp20.Checked) conceptType = CommThread.ConceptType.ConceptTp20;
 
                 CommThread.EnetCommType enetCommType = CommThread.EnetCommType.None;
-                if (checkBoxEnetHsfz.Checked) enetCommType |= CommThread.EnetCommType.Hsfz;
-                if (checkBoxEnetDoIp.Checked) enetCommType |= CommThread.EnetCommType.DoIp;
+                if (checkBoxEnetDoIp.Checked)
+                {
+                    enetCommType |= CommThread.EnetCommType.DoIp;
+                }
+                else
+                {
+                    enetCommType |= CommThread.EnetCommType.Hsfz;
+                }
 
                 string responseFile = (string)listBoxResponseFiles.SelectedItem;
                 if (responseFile == null)
