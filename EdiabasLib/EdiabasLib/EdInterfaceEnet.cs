@@ -2979,10 +2979,12 @@ namespace EdiabasLib
                 {
                     EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream TLS exception: " + EdiabasNet.GetExceptionText(tlsException));
                     EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
-                    return null;
+                }
+                else
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream exception: " + EdiabasNet.GetExceptionText(ex));
                 }
 
-                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream exception: " + EdiabasNet.GetExceptionText(ex));
                 throw;
             }
         }
