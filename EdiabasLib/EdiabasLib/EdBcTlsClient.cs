@@ -244,7 +244,7 @@ namespace EdiabasLib
 
                 if (!EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, chain, m_outer.m_certificateAuthorities.ToArray()))
                 {
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate);
+                    throw new TlsFatalAlert(AlertDescription.unknown_ca);
                 }
 
                 TlsUtilities.CheckPeerSigAlgs(m_context, chain);
@@ -264,7 +264,7 @@ namespace EdiabasLib
                 IList<X509Name> certificateAuthorities = m_certificateAuthorities;
                 if (certificateAuthorities == null || certificateAuthorities.Count == 0)
                 {
-                    throw new TlsFatalAlert(AlertDescription.bad_certificate);
+                    throw new TlsFatalAlert(AlertDescription.unknown_ca);
                 }
 
                 string selectedPrivateCert = null;
