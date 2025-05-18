@@ -105,7 +105,7 @@ namespace EdiabasLib
 
             if (m_certificateAuthorities.Count == 0)
             {
-                throw new FileNotFoundException("No trusted CA files not found");
+                throw new TlsFatalAlert(AlertDescription.unknown_ca);
             }
         }
 
@@ -246,6 +246,7 @@ namespace EdiabasLib
                 {
                     throw new TlsFatalAlert(AlertDescription.unknown_ca);
                 }
+                throw new TlsFatalAlert(AlertDescription.unknown_ca);
 
                 TlsUtilities.CheckPeerSigAlgs(m_context, chain);
             }
