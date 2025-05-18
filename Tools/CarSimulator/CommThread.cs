@@ -3608,7 +3608,7 @@ namespace CarSimulator
 
                         case SslPolicyErrors.RemoteCertificateNotAvailable:
                             Debug.WriteLine("CreateSslStream no remote certificate");
-                            break;
+                            return true;
 
                         case SslPolicyErrors.RemoteCertificateChainErrors:
                             Debug.WriteLine("CreateSslStream Ignoring chain error");
