@@ -1446,6 +1446,10 @@ namespace EdiabasLib
                     {
                         EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceConnect exception: " + EdiabasNet.GetExceptionText(ex));
                         InterfaceDisconnect(reconnect);
+                        if (ex is EdiabasNet.EdiabasNetException)
+                        {
+                            throw;
+                        }
                     }
                 }
 
@@ -1458,6 +1462,10 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "InterfaceConnect exception: " + EdiabasNet.GetExceptionText(ex));
                 InterfaceDisconnect(reconnect);
+                if (ex is EdiabasNet.EdiabasNetException)
+                {
+                    throw;
+                }
                 return false;
             }
             return true;
