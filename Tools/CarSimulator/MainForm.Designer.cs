@@ -409,6 +409,7 @@
             checkBoxEnetDoIp.TabIndex = 20;
             checkBoxEnetDoIp.Text = "DoIP";
             checkBoxEnetDoIp.UseVisualStyleBackColor = true;
+            checkBoxEnetDoIp.CheckedChanged += checkBoxEnetDoIp_CheckedChanged;
             // 
             // checkBoxHighTestVoltage
             // 

@@ -36,6 +36,7 @@ namespace CarSimulator
         private string _rootFolder;
         private string _ecuFolder;
         private string _responseDir;
+        private bool _serverUseDoIP = false;
         private string _serverCertFile;
         private string _serverCertPwd;
         private int _serverSslPort = DefaultSslPort;
@@ -65,6 +66,7 @@ namespace CarSimulator
             GetDirectories();
             _rootFolder = Properties.Settings.Default.RootFolder;
             _ecuFolder = Properties.Settings.Default.EcuFolder;
+            _serverUseDoIP = Properties.Settings.Default.ServerDoIP;
             _serverCertFile = Properties.Settings.Default.ServerCertFile;
             _serverCertPwd = Properties.Settings.Default.ServerCertPwd;
             try
@@ -76,7 +78,6 @@ namespace CarSimulator
                 _serverSslPort = DefaultSslPort;
             }
             _serverUseBcSsl = Properties.Settings.Default.ServerUseBcSsl;
-            checkBoxEnetDoIp.Checked = Properties.Settings.Default.ServerDoIP;
 
             _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
@@ -144,11 +145,11 @@ namespace CarSimulator
 
             Properties.Settings.Default.RootFolder = _rootFolder;
             Properties.Settings.Default.EcuFolder = _ecuFolder;
+            Properties.Settings.Default.ServerDoIP = _serverUseDoIP;
             Properties.Settings.Default.ServerCertFile = _serverCertFile;
             Properties.Settings.Default.ServerCertPwd = _serverCertPwd;
             Properties.Settings.Default.ServerSslPort = _serverSslPort;
             Properties.Settings.Default.ServerUseBcSsl = _serverUseBcSsl;
-            Properties.Settings.Default.ServerDoIP = checkBoxEnetDoIp.Checked;
             Properties.Settings.Default.Save();
         }
 
@@ -762,6 +763,7 @@ namespace CarSimulator
             bool ecuFolderExits = !string.IsNullOrEmpty(_ecuFolder) && Directory.Exists(_ecuFolder);
 
             textBoxEcuFolder.Text = _ecuFolder ?? string.Empty;
+            checkBoxEnetDoIp.Checked = _serverUseDoIP;
             textBoxServerCert.Text = _serverCertFile ?? string.Empty;
             textBoxCertPwd.Text = _serverCertPwd ?? string.Empty;
             textBoxCertPwd.Enabled = !active;
@@ -1060,6 +1062,11 @@ namespace CarSimulator
         private void checkBoxBcSsl_CheckedChanged(object sender, EventArgs e)
         {
             _serverUseBcSsl = checkBoxBcSsl.Checked;
+        }
+
+        private void checkBoxEnetDoIp_CheckedChanged(object sender, EventArgs e)
+        {
+            _serverUseDoIP = checkBoxEnetDoIp.Checked;
         }
 
         private void richTextBoxTestResults_LinkClicked(object sender, LinkClickedEventArgs e)

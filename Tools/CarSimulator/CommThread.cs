@@ -2265,11 +2265,6 @@ namespace CarSimulator
                     resPayloadType = 0x0004;
 
                     byte[] vinBytes = Encoding.ASCII.GetBytes(TestVin);
-                    if ((_enetCommType & EnetCommType.Hsfz) == EnetCommType.Hsfz)
-                    {
-                        vinBytes[^1]++;
-                    }
-
                     resData.AddRange(vinBytes);
                     // log address
                     resData.Add((byte)(_doIpGwAddr >> 8));
