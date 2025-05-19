@@ -17,6 +17,7 @@ using System.Text;
 using System;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.Utilities.Collections;
 
 namespace EdiabasLib
 {
@@ -385,6 +386,7 @@ namespace EdiabasLib
             }
             return null;
         }
+
         public static byte[] CreatePkcs12Data(string certResource, string keyResource, string password = null)
         {
             try
@@ -421,6 +423,46 @@ namespace EdiabasLib
                 {
                     store.Save(stream, null, new SecureRandom());
                     return stream.ToArray();
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static AsymmetricKeyParameter LoadPkcs12Key(string certResource, string password = null)
+        {
+            try
+            {
+                using (FileStream fs = new FileStream(certResource, FileMode.Open, FileAccess.Read))
+                {
+                    Pkcs12Store store = new Pkcs12StoreBuilder().Build();
+                    char[] passwordChars = password?.ToCharArray();
+                    store.Load(fs, passwordChars);
+
+                    string keyAlisas = null;
+                    foreach (string alias in store.Aliases)
+                    {
+                        if (store.IsKeyEntry(alias))
+                        {
+                            keyAlisas = alias;
+                            break;
+                        }
+                    }
+
+                    if (keyAlisas == null)
+                    {
+                        return null;
+                    }
+
+                    AsymmetricKeyEntry keyEntry = store.GetKey(keyAlisas);
+                    if (keyEntry == null)
+                    {
+                        return null;
+                    }
+
+                    return keyEntry.Key;
                 }
             }
             catch (Exception)
