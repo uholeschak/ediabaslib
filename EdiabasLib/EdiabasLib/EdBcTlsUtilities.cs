@@ -108,26 +108,32 @@ namespace EdiabasLib
 
         public static PemObject LoadPemResource(string resource)
         {
-            using (var p = new PemReader(new StreamReader(resource)))
+            using (StreamReader sr = new StreamReader(resource))
             {
-                return p.ReadPemObject();
+                using (PemReader p = new PemReader(sr))
+                {
+                    return p.ReadPemObject();
+                }
             }
         }
 
         public static List<PemObject> LoadPemResources(string resource)
         {
             List <PemObject> pemObjects = new List<PemObject>();
-            using (PemReader p = new PemReader(new StreamReader(resource)))
+            using (StreamReader sr = new StreamReader(resource))
             {
-                for (;;)
+                using (PemReader p = new PemReader(sr))
                 {
-                    PemObject pemObject = p.ReadPemObject();
-                    if (pemObject == null)
+                    for (; ; )
                     {
-                        break;
-                    }
+                        PemObject pemObject = p.ReadPemObject();
+                        if (pemObject == null)
+                        {
+                            break;
+                        }
 
-                    pemObjects.Add(pemObject);
+                        pemObjects.Add(pemObject);
+                    }
                 }
             }
 
