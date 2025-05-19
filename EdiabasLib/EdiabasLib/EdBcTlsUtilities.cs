@@ -110,9 +110,20 @@ namespace EdiabasLib
         {
             using (StreamReader sr = new StreamReader(resource))
             {
-                using (PemReader p = new PemReader(sr))
+                using (Org.BouncyCastle.OpenSsl.PemReader p = new Org.BouncyCastle.OpenSsl.PemReader(sr))
                 {
                     return p.ReadPemObject();
+                }
+            }
+        }
+
+        public static object LoadPemObject(string resource)
+        {
+            using (StreamReader sr = new StreamReader(resource))
+            {
+                using (Org.BouncyCastle.OpenSsl.PemReader p = new Org.BouncyCastle.OpenSsl.PemReader(sr))
+                {
+                    return p.ReadObject();
                 }
             }
         }
@@ -122,7 +133,7 @@ namespace EdiabasLib
             List <PemObject> pemObjects = new List<PemObject>();
             using (StreamReader sr = new StreamReader(resource))
             {
-                using (PemReader p = new PemReader(sr))
+                using (Org.BouncyCastle.OpenSsl.PemReader p = new Org.BouncyCastle.OpenSsl.PemReader(sr))
                 {
                     for (; ; )
                     {
