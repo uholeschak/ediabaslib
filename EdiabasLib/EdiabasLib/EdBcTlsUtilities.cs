@@ -470,5 +470,20 @@ namespace EdiabasLib
                 return null;
             }
         }
+
+        public static AsymmetricCipherKeyPair GenerateEcKeyPair()
+        {
+            try
+            {
+                IAsymmetricCipherKeyPairGenerator kpg = GeneratorUtilities.GetKeyPairGenerator("EC");
+                kpg.Init(new ECKeyGenerationParameters(SecObjectIdentifiers.SecP256r1, new SecureRandom()));
+                AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
+                return kp;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }
