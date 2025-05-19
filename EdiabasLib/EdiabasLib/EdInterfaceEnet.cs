@@ -3104,6 +3104,7 @@ namespace EdiabasLib
                     }
                 }
 
+                string p12Password = "TestPwd";
                 bool publicCertFound = false;
                 if (File.Exists(machinePublicFile))
                 {
@@ -3130,7 +3131,7 @@ namespace EdiabasLib
                 {
                     try
                     {
-                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile);
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, p12Password);
                         if (asymmetricKeyPar == null)
                         {
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load private cert failed: {0}", machinePrivateFile);
@@ -3148,7 +3149,7 @@ namespace EdiabasLib
 
                 if (!publicCertFound || !privateCertFound)
                 {
-                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile))
+                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, p12Password))
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Generate private key file failed: {0}", machinePrivateFile);
                     }
