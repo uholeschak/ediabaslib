@@ -3087,6 +3087,21 @@ namespace EdiabasLib
                             {
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert failed: {0}", certFile);
                             }
+
+                            foreach (PemObject pemResource in pemResources)
+                            {
+                                StringBuilder sb = new StringBuilder();
+                                sb.Append(pemResource.Type);
+                                foreach (PemHeader pemHeader in pemResource.Headers)
+                                {
+                                    sb.Append(" [");
+                                    sb.Append(pemHeader.Name);
+                                    sb.Append(": ");
+                                    sb.Append(pemHeader.Value);
+                                    sb.Append("]");
+                                }
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Public cert into: {0}", sb.ToString());
+                            }
                         }
                         catch (Exception ex)
                         {
