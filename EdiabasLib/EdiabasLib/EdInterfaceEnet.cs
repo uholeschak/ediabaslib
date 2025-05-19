@@ -15,6 +15,7 @@ using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Utilities.IO.Pem;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -3061,6 +3062,10 @@ namespace EdiabasLib
                     return false;
                 }
 
+                string machineName = Environment.MachineName;
+                string machinePrivateCert = machineName + ".p12";
+                string machinePublicCert = machineName + "_public.pem";
+
                 List<X509Certificate2> certList = new List<X509Certificate2>();
                 List<EdBcTlsClient.CertInfo> certKeyList = new List<EdBcTlsClient.CertInfo>();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
@@ -3069,6 +3074,25 @@ namespace EdiabasLib
                     string certExtension = Path.GetExtension(certFile);
                     if (string.IsNullOrEmpty(certExtension))
                     {
+                        continue;
+                    }
+
+                    string certFileName = Path.GetFileName(certFile);
+                    if (string.Compare(certFileName, machinePublicCert, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        try
+                        {
+                            List<PemObject> pemResources = EdBcTlsUtilities.LoadPemResources(certFile);
+                            if (pemResources != null && pemResources.Count == 0)
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert failed: {0}", certFile);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
+                        }
+
                         continue;
                     }
 
