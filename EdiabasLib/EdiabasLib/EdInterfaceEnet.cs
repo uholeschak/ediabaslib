@@ -3082,7 +3082,32 @@ namespace EdiabasLib
                             {
                                 if (asymmetricKeyPar.IsPrivate)
                                 {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Public cert not private: {0}", certFile);
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Public cert not public: {0}", certFile);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
+                        }
+
+                        continue;
+                    }
+
+                    if (string.Compare(certFileName, machinePrivateCert, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        try
+                        {
+                            AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(certFile);
+                            if (asymmetricKeyPar == null)
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load private cert failed: {0}", certFile);
+                            }
+                            else
+                            {
+                                if (!asymmetricKeyPar.IsPrivate)
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Private cert not private: {0}", certFile);
                                 }
                             }
                         }
