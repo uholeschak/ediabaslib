@@ -472,7 +472,7 @@ namespace EdiabasLib
             }
         }
 
-        public static bool GenerateEcKeyPair(string privateKeyFile, string password = null)
+        public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, string password = null)
         {
             try
             {
@@ -503,6 +503,12 @@ namespace EdiabasLib
                 {
                     store.Save(stream, password?.ToCharArray(), secureRandom);
                 }
+
+                using (Org.BouncyCastle.OpenSsl.PemWriter pemWriter = new Org.BouncyCastle.OpenSsl.PemWriter(new StreamWriter(publicKeyFile)))
+                {
+                    pemWriter.WriteObject(kp.Public);
+                }
+
                 return true;
             }
             catch (Exception)

@@ -3148,7 +3148,7 @@ namespace EdiabasLib
 
                 if (!publicCertFound || !privateCertFound)
                 {
-                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile))
+                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile))
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Generate private key file failed: {0}", machinePrivateFile);
                     }
