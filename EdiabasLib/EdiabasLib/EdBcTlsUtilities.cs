@@ -478,7 +478,7 @@ namespace EdiabasLib
             {
                 SecureRandom secureRandom = new SecureRandom();
                 IAsymmetricCipherKeyPairGenerator kpg = GeneratorUtilities.GetKeyPairGenerator("EC");
-                kpg.Init(new ECKeyGenerationParameters(SecObjectIdentifiers.SecP256r1, secureRandom));
+                kpg.Init(new ECKeyGenerationParameters(SecObjectIdentifiers.SecP521r1, secureRandom));
                 AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
 
                 Pkcs12Store store = new Pkcs12StoreBuilder().Build();
