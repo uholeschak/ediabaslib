@@ -3054,8 +3054,8 @@ namespace EdiabasLib
                 }
 
                 string machineName = Environment.MachineName;
-                string machinePrivateCert = machineName + ".p12";
-                string machinePublicCert = machineName + "_public.pem";
+                string machinePrivateFile = Path.Combine(certPath, machineName + ".p12");
+                string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
 
                 List<X509Certificate2> certList = new List<X509Certificate2>();
                 List<EdBcTlsClient.CertInfo> certKeyList = new List<EdBcTlsClient.CertInfo>();
@@ -3065,57 +3065,6 @@ namespace EdiabasLib
                     string certExtension = Path.GetExtension(certFile);
                     if (string.IsNullOrEmpty(certExtension))
                     {
-                        continue;
-                    }
-
-                    string certFileName = Path.GetFileName(certFile);
-                    if (string.Compare(certFileName, machinePublicCert, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        try
-                        {
-                            AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(certFile) as AsymmetricKeyParameter;
-                            if (asymmetricKeyPar == null)
-                            {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert failed: {0}", certFile);
-                            }
-                            else
-                            {
-                                if (asymmetricKeyPar.IsPrivate)
-                                {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Public cert not public: {0}", certFile);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
-                        }
-
-                        continue;
-                    }
-
-                    if (string.Compare(certFileName, machinePrivateCert, StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        try
-                        {
-                            AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(certFile);
-                            if (asymmetricKeyPar == null)
-                            {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load private cert failed: {0}", certFile);
-                            }
-                            else
-                            {
-                                if (!asymmetricKeyPar.IsPrivate)
-                                {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Private cert not private: {0}", certFile);
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
-                        }
-
                         continue;
                     }
 
@@ -3152,6 +3101,56 @@ namespace EdiabasLib
                                 }
                             }
                         }
+                    }
+                }
+
+                bool publicCertFound = false;
+                if (File.Exists(machinePublicFile))
+                {
+                    try
+                    {
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
+                        if (asymmetricKeyPar == null)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert failed: {0}", machinePublicFile);
+                        }
+                        else
+                        {
+                            publicCertFound = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", machinePublicFile, EdiabasNet.GetExceptionText(ex));
+                    }
+                }
+
+                bool privateCertFound = false;
+                if (File.Exists(machinePrivateFile))
+                {
+                    try
+                    {
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile);
+                        if (asymmetricKeyPar == null)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load private cert failed: {0}", machinePrivateFile);
+                        }
+                        else
+                        {
+                            privateCertFound = true;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", machinePrivateFile, EdiabasNet.GetExceptionText(ex));
+                    }
+                }
+
+                if (!publicCertFound || !privateCertFound)
+                {
+                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile))
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Generate private key file failed: {0}", machinePrivateFile);
                     }
                 }
 

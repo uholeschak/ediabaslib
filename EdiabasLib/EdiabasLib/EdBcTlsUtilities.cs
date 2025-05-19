@@ -17,7 +17,8 @@ using System.Text;
 using System;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Pkcs;
-using Org.BouncyCastle.Utilities.Collections;
+using Org.BouncyCastle.Crypto.Operators;
+using Org.BouncyCastle.Math;
 
 namespace EdiabasLib
 {
@@ -471,18 +472,42 @@ namespace EdiabasLib
             }
         }
 
-        public static AsymmetricCipherKeyPair GenerateEcKeyPair()
+        public static bool GenerateEcKeyPair(string privateKeyFile, string password = null)
         {
             try
             {
+                SecureRandom secureRandom = new SecureRandom();
                 IAsymmetricCipherKeyPairGenerator kpg = GeneratorUtilities.GetKeyPairGenerator("EC");
-                kpg.Init(new ECKeyGenerationParameters(SecObjectIdentifiers.SecP256r1, new SecureRandom()));
+                kpg.Init(new ECKeyGenerationParameters(SecObjectIdentifiers.SecP256r1, secureRandom));
                 AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
-                return kp;
+
+                Pkcs12Store store = new Pkcs12StoreBuilder().Build();
+
+                List<X509CertificateEntry> certificateEntries = new List<X509CertificateEntry>();
+                X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
+                certGen.SetSerialNumber(BigInteger.One);
+                certGen.SetIssuerDN(new X509Name("CN=EC Cert"));
+                certGen.SetNotBefore(DateTime.UtcNow.AddSeconds(-50));
+                certGen.SetNotAfter(DateTime.UtcNow.AddSeconds(50000));
+                certGen.SetSubjectDN(new X509Name("CN=EC Cert"));
+                certGen.SetPublicKey(kp.Public);
+
+                ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA1withECDSA", kp.Private, secureRandom);
+                X509Certificate certificate = certGen.Generate(signatureFactory);
+                X509CertificateEntry certificateEntry = new X509CertificateEntry(certificate);
+                certificateEntries.Add(certificateEntry);
+
+                AsymmetricKeyEntry keyEntry = new AsymmetricKeyEntry(kp.Private);
+                store.SetKeyEntry("EC", keyEntry, certificateEntries.ToArray());
+                using (FileStream stream = new FileStream(privateKeyFile, FileMode.Create, FileAccess.Write))
+                {
+                    store.Save(stream, password?.ToCharArray(), secureRandom);
+                }
+                return true;
             }
             catch (Exception)
             {
-                return null;
+                return false;
             }
         }
     }
