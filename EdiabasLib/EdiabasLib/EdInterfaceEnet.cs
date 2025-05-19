@@ -2947,15 +2947,6 @@ namespace EdiabasLib
                 return null;
             }
 
-            string serverDnsName = sharedData.EnetHostConn.Vin;
-            string serverIpAddress = sharedData.EnetHostConn.IpAddress.ToString();
-
-            if (string.IsNullOrEmpty(serverDnsName))
-            {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream Empty server name");
-                return null;
-            }
-
             if (sharedData.S29CertFiles == null || sharedData.S29CertFiles.Count == 0)
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream No client keys");
