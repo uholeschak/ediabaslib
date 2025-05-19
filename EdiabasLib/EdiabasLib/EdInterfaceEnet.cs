@@ -15,7 +15,7 @@ using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Tls;
-using Org.BouncyCastle.Utilities.IO.Pem;
+using Org.BouncyCastle.Crypto;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -3082,26 +3082,16 @@ namespace EdiabasLib
                     {
                         try
                         {
-                            List<PemObject> pemResources = EdBcTlsUtilities.LoadPemResources(certFile);
-                            if (pemResources == null || pemResources.Count == 0)
+                            AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(certFile) as AsymmetricKeyParameter;
+                            if (asymmetricKeyPar == null)
                             {
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert failed: {0}", certFile);
                             }
                             else
                             {
-                                foreach (PemObject pemResource in pemResources)
+                                if (asymmetricKeyPar.IsPrivate)
                                 {
-                                    StringBuilder sb = new StringBuilder();
-                                    sb.Append(pemResource.Type);
-                                    foreach (PemHeader pemHeader in pemResource.Headers)
-                                    {
-                                        sb.Append(" [");
-                                        sb.Append(pemHeader.Name);
-                                        sb.Append(": ");
-                                        sb.Append(pemHeader.Value);
-                                        sb.Append("]");
-                                    }
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Public cert into: {0}", sb.ToString());
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Public cert not private: {0}", certFile);
                                 }
                             }
                         }
