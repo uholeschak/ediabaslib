@@ -20,7 +20,7 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" GeneratePathProperty="true" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.0" GeneratePathProperty="true" />
     <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.1" GeneratePathProperty="true" />
   </ItemGroup>
   <ItemGroup>
