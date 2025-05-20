@@ -3112,58 +3112,75 @@ namespace EdiabasLib
                     p12Password = Convert.ToBase64String(algorithm.ComputeHash(Encoding.UTF8.GetBytes(machineName.ToUpperInvariant())));
                 }
 
-                X509CertificateEntry machinePublicCert = null;
-                if (File.Exists(machinePrivateFile))
-                {
-                    try
-                    {
-                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, p12Password, out X509CertificateEntry publicCert);
-                        if (asymmetricKeyPar == null || publicCert == null)
-                        {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load private cert failed: {0}", machinePrivateFile);
-                        }
-                        else
-                        {
-                            machinePublicCert = publicCert;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", machinePrivateFile, EdiabasNet.GetExceptionText(ex));
-                    }
-                }
+                AsymmetricKeyParameter machineAsymmetricKeyPar = null;
+                X509CertificateEntry[] machinePublicChain = null;
 
-                if (File.Exists(machinePublicFile) && machinePublicCert != null)
+                for (int retry = 0; retry < 2; retry++)
                 {
-                    try
+                    machineAsymmetricKeyPar = null;
+                    machinePublicChain = null;
+
+                    if (File.Exists(machinePrivateFile))
                     {
-                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
-                        if (asymmetricKeyPar == null)
+                        try
                         {
-                            machinePublicCert = null;
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert failed: {0}", machinePublicFile);
-                        }
-                        else
-                        {
-                            if (!machinePublicCert.Certificate.GetPublicKey().Equals(asymmetricKeyPar))
+                            AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, p12Password, out X509CertificateEntry[] publicChain);
+                            if (asymmetricKeyPar == null || publicChain == null)
                             {
-                                machinePublicCert = null;
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert different: {0}", machinePublicFile);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load private cert failed: {0}", machinePrivateFile);
+                            }
+                            else
+                            {
+                                machineAsymmetricKeyPar = asymmetricKeyPar;
+                                machinePublicChain = publicChain;
                             }
                         }
+                        catch (Exception ex)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", machinePrivateFile, EdiabasNet.GetExceptionText(ex));
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", machinePublicFile, EdiabasNet.GetExceptionText(ex));
-                    }
-                }
 
-                if (machinePublicCert == null)
-                {
+                    if (File.Exists(machinePublicFile) && machinePublicChain != null)
+                    {
+                        try
+                        {
+                            AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
+                            if (asymmetricKeyPar == null)
+                            {
+                                machineAsymmetricKeyPar = null;
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert failed: {0}", machinePublicFile);
+                            }
+                            else
+                            {
+                                if (!machinePublicChain[0].Certificate.GetPublicKey().Equals(asymmetricKeyPar))
+                                {
+                                    machineAsymmetricKeyPar = null;
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert different: {0}", machinePublicFile);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", machinePublicFile, EdiabasNet.GetExceptionText(ex));
+                        }
+                    }
+
+                    if (machineAsymmetricKeyPar != null && machinePublicChain != null)
+                    {
+                        break;
+                    }
+
                     if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, p12Password))
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Generate private key file failed: {0}", machinePrivateFile);
+                        break;
                     }
+                }
+
+                if (machineAsymmetricKeyPar != null && machinePublicChain != null)
+                {
+                    certKeyList.Add(new EdBcTlsClient.CertInfo(machineAsymmetricKeyPar, machinePublicChain));
                 }
 
                 sharedData.S29Certs = certList;
