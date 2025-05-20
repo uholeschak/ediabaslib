@@ -219,9 +219,12 @@ public class BcTlsServer : DefaultTlsServer
             Debug.WriteLine("    fingerprint:SHA-256 " + EdBcTlsUtilities.Fingerprint(entry) + " (" + entry.Subject + ")");
         }
 
-        if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, chain, m_certificateAuthorities.ToArray()))
+        if (chain.Length > 1)
         {
-            throw new TlsFatalAlert(AlertDescription.bad_certificate);
+            if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, chain, m_certificateAuthorities.ToArray()))
+            {
+                throw new TlsFatalAlert(AlertDescription.bad_certificate);
+            }
         }
 
         TlsUtilities.CheckPeerSigAlgs(m_context, chain);
