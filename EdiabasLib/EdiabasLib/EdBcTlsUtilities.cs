@@ -432,9 +432,9 @@ namespace EdiabasLib
             }
         }
 
-        public static AsymmetricKeyParameter LoadPkcs12Key(string certResource, string password, out X509CertificateEntry publicCert)
+        public static AsymmetricKeyParameter LoadPkcs12Key(string certResource, string password, out X509CertificateEntry[] publicChain)
         {
-            publicCert = null;
+            publicChain = null;
             try
             {
                 using (FileStream fs = new FileStream(certResource, FileMode.Open, FileAccess.Read))
@@ -470,12 +470,15 @@ namespace EdiabasLib
                         return null;
                     }
 
-                    publicCert = chain[0];
-                    if (!publicCert.Certificate.IsValid(DateTime.UtcNow.AddHours(12.0)))
+                    foreach (X509CertificateEntry certEntry in chain)
                     {
-                        return null;
+                        if (!certEntry.Certificate.IsValid(DateTime.UtcNow.AddHours(12.0)))
+                        {
+                            return null;
+                        }
                     }
 
+                    publicChain = chain;
                     return keyEntry.Key;
                 }
             }

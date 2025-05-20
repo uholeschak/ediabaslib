@@ -9,7 +9,7 @@ using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
 using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.X509;
+using Org.BouncyCastle.Pkcs;
 
 namespace EdiabasLib
 {
@@ -23,8 +23,16 @@ namespace EdiabasLib
                 PublicCert = publicCert;
             }
 
+            public CertInfo(AsymmetricKeyParameter keyParameter, X509CertificateEntry[] publicChain)
+            {
+                KeyParameter = keyParameter;
+                PublicChain = publicChain;
+            }
+
             public string PrivateCert { get; }
             public string PublicCert { get; }
+            public AsymmetricKeyParameter KeyParameter { get; }
+            public X509CertificateEntry[] PublicChain { get; }
         }
 
         private static readonly int[] ClientCipherSuites = new int[]
@@ -272,6 +280,11 @@ namespace EdiabasLib
 
                 foreach (CertInfo certInfo in m_outer.m_privatePublicCertList)
                 {
+                    if (string.IsNullOrEmpty(certInfo.PrivateCert) || string.IsNullOrEmpty(certInfo.PublicCert))
+                    {
+                        continue;
+                    }
+
                     List<TlsCertificate> publicCerts = EdBcTlsUtilities.LoadCertificateResources(m_outer.Crypto, certInfo.PublicCert);
                     if (EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, publicCerts.ToArray(), m_certificateAuthorities.ToArray()))
                     {
