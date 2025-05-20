@@ -41,7 +41,7 @@
     <Compile Include="..\EdiabasLib\TcpClientWithTimeout.cs" Link="TcpClientWithTimeout.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.5.1" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
   </ItemGroup>
   <ItemGroup>
