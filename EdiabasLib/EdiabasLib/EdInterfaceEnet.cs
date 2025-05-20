@@ -3181,6 +3181,19 @@ namespace EdiabasLib
                 if (machineAsymmetricKeyPar != null && machinePublicChain != null)
                 {
                     certKeyList.Add(new EdBcTlsClient.CertInfo(machineAsymmetricKeyPar, machinePublicChain));
+                    try
+                    {
+#if NET9_0_OR_GREATER
+                        X509Certificate2 cert = X509CertificateLoader.LoadCertificate(machinePrivateFile, p12Password);
+#else
+                        X509Certificate2 cert = new X509Certificate2(machinePrivateFile, p12Password);
+#endif
+                        certList.Add(cert);
+                    }
+                    catch (Exception ex)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Private key file {0}, Exception: {1}", machinePrivateFile, EdiabasNet.GetExceptionText(ex));
+                    }
                 }
 
                 sharedData.S29Certs = certList;
