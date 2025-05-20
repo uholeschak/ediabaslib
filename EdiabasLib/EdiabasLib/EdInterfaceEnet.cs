@@ -17,6 +17,7 @@ using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
+using System.Security.Cryptography;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -3105,7 +3106,12 @@ namespace EdiabasLib
                     }
                 }
 
-                string p12Password = "TestPwd";
+                string p12Password;
+                using (SHA256 algorithm = SHA256.Create())
+                {
+                    p12Password = Convert.ToBase64String(algorithm.ComputeHash(Encoding.UTF8.GetBytes(machineName)));
+                }
+
                 bool publicCertFound = false;
                 if (File.Exists(machinePublicFile))
                 {

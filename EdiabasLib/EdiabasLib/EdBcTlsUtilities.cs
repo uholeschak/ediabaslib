@@ -512,7 +512,7 @@ namespace EdiabasLib
                 certificateEntries.Add(certificateEntry);
 
                 AsymmetricKeyEntry keyEntry = new AsymmetricKeyEntry(kp.Private);
-                store.SetKeyEntry("EC", keyEntry, certificateEntries.ToArray());
+                store.SetKeyEntry("EdiabasLib", keyEntry, certificateEntries.ToArray());
                 using (FileStream stream = new FileStream(privateKeyFile, FileMode.Create, FileAccess.Write))
                 {
                     store.Save(stream, password?.ToCharArray(), secureRandom);
