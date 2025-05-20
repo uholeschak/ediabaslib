@@ -16,6 +16,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Pkcs;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -3131,8 +3132,8 @@ namespace EdiabasLib
                 {
                     try
                     {
-                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, p12Password);
-                        if (asymmetricKeyPar == null)
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, p12Password, out X509CertificateEntry publicCert);
+                        if (asymmetricKeyPar == null || publicCert == null)
                         {
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load private cert failed: {0}", machinePrivateFile);
                         }
