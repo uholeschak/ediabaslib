@@ -471,7 +471,7 @@ namespace EdiabasLib
                     }
 
                     publicCert = chain[0];
-                    if (!publicCert.Certificate.IsValidNow)
+                    if (!publicCert.Certificate.IsValid(DateTime.UtcNow.AddHours(12.0)))
                     {
                         return null;
                     }
@@ -502,7 +502,7 @@ namespace EdiabasLib
                 certGen.SetSerialNumber(BigInteger.One);
                 certGen.SetIssuerDN(dnName);
                 certGen.SetNotBefore(DateTime.UtcNow.AddMinutes(-5.0));
-                certGen.SetNotAfter(DateTime.UtcNow.AddDays(4.0));
+                certGen.SetNotAfter(DateTime.UtcNow.AddDays(7.0));
                 certGen.SetSubjectDN(dnName);
                 certGen.SetPublicKey(kp.Public);
 
