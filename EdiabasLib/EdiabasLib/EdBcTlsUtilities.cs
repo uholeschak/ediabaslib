@@ -202,6 +202,11 @@ namespace EdiabasLib
         public static TlsCredentialedSigner LoadSignerCredentials(TlsContext context, IList<SignatureAndHashAlgorithm> supportedSignatureAlgorithms, string[] certResources,
             string keyResource, SignatureAndHashAlgorithm[] signatureAndHashAlgorithms)
         {
+            if (signatureAndHashAlgorithms == null)
+            {
+                return null;
+            }
+
             TlsCrypto crypto = context.Crypto;
             TlsCryptoParameters cryptoParams = new TlsCryptoParameters(context);
 

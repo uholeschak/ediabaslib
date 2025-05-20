@@ -277,6 +277,7 @@ namespace EdiabasLib
 
                 string selectedPrivateCert = null;
                 string selectedPublicCert = null;
+                short selectedSigAlg = SignatureAlgorithm.anonymous;
 
                 foreach (CertInfo certInfo in m_outer.m_privatePublicCertList)
                 {
@@ -285,11 +286,33 @@ namespace EdiabasLib
                         continue;
                     }
 
+                    short supportedSignatureAlgorithm = SignatureAlgorithm.anonymous;
                     List<TlsCertificate> publicCerts = EdBcTlsUtilities.LoadCertificateResources(m_outer.Crypto, certInfo.PublicCert);
+                    foreach (TlsCertificate publicCert in publicCerts)
+                    {
+                        if (publicCert.SupportsSignatureAlgorithmCA(SignatureAlgorithm.rsa))
+                        {
+                            supportedSignatureAlgorithm = SignatureAlgorithm.rsa;
+                            break;
+                        }
+
+                        if (publicCert.SupportsSignatureAlgorithmCA(SignatureAlgorithm.ecdsa))
+                        {
+                            supportedSignatureAlgorithm = SignatureAlgorithm.ecdsa;
+                            break;
+                        }
+                    }
+
+                    if (supportedSignatureAlgorithm == SignatureAlgorithm.anonymous)
+                    {
+                        continue;
+                    }
+
                     if (EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, publicCerts.ToArray(), m_certificateAuthorities.ToArray()))
                     {
                         selectedPrivateCert = certInfo.PrivateCert;
                         selectedPublicCert = certInfo.PublicCert;
+                        selectedSigAlg = supportedSignatureAlgorithm;
                         break;
                     }
                 }
@@ -300,17 +323,22 @@ namespace EdiabasLib
                 }
 
                 IList<SignatureAndHashAlgorithm> supportedSigAlgs = certificateRequest.SupportedSignatureAlgorithms;
-
                 if (supportedSigAlgs != null)
                 {
-                    TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, new[] { selectedPublicCert }, selectedPrivateCert, RsaSignatureAndHashAlgorithms);
+                    SignatureAndHashAlgorithm[] signatureAlgorithms = null;
+                    if (selectedSigAlg == SignatureAlgorithm.rsa)
+                    {
+                        signatureAlgorithms = RsaSignatureAndHashAlgorithms;
+                    }
+
+                    TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, new[] { selectedPublicCert }, selectedPrivateCert, signatureAlgorithms);
                     if (signerCredentials != null)
                     {
                         return signerCredentials;
                     }
                 }
 
-                return EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, SignatureAlgorithm.rsa, new[] { selectedPublicCert }, selectedPrivateCert);
+                return EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, selectedSigAlg, new[] { selectedPublicCert }, selectedPrivateCert);
             }
         }
     }
