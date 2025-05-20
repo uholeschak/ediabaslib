@@ -212,7 +212,7 @@ public class BcTlsServer : DefaultTlsServer
         TlsCertificate[] chain = clientCertificate.GetCertificateList();
 
         Debug.WriteLine("TLS server received client certificate chain of length " + chain.Length);
-        for (int i = 0; i < chain.Length; ++i)
+        for (int i = 0; i < chain.Length; i++)
         {
             X509CertificateStructure entry = X509CertificateStructure.GetInstance(chain[i].GetEncoded());
             // TODO Create fingerprint based on certificate signature algorithm digest
