@@ -3109,31 +3109,10 @@ namespace EdiabasLib
                 string p12Password;
                 using (SHA256 algorithm = SHA256.Create())
                 {
-                    p12Password = Convert.ToBase64String(algorithm.ComputeHash(Encoding.UTF8.GetBytes(machineName)));
+                    p12Password = Convert.ToBase64String(algorithm.ComputeHash(Encoding.UTF8.GetBytes(machineName.ToUpperInvariant())));
                 }
 
-                bool publicCertFound = false;
-                if (File.Exists(machinePublicFile))
-                {
-                    try
-                    {
-                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
-                        if (asymmetricKeyPar == null)
-                        {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert failed: {0}", machinePublicFile);
-                        }
-                        else
-                        {
-                            publicCertFound = true;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", machinePublicFile, EdiabasNet.GetExceptionText(ex));
-                    }
-                }
-
-                bool privateCertFound = false;
+                X509CertificateEntry machinePublicCert = null;
                 if (File.Exists(machinePrivateFile))
                 {
                     try
@@ -3145,7 +3124,7 @@ namespace EdiabasLib
                         }
                         else
                         {
-                            privateCertFound = true;
+                            machinePublicCert = publicCert;
                         }
                     }
                     catch (Exception ex)
@@ -3154,7 +3133,32 @@ namespace EdiabasLib
                     }
                 }
 
-                if (!publicCertFound || !privateCertFound)
+                if (File.Exists(machinePublicFile) && machinePublicCert != null)
+                {
+                    try
+                    {
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
+                        if (asymmetricKeyPar == null)
+                        {
+                            machinePublicCert = null;
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert failed: {0}", machinePublicFile);
+                        }
+                        else
+                        {
+                            if (!machinePublicCert.Certificate.GetPublicKey().Equals(asymmetricKeyPar))
+                            {
+                                machinePublicCert = null;
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert different: {0}", machinePublicFile);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", machinePublicFile, EdiabasNet.GetExceptionText(ex));
+                    }
+                }
+
+                if (machinePublicCert == null)
                 {
                     if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, p12Password))
                     {
