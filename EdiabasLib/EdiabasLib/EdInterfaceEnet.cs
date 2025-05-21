@@ -288,6 +288,36 @@ namespace EdiabasLib
 
                 if (S29CertFiles != null)
                 {
+                    foreach (EdBcTlsClient.CertInfo certInfo in S29CertFiles)
+                    {
+                        if (certInfo.TempFile)
+                        {
+                            try
+                            {
+                                if (File.Exists(certInfo.PrivateCert))
+                                {
+                                    File.Delete(certInfo.PrivateCert);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
+                            try
+                            {
+                                if (File.Exists(certInfo.PublicCert))
+                                {
+                                    File.Delete(certInfo.PublicCert);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+                        }
+                    }
+
                     S29CertFiles.Clear();
                     S29CertFiles = null;
                 }
@@ -3137,7 +3167,41 @@ namespace EdiabasLib
 
                 if (machineAsymmetricKeyPar != null && machinePublicChain != null)
                 {
-                    certKeyList.Add(new EdBcTlsClient.CertInfo(machineAsymmetricKeyPar, machinePublicChain));
+                    string tempPath = Path.GetTempPath();
+                    string privateTempFile = Path.Combine(tempPath, Path.GetTempFileName());
+                    string publicTempFile = Path.Combine(tempPath, Path.GetTempFileName());
+
+                    if (!EdBcTlsUtilities.ExtractPkcs12Key(machinePrivateFile, p12Password, privateTempFile, publicTempFile))
+                    {
+                        try
+                        {
+                            if (File.Exists(privateTempFile))
+                            {
+                                File.Delete(privateTempFile);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            if (File.Exists(publicTempFile))
+                            {
+                                File.Delete(publicTempFile);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                    else
+                    {
+                        certKeyList.Add(new EdBcTlsClient.CertInfo(privateTempFile, publicTempFile, true));
+                    }
+
                     try
                     {
 #if NET9_0_OR_GREATER
