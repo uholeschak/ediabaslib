@@ -3109,7 +3109,8 @@ namespace EdiabasLib
                             }
                             else
                             {
-                                if (!machinePublicChain[0].Certificate.GetPublicKey().Equals(asymmetricKeyPar))
+                                if (machinePublicChain.Length < 1 ||
+                                    !machinePublicChain[0].Certificate.GetPublicKey().Equals(asymmetricKeyPar))
                                 {
                                     machineAsymmetricKeyPar = null;
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert different: {0}", machinePublicFile);

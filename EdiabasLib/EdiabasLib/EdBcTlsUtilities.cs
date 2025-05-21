@@ -437,12 +437,12 @@ namespace EdiabasLib
             }
         }
 
-        public static AsymmetricKeyParameter LoadPkcs12Key(string certResource, string password, out X509CertificateEntry[] publicChain)
+        public static AsymmetricKeyParameter LoadPkcs12Key(string pkcs12File, string password, out X509CertificateEntry[] publicChain)
         {
             publicChain = null;
             try
             {
-                using (FileStream fs = new FileStream(certResource, FileMode.Open, FileAccess.Read))
+                using (FileStream fs = new FileStream(pkcs12File, FileMode.Open, FileAccess.Read))
                 {
                     Pkcs12Store store = new Pkcs12StoreBuilder().Build();
                     char[] passwordChars = password?.ToCharArray();
@@ -470,7 +470,7 @@ namespace EdiabasLib
                     }
 
                     X509CertificateEntry[] chain = store.GetCertificateChain(keyAlisas);
-                    if (chain == null || chain.Length != 1)
+                    if (chain == null || chain.Length < 1)
                     {
                         return null;
                     }
@@ -490,6 +490,34 @@ namespace EdiabasLib
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public static bool ExtractPkcs12Key(string pkcs12File, string password, string privateFile, string publicFile)
+        {
+            try
+            {
+                AsymmetricKeyParameter asymmetricKeyPar = LoadPkcs12Key(pkcs12File, password, out X509CertificateEntry[] publicChain);
+                if (asymmetricKeyPar == null || publicChain == null || publicChain.Length < 1)
+                {
+                    return false;
+                }
+
+                using (Org.BouncyCastle.OpenSsl.PemWriter pemWriter = new Org.BouncyCastle.OpenSsl.PemWriter(new StreamWriter(privateFile)))
+                {
+                    pemWriter.WriteObject(asymmetricKeyPar);
+                }
+
+                using (Org.BouncyCastle.OpenSsl.PemWriter pemWriter = new Org.BouncyCastle.OpenSsl.PemWriter(new StreamWriter(publicFile)))
+                {
+                    pemWriter.WriteObject(publicChain);
+                }
+
+                return true;
+            }
+            catch (Exception )
+            {
+                return false;
             }
         }
 
