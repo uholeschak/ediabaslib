@@ -510,7 +510,10 @@ namespace EdiabasLib
 
                 using (Org.BouncyCastle.OpenSsl.PemWriter pemWriter = new Org.BouncyCastle.OpenSsl.PemWriter(new StreamWriter(publicFile)))
                 {
-                    pemWriter.WriteObject(publicChain);
+                    foreach (X509CertificateEntry certificateEntry in publicChain)
+                    {
+                        pemWriter.WriteObject(certificateEntry.Certificate);
+                    }
                 }
 
                 return true;

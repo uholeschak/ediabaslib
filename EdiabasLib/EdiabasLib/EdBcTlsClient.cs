@@ -17,22 +17,16 @@ namespace EdiabasLib
     {
         public class CertInfo
         {
-            public CertInfo(string privateCert, string publicCert)
+            public CertInfo(string privateCert, string publicCert, bool tempFile = false)
             {
                 PrivateCert = privateCert;
                 PublicCert = publicCert;
-            }
-
-            public CertInfo(AsymmetricKeyParameter keyParameter, X509CertificateEntry[] publicChain)
-            {
-                KeyParameter = keyParameter;
-                PublicChain = publicChain;
+                TempFile = tempFile;
             }
 
             public string PrivateCert { get; }
             public string PublicCert { get; }
-            public AsymmetricKeyParameter KeyParameter { get; }
-            public X509CertificateEntry[] PublicChain { get; }
+            public bool TempFile { get; }
         }
 
         private static readonly int[] ClientCipherSuites = new int[]
