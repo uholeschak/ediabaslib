@@ -309,7 +309,20 @@ namespace EdiabasLib
                         continue;
                     }
 
+                    bool acceptCert = false;
                     if (EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, publicCerts.ToArray(), m_certificateAuthorities.ToArray()))
+                    {
+                        acceptCert = true;
+                    }
+                    else
+                    {
+                        if (publicCerts.Count == 1)
+                        {
+                            acceptCert = true;
+                        }
+                    }
+
+                    if (acceptCert)
                     {
                         selectedPrivateCert = certInfo.PrivateCert;
                         selectedPublicCert = certInfo.PublicCert;
