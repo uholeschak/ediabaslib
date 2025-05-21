@@ -75,9 +75,9 @@ namespace EdiabasLib
 
         private static readonly SignatureAndHashAlgorithm[] EcSignatureAndHashAlgorithms =
         {
-            SignatureAndHashAlgorithm.ecdsa_brainpoolP256r1tls13_sha256,
-            SignatureAndHashAlgorithm.ecdsa_brainpoolP384r1tls13_sha384,
-            SignatureAndHashAlgorithm.ecdsa_brainpoolP512r1tls13_sha512,
+            //SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp256r1_sha256),
+            SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp384r1_sha384),
+            SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp521r1_sha512)
         };
 
         private readonly EdiabasNet m_ediabasNet;
