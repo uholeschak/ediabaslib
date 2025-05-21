@@ -3223,32 +3223,32 @@ namespace EdiabasLib
                     }
                 }
 
-                IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
-                foreach (string certFile in certFiles)
+                if (machineAsymmetricKeyPar == null)
                 {
-                    string certExtension = Path.GetExtension(certFile);
-                    if (string.IsNullOrEmpty(certExtension))
+                    IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
+                    foreach (string certFile in certFiles)
                     {
-                        continue;
-                    }
-
-                    if (!string.IsNullOrEmpty(selectCert))
-                    {
-                        string baseFileName = Path.GetFileNameWithoutExtension(certFile);
-                        if (string.Compare(baseFileName, selectCert, StringComparison.OrdinalIgnoreCase) != 0)
+                        string certExtension = Path.GetExtension(certFile);
+                        if (string.IsNullOrEmpty(certExtension))
                         {
                             continue;
                         }
-                    }
 
-                    if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        string publicCert = Path.ChangeExtension(certFile, ".pem");
-                        if (File.Exists(publicCert))
+                        if (!string.IsNullOrEmpty(selectCert))
                         {
-                            certKeyList.Add(new EdBcTlsClient.CertInfo(certFile, publicCert));
-                            if (machineAsymmetricKeyPar == null)
+                            string baseFileName = Path.GetFileNameWithoutExtension(certFile);
+                            if (string.Compare(baseFileName, selectCert, StringComparison.OrdinalIgnoreCase) != 0)
                             {
+                                continue;
+                            }
+                        }
+
+                        if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            string publicCert = Path.ChangeExtension(certFile, ".pem");
+                            if (File.Exists(publicCert))
+                            {
+                                certKeyList.Add(new EdBcTlsClient.CertInfo(certFile, publicCert));
                                 byte[] pkcs12Data = EdBcTlsUtilities.CreatePkcs12Data(publicCert, certFile);
                                 if (pkcs12Data != null)
                                 {
