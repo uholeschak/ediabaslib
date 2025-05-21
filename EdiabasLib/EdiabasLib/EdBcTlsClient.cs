@@ -73,6 +73,7 @@ namespace EdiabasLib
             SignatureAndHashAlgorithm.rsa_pss_rsae_sha512,
         };
 
+        // These alogorithms are compatibe with Microsoft TLS 1.3 implementation
         private static readonly SignatureAndHashAlgorithm[] EcSignatureAndHashAlgorithms =
         {
             //SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp256r1_sha256),
