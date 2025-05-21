@@ -1568,6 +1568,12 @@ namespace EdiabasLib
                 result = false;
             }
 
+            if (!reconnect)
+            {
+                SharedDataActive.DisposeCAs();
+                SharedDataActive.DisposeS29Certs();
+            }
+
             if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn != null && SharedDataActive.EnetHostConn.DiagPort >= 0)
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
