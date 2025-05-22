@@ -4,12 +4,14 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.Asn1.Sec;
+using Org.BouncyCastle.Asn1.X9;
+using Org.BouncyCastle.Asn1.Pkcs;
 
 namespace EdiabasLib
 {
@@ -63,22 +65,6 @@ namespace EdiabasLib
             CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256,
             CipherSuite.TLS_RSA_WITH_AES_256_CBC_SHA,
             CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA,
-        };
-
-        // These alogorithms are compatibe with Microsoft TLS 1.3 implementation
-        private static readonly SignatureAndHashAlgorithm[] RsaSignatureAndHashAlgorithms =
-        {
-            SignatureAndHashAlgorithm.rsa_pss_rsae_sha256,
-            SignatureAndHashAlgorithm.rsa_pss_rsae_sha384,
-            SignatureAndHashAlgorithm.rsa_pss_rsae_sha512,
-        };
-
-        // These alogorithms are compatibe with Microsoft TLS 1.3 implementation
-        private static readonly SignatureAndHashAlgorithm[] EcSignatureAndHashAlgorithms =
-        {
-            //SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp256r1_sha256),
-            SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp384r1_sha384),
-            SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp521r1_sha512)
         };
 
         private readonly EdiabasNet m_ediabasNet;
@@ -277,9 +263,16 @@ namespace EdiabasLib
                     throw new TlsFatalAlert(AlertDescription.unknown_ca);
                 }
 
+                BcTlsCrypto bcTlsCrypto = m_outer.Crypto as BcTlsCrypto;
+                if (bcTlsCrypto == null)
+                {
+                    throw new TlsFatalAlert(AlertDescription.internal_error);
+                }
+
                 string selectedPrivateCert = null;
                 string selectedPublicCert = null;
                 short selectedSigAlg = SignatureAlgorithm.anonymous;
+                SignatureAndHashAlgorithm[] selectedSigAndHashAlgs = null;
 
                 foreach (CertInfo certInfo in m_outer.m_privatePublicCertList)
                 {
@@ -289,18 +282,68 @@ namespace EdiabasLib
                     }
 
                     short supportedSignatureAlgorithm = SignatureAlgorithm.anonymous;
-                    List<TlsCertificate> publicCerts = EdBcTlsUtilities.LoadCertificateResources(m_outer.Crypto, certInfo.PublicCert);
-                    foreach (TlsCertificate publicCert in publicCerts)
+                    SignatureAndHashAlgorithm[] supportedSigAndHashAlgs = null;
+                    List<X509CertificateStructure> publicCertificates = EdBcTlsUtilities.LoadBcCertificateResources(certInfo.PublicCert);
+                    foreach (X509CertificateStructure publicCertificate in publicCertificates)
                     {
-                        if (publicCert.SupportsSignatureAlgorithmCA(SignatureAlgorithm.rsa))
+                        AlgorithmIdentifier algorithmIdentifier = publicCertificate.SubjectPublicKeyInfo?.Algorithm;
+                        if (algorithmIdentifier == null)
                         {
-                            supportedSignatureAlgorithm = SignatureAlgorithm.rsa;
-                            break;
+                            continue;
                         }
 
-                        if (publicCert.SupportsSignatureAlgorithmCA(SignatureAlgorithm.ecdsa))
+                        DerObjectIdentifier algorithm = algorithmIdentifier.Algorithm;
+                        if (algorithm == null)
+                        {
+                            continue;
+                        }
+
+                        if (algorithm.Equals(X9ObjectIdentifiers.IdECPublicKey))
                         {
                             supportedSignatureAlgorithm = SignatureAlgorithm.ecdsa;
+
+                            Asn1Encodable parameters = algorithmIdentifier.Parameters;
+                            if (parameters != null)
+                            {
+                                if (parameters.Equals(SecObjectIdentifiers.SecP256r1))
+                                {
+                                    supportedSigAndHashAlgs = new[] { SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp256r1_sha256) };
+                                }
+                                else if (parameters.Equals(SecObjectIdentifiers.SecP384r1))
+                                {
+                                    supportedSigAndHashAlgs = new[] { SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp384r1_sha384) };
+                                }
+                                else if (parameters.Equals(SecObjectIdentifiers.SecP521r1))
+                                {
+                                    supportedSigAndHashAlgs = new[] { SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp521r1_sha512) };
+                                }
+                            }
+                        }
+
+                        if (algorithm.Equals(PkcsObjectIdentifiers.RsaEncryption))
+                        {
+                            supportedSignatureAlgorithm = SignatureAlgorithm.rsa;
+
+                            DerObjectIdentifier sigAlg = publicCertificate.SignatureAlgorithm?.Algorithm;
+                            if (sigAlg != null)
+                            {
+                                if (sigAlg.Equals(PkcsObjectIdentifiers.Sha256WithRsaEncryption))
+                                {
+                                    supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha256 };
+                                }
+                                else if (sigAlg.Equals(PkcsObjectIdentifiers.Sha384WithRsaEncryption))
+                                {
+                                    supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha384 };
+                                }
+                                else if (sigAlg.Equals(PkcsObjectIdentifiers.Sha512WithRsaEncryption))
+                                {
+                                    supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha512 };
+                                }
+                            }
+                        }
+
+                        if (supportedSignatureAlgorithm != SignatureAlgorithm.anonymous)
+                        {
                             break;
                         }
                     }
@@ -311,13 +354,14 @@ namespace EdiabasLib
                     }
 
                     bool acceptCert = false;
-                    if (EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, publicCerts.ToArray(), m_certificateAuthorities.ToArray()))
+                    if (publicCertificates.Count == 1)
                     {
                         acceptCert = true;
                     }
                     else
                     {
-                        if (publicCerts.Count == 1)
+                        List<TlsCertificate> publicCerts = EdBcTlsUtilities.LoadCertificateResources(m_outer.Crypto, certInfo.PublicCert);
+                        if (EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, publicCerts.ToArray(), m_certificateAuthorities.ToArray()))
                         {
                             acceptCert = true;
                         }
@@ -328,6 +372,7 @@ namespace EdiabasLib
                         selectedPrivateCert = certInfo.PrivateCert;
                         selectedPublicCert = certInfo.PublicCert;
                         selectedSigAlg = supportedSignatureAlgorithm;
+                        selectedSigAndHashAlgs = supportedSigAndHashAlgs;
                         break;
                     }
                 }
@@ -340,19 +385,7 @@ namespace EdiabasLib
                 IList<SignatureAndHashAlgorithm> supportedSigAlgs = certificateRequest.SupportedSignatureAlgorithms;
                 if (supportedSigAlgs != null)
                 {
-                    SignatureAndHashAlgorithm[] signatureAlgorithms = null;
-                    switch (selectedSigAlg)
-                    {
-                        case SignatureAlgorithm.rsa:
-                            signatureAlgorithms = RsaSignatureAndHashAlgorithms;
-                            break;
-
-                        case SignatureAlgorithm.ecdsa:
-                            signatureAlgorithms = EcSignatureAndHashAlgorithms;
-                            break;
-                    }
-
-                    TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, new[] { selectedPublicCert }, selectedPrivateCert, signatureAlgorithms);
+                    TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, supportedSigAlgs, new[] { selectedPublicCert }, selectedPrivateCert, selectedSigAndHashAlgs);
                     if (signerCredentials != null)
                     {
                         return signerCredentials;
