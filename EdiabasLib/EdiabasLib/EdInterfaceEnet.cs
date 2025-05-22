@@ -18,6 +18,7 @@ using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using System.Security.Cryptography;
+using Org.BouncyCastle.Asn1.Sec;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -3164,7 +3165,7 @@ namespace EdiabasLib
                         break;
                     }
 
-                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, p12Password))
+                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, SecObjectIdentifiers.SecP384r1, p12Password))
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Generate private key file failed: {0}", machinePrivateFile);
                         break;
