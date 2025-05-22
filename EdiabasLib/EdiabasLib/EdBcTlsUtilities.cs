@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System;
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Crypto.Operators;
@@ -245,11 +246,11 @@ namespace EdiabasLib
             Certificate certificate = LoadCertificateChain(cryptoParams.ServerVersion, crypto, certResources);
 
             // TODO[tls-ops] Need to have TlsCrypto construct the credentials from the certs/key (as raw data)
-            if (crypto is BcTlsCrypto)
+            if (crypto is BcTlsCrypto bcTlsCrypto)
             {
                 AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
 
-                return new BcDefaultTlsCredentialedSigner(cryptoParams, (BcTlsCrypto)crypto, privateKey, certificate, signatureAndHashAlgorithm);
+                return new BcDefaultTlsCredentialedSigner(cryptoParams, bcTlsCrypto, privateKey, certificate, signatureAndHashAlgorithm);
             }
 
             throw new NotSupportedException();
@@ -524,13 +525,13 @@ namespace EdiabasLib
             }
         }
 
-        public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, string password = null)
+        public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, DerObjectIdentifier paramSet, string password = null)
         {
             try
             {
                 SecureRandom secureRandom = new SecureRandom();
                 IAsymmetricCipherKeyPairGenerator kpg = GeneratorUtilities.GetKeyPairGenerator("EC");
-                kpg.Init(new ECKeyGenerationParameters(SecObjectIdentifiers.SecP384r1, secureRandom));
+                kpg.Init(new ECKeyGenerationParameters(paramSet, secureRandom));
                 AsymmetricCipherKeyPair kp = kpg.GenerateKeyPair();
 
                 Pkcs12Store store = new Pkcs12StoreBuilder().Build();
