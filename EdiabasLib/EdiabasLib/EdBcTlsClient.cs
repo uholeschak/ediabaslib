@@ -167,16 +167,9 @@ namespace EdiabasLib
 
         public override void NotifySelectedCipherSuite(int selectedCipherSuite)
         {
-            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client selected cipher suite: {0}", selectedCipherSuite);
-        }
+            base.NotifySelectedCipherSuite(selectedCipherSuite);
 
-        /// <exception cref="IOException"/>
-        public override void NotifySelectedPsk(TlsPsk selectedPsk)
-        {
-            if (selectedPsk != null)
-            {
-                m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client selected prf alg: {0}", selectedPsk.PrfAlgorithm);
-            }
+            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client selected cipher suite: {0}", selectedCipherSuite);
         }
 
         public override TlsAuthentication GetAuthentication()
