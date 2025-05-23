@@ -665,25 +665,31 @@ namespace EdiabasLib
 
         public class CustomTlsCredentialedSigner : BcDefaultTlsCredentialedSigner
         {
-            public bool SuppressCertificate { get; set; }
+            private TlsCryptoParameters m_cryptoParams;
 
             public CustomTlsCredentialedSigner(TlsCryptoParameters cryptoParams, BcTlsCrypto crypto,
                 AsymmetricKeyParameter privateKey, Certificate certificate,
                 SignatureAndHashAlgorithm signatureAndHashAlgorithm) 
                 : base(cryptoParams, crypto, privateKey, certificate, signatureAndHashAlgorithm)
             {
+                m_cryptoParams = cryptoParams;
             }
 
             public override Certificate Certificate
             {
                 get
                 {
-                    if (SuppressCertificate)
+                    if (m_cryptoParams.IsServer)
                     {
-                        return null;
+                        return base.Certificate;
                     }
 
-                    return base.Certificate;
+                    if (base.Certificate.Length > 0)
+                    {
+                        return base.Certificate;
+                    }
+
+                    return null;
                 }
             }
         }
