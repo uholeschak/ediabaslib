@@ -665,14 +665,11 @@ namespace EdiabasLib
 
         public class CustomTlsCredentialedSigner : BcDefaultTlsCredentialedSigner
         {
-            private TlsCryptoParameters m_cryptoParams;
-
             public CustomTlsCredentialedSigner(TlsCryptoParameters cryptoParams, BcTlsCrypto crypto,
                 AsymmetricKeyParameter privateKey, Certificate certificate,
                 SignatureAndHashAlgorithm signatureAndHashAlgorithm) 
                 : base(cryptoParams, crypto, privateKey, certificate, signatureAndHashAlgorithm)
             {
-                m_cryptoParams = cryptoParams;
             }
 
             public override Certificate Certificate
