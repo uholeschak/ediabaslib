@@ -78,11 +78,6 @@ namespace EdiabasLib
             m_ediabasNet = ediabasNet;
             m_privatePublicCertList = certInfoList;
 
-            if (m_privatePublicCertList == null || m_privatePublicCertList.Count == 0)
-            {
-                throw new ArgumentNullException("Private/Public cert list is empty");
-            }
-
             m_certificateAuthorities = new List<X509Name>();
             if (trustedCaList != null)
             {
@@ -262,6 +257,11 @@ namespace EdiabasLib
                     short[] certificateTypes = certificateRequest.CertificateTypes;
                     if (certificateTypes == null || !Arrays.Contains(certificateTypes, ClientCertificateType.rsa_sign))
                         return null;
+                }
+
+                if (m_outer.m_privatePublicCertList == null || m_outer.m_privatePublicCertList.Count == 0)
+                {
+                    return null;
                 }
 
                 IList<X509Name> certificateAuthorities = m_certificateAuthorities;

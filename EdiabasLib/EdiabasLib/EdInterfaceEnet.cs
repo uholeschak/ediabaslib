@@ -2986,12 +2986,6 @@ namespace EdiabasLib
                 return null;
             }
 
-            if (sharedData.S29CertFiles == null || sharedData.S29CertFiles.Count == 0)
-            {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream No client keys");
-                return null;
-            }
-
             try
             {
                 NetworkStream serverStream = sharedData.TcpDiagClient.GetStream();
@@ -3174,6 +3168,7 @@ namespace EdiabasLib
 
                 if (machineAsymmetricKeyPar != null && machinePublicChain != null)
                 {
+#if false
                     string tempPath = Path.GetTempPath();
                     string privateTempFile = Path.Combine(tempPath, Path.GetTempFileName());
                     string publicTempFile = Path.Combine(tempPath, Path.GetTempFileName());
@@ -3208,7 +3203,7 @@ namespace EdiabasLib
                     {
                         certKeyList.Add(new EdBcTlsClient.CertInfo(privateTempFile, publicTempFile, true));
                     }
-
+#endif
                     try
                     {
 #if NET9_0_OR_GREATER
