@@ -354,14 +354,13 @@ namespace EdiabasLib
                     }
 
                     bool acceptCert = false;
-                    if (publicCertificates.Count == 1)
+                    if (EdBcTlsUtilities.CheckCertificateChainCa(publicCertificates.ToArray(), m_certificateAuthorities.ToArray()))
                     {
                         acceptCert = true;
                     }
                     else
                     {
-                        List<TlsCertificate> publicCerts = EdBcTlsUtilities.LoadCertificateResources(m_outer.Crypto, certInfo.PublicCert);
-                        if (EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, publicCerts.ToArray(), m_certificateAuthorities.ToArray()))
+                        if (publicCertificates.Count == 1)
                         {
                             acceptCert = true;
                         }
