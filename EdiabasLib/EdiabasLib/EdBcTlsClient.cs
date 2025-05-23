@@ -162,7 +162,21 @@ namespace EdiabasLib
         {
             base.NotifyServerVersion(serverVersion);
 
-            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client negotiated : {0}", serverVersion);
+            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client negotiated: {0}", serverVersion);
+        }
+
+        public override void NotifySelectedCipherSuite(int selectedCipherSuite)
+        {
+            m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client selected cipher suite: {0}", selectedCipherSuite);
+        }
+
+        /// <exception cref="IOException"/>
+        public override void NotifySelectedPsk(TlsPsk selectedPsk)
+        {
+            if (selectedPsk != null)
+            {
+                m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client selected prf alg: {0}", selectedPsk.PrfAlgorithm);
+            }
         }
 
         public override TlsAuthentication GetAuthentication()
