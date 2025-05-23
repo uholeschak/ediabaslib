@@ -173,6 +173,70 @@ namespace EdiabasLib
             }
         }
 
+        public static short? GetSupportedSignatureAlgorithms(X509CertificateStructure certificateStructure, out SignatureAndHashAlgorithm[] supportedSigAndHashAlgs)
+        {
+            supportedSigAndHashAlgs = null;
+
+            AlgorithmIdentifier algorithmIdentifier = certificateStructure.SubjectPublicKeyInfo?.Algorithm;
+            if (algorithmIdentifier == null)
+            {
+                return null;
+            }
+
+            DerObjectIdentifier algorithm = algorithmIdentifier.Algorithm;
+            if (algorithm == null)
+            {
+                return null;
+            }
+
+            short? supportedSignatureAlgorithm = null;
+            if (algorithm.Equals(X9ObjectIdentifiers.IdECPublicKey))
+            {
+                supportedSignatureAlgorithm = SignatureAlgorithm.ecdsa;
+
+                Asn1Encodable parameters = algorithmIdentifier.Parameters;
+                if (parameters != null)
+                {
+                    if (parameters.Equals(SecObjectIdentifiers.SecP256r1))
+                    {
+                        supportedSigAndHashAlgs = new[] { SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp256r1_sha256) };
+                    }
+                    else if (parameters.Equals(SecObjectIdentifiers.SecP384r1))
+                    {
+                        supportedSigAndHashAlgs = new[] { SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp384r1_sha384) };
+                    }
+                    else if (parameters.Equals(SecObjectIdentifiers.SecP521r1))
+                    {
+                        supportedSigAndHashAlgs = new[] { SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp521r1_sha512) };
+                    }
+                }
+            }
+
+            if (algorithm.Equals(PkcsObjectIdentifiers.RsaEncryption))
+            {
+                supportedSignatureAlgorithm = SignatureAlgorithm.rsa;
+
+                DerObjectIdentifier sigAlg = certificateStructure.SignatureAlgorithm?.Algorithm;
+                if (sigAlg != null)
+                {
+                    if (sigAlg.Equals(PkcsObjectIdentifiers.Sha256WithRsaEncryption))
+                    {
+                        supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha256 };
+                    }
+                    else if (sigAlg.Equals(PkcsObjectIdentifiers.Sha384WithRsaEncryption))
+                    {
+                        supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha384 };
+                    }
+                    else if (sigAlg.Equals(PkcsObjectIdentifiers.Sha512WithRsaEncryption))
+                    {
+                        supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha512 };
+                    }
+                }
+            }
+
+            return supportedSignatureAlgorithm;
+        }
+
         public static TlsCredentialedSigner LoadSignerCredentials(TlsContext context,
             IList<SignatureAndHashAlgorithm> supportedSignatureAlgorithms, short signatureAlgorithm,
             string[] certResources, string keyResource)

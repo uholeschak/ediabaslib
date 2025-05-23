@@ -281,74 +281,19 @@ namespace EdiabasLib
                         continue;
                     }
 
-                    short supportedSignatureAlgorithm = SignatureAlgorithm.anonymous;
+                    short? supportedSignatureAlgorithm = null;
                     SignatureAndHashAlgorithm[] supportedSigAndHashAlgs = null;
                     List<X509CertificateStructure> publicCertificates = EdBcTlsUtilities.LoadBcCertificateResources(certInfo.PublicCert);
                     foreach (X509CertificateStructure publicCertificate in publicCertificates)
                     {
-                        AlgorithmIdentifier algorithmIdentifier = publicCertificate.SubjectPublicKeyInfo?.Algorithm;
-                        if (algorithmIdentifier == null)
-                        {
-                            continue;
-                        }
-
-                        DerObjectIdentifier algorithm = algorithmIdentifier.Algorithm;
-                        if (algorithm == null)
-                        {
-                            continue;
-                        }
-
-                        if (algorithm.Equals(X9ObjectIdentifiers.IdECPublicKey))
-                        {
-                            supportedSignatureAlgorithm = SignatureAlgorithm.ecdsa;
-
-                            Asn1Encodable parameters = algorithmIdentifier.Parameters;
-                            if (parameters != null)
-                            {
-                                if (parameters.Equals(SecObjectIdentifiers.SecP256r1))
-                                {
-                                    supportedSigAndHashAlgs = new[] { SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp256r1_sha256) };
-                                }
-                                else if (parameters.Equals(SecObjectIdentifiers.SecP384r1))
-                                {
-                                    supportedSigAndHashAlgs = new[] { SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp384r1_sha384) };
-                                }
-                                else if (parameters.Equals(SecObjectIdentifiers.SecP521r1))
-                                {
-                                    supportedSigAndHashAlgs = new[] { SignatureScheme.GetSignatureAndHashAlgorithm(SignatureScheme.ecdsa_secp521r1_sha512) };
-                                }
-                            }
-                        }
-
-                        if (algorithm.Equals(PkcsObjectIdentifiers.RsaEncryption))
-                        {
-                            supportedSignatureAlgorithm = SignatureAlgorithm.rsa;
-
-                            DerObjectIdentifier sigAlg = publicCertificate.SignatureAlgorithm?.Algorithm;
-                            if (sigAlg != null)
-                            {
-                                if (sigAlg.Equals(PkcsObjectIdentifiers.Sha256WithRsaEncryption))
-                                {
-                                    supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha256 };
-                                }
-                                else if (sigAlg.Equals(PkcsObjectIdentifiers.Sha384WithRsaEncryption))
-                                {
-                                    supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha384 };
-                                }
-                                else if (sigAlg.Equals(PkcsObjectIdentifiers.Sha512WithRsaEncryption))
-                                {
-                                    supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha512 };
-                                }
-                            }
-                        }
-
-                        if (supportedSignatureAlgorithm != SignatureAlgorithm.anonymous)
+                        supportedSignatureAlgorithm = EdBcTlsUtilities.GetSupportedSignatureAlgorithms(publicCertificate, out supportedSigAndHashAlgs);
+                        if (supportedSignatureAlgorithm != null)
                         {
                             break;
                         }
                     }
 
-                    if (supportedSignatureAlgorithm == SignatureAlgorithm.anonymous)
+                    if (supportedSignatureAlgorithm == null)
                     {
                         continue;
                     }
@@ -370,7 +315,7 @@ namespace EdiabasLib
                     {
                         selectedPrivateCert = certInfo.PrivateCert;
                         selectedPublicCert = certInfo.PublicCert;
-                        selectedSigAlg = supportedSignatureAlgorithm;
+                        selectedSigAlg = supportedSignatureAlgorithm.Value;
                         selectedSigAndHashAlgs = supportedSigAndHashAlgs;
                         break;
                     }
