@@ -314,7 +314,7 @@ namespace EdiabasLib
             {
                 AsymmetricKeyParameter privateKey = LoadBcPrivateKeyResource(keyResource);
 
-                return new BcDefaultTlsCredentialedSigner(cryptoParams, bcTlsCrypto, privateKey, certificate, signatureAndHashAlgorithm);
+                return new CustomTlsCredentialedSigner(cryptoParams, bcTlsCrypto, privateKey, certificate, signatureAndHashAlgorithm);
             }
 
             throw new NotSupportedException();
@@ -660,6 +660,31 @@ namespace EdiabasLib
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public class CustomTlsCredentialedSigner : BcDefaultTlsCredentialedSigner
+        {
+            public bool SuppressCertificate { get; set; }
+
+            public CustomTlsCredentialedSigner(TlsCryptoParameters cryptoParams, BcTlsCrypto crypto,
+                AsymmetricKeyParameter privateKey, Certificate certificate,
+                SignatureAndHashAlgorithm signatureAndHashAlgorithm) 
+                : base(cryptoParams, crypto, privateKey, certificate, signatureAndHashAlgorithm)
+            {
+            }
+
+            public override Certificate Certificate
+            {
+                get
+                {
+                    if (SuppressCertificate)
+                    {
+                        return null;
+                    }
+
+                    return base.Certificate;
+                }
             }
         }
     }
