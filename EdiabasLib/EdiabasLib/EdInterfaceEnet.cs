@@ -3207,7 +3207,7 @@ namespace EdiabasLib
                     try
                     {
 #if NET9_0_OR_GREATER
-                        X509Certificate2 cert = X509CertificateLoader.LoadCertificate(machinePrivateFile, p12Password);
+                        X509Certificate2 cert = X509CertificateLoader.LoadPkcs12FromFile(machinePrivateFile, p12Password);
 #else
                         X509Certificate2 cert = new X509Certificate2(machinePrivateFile, p12Password);
 #endif
