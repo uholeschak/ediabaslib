@@ -1469,6 +1469,23 @@ namespace EdiabasLib
                                 InterfaceDisconnect(reconnect);
                                 continue;
                             }
+
+                            if (SharedDataActive.DiagDoIpSsl && !reconnect)
+                            {
+                                byte[] authRequestBuffer = { 0x82, DoIpGwAddrDefault, 0xF1, 0x29, 0x08 };
+                                if (!SendDoIpData(authRequestBuffer, authRequestBuffer.Length, true))
+                                {
+                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth request failed");
+                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
+                                }
+
+                                byte[] authResponseBuffer = new byte[TransBufferSize];
+                                if (!ReceiveDoIpData(authResponseBuffer, ParTimeoutStd))
+                                {
+                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receiving DoIp auth response failed");
+                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
+                                }
+                            }
                         }
 
                         if (Connected)
@@ -4326,10 +4343,13 @@ namespace EdiabasLib
 
                 if (SharedDataActive.DiagDoIp)
                 {
-                    if (!SendDoIpData(sendData, sendLength, enableLogging))
+                    if (SharedDataActive.DiagDoIpSsl)
                     {
-                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
-                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                        if (!SendDoIpData(sendData, sendLength, enableLogging))
+                        {
+                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
+                        }
                     }
                 }
                 else
