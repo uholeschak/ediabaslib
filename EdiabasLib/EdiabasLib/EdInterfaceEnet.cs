@@ -1492,6 +1492,9 @@ namespace EdiabasLib
                                     EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, authResponseBuffer, 0, authResponseLength, "*** DoIp auth response invalid");
                                     EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
                                 }
+
+                                byte authConfig = authResponseBuffer[5];
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DoIp auth configuration: {0:X02}", authConfig);
                             }
                         }
 
