@@ -3269,7 +3269,7 @@ namespace EdiabasLib
 
                 sharedData.S29Certs = certList;
                 sharedData.S29CertFiles = certKeyList;
-                return certList.Count > 0 || certKeyList.Count > 0;
+                return true;
             }
             catch (Exception ex)
             {
