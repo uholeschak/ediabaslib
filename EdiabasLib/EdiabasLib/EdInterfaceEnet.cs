@@ -2948,10 +2948,19 @@ namespace EdiabasLib
 #endif
                 if (!sslStream.IsEncrypted || !sslStream.IsSigned)
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not authenticated: Encrypted={0}, Signed={1}",
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not encrypted: Encrypted={0}, Signed={1}",
                         sslStream.IsEncrypted, sslStream.IsSigned);
                     sslStream.Close();
                     return null;
+                }
+
+                if (clientCertificates != null && clientCertificates.Count > 0)
+                {
+                    if (!sslStream.IsMutuallyAuthenticated)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not mutually authenticated");
+                        return null;
+                    }
                 }
                 return sslStream;
             }
