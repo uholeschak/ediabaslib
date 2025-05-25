@@ -631,21 +631,21 @@ namespace EdiabasLib
 
                 List<X509CertificateEntry> certificateEntries = new List<X509CertificateEntry>();
                 X509V3CertificateGenerator certGen = new X509V3CertificateGenerator();
-                X509Name dnName = new X509Name("CN=EdiabasLib");
+                X509Name dnName = new X509Name("CN=SelfSigned");
                 certGen.SetSerialNumber(BigInteger.One);
                 certGen.SetIssuerDN(dnName);
                 certGen.SetNotBefore(DateTime.UtcNow.AddMinutes(-5.0));
-                certGen.SetNotAfter(DateTime.UtcNow.AddDays(7.0));
+                certGen.SetNotAfter(DateTime.UtcNow.AddYears(1));
                 certGen.SetSubjectDN(dnName);
                 certGen.SetPublicKey(kp.Public);
 
-                ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA1withECDSA", kp.Private, secureRandom);
+                ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", kp.Private, secureRandom);
                 X509Certificate certificate = certGen.Generate(signatureFactory);
                 X509CertificateEntry certificateEntry = new X509CertificateEntry(certificate);
                 certificateEntries.Add(certificateEntry);
 
                 AsymmetricKeyEntry keyEntry = new AsymmetricKeyEntry(kp.Private);
-                store.SetKeyEntry("EdiabasLib", keyEntry, certificateEntries.ToArray());
+                store.SetKeyEntry("alias", keyEntry, certificateEntries.ToArray());
                 using (FileStream stream = new FileStream(privateKeyFile, FileMode.Create, FileAccess.Write))
                 {
                     store.Save(stream, password?.ToCharArray(), secureRandom);
