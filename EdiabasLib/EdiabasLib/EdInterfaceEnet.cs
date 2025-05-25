@@ -2794,22 +2794,6 @@ namespace EdiabasLib
                 {
                     try
                     {
-                        X509Certificate2 cert2 = new X509Certificate2(certificate);
-                        string hostDnsName = cert2.GetNameInfo(X509NameType.DnsName, false);
-                        if (string.IsNullOrEmpty(hostDnsName))
-                        {
-                            return false;
-                        }
-
-                        if (string.Compare(hostDnsName.Trim(), serverDnsName.Trim(), StringComparison.OrdinalIgnoreCase) != 0 &&
-                            string.Compare(hostDnsName.Trim(), serverDnsName2.Trim(), StringComparison.OrdinalIgnoreCase) != 0 &&
-                            string.Compare(hostDnsName.Trim(), serverIpAddress.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
-                        {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream DNS name not matching: {0} != {1}, {2}",
-                                hostDnsName, serverDnsName, serverIpAddress);
-                            return false;
-                        }
-
                         if (errors == SslPolicyErrors.None)
                         {
                             return true;
