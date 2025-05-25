@@ -19,6 +19,8 @@ using System.Text;
 using System.Threading;
 using BmwFileReader;
 using EdiabasLib;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Tls;
 using Peak.Can.Basic;
 // ReSharper disable RedundantAssignment
@@ -1049,6 +1051,17 @@ namespace CarSimulator
 #else
                                     _serverCertificate = new X509Certificate2(pkcs12Data);
 #endif
+                                }
+                            }
+
+                            string certDir = Path.GetDirectoryName(ServerCertFile);
+                            if (certDir != null)
+                            {
+                                string keyContainerFile = Path.Combine(certDir, "keyContainer.pfx");
+                                AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(keyContainerFile, "G#8x!9sD2@qZ6&lF1", out X509CertificateEntry[] publicChain);
+                                if (asymmetricKeyPar == null)
+                                {
+                                    Debug.WriteLine("LoadKeyPairFromFile: Load key container failed: {0}", keyContainerFile);
                                 }
                             }
                         }
