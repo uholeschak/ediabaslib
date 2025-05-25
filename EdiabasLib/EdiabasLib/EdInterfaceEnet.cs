@@ -1480,9 +1480,16 @@ namespace EdiabasLib
                                 }
 
                                 byte[] authResponseBuffer = new byte[TransBufferSize];
-                                if (!ReceiveDoIpData(authResponseBuffer, ParTimeoutStd))
+                                if (!ReceiveDoIpData(authResponseBuffer, ConnectTimeout))
                                 {
                                     EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receiving DoIp auth response failed");
+                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
+                                }
+
+                                int authResponseLength = TelLengthBmwFast(authResponseBuffer);
+                                if (authResponseLength < 6 || (authResponseBuffer[3] != (authRequestBuffer[3] | 0x40)))
+                                {
+                                    EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, authResponseBuffer, 0, authResponseLength, "*** DoIp auth response invalid");
                                     EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
                                 }
                             }
@@ -1502,6 +1509,11 @@ namespace EdiabasLib
                             throw;
                         }
                     }
+                }
+
+                if (Connected)
+                {
+
                 }
 
                 if (!Connected)
