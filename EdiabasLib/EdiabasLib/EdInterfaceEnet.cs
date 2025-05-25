@@ -1351,7 +1351,7 @@ namespace EdiabasLib
                                 continue;
                             }
 
-                            if (!GetS29Certs(SharedDataActive, DoIpS29Path, DoIpS29SelectCert))
+                            if (!CreateS29Certs(SharedDataActive, DoIpS29Path, DoIpS29SelectCert))
                             {
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}, select cert: {1}", DoIpS29Path, DoIpS29SelectCert);
                                 //continue;
@@ -2946,7 +2946,7 @@ namespace EdiabasLib
                 sslStream.ReadTimeout = SslAuthTimeout;
                 sslStream.AuthenticateAsClient(string.Empty, clientCertificates, false);
 #endif
-                if (!sslStream.IsEncrypted || !sslStream.IsSigned || !sslStream.IsMutuallyAuthenticated)
+                if (!sslStream.IsEncrypted || !sslStream.IsSigned)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream not authenticated: Encrypted={0}, Signed={1}",
                         sslStream.IsEncrypted, sslStream.IsSigned);
@@ -3050,7 +3050,7 @@ namespace EdiabasLib
             }
         }
 
-        protected bool GetS29Certs(SharedData sharedData, string certPath, string selectCert = null)
+        protected bool CreateS29Certs(SharedData sharedData, string certPath, string selectCert = null)
         {
             try
             {
@@ -3073,9 +3073,6 @@ namespace EdiabasLib
                 string machineName = Environment.MachineName;
                 string machinePrivateFile = Path.Combine(certPath, machineName + ".p12");
                 string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
-
-                List<X509Certificate2> certList = new List<X509Certificate2>();
-                List<EdBcTlsClient.CertInfo> certKeyList = new List<EdBcTlsClient.CertInfo>();
 
                 string p12Password;
                 using (SHA256 algorithm = SHA256.Create())
@@ -3150,12 +3147,26 @@ namespace EdiabasLib
                     }
                 }
 
+                List<X509Certificate2> certList = null;
+                List<EdBcTlsClient.CertInfo> certKeyList = null;
+#if false
                 if (machineAsymmetricKeyPar != null && machinePublicChain != null)
                 {
-#if false
                     string tempPath = Path.GetTempPath();
                     string privateTempFile = Path.Combine(tempPath, Path.GetTempFileName());
                     string publicTempFile = Path.Combine(tempPath, Path.GetTempFileName());
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    if (certList == null)
+                    {
+                        certList = new List<X509Certificate2>();
+                    }
+
+                    // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                    if (certKeyList == null)
+                    {
+                        certKeyList = new List<EdBcTlsClient.CertInfo>();
+                    }
 
                     if (!EdBcTlsUtilities.ExtractPkcs12Key(machinePrivateFile, p12Password, privateTempFile, publicTempFile))
                     {
@@ -3187,7 +3198,7 @@ namespace EdiabasLib
                     {
                         certKeyList.Add(new EdBcTlsClient.CertInfo(privateTempFile, publicTempFile, true));
                     }
-#endif
+
                     try
                     {
 #if NET9_0_OR_GREATER
@@ -3202,55 +3213,65 @@ namespace EdiabasLib
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Private key file {0}, Exception: {1}", machinePrivateFile, EdiabasNet.GetExceptionText(ex));
                     }
                 }
-
-                if (machineAsymmetricKeyPar == null)
+#endif
+#if false
+                IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
+                foreach (string certFile in certFiles)
                 {
-                    IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
-                    foreach (string certFile in certFiles)
+                    string certExtension = Path.GetExtension(certFile);
+                    if (string.IsNullOrEmpty(certExtension))
                     {
-                        string certExtension = Path.GetExtension(certFile);
-                        if (string.IsNullOrEmpty(certExtension))
+                        continue;
+                    }
+
+                    if (!string.IsNullOrEmpty(selectCert))
+                    {
+                        string baseFileName = Path.GetFileNameWithoutExtension(certFile);
+                        if (string.Compare(baseFileName, selectCert, StringComparison.OrdinalIgnoreCase) != 0)
                         {
                             continue;
                         }
+                    }
 
-                        if (!string.IsNullOrEmpty(selectCert))
+                    if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        string publicCert = Path.ChangeExtension(certFile, ".pem");
+                        if (File.Exists(publicCert))
                         {
-                            string baseFileName = Path.GetFileNameWithoutExtension(certFile);
-                            if (string.Compare(baseFileName, selectCert, StringComparison.OrdinalIgnoreCase) != 0)
+                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                            if (certList == null)
                             {
-                                continue;
+                                certList = new List<X509Certificate2>();
                             }
-                        }
 
-                        if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            string publicCert = Path.ChangeExtension(certFile, ".pem");
-                            if (File.Exists(publicCert))
+                            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+                            if (certKeyList == null)
                             {
-                                certKeyList.Add(new EdBcTlsClient.CertInfo(certFile, publicCert));
-                                byte[] pkcs12Data = EdBcTlsUtilities.CreatePkcs12Data(publicCert, certFile);
-                                if (pkcs12Data != null)
+                                certKeyList = new List<EdBcTlsClient.CertInfo>();
+                            }
+
+                            certKeyList.Add(new EdBcTlsClient.CertInfo(certFile, publicCert));
+                            byte[] pkcs12Data = EdBcTlsUtilities.CreatePkcs12Data(publicCert, certFile);
+                            if (pkcs12Data != null)
+                            {
+                                try
                                 {
-                                    try
-                                    {
 #if NET9_0_OR_GREATER
-                                        X509Certificate2 cert = X509CertificateLoader.LoadCertificate(pkcs12Data);
+                                    X509Certificate2 cert = X509CertificateLoader.LoadCertificate(pkcs12Data);
 #else
-                                        X509Certificate2 cert = new X509Certificate2(pkcs12Data);
+                                    X509Certificate2 cert = new X509Certificate2(pkcs12Data);
 #endif
-                                        certList.Add(cert);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
-                                    }
+                                    certList.Add(cert);
+                                }
+                                catch (Exception ex)
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", certFile, EdiabasNet.GetExceptionText(ex));
                                 }
                             }
                         }
                     }
                 }
-
+#endif
                 sharedData.S29Certs = certList;
                 sharedData.S29CertFiles = certKeyList;
                 return true;
