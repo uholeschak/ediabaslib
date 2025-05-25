@@ -189,6 +189,7 @@ namespace EdiabasLib
                 return null;
             }
 
+            // Select signature algorithm compatible to Microsoft TLS Server implementation
             short? supportedSignatureAlgorithm = null;
             if (algorithm.Equals(X9ObjectIdentifiers.IdECPublicKey))
             {
