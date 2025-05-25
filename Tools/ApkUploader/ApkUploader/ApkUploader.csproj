@@ -21,11 +21,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Apis.AndroidPublisher.v3">
-      <Version>1.69.0.3729</Version>
+      <Version>1.69.0.3791</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Management" Version="9.0.4" />
+    <PackageReference Include="System.Management" Version="9.0.5" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
