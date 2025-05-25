@@ -1476,21 +1476,21 @@ namespace EdiabasLib
                                 if (!SendDoIpData(authRequestBuffer, authRequestBuffer.Length, true))
                                 {
                                     EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth request failed");
-                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
+                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
                                 }
 
                                 byte[] authResponseBuffer = new byte[TransBufferSize];
                                 if (!ReceiveDoIpData(authResponseBuffer, ConnectTimeout))
                                 {
                                     EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receiving DoIp auth response failed");
-                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
+                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
                                 }
 
                                 int authResponseLength = TelLengthBmwFast(authResponseBuffer);
                                 if (authResponseLength < 6 || (authResponseBuffer[3] != (authRequestBuffer[3] | 0x40)))
                                 {
                                     EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, authResponseBuffer, 0, authResponseLength, "*** DoIp auth response invalid");
-                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
+                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
                                 }
 
                                 byte authConfig = authResponseBuffer[5];
