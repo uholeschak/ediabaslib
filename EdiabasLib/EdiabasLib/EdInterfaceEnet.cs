@@ -4253,23 +4253,16 @@ namespace EdiabasLib
         protected EdiabasNet.ErrorCodes DoIpAuthenticate()
         {
             byte[] authRequestBuffer = { 0x82, DoIpGwAddrDefault, 0xF1, 0x29, 0x08 };
-            if (!SendDoIpData(authRequestBuffer, authRequestBuffer.Length, true))
+            byte[] authResponseBuffer = new byte[TransBufferSize];
+            if (TransBmwFast(authRequestBuffer, authRequestBuffer.Length, ref authResponseBuffer, out int receiveLength) != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth request failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            byte[] authResponseBuffer = new byte[TransBufferSize];
-            if (!ReceiveDoIpData(authResponseBuffer, ConnectTimeout))
+            if (receiveLength < 7 || (authResponseBuffer[3] != (authRequestBuffer[3] | 0x40)))
             {
-                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receiving DoIp auth response failed");
-                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
-            }
-
-            int authResponseLength = TelLengthBmwFast(authResponseBuffer);
-            if (authResponseLength < 6 || (authResponseBuffer[3] != (authRequestBuffer[3] | 0x40)))
-            {
-                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, authResponseBuffer, 0, authResponseLength, "*** DoIp auth response invalid");
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, authResponseBuffer, 0, receiveLength, "*** DoIp auth response invalid");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
