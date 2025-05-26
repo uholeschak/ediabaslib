@@ -1472,29 +1472,13 @@ namespace EdiabasLib
 
                             if (SharedDataActive.DiagDoIpSsl && !reconnect)
                             {
-                                byte[] authRequestBuffer = { 0x82, DoIpGwAddrDefault, 0xF1, 0x29, 0x08 };
-                                if (!SendDoIpData(authRequestBuffer, authRequestBuffer.Length, true))
+                                EdiabasNet.ErrorCodes authResult = DoIpAuthenticate();
+                                if (authResult != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                                 {
-                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth request failed");
-                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** DoIp authentication failed: {0}", authResult);
+                                    EdiabasProtected?.SetError(authResult);
+                                    break;
                                 }
-
-                                byte[] authResponseBuffer = new byte[TransBufferSize];
-                                if (!ReceiveDoIpData(authResponseBuffer, ConnectTimeout))
-                                {
-                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receiving DoIp auth response failed");
-                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
-                                }
-
-                                int authResponseLength = TelLengthBmwFast(authResponseBuffer);
-                                if (authResponseLength < 6 || (authResponseBuffer[3] != (authRequestBuffer[3] | 0x40)))
-                                {
-                                    EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, authResponseBuffer, 0, authResponseLength, "*** DoIp auth response invalid");
-                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
-                                }
-
-                                byte authConfig = authResponseBuffer[5];
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DoIp auth configuration: {0:X02}", authConfig);
                             }
                         }
 
@@ -4264,6 +4248,34 @@ namespace EdiabasLib
                     return false;
                 }
             }
+        }
+
+        protected EdiabasNet.ErrorCodes DoIpAuthenticate()
+        {
+            byte[] authRequestBuffer = { 0x82, DoIpGwAddrDefault, 0xF1, 0x29, 0x08 };
+            if (!SendDoIpData(authRequestBuffer, authRequestBuffer.Length, true))
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth request failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            byte[] authResponseBuffer = new byte[TransBufferSize];
+            if (!ReceiveDoIpData(authResponseBuffer, ConnectTimeout))
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Receiving DoIp auth response failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            int authResponseLength = TelLengthBmwFast(authResponseBuffer);
+            if (authResponseLength < 6 || (authResponseBuffer[3] != (authRequestBuffer[3] | 0x40)))
+            {
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, authResponseBuffer, 0, authResponseLength, "*** DoIp auth response invalid");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            byte authConfig = authResponseBuffer[5];
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DoIp auth configuration: {0:X02}", authConfig);
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
