@@ -495,7 +495,9 @@ namespace EdiabasLib
         protected byte[] RecBuffer = new byte[TransBufferSize];
         protected byte[] DataBuffer = new byte[TransBufferSize];
         protected byte[] AckBuffer = new byte[TransBufferSize];
+        protected byte[] AuthBuffer = new byte[TransBufferSize];
         protected byte[] RoutingBuffer = new byte[8 + 11];
+
         protected Dictionary<byte, int> Nr78Dict = new Dictionary<byte, int>();
 
         protected TransmitDelegate ParTransmitFunc;
@@ -4252,21 +4254,20 @@ namespace EdiabasLib
 
         protected EdiabasNet.ErrorCodes DoIpAuthenticate()
         {
-            byte[] authRequestBuffer = { 0x82, DoIpGwAddrDefault, 0xF1, 0x29, 0x08 };
-            byte[] authResponseBuffer = new byte[TransBufferSize];
-            if (TransBmwFast(authRequestBuffer, authRequestBuffer.Length, ref authResponseBuffer, out int receiveLength) != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            byte[] authRequest = { 0x82, DoIpGwAddrDefault, 0xF1, 0x29, 0x08 };
+            if (TransBmwFast(authRequest, authRequest.Length, ref AuthBuffer, out int receiveLength) != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth request failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            if (receiveLength < 7 || (authResponseBuffer[3] != (authRequestBuffer[3] | 0x40)))
+            if (receiveLength < 7 || (AuthBuffer[3] != (authRequest[3] | 0x40)))
             {
-                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, authResponseBuffer, 0, receiveLength, "*** DoIp auth response invalid");
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth response invalid");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            byte authConfig = authResponseBuffer[5];
+            byte authConfig = AuthBuffer[5];
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DoIp auth configuration: {0:X02}", authConfig);
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
