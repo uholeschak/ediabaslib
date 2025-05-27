@@ -3001,6 +3001,7 @@ namespace EdiabasLib
                 else
                 {
                     EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream exception: " + EdiabasNet.GetExceptionText(ex));
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0003);
                 }
 
                 throw;
