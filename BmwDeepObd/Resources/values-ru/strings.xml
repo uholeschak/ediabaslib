@@ -534,6 +534,8 @@
   <string name="settings_mtc_boot_hint_app_manger">Рекомендуется настроить Deep OBD в диспетчере приложений, чтобы оставаться активным в режиме ожидания.</string>
   <string name="settings_mtc_boot_hint_start">Рекомендуется выбрать второй вариант запуска и всегда держать Deep OBD на переднем плане, чтобы приложение оставалось активным после режима ожидания.\nПри использовании других инструментов (например, Automation, Macrodroid) приложение необходимо запускать после загрузки.</string>
   <string name="settings_internal_location_boot_hint">Параметр загрузки доступен только в том случае, если приложение установлено на внутреннюю память.</string>
+  <!--Translate-->
+  <string name="settings_old_vag_mode_hint">Старый режим VAG медленный и должен использоваться только для существующих старых конфигураций.</string>
   <string name="settings_start_app_failed">Ошибка запуска приложения.</string>
 
   <!--  EdiabasToolActivity -->
