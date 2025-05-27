@@ -5459,6 +5459,11 @@ namespace EdiabasLib
                 catch (Exception ex)
                 {
                     LogString(EdLogLevel.Error, "ExecuteExitJob Exception: " + GetExceptionText(ex));
+                    if (ex is EdiabasNetException)
+                    {
+                        throw;
+                    }
+
                     throw new Exception("ExecuteExitJob", ex);
                 }
             }
