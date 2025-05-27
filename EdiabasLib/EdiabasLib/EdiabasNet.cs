@@ -5459,6 +5459,10 @@ namespace EdiabasLib
                 catch (Exception ex)
                 {
                     LogString(EdLogLevel.Error, "ExecuteExitJob Exception: " + GetExceptionText(ex));
+                    if (ex is EdiabasNetException)
+                    {
+                        throw;
+                    }
                     throw new Exception("ExecuteExitJob", ex);
                 }
             }
@@ -5488,6 +5492,10 @@ namespace EdiabasLib
                 catch (Exception ex)
                 {
                     LogString(EdLogLevel.Error, "executeIdentJob Exception: " + GetExceptionText(ex));
+                    if (ex is EdiabasNetException)
+                    {
+                        throw;
+                    }
                     throw new Exception("executeIdentJob", ex);
                 }
                 if (_resultSets.Count > 1)
@@ -5610,6 +5618,10 @@ namespace EdiabasLib
                         catch (Exception ex)
                         {
                             LogString(EdLogLevel.Error, "executeJob base job exception: " + GetExceptionText(ex));
+                            if (ex is EdiabasNetException)
+                            {
+                                throw;
+                            }
                             throw new Exception("executeJob base job exception", ex);
                         }
                     }
@@ -5770,6 +5782,10 @@ namespace EdiabasLib
             catch (Exception ex)
             {
                 LogString(EdLogLevel.Error, "executeJob Exception: " + GetExceptionText(ex));
+                if (ex is EdiabasNetException)
+                {
+                    throw;
+                }
                 throw new Exception("executeJob", ex);
             }
             finally
@@ -5809,6 +5825,10 @@ namespace EdiabasLib
             catch (Exception ex)
             {
                 LogString(EdLogLevel.Error, "executeVJob Exception: " + GetExceptionText(ex));
+                if (ex is EdiabasNetException)
+                {
+                    throw;
+                }
                 throw new Exception("executeVJob", ex);
             }
             finally
@@ -6859,6 +6879,10 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
+                if (ex is EdiabasNetException)
+                {
+                    throw;
+                }
                 throw new Exception("opAddrMode", ex);
             }
         }
@@ -7010,6 +7034,10 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
+                if (ex is EdiabasNetException)
+                {
+                    throw;
+                }
                 throw new Exception("opAddrMode", ex);
             }
             return string.Empty;
