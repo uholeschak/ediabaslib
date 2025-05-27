@@ -2968,6 +2968,7 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CreateSslStream exception: " + EdiabasNet.GetExceptionText(ex));
                 sslStream.Close();
+                EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0002);
                 throw;
             }
         }
