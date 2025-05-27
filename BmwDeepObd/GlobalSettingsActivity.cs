@@ -295,6 +295,27 @@ namespace BmwDeepObd
             _checkBoxCheckEcuFiles = FindViewById<CheckBox>(Resource.Id.checkBoxCheckEcuFiles);
             _checkBoxShowBatteryVoltageWarning = FindViewById<CheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
             _checkBoxOldVagMode = FindViewById<CheckBox>(Resource.Id.checkBoxOldVagMode);
+            _checkBoxOldVagMode.Click += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                if (_ignoreCheckChange)
+                {
+                    return;
+                }
+
+                if (_checkBoxOldVagMode.Checked)
+                {
+                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                    balloonBuilder.SetText(GetString(Resource.String.settings_old_vag_mode_hint));
+                    Balloon balloon = balloonBuilder.Build();
+                    balloon.ShowAtCenter(_checkBoxOldVagMode);
+                }
+            };
+
             _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
             _checkBoxUseBmwDatabase.Click += (sender, args) =>
             {

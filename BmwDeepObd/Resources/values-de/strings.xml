@@ -320,8 +320,8 @@
   <string name="menu_cfg_page_menu">Aktuelle Seite editieren</string>
   <string name="menu_cfg_page_edit">Seite editieren</string>
   <string name="menu_cfg_page_edit_fontsize">Schriftgröße</string>
-  <string name="menu_cfg_page_edit_gauges_landscape">Graphische Elemente Querformat</string>
-  <string name="menu_cfg_page_edit_gauges_portrait">Graphische Elemente Hochformat</string>
+  <string name="menu_cfg_page_edit_gauges_landscape">Grafische Elemente Querformat</string>
+  <string name="menu_cfg_page_edit_gauges_portrait">Grafische Elemente Hochformat</string>
   <string name="menu_cfg_page_edit_display_order">Anzeigereihenfolge der Ergebnisse</string>
   <string name="menu_cfg_select_edit">Andere Datei editieren</string>
   <string name="menu_cfg_edit_reset">XML Editor zurücksetzen</string>
@@ -442,7 +442,7 @@
   <string name="settings_suppress_title_bar">Nicht verwendete Titelzeilen unterdrücken (mit Wischgeste anzeigen)</string>
   <string name="settings_full_screen_mode">Vollbildmodus</string>
   <string name="settings_caption_multi_window">Geteilte Bildschirmansicht</string>
-  <string name="settings_swap_multi_window_orientation">Graphische Anzeige: Anzeige-Orientierung in geteilter Ansicht vertauschen</string>
+  <string name="settings_swap_multi_window_orientation">Grafische Anzeige: Anzeige-Orientierung in geteilter Ansicht vertauschen</string>
   <string name="settings_caption_internet">Für OBD Netzwerkadapter Internetverbindung über</string>
   <string name="settings_internet_cellular">Mobiles Netzwerk</string>
   <string name="settings_internet_wifi">Wi-Fi</string>
@@ -462,7 +462,7 @@
   <string name="settings_caption_logfiles">Datenaufzeichnung</string>
   <string name="settings_store_data_log_settings">Speichern der Logdaten-Einstellungen</string>
   <string name="settings_caption_app_start">App starten</string>
-  <string name="settings_start_offline">Keine Verbindungsaufbau zum Fahrzeug</string>
+  <string name="settings_start_offline">Kein Verbindungsaufbau zum Fahrzeug</string>
   <string name="settings_start_connect">Automatischer Verbindungsaufbau zum Fahrzeug</string>
   <string name="settings_start_connect_close">Automatischer Verbindungsaufbau zum Fahrzeug und App beenden</string>
   <string name="settings_start_boot">Automatischer Servicestart beim Booten um den letzten Verbindungszustand wieder herzustellen</string>
@@ -512,6 +512,7 @@
   <string name="settings_mtc_boot_hint_app_manger">Es wird empfohlen Deep OBD im App-Manager so zu konfigurieren, dass es im Standby aktiv bleibt.</string>
   <string name="settings_mtc_boot_hint_start">Es wird empfohlen die zweite Startoption wählen und Deep OBD immer im Vordergrund zu lassen, damit die App nach dem Standby aktiv bleibt.\nMit anderen Tools (z.B. Automation, Macrodroid) muss der App-Start nach dem Booten ausgeführt werden.</string>
   <string name="settings_internal_location_boot_hint">Die Bootoption ist nur verfügbar, wenn die App im internen Speicher installiert ist.</string>
+  <string name="settings_old_vag_mode_hint">Der alte VAG Modus is langsam und sollte nur noch für bestehende alte Konfigurationen verwendet werden.</string>
   <string name="settings_start_app_failed">Die App konnte nicht gestartet werden.</string>
 
   <!--  EdiabasToolActivity -->
@@ -651,12 +652,12 @@
   <string name="xml_tool_ecu_page_name">Seitenname</string>
   <string name="xml_tool_ecu_ecu_name">ECU Name</string>
   <string name="xml_tool_ecu_display_type">Anzeigeart</string>
-  <string name="xml_tool_ecu_display_type_grid">Graphische Anzeige</string>
+  <string name="xml_tool_ecu_display_type_grid">Grafische Anzeige</string>
   <string name="xml_tool_ecu_font_size">Schriftgröße</string>
   <string name="xml_tool_ecu_font_size_small">Klein</string>
   <string name="xml_tool_ecu_font_size_medium">Mittel</string>
   <string name="xml_tool_ecu_font_size_large">Groß</string>
-  <string name="xml_tool_ecu_grid_count">Graphische Elemente pro Zeile</string>
+  <string name="xml_tool_ecu_grid_count">Grafische Elemente pro Zeile</string>
   <string name="xml_tool_ecu_grid_count_portrait_value">Hochformat</string>
   <string name="xml_tool_ecu_grid_count_landscape_value">Querformat</string>
   <string name="xml_tool_ecu_jobs_name">Job Liste</string>
@@ -668,7 +669,7 @@
   <string name="xml_tool_ecu_display_text">Anzeigetext</string>
   <string name="xml_tool_ecu_display_order">Anzeigereihenfolge</string>
   <string name="xml_tool_ecu_log_tag">Tag für Datenaufzeichnung</string>
-  <string name="xml_tool_ecu_grid_type">Graphische Darstellung</string>
+  <string name="xml_tool_ecu_grid_type">Grafische Darstellung</string>
   <string name="xml_tool_ecu_grid_type_hidden">Verborgen</string>
   <string name="xml_tool_ecu_grid_type_text">Nur Text</string>
   <string name="xml_tool_ecu_grid_type_simple_square">Einfache eckige Anzeige</string>
@@ -692,7 +693,7 @@
   <string name="xml_tool_read_test_job_failed">Ausführen des Jobs fehlgeschlagen</string>
   <string name="xml_tool_ecu_msg_save_lock">Das Schreiben der Konfiguration wurde in der Konfigurationsdatei gesperrt.\nÄnderungen können nicht gespeichert werden.</string>
   <string name="xml_tool_ecu_msg_no_selection">Sie haben keine Daten für die Anzeige ausgewählt.\nWählen Sie hierfür zunächst die gewünschen Jobs und Ergebnisse aus der Liste.\nWollen Sie trotzdem abbrechen?</string>
-  <string name="xml_tool_ecu_msg_no_grid_selection">Sie haben die graphische Anzeige aktiviert, aber keine graphische Darstellung ausgewählt.\nEs wird keine graphische Darstellung angezeigt.\nWollen Sie trotzdem fortfahren?</string>
+  <string name="xml_tool_ecu_msg_no_grid_selection">Sie haben die grafische Anzeige aktiviert, aber keine grafische Darstellung ausgewählt.\nEs wird keine grafische Darstellung angezeigt.\nWollen Sie trotzdem fortfahren?</string>
   <string name="xml_tool_ecu_msg_func_not_avail">Die gewählte Funktion ist nicht verfügbar.</string>
   <string name="xml_tool_ecu_arg_limit_hint">Die maximalen Argumente pro Anfrage hängen vom ECU Typ ab.\nWenn nicht alle Werte auf der Hauptseite angezeigt werden, müssen Sie die \"Maximale Argumente pro Anfrage\" reduzieren.</string>
 
