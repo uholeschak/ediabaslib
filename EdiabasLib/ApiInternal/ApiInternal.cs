@@ -1488,7 +1488,7 @@ namespace Ediabas
                 {
                     _ediabas.ResolveSgbdFile(_jobEcuName);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     if (_abortJob)
                     {
@@ -1502,7 +1502,14 @@ namespace Ediabas
                         }
                         else
                         {
-                            setJobError((int)EdiabasNet.ErrorCodes.EDIABAS_SYS_0002);
+                            if (ex is EdiabasNet.EdiabasNetException ediabasNetException)
+                            {
+                                setJobError((int)ediabasNetException.ErrorCode);
+                            }
+                            else
+                            {
+                                setJobError((int)EdiabasNet.ErrorCodes.EDIABAS_SYS_0002);
+                            }
                         }
                     }
                     return;
