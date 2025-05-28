@@ -30,6 +30,7 @@ namespace BMW.Rheingold.Psdz.Client
 
         private const string istaPIDfileName = "PsdzInstances.txt";
 
+        // [UH] initialized in static constructor
         private static string istaPIDfilePath;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PsdzServiceStarter));
@@ -182,33 +183,28 @@ namespace BMW.Rheingold.Psdz.Client
 
         public PsdzServiceStartResult StartIfNotRunning(int istaProcessId = 0)
         {
-            PsdzServiceStartResult result;
             using (Mutex mutex = new Mutex(false, PsdzServiceStarterMutex))
             {
                 try
                 {
                     mutex.WaitOne();
-                    if (PsdzServiceStarter.IsPsdzServiceHostRunning(istaProcessId))
+                    if (IsPsdzServiceHostRunning(istaProcessId))
                     {
-                        result = PsdzServiceStartResult.PsdzStillRunning;
+                        return PsdzServiceStartResult.PsdzStillRunning;
                     }
-                    else
-                    {
-                        result = this.StartServerInstance(istaProcessId);
-                    }
+                    return StartServerInstance(istaProcessId);
                 }
                 finally
                 {
                     mutex.ReleaseMutex();
                 }
             }
-            return result;
         }
 
         private PsdzServiceStartResult StartServerInstance(int istaProcessId)
         {
             Logger.Info("Starting new PsdzServiceHost instance...");
-            Logger.Info($"PID file path: {istaPIDfilePath}");
+            Logger.Info($"PID file path: {istaPIDfilePath}");   // [UH] added
             string tempFileName = Path.GetTempFileName();
             PsdzServiceArgs.Serialize(tempFileName, psdzServiceArgs);
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
