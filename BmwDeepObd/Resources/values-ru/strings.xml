@@ -536,6 +536,8 @@
   <string name="settings_internal_location_boot_hint">Параметр загрузки доступен только в том случае, если приложение установлено на внутреннюю память.</string>
   <!--Translate-->
   <string name="settings_old_vag_mode_hint">Старый режим VAG медленный и должен использоваться только для существующих старых конфигураций.</string>
+  <!--Translate-->
+  <string name="settings_old_vag_mode_debug_hint">Режим может быть включен только в том случае, если активен сбор отладочной информации.</string>
   <string name="settings_start_app_failed">Ошибка запуска приложения.</string>
 
   <!--  EdiabasToolActivity -->

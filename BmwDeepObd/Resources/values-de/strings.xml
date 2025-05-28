@@ -513,7 +513,7 @@
   <string name="settings_mtc_boot_hint_start">Es wird empfohlen die zweite Startoption wählen und Deep OBD immer im Vordergrund zu lassen, damit die App nach dem Standby aktiv bleibt.\nMit anderen Tools (z.B. Automation, Macrodroid) muss der App-Start nach dem Booten ausgeführt werden.</string>
   <string name="settings_internal_location_boot_hint">Die Bootoption ist nur verfügbar, wenn die App im internen Speicher installiert ist.</string>
   <string name="settings_old_vag_mode_hint">Der alte VAG Modus is langsam und sollte nur noch für bestehende alte Konfigurationen verwendet werden.</string>
-  <string name="settings_old_vag_mode_debug_hint">Er kann nur aktiviert werden, wenn Debug-Informationen sammeln aktiv ist.</string>
+  <string name="settings_old_vag_mode_debug_hint">Der Modus kann nur aktiviert werden, wenn Debug-Informationen sammeln aktiv ist.</string>
   <string name="settings_start_app_failed">Die App konnte nicht gestartet werden.</string>
 
   <!--  EdiabasToolActivity -->
