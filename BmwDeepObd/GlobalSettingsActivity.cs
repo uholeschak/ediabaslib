@@ -309,8 +309,15 @@ namespace BmwDeepObd
 
                 if (_checkBoxOldVagMode.Checked)
                 {
+                    string message = GetString(Resource.String.settings_old_vag_mode_hint);
+                    if (!_checkBoxCollectDebugInfo.Checked)
+                    {
+                        _checkBoxOldVagMode.Checked = false;
+                        message += "\r\n" + GetString(Resource.String.settings_old_vag_mode_debug_hint);
+                    }
+
                     Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                    balloonBuilder.SetText(GetString(Resource.String.settings_old_vag_mode_hint));
+                    balloonBuilder.SetText(message);
                     Balloon balloon = balloonBuilder.Build();
                     balloon.ShowAtCenter(_checkBoxOldVagMode);
                 }
