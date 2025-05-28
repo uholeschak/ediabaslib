@@ -307,7 +307,6 @@ namespace BMW.Rheingold.Psdz.Client
             }
             if (!File.Exists(istaPIDfilePath))
             {
-                // [UH] Close the file handle to avoid file sharing violation
                 File.Create(istaPIDfilePath).Close();
             }
         }
