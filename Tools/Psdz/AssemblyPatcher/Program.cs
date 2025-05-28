@@ -821,6 +821,7 @@ namespace AssemblyPatcher
                             if (instructions != null)
                             {
                                 Console.WriteLine("PsdzServiceStarter.StartServerInstance found");
+                                bool alreadyCorrected = false;
                                 int patchIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
@@ -832,6 +833,13 @@ namespace AssemblyPatcher
                                         patchIndex = index;
                                         break;
                                     }
+
+                                    if (instruction.OpCode == OpCodes.Ldstr &&
+                                        string.Compare(instruction.Operand.ToString(), "\"{0}\" \"{1}\" \"{2}\"", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        alreadyCorrected = true;
+                                        break;
+                                    }
                                 }
 
                                 if (patchIndex >= 0)
@@ -841,7 +849,14 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Patching Arguments three param failed");
+                                    if (alreadyCorrected)
+                                    {
+                                        Console.WriteLine("Patching Arguments three param not required");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Patching Arguments three param failed");
+                                    }
                                 }
                             }
                         }
