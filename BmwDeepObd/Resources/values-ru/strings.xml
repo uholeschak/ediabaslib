@@ -537,7 +537,7 @@
   <!--Translate-->
   <string name="settings_old_vag_mode_hint">Старый режим VAG медленный и должен использоваться только для существующих старых конфигураций.</string>
   <!--Translate-->
-  <string name="settings_old_vag_mode_debug_hint">Режим может быть включен только в том случае, если активен сбор отладочной информации.</string>
+  <string name="settings_old_vag_mode_debug_request">Старый режим VAG можно было включить только если активен сбор отладочной информации.\nХотите включить его сейчас?</string>
   <string name="settings_start_app_failed">Ошибка запуска приложения.</string>
 
   <!--  EdiabasToolActivity -->

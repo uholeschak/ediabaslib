@@ -309,15 +309,26 @@ namespace BmwDeepObd
 
                 if (_checkBoxOldVagMode.Checked)
                 {
-                    string message = GetString(Resource.String.settings_old_vag_mode_hint);
                     if (!_checkBoxCollectDebugInfo.Checked)
                     {
                         _checkBoxOldVagMode.Checked = false;
-                        message += "\r\n" + GetString(Resource.String.settings_old_vag_mode_debug_hint);
+                        new AlertDialog.Builder(this)
+                            .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
+                            {
+                                _checkBoxCollectDebugInfo.Checked = true;
+                            })
+                            .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
+                            {
+                            })
+                            .SetCancelable(true)
+                            .SetMessage(Resource.String.settings_old_vag_mode_debug_request)
+                            .SetTitle(Resource.String.alert_title_question)
+                            .Show();
+                        return;
                     }
 
                     Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                    balloonBuilder.SetText(message);
+                    balloonBuilder.SetText(GetString(Resource.String.settings_old_vag_mode_hint));
                     Balloon balloon = balloonBuilder.Build();
                     balloon.ShowAtCenter(_checkBoxOldVagMode);
                 }
