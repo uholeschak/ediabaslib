@@ -272,7 +272,7 @@ namespace PsdzClient.Core.Container
                     }
                     if (ecuData != null)
                     {
-                        ECUJob eCUJob2 = ecuKom.apiJobData(ecuGroup, ecuJob, ecuData, ecuData.Length, ecuResultFilter);
+                        ECUJob eCUJob2 = ecuKom.apiJobData(ecuGroup, ecuJob, ecuData, ecuData.Length, ecuResultFilter, string.Empty);
                         eCUJob2.maskResultFASTARelevant(1, -1, "JOB_STATUS");
                         MarkAsFastaRelevant(eCUJob2, RetrieveFastaRelevantJobNames(inParameters));
                         Log.Info("EDIABASAdapter.Execute()", "apiJobData('{0}', '{1}', Data Len: {2}) - JobStatus: {3}:{4}", ecuGroup, ecuJob, (ecuData != null) ? ecuData.Length.ToString(CultureInfo.InvariantCulture) : "null", eCUJob2?.JobErrorCode ?? (-1), (eCUJob2 != null) ? eCUJob2.JobErrorText : "null");

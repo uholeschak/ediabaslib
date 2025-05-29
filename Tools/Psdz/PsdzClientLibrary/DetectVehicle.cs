@@ -879,11 +879,11 @@ namespace PsdzClient
                 ECUKom ecuKom = new ECUKom("DetectVehicle", _ediabas);
                 if (_clientContext.IsProblemHandlingTraceRunning)
                 {
-                    ecuKom.SetLogLevelToMax();
+                    ecuKom.SetTraceLevelToMax(string.Empty);
                 }
                 else
                 {
-                    ecuKom.SetLogLevelToNormal();
+                    ecuKom.RemoveTraceLevel(string.Empty);
                 }
 
                 EDIABASAdapter ediabasAdapter = new EDIABASAdapter(true, ecuKom, configurationContainer);

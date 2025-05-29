@@ -9,7 +9,7 @@ namespace PsdzClient.Core.Container
     {
         bool IsInSimulationMode { get; }
 
-        bool IsProblemHandlingTraceRunning { get; }
+        bool IsProblemHandlingTraceRunning { get; set; }
 
         string VciIpAddress { get; }
 
@@ -33,8 +33,6 @@ namespace PsdzClient.Core.Container
 
         void SetLogLevelToMax();
 
-        void SetLogLevelToNormal();
-
         int GetCacheHitCounter();
 
         int GetCacheMissCounter();
@@ -46,5 +44,9 @@ namespace PsdzClient.Core.Container
         bool ApiInitExt(string ifh, string unit, string app, string reserved);
 
         void SetEcuPath(bool logging);
+
+        void RemoveTraceLevel(string callerMember);
+
+        void SetTraceLevelToMax(string callerMember);
     }
 }

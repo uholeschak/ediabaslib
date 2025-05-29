@@ -161,7 +161,20 @@ namespace PsdzClient.Core.Container
         [XmlIgnore]
         public bool IsInSimulationMode => CommunicationMode == CommMode.Simulation;
 
-        public bool IsProblemHandlingTraceRunning => isProblemHandlingTraceRunning;
+        public bool IsProblemHandlingTraceRunning
+        {
+            get
+            {
+                return isProblemHandlingTraceRunning;
+            }
+            set
+            {
+                if (isProblemHandlingTraceRunning != value)
+                {
+                    isProblemHandlingTraceRunning = value;
+                }
+            }
+        }
 
         public string VciIpAddress => VCI?.IPAddress;
 
@@ -241,18 +254,8 @@ namespace PsdzClient.Core.Container
             return apiJobNamesToBeCached.Count;
         }
 
-        public void SetLogLevelToNormal()
-        {
-            api.apiSetConfig("ApiTrace", 0.ToString(CultureInfo.InvariantCulture));
-            isProblemHandlingTraceRunning = false;
-        }
-
         public void SetLogLevelToMax()
         {
-            int configint = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Level.Trace.Ediabas", 5);
-            int configint2 = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Trace.Ediabas.Size", 32767);
-            api.apiSetConfig("ApiTrace", configint.ToString(CultureInfo.InvariantCulture));
-            api.apiSetConfig("TraceSize", configint2.ToString(CultureInfo.InvariantCulture));
             isProblemHandlingTraceRunning = true;
         }
 
@@ -482,9 +485,9 @@ namespace PsdzClient.Core.Container
             try
             {
                 string pathString = ConfigSettings.getPathString("BMW.Rheingold.Logging.Directory.Current", "..\\..\\..\\logs");
+                CreateEdiabasPublicKeyIfNotExist(device);
                 if (isDoIP2 || isDoIP)
                 {
-                    CreateEdiabasPublicKeyIfNotExist(device);
                     isS29Successful = HandleS29Authentication(device);
                     if (!isS29Successful.Result)
                     {
@@ -1036,7 +1039,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        public ECUJob apiJob(string ecu, string job, string param, string resultFilter)
+        public ECUJob apiJob(string ecu, string job, string param, string resultFilter, string callerMember = "")
         {
             try
             {
@@ -1045,7 +1048,7 @@ namespace PsdzClient.Core.Container
                 {
                     int len;
                     byte[] param2 = FormatConverter.Ascii2ByteArray(param, out len);
-                    eCUJob = apiJobData("FA", "FA_STREAM2STRUCT", param2, len, string.Empty);
+                    eCUJob = apiJobData("FA", "FA_STREAM2STRUCT", param2, len, string.Empty, callerMember);
                 }
                 else
                 {
@@ -1288,11 +1291,54 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        public void RemoveTraceLevel(string callerMember)
+        {
+            if (!UseConfigFileTraces())
+            {
+                api.apiSetConfig("ApiTrace", "0");
+                api.apiSetConfig("IfhTrace", "0");
+                api.apiSetConfig("SystemTraceIfh", "0");
+                api.apiSetConfig("SystemTraceNet", "0");
+            }
+            isProblemHandlingTraceRunning = false;
+        }
+
+        public void SetTraceLevelToMax(string callerMember)
+        {
+            if (!(callerMember == "run") && !UseConfigFileTraces())
+            {
+                if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Logging.Level.Trace.Enabled", defaultValue: false))
+                {
+                    int configint = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Level.Trace.Ediabas", 6);
+                    int configint2 = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Trace.Ediabas.Size", 32767);
+                    api.apiSetConfig("ApiTrace", configint.ToString(CultureInfo.InvariantCulture));
+                    api.apiSetConfig("TraceSize", configint2.ToString(CultureInfo.InvariantCulture));
+                    api.apiSetConfig("IfhTrace", 3.ToString());
+                    api.apiSetConfig("SystemTraceIfh", 6.ToString());
+                    api.apiSetConfig("SystemTraceNet", 6.ToString());
+                }
+                isProblemHandlingTraceRunning = true;
+            }
+        }
+
+        private bool UseConfigFileTraces()
+        {
+            api.apiGetConfig("ApiTrace", out string text);
+            api.apiGetConfig("IfhTrace", out string text2);
+            api.apiGetConfig("SystemTraceIfh", out string text3);
+            api.apiGetConfig("SystemTraceNet", out string text4);
+            if (text != "0" || text2 != "0" || text3 != "0" || text4 != "0")
+            {
+                return true;
+            }
+            return false;
+        }
+
         public IEcuJob ApiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter = "", int retries = 0)
         {
             if (retries == 0)
             {
-                return apiJobData(ecu, job, param, paramlen, resultFilter);
+                return apiJobData(ecu, job, param, paramlen, resultFilter, string.Empty);
             }
             return apiJobData(ecu, job, param, paramlen, resultFilter, retries);
         }
@@ -1301,17 +1347,17 @@ namespace PsdzClient.Core.Container
         {
             try
             {
-                ECUJob eCUJob = apiJobData(ecu, job, param, paramlen, resultFilter);
+                ECUJob eCUJob = apiJobData(ecu, job, param, paramlen, resultFilter, string.Empty);
                 if (eCUJob.JobErrorCode == 98)
                 {
                     return eCUJob;
                 }
-                ushort num2 = 0;
-                while (num2 < retries && !eCUJob.IsDone())
+                ushort num = 0;
+                while (num < retries && !eCUJob.IsDone())
                 {
-                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJobData()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, job, num2);
-                    eCUJob = apiJobData(ecu, job, param, paramlen, resultFilter);
-                    num2 = (ushort)(num2 + 1);
+                    Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJobData()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, job, num);
+                    eCUJob = apiJobData(ecu, job, param, paramlen, resultFilter, string.Empty);
+                    num++;
                 }
                 return eCUJob;
             }
@@ -1333,7 +1379,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        public ECUJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter)
+        public ECUJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter, string callerMember)
         {
             //TimeMetricsUtility.Instance.ApiJobStart(ecu, job, string.Empty, paramlen);
             try
@@ -1408,11 +1454,13 @@ namespace PsdzClient.Core.Container
                 try
                 {
                     eCUJob2.JobParam = FormatConverter.ByteArray2String(param, (uint)paramlen);
+                    SetTraceLevelToMax(callerMember);
                     api.apiJobData(ecu, job, param, paramlen, resultFilter);
                     while (api.apiStateExt(1000) == 0)
                     {
                         SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecu + ", " + job + ", byte[]");
                     }
+                    RemoveTraceLevel(callerMember);
                     num = (eCUJob2.JobErrorCode = api.apiErrorCode());
                     eCUJob2.JobErrorText = api.apiErrorText();
                     if (num == 0)
