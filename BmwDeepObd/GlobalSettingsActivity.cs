@@ -295,44 +295,7 @@ namespace BmwDeepObd
             _checkBoxCheckEcuFiles = FindViewById<CheckBox>(Resource.Id.checkBoxCheckEcuFiles);
             _checkBoxShowBatteryVoltageWarning = FindViewById<CheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
             _checkBoxOldVagMode = FindViewById<CheckBox>(Resource.Id.checkBoxOldVagMode);
-            _checkBoxOldVagMode.Click += (sender, args) =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                if (_ignoreCheckChange)
-                {
-                    return;
-                }
-
-                if (_checkBoxOldVagMode.Checked)
-                {
-                    if (!_checkBoxCollectDebugInfo.Checked)
-                    {
-                        _checkBoxOldVagMode.Checked = false;
-                        new AlertDialog.Builder(this)
-                            .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
-                            {
-                                _checkBoxCollectDebugInfo.Checked = true;
-                            })
-                            .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
-                            {
-                            })
-                            .SetCancelable(true)
-                            .SetMessage(Resource.String.settings_old_vag_mode_debug_request)
-                            .SetTitle(Resource.String.alert_title_question)
-                            .Show();
-                        return;
-                    }
-
-                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                    balloonBuilder.SetText(GetString(Resource.String.settings_old_vag_mode_hint));
-                    Balloon balloon = balloonBuilder.Build();
-                    balloon.ShowAtCenter(_checkBoxOldVagMode);
-                }
-            };
+            _checkBoxOldVagMode.Click += OnOldVagModeClick;
 
             _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
             _checkBoxUseBmwDatabase.Click += (sender, args) =>
@@ -692,6 +655,60 @@ namespace BmwDeepObd
                         }
                     }
                     break;
+            }
+        }
+
+        private void OnOldVagModeClick(object sender, EventArgs args)
+        {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
+            if (_ignoreCheckChange)
+            {
+                return;
+            }
+
+            if (_checkBoxOldVagMode.Checked)
+            {
+                if (!_checkBoxCollectDebugInfo.Checked)
+                {
+                    AlertDialog alertDialog = new AlertDialog.Builder(this)
+                        .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
+                        {
+                            _checkBoxCollectDebugInfo.Checked = true;
+                            OnOldVagModeClick(sender, args);
+                        })
+                        .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
+                        {
+                        })
+                        .SetCancelable(true)
+                        .SetMessage(Resource.String.settings_old_vag_mode_debug_request)
+                        .SetTitle(Resource.String.alert_title_question)
+                        .Show();
+                    if (alertDialog != null)
+                    {
+                        alertDialog.DismissEvent += (sender, args) =>
+                        {
+                            if (_activityCommon == null)
+                            {
+                                return;
+                            }
+
+                            if (!_checkBoxCollectDebugInfo.Checked)
+                            {
+                                _checkBoxOldVagMode.Checked = false;
+                            }
+                        };
+                    }
+                    return;
+                }
+
+                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                balloonBuilder.SetText(GetString(Resource.String.settings_old_vag_mode_hint));
+                Balloon balloon = balloonBuilder.Build();
+                balloon.ShowAtCenter(_checkBoxOldVagMode);
             }
         }
 
