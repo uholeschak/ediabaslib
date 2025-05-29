@@ -15,6 +15,52 @@ namespace PsdzClient.Core
 {
 	public class FA : INotifyPropertyChanged, IFa, IFARuleEvaluation, IReactorFa
     {
+        private short? sA_ANZField;
+
+        private ObservableCollection<string> saField;
+
+        private ObservableCollection<LocalizedSAItem> saLocalizedItemsField;
+
+        private ObservableCollection<SALAPALocalizedEntry> sALAPAField;
+
+        private short? e_WORT_ANZField;
+
+        private ObservableCollection<string> e_WORTField;
+
+        private short? hO_WORT_ANZField;
+
+        private ObservableCollection<string> hO_WORTField;
+
+        private short? zUSBAU_ANZField;
+
+        private ObservableCollection<string> zUSBAU_WORTField;
+
+        private string pOLSTERField;
+
+        private string pOLSTER_TEXTField;
+
+        private string lACKField;
+
+        private string lACK_TEXTField;
+
+        private string fAHRZEUG_KATEGORIEField;
+
+        private string kONTROLL_KLASSEField;
+
+        private string c_DATEField;
+
+        private DateTime? c_DATETIMEField;
+
+        private string vERSIONField;
+
+        private string brField;
+
+        private string sTANDARD_FAField;
+
+        private string tYPEField;
+
+        private bool alreadyDoneField;
+
         public FA()
 		{
             zUSBAU_WORTField = new ObservableCollection<string>();
@@ -599,14 +645,10 @@ namespace PsdzClient.Core
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
-		public virtual void OnPropertyChanged(string propertyName)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged != null)
-			{
-				propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         [XmlIgnore]
         IEnumerable<string> IFa.DealerInstalledSA => null;
@@ -710,52 +752,5 @@ namespace PsdzClient.Core
             }
             return string.Empty;
         }
-
-        private short? sA_ANZField;
-
-        private ObservableCollection<string> saField;
-
-        private ObservableCollection<LocalizedSAItem> saLocalizedItemsField;
-
-        private ObservableCollection<SALAPALocalizedEntry> sALAPAField;
-
-        private short? e_WORT_ANZField;
-
-        private ObservableCollection<string> e_WORTField;
-
-        private short? hO_WORT_ANZField;
-
-        private ObservableCollection<string> hO_WORTField;
-
-        private short? zUSBAU_ANZField;
-
-        private ObservableCollection<string> zUSBAU_WORTField;
-
-        private string pOLSTERField;
-
-        private string pOLSTER_TEXTField;
-
-        private string lACKField;
-
-        private string lACK_TEXTField;
-
-        private string fAHRZEUG_KATEGORIEField;
-
-        private string kONTROLL_KLASSEField;
-
-        private string c_DATEField;
-
-        private DateTime? c_DATETIMEField;
-
-        private string vERSIONField;
-
-        private string brField;
-
-        private string sTANDARD_FAField;
-
-        private string tYPEField;
-
-        private bool alreadyDoneField;
-
 	}
 }
