@@ -1762,7 +1762,8 @@ namespace BmwDeepObd
 
         private void HandleStartDialogs()
         {
-            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None)
+            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None ||
+                string.IsNullOrEmpty(_lastFileName))
             {
                 SelectInterface();
             }
