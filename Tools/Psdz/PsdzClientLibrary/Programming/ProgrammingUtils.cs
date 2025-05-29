@@ -31,13 +31,27 @@ namespace BMW.Rheingold.Programming.Common
             where !DisabledTaCategories.Contains(x)
             select x).ToArray();
 
-        public static bool IsFlashableOverMost(IEcu ecu)
+        internal static bool IsExpertModeEnabled => ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.ExpertMode", defaultValue: false);
+
+        internal static bool IsFastaEnabled
         {
-            if (ecu.BUS != BusType.MOST && (ecu.BUS != BusType.VIRTUAL || ecu.ID_SG_ADR != 160L))
+            get
             {
+                if (ConfigSettings.getConfigStringAsBoolean("FASTAEnabled", defaultValue: true))
+                {
+                    return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.FASTAEnabled", defaultValue: false);
+                }
                 return false;
             }
-            return true;
+        }
+
+        public static bool IsFlashableOverMost(IEcu ecu)
+        {
+            if (ecu.BUS == BusType.MOST || (ecu.BUS == BusType.VIRTUAL && ecu.ID_SG_ADR == 160))
+            {
+                return true;
+            }
+            return false;
         }
 
         public static bool IsUsedSpecificRoutingTable(IEcu ecu)
@@ -52,8 +66,8 @@ namespace BMW.Rheingold.Programming.Common
         }
 
         // ProgrammingTaskFlags.Mount | ProgrammingTaskFlags.Unmount | ProgrammingTaskFlags.Replace | ProgrammingTaskFlags.Flash | Programming.ProgrammingTaskFlags.Code | ProgrammingTaskFlags.DataRecovery | ProgrammingTaskFlags.Fsc
-        public static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
-		{
+        internal static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
+        {
             ISet<TaCategories> set = new HashSet<TaCategories>();
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.EnforceCoding))
             {
@@ -99,30 +113,31 @@ namespace BMW.Rheingold.Programming.Common
             set3.ExceptWith(set);
             set3.ExceptWith(set2);
             inputTalFilter = objectBuilder.DefineFilterForAllEcus(set3.ToArray(), TalFilterOptions.MustNot, inputTalFilter);
+            Log.Info("ProgrammingUtils.CreateTalFilter()", "TALFilter: {0}", NormalizeXmlText(inputTalFilter?.AsXml));
             return inputTalFilter;
-		}
+        }
 
-        public static ProgrammingTaskFlags RetrieveProgrammingTaskFlagsFromTasks(IEnumerable<IProgrammingTask> programmingTasks)
-		{
-			ProgrammingTaskFlags programmingTaskFlags = (ProgrammingTaskFlags)0;
-			if (programmingTasks != null)
-			{
-				foreach (IProgrammingTask programmingTask in programmingTasks)
-				{
-					programmingTaskFlags |= programmingTask.Flags;
-				}
-			}
-			return programmingTaskFlags;
-		}
+        internal static ProgrammingTaskFlags RetrieveProgrammingTaskFlagsFromTasks(IEnumerable<IProgrammingTask> programmingTasks)
+        {
+            ProgrammingTaskFlags programmingTaskFlags = (ProgrammingTaskFlags)0;
+            if (programmingTasks != null)
+            {
+                foreach (IProgrammingTask programmingTask in programmingTasks)
+                {
+                    programmingTaskFlags |= programmingTask.Flags;
+                }
+            }
+            return programmingTaskFlags;
+        }
 
-        public static string NormalizeXmlText(string xmlText)
-		{
-			if (string.IsNullOrEmpty(xmlText))
-			{
-				return xmlText;
-			}
-			return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
-		}
+        internal static string NormalizeXmlText(string xmlText)
+        {
+            if (string.IsNullOrEmpty(xmlText))
+            {
+                return xmlText;
+            }
+            return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
+        }
 
         public static FA BuildVehicleFa(IPsdzFa faInput, string br)
         {
