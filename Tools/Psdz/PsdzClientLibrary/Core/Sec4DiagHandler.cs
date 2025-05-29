@@ -123,6 +123,7 @@ namespace PsdzClient.Core
             }
         }
 
+#pragma warning disable CS0618 // Typ oder Element ist veraltet
         public X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, string vin)
         {
             X509Name subject = GetSubject(vin);
@@ -151,6 +152,7 @@ namespace PsdzClient.Core
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", IstaKeyPair.Private);
             return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
         }
+#pragma warning restore CS0618 // Typ oder Element ist veraltet
 
         public AsymmetricCipherKeyPair GenerateKeyPair()
         {
