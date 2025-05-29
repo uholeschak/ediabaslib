@@ -561,7 +561,7 @@ namespace PsdzClient.Core.Container
                             break;
                         }
                     case VCIDeviceType.PTT:
-                        boolResultObject.Result = false;
+                        boolResultObject.Result = false;    // [UH] modified
                         break;
                     case VCIDeviceType.SIM:
                         boolResultObject.Result = true;
@@ -620,6 +620,7 @@ namespace PsdzClient.Core.Container
                 Log.WarningException("ECUKom.InitVCI()", ex);
                 boolResultObject.ErrorMessage = ex.Message;
                 boolResultObject.Result = true;
+                boolResultObject.ErrorCodeInt = 5;
                 return boolResultObject;
             }
         }
@@ -636,7 +637,6 @@ namespace PsdzClient.Core.Container
                     if (num == service.RoleMaskAsInt)
                     {
                         //ImportantLoggingItem.AddMessagesToLog("S29-Authentification-Ediabas", "Authentification: $" + stringResult);
-                        Log.Info("S29-Authentification-Ediabas", "Authentification: $" + stringResult);
                         return true;
                     }
                     return false;
@@ -734,7 +734,7 @@ namespace PsdzClient.Core.Container
                     Sec4DiagCertificateState sec4DiagCertificateState = service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate);
                     if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection() && sec4DiagCertificateState == Sec4DiagCertificateState.NotYetExpired)
                     {
-                        TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
+                        //TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
                         //interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
                         boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
                         return boolResultObject;
