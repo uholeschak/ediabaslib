@@ -3,6 +3,10 @@
     "ISTA_ELM": {
       "commandName": "Project",
       "commandLineArgs": "-i \"D:\\Projects\\EdiabasLib\\Logs\\Orphee\\ifh.log\" -i \"D:\\Projects\\EdiabasLib\\Logs\\Orphee\\ifh_KDCAN.log\" -i \"D:\\Projects\\EdiabasLib\\Logs\\Orphee\\ISTA_DCAN_2\\ifh.log\" -i \"D:\\Projects\\EdiabasLib\\Logs\\Orphee\\ISTA_ELM327_2\\ifh.log\" -i \"D:\\Projects\\EdiabasLib\\Logs\\Orphee\\20250220_ELM327_ISTA_scans_no_erase\\Trace\\ifh.log\" -i \"D:\\Projects\\EdiabasLib\\Logs\\Orphee\\20250220_ELM327_ISTA_direct_rescan_KO\\Trace\\ifh.log\" -o \"D:\\Projects\\EdiabasLib\\Logs\\Orphee\\Extracted.txt\" -r -s"
+    },
+    "KWP2000": {
+      "commandName": "Project",
+      "commandLineArgs": "-i \"D:\\Projects\\EdiabasLib\\Logs\\KWP1281\\70482-2025-05-26-09-03-56-ifh.trc\\ifh.trc\" -o \"D:\\Projects\\EdiabasLib\\Logs\\KWP1281\\Extracted.txt\" -r -s"
     }
   }
 }
