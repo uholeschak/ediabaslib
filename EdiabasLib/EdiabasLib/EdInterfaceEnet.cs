@@ -4348,13 +4348,10 @@ namespace EdiabasLib
 
                 if (SharedDataActive.DiagDoIp)
                 {
-                    if (SharedDataActive.DiagDoIpSsl)
+                    if (!SendDoIpData(sendData, sendLength, enableLogging))
                     {
-                        if (!SendDoIpData(sendData, sendLength, enableLogging))
-                        {
-                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
-                            return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
-                        }
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending failed");
+                        return EdiabasNet.ErrorCodes.EDIABAS_IFH_0003;
                     }
                 }
                 else
