@@ -550,7 +550,7 @@ namespace LogfileConverter
                 {
                     if (line.Length > 0)
                     {
-                        if (Regex.IsMatch(line, @"^ \(EDIC CommParameter"))
+                        if (Regex.IsMatch(line, @"^\s\(EDIC CommParameter", RegexOptions.IgnoreCase))
                         {
                             _edicCanMode = false;
                             _edicCanIsoTpMode = false;

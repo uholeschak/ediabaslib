@@ -6,7 +6,7 @@
     },
     "KWP1281": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"D:\\Projects\\EdiabasLib\\Logs\\KWP1281\\ifh\\ifh.trc\" -o \"D:\\Projects\\EdiabasLib\\Logs\\KWP1281\\Extracted.txt\" -r -s"
+      "commandLineArgs": "-i \"D:\\Projects\\EdiabasLib\\Logs\\KWP1281\\70480-2025-05-26-09-01-55-ifh.trc\\ifh.trc\" -o \"D:\\Projects\\EdiabasLib\\Logs\\KWP1281\\Extracted.txt\" -r"
     }
   }
 }
