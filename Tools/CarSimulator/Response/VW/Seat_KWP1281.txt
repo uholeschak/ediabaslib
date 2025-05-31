@@ -34,5 +34,20 @@ CFG: 01 01 8A
 ; Messwerteblock_lesen#13;WertEinmalLesen
 04 00 29 0D : 0F 75 E7 33 06 69 33 06 6E 33 06 A8 11 20 20
 
+; Messwerteblock_lesen#19;WertEinmalLesen
+04 00 29 13 : 0F 13 E7 11 20 20 11 20 20 11 20 20 11 20 20
+
+; Messwerteblock_lesen#20;WertEinmalLesen
+04 00 29 14 : 0F 21 E7 01 69 2A 34 64 3F 27 46 FF 27 46 00
+
+; Messwerteblock_lesen#22;WertEinmalLesen
+04 00 29 16 : 0F 2F E7 08 0A 01 10 3F 00 08 0A 00 08 0A 00
+
+; Messwerteblock_lesen#34;WertEinmalLesen
+04 00 29 22 : 0F 3D E7 11 20 20 11 20 20 11 20 20 11 20 20
+
 ; Messwerteblock_lesen#63;WertEinmalLesen
 04 00 29 3F : 04 43 0A 43
+
+; Messwerteblock_lesen#81;WertEinmalLesen
+04 00 29 51 : 0F 4B E7 11 20 20 11 20 20 11 20 20 11 20 20
