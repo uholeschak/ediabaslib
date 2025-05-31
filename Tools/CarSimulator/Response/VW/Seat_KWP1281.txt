@@ -4,20 +4,32 @@ CFG: 01 01 8A
 ;ID
 : 1B 25 F6 B0 34 35 39 30 36 30 31 39 42 51 20 31 2C 34 6C 20 52 33 20 45 44 43 20  07 27 F6 47 34 30 30  0B 29 F6 53 47 20 20 37 36 32 37  08 2B F6 00 00 CC 13 4D
 
+; Fehlerspeicher_abfragen
+03 00 07 : 06 3F FC FF FF 88
 ; Fehlerspeicher_loeschen
 03 00 05 : 06 13 FC FF FF 88
 
 ; Messwerteblock_lesen#1;WertEinmalLesen
 04 00 29 01 : 0F 3D E7 01 69 28 27 46 1B 22 33 8E 05 09 C6
+; 04 00 29 01 : 0F 49 E7 01 69 2B 27 46 14 22 33 8D 05 09 A5
+
+; Messwerteblock_lesen#2;WertEinmalLesen
+04 00 29 02 : 0F 57 E7 01 69 2B 21 FF 00 10 49 49 05 09 A5
 
 ; Messwerteblock_lesen#3;WertEinmalLesen
 04 00 29 03 : 0F 4B E7 01 69 29 31 C8 49 31 C4 49 17 66 8A
+
+; Messwerteblock_lesen#4;WertEinmalLesen
+04 00 29 04 : 0F 65 E7 01 69 2B 04 1F 79 22 33 8C 22 37 83
 
 ; Messwerteblock_lesen#7;WertEinmalLesen
 04 00 29 07 : 0F 59 E7 05 09 B6 17 67 00 05 09 A2 05 09 C6
 
 ; Messwerteblock_lesen#10;WertEinmalLesen
 04 00 29 0A : 0F 67 E7 31 C4 4D 12 FF 62 12 FF 61 21 FF 00
+
+; Messwerteblock_lesen#12;WertEinmalLesen
+04 00 29 0C : 0F 73 E7 10 FF FF 1F C9 00 06 4C BF 05 09 A5
 
 ; Messwerteblock_lesen#13;WertEinmalLesen
 04 00 29 0D : 0F 75 E7 33 06 69 33 06 6E 33 06 A8 11 20 20
