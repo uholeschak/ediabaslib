@@ -12582,6 +12582,31 @@ using System.Threading;"
             return null;
         }
 
+        public static List<UdsReader> GetUdsReaderList(UdsReader ignoreReader = null)
+        {
+            try
+            {
+                List<UdsReader> udsReaderList = new List<UdsReader>(_udsReaderDict.Values);
+                foreach (KeyValuePair<string, UdsReader> keyValuePair in _udsReaderDict)
+                {
+                    if (ignoreReader != null && keyValuePair.Value == ignoreReader)
+                    {
+                        continue;
+                    }
+
+                    udsReaderList.Add(keyValuePair.Value);
+                }
+
+                return udsReaderList;
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+            return null;
+        }
+
+
         public bool IsInitEcuFunctionsRequired()
         {
             if (!UseBmwDatabase || SelectedManufacturer != ManufacturerType.Bmw)

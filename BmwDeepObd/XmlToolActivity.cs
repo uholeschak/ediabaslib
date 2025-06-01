@@ -4994,15 +4994,40 @@ namespace BmwDeepObd
                 {
                     return false;
                 }
+
+                bool udsEcu = IsUdsEcu(ecuInfo);
                 string vagDirLang = Path.Combine(_vagDir, udsReader.LanguageDir);
+                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using VAG reader languge: {0}", udsReader.LanguageDir);
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Resolving VAG part number: {0}, HW part number: {1}, Address: {2:X02}",
                     ecuInfo.VagPartNumber ?? string.Empty, ecuInfo.VagHwPartNumber ?? string.Empty, ecuInfo.Address);
                 UdsFileReader.DataReader.FileNameResolver dataResolver = new UdsFileReader.DataReader.FileNameResolver(udsReader.DataReader, ecuInfo.VagPartNumber, ecuInfo.VagHwPartNumber, (int)ecuInfo.Address);
+
                 string dataFileName = dataResolver.GetFileName(vagDirLang);
+                if (string.IsNullOrEmpty(dataFileName) && !udsEcu)
+                {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VAG data file not found, trying other langaues");
+                    List<UdsFileReader.UdsReader> udsReaderList = ActivityCommon.GetUdsReaderList(udsReader);
+                    if (udsReaderList != null && udsReaderList.Count > 0)
+                    {
+                        foreach (UdsFileReader.UdsReader udsReaderTemp in udsReaderList)
+                        {
+                            UdsFileReader.DataReader.FileNameResolver dataResolverTemp = new UdsFileReader.DataReader.FileNameResolver(udsReaderTemp.DataReader, ecuInfo.VagPartNumber, ecuInfo.VagHwPartNumber, (int)ecuInfo.Address);
+                            string vagDirLangTemp = Path.Combine(_vagDir, udsReaderTemp.LanguageDir);
+                            string dataFileNameTemp = dataResolverTemp.GetFileName(vagDirLangTemp);
+                            if (!string.IsNullOrEmpty(dataFileNameTemp))
+                            {
+                                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Found VAG data file: {0} for Language: {1}", dataFileNameTemp, udsReaderTemp.LanguageDir);
+                                dataFileName = dataFileNameTemp;
+                                break;
+                            }
+                        }
+                    }
+                }
+
                 ecuInfo.VagDataFileName = dataFileName ?? string.Empty;
                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "VAG data file: {0}", ecuInfo.VagDataFileName);
 
-                if (IsUdsEcu(ecuInfo))
+                if (udsEcu)
                 {
                     if (_ecuInfoMot == null || _ecuInfoDid == null)
                     {
