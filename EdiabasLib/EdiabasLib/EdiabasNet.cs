@@ -3569,6 +3569,7 @@ namespace EdiabasLib
                         _ecuPath = ecuPath;
                     }
                     _closeSgbdFs = true;
+                    ClearGroupMapping();
                 }
             }
 
