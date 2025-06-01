@@ -1087,6 +1087,14 @@ namespace EdiabasLib
             }
         }
 
+        public override bool IsEcuConnected
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         protected override Mutex InterfaceMutex
         {
             get { return _interfaceMutex; }

@@ -699,6 +699,8 @@ namespace EdiabasLib
 
         public abstract bool Connected { get; }
 
+        public abstract bool IsEcuConnected { get; }
+
         public virtual long ResponseCount
         {
             get
