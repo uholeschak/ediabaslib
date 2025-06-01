@@ -51,3 +51,12 @@ CFG: 01 01 8A
 
 ; Messwerteblock_lesen#81;WertEinmalLesen
 04 00 29 51 : 0F 4B E7 11 20 20 11 20 20 11 20 20 11 20 20
+
+; Anpassung_testen#2;32767;WertEinmalLesen
+06 44 22 02 7F FF : 13 45 E6 02 7F FF E7 01 69 2C 21 FF 00 10 49 49 05 09 AD
+
+; Anpassung_lesen#2;WertEinmalLesen
+04 00 21 02 : 13 61 E6 02 7F FF E7 01 69 2B 21 FF 00 10 49 49 05 09 AD
+
+; Anpassung_speichern#04941;2;32767
+09 66 2A 02 7F FF 00 13 4D : 03 67 09
