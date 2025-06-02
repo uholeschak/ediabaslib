@@ -1593,6 +1593,8 @@ namespace BmwDeepObd
                     if (!executeFailed && !string.IsNullOrEmpty(adaptionJob))
                     {
                         bool connected = false;
+                        int errorCount = 0;
+
                         for (;;)
                         {
                             bool testAdaption = _instanceData.TestAdaption;
@@ -1728,8 +1730,9 @@ namespace BmwDeepObd
                             jobStatus = CheckAdaptionResult();
                             if (jobStatus != JobStatus.Ok)
                             {
-                                if (jobStatus == JobStatus.Unknown && read1281Adaption)
+                                if (jobStatus == JobStatus.Unknown && read1281Adaption && errorCount < 3)
                                 {
+                                    errorCount++;
                                     _ediabas.CloseSgbd();
                                     RunOnUiThread(() =>
                                     {
@@ -1741,6 +1744,11 @@ namespace BmwDeepObd
                                 }
 
                                 executeFailed = true;
+                            }
+
+                            if (!executeFailed)
+                            {
+                                errorCount = 0;
                             }
 
                             if (!executeFailed && stopAdaption && isUdsEcu && _instanceData.EcuReset)
