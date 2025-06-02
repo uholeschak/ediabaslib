@@ -418,12 +418,6 @@ namespace BmwDeepObd
 
         private void EdiabasOpen()
         {
-            if (_ediabas?.EdInterfaceClass != null &&
-                !_ediabas.EdInterfaceClass.IsEcuConnected)
-            {
-                EdiabasClose();
-            }
-
             if (_ediabas == null)
             {
                 _ediabas = new EdiabasNet

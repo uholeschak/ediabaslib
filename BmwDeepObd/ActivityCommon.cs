@@ -6414,6 +6414,8 @@ namespace BmwDeepObd
                 edInterfaceEnet.RemoteHost = remoteHost;
                 connectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData);
             }
+
+            ediabas.CloseSgbd();
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
