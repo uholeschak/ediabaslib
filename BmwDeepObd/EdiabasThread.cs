@@ -483,6 +483,8 @@ namespace BmwDeepObd
                         edInterfaceEnet.RemoteHost = portName;
                     }
                 }
+
+                Ediabas.CloseSgbd();
                 Ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
                 ActivityCommon.SetEdiabasConfigProperties(Ediabas, instanceData.TraceDir, simulationPath, instanceData.TraceAppend);
                 CloseDataLog();
