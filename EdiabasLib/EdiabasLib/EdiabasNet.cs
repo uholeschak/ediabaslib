@@ -5627,9 +5627,13 @@ namespace EdiabasLib
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     LogString(EdLogLevel.Error, "ExecuteJobPrivate file not found: " + fileName);
+                    if (ex is EdiabasNetException)
+                    {
+                        throw;
+                    }
                     throw new ArgumentOutOfRangeException("fileName", "ExecuteJobPrivate: SGBD not found: " + fileName);
                 }
                 finally
