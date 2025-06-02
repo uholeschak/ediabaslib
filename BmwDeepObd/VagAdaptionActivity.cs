@@ -1730,8 +1730,13 @@ namespace BmwDeepObd
                             {
                                 if (jobStatus == JobStatus.Unknown && read1281Adaption)
                                 {
-                                    UpdateAdaptionText(true);
                                     _ediabas.CloseSgbd();
+                                    RunOnUiThread(() =>
+                                    {
+                                        _instanceData.AdaptionValueStart = null;
+                                        UpdateAdaptionText(true);
+                                    });
+
                                     continue;
                                 }
 
