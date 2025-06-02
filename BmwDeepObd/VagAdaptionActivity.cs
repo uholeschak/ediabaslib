@@ -1605,6 +1605,7 @@ namespace BmwDeepObd
                             string writeJobProgDateArgs = string.Empty;
                             string writeJobRscName = string.Empty;
                             string writeJobRscArgs = string.Empty;
+                            bool read1281Adaption = false;
 
                             if (isUdsEcu)
                             {
@@ -1645,15 +1646,18 @@ namespace BmwDeepObd
                             {
                                 adaptionJob = @"Anpassung_lesen";
                                 adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};WertEinmalLesen", adaptionChannel);
+                                read1281Adaption = true;
                                 if (adaptionValueNew != null)
                                 {
                                     if (testAdaption)
                                     {
+                                        read1281Adaption = false;
                                         adaptionJob = @"Anpassung_testen";
                                         adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0};{1};WertEinmalLesen", adaptionChannel, adaptionValueNew.Value);
                                     }
                                     else if (storeAdaption)
                                     {
+                                        read1281Adaption = false;
                                         adaptionJob = @"Anpassung_speichern";
                                         adaptionJobArgs = string.Format(CultureInfo.InvariantCulture, "{0:00000};{1};{2}",
                                             _instanceData.CurrentWorkshopNumber ?? 0, adaptionChannel, adaptionValueNew.Value);
@@ -1724,6 +1728,13 @@ namespace BmwDeepObd
                             jobStatus = CheckAdaptionResult();
                             if (jobStatus != JobStatus.Ok)
                             {
+                                if (jobStatus == JobStatus.Unknown && read1281Adaption)
+                                {
+                                    UpdateAdaptionText(true);
+                                    _ediabas.CloseSgbd();
+                                    continue;
+                                }
+
                                 executeFailed = true;
                             }
 
