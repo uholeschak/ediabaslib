@@ -10012,27 +10012,31 @@ namespace CarSimulator
                             {
                                 if (_receiveData[3] == ResetAdaptionChannel)
                                 {
-                                    Debug.WriteLine("Adaption reset");
                                     lastAdaption = DefaultAdaptionChannelValue;
+                                    Debug.WriteLine("Adaption reset: {0:X04}", lastAdaption);
                                 }
                                 else
                                 {
-                                    Debug.WriteLine("Adaption save");
                                     lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
+                                    Debug.WriteLine("Adaption save: {0:X04}", lastAdaption);
                                 }
                                 addValues = false;
                             }
                             else if (_receiveData.Length >= 6 && _receiveData[0] >= 0x06 && _receiveData[2] == 0x22)
                             {
-                                Debug.WriteLine("Adaption transfer");
                                 if (_receiveData[3] != ResetAdaptionChannel)
                                 {
                                     lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
+                                    Debug.WriteLine("Adaption transfer: {0:X04}", lastAdaption);
+                                }
+                                else
+                                {
+                                    Debug.WriteLine("Adaption transfer reset channel");
                                 }
                             }
                             else
                             {
-                                Debug.WriteLine("Adaption read");
+                                Debug.WriteLine("Adaption read: {0:X04}", lastAdaption);
                             }
                             List<byte> dummyResponseList = new List<byte>() { 0x06, 0x00, 0xE6, _receiveData[3], (byte)(lastAdaption >> 8), (byte)lastAdaption };
                             if (addValues)
