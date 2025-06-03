@@ -612,9 +612,12 @@ namespace EdiabasLib
             bool voltageUpdate = false;
             if (!forceUpdate && AdapterType >= 0)
             {
-                if (UpdateAdapterVoltage && Stopwatch.GetTimestamp() - _lastVoltageUpdateTime > AdapterVoltageTimeout * TickResolMs)
+                if (CurrentProtocol != EdInterfaceObd.Protocol.Kwp)
                 {
-                    voltageUpdate = true;
+                    if (UpdateAdapterVoltage && Stopwatch.GetTimestamp() - _lastVoltageUpdateTime > AdapterVoltageTimeout * TickResolMs)
+                    {
+                        voltageUpdate = true;
+                    }
                 }
 
                 if (!voltageUpdate)
