@@ -287,7 +287,7 @@
             labelTrackUnassign.Location = new System.Drawing.Point(997, 48);
             labelTrackUnassign.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelTrackUnassign.Name = "labelTrackUnassign";
-            labelTrackUnassign.Size = new System.Drawing.Size(87, 15);
+            labelTrackUnassign.Size = new System.Drawing.Size(88, 15);
             labelTrackUnassign.TabIndex = 28;
             labelTrackUnassign.Text = "Track unassign:";
             // 
@@ -298,7 +298,7 @@
             labelTrackAssign.Location = new System.Drawing.Point(1011, 15);
             labelTrackAssign.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             labelTrackAssign.Name = "labelTrackAssign";
-            labelTrackAssign.Size = new System.Drawing.Size(73, 15);
+            labelTrackAssign.Size = new System.Drawing.Size(74, 15);
             labelTrackAssign.TabIndex = 25;
             labelTrackAssign.Text = "Track assign:";
             // 
@@ -309,7 +309,7 @@
             buttonAssignTrack.Name = "buttonAssignTrack";
             buttonAssignTrack.Size = new System.Drawing.Size(134, 27);
             buttonAssignTrack.TabIndex = 6;
-            buttonAssignTrack.Text = "Assign Track";
+            buttonAssignTrack.Text = "Assign Track to Ver";
             buttonAssignTrack.UseVisualStyleBackColor = true;
             buttonAssignTrack.Click += buttonAssignTrack_Click;
             // 

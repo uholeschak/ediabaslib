@@ -1110,6 +1110,12 @@ namespace ApkUploader
                 return false;
             }
             UpdateStatus(string.Empty);
+            if (string.IsNullOrWhiteSpace(track))
+            {
+                UpdateStatus("Empty track");
+                return false;
+            }
+
             _cts = new CancellationTokenSource();
             _serviceThread = new Thread(async () =>
             {
