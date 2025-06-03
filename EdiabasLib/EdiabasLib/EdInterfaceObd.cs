@@ -5177,7 +5177,13 @@ namespace EdiabasLib
             bool autoKwp = HasAutoKwp1281;
             int retries = 0;
             int blockLen = sendData[0];
-            if (enableLog) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, blockLen, "Send");
+
+            if (enableLog)
+            {
+                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, blockLen, "Send");
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Send AutoKwp: {0}", autoKwp);
+            }
+
             if (autoKwp)
             {
                 for (;;)
@@ -5274,6 +5280,7 @@ namespace EdiabasLib
             Kwp1281SendNack = false;
             bool autoKwp = HasAutoKwp1281;
 
+            if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Receive AutoKwp: {0}", autoKwp);
             if (autoKwp)
             {
                 byte[] statusBuffer = new byte[2];
