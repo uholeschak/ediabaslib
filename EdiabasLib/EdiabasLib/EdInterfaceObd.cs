@@ -206,6 +206,7 @@ namespace EdiabasLib
         protected Dictionary<byte, int> Nr78Dict = new Dictionary<byte, int>();
         protected bool EcuConnected;
         protected KwpModes KwpMode;
+        protected bool Kwp1281AutoMode;
         protected long LastCommTick;
         protected long LastResponseTick;
         protected bool Kwp1281SendNack;
@@ -3533,11 +3534,14 @@ namespace EdiabasLib
                 }
 
                 KwpMode = KwpModes.Undefined;
+                Kwp1281AutoMode = HasAutoKwp1281;
                 Kwp1281SendNack = false;
                 KeyBytesProtected = ByteArray0;
                 keyBytesList = new List<byte>();
                 long delayTime = ParEdicInitDelay;
                 ParEdicInitDelay = Kwp1281InitLongDelay;
+
+                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Kwp1281Auto: {0}", Kwp1281AutoMode);
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Delay time: {0}", delayTime);
                 while ((Stopwatch.GetTimestamp() - LastCommTick) < delayTime * TickResolMs)
                 {
@@ -5174,17 +5178,12 @@ namespace EdiabasLib
 
         private EdiabasNet.ErrorCodes SendKwp1281Block(byte[] sendData, bool enableLog)
         {
-            bool autoKwp = HasAutoKwp1281;
             int retries = 0;
             int blockLen = sendData[0];
 
-            if (enableLog)
-            {
-                EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, blockLen, "Send");
-                EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Send AutoKwp: {0}", autoKwp);
-            }
+            if (enableLog) EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, blockLen, "Send");
 
-            if (autoKwp)
+            if (Kwp1281AutoMode)
             {
                 for (;;)
                 {
@@ -5225,6 +5224,7 @@ namespace EdiabasLib
                     return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
                 }
             }
+
             for (;;)
             {
                 bool restart = false;
@@ -5278,10 +5278,8 @@ namespace EdiabasLib
         private EdiabasNet.ErrorCodes ReceiveKwp1281Block(byte[] recData, bool enableLog, int addStartTimeout)
         {
             Kwp1281SendNack = false;
-            bool autoKwp = HasAutoKwp1281;
 
-            if (enableLog) EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Receive AutoKwp: {0}", autoKwp);
-            if (autoKwp)
+            if (Kwp1281AutoMode)
             {
                 byte[] statusBuffer = new byte[2];
                 // block length
