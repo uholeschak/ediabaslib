@@ -309,7 +309,7 @@
             buttonAssignTrack.Name = "buttonAssignTrack";
             buttonAssignTrack.Size = new System.Drawing.Size(134, 27);
             buttonAssignTrack.TabIndex = 6;
-            buttonAssignTrack.Text = "Assign Track to Ver";
+            buttonAssignTrack.Text = "Assign Ver to Track";
             buttonAssignTrack.UseVisualStyleBackColor = true;
             buttonAssignTrack.Click += buttonAssignTrack_Click;
             // 
