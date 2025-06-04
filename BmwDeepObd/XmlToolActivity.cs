@@ -385,6 +385,7 @@ namespace BmwDeepObd
                 CommErrorsOccurred = false;
                 ServiceMenuHintShown = false;
                 ServiceFunctionWarningShown = false;
+                SelectInterfaceShown = false;
                 ListMoveHintShown = false;
             }
 
@@ -413,6 +414,7 @@ namespace BmwDeepObd
             public bool CommErrorsOccurred { get; set; }
             public bool ServiceMenuHintShown { get; set; }
             public bool ServiceFunctionWarningShown { get; set; }
+            public bool SelectInterfaceShown { get; set; }
             public bool ListMoveHintShown { get; set; }
         }
 
@@ -1765,8 +1767,13 @@ namespace BmwDeepObd
             if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.None ||
                 string.IsNullOrEmpty(_lastFileName))
             {
-                SelectInterface();
+                if (!_instanceData.SelectInterfaceShown)
+                {
+                    _instanceData.SelectInterfaceShown = true;
+                    SelectInterface();
+                }
             }
+
             SelectInterfaceEnable();
             UpdateOptionsMenu();
             UpdateDisplay();
