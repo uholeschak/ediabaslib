@@ -295,7 +295,26 @@ namespace BmwDeepObd
             _checkBoxCheckEcuFiles = FindViewById<CheckBox>(Resource.Id.checkBoxCheckEcuFiles);
             _checkBoxShowBatteryVoltageWarning = FindViewById<CheckBox>(Resource.Id.checkBoxShowBatteryVoltageWarning);
             _checkBoxOldVagMode = FindViewById<CheckBox>(Resource.Id.checkBoxOldVagMode);
-            _checkBoxOldVagMode.Click += OnOldVagModeClick;
+            _checkBoxOldVagMode.Click += (sender, args) =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                if (_ignoreCheckChange)
+                {
+                    return;
+                }
+
+                if (_checkBoxOldVagMode.Checked)
+                {
+                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                    balloonBuilder.SetText(GetString(Resource.String.settings_old_vag_mode_hint));
+                    Balloon balloon = balloonBuilder.Build();
+                    balloon.ShowAtCenter(_checkBoxOldVagMode);
+                }
+            };
 
             _checkBoxUseBmwDatabase = FindViewById<CheckBox>(Resource.Id.checkBoxUseBmwDatabase);
             _checkBoxUseBmwDatabase.Click += (sender, args) =>
@@ -313,24 +332,44 @@ namespace BmwDeepObd
             _buttonStorageCopyTreeToApp = FindViewById<Button>(Resource.Id.buttonStorageCopyTreeToApp);
             _buttonStorageCopyTreeToApp.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 SelectCopyDocumentTree(false);
             };
 
             _buttonStorageCopyTreeFromApp = FindViewById<Button>(Resource.Id.buttonStorageCopyTreeFromApp);
             _buttonStorageCopyTreeFromApp.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 SelectCopyAppDir(true);
             };
 
             _buttonStorageDelTreeFromApp = FindViewById<Button>(Resource.Id.buttonStorageDelTreeFromApp);
             _buttonStorageDelTreeFromApp.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 SelectDeleteAppDir();
             };
 
             _buttonStorageLocation = FindViewById<Button>(Resource.Id.buttonStorageLocation);
             _buttonStorageLocation.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 SelectMedia();
             };
 
@@ -339,6 +378,11 @@ namespace BmwDeepObd
             _buttonManageNotifications = FindViewById<Button>(Resource.Id.buttonManageNotifications);
             _buttonManageNotifications.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 _activityCommon.ShowNotificationSettings((int) ActivityRequest.RequestNotificationSettings);
             };
             _textViewCaptionNotifications.Visibility = viewStateNotifications;
@@ -356,12 +400,22 @@ namespace BmwDeepObd
             _buttonHciSnoopLog.Visibility = viewStateSnoopLog;
             _buttonHciSnoopLog.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 ShowDevelopmentSettings();
             };
 
             _buttonDefaultSettings = FindViewById<Button>(Resource.Id.buttonDefaultSettings);
             _buttonDefaultSettings.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 DefaultSettings();
             };
 
@@ -369,6 +423,11 @@ namespace BmwDeepObd
             _buttonExportSettings.Enabled = allowExport;
             _buttonExportSettings.Click += (sender, args) =>
             {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
                 new AlertDialog.Builder(this)
                     .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
                     {
@@ -655,60 +714,6 @@ namespace BmwDeepObd
                         }
                     }
                     break;
-            }
-        }
-
-        private void OnOldVagModeClick(object sender, EventArgs args)
-        {
-            if (_activityCommon == null)
-            {
-                return;
-            }
-
-            if (_ignoreCheckChange)
-            {
-                return;
-            }
-
-            if (_checkBoxOldVagMode.Checked)
-            {
-                if (!_checkBoxCollectDebugInfo.Checked)
-                {
-                    AlertDialog alertDialog = new AlertDialog.Builder(this)
-                        .SetPositiveButton(Resource.String.button_yes, (o, eventArgs) =>
-                        {
-                            _checkBoxCollectDebugInfo.Checked = true;
-                            OnOldVagModeClick(sender, args);
-                        })
-                        .SetNegativeButton(Resource.String.button_no, (o, eventArgs) =>
-                        {
-                        })
-                        .SetCancelable(true)
-                        .SetMessage(Resource.String.settings_old_vag_mode_debug_request)
-                        .SetTitle(Resource.String.alert_title_question)
-                        .Show();
-                    if (alertDialog != null)
-                    {
-                        alertDialog.DismissEvent += (sender, args) =>
-                        {
-                            if (_activityCommon == null)
-                            {
-                                return;
-                            }
-
-                            if (!_checkBoxCollectDebugInfo.Checked)
-                            {
-                                _checkBoxOldVagMode.Checked = false;
-                            }
-                        };
-                    }
-                    return;
-                }
-
-                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                balloonBuilder.SetText(GetString(Resource.String.settings_old_vag_mode_hint));
-                Balloon balloon = balloonBuilder.Build();
-                balloon.ShowAtCenter(_checkBoxOldVagMode);
             }
         }
 
