@@ -10010,28 +10010,28 @@ namespace CarSimulator
                             bool addValues = true;
                             if (_receiveData.Length >= 9 && _receiveData[0] >= 0x09 && _receiveData[2] == 0x2A)
                             {
-                                if (_receiveData[3] == ResetAdaptionChannel)
+                                byte adaptionChannel = _receiveData[3];
+                                Debug.WriteLine("Adaption save channel: {0}", adaptionChannel);
+                                if (adaptionChannel == ResetAdaptionChannel)
                                 {
                                     lastAdaption = DefaultAdaptionChannelValue;
-                                    Debug.WriteLine("Adaption reset: {0:X04}", lastAdaption);
+                                    Debug.WriteLine("Adaption reset value: {0:X04}", lastAdaption);
                                 }
                                 else
                                 {
                                     lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
-                                    Debug.WriteLine("Adaption save: {0:X04}", lastAdaption);
+                                    Debug.WriteLine("Adaption save value: {0:X04}", lastAdaption);
                                 }
                                 addValues = false;
                             }
                             else if (_receiveData.Length >= 6 && _receiveData[0] >= 0x06 && _receiveData[2] == 0x22)
                             {
-                                if (_receiveData[3] != ResetAdaptionChannel)
+                                byte adaptionChannel = _receiveData[3];
+                                Debug.WriteLine("Adaption transfer channel: {0}", adaptionChannel);
+                                if (adaptionChannel != ResetAdaptionChannel)
                                 {
                                     lastAdaption = (_receiveData[4] << 8) + _receiveData[5];
-                                    Debug.WriteLine("Adaption transfer: {0:X04}", lastAdaption);
-                                }
-                                else
-                                {
-                                    Debug.WriteLine("Adaption transfer reset channel");
+                                    Debug.WriteLine("Adaption transfer value: {0:X04}", lastAdaption);
                                 }
                             }
                             else
