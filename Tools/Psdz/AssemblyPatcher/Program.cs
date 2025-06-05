@@ -851,7 +851,7 @@ namespace AssemblyPatcher
                                 {
                                     if (alreadyCorrected)
                                     {
-                                        Console.WriteLine("Patching Arguments three param not required");
+                                        Console.WriteLine("Arguments three param already fixed");
                                     }
                                     else
                                     {
