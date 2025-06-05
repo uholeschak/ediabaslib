@@ -529,7 +529,6 @@ namespace PsdzClient.Core
             }
         }
 
-
         public bool ProcessILevelJobResultsEES25(Reactor reactor, IVehicle vecInfo, IEcuJob iJob)
         {
             string text = ReadingOutILevelJobResult(iJob, "I_STUFE_HO.SERIES_GROUP", "I_STUFE_HO.YEAR", "I_STUFE_HO.MONTH", "I_STUFE_HO.I_LEVEL_IDENTIFICATION_NUMBER");
@@ -611,6 +610,11 @@ namespace PsdzClient.Core
                 return false;
             }
             return true;
+        }
+
+        public new string GetMainSeriesSgbd(Vehicle vecInfo)
+        {
+            return base.GetMainSeriesSgbd(vecInfo);
         }
 
         public string GetMainSeriesSgbdAdditional(Vehicle vecInfo)
