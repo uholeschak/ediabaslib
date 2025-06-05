@@ -57,6 +57,7 @@ namespace PsdzClient.Core.Container
 
         private const int _portDoIPW2V = 51562;
 
+        // [UH] adapted for EdiabasNet
         private ApiInternal api;
 
         private string _APP;
@@ -65,7 +66,7 @@ namespace PsdzClient.Core.Container
 
         private bool isProblemHandlingTraceRunning;
 
-        private List<string> apiJobNamesToBeCached = new List<string>();
+        private List<string> apiJobNamesToBeCached = CachedApiJobConfigParser.Parse();
 
         private DateTime lastJobExecution;
 
@@ -88,7 +89,6 @@ namespace PsdzClient.Core.Container
         private readonly ISec4DiagHandler sec4DiagHandler;
 
         public List<ECUJob> jobList = new List<ECUJob>();
-
 
         public string APP
         {
