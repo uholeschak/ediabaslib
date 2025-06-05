@@ -301,6 +301,7 @@ namespace AssemblyPatcher
                             {
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ret));
                                 patched = true;
+                                Console.WriteLine("{0}.ctor patched", patchCtorClass);
                             }
                         }
                         catch (Exception)
@@ -322,6 +323,7 @@ namespace AssemblyPatcher
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
                                 instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                 patched = true;
+                                Console.WriteLine("{0}.{1} patched", patchMethod1Class, patchMethod1Name);
                             }
                         }
                         catch (Exception)
@@ -345,6 +347,7 @@ namespace AssemblyPatcher
                                     instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
                                     instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                     patched = true;
+                                    Console.WriteLine("{0}.{1} patched", patchMethod1Class, patchMethod1Name2);
                                 }
                             }
                             catch (Exception)
@@ -368,6 +371,7 @@ namespace AssemblyPatcher
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_1));
                                 instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                 patched = true;
+                                Console.WriteLine("{0}.{1} patched", patchMethod2Class, patchMethod2Name);
                             }
                         }
                         catch (Exception)
@@ -391,6 +395,7 @@ namespace AssemblyPatcher
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_1));
                                 instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                 patched = true;
+                                Console.WriteLine("IsConnectedViaENETAndBrandIsToyota patched");
                             }
                         }
                         catch (Exception)
@@ -414,6 +419,7 @@ namespace AssemblyPatcher
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
                                 instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                 patched = true;
+                                Console.WriteLine("IsLoginEnabled patched");
                             }
                         }
                         catch (Exception)
@@ -436,6 +442,7 @@ namespace AssemblyPatcher
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_1));
                                 instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                 patched = true;
+                                Console.WriteLine("VerifyStrongName patched");
                             }
                         }
                         catch (Exception)
@@ -457,6 +464,7 @@ namespace AssemblyPatcher
                                 Console.WriteLine("IstaIcsServiceClient.ValidateHost found");
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ret));
                                 patched = true;
+                                Console.WriteLine("ValidateHost patched");
                             }
                         }
                         catch (Exception)
@@ -478,6 +486,7 @@ namespace AssemblyPatcher
                                 Console.WriteLine("IstaIcsServiceClient.VerifyLicense found");
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ret));
                                 patched = true;
+                                Console.WriteLine("VerifyLicense patched");
                             }
                         }
                         catch (Exception)
@@ -500,120 +509,13 @@ namespace AssemblyPatcher
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_1));
                                 instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                 patched = true;
+                                Console.WriteLine("CheckInstallationStatus patched");
                             }
                         }
                         catch (Exception)
                         {
                             // ignored
                         }
-
-#if false
-                        try
-                        {
-                            Target target = new Target
-                            {
-                                Namespace = "BMW.Rheingold.RheingoldISPINext.ICS",
-                                Class = "CommonServiceWrapper",
-                                Method = "GetFeatureEnabledStatus",
-                            };
-                            IList<Instruction> instructions = patcher.GetInstructionList(target);
-                            if (instructions != null)
-                            {
-                                Console.WriteLine("CommonServiceWrapper.GetFeatureEnabledStatus found");
-
-                                int patchIndex = -1;
-                                for (int index = 0; index < instructions.Count; index++)
-                                {
-                                    Instruction instruction = instructions[index];
-                                    if (instruction.OpCode == OpCodes.Brtrue_S
-                                        && index + 8 < instructions.Count)
-                                    {
-                                        if (instructions[index + 1].OpCode != OpCodes.Ldloc_2)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructions[index + 2].OpCode != OpCodes.Ldarg_0)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructions[index + 3].OpCode != OpCodes.Ldarg_1)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructions[index + 4].OpCode != OpCodes.Ldloc_2)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructions[index + 5].OpCode != OpCodes.Ldstr ||
-                                            string.Compare(instructions[index + 5].Operand.ToString(), "MISSING CLIENT CONFIGURATION - RETURN DEFAULT VALUE", StringComparison.OrdinalIgnoreCase) != 0)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructions[index + 6].OpCode != OpCodes.Call)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructions[index + 7].OpCode != OpCodes.Newobj)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructions[index + 8].OpCode != OpCodes.Ret)
-                                        {
-                                            continue;
-                                        }
-
-                                        Console.WriteLine("'MISSING CLIENT CONFIGURATION - RETURN DEFAULT VALUE' found at index: {0}", index);
-                                        patchIndex = index;
-                                        break;
-                                    }
-                                }
-
-                                int templateIndex = -1;
-                                if (patchIndex >= 0)
-                                {
-                                    for (int index = patchIndex; index < instructions.Count; index++)
-                                    {
-                                        Instruction instruction = instructions[index];
-                                        if (instruction.OpCode == OpCodes.Call
-                                            && index + 1 < instructions.Count)
-                                        {
-                                            if (instructions[index + 1].OpCode != OpCodes.Brfalse)
-                                            {
-                                                continue;
-                                            }
-
-                                            Console.WriteLine("Template branch found at index: {0}", index);
-                                            templateIndex = index + 1;
-                                            break;
-                                        }
-                                    }
-
-                                    if (templateIndex < 0)
-                                    {
-                                        Console.WriteLine("Template branch not found");
-                                    }
-                                }
-
-                                if (patchIndex >= 0 && templateIndex >= 0)
-                                {
-                                    instructions[patchIndex] = instructions[templateIndex].Clone();
-                                    for (int i = 0; i < 8; i++)
-                                    {
-                                        instructions.RemoveAt(patchIndex + 1);
-                                    }
-                                    patched = true;
-                                }
-                                else
-                                {
-                                    Console.WriteLine("'DEFAULT VALUE' appears to have already been patched or is not existing");
-                                }
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-#endif
 
                         try
                         {
@@ -684,6 +586,7 @@ namespace AssemblyPatcher
                                                     patcher.BuildCall(typeof(System.String), "Concat", typeof(string),
                                                         new[] { typeof(string), typeof(string), typeof(string) })));
                                             patched = true;
+                                            Console.WriteLine("InitVCI patched");
                                             //patcher.Save(file.Replace(".dll", "Test.dll"));
                                         }
                                     }
@@ -797,6 +700,7 @@ namespace AssemblyPatcher
                                         offset++;
                                     }
                                     patched = true;
+                                    Console.WriteLine("InitVCI isDoIP patched");
                                 }
                                 else
                                 {
@@ -846,16 +750,17 @@ namespace AssemblyPatcher
                                 {
                                     instructions[patchIndex].Operand = "\"{0}\" \"{1}\" \"{2}\"";
                                     patched = true;
+                                    Console.WriteLine("StartServerInstance patched");
                                 }
                                 else
                                 {
                                     if (alreadyCorrected)
                                     {
-                                        Console.WriteLine("Arguments three param already fixed");
+                                        Console.WriteLine("StartServerInstance already fixed");
                                     }
                                     else
                                     {
-                                        Console.WriteLine("Patching Arguments three param failed");
+                                        Console.WriteLine("Patching StartServerInstance failed");
                                     }
                                 }
                             }
@@ -908,6 +813,7 @@ namespace AssemblyPatcher
                                     instructions[patchIndex] = Instruction.Create(OpCodes.Callvirt,
                                         patcher.BuildCall(typeof(System.IO.Stream), "Close", typeof(void), null));
                                     patched = true;
+                                    Console.WriteLine("checkForPsdzInstancesLogFile patched");
                                 }
                                 else
                                 {
@@ -1086,6 +992,7 @@ namespace AssemblyPatcher
                                     }
 
                                     patched = true;
+                                    Console.WriteLine("doVehicleShortTest patched");
                                 }
                                 else
                                 {
@@ -1197,6 +1104,7 @@ namespace AssemblyPatcher
                                     instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
                                     instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                     patched = true;
+                                    Console.WriteLine("IsIcomUnsupported patched");
                                 }
                             }
                             catch (Exception)
