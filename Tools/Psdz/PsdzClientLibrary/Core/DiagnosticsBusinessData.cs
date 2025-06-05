@@ -412,7 +412,7 @@ namespace PsdzClient.Core
                         }
                         if (ecuJob.IsOkay())
                         {
-                            return GetMileageFromJob(ecuJob, "STAT_GWSZ_WERT", null).GetValueOrDefault();
+                            return GetMileageFromJob(ecuJob, "STAT_GWSZ_WERT").GetValueOrDefault();
                         }
                         break;
                     }
