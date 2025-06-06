@@ -83,9 +83,9 @@ namespace PsdzClient.Core.Container
 
         //private bool serviceIsRunning;
 
-        //private readonly IInteractionService interactionService;
+        private readonly IInteractionService interactionService;
 
-        //private readonly IBackendCallsWatchDog backendCallsWatchDog;
+        private readonly IBackendCallsWatchDog backendCallsWatchDog;
 
         private readonly ISec4DiagHandler sec4DiagHandler;
 
@@ -205,9 +205,12 @@ namespace PsdzClient.Core.Container
             APP = app;
             FromFastaConfig = false;
             CacheHitCounter = 0;
+            ServiceLocator.Current.TryGetService<IInteractionService>(out interactionService);
+            ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out backendCallsWatchDog);
             ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
         }
 
+        // [UH] ediabas added
         private ApiInternal CreateApi(EdiabasNet ediabas)
         {
             return new ApiInternal(ediabas);
@@ -561,12 +564,12 @@ namespace PsdzClient.Core.Container
                         }
                         break;
                     case VCIDeviceType.TELESERVICE:
-                        {
-                            string text = string.Format(CultureInfo.InvariantCulture, "CompoundID={0};UsePdmResult={1}", device.DevId, device.UsePdmResult ? "true" : "false");
-                            Log.Info("ECUKom.InitVCI()", "calling TELESERVICE api init with parameter: {0}", text);
-                            boolResultObject.Result = api.apiInitExt("TELE", "_", "Rheingold", text);
-                            break;
-                        }
+                    {
+                        string text = string.Format(CultureInfo.InvariantCulture, "CompoundID={0};UsePdmResult={1}", device.DevId, device.UsePdmResult ? "true" : "false");
+                        Log.Info("ECUKom.InitVCI()", "calling TELESERVICE api init with parameter: {0}", text);
+                        boolResultObject.Result = api.apiInitExt("TELE", "_", "Rheingold", text);
+                        break;
+                    }
                     case VCIDeviceType.PTT:
                         boolResultObject.Result = false;    // [UH] modified
                         break;
