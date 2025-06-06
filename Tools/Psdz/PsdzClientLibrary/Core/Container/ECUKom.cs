@@ -1887,7 +1887,7 @@ namespace PsdzClient.Core.Container
 
         private void AddJobInCache(ECUJob job, bool cacheCondition = true)
         {
-            if (jobList != null && cacheCondition)
+            if (!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.JobResultsCachingDisabled", defaultValue: false) && jobList != null && cacheCondition)
             {
                 string msg = "Store in Cache: EcuName:" + job.EcuName + ", JobName:" + job.JobName + ", JobParam:" + job.JobParam;
                 Log.Info("ECUKom.AddJobInCache()", msg);
@@ -1900,15 +1900,15 @@ namespace PsdzClient.Core.Container
             StringBuilder stringBuilder = new StringBuilder();
             try
             {
-                int num2 = 1;
+                int num = 1;
                 do
                 {
-                    MethodBase method = new StackFrame(num2).GetMethod();
+                    MethodBase method = new StackFrame(num).GetMethod();
                     string name = method.DeclaringType.Name;
                     stringBuilder.Append("-> " + name + "." + method.Name + " ");
-                    num2++;
+                    num++;
                 }
-                while (num2 < 10);
+                while (num < 10);
             }
             catch (Exception exception)
             {
@@ -1922,18 +1922,20 @@ namespace PsdzClient.Core.Container
             ECUJob eCUJob = null;
             bool flag = false;
             DateTime dateTime = DateTime.Now.AddMilliseconds(timeout);
+            if (!VehicleCommunication.validLicense)
+            {
+                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
+            }
             try
             {
-                do
+                while (!flag && dateTime > DateTime.Now)
                 {
-                    if (!flag && dateTime > DateTime.Now)
+                    eCUJob = apiJob(ecu, job, param, resultFilter);
+                    if (eCUJob.IsDone() && !eCUJob.IsJobState("ERROR_ECU_REQUEST_CORRECTLY_RECEIVED__RESPONSE_PENDING"))
                     {
-                        eCUJob = apiJob(ecu, job, param, resultFilter);
-                        continue;
+                        return eCUJob;
                     }
-                    return eCUJob;
                 }
-                while (!eCUJob.IsDone() || eCUJob.IsJobState("ERROR_ECU_REQUEST_CORRECTLY_RECEIVED__RESPONSE_PENDING"));
                 return eCUJob;
             }
             catch (Exception exception)
