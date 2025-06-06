@@ -51,6 +51,44 @@ namespace BMW.Rheingold.Psdz.Client
 
         private readonly KdsServiceClient kdsService;
 
+        public IConfigurationService ConfigurationService => configurationService;
+
+        public IConnectionFactoryService ConnectionFactoryService => connectionFactoryService;
+
+        public IConnectionManagerService ConnectionManagerService => connectionManagerService;
+
+        public IEcuService EcuService => ecuService;
+
+        public IEventManagerService EventManagerService { get; private set; }
+
+        public ILogService LogService => logService;
+
+        public ILogicService LogicService => logicService;
+
+        public IMacrosService MacrosService => macrosService;
+
+        public IObjectBuilderService ObjectBuilderService => objectBuilderServiceClient;
+
+        public IProgrammingService ProgrammingService => programmingService;
+
+        public ITalExecutionService TalExecutionService => talExecutionService;
+
+        public IVcmService VcmService => vcmService;
+
+        public ICertificateManagementService CertificateManagementService => certificateManagementService;
+
+        public IIndividualDataRestoreService IndividualDataRestoreService => individualDataRestoreService;
+
+        public ISecureFeatureActivationService SecureFeatureActivationService => secureFeatureActivationService;
+
+        public IKdsService KdsService => kdsService;
+
+        public ISecurityManagementService SecurityManagementService => securityManagementService;
+
+        public ISecureDiagnosticsService SecureDiagnosticsService => secureDiagnosticsService;
+
+        public ISecureCodingService SecureCodingService => secureCodingService;
+
         // ToDo: Check on update
         public PsdzServiceClient(string clientLogDir, int istaProcessId = 0)
         {
@@ -106,44 +144,6 @@ namespace BMW.Rheingold.Psdz.Client
                 individualDataRestoreService = new IndividualDataRestoreServiceClient(psdzProgressListenerDispatcher, netNamedPipeBinding, CreateEndpointAddress($"net.pipe://localhost/PsdzServiceHost{istaProcessId}/IndividualDataRestoreService", clientId, clientLogDir));
             }
         }
-
-        public IConfigurationService ConfigurationService => configurationService;
-
-        public IConnectionFactoryService ConnectionFactoryService => connectionFactoryService;
-
-        public IConnectionManagerService ConnectionManagerService => connectionManagerService;
-
-        public IEcuService EcuService => ecuService;
-
-        public IEventManagerService EventManagerService { get; private set; }
-
-        public ILogService LogService => logService;
-
-        public ILogicService LogicService => logicService;
-
-        public IMacrosService MacrosService => macrosService;
-
-        public IObjectBuilderService ObjectBuilderService => objectBuilderServiceClient;
-
-        public IProgrammingService ProgrammingService => programmingService;
-
-        public ITalExecutionService TalExecutionService => talExecutionService;
-
-        public IVcmService VcmService => vcmService;
-
-        public ICertificateManagementService CertificateManagementService => certificateManagementService;
-
-        public IIndividualDataRestoreService IndividualDataRestoreService => individualDataRestoreService;
-
-        public ISecureFeatureActivationService SecureFeatureActivationService => secureFeatureActivationService;
-
-        public IKdsService KdsService => kdsService;
-
-        public ISecurityManagementService SecurityManagementService => securityManagementService;
-
-        public ISecureDiagnosticsService SecureDiagnosticsService => secureDiagnosticsService;
-
-        public ISecureCodingService SecureCodingService => secureCodingService;
 
         private static EndpointAddress CreateEndpointAddress(string uri, string clientId, string clientLogDir)
         {
