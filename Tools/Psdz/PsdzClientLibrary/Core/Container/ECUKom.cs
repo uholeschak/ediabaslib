@@ -647,6 +647,7 @@ namespace PsdzClient.Core.Container
                     if (num == service.RoleMaskAsInt)
                     {
                         //ImportantLoggingItem.AddMessagesToLog("S29-Authentification-Ediabas", "Authentification: $" + stringResult);
+                        Log.Info("S29-Authentification-Ediabas", "Authentification: $" + stringResult);
                         return true;
                     }
                     return false;
@@ -744,7 +745,7 @@ namespace PsdzClient.Core.Container
                     Sec4DiagCertificateState sec4DiagCertificateState = service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate);
                     if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection() && sec4DiagCertificateState == Sec4DiagCertificateState.NotYetExpired)
                     {
-                        //TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
+                        TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
                         //interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
                         boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
                         return boolResultObject;
@@ -984,17 +985,26 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, resultFilter, cacheAdding);
         }
 
-        // [UH] added default values
+        // [UH] fastaprotcoller removed
         public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter = "", int retries = 0, bool fastaActive = true)
         {
-            return (retries == 0) ? apiJob(ecu, job, param, resultFilter) : apiJob(ecu, job, param, resultFilter, retries, 0);
+            if (retries != 0)
+            {
+                return apiJob(ecu, job, param, resultFilter, retries, 0);
+            }
+            return apiJob(ecu, job, param, resultFilter);
         }
 
         public IEcuJob ApiJob(string ecu, string job, string param, int retries, int millisecondsTimeout)
         {
-            return (retries == 0) ? apiJob(ecu, job, param, string.Empty) : apiJob(ecu, job, param, string.Empty, retries, millisecondsTimeout);
+            if (retries != 0)
+            {
+                return apiJob(ecu, job, param, string.Empty, retries, millisecondsTimeout);
+            }
+            return apiJob(ecu, job, param, string.Empty);
         }
 
+        // [UH] fastaprotcoller removed
         public ECUJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "", [CallerMemberName] string callerMember = "")
         {
             if (FromFastaConfig && !string.IsNullOrEmpty(sgbd) && apiJobNamesToBeCached.Contains(job))
@@ -1008,7 +1018,7 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, 0);
         }
 
-        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout)
+        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, string callerMember = "")
         {
             if (retries > 5)
             {
@@ -1016,7 +1026,7 @@ namespace PsdzClient.Core.Container
             }
             try
             {
-                ECUJob eCUJob = apiJob(ecu, jobName, param, resultFilter);
+                ECUJob eCUJob = apiJob(ecu, jobName, param, resultFilter, callerMember);
                 if (eCUJob.JobErrorCode == 98)
                 {
                     return eCUJob;
@@ -1026,7 +1036,7 @@ namespace PsdzClient.Core.Container
                 {
                     SleepUtility.ThreadSleep(millisecondsTimeout, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
                     Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, jobName, num);
-                    eCUJob = apiJob(ecu, jobName, param, resultFilter);
+                    eCUJob = apiJob(ecu, jobName, param, resultFilter, callerMember);
                     num++;
                 }
                 return eCUJob;
@@ -1062,7 +1072,11 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    eCUJob = apiJob(ecu, job, param, resultFilter, cacheAdding: true);
+                    eCUJob = apiJob(ecu, job, param, resultFilter, cacheAdding: true, callerMember);
+                }
+                if (eCUJob != null && VehicleCommunication.DebugLevel > 2)
+                {
+                    ECUJob.Dump(eCUJob);
                 }
                 return eCUJob;
             }
@@ -1086,7 +1100,7 @@ namespace PsdzClient.Core.Container
             return eCUJob2;
         }
 
-        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding)
+        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, string callerMember = "")
         {
             //TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
             try
@@ -1155,14 +1169,53 @@ namespace PsdzClient.Core.Container
                 eCUJob3.JobResult = new List<ECUResult>();
                 try
                 {
+                    SetTraceLevelToMax(callerMember);
+#if false
+                    if (serviceIsRunning)
+                    {
+                        try
+                        {
+                            sc.ExecuteCommand(150);
+                        }
+                        catch
+                        {
+                            Log.Error("ECUKom.apiJob()", $"Ediabas monitor executeCommand failed for Command {EdiabasMonitorTrigger.apijob}");
+                        }
+                    }
+#endif
                     api.apiJob(ecu, jobName, param, resultFilter);
                     while (api.apiStateExt(1000) == 0)
                     {
                         SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
                     }
+#if false
+                    if (serviceIsRunning)
+                    {
+                        try
+                        {
+                            sc.ExecuteCommand(151);
+                        }
+                        catch
+                        {
+                        }
+                    }
+#endif
+                    RemoveTraceLevel(callerMember);
                     num = (eCUJob3.JobErrorCode = api.apiErrorCode());
                     eCUJob3.JobErrorText = api.apiErrorText();
                     api.apiResultSets(out var rsets);
+#if false
+                    if (serviceIsRunning)
+                    {
+                        try
+                        {
+                            sc.ExecuteCommand(152);
+                        }
+                        catch
+                        {
+                        }
+                    }
+#endif
                     eCUJob3.JobResultSets = rsets;
                     if (rsets > 0)
                     {
@@ -1331,6 +1384,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        // [UH] converted
         private bool UseConfigFileTraces()
         {
             api.apiGetConfig("ApiTrace", out string text);
