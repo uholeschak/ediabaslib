@@ -196,15 +196,21 @@ namespace PsdzClient.Core.Container
         {
         }
 
+        // [UH] ediabas added
         public ECUKom(string app, EdiabasNet ediabas = null)
         {
-            api = new ApiInternal(ediabas);
+            api = CreateApi(ediabas);
             communicationMode = CommMode.Normal;
             jobList = new List<ECUJob>();
             APP = app;
             FromFastaConfig = false;
             CacheHitCounter = 0;
             ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
+        }
+
+        private ApiInternal CreateApi(EdiabasNet ediabas)
+        {
+            return new ApiInternal(ediabas);
         }
 
         public void End()
