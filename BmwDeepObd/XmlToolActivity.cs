@@ -2955,9 +2955,12 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    if (_listViewEcu.ChildCount > 0)
+                    DragEcuListAdapter.CustomViewHolder viewHolder =_ecuListAdapter.GetItemViewHolder(itemIndex);
+                    View itemView = viewHolder?.ItemView;
+
+                    if (itemView != null)
                     {
-                        anchor = _listViewEcu.GetChildAt(0);
+                        anchor = itemView;
                     }
                 }
 
