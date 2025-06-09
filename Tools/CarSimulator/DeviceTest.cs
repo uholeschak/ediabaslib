@@ -558,39 +558,45 @@ namespace CarSimulator
 
                     _testCount = 0;
                     int retry = 0;
-                    for (;;)
+                    try
                     {
-                        _form.UpdateTestStatusText("Connecting ...");
-                        if (!ConnectBtDevice(device))
+                        for (; ; )
                         {
-                            _form.UpdateTestStatusText("Connection failed");
-                            return false;
-                        }
-
-                        if (!RunTest(comPort, btDeviceName, out bool commError))
-                        {
-                            if (!commError || retry > 1)
+                            _form.UpdateTestStatusText("Connecting ...");
+                            if (!ConnectBtDevice(device))
                             {
+                                _form.UpdateTestStatusText("Connection failed");
                                 return false;
                             }
 
-                            retry++;
+                            if (!RunTest(comPort, btDeviceName, out bool commError))
+                            {
+                                if (!commError || retry > 1)
+                                {
+                                    return false;
+                                }
+
+                                retry++;
+                                DisconnectStream();
+                                continue;
+                            }
+
+                            if (AbortTest)
+                            {
+                                break;
+                            }
+
                             DisconnectStream();
-                            continue;
+                            BluetoothSecurity.RemoveDevice(device.DeviceAddress);
+                            retry = 0;
                         }
-
-                        if (AbortTest)
-                        {
-                            break;
-                        }
-
+                    }
+                    finally
+                    {
                         DisconnectStream();
                         BluetoothSecurity.RemoveDevice(device.DeviceAddress);
-                        retry = 0;
                     }
 
-                    DisconnectStream();
-                    BluetoothSecurity.RemoveDevice(device.DeviceAddress);
                     int removeDevices = CleanupBtDevices(new string[] { DefaultBtName, DefaultBtNameStd });
                     if (removeDevices > 0)
                     {
