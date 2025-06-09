@@ -747,6 +747,7 @@ namespace BmwDeepObd
                 {
                     ActivityCommon.ResolveSgbdFile(_ediabas, _ecuInfo.Sgbd);
 
+                    // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionComponentTrigger.PhasePreset
                     EcuFunctionStructs.EcuJob.PhaseType phase = EcuFunctionStructs.EcuJob.PhaseType.Preset;
                     RunOnUiThread(() =>
                     {
@@ -845,6 +846,7 @@ namespace BmwDeepObd
                             });
                         }
 
+                        // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionComponentTrigger.PhaseMain
                         if (currentPhase == EcuFunctionStructs.EcuJob.PhaseType.Main)
                         {
                             if (!_instanceData.Continuous)
@@ -878,6 +880,7 @@ namespace BmwDeepObd
 
                     if (!executeFailed)
                     {
+                        // from: RheingoldSessionController.dll BMW.Rheingold.RheingoldSessionController.EcuFunctions.EcuFunctionComponentTrigger.PhaseReset
                         EcuFunctionStructs.EcuJob.PhaseType currentPhase = EcuFunctionStructs.EcuJob.PhaseType.Reset;
                         RunOnUiThread(() =>
                         {
