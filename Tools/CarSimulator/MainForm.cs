@@ -929,7 +929,7 @@ namespace CarSimulator
             }
         }
 
-        public void UpdateTestStatusText(string text = null, bool append = false)
+        public void UpdateTestStatusText(string text = null, bool appendText = false)
         {
             if (InvokeRequired)
             {
@@ -946,14 +946,26 @@ namespace CarSimulator
             }
             else
             {
-                if (append && richTextBoxTestResults.Text.Length > 0)
+                StringBuilder sb = new StringBuilder();
+                if (appendText)
                 {
-                    richTextBoxTestResults.Text += "\r\n" + text;
+                    string lastText = richTextBoxTestResults.Text;
+                    if (!string.IsNullOrEmpty(lastText))
+                    {
+                        sb.Append(lastText);
+                    }
                 }
-                else
+
+                if (!string.IsNullOrEmpty(text))
                 {
-                    richTextBoxTestResults.Text = text;
+                    if (sb.Length > 0)
+                    {
+                        sb.Append("\r\n");
+                    }
+                    sb.Append(text);
                 }
+
+                richTextBoxTestResults.Text = sb.ToString();
                 richTextBoxTestResults.SelectionStart = richTextBoxTestResults.TextLength;
                 richTextBoxTestResults.Update();
                 richTextBoxTestResults.ScrollToCaret();
