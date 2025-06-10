@@ -537,7 +537,7 @@ namespace CarSimulator
                     }
                     catch (Exception)
                     {
-                        _form.UpdateTestStatusText("Connection failed");
+                        _form.UpdateTestStatusText("Connection failed", true);
                         return false;
                     }
                 }
