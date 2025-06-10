@@ -521,6 +521,29 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.ISTAGUI.Controller",
+                                Class = "PackageValidityService",
+                                Method = "CheckPackageValidity",
+                                Parameters = new[] { "PackageValidityService", "Version" },
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("PackageValidityService.CheckPackageValidity found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                                Console.WriteLine("CheckPackageValidity patched");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.VehicleCommunication",
                                 Class = "ECUKom",
                                 Method = "InitVCI",
