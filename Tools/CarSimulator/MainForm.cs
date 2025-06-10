@@ -929,7 +929,7 @@ namespace CarSimulator
             }
         }
 
-        public void UpdateTestStatusText(string text = null)
+        public void UpdateTestStatusText(string text = null, bool append = false)
         {
             if (InvokeRequired)
             {
@@ -946,7 +946,14 @@ namespace CarSimulator
             }
             else
             {
-                richTextBoxTestResults.Text = text;
+                if (append && richTextBoxTestResults.Text.Length > 0)
+                {
+                    richTextBoxTestResults.Text += "\r\n" + text;
+                }
+                else
+                {
+                    richTextBoxTestResults.Text = text;
+                }
                 richTextBoxTestResults.SelectionStart = richTextBoxTestResults.TextLength;
                 richTextBoxTestResults.Update();
                 richTextBoxTestResults.ScrollToCaret();
