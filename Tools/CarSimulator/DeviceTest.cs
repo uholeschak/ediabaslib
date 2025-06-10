@@ -595,12 +595,12 @@ namespace CarSimulator
                     {
                         DisconnectStream();
                         BluetoothSecurity.RemoveDevice(device.DeviceAddress);
-                    }
 
-                    int removeDevices = CleanupBtDevices(new string[] { DefaultBtName, DefaultBtNameStd });
-                    if (removeDevices > 0)
-                    {
-                        _form.UpdateTestStatusText($"Removed {removeDevices} Bluetooth devices");
+                        int removeDevices = CleanupBtDevices(new string[] { DefaultBtName, DefaultBtNameStd });
+                        if (removeDevices > 0)
+                        {
+                            _form.UpdateTestStatusText($"Removed {removeDevices} Bluetooth devices", true);
+                        }
                     }
                 }
             }
