@@ -935,7 +935,7 @@ namespace CarSimulator
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateTestStatusText(text);
+                    UpdateTestStatusText(text, appendText);
                 }));
                 return;
             }

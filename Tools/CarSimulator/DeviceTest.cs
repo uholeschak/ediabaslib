@@ -552,7 +552,7 @@ namespace CarSimulator
 
                     if (device == null)
                     {
-                        _form.UpdateTestStatusText("No device selected");
+                        _form.UpdateTestStatusText("No device selected", true);
                         return false;
                     }
 
@@ -565,7 +565,7 @@ namespace CarSimulator
                             _form.UpdateTestStatusText("Connecting ...");
                             if (!ConnectBtDevice(device))
                             {
-                                _form.UpdateTestStatusText("Connection failed");
+                                _form.UpdateTestStatusText("Connection failed", true);
                                 return false;
                             }
 
