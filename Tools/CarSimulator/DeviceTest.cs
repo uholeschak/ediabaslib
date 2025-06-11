@@ -283,13 +283,13 @@ namespace CarSimulator
             espLink = false;
             if (_wifi == null || _wlanClient == null)
             {
-                _form.UpdateTestStatusText("WiFi access rejected");
+                _form.UpdateTestStatusText("WiFi access rejected", true);
                 return false;
             }
 
             if (_wifi.NoWifiAvailable || _wlanClient.NoWifiAvailable)
             {
-                _form.UpdateTestStatusText("WiFi not available");
+                _form.UpdateTestStatusText("WiFi not available", true);
                 return false;
             }
 
@@ -371,11 +371,11 @@ namespace CarSimulator
                                     // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                                     if (!success)
                                     {
-                                        _form.UpdateTestStatusText("Connection failed");
+                                        _form.UpdateTestStatusText("Connection failed", true);
                                     }
                                     else
                                     {
-                                        _form.UpdateTestStatusText("Wifi connected");
+                                        _form.UpdateTestStatusText("Wifi connected", true);
                                     }
                                 }));
                             });
@@ -388,7 +388,7 @@ namespace CarSimulator
             {
                 // ignored
             }
-            _form.UpdateTestStatusText("No WiFi device found");
+            _form.UpdateTestStatusText("No WiFi device found", true);
 
             return false;
         }
@@ -475,14 +475,14 @@ namespace CarSimulator
         {
             if (!comPort.StartsWith("COM"))
             {
-                _form.UpdateTestStatusText("No COM port selected");
+                _form.UpdateTestStatusText("No COM port selected", true);
                 return false;
             }
 
             _responseFileE61 = Path.Combine(_form.responseDir, MainForm.ResponseFileE61);
             if (!File.Exists(_responseFileE61))
             {
-                _form.UpdateTestStatusText("Response file e61.txt not found");
+                _form.UpdateTestStatusText("Response file e61.txt not found", true);
                 return false;
             }
 
