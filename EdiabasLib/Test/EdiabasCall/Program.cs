@@ -132,9 +132,9 @@ namespace EdiabasCall
                         sbArgs.Append(' ');
                     }
 
-                    sbArgs.Append("'");
+                    sbArgs.Append("\"");
                     sbArgs.Append(arg);
-                    sbArgs.Append("'");
+                    sbArgs.Append("\"");
                 }
                 Console.WriteLine("Args: {0}", sbArgs);
             }
