@@ -177,6 +177,11 @@ This could be automated with (backup ReleaseMod before):
 AssemblyPatcher.exe "TesterGUI\bin\ReleaseMod"
 
 Make sure the EDIABAS.INI settings has default values in case ModifyEdiabasIni is true:
+[Configuration]
+SystemTraceSec   = 7
+SystemTraceIfh   = 7
+SystemTraceNet   = 7
+
 [XEthernet]
 RemoteHost       = Autodetect
 TesterAddress    = F4,F5
