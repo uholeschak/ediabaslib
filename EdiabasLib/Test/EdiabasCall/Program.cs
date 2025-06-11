@@ -68,6 +68,7 @@ namespace EdiabasCall
             bool appendFile = false;
             bool storeResults = false;
             bool printAllTypes = false;
+            bool printArgs = false;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool showHelp = false;
@@ -92,6 +93,8 @@ namespace EdiabasCall
                   v => storeResults = v != null },
                 { "alltypes", "print all value types.",
                   v => printAllTypes = v != null },
+                { "args", "print args.",
+                    v => printArgs = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
                   v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters prepend the hex string with| (e.g. |A3C2)",
@@ -117,6 +120,23 @@ namespace EdiabasCall
             {
                 ShowHelp(p);
                 return 0;
+            }
+
+            if (printArgs)
+            {
+                StringBuilder sbArgs = new StringBuilder();
+                foreach (string arg in args)
+                {
+                    if (sbArgs.Length > 0)
+                    {
+                        sbArgs.Append(' ');
+                    }
+
+                    sbArgs.Append("\"");
+                    sbArgs.Append(arg);
+                    sbArgs.Append("\"");
+                }
+                Console.WriteLine("Args: {0}", sbArgs);
             }
 
             _outputWriter = string.IsNullOrEmpty(outFile) ? Console.Out : new StreamWriter(outFile, appendFile, Encoding);
