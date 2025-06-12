@@ -618,6 +618,35 @@ namespace EdiabasLib
             }
         }
 
+        public static string ConvertPublicKeyToPEM(AsymmetricKeyParameter publicKey)
+        {
+            try
+            {
+                if (publicKey == null)
+                {
+                    return null;
+                }
+
+                using (StringWriter stringWriter = new StringWriter())
+                {
+                    using (Org.BouncyCastle.OpenSsl.PemWriter pemWriter = new Org.BouncyCastle.OpenSsl.PemWriter(stringWriter))
+                    {
+                        pemWriter.WriteObject(publicKey);
+                        pemWriter.Writer.Flush();
+                        string text = stringWriter.ToString().Replace("-----BEGIN PUBLIC KEY-----", "").Replace("-----END PUBLIC KEY-----", "")
+                            .Replace("\r", "")
+                            .Replace("\n", "")
+                            .Trim();
+                        return text;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, DerObjectIdentifier paramSet, string password = null)
         {
             try
