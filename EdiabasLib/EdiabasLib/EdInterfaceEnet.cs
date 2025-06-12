@@ -3378,9 +3378,11 @@ namespace EdiabasLib
                 string requestFileName = "RequestContainer_service-29-" + requestData.CertReqProfile + "-" + vin17 + ".json";
                 string requestJson = Path.Combine(jsonRequestPath, requestFileName);
                 using (StreamWriter sw = new StreamWriter(requestJson))
-                using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    serializer.Serialize(writer, requestData);
+                    using (JsonWriter writer = new JsonTextWriter(sw))
+                    {
+                        serializer.Serialize(writer, requestData);
+                    }
                 }
 
                 return true;
