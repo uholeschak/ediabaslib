@@ -1,24 +1,26 @@
-﻿using System;
-using System.Diagnostics;
-using System.Globalization;
-using System.Net;
-using System.Net.Sockets;
-using System.Threading;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml;
-using System.Xml.Linq;
-using System.Net.Http;
-using System.Net.Security;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-using Org.BouncyCastle.Tls;
+﻿using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Crmf;
+using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.Tls;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Security;
+using System.Net.Sockets;
+using System.Security.Authentication;
 using System.Security.Cryptography;
-using Org.BouncyCastle.Asn1.Sec;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using System.Threading;
+using System.Xml;
+using System.Xml.Linq;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -322,6 +324,21 @@ namespace EdiabasLib
                     S29CertFiles.Clear();
                     S29CertFiles = null;
                 }
+            }
+
+            public class Sec4DiagRequestData
+            {
+                [JsonProperty("vin17")]
+                public string Vin17 { get; set; }
+
+                [JsonProperty("certReqProfile")]
+                public string CertReqProfile { get; set; }
+
+                [JsonProperty("publicKey")]
+                public string PublicKey { get; set; }
+
+                [JsonProperty("proofOfPossession")]
+                public ProofOfPossession ProofOfPossession { get; set; }
             }
 
             public void Dispose()
