@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.Crmf;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
@@ -326,21 +325,6 @@ namespace EdiabasLib
                 }
             }
 
-            public class Sec4DiagRequestData
-            {
-                [JsonProperty("vin17")]
-                public string Vin17 { get; set; }
-
-                [JsonProperty("certReqProfile")]
-                public string CertReqProfile { get; set; }
-
-                [JsonProperty("publicKey")]
-                public string PublicKey { get; set; }
-
-                [JsonProperty("proofOfPossession")]
-                public ProofOfPossession ProofOfPossession { get; set; }
-            }
-
             public void Dispose()
             {
                 Dispose(true);
@@ -416,6 +400,30 @@ namespace EdiabasLib
             public bool ReconnectRequired;
             public bool IcomAllocateActive;
             public DoIpRoutingState DoIpRoutingState;
+        }
+
+        public class ProofOfPossession
+        {
+            [JsonProperty("signatureType")]
+            public string SignatureType { get; set; }
+
+            [JsonProperty("signature")]
+            public string Signature { get; set; }
+        }
+
+        public class Sec4DiagRequestData
+        {
+            [JsonProperty("vin17")]
+            public string Vin17 { get; set; }
+
+            [JsonProperty("certReqProfile")]
+            public string CertReqProfile { get; set; }
+
+            [JsonProperty("publicKey")]
+            public string PublicKey { get; set; }
+
+            [JsonProperty("proofOfPossession")]
+            public ProofOfPossession ProofOfPossession { get; set; }
         }
 
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
@@ -3310,6 +3318,56 @@ namespace EdiabasLib
 #endif
                 sharedData.S29Certs = certList;
                 sharedData.S29CertFiles = certKeyList;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return false;
+            }
+        }
+
+        protected bool CreateRequestJson(string jsonRequestPath, string vin)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(jsonRequestPath) || string.IsNullOrEmpty(vin))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson invalid parameters: jsonRequestPath={0}, vin={1}", jsonRequestPath, vin);
+                    return false;
+                }
+
+                string templateJson = Path.Combine(jsonRequestPath, "template.json");
+                if (!File.Exists(templateJson))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file not found: {0}", templateJson);
+                    return false;
+                }
+
+                JsonSerializer serializer = new JsonSerializer();
+                Sec4DiagRequestData requestData;
+                using (StreamReader file = File.OpenText(templateJson))
+                {
+                    requestData = serializer.Deserialize(file, typeof(Sec4DiagRequestData)) as Sec4DiagRequestData;
+                }
+
+                if (requestData == null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file invalid: {0}", templateJson);
+                    return false;
+                }
+
+                string vin17 = vin.ToUpperInvariant().Trim();
+                requestData.Vin17 = vin17;
+
+                string requestFileName = "RequestContainer_service-29-" + requestData.CertReqProfile + "-" + vin17 + ".json";
+                string requestJson = Path.Combine(jsonRequestPath, requestFileName);
+                using (StreamWriter sw = new StreamWriter(requestJson))
+                using (JsonWriter writer = new JsonTextWriter(sw))
+                {
+                    serializer.Serialize(writer, requestData);
+                }
+
                 return true;
             }
             catch (Exception ex)
