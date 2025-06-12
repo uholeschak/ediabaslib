@@ -3331,6 +3331,12 @@ namespace EdiabasLib
         {
             try
             {
+                if (string.IsNullOrEmpty(jsonRequestPath) || string.IsNullOrEmpty(vin))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson invalid parameters: jsonRequestPath={0}, vin={1}", jsonRequestPath, vin);
+                    return false;
+                }
+
                 string templateJson = Path.Combine(jsonRequestPath, "template.json");
                 if (!File.Exists(templateJson))
                 {
@@ -3339,7 +3345,7 @@ namespace EdiabasLib
                 }
 
                 JsonSerializer serializer = new JsonSerializer();
-                Sec4DiagRequestData requestData = null;
+                Sec4DiagRequestData requestData;
                 using (StreamReader file = File.OpenText(templateJson))
                 {
                     requestData = serializer.Deserialize(file, typeof(Sec4DiagRequestData)) as Sec4DiagRequestData;
