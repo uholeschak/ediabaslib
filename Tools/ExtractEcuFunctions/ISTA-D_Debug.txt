@@ -182,6 +182,9 @@ SystemTraceSec   = 7
 SystemTraceIfh   = 7
 SystemTraceNet   = 7
 
+[S29]
+SelectCertificate = <CertPath>
+
 [XEthernet]
 RemoteHost       = Autodetect
 TesterAddress    = F4,F5
