@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.Crmf;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
@@ -324,6 +323,15 @@ namespace EdiabasLib
                     S29CertFiles.Clear();
                     S29CertFiles = null;
                 }
+            }
+
+            public class ProofOfPossession
+            {
+                [JsonProperty("signatureType")]
+                public string SignatureType { get; set; }
+
+                [JsonProperty("signature")]
+                public string Signature { get; set; }
             }
 
             public class Sec4DiagRequestData
