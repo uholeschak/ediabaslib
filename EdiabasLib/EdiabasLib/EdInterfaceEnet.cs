@@ -3327,13 +3327,27 @@ namespace EdiabasLib
             }
         }
 
-        protected bool CreateRequestJson(string jsonRequestPath, string vin)
+        protected bool CreateRequestJson(string jsonRequestPath, string vin, string machinePublicFile)
         {
             try
             {
                 if (string.IsNullOrEmpty(jsonRequestPath) || string.IsNullOrEmpty(vin))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson invalid parameters: jsonRequestPath={0}, vin={1}", jsonRequestPath, vin);
+                    return false;
+                }
+
+                AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
+                if (asymmetricKeyPar == null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson Load public cert failed: {0}", machinePublicFile);
+                    return false;
+                }
+
+                string publicKey = EdBcTlsUtilities.ConvertPublicKeyToPEM(asymmetricKeyPar);
+                if (string.IsNullOrEmpty(publicKey))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson Convert public key failed: {0}", machinePublicFile);
                     return false;
                 }
 
@@ -3359,6 +3373,7 @@ namespace EdiabasLib
 
                 string vin17 = vin.ToUpperInvariant().Trim();
                 requestData.Vin17 = vin17;
+                requestData.PublicKey = publicKey;
 
                 string requestFileName = "RequestContainer_service-29-" + requestData.CertReqProfile + "-" + vin17 + ".json";
                 string requestJson = Path.Combine(jsonRequestPath, requestFileName);
