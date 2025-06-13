@@ -3399,7 +3399,6 @@ namespace EdiabasLib
                     return false;
                 }
 
-
                 if (sharedData.MachineKeyPair == null || sharedData.MachineKeyPair.Public == null)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson machine key pair not available");
@@ -3469,9 +3468,16 @@ namespace EdiabasLib
                     return false;
                 }
 
+                string vin = sharedData.EnetHostConn?.Vin;
+                if (string.IsNullOrWhiteSpace(vin))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert VIN is empty");
+                    return false;
+                }
+
                 if (string.IsNullOrEmpty(jsonResponseFile) || !File.Exists(jsonResponseFile))
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson file not found: {0}", jsonResponseFile);
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert file not found: {0}", jsonResponseFile);
                     return false;
                 }
 
@@ -3484,13 +3490,25 @@ namespace EdiabasLib
 
                 if (responseData == null)
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson file invalid: {0}", jsonResponseFile);
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert file invalid: {0}", jsonResponseFile);
                     return false;
                 }
 
                 if (responseData.Certificate == null || responseData.CertificateChain == null)
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson no certificates found in file: {0}", jsonResponseFile);
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert no certificates found in file: {0}", jsonResponseFile);
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(responseData.Vin17))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert no VIN found in file: {0}", jsonResponseFile);
+                    return false;
+                }
+
+                if (string.Compare(responseData.Vin17.Trim(), vin.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert VIN mismatch: {0} != {1}", responseData.Vin17, vin);
                     return false;
                 }
 
@@ -3506,7 +3524,7 @@ namespace EdiabasLib
                 {
                     if (!fileCert.IsValidNow)
                     {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson certificate not valid: {0}", fileCert.SubjectDN);
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert certificate not valid: {0}", fileCert.SubjectDN);
                         return false;
                     }
 
@@ -3522,7 +3540,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson exception: {0}", EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
