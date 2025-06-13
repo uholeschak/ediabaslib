@@ -3400,6 +3400,7 @@ namespace EdiabasLib
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.NullValueHandling = NullValueHandling.Ignore;
                 serializer.Formatting = Formatting.Indented;
+                serializer.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
 
                 Sec4DiagRequestData requestData;
                 using (StreamReader file = File.OpenText(templateJson))
