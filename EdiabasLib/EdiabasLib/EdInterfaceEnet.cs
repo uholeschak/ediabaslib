@@ -248,6 +248,7 @@ namespace EdiabasLib
                 TrustedCAFiles = null;
                 S29Certs = null;
                 S29CertFiles = null;
+                MachineKeyPair = null;
                 TcpControlTimerLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
                 TcpDiagRecLen = 0;
@@ -389,6 +390,7 @@ namespace EdiabasLib
             public List<string> TrustedCAFiles;
             public List<X509Certificate2> S29Certs;
             public List<EdBcTlsClient.CertInfo> S29CertFiles;
+            public AsymmetricCipherKeyPair MachineKeyPair;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -3149,11 +3151,13 @@ namespace EdiabasLib
 
                 AsymmetricKeyParameter machineAsymmetricKeyPar = null;
                 X509CertificateEntry[] machinePublicChain = null;
+                AsymmetricCipherKeyPair machineKeyPair = null;
 
                 for (int retry = 0; retry < 2; retry++)
                 {
                     machineAsymmetricKeyPar = null;
                     machinePublicChain = null;
+                    machineKeyPair = null;
 
                     if (File.Exists(machinePrivateFile))
                     {
@@ -3168,6 +3172,10 @@ namespace EdiabasLib
                             {
                                 machineAsymmetricKeyPar = asymmetricKeyPar;
                                 machinePublicChain = publicChain;
+                                if (machinePublicChain.Length > 0)
+                                {
+                                    machineKeyPair = new AsymmetricCipherKeyPair(machinePublicChain[0].Certificate.GetPublicKey(), machineAsymmetricKeyPar);
+                                }
                             }
                         }
                         catch (Exception ex)
@@ -3192,6 +3200,7 @@ namespace EdiabasLib
                                     !machinePublicChain[0].Certificate.GetPublicKey().Equals(asymmetricKeyPar))
                                 {
                                     machineAsymmetricKeyPar = null;
+                                    machineKeyPair = null;
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Load public cert different: {0}", machinePublicFile);
                                 }
                             }
@@ -3341,6 +3350,7 @@ namespace EdiabasLib
 #endif
                 sharedData.S29Certs = certList;
                 sharedData.S29CertFiles = certKeyList;
+                sharedData.MachineKeyPair = machineKeyPair;
                 return true;
             }
             catch (Exception ex)
