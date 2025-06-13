@@ -306,7 +306,7 @@ namespace CarSimulator
         private const int DoIpDiagPort = 13400;
         private const int DoIpProtoVer = EdInterfaceEnet.DoIpProtoVer;
         private const int SrvLocPort = 427;
-        // Make sure that on the OBD interface side of the ICOM only the IP4 protocol ist enabled in the interface!
+        // Make sure that on the OBD interface side of the ICOM only the IP4 protocol is enabled in the interface settings!
         // Otherwise, there is packet loss in the ICOM internally!
         // Use PC connection via WiFi or 100Mbit network, this also reduces the traffic.
         private const int MaxBufferLength = 0x10000;
