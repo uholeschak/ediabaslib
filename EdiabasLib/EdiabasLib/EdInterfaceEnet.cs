@@ -1408,7 +1408,7 @@ namespace EdiabasLib
 
                             if (!string.IsNullOrEmpty(DoIpS29JsonRequestPath))
                             {
-                                if (!CreateRequestJson(DoIpS29JsonRequestPath, SharedDataActive.EnetHostConn.Vin, DoIpS29Path))
+                                if (!CreateRequestJson(DoIpS29JsonRequestPath, DoIpS29Path, SharedDataActive.EnetHostConn.Vin))
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Generate JSON request files failed: {0}", DoIpS29JsonRequestPath);
                                     //continue;
@@ -3350,17 +3350,11 @@ namespace EdiabasLib
             }
         }
 
-        protected bool CreateRequestJson(string jsonRequestPath, string vin, string certPath)
+        protected bool CreateRequestJson(string jsonRequestPath, string certPath, string vin)
         {
             try
             {
-                if (string.IsNullOrEmpty(jsonRequestPath) || string.IsNullOrEmpty(vin))
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson invalid parameters: jsonRequestPath={0}, vin={1}", jsonRequestPath, vin);
-                    return false;
-                }
-
-                if (!Directory.Exists(jsonRequestPath))
+                if (string.IsNullOrEmpty(jsonRequestPath) || !Directory.Exists(jsonRequestPath))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson path not found: {0}", jsonRequestPath);
                     return false;
@@ -3369,6 +3363,12 @@ namespace EdiabasLib
                 if (string.IsNullOrEmpty(certPath) || !Directory.Exists(certPath))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson cert path not found: {0}", certPath);
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(vin))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson VIN is empty");
                     return false;
                 }
 
