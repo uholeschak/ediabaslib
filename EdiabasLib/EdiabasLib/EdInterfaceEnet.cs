@@ -1423,7 +1423,7 @@ namespace EdiabasLib
 
                             if (string.IsNullOrEmpty(DoIpS29SelectCert))
                             {
-                                if (!RequestExternalCert(SharedDataActive))
+                                if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath))
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request failed");
                                     continue;
@@ -3456,18 +3456,36 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs exception: {0}", EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
 
-        protected bool RequestExternalCert(SharedData sharedData)
+        protected bool ParseResponseJson(SharedData sharedData, string jsonResponseFile)
         {
             try
             {
-                if (!CreateRequestJson(sharedData, DoIpS29JsonRequestPath))
+                if (sharedData == null)
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RequestExternalCert CreateRequestJson failed: {0}", DoIpS29JsonRequestPath);
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(jsonResponseFile) || !File.Exists(jsonResponseFile))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson file not found: {0}", jsonResponseFile);
+                    return false;
+                }
+
+                Sec4DiagResponseData responseData;
+                using (StreamReader file = File.OpenText(jsonResponseFile))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    responseData = serializer.Deserialize(file, typeof(Sec4DiagResponseData)) as Sec4DiagResponseData;
+                }
+
+                if (responseData == null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson file invalid: {0}", jsonResponseFile);
                     return false;
                 }
 
@@ -3475,7 +3493,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs exception: {0}", EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
