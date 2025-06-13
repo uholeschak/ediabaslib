@@ -1406,15 +1406,15 @@ namespace EdiabasLib
                             if (!CreateS29Certs(SharedDataActive, DoIpS29Path, DoIpS29SelectCert))
                             {
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}, select cert: {1}", DoIpS29Path, DoIpS29SelectCert);
-                                //continue;
+                                continue;
                             }
 
-                            if (!string.IsNullOrEmpty(DoIpS29JsonRequestPath))
+                            if (string.IsNullOrEmpty(DoIpS29SelectCert))
                             {
-                                if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath))
+                                if (!RequestExternalCert(SharedDataActive))
                                 {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Generate JSON request files failed: {0}", DoIpS29JsonRequestPath);
-                                    //continue;
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request failed");
+                                    continue;
                                 }
                             }
                         }
@@ -3141,6 +3141,11 @@ namespace EdiabasLib
                 }
 
                 string machineName = Environment.MachineName;
+                if (string.IsNullOrEmpty(machineName))
+                {
+                    machineName = "LocalMachine";
+                }
+
                 string machinePrivateFile = Path.Combine(certPath, machineName + ".p12");
                 string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
 
@@ -3433,6 +3438,25 @@ namespace EdiabasLib
                     {
                         serializer.Serialize(writer, requestData);
                     }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return false;
+            }
+        }
+
+        protected bool RequestExternalCert(SharedData sharedData)
+        {
+            try
+            {
+                if (!CreateRequestJson(sharedData, DoIpS29JsonRequestPath))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RequestExternalCert CreateRequestJson failed: {0}", DoIpS29JsonRequestPath);
+                    return false;
                 }
 
                 return true;
