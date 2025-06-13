@@ -647,6 +647,11 @@ namespace EdiabasLib
             }
         }
 
+        public static X509Certificate CreateCertificateFromBase64(string base64Certificate)
+        {
+            return new X509CertificateParser().ReadCertificate(new MemoryStream(Convert.FromBase64String(base64Certificate)));
+        }
+
         public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, DerObjectIdentifier paramSet, string password = null)
         {
             try
