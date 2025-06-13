@@ -3504,6 +3504,12 @@ namespace EdiabasLib
                 StringBuilder stringBuilder = new StringBuilder();
                 foreach (Org.BouncyCastle.X509.X509Certificate fileCert in fileCertChain)
                 {
+                    if (!fileCert.IsValidNow)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson certificate not valid: {0}", fileCert.SubjectDN);
+                        return false;
+                    }
+
                     stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
                     stringBuilder.AppendLine(Convert.ToBase64String(fileCert.GetEncoded()));
                     stringBuilder.AppendLine("-----END CERTIFICATE-----");
