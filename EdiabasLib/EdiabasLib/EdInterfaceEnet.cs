@@ -20,6 +20,7 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using Formatting = Newtonsoft.Json.Formatting;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -3397,6 +3398,9 @@ namespace EdiabasLib
                 }
 
                 JsonSerializer serializer = new JsonSerializer();
+                serializer.NullValueHandling = NullValueHandling.Ignore;
+                serializer.Formatting = Formatting.Indented;
+
                 Sec4DiagRequestData requestData;
                 using (StreamReader file = File.OpenText(templateJson))
                 {
