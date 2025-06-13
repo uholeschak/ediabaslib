@@ -429,6 +429,18 @@ namespace EdiabasLib
             public ProofOfPossession ProofOfPossession { get; set; }
         }
 
+        public class Sec4DiagResponseData
+        {
+            [JsonProperty("vin17")]
+            public string Vin17 { get; set; }
+
+            [JsonProperty("certificate")]
+            public string Certificate { get; set; }
+
+            [JsonProperty("certificateChain")]
+            public string[] CertificateChain { get; set; }
+        }
+
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
         protected delegate void ExecuteNetworkDelegate();
         public delegate void IcomAllocateDeviceDelegate(bool success, int statusCode = -1);
