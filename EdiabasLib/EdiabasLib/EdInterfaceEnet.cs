@@ -508,6 +508,8 @@ namespace EdiabasLib
         protected string DoIpSslSecurityPath = string.Empty;
         protected string DoIpS29Path = string.Empty;
         protected string DoIpS29SelectCert = string.Empty;
+        protected string DoIpS29JsonRequestPath = string.Empty;
+        protected string DoIpS29JsonResponsePath = string.Empty;
         protected int ConnectTimeout = 5000;
         protected int BatteryVoltageValue = 12000;
         protected int IgnitionVoltageValue = 12000;
@@ -733,6 +735,18 @@ namespace EdiabasLib
                 if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpS29SelectCert = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("JSONRequestPath");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    DoIpS29JsonRequestPath = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("JSONResponsePath");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    DoIpS29JsonResponsePath = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetTimeoutConnect");
@@ -1390,6 +1404,15 @@ namespace EdiabasLib
                             {
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}, select cert: {1}", DoIpS29Path, DoIpS29SelectCert);
                                 //continue;
+                            }
+
+                            if (!string.IsNullOrEmpty(DoIpS29JsonRequestPath))
+                            {
+                                if (!CreateRequestJson(DoIpS29JsonRequestPath, SharedDataActive.EnetHostConn.Vin, DoIpS29Path))
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Generate JSON request files failed: {0}", DoIpS29JsonRequestPath);
+                                    //continue;
+                                }
                             }
                         }
                     }
@@ -3327,13 +3350,48 @@ namespace EdiabasLib
             }
         }
 
-        protected bool CreateRequestJson(string jsonRequestPath, string vin, string machinePublicFile)
+        protected bool CreateRequestJson(string jsonRequestPath, string vin, string certPath)
         {
             try
             {
                 if (string.IsNullOrEmpty(jsonRequestPath) || string.IsNullOrEmpty(vin))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson invalid parameters: jsonRequestPath={0}, vin={1}", jsonRequestPath, vin);
+                    return false;
+                }
+
+                if (!Directory.Exists(jsonRequestPath))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson path not found: {0}", jsonRequestPath);
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(certPath) || !Directory.Exists(certPath))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson cert path not found: {0}", certPath);
+                    return false;
+                }
+
+                string templateJson = Path.Combine(jsonRequestPath, "template.json");
+                if (!File.Exists(templateJson))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file not found: {0}", templateJson);
+                    return false;
+                }
+
+                string machineName = Environment.MachineName;
+                string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
+
+                JsonSerializer serializer = new JsonSerializer();
+                Sec4DiagRequestData requestData;
+                using (StreamReader file = File.OpenText(templateJson))
+                {
+                    requestData = serializer.Deserialize(file, typeof(Sec4DiagRequestData)) as Sec4DiagRequestData;
+                }
+
+                if (requestData == null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file invalid: {0}", templateJson);
                     return false;
                 }
 
@@ -3348,26 +3406,6 @@ namespace EdiabasLib
                 if (string.IsNullOrEmpty(publicKey))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson Convert public key failed: {0}", machinePublicFile);
-                    return false;
-                }
-
-                string templateJson = Path.Combine(jsonRequestPath, "template.json");
-                if (!File.Exists(templateJson))
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file not found: {0}", templateJson);
-                    return false;
-                }
-
-                JsonSerializer serializer = new JsonSerializer();
-                Sec4DiagRequestData requestData;
-                using (StreamReader file = File.OpenText(templateJson))
-                {
-                    requestData = serializer.Deserialize(file, typeof(Sec4DiagRequestData)) as Sec4DiagRequestData;
-                }
-
-                if (requestData == null)
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file invalid: {0}", templateJson);
                     return false;
                 }
 
