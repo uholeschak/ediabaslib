@@ -20,7 +20,6 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using Formatting = Newtonsoft.Json.Formatting;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -1423,7 +1422,7 @@ namespace EdiabasLib
 
                             if (string.IsNullOrEmpty(DoIpS29SelectCert))
                             {
-                                if (!RequestExternalCert(SharedDataActive))
+                                if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath))
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request failed");
                                     continue;
@@ -2922,7 +2921,7 @@ namespace EdiabasLib
                     if (issuers != null && issuers.Length > 0 && certificates != null && certificates.Count > 0)
                     {
                         // Use the first certificate that is from an acceptable issuer.
-                        foreach (X509Certificate cert in certificates)
+                        foreach (System.Security.Cryptography.X509Certificates.X509Certificate cert in certificates)
                         {
                             string issuer = cert.Issuer;
                             if (Array.IndexOf(issuers, issuer) != -1)
@@ -3416,7 +3415,7 @@ namespace EdiabasLib
 
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.NullValueHandling = NullValueHandling.Ignore;
-                serializer.Formatting = Formatting.Indented;
+                serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
                 serializer.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
 
                 Sec4DiagRequestData requestData;
@@ -3456,26 +3455,68 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs exception: {0}", EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
 
-        protected bool RequestExternalCert(SharedData sharedData)
+        protected bool StoreResponseJsonCert(SharedData sharedData, string jsonResponseFile, string outputCertFile)
         {
             try
             {
-                if (!CreateRequestJson(sharedData, DoIpS29JsonRequestPath))
+                if (sharedData == null)
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RequestExternalCert CreateRequestJson failed: {0}", DoIpS29JsonRequestPath);
                     return false;
                 }
+
+                if (string.IsNullOrEmpty(jsonResponseFile) || !File.Exists(jsonResponseFile))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson file not found: {0}", jsonResponseFile);
+                    return false;
+                }
+
+                Sec4DiagResponseData responseData;
+                using (StreamReader file = File.OpenText(jsonResponseFile))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    responseData = serializer.Deserialize(file, typeof(Sec4DiagResponseData)) as Sec4DiagResponseData;
+                }
+
+                if (responseData == null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson file invalid: {0}", jsonResponseFile);
+                    return false;
+                }
+
+                if (responseData.Certificate == null || responseData.CertificateChain == null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson no certificates found in file: {0}", jsonResponseFile);
+                    return false;
+                }
+
+                List<Org.BouncyCastle.X509.X509Certificate> fileCertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                fileCertChain.Add(EdBcTlsUtilities.CreateCertificateFromBase64(responseData.Certificate));
+                foreach (string chainCert in responseData.CertificateChain)
+                {
+                    fileCertChain.Add(EdBcTlsUtilities.CreateCertificateFromBase64(chainCert));
+                }
+
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (Org.BouncyCastle.X509.X509Certificate fileCert in fileCertChain)
+                {
+                    stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
+                    stringBuilder.AppendLine(Convert.ToBase64String(fileCert.GetEncoded()));
+                    stringBuilder.AppendLine("-----END CERTIFICATE-----");
+                }
+
+                string certContent = stringBuilder.ToString();
+                File.WriteAllText(outputCertFile, certContent);
 
                 return true;
             }
             catch (Exception ex)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs exception: {0}", EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ParseResponseJson exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
