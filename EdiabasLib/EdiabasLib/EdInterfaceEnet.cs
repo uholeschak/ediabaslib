@@ -1410,7 +1410,7 @@ namespace EdiabasLib
 
                             if (!string.IsNullOrEmpty(DoIpS29JsonRequestPath))
                             {
-                                if (!CreateRequestJson(DoIpS29JsonRequestPath, DoIpS29Path, SharedDataActive.EnetHostConn.Vin))
+                                if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath))
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Generate JSON request files failed: {0}", DoIpS29JsonRequestPath);
                                     //continue;
@@ -3360,25 +3360,32 @@ namespace EdiabasLib
             }
         }
 
-        protected bool CreateRequestJson(string jsonRequestPath, string certPath, string vin)
+        protected bool CreateRequestJson(SharedData sharedData, string jsonRequestPath)
         {
             try
             {
+                if (sharedData == null)
+                {
+                    return false;
+                }
+
                 if (string.IsNullOrEmpty(jsonRequestPath) || !Directory.Exists(jsonRequestPath))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson path not found: {0}", jsonRequestPath);
                     return false;
                 }
 
-                if (string.IsNullOrEmpty(certPath) || !Directory.Exists(certPath))
+                string vin = sharedData.EnetHostConn?.Vin;
+                if (string.IsNullOrWhiteSpace(vin))
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson cert path not found: {0}", certPath);
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson VIN is empty");
                     return false;
                 }
 
-                if (string.IsNullOrEmpty(vin))
+
+                if (sharedData.MachineKeyPair == null || sharedData.MachineKeyPair.Public == null)
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson VIN is empty");
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson machine key pair not available");
                     return false;
                 }
 
@@ -3388,9 +3395,6 @@ namespace EdiabasLib
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file not found: {0}", templateJson);
                     return false;
                 }
-
-                string machineName = Environment.MachineName;
-                string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
 
                 JsonSerializer serializer = new JsonSerializer();
                 Sec4DiagRequestData requestData;
@@ -3405,17 +3409,10 @@ namespace EdiabasLib
                     return false;
                 }
 
-                AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
-                if (asymmetricKeyPar == null)
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson Load public cert failed: {0}", machinePublicFile);
-                    return false;
-                }
-
-                string publicKey = EdBcTlsUtilities.ConvertPublicKeyToPEM(asymmetricKeyPar);
+                string publicKey = EdBcTlsUtilities.ConvertPublicKeyToPEM(sharedData.MachineKeyPair.Public);
                 if (string.IsNullOrEmpty(publicKey))
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson Convert public key failed: {0}", machinePublicFile);
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson Convert public key failed");
                     return false;
                 }
 
