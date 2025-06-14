@@ -1443,6 +1443,11 @@ namespace EdiabasLib
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request failed");
                                     continue;
                                 }
+
+                                if (StoreResponseJsonCerts(SharedDataActive, DoIpS29JsonResponsePath, DoIpS29Path))
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 response certificate stored in: {0}", DoIpS29JsonResponsePath);
+                                }
                             }
                         }
                     }
@@ -3500,26 +3505,19 @@ namespace EdiabasLib
             }
         }
 
-        protected bool StoreResponseJsonCert(SharedData sharedData, string jsonResponseFile, string outputCertFile)
+        protected string StoreResponseJsonCert(SharedData sharedData, string jsonResponseFile, string certPath)
         {
             try
             {
                 if (sharedData == null)
                 {
-                    return false;
-                }
-
-                string vin = sharedData.EnetHostConn?.Vin;
-                if (string.IsNullOrWhiteSpace(vin))
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert VIN is empty");
-                    return false;
+                    return null;
                 }
 
                 if (string.IsNullOrEmpty(jsonResponseFile) || !File.Exists(jsonResponseFile))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert file not found: {0}", jsonResponseFile);
-                    return false;
+                    return null;
                 }
 
                 Sec4DiagResponseData responseData;
@@ -3532,25 +3530,19 @@ namespace EdiabasLib
                 if (responseData == null)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert file invalid: {0}", jsonResponseFile);
-                    return false;
+                    return null;
                 }
 
                 if (responseData.Certificate == null || responseData.CertificateChain == null)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert no certificates found in file: {0}", jsonResponseFile);
-                    return false;
+                    return null;
                 }
 
                 if (string.IsNullOrEmpty(responseData.Vin17))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert no VIN found in file: {0}", jsonResponseFile);
-                    return false;
-                }
-
-                if (string.Compare(responseData.Vin17.Trim(), vin.Trim(), StringComparison.OrdinalIgnoreCase) != 0)
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert VIN mismatch: {0} != {1}", responseData.Vin17, vin);
-                    return false;
+                    return null;
                 }
 
                 List<Org.BouncyCastle.X509.X509Certificate> fileCertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
@@ -3566,7 +3558,7 @@ namespace EdiabasLib
                     if (!fileCert.IsValidNow)
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert certificate not valid: {0}", fileCert.SubjectDN);
-                        return false;
+                        return null;
                     }
 
                     stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
@@ -3574,14 +3566,45 @@ namespace EdiabasLib
                     stringBuilder.AppendLine("-----END CERTIFICATE-----");
                 }
 
+                string vin17 = responseData.Vin17.ToUpperInvariant().Trim();
+                string outputCertFile = Path.Combine(certPath, "S29-" + vin17 + ".pem");
                 string certContent = stringBuilder.ToString();
                 File.WriteAllText(outputCertFile, certContent);
 
-                return true;
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert stored certificate: {0}", outputCertFile);
+                return vin17;
             }
             catch (Exception ex)
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return null;
+            }
+        }
+
+        protected bool StoreResponseJsonCerts(SharedData sharedData, string jsonResponsePath, string certPath)
+        {
+            try
+            {
+                bool foundCerts = false;
+                string vin = sharedData.EnetHostConn.Vin;
+                IEnumerable<string> certFiles = Directory.EnumerateFiles(jsonResponsePath, "*.pem", SearchOption.TopDirectoryOnly);
+                foreach (string certFile in certFiles)
+                {
+                    string vin17 = StoreResponseJsonCert(sharedData, certFile, certPath);
+                    if (!string.IsNullOrEmpty(vin17))
+                    {
+                        if (string.Compare(vin, vin17, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            foundCerts = true;
+                        }
+                    }
+                }
+
+                return foundCerts;
+            }
+            catch (Exception ex)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCerts exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
