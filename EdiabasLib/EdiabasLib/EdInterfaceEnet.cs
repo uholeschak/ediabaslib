@@ -21,7 +21,6 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
-using static EdiabasLib.EdInterfaceEnet;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
