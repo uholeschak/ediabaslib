@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Tls;
 using System;
@@ -20,6 +21,7 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using static EdiabasLib.EdInterfaceEnet;
 
 // ReSharper disable InlineOutVariableDeclaration
 // ReSharper disable ConvertPropertyToExpressionBody
@@ -3399,7 +3401,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                if (sharedData.MachineKeyPair == null || sharedData.MachineKeyPair.Public == null)
+                if (sharedData.MachineKeyPair == null || sharedData.MachineKeyPair.Public == null || sharedData.MachineKeyPair.Private == null)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson machine key pair not available");
                     return false;
@@ -3436,9 +3438,24 @@ namespace EdiabasLib
                     return false;
                 }
 
+                ECPrivateKeyParameters privateKey = sharedData.MachineKeyPair.Private as ECPrivateKeyParameters;
+                if (privateKey == null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson Private key is not ECPrivateKeyParameters");
+                    return false;
+                }
+
                 string vin17 = vin.ToUpperInvariant().Trim();
                 requestData.Vin17 = vin17;
                 requestData.PublicKey = publicKey;
+                requestData.ProofOfPossession = new ProofOfPossession
+                {
+                    SignatureType = "SHA512withECDSA"
+                };
+
+                string signMessage = vin17 + requestData.CertReqProfile;
+                string signature = EdBcTlsUtilities.SignData(signMessage, privateKey, requestData.ProofOfPossession.SignatureType);
+                requestData.ProofOfPossession.Signature = signature;
 
                 string requestFileName = "RequestContainer_service-29-" + requestData.CertReqProfile + "-" + vin17 + ".json";
                 string requestJson = Path.Combine(jsonRequestPath, requestFileName);

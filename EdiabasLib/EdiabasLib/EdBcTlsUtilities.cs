@@ -652,6 +652,15 @@ namespace EdiabasLib
             return new X509CertificateParser().ReadCertificate(new MemoryStream(Convert.FromBase64String(base64Certificate)));
         }
 
+        public static string SignData(string message, ECPrivateKeyParameters privateKey, string algorithm = "SHA512withECDSA")
+        {
+            ISigner signer = SignerUtilities.GetSigner(algorithm);
+            signer.Init(true, privateKey);
+            byte[] bytes = Encoding.UTF8.GetBytes(message);
+            signer.BlockUpdate(bytes, 0, bytes.Length);
+            return Convert.ToBase64String(signer.GenerateSignature());
+        }
+
         public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, DerObjectIdentifier paramSet, string password = null)
         {
             try
