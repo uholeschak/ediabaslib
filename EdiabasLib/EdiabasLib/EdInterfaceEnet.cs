@@ -14,6 +14,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Runtime.Serialization;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -403,6 +404,20 @@ namespace EdiabasLib
             public bool ReconnectRequired;
             public bool IcomAllocateActive;
             public DoIpRoutingState DoIpRoutingState;
+        }
+
+        public class CertReqProfile
+        {
+            [DataContract]
+            public enum EnumType
+            {
+                [EnumMember]
+                crp_subCA_4ISTA,
+                [EnumMember]
+                crp_subCA_4ISTA_TISonly,
+                [EnumMember]
+                crp_M2M_3dParty_4_CUST_ControlOnly
+            }
         }
 
         public class ProofOfPossession
@@ -1423,7 +1438,7 @@ namespace EdiabasLib
 
                             if (string.IsNullOrEmpty(DoIpS29SelectCert))
                             {
-                                if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath))
+                                if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath, CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly))
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request failed");
                                     continue;
@@ -3378,7 +3393,7 @@ namespace EdiabasLib
             }
         }
 
-        protected bool CreateRequestJson(SharedData sharedData, string jsonRequestPath)
+        protected bool CreateRequestJson(SharedData sharedData, string jsonRequestPath, CertReqProfile.EnumType? certReqProfileType = null)
         {
             try
             {
@@ -3406,28 +3421,38 @@ namespace EdiabasLib
                     return false;
                 }
 
-                string templateJson = Path.Combine(jsonRequestPath, "template.json");
-                if (!File.Exists(templateJson))
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file not found: {0}", templateJson);
-                    return false;
-                }
-
                 JsonSerializer serializer = new JsonSerializer();
                 serializer.NullValueHandling = NullValueHandling.Ignore;
                 serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
                 serializer.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
 
                 Sec4DiagRequestData requestData;
-                using (StreamReader file = File.OpenText(templateJson))
+                if (certReqProfileType == null)
                 {
-                    requestData = serializer.Deserialize(file, typeof(Sec4DiagRequestData)) as Sec4DiagRequestData;
-                }
+                    string templateJson = Path.Combine(jsonRequestPath, "template.json");
+                    if (!File.Exists(templateJson))
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file not found: {0}", templateJson);
+                        return false;
+                    }
 
-                if (requestData == null)
+                    using (StreamReader file = File.OpenText(templateJson))
+                    {
+                        requestData = serializer.Deserialize(file, typeof(Sec4DiagRequestData)) as Sec4DiagRequestData;
+                    }
+
+                    if (requestData == null)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file invalid: {0}", templateJson);
+                        return false;
+                    }
+                }
+                else
                 {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson template file invalid: {0}", templateJson);
-                    return false;
+                    requestData = new Sec4DiagRequestData
+                    {
+                        CertReqProfile = certReqProfileType.Value.ToString()
+                    };
                 }
 
                 string publicKey = EdBcTlsUtilities.ConvertPublicKeyToPEM(sharedData.MachineKeyPair.Public);
