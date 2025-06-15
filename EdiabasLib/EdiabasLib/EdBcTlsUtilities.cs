@@ -78,33 +78,42 @@ namespace EdiabasLib
 
         public static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource, string password = null)
         {
-            PemObject pem = LoadPemResource(resource);
-            if (pem.Type.Equals("PRIVATE KEY"))
+            List<PemObject> pemObjects = LoadPemResources(resource);
+            foreach (PemObject pem in pemObjects)
             {
-                return PrivateKeyFactory.CreateKey(pem.Content);
-            }
-            if (pem.Type.Equals("ENCRYPTED PRIVATE KEY"))
-            {
-                if (string.IsNullOrEmpty(password))
+                if (pem.Type.Equals("PRIVATE KEY"))
                 {
-                    throw new ArgumentException("password is required for encrypted private key", "password");
+                    return PrivateKeyFactory.CreateKey(pem.Content);
+                }
+                if (pem.Type.Equals("ENCRYPTED PRIVATE KEY"))
+                {
+                    if (string.IsNullOrEmpty(password))
+                    {
+                        throw new ArgumentException("password is required for encrypted private key", "password");
+                    }
+
+                    return PrivateKeyFactory.DecryptKey(password.ToCharArray(), EncryptedPrivateKeyInfo.GetInstance(pem.Content));
+                }
+                if (pem.Type.Equals("RSA PRIVATE KEY"))
+                {
+                    RsaPrivateKeyStructure rsa = RsaPrivateKeyStructure.GetInstance(pem.Content);
+                    return new RsaPrivateCrtKeyParameters(rsa.Modulus, rsa.PublicExponent,
+                        rsa.PrivateExponent, rsa.Prime1, rsa.Prime2, rsa.Exponent1,
+                        rsa.Exponent2, rsa.Coefficient);
+                }
+                if (pem.Type.Equals("EC PRIVATE KEY"))
+                {
+                    ECPrivateKeyStructure pKey = ECPrivateKeyStructure.GetInstance(pem.Content);
+                    AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, pKey.Parameters);
+                    PrivateKeyInfo privInfo = new PrivateKeyInfo(algId, pKey);
+                    return PrivateKeyFactory.CreateKey(privInfo);
                 }
 
-                return PrivateKeyFactory.DecryptKey(password.ToCharArray(), EncryptedPrivateKeyInfo.GetInstance(pem.Content));
-            }
-            if (pem.Type.Equals("RSA PRIVATE KEY"))
-            {
-                RsaPrivateKeyStructure rsa = RsaPrivateKeyStructure.GetInstance(pem.Content);
-                return new RsaPrivateCrtKeyParameters(rsa.Modulus, rsa.PublicExponent,
-                    rsa.PrivateExponent, rsa.Prime1, rsa.Prime2, rsa.Exponent1,
-                    rsa.Exponent2, rsa.Coefficient);
-            }
-            if (pem.Type.Equals("EC PRIVATE KEY"))
-            {
-                ECPrivateKeyStructure pKey = ECPrivateKeyStructure.GetInstance(pem.Content);
-                AlgorithmIdentifier algId = new AlgorithmIdentifier(X9ObjectIdentifiers.IdECPublicKey, pKey.Parameters);
-                PrivateKeyInfo privInfo = new PrivateKeyInfo(algId, pKey);
-                return PrivateKeyFactory.CreateKey(privInfo);
+                if (pem.Type.Equals("EC PARAMETERS"))
+                {
+                    continue;
+                }
+                break;
             }
             throw new ArgumentException("doesn't specify a valid private key", "resource");
         }
