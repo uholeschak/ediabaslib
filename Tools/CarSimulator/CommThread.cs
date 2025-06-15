@@ -1014,6 +1014,7 @@ namespace CarSimulator
                     {
                         try
                         {
+                            // RSA
                             // generate CA:
                             // openssl genrsa -out rootCA.key 4096
                             // openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 36500 -out rootCA.crt
@@ -1037,6 +1038,12 @@ namespace CarSimulator
                             // cat client.crt rootCA.crt > client.pem
                             // optional: openssl pkcs12 -export -out client.pfx -inkey client.key -in client.pem -passout pass:
                             // copy files to EDIABAS.ini [SSL] S29Path property location.
+
+                            // ECDSA
+                            // generate CA:
+                            // openssl ecparam -out rootCA_EC.key -name secp384r1 -genkey
+                            // openssl req -x509 -new -nodes -key rootCA_EC.key -sha512 -days 36500 -outform pem -out rootCA_EC.crt
+                            // openssl x509 -inform pem -noout -text -in rootCA_EC.crt
 
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
                             string publicCert = Path.ChangeExtension(ServerCertFile, ".pem");
