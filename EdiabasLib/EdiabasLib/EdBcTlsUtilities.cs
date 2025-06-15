@@ -346,7 +346,8 @@ namespace EdiabasLib
             for (int i = chain.Length - 1; i >= 0; i--)
             {
                 TlsCertificate tlsCertificate = chain[i];
-                X509Name issuer = BcTlsCertificate.Convert(bcTlsCrypto, tlsCertificate)?.X509CertificateStructure?.Issuer;
+                X509CertificateStructure tlsCertificateStructure = BcTlsCertificate.Convert(bcTlsCrypto, tlsCertificate)?.X509CertificateStructure;
+                X509Name issuer = tlsCertificateStructure?.Issuer;
                 if (issuer == null)
                 {
                     continue;

@@ -4,14 +4,10 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
-using Org.BouncyCastle.Asn1.Sec;
-using Org.BouncyCastle.Asn1.X9;
-using Org.BouncyCastle.Asn1.Pkcs;
 
 namespace EdiabasLib
 {
@@ -69,6 +65,7 @@ namespace EdiabasLib
 
         private readonly EdiabasNet m_ediabasNet;
         private readonly List<CertInfo> m_privatePublicCertList;
+        private readonly IList<X509CertificateStructure> m_caCerts = null;
         private readonly IList<X509Name> m_certificateAuthorities = null;
 
         public int HandshakeTimeout { get; set; } = 0;
@@ -78,6 +75,7 @@ namespace EdiabasLib
             m_ediabasNet = ediabasNet;
             m_privatePublicCertList = certInfoList;
 
+            m_caCerts = new List<X509CertificateStructure>();
             m_certificateAuthorities = new List<X509Name>();
             if (trustedCaList != null)
             {
@@ -85,7 +83,14 @@ namespace EdiabasLib
                 {
                     if (File.Exists(trustedCa))
                     {
-                        X509Name trustedIssuer = EdBcTlsUtilities.LoadBcCertificateResource(trustedCa)?.Subject;
+                        X509CertificateStructure caCert = EdBcTlsUtilities.LoadBcCertificateResource(trustedCa);
+                        if (caCert == null)
+                        {
+                            continue;
+                        }
+
+                        m_caCerts.Add(caCert);
+                        X509Name trustedIssuer = caCert.Subject;
                         if (trustedIssuer != null)
                         {
                             m_certificateAuthorities.Add(trustedIssuer);
