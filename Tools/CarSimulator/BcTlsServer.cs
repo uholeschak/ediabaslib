@@ -1,19 +1,18 @@
-﻿using Org.BouncyCastle.Asn1.X509;
+﻿using EdiabasLib;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Tls.Crypto.Impl.BC;
-using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Tls.Crypto;
+using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using Org.BouncyCastle.Utilities.Encoders;
+using Org.BouncyCastle.X509;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
-using System;
 using System.Linq;
-using Org.BouncyCastle.Crypto;
-using System.Reflection;
-using EdiabasLib;
-using Org.BouncyCastle.X509;
 
 namespace CarSimulator;
 
@@ -30,6 +29,7 @@ public class BcTlsServer : DefaultTlsServer
     private readonly string m_privateCert = null;
     private readonly string m_publicCert = null;
     private readonly string m_certPassword = null;
+    private AsymmetricKeyParameter m_privateKeyResource;
     private readonly string[] m_certResources;
     private readonly IList<X509Name> m_certificateAuthorities = null;
     private IList<X509Name> m_clientTrustedIssuers = null;
@@ -78,8 +78,8 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("No trusted CA files found", certBaseFile);
         }
 
-        AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(m_privateCert, m_certPassword);
-        if (privateKeyResource == null)
+        m_privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(m_privateCert, m_certPassword);
+        if (m_privateKeyResource == null)
         {
             throw new FileNotFoundException("Private key file not valid", m_privateCert);
         }
@@ -116,7 +116,22 @@ public class BcTlsServer : DefaultTlsServer
 
         if (TlsUtilities.IsTlsV13(m_context))
         {
-            return GetRsaSignerCredentials();
+            if (m_privateKeyResource is RsaPrivateCrtKeyParameters)
+            {
+                return GetRsaSignerCredentials();
+            }
+
+            if (m_privateKeyResource is ECPrivateKeyParameters)
+            {
+                return GetECDsaSignerCredentials();
+            }
+
+            if (m_privateKeyResource is DsaPrivateKeyParameters)
+            {
+                return GetDsaSignerCredentials();
+            }
+
+            throw new TlsFatalAlert(AlertDescription.bad_certificate);
         }
 
         return base.GetCredentials();
