@@ -1019,6 +1019,10 @@ namespace CarSimulator
                             // openssl genrsa -out rootCA.key 4096
                             // openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 36500 -out rootCA.crt
                             // openssl x509 -inform pem -noout -text -in rootCA.crt
+                            // generate hash name:
+                            // openssl x509 -hash -noout -in rootCA.crt
+                            // cp rootCA.crt <hash>.0
+                            // copy files to EDIABAS.ini [SSL] SecurityPath property location.
 
                             // vehicle key:
                             // openssl req -new -nodes -out vin1.csr -newkey rsa:4096 -keyout vin1.key
@@ -1026,10 +1030,6 @@ namespace CarSimulator
                             // openssl x509 -inform pem -noout -text -in vin1.crt
                             // cat vin1.crt rootCA.crt > vin1.pem
                             // optional: openssl pkcs12 -export -out vin1.pfx -inkey vin1.key -in vin1.pem -passout pass:
-                            // generate hash name:
-                            // openssl x509 -hash -noout -in rootCA.crt
-                            // cp rootCA.crt <hash>.0
-                            // copy files to EDIABAS.ini [SSL] SecurityPath property location.
 
                             // client key:
                             // openssl req -new -nodes -out client.csr -newkey rsa:4096 -keyout client.key
@@ -1044,6 +1044,10 @@ namespace CarSimulator
                             // openssl ecparam -out rootCA_EC.key -name secp384r1 -genkey
                             // openssl req -x509 -new -nodes -key rootCA_EC.key -sha512 -days 36500 -outform pem -out rootCA_EC.crt
                             // openssl x509 -inform pem -noout -text -in rootCA_EC.crt
+                            // generate hash name:
+                            // openssl x509 -hash -noout -in rootCA_EC.crt
+                            // cp rootCA_EC.crt <hash>.0
+                            // copy files to EDIABAS.ini [SSL] SecurityPath property location.
 
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
                             string publicCert = Path.ChangeExtension(ServerCertFile, ".pem");
