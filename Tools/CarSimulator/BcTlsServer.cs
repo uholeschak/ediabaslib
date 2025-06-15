@@ -58,7 +58,7 @@ public class BcTlsServer : DefaultTlsServer
                 continue;
             }
 
-            if (certFileName.EndsWith("CA.crt", StringComparison.OrdinalIgnoreCase))
+            if (certFileName.StartsWith("rootCA", StringComparison.OrdinalIgnoreCase))
             {
                 X509Name trustedIssuer = EdBcTlsUtilities.LoadBcCertificateResource(trustedFile)?.Subject;
                 if (trustedIssuer != null)
