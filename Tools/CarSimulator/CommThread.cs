@@ -1014,7 +1014,7 @@ namespace CarSimulator
                     {
                         try
                         {
-                            // RSA
+                            // RSA (not working with EDIABAS)
                             // generate CA:
                             // openssl genrsa -out rootCA.key 4096
                             // openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 36500 -out rootCA.crt
@@ -1039,7 +1039,7 @@ namespace CarSimulator
                             // optional: openssl pkcs12 -export -out client.pfx -inkey client.key -in client.pem -passout pass:
                             // copy files to EDIABAS.ini [SSL] S29Path property location.
 
-                            // ECDSA
+                            // ECDSA (working with EDIABAS):
                             // generate CA:
                             // openssl ecparam -out rootCA_EC.key -name secp384r1 -genkey
                             // openssl req -x509 -new -nodes -key rootCA_EC.key -sha512 -days 36500 -outform pem -out rootCA_EC.crt -subj '//DUMMY=/CN=Sec4Diag-Root-CA-2025/ST=Production/OU=Sec4Diag-PKI-Root-CA/O=BMW Group/C=DE' -set_serial 1000
