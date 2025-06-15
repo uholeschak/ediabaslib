@@ -1042,7 +1042,7 @@ namespace CarSimulator
                             // ECDSA
                             // generate CA:
                             // openssl ecparam -out rootCA_EC.key -name secp384r1 -genkey
-                            // openssl req -x509 -new -nodes -key rootCA_EC.key -sha512 -days 36500 -outform pem -out rootCA_EC.crt  -subj '//DUMMY=/CN=Sec4Diag-Root-CA-2025/ST=Production/OU=Sec4Diag-PKI-Root-CA/O=BMW Group/C=DE'
+                            // openssl req -x509 -new -nodes -key rootCA_EC.key -sha512 -days 36500 -outform pem -out rootCA_EC.crt -subj '//DUMMY=/CN=Sec4Diag-Root-CA-2025/ST=Production/OU=Sec4Diag-PKI-Root-CA/O=BMW Group/C=DE' -set_serial 1000
                             // openssl x509 -inform pem -noout -text -in rootCA_EC.crt
                             // generate hash name:
                             // openssl x509 -hash -noout -in rootCA_EC.crt
