@@ -45,6 +45,7 @@ namespace S29CertGenerator
             {
                 textBoxCaCeyFile.Text = Properties.Settings.Default.CaKeyFile;
                 textBoxJsonRequestFolder.Text = Properties.Settings.Default.JsonRequestFolder;
+                textBoxCertOutputFolder.Text = Properties.Settings.Default.CertOutputFolder;
                 return true;
             }
             catch (Exception)
@@ -59,6 +60,7 @@ namespace S29CertGenerator
             {
                 Properties.Settings.Default.CaKeyFile = textBoxCaCeyFile.Text;
                 Properties.Settings.Default.JsonRequestFolder = textBoxJsonRequestFolder.Text;
+                Properties.Settings.Default.CertOutputFolder = textBoxCertOutputFolder.Text;
                 Properties.Settings.Default.Save();
                 return true;
             }
@@ -115,6 +117,30 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 textBoxJsonRequestFolder.Text = folderBrowserDialog.SelectedPath;
+                UpdateDisplay();
+            }
+        }
+
+        private void buttonSelectCertOutputFolder_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string outputFolder = textBoxCertOutputFolder.Text;
+
+            if (Directory.Exists(outputFolder))
+            {
+                initDir = outputFolder;
+            }
+            else
+            {
+                outputFolder = string.Empty;
+            }
+
+            folderBrowserDialog.InitialDirectory = initDir;
+            folderBrowserDialog.SelectedPath = outputFolder;
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxCertOutputFolder.Text = folderBrowserDialog.SelectedPath;
                 UpdateDisplay();
             }
         }

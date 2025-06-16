@@ -35,6 +35,8 @@
             buttonClose = new System.Windows.Forms.Button();
             buttonSelectJsonRequestFolder = new System.Windows.Forms.Button();
             textBoxJsonRequestFolder = new System.Windows.Forms.TextBox();
+            buttonSelectCertOutputFolder = new System.Windows.Forms.Button();
+            textBoxCertOutputFolder = new System.Windows.Forms.TextBox();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -97,12 +99,33 @@
             textBoxJsonRequestFolder.Size = new System.Drawing.Size(591, 23);
             textBoxJsonRequestFolder.TabIndex = 4;
             // 
+            // buttonSelectCertOutputFolder
+            // 
+            buttonSelectCertOutputFolder.Location = new System.Drawing.Point(12, 70);
+            buttonSelectCertOutputFolder.Name = "buttonSelectCertOutputFolder";
+            buttonSelectCertOutputFolder.Size = new System.Drawing.Size(179, 23);
+            buttonSelectCertOutputFolder.TabIndex = 5;
+            buttonSelectCertOutputFolder.Text = "Select Cert Output Dir";
+            buttonSelectCertOutputFolder.UseVisualStyleBackColor = true;
+            buttonSelectCertOutputFolder.Click += buttonSelectCertOutputFolder_Click;
+            // 
+            // textBoxCertOutputFolder
+            // 
+            textBoxCertOutputFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxCertOutputFolder.Location = new System.Drawing.Point(197, 70);
+            textBoxCertOutputFolder.Name = "textBoxCertOutputFolder";
+            textBoxCertOutputFolder.ReadOnly = true;
+            textBoxCertOutputFolder.Size = new System.Drawing.Size(591, 23);
+            textBoxCertOutputFolder.TabIndex = 6;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(textBoxCertOutputFolder);
+            Controls.Add(buttonSelectCertOutputFolder);
             Controls.Add(textBoxJsonRequestFolder);
             Controls.Add(buttonSelectJsonRequestFolder);
             Controls.Add(buttonClose);
@@ -126,5 +149,7 @@
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.Button buttonSelectJsonRequestFolder;
         private System.Windows.Forms.TextBox textBoxJsonRequestFolder;
+        private System.Windows.Forms.Button buttonSelectCertOutputFolder;
+        private System.Windows.Forms.TextBox textBoxCertOutputFolder;
     }
 }
