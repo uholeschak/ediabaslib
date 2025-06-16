@@ -330,7 +330,7 @@ namespace S29CertGenerator
                 }
 
                 string certContent = stringBuilder.ToString();
-                string outputCertFile = Path.Combine(certOutputFolder, "S29-" + vin17 + ".pem");
+                string outputCertFile = Path.Combine(certOutputFolder, "S29-" + requestData.CertReqProfile + "-"+ vin17 + ".pem");
                 File.WriteAllText(outputCertFile, certContent);
 
                 UpdateStatusText($"Certificate stored: {outputCertFile}", true);
