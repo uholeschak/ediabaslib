@@ -1,10 +1,10 @@
 using EdiabasLib;
-using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace S29CertGenerator
@@ -27,6 +27,7 @@ namespace S29CertGenerator
             Icon = Properties.Resources.AppIcon;
 
             LoadSettings();
+            UpdateStatusText(string.Empty);
             UpdateDisplay();
         }
 
@@ -93,6 +94,42 @@ namespace S29CertGenerator
             {
                 // ignored
             }
+        }
+
+        public void UpdateStatusText(string text, bool appendText = false)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((Action)(() =>
+                {
+                    UpdateStatusText(text, appendText);
+                }));
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            if (appendText)
+            {
+                string lastText = richTextBoxStatus.Text;
+                if (!string.IsNullOrEmpty(lastText))
+                {
+                    sb.Append(lastText);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append("\r\n");
+                }
+                sb.Append(text);
+            }
+
+            richTextBoxStatus.Text = sb.ToString();
+            richTextBoxStatus.SelectionStart = richTextBoxStatus.TextLength;
+            richTextBoxStatus.Update();
+            richTextBoxStatus.ScrollToCaret();
         }
 
         private bool IsSettingValid()
