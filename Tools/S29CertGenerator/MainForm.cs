@@ -118,7 +118,7 @@ namespace S29CertGenerator
                 }
             }
 
-            if (!string.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text) || appendText)
             {
                 if (sb.Length > 0)
                 {
@@ -209,14 +209,16 @@ namespace S29CertGenerator
             }
         }
 
-        private bool ConvertJsonRequestFile(string jsonRequestFile)
+        private bool ConvertJsonRequestFile(string jsonRequestFile, string certOutputFolder)
         {
             try
             {
-                UpdateStatusText($"Converting request file: {jsonRequestFile}", true);
+                string baseJsonFile = Path.GetFileName(jsonRequestFile);
+                UpdateStatusText($"Converting request file: {baseJsonFile}", true);
+
                 if (!File.Exists(jsonRequestFile))
                 {
-                    UpdateStatusText($"Request file does not exist: {jsonRequestFile}", true);
+                    UpdateStatusText($"Request file does not exist: {baseJsonFile}", true);
                     return false;
                 }
 
@@ -229,14 +231,14 @@ namespace S29CertGenerator
 
                 if (requestData == null)
                 {
-                    UpdateStatusText($"Failed to deserialize request file: {jsonRequestFile}", true);
+                    UpdateStatusText($"Failed to deserialize request file: {baseJsonFile}", true);
                     return false;
                 }
 
                 string vin17 = requestData.Vin17;
                 if (string.IsNullOrWhiteSpace(vin17))
                 {
-                    UpdateStatusText($"VIN is empty in request file: {jsonRequestFile}", true);
+                    UpdateStatusText($"VIN is empty in request file: {baseJsonFile}", true);
                     return false;
                 }
 
@@ -244,22 +246,63 @@ namespace S29CertGenerator
                 string publicKey = requestData.PublicKey;
                 if (string.IsNullOrWhiteSpace(publicKey))
                 {
-                    UpdateStatusText($"Public key is empty in request file: {jsonRequestFile}", true);
+                    UpdateStatusText($"Public key is empty in request file: {baseJsonFile}", true);
                     return false;
                 }
 
                 AsymmetricKeyParameter publicKeyParameter = EdBcTlsUtilities.ConvertPemToPublicKey(publicKey);
                 if (publicKeyParameter == null)
                 {
-                    UpdateStatusText($"Failed to convert public key in request file: {jsonRequestFile}", true);
+                    UpdateStatusText($"Failed to convert public key in request file: {baseJsonFile}", true);
                     return false;
+                }
+
+                UpdateStatusText($"Public key converted", true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Convert request file exception: {ex.Message}", true);
+                return false;
+            }
+        }
+
+        protected bool ConvertAllJsonRequestFiles(string jsonRequestFolder, string certOutputFolder)
+        {
+            try
+            {
+                UpdateStatusText(string.Empty);
+
+                if (string.IsNullOrEmpty(jsonRequestFolder) || !Directory.Exists(jsonRequestFolder))
+                {
+                    UpdateStatusText($"Request folder is not existing: {jsonRequestFolder}", true);
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(certOutputFolder) || !Directory.Exists(certOutputFolder))
+                {
+                    UpdateStatusText($"Output folder is not existing: {certOutputFolder}", true);
+                    return false;
+                }
+
+                IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonRequestFolder, "*.json", SearchOption.TopDirectoryOnly);
+                foreach (string jsonFile in jsonFiles)
+                {
+                    string baseFileName = Path.GetFileName(jsonFile);
+                    if (string.Compare(baseFileName, "template.json", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        continue;
+                    }
+
+                    UpdateStatusText(string.Empty, true);
+                    ConvertJsonRequestFile(jsonFile, certOutputFolder);
                 }
 
                 return true;
             }
             catch (Exception ex)
             {
-                UpdateStatusText($"Convert request file exception: {ex.Message}", true);
+                UpdateStatusText($"Convert request files exception: {ex.Message}", true);
                 return false;
             }
         }
@@ -336,7 +379,7 @@ namespace S29CertGenerator
 
         private void buttonExecute_Click(object sender, EventArgs e)
         {
-
+            ConvertAllJsonRequestFiles(textBoxJsonRequestFolder.Text, textBoxCertOutputFolder.Text);
         }
     }
 }
