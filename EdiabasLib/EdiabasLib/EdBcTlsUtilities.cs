@@ -497,30 +497,36 @@ namespace EdiabasLib
             return null;
         }
 
+        public static List<X509CertificateEntry> GetCertificateEntries(List<X509CertificateStructure> certificateStructures)
+        {
+            if (certificateStructures == null || certificateStructures.Count == 0)
+            {
+                return null;
+            }
+
+            List<X509CertificateEntry> certificateEntries = new List<X509CertificateEntry>();
+            foreach (X509CertificateStructure certificateStructure in certificateStructures)
+            {
+                X509Certificate certificate = new X509Certificate(certificateStructure);
+                X509CertificateEntry certificateEntry = new X509CertificateEntry(certificate);
+                certificateEntries.Add(certificateEntry);
+            }
+
+            return certificateEntries;
+        }
+
         public static byte[] CreatePkcs12Data(string certResource, string keyResource, string password = null)
         {
             try
             {
                 Pkcs12Store store = new Pkcs12StoreBuilder().Build();
-                List<X509CertificateStructure> certificateStructures = LoadBcCertificateResources(certResource);
-                if (certificateStructures.Count == 0)
+                List<X509CertificateEntry> certificateEntries = GetCertificateEntries(LoadBcCertificateResources(certResource));
+                if (certificateEntries == null || certificateEntries.Count < 1)
                 {
                     return null;
                 }
 
-                List<X509CertificateEntry> certificateEntries = new List<X509CertificateEntry>();
-                string friendlyName = null;
-                foreach (X509CertificateStructure certificateStructure in certificateStructures)
-                {
-                    X509Certificate certificate = new X509Certificate(certificateStructure);
-                    X509CertificateEntry certificateEntry = new X509CertificateEntry(certificate);
-                    certificateEntries.Add(certificateEntry);
-                    if (friendlyName == null)
-                    {
-                        friendlyName = certificate.SubjectDN.ToString();
-                    }
-                }
-
+                string friendlyName = certificateEntries[0].Certificate?.SubjectDN?.ToString();
                 if (string.IsNullOrEmpty(friendlyName))
                 {
                     return null;
