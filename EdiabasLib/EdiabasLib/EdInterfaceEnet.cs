@@ -14,7 +14,6 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Security;
 using System.Net.Sockets;
-using System.Runtime.Serialization;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -404,56 +403,6 @@ namespace EdiabasLib
             public bool ReconnectRequired;
             public bool IcomAllocateActive;
             public DoIpRoutingState DoIpRoutingState;
-        }
-
-        public class CertReqProfile
-        {
-            [DataContract]
-            public enum EnumType
-            {
-                [EnumMember]
-                crp_subCA_4ISTA,
-                [EnumMember]
-                crp_subCA_4ISTA_TISonly,
-                [EnumMember]
-                crp_M2M_3dParty_4_CUST_ControlOnly
-            }
-        }
-
-        public class ProofOfPossession
-        {
-            [JsonProperty("signatureType")]
-            public string SignatureType { get; set; }
-
-            [JsonProperty("signature")]
-            public string Signature { get; set; }
-        }
-
-        public class Sec4DiagRequestData
-        {
-            [JsonProperty("vin17")]
-            public string Vin17 { get; set; }
-
-            [JsonProperty("certReqProfile")]
-            public string CertReqProfile { get; set; }
-
-            [JsonProperty("publicKey")]
-            public string PublicKey { get; set; }
-
-            [JsonProperty("proofOfPossession")]
-            public ProofOfPossession ProofOfPossession { get; set; }
-        }
-
-        public class Sec4DiagResponseData
-        {
-            [JsonProperty("vin17")]
-            public string Vin17 { get; set; }
-
-            [JsonProperty("certificate")]
-            public string Certificate { get; set; }
-
-            [JsonProperty("certificateChain")]
-            public string[] CertificateChain { get; set; }
         }
 
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
@@ -1438,7 +1387,7 @@ namespace EdiabasLib
 
                             if (string.IsNullOrEmpty(DoIpS29SelectCert))
                             {
-                                if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath, CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly))
+                                if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath, EdSec4Diag.CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly))
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request failed");
                                     continue;
@@ -3398,7 +3347,7 @@ namespace EdiabasLib
             }
         }
 
-        protected bool CreateRequestJson(SharedData sharedData, string jsonRequestPath, CertReqProfile.EnumType? certReqProfileType = null)
+        protected bool CreateRequestJson(SharedData sharedData, string jsonRequestPath, EdSec4Diag.CertReqProfile.EnumType? certReqProfileType = null)
         {
             try
             {
@@ -3431,7 +3380,7 @@ namespace EdiabasLib
                 serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
                 serializer.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
 
-                Sec4DiagRequestData requestData;
+                EdSec4Diag.Sec4DiagRequestData requestData;
                 if (certReqProfileType == null)
                 {
                     string templateJson = Path.Combine(jsonRequestPath, "template.json");
@@ -3443,7 +3392,7 @@ namespace EdiabasLib
 
                     using (StreamReader file = File.OpenText(templateJson))
                     {
-                        requestData = serializer.Deserialize(file, typeof(Sec4DiagRequestData)) as Sec4DiagRequestData;
+                        requestData = serializer.Deserialize(file, typeof(EdSec4Diag.Sec4DiagRequestData)) as EdSec4Diag.Sec4DiagRequestData;
                     }
 
                     if (requestData == null)
@@ -3454,7 +3403,7 @@ namespace EdiabasLib
                 }
                 else
                 {
-                    requestData = new Sec4DiagRequestData
+                    requestData = new EdSec4Diag.Sec4DiagRequestData
                     {
                         CertReqProfile = certReqProfileType.Value.ToString()
                     };
@@ -3477,7 +3426,7 @@ namespace EdiabasLib
                 string vin17 = vin.ToUpperInvariant().Trim();
                 requestData.Vin17 = vin17;
                 requestData.PublicKey = publicKey;
-                requestData.ProofOfPossession = new ProofOfPossession
+                requestData.ProofOfPossession = new EdSec4Diag.ProofOfPossession
                 {
                     SignatureType = "SHA512withECDSA"
                 };
@@ -3520,11 +3469,11 @@ namespace EdiabasLib
                     return null;
                 }
 
-                Sec4DiagResponseData responseData;
+                EdSec4Diag.Sec4DiagResponseData responseData;
                 using (StreamReader file = File.OpenText(jsonResponseFile))
                 {
                     JsonSerializer serializer = new JsonSerializer();
-                    responseData = serializer.Deserialize(file, typeof(Sec4DiagResponseData)) as Sec4DiagResponseData;
+                    responseData = serializer.Deserialize(file, typeof(EdSec4Diag.Sec4DiagResponseData)) as EdSec4Diag.Sec4DiagResponseData;
                 }
 
                 if (responseData == null)

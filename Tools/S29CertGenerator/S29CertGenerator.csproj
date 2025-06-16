@@ -9,7 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\EdiabasLib\EdiabasLib\EdBcTlsUtilities.cs" Link="EdBcTlsUtilities.cs" />
+    <Compile Include="..\..\EdiabasLib\EdiabasLib\EdSec4Diag.cs" Link="EdSec4Diag.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
