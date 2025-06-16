@@ -28,7 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
+            folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            openCertFileDialog = new System.Windows.Forms.OpenFileDialog();
             SuspendLayout();
+            // 
+            // folderBrowserDialog
+            // 
+            folderBrowserDialog.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            folderBrowserDialog.ShowNewFolderButton = false;
+            // 
+            // openCertFileDialog
+            // 
+            openCertFileDialog.DefaultExt = "key";
+            openCertFileDialog.Filter = "Cert|*.key|All files|*.*";
+            openCertFileDialog.Title = "Select server cert";
             // 
             // MainForm
             // 
@@ -44,5 +57,8 @@
         }
 
         #endregion
+
+        private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
+        private System.Windows.Forms.OpenFileDialog openCertFileDialog;
     }
 }
