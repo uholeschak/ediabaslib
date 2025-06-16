@@ -1,12 +1,19 @@
 using EdiabasLib;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.X509;
+using Org.BouncyCastle.X509.Extension;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
+using Org.BouncyCastle.Math;
 
 namespace S29CertGenerator
 {
@@ -15,6 +22,7 @@ namespace S29CertGenerator
         private string _appDir;
         private AsymmetricKeyParameter _caKeyResource;
         private List<X509CertificateEntry> _caPublicCertificates;
+        private readonly byte[] roleMask = new byte[] { 0, 0, 5, 75 };
 
         public MainForm()
         {
@@ -209,6 +217,35 @@ namespace S29CertGenerator
             }
         }
 
+        public X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey, string vin)
+        {
+            X509Name subject = new X509Name("ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN=Service29-EDIABAS-S29, GIVENNAME=" + vin);
+            X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
+            x509V3CertificateGenerator.SetPublicKey(publicKey);
+            x509V3CertificateGenerator.SetSerialNumber(BigInteger.ProbablePrime(120, new Random()));
+            x509V3CertificateGenerator.SetIssuerDN(issuerCert.SubjectDN);
+            x509V3CertificateGenerator.SetNotBefore(DateTime.UtcNow.AddMinutes(-5.0));
+            x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddDays(4.0));
+            x509V3CertificateGenerator.SetSubjectDN(subject);
+            DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.30");
+            byte[] contents = new byte[2] { 14, 243 };
+            byte[] contents2 = new byte[2] { 14, 244 };
+            byte[] contents3 = new byte[2] { 14, 245 };
+            DerOctetString element = new DerOctetString(contents);
+            DerOctetString element2 = new DerOctetString(contents2);
+            DerOctetString element3 = new DerOctetString(contents3);
+            DerSet extensionValue = new DerSet(new Asn1EncodableVector { element, element2, element3 });
+            x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
+            DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.10");
+            x509V3CertificateGenerator.AddExtension(oid2, critical: true, roleMask);
+            x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, new KeyUsage(128));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, new SubjectKeyIdentifierStructure(publicKey));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: false));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, new AuthorityKeyIdentifierStructure(issuerCert.GetPublicKey()));
+            ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", issuerPrivateKey);
+            return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
+        }
+
         private bool ConvertJsonRequestFile(string jsonRequestFile, string certOutputFolder)
         {
             try
@@ -257,7 +294,27 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                UpdateStatusText($"Public key converted", true);
+                if (_caPublicCertificates == null || _caPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText($"CA public certificate is not loaded", true);
+                    return false;
+                }
+
+                if (_caKeyResource == null)
+                {
+                    UpdateStatusText($"CA private key is not loaded", true);
+                    return false;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
+                X509Certificate2 generatedCert = GenerateCertificate(issuerCert, publicKeyParameter, _caKeyResource, vin17);
+                if (generatedCert == null)
+                {
+                    UpdateStatusText($"Failed to generate certificate for VIN: {vin17}", true);
+                    return false;
+                }
+
+                UpdateStatusText($"Generated certificate for VIN: {vin17}", true);
                 return true;
             }
             catch (Exception ex)
