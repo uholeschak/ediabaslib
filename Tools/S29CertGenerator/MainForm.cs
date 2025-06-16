@@ -72,8 +72,53 @@ namespace S29CertGenerator
 
         private void UpdateDisplay()
         {
+            try
+            {
+                bool isValid = IsSettingValid();
+                buttonExecute.Enabled = isValid;
 
+                if (isValid)
+                {
+                    buttonExecute.Focus();
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
+
+        private bool IsSettingValid()
+        {
+            try
+            {
+                string caKeyFile = textBoxCaCeyFile.Text.Trim();
+                string jsonRequestFolder = textBoxJsonRequestFolder.Text.Trim();
+                string certOutputFolder = textBoxCertOutputFolder.Text.Trim();
+
+                if (string.IsNullOrEmpty(caKeyFile) || !File.Exists(caKeyFile))
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(jsonRequestFolder) || !Directory.Exists(jsonRequestFolder))
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(certOutputFolder) || !Directory.Exists(certOutputFolder))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
 
         private void buttonSelectCaKeyFile_Click(object sender, EventArgs e)
         {
@@ -143,6 +188,11 @@ namespace S29CertGenerator
                 textBoxCertOutputFolder.Text = folderBrowserDialog.SelectedPath;
                 UpdateDisplay();
             }
+        }
+
+        private void buttonExecute_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

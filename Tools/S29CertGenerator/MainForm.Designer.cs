@@ -37,6 +37,7 @@
             textBoxJsonRequestFolder = new System.Windows.Forms.TextBox();
             buttonSelectCertOutputFolder = new System.Windows.Forms.Button();
             textBoxCertOutputFolder = new System.Windows.Forms.TextBox();
+            buttonExecute = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -118,12 +119,25 @@
             textBoxCertOutputFolder.Size = new System.Drawing.Size(591, 23);
             textBoxCertOutputFolder.TabIndex = 6;
             // 
+            // buttonExecute
+            // 
+            buttonExecute.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonExecute.Location = new System.Drawing.Point(632, 415);
+            buttonExecute.Name = "buttonExecute";
+            buttonExecute.Size = new System.Drawing.Size(75, 23);
+            buttonExecute.TabIndex = 7;
+            buttonExecute.Text = "Execute";
+            buttonExecute.UseVisualStyleBackColor = true;
+            buttonExecute.Click += buttonExecute_Click;
+            // 
             // MainForm
             // 
+            AcceptButton = buttonExecute;
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(buttonExecute);
             Controls.Add(textBoxCertOutputFolder);
             Controls.Add(buttonSelectCertOutputFolder);
             Controls.Add(textBoxJsonRequestFolder);
@@ -151,5 +165,6 @@
         private System.Windows.Forms.TextBox textBoxJsonRequestFolder;
         private System.Windows.Forms.Button buttonSelectCertOutputFolder;
         private System.Windows.Forms.TextBox textBoxCertOutputFolder;
+        private System.Windows.Forms.Button buttonExecute;
     }
 }
