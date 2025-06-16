@@ -80,11 +80,11 @@ namespace S29CertGenerator
         {
             try
             {
-                LoadCaKey(textBoxCaCeyFile.Text);
+                bool caKeyValid = LoadCaKey(textBoxCaCeyFile.Text);
                 bool isValid = IsSettingValid();
                 buttonExecute.Enabled = isValid;
 
-                if (isValid)
+                if (caKeyValid && isValid)
                 {
                     buttonExecute.Focus();
                 }
@@ -116,11 +116,6 @@ namespace S29CertGenerator
                 if (string.IsNullOrEmpty(certOutputFolder) || !Directory.Exists(certOutputFolder))
                 {
                     return false;
-                }
-
-                if (_caKeyResource == null || _caPublicCertificates == null || _caPublicCertificates.Count == 0)
-                {
-                    return false; // CA key or public certificates not loaded
                 }
 
                 return true;

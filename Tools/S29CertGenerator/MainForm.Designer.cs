@@ -38,6 +38,7 @@
             buttonSelectCertOutputFolder = new System.Windows.Forms.Button();
             textBoxCertOutputFolder = new System.Windows.Forms.TextBox();
             buttonExecute = new System.Windows.Forms.Button();
+            richTextBoxStatus = new System.Windows.Forms.RichTextBox();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -67,13 +68,13 @@
             textBoxCaCeyFile.Location = new System.Drawing.Point(197, 12);
             textBoxCaCeyFile.Name = "textBoxCaCeyFile";
             textBoxCaCeyFile.ReadOnly = true;
-            textBoxCaCeyFile.Size = new System.Drawing.Size(591, 23);
+            textBoxCaCeyFile.Size = new System.Drawing.Size(488, 23);
             textBoxCaCeyFile.TabIndex = 1;
             // 
             // buttonClose
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.Location = new System.Drawing.Point(713, 415);
+            buttonClose.Location = new System.Drawing.Point(610, 320);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
             buttonClose.TabIndex = 2;
@@ -97,7 +98,7 @@
             textBoxJsonRequestFolder.Location = new System.Drawing.Point(197, 41);
             textBoxJsonRequestFolder.Name = "textBoxJsonRequestFolder";
             textBoxJsonRequestFolder.ReadOnly = true;
-            textBoxJsonRequestFolder.Size = new System.Drawing.Size(591, 23);
+            textBoxJsonRequestFolder.Size = new System.Drawing.Size(488, 23);
             textBoxJsonRequestFolder.TabIndex = 4;
             // 
             // buttonSelectCertOutputFolder
@@ -116,13 +117,13 @@
             textBoxCertOutputFolder.Location = new System.Drawing.Point(197, 70);
             textBoxCertOutputFolder.Name = "textBoxCertOutputFolder";
             textBoxCertOutputFolder.ReadOnly = true;
-            textBoxCertOutputFolder.Size = new System.Drawing.Size(591, 23);
+            textBoxCertOutputFolder.Size = new System.Drawing.Size(488, 23);
             textBoxCertOutputFolder.TabIndex = 6;
             // 
             // buttonExecute
             // 
             buttonExecute.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonExecute.Location = new System.Drawing.Point(632, 415);
+            buttonExecute.Location = new System.Drawing.Point(529, 320);
             buttonExecute.Name = "buttonExecute";
             buttonExecute.Size = new System.Drawing.Size(75, 23);
             buttonExecute.TabIndex = 7;
@@ -130,13 +131,26 @@
             buttonExecute.UseVisualStyleBackColor = true;
             buttonExecute.Click += buttonExecute_Click;
             // 
+            // richTextBoxStatus
+            // 
+            richTextBoxStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            richTextBoxStatus.Location = new System.Drawing.Point(12, 99);
+            richTextBoxStatus.Name = "richTextBoxStatus";
+            richTextBoxStatus.ReadOnly = true;
+            richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
+            richTextBoxStatus.Size = new System.Drawing.Size(673, 215);
+            richTextBoxStatus.TabIndex = 8;
+            richTextBoxStatus.Text = "";
+            // 
             // MainForm
             // 
             AcceptButton = buttonExecute;
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(800, 450);
+            ClientSize = new System.Drawing.Size(697, 355);
+            Controls.Add(richTextBoxStatus);
             Controls.Add(buttonExecute);
             Controls.Add(textBoxCertOutputFolder);
             Controls.Add(buttonSelectCertOutputFolder);
@@ -145,7 +159,10 @@
             Controls.Add(buttonClose);
             Controls.Add(textBoxCaCeyFile);
             Controls.Add(buttonSelectCaKeyFile);
+            MaximizeBox = false;
+            MinimumSize = new System.Drawing.Size(600, 300);
             Name = "MainForm";
+            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             Text = "S29CertGenerator";
             FormClosing += MainForm_FormClosing;
             FormClosed += MainForm_FormClosed;
@@ -166,5 +183,6 @@
         private System.Windows.Forms.Button buttonSelectCertOutputFolder;
         private System.Windows.Forms.TextBox textBoxCertOutputFolder;
         private System.Windows.Forms.Button buttonExecute;
+        private System.Windows.Forms.RichTextBox richTextBoxStatus;
     }
 }
