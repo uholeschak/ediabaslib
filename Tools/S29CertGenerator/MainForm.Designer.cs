@@ -54,6 +54,7 @@
             buttonSelectCaKeyFile.TabIndex = 0;
             buttonSelectCaKeyFile.Text = "Select CA Key";
             buttonSelectCaKeyFile.UseVisualStyleBackColor = true;
+            buttonSelectCaKeyFile.Click += buttonSelectCaKeyFile_Click;
             // 
             // textBoxCaCeyFile
             // 

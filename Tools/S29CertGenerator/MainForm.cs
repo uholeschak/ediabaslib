@@ -7,9 +7,13 @@ namespace S29CertGenerator
 {
     public partial class MainForm : Form
     {
+        private string _appDir;
+
         public MainForm()
         {
             InitializeComponent();
+
+            _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         }
 
         private void MainForm_Load(object sender, System.EventArgs e)
@@ -58,6 +62,26 @@ namespace S29CertGenerator
             catch (Exception e)
             {
                 return false;
+            }
+        }
+
+        private void buttonSelectCaKeyFile_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string certFile = textBoxCaCeyFile.Text;
+            string fileName = string.Empty;
+            if (File.Exists(certFile))
+            {
+                fileName = Path.GetFileName(certFile);
+                initDir = Path.GetDirectoryName(certFile);
+            }
+
+            openCertFileDialog.FileName = fileName;
+            openCertFileDialog.InitialDirectory = initDir ?? string.Empty;
+            DialogResult result = openCertFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxCaCeyFile.Text = openCertFileDialog.FileName;
             }
         }
     }
