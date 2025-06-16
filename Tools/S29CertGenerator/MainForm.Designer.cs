@@ -33,6 +33,8 @@
             buttonSelectCaKeyFile = new System.Windows.Forms.Button();
             textBoxCaCeyFile = new System.Windows.Forms.TextBox();
             buttonClose = new System.Windows.Forms.Button();
+            buttonSelectJsonRequestFolder = new System.Windows.Forms.Button();
+            textBoxJsonRequestFolder = new System.Windows.Forms.TextBox();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -50,7 +52,7 @@
             // 
             buttonSelectCaKeyFile.Location = new System.Drawing.Point(12, 12);
             buttonSelectCaKeyFile.Name = "buttonSelectCaKeyFile";
-            buttonSelectCaKeyFile.Size = new System.Drawing.Size(147, 23);
+            buttonSelectCaKeyFile.Size = new System.Drawing.Size(179, 23);
             buttonSelectCaKeyFile.TabIndex = 0;
             buttonSelectCaKeyFile.Text = "Select CA Key";
             buttonSelectCaKeyFile.UseVisualStyleBackColor = true;
@@ -59,10 +61,10 @@
             // textBoxCaCeyFile
             // 
             textBoxCaCeyFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxCaCeyFile.Location = new System.Drawing.Point(165, 12);
+            textBoxCaCeyFile.Location = new System.Drawing.Point(197, 12);
             textBoxCaCeyFile.Name = "textBoxCaCeyFile";
             textBoxCaCeyFile.ReadOnly = true;
-            textBoxCaCeyFile.Size = new System.Drawing.Size(623, 23);
+            textBoxCaCeyFile.Size = new System.Drawing.Size(591, 23);
             textBoxCaCeyFile.TabIndex = 1;
             // 
             // buttonClose
@@ -76,12 +78,33 @@
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += buttonClose_Click;
             // 
+            // buttonSelectJsonRequestFolder
+            // 
+            buttonSelectJsonRequestFolder.Location = new System.Drawing.Point(12, 41);
+            buttonSelectJsonRequestFolder.Name = "buttonSelectJsonRequestFolder";
+            buttonSelectJsonRequestFolder.Size = new System.Drawing.Size(179, 23);
+            buttonSelectJsonRequestFolder.TabIndex = 3;
+            buttonSelectJsonRequestFolder.Text = "Select JSON Request Dir";
+            buttonSelectJsonRequestFolder.UseVisualStyleBackColor = true;
+            buttonSelectJsonRequestFolder.Click += buttonSelectJsonRequestFolder_Click;
+            // 
+            // textBoxJsonRequestFolder
+            // 
+            textBoxJsonRequestFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxJsonRequestFolder.Location = new System.Drawing.Point(197, 41);
+            textBoxJsonRequestFolder.Name = "textBoxJsonRequestFolder";
+            textBoxJsonRequestFolder.ReadOnly = true;
+            textBoxJsonRequestFolder.Size = new System.Drawing.Size(591, 23);
+            textBoxJsonRequestFolder.TabIndex = 4;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(textBoxJsonRequestFolder);
+            Controls.Add(buttonSelectJsonRequestFolder);
             Controls.Add(buttonClose);
             Controls.Add(textBoxCaCeyFile);
             Controls.Add(buttonSelectCaKeyFile);
@@ -101,5 +124,7 @@
         private System.Windows.Forms.Button buttonSelectCaKeyFile;
         private System.Windows.Forms.TextBox textBoxCaCeyFile;
         private System.Windows.Forms.Button buttonClose;
+        private System.Windows.Forms.Button buttonSelectJsonRequestFolder;
+        private System.Windows.Forms.TextBox textBoxJsonRequestFolder;
     }
 }

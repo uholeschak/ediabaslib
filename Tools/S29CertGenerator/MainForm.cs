@@ -21,6 +21,7 @@ namespace S29CertGenerator
             Icon = Properties.Resources.AppIcon;
 
             LoadSettings();
+            UpdateDisplay();
         }
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -43,6 +44,7 @@ namespace S29CertGenerator
             try
             {
                 textBoxCaCeyFile.Text = Properties.Settings.Default.CaKeyFile;
+                textBoxJsonRequestFolder.Text = Properties.Settings.Default.JsonRequestFolder;
                 return true;
             }
             catch (Exception)
@@ -56,13 +58,19 @@ namespace S29CertGenerator
             try
             {
                 Properties.Settings.Default.CaKeyFile = textBoxCaCeyFile.Text;
+                Properties.Settings.Default.JsonRequestFolder = textBoxJsonRequestFolder.Text;
                 Properties.Settings.Default.Save();
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return false;
             }
+        }
+
+        private void UpdateDisplay()
+        {
+
         }
 
         private void buttonSelectCaKeyFile_Click(object sender, EventArgs e)
@@ -70,6 +78,7 @@ namespace S29CertGenerator
             string initDir = _appDir;
             string certFile = textBoxCaCeyFile.Text;
             string fileName = string.Empty;
+
             if (File.Exists(certFile))
             {
                 fileName = Path.GetFileName(certFile);
@@ -82,6 +91,31 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 textBoxCaCeyFile.Text = openCertFileDialog.FileName;
+                UpdateDisplay();
+            }
+        }
+
+        private void buttonSelectJsonRequestFolder_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string requestFolder = textBoxJsonRequestFolder.Text;
+
+            if (Directory.Exists(requestFolder))
+            {
+                initDir = requestFolder;
+            }
+            else
+            {
+                requestFolder = string.Empty;
+            }
+
+            folderBrowserDialog.InitialDirectory = initDir;
+            folderBrowserDialog.SelectedPath = requestFolder;
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxJsonRequestFolder.Text = folderBrowserDialog.SelectedPath;
+                UpdateDisplay();
             }
         }
     }
