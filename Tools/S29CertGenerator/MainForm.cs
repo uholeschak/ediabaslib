@@ -1,5 +1,9 @@
+using EdiabasLib;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Pkcs;
 using System;
-using System.Drawing;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -8,6 +12,8 @@ namespace S29CertGenerator
     public partial class MainForm : Form
     {
         private string _appDir;
+        private AsymmetricKeyParameter _caKeyResource;
+        private List<X509CertificateEntry> _caPublicCertificates;
 
         public MainForm()
         {
@@ -74,6 +80,7 @@ namespace S29CertGenerator
         {
             try
             {
+                LoadCaKey(textBoxCaCeyFile.Text);
                 bool isValid = IsSettingValid();
                 buttonExecute.Enabled = isValid;
 
@@ -111,6 +118,11 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                if (_caKeyResource == null || _caPublicCertificates == null || _caPublicCertificates.Count == 0)
+                {
+                    return false; // CA key or public certificates not loaded
+                }
+
                 return true;
             }
             catch (Exception)
@@ -119,6 +131,58 @@ namespace S29CertGenerator
             }
         }
 
+        private bool LoadCaKey(string caKeyFile)
+        {
+            _caKeyResource = null;
+            _caPublicCertificates = null;
+
+            try
+            {
+                if (string.IsNullOrEmpty(caKeyFile) || !File.Exists(caKeyFile))
+                {
+                    return false;
+                }
+
+                string publicCert = Path.ChangeExtension(caKeyFile, ".crt");
+                if (!File.Exists(publicCert))
+                {
+                    return false; // Public certificate file does not exist
+                }
+
+                AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(caKeyFile);
+                if (privateKeyResource == null)
+                {
+                    return false; // Failed to load private key
+                }
+
+                List<X509CertificateStructure> publicCertificates = EdBcTlsUtilities.LoadBcCertificateResources(publicCert);
+                if (publicCertificates == null || publicCertificates.Count == 0)
+                {
+                    return false; // Failed to load public certificates
+                }
+
+                List<X509CertificateEntry> publicCertificateEntries = new List<X509CertificateEntry>();
+                foreach (X509CertificateStructure certificateStructure in publicCertificates)
+                {
+                    Org.BouncyCastle.X509.X509Certificate certificate = new Org.BouncyCastle.X509.X509Certificate(certificateStructure);
+                    X509CertificateEntry certificateEntry = new X509CertificateEntry(certificate);
+                    if (!certificateEntry.Certificate.IsValidNow)
+                    {
+                        return false; // Certificate is not valid
+                    }
+
+                    publicCertificateEntries.Add(certificateEntry);
+                }
+
+                _caKeyResource = privateKeyResource;
+                _caPublicCertificates = publicCertificateEntries;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         private void buttonSelectCaKeyFile_Click(object sender, EventArgs e)
         {
