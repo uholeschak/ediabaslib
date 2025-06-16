@@ -7,7 +7,6 @@ using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using Org.BouncyCastle.Utilities.Encoders;
-using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -84,11 +83,7 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("Private key file not valid", m_privateCert);
         }
 
-        IList<X509Certificate> publicCerts;
-        using (Stream fileStream = new FileStream(m_publicCert, FileMode.Open, FileAccess.Read, FileShare.Read))
-        {
-            publicCerts = new X509CertificateParser().ReadCertificates(fileStream);
-        }
+        List<X509CertificateStructure> publicCerts = EdBcTlsUtilities.LoadBcCertificateResources(m_publicCert);
         if (publicCerts == null || publicCerts.Count == 0)
         {
             throw new FileNotFoundException("Public certificate file not valid", m_publicCert);
