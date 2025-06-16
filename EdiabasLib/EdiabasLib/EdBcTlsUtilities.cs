@@ -663,6 +663,39 @@ namespace EdiabasLib
             }
         }
 
+        public static AsymmetricKeyParameter ConvertPemToPublicKey(string pemContent)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(pemContent))
+                {
+                    return null;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("-----BEGIN PUBLIC KEY-----");
+                sb.AppendLine(pemContent.Trim());
+                sb.AppendLine("-----END PUBLIC KEY-----");
+                using (StringReader stringReader = new StringReader(sb.ToString()))
+                {
+                    using (Org.BouncyCastle.OpenSsl.PemReader pemReader = new Org.BouncyCastle.OpenSsl.PemReader(stringReader))
+                    {
+                        object pemObject = pemReader.ReadObject();
+                        if (pemObject is AsymmetricKeyParameter keyParameter)
+                        {
+                            return keyParameter;
+                        }
+                    }
+                }
+
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static X509Certificate CreateCertificateFromBase64(string base64Certificate)
         {
             return new X509CertificateParser().ReadCertificate(new MemoryStream(Convert.FromBase64String(base64Certificate)));

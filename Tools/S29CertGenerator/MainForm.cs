@@ -1,4 +1,5 @@
 using EdiabasLib;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using System;
@@ -204,6 +205,61 @@ namespace S29CertGenerator
             }
             catch (Exception)
             {
+                return false;
+            }
+        }
+
+        private bool ConvertJsonRequestFile(string jsonRequestFile)
+        {
+            try
+            {
+                UpdateStatusText($"Converting request file: {jsonRequestFile}", true);
+                if (!File.Exists(jsonRequestFile))
+                {
+                    UpdateStatusText($"Request file does not exist: {jsonRequestFile}", true);
+                    return false;
+                }
+
+                EdSec4Diag.Sec4DiagRequestData requestData;
+                using (StreamReader file = File.OpenText(jsonRequestFile))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    requestData = serializer.Deserialize(file, typeof(EdSec4Diag.Sec4DiagRequestData)) as EdSec4Diag.Sec4DiagRequestData;
+                }
+
+                if (requestData == null)
+                {
+                    UpdateStatusText($"Failed to deserialize request file: {jsonRequestFile}", true);
+                    return false;
+                }
+
+                string vin17 = requestData.Vin17;
+                if (string.IsNullOrWhiteSpace(vin17))
+                {
+                    UpdateStatusText($"VIN is empty in request file: {jsonRequestFile}", true);
+                    return false;
+                }
+
+                UpdateStatusText($"VIN: {vin17}", true);
+                string publicKey = requestData.PublicKey;
+                if (string.IsNullOrWhiteSpace(publicKey))
+                {
+                    UpdateStatusText($"Public key is empty in request file: {jsonRequestFile}", true);
+                    return false;
+                }
+
+                AsymmetricKeyParameter publicKeyParameter = EdBcTlsUtilities.ConvertPemToPublicKey(publicKey);
+                if (publicKeyParameter == null)
+                {
+                    UpdateStatusText($"Failed to convert public key in request file: {jsonRequestFile}", true);
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Convert request file exception: {ex.Message}", true);
                 return false;
             }
         }
