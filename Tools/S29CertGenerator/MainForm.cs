@@ -155,23 +155,15 @@ namespace S29CertGenerator
                     return false; // Failed to load private key
                 }
 
-                List<X509CertificateStructure> publicCertificates = EdBcTlsUtilities.LoadBcCertificateResources(publicCert);
-                if (publicCertificates == null || publicCertificates.Count == 0)
+                List<X509CertificateEntry> publicCertificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(publicCert));
+                if (publicCertificateEntries == null || publicCertificateEntries.Count < 1)
                 {
                     return false; // Failed to load public certificates
                 }
 
-                List<X509CertificateEntry> publicCertificateEntries = new List<X509CertificateEntry>();
-                foreach (X509CertificateStructure certificateStructure in publicCertificates)
+                if (!publicCertificateEntries[0].Certificate.IsValidNow)
                 {
-                    Org.BouncyCastle.X509.X509Certificate certificate = new Org.BouncyCastle.X509.X509Certificate(certificateStructure);
-                    X509CertificateEntry certificateEntry = new X509CertificateEntry(certificate);
-                    if (!certificateEntry.Certificate.IsValidNow)
-                    {
-                        return false; // Certificate is not valid
-                    }
-
-                    publicCertificateEntries.Add(certificateEntry);
+                    return false; // Public certificate is not valid now
                 }
 
                 _caKeyResource = privateKeyResource;
