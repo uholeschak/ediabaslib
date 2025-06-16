@@ -1,9 +1,12 @@
 using EdiabasLib;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.IsisMtt.Ocsp;
+using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Operators;
+using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.X509.Extension;
@@ -13,7 +16,6 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
-using Org.BouncyCastle.Math;
 
 namespace S29CertGenerator
 {
@@ -272,13 +274,14 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                string vin17 = requestData.Vin17;
-                if (string.IsNullOrWhiteSpace(vin17))
+                string vin = requestData.Vin17;
+                if (string.IsNullOrWhiteSpace(vin))
                 {
                     UpdateStatusText($"VIN is empty in request file: {baseJsonFile}", true);
                     return false;
                 }
 
+                string vin17 = vin.Trim().ToUpperInvariant();
                 UpdateStatusText($"VIN: {vin17}", true);
                 string publicKey = requestData.PublicKey;
                 if (string.IsNullOrWhiteSpace(publicKey))
@@ -307,14 +310,30 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                X509Certificate2 generatedCert = GenerateCertificate(issuerCert, publicKeyParameter, _caKeyResource, vin17);
-                if (generatedCert == null)
+                X509Certificate2 S29Cert = GenerateCertificate(issuerCert, publicKeyParameter, _caKeyResource, vin17);
+                if (S29Cert == null)
                 {
                     UpdateStatusText($"Failed to generate certificate for VIN: {vin17}", true);
                     return false;
                 }
 
-                UpdateStatusText($"Generated certificate for VIN: {vin17}", true);
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
+                stringBuilder.AppendLine(Convert.ToBase64String(S29Cert.GetRawCertData()));
+                stringBuilder.AppendLine("-----END CERTIFICATE-----");
+
+                foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
+                {
+                    stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
+                    stringBuilder.AppendLine(Convert.ToBase64String(caPublicCertificate.Certificate.GetEncoded()));
+                    stringBuilder.AppendLine("-----END CERTIFICATE-----");
+                }
+
+                string certContent = stringBuilder.ToString();
+                string outputCertFile = Path.Combine(certOutputFolder, "S29-" + vin17 + ".pem");
+                File.WriteAllText(outputCertFile, certContent);
+
+                UpdateStatusText($"Certificate stored: {outputCertFile}", true);
                 return true;
             }
             catch (Exception ex)
