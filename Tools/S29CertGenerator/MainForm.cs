@@ -45,7 +45,7 @@ namespace S29CertGenerator
             Icon = Properties.Resources.AppIcon;
 
             LoadSettings();
-            if (!IsSettingValid())
+            if (!IsSettingValid(true))
             {
                 if (!string.IsNullOrEmpty(_ediabasPath))
                 {
@@ -162,7 +162,7 @@ namespace S29CertGenerator
             richTextBoxStatus.ScrollToCaret();
         }
 
-        private bool IsSettingValid()
+        private bool IsSettingValid(bool ignoreCaKey = false)
         {
             try
             {
@@ -172,9 +172,12 @@ namespace S29CertGenerator
                 string jsonResponseFolder = textBoxJsonResponseFolder.Text.Trim();
                 string certOutputFolder = textBoxCertOutputFolder.Text.Trim();
 
-                if (string.IsNullOrEmpty(caKeyFile) || !File.Exists(caKeyFile))
+                if (!ignoreCaKey)
                 {
-                    return false;
+                    if (string.IsNullOrEmpty(caKeyFile) || !File.Exists(caKeyFile))
+                    {
+                        return false;
+                    }
                 }
 
                 if (string.IsNullOrEmpty(s29Folder) || !Directory.Exists(s29Folder))
