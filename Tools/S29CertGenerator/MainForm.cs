@@ -63,6 +63,7 @@ namespace S29CertGenerator
             {
                 textBoxCaCeyFile.Text = Properties.Settings.Default.CaKeyFile;
                 textBoxJsonRequestFolder.Text = Properties.Settings.Default.JsonRequestFolder;
+                textBoxJsonResponseFolder.Text = Properties.Settings.Default.JsonResponseFolder;
                 textBoxCertOutputFolder.Text = Properties.Settings.Default.CertOutputFolder;
                 return true;
             }
@@ -78,6 +79,7 @@ namespace S29CertGenerator
             {
                 Properties.Settings.Default.CaKeyFile = textBoxCaCeyFile.Text;
                 Properties.Settings.Default.JsonRequestFolder = textBoxJsonRequestFolder.Text;
+                Properties.Settings.Default.JsonResponseFolder = textBoxJsonResponseFolder.Text;
                 Properties.Settings.Default.CertOutputFolder = textBoxCertOutputFolder.Text;
                 Properties.Settings.Default.Save();
                 return true;
@@ -149,6 +151,7 @@ namespace S29CertGenerator
             {
                 string caKeyFile = textBoxCaCeyFile.Text.Trim();
                 string jsonRequestFolder = textBoxJsonRequestFolder.Text.Trim();
+                string jsonResponseFolder = textBoxJsonResponseFolder.Text.Trim();
                 string certOutputFolder = textBoxCertOutputFolder.Text.Trim();
 
                 if (string.IsNullOrEmpty(caKeyFile) || !File.Exists(caKeyFile))
@@ -157,6 +160,11 @@ namespace S29CertGenerator
                 }
 
                 if (string.IsNullOrEmpty(jsonRequestFolder) || !Directory.Exists(jsonRequestFolder))
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(jsonResponseFolder) || !Directory.Exists(jsonResponseFolder))
                 {
                     return false;
                 }
@@ -241,9 +249,9 @@ namespace S29CertGenerator
             DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.10");
             x509V3CertificateGenerator.AddExtension(oid2, critical: true, roleMask);
             x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, new KeyUsage(128));
-            x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, new SubjectKeyIdentifierStructure(publicKey));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, X509ExtensionUtilities.CreateSubjectKeyIdentifier(publicKey));
             x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: false));
-            x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, new AuthorityKeyIdentifierStructure(issuerCert.GetPublicKey()));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, X509ExtensionUtilities.CreateAuthorityKeyIdentifier(issuerCert.GetPublicKey()));
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", issuerPrivateKey);
             return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
         }
@@ -330,7 +338,7 @@ namespace S29CertGenerator
                 }
 
                 string certContent = stringBuilder.ToString();
-                string outputCertFile = Path.Combine(certOutputFolder, "S29-" + requestData.CertReqProfile + "-"+ vin17 + ".pem");
+                string outputCertFile = Path.Combine(certOutputFolder, "S29-" + requestData.CertReqProfile + "-" + vin17 + ".pem");
                 File.WriteAllText(outputCertFile, certContent);
 
                 UpdateStatusText($"Certificate stored: {outputCertFile}", true);
@@ -425,6 +433,30 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 textBoxJsonRequestFolder.Text = folderBrowserDialog.SelectedPath;
+                UpdateDisplay();
+            }
+        }
+
+        private void buttonSelectJsonResponseFolder_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string responseFolder = textBoxJsonResponseFolder.Text;
+
+            if (Directory.Exists(responseFolder))
+            {
+                initDir = responseFolder;
+            }
+            else
+            {
+                responseFolder = string.Empty;
+            }
+
+            folderBrowserDialog.InitialDirectory = initDir;
+            folderBrowserDialog.SelectedPath = responseFolder;
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxJsonResponseFolder.Text = folderBrowserDialog.SelectedPath;
                 UpdateDisplay();
             }
         }

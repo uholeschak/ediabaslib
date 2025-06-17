@@ -50,6 +50,18 @@ namespace S29CertGenerator.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string JsonResponseFolder {
+            get {
+                return ((string)(this["JsonResponseFolder"]));
+            }
+            set {
+                this["JsonResponseFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string CertOutputFolder {
             get {
                 return ((string)(this["CertOutputFolder"]));

@@ -8,6 +8,9 @@
     <Setting Name="JsonRequestFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="JsonResponseFolder" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
     <Setting Name="CertOutputFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>

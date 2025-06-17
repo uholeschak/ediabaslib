@@ -39,6 +39,8 @@
             textBoxCertOutputFolder = new System.Windows.Forms.TextBox();
             buttonExecute = new System.Windows.Forms.Button();
             richTextBoxStatus = new System.Windows.Forms.RichTextBox();
+            buttonSelectJsonResponseFolder = new System.Windows.Forms.Button();
+            textBoxJsonResponseFolder = new System.Windows.Forms.TextBox();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -103,7 +105,7 @@
             // 
             // buttonSelectCertOutputFolder
             // 
-            buttonSelectCertOutputFolder.Location = new System.Drawing.Point(12, 70);
+            buttonSelectCertOutputFolder.Location = new System.Drawing.Point(12, 99);
             buttonSelectCertOutputFolder.Name = "buttonSelectCertOutputFolder";
             buttonSelectCertOutputFolder.Size = new System.Drawing.Size(179, 23);
             buttonSelectCertOutputFolder.TabIndex = 5;
@@ -114,7 +116,7 @@
             // textBoxCertOutputFolder
             // 
             textBoxCertOutputFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxCertOutputFolder.Location = new System.Drawing.Point(197, 70);
+            textBoxCertOutputFolder.Location = new System.Drawing.Point(197, 99);
             textBoxCertOutputFolder.Name = "textBoxCertOutputFolder";
             textBoxCertOutputFolder.ReadOnly = true;
             textBoxCertOutputFolder.Size = new System.Drawing.Size(488, 23);
@@ -135,13 +137,32 @@
             // 
             richTextBoxStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            richTextBoxStatus.Location = new System.Drawing.Point(12, 99);
+            richTextBoxStatus.Location = new System.Drawing.Point(12, 128);
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            richTextBoxStatus.Size = new System.Drawing.Size(673, 215);
+            richTextBoxStatus.Size = new System.Drawing.Size(673, 186);
             richTextBoxStatus.TabIndex = 8;
             richTextBoxStatus.Text = "";
+            // 
+            // buttonSelectJsonResponseFolder
+            // 
+            buttonSelectJsonResponseFolder.Location = new System.Drawing.Point(12, 70);
+            buttonSelectJsonResponseFolder.Name = "buttonSelectJsonResponseFolder";
+            buttonSelectJsonResponseFolder.Size = new System.Drawing.Size(179, 23);
+            buttonSelectJsonResponseFolder.TabIndex = 9;
+            buttonSelectJsonResponseFolder.Text = "Select JSON Response Dir";
+            buttonSelectJsonResponseFolder.UseVisualStyleBackColor = true;
+            buttonSelectJsonResponseFolder.Click += buttonSelectJsonResponseFolder_Click;
+            // 
+            // textBoxJsonResponseFolder
+            // 
+            textBoxJsonResponseFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxJsonResponseFolder.Location = new System.Drawing.Point(197, 70);
+            textBoxJsonResponseFolder.Name = "textBoxJsonResponseFolder";
+            textBoxJsonResponseFolder.ReadOnly = true;
+            textBoxJsonResponseFolder.Size = new System.Drawing.Size(488, 23);
+            textBoxJsonResponseFolder.TabIndex = 10;
             // 
             // MainForm
             // 
@@ -150,6 +171,8 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(697, 355);
+            Controls.Add(textBoxJsonResponseFolder);
+            Controls.Add(buttonSelectJsonResponseFolder);
             Controls.Add(richTextBoxStatus);
             Controls.Add(buttonExecute);
             Controls.Add(textBoxCertOutputFolder);
@@ -184,5 +207,7 @@
         private System.Windows.Forms.TextBox textBoxCertOutputFolder;
         private System.Windows.Forms.Button buttonExecute;
         private System.Windows.Forms.RichTextBox richTextBoxStatus;
+        private System.Windows.Forms.Button buttonSelectJsonResponseFolder;
+        private System.Windows.Forms.TextBox textBoxJsonResponseFolder;
     }
 }
