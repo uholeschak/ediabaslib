@@ -1,8 +1,5 @@
 using EdiabasLib;
-using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.IsisMtt.Ocsp;
-using Org.BouncyCastle.Asn1.Ocsp;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Operators;
@@ -16,6 +13,7 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 namespace S29CertGenerator
 {
@@ -269,10 +267,14 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.NullValueHandling = NullValueHandling.Ignore;
+                serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                serializer.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
+
                 EdSec4Diag.Sec4DiagRequestData requestData;
                 using (StreamReader file = File.OpenText(jsonRequestFile))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
                     requestData = serializer.Deserialize(file, typeof(EdSec4Diag.Sec4DiagRequestData)) as EdSec4Diag.Sec4DiagRequestData;
                 }
 
@@ -325,16 +327,23 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                string s29CertData = Convert.ToBase64String(S29Cert.GetRawCertData());
+
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
-                stringBuilder.AppendLine(Convert.ToBase64String(S29Cert.GetRawCertData()));
+                stringBuilder.AppendLine(s29CertData);
                 stringBuilder.AppendLine("-----END CERTIFICATE-----");
 
+                List<string> certChain = new List<string>();
                 foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
                 {
+                    string certData = Convert.ToBase64String(caPublicCertificate.Certificate.GetEncoded());
+
                     stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
-                    stringBuilder.AppendLine(Convert.ToBase64String(caPublicCertificate.Certificate.GetEncoded()));
+                    stringBuilder.AppendLine(certData);
                     stringBuilder.AppendLine("-----END CERTIFICATE-----");
+
+                    certChain.Add(certData);
                 }
 
                 string certContent = stringBuilder.ToString();
@@ -343,6 +352,31 @@ namespace S29CertGenerator
                 File.WriteAllText(outputCertFile, certContent);
 
                 UpdateStatusText($"Certificate stored: {outputCertFileName}", true);
+
+                EdSec4Diag.Sec4DiagResponseData responseData = new EdSec4Diag.Sec4DiagResponseData
+                {
+                    Vin17 = vin17,
+                    Certificate = s29CertData,
+                    CertificateChain = certChain.ToArray()
+                };
+
+                string jsonResponseFileName = baseJsonFile.Replace("RequestContainer", "ResponseContainer");
+                if (string.Compare(jsonResponseFileName, baseJsonFile, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    jsonResponseFileName = $"ResponseContainer-{vin17}.json";
+                }
+
+                string jsonResponseFile = Path.Combine(jsonResponseFolder, jsonResponseFileName);
+                using (StreamWriter sw = new StreamWriter(jsonResponseFile))
+                {
+                    using (JsonWriter writer = new JsonTextWriter(sw))
+                    {
+                        serializer.Serialize(writer, responseData);
+                    }
+                }
+
+                UpdateStatusText($"Response file created: {jsonResponseFileName}", true);
+
                 return true;
             }
             catch (Exception ex)
