@@ -188,6 +188,42 @@ namespace S29CertGenerator
             }
         }
 
+        private bool IsValidEdiabasPath(string ediabasPath)
+        {
+            if (string.IsNullOrEmpty(ediabasPath) || !Directory.Exists(ediabasPath))
+            {
+                return false;
+            }
+
+            string securityPath = Path.Combine(ediabasPath, "Security");
+            if (!Directory.Exists(securityPath))
+            {
+                return false;
+            }
+
+            string s29Folder = Path.Combine(securityPath, "S29");
+            if (!Directory.Exists(s29Folder))
+            {
+                return false;
+            }
+
+            string sslTrustFolder = Path.Combine(securityPath, "SSL_Truststore");
+            if (!Directory.Exists(sslTrustFolder))
+            {
+                return false;
+            }
+
+            string jsonRequestFolder = Path.Combine(s29Folder, "JSONRequests");
+            string jsonResponseFolder = Path.Combine(s29Folder, "JSONResponses");
+            string certOutputFolder = Path.Combine(s29Folder, "Certificates");
+            if (!Directory.Exists(jsonRequestFolder) || !Directory.Exists(jsonResponseFolder) || !Directory.Exists(certOutputFolder))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         private bool SyncFolders(string s29Folder)
         {
             if (string.IsNullOrEmpty(s29Folder) || !Directory.Exists(s29Folder))
