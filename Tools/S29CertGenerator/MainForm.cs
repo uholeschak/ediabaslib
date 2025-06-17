@@ -1,4 +1,6 @@
 using EdiabasLib;
+using Microsoft.Win32;
+using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
@@ -13,22 +15,29 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
-using Newtonsoft.Json;
 
 namespace S29CertGenerator
 {
     public partial class MainForm : Form
     {
         private string _appDir;
+        private string _ediabasPath;
         private AsymmetricKeyParameter _caKeyResource;
         private List<X509CertificateEntry> _caPublicCertificates;
         private readonly byte[] roleMask = new byte[] { 0, 0, 5, 75 };
+        public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
+        public const string RegValueIstaLocation = @"InstallLocation";
+        public const string EdiabasDirName = @"Ediabas";
+        public const string EdiabasSecurityDirName = @"Security";
+        public const string EdiabasS29DirName = @"S29";
+        public const string EdiabasSllTrustDirName = @"SSL_Truststore";
 
         public MainForm()
         {
             InitializeComponent();
 
             _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            _ediabasPath = DetectEdiabasPath();
         }
 
         private void MainForm_Load(object sender, System.EventArgs e)
@@ -36,6 +45,14 @@ namespace S29CertGenerator
             Icon = Properties.Resources.AppIcon;
 
             LoadSettings();
+            if (!IsSettingValid())
+            {
+                if (!string.IsNullOrEmpty(_ediabasPath))
+                {
+                    textBoxS29Folder.Text = Path.Combine(_ediabasPath, EdiabasSecurityDirName, EdiabasS29DirName);
+                    SyncFolders(textBoxS29Folder.Text);
+                }
+            }
             UpdateStatusText(string.Empty);
             UpdateDisplay();
         }
@@ -188,6 +205,67 @@ namespace S29CertGenerator
             }
         }
 
+        private string DetectEdiabasPath()
+        {
+            string ediabasPath;
+            string ediabasBinPath = Environment.GetEnvironmentVariable("ediabas_config_dir");
+            if (!string.IsNullOrEmpty(ediabasBinPath) && Directory.Exists(ediabasBinPath))
+            {
+                ediabasPath = Directory.GetParent(ediabasBinPath)?.FullName;
+                if (IsValidEdiabasPath(ediabasPath))
+                {
+                    return ediabasPath;
+                }
+            }
+
+            ediabasPath = Environment.GetEnvironmentVariable("EDIABAS_PATH");
+            if (IsValidEdiabasPath(ediabasPath))
+            {
+                return ediabasPath;
+            }
+
+            try
+            {
+                using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+                {
+                    using (RegistryKey key = localMachine32.OpenSubKey(RegKeyIsta))
+                    {
+                        string path = key?.GetValue(RegValueIstaLocation, null) as string;
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            ediabasPath = Path.Combine(path, EdiabasDirName);
+                            if (IsValidEdiabasPath(ediabasPath))
+                            {
+                                return ediabasPath;
+                            }
+                        }
+                    }
+                }
+
+                using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+                {
+                    using (RegistryKey key = localMachine64.OpenSubKey(RegKeyIsta))
+                    {
+                        string path = key?.GetValue(RegValueIstaLocation, null) as string;
+                        if (!string.IsNullOrEmpty(path))
+                        {
+                            ediabasPath = Path.Combine(path, EdiabasDirName);
+                            if (IsValidEdiabasPath(ediabasPath))
+                            {
+                                return ediabasPath;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return null;
+        }
+
         private bool IsValidEdiabasPath(string ediabasPath)
         {
             if (string.IsNullOrEmpty(ediabasPath) || !Directory.Exists(ediabasPath))
@@ -195,19 +273,19 @@ namespace S29CertGenerator
                 return false;
             }
 
-            string securityPath = Path.Combine(ediabasPath, "Security");
+            string securityPath = Path.Combine(ediabasPath, EdiabasSecurityDirName);
             if (!Directory.Exists(securityPath))
             {
                 return false;
             }
 
-            string s29Folder = Path.Combine(securityPath, "S29");
+            string s29Folder = Path.Combine(securityPath, EdiabasS29DirName);
             if (!Directory.Exists(s29Folder))
             {
                 return false;
             }
 
-            string sslTrustFolder = Path.Combine(securityPath, "SSL_Truststore");
+            string sslTrustFolder = Path.Combine(securityPath, EdiabasSllTrustDirName);
             if (!Directory.Exists(sslTrustFolder))
             {
                 return false;
