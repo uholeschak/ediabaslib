@@ -691,15 +691,28 @@ namespace EdiabasLib
                     DoIpSslSecurityPath = prop;
                 }
 
-                if (!string.IsNullOrEmpty(assemblyPath))
+                if (!string.IsNullOrEmpty(DoIpSslSecurityPath) && Directory.Exists(DoIpSslSecurityPath))
                 {
-                    string parentDir = Directory.GetParent(assemblyPath)?.FullName;
+                    string parentDir = Directory.GetParent(DoIpSslSecurityPath)?.FullName;
                     if (!string.IsNullOrEmpty(parentDir))
                     {
-                        string sslSecurityPath = Path.Combine(parentDir, "Security", "S29", "Certificates");
-                        if (Directory.Exists(sslSecurityPath))
+                        string s29BasePath = Path.Combine(parentDir, "S29");
+                        string certificatesPath = Path.Combine(s29BasePath, "Certificates");
+                        if (Directory.Exists(certificatesPath))
                         {
-                            DoIpS29Path = sslSecurityPath;
+                            DoIpS29Path = certificatesPath;
+                        }
+
+                        string s29JsonRequestPath = Path.Combine(s29BasePath, "JsonRequests");
+                        if (Directory.Exists(s29JsonRequestPath))
+                        {
+                            DoIpS29JsonRequestPath = s29JsonRequestPath;
+                        }
+
+                        string s29JsonResponsePath = Path.Combine(s29BasePath, "JsonResponses");
+                        if (Directory.Exists(s29JsonResponsePath))
+                        {
+                            DoIpS29JsonResponsePath = s29JsonResponsePath;
                         }
                     }
                 }
@@ -3516,7 +3529,8 @@ namespace EdiabasLib
                 }
 
                 string vin17 = responseData.Vin17.ToUpperInvariant().Trim();
-                string outputCertFile = Path.Combine(certPath, "S29-" + vin17 + ".pem");
+                string outputCertFileName = $"S29-{vin17}.pem";
+                string outputCertFile = Path.Combine(certPath, outputCertFileName);
                 string certContent = stringBuilder.ToString();
                 File.WriteAllText(outputCertFile, certContent);
 
@@ -3534,12 +3548,23 @@ namespace EdiabasLib
         {
             try
             {
+                if (sharedData == null)
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(jsonResponsePath) || !Directory.Exists(jsonResponsePath))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCerts path not found: {0}", jsonResponsePath);
+                    return false;
+                }
+
                 bool foundCerts = false;
                 string vin = sharedData.EnetHostConn.Vin;
-                IEnumerable<string> certFiles = Directory.EnumerateFiles(jsonResponsePath, "*.pem", SearchOption.TopDirectoryOnly);
-                foreach (string certFile in certFiles)
+                IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonResponsePath, "*.json", SearchOption.TopDirectoryOnly);
+                foreach (string jsonFile in jsonFiles)
                 {
-                    string vin17 = StoreResponseJsonCert(sharedData, certFile, certPath);
+                    string vin17 = StoreResponseJsonCert(sharedData, jsonFile, certPath);
                     if (!string.IsNullOrEmpty(vin17))
                     {
                         if (string.Compare(vin, vin17, StringComparison.OrdinalIgnoreCase) == 0)
