@@ -70,5 +70,17 @@ namespace S29CertGenerator.Properties {
                 this["CertOutputFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string S29Folder {
+            get {
+                return ((string)(this["S29Folder"]));
+            }
+            set {
+                this["S29Folder"] = value;
+            }
+        }
     }
 }

@@ -41,6 +41,8 @@
             richTextBoxStatus = new System.Windows.Forms.RichTextBox();
             buttonSelectJsonResponseFolder = new System.Windows.Forms.Button();
             textBoxJsonResponseFolder = new System.Windows.Forms.TextBox();
+            buttonSelectS29Folder = new System.Windows.Forms.Button();
+            textBoxS29Folder = new System.Windows.Forms.TextBox();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -76,7 +78,7 @@
             // buttonClose
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.Location = new System.Drawing.Point(610, 320);
+            buttonClose.Location = new System.Drawing.Point(610, 326);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
             buttonClose.TabIndex = 10;
@@ -86,7 +88,7 @@
             // 
             // buttonSelectJsonRequestFolder
             // 
-            buttonSelectJsonRequestFolder.Location = new System.Drawing.Point(12, 41);
+            buttonSelectJsonRequestFolder.Location = new System.Drawing.Point(12, 70);
             buttonSelectJsonRequestFolder.Name = "buttonSelectJsonRequestFolder";
             buttonSelectJsonRequestFolder.Size = new System.Drawing.Size(179, 23);
             buttonSelectJsonRequestFolder.TabIndex = 2;
@@ -97,7 +99,7 @@
             // textBoxJsonRequestFolder
             // 
             textBoxJsonRequestFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxJsonRequestFolder.Location = new System.Drawing.Point(197, 41);
+            textBoxJsonRequestFolder.Location = new System.Drawing.Point(197, 70);
             textBoxJsonRequestFolder.Name = "textBoxJsonRequestFolder";
             textBoxJsonRequestFolder.ReadOnly = true;
             textBoxJsonRequestFolder.Size = new System.Drawing.Size(488, 23);
@@ -105,7 +107,7 @@
             // 
             // buttonSelectCertOutputFolder
             // 
-            buttonSelectCertOutputFolder.Location = new System.Drawing.Point(12, 99);
+            buttonSelectCertOutputFolder.Location = new System.Drawing.Point(12, 128);
             buttonSelectCertOutputFolder.Name = "buttonSelectCertOutputFolder";
             buttonSelectCertOutputFolder.Size = new System.Drawing.Size(179, 23);
             buttonSelectCertOutputFolder.TabIndex = 6;
@@ -116,7 +118,7 @@
             // textBoxCertOutputFolder
             // 
             textBoxCertOutputFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxCertOutputFolder.Location = new System.Drawing.Point(197, 99);
+            textBoxCertOutputFolder.Location = new System.Drawing.Point(197, 128);
             textBoxCertOutputFolder.Name = "textBoxCertOutputFolder";
             textBoxCertOutputFolder.ReadOnly = true;
             textBoxCertOutputFolder.Size = new System.Drawing.Size(488, 23);
@@ -125,7 +127,7 @@
             // buttonExecute
             // 
             buttonExecute.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonExecute.Location = new System.Drawing.Point(529, 320);
+            buttonExecute.Location = new System.Drawing.Point(529, 326);
             buttonExecute.Name = "buttonExecute";
             buttonExecute.Size = new System.Drawing.Size(75, 23);
             buttonExecute.TabIndex = 9;
@@ -137,17 +139,17 @@
             // 
             richTextBoxStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            richTextBoxStatus.Location = new System.Drawing.Point(12, 128);
+            richTextBoxStatus.Location = new System.Drawing.Point(12, 157);
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            richTextBoxStatus.Size = new System.Drawing.Size(673, 186);
+            richTextBoxStatus.Size = new System.Drawing.Size(673, 163);
             richTextBoxStatus.TabIndex = 8;
             richTextBoxStatus.Text = "";
             // 
             // buttonSelectJsonResponseFolder
             // 
-            buttonSelectJsonResponseFolder.Location = new System.Drawing.Point(12, 70);
+            buttonSelectJsonResponseFolder.Location = new System.Drawing.Point(12, 99);
             buttonSelectJsonResponseFolder.Name = "buttonSelectJsonResponseFolder";
             buttonSelectJsonResponseFolder.Size = new System.Drawing.Size(179, 23);
             buttonSelectJsonResponseFolder.TabIndex = 4;
@@ -158,11 +160,30 @@
             // textBoxJsonResponseFolder
             // 
             textBoxJsonResponseFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxJsonResponseFolder.Location = new System.Drawing.Point(197, 70);
+            textBoxJsonResponseFolder.Location = new System.Drawing.Point(197, 99);
             textBoxJsonResponseFolder.Name = "textBoxJsonResponseFolder";
             textBoxJsonResponseFolder.ReadOnly = true;
             textBoxJsonResponseFolder.Size = new System.Drawing.Size(488, 23);
             textBoxJsonResponseFolder.TabIndex = 5;
+            // 
+            // buttonSelectS29Folder
+            // 
+            buttonSelectS29Folder.Location = new System.Drawing.Point(12, 41);
+            buttonSelectS29Folder.Name = "buttonSelectS29Folder";
+            buttonSelectS29Folder.Size = new System.Drawing.Size(179, 23);
+            buttonSelectS29Folder.TabIndex = 11;
+            buttonSelectS29Folder.Text = "Select S29 Dir";
+            buttonSelectS29Folder.UseVisualStyleBackColor = true;
+            buttonSelectS29Folder.Click += buttonSelectS29Folder_Click;
+            // 
+            // textBoxS29Folder
+            // 
+            textBoxS29Folder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxS29Folder.Location = new System.Drawing.Point(197, 41);
+            textBoxS29Folder.Name = "textBoxS29Folder";
+            textBoxS29Folder.ReadOnly = true;
+            textBoxS29Folder.Size = new System.Drawing.Size(488, 23);
+            textBoxS29Folder.TabIndex = 12;
             // 
             // MainForm
             // 
@@ -170,7 +191,9 @@
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(697, 355);
+            ClientSize = new System.Drawing.Size(697, 361);
+            Controls.Add(textBoxS29Folder);
+            Controls.Add(buttonSelectS29Folder);
             Controls.Add(textBoxJsonResponseFolder);
             Controls.Add(buttonSelectJsonResponseFolder);
             Controls.Add(richTextBoxStatus);
@@ -183,7 +206,7 @@
             Controls.Add(textBoxCaCeyFile);
             Controls.Add(buttonSelectCaKeyFile);
             MaximizeBox = false;
-            MinimumSize = new System.Drawing.Size(600, 300);
+            MinimumSize = new System.Drawing.Size(600, 400);
             Name = "MainForm";
             SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             Text = "S29CertGenerator";
@@ -209,5 +232,7 @@
         private System.Windows.Forms.RichTextBox richTextBoxStatus;
         private System.Windows.Forms.Button buttonSelectJsonResponseFolder;
         private System.Windows.Forms.TextBox textBoxJsonResponseFolder;
+        private System.Windows.Forms.Button buttonSelectS29Folder;
+        private System.Windows.Forms.TextBox textBoxS29Folder;
     }
 }

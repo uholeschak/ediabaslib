@@ -60,6 +60,7 @@ namespace S29CertGenerator
             try
             {
                 textBoxCaCeyFile.Text = Properties.Settings.Default.CaKeyFile;
+                textBoxS29Folder.Text = Properties.Settings.Default.S29Folder;
                 textBoxJsonRequestFolder.Text = Properties.Settings.Default.JsonRequestFolder;
                 textBoxJsonResponseFolder.Text = Properties.Settings.Default.JsonResponseFolder;
                 textBoxCertOutputFolder.Text = Properties.Settings.Default.CertOutputFolder;
@@ -76,6 +77,7 @@ namespace S29CertGenerator
             try
             {
                 Properties.Settings.Default.CaKeyFile = textBoxCaCeyFile.Text;
+                Properties.Settings.Default.S29Folder = textBoxS29Folder.Text;
                 Properties.Settings.Default.JsonRequestFolder = textBoxJsonRequestFolder.Text;
                 Properties.Settings.Default.JsonResponseFolder = textBoxJsonResponseFolder.Text;
                 Properties.Settings.Default.CertOutputFolder = textBoxCertOutputFolder.Text;
@@ -148,11 +150,17 @@ namespace S29CertGenerator
             try
             {
                 string caKeyFile = textBoxCaCeyFile.Text.Trim();
+                string s29Folder = textBoxS29Folder.Text.Trim();
                 string jsonRequestFolder = textBoxJsonRequestFolder.Text.Trim();
                 string jsonResponseFolder = textBoxJsonResponseFolder.Text.Trim();
                 string certOutputFolder = textBoxCertOutputFolder.Text.Trim();
 
                 if (string.IsNullOrEmpty(caKeyFile) || !File.Exists(caKeyFile))
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(s29Folder) || !Directory.Exists(s29Folder))
                 {
                     return false;
                 }
@@ -180,37 +188,34 @@ namespace S29CertGenerator
             }
         }
 
-        private bool SyncFolders(string sourceFolder)
+        private bool SyncFolders(string s29Folder)
         {
-            if (string.IsNullOrEmpty(sourceFolder) || !Directory.Exists(sourceFolder))
+            if (string.IsNullOrEmpty(s29Folder) || !Directory.Exists(s29Folder))
             {
                 return false;
             }
 
-            string parentFolder = Directory.GetParent(sourceFolder)?.FullName;
-            if (string.IsNullOrEmpty(parentFolder) || !Directory.Exists(parentFolder))
-            {
-                return false;
-            }
+            string jsonRequestFolder = Path.Combine(s29Folder, "JSONRequests");
+            string jsonResponseFolder = Path.Combine(s29Folder, "JSONResponses");
+            string certOutputFolder = Path.Combine(s29Folder, "Certificates");
 
-            string jsonRequestFolder = Path.Combine(parentFolder, "JSONRequests");
-            string jsonResponseFolder = Path.Combine(parentFolder, "JSONResponses");
-            string certOutputFolder = Path.Combine(parentFolder, "Certificates");
-
-            if (Directory.Exists(jsonRequestFolder))
+            if (!Directory.Exists(jsonRequestFolder))
             {
-                textBoxJsonRequestFolder.Text = jsonRequestFolder;
+                jsonRequestFolder = string.Empty;
             }
+            textBoxJsonRequestFolder.Text = jsonRequestFolder;
 
-            if (Directory.Exists(jsonResponseFolder))
+            if (!Directory.Exists(jsonResponseFolder))
             {
-                textBoxJsonResponseFolder.Text = jsonResponseFolder;
+                jsonResponseFolder = string.Empty;
             }
+            textBoxJsonResponseFolder.Text = jsonResponseFolder;
 
-            if (Directory.Exists(certOutputFolder))
+            if (!Directory.Exists(certOutputFolder))
             {
-                textBoxCertOutputFolder.Text = certOutputFolder;
+                certOutputFolder = string.Empty;
             }
+            textBoxCertOutputFolder.Text = certOutputFolder;
 
             return true;
         }
@@ -489,6 +494,31 @@ namespace S29CertGenerator
             }
         }
 
+        private void buttonSelectS29Folder_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string requestFolder = textBoxS29Folder.Text;
+
+            if (Directory.Exists(requestFolder))
+            {
+                initDir = requestFolder;
+            }
+            else
+            {
+                requestFolder = string.Empty;
+            }
+
+            folderBrowserDialog.InitialDirectory = initDir;
+            folderBrowserDialog.SelectedPath = requestFolder;
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxS29Folder.Text = folderBrowserDialog.SelectedPath;
+                SyncFolders(textBoxS29Folder.Text);
+                UpdateDisplay();
+            }
+        }
+
         private void buttonSelectJsonRequestFolder_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
@@ -509,7 +539,6 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 textBoxJsonRequestFolder.Text = folderBrowserDialog.SelectedPath;
-                SyncFolders(textBoxJsonRequestFolder.Text);
                 UpdateDisplay();
             }
         }
