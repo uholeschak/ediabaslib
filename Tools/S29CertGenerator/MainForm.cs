@@ -256,7 +256,7 @@ namespace S29CertGenerator
             return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
         }
 
-        private bool ConvertJsonRequestFile(string jsonRequestFile, string certOutputFolder)
+        private bool ConvertJsonRequestFile(string jsonRequestFile, string jsonResponseFolder, string certOutputFolder)
         {
             try
             {
@@ -338,10 +338,11 @@ namespace S29CertGenerator
                 }
 
                 string certContent = stringBuilder.ToString();
-                string outputCertFile = Path.Combine(certOutputFolder, "S29-" + requestData.CertReqProfile + "-" + vin17 + ".pem");
+                string outputCertFileName = $"S29-{requestData.CertReqProfile}-{vin17}.pem";
+                string outputCertFile = Path.Combine(certOutputFolder, outputCertFileName);
                 File.WriteAllText(outputCertFile, certContent);
 
-                UpdateStatusText($"Certificate stored: {outputCertFile}", true);
+                UpdateStatusText($"Certificate stored: {outputCertFileName}", true);
                 return true;
             }
             catch (Exception ex)
@@ -351,7 +352,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ConvertAllJsonRequestFiles(string jsonRequestFolder, string certOutputFolder)
+        protected bool ConvertAllJsonRequestFiles(string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder)
         {
             try
             {
@@ -360,6 +361,12 @@ namespace S29CertGenerator
                 if (string.IsNullOrEmpty(jsonRequestFolder) || !Directory.Exists(jsonRequestFolder))
                 {
                     UpdateStatusText($"Request folder is not existing: {jsonRequestFolder}", true);
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(jsonResponseFolder) || !Directory.Exists(jsonResponseFolder))
+                {
+                    UpdateStatusText($"Response folder is not existing: {jsonResponseFolder}", true);
                     return false;
                 }
 
@@ -379,7 +386,7 @@ namespace S29CertGenerator
                     }
 
                     UpdateStatusText(string.Empty, true);
-                    ConvertJsonRequestFile(jsonFile, certOutputFolder);
+                    ConvertJsonRequestFile(jsonFile, jsonResponseFolder, certOutputFolder);
                 }
 
                 return true;
@@ -487,7 +494,7 @@ namespace S29CertGenerator
 
         private void buttonExecute_Click(object sender, EventArgs e)
         {
-            ConvertAllJsonRequestFiles(textBoxJsonRequestFolder.Text, textBoxCertOutputFolder.Text);
+            ConvertAllJsonRequestFiles(textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text);
         }
     }
 }
