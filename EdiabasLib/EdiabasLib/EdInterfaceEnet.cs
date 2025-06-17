@@ -3529,7 +3529,8 @@ namespace EdiabasLib
                 }
 
                 string vin17 = responseData.Vin17.ToUpperInvariant().Trim();
-                string outputCertFile = Path.Combine(certPath, "S29-" + vin17 + ".pem");
+                string outputCertFileName = $"S29-{vin17}.pem";
+                string outputCertFile = Path.Combine(certPath, outputCertFileName);
                 string certContent = stringBuilder.ToString();
                 File.WriteAllText(outputCertFile, certContent);
 
