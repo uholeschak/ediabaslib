@@ -79,7 +79,7 @@
             buttonClose.Location = new System.Drawing.Point(610, 320);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
-            buttonClose.TabIndex = 2;
+            buttonClose.TabIndex = 10;
             buttonClose.Text = "Close";
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += buttonClose_Click;
@@ -89,7 +89,7 @@
             buttonSelectJsonRequestFolder.Location = new System.Drawing.Point(12, 41);
             buttonSelectJsonRequestFolder.Name = "buttonSelectJsonRequestFolder";
             buttonSelectJsonRequestFolder.Size = new System.Drawing.Size(179, 23);
-            buttonSelectJsonRequestFolder.TabIndex = 3;
+            buttonSelectJsonRequestFolder.TabIndex = 2;
             buttonSelectJsonRequestFolder.Text = "Select JSON Request Dir";
             buttonSelectJsonRequestFolder.UseVisualStyleBackColor = true;
             buttonSelectJsonRequestFolder.Click += buttonSelectJsonRequestFolder_Click;
@@ -101,14 +101,14 @@
             textBoxJsonRequestFolder.Name = "textBoxJsonRequestFolder";
             textBoxJsonRequestFolder.ReadOnly = true;
             textBoxJsonRequestFolder.Size = new System.Drawing.Size(488, 23);
-            textBoxJsonRequestFolder.TabIndex = 4;
+            textBoxJsonRequestFolder.TabIndex = 3;
             // 
             // buttonSelectCertOutputFolder
             // 
             buttonSelectCertOutputFolder.Location = new System.Drawing.Point(12, 99);
             buttonSelectCertOutputFolder.Name = "buttonSelectCertOutputFolder";
             buttonSelectCertOutputFolder.Size = new System.Drawing.Size(179, 23);
-            buttonSelectCertOutputFolder.TabIndex = 5;
+            buttonSelectCertOutputFolder.TabIndex = 6;
             buttonSelectCertOutputFolder.Text = "Select Cert Output Dir";
             buttonSelectCertOutputFolder.UseVisualStyleBackColor = true;
             buttonSelectCertOutputFolder.Click += buttonSelectCertOutputFolder_Click;
@@ -120,7 +120,7 @@
             textBoxCertOutputFolder.Name = "textBoxCertOutputFolder";
             textBoxCertOutputFolder.ReadOnly = true;
             textBoxCertOutputFolder.Size = new System.Drawing.Size(488, 23);
-            textBoxCertOutputFolder.TabIndex = 6;
+            textBoxCertOutputFolder.TabIndex = 7;
             // 
             // buttonExecute
             // 
@@ -128,7 +128,7 @@
             buttonExecute.Location = new System.Drawing.Point(529, 320);
             buttonExecute.Name = "buttonExecute";
             buttonExecute.Size = new System.Drawing.Size(75, 23);
-            buttonExecute.TabIndex = 7;
+            buttonExecute.TabIndex = 9;
             buttonExecute.Text = "Execute";
             buttonExecute.UseVisualStyleBackColor = true;
             buttonExecute.Click += buttonExecute_Click;
@@ -150,7 +150,7 @@
             buttonSelectJsonResponseFolder.Location = new System.Drawing.Point(12, 70);
             buttonSelectJsonResponseFolder.Name = "buttonSelectJsonResponseFolder";
             buttonSelectJsonResponseFolder.Size = new System.Drawing.Size(179, 23);
-            buttonSelectJsonResponseFolder.TabIndex = 9;
+            buttonSelectJsonResponseFolder.TabIndex = 4;
             buttonSelectJsonResponseFolder.Text = "Select JSON Response Dir";
             buttonSelectJsonResponseFolder.UseVisualStyleBackColor = true;
             buttonSelectJsonResponseFolder.Click += buttonSelectJsonResponseFolder_Click;
@@ -162,7 +162,7 @@
             textBoxJsonResponseFolder.Name = "textBoxJsonResponseFolder";
             textBoxJsonResponseFolder.ReadOnly = true;
             textBoxJsonResponseFolder.Size = new System.Drawing.Size(488, 23);
-            textBoxJsonResponseFolder.TabIndex = 10;
+            textBoxJsonResponseFolder.TabIndex = 5;
             // 
             // MainForm
             // 

@@ -180,6 +180,41 @@ namespace S29CertGenerator
             }
         }
 
+        private bool SyncFolders(string sourceFolder)
+        {
+            if (string.IsNullOrEmpty(sourceFolder) || !Directory.Exists(sourceFolder))
+            {
+                return false;
+            }
+
+            string parentFolder = Directory.GetParent(sourceFolder)?.FullName;
+            if (string.IsNullOrEmpty(parentFolder) || !Directory.Exists(parentFolder))
+            {
+                return false;
+            }
+
+            string jsonRequestFolder = Path.Combine(parentFolder, "JSONRequests");
+            string jsonResponseFolder = Path.Combine(parentFolder, "JSONResponses");
+            string certOutputFolder = Path.Combine(parentFolder, "Certificates");
+
+            if (Directory.Exists(jsonRequestFolder))
+            {
+                textBoxJsonRequestFolder.Text = jsonRequestFolder;
+            }
+
+            if (Directory.Exists(jsonResponseFolder))
+            {
+                textBoxJsonResponseFolder.Text = jsonResponseFolder;
+            }
+
+            if (Directory.Exists(certOutputFolder))
+            {
+                textBoxCertOutputFolder.Text = certOutputFolder;
+            }
+
+            return true;
+        }
+
         private bool LoadCaKey(string caKeyFile)
         {
             _caKeyResource = null;
@@ -474,6 +509,7 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 textBoxJsonRequestFolder.Text = folderBrowserDialog.SelectedPath;
+                SyncFolders(textBoxJsonRequestFolder.Text);
                 UpdateDisplay();
             }
         }
