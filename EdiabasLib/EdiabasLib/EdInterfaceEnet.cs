@@ -3534,6 +3534,17 @@ namespace EdiabasLib
         {
             try
             {
+                if (sharedData == null)
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(jsonResponsePath) || !Directory.Exists(jsonResponsePath))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCerts path not found: {0}", jsonResponsePath);
+                    return false;
+                }
+
                 bool foundCerts = false;
                 string vin = sharedData.EnetHostConn.Vin;
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(jsonResponsePath, "*.pem", SearchOption.TopDirectoryOnly);
