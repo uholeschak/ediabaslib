@@ -511,7 +511,7 @@ namespace S29CertGenerator
                 }
 
                 string certContent = stringBuilder.ToString();
-                string outputCertFileName = $"S29-{certReqProfile}-{vin17}.pem";
+                string outputCertFileName = $"S29-{vin17}.pem";
                 string outputCertFile = Path.Combine(certOutputFolder, outputCertFileName);
                 File.WriteAllText(outputCertFile, certContent);
 
