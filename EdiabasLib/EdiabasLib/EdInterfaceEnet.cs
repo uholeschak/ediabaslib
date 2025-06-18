@@ -3576,9 +3576,17 @@ namespace EdiabasLib
 
                 bool foundCerts = false;
                 string vin = sharedData.EnetHostConn.Vin;
-                IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonResponsePath, "*.json", SearchOption.TopDirectoryOnly);
-                foreach (string jsonFile in jsonFiles)
+                DirectoryInfo directoryInfo = new DirectoryInfo(jsonResponsePath);
+                FileInfo[] files = directoryInfo.GetFiles().OrderBy(p => p.LastWriteTime).ToArray();
+                foreach (FileInfo fileInfo in files)
                 {
+                    string jsonFile = fileInfo.FullName;
+                    string baseFileName = Path.GetFileName(jsonFile);
+                    if (!baseFileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
                     string vin17 = StoreResponseJsonCert(sharedData, jsonFile, certPath);
                     if (!string.IsNullOrEmpty(vin17))
                     {
