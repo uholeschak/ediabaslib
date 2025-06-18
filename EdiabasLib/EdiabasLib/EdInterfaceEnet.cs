@@ -3514,18 +3514,33 @@ namespace EdiabasLib
                     fileCertChain.Add(EdBcTlsUtilities.CreateCertificateFromBase64(chainCert));
                 }
 
+                bool certValid = true;
                 StringBuilder stringBuilder = new StringBuilder();
                 foreach (Org.BouncyCastle.X509.X509Certificate fileCert in fileCertChain)
                 {
-                    if (!fileCert.IsValidNow)
+                    if (!fileCert.IsValid(DateTime.UtcNow.AddHours(1.0)))
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert certificate not valid: {0}", fileCert.SubjectDN);
-                        return null;
+                        certValid = false;
                     }
 
                     stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
                     stringBuilder.AppendLine(Convert.ToBase64String(fileCert.GetEncoded()));
                     stringBuilder.AppendLine("-----END CERTIFICATE-----");
+                }
+
+                if (!certValid)
+                {
+                    try
+                    {
+                        File.Delete(jsonResponseFile);
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert Old file deleted: {0}", jsonResponseFile);
+                    }
+                    catch (Exception ex)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert Delete json file exception: {0}", EdiabasNet.GetExceptionText(ex));
+                    }
+                    return null;
                 }
 
                 string vin17 = responseData.Vin17.ToUpperInvariant().Trim();
