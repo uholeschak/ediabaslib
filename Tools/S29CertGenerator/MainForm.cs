@@ -12,6 +12,7 @@ using Org.BouncyCastle.X509.Extension;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
@@ -569,10 +570,17 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonRequestFolder, "*.json", SearchOption.TopDirectoryOnly);
-                foreach (string jsonFile in jsonFiles)
+                DirectoryInfo directoryInfo = new DirectoryInfo(jsonRequestFolder);
+                FileInfo[] files = directoryInfo.GetFiles().OrderBy(p => p.LastWriteTime).ToArray();
+                foreach (FileInfo fileInfo in files)
                 {
+                    string jsonFile = fileInfo.FullName;
                     string baseFileName = Path.GetFileName(jsonFile);
+                    if (!jsonFile.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
                     if (string.Compare(baseFileName, "template.json", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         continue;
