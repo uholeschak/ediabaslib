@@ -3482,75 +3482,81 @@ namespace EdiabasLib
                     return null;
                 }
 
-                EdSec4Diag.Sec4DiagResponseData responseData;
-                using (StreamReader file = File.OpenText(jsonResponseFile))
+                bool responseFileValid = false;
+                try
                 {
-                    JsonSerializer serializer = new JsonSerializer();
-                    responseData = serializer.Deserialize(file, typeof(EdSec4Diag.Sec4DiagResponseData)) as EdSec4Diag.Sec4DiagResponseData;
-                }
-
-                if (responseData == null)
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert file invalid: {0}", jsonResponseFile);
-                    return null;
-                }
-
-                if (responseData.Certificate == null || responseData.CertificateChain == null)
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert no certificates found in file: {0}", jsonResponseFile);
-                    return null;
-                }
-
-                if (string.IsNullOrEmpty(responseData.Vin17))
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert no VIN found in file: {0}", jsonResponseFile);
-                    return null;
-                }
-
-                List<Org.BouncyCastle.X509.X509Certificate> fileCertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
-                fileCertChain.Add(EdBcTlsUtilities.CreateCertificateFromBase64(responseData.Certificate));
-                foreach (string chainCert in responseData.CertificateChain)
-                {
-                    fileCertChain.Add(EdBcTlsUtilities.CreateCertificateFromBase64(chainCert));
-                }
-
-                bool certValid = true;
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (Org.BouncyCastle.X509.X509Certificate fileCert in fileCertChain)
-                {
-                    if (!fileCert.IsValid(DateTime.UtcNow.AddHours(1.0)))
+                    EdSec4Diag.Sec4DiagResponseData responseData;
+                    using (StreamReader file = File.OpenText(jsonResponseFile))
                     {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert certificate not valid: {0}", fileCert.SubjectDN);
-                        certValid = false;
+                        JsonSerializer serializer = new JsonSerializer();
+                        responseData = serializer.Deserialize(file, typeof(EdSec4Diag.Sec4DiagResponseData)) as EdSec4Diag.Sec4DiagResponseData;
                     }
 
-                    stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
-                    stringBuilder.AppendLine(Convert.ToBase64String(fileCert.GetEncoded()));
-                    stringBuilder.AppendLine("-----END CERTIFICATE-----");
-                }
+                    if (responseData == null)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert file invalid: {0}", jsonResponseFile);
+                        return null;
+                    }
 
-                if (!certValid)
+                    if (responseData.Certificate == null || responseData.CertificateChain == null)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert no certificates found in file: {0}", jsonResponseFile);
+                        return null;
+                    }
+
+                    if (string.IsNullOrEmpty(responseData.Vin17))
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert no VIN found in file: {0}", jsonResponseFile);
+                        return null;
+                    }
+
+                    List<Org.BouncyCastle.X509.X509Certificate> fileCertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                    fileCertChain.Add(EdBcTlsUtilities.CreateCertificateFromBase64(responseData.Certificate));
+                    foreach (string chainCert in responseData.CertificateChain)
+                    {
+                        fileCertChain.Add(EdBcTlsUtilities.CreateCertificateFromBase64(chainCert));
+                    }
+
+                    StringBuilder stringBuilder = new StringBuilder();
+                    foreach (Org.BouncyCastle.X509.X509Certificate fileCert in fileCertChain)
+                    {
+                        if (!fileCert.IsValid(DateTime.UtcNow.AddHours(1.0)))
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh,
+                                "StoreResponseJsonCert certificate not valid: {0}", fileCert.SubjectDN);
+                            return null;
+                        }
+
+                        stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
+                        stringBuilder.AppendLine(Convert.ToBase64String(fileCert.GetEncoded()));
+                        stringBuilder.AppendLine("-----END CERTIFICATE-----");
+                    }
+
+                    string vin17 = responseData.Vin17.ToUpperInvariant().Trim();
+                    string outputCertFileName = $"S29-{vin17}.pem";
+                    string outputCertFile = Path.Combine(certPath, outputCertFileName);
+                    string certContent = stringBuilder.ToString();
+                    File.WriteAllText(outputCertFile, certContent);
+                    responseFileValid = true;
+
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert stored certificate: {0}", outputCertFile);
+                    return vin17;
+                }
+                finally
                 {
-                    try
+                    if (!responseFileValid)
                     {
-                        File.Delete(jsonResponseFile);
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert Old file deleted: {0}", jsonResponseFile);
+                        try
+                        {
+                            File.Delete(jsonResponseFile);
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert Old file deleted: {0}", jsonResponseFile);
+                        }
+                        catch (Exception ex)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert Delete json file exception: {0}", EdiabasNet.GetExceptionText(ex));
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert Delete json file exception: {0}", EdiabasNet.GetExceptionText(ex));
-                    }
-                    return null;
                 }
-
-                string vin17 = responseData.Vin17.ToUpperInvariant().Trim();
-                string outputCertFileName = $"S29-{vin17}.pem";
-                string outputCertFile = Path.Combine(certPath, outputCertFileName);
-                string certContent = stringBuilder.ToString();
-                File.WriteAllText(outputCertFile, certContent);
-
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "StoreResponseJsonCert stored certificate: {0}", outputCertFile);
-                return vin17;
             }
             catch (Exception ex)
             {
