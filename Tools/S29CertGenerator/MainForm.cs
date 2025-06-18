@@ -457,6 +457,13 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                string certReqProfile = requestData.CertReqProfile;
+                if (string.IsNullOrWhiteSpace(certReqProfile))
+                {
+                    UpdateStatusText($"Certificate request profile is empty in request file: {baseJsonFile}", true);
+                    return false;
+                }
+
                 AsymmetricKeyParameter publicKeyParameter = EdBcTlsUtilities.ConvertPemToPublicKey(publicKey);
                 if (publicKeyParameter == null)
                 {
@@ -504,7 +511,7 @@ namespace S29CertGenerator
                 }
 
                 string certContent = stringBuilder.ToString();
-                string outputCertFileName = $"S29-{requestData.CertReqProfile}-{vin17}.pem";
+                string outputCertFileName = $"S29-{certReqProfile}-{vin17}.pem";
                 string outputCertFile = Path.Combine(certOutputFolder, outputCertFileName);
                 File.WriteAllText(outputCertFile, certContent);
 
@@ -517,12 +524,7 @@ namespace S29CertGenerator
                     CertificateChain = certChain.ToArray()
                 };
 
-                string jsonResponseFileName = baseJsonFile.Replace("RequestContainer", "ResponseContainer");
-                if (string.Compare(jsonResponseFileName, baseJsonFile, StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    jsonResponseFileName = $"ResponseContainer-{vin17}.json";
-                }
-
+                string jsonResponseFileName = $"ResponseContainer_service-29-{certReqProfile}-{vin17}.json";
                 string jsonResponseFile = Path.Combine(jsonResponseFolder, jsonResponseFileName);
                 using (StreamWriter sw = new StreamWriter(jsonResponseFile))
                 {
