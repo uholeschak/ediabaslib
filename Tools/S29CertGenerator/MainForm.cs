@@ -576,7 +576,7 @@ namespace S29CertGenerator
                 {
                     string jsonFile = fileInfo.FullName;
                     string baseFileName = Path.GetFileName(jsonFile);
-                    if (!jsonFile.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                    if (!baseFileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }
