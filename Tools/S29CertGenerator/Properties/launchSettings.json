@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "S29CertGenerator": {
+      "commandName": "Project"
+    },
+    "VM-WIN11": {
+      "commandName": "Project",
+      "remoteDebugMachine": "VM-WIN11",
+      "authenticationMode": "Windows",
+      "remoteDebugEnabled": true
+    }
+  }
+}

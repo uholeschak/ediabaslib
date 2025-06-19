@@ -391,7 +391,7 @@ namespace S29CertGenerator
             x509V3CertificateGenerator.SetSerialNumber(BigInteger.ProbablePrime(120, new Random()));
             x509V3CertificateGenerator.SetIssuerDN(issuerCert.SubjectDN);
             x509V3CertificateGenerator.SetNotBefore(DateTime.UtcNow.AddMinutes(-5.0));
-            x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddDays(4.0));
+            x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddYears(1));
             x509V3CertificateGenerator.SetSubjectDN(subject);
             DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.30");
             byte[] contents = new byte[2] { 14, 243 };
