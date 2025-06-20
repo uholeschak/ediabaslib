@@ -6596,15 +6596,15 @@ namespace CarSimulator
                                     if (x509CertList.Count > 0)
                                     {
                                         Debug.WriteLine("Cert chain length: {0}", x509CertList.Count);
-                                        string serverSubject = _serverCertificate?.Subject;
+                                        string serverIssuer = _serverCertificate?.Issuer;
                                         string certIssuer = x509CertList[0].IssuerDN?.ToString();
-                                        if (!string.IsNullOrEmpty(serverSubject) && !string.IsNullOrEmpty(certIssuer) && string.Compare(serverSubject, certIssuer, StringComparison.Ordinal) == 0)
+                                        if (!string.IsNullOrEmpty(serverIssuer) && !string.IsNullOrEmpty(certIssuer) && string.Compare(serverIssuer, certIssuer, StringComparison.Ordinal) == 0)
                                         {
-                                            Debug.WriteLine("Certificate matches server certificate issuer: {0}", serverSubject);
+                                            Debug.WriteLine("Certificate matches server certificate issuer: {0}", serverIssuer);
                                         }
                                         else
                                         {
-                                            Debug.WriteLine("Certificate does not match server certificate issuer: {0} != {1}", certIssuer, serverSubject);
+                                            Debug.WriteLine("Certificate does not match server certificate issuer: {0} != {1}", certIssuer, serverIssuer);
                                         }
                                     }
                                 }
