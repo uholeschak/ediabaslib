@@ -6607,31 +6607,29 @@ namespace CarSimulator
                                 }
                                 else
                                 {
-                                    List<Org.BouncyCastle.X509.X509Certificate> x509CertList = new List<Org.BouncyCastle.X509.X509Certificate>();
+                                    List<X509CertificateStructure> x509CertList = new List<X509CertificateStructure>();
                                     foreach (byte[] certData in certList)
                                     {
                                         Org.BouncyCastle.X509.X509Certificate x509Cert = new X509CertificateParser().ReadCertificate(certData);
-                                        if (x509Cert == null)
+                                        if (x509Cert?.CertificateStructure == null)
                                         {
                                             Debug.WriteLine("Invalid X509 certificate data");
                                             break;
                                         }
 
-                                        x509CertList.Add(x509Cert);
+                                        x509CertList.Add(x509Cert.CertificateStructure);
                                     }
 
                                     if (x509CertList.Count > 0)
                                     {
                                         Debug.WriteLine("Cert chain length: {0}", x509CertList.Count);
-                                        string serverIssuer = _serverCertificate?.Issuer;
-                                        string certIssuer = x509CertList[0].IssuerDN?.ToString();
-                                        if (!string.IsNullOrEmpty(serverIssuer) && !string.IsNullOrEmpty(certIssuer) && string.Compare(serverIssuer, certIssuer, StringComparison.Ordinal) == 0)
+                                        if (EdBcTlsUtilities.CheckCertificateChainCa(x509CertList.ToArray(), _serverCertificateAuthorities.ToArray()))
                                         {
-                                            Debug.WriteLine("Certificate matches server certificate issuer: {0}", serverIssuer);
+                                            Debug.WriteLine("Certificate chain is valid");
                                         }
                                         else
                                         {
-                                            Debug.WriteLine("Certificate does not match server certificate issuer: {0} != {1}", certIssuer, serverIssuer);
+                                            Debug.WriteLine("Certificate chain is invalid");
                                         }
                                     }
                                 }
