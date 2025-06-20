@@ -6573,6 +6573,8 @@ namespace CarSimulator
                             else
                             {
                                 DebugLogData("PublicKey: ", publicKey, publicKey.Length);
+                                Debug.WriteLine("Base64: {0} ", (object) Convert.ToBase64String(publicKey));
+
                                 dataOffset += publicKey.Length + 2;
                                 byte[] challenge = ExtractS29Parameter(_receiveData, dataOffset);
                                 if (challenge == null)
@@ -6584,7 +6586,8 @@ namespace CarSimulator
                                     DebugLogData("Challenge: ", challenge, challenge.Length);
                                     try
                                     {
-                                        Org.BouncyCastle.X509.X509Certificate publicCert = new X509CertificateParser().ReadCertificate(publicKey);
+                                        byte[] certData = publicKey.Skip(6).ToArray(); // skip first 6 bytes (ASN.1 header)
+                                        Org.BouncyCastle.X509.X509Certificate publicCert = new X509CertificateParser().ReadCertificate(certData);
                                         string serverSubject = _serverCertificate?.Subject;
                                         if (publicCert != null && !string.IsNullOrEmpty(serverSubject))
                                         {
@@ -6604,7 +6607,7 @@ namespace CarSimulator
                                     }
                                     catch (Exception ex)
                                     {
-                                        Debug.WriteLine("Error parsing public key: {0}", ex.Message);
+                                        Debug.WriteLine("Error parsing public key: {0}", (object)ex.Message);
                                     }
                                 }
                             }
