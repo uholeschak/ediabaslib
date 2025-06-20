@@ -6545,15 +6545,47 @@ namespace CarSimulator
                         found = true;
 
                         byte subFunction = _receiveData[4 + offset];
+                        bool verifyCertUni = false;
                         bool authConf = false;
                         switch (subFunction)
                         {
+                            case 0x01:
+                                verifyCertUni = true;
+                                break;
+
                             case 0x08:
                                 authConf = true;
                                 break;
                         }
 
-                        if (authConf)
+                        if (verifyCertUni)
+                        {
+                            Debug.WriteLine("Verify certificate unidirectional");
+                            int dataOffset = offset + 6;
+                            byte[] challenge = ExtractS29Parameter(_receiveData, dataOffset);
+                            if (challenge == null)
+                            {
+                                Debug.WriteLine("Challenge invalid");
+                            }
+                            else
+                            {
+                                DebugLogData("Challenge: ", challenge, challenge.Length);
+                                dataOffset += challenge.Length + 2;
+                                byte[] publicKey = ExtractS29Parameter(_receiveData, dataOffset);
+                                if (publicKey == null)
+                                {
+                                    Debug.WriteLine("Public key invalid");
+                                }
+                                else
+                                {
+                                    DebugLogData("PublicKey: ", publicKey, publicKey.Length);
+                                }
+                            }
+
+                            byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x69, subFunction, 0x00 };   // positive ACK
+                            ObdSend(dummyResponse, bmwTcpClientData);
+                        }
+                        else if (authConf)
                         {
                             Debug.WriteLine("Authentication Configuration -> PKI certificate");
                             byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x69, _receiveData[4 + offset], 0x02, 0x00 };   // PKI certificate
@@ -7046,6 +7078,24 @@ namespace CarSimulator
                     DebugLogData("Not found: ", _receiveData, recLength);
                 }
             }
+        }
+
+        byte[] ExtractS29Parameter(byte[] buffer, int offset)
+        {
+            if (buffer.Length < offset + 2)
+            {
+                return null;
+            }
+
+            int length = (buffer[offset] << 8) + buffer[offset + 1];
+            if (buffer.Length < offset + 2 + length)
+            {
+                return null;
+            }
+
+            byte[] parameter = new byte[length];
+            Array.Copy(buffer, offset + 2, parameter, 0, length);
+            return parameter;
         }
 
         private bool HandleDynamicUdsIds(BmwTcpClientData bmwTcpClientData)
