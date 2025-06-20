@@ -6565,48 +6565,47 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("Verify certificate unidirectional");
                             int dataOffset = offset + 6;
-                            byte[] publicKey = ExtractS29Parameter(_receiveData, dataOffset);
-                            if (publicKey == null)
+                            List<byte[]> parameterList = ExtractS29ParameterList(_receiveData, dataOffset, 2);
+                            if (parameterList == null || parameterList.Count < 2)
                             {
-                                Debug.WriteLine("Public key invalid");
+                                Debug.WriteLine("Invalid S29 parameters");
                             }
                             else
                             {
-                                DebugLogData("PublicKey: ", publicKey, publicKey.Length);
-                                Debug.WriteLine("Base64: {0} ", (object) Convert.ToBase64String(publicKey));
-
-                                dataOffset += publicKey.Length + 2;
-                                byte[] challenge = ExtractS29Parameter(_receiveData, dataOffset);
-                                if (challenge == null)
+                                byte[] certBlock = parameterList[0];
+                                List<byte[]> certList = ExtractS29ParameterList(certBlock, 0);
+                                if (certList == null || certList.Count < 2)
                                 {
-                                    Debug.WriteLine("Challenge invalid");
+                                    Debug.WriteLine("Invalid certificate data");
                                 }
                                 else
                                 {
-                                    DebugLogData("Challenge: ", challenge, challenge.Length);
-                                    try
+                                    List<Org.BouncyCastle.X509.X509Certificate> x509CertList = new List<Org.BouncyCastle.X509.X509Certificate>();
+                                    foreach (byte[] certData in certList)
                                     {
-                                        IList<Org.BouncyCastle.X509.X509Certificate> publicCerts = new X509CertificateParser().ReadCertificates(new MemoryStream(publicKey));
-                                        string serverSubject = _serverCertificate?.Subject;
-                                        if (publicCerts != null && publicCerts.Count > 0 && !string.IsNullOrEmpty(serverSubject))
+                                        Org.BouncyCastle.X509.X509Certificate x509Cert = new X509CertificateParser().ReadCertificate(certData);
+                                        if (x509Cert == null)
                                         {
-                                            if (publicCerts[0].IssuerDN.Equivalent(X509Name.GetInstance(serverSubject)))
-                                            {
-                                                Debug.WriteLine("Public key matches server certificate issuer: {0}", serverSubject);
-                                            }
-                                            else
-                                            {
-                                                Debug.WriteLine("Public key does not match server certificate issuer: {0} != {1}", publicCerts[0].IssuerDN, serverSubject);
-                                            }
+                                            Debug.WriteLine("Invalid X509 certificate data");
+                                            break;
+                                        }
+
+                                        x509CertList.Add(x509Cert);
+                                    }
+
+                                    if (x509CertList.Count > 0)
+                                    {
+                                        Debug.WriteLine("Cert chain length: {0}", x509CertList.Count);
+                                        string serverSubject = _serverCertificate?.Subject;
+                                        string certIssuer = x509CertList[0].IssuerDN?.ToString();
+                                        if (!string.IsNullOrEmpty(serverSubject) && !string.IsNullOrEmpty(certIssuer) && string.Compare(serverSubject, certIssuer, StringComparison.Ordinal) == 0)
+                                        {
+                                            Debug.WriteLine("Certificate matches server certificate issuer: {0}", serverSubject);
                                         }
                                         else
                                         {
-                                            Debug.WriteLine("Public key or server certificate issuer is null");
+                                            Debug.WriteLine("Certificate does not match server certificate issuer: {0} != {1}", certIssuer, serverSubject);
                                         }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Debug.WriteLine("Error parsing public key: {0}", (object)ex.Message);
                                     }
                                 }
                             }
@@ -7107,6 +7106,29 @@ namespace CarSimulator
                     DebugLogData("Not found: ", _receiveData, recLength);
                 }
             }
+        }
+
+        List<byte[]> ExtractS29ParameterList(byte[] buffer, int offset, int maxEntries = int.MaxValue)
+        {
+            List<byte[]> parameters = new List<byte[]>();
+            while (offset < buffer.Length)
+            {
+                byte[] parameter = ExtractS29Parameter(buffer, offset);
+                if (parameter == null)
+                {
+                    return null;
+                }
+
+                parameters.Add(parameter);
+                offset += 2 + parameter.Length; // move to next parameter
+
+                if (parameters.Count >= maxEntries)
+                {
+                    break;
+                }
+            }
+
+            return parameters;
         }
 
         byte[] ExtractS29Parameter(byte[] buffer, int offset)
