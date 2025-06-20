@@ -6605,6 +6605,9 @@ namespace CarSimulator
                             }
                             else
                             {
+                                DebugLogData("Cert: ", parameterList[0], parameterList[0].Length);
+                                DebugLogData("Ephemeral PublicKey: ", parameterList[1], parameterList[1].Length);
+
                                 byte[] certBlock = parameterList[0];
                                 List<byte[]> certList = ExtractS29ParameterList(certBlock, 0);
                                 if (certList == null || certList.Count < 2)
@@ -6672,6 +6675,8 @@ namespace CarSimulator
                             }
                             else
                             {
+                                DebugLogData("Proof: ", parameterList[0], parameterList[0].Length);
+                                DebugLogData("Ephemeral PublicKey: ", parameterList[1], parameterList[1].Length);
                                 proofValid = true;
                             }
 
