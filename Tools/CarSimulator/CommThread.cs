@@ -6577,11 +6577,16 @@ namespace CarSimulator
 
                         byte subFunction = _receiveData[4 + offset];
                         bool verifyCertUni = false;
+                        bool proofOfOwnership = false;
                         bool authConf = false;
                         switch (subFunction)
                         {
                             case 0x01:
                                 verifyCertUni = true;
+                                break;
+
+                            case 0x03:
+                                proofOfOwnership = true;
                                 break;
 
                             case 0x08:
@@ -6593,8 +6598,7 @@ namespace CarSimulator
                         {
                             bool certValid = false;
                             Debug.WriteLine("Verify certificate unidirectional");
-                            int dataOffset = offset + 6;
-                            List<byte[]> parameterList = ExtractS29ParameterList(_receiveData, dataOffset, 2);
+                            List<byte[]> parameterList = ExtractS29ParameterList(_receiveData, offset + 6, 2);
                             if (parameterList == null || parameterList.Count < 2)
                             {
                                 Debug.WriteLine("Invalid S29 parameters");
@@ -6653,6 +6657,31 @@ namespace CarSimulator
                             else
                             {
                                 Debug.WriteLine("Certificate is invalid");
+                                byte[] errorResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, subFunction, 0x31, 0x00 };   // negative ACK
+                                ObdSend(errorResponse, bmwTcpClientData);
+                            }
+                        }
+                        else if (proofOfOwnership)
+                        {
+                            Debug.WriteLine("Proof of ownership");
+                            bool proofValid = false;
+                            List<byte[]> parameterList = ExtractS29ParameterList(_receiveData, offset + 6, 2);
+                            if (parameterList == null || parameterList.Count < 2)
+                            {
+                                Debug.WriteLine("Invalid S29 parameters");
+                            }
+                            else
+                            {
+                                proofValid = true;
+                            }
+
+                            if (proofValid)
+                            {
+                                byte[] validResponse = { 0x83, _receiveData[2], _receiveData[1], 0x69, subFunction, 0x12, 0x00 };   // positive ACK
+                                ObdSend(validResponse, bmwTcpClientData);
+                            }
+                            else
+                            {
                                 byte[] errorResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, subFunction, 0x31, 0x00 };   // negative ACK
                                 ObdSend(errorResponse, bmwTcpClientData);
                             }
