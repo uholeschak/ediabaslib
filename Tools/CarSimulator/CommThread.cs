@@ -10,6 +10,7 @@ using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.X509;
 using Peak.Can.Basic;
 using System;
 using System.Collections.Generic;
@@ -6585,17 +6586,17 @@ namespace CarSimulator
                                     DebugLogData("Challenge: ", challenge, challenge.Length);
                                     try
                                     {
-                                        X509CertificateStructure publicCert = X509CertificateStructure.GetInstance(publicKey);
+                                        IList<Org.BouncyCastle.X509.X509Certificate> publicCerts = new X509CertificateParser().ReadCertificates(new MemoryStream(publicKey));
                                         string serverSubject = _serverCertificate?.Subject;
-                                        if (publicCert != null && !string.IsNullOrEmpty(serverSubject))
+                                        if (publicCerts != null && publicCerts.Count > 0 && !string.IsNullOrEmpty(serverSubject))
                                         {
-                                            if (publicCert.Issuer.Equivalent(X509Name.GetInstance(serverSubject)))
+                                            if (publicCerts[0].IssuerDN.Equivalent(X509Name.GetInstance(serverSubject)))
                                             {
                                                 Debug.WriteLine("Public key matches server certificate issuer: {0}", serverSubject);
                                             }
                                             else
                                             {
-                                                Debug.WriteLine("Public key does not match server certificate issuer: {0} != {1}", publicCert.Issuer, serverSubject);
+                                                Debug.WriteLine("Public key does not match server certificate issuer: {0} != {1}", publicCerts[0].IssuerDN, serverSubject);
                                             }
                                         }
                                         else
