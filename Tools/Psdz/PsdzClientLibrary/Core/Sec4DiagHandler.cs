@@ -212,8 +212,8 @@ namespace PsdzClient.Core
             Buffer.BlockCopy(array5, 0, array6, array.Length, array5.Length);
             byte[] array7 = new byte[2]
             {
-            (byte)((array6.Length >> 8) & 0xFF),
-            (byte)(array6.Length & 0xFF)
+                (byte)((array6.Length >> 8) & 0xFF),
+                (byte)(array6.Length & 0xFF)
             };
             byte[] array8 = new byte[2 + array7.Length + array6.Length + 2];
             array8[0] = 41;
