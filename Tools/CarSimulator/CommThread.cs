@@ -22,6 +22,7 @@ using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
@@ -6590,6 +6591,7 @@ namespace CarSimulator
 
                         if (verifyCertUni)
                         {
+                            bool certValid = false;
                             Debug.WriteLine("Verify certificate unidirectional");
                             int dataOffset = offset + 6;
                             List<byte[]> parameterList = ExtractS29ParameterList(_receiveData, dataOffset, 2);
@@ -6626,6 +6628,7 @@ namespace CarSimulator
                                         if (EdBcTlsUtilities.CheckCertificateChainCa(x509CertList.ToArray(), _serverCertificateAuthorities.ToArray()))
                                         {
                                             Debug.WriteLine("Certificate chain is valid");
+                                            certValid = true;
                                         }
                                         else
                                         {
@@ -6635,8 +6638,24 @@ namespace CarSimulator
                                 }
                             }
 
-                            byte[] dummyResponse = { 0x82, _receiveData[2], _receiveData[1], 0x69, subFunction, 0x00 };   // positive ACK
-                            ObdSend(dummyResponse, bmwTcpClientData);
+                            if (certValid)
+                            {
+                                Debug.WriteLine("Certificate send challenge");
+                                byte[] challenge = new byte[16];
+                                RandomNumberGenerator.Create().GetBytes(challenge);
+                                List<byte> challengeResponse = new List<byte> { (byte) (0x80 + 5 + challenge.Length), _receiveData[2], _receiveData[1], 0x69, subFunction, 0x11 };
+                                challengeResponse.Add((byte)(challenge.Length >> 8));
+                                challengeResponse.Add((byte)(challenge.Length & 0xFF));
+                                challengeResponse.AddRange(challenge);
+                                challengeResponse.Add(0x00); // checksum
+                                ObdSend(challengeResponse.ToArray(), bmwTcpClientData);
+                            }
+                            else
+                            {
+                                Debug.WriteLine("Certificate is invalid");
+                                byte[] errorResponse = { 0x83, _receiveData[2], _receiveData[1], 0x7F, subFunction, 0x31, 0x00 };   // negative ACK
+                                ObdSend(errorResponse, bmwTcpClientData);
+                            }
                         }
                         else if (authConf)
                         {
