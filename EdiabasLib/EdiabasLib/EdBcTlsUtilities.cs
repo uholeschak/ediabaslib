@@ -698,7 +698,8 @@ namespace EdiabasLib
 
         public static X509Certificate CreateCertificateFromBase64(string base64Certificate)
         {
-            return new X509CertificateParser().ReadCertificate(new MemoryStream(Convert.FromBase64String(base64Certificate)));
+            byte[] certificateBytes = Convert.FromBase64String(base64Certificate);
+            return new X509CertificateParser().ReadCertificate(certificateBytes);
         }
 
         public static string SignData(string message, ECPrivateKeyParameters privateKey, string algorithm = "SHA512withECDSA")
