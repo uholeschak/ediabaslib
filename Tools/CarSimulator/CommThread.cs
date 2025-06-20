@@ -4,6 +4,14 @@
 #endif
 #define CAN_DYN_LEN
 #define VCDS
+using BmwFileReader;
+using EdiabasLib;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.X509;
+using Peak.Can.Basic;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,12 +25,7 @@ using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
-using BmwFileReader;
-using EdiabasLib;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Pkcs;
-using Org.BouncyCastle.Tls;
-using Peak.Can.Basic;
+
 // ReSharper disable RedundantAssignment
 // ReSharper disable RedundantCast
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -6562,23 +6565,47 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("Verify certificate unidirectional");
                             int dataOffset = offset + 6;
-                            byte[] challenge = ExtractS29Parameter(_receiveData, dataOffset);
-                            if (challenge == null)
+                            byte[] publicKey = ExtractS29Parameter(_receiveData, dataOffset);
+                            if (publicKey == null)
                             {
-                                Debug.WriteLine("Challenge invalid");
+                                Debug.WriteLine("Public key invalid");
                             }
                             else
                             {
-                                DebugLogData("Challenge: ", challenge, challenge.Length);
-                                dataOffset += challenge.Length + 2;
-                                byte[] publicKey = ExtractS29Parameter(_receiveData, dataOffset);
-                                if (publicKey == null)
+                                DebugLogData("PublicKey: ", publicKey, publicKey.Length);
+                                dataOffset += publicKey.Length + 2;
+                                byte[] challenge = ExtractS29Parameter(_receiveData, dataOffset);
+                                if (challenge == null)
                                 {
-                                    Debug.WriteLine("Public key invalid");
+                                    Debug.WriteLine("Challenge invalid");
                                 }
                                 else
                                 {
-                                    DebugLogData("PublicKey: ", publicKey, publicKey.Length);
+                                    DebugLogData("Challenge: ", challenge, challenge.Length);
+                                    try
+                                    {
+                                        Org.BouncyCastle.X509.X509Certificate publicCert = new X509CertificateParser().ReadCertificate(publicKey);
+                                        string serverSubject = _serverCertificate?.Subject;
+                                        if (publicCert != null && !string.IsNullOrEmpty(serverSubject))
+                                        {
+                                            if (publicCert.IssuerDN.Equivalent(X509Name.GetInstance(serverSubject)))
+                                            {
+                                                Debug.WriteLine("Public key matches server certificate issuer: {0}", serverSubject);
+                                            }
+                                            else
+                                            {
+                                                Debug.WriteLine("Public key does not match server certificate issuer: {0} != {1}", publicCert.IssuerDN, serverSubject);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Debug.WriteLine("Public key or server certificate issuer is null");
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Debug.WriteLine("Error parsing public key: {0}", ex.Message);
+                                    }
                                 }
                             }
 
