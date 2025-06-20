@@ -351,6 +351,7 @@ namespace CarSimulator
         private readonly Dictionary<byte, byte[]> _codingStampDict;
         private readonly List<BmwTcpChannel> _bmwTcpChannels;
         private X509Certificate2 _serverCertificate;
+        private List<X509Name> _serverCertificateAuthorities;
         private UdpClient _udpClient;
         private bool _udpError;
         private UdpClient _udpDoIpClient;
@@ -1090,6 +1091,26 @@ namespace CarSimulator
                                 {
                                     Debug.WriteLine("LoadKeyPairFromFile: Load key container failed: {0}", keyContainerFile);
                                 }
+
+                                _serverCertificateAuthorities = new List<X509Name>();
+                                string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
+                                foreach (string trustedFile in trustedFiles)
+                                {
+                                    string certFileName = Path.GetFileName(trustedFile);
+                                    if (string.IsNullOrEmpty(certFileName))
+                                    {
+                                        continue;
+                                    }
+
+                                    if (certFileName.StartsWith("rootCA", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        X509Name trustedIssuer = EdBcTlsUtilities.LoadBcCertificateResource(trustedFile)?.Subject;
+                                        if (trustedIssuer != null)
+                                        {
+                                            _serverCertificateAuthorities.Add(trustedIssuer);
+                                        }
+                                    }
+                                }
                             }
                         }
                         catch (Exception e)
@@ -1396,6 +1417,12 @@ namespace CarSimulator
             {
                 _serverCertificate.Dispose();
                 _serverCertificate = null;
+            }
+
+            if (_serverCertificateAuthorities != null)
+            {
+                _serverCertificateAuthorities.Clear();
+                _serverCertificateAuthorities = null;
             }
 
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
@@ -3184,7 +3211,7 @@ namespace CarSimulator
                     {
                         if (ServerUseBcSsl)
                         {
-                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, ServerCertFile);
+                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, ServerCertFile, _serverCertificateAuthorities);
                         }
                         else
                         {
@@ -3673,7 +3700,7 @@ namespace CarSimulator
             }
         }
 
-        private Stream CreateBcSslStream(TcpClient client, string serverCertFile)
+        private Stream CreateBcSslStream(TcpClient client, string serverCertFile, List<X509Name> certificateAuthorities)
         {
             if (string.IsNullOrEmpty(serverCertFile))
             {
@@ -3687,7 +3714,7 @@ namespace CarSimulator
                 clientStream.ReadTimeout = SslAuthTimeout;
                 TlsServerProtocol tlsProtocol = new TlsServerProtocol(client.GetStream());
                 tlsProtocol.IsResumableHandshake = true;
-                BcTlsServer tlsServer = new BcTlsServer(serverCertFile, ServerCertPwd);
+                BcTlsServer tlsServer = new BcTlsServer(serverCertFile, ServerCertPwd, certificateAuthorities);
                 tlsServer.HandshakeTimeout = SslAuthTimeout;
                 tlsProtocol.Accept(tlsServer);
                 sslStream = tlsProtocol.Stream;

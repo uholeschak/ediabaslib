@@ -35,7 +35,7 @@ public class BcTlsServer : DefaultTlsServer
 
     public int HandshakeTimeout { get; set; } = 0;
 
-    public BcTlsServer(string certBaseFile, string certPassword) : base(new BcTlsCrypto(new SecureRandom()))
+    public BcTlsServer(string certBaseFile, string certPassword, List<X509Name> certificateAuthorities) : base(new BcTlsCrypto(new SecureRandom()))
     {
         string certDir = Path.GetDirectoryName(certBaseFile);
         if (string.IsNullOrEmpty(certDir))
@@ -46,26 +46,7 @@ public class BcTlsServer : DefaultTlsServer
         m_publicCert = Path.ChangeExtension(certBaseFile, ".pem");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
         m_certPassword = certPassword;
-
-        m_certificateAuthorities = new List<X509Name>();
-        string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
-        foreach (string trustedFile in trustedFiles)
-        {
-            string certFileName = Path.GetFileName(trustedFile);
-            if (string.IsNullOrEmpty(certFileName))
-            {
-                continue;
-            }
-
-            if (certFileName.StartsWith("rootCA", StringComparison.OrdinalIgnoreCase))
-            {
-                X509Name trustedIssuer = EdBcTlsUtilities.LoadBcCertificateResource(trustedFile)?.Subject;
-                if (trustedIssuer != null)
-                {
-                    m_certificateAuthorities.Add(trustedIssuer);
-                }
-            }
-        }
+        m_certificateAuthorities = certificateAuthorities;
 
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
         {
