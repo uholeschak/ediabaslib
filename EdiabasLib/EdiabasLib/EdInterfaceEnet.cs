@@ -1392,9 +1392,9 @@ namespace EdiabasLib
                                 continue;
                             }
 
-                            if (!CreateS29Certs(SharedDataActive, DoIpS29Path, DoIpS29SelectCert))
+                            if (!CreateS29Certs(SharedDataActive, DoIpS29Path))
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}, select cert: {1}", DoIpS29Path, DoIpS29SelectCert);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}, select cert: {1}", DoIpS29Path);
                                 continue;
                             }
 
@@ -3114,7 +3114,7 @@ namespace EdiabasLib
             }
         }
 
-        protected bool CreateS29Certs(SharedData sharedData, string certPath, string selectCert = null)
+        protected bool CreateS29Certs(SharedData sharedData, string certPath)
         {
             try
             {
@@ -3298,15 +3298,6 @@ namespace EdiabasLib
                     if (string.IsNullOrEmpty(certExtension))
                     {
                         continue;
-                    }
-
-                    if (!string.IsNullOrEmpty(selectCert))
-                    {
-                        string baseFileName = Path.GetFileNameWithoutExtension(certFile);
-                        if (string.Compare(baseFileName, selectCert, StringComparison.OrdinalIgnoreCase) != 0)
-                        {
-                            continue;
-                        }
                     }
 
                     if (string.Compare(certExtension, ".key", StringComparison.OrdinalIgnoreCase) == 0)
