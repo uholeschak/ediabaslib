@@ -6668,7 +6668,7 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("Proof of ownership");
                             bool proofValid = false;
-                            List<byte[]> parameterList = ExtractS29ParameterList(_receiveData, offset + 6, 2);
+                            List<byte[]> parameterList = ExtractS29ParameterList(_receiveData, offset + 5, 2);
                             if (parameterList == null || parameterList.Count < 2)
                             {
                                 Debug.WriteLine("Invalid S29 parameters");
