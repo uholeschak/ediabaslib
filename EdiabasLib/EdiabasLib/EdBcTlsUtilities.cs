@@ -716,35 +716,36 @@ namespace EdiabasLib
         public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey)
         {
             const string prefix = "S29UNIPOO";
+
             byte[] array = new byte[16];
             RandomNumberGenerator.Create().GetBytes(array);
-            int num = Encoding.ASCII.GetBytes(prefix).Length;
-            byte[] array2 = new byte[num + array.Length + server_challenge.Length + 2];
+            int prefixLength = Encoding.ASCII.GetBytes(prefix).Length;
+            byte[] array2 = new byte[prefixLength + array.Length + server_challenge.Length + 2];
             Encoding.ASCII.GetBytes(prefix).CopyTo(array2, 0);
-            array.CopyTo(array2, num);
-            server_challenge.CopyTo(array2, num + array.Length);
-            array2[num + array.Length + server_challenge.Length + 2 - 2] = 0;
-            array2[num + array.Length + server_challenge.Length + 2 - 1] = 16;
+            array.CopyTo(array2, prefixLength);
+            server_challenge.CopyTo(array2, prefixLength + array.Length);
+            array2[prefixLength + array.Length + server_challenge.Length + 2 - 2] = 0;
+            array2[prefixLength + array.Length + server_challenge.Length + 2 - 1] = 16;
+
             byte[] source = SignDataByte(array2, privateKey);
-            int count = privateKey.Parameters.N.BitLength / 8;
-            BigInteger bigInteger = new BigInteger(1, source.Take(count).ToArray());
-            BigInteger bigInteger2 = new BigInteger(1, source.Skip(count).Take(count).ToArray());
+            int privateKeyBytes = privateKey.Parameters.N.BitLength / 8;
+            BigInteger bigInteger = new BigInteger(1, source.Take(privateKeyBytes).ToArray());
+            BigInteger bigInteger2 = new BigInteger(1, source.Skip(privateKeyBytes).Take(privateKeyBytes).ToArray());
             byte[] array3 = bigInteger.ToByteArrayUnsigned();
             byte[] array4 = bigInteger2.ToByteArrayUnsigned();
             byte[] array5 = new byte[array3.Length + array4.Length];
             Buffer.BlockCopy(array3, 0, array5, 0, array3.Length);
             Buffer.BlockCopy(array4, 0, array5, array3.Length, array4.Length);
+
             ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
             signer.Init(forSigning: true, privateKey);
             signer.BlockUpdate(server_challenge, 0, server_challenge.Length);
+
             byte[] array6 = new byte[array.Length + array5.Length];
             Buffer.BlockCopy(array, 0, array6, 0, array.Length);
             Buffer.BlockCopy(array5, 0, array6, array.Length, array5.Length);
-            byte[] array7 = new byte[2]
-            {
-                (byte)((array6.Length >> 8) & 0xFF),
-                (byte)(array6.Length & 0xFF)
-            };
+
+            byte[] array7 = { (byte)((array6.Length >> 8) & 0xFF), (byte)(array6.Length & 0xFF) };
             byte[] array8 = new byte[2 + array7.Length + array6.Length + 2];
             array8[0] = 41;
             array8[1] = 3;
@@ -752,6 +753,7 @@ namespace EdiabasLib
             Buffer.BlockCopy(array6, 0, array8, 2 + array7.Length, array6.Length);
             array8[array8.Length - 2] = 0;
             array8[array8.Length - 1] = 0;
+
             return array8;
         }
 
