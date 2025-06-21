@@ -1,25 +1,27 @@
-﻿using Org.BouncyCastle.Asn1.Pkcs;
+﻿using Org.BouncyCastle.Asn1;
+using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1.X9;
-using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Operators;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Math;
+using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.Tls.Crypto.Impl.BC;
-using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Tls;
+using Org.BouncyCastle.Tls.Crypto;
+using Org.BouncyCastle.Tls.Crypto.Impl.BC;
+using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Encoders;
 using Org.BouncyCastle.Utilities.IO.Pem;
-using Org.BouncyCastle.Utilities;
+using Org.BouncyCastle.X509;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
-using System;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.X509;
-using Org.BouncyCastle.Pkcs;
-using Org.BouncyCastle.Crypto.Operators;
-using Org.BouncyCastle.Math;
 
 namespace EdiabasLib
 {
@@ -709,6 +711,56 @@ namespace EdiabasLib
             byte[] bytes = Encoding.UTF8.GetBytes(message);
             signer.BlockUpdate(bytes, 0, bytes.Length);
             return Convert.ToBase64String(signer.GenerateSignature());
+        }
+
+        public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey)
+        {
+            const string prefix = "S29UNIPOO";
+            byte[] array = new byte[16];
+            RandomNumberGenerator.Create().GetBytes(array);
+            int num = Encoding.ASCII.GetBytes(prefix).Length;
+            byte[] array2 = new byte[num + array.Length + server_challenge.Length + 2];
+            Encoding.ASCII.GetBytes(prefix).CopyTo(array2, 0);
+            array.CopyTo(array2, num);
+            server_challenge.CopyTo(array2, num + array.Length);
+            array2[num + array.Length + server_challenge.Length + 2 - 2] = 0;
+            array2[num + array.Length + server_challenge.Length + 2 - 1] = 16;
+            byte[] source = SignDataByte(array2, privateKey);
+            int count = privateKey.Parameters.N.BitLength / 8;
+            BigInteger bigInteger = new BigInteger(1, source.Take(count).ToArray());
+            BigInteger bigInteger2 = new BigInteger(1, source.Skip(count).Take(count).ToArray());
+            byte[] array3 = bigInteger.ToByteArrayUnsigned();
+            byte[] array4 = bigInteger2.ToByteArrayUnsigned();
+            byte[] array5 = new byte[array3.Length + array4.Length];
+            Buffer.BlockCopy(array3, 0, array5, 0, array3.Length);
+            Buffer.BlockCopy(array4, 0, array5, array3.Length, array4.Length);
+            ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
+            signer.Init(forSigning: true, privateKey);
+            signer.BlockUpdate(server_challenge, 0, server_challenge.Length);
+            byte[] array6 = new byte[array.Length + array5.Length];
+            Buffer.BlockCopy(array, 0, array6, 0, array.Length);
+            Buffer.BlockCopy(array5, 0, array6, array.Length, array5.Length);
+            byte[] array7 = new byte[2]
+            {
+                (byte)((array6.Length >> 8) & 0xFF),
+                (byte)(array6.Length & 0xFF)
+            };
+            byte[] array8 = new byte[2 + array7.Length + array6.Length + 2];
+            array8[0] = 41;
+            array8[1] = 3;
+            Buffer.BlockCopy(array7, 0, array8, 2, array7.Length);
+            Buffer.BlockCopy(array6, 0, array8, 2 + array7.Length, array6.Length);
+            array8[array8.Length - 2] = 0;
+            array8[array8.Length - 1] = 0;
+            return array8;
+        }
+
+        private static byte[] SignDataByte(byte[] message, ECPrivateKeyParameters privateKey)
+        {
+            ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
+            signer.Init(forSigning: true, privateKey);
+            signer.BlockUpdate(message, 0, message.Length);
+            return signer.GenerateSignature();
         }
 
         public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, DerObjectIdentifier paramSet, string password = null)
