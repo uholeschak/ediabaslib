@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Org.BouncyCastle.Asn1.Sec;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Pkcs;
@@ -250,6 +251,7 @@ namespace EdiabasLib
                 S29Certs = null;
                 S29CertFiles = null;
                 MachineKeyPair = null;
+                S29SelectCert = null;
                 TcpControlTimerLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
                 TcpDiagRecLen = 0;
@@ -325,6 +327,8 @@ namespace EdiabasLib
                     S29CertFiles.Clear();
                     S29CertFiles = null;
                 }
+
+                S29SelectCert = null;
             }
 
             public void Dispose()
@@ -392,6 +396,7 @@ namespace EdiabasLib
             public List<X509Certificate2> S29Certs;
             public List<EdBcTlsClient.CertInfo> S29CertFiles;
             public AsymmetricCipherKeyPair MachineKeyPair;
+            public List<X509CertificateStructure> S29SelectCert;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
             public object TcpDiagStreamRecLock;
@@ -1409,6 +1414,14 @@ namespace EdiabasLib
                                 if (StoreResponseJsonCerts(SharedDataActive, DoIpS29JsonResponsePath, DoIpS29Path))
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 response certificate stored in: {0}", DoIpS29JsonResponsePath);
+                                }
+                            }
+                            else
+                            {
+                                if (!LoadS29Cert(SharedDataActive, DoIpS29Path, DoIpS29SelectCert))
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected S29 certificate load failed: {0}", DoIpS29SelectCert);
+                                    continue;
                                 }
                             }
                         }
@@ -3347,6 +3360,45 @@ namespace EdiabasLib
             catch (Exception ex)
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs exception: {0}", EdiabasNet.GetExceptionText(ex));
+                return false;
+            }
+        }
+
+        protected bool LoadS29Cert(SharedData sharedData, string certPath, string selectFile)
+        {
+            try
+            {
+                if (sharedData == null)
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(certPath) || !Directory.Exists(certPath))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadS29Cert path not found: {0}", certPath);
+                    return false;
+                }
+
+                string fileName = Path.Combine(certPath, selectFile + ".pem");
+                if (!File.Exists(fileName))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadS29Cert file not found: {0}", fileName);
+                    return false;
+                }
+
+                List<X509CertificateStructure> certList = EdBcTlsUtilities.LoadBcCertificateResources(fileName);
+                if (certList == null || certList.Count < 2)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadS29Cert no certificates found in file: {0}", fileName);
+                    return false;
+                }
+
+                sharedData.S29SelectCert = certList;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadS29Cert exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
