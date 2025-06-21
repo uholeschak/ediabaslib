@@ -1540,7 +1540,7 @@ namespace EdiabasLib
 
                             if (SharedDataActive.DiagDoIpSsl && !reconnect)
                             {
-                                EdiabasNet.ErrorCodes authResult = DoIpAuthenticate();
+                                EdiabasNet.ErrorCodes authResult = DoIpAuthenticate(SharedDataActive);
                                 if (authResult != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** DoIp authentication failed: {0}", authResult);
@@ -4607,7 +4607,7 @@ namespace EdiabasLib
             }
         }
 
-        protected EdiabasNet.ErrorCodes DoIpAuthenticate()
+        protected EdiabasNet.ErrorCodes DoIpAuthenticate(SharedData sharedData)
         {
             byte[] authRequest = { 0x82, DoIpGwAddrDefault, 0xF1, 0x29, 0x08 };
             if (TransBmwFast(authRequest, authRequest.Length, ref AuthBuffer, out int receiveLength) != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
@@ -4624,6 +4624,13 @@ namespace EdiabasLib
 
             byte authConfig = AuthBuffer[5];
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DoIp auth configuration: {0:X02}", authConfig);
+
+            if (sharedData.S29SelectCert == null)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No S29 certificate selected for DoIp authentication");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
