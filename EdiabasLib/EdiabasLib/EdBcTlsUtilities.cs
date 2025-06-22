@@ -802,10 +802,10 @@ namespace EdiabasLib
 
             int parameterBytes = publicKey.Parameters.N.BitLength / 8;
             byte[] signatureData = new byte[parameterBytes * 2 + 8];
-            BigInteger bigInteger1 = new BigInteger(1, server_challenge.Skip(dataOffset + randomData.Length).Take(parameterBytes).ToArray());
-            BigInteger bigInteger2 = new BigInteger(1, server_challenge.Skip(dataOffset + randomData.Length + parameterBytes).Take(parameterBytes).ToArray());
-            byte[] integerPart1 = bigInteger1.ToByteArrayUnsigned();
-            byte[] integerPart2 = bigInteger2.ToByteArrayUnsigned();
+            BigInteger bigInteger1 = new BigInteger(0, server_challenge.Skip(dataOffset + randomData.Length).Take(parameterBytes).ToArray());
+            BigInteger bigInteger2 = new BigInteger(0, server_challenge.Skip(dataOffset + randomData.Length + parameterBytes).Take(parameterBytes).ToArray());
+            byte[] integerPart1 = bigInteger1.ToByteArray();
+            byte[] integerPart2 = bigInteger2.ToByteArray();
             Buffer.BlockCopy(integerPart1, 0, signatureData, 0, integerPart1.Length);
             Buffer.BlockCopy(integerPart2, 0, signatureData, integerPart1.Length, integerPart2.Length);
 
