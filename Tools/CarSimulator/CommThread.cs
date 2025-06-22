@@ -6598,7 +6598,7 @@ namespace CarSimulator
                         {
                             bool certValid = false;
                             Debug.WriteLine("Verify certificate unidirectional");
-                            List<byte[]> parameterList = ExtractS29ParameterList(_receiveData, offset + 6, 2);
+                            List<byte[]> parameterList = GetS29ParameterList(_receiveData, offset + 6, 2);
                             if (parameterList == null || parameterList.Count < 2)
                             {
                                 Debug.WriteLine("Invalid S29 parameters");
@@ -6609,7 +6609,7 @@ namespace CarSimulator
                                 DebugLogData("Ephemeral PublicKey: ", parameterList[1], parameterList[1].Length);
 
                                 byte[] certBlock = parameterList[0];
-                                List<byte[]> certList = ExtractS29ParameterList(certBlock, 0);
+                                List<byte[]> certList = GetS29ParameterList(certBlock, 0);
                                 if (certList == null || certList.Count < 2)
                                 {
                                     Debug.WriteLine("Invalid certificate data");
@@ -6677,7 +6677,7 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("Proof of ownership");
                             bool proofValid = false;
-                            List<byte[]> parameterList = ExtractS29ParameterList(_receiveData, offset + 5, 2);
+                            List<byte[]> parameterList = GetS29ParameterList(_receiveData, offset + 5, 2);
                             if (parameterList == null || parameterList.Count < 2)
                             {
                                 Debug.WriteLine("Invalid S29 parameters");
@@ -7195,12 +7195,12 @@ namespace CarSimulator
             }
         }
 
-        List<byte[]> ExtractS29ParameterList(byte[] buffer, int offset, int maxEntries = int.MaxValue)
+        private List<byte[]> GetS29ParameterList(byte[] buffer, int offset, int maxEntries = int.MaxValue)
         {
             List<byte[]> parameters = new List<byte[]>();
             while (offset < buffer.Length)
             {
-                byte[] parameter = ExtractS29Parameter(buffer, offset);
+                byte[] parameter = EdInterfaceEnet.GetS29DataBlock(buffer, offset);
                 if (parameter == null)
                 {
                     return null;
@@ -7216,24 +7216,6 @@ namespace CarSimulator
             }
 
             return parameters;
-        }
-
-        byte[] ExtractS29Parameter(byte[] buffer, int offset)
-        {
-            if (buffer.Length < offset + 2)
-            {
-                return null;
-            }
-
-            int length = (buffer[offset] << 8) + buffer[offset + 1];
-            if (buffer.Length < offset + 2 + length)
-            {
-                return null;
-            }
-
-            byte[] parameter = new byte[length];
-            Array.Copy(buffer, offset + 2, parameter, 0, length);
-            return parameter;
         }
 
         private bool HandleDynamicUdsIds(BmwTcpClientData bmwTcpClientData)

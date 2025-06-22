@@ -4668,10 +4668,17 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
+            byte[] challenge = GetS29DataBlock(AuthBuffer, dataOffset + 3);
+            if (challenge == null || challenge.Length < 8)
+            {
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth challenge invalid");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
-        protected void AppendS29DataBlock(ref List<byte> buffer, byte[] dataBlock)
+        public static void AppendS29DataBlock(ref List<byte> buffer, byte[] dataBlock)
         {
             int length = dataBlock.Length;
             buffer.Add((byte) (length >> 8));
@@ -4681,6 +4688,25 @@ namespace EdiabasLib
                 buffer.AddRange(dataBlock);
             }
         }
+
+        public static byte[] GetS29DataBlock(byte[] buffer, int offset)
+        {
+            if (buffer.Length < offset + 2)
+            {
+                return null;
+            }
+
+            int length = (buffer[offset] << 8) + buffer[offset + 1];
+            if (buffer.Length < offset + 2 + length)
+            {
+                return null;
+            }
+
+            byte[] parameter = new byte[length];
+            Array.Copy(buffer, offset + 2, parameter, 0, length);
+            return parameter;
+        }
+
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
