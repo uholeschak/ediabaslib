@@ -27,6 +27,8 @@ namespace EdiabasLib
 {
     public static class EdBcTlsUtilities
     {
+        public const string S29ProofOfOwnershipPrefix = "S29UNIPOO";
+
         public static string Fingerprint(X509CertificateStructure c)
         {
             byte[] der = c.GetEncoded();
@@ -736,12 +738,11 @@ namespace EdiabasLib
                 return null;
             }
 
-            const string prefix = "S29UNIPOO";
             byte[] randomData = new byte[16];
             RandomNumberGenerator.Create().GetBytes(randomData);
-            int prefixLength = Encoding.ASCII.GetBytes(prefix).Length;
+            int prefixLength = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).Length;
             byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
-            Encoding.ASCII.GetBytes(prefix).CopyTo(signData, 0);
+            Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).CopyTo(signData, 0);
             randomData.CopyTo(signData, prefixLength);
             server_challenge.CopyTo(signData, prefixLength + randomData.Length);
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 2] = 0;
@@ -779,6 +780,35 @@ namespace EdiabasLib
             resultData[resultData.Length - 1] = 0;
 
             return resultData;
+        }
+
+        public static bool VerifyProofOfOwnership(byte[] server_challenge, ECPublicKeyParameters publicKey)
+        {
+            if (server_challenge == null || publicKey == null)
+            {
+                return false;
+            }
+
+            byte[] randomData = new byte[16];
+            Buffer.BlockCopy(server_challenge, 4, randomData, 0, randomData.Length);
+            int prefixLength = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).Length;
+            byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
+            Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).CopyTo(signData, 0);
+            randomData.CopyTo(signData, prefixLength);
+            server_challenge.CopyTo(signData, prefixLength + randomData.Length);
+            signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 2] = 0;
+            signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
+
+            int parameterBytes = publicKey.Parameters.N.BitLength / 8;
+            byte[] signatureData = new byte[parameterBytes * 2 + 8];
+            Buffer.BlockCopy(server_challenge, 4 + randomData.Length, signatureData, 0, parameterBytes * 2);
+
+            if (!VerifyDataSignature(signData, signatureData, publicKey))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, DerObjectIdentifier paramSet, string password = null)
