@@ -4683,6 +4683,35 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
+            List<byte> proofRequest = new List<byte> { 0x80, DoIpGwAddrDefault, 0xF1,
+                0x00, 0x00, 0x03,       // 16 bit length
+                0x29, 0x03 };
+            AppendS29DataBlock(ref proofRequest, proofData);
+            AppendS29DataBlock(ref proofRequest, Array.Empty<byte>());   // Ephemeral Public Key
+
+            int proofRequestLength = proofRequest.Count - 6;
+            proofRequest[4] = (byte)(proofRequestLength >> 8);
+            proofRequest[5] = (byte)(proofRequestLength & 0xFF);
+            if (TransBmwFast(proofRequest.ToArray(), proofRequest.Count, ref AuthBuffer, out receiveLength) != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth proof request failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            dataLength = DataLengthBmwFast(AuthBuffer, out dataOffset);
+            if (dataLength < 3 || AuthBuffer[dataOffset + 0] != (0x29 | 0x40))
+            {
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth cert response invalid");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            byte proofResponseType = AuthBuffer[dataOffset + 2];
+            if (proofResponseType != 0x12)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth proof response type invalid: {0:X02}", proofResponseType);
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
