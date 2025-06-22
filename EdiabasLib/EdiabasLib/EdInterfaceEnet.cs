@@ -4609,16 +4609,16 @@ namespace EdiabasLib
 
         protected EdiabasNet.ErrorCodes DoIpAuthenticate(SharedData sharedData)
         {
-            byte[] authRequest = { 0x82, DoIpGwAddrDefault, 0xF1, 0x29, 0x08 };
-            if (TransBmwFast(authRequest, authRequest.Length, ref AuthBuffer, out int receiveLength) != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            byte[] authConfRequest = { 0x82, DoIpGwAddrDefault, 0xF1, 0x29, 0x08 };
+            if (TransBmwFast(authConfRequest, authConfRequest.Length, ref AuthBuffer, out int receiveLength) != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
-                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth request failed");
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth conf request failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            if (receiveLength < 7 || (AuthBuffer[3] != (authRequest[3] | 0x40)))
+            if (receiveLength < 7 || AuthBuffer[3] != (0x29 | 0x40))
             {
-                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth response invalid");
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth conf response invalid");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
@@ -4631,7 +4631,46 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
+            List<byte> certRequest = new List<byte> { 0x80, DoIpGwAddrDefault, 0xF1,
+                0x00, 0x00, 0x03,       // 16 bit length
+                0x29, 0x01, 0x00 };
+            List<byte> certBlock = new List<byte>();
+            foreach (X509CertificateStructure selectCert in sharedData.S29SelectCert)
+            {
+                byte[] certBytes = selectCert.GetEncoded();
+                AppendS29DataBlock(ref certBlock, certBytes);
+            }
+
+            AppendS29DataBlock(ref certRequest, certBlock.ToArray());
+            AppendS29DataBlock(ref certRequest, Array.Empty<byte>());   // Ephemeral Public Key
+
+            int certRequestLength = certRequest.Count - 6;
+            certRequest[4] = (byte)(certRequestLength >> 8);
+            certRequest[5] = (byte)(certRequestLength & 0xFF);
+            if (TransBmwFast(certRequest.ToArray(), certRequest.Count, ref AuthBuffer, out receiveLength) != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Sending DoIp auth cert request failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            if (receiveLength < 7 || AuthBuffer[3] != (0x29 | 0x40))
+            {
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth cert response invalid");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        protected void AppendS29DataBlock(ref List<byte> buffer, byte[] dataBlock)
+        {
+            int length = dataBlock.Length;
+            buffer.Add((byte) (length >> 8));
+            buffer.Add((byte) (length & 0xFF));
+            if (length > 0)
+            {
+                buffer.AddRange(dataBlock);
+            }
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
