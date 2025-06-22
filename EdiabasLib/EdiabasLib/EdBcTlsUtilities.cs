@@ -756,9 +756,9 @@ namespace EdiabasLib
                 }
             }
 
-            int privateKeyBytes = privateKey.Parameters.N.BitLength / 8;
-            BigInteger bigInteger1 = new BigInteger(1, signatureData.Take(privateKeyBytes).ToArray());
-            BigInteger bigInteger2 = new BigInteger(1, signatureData.Skip(privateKeyBytes).Take(privateKeyBytes).ToArray());
+            int parameterBytes = privateKey.Parameters.N.BitLength / 8;
+            BigInteger bigInteger1 = new BigInteger(1, signatureData.Take(parameterBytes).ToArray());
+            BigInteger bigInteger2 = new BigInteger(1, signatureData.Skip(parameterBytes).Take(parameterBytes).ToArray());
             byte[] integerPart1 = bigInteger1.ToByteArrayUnsigned();
             byte[] integerPart2 = bigInteger2.ToByteArrayUnsigned();
             byte[] integerData = new byte[integerPart1.Length + integerPart2.Length];
