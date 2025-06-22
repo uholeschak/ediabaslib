@@ -789,8 +789,9 @@ namespace EdiabasLib
                 return false;
             }
 
+            int dataOffset = 4;
             byte[] randomData = new byte[16];
-            Buffer.BlockCopy(server_challenge, 4, randomData, 0, randomData.Length);
+            Buffer.BlockCopy(server_challenge, dataOffset, randomData, 0, randomData.Length);
             int prefixLength = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).Length;
             byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
             Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).CopyTo(signData, 0);
@@ -801,7 +802,12 @@ namespace EdiabasLib
 
             int parameterBytes = publicKey.Parameters.N.BitLength / 8;
             byte[] signatureData = new byte[parameterBytes * 2 + 8];
-            Buffer.BlockCopy(server_challenge, 4 + randomData.Length, signatureData, 0, parameterBytes * 2);
+            BigInteger bigInteger1 = new BigInteger(1, server_challenge.Skip(dataOffset + randomData.Length).Take(parameterBytes).ToArray());
+            BigInteger bigInteger2 = new BigInteger(1, server_challenge.Skip(dataOffset + randomData.Length + parameterBytes).Take(parameterBytes).ToArray());
+            byte[] integerPart1 = bigInteger1.ToByteArrayUnsigned();
+            byte[] integerPart2 = bigInteger2.ToByteArrayUnsigned();
+            Buffer.BlockCopy(integerPart1, 0, signatureData, 0, integerPart1.Length);
+            Buffer.BlockCopy(integerPart2, 0, signatureData, integerPart1.Length, integerPart2.Length);
 
             if (!VerifyDataSignature(signData, signatureData, publicKey))
             {
