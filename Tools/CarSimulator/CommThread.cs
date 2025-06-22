@@ -6703,7 +6703,7 @@ namespace CarSimulator
                         else if (authConf)
                         {
                             Debug.WriteLine("Authentication Configuration -> PKI certificate");
-                            byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x69, _receiveData[4 + offset], 0x02, 0x00 };   // PKI certificate
+                            byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x69, subFunction, 0x02, 0x00 };   // PKI certificate
                             ObdSend(dummyResponse, bmwTcpClientData);
                         }
                         else

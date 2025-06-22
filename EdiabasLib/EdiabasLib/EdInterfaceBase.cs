@@ -867,6 +867,32 @@ namespace EdiabasLib
             return telLength;
         }
 
+        public static int DataLengthBmwFast(byte[] dataBuffer, out int dataOffset)
+        {
+            dataOffset = 3;
+            int telLength = dataBuffer[0] & 0x3F;
+            if (telLength == 0)
+            {   // with length byte
+                if (dataBuffer[3] == 0)
+                {
+                    dataOffset = 6;
+                    telLength = (dataBuffer[4] << 8) + dataBuffer[5];
+                }
+                else
+                {
+                    dataOffset = 4;
+                    telLength = dataBuffer[3];
+                }
+            }
+
+            if (telLength + dataOffset > dataBuffer.Length)
+            {
+                return -1;
+            }
+
+            return telLength;
+        }
+
         public static byte CalcChecksumBmwFast(byte[] data, int length)
         {
             byte sum = 0;
