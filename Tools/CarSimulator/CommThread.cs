@@ -6619,14 +6619,23 @@ namespace CarSimulator
                                     List<X509CertificateStructure> x509CertList = new List<X509CertificateStructure>();
                                     foreach (byte[] certData in certList)
                                     {
-                                        Org.BouncyCastle.X509.X509Certificate x509Cert = new X509CertificateParser().ReadCertificate(certData);
-                                        if (x509Cert?.CertificateStructure == null)
+                                        try
                                         {
-                                            Debug.WriteLine("Invalid X509 certificate data");
+                                            Org.BouncyCastle.X509.X509Certificate x509Cert = new X509CertificateParser().ReadCertificate(certData);
+                                            if (x509Cert?.CertificateStructure == null)
+                                            {
+                                                Debug.WriteLine("Invalid X509 certificate data");
+                                                break;
+                                            }
+
+                                            x509CertList.Add(x509Cert.CertificateStructure);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Debug.WriteLine("Error parsing X509 certificate: {0}", e.Message);
+                                            x509CertList.Clear();
                                             break;
                                         }
-
-                                        x509CertList.Add(x509Cert.CertificateStructure);
                                     }
 
                                     if (x509CertList.Count > 0)
