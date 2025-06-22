@@ -729,7 +729,7 @@ namespace EdiabasLib
             return signer.VerifySignature(signature);
         }
 
-        public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey)
+        public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey, ECPublicKeyParameters publicKey = null)
         {
             if (server_challenge == null || privateKey == null)
             {
@@ -748,6 +748,14 @@ namespace EdiabasLib
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
 
             byte[] signatureData = SignDataBytes(signData, privateKey);
+            if (publicKey != null)
+            {
+                if (!VerifyDataSignature(signData, signatureData, publicKey))
+                {
+                    throw new InvalidOperationException("Signature verification failed.");
+                }
+            }
+
             int privateKeyBytes = privateKey.Parameters.N.BitLength / 8;
             BigInteger bigInteger1 = new BigInteger(1, signatureData.Take(privateKeyBytes).ToArray());
             BigInteger bigInteger2 = new BigInteger(1, signatureData.Skip(privateKeyBytes).Take(privateKeyBytes).ToArray());
