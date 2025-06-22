@@ -741,10 +741,6 @@ namespace EdiabasLib
             Buffer.BlockCopy(array3, 0, array5, 0, array3.Length);
             Buffer.BlockCopy(array4, 0, array5, array3.Length, array4.Length);
 
-            ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
-            signer.Init(forSigning: true, privateKey);
-            signer.BlockUpdate(server_challenge, 0, server_challenge.Length);
-
             byte[] array6 = new byte[array.Length + array5.Length];
             Buffer.BlockCopy(array, 0, array6, 0, array.Length);
             Buffer.BlockCopy(array5, 0, array6, array.Length, array5.Length);
