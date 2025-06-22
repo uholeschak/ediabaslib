@@ -721,7 +721,7 @@ namespace EdiabasLib
             return signer.GenerateSignature();
         }
 
-        private static bool VerifyDataSignature(byte[] message, byte[] signature, ECPrivateKeyParameters publicKey)
+        private static bool VerifyDataSignature(byte[] message, byte[] signature, ECPublicKeyParameters publicKey)
         {
             ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
             signer.Init(forSigning: false, publicKey);
