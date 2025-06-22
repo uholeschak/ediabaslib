@@ -4616,13 +4616,14 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            if (receiveLength < 7 || AuthBuffer[3] != (0x29 | 0x40))
+            int dataLength = DataLengthBmwFast(AuthBuffer, out int dataOffset);
+            if (dataLength < 3 || AuthBuffer[dataOffset + 0] != (0x29 | 0x40))
             {
                 EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth conf response invalid");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            byte authConfig = AuthBuffer[5];
+            byte authConfig = AuthBuffer[dataOffset + 2];
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DoIp auth configuration: {0:X02}", authConfig);
 
             if (sharedData.S29SelectCert == null)
@@ -4653,9 +4654,17 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            if (receiveLength < 7 || AuthBuffer[3] != (0x29 | 0x40))
+            dataLength = DataLengthBmwFast(AuthBuffer, out dataOffset);
+            if (dataLength < 3 + 2 + 8 || AuthBuffer[dataOffset + 0] != (0x29 | 0x40))
             {
                 EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth cert response invalid");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            byte certCheckResponseType = AuthBuffer[dataOffset + 2];
+            if (certCheckResponseType != 0x11)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth cert response type invalid: {0:X02}", certCheckResponseType);
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
