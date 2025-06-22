@@ -715,8 +715,12 @@ namespace EdiabasLib
 
         public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey)
         {
-            const string prefix = "S29UNIPOO";
+            if (server_challenge == null || privateKey == null)
+            {
+                return null;
+            }
 
+            const string prefix = "S29UNIPOO";
             byte[] array = new byte[16];
             RandomNumberGenerator.Create().GetBytes(array);
             int prefixLength = Encoding.ASCII.GetBytes(prefix).Length;

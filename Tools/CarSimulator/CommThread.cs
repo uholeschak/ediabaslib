@@ -6660,9 +6660,7 @@ namespace CarSimulator
                                 byte[] challenge = new byte[16];
                                 RandomNumberGenerator.Create().GetBytes(challenge);
                                 List<byte> challengeResponse = new List<byte> { (byte) (0x80 + 5 + challenge.Length), _receiveData[2], _receiveData[1], 0x69, subFunction, 0x11 };
-                                challengeResponse.Add((byte)(challenge.Length >> 8));
-                                challengeResponse.Add((byte)(challenge.Length & 0xFF));
-                                challengeResponse.AddRange(challenge);
+                                EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, challenge); // challenge block
                                 challengeResponse.Add(0x00); // checksum
                                 ObdSend(challengeResponse.ToArray(), bmwTcpClientData);
                             }
