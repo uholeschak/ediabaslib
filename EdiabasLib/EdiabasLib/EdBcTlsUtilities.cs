@@ -713,6 +713,14 @@ namespace EdiabasLib
             return Convert.ToBase64String(signer.GenerateSignature());
         }
 
+        private static byte[] SignDataBytes(byte[] message, ECPrivateKeyParameters privateKey)
+        {
+            ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
+            signer.Init(forSigning: true, privateKey);
+            signer.BlockUpdate(message, 0, message.Length);
+            return signer.GenerateSignature();
+        }
+
         public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey)
         {
             if (server_challenge == null || privateKey == null)
@@ -721,48 +729,40 @@ namespace EdiabasLib
             }
 
             const string prefix = "S29UNIPOO";
-            byte[] array = new byte[16];
-            RandomNumberGenerator.Create().GetBytes(array);
+            byte[] randomData = new byte[16];
+            RandomNumberGenerator.Create().GetBytes(randomData);
             int prefixLength = Encoding.ASCII.GetBytes(prefix).Length;
-            byte[] array2 = new byte[prefixLength + array.Length + server_challenge.Length + 2];
-            Encoding.ASCII.GetBytes(prefix).CopyTo(array2, 0);
-            array.CopyTo(array2, prefixLength);
-            server_challenge.CopyTo(array2, prefixLength + array.Length);
-            array2[prefixLength + array.Length + server_challenge.Length + 2 - 2] = 0;
-            array2[prefixLength + array.Length + server_challenge.Length + 2 - 1] = 16;
+            byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
+            Encoding.ASCII.GetBytes(prefix).CopyTo(signData, 0);
+            randomData.CopyTo(signData, prefixLength);
+            server_challenge.CopyTo(signData, prefixLength + randomData.Length);
+            signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 2] = 0;
+            signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
 
-            byte[] source = SignDataByte(array2, privateKey);
+            byte[] signatureData = SignDataBytes(signData, privateKey);
             int privateKeyBytes = privateKey.Parameters.N.BitLength / 8;
-            BigInteger bigInteger = new BigInteger(1, source.Take(privateKeyBytes).ToArray());
-            BigInteger bigInteger2 = new BigInteger(1, source.Skip(privateKeyBytes).Take(privateKeyBytes).ToArray());
-            byte[] array3 = bigInteger.ToByteArrayUnsigned();
-            byte[] array4 = bigInteger2.ToByteArrayUnsigned();
-            byte[] array5 = new byte[array3.Length + array4.Length];
-            Buffer.BlockCopy(array3, 0, array5, 0, array3.Length);
-            Buffer.BlockCopy(array4, 0, array5, array3.Length, array4.Length);
+            BigInteger bigInteger1 = new BigInteger(1, signatureData.Take(privateKeyBytes).ToArray());
+            BigInteger bigInteger2 = new BigInteger(1, signatureData.Skip(privateKeyBytes).Take(privateKeyBytes).ToArray());
+            byte[] integerPart1 = bigInteger1.ToByteArrayUnsigned();
+            byte[] integerPart2 = bigInteger2.ToByteArrayUnsigned();
+            byte[] integerData = new byte[integerPart1.Length + integerPart2.Length];
+            Buffer.BlockCopy(integerPart1, 0, integerData, 0, integerPart1.Length);
+            Buffer.BlockCopy(integerPart2, 0, integerData, integerPart1.Length, integerPart2.Length);
 
-            byte[] array6 = new byte[array.Length + array5.Length];
-            Buffer.BlockCopy(array, 0, array6, 0, array.Length);
-            Buffer.BlockCopy(array5, 0, array6, array.Length, array5.Length);
+            byte[] signedData = new byte[randomData.Length + integerData.Length];
+            Buffer.BlockCopy(randomData, 0, signedData, 0, randomData.Length);
+            Buffer.BlockCopy(integerData, 0, signedData, randomData.Length, integerData.Length);
 
-            byte[] array7 = { (byte)((array6.Length >> 8) & 0xFF), (byte)(array6.Length & 0xFF) };
-            byte[] array8 = new byte[2 + array7.Length + array6.Length + 2];
-            array8[0] = 41;
-            array8[1] = 3;
-            Buffer.BlockCopy(array7, 0, array8, 2, array7.Length);
-            Buffer.BlockCopy(array6, 0, array8, 2 + array7.Length, array6.Length);
-            array8[array8.Length - 2] = 0;
-            array8[array8.Length - 1] = 0;
+            byte[] signedLengthData = { (byte)((signedData.Length >> 8) & 0xFF), (byte)(signedData.Length & 0xFF) };
+            byte[] resultData = new byte[2 + signedLengthData.Length + signedData.Length + 2];
+            resultData[0] = 41;
+            resultData[1] = 3;
+            Buffer.BlockCopy(signedLengthData, 0, resultData, 2, signedLengthData.Length);
+            Buffer.BlockCopy(signedData, 0, resultData, 2 + signedLengthData.Length, signedData.Length);
+            resultData[resultData.Length - 2] = 0;
+            resultData[resultData.Length - 1] = 0;
 
-            return array8;
-        }
-
-        private static byte[] SignDataByte(byte[] message, ECPrivateKeyParameters privateKey)
-        {
-            ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
-            signer.Init(forSigning: true, privateKey);
-            signer.BlockUpdate(message, 0, message.Length);
-            return signer.GenerateSignature();
+            return resultData;
         }
 
         public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, DerObjectIdentifier paramSet, string password = null)
