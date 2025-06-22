@@ -4655,7 +4655,7 @@ namespace EdiabasLib
             }
 
             dataLength = DataLengthBmwFast(AuthBuffer, out dataOffset);
-            if (dataLength < 3 + 2 + 8 || AuthBuffer[dataOffset + 0] != (0x29 | 0x40))
+            if (dataLength < 3 + 2 + 16 || AuthBuffer[dataOffset + 0] != (0x29 | 0x40))
             {
                 EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth cert response invalid");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
@@ -4668,10 +4668,18 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            byte[] challenge = GetS29DataBlock(AuthBuffer, dataOffset + 3);
-            if (challenge == null || challenge.Length < 8)
+            byte[] serverChallenge = GetS29DataBlock(AuthBuffer, dataOffset + 3);
+            if (serverChallenge == null || serverChallenge.Length < 16)
             {
                 EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth challenge invalid");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            ECPrivateKeyParameters privateKey = sharedData.MachineKeyPair?.Private as ECPrivateKeyParameters;
+            byte[] proofData = EdBcTlsUtilities.CalculateProofOfOwnership(serverChallenge, privateKey);
+            if (proofData == null)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth proof of ownership calculation failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
