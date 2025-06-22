@@ -4676,7 +4676,8 @@ namespace EdiabasLib
             }
 
             ECPrivateKeyParameters privateKey = sharedData.MachineKeyPair?.Private as ECPrivateKeyParameters;
-            byte[] proofData = EdBcTlsUtilities.CalculateProofOfOwnership(serverChallenge, privateKey);
+            ECPublicKeyParameters publicKey = sharedData.MachineKeyPair?.Public as ECPublicKeyParameters;
+            byte[] proofData = EdBcTlsUtilities.CalculateProofOfOwnership(serverChallenge, privateKey, publicKey);
             if (proofData == null)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth proof of ownership calculation failed");
