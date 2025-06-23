@@ -1421,7 +1421,8 @@ namespace EdiabasLib
                                 if (!LoadS29Cert(SharedDataActive, DoIpS29Path, DoIpS29SelectCert))
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected S29 certificate load failed: {0}", DoIpS29SelectCert);
-                                    continue;
+                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
+                                    break;
                                 }
                             }
                         }
@@ -4682,6 +4683,11 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth proof of ownership calculation failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            if (!EdBcTlsUtilities.VerifyProofOfOwnership(proofData, serverChallenge, publicKey))
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth proof of ownership verification failed");
             }
 
             List<byte> proofRequest = new List<byte> { 0x80, DoIpGwAddrDefault, 0xF1,
