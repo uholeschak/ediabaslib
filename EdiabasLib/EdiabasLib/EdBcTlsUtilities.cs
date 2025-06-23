@@ -782,16 +782,16 @@ namespace EdiabasLib
             return resultData;
         }
 
-        public static bool VerifyProofOfOwnership(byte[] server_challenge, ECPublicKeyParameters publicKey)
+        public static bool VerifyProofOfOwnership(byte[] proofData, byte[] server_challenge, ECPublicKeyParameters publicKey)
         {
-            if (server_challenge == null || publicKey == null)
+            if (proofData == null || server_challenge == null || publicKey == null)
             {
                 return false;
             }
 
             int dataOffset = 4;
             byte[] randomData = new byte[16];
-            Buffer.BlockCopy(server_challenge, dataOffset, randomData, 0, randomData.Length);
+            Buffer.BlockCopy(proofData, dataOffset, randomData, 0, randomData.Length);
             int prefixLength = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).Length;
             byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
             Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).CopyTo(signData, 0);
@@ -801,9 +801,25 @@ namespace EdiabasLib
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
 
             int parameterBytes = publicKey.Parameters.N.BitLength / 8;
+            if (proofData.Length < dataOffset + randomData.Length + parameterBytes * 2 + 2)
+            {
+                return false;
+            }
+
+            if (proofData[0] != 41 || proofData[1] != 3)
+            {
+                return false;
+            }
+
+            int signedBlockLength = (proofData[2] << 8) | proofData[3];
+            if (signedBlockLength + 6 != proofData.Length)
+            {
+                return false;
+            }
+
             byte[] signatureData = new byte[parameterBytes * 2 + 8];
-            BigInteger bigInteger1 = new BigInteger(0, server_challenge.Skip(dataOffset + randomData.Length).Take(parameterBytes).ToArray());
-            BigInteger bigInteger2 = new BigInteger(0, server_challenge.Skip(dataOffset + randomData.Length + parameterBytes).Take(parameterBytes).ToArray());
+            BigInteger bigInteger1 = new BigInteger(0, proofData.Skip(dataOffset + randomData.Length).Take(parameterBytes).ToArray());
+            BigInteger bigInteger2 = new BigInteger(0, proofData.Skip(dataOffset + randomData.Length + parameterBytes).Take(parameterBytes).ToArray());
             byte[] integerPart1 = bigInteger1.ToByteArray();
             byte[] integerPart2 = bigInteger2.ToByteArray();
             Buffer.BlockCopy(integerPart1, 0, signatureData, 0, integerPart1.Length);
