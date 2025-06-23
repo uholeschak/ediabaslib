@@ -6,6 +6,7 @@ using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
@@ -20,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -728,6 +730,16 @@ namespace EdiabasLib
             ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
             signer.Init(forSigning: false, publicKey);
             signer.BlockUpdate(message, 0, message.Length);
+
+            DsaDigestSigner dsaDigestSigner = signer as DsaDigestSigner;
+            if (dsaDigestSigner != null)
+            {
+                MethodInfo getOrderMethod = dsaDigestSigner.GetType().GetMethod("GetOrder", BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
+                if (getOrderMethod != null)
+                {
+                    BigInteger order = getOrderMethod.Invoke(dsaDigestSigner, null) as BigInteger;
+                }
+            }
             return signer.VerifySignature(signature);
         }
 
