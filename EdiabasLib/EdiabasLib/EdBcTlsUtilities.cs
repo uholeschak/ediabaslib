@@ -811,6 +811,11 @@ namespace EdiabasLib
                 return false;
             }
 
+            if (proofData[proofData.Length - 2] != 0 || proofData[proofData.Length - 1] != 0)
+            {
+                return false;
+            }
+
             int signedBlockLength = (proofData[2] << 8) | proofData[3];
             if (signedBlockLength + 6 != proofData.Length)
             {
