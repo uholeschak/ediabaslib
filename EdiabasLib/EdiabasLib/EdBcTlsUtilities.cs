@@ -801,6 +801,11 @@ namespace EdiabasLib
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
 
             int parameterBytes = publicKey.Parameters.N.BitLength / 8;
+            if (server_challenge.Length < 2 + 2 + randomData.Length + parameterBytes * 2 + 2)
+            {
+                return false;
+            }
+
             byte[] signatureData = new byte[parameterBytes * 2 + 8];
             BigInteger bigInteger1 = new BigInteger(0, server_challenge.Skip(dataOffset + randomData.Length).Take(parameterBytes).ToArray());
             BigInteger bigInteger2 = new BigInteger(0, server_challenge.Skip(dataOffset + randomData.Length + parameterBytes).Take(parameterBytes).ToArray());
