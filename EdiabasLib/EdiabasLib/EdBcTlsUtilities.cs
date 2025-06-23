@@ -4,6 +4,7 @@ using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
@@ -20,8 +21,6 @@ using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -717,30 +716,26 @@ namespace EdiabasLib
             return Convert.ToBase64String(signer.GenerateSignature());
         }
 
-        private static byte[] SignDataBytes(byte[] message, ECPrivateKeyParameters privateKey)
+        private static BigInteger[] SignDataBytes(byte[] message, ECPrivateKeyParameters privateKey)
         {
-            ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
-            signer.Init(forSigning: true, privateKey);
-            signer.BlockUpdate(message, 0, message.Length);
-            return signer.GenerateSignature();
+            Sha512Digest sha512Digest = new Sha512Digest();
+            sha512Digest.BlockUpdate(message, 0, message.Length);
+            byte[] array = new byte[sha512Digest.GetDigestSize()];
+            sha512Digest.DoFinal(array, 0);
+            ECDsaSigner eCDsaSigner = new ECDsaSigner();
+            eCDsaSigner.Init(forSigning: true, privateKey);
+            return eCDsaSigner.GenerateSignature(array);
         }
 
-        private static bool VerifyDataSignature(byte[] message, byte[] signature, ECPublicKeyParameters publicKey)
+        private static bool VerifyDataSignature(byte[] message, BigInteger[] signatureInts, ECPublicKeyParameters publicKey)
         {
-            ISigner signer = SignerUtilities.GetSigner("SHA512withECDSA");
-            signer.Init(forSigning: false, publicKey);
-            signer.BlockUpdate(message, 0, message.Length);
-
-            DsaDigestSigner dsaDigestSigner = signer as DsaDigestSigner;
-            if (dsaDigestSigner != null)
-            {
-                MethodInfo getOrderMethod = dsaDigestSigner.GetType().GetMethod("GetOrder", BindingFlags.Instance | BindingFlags.NonPublic, null, Type.EmptyTypes, null);
-                if (getOrderMethod != null)
-                {
-                    BigInteger order = getOrderMethod.Invoke(dsaDigestSigner, null) as BigInteger;
-                }
-            }
-            return signer.VerifySignature(signature);
+            Sha512Digest sha512Digest = new Sha512Digest();
+            sha512Digest.BlockUpdate(message, 0, message.Length);
+            byte[] array = new byte[sha512Digest.GetDigestSize()];
+            sha512Digest.DoFinal(array, 0);
+            ECDsaSigner eCDsaSigner = new ECDsaSigner();
+            eCDsaSigner.Init(forSigning: false, publicKey);
+            return eCDsaSigner.VerifySignature(array, signatureInts[0], signatureInts[1]);
         }
 
         public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey, ECPublicKeyParameters publicKey = null)
@@ -752,44 +747,33 @@ namespace EdiabasLib
 
             byte[] randomData = new byte[16];
             RandomNumberGenerator.Create().GetBytes(randomData);
-            int prefixLength = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).Length;
+            byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix);
+            int prefixLength = prefixBytes.Length;
             byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
-            Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).CopyTo(signData, 0);
+            prefixBytes.CopyTo(signData, 0);
             randomData.CopyTo(signData, prefixLength);
             server_challenge.CopyTo(signData, prefixLength + randomData.Length);
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 2] = 0;
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
 
-            byte[] signatureData = SignDataBytes(signData, privateKey);
+            BigInteger[] signatureInts = SignDataBytes(signData, privateKey);
             if (publicKey != null)
             {
-                if (!VerifyDataSignature(signData, signatureData, publicKey))
+                if (!VerifyDataSignature(signData, signatureInts, publicKey))
                 {
-                    throw new InvalidOperationException("Signature verification failed.");
+                    return null;
                 }
             }
 
-            int parameterBytes = privateKey.Parameters.N.BitLength / 8;
-            BigInteger bigInteger1 = new BigInteger(1, signatureData.Take(parameterBytes).ToArray());
-            BigInteger bigInteger2 = new BigInteger(1, signatureData.Skip(parameterBytes).Take(parameterBytes).ToArray());
-            byte[] integerPart1 = bigInteger1.ToByteArrayUnsigned();
-            byte[] integerPart2 = bigInteger2.ToByteArrayUnsigned();
+            byte[] integerPart1 = signatureInts[0].ToByteArrayUnsigned();
+            byte[] integerPart2 = signatureInts[1].ToByteArrayUnsigned();
             byte[] integerData = new byte[integerPart1.Length + integerPart2.Length];
             Buffer.BlockCopy(integerPart1, 0, integerData, 0, integerPart1.Length);
             Buffer.BlockCopy(integerPart2, 0, integerData, integerPart1.Length, integerPart2.Length);
 
-            byte[] signedData = new byte[randomData.Length + integerData.Length];
-            Buffer.BlockCopy(randomData, 0, signedData, 0, randomData.Length);
-            Buffer.BlockCopy(integerData, 0, signedData, randomData.Length, integerData.Length);
-
-            byte[] signedLengthData = { (byte)((signedData.Length >> 8) & 0xFF), (byte)(signedData.Length & 0xFF) };
-            byte[] resultData = new byte[2 + signedLengthData.Length + signedData.Length + 2];
-            resultData[0] = 41;
-            resultData[1] = 3;
-            Buffer.BlockCopy(signedLengthData, 0, resultData, 2, signedLengthData.Length);
-            Buffer.BlockCopy(signedData, 0, resultData, 2 + signedLengthData.Length, signedData.Length);
-            resultData[resultData.Length - 2] = 0;
-            resultData[resultData.Length - 1] = 0;
+            byte[] resultData = new byte[randomData.Length + integerData.Length];
+            Buffer.BlockCopy(randomData, 0, resultData, 0, randomData.Length);
+            Buffer.BlockCopy(integerData, 0, resultData, randomData.Length, integerData.Length);
 
             return resultData;
         }
@@ -801,48 +785,26 @@ namespace EdiabasLib
                 return false;
             }
 
-            int dataOffset = 4;
             byte[] randomData = new byte[16];
-            Buffer.BlockCopy(proofData, dataOffset, randomData, 0, randomData.Length);
-            int prefixLength = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).Length;
+            Buffer.BlockCopy(proofData, 0, randomData, 0, randomData.Length);
+            byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix);
+            int prefixLength = prefixBytes.Length;
             byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
-            Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix).CopyTo(signData, 0);
+            prefixBytes.CopyTo(signData, 0);
             randomData.CopyTo(signData, prefixLength);
             server_challenge.CopyTo(signData, prefixLength + randomData.Length);
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 2] = 0;
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
 
-            int parameterBytes = publicKey.Parameters.N.BitLength / 8;
-            if (proofData.Length < dataOffset + randomData.Length + parameterBytes * 2 + 2)
-            {
-                return false;
-            }
+            BigInteger[] signatureInts = new BigInteger[2];
+            byte[] integerPart1 = new byte[(proofData.Length - randomData.Length) / 2];
+            byte[] integerPart2 = new byte[(proofData.Length - randomData.Length) / 2];
+            Buffer.BlockCopy(proofData, randomData.Length, integerPart1, 0, integerPart1.Length);
+            Buffer.BlockCopy(proofData, randomData.Length + integerPart1.Length, integerPart2, 0, integerPart2.Length);
+            signatureInts[0] = new BigInteger(1, integerPart1);
+            signatureInts[1] = new BigInteger(1, integerPart2);
 
-            if (proofData[0] != 41 || proofData[1] != 3)
-            {
-                return false;
-            }
-
-            if (proofData[proofData.Length - 2] != 0 || proofData[proofData.Length - 1] != 0)
-            {
-                return false;
-            }
-
-            int signedBlockLength = (proofData[2] << 8) | proofData[3];
-            if (signedBlockLength + 6 != proofData.Length)
-            {
-                return false;
-            }
-
-            byte[] signatureData = new byte[parameterBytes * 2 + 8];
-            BigInteger bigInteger1 = new BigInteger(0, proofData.Skip(dataOffset + randomData.Length).Take(parameterBytes).ToArray());
-            BigInteger bigInteger2 = new BigInteger(0, proofData.Skip(dataOffset + randomData.Length + parameterBytes).Take(parameterBytes).ToArray());
-            byte[] integerPart1 = bigInteger1.ToByteArray();
-            byte[] integerPart2 = bigInteger2.ToByteArray();
-            Buffer.BlockCopy(integerPart1, 0, signatureData, 0, integerPart1.Length);
-            Buffer.BlockCopy(integerPart2, 0, signatureData, integerPart1.Length, integerPart2.Length);
-
-            if (!VerifyDataSignature(signData, signatureData, publicKey))
+            if (!VerifyDataSignature(signData, signatureInts, publicKey))
             {
                 return false;
             }
