@@ -738,7 +738,7 @@ namespace EdiabasLib
             return eCDsaSigner.VerifySignature(array, signatureInts[0], signatureInts[1]);
         }
 
-        public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey, ECPublicKeyParameters publicKey = null)
+        public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey)
         {
             if (server_challenge == null || privateKey == null)
             {
@@ -757,14 +757,6 @@ namespace EdiabasLib
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
 
             BigInteger[] signatureInts = SignDataBytes(signData, privateKey);
-            if (publicKey != null)
-            {
-                if (!VerifyDataSignature(signData, signatureInts, publicKey))
-                {
-                    return null;
-                }
-            }
-
             byte[] integerPart1 = signatureInts[0].ToByteArrayUnsigned();
             byte[] integerPart2 = signatureInts[1].ToByteArrayUnsigned();
             byte[] integerData = new byte[integerPart1.Length + integerPart2.Length];
