@@ -26,6 +26,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using Org.BouncyCastle.Crypto.Parameters;
 
 // ReSharper disable RedundantAssignment
 // ReSharper disable RedundantCast
@@ -135,6 +136,8 @@ namespace CarSimulator
                 TcpClientStream = null;
                 LastTcpRecTick = DateTime.MinValue.Ticks;
                 LastTcpSendTick = DateTime.MinValue.Ticks;
+                ClientPublicKey = null;
+                ServerChallenge = null;
             }
 
             public readonly BmwTcpChannel BmwTcpChannel;
@@ -148,6 +151,8 @@ namespace CarSimulator
             public int TcpNackIndex;
             public int TcpDataIndex;
             public byte[] TcpLastResponse;
+            public ECPublicKeyParameters ClientPublicKey;
+            public byte[] ServerChallenge;
         }
 
         private class BmwTcpChannel
@@ -6644,7 +6649,24 @@ namespace CarSimulator
                                         if (EdBcTlsUtilities.CheckCertificateChainCa(x509CertList.ToArray(), _serverCertificateAuthorities.ToArray()))
                                         {
                                             Debug.WriteLine("Certificate chain is valid");
-                                            certValid = true;
+                                            try
+                                            {
+                                                Org.BouncyCastle.X509.X509Certificate x509Certificate = new Org.BouncyCastle.X509.X509Certificate(x509CertList[0]);
+                                                bmwTcpClientData.ClientPublicKey = x509Certificate.GetPublicKey() as ECPublicKeyParameters;
+                                                if (bmwTcpClientData.ClientPublicKey == null)
+                                                {
+                                                    Debug.WriteLine("Invalid public key in certificate");
+                                                }
+                                                else
+                                                {
+                                                    certValid = true;
+                                                }
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Debug.WriteLine("Error getting public key from certificate: {0}", e.Message);
+                                                certValid = false;
+                                            }
                                         }
                                         else
                                         {
@@ -6662,6 +6684,7 @@ namespace CarSimulator
                                 List<byte> challengeResponse = new List<byte> { (byte) (0x80 + 5 + challenge.Length), _receiveData[2], _receiveData[1], 0x69, subFunction, 0x11 };
                                 EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, challenge); // challenge block
                                 challengeResponse.Add(0x00); // checksum
+                                bmwTcpClientData.ServerChallenge = challenge;
                                 ObdSend(challengeResponse.ToArray(), bmwTcpClientData);
                             }
                             else
@@ -6684,7 +6707,15 @@ namespace CarSimulator
                             {
                                 DebugLogData("Proof: ", parameterList[0], parameterList[0].Length);
                                 DebugLogData("Ephemeral PublicKey: ", parameterList[1], parameterList[1].Length);
-                                proofValid = true;
+                                if (!EdBcTlsUtilities.VerifyProofOfOwnership(parameterList[0], bmwTcpClientData.ServerChallenge, bmwTcpClientData.ClientPublicKey))
+                                {
+                                    Debug.WriteLine("Proof of ownership is invalid");
+                                }
+                                else
+                                {
+                                    Debug.WriteLine("Proof of ownership is valid");
+                                    proofValid = true;
+                                }
                             }
 
                             if (proofValid)
@@ -6702,6 +6733,8 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("Authentication Configuration -> PKI certificate");
                             byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x69, subFunction, 0x02, 0x00 };   // PKI certificate
+                            bmwTcpClientData.ClientPublicKey = null;
+                            bmwTcpClientData.ServerChallenge = null;
                             ObdSend(dummyResponse, bmwTcpClientData);
                         }
                         else
