@@ -753,8 +753,8 @@ namespace EdiabasLib
             prefixBytes.CopyTo(signData, 0);
             randomData.CopyTo(signData, prefixLength);
             server_challenge.CopyTo(signData, prefixLength + randomData.Length);
-            signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 2] = 0;
-            signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
+            signData[signData.Length - 2] = 0;
+            signData[signData.Length - 1] = 16;
 
             BigInteger[] signatureInts = SignDataBytes(signData, privateKey);
             byte[] integerPart1 = signatureInts[0].ToByteArrayUnsigned();
@@ -777,6 +777,11 @@ namespace EdiabasLib
                 return false;
             }
 
+            if (proofData.Length < 16 + 2 * 48)
+            {
+                return false; // Minimum length check for random data and signature integers
+            }
+
             byte[] randomData = new byte[16];
             Buffer.BlockCopy(proofData, 0, randomData, 0, randomData.Length);
             byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix);
@@ -785,12 +790,13 @@ namespace EdiabasLib
             prefixBytes.CopyTo(signData, 0);
             randomData.CopyTo(signData, prefixLength);
             server_challenge.CopyTo(signData, prefixLength + randomData.Length);
-            signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 2] = 0;
-            signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
+            signData[signData.Length - 2] = 0;
+            signData[signData.Length - 1] = 16;
 
             BigInteger[] signatureInts = new BigInteger[2];
-            byte[] integerPart1 = new byte[(proofData.Length - randomData.Length) / 2];
-            byte[] integerPart2 = new byte[(proofData.Length - randomData.Length) / 2];
+            int integerDataLength = (proofData.Length - randomData.Length) / 2;
+            byte[] integerPart1 = new byte[integerDataLength];
+            byte[] integerPart2 = new byte[integerDataLength];
             Buffer.BlockCopy(proofData, randomData.Length, integerPart1, 0, integerPart1.Length);
             Buffer.BlockCopy(proofData, randomData.Length + integerPart1.Length, integerPart2, 0, integerPart2.Length);
             signatureInts[0] = new BigInteger(1, integerPart1);
