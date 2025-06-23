@@ -801,7 +801,7 @@ namespace EdiabasLib
             signData[prefixLength + randomData.Length + server_challenge.Length + 2 - 1] = 16;
 
             int parameterBytes = publicKey.Parameters.N.BitLength / 8;
-            if (server_challenge.Length < 2 + 2 + randomData.Length + parameterBytes * 2 + 2)
+            if (server_challenge.Length < dataOffset + randomData.Length + parameterBytes * 2 + 2)
             {
                 return false;
             }
