@@ -806,6 +806,17 @@ namespace EdiabasLib
                 return false;
             }
 
+            if (server_challenge[0] != 41 || server_challenge[1] != 3)
+            {
+                return false;
+            }
+
+            int signedBlockLength = (server_challenge[2] << 8) | server_challenge[3];
+            if (signedBlockLength + 6 != server_challenge.Length)
+            {
+                return false;
+            }
+
             byte[] signatureData = new byte[parameterBytes * 2 + 8];
             BigInteger bigInteger1 = new BigInteger(0, server_challenge.Skip(dataOffset + randomData.Length).Take(parameterBytes).ToArray());
             BigInteger bigInteger2 = new BigInteger(0, server_challenge.Skip(dataOffset + randomData.Length + parameterBytes).Take(parameterBytes).ToArray());
