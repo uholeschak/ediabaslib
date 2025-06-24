@@ -740,74 +740,88 @@ namespace EdiabasLib
 
         public static byte[] CalculateProofOfOwnership(byte[] server_challenge, ECPrivateKeyParameters privateKey)
         {
-            if (server_challenge == null || privateKey == null)
+            try
+            {
+                if (server_challenge == null || privateKey == null)
+                {
+                    return null;
+                }
+
+                byte[] randomData = new byte[16];
+                RandomNumberGenerator.Create().GetBytes(randomData);
+                byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix);
+                int prefixLength = prefixBytes.Length;
+                byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
+                prefixBytes.CopyTo(signData, 0);
+                randomData.CopyTo(signData, prefixLength);
+                server_challenge.CopyTo(signData, prefixLength + randomData.Length);
+                signData[signData.Length - 2] = 0;
+                signData[signData.Length - 1] = 16;
+
+                BigInteger[] signatureInts = SignDataBytes(signData, privateKey);
+                byte[] integerPart1 = signatureInts[0].ToByteArrayUnsigned();
+                byte[] integerPart2 = signatureInts[1].ToByteArrayUnsigned();
+                byte[] integerData = new byte[integerPart1.Length + integerPart2.Length];
+                Buffer.BlockCopy(integerPart1, 0, integerData, 0, integerPart1.Length);
+                Buffer.BlockCopy(integerPart2, 0, integerData, integerPart1.Length, integerPart2.Length);
+
+                byte[] resultData = new byte[randomData.Length + integerData.Length];
+                Buffer.BlockCopy(randomData, 0, resultData, 0, randomData.Length);
+                Buffer.BlockCopy(integerData, 0, resultData, randomData.Length, integerData.Length);
+
+                return resultData;
+            }
+            catch (Exception)
             {
                 return null;
             }
-
-            byte[] randomData = new byte[16];
-            RandomNumberGenerator.Create().GetBytes(randomData);
-            byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix);
-            int prefixLength = prefixBytes.Length;
-            byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
-            prefixBytes.CopyTo(signData, 0);
-            randomData.CopyTo(signData, prefixLength);
-            server_challenge.CopyTo(signData, prefixLength + randomData.Length);
-            signData[signData.Length - 2] = 0;
-            signData[signData.Length - 1] = 16;
-
-            BigInteger[] signatureInts = SignDataBytes(signData, privateKey);
-            byte[] integerPart1 = signatureInts[0].ToByteArrayUnsigned();
-            byte[] integerPart2 = signatureInts[1].ToByteArrayUnsigned();
-            byte[] integerData = new byte[integerPart1.Length + integerPart2.Length];
-            Buffer.BlockCopy(integerPart1, 0, integerData, 0, integerPart1.Length);
-            Buffer.BlockCopy(integerPart2, 0, integerData, integerPart1.Length, integerPart2.Length);
-
-            byte[] resultData = new byte[randomData.Length + integerData.Length];
-            Buffer.BlockCopy(randomData, 0, resultData, 0, randomData.Length);
-            Buffer.BlockCopy(integerData, 0, resultData, randomData.Length, integerData.Length);
-
-            return resultData;
         }
 
         public static bool VerifyProofOfOwnership(byte[] proofData, byte[] server_challenge, ECPublicKeyParameters publicKey)
         {
-            if (proofData == null || server_challenge == null || publicKey == null)
+            try
+            {
+                if (proofData == null || server_challenge == null || publicKey == null)
+                {
+                    return false;
+                }
+
+                if (proofData.Length < 16 + 2 * 48)
+                {
+                    return false; // Minimum length check for random data and signature integers
+                }
+
+                byte[] randomData = new byte[16];
+                Buffer.BlockCopy(proofData, 0, randomData, 0, randomData.Length);
+                byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix);
+                int prefixLength = prefixBytes.Length;
+                byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
+                prefixBytes.CopyTo(signData, 0);
+                randomData.CopyTo(signData, prefixLength);
+                server_challenge.CopyTo(signData, prefixLength + randomData.Length);
+                signData[signData.Length - 2] = 0;
+                signData[signData.Length - 1] = 16;
+
+                BigInteger[] signatureInts = new BigInteger[2];
+                int integerDataLength = (proofData.Length - randomData.Length) / 2;
+                byte[] integerPart1 = new byte[integerDataLength];
+                byte[] integerPart2 = new byte[integerDataLength];
+                Buffer.BlockCopy(proofData, randomData.Length, integerPart1, 0, integerPart1.Length);
+                Buffer.BlockCopy(proofData, randomData.Length + integerPart1.Length, integerPart2, 0, integerPart2.Length);
+                signatureInts[0] = new BigInteger(1, integerPart1);
+                signatureInts[1] = new BigInteger(1, integerPart2);
+
+                if (!VerifyDataSignature(signData, signatureInts, publicKey))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
             {
                 return false;
             }
-
-            if (proofData.Length < 16 + 2 * 48)
-            {
-                return false; // Minimum length check for random data and signature integers
-            }
-
-            byte[] randomData = new byte[16];
-            Buffer.BlockCopy(proofData, 0, randomData, 0, randomData.Length);
-            byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix);
-            int prefixLength = prefixBytes.Length;
-            byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
-            prefixBytes.CopyTo(signData, 0);
-            randomData.CopyTo(signData, prefixLength);
-            server_challenge.CopyTo(signData, prefixLength + randomData.Length);
-            signData[signData.Length - 2] = 0;
-            signData[signData.Length - 1] = 16;
-
-            BigInteger[] signatureInts = new BigInteger[2];
-            int integerDataLength = (proofData.Length - randomData.Length) / 2;
-            byte[] integerPart1 = new byte[integerDataLength];
-            byte[] integerPart2 = new byte[integerDataLength];
-            Buffer.BlockCopy(proofData, randomData.Length, integerPart1, 0, integerPart1.Length);
-            Buffer.BlockCopy(proofData, randomData.Length + integerPart1.Length, integerPart2, 0, integerPart2.Length);
-            signatureInts[0] = new BigInteger(1, integerPart1);
-            signatureInts[1] = new BigInteger(1, integerPart2);
-
-            if (!VerifyDataSignature(signData, signatureInts, publicKey))
-            {
-                return false;
-            }
-
-            return true;
         }
 
         public static bool GenerateEcKeyPair(string privateKeyFile, string publicKeyFile, DerObjectIdentifier paramSet, string password = null)
