@@ -6718,6 +6718,7 @@ namespace CarSimulator
                                 }
                             }
 
+                            bmwTcpClientData.ServerChallenge = null; // reset challenge after use
                             if (proofValid)
                             {
                                 byte[] validResponse = { 0x83, _receiveData[2], _receiveData[1], 0x69, subFunction, 0x12, 0x00 };   // positive ACK
