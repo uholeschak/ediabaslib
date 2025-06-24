@@ -16,6 +16,7 @@ using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto;
 using Org.BouncyCastle.Tls.Crypto.Impl.BC;
 using Org.BouncyCastle.Utilities;
+using Org.BouncyCastle.Utilities.Collections;
 using Org.BouncyCastle.Utilities.Encoders;
 using Org.BouncyCastle.Utilities.IO.Pem;
 using Org.BouncyCastle.X509;
@@ -909,6 +910,7 @@ namespace EdiabasLib
             }
 
             X509Certificate rootCert = certChain[certChain.Count - 1];
+            IStore<X509Certificate> x509CertStore = CollectionUtilities.CreateStore(certChain);
             PkixCertPath cp = new PkixCertPath(certChain);
             PkixCertPathValidator cpv = new PkixCertPathValidator();
             HashSet<TrustAnchor> trust = new HashSet<TrustAnchor>();
@@ -916,7 +918,10 @@ namespace EdiabasLib
             CertPathChecker checker = new CertPathChecker();
 
             param.AddCertPathChecker(checker);
+            param.AddStoreCert(x509CertStore);
+            param.Date = DateTime.UtcNow.AddHours(1);
             PkixCertPathValidatorResult result = cpv.Validate(cp, param);
+            AsymmetricKeyParameter subjectPublicKey = result.SubjectPublicKey;
 
             if (!result.TrustAnchor.TrustedCert.Equals(rootCert))
             {
