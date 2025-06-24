@@ -10,6 +10,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
+using Org.BouncyCastle.Pkix;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto;
@@ -29,6 +30,36 @@ namespace EdiabasLib
     public static class EdBcTlsUtilities
     {
         public const string S29ProofOfOwnershipPrefix = "S29UNIPOO";
+
+        private class CertPathChecker
+            : PkixCertPathChecker
+        {
+            private static int count;
+
+            public override void Init(bool forward)
+            {
+            }
+
+            public override bool IsForwardCheckingSupported()
+            {
+                return true;
+            }
+
+            public override ISet<string> GetSupportedExtensions()
+            {
+                return null;
+            }
+
+            public override void Check(X509Certificate cert, ISet<string> unresolvedCritExts)
+            {
+                count++;
+            }
+
+            public int GetCount()
+            {
+                return count;
+            }
+        }
 
         public static string Fingerprint(X509CertificateStructure c)
         {
@@ -868,6 +899,31 @@ namespace EdiabasLib
             {
                 return false;
             }
+        }
+
+        public static bool ValidateCertChain(List<X509Certificate> certChain)
+        {
+            if (certChain == null || certChain.Count < 2)
+            {
+                return false;
+            }
+
+            X509Certificate rootCert = certChain[certChain.Count - 1];
+            PkixCertPath cp = new PkixCertPath(certChain);
+            PkixCertPathValidator cpv = new PkixCertPathValidator();
+            HashSet<TrustAnchor> trust = new HashSet<TrustAnchor>();
+            PkixParameters param = new PkixParameters(trust);
+            CertPathChecker checker = new CertPathChecker();
+
+            param.AddCertPathChecker(checker);
+            PkixCertPathValidatorResult result = cpv.Validate(cp, param);
+
+            if (!result.TrustAnchor.TrustedCert.Equals(rootCert))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }
