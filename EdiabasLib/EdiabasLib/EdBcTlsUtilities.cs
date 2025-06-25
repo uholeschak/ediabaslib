@@ -941,6 +941,8 @@ namespace EdiabasLib
                 PkixCertPath cp = new PkixCertPath(certChain);
                 PkixCertPathValidator cpv = new PkixCertPathValidator();
                 HashSet<TrustAnchor> trust = new HashSet<TrustAnchor>();
+                trust.Add(new TrustAnchor(rootCert, null));
+
                 PkixParameters param = new PkixParameters(trust);
                 CertPathChecker checker = new CertPathChecker();
 
