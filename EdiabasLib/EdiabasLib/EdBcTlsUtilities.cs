@@ -113,6 +113,21 @@ namespace EdiabasLib
             return certificates;
         }
 
+        public static List<X509Certificate> ConvertToX509CertList(List<X509CertificateStructure> certList)
+        {
+            List<X509Certificate> certificates = new List<X509Certificate>();
+            foreach (X509CertificateStructure certStruct in certList)
+            {
+                if (certStruct != null)
+                {
+                    X509Certificate certificate = new X509Certificate(certStruct);
+                    certificates.Add(certificate);
+                }
+            }
+
+            return certificates;
+        }
+
         public static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource, string password = null)
         {
             List<PemObject> pemObjects = LoadPemResources(resource);
