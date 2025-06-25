@@ -902,7 +902,7 @@ namespace EdiabasLib
             }
         }
 
-        public static bool ValidateCertChain(List<X509Certificate> certChain)
+        public static bool ValidateCertChain(List<X509Certificate> certChain, List<X509Certificate> rootCerts)
         {
             if (certChain == null || certChain.Count < 2)
             {
@@ -910,7 +910,7 @@ namespace EdiabasLib
             }
 
             X509Certificate rootCert = certChain[certChain.Count - 1];
-            IStore<X509Certificate> x509CertStore = CollectionUtilities.CreateStore(certChain);
+            IStore<X509Certificate> x509CertStore = CollectionUtilities.CreateStore(rootCerts);
             PkixCertPath cp = new PkixCertPath(certChain);
             PkixCertPathValidator cpv = new PkixCertPathValidator();
             HashSet<TrustAnchor> trust = new HashSet<TrustAnchor>();
