@@ -948,7 +948,7 @@ namespace EdiabasLib
 
                 param.AddCertPathChecker(checker);
                 param.AddStoreCert(x509CertStore);
-                param.Date = DateTime.UtcNow.AddHours(1);
+                param.IsRevocationEnabled = false;
                 PkixCertPathValidatorResult result = cpv.Validate(cp, param);
                 AsymmetricKeyParameter subjectPublicKey = result.SubjectPublicKey;
 
