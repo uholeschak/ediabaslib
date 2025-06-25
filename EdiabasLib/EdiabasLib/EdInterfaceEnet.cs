@@ -247,6 +247,7 @@ namespace EdiabasLib
                 TcpDiagStreamRecLock = new object();
                 TcpControlTimer = new Timer(TcpControlTimeout, this, Timeout.Infinite, Timeout.Infinite);
                 TrustedCAs = null;
+                TrustedCaStructs = null;
                 TrustedCAFiles = null;
                 S29Certs = null;
                 S29CertFiles = null;
@@ -270,6 +271,12 @@ namespace EdiabasLib
 
                     TrustedCAs.Clear();
                     TrustedCAs = null;
+                }
+
+                if (TrustedCaStructs != null)
+                {
+                    TrustedCaStructs.Clear();
+                    TrustedCaStructs = null;
                 }
 
                 if (TrustedCAFiles != null)
@@ -392,6 +399,7 @@ namespace EdiabasLib
             public Stream TcpControlStream;
             public Timer TcpControlTimer;
             public List<X509Certificate2> TrustedCAs;
+            public List<X509CertificateStructure> TrustedCaStructs;
             public List<string> TrustedCAFiles;
             public List<X509Certificate2> S29Certs;
             public List<EdBcTlsClient.CertInfo> S29CertFiles;
@@ -3097,6 +3105,7 @@ namespace EdiabasLib
                 }
 
                 List<X509Certificate2> caList = new List<X509Certificate2>();
+                List<X509CertificateStructure> caStructList = new List<X509CertificateStructure>();
                 List<string> caFileList = new List<string>();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
@@ -3110,6 +3119,12 @@ namespace EdiabasLib
 #endif
                         caList.Add(cert);
                         caFileList.Add(certFile);
+
+                        X509CertificateStructure certStruct = EdBcTlsUtilities.LoadBcCertificateResource(certFile);
+                        if (certStruct != null)
+                        {
+                            caStructList.Add(certStruct);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -3118,8 +3133,9 @@ namespace EdiabasLib
                 }
 
                 sharedData.TrustedCAs = caList;
+                sharedData.TrustedCaStructs = caStructList;
                 sharedData.TrustedCAFiles = caFileList;
-                return caList.Count > 0 | caFileList.Count > 0;
+                return caList.Count > 0 | caStructList.Count > 0 | caFileList.Count > 0;
             }
             catch (Exception ex)
             {
@@ -3395,6 +3411,13 @@ namespace EdiabasLib
                 }
 
                 List<Org.BouncyCastle.X509.X509Certificate> x509CertList =  EdBcTlsUtilities.ConvertToX509CertList(certList);
+                List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(sharedData.TrustedCaStructs);
+                if (!EdBcTlsUtilities.ValidateCertChain(x509CertList, rootCerts))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadS29Cert certificate chain validation failed: {0}", fileName);
+                    //return false;
+                }
+
                 foreach (Org.BouncyCastle.X509.X509Certificate x509Cert in x509CertList)
                 {
                     if (!x509Cert.IsValid(DateTime.UtcNow.AddHours(1.0)))

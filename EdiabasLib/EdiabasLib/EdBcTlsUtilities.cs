@@ -113,14 +113,29 @@ namespace EdiabasLib
             return certificates;
         }
 
+        public static X509Certificate ConvertToX509Cert(X509CertificateStructure certStruct)
+        {
+            if (certStruct == null)
+            {
+                return null;
+            }
+
+            return new X509Certificate(certStruct);
+        }
+
         public static List<X509Certificate> ConvertToX509CertList(List<X509CertificateStructure> certList)
         {
             List<X509Certificate> certificates = new List<X509Certificate>();
+            if (certList == null || certList.Count == 0)
+            {
+                return certificates;
+            }
+
             foreach (X509CertificateStructure certStruct in certList)
             {
-                if (certStruct != null)
+                X509Certificate certificate = ConvertToX509Cert(certStruct);
+                if (certificate != null)
                 {
-                    X509Certificate certificate = new X509Certificate(certStruct);
                     certificates.Add(certificate);
                 }
             }
@@ -919,31 +934,33 @@ namespace EdiabasLib
 
         public static bool ValidateCertChain(List<X509Certificate> certChain, List<X509Certificate> rootCerts)
         {
-            if (certChain == null || certChain.Count < 2)
+            try
+            {
+                X509Certificate rootCert = certChain[certChain.Count - 1];
+                IStore<X509Certificate> x509CertStore = CollectionUtilities.CreateStore(rootCerts);
+                PkixCertPath cp = new PkixCertPath(certChain);
+                PkixCertPathValidator cpv = new PkixCertPathValidator();
+                HashSet<TrustAnchor> trust = new HashSet<TrustAnchor>();
+                PkixParameters param = new PkixParameters(trust);
+                CertPathChecker checker = new CertPathChecker();
+
+                param.AddCertPathChecker(checker);
+                param.AddStoreCert(x509CertStore);
+                param.Date = DateTime.UtcNow.AddHours(1);
+                PkixCertPathValidatorResult result = cpv.Validate(cp, param);
+                AsymmetricKeyParameter subjectPublicKey = result.SubjectPublicKey;
+
+                if (!result.TrustAnchor.TrustedCert.Equals(rootCert))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
             {
                 return false;
             }
-
-            X509Certificate rootCert = certChain[certChain.Count - 1];
-            IStore<X509Certificate> x509CertStore = CollectionUtilities.CreateStore(rootCerts);
-            PkixCertPath cp = new PkixCertPath(certChain);
-            PkixCertPathValidator cpv = new PkixCertPathValidator();
-            HashSet<TrustAnchor> trust = new HashSet<TrustAnchor>();
-            PkixParameters param = new PkixParameters(trust);
-            CertPathChecker checker = new CertPathChecker();
-
-            param.AddCertPathChecker(checker);
-            param.AddStoreCert(x509CertStore);
-            param.Date = DateTime.UtcNow.AddHours(1);
-            PkixCertPathValidatorResult result = cpv.Validate(cp, param);
-            AsymmetricKeyParameter subjectPublicKey = result.SubjectPublicKey;
-
-            if (!result.TrustAnchor.TrustedCert.Equals(rootCert))
-            {
-                return false;
-            }
-
-            return true;
         }
     }
 }
