@@ -937,6 +937,12 @@ namespace EdiabasLib
         {
             try
             {
+                if (certChain == null || certChain.Count < 2)
+                {
+                    return false;
+                }
+
+                X509Certificate finalCert = certChain[0];
                 X509Certificate rootCert = certChain[certChain.Count - 1];
                 IStore<X509Certificate> x509CertStore = CollectionUtilities.CreateStore(rootCerts);
                 PkixCertPath cp = new PkixCertPath(certChain);
@@ -953,6 +959,16 @@ namespace EdiabasLib
                 param.Date = DateTime.UtcNow.AddHours(1.0);
                 PkixCertPathValidatorResult result = cpv.Validate(cp, param);
                 AsymmetricKeyParameter subjectPublicKey = result.SubjectPublicKey;
+
+                if (checker.GetCount() != certChain.Count)
+                {
+                    return false;
+                }
+
+                if (!subjectPublicKey.Equals(finalCert.GetPublicKey()))
+                {
+                    return false;
+                }
 
                 if (!result.TrustAnchor.TrustedCert.Equals(rootCert))
                 {
