@@ -3415,16 +3415,7 @@ namespace EdiabasLib
                 if (!EdBcTlsUtilities.ValidateCertChain(x509CertList, rootCerts))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadS29Cert certificate chain validation failed: {0}", fileName);
-                    //return false;
-                }
-
-                foreach (Org.BouncyCastle.X509.X509Certificate x509Cert in x509CertList)
-                {
-                    if (!x509Cert.IsValid(DateTime.UtcNow.AddHours(1.0)))
-                    {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadS29Cert certificate not valid: {0}", x509Cert.SubjectDN);
-                        return false;
-                    }
+                    return false;
                 }
 
                 sharedData.S29SelectCert = certList;
