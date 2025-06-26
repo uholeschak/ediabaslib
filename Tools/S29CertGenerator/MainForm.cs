@@ -368,9 +368,9 @@ namespace S29CertGenerator
                     return false; // Failed to load public certificates
                 }
 
-                if (!publicCertificateEntries[0].Certificate.IsValidNow)
+                if (!publicCertificateEntries[0].Certificate.IsValid(DateTime.UtcNow.AddDays(1.0)))
                 {
-                    return false; // Public certificate is not valid now
+                    return false; // Public certificate is not valid in the future
                 }
 
                 _caKeyResource = privateKeyResource;
