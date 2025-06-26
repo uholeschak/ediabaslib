@@ -53,6 +53,7 @@ namespace EdiabasLib
 
             public override void Check(X509Certificate cert, ISet<string> unresolvedCritExts)
             {
+                unresolvedCritExts.Clear();
                 count++;
             }
 
