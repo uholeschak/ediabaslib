@@ -357,7 +357,8 @@ namespace CarSimulator
         private readonly Dictionary<byte, byte[]> _codingStampDict;
         private readonly List<BmwTcpChannel> _bmwTcpChannels;
         private X509Certificate2 _serverCertificate;
-        private List<X509Name> _serverCertificateAuthorities;
+        private List<X509CertificateStructure> _serverCAs;
+        private List<X509Name> _serverCaNames;
         private UdpClient _udpClient;
         private bool _udpError;
         private UdpClient _udpDoIpClient;
@@ -1098,7 +1099,8 @@ namespace CarSimulator
                                     Debug.WriteLine("LoadKeyPairFromFile: Load key container failed: {0}", keyContainerFile);
                                 }
 
-                                _serverCertificateAuthorities = new List<X509Name>();
+                                _serverCAs = new List<X509CertificateStructure>();
+                                _serverCaNames = new List<X509Name>();
                                 string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
                                 foreach (string trustedFile in trustedFiles)
                                 {
@@ -1110,10 +1112,15 @@ namespace CarSimulator
 
                                     if (certFileName.StartsWith("rootCA", StringComparison.OrdinalIgnoreCase))
                                     {
-                                        X509Name trustedIssuer = EdBcTlsUtilities.LoadBcCertificateResource(trustedFile)?.Subject;
-                                        if (trustedIssuer != null)
+                                        X509CertificateStructure trustedCert = EdBcTlsUtilities.LoadBcCertificateResource(trustedFile);
+                                        if (trustedCert != null)
                                         {
-                                            _serverCertificateAuthorities.Add(trustedIssuer);
+                                            _serverCAs.Add(trustedCert);
+                                            X509Name trustedIssuer = trustedCert.Subject;
+                                            if (trustedIssuer != null)
+                                            {
+                                                _serverCaNames.Add(trustedIssuer);
+                                            }
                                         }
                                     }
                                 }
@@ -1425,10 +1432,16 @@ namespace CarSimulator
                 _serverCertificate = null;
             }
 
-            if (_serverCertificateAuthorities != null)
+            if (_serverCAs != null)
             {
-                _serverCertificateAuthorities.Clear();
-                _serverCertificateAuthorities = null;
+                _serverCAs.Clear();
+                _serverCAs = null;
+            }
+
+            if (_serverCaNames != null)
+            {
+                _serverCaNames.Clear();
+                _serverCaNames = null;
             }
 
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
@@ -3217,7 +3230,7 @@ namespace CarSimulator
                     {
                         if (ServerUseBcSsl)
                         {
-                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, ServerCertFile, _serverCertificateAuthorities);
+                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, ServerCertFile, _serverCaNames);
                         }
                         else
                         {
@@ -6646,7 +6659,7 @@ namespace CarSimulator
                                     if (x509CertList.Count > 0)
                                     {
                                         Debug.WriteLine("Cert chain length: {0}", x509CertList.Count);
-                                        if (EdBcTlsUtilities.CheckCertificateChainCa(x509CertList.ToArray(), _serverCertificateAuthorities.ToArray()))
+                                        if (EdBcTlsUtilities.CheckCertificateChainCa(x509CertList.ToArray(), _serverCaNames.ToArray()))
                                         {
                                             Debug.WriteLine("Certificate chain is valid");
                                             try
