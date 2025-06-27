@@ -35,7 +35,7 @@ namespace EdiabasLib
         private class CertPathChecker
             : PkixCertPathChecker
         {
-            private static int count;
+            private int count;
 
             public override void Init(bool forward)
             {
@@ -54,12 +54,6 @@ namespace EdiabasLib
             public override void Check(X509Certificate cert, ISet<string> unresolvedCritExts)
             {
                 unresolvedCritExts.Clear();
-                count++;
-            }
-
-            public int GetCount()
-            {
-                return count;
             }
         }
 
@@ -959,11 +953,6 @@ namespace EdiabasLib
                 param.Date = DateTime.UtcNow.AddHours(1.0);
                 PkixCertPathValidatorResult result = cpv.Validate(cp, param);
                 AsymmetricKeyParameter subjectPublicKey = result.SubjectPublicKey;
-
-                if (checker.GetCount() != certChain.Count)
-                {
-                    return false;
-                }
 
                 if (!subjectPublicKey.Equals(finalCert.GetPublicKey()))
                 {
