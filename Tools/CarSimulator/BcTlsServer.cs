@@ -30,12 +30,13 @@ public class BcTlsServer : DefaultTlsServer
     private readonly string m_certPassword = null;
     private AsymmetricKeyParameter m_privateKeyResource;
     private readonly string[] m_certResources;
-    private readonly IList<X509Name> m_certificateAuthorities = null;
+    private readonly List<X509CertificateStructure> m_certificateAuthorities = null;
+    private IList<X509Name> m_TrustedCaNames = null;
     private IList<X509Name> m_clientTrustedIssuers = null;
 
     public int HandshakeTimeout { get; set; } = 0;
 
-    public BcTlsServer(string certBaseFile, string certPassword, List<X509Name> certificateAuthorities) : base(new BcTlsCrypto(new SecureRandom()))
+    public BcTlsServer(string certBaseFile, string certPassword, List<X509CertificateStructure> certificateAuthorities) : base(new BcTlsCrypto(new SecureRandom()))
     {
         string certDir = Path.GetDirectoryName(certBaseFile);
         if (string.IsNullOrEmpty(certDir))
@@ -48,14 +49,26 @@ public class BcTlsServer : DefaultTlsServer
         m_certPassword = certPassword;
         m_certificateAuthorities = certificateAuthorities;
 
+        m_TrustedCaNames = new List<X509Name>();
+        if (m_certificateAuthorities != null && m_certificateAuthorities.Count > 0)
+        {
+            foreach (X509CertificateStructure ca in m_certificateAuthorities)
+            {
+                if (ca != null)
+                {
+                    m_TrustedCaNames.Add(ca.Subject);
+                }
+            }
+        }
+
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
         {
             throw new FileNotFoundException("Certificate files not found", certBaseFile);
         }
 
-        if (m_certificateAuthorities.Count == 0)
+        if (m_TrustedCaNames.Count == 0)
         {
-            throw new FileNotFoundException("No trusted CA files found", certBaseFile);
+            throw new FileNotFoundException("No trusted CA names found", certBaseFile);
         }
 
         m_privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(m_privateCert, m_certPassword);
@@ -167,13 +180,13 @@ public class BcTlsServer : DefaultTlsServer
         {
             byte[] certificateRequestContext = TlsUtilities.EmptyBytes;
 
-            return new CertificateRequest(certificateRequestContext, serverSigAlgs, null, m_certificateAuthorities);
+            return new CertificateRequest(certificateRequestContext, serverSigAlgs, null, m_TrustedCaNames);
         }
         else
         {
             short[] certificateTypes = new []{ ClientCertificateType.rsa_sign, ClientCertificateType.dss_sign, ClientCertificateType.ecdsa_sign };
 
-            return new CertificateRequest(certificateTypes, serverSigAlgs, m_certificateAuthorities);
+            return new CertificateRequest(certificateTypes, serverSigAlgs, m_TrustedCaNames);
         }
     }
 
@@ -212,7 +225,7 @@ public class BcTlsServer : DefaultTlsServer
 
         if (chain.Length > 1)
         {
-            if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, chain, m_certificateAuthorities.ToArray()))
+            if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, chain, m_TrustedCaNames.ToArray()))
             {
                 throw new TlsFatalAlert(AlertDescription.bad_certificate);
             }

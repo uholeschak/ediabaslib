@@ -358,7 +358,6 @@ namespace CarSimulator
         private readonly List<BmwTcpChannel> _bmwTcpChannels;
         private X509Certificate2 _serverCertificate;
         private List<X509CertificateStructure> _serverCAs;
-        private List<X509Name> _serverCaNames;
         private UdpClient _udpClient;
         private bool _udpError;
         private UdpClient _udpDoIpClient;
@@ -1100,7 +1099,6 @@ namespace CarSimulator
                                 }
 
                                 _serverCAs = new List<X509CertificateStructure>();
-                                _serverCaNames = new List<X509Name>();
                                 string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
                                 foreach (string trustedFile in trustedFiles)
                                 {
@@ -1116,11 +1114,6 @@ namespace CarSimulator
                                         if (trustedCert != null)
                                         {
                                             _serverCAs.Add(trustedCert);
-                                            X509Name trustedIssuer = trustedCert.Subject;
-                                            if (trustedIssuer != null)
-                                            {
-                                                _serverCaNames.Add(trustedIssuer);
-                                            }
                                         }
                                     }
                                 }
@@ -1436,12 +1429,6 @@ namespace CarSimulator
             {
                 _serverCAs.Clear();
                 _serverCAs = null;
-            }
-
-            if (_serverCaNames != null)
-            {
-                _serverCaNames.Clear();
-                _serverCaNames = null;
             }
 
             if (_pcanHandle != PCANBasic.PCAN_NONEBUS)
@@ -3230,7 +3217,7 @@ namespace CarSimulator
                     {
                         if (ServerUseBcSsl)
                         {
-                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, ServerCertFile, _serverCaNames);
+                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, ServerCertFile, _serverCAs);
                         }
                         else
                         {
@@ -3719,7 +3706,7 @@ namespace CarSimulator
             }
         }
 
-        private Stream CreateBcSslStream(TcpClient client, string serverCertFile, List<X509Name> certificateAuthorities)
+        private Stream CreateBcSslStream(TcpClient client, string serverCertFile, List<X509CertificateStructure> certificateAuthorities)
         {
             if (string.IsNullOrEmpty(serverCertFile))
             {
