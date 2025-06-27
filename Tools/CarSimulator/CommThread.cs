@@ -6634,19 +6634,19 @@ namespace CarSimulator
                                 }
                                 else
                                 {
-                                    List<X509CertificateStructure> x509CertList = new List<X509CertificateStructure>();
+                                    List<Org.BouncyCastle.X509.X509Certificate> x509CertList = new List<Org.BouncyCastle.X509.X509Certificate>();
                                     foreach (byte[] certData in certList)
                                     {
                                         try
                                         {
                                             Org.BouncyCastle.X509.X509Certificate x509Cert = new X509CertificateParser().ReadCertificate(certData);
-                                            if (x509Cert?.CertificateStructure == null)
+                                            if (x509Cert == null)
                                             {
                                                 Debug.WriteLine("Invalid X509 certificate data");
                                                 break;
                                             }
 
-                                            x509CertList.Add(x509Cert.CertificateStructure);
+                                            x509CertList.Add(x509Cert);
                                         }
                                         catch (Exception e)
                                         {
@@ -6659,13 +6659,13 @@ namespace CarSimulator
                                     if (x509CertList.Count > 0)
                                     {
                                         Debug.WriteLine("Cert chain length: {0}", x509CertList.Count);
-                                        if (EdBcTlsUtilities.CheckCertificateChainCa(x509CertList.ToArray(), _serverCaNames.ToArray()))
+                                        List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(_serverCAs);
+                                        if (EdBcTlsUtilities.ValidateCertChain(x509CertList, rootCerts))
                                         {
                                             Debug.WriteLine("Certificate chain is valid");
                                             try
                                             {
-                                                Org.BouncyCastle.X509.X509Certificate x509Certificate = new Org.BouncyCastle.X509.X509Certificate(x509CertList[0]);
-                                                bmwTcpClientData.ClientPublicKey = x509Certificate.GetPublicKey() as ECPublicKeyParameters;
+                                                bmwTcpClientData.ClientPublicKey = x509CertList[0].GetPublicKey() as ECPublicKeyParameters;
                                                 if (bmwTcpClientData.ClientPublicKey == null)
                                                 {
                                                     Debug.WriteLine("Invalid public key in certificate");
