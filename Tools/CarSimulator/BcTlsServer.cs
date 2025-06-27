@@ -49,21 +49,19 @@ public class BcTlsServer : DefaultTlsServer
         m_certPassword = certPassword;
         m_certificateAuthorities = certificateAuthorities;
 
-        m_TrustedCaNames = new List<X509Name>();
-        if (m_certificateAuthorities != null && m_certificateAuthorities.Count > 0)
-        {
-            foreach (X509CertificateStructure ca in m_certificateAuthorities)
-            {
-                if (ca != null)
-                {
-                    m_TrustedCaNames.Add(ca.Subject);
-                }
-            }
-        }
-
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
         {
             throw new FileNotFoundException("Certificate files not found", certBaseFile);
+        }
+
+        m_TrustedCaNames = new List<X509Name>();
+        foreach (X509CertificateStructure ca in m_certificateAuthorities)
+        {
+            X509Name caName = ca.Subject;
+            if (caName != null)
+            {
+                m_TrustedCaNames.Add(caName);
+            }
         }
 
         if (m_TrustedCaNames.Count == 0)
