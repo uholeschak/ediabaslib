@@ -138,6 +138,29 @@ namespace EdiabasLib
             return certificates;
         }
 
+        public static List<X509Name> GetSubjectList(List<X509CertificateStructure> certList)
+        {
+            List<X509Name> subjectList = new List<X509Name>();
+            if (certList == null || certList.Count == 0)
+            {
+                return subjectList;
+            }
+
+            foreach (X509CertificateStructure certStruct in certList)
+            {
+                X509Name subject = certStruct?.Subject;
+                if (subject != null)
+                {
+                    if (!subjectList.Contains(subject))
+                    {
+                        subjectList.Add(subject);
+                    }
+                }
+            }
+
+            return subjectList;
+        }
+
         public static AsymmetricKeyParameter LoadBcPrivateKeyResource(string resource, string password = null)
         {
             List<PemObject> pemObjects = LoadPemResources(resource);
