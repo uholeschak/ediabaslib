@@ -54,16 +54,7 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("Certificate files not found", certBaseFile);
         }
 
-        m_TrustedCaNames = new List<X509Name>();
-        foreach (X509CertificateStructure ca in m_certificateAuthorities)
-        {
-            X509Name caName = ca.Subject;
-            if (caName != null)
-            {
-                m_TrustedCaNames.Add(caName);
-            }
-        }
-
+        m_TrustedCaNames = EdBcTlsUtilities.GetSubjectList(m_certificateAuthorities);
         if (m_TrustedCaNames.Count == 0)
         {
             throw new FileNotFoundException("No trusted CA names found", certBaseFile);
