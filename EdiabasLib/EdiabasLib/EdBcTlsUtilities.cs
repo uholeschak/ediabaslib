@@ -35,8 +35,6 @@ namespace EdiabasLib
         private class CertPathChecker
             : PkixCertPathChecker
         {
-            private int count;
-
             public override void Init(bool forward)
             {
             }
