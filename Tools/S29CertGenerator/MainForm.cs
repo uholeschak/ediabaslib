@@ -412,6 +412,39 @@ namespace S29CertGenerator
             return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
         }
 
+        public void InstallCertificate(X509Certificate2 cert)
+        {
+            using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+            {
+                x509Store.Open(OpenFlags.ReadWrite);
+                x509Store.Add(cert);
+                x509Store.Close();
+            }
+        }
+
+        private bool InstallCertificates(List<Org.BouncyCastle.X509.X509Certificate> x509CertChain)
+        {
+            try
+            {
+                if (x509CertChain == null || x509CertChain.Count < 1)
+                {
+                    return false;
+                }
+
+                foreach (Org.BouncyCastle.X509.X509Certificate x509Certificate in x509CertChain)
+                {
+                    X509Certificate2 cert = new X509Certificate2(x509Certificate.GetEncoded());
+                    InstallCertificate(cert);
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private bool ConvertJsonRequestFile(string jsonRequestFile, string jsonResponseFolder, string certOutputFolder)
         {
             try
@@ -557,6 +590,13 @@ namespace S29CertGenerator
 
                 UpdateStatusText($"Response file created: {jsonResponseFileName}", true);
 
+                if (!InstallCertificates(x509CertChain))
+                {
+                    UpdateStatusText($"Failed to install certificates for VIN: {vin17}", true);
+                    return false;
+                }
+
+                UpdateStatusText($"Certificates installed for VIN: {vin17}", true);
                 return true;
             }
             catch (Exception ex)
