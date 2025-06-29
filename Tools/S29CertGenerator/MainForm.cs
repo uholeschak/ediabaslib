@@ -26,6 +26,7 @@ namespace S29CertGenerator
         private AsymmetricKeyParameter _caKeyResource;
         private List<X509CertificateEntry> _caPublicCertificates;
         private readonly byte[] roleMask = new byte[] { 0, 0, 5, 75 };
+        public const string Service29CnName = "Service29-EDIABAS-S29";
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegValueIstaLocation = @"InstallLocation";
         public const string EdiabasDirName = @"Ediabas";
@@ -385,7 +386,7 @@ namespace S29CertGenerator
 
         public X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey, string vin)
         {
-            X509Name subject = new X509Name("ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN=Service29-EDIABAS-S29, GIVENNAME=" + vin);
+            X509Name subject = new X509Name($"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={Service29CnName}, GIVENNAME=" + vin);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
             x509V3CertificateGenerator.SetSerialNumber(BigInteger.ProbablePrime(120, new Random()));
@@ -447,7 +448,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                DeleteCertificateBySubjectName("Service29-EDIABAS-S29");
+                DeleteCertificateBySubjectName(Service29CnName);
                 foreach (Org.BouncyCastle.X509.X509Certificate x509Certificate in x509CertChain)
                 {
                     X509Certificate2 cert = new X509Certificate2(x509Certificate.GetEncoded());
