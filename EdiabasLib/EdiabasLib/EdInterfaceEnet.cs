@@ -248,7 +248,6 @@ namespace EdiabasLib
                 TcpControlTimer = new Timer(TcpControlTimeout, this, Timeout.Infinite, Timeout.Infinite);
                 TrustedCAs = null;
                 TrustedCaStructs = null;
-                TrustedCAFiles = null;
                 S29Certs = null;
                 S29CertFiles = null;
                 MachineKeyPair = null;
@@ -277,12 +276,6 @@ namespace EdiabasLib
                 {
                     TrustedCaStructs.Clear();
                     TrustedCaStructs = null;
-                }
-
-                if (TrustedCAFiles != null)
-                {
-                    TrustedCAFiles.Clear();
-                    TrustedCAFiles = null;
                 }
             }
 
@@ -400,7 +393,6 @@ namespace EdiabasLib
             public Timer TcpControlTimer;
             public List<X509Certificate2> TrustedCAs;
             public List<X509CertificateStructure> TrustedCaStructs;
-            public List<string> TrustedCAFiles;
             public List<X509Certificate2> S29Certs;
             public List<EdBcTlsClient.CertInfo> S29CertFiles;
             public AsymmetricCipherKeyPair MachineKeyPair;
@@ -3061,7 +3053,7 @@ namespace EdiabasLib
                 serverStream.ReadTimeout = SslAuthTimeout;
                 TlsClientProtocol clientProtocol = new TlsClientProtocol(serverStream);
                 clientProtocol.IsResumableHandshake = true;
-                EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, sharedData.S29CertFiles, sharedData.TrustedCAFiles);
+                EdBcTlsClient tlsClient = new EdBcTlsClient(EdiabasProtected, sharedData.S29CertFiles, sharedData.TrustedCaStructs);
                 tlsClient.HandshakeTimeout = SslAuthTimeout;
                 clientProtocol.Connect(tlsClient);
                 Stream sslStream = clientProtocol.Stream;
@@ -3106,7 +3098,6 @@ namespace EdiabasLib
 
                 List<X509Certificate2> caList = new List<X509Certificate2>();
                 List<X509CertificateStructure> caStructList = new List<X509CertificateStructure>();
-                List<string> caFileList = new List<string>();
                 IEnumerable<string> certFiles = Directory.EnumerateFiles(certPath, "*.*", SearchOption.AllDirectories);
                 foreach (string certFile in certFiles)
                 {
@@ -3118,7 +3109,6 @@ namespace EdiabasLib
                         X509Certificate2 cert = new X509Certificate2(certFile);
 #endif
                         caList.Add(cert);
-                        caFileList.Add(certFile);
 
                         X509CertificateStructure certStruct = EdBcTlsUtilities.LoadBcCertificateResource(certFile);
                         if (certStruct != null)
@@ -3134,8 +3124,7 @@ namespace EdiabasLib
 
                 sharedData.TrustedCAs = caList;
                 sharedData.TrustedCaStructs = caStructList;
-                sharedData.TrustedCAFiles = caFileList;
-                return caList.Count > 0 | caStructList.Count > 0 | caFileList.Count > 0;
+                return caList.Count > 0 | caStructList.Count > 0;
             }
             catch (Exception ex)
             {

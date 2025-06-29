@@ -65,41 +65,19 @@ namespace EdiabasLib
 
         private readonly EdiabasNet m_ediabasNet;
         private readonly List<CertInfo> m_privatePublicCertList;
-        private readonly IList<X509CertificateStructure> m_caCerts = null;
-        private readonly IList<X509Name> m_certificateAuthorities = null;
+        private readonly IList<X509CertificateStructure> m_certificateAuthorities = null;
+        private readonly IList<X509Name> m_TrustedCaNames = null;
 
         public int HandshakeTimeout { get; set; } = 0;
 
-        public EdBcTlsClient(EdiabasNet ediabasNet, List<CertInfo> certInfoList, List<string> trustedCaList) : base(new BcTlsCrypto())
+        public EdBcTlsClient(EdiabasNet ediabasNet, List<CertInfo> certInfoList, List<X509CertificateStructure> certificateAuthorities) : base(new BcTlsCrypto())
         {
             m_ediabasNet = ediabasNet;
             m_privatePublicCertList = certInfoList;
 
-            m_caCerts = new List<X509CertificateStructure>();
-            m_certificateAuthorities = new List<X509Name>();
-            if (trustedCaList != null)
-            {
-                foreach (string trustedCa in trustedCaList)
-                {
-                    if (File.Exists(trustedCa))
-                    {
-                        X509CertificateStructure caCert = EdBcTlsUtilities.LoadBcCertificateResource(trustedCa);
-                        if (caCert == null)
-                        {
-                            continue;
-                        }
-
-                        m_caCerts.Add(caCert);
-                        X509Name trustedIssuer = caCert.Subject;
-                        if (trustedIssuer != null)
-                        {
-                            m_certificateAuthorities.Add(trustedIssuer);
-                        }
-                    }
-                }
-            }
-
-            if (m_certificateAuthorities.Count == 0)
+            m_certificateAuthorities = new List<X509CertificateStructure>();
+            m_TrustedCaNames = EdBcTlsUtilities.GetSubjectList(certificateAuthorities);
+            if (m_TrustedCaNames.Count == 0)
             {
                 throw new TlsFatalAlert(AlertDescription.unknown_ca);
             }
@@ -123,7 +101,7 @@ namespace EdiabasLib
 
         protected override IList<X509Name> GetCertificateAuthorities()
         {
-            return m_certificateAuthorities;
+            return m_TrustedCaNames;
         }
 
         public override void NotifyAlertRaised(short alertLevel, short alertDescription, string message, Exception cause)
@@ -245,7 +223,7 @@ namespace EdiabasLib
                     m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "fingerprint:SHA-256: {0} ({1})", EdBcTlsUtilities.Fingerprint(entry), entry.Subject);
                 }
 
-                if (!EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, chain, m_outer.m_certificateAuthorities.ToArray()))
+                if (!EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, chain, m_outer.m_TrustedCaNames.ToArray()))
                 {
                     throw new TlsFatalAlert(AlertDescription.unknown_ca);
                 }
