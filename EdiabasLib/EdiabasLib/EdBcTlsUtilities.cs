@@ -40,12 +40,12 @@ namespace EdiabasLib
             }
 
             public override bool IsForwardCheckingSupported()
-            {
+            {   // never called
                 return true;
             }
 
             public override ISet<string> GetSupportedExtensions()
-            {
+            {   // never called, but should be used instead of Clear() in Check() function
                 return null;
             }
 
