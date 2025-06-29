@@ -412,7 +412,7 @@ namespace S29CertGenerator
             return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
         }
 
-        public void InstallCertificate(X509Certificate2 cert)
+        private static void InstallCertificate(X509Certificate2 cert)
         {
             using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
             {
@@ -420,6 +420,22 @@ namespace S29CertGenerator
                 x509Store.Add(cert);
                 x509Store.Close();
             }
+        }
+
+        private static void DeleteCertificateBySubjectName(string subjectName)
+        {
+            if (string.IsNullOrEmpty(subjectName))
+            {
+                return; // No subject name provided
+            }
+
+            X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+            x509Store.Open(OpenFlags.ReadWrite);
+            foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false))
+            {
+                x509Store.Remove(x509Certificate);
+            }
+            x509Store.Close();
         }
 
         private bool InstallCertificates(List<Org.BouncyCastle.X509.X509Certificate> x509CertChain)
@@ -431,6 +447,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                DeleteCertificateBySubjectName("Service29-EDIABAS-S29");
                 foreach (Org.BouncyCastle.X509.X509Certificate x509Certificate in x509CertChain)
                 {
                     X509Certificate2 cert = new X509Certificate2(x509Certificate.GetEncoded());
