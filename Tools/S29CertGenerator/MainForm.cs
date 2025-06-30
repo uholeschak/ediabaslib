@@ -488,9 +488,9 @@ namespace S29CertGenerator
             x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
             DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.10");
             x509V3CertificateGenerator.AddExtension(oid2, critical: true, roleMask);
-            x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, new KeyUsage(128));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign));
             x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, X509ExtensionUtilities.CreateSubjectKeyIdentifier(publicKey));
-            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: false));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: true));
             x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, X509ExtensionUtilities.CreateAuthorityKeyIdentifier(issuerCert.GetPublicKey()));
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", issuerPrivateKey);
             return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
