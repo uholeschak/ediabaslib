@@ -3319,8 +3319,30 @@ namespace CarSimulator
                     }
                     if (payloadLength > 0)
                     {
-                        recLen += bmwTcpClientData.TcpClientStream.Read(dataBuffer, 8, payloadLength);
+                        long startTick = Stopwatch.GetTimestamp();
+                        for (;;)
+                        {
+                            int readBytes = bmwTcpClientData.TcpClientStream.Read(dataBuffer, recLen, payloadLength);
+                            if (readBytes > 0)
+                            {
+                                recLen += readBytes;
+                                if (recLen >= payloadLength + 8)
+                                {
+                                    break;
+                                }
+
+                                startTick = Stopwatch.GetTimestamp();
+                            }
+
+                            if ((Stopwatch.GetTimestamp() - startTick) > SslAuthTimeout * TickResolMs)
+                            {
+                                break;
+                            }
+
+                            Thread.Sleep(10);
+                        }
                     }
+
                     if (recLen < payloadLength + 8)
                     {
                         Debug.WriteLine("DoIp rec data length too short [{0}], Port={1}: {2} < {3}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, recLen, payloadLength + 8);
