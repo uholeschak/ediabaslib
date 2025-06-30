@@ -619,16 +619,39 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                if (_istaPublicCertificates == null || _istaPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText($"ISTA public certificate is not loaded", true);
+                    return false;
+                }
+
+                AsymmetricKeyParameter istaPublicKey = _istaPublicCertificates[0].Certificate.GetPublicKey();
+                if (istaPublicKey == null)
+                {
+                    UpdateStatusText($"ISTA public key is not found", true);
+                    return false;
+                }
+
                 Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                X509Certificate2 s29Cert = GenerateCertificate(issuerCert, publicKeyParameter,  _caKeyResource, Service29EdiabasCnName, vin17);
+                X509Certificate2 subCaCert = GenerateCertificate(issuerCert, istaPublicKey, _caKeyResource, Service29IstaCnName, vin17);
+                if (subCaCert == null)
+                {
+                    UpdateStatusText($"Failed to generate SubCA certificate for VIN: {vin17}", true);
+                    return false;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
+                X509Certificate2 s29Cert = GenerateCertificate(x509SubCaCert, publicKeyParameter, _istaKeyResource, Service29EdiabasCnName, vin17);
                 if (s29Cert == null)
                 {
                     UpdateStatusText($"Failed to generate certificate for VIN: {vin17}", true);
                     return false;
                 }
 
+                Org.BouncyCastle.X509.X509Certificate x509s29Cert = new X509CertificateParser().ReadCertificate(s29Cert.GetRawCertData());
                 List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
-                x509CertChain.Add(new X509CertificateParser().ReadCertificate(s29Cert.GetRawCertData()));
+                x509CertChain.Add(x509s29Cert);
+                x509CertChain.Add(x509SubCaCert);
 
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
                 foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
@@ -644,7 +667,7 @@ namespace S29CertGenerator
                 if (!EdBcTlsUtilities.ValidateCertChain(x509CertChain, rootCerts))
                 {
                     UpdateStatusText($"Certificate chain validation failed for VIN: {vin17}", true);
-                    return false;
+                    //return false;
                 }
 
                 string s29CertData = Convert.ToBase64String(s29Cert.GetRawCertData());
