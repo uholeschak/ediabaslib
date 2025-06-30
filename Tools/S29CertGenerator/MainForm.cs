@@ -25,6 +25,8 @@ namespace S29CertGenerator
         private string _ediabasPath;
         private AsymmetricKeyParameter _caKeyResource;
         private List<X509CertificateEntry> _caPublicCertificates;
+        private AsymmetricKeyParameter _istaKeyResource;
+        private List<X509CertificateEntry> _istaPublicCertificates;
         private readonly byte[] roleMask = new byte[] { 0, 0, 5, 75 };
         public const string Service29CnName = "Service29-EDIABAS-S29";
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
@@ -53,9 +55,17 @@ namespace S29CertGenerator
                 {
                     textBoxS29Folder.Text = Path.Combine(_ediabasPath, EdiabasSecurityDirName, EdiabasS29DirName);
                     SyncFolders(textBoxS29Folder.Text);
+                }
+            }
+
+            if (!LoadIstaKey(textBoxIstaKeyFile.Text))
+            {
+                if (!string.IsNullOrEmpty(_ediabasPath))
+                {
                     SetIstaKeyFile(_ediabasPath);
                 }
             }
+
             UpdateStatusText(string.Empty);
             UpdateDisplay();
         }
@@ -117,10 +127,11 @@ namespace S29CertGenerator
             try
             {
                 bool caKeyValid = LoadCaKey(textBoxCaCeyFile.Text);
+                bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
                 bool isValid = IsSettingValid();
                 buttonExecute.Enabled = isValid;
 
-                if (caKeyValid && isValid)
+                if (caKeyValid && istaKeyValid && isValid)
                 {
                     buttonExecute.Focus();
                 }
@@ -167,19 +178,25 @@ namespace S29CertGenerator
             richTextBoxStatus.ScrollToCaret();
         }
 
-        private bool IsSettingValid(bool ignoreCaKey = false)
+        private bool IsSettingValid(bool ignoreKeyFiles = false)
         {
             try
             {
                 string caKeyFile = textBoxCaCeyFile.Text.Trim();
+                string istaKeyFile = textBoxIstaKeyFile.Text.Trim();
                 string s29Folder = textBoxS29Folder.Text.Trim();
                 string jsonRequestFolder = textBoxJsonRequestFolder.Text.Trim();
                 string jsonResponseFolder = textBoxJsonResponseFolder.Text.Trim();
                 string certOutputFolder = textBoxCertOutputFolder.Text.Trim();
 
-                if (!ignoreCaKey)
+                if (!ignoreKeyFiles)
                 {
                     if (string.IsNullOrEmpty(caKeyFile) || !File.Exists(caKeyFile))
+                    {
+                        return false;
+                    }
+
+                    if (string.IsNullOrEmpty(istaKeyFile) || !File.Exists(istaKeyFile))
                     {
                         return false;
                     }
@@ -403,6 +420,44 @@ namespace S29CertGenerator
 
                 _caKeyResource = privateKeyResource;
                 _caPublicCertificates = publicCertificateEntries;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool LoadIstaKey(string istaKeyFile)
+        {
+            _istaKeyResource = null;
+            _istaPublicCertificates = null;
+
+            try
+            {
+                if (string.IsNullOrEmpty(istaKeyFile) || !File.Exists(istaKeyFile))
+                {
+                    return false;
+                }
+
+                AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(istaKeyFile, "G#8x!9sD2@qZ6&lF1", out X509CertificateEntry[] publicCertificateEntries);
+                if (privateKeyResource == null)
+                {
+                    return false; // Failed to load private key
+                }
+
+                if (publicCertificateEntries == null || publicCertificateEntries.Length < 1)
+                {
+                    return false; // Failed to load public certificates
+                }
+
+                if (!publicCertificateEntries[0].Certificate.IsValid(DateTime.UtcNow.AddDays(1.0)))
+                {
+                    return false; // Public certificate is not valid in the future
+                }
+
+                _istaKeyResource = privateKeyResource;
+                _istaPublicCertificates = publicCertificateEntries.ToList();
                 return true;
             }
             catch (Exception)
