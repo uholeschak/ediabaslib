@@ -13,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
@@ -54,6 +53,7 @@ namespace S29CertGenerator
                 {
                     textBoxS29Folder.Text = Path.Combine(_ediabasPath, EdiabasSecurityDirName, EdiabasS29DirName);
                     SyncFolders(textBoxS29Folder.Text);
+                    SetIstaKeyFile(_ediabasPath);
                 }
             }
             UpdateStatusText(string.Empty);
@@ -338,6 +338,30 @@ namespace S29CertGenerator
                 certOutputFolder = string.Empty;
             }
             textBoxCertOutputFolder.Text = certOutputFolder;
+
+            return true;
+        }
+
+        private bool SetIstaKeyFile(string ediabasPath)
+        {
+            if (string.IsNullOrEmpty(ediabasPath) || !Directory.Exists(ediabasPath))
+            {
+                return false;
+            }
+
+            string istaFolder = Directory.GetParent(ediabasPath)?.FullName;
+            if (string.IsNullOrEmpty(istaFolder))
+            {
+                return false;
+            }
+
+            string istaKeyFile = Path.Combine(istaFolder, "TesterGUI", "keyContainer.pfx");
+            if (!File.Exists(istaKeyFile))
+            {
+                istaKeyFile = string.Empty;
+            }
+
+            textBoxIstaKeyFile.Text = istaKeyFile;
 
             return true;
         }
