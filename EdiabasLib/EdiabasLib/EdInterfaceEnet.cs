@@ -3584,9 +3584,9 @@ namespace EdiabasLib
                             return null;
                         }
 
-                        stringBuilder.AppendLine("-----BEGIN CERTIFICATE-----");
+                        stringBuilder.AppendLine(EdBcTlsUtilities.BeginCertificate);
                         stringBuilder.AppendLine(Convert.ToBase64String(fileCert.GetEncoded()));
-                        stringBuilder.AppendLine("-----END CERTIFICATE-----");
+                        stringBuilder.AppendLine(EdBcTlsUtilities.EndCertificate);
                     }
 
                     string vin17 = responseData.Vin17.ToUpperInvariant().Trim();

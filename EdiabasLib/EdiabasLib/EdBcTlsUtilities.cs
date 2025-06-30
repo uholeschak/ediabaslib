@@ -31,6 +31,8 @@ namespace EdiabasLib
     public static class EdBcTlsUtilities
     {
         public const string S29ProofOfOwnershipPrefix = "S29UNIPOO";
+        public const string BeginCertificate = "-----BEGIN CERTIFICATE-----";
+        public const string EndCertificate = "-----END CERTIFICATE-----";
 
         private class CertPathChecker
             : PkixCertPathChecker
