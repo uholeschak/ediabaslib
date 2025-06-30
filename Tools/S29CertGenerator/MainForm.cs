@@ -28,7 +28,8 @@ namespace S29CertGenerator
         private AsymmetricKeyParameter _istaKeyResource;
         private List<X509CertificateEntry> _istaPublicCertificates;
         private readonly byte[] roleMask = new byte[] { 0, 0, 5, 75 };
-        public const string Service29CnName = "Service29-EDIABAS-S29";
+        public const string Service29IstaCnName = "Service29-ISTA-S29";
+        public const string Service29EdiabasCnName = "Service29-EDIABAS-S29";
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegValueIstaLocation = @"InstallLocation";
         public const string EdiabasDirName = @"Ediabas";
@@ -466,9 +467,9 @@ namespace S29CertGenerator
             }
         }
 
-        public X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey, string vin)
+        public X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey, string cnName, string vin)
         {
-            X509Name subject = new X509Name($"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={Service29CnName}, GIVENNAME=" + vin);
+            X509Name subject = new X509Name($"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={cnName}, GIVENNAME=" + vin);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
             x509V3CertificateGenerator.SetSerialNumber(BigInteger.ProbablePrime(120, new Random()));
@@ -530,7 +531,8 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                DeleteCertificateBySubjectName(Service29CnName);
+                DeleteCertificateBySubjectName(Service29IstaCnName);
+                DeleteCertificateBySubjectName(Service29EdiabasCnName);
                 foreach (Org.BouncyCastle.X509.X509Certificate x509Certificate in x509CertChain)
                 {
                     X509Certificate2 cert = new X509Certificate2(x509Certificate.GetEncoded());
@@ -618,7 +620,7 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                X509Certificate2 s29Cert = GenerateCertificate(issuerCert, publicKeyParameter, _caKeyResource, vin17);
+                X509Certificate2 s29Cert = GenerateCertificate(issuerCert, publicKeyParameter,  _caKeyResource, Service29EdiabasCnName, vin17);
                 if (s29Cert == null)
                 {
                     UpdateStatusText($"Failed to generate certificate for VIN: {vin17}", true);
