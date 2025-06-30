@@ -3311,6 +3311,7 @@ namespace CarSimulator
                             while (sslStream.ReadByte() >= 0)
                             {
                             }
+                            sslStream.ReadTimeout = SslAuthTimeout;
                         }
 
                         Debug.WriteLine("DoIp Rec data buffer overflow [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, payloadLength);
