@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows.Forms;
@@ -83,6 +84,7 @@ namespace S29CertGenerator
                 textBoxJsonRequestFolder.Text = Properties.Settings.Default.JsonRequestFolder;
                 textBoxJsonResponseFolder.Text = Properties.Settings.Default.JsonResponseFolder;
                 textBoxCertOutputFolder.Text = Properties.Settings.Default.CertOutputFolder;
+                textBoxIstaKeyFile.Text = Properties.Settings.Default.IstaKeyFile;
                 return true;
             }
             catch (Exception)
@@ -100,6 +102,7 @@ namespace S29CertGenerator
                 Properties.Settings.Default.JsonRequestFolder = textBoxJsonRequestFolder.Text;
                 Properties.Settings.Default.JsonResponseFolder = textBoxJsonResponseFolder.Text;
                 Properties.Settings.Default.CertOutputFolder = textBoxCertOutputFolder.Text;
+                Properties.Settings.Default.IstaKeyFile = textBoxIstaKeyFile.Text;
                 Properties.Settings.Default.Save();
                 return true;
             }
@@ -792,6 +795,28 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 textBoxCertOutputFolder.Text = folderBrowserDialog.SelectedPath;
+                UpdateDisplay();
+            }
+        }
+
+        private void buttonSelectIstaKeyFile_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string certFile = textBoxIstaKeyFile.Text;
+            string fileName = string.Empty;
+
+            if (File.Exists(certFile))
+            {
+                fileName = Path.GetFileName(certFile);
+                initDir = Path.GetDirectoryName(certFile);
+            }
+
+            openIstaKeyFileDialog.FileName = fileName;
+            openIstaKeyFileDialog.InitialDirectory = initDir ?? string.Empty;
+            DialogResult result = openIstaKeyFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxIstaKeyFile.Text = openIstaKeyFileDialog.FileName;
                 UpdateDisplay();
             }
         }

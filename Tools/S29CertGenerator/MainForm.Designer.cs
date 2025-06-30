@@ -43,6 +43,9 @@
             textBoxJsonResponseFolder = new System.Windows.Forms.TextBox();
             buttonSelectS29Folder = new System.Windows.Forms.Button();
             textBoxS29Folder = new System.Windows.Forms.TextBox();
+            buttonSelectIstaKeyFile = new System.Windows.Forms.Button();
+            textBoxIstaKeyFile = new System.Windows.Forms.TextBox();
+            openIstaKeyFileDialog = new System.Windows.Forms.OpenFileDialog();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -78,7 +81,7 @@
             // buttonClose
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.Location = new System.Drawing.Point(610, 326);
+            buttonClose.Location = new System.Drawing.Point(610, 374);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
             buttonClose.TabIndex = 10;
@@ -127,7 +130,7 @@
             // buttonExecute
             // 
             buttonExecute.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonExecute.Location = new System.Drawing.Point(529, 326);
+            buttonExecute.Location = new System.Drawing.Point(529, 374);
             buttonExecute.Name = "buttonExecute";
             buttonExecute.Size = new System.Drawing.Size(75, 23);
             buttonExecute.TabIndex = 9;
@@ -139,11 +142,11 @@
             // 
             richTextBoxStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            richTextBoxStatus.Location = new System.Drawing.Point(12, 157);
+            richTextBoxStatus.Location = new System.Drawing.Point(12, 186);
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            richTextBoxStatus.Size = new System.Drawing.Size(673, 163);
+            richTextBoxStatus.Size = new System.Drawing.Size(673, 182);
             richTextBoxStatus.TabIndex = 8;
             richTextBoxStatus.Text = "";
             // 
@@ -185,13 +188,40 @@
             textBoxS29Folder.Size = new System.Drawing.Size(488, 23);
             textBoxS29Folder.TabIndex = 12;
             // 
+            // buttonSelectIstaKeyFile
+            // 
+            buttonSelectIstaKeyFile.Location = new System.Drawing.Point(12, 157);
+            buttonSelectIstaKeyFile.Name = "buttonSelectIstaKeyFile";
+            buttonSelectIstaKeyFile.Size = new System.Drawing.Size(179, 23);
+            buttonSelectIstaKeyFile.TabIndex = 13;
+            buttonSelectIstaKeyFile.Text = "Select ISTA Key file";
+            buttonSelectIstaKeyFile.UseVisualStyleBackColor = true;
+            buttonSelectIstaKeyFile.Click += buttonSelectIstaKeyFile_Click;
+            // 
+            // textBoxIstaKeyFile
+            // 
+            textBoxIstaKeyFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxIstaKeyFile.Location = new System.Drawing.Point(197, 157);
+            textBoxIstaKeyFile.Name = "textBoxIstaKeyFile";
+            textBoxIstaKeyFile.ReadOnly = true;
+            textBoxIstaKeyFile.Size = new System.Drawing.Size(488, 23);
+            textBoxIstaKeyFile.TabIndex = 14;
+            // 
+            // openIstaKeyFileDialog
+            // 
+            openIstaKeyFileDialog.DefaultExt = "pfx";
+            openIstaKeyFileDialog.Filter = "Key|*.pfx|All files|*.*";
+            openIstaKeyFileDialog.Title = "Select ISTA key file";
+            // 
             // MainForm
             // 
             AcceptButton = buttonExecute;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(697, 361);
+            ClientSize = new System.Drawing.Size(697, 409);
+            Controls.Add(textBoxIstaKeyFile);
+            Controls.Add(buttonSelectIstaKeyFile);
             Controls.Add(textBoxS29Folder);
             Controls.Add(buttonSelectS29Folder);
             Controls.Add(textBoxJsonResponseFolder);
@@ -234,5 +264,8 @@
         private System.Windows.Forms.TextBox textBoxJsonResponseFolder;
         private System.Windows.Forms.Button buttonSelectS29Folder;
         private System.Windows.Forms.TextBox textBoxS29Folder;
+        private System.Windows.Forms.Button buttonSelectIstaKeyFile;
+        private System.Windows.Forms.TextBox textBoxIstaKeyFile;
+        private System.Windows.Forms.OpenFileDialog openIstaKeyFileDialog;
     }
 }

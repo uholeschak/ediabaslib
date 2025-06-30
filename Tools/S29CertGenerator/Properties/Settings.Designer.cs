@@ -82,5 +82,17 @@ namespace S29CertGenerator.Properties {
                 this["S29Folder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string IstaKeyFile {
+            get {
+                return ((string)(this["IstaKeyFile"]));
+            }
+            set {
+                this["IstaKeyFile"] = value;
+            }
+        }
     }
 }
