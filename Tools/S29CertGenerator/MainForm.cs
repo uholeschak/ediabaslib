@@ -726,6 +726,28 @@ namespace S29CertGenerator
             }
         }
 
+        private void buttonSelectIstaKeyFile_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string certFile = textBoxIstaKeyFile.Text;
+            string fileName = string.Empty;
+
+            if (File.Exists(certFile))
+            {
+                fileName = Path.GetFileName(certFile);
+                initDir = Path.GetDirectoryName(certFile);
+            }
+
+            openIstaKeyFileDialog.FileName = fileName;
+            openIstaKeyFileDialog.InitialDirectory = initDir ?? string.Empty;
+            DialogResult result = openIstaKeyFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxIstaKeyFile.Text = openIstaKeyFileDialog.FileName;
+                UpdateDisplay();
+            }
+        }
+
         private void buttonSelectS29Folder_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
@@ -819,28 +841,6 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 textBoxCertOutputFolder.Text = folderBrowserDialog.SelectedPath;
-                UpdateDisplay();
-            }
-        }
-
-        private void buttonSelectIstaKeyFile_Click(object sender, EventArgs e)
-        {
-            string initDir = _appDir;
-            string certFile = textBoxIstaKeyFile.Text;
-            string fileName = string.Empty;
-
-            if (File.Exists(certFile))
-            {
-                fileName = Path.GetFileName(certFile);
-                initDir = Path.GetDirectoryName(certFile);
-            }
-
-            openIstaKeyFileDialog.FileName = fileName;
-            openIstaKeyFileDialog.InitialDirectory = initDir ?? string.Empty;
-            DialogResult result = openIstaKeyFileDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                textBoxIstaKeyFile.Text = openIstaKeyFileDialog.FileName;
                 UpdateDisplay();
             }
         }
