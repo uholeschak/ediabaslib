@@ -1091,13 +1091,6 @@ namespace CarSimulator
                             string certDir = Path.GetDirectoryName(ServerCertFile);
                             if (certDir != null)
                             {
-                                string keyContainerFile = Path.Combine(certDir, "keyContainer.pfx");
-                                AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(keyContainerFile, "G#8x!9sD2@qZ6&lF1", out X509CertificateEntry[] publicChain);
-                                if (asymmetricKeyPar == null)
-                                {
-                                    Debug.WriteLine("LoadKeyPairFromFile: Load key container failed: {0}", keyContainerFile);
-                                }
-
                                 _serverCAs = new List<X509CertificateStructure>();
                                 string[] trustedFiles = Directory.GetFiles(certDir, "*.crt", SearchOption.TopDirectoryOnly);
                                 foreach (string trustedFile in trustedFiles)
