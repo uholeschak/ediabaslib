@@ -3796,6 +3796,7 @@ namespace EdiabasLib
                             while (diagSslStream.ReadByte() >= 0)
                             {
                             }
+                            diagSslStream.ReadTimeout = SslAuthTimeout;
                         }
 
                         SharedDataActive.TcpDiagRecLen = 0;
@@ -3939,6 +3940,7 @@ namespace EdiabasLib
                             while (diagSslStream.ReadByte() >= 0)
                             {
                             }
+                            diagSslStream.ReadTimeout = SslAuthTimeout;
                         }
                         SharedDataActive.TcpDiagRecLen = 0;
                     }
@@ -4948,7 +4950,7 @@ namespace EdiabasLib
             ParRetryNr78 = 2;
         }
 
-        private void WriteNetworkStream(Stream networkStream, byte[] buffer, int offset, int size, int packetSize = TcpSendBufferSize)
+        private void WriteNetworkStream(Stream networkStream, byte[] buffer, int offset, int size, int packetSize = 0)
         {
             if (networkStream == null)
             {
