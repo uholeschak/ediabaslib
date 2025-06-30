@@ -4950,7 +4950,7 @@ namespace EdiabasLib
             ParRetryNr78 = 2;
         }
 
-        private void WriteNetworkStream(Stream networkStream, byte[] buffer, int offset, int size, int packetSize = 0)
+        private void WriteNetworkStream(Stream networkStream, byte[] buffer, int offset, int size, int packetSize = TcpSendBufferSize)
         {
             if (networkStream == null)
             {
