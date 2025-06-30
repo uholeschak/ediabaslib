@@ -3282,6 +3282,7 @@ namespace CarSimulator
 
                     if (networkStream != null && !networkStream.DataAvailable)
                     {
+                        Debug.WriteLine("DoIp No data available [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort);
                         return false;
                     }
 
@@ -3290,6 +3291,7 @@ namespace CarSimulator
                     int recLen = bmwTcpClientData.TcpClientStream.Read(dataBuffer, 0, 8);
                     if (recLen < 8)
                     {
+                        Debug.WriteLine("DoIp header too short [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, recLen);
                         return false;
                     }
                     int payloadLength = (((int)dataBuffer[4] << 24) | ((int)dataBuffer[5] << 16) | ((int)dataBuffer[6] << 8) | dataBuffer[7]);
@@ -3310,6 +3312,8 @@ namespace CarSimulator
                             {
                             }
                         }
+
+                        Debug.WriteLine("DoIp Rec data buffer overflow [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, payloadLength);
                         return false;
                     }
                     if (payloadLength > 0)
@@ -3318,6 +3322,7 @@ namespace CarSimulator
                     }
                     if (recLen < payloadLength + 8)
                     {
+                        Debug.WriteLine("DoIp rec data length too short [{0}], Port={1}: {2} < {3}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, recLen, payloadLength + 8);
                         return false;
                     }
 #if true
