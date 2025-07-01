@@ -7,8 +7,6 @@
 using BmwFileReader;
 using EdiabasLib;
 using Org.BouncyCastle.Asn1.X509;
-using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.X509;
 using Peak.Can.Basic;
@@ -2101,7 +2099,7 @@ namespace CarSimulator
             return false;
         }
 
-        private int ReadNetworkStream(BmwTcpClientData bmwTcpClientData, byte[] buffer, int offset, int count, int timeout = SslAuthTimeout)
+        private int ReadNetworkStream(BmwTcpClientData bmwTcpClientData, byte[] buffer, int offset, int count, int timeout = 2000)
         {
             int recLen = 0;
             long startTick = Stopwatch.GetTimestamp();
@@ -3307,6 +3305,8 @@ namespace CarSimulator
             {
                 if (bmwTcpClientData.TcpClientStream != null)
                 {
+                    string streamName = bmwTcpClientData.TcpClientStream.GetType().Name;
+                    Stream tlsStream = streamName == "TlsStream" ? bmwTcpClientData.TcpClientStream : null;
                     NetworkStream networkStream = bmwTcpClientData.TcpClientStream as NetworkStream;
                     SslStream sslStream = bmwTcpClientData.TcpClientStream as SslStream;
 
@@ -3318,7 +3318,7 @@ namespace CarSimulator
 
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     byte[] dataBuffer = new byte[MaxBufferLength];
-                    int recLen = bmwTcpClientData.TcpClientStream.Read(dataBuffer, 0, 8);
+                    int recLen = ReadNetworkStream(bmwTcpClientData, dataBuffer, 0, 8);
                     if (recLen < 8)
                     {
                         Debug.WriteLine("DoIp header too short [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, recLen);
@@ -3342,6 +3342,13 @@ namespace CarSimulator
                             {
                             }
                             sslStream.ReadTimeout = SslAuthTimeout;
+                        }
+
+                        if (tlsStream != null)
+                        {
+                            while (tlsStream.ReadByte() >= 0)
+                            {
+                            }
                         }
 
                         Debug.WriteLine("DoIp Rec data buffer overflow [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, payloadLength);
