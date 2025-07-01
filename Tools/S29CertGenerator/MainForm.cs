@@ -549,6 +549,19 @@ namespace S29CertGenerator
             }
         }
 
+        private bool SetIstaConfigString(string key, string value)
+        {
+            try
+            {
+                Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, value);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private bool ConvertJsonRequestFile(string jsonRequestFile, string jsonResponseFolder, string certOutputFolder)
         {
             try
@@ -726,6 +739,19 @@ namespace S29CertGenerator
                 if (!InstallCertificates(installCerts))
                 {
                     UpdateStatusText($"Failed to install certificates for VIN: {vin17}", true);
+                    return false;
+                }
+
+                X509Certificate2 caCert = new X509Certificate2(_caPublicCertificates[0].Certificate.GetEncoded());
+                if (!SetIstaConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", caCert.Thumbprint))
+                {
+                    UpdateStatusText($"Failed to set CA thumbprint in ISTA config", true);
+                    return false;
+                }
+
+                if (!SetIstaConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", subCaCert.Thumbprint))
+                {
+                    UpdateStatusText($"Failed to set SubCA thumbprint in ISTA config", true);
                     return false;
                 }
 
