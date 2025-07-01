@@ -722,7 +722,8 @@ namespace S29CertGenerator
 
                 UpdateStatusText($"Response file created: {jsonResponseFileName}", true);
 
-                if (!InstallCertificates(x509CertChain))
+                List<Org.BouncyCastle.X509.X509Certificate> installCerts = x509CertChain.Skip(1).ToList();
+                if (!InstallCertificates(installCerts))
                 {
                     UpdateStatusText($"Failed to install certificates for VIN: {vin17}", true);
                     return false;
