@@ -2181,6 +2181,38 @@ namespace CarSimulator
             bmwTcpClientData.LastTcpSendTick = Stopwatch.GetTimestamp();
         }
 
+        void ClearNetworkStream(BmwTcpClientData bmwTcpClientData)
+        {
+            string streamName = bmwTcpClientData.TcpClientStream.GetType().Name;
+            NetworkStream networkStream = bmwTcpClientData.TcpClientStream as NetworkStream;
+            SslStream sslStream = bmwTcpClientData.TcpClientStream as SslStream;
+            Stream tlsStream = streamName == EdBcTlsUtilities.TlsStreamName ? bmwTcpClientData.TcpClientStream : null;
+
+            if (networkStream != null)
+            {
+                while (networkStream.DataAvailable)
+                {
+                    bmwTcpClientData.TcpClientStream.ReadByte();
+                }
+            }
+
+            if (sslStream != null)
+            {
+                sslStream.ReadTimeout = 1;
+                while (sslStream.ReadByte() >= 0)
+                {
+                }
+                sslStream.ReadTimeout = SslAuthTimeout;
+            }
+
+            if (tlsStream != null)
+            {
+                while (tlsStream.ReadByte() >= 0)
+                {
+                }
+            }
+        }
+
         private void StartUdpListen()
         {
             _udpClient?.BeginReceive(UdpReceiver, new Object());
@@ -3305,10 +3337,7 @@ namespace CarSimulator
             {
                 if (bmwTcpClientData.TcpClientStream != null)
                 {
-                    string streamName = bmwTcpClientData.TcpClientStream.GetType().Name;
-                    Stream tlsStream = streamName == "TlsStream" ? bmwTcpClientData.TcpClientStream : null;
                     NetworkStream networkStream = bmwTcpClientData.TcpClientStream as NetworkStream;
-                    SslStream sslStream = bmwTcpClientData.TcpClientStream as SslStream;
 
                     if (networkStream != null && !networkStream.DataAvailable)
                     {
@@ -3327,30 +3356,7 @@ namespace CarSimulator
                     int payloadLength = (((int)dataBuffer[4] << 24) | ((int)dataBuffer[5] << 16) | ((int)dataBuffer[6] << 8) | dataBuffer[7]);
                     if (payloadLength > dataBuffer.Length - 8)
                     {
-                        if (networkStream != null)
-                        {
-                            while (networkStream.DataAvailable)
-                            {
-                                bmwTcpClientData.TcpClientStream.ReadByte();
-                            }
-                        }
-
-                        if (sslStream != null)
-                        {
-                            sslStream.ReadTimeout = 1;
-                            while (sslStream.ReadByte() >= 0)
-                            {
-                            }
-                            sslStream.ReadTimeout = SslAuthTimeout;
-                        }
-
-                        if (tlsStream != null)
-                        {
-                            while (tlsStream.ReadByte() >= 0)
-                            {
-                            }
-                        }
-
+                        ClearNetworkStream(bmwTcpClientData);
                         Debug.WriteLine("DoIp Rec data buffer overflow [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, payloadLength);
                         return false;
                     }
