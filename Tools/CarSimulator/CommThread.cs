@@ -2181,18 +2181,18 @@ namespace CarSimulator
             bmwTcpClientData.LastTcpSendTick = Stopwatch.GetTimestamp();
         }
 
-        void ClearNetworkStream(BmwTcpClientData bmwTcpClientData)
+        void ClearNetworkStream(Stream tcpClientStream)
         {
-            string streamName = bmwTcpClientData.TcpClientStream.GetType().Name;
-            NetworkStream networkStream = bmwTcpClientData.TcpClientStream as NetworkStream;
-            SslStream sslStream = bmwTcpClientData.TcpClientStream as SslStream;
-            Stream tlsStream = streamName == EdBcTlsUtilities.TlsStreamName ? bmwTcpClientData.TcpClientStream : null;
+            string streamName = tcpClientStream.GetType().Name;
+            NetworkStream networkStream = tcpClientStream as NetworkStream;
+            SslStream sslStream = tcpClientStream as SslStream;
+            Stream tlsStream = streamName == EdBcTlsUtilities.TlsStreamName ? tcpClientStream : null;
 
             if (networkStream != null)
             {
                 while (networkStream.DataAvailable)
                 {
-                    bmwTcpClientData.TcpClientStream.ReadByte();
+                    tcpClientStream.ReadByte();
                 }
             }
 
@@ -3023,10 +3023,8 @@ namespace CarSimulator
                     int payloadLength = (((int)dataBuffer[0] << 24) | ((int)dataBuffer[1] << 16) | ((int)dataBuffer[2] << 8) | dataBuffer[3]);
                     if (payloadLength > dataBuffer.Length - 6)
                     {
-                        while (tcpClientStream.DataAvailable)
-                        {
-                            tcpClientStream.ReadByte();
-                        }
+                        ClearNetworkStream(bmwTcpClientData.TcpClientStream);
+                        Debug.WriteLine("Payload length too long: {0} > {1}", payloadLength, dataBuffer.Length - 6);
                         return false;
                     }
                     if (payloadLength > 0)
@@ -3356,7 +3354,7 @@ namespace CarSimulator
                     int payloadLength = (((int)dataBuffer[4] << 24) | ((int)dataBuffer[5] << 16) | ((int)dataBuffer[6] << 8) | dataBuffer[7]);
                     if (payloadLength > dataBuffer.Length - 8)
                     {
-                        ClearNetworkStream(bmwTcpClientData);
+                        ClearNetworkStream(bmwTcpClientData.TcpClientStream);
                         Debug.WriteLine("DoIp Rec data buffer overflow [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, payloadLength);
                         return false;
                     }
