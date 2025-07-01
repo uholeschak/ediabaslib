@@ -2101,6 +2101,36 @@ namespace CarSimulator
             return false;
         }
 
+        private int ReadNetworkStream(BmwTcpClientData bmwTcpClientData, byte[] buffer, int offset, int count, int timeout = SslAuthTimeout)
+        {
+            int recLen = 0;
+            long startTick = Stopwatch.GetTimestamp();
+
+            for (; ; )
+            {
+                int readBytes = bmwTcpClientData.TcpClientStream.Read(buffer, offset + recLen, count);
+                if (readBytes > 0)
+                {
+                    recLen += readBytes;
+                    if (recLen >= count)
+                    {
+                        break;
+                    }
+
+                    startTick = Stopwatch.GetTimestamp();
+                }
+
+                if ((Stopwatch.GetTimestamp() - startTick) > timeout * TickResolMs)
+                {
+                    break;
+                }
+
+                Thread.Sleep(10);
+            }
+
+            return recLen;
+        }
+
         private void WriteNetworkStream(BmwTcpClientData bmwTcpClientData, byte[] buffer, int offset, int size)
         {
             if (size == 0)
@@ -3317,6 +3347,7 @@ namespace CarSimulator
                         Debug.WriteLine("DoIp Rec data buffer overflow [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, payloadLength);
                         return false;
                     }
+
                     if (payloadLength > 0)
                     {
                         long startTick = Stopwatch.GetTimestamp();
