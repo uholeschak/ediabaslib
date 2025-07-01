@@ -470,7 +470,13 @@ namespace S29CertGenerator
         public X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey,
             string cnName, string vin, bool isSubCa = false)
         {
-            X509Name subject = new X509Name($"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={cnName}, GIVENNAME=" + vin);
+            string subjectName = $"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={cnName}";
+            if (!string.IsNullOrEmpty(vin))
+            {
+                subjectName += $", GIVENNAME={vin}";
+            }
+
+            X509Name subject = new X509Name(subjectName);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
             x509V3CertificateGenerator.SetSerialNumber(BigInteger.ProbablePrime(120, new Random()));
@@ -648,7 +654,7 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                X509Certificate2 subCaCert = GenerateCertificate(issuerCert, istaPublicKey, _caKeyResource, Service29BmwCnName, vin17, true);
+                X509Certificate2 subCaCert = GenerateCertificate(issuerCert, istaPublicKey, _caKeyResource, Service29BmwCnName, null, true);
                 if (subCaCert == null)
                 {
                     UpdateStatusText($"Failed to generate SubCA certificate for VIN: {vin17}", true);
