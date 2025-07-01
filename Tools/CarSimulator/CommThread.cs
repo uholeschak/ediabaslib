@@ -3350,28 +3350,7 @@ namespace CarSimulator
 
                     if (payloadLength > 0)
                     {
-                        long startTick = Stopwatch.GetTimestamp();
-                        for (;;)
-                        {
-                            int readBytes = bmwTcpClientData.TcpClientStream.Read(dataBuffer, recLen, payloadLength);
-                            if (readBytes > 0)
-                            {
-                                recLen += readBytes;
-                                if (recLen >= payloadLength + 8)
-                                {
-                                    break;
-                                }
-
-                                startTick = Stopwatch.GetTimestamp();
-                            }
-
-                            if ((Stopwatch.GetTimestamp() - startTick) > SslAuthTimeout * TickResolMs)
-                            {
-                                break;
-                            }
-
-                            Thread.Sleep(10);
-                        }
+                        recLen += ReadNetworkStream(bmwTcpClientData, dataBuffer, recLen, payloadLength);
                     }
 
                     if (recLen < payloadLength + 8)
