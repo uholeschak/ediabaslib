@@ -2101,9 +2101,13 @@ namespace CarSimulator
 
         private int ReadNetworkStream(Stream tcpClientStream, byte[] buffer, int offset, int count, int timeout = 2000)
         {
+            if (tcpClientStream == null || count <= 0 || buffer == null || offset < 0 || offset + count > buffer.Length)
+            {
+                return 0;
+            }
+
             int recLen = 0;
             long startTick = Stopwatch.GetTimestamp();
-
             for (; ; )
             {
                 int readBytes = tcpClientStream.Read(buffer, offset + recLen, count);
@@ -2183,6 +2187,11 @@ namespace CarSimulator
 
         void ClearNetworkStream(Stream tcpClientStream)
         {
+            if (tcpClientStream == null)
+            {
+                return;
+            }
+
             string streamName = tcpClientStream.GetType().Name;
             NetworkStream networkStream = tcpClientStream as NetworkStream;
             SslStream sslStream = tcpClientStream as SslStream;
