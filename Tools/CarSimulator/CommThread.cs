@@ -2099,14 +2099,14 @@ namespace CarSimulator
             return false;
         }
 
-        private int ReadNetworkStream(BmwTcpClientData bmwTcpClientData, byte[] buffer, int offset, int count, int timeout = 2000)
+        private int ReadNetworkStream(Stream tcpClientStream, byte[] buffer, int offset, int count, int timeout = 2000)
         {
             int recLen = 0;
             long startTick = Stopwatch.GetTimestamp();
 
             for (; ; )
             {
-                int readBytes = bmwTcpClientData.TcpClientStream.Read(buffer, offset + recLen, count);
+                int readBytes = tcpClientStream.Read(buffer, offset + recLen, count);
                 if (readBytes > 0)
                 {
                     recLen += readBytes;
@@ -3345,7 +3345,7 @@ namespace CarSimulator
 
                     bmwTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
                     byte[] dataBuffer = new byte[MaxBufferLength];
-                    int recLen = ReadNetworkStream(bmwTcpClientData, dataBuffer, 0, 8);
+                    int recLen = ReadNetworkStream(bmwTcpClientData.TcpClientStream, dataBuffer, 0, 8);
                     if (recLen < 8)
                     {
                         Debug.WriteLine("DoIp header too short [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, recLen);
@@ -3361,7 +3361,7 @@ namespace CarSimulator
 
                     if (payloadLength > 0)
                     {
-                        recLen += ReadNetworkStream(bmwTcpClientData, dataBuffer, recLen, payloadLength);
+                        recLen += ReadNetworkStream(bmwTcpClientData.TcpClientStream, dataBuffer, recLen, payloadLength);
                     }
 
                     if (recLen < payloadLength + 8)
