@@ -2203,6 +2203,7 @@ namespace CarSimulator
                 {
                     tcpClientStream.ReadByte();
                 }
+                return;
             }
 
             if (sslStream != null)
@@ -2212,6 +2213,7 @@ namespace CarSimulator
                 {
                 }
                 sslStream.ReadTimeout = SslAuthTimeout;
+                return;
             }
 
             if (tlsStream != null)
