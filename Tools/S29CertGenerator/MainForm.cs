@@ -27,9 +27,6 @@ namespace S29CertGenerator
         private List<X509CertificateEntry> _caPublicCertificates;
         private AsymmetricKeyParameter _istaKeyResource;
         private List<X509CertificateEntry> _istaPublicCertificates;
-        private readonly byte[] roleMask = new byte[] { 0, 0, 5, 75 };
-        public const string Service29BmwCnName = "Service29-BMW-S29";
-        public const string Service29IstaCnName = "Service29-ISTA-S29";
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegValueIstaLocation = @"InstallLocation";
         public const string EdiabasDirName = @"Ediabas";
@@ -467,43 +464,6 @@ namespace S29CertGenerator
             }
         }
 
-        public X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey,
-            string cnName, string vin, bool isSubCa = false)
-        {
-            string subjectName = $"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={cnName}";
-            if (!string.IsNullOrEmpty(vin))
-            {
-                subjectName += $", GIVENNAME={vin}";
-            }
-
-            X509Name subject = new X509Name(subjectName);
-            X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
-            x509V3CertificateGenerator.SetPublicKey(publicKey);
-            x509V3CertificateGenerator.SetSerialNumber(BigInteger.ProbablePrime(120, new Random()));
-            x509V3CertificateGenerator.SetIssuerDN(issuerCert.SubjectDN);
-            x509V3CertificateGenerator.SetNotBefore(DateTime.UtcNow.AddMinutes(-5.0));
-            x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddYears(1));
-            x509V3CertificateGenerator.SetSubjectDN(subject);
-            DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.30");
-            byte[] contents = new byte[2] { 14, 243 };
-            byte[] contents2 = new byte[2] { 14, 244 };
-            byte[] contents3 = new byte[2] { 14, 245 };
-            DerOctetString element = new DerOctetString(contents);
-            DerOctetString element2 = new DerOctetString(contents2);
-            DerOctetString element3 = new DerOctetString(contents3);
-            DerSet extensionValue = new DerSet(new Asn1EncodableVector { element, element2, element3 });
-            x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
-            DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.10");
-            x509V3CertificateGenerator.AddExtension(oid2, critical: true, roleMask);
-            KeyUsage keyUsage = isSubCa ? new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign) : new KeyUsage(KeyUsage.DigitalSignature);
-            x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, keyUsage);
-            x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, X509ExtensionUtilities.CreateSubjectKeyIdentifier(publicKey));
-            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: isSubCa));
-            x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, X509ExtensionUtilities.CreateAuthorityKeyIdentifier(issuerCert.GetPublicKey()));
-            ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", issuerPrivateKey);
-            return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
-        }
-
         private static void InstallCertificate(X509Certificate2 cert)
         {
             using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
@@ -539,8 +499,8 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                DeleteCertificateBySubjectName(Service29BmwCnName);
-                DeleteCertificateBySubjectName(Service29IstaCnName);
+                DeleteCertificateBySubjectName(EdSec4Diag.S29BmwCnName);
+                DeleteCertificateBySubjectName(EdSec4Diag.S29IstaCnName);
                 foreach (Org.BouncyCastle.X509.X509Certificate x509Certificate in x509CertChain)
                 {
                     X509Certificate2 cert = new X509Certificate2(x509Certificate.GetEncoded());
@@ -654,7 +614,7 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                X509Certificate2 subCaCert = GenerateCertificate(issuerCert, istaPublicKey, _caKeyResource, Service29BmwCnName, null, true);
+                X509Certificate2 subCaCert = EdSec4Diag.GenerateCertificate(issuerCert, istaPublicKey, _caKeyResource, EdSec4Diag.S29BmwCnName, null, true);
                 if (subCaCert == null)
                 {
                     UpdateStatusText($"Failed to generate SubCA certificate for VIN: {vin17}", true);
@@ -662,7 +622,7 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
-                X509Certificate2 s29Cert = GenerateCertificate(x509SubCaCert, publicKeyParameter, _istaKeyResource, Service29IstaCnName, vin17);
+                X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(x509SubCaCert, publicKeyParameter, _istaKeyResource, EdSec4Diag.S29IstaCnName, vin17);
                 if (s29Cert == null)
                 {
                     UpdateStatusText($"Failed to generate certificate for VIN: {vin17}", true);
