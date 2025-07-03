@@ -708,7 +708,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                X509Certificate2 caCert = new X509Certificate2(_caPublicCertificates[0].Certificate.GetEncoded());
+                X509Certificate2 caCert = new X509Certificate2(issuerCert.GetEncoded());
                 if (!SetIstaConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", caCert.Thumbprint))
                 {
                     UpdateStatusText($"Failed to set CA thumbprint in ISTA config", true);
