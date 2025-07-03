@@ -22,6 +22,8 @@ namespace EdiabasLib
         public const string S29ProofOfOwnershipPrefix = "S29UNIPOO";
         public const string S29BmwCnName = "Service29-BMW-S29";
         public const string S29IstaCnName = "Service29-ISTA-S29";
+        public const string S29ThumbprintCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca";
+        public const string S29ThumbprintSubCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa";
         public const string IstaPkcs12KeyPwd = "G#8x!9sD2@qZ6&lF1";
         public static byte[] RoleMask = new byte[] { 0, 0, 5, 75 };
 
@@ -217,7 +219,27 @@ namespace EdiabasLib
             x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: isSubCa));
             x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, X509ExtensionUtilities.CreateAuthorityKeyIdentifier(issuerCert.GetPublicKey()));
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", issuerPrivateKey);
-            return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
+            byte[] encodedCert = x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded();
+#if NET9_0_OR_GREATER
+            return X509CertificateLoader.LoadCertificate(encodedCert);
+#else
+            return new X509Certificate2(encodedCert);
+#endif
         }
+
+#if !ANDROID
+        public static bool SetIstaConfigString(string key, string value = "")
+        {
+            try
+            {
+                Microsoft.Win32.Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, value);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+#endif
     }
 }

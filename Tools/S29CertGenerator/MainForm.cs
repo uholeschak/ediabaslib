@@ -515,19 +515,6 @@ namespace S29CertGenerator
             }
         }
 
-        private bool SetIstaConfigString(string key, string value)
-        {
-            try
-            {
-                Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, value);
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         private bool ConvertJsonRequestFile(string jsonRequestFile, string jsonResponseFolder, string certOutputFolder)
         {
             try
@@ -708,24 +695,26 @@ namespace S29CertGenerator
                 };
                 if (!InstallCertificates(installCerts))
                 {
-                    UpdateStatusText($"Failed to install certificates for VIN: {vin17}", true);
+                    UpdateStatusText("Failed to install certificates", true);
+                    EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
+                    EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
                     return false;
                 }
 
                 X509Certificate2 caCert = new X509Certificate2(issuerCert.GetEncoded());
-                if (!SetIstaConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", caCert.Thumbprint))
+                if (!EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa, caCert.Thumbprint))
                 {
-                    UpdateStatusText($"Failed to set CA thumbprint in ISTA config", true);
+                    UpdateStatusText("Failed to set CA thumbprint in ISTA config", true);
                     return false;
                 }
 
-                if (!SetIstaConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", subCaCert.Thumbprint))
+                if (!EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa, subCaCert.Thumbprint))
                 {
-                    UpdateStatusText($"Failed to set SubCA thumbprint in ISTA config", true);
+                    UpdateStatusText("Failed to set SubCA thumbprint in ISTA config", true);
                     return false;
                 }
 
-                UpdateStatusText($"Certificates installed for VIN: {vin17}", true);
+                UpdateStatusText("Certificates installed", true);
                 return true;
             }
             catch (Exception ex)
