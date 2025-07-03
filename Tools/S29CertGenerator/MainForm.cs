@@ -438,7 +438,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(istaKeyFile, "G#8x!9sD2@qZ6&lF1", out X509CertificateEntry[] publicCertificateEntries);
+                AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(istaKeyFile, EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
                 if (privateKeyResource == null)
                 {
                     return false; // Failed to load private key
@@ -617,7 +617,7 @@ namespace S29CertGenerator
                 X509Certificate2 subCaCert = EdSec4Diag.GenerateCertificate(issuerCert, istaPublicKey, _caKeyResource, EdSec4Diag.S29BmwCnName, null, true);
                 if (subCaCert == null)
                 {
-                    UpdateStatusText($"Failed to generate SubCA certificate for VIN: {vin17}", true);
+                    UpdateStatusText($"Failed to generate SubCA certificate", true);
                     return false;
                 }
 

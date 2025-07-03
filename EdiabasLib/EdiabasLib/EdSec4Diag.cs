@@ -22,6 +22,7 @@ namespace EdiabasLib
         public const string S29ProofOfOwnershipPrefix = "S29UNIPOO";
         public const string S29BmwCnName = "Service29-BMW-S29";
         public const string S29IstaCnName = "Service29-ISTA-S29";
+        public const string IstaPkcs12KeyPwd = "G#8x!9sD2@qZ6&lF1";
         public static byte[] RoleMask = new byte[] { 0, 0, 5, 75 };
 
         public class CertReqProfile
