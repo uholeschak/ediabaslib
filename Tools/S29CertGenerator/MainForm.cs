@@ -515,6 +515,76 @@ namespace S29CertGenerator
             }
         }
 
+        private bool InstallIstaSubCaCert()
+        {
+            try
+            {
+                if (_caPublicCertificates == null || _caPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("CA public certificate is not loaded", true);
+                    return false;
+                }
+
+                if (_caKeyResource == null)
+                {
+                    UpdateStatusText("CA private key is not loaded", true);
+                    return false;
+                }
+
+                if (_istaPublicCertificates == null || _istaPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("ISTA public certificate is not loaded", true);
+                    return false;
+                }
+
+                AsymmetricKeyParameter istaPublicKey = _istaPublicCertificates[0].Certificate.GetPublicKey();
+                if (istaPublicKey == null)
+                {
+                    UpdateStatusText($"ISTA public key is not found", true);
+                    return false;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
+                X509Certificate2 subCaCert = EdSec4Diag.GenerateCertificate(issuerCert, istaPublicKey, _caKeyResource, EdSec4Diag.S29BmwCnName, null, true);
+                if (subCaCert == null)
+                {
+                    UpdateStatusText("Failed to generate SubCA certificate", true);
+                    return false;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
+                List<Org.BouncyCastle.X509.X509Certificate> installCerts = new List<Org.BouncyCastle.X509.X509Certificate>()
+                {
+                    issuerCert,
+                    x509SubCaCert,
+                };
+
+                if (!InstallCertificates(installCerts))
+                {
+                    UpdateStatusText("Failed to install certificates", true);
+                    EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
+                    EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
+                    return false;
+                }
+
+                X509Certificate2 caCert = new X509Certificate2(issuerCert.GetEncoded());
+                if (!EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa, caCert.Thumbprint) ||
+                    !EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa, subCaCert.Thumbprint))
+                {
+                    UpdateStatusText("Failed to set CA thumbprints in ISTA config", true);
+                    return false;
+                }
+
+                UpdateStatusText("Certificates installed", true);
+                return true;
+            }
+            catch (Exception e)
+            {
+                UpdateStatusText($"Install SubCA certificate exception: {e.Message}", true);
+                return false;
+            }
+        }
+
         private bool ConvertJsonRequestFile(string jsonRequestFile, string jsonResponseFolder, string certOutputFolder)
         {
             try
