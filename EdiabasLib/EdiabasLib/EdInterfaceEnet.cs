@@ -4683,14 +4683,14 @@ namespace EdiabasLib
 
             ECPrivateKeyParameters privateKey = sharedData.MachineKeyPair?.Private as ECPrivateKeyParameters;
             ECPublicKeyParameters publicKey = sharedData.MachineKeyPair?.Public as ECPublicKeyParameters;
-            byte[] proofData = EdBcTlsUtilities.CalculateProofOfOwnership(serverChallenge, privateKey);
+            byte[] proofData = EdSec4Diag.CalculateProofOfOwnership(serverChallenge, privateKey);
             if (proofData == null)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth proof of ownership calculation failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            if (!EdBcTlsUtilities.VerifyProofOfOwnership(proofData, serverChallenge, publicKey))
+            if (!EdSec4Diag.VerifyProofOfOwnership(proofData, serverChallenge, publicKey))
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth proof of ownership verification failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;

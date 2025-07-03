@@ -2135,7 +2135,7 @@ namespace CarSimulator
 
         private void WriteNetworkStream(BmwTcpClientData bmwTcpClientData, byte[] buffer, int offset, int size)
         {
-            if (size == 0)
+            if (buffer == null || size <= 0 || offset < 0 || offset + size > buffer.Length)
             {
                 return;
             }
@@ -6760,7 +6760,7 @@ namespace CarSimulator
                             {
                                 DebugLogData("Proof: ", parameterList[0], parameterList[0].Length);
                                 DebugLogData("Ephemeral PublicKey: ", parameterList[1], parameterList[1].Length);
-                                if (!EdBcTlsUtilities.VerifyProofOfOwnership(parameterList[0], bmwTcpClientData.ServerChallenge, bmwTcpClientData.ClientPublicKey))
+                                if (!EdSec4Diag.VerifyProofOfOwnership(parameterList[0], bmwTcpClientData.ServerChallenge, bmwTcpClientData.ClientPublicKey))
                                 {
                                     Debug.WriteLine("Proof of ownership is invalid");
                                 }
