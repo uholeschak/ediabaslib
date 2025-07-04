@@ -40,6 +40,7 @@ namespace S29CertGenerator
         private void MainForm_Load(object sender, System.EventArgs e)
         {
             Icon = Properties.Resources.AppIcon;
+            checkBoxForceCreate.Checked = false;
 
             LoadSettings();
             if (!IsSettingValid(true))
@@ -459,7 +460,7 @@ namespace S29CertGenerator
             }
         }
 
-        private Org.BouncyCastle.X509.X509Certificate LoadIstaSubCaCert()
+        private Org.BouncyCastle.X509.X509Certificate LoadIstaSubCaCert(bool forceUpdate)
         {
             try
             {
@@ -484,65 +485,69 @@ namespace S29CertGenerator
 
                 X509Certificate2 caCert = null;
                 X509Certificate2 subCaCert = null;
-                string thumbprintCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
-                string thumbprintSubCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
-                if (!string.IsNullOrEmpty(thumbprintCa) && !string.IsNullOrEmpty(thumbprintSubCa))
-                {
-                    caCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintCa);
-                    subCaCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintSubCa);
-                }
-
                 Org.BouncyCastle.X509.X509Certificate x509CaCert = null;
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = null;
-                if (caCert != null && subCaCert != null)
+
+                if (!forceUpdate)
                 {
-                    bool certValid = true;
-                    x509CaCert = new X509CertificateParser().ReadCertificate(caCert.GetRawCertData());
-                    x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
-
-                    Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                    if (!issuerCert.GetPublicKey().Equals(x509CaCert.GetPublicKey()))
+                    string thumbprintCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
+                    string thumbprintSubCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
+                    if (!string.IsNullOrEmpty(thumbprintCa) && !string.IsNullOrEmpty(thumbprintSubCa))
                     {
-                        UpdateStatusText("CA certificate public key does not match CA public certificate", true);
-                        certValid = false;
+                        caCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintCa);
+                        subCaCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintSubCa);
                     }
 
-                    if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
+                    if (caCert != null && subCaCert != null)
                     {
-                        UpdateStatusText("SubCA certificate public key does not match ISTA public key", true);
-                        certValid = false;
-                    }
+                        bool certValid = true;
+                        x509CaCert = new X509CertificateParser().ReadCertificate(caCert.GetRawCertData());
+                        x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
 
-                    List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
-                    x509CertChain.Add(x509SubCaCert);
-                    x509CertChain.Add(x509CaCert);
-
-                    List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
-                    foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
-                    {
-                        Org.BouncyCastle.X509.X509Certificate cert = caPublicCertificate.Certificate;
-                        if (cert != null)
+                        Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
+                        if (!issuerCert.GetPublicKey().Equals(x509CaCert.GetPublicKey()))
                         {
-                            rootCerts.Add(cert);
+                            UpdateStatusText("CA certificate public key does not match CA public certificate", true);
+                            certValid = false;
                         }
-                    }
 
-                    if (!EdBcTlsUtilities.ValidateCertChain(x509CertChain, rootCerts))
-                    {
-                        UpdateStatusText("SubCA certificate chain validation failed", true);
-                        certValid = false;
-                    }
+                        if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
+                        {
+                            UpdateStatusText("SubCA certificate public key does not match ISTA public key", true);
+                            certValid = false;
+                        }
 
-                    if (!certValid)
-                    {
-                        x509CaCert = null;
-                        x509SubCaCert = null;
+                        List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                        x509CertChain.Add(x509SubCaCert);
+                        x509CertChain.Add(x509CaCert);
+
+                        List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
+                        foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
+                        {
+                            Org.BouncyCastle.X509.X509Certificate cert = caPublicCertificate.Certificate;
+                            if (cert != null)
+                            {
+                                rootCerts.Add(cert);
+                            }
+                        }
+
+                        if (!EdBcTlsUtilities.ValidateCertChain(x509CertChain, rootCerts))
+                        {
+                            UpdateStatusText("SubCA certificate chain validation failed", true);
+                            certValid = false;
+                        }
+
+                        if (!certValid)
+                        {
+                            x509CaCert = null;
+                            x509SubCaCert = null;
+                        }
                     }
                 }
 
                 if (x509CaCert == null || x509SubCaCert == null)
                 {
-                    UpdateStatusText("SubCA certificate not found, creating new SubCA certificate", true);
+                    UpdateStatusText("Creating new SubCA certificate", true);
                     x509SubCaCert = CreateIstaSubCaCert();
                 }
 
@@ -804,13 +809,13 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ConvertAllJsonRequestFiles(string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder)
+        protected bool ConvertAllJsonRequestFiles(string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, bool forceUpdate = false)
         {
             try
             {
                 UpdateStatusText(string.Empty);
 
-                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = LoadIstaSubCaCert();
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = LoadIstaSubCaCert(forceUpdate);
                 if (x509SubCaCert == null)
                 {
                     UpdateStatusText("Failed to create SubCA certificate", true);
@@ -1007,7 +1012,7 @@ namespace S29CertGenerator
 
         private void buttonExecute_Click(object sender, EventArgs e)
         {
-            ConvertAllJsonRequestFiles(textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text);
+            ConvertAllJsonRequestFiles(textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
         }
     }
 }

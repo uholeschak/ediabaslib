@@ -46,6 +46,7 @@
             buttonSelectIstaKeyFile = new System.Windows.Forms.Button();
             textBoxIstaKeyFile = new System.Windows.Forms.TextBox();
             openIstaKeyFileDialog = new System.Windows.Forms.OpenFileDialog();
+            checkBoxForceCreate = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -84,7 +85,7 @@
             buttonClose.Location = new System.Drawing.Point(610, 374);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
-            buttonClose.TabIndex = 14;
+            buttonClose.TabIndex = 15;
             buttonClose.Text = "Close";
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += buttonClose_Click;
@@ -133,7 +134,7 @@
             buttonExecute.Location = new System.Drawing.Point(529, 374);
             buttonExecute.Name = "buttonExecute";
             buttonExecute.Size = new System.Drawing.Size(75, 23);
-            buttonExecute.TabIndex = 13;
+            buttonExecute.TabIndex = 14;
             buttonExecute.Text = "Execute";
             buttonExecute.UseVisualStyleBackColor = true;
             buttonExecute.Click += buttonExecute_Click;
@@ -213,6 +214,16 @@
             openIstaKeyFileDialog.Filter = "Key|*.pfx|All files|*.*";
             openIstaKeyFileDialog.Title = "Select ISTA key file";
             // 
+            // checkBoxForceCreate
+            // 
+            checkBoxForceCreate.AutoSize = true;
+            checkBoxForceCreate.Location = new System.Drawing.Point(12, 374);
+            checkBoxForceCreate.Name = "checkBoxForceCreate";
+            checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
+            checkBoxForceCreate.TabIndex = 13;
+            checkBoxForceCreate.Text = "Force create cert";
+            checkBoxForceCreate.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AcceptButton = buttonExecute;
@@ -220,6 +231,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(697, 409);
+            Controls.Add(checkBoxForceCreate);
             Controls.Add(textBoxIstaKeyFile);
             Controls.Add(buttonSelectIstaKeyFile);
             Controls.Add(textBoxS29Folder);
@@ -267,5 +279,6 @@
         private System.Windows.Forms.Button buttonSelectIstaKeyFile;
         private System.Windows.Forms.TextBox textBoxIstaKeyFile;
         private System.Windows.Forms.OpenFileDialog openIstaKeyFileDialog;
+        private System.Windows.Forms.CheckBox checkBoxForceCreate;
     }
 }
