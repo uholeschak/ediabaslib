@@ -259,13 +259,45 @@ namespace EdiabasLib
                 return; // No subject name provided
             }
 
-            X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-            x509Store.Open(OpenFlags.ReadWrite);
-            foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false))
+            using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
             {
-                x509Store.Remove(x509Certificate);
+                x509Store.Open(OpenFlags.ReadWrite);
+                foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false))
+                {
+                    x509Store.Remove(x509Certificate);
+                }
+                x509Store.Close();
             }
-            x509Store.Close();
+        }
+
+        public static X509Certificate2 GetCertificateFromStoreBySubjectName(string subjectName)
+        {
+            using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+            {
+                X509Certificate2 x509Certificate;
+                try
+                {
+                    x509Store.Open(OpenFlags.ReadOnly);
+                    X509Certificate2Collection x509Certificate2Collection = x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false);
+                    if (x509Certificate2Collection.Count > 0)
+                    {
+                        x509Certificate = x509Certificate2Collection[0];
+                    }
+                    else
+                    {
+                        x509Certificate = null;
+                    }
+                }
+                catch (Exception)
+                {
+                    x509Certificate = null;
+                }
+                finally
+                {
+                    x509Store.Close();
+                }
+                return x509Certificate;
+            }
         }
 
         public static bool InstallCertificates(List<Org.BouncyCastle.X509.X509Certificate> x509CertChain)
