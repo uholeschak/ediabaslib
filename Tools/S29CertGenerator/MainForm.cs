@@ -463,6 +463,12 @@ namespace S29CertGenerator
         {
             try
             {
+                if (_caPublicCertificates == null || _caPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("CA public certificate is not loaded", true);
+                    return null;
+                }
+
                 X509Certificate2 caCert = null;
                 X509Certificate2 subCaCert = null;
                 string thumbprintCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
@@ -497,13 +503,15 @@ namespace S29CertGenerator
                     if (!EdBcTlsUtilities.ValidateCertChain(x509CertChain, rootCerts))
                     {
                         UpdateStatusText("SubCA certificate chain validation failed", true);
+
+                        x509CaCert = null;
                         x509SubCaCert = null;
-                        subCaCert = null;
                     }
                 }
 
-                if (subCaCert == null)
+                if (x509CaCert == null || x509SubCaCert == null)
                 {
+                    UpdateStatusText("SubCA certificate not found, creating new SubCA certificate", true);
                     x509SubCaCert = CreateIstaSubCaCert();
                 }
 
