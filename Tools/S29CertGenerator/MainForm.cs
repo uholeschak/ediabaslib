@@ -469,6 +469,19 @@ namespace S29CertGenerator
                     return null;
                 }
 
+                if (_istaPublicCertificates == null || _istaPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("ISTA public certificate is not loaded", true);
+                    return null;
+                }
+
+                AsymmetricKeyParameter istaPublicKey = _istaPublicCertificates[0].Certificate.GetPublicKey();
+                if (istaPublicKey == null)
+                {
+                    UpdateStatusText($"ISTA public key is not found", true);
+                    return null;
+                }
+
                 X509Certificate2 caCert = null;
                 X509Certificate2 subCaCert = null;
                 string thumbprintCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
@@ -483,8 +496,22 @@ namespace S29CertGenerator
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = null;
                 if (caCert != null && subCaCert != null)
                 {
+                    bool certValid = true;
                     x509CaCert = new X509CertificateParser().ReadCertificate(caCert.GetRawCertData());
                     x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
+
+                    Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
+                    if (!issuerCert.GetPublicKey().Equals(x509CaCert.GetPublicKey()))
+                    {
+                        UpdateStatusText("CA certificate public key does not match CA public certificate", true);
+                        certValid = false;
+                    }
+
+                    if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
+                    {
+                        UpdateStatusText("SubCA certificate public key does not match ISTA public key", true);
+                        certValid = false;
+                    }
 
                     List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
                     x509CertChain.Add(x509SubCaCert);
@@ -503,7 +530,11 @@ namespace S29CertGenerator
                     if (!EdBcTlsUtilities.ValidateCertChain(x509CertChain, rootCerts))
                     {
                         UpdateStatusText("SubCA certificate chain validation failed", true);
+                        certValid = false;
+                    }
 
+                    if (!certValid)
+                    {
                         x509CaCert = null;
                         x509SubCaCert = null;
                     }
