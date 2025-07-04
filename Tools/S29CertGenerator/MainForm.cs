@@ -473,10 +473,33 @@ namespace S29CertGenerator
                     subCaCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintSubCa);
                 }
 
+                Org.BouncyCastle.X509.X509Certificate x509CaCert = null;
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = null;
                 if (caCert != null && subCaCert != null)
                 {
+                    x509CaCert = new X509CertificateParser().ReadCertificate(caCert.GetRawCertData());
                     x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
+
+                    List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                    x509CertChain.Add(x509SubCaCert);
+                    x509CertChain.Add(x509CaCert);
+
+                    List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
+                    foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
+                    {
+                        Org.BouncyCastle.X509.X509Certificate cert = caPublicCertificate.Certificate;
+                        if (cert != null)
+                        {
+                            rootCerts.Add(cert);
+                        }
+                    }
+
+                    if (!EdBcTlsUtilities.ValidateCertChain(x509CertChain, rootCerts))
+                    {
+                        UpdateStatusText("SubCA certificate chain validation failed", true);
+                        x509SubCaCert = null;
+                        subCaCert = null;
+                    }
                 }
 
                 if (subCaCert == null)
