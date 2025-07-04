@@ -366,11 +366,11 @@ namespace EdiabasLib
                     return false;
                 }
 
-                DeleteCertificateBySubjectName(EdSec4Diag.S29BmwCnName);
-                DeleteCertificateBySubjectName(EdSec4Diag.S29IstaCnName);
                 foreach (Org.BouncyCastle.X509.X509Certificate x509Certificate in x509CertChain)
                 {
                     X509Certificate2 cert = new X509Certificate2(x509Certificate.GetEncoded());
+                    string cnName = cert.GetNameInfo(X509NameType.SimpleName, false);
+                    DeleteCertificateBySubjectName(cnName);
                     InstallCertificate(cert);
                 }
 
