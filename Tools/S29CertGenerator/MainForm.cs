@@ -464,57 +464,6 @@ namespace S29CertGenerator
             }
         }
 
-        private static void InstallCertificate(X509Certificate2 cert)
-        {
-            using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
-            {
-                x509Store.Open(OpenFlags.ReadWrite);
-                x509Store.Add(cert);
-                x509Store.Close();
-            }
-        }
-
-        private static void DeleteCertificateBySubjectName(string subjectName)
-        {
-            if (string.IsNullOrEmpty(subjectName))
-            {
-                return; // No subject name provided
-            }
-
-            X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
-            x509Store.Open(OpenFlags.ReadWrite);
-            foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false))
-            {
-                x509Store.Remove(x509Certificate);
-            }
-            x509Store.Close();
-        }
-
-        private bool InstallCertificates(List<Org.BouncyCastle.X509.X509Certificate> x509CertChain)
-        {
-            try
-            {
-                if (x509CertChain == null || x509CertChain.Count < 1)
-                {
-                    return false;
-                }
-
-                DeleteCertificateBySubjectName(EdSec4Diag.S29BmwCnName);
-                DeleteCertificateBySubjectName(EdSec4Diag.S29IstaCnName);
-                foreach (Org.BouncyCastle.X509.X509Certificate x509Certificate in x509CertChain)
-                {
-                    X509Certificate2 cert = new X509Certificate2(x509Certificate.GetEncoded());
-                    InstallCertificate(cert);
-                }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
         private Org.BouncyCastle.X509.X509Certificate CreateIstaSubCaCert()
         {
             try
@@ -559,7 +508,7 @@ namespace S29CertGenerator
                     x509SubCaCert,
                 };
 
-                if (!InstallCertificates(installCerts))
+                if (!EdSec4Diag.InstallCertificates(installCerts))
                 {
                     UpdateStatusText("Failed to install certificates", true);
                     EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
