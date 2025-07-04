@@ -277,11 +277,49 @@ namespace EdiabasLib
                 X509Certificate2 x509Certificate;
                 try
                 {
-                    x509Store.Open(OpenFlags.ReadOnly);
+                    x509Store.Open(OpenFlags.ReadWrite);
                     X509Certificate2Collection x509Certificate2Collection = x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false);
                     if (x509Certificate2Collection.Count > 0)
                     {
                         x509Certificate = x509Certificate2Collection[0];
+                        if (!(DateTime.Now < x509Certificate.NotAfter.AddDays(-1.0)))
+                        {   // expires in less than 1 day
+                            x509Store.Remove(x509Certificate);
+                        }
+                    }
+                    else
+                    {
+                        x509Certificate = null;
+                    }
+                }
+                catch (Exception)
+                {
+                    x509Certificate = null;
+                }
+                finally
+                {
+                    x509Store.Close();
+                }
+                return x509Certificate;
+            }
+        }
+
+        public static X509Certificate2 GetCertificateFromStoreByThumbprint(string thumbprint)
+        {
+            using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+            {
+                X509Certificate2 x509Certificate;
+                try
+                {
+                    x509Store.Open(OpenFlags.ReadWrite);
+                    X509Certificate2Collection x509Certificate2Collection = x509Store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
+                    if (x509Certificate2Collection.Count > 0)
+                    {
+                        x509Certificate = x509Certificate2Collection[0];
+                        if (!(DateTime.Now < x509Certificate.NotAfter.AddDays(-1.0)))
+                        {   // expires in less than 1 day
+                            x509Store.Remove(x509Certificate);
+                        }
                     }
                     else
                     {
