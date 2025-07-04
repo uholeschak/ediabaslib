@@ -301,7 +301,7 @@ namespace EdiabasLib
                     if (x509Certificate2Collection.Count > 0)
                     {
                         x509Certificate = x509Certificate2Collection[0];
-                        if (!(DateTime.Now < x509Certificate.NotAfter.AddDays(-1.0)))
+                        if (DateTime.UtcNow > x509Certificate.NotAfter.AddDays(-1.0))
                         {   // expires in less than 1 day
                             x509Store.Remove(x509Certificate);
                         }
@@ -335,7 +335,7 @@ namespace EdiabasLib
                     if (x509Certificate2Collection.Count > 0)
                     {
                         x509Certificate = x509Certificate2Collection[0];
-                        if (!(DateTime.Now < x509Certificate.NotAfter.AddDays(-1.0)))
+                        if (DateTime.UtcNow > x509Certificate.NotAfter.AddDays(-1.0))
                         {   // expires in less than 1 day
                             x509Store.Remove(x509Certificate);
                         }

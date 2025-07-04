@@ -517,6 +517,12 @@ namespace S29CertGenerator
                             certValid = false;
                         }
 
+                        if (DateTime.UtcNow > subCaCert.NotAfter.AddDays(-7.0))
+                        {
+                            UpdateStatusText("SubCA certificate remaining time topo short", true);
+                            certValid = false;
+                        }
+
                         List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
                         x509CertChain.Add(x509SubCaCert);
                         x509CertChain.Add(x509CaCert);
