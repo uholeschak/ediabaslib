@@ -521,7 +521,7 @@ namespace S29CertGenerator
                     return null;
                 }
 
-                UpdateStatusText("SubCA Certificates loaded", true);
+                UpdateStatusText("SubCA certificates loaded", true);
                 return x509SubCaCert;
             }
             catch (Exception e)
@@ -591,7 +591,7 @@ namespace S29CertGenerator
                     return null;
                 }
 
-                UpdateStatusText("CA Certificates installed", true);
+                UpdateStatusText("CA certificates installed", true);
                 return x509SubCaCert;
             }
             catch (Exception e)
