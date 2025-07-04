@@ -1,14 +1,9 @@
 using EdiabasLib;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1;
-using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Operators;
-using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
-using Org.BouncyCastle.X509.Extension;
 using System;
 using System.Collections.Generic;
 using System.IO;
