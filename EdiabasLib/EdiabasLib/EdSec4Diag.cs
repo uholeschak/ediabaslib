@@ -10,6 +10,7 @@ using Org.BouncyCastle.Math;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.X509.Extension;
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -233,6 +234,57 @@ namespace EdiabasLib
             try
             {
                 Microsoft.Win32.Registry.SetValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, value);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static void InstallCertificate(X509Certificate2 cert)
+        {
+            using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+            {
+                x509Store.Open(OpenFlags.ReadWrite);
+                x509Store.Add(cert);
+                x509Store.Close();
+            }
+        }
+
+        public static void DeleteCertificateBySubjectName(string subjectName)
+        {
+            if (string.IsNullOrEmpty(subjectName))
+            {
+                return; // No subject name provided
+            }
+
+            X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser);
+            x509Store.Open(OpenFlags.ReadWrite);
+            foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false))
+            {
+                x509Store.Remove(x509Certificate);
+            }
+            x509Store.Close();
+        }
+
+        public static bool InstallCertificates(List<Org.BouncyCastle.X509.X509Certificate> x509CertChain)
+        {
+            try
+            {
+                if (x509CertChain == null || x509CertChain.Count < 1)
+                {
+                    return false;
+                }
+
+                DeleteCertificateBySubjectName(EdSec4Diag.S29BmwCnName);
+                DeleteCertificateBySubjectName(EdSec4Diag.S29IstaCnName);
+                foreach (Org.BouncyCastle.X509.X509Certificate x509Certificate in x509CertChain)
+                {
+                    X509Certificate2 cert = new X509Certificate2(x509Certificate.GetEncoded());
+                    InstallCertificate(cert);
+                }
+
                 return true;
             }
             catch (Exception)
