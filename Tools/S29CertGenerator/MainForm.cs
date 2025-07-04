@@ -459,6 +459,47 @@ namespace S29CertGenerator
             }
         }
 
+        private Org.BouncyCastle.X509.X509Certificate LoadIstaSubCaCert()
+        {
+            try
+            {
+                X509Certificate2 caCert = null;
+                X509Certificate2 subCaCert = null;
+                string thumbprintCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
+                string thumbprintSubCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
+                if (!string.IsNullOrEmpty(thumbprintCa) && !string.IsNullOrEmpty(thumbprintSubCa))
+                {
+                    caCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintCa);
+                    subCaCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintSubCa);
+                }
+
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = null;
+                if (caCert != null && subCaCert != null)
+                {
+                    x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
+                }
+
+                if (subCaCert == null)
+                {
+                    x509SubCaCert = CreateIstaSubCaCert();
+                }
+
+                if (x509SubCaCert == null)
+                {
+                    UpdateStatusText("Failed to create SubCA certificate", true);
+                    return null;
+                }
+
+                UpdateStatusText("SubCA Certificates loaded", true);
+                return x509SubCaCert;
+            }
+            catch (Exception e)
+            {
+                UpdateStatusText($"Load SubCA certificate exception: {e.Message}", true);
+                return null;
+            }
+        }
+
         private Org.BouncyCastle.X509.X509Certificate CreateIstaSubCaCert()
         {
             try
@@ -707,7 +748,7 @@ namespace S29CertGenerator
             {
                 UpdateStatusText(string.Empty);
 
-                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = CreateIstaSubCaCert();
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = LoadIstaSubCaCert();
                 if (x509SubCaCert == null)
                 {
                     UpdateStatusText("Failed to create SubCA certificate", true);

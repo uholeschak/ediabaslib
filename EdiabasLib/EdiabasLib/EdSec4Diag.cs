@@ -242,6 +242,25 @@ namespace EdiabasLib
             }
         }
 
+        public static string GetIstaConfigString(string key)
+        {
+            try
+            {
+                object value = Microsoft.Win32.Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, null);
+                string text = value as string;
+                if (string.IsNullOrEmpty(text))
+                {
+                    return string.Empty; // Value is not a string
+                }
+
+                return text;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
         public static void InstallCertificate(X509Certificate2 cert)
         {
             using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
