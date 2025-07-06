@@ -7,6 +7,7 @@
 using BmwFileReader;
 using EdiabasLib;
 using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.X509;
 using Peak.Can.Basic;
@@ -24,7 +25,6 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
-using Org.BouncyCastle.Crypto.Parameters;
 
 // ReSharper disable RedundantAssignment
 // ReSharper disable RedundantCast
@@ -6520,6 +6520,7 @@ namespace CarSimulator
                         else if (_receiveData[4] == 0x17 && _receiveData[5] == 0x80)
                         {
                             Debug.WriteLine("SEC4DIAG_READ_AUTH_MODE");
+                            Debug.WriteLine("Role mask: {0:X08}", EdSec4Diag.RoleMaskAsInt);
 
                             int telLength = 6 + 3;
                             _sendData[0] = 0x80;
@@ -6531,12 +6532,9 @@ namespace CarSimulator
                             _sendData[6] = 0x62;
                             _sendData[7] = _receiveData[4];
                             _sendData[8] = _receiveData[5];
-                            _sendData[9] = 0x00;
-                            _sendData[10] = 0x00;
-                            _sendData[11] = 0x00;
-                            _sendData[12] = 0x00;
-                            _sendData[13] = 0x00;
-                            _sendData[14] = 0x00;
+                            _sendData[9] = 0x03;    // ACR with asymetric crypto
+                            Array.Copy(EdSec4Diag.RoleMask, 0, _sendData, 10, EdSec4Diag.RoleMask.Length);
+                            _sendData[14] = 0x01;   // Whitelist active
                             responseFound = true;
                         }
 
