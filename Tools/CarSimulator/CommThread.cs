@@ -6517,6 +6517,28 @@ namespace CarSimulator
                                 Debug.WriteLine("No response found");
                             }
                         }
+                        else if (_receiveData[4] == 0x17 && _receiveData[5] == 0x80)
+                        {
+                            Debug.WriteLine("SEC4DIAG_READ_AUTH_MODE");
+
+                            int telLength = 6 + 3;
+                            _sendData[0] = 0x80;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x00;
+                            _sendData[4] = (byte)(telLength >> 8);
+                            _sendData[5] = (byte)(telLength & 0xFF);
+                            _sendData[6] = 0x62;
+                            _sendData[7] = _receiveData[4];
+                            _sendData[8] = _receiveData[5];
+                            _sendData[9] = 0x00;
+                            _sendData[10] = 0x00;
+                            _sendData[11] = 0x00;
+                            _sendData[12] = 0x00;
+                            _sendData[13] = 0x00;
+                            _sendData[14] = 0x00;
+                            responseFound = true;
+                        }
 
                         if (!responseFound)
                         {

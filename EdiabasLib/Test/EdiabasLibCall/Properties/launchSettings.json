@@ -1,5 +1,10 @@
 {
   "profiles": {
+    "AUTH_MODE": {
+      "commandName": "Project",
+      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ObdComPort=BLUETOOTH:009876543210#1234;EnetRemoteHost=127.0.0.1;SslBC=1;EnetNetworkProtocol=SSL;SslSecurityPath=C:\\EDIABAS\\Security\\SSL_Truststore;selectCertificate=S29-WBAJM71000B055940;EnetVehicleProtocol=DoIP;EnetDoipGatewayAddress=FFFF;IfhTrace=2;ApiTrace=1;Simulation=0;SimulationInterfaces=OBD,ENET;SimulationPath=D:\\Projects\\EdiabasLib\\Tools\\CarSimulator\\Response\\E61\" -s \"C:\\EDIABAS\\Ecu\\IPB_APP2\" -j \"_VERSIONINFO\" -j \"STATUS_LESEN#ARG;SEC4DIAG_READ_AUTH_MODE\"",
+      "nativeDebugging": true
+    },
     "TLS": {
       "commandName": "Project",
       "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ObdComPort=BLUETOOTH:009876543210#1234;EnetRemoteHost=127.0.0.1;SslBC=1;EnetNetworkProtocol=SSL;SslSecurityPath=C:\\EDIABAS\\Security\\SSL_Truststore;selectCertificate=S29-WBAJM71000B055940;EnetVehicleProtocol=DoIP;EnetDoipGatewayAddress=FFFF;IfhTrace=2;ApiTrace=1;Simulation=0;SimulationInterfaces=OBD,ENET;SimulationPath=D:\\Projects\\EdiabasLib\\Tools\\CarSimulator\\Response\\E61\" -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"_VERSIONINFO\" -j \"FS_LESEN\" -j \"FS_LESEN_DETAIL#0x4232#F_ART_ANZ;F_UW_ANZ\" -j \"FS_LESEN_DETAIL#0x4232#F_art_anz;F_uw_anz\" -j \"FS_LOESCHEN\"",
