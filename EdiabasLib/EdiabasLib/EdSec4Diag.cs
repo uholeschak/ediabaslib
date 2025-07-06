@@ -11,6 +11,7 @@ using Org.BouncyCastle.X509;
 using Org.BouncyCastle.X509.Extension;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -76,6 +77,14 @@ namespace EdiabasLib
 
             [JsonProperty("certificateChain")]
             public string[] CertificateChain { get; set; }
+        }
+
+        public static int RoleMaskAsInt
+        {
+            get
+            {
+                return BitConverter.ToInt32(RoleMask.Reverse().ToArray(), 0);
+            }
         }
 
         private static BigInteger[] SignDataBytes(byte[] message, ECPrivateKeyParameters privateKey)
