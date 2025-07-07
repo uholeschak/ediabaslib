@@ -3547,7 +3547,7 @@ namespace CarSimulator
                         uint targAddr = (((uint)dataBuffer[10] << 8) | dataBuffer[11]);
                         byte sourceAddr = (byte)srcAddr;
                         byte targetAddr = (byte)targAddr;
-                        if (srcAddr == DoIpTesterAddr)
+                        if (srcAddr == DoIpTesterAddr || srcAddr == TcpTesterAddr)
                         {
                             sourceAddr = 0xF1;
                         }
