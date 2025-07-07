@@ -1120,9 +1120,11 @@ namespace CarSimulator
                     _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPort, EnetControlPort, DoIpDiagPort, ServerSslPort));
                     _bmwTcpChannels.Add(new BmwTcpChannel(EnetDiagPrgPort, EnetControlPrgPort));
 
+                    bool isHszfz = ((_enetCommType & EnetCommType.Hsfz) == EnetCommType.Hsfz);
+                    bool isDoIp = ((_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp);
                     foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
                     {
-                        if ((_enetCommType & EnetCommType.Hsfz) == EnetCommType.Hsfz)
+                        if (isHszfz || isDoIp)
                         {
                             try
                             {
@@ -1149,7 +1151,7 @@ namespace CarSimulator
 
                         if (bmwTcpChannel.DoIpPort > 0)
                         {
-                            if ((_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp)
+                            if (isDoIp)
                             {
                                 try
                                 {
@@ -1166,7 +1168,7 @@ namespace CarSimulator
 
                         if (bmwTcpChannel.DoIpSslPort > 0 && _serverCertificate != null)
                         {
-                            if ((_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp)
+                            if (isDoIp)
                             {
                                 try
                                 {
