@@ -407,6 +407,51 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.Programming",
+                                Class = "ConnectionManager",
+                                Method = "UseTheDoipPort",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("ConnectionManager.UseTheDoipPort found");
+                                int patchIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldarg_0
+                                        && index + 2 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Callvirt)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 2].OpCode != OpCodes.Ret)
+                                        {
+                                            continue;
+                                        }
+
+                                        Console.WriteLine("get_IsEEES25Vehicle found at index: {0}", index);
+                                        patchIndex = index + 1;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex < 0)
+                                {
+                                    Console.WriteLine("UseTheDoipPort already patched or invalid");
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.PresentationFramework.AuthenticationRefactored.Services",
                                 Class = "LoginEnabledOptionProvider",
                                 Method = "IsLoginEnabled",
