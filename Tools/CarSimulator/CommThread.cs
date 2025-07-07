@@ -1072,6 +1072,8 @@ namespace CarSimulator
                             // openssl x509 -inform pem -noout -text -in vin_RSA1.crt
                             // cat vin_RSA1.crt rootCA_EC.crt > vin_RSA1.pem
 
+                            // view PSdZ cacerts: keytool -list -storepass changeit -keystore "C:\Program Files\BMW\ISPI\TRIC\ISTA\PSdZ\Security"
+
                             // set EDIABAS.ini [SSL] SSLPORT property to DoIpDiagSslPort value.
                             string publicCert = Path.ChangeExtension(ServerCertFile, ".pem");
                             string privateCert = Path.ChangeExtension(ServerCertFile, ".key");
