@@ -1124,7 +1124,7 @@ namespace CarSimulator
                     bool isDoIp = ((_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp);
                     foreach (BmwTcpChannel bmwTcpChannel in _bmwTcpChannels)
                     {
-                        if (isHszfz || isDoIp)
+                        if (isHszfz)
                         {
                             try
                             {
@@ -3274,7 +3274,8 @@ namespace CarSimulator
                         return false;
                     }
 
-                    Debug.WriteLine("DoIp connect request [{0}], Port={1}, SSL={2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, bmwTcpClientData.DoIpSsl);
+                    int usedPort = bmwTcpClientData.DoIpSsl ? bmwTcpClientData.BmwTcpChannel.DoIpSslPort : bmwTcpClientData.BmwTcpChannel.DoIpPort;
+                    Debug.WriteLine("DoIp connect request [{0}], Port={1}, SSL={2}", bmwTcpClientData.Index, usedPort, bmwTcpClientData.DoIpSsl);
                     bmwTcpClientData.TcpClientConnection = tcpServer.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
@@ -3299,7 +3300,7 @@ namespace CarSimulator
                     bmwTcpClientData.TcpNackIndex = 0;
                     bmwTcpClientData.TcpDataIndex = 0;
                     Debug.WriteLine("DoIp connected [{0}], Port={1}, Local={2}, Remote={3}",
-                        bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort,
+                        bmwTcpClientData.Index, usedPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
                         bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
 
