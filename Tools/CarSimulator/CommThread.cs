@@ -138,6 +138,8 @@ namespace CarSimulator
                 ServerChallenge = null;
             }
 
+            public int UsedDoIpPort => DoIpSsl ? BmwTcpChannel.DoIpSslPort : BmwTcpChannel.DoIpPort;
+
             public readonly BmwTcpChannel BmwTcpChannel;
             public readonly int Index;
             public readonly bool IsDoIp;
@@ -3234,7 +3236,7 @@ namespace CarSimulator
             {
                 if (bmwTcpClientData.TcpClientConnection != null)
                 {
-                    Debug.WriteLine("DoIp Closed[{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort);
+                    Debug.WriteLine("DoIp Closed[{0}]: {1}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort);
                     bmwTcpClientData.TcpClientConnection.Close();
                     bmwTcpClientData.TcpClientConnection = null;
                     changed = true;
@@ -3274,8 +3276,7 @@ namespace CarSimulator
                         return false;
                     }
 
-                    int usedPort = bmwTcpClientData.DoIpSsl ? bmwTcpClientData.BmwTcpChannel.DoIpSslPort : bmwTcpClientData.BmwTcpChannel.DoIpPort;
-                    Debug.WriteLine("DoIp connect request [{0}], Port={1}, SSL={2}", bmwTcpClientData.Index, usedPort, bmwTcpClientData.DoIpSsl);
+                    Debug.WriteLine("DoIp connect request [{0}], Port={1}, SSL={2}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort, bmwTcpClientData.DoIpSsl);
                     bmwTcpClientData.TcpClientConnection = tcpServer.AcceptTcpClient();
                     bmwTcpClientData.TcpClientConnection.SendBufferSize = TcpSendBufferSize;
                     bmwTcpClientData.TcpClientConnection.SendTimeout = TcpSendTimeout;
@@ -3300,7 +3301,7 @@ namespace CarSimulator
                     bmwTcpClientData.TcpNackIndex = 0;
                     bmwTcpClientData.TcpDataIndex = 0;
                     Debug.WriteLine("DoIp connected [{0}], Port={1}, Local={2}, Remote={3}",
-                        bmwTcpClientData.Index, usedPort,
+                        bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
                         bmwTcpClientData.TcpClientConnection.Client.RemoteEndPoint.ToString());
 
@@ -3309,7 +3310,7 @@ namespace CarSimulator
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("DoIp exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, ex.Message);
+                Debug.WriteLine("DoIp exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort, ex.Message);
                 SendDoIpError(0x00, bmwTcpClientData);  // incorrect pattern format
                 DoIpClose(bmwTcpClientData);
             }
@@ -3337,13 +3338,13 @@ namespace CarSimulator
 
                         byte[] resBytes = responseList.ToArray();
                         WriteNetworkStream(bmwTcpClientData, resBytes, 0, resBytes.Length);
-                        Debug.WriteLine("DoIp Alive Check [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort);
+                        Debug.WriteLine("DoIp Alive Check [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine("DoIp Keep alive exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, ex.Message);
+                Debug.WriteLine("DoIp Keep alive exception [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort, ex.Message);
                 // ignored
             }
 
@@ -3355,7 +3356,7 @@ namespace CarSimulator
 
                     if (networkStream != null && !networkStream.DataAvailable)
                     {
-                        Debug.WriteLine("DoIp No data available [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort);
+                        Debug.WriteLine("DoIp No data available [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort);
                         return false;
                     }
 
@@ -3364,14 +3365,14 @@ namespace CarSimulator
                     int recLen = ReadNetworkStream(bmwTcpClientData.TcpClientStream, dataBuffer, 0, 8);
                     if (recLen < 8)
                     {
-                        Debug.WriteLine("DoIp header too short [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, recLen);
+                        Debug.WriteLine("DoIp header too short [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort, recLen);
                         return false;
                     }
                     int payloadLength = (((int)dataBuffer[4] << 24) | ((int)dataBuffer[5] << 16) | ((int)dataBuffer[6] << 8) | dataBuffer[7]);
                     if (payloadLength > dataBuffer.Length - 8)
                     {
                         ClearNetworkStream(bmwTcpClientData.TcpClientStream);
-                        Debug.WriteLine("DoIp Rec data buffer overflow [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, payloadLength);
+                        Debug.WriteLine("DoIp Rec data buffer overflow [{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort, payloadLength);
                         return false;
                     }
 
@@ -3382,7 +3383,7 @@ namespace CarSimulator
 
                     if (recLen < payloadLength + 8)
                     {
-                        Debug.WriteLine("DoIp rec data length too short [{0}], Port={1}: {2} < {3}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DoIpPort, recLen, payloadLength + 8);
+                        Debug.WriteLine("DoIp rec data length too short [{0}], Port={1}: {2} < {3}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort, recLen, payloadLength + 8);
                         return false;
                     }
 #if true
