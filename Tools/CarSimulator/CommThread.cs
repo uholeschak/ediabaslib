@@ -2772,7 +2772,8 @@ namespace CarSimulator
                     response.Add(0x00);         // Error code (2 Byte)
                     response.Add(0x00);
 
-                    string doIpSupport = _isoTpMode ? "Yes" : "No";
+                    bool doIpMode = (_enetCommType & EnetCommType.DoIp) == EnetCommType.DoIp;
+                    string doIpSupport = doIpMode ? "Yes" : "No";
                     string attributs =
                         string.Format("(DevId=G31),(Serial={2}{0}),(MacAddress={1}),(DevType=ENET),(Color=#00ff00),(State=4),(Kl15Voltage=12000),(Kl30Voltage=12000),(VIN={2}),(PowerSupply=12000),(VciChannels=[0?;1?;2?;3+]),(IPAddress={3}),(DoIP={4})",
                             BitConverter.ToString(localIp.GetAddressBytes()).Replace("-", ""), TestMac, TestVin, localIp, doIpSupport);
