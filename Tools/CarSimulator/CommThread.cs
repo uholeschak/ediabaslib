@@ -134,6 +134,7 @@ namespace CarSimulator
                 TcpClientStream = null;
                 LastTcpRecTick = DateTime.MinValue.Ticks;
                 LastTcpSendTick = DateTime.MinValue.Ticks;
+                LastTesterAddress = null;
                 ClientPublicKey = null;
                 ServerChallenge = null;
             }
@@ -148,6 +149,7 @@ namespace CarSimulator
             public Stream TcpClientStream;
             public long LastTcpRecTick;
             public long LastTcpSendTick;
+            public uint? LastTesterAddress;
             public int TcpNackIndex;
             public int TcpDataIndex;
             public byte[] TcpLastResponse;
@@ -3547,8 +3549,10 @@ namespace CarSimulator
                         uint targAddr = (((uint)dataBuffer[10] << 8) | dataBuffer[11]);
                         byte sourceAddr = (byte)srcAddr;
                         byte targetAddr = (byte)targAddr;
+                        bmwTcpClientData.LastTesterAddress = null;
                         if (srcAddr == DoIpTesterAddr || srcAddr == TcpTesterAddr)
                         {
+                            bmwTcpClientData.LastTesterAddress = srcAddr;
                             sourceAddr = 0xF1;
                         }
 
@@ -3617,7 +3621,14 @@ namespace CarSimulator
                 uint sourceAddr = sendData[2];
                 if (targetAddr == 0xF1)
                 {
-                    targetAddr = DoIpTesterAddr;
+                    if (bmwTcpClientData.LastTesterAddress != null)
+                    {
+                        targetAddr = bmwTcpClientData.LastTesterAddress.Value;
+                    }
+                    else
+                    {
+                        targetAddr = DoIpTesterAddr;
+                    }
                 }
 
                 int dataOffset = 3;
