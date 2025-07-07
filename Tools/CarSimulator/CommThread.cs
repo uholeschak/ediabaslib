@@ -309,7 +309,8 @@ namespace CarSimulator
 
         private static readonly long TickResolMs = Stopwatch.Frequency/1000;
         private const byte TcpTesterAddr = 0xF4;
-        private const int DoIpTesterAddr = 0x0EF3;
+        private const int DoIpTesterAddrMin = 0x0EF3;
+        private const int DoIpTesterAddrMax = 0x0EF4;
         private const int EnetDiagPort = 6801;
         private const int EnetControlPort = 6811;
         private const int EnetDiagPrgPort = 51560;
@@ -3550,7 +3551,7 @@ namespace CarSimulator
                         byte sourceAddr = (byte)srcAddr;
                         byte targetAddr = (byte)targAddr;
                         bmwTcpClientData.LastTesterAddress = null;
-                        if (srcAddr == DoIpTesterAddr || srcAddr == TcpTesterAddr)
+                        if (srcAddr >= DoIpTesterAddrMin && srcAddr <= DoIpTesterAddrMax)
                         {
                             bmwTcpClientData.LastTesterAddress = srcAddr;
                             sourceAddr = 0xF1;
@@ -3627,7 +3628,7 @@ namespace CarSimulator
                     }
                     else
                     {
-                        targetAddr = DoIpTesterAddr;
+                        targetAddr = DoIpTesterAddrMin;
                     }
                 }
 
@@ -6022,7 +6023,7 @@ namespace CarSimulator
 #if true
             if (bmwTcpClientData != null)
             {
-                Debug.WriteLine("Time[{0}], Port={1}: {2}", bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort, DateTime.Now.ToString("hh:mm:ss.fff"));
+                Debug.WriteLine("Time[{0}]: {1}", bmwTcpClientData.Index, DateTime.Now.ToString("hh:mm:ss.fff"));
             }
             else
             {
