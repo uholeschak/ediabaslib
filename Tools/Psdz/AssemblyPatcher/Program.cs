@@ -451,7 +451,7 @@ namespace AssemblyPatcher
                                 {
                                     Instruction instruction = instructionsTemplate[index];
                                     if (instruction.OpCode == OpCodes.Ldarg_0
-                                        && index + 3 < instructionsTemplate.Count)
+                                        && index + 5 < instructionsTemplate.Count)
                                     {
                                         if (instructionsTemplate[index + 1].OpCode != OpCodes.Callvirt)
                                         {
@@ -487,7 +487,22 @@ namespace AssemblyPatcher
 
                                 if (patchIndex >= 0 && templateIndex >= 0)
                                 {
+                                    List<Instruction> insertInstructions = new List<Instruction>();
+                                    insertInstructions.Add(instructionsTemplate[templateIndex + 0].Clone());    // callvirt get_IsDoIP()
+                                    insertInstructions.Add(new Instruction(OpCodes.Stloc_0));
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldloca_S, 0));
+                                    insertInstructions.Add(instructionsTemplate[templateIndex + 3].Clone());    // call get_Value()
 
+                                    instructions.RemoveAt(patchIndex);  // callvirt
+                                    int offset = 0;
+                                    foreach (Instruction insertInstruction in insertInstructions)
+                                    {
+                                        instructions.Insert(patchIndex + offset, insertInstruction);
+                                        offset++;
+                                    }
+
+                                    Console.WriteLine("ConnectionManager UseTheDoipPort patched");
+                                    patched = true;
                                 }
                                 else
                                 {
