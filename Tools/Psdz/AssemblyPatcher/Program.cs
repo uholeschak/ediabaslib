@@ -493,8 +493,8 @@ namespace AssemblyPatcher
                                     insertInstructions.Add(instructionsTemplate[templateIndex + 0].Clone());    // callvirt get_IsDoIP()
                                     insertInstructions.Add(new Instruction(OpCodes.Stloc_0));
 
-                                    Instruction instLoca_S = instructionsTemplate[templateIndex + 2].Clone();
-                                    Local local1 = instLoca_S.Operand as Local;
+                                    Local localTemp1 = instructionsTemplate[templateIndex + 2].Operand as Local;
+                                    Local local1 = new Local(localTemp1.Type);
                                     locals.Add(local1);
                                     insertInstructions.Add(new Instruction(OpCodes.Ldloca_S, local1));
 
