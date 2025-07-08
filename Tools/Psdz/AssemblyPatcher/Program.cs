@@ -421,6 +421,7 @@ namespace AssemblyPatcher
                             };
 
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            IList<Local> locals = patcher.GetVariableList(target);
                             IList<Instruction> instructionsTemplate = patcher.GetInstructionList(targetTemplate);
                             if (instructions != null && instructionsTemplate != null)
                             {
@@ -491,7 +492,12 @@ namespace AssemblyPatcher
                                     List<Instruction> insertInstructions = new List<Instruction>();
                                     insertInstructions.Add(instructionsTemplate[templateIndex + 0].Clone());    // callvirt get_IsDoIP()
                                     insertInstructions.Add(new Instruction(OpCodes.Stloc_0));
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldloc_0));
+
+                                    Instruction instLoca_S = instructionsTemplate[templateIndex + 2].Clone();
+                                    Local local1 = instLoca_S.Operand as Local;
+                                    locals.Add(local1);
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldloca_S, local1));
+
                                     insertInstructions.Add(instructionsTemplate[templateIndex + 3].Clone());    // call get_Value()
 
                                     instructions.RemoveAt(patchIndex);  // callvirt

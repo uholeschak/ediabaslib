@@ -127,6 +127,11 @@ namespace dnpatch
             return _patcher.GetInstructionList(target);
         }
 
+        public IList<Local> GetVariableList(Target target)
+        {
+            return _patcher.GetVariableList(target);
+        }
+
         public void PatchOperand(Target target, string operand)
         {
             _patcher.PatchOperand(target, operand);
