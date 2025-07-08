@@ -123,11 +123,15 @@ namespace S29CertGenerator
                 bool caKeyValid = LoadCaKey(textBoxCaCeyFile.Text);
                 bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
                 bool isValid = IsSettingValid();
-                buttonExecute.Enabled = isValid;
 
                 if (caKeyValid && istaKeyValid && isValid)
                 {
+                    buttonExecute.Enabled = true;
                     buttonExecute.Focus();
+                }
+                else
+                {
+                    buttonExecute.Enabled = false;
                 }
             }
             catch (Exception)
@@ -389,20 +393,13 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                string publicCert = Path.ChangeExtension(caKeyFile, ".crt");
-                if (!File.Exists(publicCert))
-                {
-                    return false; // Public certificate file does not exist
-                }
-
-                AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadBcPrivateKeyResource(caKeyFile);
+                AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(caKeyFile, string.Empty, out X509CertificateEntry[] publicCertificateEntries);
                 if (privateKeyResource == null)
                 {
                     return false; // Failed to load private key
                 }
 
-                List<X509CertificateEntry> publicCertificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(publicCert));
-                if (publicCertificateEntries == null || publicCertificateEntries.Count < 1)
+                if (publicCertificateEntries == null || publicCertificateEntries.Length < 1)
                 {
                     return false; // Failed to load public certificates
                 }
@@ -413,7 +410,7 @@ namespace S29CertGenerator
                 }
 
                 _caKeyResource = privateKeyResource;
-                _caPublicCertificates = publicCertificateEntries;
+                _caPublicCertificates = publicCertificateEntries.ToList();
                 return true;
             }
             catch (Exception)
