@@ -490,8 +490,6 @@ namespace AssemblyPatcher
                                 {
                                     List<Instruction> insertInstructions = new List<Instruction>();
                                     insertInstructions.Add(instructionsTemplate[templateIndex + 0].Clone());    // callvirt get_IsDoIP()
-                                    insertInstructions.Add(new Instruction(OpCodes.Stloc_0));
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldloca_S, 0));
                                     insertInstructions.Add(instructionsTemplate[templateIndex + 3].Clone());    // call get_Value()
 
                                     instructions.RemoveAt(patchIndex);  // callvirt
