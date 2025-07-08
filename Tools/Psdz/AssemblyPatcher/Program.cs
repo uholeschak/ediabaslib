@@ -417,6 +417,7 @@ namespace AssemblyPatcher
                                 Namespace = "BMW.Rheingold.Programming",
                                 Class = "ConnectionManager",
                                 Method = "ConnectToProject",
+                                Parameters = new[] { "ConnectionManager", "String", "String", "Boolean" },
                             };
 
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
