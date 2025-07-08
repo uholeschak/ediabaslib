@@ -411,8 +411,17 @@ namespace AssemblyPatcher
                                 Class = "ConnectionManager",
                                 Method = "UseTheDoipPort",
                             };
+
+                            Target targetTemplate = new Target
+                            {
+                                Namespace = "BMW.Rheingold.Programming",
+                                Class = "ConnectionManager",
+                                Method = "ConnectToProject",
+                            };
+
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
-                            if (instructions != null)
+                            IList<Instruction> instructionsTemplate = patcher.GetInstructionList(targetTemplate);
+                            if (instructions != null && instructionsTemplate != null)
                             {
                                 Console.WriteLine("ConnectionManager.UseTheDoipPort found");
                                 int patchIndex = -1;
@@ -437,9 +446,52 @@ namespace AssemblyPatcher
                                     }
                                 }
 
-                                if (patchIndex < 0)
+                                int templateIndex = -1;
+                                for (int index = 0; index < instructionsTemplate.Count; index++)
                                 {
-                                    Console.WriteLine("UseTheDoipPort already patched or invalid");
+                                    Instruction instruction = instructionsTemplate[index];
+                                    if (instruction.OpCode == OpCodes.Ldarg_0
+                                        && index + 3 < instructionsTemplate.Count)
+                                    {
+                                        if (instructionsTemplate[index + 1].OpCode != OpCodes.Callvirt)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructionsTemplate[index + 2].OpCode != OpCodes.Stloc_3)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructionsTemplate[index + 3].OpCode != OpCodes.Ldloca_S)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructionsTemplate[index + 4].OpCode != OpCodes.Call)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructionsTemplate[index + 5].OpCode != OpCodes.Callvirt)
+                                        {
+                                            continue;
+                                        }
+
+                                        Console.WriteLine("get_IsDoIP found at index: {0}", index);
+                                        templateIndex = index + 1;
+                                        break;
+                                    }
+                                }
+
+                                if (templateIndex < 0)
+                                {
+                                    Console.WriteLine("get_IsDoIP template not found");
+                                }
+
+                                if (patchIndex >= 0 && templateIndex >= 0)
+                                {
+
+                                }
+                                else
+                                {
+                                    Console.WriteLine("UseTheDoipPort appears to have already been patched or is not existing");
                                 }
                             }
                         }
