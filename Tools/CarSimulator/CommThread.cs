@@ -1060,6 +1060,8 @@ namespace CarSimulator
                             // generate hash name:
                             // openssl x509 -hash -noout -in rootCA_EC.crt
                             // cp rootCA_EC.crt <hash>.0
+                            // create PKCS12 file:
+                            // openssl pkcs12 -export -out rootCA_EC.p12 -inkey rootCA_EC.key -in rootCA_EC.crt -passout pass:
                             // copy files to EDIABAS.ini [SSL] SecurityPath property location.
 
                             // vehicle key ECDSA (not working):
