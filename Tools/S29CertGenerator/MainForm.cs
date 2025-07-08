@@ -61,6 +61,10 @@ namespace S29CertGenerator
             }
 
             UpdateStatusText(string.Empty);
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
             UpdateDisplay();
         }
 
