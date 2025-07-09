@@ -64,6 +64,9 @@ namespace PsdzClient
         private bool _ignoreCheck = false;
         private bool _ignoreChange = false;
         private CancellationTokenSource _cts;
+        private string _lastTestFileName;
+        private string _lastDecryptFileName;
+
         private readonly ProgrammingJobs.ExecutionMode _executionMode;
 
         public FormMain(string[] args = null)
@@ -155,6 +158,9 @@ namespace PsdzClient
                 ipAddressControlVehicleIp.Text = Properties.Settings.Default.VehicleIp;
                 checkBoxIcom.Checked = Properties.Settings.Default.IcomConnection;
                 checkBoxGenServiceModules.Checked = Properties.Settings.Default.GenServiceModules;
+                _lastTestFileName = Properties.Settings.Default.TestFileName;
+                _lastDecryptFileName = Properties.Settings.Default.DecryptFileName;
+
                 if (string.IsNullOrWhiteSpace(ipAddressControlVehicleIp.Text.Trim('.')))
                 {
                     ipAddressControlVehicleIp.Text = DefaultIp;
@@ -191,6 +197,8 @@ namespace PsdzClient
                 Properties.Settings.Default.VehicleIp = ipAddressControlVehicleIp.Text;
                 Properties.Settings.Default.IcomConnection = checkBoxIcom.Checked;
                 Properties.Settings.Default.GenServiceModules = checkBoxGenServiceModules.Checked;
+                Properties.Settings.Default.TestFileName = _lastTestFileName ?? string.Empty;
+                Properties.Settings.Default.DecryptFileName = _lastDecryptFileName ?? string.Empty;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
@@ -986,6 +994,7 @@ namespace PsdzClient
             try
             {
                 string fileName = openFileDialogTest.FileName;
+                _lastTestFileName = fileName;
                 configurationContainerXml = File.ReadAllText(fileName);
             }
             catch (Exception)
@@ -1049,7 +1058,10 @@ namespace PsdzClient
                 return;
             }
 
-            string text = DecryptFile(openFileDialogTest.FileName);
+            string fileName = openFileDialogTest.FileName;
+            _lastDecryptFileName = fileName;
+            string text = DecryptFile(fileName);
+
             if (string.IsNullOrEmpty(text))
             {
                 UpdateStatus(Resources.DecryptionFailed);

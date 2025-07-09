@@ -86,24 +86,24 @@ namespace PsdzClient.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DecyptFileName {
-            get {
-                return ((string)(this["DecyptFileName"]));
-            }
-            set {
-                this["DecyptFileName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string TestFileName {
             get {
                 return ((string)(this["TestFileName"]));
             }
             set {
                 this["TestFileName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string DecryptFileName {
+            get {
+                return ((string)(this["DecryptFileName"]));
+            }
+            set {
+                this["DecryptFileName"] = value;
             }
         }
     }
