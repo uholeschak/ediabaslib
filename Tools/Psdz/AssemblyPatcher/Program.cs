@@ -407,6 +407,29 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.iLean.CommonServices.Models.Helper",
+                                Class = "Encryption",
+                                Method = "EncryptSensitveContent",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("EncryptSensitveContent.EncryptSensitveContent found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ldarg_0));
+                                instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                                Console.WriteLine("EncryptSensitveContent patched");
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.Programming",
                                 Class = "ConnectionManager",
                                 Method = "UseTheDoipPort",
