@@ -1086,15 +1086,15 @@ namespace PsdzClient
                 }
             }
 
-            openFileDialogTest.InitialDirectory = initialDirectory;
-            openFileDialogTest.FileName = initialFileName;
+            openFileDialogDecrypt.InitialDirectory = initialDirectory;
+            openFileDialogDecrypt.FileName = initialFileName;
 
-            if (openFileDialogTest.ShowDialog(this) != DialogResult.OK)
+            if (openFileDialogDecrypt.ShowDialog(this) != DialogResult.OK)
             {
                 return;
             }
 
-            string fileName = openFileDialogTest.FileName;
+            string fileName = openFileDialogDecrypt.FileName;
             _lastDecryptFileName = fileName;
             string text = DecryptFile(fileName);
 
