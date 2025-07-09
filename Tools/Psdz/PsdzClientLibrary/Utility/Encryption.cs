@@ -8,7 +8,7 @@ using System.Text;
 
 namespace PsdzClient.Utility
 {
-    internal class Encryption
+    public class Encryption
     {
         private static string _clientId = string.Empty;
 
@@ -18,7 +18,7 @@ namespace PsdzClient.Utility
 
         private const string ICSLogEncryptionKeyName = "ICSLogEncryption";
 
-        internal static string Encrypt(string toEncrypt, bool? isSensitive = false)
+        public static string Encrypt(string toEncrypt, bool? isSensitive = false)
         {
             if (isSensitive.HasValue && isSensitive == true)
             {
@@ -68,7 +68,7 @@ namespace PsdzClient.Utility
             return string.Empty;
         }
 
-        internal static string EncryptSensitveContent(string toEncrypt)
+        public static string EncryptSensitveContent(string toEncrypt)
         {
             RSACryptoServiceProvider rSACryptoServiceProvider = null;
             try
@@ -81,7 +81,7 @@ namespace PsdzClient.Utility
                 {
                     KeyContainerName = "ICSLogEncryption"
                 });
-                rSACryptoServiceProvider.FromXmlString("<RSAKeyValue><Modulus>o0DHJwtLBqYxDLkp7fqN9fhubcWACo2GVfz3qPUJxljUPT4xfZ0QUaFzLpf2YCeOqHGN9093V6dIYtNrukrnLZJtIiZ8kVdBSd3jlJ42QEBjW87XklMez5UKJmjzebs+2NDlaNNcEmhvli2l7GRSbkokqWUuN6SzrS6jIpO8MUk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>");
+                rSACryptoServiceProvider.FromXmlString(logEncryptionPublicKey);
                 rSACryptoServiceProvider.PersistKeyInCsp = true;
                 return Convert.ToBase64String(rSACryptoServiceProvider.Encrypt(Encoding.UTF8.GetBytes(toEncrypt), fOAEP: true));
             }
@@ -108,7 +108,7 @@ namespace PsdzClient.Utility
             return string.Empty;
         }
 
-        internal static string Decrypt(string toDecrypt)
+        public static string Decrypt(string toDecrypt)
         {
             //Logger.Instance()?.Log(ICSEventId.ICSNone, "Encryption.Decrypt - string to decrypt", toDecrypt, EventKind.Technical, LogLevel.Info);
             if (string.IsNullOrEmpty(toDecrypt))
@@ -158,7 +158,7 @@ namespace PsdzClient.Utility
             return string.Empty;
         }
 
-        internal static SecureString GetSecuredDecryptedPassword(string input)
+        public static SecureString GetSecuredDecryptedPassword(string input)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -167,7 +167,7 @@ namespace PsdzClient.Utility
             return SecureStringHelper.ConvertToSecureString(Decrypt(input));
         }
 
-        internal static AesManaged InializeAesProvider()
+        public static AesManaged InializeAesProvider()
         {
             AesManaged aesManaged = null;
             AesManaged aesManaged2 = null;

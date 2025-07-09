@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using BMW.Rheingold.Psdz.Client;
 using EdiabasLib;
 using log4net;
-using Microsoft.Win32;
 using PsdzClient.Programming;
 using PsdzClient.Properties;
 
@@ -564,6 +563,23 @@ namespace PsdzClient
         {
             _programmingJobs.UpdateTargetFa(reset);
             UpdateCurrentOptions();
+        }
+
+        private string DecryptFile(string fileName)
+        {
+            try
+            {
+                string text = Utility.Encryption.Decrypt(File.ReadAllText(fileName));
+                if (string.IsNullOrEmpty(text))
+                {
+                    return null;
+                }
+                return text;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         private async Task<bool> StopProgrammingServiceTask(string istaFolder, bool force)
