@@ -121,7 +121,7 @@
     <value>Container Umwandlung fehlgeschlagen.</value>
   </data>
   <data name="DecryptionFailed" xml:space="preserve">
-    <value>Entschlüsselung fehlgeschlagen.</value>
+    <value>Dateientschlüsselung fehlgeschlagen.</value>
   </data>
   <data name="NoResponse" xml:space="preserve">
     <value>Keine Antwort</value>

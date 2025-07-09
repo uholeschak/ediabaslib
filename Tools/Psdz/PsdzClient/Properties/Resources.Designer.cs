@@ -70,7 +70,7 @@ namespace PsdzClient.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Decryption failed. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die File decryption failed. ähnelt.
         /// </summary>
         internal static string DecryptionFailed {
             get {

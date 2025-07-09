@@ -121,7 +121,7 @@
     <value>Container conversion failed.</value>
   </data>
   <data name="DecryptionFailed" xml:space="preserve">
-    <value>Decryption failed.</value>
+    <value>File decryption failed.</value>
   </data>
   <data name="NoResponse" xml:space="preserve">
     <value>No response</value>
