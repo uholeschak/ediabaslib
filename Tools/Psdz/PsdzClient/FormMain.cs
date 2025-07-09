@@ -1,4 +1,9 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Client;
+using EdiabasLib;
+using log4net;
+using PsdzClient.Programming;
+using PsdzClient.Properties;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -7,11 +12,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using BMW.Rheingold.Psdz.Client;
-using EdiabasLib;
-using log4net;
-using PsdzClient.Programming;
-using PsdzClient.Properties;
 
 namespace PsdzClient
 {
@@ -569,7 +569,11 @@ namespace PsdzClient
         {
             try
             {
-                string text = Utility.Encryption.Decrypt(File.ReadAllText(fileName));
+                if (!File.Exists(fileName))
+                {
+                    return null;
+                }
+                string text = Utility.Encryption.Decrypt(ReadAllText(fileName));
                 if (string.IsNullOrEmpty(text))
                 {
                     return null;
@@ -577,6 +581,31 @@ namespace PsdzClient
                 return text;
             }
             catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        private string ReadAllText(string path)
+        {
+            try
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    byte[] array = new byte[2048];
+                    UTF8Encoding utf8Encoding = new UTF8Encoding(true);
+                    int num;
+
+                    while ((num = fileStream.Read(array, 0, array.Length)) > 0)
+                    {
+                        stringBuilder.Append(utf8Encoding.GetString(array, 0, num));
+                    }
+                }
+                string text = stringBuilder.ToString();
+                return text;
+            }
+            catch (Exception ex)
             {
                 return null;
             }
