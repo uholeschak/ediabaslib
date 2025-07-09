@@ -1,12 +1,9 @@
-﻿using log4net.Repository.Hierarchy;
-using Microsoft.Win32;
-using PsdzClient.Core;
+﻿using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Security;
-using static EdiabasLib.EdiabasNet;
 
 namespace PsdzClient.Utility
 {

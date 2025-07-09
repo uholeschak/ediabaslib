@@ -1,8 +1,5 @@
-﻿using log4net.Repository.Hierarchy;
-using PsdzClient.Core;
-using System;
+﻿using System;
 using System.Management;
-using static EdiabasLib.EdiabasNet;
 
 namespace PsdzClient.Utility
 {
