@@ -78,7 +78,7 @@ namespace PsdzClient.Utility
                 }
                 rSACryptoServiceProvider = new RSACryptoServiceProvider(new CspParameters
                 {
-                    KeyContainerName = "ICSLogEncryption"
+                    KeyContainerName = ICSLogEncryptionKeyName
                 });
                 rSACryptoServiceProvider.FromXmlString(logEncryptionPublicKey);
                 rSACryptoServiceProvider.PersistKeyInCsp = true;
