@@ -70,6 +70,15 @@ namespace PsdzClient.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Decryption failed. ähnelt.
+        /// </summary>
+        internal static string DecryptionFailed {
+            get {
+                return ResourceManager.GetString("DecryptionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die No response ähnelt.
         /// </summary>
         internal static string NoResponse {

@@ -120,6 +120,9 @@
   <data name="ContainerError" xml:space="preserve">
     <value>Container conversion failed.</value>
   </data>
+  <data name="DecryptionFailed" xml:space="preserve">
+    <value>Decryption failed.</value>
+  </data>
   <data name="NoResponse" xml:space="preserve">
     <value>No response</value>
   </data>

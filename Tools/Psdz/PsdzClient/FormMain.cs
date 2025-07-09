@@ -606,7 +606,7 @@ namespace PsdzClient
                 string text = stringBuilder.ToString();
                 return text;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }
@@ -1052,7 +1052,7 @@ namespace PsdzClient
             string text = DecryptFile(openFileDialogTest.FileName);
             if (string.IsNullOrEmpty(text))
             {
-                UpdateStatus(Resources.ContainerError);
+                UpdateStatus(Resources.DecryptionFailed);
                 return;
             }
 
