@@ -60,6 +60,7 @@ namespace PsdzClient
             this.buttonInternalTest = new System.Windows.Forms.Button();
             this.openFileDialogTest = new System.Windows.Forms.OpenFileDialog();
             this.checkBoxGenServiceModules = new System.Windows.Forms.CheckBox();
+            this.buttonDecryptFile = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -339,12 +340,22 @@ namespace PsdzClient
             // checkBoxGenServiceModules
             // 
             this.checkBoxGenServiceModules.AutoSize = true;
-            this.checkBoxGenServiceModules.Location = new System.Drawing.Point(417, 70);
+            this.checkBoxGenServiceModules.Location = new System.Drawing.Point(498, 70);
             this.checkBoxGenServiceModules.Name = "checkBoxGenServiceModules";
             this.checkBoxGenServiceModules.Size = new System.Drawing.Size(104, 17);
             this.checkBoxGenServiceModules.TabIndex = 26;
             this.checkBoxGenServiceModules.Text = "Service modules";
             this.checkBoxGenServiceModules.UseVisualStyleBackColor = true;
+            // 
+            // buttonDecryptFile
+            // 
+            this.buttonDecryptFile.Location = new System.Drawing.Point(417, 66);
+            this.buttonDecryptFile.Name = "buttonDecryptFile";
+            this.buttonDecryptFile.Size = new System.Drawing.Size(75, 23);
+            this.buttonDecryptFile.TabIndex = 27;
+            this.buttonDecryptFile.Text = "Decrypt";
+            this.buttonDecryptFile.UseVisualStyleBackColor = true;
+            this.buttonDecryptFile.Click += new System.EventHandler(this.buttonDecryptFile_Click);
             // 
             // FormMain
             // 
@@ -353,6 +364,7 @@ namespace PsdzClient
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
             this.ClientSize = new System.Drawing.Size(784, 661);
+            this.Controls.Add(this.buttonDecryptFile);
             this.Controls.Add(this.checkBoxGenServiceModules);
             this.Controls.Add(this.buttonInternalTest);
             this.Controls.Add(this.comboBoxLanguage);
@@ -423,6 +435,7 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonInternalTest;
         private System.Windows.Forms.OpenFileDialog openFileDialogTest;
         private System.Windows.Forms.CheckBox checkBoxGenServiceModules;
+        private System.Windows.Forms.Button buttonDecryptFile;
     }
 }
 

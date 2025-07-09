@@ -126,6 +126,7 @@ namespace PsdzClient
             checkBoxGenServiceModules.Enabled = !active && !hostRunning;
             buttonVehicleSearch.Enabled = ipEnabled;
             buttonInternalTest.Enabled = !active;
+            buttonDecryptFile.Enabled = !active;
             buttonStopHost.Enabled = !active && hostRunning;
             buttonConnect.Enabled = !active && !vehicleConnected;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
@@ -1033,6 +1034,29 @@ namespace PsdzClient
 
             TaskActive = true;
             UpdateDisplay();
+        }
+
+
+        private void buttonDecryptFile_Click(object sender, EventArgs e)
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            if (openFileDialogTest.ShowDialog(this) != DialogResult.OK)
+            {
+                return;
+            }
+
+            string text = DecryptFile(openFileDialogTest.FileName);
+            if (string.IsNullOrEmpty(text))
+            {
+                UpdateStatus(Resources.ContainerError);
+                return;
+            }
+
+            UpdateStatus(text);
         }
 
         private void checkedListBoxOptions_ItemCheck(object sender, ItemCheckEventArgs e)
