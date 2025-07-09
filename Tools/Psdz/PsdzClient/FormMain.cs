@@ -985,6 +985,24 @@ namespace PsdzClient
                 return;
             }
 
+            string initialDirectory = Application.StartupPath;
+            string initialFileName = string.Empty;
+            if (!string.IsNullOrEmpty(_lastTestFileName))
+            {
+                string lastDir = Path.GetDirectoryName(_lastTestFileName);
+                if (Directory.Exists(lastDir))
+                {
+                    initialDirectory = lastDir;
+                    if (File.Exists(_lastTestFileName))
+                    {
+                        initialFileName = Path.GetFileName(_lastTestFileName);
+                    }
+                }
+            }
+
+            openFileDialogTest.InitialDirectory = initialDirectory;
+            openFileDialogTest.FileName = initialFileName;
+
             if (openFileDialogTest.ShowDialog(this) != DialogResult.OK)
             {
                 return;
@@ -1052,6 +1070,24 @@ namespace PsdzClient
             {
                 return;
             }
+
+            string initialDirectory = Application.StartupPath;
+            string initialFileName = string.Empty;
+            if (!string.IsNullOrEmpty(_lastDecryptFileName))
+            {
+                string lastDir = Path.GetDirectoryName(_lastDecryptFileName);
+                if (Directory.Exists(lastDir))
+                {
+                    initialDirectory = lastDir;
+                    if (File.Exists(_lastDecryptFileName))
+                    {
+                        initialFileName = Path.GetFileName(_lastDecryptFileName);
+                    }
+                }
+            }
+
+            openFileDialogTest.InitialDirectory = initialDirectory;
+            openFileDialogTest.FileName = initialFileName;
 
             if (openFileDialogTest.ShowDialog(this) != DialogResult.OK)
             {
