@@ -429,7 +429,7 @@
             buttonServerCert.Name = "buttonServerCert";
             buttonServerCert.Size = new System.Drawing.Size(240, 27);
             buttonServerCert.TabIndex = 22;
-            buttonServerCert.Text = "Select Server Cert";
+            buttonServerCert.Text = "Select Server Cert (RSA)";
             buttonServerCert.UseVisualStyleBackColor = true;
             buttonServerCert.Click += buttonServerCert_Click;
             // 
