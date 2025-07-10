@@ -6546,7 +6546,7 @@ namespace CarSimulator
                         else if (_receiveData[4] == 0x17 && _receiveData[5] == 0x80)
                         {
                             Debug.WriteLine("SEC4DIAG_READ_AUTH_MODE");
-                            Debug.WriteLine("Role mask: {0:X08}", EdSec4Diag.RoleMaskAsInt);
+                            Debug.WriteLine("Expected role mask: {0:X08}", EdSec4Diag.RoleMaskAsInt);
 
                             int telLength = 6 + 3;
                             _sendData[0] = 0x80;
