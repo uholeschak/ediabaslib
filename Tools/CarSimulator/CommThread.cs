@@ -6530,9 +6530,9 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("RDBI_CPS Codierpruefstempel");
 
-                            if (_codingStampDict.TryGetValue(_receiveData[1], out byte[] resposeData))
+                            if (_codingStampDict.TryGetValue(_receiveData[1], out byte[] responseData))
                             {
-                                Array.Copy(resposeData, _sendData, resposeData.Length);
+                                Array.Copy(responseData, _sendData, responseData.Length);
                                 _sendData[1] = 0xF1;
                                 _sendData[2] = _receiveData[1];
                                 _sendData[3] = 0x62;
@@ -6561,6 +6561,23 @@ namespace CarSimulator
                             _sendData[9] = 0x03;    // ACR with asymetric crypto
                             Array.Copy(EdSec4Diag.RoleMask, 0, _sendData, 10, EdSec4Diag.RoleMask.Length);
                             _sendData[14] = 0x01;   // Whitelist active
+                            responseFound = true;
+                        }
+                        else if (_receiveData[4] == 0xF1 && _receiveData[5] == 0x00)
+                        {
+                            Debug.WriteLine("ReadActiveSessionState");
+
+                            _sendData[0] = 0x88;
+                            _sendData[1] = 0xF1;
+                            _sendData[2] = _receiveData[1];
+                            _sendData[3] = 0x62;
+                            _sendData[4] = 0xF1;
+                            _sendData[5] = 0x00;
+                            _sendData[6] = 0x01;
+                            _sendData[7] = 0x81;
+                            _sendData[8] = 0x00;
+                            _sendData[9] = 0x01;
+                            _sendData[10] = 0x01;   // TP_CONTROL
                             responseFound = true;
                         }
 
