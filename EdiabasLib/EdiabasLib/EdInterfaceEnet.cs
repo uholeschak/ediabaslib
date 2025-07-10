@@ -713,12 +713,13 @@ namespace EdiabasLib
                         {
                             DoIpS29JsonRequestPath = s29JsonRequestPath;
                         }
-
+#if false
                         string s29JsonResponsePath = Path.Combine(s29BasePath, "JsonResponses");
                         if (Directory.Exists(s29JsonResponsePath))
                         {
                             DoIpS29JsonResponsePath = s29JsonResponsePath;
                         }
+#endif
                     }
                 }
 
@@ -1411,9 +1412,12 @@ namespace EdiabasLib
                                     continue;
                                 }
 
-                                if (StoreResponseJsonCerts(SharedDataActive, DoIpS29JsonResponsePath, DoIpS29Path))
+                                if (!string.IsNullOrEmpty(DoIpS29JsonResponsePath))
                                 {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 response certificate stored in: {0}", DoIpS29JsonResponsePath);
+                                    if (StoreResponseJsonCerts(SharedDataActive, DoIpS29JsonResponsePath, DoIpS29Path))
+                                    {
+                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 response certificate stored in: {0}", DoIpS29JsonResponsePath);
+                                    }
                                 }
                             }
                             else
