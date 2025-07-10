@@ -6565,9 +6565,9 @@ namespace CarSimulator
                         }
                         else if (_receiveData[4] == 0xF1 && _receiveData[5] == 0x00)
                         {
-                            Debug.WriteLine("ReadActiveSessionState");
+                            Debug.WriteLine("ReadActiveSessionState: defaultSession, FlashMode deactivated, EnergyModeDeactivated, SROE_Activated");
 
-                            _sendData[0] = 0x88;
+                            _sendData[0] = 0x87;
                             _sendData[1] = 0xF1;
                             _sendData[2] = _receiveData[1];
                             _sendData[3] = 0x62;
@@ -6577,7 +6577,6 @@ namespace CarSimulator
                             _sendData[7] = 0x81;
                             _sendData[8] = 0x00;
                             _sendData[9] = 0x01;
-                            _sendData[10] = 0x01;   // TP_CONTROL
                             responseFound = true;
                         }
 
