@@ -6718,7 +6718,7 @@ namespace CarSimulator
                         {
                             bool certValid = false;
                             Debug.WriteLine("Verify certificate unidirectional");
-                            List<byte[]> parameterList = GetS29ParameterList(_receiveData, offset + 6, 2);
+                            List<byte[]> parameterList = EdInterfaceEnet.GetS29ParameterList(_receiveData, offset + 6, 2);
                             if (parameterList == null || parameterList.Count < 2)
                             {
                                 Debug.WriteLine("Invalid S29 parameters");
@@ -6729,7 +6729,7 @@ namespace CarSimulator
                                 DebugLogData("Ephemeral PublicKey: ", parameterList[1], parameterList[1].Length);
 
                                 byte[] certBlock = parameterList[0];
-                                List<byte[]> certList = GetS29ParameterList(certBlock, 0);
+                                List<byte[]> certList = EdInterfaceEnet.GetS29ParameterList(certBlock, 0);
                                 if (certList == null || certList.Count < 2)
                                 {
                                     Debug.WriteLine("Invalid certificate data");
@@ -6815,7 +6815,7 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("Proof of ownership");
                             bool proofValid = false;
-                            List<byte[]> parameterList = GetS29ParameterList(_receiveData, offset + 5, 2);
+                            List<byte[]> parameterList = EdInterfaceEnet.GetS29ParameterList(_receiveData, offset + 5, 2);
                             if (parameterList == null || parameterList.Count < 2)
                             {
                                 Debug.WriteLine("Invalid S29 parameters");
@@ -7342,29 +7342,6 @@ namespace CarSimulator
                     DebugLogData("Not found: ", _receiveData, recLength);
                 }
             }
-        }
-
-        private List<byte[]> GetS29ParameterList(byte[] buffer, int offset, int maxEntries = int.MaxValue)
-        {
-            List<byte[]> parameters = new List<byte[]>();
-            while (offset < buffer.Length)
-            {
-                byte[] parameter = EdInterfaceEnet.GetS29DataBlock(buffer, offset);
-                if (parameter == null)
-                {
-                    return null;
-                }
-
-                parameters.Add(parameter);
-                offset += 2 + parameter.Length; // move to next parameter
-
-                if (parameters.Count >= maxEntries)
-                {
-                    break;
-                }
-            }
-
-            return parameters;
         }
 
         private bool HandleDynamicUdsIds(BmwTcpClientData bmwTcpClientData)
