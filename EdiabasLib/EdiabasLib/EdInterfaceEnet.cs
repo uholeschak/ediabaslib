@@ -4678,10 +4678,17 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            byte[] serverChallenge = GetS29DataBlock(AuthBuffer, dataOffset + 3);
-            if (serverChallenge == null || serverChallenge.Length < 16)
+            List<byte[]> challengeList = GetS29ParameterList(AuthBuffer, dataOffset + 3, 2);
+            if (challengeList == null || challengeList.Count < 1)
             {
-                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth challenge invalid");
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth challenge parameter invalid");
+                return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            byte[] serverChallenge = challengeList[0];
+            if (serverChallenge.Length < 16)
+            {
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth challenge too short");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
@@ -4761,6 +4768,28 @@ namespace EdiabasLib
             return parameter;
         }
 
+        public static List<byte[]> GetS29ParameterList(byte[] buffer, int offset, int maxEntries = int.MaxValue)
+        {
+            List<byte[]> parameters = new List<byte[]>();
+            while (offset < buffer.Length)
+            {
+                byte[] parameter = EdInterfaceEnet.GetS29DataBlock(buffer, offset);
+                if (parameter == null)
+                {
+                    return null;
+                }
+
+                parameters.Add(parameter);
+                offset += 2 + parameter.Length; // move to next parameter
+
+                if (parameters.Count >= maxEntries)
+                {
+                    break;
+                }
+            }
+
+            return parameters;
+        }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
