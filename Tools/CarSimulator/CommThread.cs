@@ -6798,6 +6798,8 @@ namespace CarSimulator
                                 RandomNumberGenerator.Create().GetBytes(challenge);
                                 List<byte> challengeResponse = new List<byte> { (byte) (0x80 + 5 + challenge.Length), _receiveData[2], _receiveData[1], 0x69, subFunction, 0x11 };
                                 EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, challenge); // challenge block
+                                byte[] prefixData = Encoding.ASCII.GetBytes(EdSec4Diag.S29ProofOfOwnershipData);
+                                EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, prefixData); // prefix block
                                 challengeResponse.Add(0x00); // checksum
                                 bmwTcpClientData.ServerChallenge = challenge;
                                 ObdSend(challengeResponse.ToArray(), bmwTcpClientData);
