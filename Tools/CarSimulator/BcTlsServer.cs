@@ -306,7 +306,7 @@ public class BcTlsServer : DefaultTlsServer
         IList<SignatureAndHashAlgorithm> clientSignatureAlgorithms = m_context.SecurityParameters?.ClientSigAlgs;
         if (signatureAndHashAlgorithms != null)
         {
-            TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, clientSignatureAlgorithms, m_certResources, m_privateCert, RsaSignatureAndHashAlgorithms);
+            TlsCredentialedSigner signerCredentials = EdBcTlsUtilities.LoadSignerCredentials(m_context, clientSignatureAlgorithms, m_certResources, m_privateCert, signatureAndHashAlgorithms);
             if (signerCredentials != null)
             {
                 return signerCredentials;
