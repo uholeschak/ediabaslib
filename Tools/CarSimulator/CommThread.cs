@@ -6799,8 +6799,8 @@ namespace CarSimulator
                                 RandomNumberGenerator.Create().GetBytes(challenge);
                                 List<byte> challengeResponse = new List<byte> { 0x80, _receiveData[2], _receiveData[1], 0x00, 0x00, 0x00, 0x69, subFunction, 0x11 };
                                 EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, challenge); // challenge block
-                                byte[] proofContentData = Encoding.ASCII.GetBytes(EdSec4Diag.S29ProofOfOwnershipData);
-                                EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, proofContentData);    // proof data
+                                byte[] ephemeralKey = new byte[0];
+                                EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, ephemeralKey);    // Ephemeral PublicKey
 
                                 int challengeResponseLength = challengeResponse.Count - 6;
                                 challengeResponse[4] = (byte)(challengeResponseLength >> 8);
