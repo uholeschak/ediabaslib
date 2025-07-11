@@ -4692,17 +4692,6 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            if (challengeList.Count >= 2)
-            {
-                byte[] proofContentData = challengeList[1];
-                byte[] proofCompareData = Encoding.ASCII.GetBytes(EdSec4Diag.S29ProofOfOwnershipData);
-                if (!proofContentData.SequenceEqual(proofCompareData))
-                {
-                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth proof content data invalid");
-                    return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
-                }
-            }
-
             ECPrivateKeyParameters privateKey = sharedData.MachineKeyPair?.Private as ECPrivateKeyParameters;
             ECPublicKeyParameters publicKey = sharedData.MachineKeyPair?.Public as ECPublicKeyParameters;
             byte[] proofData = EdSec4Diag.CalculateProofOfOwnership(serverChallenge, privateKey);
