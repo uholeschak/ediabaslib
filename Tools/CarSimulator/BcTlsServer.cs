@@ -30,6 +30,8 @@ public class BcTlsServer : DefaultTlsServer
     private readonly string m_certPassword = null;
     private AsymmetricKeyParameter m_privateKeyResource;
     private readonly string[] m_certResources;
+    private readonly short m_supportedSignatureAlgorithm;
+    private readonly SignatureAndHashAlgorithm[] m_supportedSigAndHashAlgs;
     private readonly List<X509CertificateStructure> m_certificateAuthorities = null;
     private IList<X509Name> m_TrustedCaNames = null;
     private IList<X509Name> m_clientTrustedIssuers = null;
@@ -77,6 +79,13 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("Public certificate file does not contain CA certificate", m_publicCert);
         }
 
+        short? supportedSignatureAlgorithm = EdBcTlsUtilities.GetSupportedSignatureAlgorithms(publicCerts[0], out m_supportedSigAndHashAlgs);
+        if (supportedSignatureAlgorithm == null)
+        {
+            throw new FileNotFoundException("Public certificate does not contain supported signature algorithm", m_publicCert);
+        }
+
+        m_supportedSignatureAlgorithm = supportedSignatureAlgorithm.Value;
         m_certResources = new string[] { m_publicCert };
     }
 
@@ -94,22 +103,7 @@ public class BcTlsServer : DefaultTlsServer
 
         if (TlsUtilities.IsTlsV13(m_context))
         {
-            if (m_privateKeyResource is RsaPrivateCrtKeyParameters)
-            {
-                return GetRsaSignerCredentials();
-            }
-
-            if (m_privateKeyResource is ECPrivateKeyParameters)
-            {
-                return GetECDsaSignerCredentials();
-            }
-
-            if (m_privateKeyResource is DsaPrivateKeyParameters)
-            {
-                return GetDsaSignerCredentials();
-            }
-
-            throw new TlsFatalAlert(AlertDescription.bad_certificate);
+            return LoadSignerCredentials(m_supportedSignatureAlgorithm, m_supportedSigAndHashAlgs);
         }
 
         return base.GetCredentials();
@@ -273,27 +267,9 @@ public class BcTlsServer : DefaultTlsServer
         base.GetServerExtensionsForConnection(serverExtensions);
     }
 
-    protected override TlsCredentialedSigner GetDsaSignerCredentials()
-    {
-        return LoadSignerCredentials(SignatureAlgorithm.dsa);
-    }
-
-    protected override TlsCredentialedSigner GetECDsaSignerCredentials()
-    {
-        // TODO[RFC 8422] Code should choose based on client's supported sig algs?
-        return LoadSignerCredentials(SignatureAlgorithm.ecdsa);
-        //return LoadSignerCredentials(SignatureAlgorithm.ed25519);
-        //return LoadSignerCredentials(SignatureAlgorithm.ed448);
-    }
-
     protected override TlsCredentialedDecryptor GetRsaEncryptionCredentials()
     {
         return EdBcTlsUtilities.LoadEncryptionCredentials(m_context, m_certResources, m_privateCert);
-    }
-
-    protected override TlsCredentialedSigner GetRsaSignerCredentials()
-    {
-        return LoadSignerCredentials(SignatureAlgorithm.rsa, RsaSignatureAndHashAlgorithms);
     }
 
     public virtual string ToHexString(byte[] data)
