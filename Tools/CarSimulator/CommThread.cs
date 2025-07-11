@@ -6844,7 +6844,7 @@ namespace CarSimulator
                             if (proofValid)
                             {
                                 List<byte> proofResponse = new List<byte> { 0x80, _receiveData[2], _receiveData[1], 0x00, 0x00, 0x00, 0x69, subFunction, 0x12 };
-                                EdInterfaceEnet.AppendS29DataBlock(ref proofResponse, Array.Empty<byte>()); // Ephemeral Public Key
+                                EdInterfaceEnet.AppendS29DataBlock(ref proofResponse, Array.Empty<byte>()); // Session Key Info
 
                                 int proofResponseLength = proofResponse.Count - 6;
                                 proofResponse[4] = (byte)(proofResponseLength >> 8);
