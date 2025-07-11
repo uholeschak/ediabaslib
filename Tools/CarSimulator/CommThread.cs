@@ -6843,8 +6843,15 @@ namespace CarSimulator
                             bmwTcpClientData.ServerChallenge = null; // reset challenge after use
                             if (proofValid)
                             {
-                                byte[] validResponse = { 0x83, _receiveData[2], _receiveData[1], 0x69, subFunction, 0x12, 0x00 };   // positive ACK
-                                ObdSend(validResponse, bmwTcpClientData);
+                                List<byte> proofResponse = new List<byte> { 0x80, _receiveData[2], _receiveData[1], 0x00, 0x00, 0x00, 0x69, subFunction, 0x12 };
+                                EdInterfaceEnet.AppendS29DataBlock(ref proofResponse, Array.Empty<byte>()); // Ephemeral Public Key
+
+                                int proofResponseLength = proofResponse.Count - 6;
+                                proofResponse[4] = (byte)(proofResponseLength >> 8);
+                                proofResponse[5] = (byte)(proofResponseLength & 0xFF);
+
+                                proofResponse.Add(0x00); // checksum
+                                ObdSend(proofResponse.ToArray(), bmwTcpClientData);
                             }
                             else
                             {
