@@ -4678,7 +4678,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
             }
 
-            List<byte[]> challengeList = GetS29ParameterList(AuthBuffer, dataOffset + 3, 2);
+            List<byte[]> challengeList = GetS29ParameterList(AuthBuffer, dataLength + dataOffset, dataOffset + 3);
             if (challengeList == null || challengeList.Count < 1)
             {
                 EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth challenge parameter invalid");
@@ -4690,6 +4690,17 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AuthBuffer, 0, receiveLength, "*** DoIp auth challenge too short");
                 return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+            }
+
+            if (challengeList.Count >= 2)
+            {
+                byte[] proofContentData = challengeList[1];
+                byte[] proofCompareData = Encoding.ASCII.GetBytes(EdSec4Diag.S29ProofOfOwnershipData);
+                if (!proofContentData.SequenceEqual(proofCompareData))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** DoIp auth proof content data invalid");
+                    return EdiabasNet.ErrorCodes.EDIABAS_SEC_0036;
+                }
             }
 
             ECPrivateKeyParameters privateKey = sharedData.MachineKeyPair?.Private as ECPrivateKeyParameters;
@@ -4768,12 +4779,12 @@ namespace EdiabasLib
             return parameter;
         }
 
-        public static List<byte[]> GetS29ParameterList(byte[] buffer, int offset, int maxEntries = int.MaxValue)
+        public static List<byte[]> GetS29ParameterList(byte[] buffer, int bufferLength, int offset, int maxEntries = int.MaxValue)
         {
             List<byte[]> parameters = new List<byte[]>();
-            while (offset < buffer.Length)
+            while (offset < bufferLength)
             {
-                byte[] parameter = EdInterfaceEnet.GetS29DataBlock(buffer, offset);
+                byte[] parameter = GetS29DataBlock(buffer, offset);
                 if (parameter == null)
                 {
                     return null;

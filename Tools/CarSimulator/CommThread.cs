@@ -6,6 +6,7 @@
 #define VCDS
 using BmwFileReader;
 using EdiabasLib;
+using Org.BouncyCastle.Asn1.Crmf;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Tls;
@@ -6718,7 +6719,7 @@ namespace CarSimulator
                         {
                             bool certValid = false;
                             Debug.WriteLine("Verify certificate unidirectional");
-                            List<byte[]> parameterList = EdInterfaceEnet.GetS29ParameterList(_receiveData, offset + 6, 2);
+                            List<byte[]> parameterList = EdInterfaceEnet.GetS29ParameterList(_receiveData, _receiveData.Length, offset + 6, 2);
                             if (parameterList == null || parameterList.Count < 2)
                             {
                                 Debug.WriteLine("Invalid S29 parameters");
@@ -6729,7 +6730,7 @@ namespace CarSimulator
                                 DebugLogData("Ephemeral PublicKey: ", parameterList[1], parameterList[1].Length);
 
                                 byte[] certBlock = parameterList[0];
-                                List<byte[]> certList = EdInterfaceEnet.GetS29ParameterList(certBlock, 0);
+                                List<byte[]> certList = EdInterfaceEnet.GetS29ParameterList(certBlock, certBlock.Length, 0);
                                 if (certList == null || certList.Count < 2)
                                 {
                                     Debug.WriteLine("Invalid certificate data");
@@ -6796,10 +6797,15 @@ namespace CarSimulator
                                 Debug.WriteLine("Certificate send challenge");
                                 byte[] challenge = new byte[16];
                                 RandomNumberGenerator.Create().GetBytes(challenge);
-                                List<byte> challengeResponse = new List<byte> { (byte) (0x80 + 5 + challenge.Length), _receiveData[2], _receiveData[1], 0x69, subFunction, 0x11 };
+                                List<byte> challengeResponse = new List<byte> { 0x80, _receiveData[2], _receiveData[1], 0x00, 0x00, 0x00, 0x69, subFunction, 0x11 };
                                 EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, challenge); // challenge block
-                                byte[] prefixData = Encoding.ASCII.GetBytes(EdSec4Diag.S29ProofOfOwnershipData);
-                                EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, prefixData); // prefix block
+                                byte[] proofContentData = Encoding.ASCII.GetBytes(EdSec4Diag.S29ProofOfOwnershipData);
+                                EdInterfaceEnet.AppendS29DataBlock(ref challengeResponse, proofContentData);    // proof data
+
+                                int challengeResponseLength = challengeResponse.Count - 6;
+                                challengeResponse[4] = (byte)(challengeResponseLength >> 8);
+                                challengeResponse[5] = (byte)(challengeResponseLength & 0xFF);
+
                                 challengeResponse.Add(0x00); // checksum
                                 bmwTcpClientData.ServerChallenge = challenge;
                                 ObdSend(challengeResponse.ToArray(), bmwTcpClientData);
@@ -6815,7 +6821,7 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("Proof of ownership");
                             bool proofValid = false;
-                            List<byte[]> parameterList = EdInterfaceEnet.GetS29ParameterList(_receiveData, offset + 5, 2);
+                            List<byte[]> parameterList = EdInterfaceEnet.GetS29ParameterList(_receiveData, _receiveData.Length, offset + 5, 2);
                             if (parameterList == null || parameterList.Count < 2)
                             {
                                 Debug.WriteLine("Invalid S29 parameters");
