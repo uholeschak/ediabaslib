@@ -21,7 +21,7 @@ namespace EdiabasLib
 {
     public static class EdSec4Diag
     {
-        public const string S29ProofOfOwnershipPrefix = "S29UNIPOO";
+        public const string S29ProofOfOwnershipData = "S29UNIPOO";
         public const string S29BmwCnName = "Service29-BMW-S29";
         public const string S29IstaCnName = "Service29-ISTA-S29";
         public const string S29ThumbprintCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca";
@@ -120,7 +120,7 @@ namespace EdiabasLib
 
                 byte[] randomData = new byte[16];
                 RandomNumberGenerator.Create().GetBytes(randomData);
-                byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix);
+                byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipData);
                 int prefixLength = prefixBytes.Length;
                 byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
                 prefixBytes.CopyTo(signData, 0);
@@ -164,7 +164,7 @@ namespace EdiabasLib
 
                 byte[] randomData = new byte[16];
                 Buffer.BlockCopy(proofData, 0, randomData, 0, randomData.Length);
-                byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipPrefix);
+                byte[] prefixBytes = Encoding.ASCII.GetBytes(S29ProofOfOwnershipData);
                 int prefixLength = prefixBytes.Length;
                 byte[] signData = new byte[prefixLength + randomData.Length + server_challenge.Length + 2];
                 prefixBytes.CopyTo(signData, 0);
