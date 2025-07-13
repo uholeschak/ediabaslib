@@ -426,7 +426,7 @@ namespace EdiabasLibConfigTool
         {
             try
             {
-                if (_wlanClient != null)
+                if (_wlanClient?.Interfaces != null)
                 {
                     foreach (WlanInterface wlanIface in _wlanClient.Interfaces)
                     {
