@@ -865,14 +865,20 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
-                string s29Path = Path.Combine(ediabasDir, "Security", "S29");
+                string ediabasBaseDir = Directory.GetParent(ediabasDir)?.FullName;
+                if (string.IsNullOrEmpty(ediabasBaseDir))
+                {
+                    return false;
+                }
+
+                string s29Path = Path.Combine(ediabasBaseDir, "Security", "S29");
                 if (!Directory.Exists(s29Path))
                 {
                     return false;
                 }
 
                 bool result = true;
-                string certPath = Path.Combine(ediabasDir, s29Path, "Certificates");
+                string certPath = Path.Combine(s29Path, "Certificates");
                 if (Directory.Exists(certPath))
                 {
                     string machineName = Environment.MachineName;
@@ -907,9 +913,31 @@ namespace EdiabasLibConfigTool
                             result = false;
                         }
                     }
+
+                    IEnumerable<string> pemFiles = Directory.EnumerateFiles(certPath, "*.pem", SearchOption.AllDirectories);
+                    foreach (string pemFile in pemFiles)
+                    {
+                        string baseFileName = Path.GetFileName(pemFile);
+
+                        if (!baseFileName.StartsWith("certificates_", StringComparison.OrdinalIgnoreCase) &&
+                            !baseFileName.StartsWith("S29-", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            File.Delete(pemFile);
+                        }
+                        catch (Exception)
+                        {
+                            result = false;
+                        }
+                    }
+
                 }
 
-                string jsonRequestPath = Path.Combine(ediabasDir, s29Path, "JSONRequests");
+                string jsonRequestPath = Path.Combine(ediabasBaseDir, "JSONRequests");
                 if (Directory.Exists(jsonRequestPath))
                 {
                     IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonRequestPath, "*.json", SearchOption.AllDirectories);
@@ -932,7 +960,7 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                string jsonResponsePath = Path.Combine(ediabasDir, s29Path, "JSONResponses");
+                string jsonResponsePath = Path.Combine(ediabasBaseDir, "JSONResponses");
                 if (Directory.Exists(jsonResponsePath))
                 {
                     IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonResponsePath, "*.json", SearchOption.AllDirectories);
