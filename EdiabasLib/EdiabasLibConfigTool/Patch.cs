@@ -581,9 +581,12 @@ namespace EdiabasLibConfigTool
                             string jsonResponsesPath = Path.Combine(s29BasePath, "JSONResponses");
 
                             UpdateConfigNode(settingsNode, @"SslSecurityPath", sslSecurityPath);
+#if false
+                            // configured by SslSecurityPath
                             UpdateConfigNode(settingsNode, @"S29Path", certPath);
                             UpdateConfigNode(settingsNode, @"JSONRequestPath", jsonRequestsPath);
                             UpdateConfigNode(settingsNode, @"JSONResponsePath", jsonResponsesPath);
+#endif
                         }
                     }
                 }
