@@ -448,15 +448,18 @@ namespace EdiabasLibConfigTool
                     interfaceValue = @"EDIC";
                 }
 
-                string enetVehicleProtocol = string.Empty;
+                bool istadMode;
+                string enetVehicleProtocol;
                 switch (patchType)
                 {
                     case PatchType.Istad:
                     case PatchType.IstadExt:
+                        istadMode = true;
                         enetVehicleProtocol = EdInterfaceEnet.ProtocolHsfz + "," + EdInterfaceEnet.ProtocolDoIp;
                         break;
 
                     default:
+                        istadMode = false;
                         enetVehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
                         break;
                 }
@@ -522,17 +525,11 @@ namespace EdiabasLibConfigTool
                         UpdateConfigNode(settingsNode, @"EnetIcomAllocate", "1");
                         icomConfigured = true;
 
-                        switch (patchType)
+                        if (!istadMode)
                         {
-                            case PatchType.Istad:
-                            case PatchType.IstadExt:
-                                break;
-
-                            default:
-                                UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
-                                UpdateConfigNode(settingsNode, @"EnetControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
-                                portsConfigured = true;
-                                break;
+                            UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
+                            UpdateConfigNode(settingsNode, @"EnetControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
+                            portsConfigured = true;
                         }
                     }
                 }
