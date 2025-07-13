@@ -913,6 +913,28 @@ namespace EdiabasLibConfigTool
                             result = false;
                         }
                     }
+
+                    IEnumerable<string> pemFiles = Directory.EnumerateFiles(certPath, "*.pem", SearchOption.AllDirectories);
+                    foreach (string pemFile in pemFiles)
+                    {
+                        string baseFileName = Path.GetFileName(pemFile);
+
+                        if (!baseFileName.StartsWith("certificates_", StringComparison.OrdinalIgnoreCase) &&
+                            !baseFileName.StartsWith("S29-", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            File.Delete(pemFile);
+                        }
+                        catch (Exception)
+                        {
+                            result = false;
+                        }
+                    }
+
                 }
 
                 string jsonRequestPath = Path.Combine(ediabasBaseDir, "JSONRequests");
