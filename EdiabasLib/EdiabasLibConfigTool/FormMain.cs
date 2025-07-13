@@ -1283,6 +1283,7 @@ namespace EdiabasLibConfigTool
             }
 
             string dirName = null;
+            string ediabasDir = null;
             Patch.PatchType patchType = Patch.PatchType.Ediabas;
             if (sender == buttonPatchEdiabas)
             {
@@ -1297,6 +1298,7 @@ namespace EdiabasLibConfigTool
             else if (sender == buttonPatchIstad)
             {
                 dirName = _ediabasDirIstad;
+                ediabasDir = _ediabasDirIstad;
                 patchType = Patch.PatchType.Istad;
 
                 if (Patch.GetIstaReg() != null)
@@ -1327,7 +1329,7 @@ namespace EdiabasLibConfigTool
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
-                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, devInfo, wlanIface, enetConnection, usbInfo, textBoxBluetoothPin.Text);
+                Patch.PatchEdiabas(sr, patchType, _test.AdapterType, dirName, ediabasDir, devInfo, wlanIface, enetConnection, usbInfo, textBoxBluetoothPin.Text);
                 UpdateStatusText(sr.ToString());
             }
             UpdateButtonStatus();
@@ -1336,6 +1338,7 @@ namespace EdiabasLibConfigTool
         private void buttonRestore_Click(object sender, EventArgs e)
         {
             string dirName = null;
+            string ediabasDir = null;
             Patch.PatchType patchType = Patch.PatchType.Ediabas;
             if (sender == buttonRestoreEdiabas)
             {
@@ -1350,13 +1353,14 @@ namespace EdiabasLibConfigTool
             else if (sender == buttonRestoreIstad)
             {
                 dirName = _ediabasDirIstad;
+                ediabasDir = _ediabasDirIstad;
                 patchType = Patch.PatchType.Istad;
             }
 
             if (!string.IsNullOrEmpty(dirName))
             {
                 StringBuilder sr = new StringBuilder();
-                Patch.RestoreEdiabas(sr, patchType, dirName);
+                Patch.RestoreEdiabas(sr, patchType, dirName, ediabasDir);
                 UpdateStatusText(sr.ToString());
             }
             UpdateButtonStatus();

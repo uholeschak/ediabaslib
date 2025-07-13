@@ -851,21 +851,21 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool DeleteMachineCertificates(string ediabasPath)
+        public static bool DeleteMachineCertificates(string ediabasDir)
         {
             try
             {
-                if (string.IsNullOrEmpty(ediabasPath))
+                if (string.IsNullOrEmpty(ediabasDir))
                 {
                     return false;
                 }
 
-                if (!Directory.Exists(ediabasPath))
+                if (!Directory.Exists(ediabasDir))
                 {
                     return false;
                 }
 
-                string certPath = Path.Combine(ediabasPath, "Security", "S29", "Certificates");
+                string certPath = Path.Combine(ediabasDir, "Security", "S29", "Certificates");
                 if (!Directory.Exists(certPath))
                 {
                     return false;
@@ -1134,7 +1134,7 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName,
+        public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName, string ediabasDir,
             BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
         {
             if (string.IsNullOrEmpty(dirName))
@@ -1185,6 +1185,11 @@ namespace EdiabasLibConfigTool
 
                 sr.AppendFormat(Resources.Strings.PatchDirectory, dirName);
                 RemoveIstaReg(sr, registryViewIsta);
+
+                if (!string.IsNullOrEmpty(ediabasDir))
+                {
+                    DeleteMachineCertificates(ediabasDir);
+                }
 
                 if (!PatchFiles(sr, dirName, copyOnly))
                 {
@@ -1258,7 +1263,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool RestoreEdiabas(StringBuilder sr, PatchType patchType, string dirName)
+        public static bool RestoreEdiabas(StringBuilder sr, PatchType patchType, string dirName, string ediabasDir)
         {
             sr.AppendFormat(Resources.Strings.RestoreDirectory, dirName);
 
@@ -1281,6 +1286,11 @@ namespace EdiabasLibConfigTool
             if (!RemoveIstaReg(sr, registryViewIsta))
             {
                 result = false;
+            }
+
+            if (!string.IsNullOrEmpty(ediabasDir))
+            {
+                DeleteMachineCertificates(ediabasDir);
             }
 
             return result;
