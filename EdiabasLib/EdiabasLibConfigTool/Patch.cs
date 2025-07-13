@@ -64,25 +64,25 @@ namespace EdiabasLibConfigTool
 
         static class NativeMethods
         {
-            [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
             public static extern int LoadLibrary(string dllToLoad);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Ansi)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Ansi, SetLastError = true)]
             public static extern IntPtr GetProcAddress(int hModule, string procedureName);
 
-            [DllImport("kernel32.dll")]
+            [DllImport("kernel32.dll", SetLastError = true)]
             public static extern bool FreeLibrary(int hModule);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
             public static extern bool SetDllDirectory(string lpPathName);
 
             [DllImport("kernel32.dll")]
             public static extern ErrorModes SetErrorMode(ErrorModes uMode);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
             public static extern long WritePrivateProfileString(string Section, string Key, string Value, string FilePath);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
             public static extern int GetPrivateProfileString(string Section, string Key, string Default, StringBuilder RetVal, int Size, string FilePath);
 
             [Flags]
@@ -286,8 +286,9 @@ namespace EdiabasLibConfigTool
             return fileList;
         }
 
-        public static string EdiabasLibVersion(string fileName, bool setSearchDir)
+        public static string EdiabasLibVersion(string fileName, bool setSearchDir, out int errorCode)
         {
+            errorCode = 0;
             try
             {
                 NativeMethods.SetErrorMode(NativeMethods.ErrorModes.SEM_FAILCRITICALERRORS);
@@ -298,6 +299,7 @@ namespace EdiabasLibConfigTool
                 }
                 if (!NativeMethods.SetDllDirectory(searchDir))
                 {
+                    errorCode = Marshal.GetLastWin32Error();
                     return null;
                 }
             }
@@ -311,12 +313,14 @@ namespace EdiabasLibConfigTool
             {
                 if (hDll == 0)
                 {
+                    errorCode = Marshal.GetLastWin32Error();
                     return null;
                 }
 
                 IntPtr pApiCheckVersion = NativeMethods.GetProcAddress(hDll, "__apiCheckVersion");
                 if (pApiCheckVersion == IntPtr.Zero)
                 {
+                    errorCode = Marshal.GetLastWin32Error();
                     return null;
                 }
 
@@ -586,10 +590,10 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
-                string version32 = EdiabasLibVersion(sourceDll32, false);
+                string version32 = EdiabasLibVersion(sourceDll32, false, out int _);
                 if (string.IsNullOrEmpty(version32))
                 {
-                    version32 = EdiabasLibVersion(sourceDll32, true);
+                    version32 = EdiabasLibVersion(sourceDll32, true, out int _);
                     if (string.IsNullOrEmpty(version32))
                     {
                         sr.Append("\r\n");
