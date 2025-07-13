@@ -1,4 +1,9 @@
-﻿using System;
+﻿using EdiabasLib;
+using InTheHand.Net.Sockets;
+using Microsoft.Win32;
+using SimpleWifi.Win32;
+using SimpleWifi.Win32.Interop;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,11 +14,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Xml.Linq;
-using EdiabasLib;
-using InTheHand.Net.Sockets;
-using Microsoft.Win32;
-using SimpleWifi.Win32;
-using SimpleWifi.Win32.Interop;
 
 namespace EdiabasLibConfigTool
 {
@@ -849,6 +849,68 @@ namespace EdiabasLibConfigTool
             }
 
             return true;
+        }
+
+        public static bool DeleteMachineCertificates(string ediabasPath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(ediabasPath))
+                {
+                    return false;
+                }
+
+                if (!Directory.Exists(ediabasPath))
+                {
+                    return false;
+                }
+
+                string certPath = Path.Combine(ediabasPath, "Security", "S29", "Certificates");
+                if (!Directory.Exists(certPath))
+                {
+                    return false;
+                }
+
+                string machineName = Environment.MachineName;
+                if (string.IsNullOrEmpty(machineName))
+                {
+                    machineName = "LocalMachine";
+                }
+
+                string machinePrivateFile = Path.Combine(certPath, machineName + ".p12");
+                string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
+
+                bool result = true;
+                if (File.Exists(machinePrivateFile))
+                {
+                    try
+                    {
+                        File.Delete(machinePrivateFile);
+                    }
+                    catch (Exception)
+                    {
+                        result = false;
+                    }
+                }
+
+                if (File.Exists(machinePublicFile))
+                {
+                    try
+                    {
+                        File.Delete(machinePublicFile);
+                    }
+                    catch (Exception)
+                    {
+                        result = false;
+                    }
+                }
+
+                return result;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public static List<string> GetFtdiRegKeys(string comPort)

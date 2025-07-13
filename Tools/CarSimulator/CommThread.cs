@@ -1065,14 +1065,14 @@ namespace CarSimulator
                             // openssl pkcs12 -export -out rootCA_EC.pfx -inkey rootCA_EC.key -in rootCA_EC.crt -passout pass:
                             // copy files to EDIABAS.ini [SSL] SecurityPath property location.
 
-                            // vehicle key ECDSA (not working):
+                            // vehicle key ECDSA (preferred):
                             // openssl ecparam -out vin_EC1.key -name secp384r1 -genkey
                             // openssl req -new -nodes -key vin_EC1.key -outform pem -out vin_EC1.csr -sha512 -subj '//DUMMY=/ST=Production/O=BMW Group/CN=WBAJM71000B055940'
                             // openssl x509 -req -in vin_EC1.csr -CA rootCA_EC.crt -CAkey rootCA_EC.key -CAcreateserial -out vin_EC1.crt -days 36500 -sha256
                             // openssl x509 -inform pem -noout -text -in vin_EC1.crt
                             // cat vin_EC1.crt rootCA_EC.crt > vin_EC1.pem
 
-                            // vehicle key RSA with ECDSA CA (ok):
+                            // vehicle key RSA with ECDSA CA (not recommended):
                             // openssl req -new -nodes -out vin_RSA1.csr -newkey rsa:4096 -keyout vin_RSA1.key -subj '//DUMMY=/ST=Production/O=BMW Group/CN=WBAJM71000B055940'
                             // openssl x509 -req -in vin_RSA1.csr -CA rootCA_EC.crt -CAkey rootCA_EC.key -CAcreateserial -out vin_RSA1.crt -days 36500 -sha256
                             // openssl x509 -inform pem -noout -text -in vin_RSA1.crt
