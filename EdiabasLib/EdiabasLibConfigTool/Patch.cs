@@ -851,7 +851,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        public static bool DeleteMachineCertificates(string ediabasDir)
+        public static bool DeleteEdiabasMachineCerts(string ediabasDir)
         {
             try
             {
@@ -865,43 +865,87 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
-                string certPath = Path.Combine(ediabasDir, "Security", "S29", "Certificates");
-                if (!Directory.Exists(certPath))
+                string s29Path = Path.Combine(ediabasDir, "Security", "S29");
+                if (!Directory.Exists(s29Path))
                 {
                     return false;
                 }
 
-                string machineName = Environment.MachineName;
-                if (string.IsNullOrEmpty(machineName))
-                {
-                    machineName = "LocalMachine";
-                }
-
-                string machinePrivateFile = Path.Combine(certPath, machineName + ".p12");
-                string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
-
                 bool result = true;
-                if (File.Exists(machinePrivateFile))
+                string certPath = Path.Combine(ediabasDir, s29Path, "Certificates");
+                if (Directory.Exists(certPath))
                 {
-                    try
+                    string machineName = Environment.MachineName;
+                    if (string.IsNullOrEmpty(machineName))
                     {
-                        File.Delete(machinePrivateFile);
+                        machineName = "LocalMachine";
                     }
-                    catch (Exception)
+
+                    string machinePrivateFile = Path.Combine(certPath, machineName + ".p12");
+                    string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
+
+                    if (File.Exists(machinePrivateFile))
                     {
-                        result = false;
+                        try
+                        {
+                            File.Delete(machinePrivateFile);
+                        }
+                        catch (Exception)
+                        {
+                            result = false;
+                        }
+                    }
+
+                    if (File.Exists(machinePublicFile))
+                    {
+                        try
+                        {
+                            File.Delete(machinePublicFile);
+                        }
+                        catch (Exception)
+                        {
+                            result = false;
+                        }
                     }
                 }
 
-                if (File.Exists(machinePublicFile))
+                string jsonRequestPath = Path.Combine(ediabasDir, s29Path, "JSONRequests");
+                if (Directory.Exists(jsonRequestPath))
                 {
-                    try
+                    IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonRequestPath, "*.json", SearchOption.AllDirectories);
+                    foreach (string jsonFile in jsonFiles)
                     {
-                        File.Delete(machinePublicFile);
+                        string baseFileName = Path.GetFileName(jsonFile);
+                        if (string.Compare(baseFileName, "template.json", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            continue;
+                        }
+
+                        try
+                        {
+                            File.Delete(jsonFile);
+                        }
+                        catch (Exception)
+                        {
+                            result = false;
+                        }
                     }
-                    catch (Exception)
+                }
+
+                string jsonResponsePath = Path.Combine(ediabasDir, s29Path, "JSONResponses");
+                if (Directory.Exists(jsonResponsePath))
+                {
+                    IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonResponsePath, "*.json", SearchOption.AllDirectories);
+                    foreach (string jsonFile in jsonFiles)
                     {
-                        result = false;
+                        try
+                        {
+                            File.Delete(jsonFile);
+                        }
+                        catch (Exception)
+                        {
+                            result = false;
+                        }
                     }
                 }
 
@@ -1188,7 +1232,7 @@ namespace EdiabasLibConfigTool
 
                 if (!string.IsNullOrEmpty(ediabasDir))
                 {
-                    DeleteMachineCertificates(ediabasDir);
+                    DeleteEdiabasMachineCerts(ediabasDir);
                 }
 
                 if (!PatchFiles(sr, dirName, copyOnly))
@@ -1290,7 +1334,7 @@ namespace EdiabasLibConfigTool
 
             if (!string.IsNullOrEmpty(ediabasDir))
             {
-                DeleteMachineCertificates(ediabasDir);
+                DeleteEdiabasMachineCerts(ediabasDir);
             }
 
             return result;
