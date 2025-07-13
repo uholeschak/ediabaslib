@@ -326,6 +326,15 @@ namespace EdiabasLib
                     {
                         supportedSigAndHashAlgs = new[] { SignatureAndHashAlgorithm.rsa_pss_rsae_sha512 };
                     }
+                    else
+                    {
+                        supportedSigAndHashAlgs = new[]
+                        {
+                            SignatureAndHashAlgorithm.rsa_pss_rsae_sha256,
+                            SignatureAndHashAlgorithm.rsa_pss_rsae_sha384,
+                            SignatureAndHashAlgorithm.rsa_pss_rsae_sha512,
+                        };
+                    }
                 }
             }
 
