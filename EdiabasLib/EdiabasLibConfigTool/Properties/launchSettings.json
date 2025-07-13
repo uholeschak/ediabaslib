@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "EdiabasLibConfigTool": {
+      "commandName": "Project"
+    },
+    "VM-WIN11": {
+      "commandName": "Project",
+      "remoteDebugEnabled": true,
+      "remoteDebugMachine": "VM-WIN11",
+      "authenticationMode": "Windows"
+    }
+  }
+}
