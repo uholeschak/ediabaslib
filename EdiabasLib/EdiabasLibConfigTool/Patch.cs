@@ -934,10 +934,9 @@ namespace EdiabasLibConfigTool
                             result = false;
                         }
                     }
-
                 }
 
-                string jsonRequestPath = Path.Combine(ediabasBaseDir, "JSONRequests");
+                string jsonRequestPath = Path.Combine(s29Path, "JSONRequests");
                 if (Directory.Exists(jsonRequestPath))
                 {
                     IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonRequestPath, "*.json", SearchOption.AllDirectories);
@@ -960,7 +959,7 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                string jsonResponsePath = Path.Combine(ediabasBaseDir, "JSONResponses");
+                string jsonResponsePath = Path.Combine(s29Path, "JSONResponses");
                 if (Directory.Exists(jsonResponsePath))
                 {
                     IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonResponsePath, "*.json", SearchOption.AllDirectories);
