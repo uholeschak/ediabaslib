@@ -430,7 +430,7 @@ namespace EdiabasLibConfigTool
             return false;
         }
 
-        public static bool UpdateConfigFile(PatchType patchType, string configFile, string iniFile, int adapterType,
+        public static bool UpdateConfigFile(PatchType patchType, string configFile, string ediabasDir, string iniFile, int adapterType,
             BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
         {
             try
@@ -457,9 +457,9 @@ namespace EdiabasLibConfigTool
                     WlanConnectionAttributes conn = wlanIface.CurrentConnection;
                     string ssidString = Encoding.ASCII.GetString(conn.wlanAssociationAttributes.dot11Ssid.SSID).TrimEnd('\0');
                     if (string.Compare(ssidString, AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
-                        ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
-                        ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
-                        ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase))
+                        ssidString.StartsWith(AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
+                        ssidString.StartsWith(AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
+                        ssidString.StartsWith(AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase))
                     {
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
@@ -551,6 +551,34 @@ namespace EdiabasLibConfigTool
                 if (!icomConfigured)
                 {
                     UpdateConfigNode(settingsNode, @"EnetIcomAllocate");
+                }
+
+                if (!string.IsNullOrEmpty(ediabasDir) && Directory.Exists(ediabasDir))
+                {
+                    string ediabasBaseDir = Directory.GetParent(ediabasDir)?.FullName;
+                    bool updateNodes = false;
+                    if (!string.IsNullOrEmpty(ediabasBaseDir))
+                    {
+                        string securityPath = Path.Combine(ediabasBaseDir, "Security");
+                        string sslSecurityPath = Path.Combine(securityPath, "SSL_Truststore");
+                        string s29BasePath = Path.Combine(securityPath, "S29");
+                        if (Directory.Exists(sslSecurityPath) && Directory.Exists(s29BasePath))
+                        {
+                            updateNodes = true;
+                        }
+
+                        if (updateNodes)
+                        {
+                            string certPath = Path.Combine(s29BasePath, "Certificates");
+                            string jsonRequestsPath = Path.Combine(s29BasePath, "JSONRequests");
+                            string jsonResponsesPath = Path.Combine(s29BasePath, "JSONResponses");
+
+                            UpdateConfigNode(settingsNode, @"SslSecurityPath", sslSecurityPath);
+                            UpdateConfigNode(settingsNode, @"S29Path", certPath);
+                            UpdateConfigNode(settingsNode, @"JSONRequestPath", jsonRequestsPath);
+                            UpdateConfigNode(settingsNode, @"JSONResponsePath", jsonResponsesPath);
+                        }
+                    }
                 }
 
                 xDocument.Save(configFile);
@@ -875,14 +903,14 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
-                string s29Path = Path.Combine(ediabasBaseDir, "Security", "S29");
-                if (!Directory.Exists(s29Path))
+                string s29BasePath = Path.Combine(ediabasBaseDir, "Security", "S29");
+                if (!Directory.Exists(s29BasePath))
                 {
                     return false;
                 }
 
                 bool result = true;
-                string certPath = Path.Combine(s29Path, "Certificates");
+                string certPath = Path.Combine(s29BasePath, "Certificates");
                 if (Directory.Exists(certPath))
                 {
                     string machineName = Environment.MachineName;
@@ -940,7 +968,7 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                string jsonRequestPath = Path.Combine(s29Path, "JSONRequests");
+                string jsonRequestPath = Path.Combine(s29BasePath, "JSONRequests");
                 if (Directory.Exists(jsonRequestPath))
                 {
                     IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonRequestPath, "*.json", SearchOption.AllDirectories);
@@ -963,7 +991,7 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                string jsonResponsePath = Path.Combine(s29Path, "JSONResponses");
+                string jsonResponsePath = Path.Combine(s29BasePath, "JSONResponses");
                 if (Directory.Exists(jsonResponsePath))
                 {
                     IEnumerable<string> jsonFiles = Directory.EnumerateFiles(jsonResponsePath, "*.json", SearchOption.AllDirectories);
@@ -1274,7 +1302,7 @@ namespace EdiabasLibConfigTool
                 }
 
                 string configFile = Path.Combine(dirName, ConfigFileName);
-                if (!UpdateConfigFile(patchType, configFile, null, adapterType, devInfo, wlanIface, enetConnection, usbInfo, pin))
+                if (!UpdateConfigFile(patchType, configFile, ediabasDir, null, adapterType, devInfo, wlanIface, enetConnection, usbInfo, pin))
                 {
                     sr.Append("\r\n");
                     sr.Append(Resources.Strings.PatchConfigUpdateFailed);
