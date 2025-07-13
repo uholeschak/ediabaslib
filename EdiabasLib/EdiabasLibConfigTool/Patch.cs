@@ -448,6 +448,19 @@ namespace EdiabasLibConfigTool
                     interfaceValue = @"EDIC";
                 }
 
+                string enetVehicleProtocol = string.Empty;
+                switch (patchType)
+                {
+                    case PatchType.Istad:
+                    case PatchType.IstadExt:
+                        enetVehicleProtocol = EdInterfaceEnet.ProtocolHsfz + "," + EdInterfaceEnet.ProtocolDoIp;
+                        break;
+
+                    default:
+                        enetVehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
+                        break;
+                }
+
                 bool keepConnectionConfigured = false;
                 bool icomConfigured = false;
                 bool portsConfigured = false;
@@ -462,7 +475,7 @@ namespace EdiabasLibConfigTool
                         ssidString.StartsWith(AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase))
                     {
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
-                        UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", EdInterfaceEnet.ProtocolHsfz);
+                        UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", enetVehicleProtocol);
                         UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                         UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
                     }
@@ -499,10 +512,7 @@ namespace EdiabasLibConfigTool
                 else if (enetConnection != null)
                 {
                     UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
-
-                    string vehicleProtocol = enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.DirectDoIp ?
-                        EdInterfaceEnet.ProtocolDoIp : EdInterfaceEnet.ProtocolHsfz;
-                    UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", vehicleProtocol);
+                    UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", enetVehicleProtocol);
                     UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                     UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
 
