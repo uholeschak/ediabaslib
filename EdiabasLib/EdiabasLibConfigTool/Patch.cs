@@ -449,13 +449,12 @@ namespace EdiabasLibConfigTool
                 }
 
                 bool istadMode;
-                string enetVehicleProtocol;
+                string enetVehicleProtocol = null;
                 switch (patchType)
                 {
                     case PatchType.Istad:
                     case PatchType.IstadExt:
                         istadMode = true;
-                        enetVehicleProtocol = EdInterfaceEnet.ProtocolHsfz + "," + EdInterfaceEnet.ProtocolDoIp;
                         break;
 
                     default:
@@ -904,13 +903,13 @@ namespace EdiabasLibConfigTool
                 string ediabasBaseDir = Directory.GetParent(ediabasDir)?.FullName;
                 if (string.IsNullOrEmpty(ediabasBaseDir))
                 {
-                    return false;
+                    return true;
                 }
 
                 string s29BasePath = Path.Combine(ediabasBaseDir, "Security", "S29");
                 if (!Directory.Exists(s29BasePath))
                 {
-                    return false;
+                    return true;
                 }
 
                 bool result = true;
@@ -1397,7 +1396,10 @@ namespace EdiabasLibConfigTool
 
             if (!string.IsNullOrEmpty(ediabasDir))
             {
-                DeleteEdiabasMachineCerts(ediabasDir);
+                if (!DeleteEdiabasMachineCerts(ediabasDir))
+                {
+                    result = false;
+                }
             }
 
             return result;
