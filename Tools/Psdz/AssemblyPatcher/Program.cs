@@ -648,14 +648,13 @@ namespace AssemblyPatcher
                                 Target target = new Target
                                 {
                                     Namespace = "BMW.ISPI.IstaServices.Client",
-                                    Class = "IstaServiceClient",
-                                    NestedClass = "TServiceContract",
+                                    Class = "IstaServiceClient`1",
                                     Method = "IsAvailable",
                                 };
                                 IList<Instruction> instructions = patcher.GetInstructionList(target);
                                 if (instructions != null)
                                 {
-                                    Console.WriteLine("IstaServiceClient<TServiceContract>.IsAvailable found");
+                                    Console.WriteLine("IstaServiceClient.IsAvailable found");
                                     instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
                                     instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                     patched = true;
