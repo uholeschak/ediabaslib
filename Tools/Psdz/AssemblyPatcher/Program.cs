@@ -658,7 +658,7 @@ namespace AssemblyPatcher
                                     instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
                                     instructions.Insert(1, Instruction.Create(OpCodes.Ret));
                                     patched = true;
-                                    Console.WriteLine("IsAvailable disabled");
+                                    Console.WriteLine("IstaServiceClient.IsAvailable disabled");
                                 }
                             }
                             catch (Exception)
