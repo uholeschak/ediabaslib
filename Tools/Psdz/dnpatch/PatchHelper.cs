@@ -134,7 +134,7 @@ namespace dnpatch
                 classPath = classPath.Remove(0, 1);
             foreach (var module in Module.Assembly.Modules)
             {
-                foreach (var type in Module.Types)
+                foreach (var type in module.Types)
                 {
                     if (type.FullName == classPath)
                     {
