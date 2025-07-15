@@ -1,13 +1,13 @@
-﻿using System;
+﻿using CommandLine;
+using dnlib.DotNet.Emit;
+using dnpatch;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using CommandLine;
-using dnlib.DotNet.Emit;
-using dnpatch;
 
 // switch to artifacs directory layout:
 // create dotnet new buildprops --use-artifacts
@@ -542,6 +542,63 @@ namespace AssemblyPatcher
                                 else
                                 {
                                     Console.WriteLine("UseTheDoipPort appears to have already been patched or is not existing");
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.Programming.Common",
+                                Class = "VoltageUtils",
+                                Method = "CheckVoltageForEthernetConnection",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                // Hard coded "BMW.Rheingold.ISTAGUI.enableENETprogramming", not option required
+                                Console.WriteLine("VoltageUtils.CheckVoltageForEthernetConnection found");
+                                int patchIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldloc_0
+                                        && index + 3 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Ldc_R8 && instructions[index + 1].Operand is double value && value == 0)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 2].OpCode != OpCodes.Bgt_Un_S)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldarg_1)
+                                        {
+                                            continue;
+                                        }
+
+                                        Console.WriteLine("handleAbnormalValue found at index: {0}", index);
+                                        patchIndex = index + 3;
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    instructions.Insert(patchIndex, new Instruction(OpCodes.Ret));
+
+                                    Console.WriteLine("VoltageUtils CheckVoltageForEthernetConnection patched");
+                                    patched = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("CheckVoltageForEthernetConnection appears to have already been patched or is not existing");
                                 }
                             }
                         }
