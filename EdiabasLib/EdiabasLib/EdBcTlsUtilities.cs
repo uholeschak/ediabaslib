@@ -898,13 +898,13 @@ namespace EdiabasLib
             }
         }
 
-        public static bool IsCaCertPresent(X509Certificate cert, string caFolder)
+        public static string GetCaCertFileName(X509Certificate cert, string caFolder)
         {
             try
             {
                 if (cert == null || string.IsNullOrEmpty(caFolder) || !Directory.Exists(caFolder))
                 {
-                    return false;
+                    return null;
                 }
 
                 byte[] certBytes = cert.GetEncoded();
@@ -918,7 +918,7 @@ namespace EdiabasLib
                         {
                             if (Arrays.AreEqual(certBytes, certStruct.GetEncoded()))
                             {
-                                return true;
+                                return certFile;
                             }
                         }
                     }
@@ -928,11 +928,11 @@ namespace EdiabasLib
                     }
                 }
 
-                return false;
+                return string.Empty;
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
         }
 

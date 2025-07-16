@@ -585,6 +585,34 @@ namespace S29CertGenerator
             }
         }
 
+        private bool InstallTrustesCaCert(string trustStoreFolder)
+        {
+            try
+            {
+                if (_caPublicCertificates == null || _caPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("CA public certificate is not loaded", true);
+                    return false;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate caCert = _caPublicCertificates[0].Certificate;
+                string caFileName = EdBcTlsUtilities.GetCaCertFileName(caCert, trustStoreFolder);
+                if (caFileName == null)
+                {
+                    UpdateStatusText("Trusted folder reading failed", true);
+                    return false;
+                }
+
+                UpdateStatusText("Trusted CA certificate is already installed", true);
+                return true;
+            }
+            catch (Exception e)
+            {
+                UpdateStatusText($"Install CA certificate exception: {e.Message}", true);
+                return false;
+            }
+        }
+
         private Org.BouncyCastle.X509.X509Certificate LoadIstaSubCaCert(bool forceUpdate)
         {
             try
@@ -940,7 +968,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ConvertAllJsonRequestFiles(string caCertsFile, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, bool forceUpdate = false)
+        protected bool ConvertAllJsonRequestFiles(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, bool forceUpdate = false)
         {
             try
             {
@@ -958,6 +986,15 @@ namespace S29CertGenerator
                     if (!InstallCaCert(caCertsFile))
                     {
                         UpdateStatusText("Installing CA certificate failed", true);
+                        return false;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(trustStoreFolder))
+                {
+                    if (!InstallTrustesCaCert(trustStoreFolder))
+                    {
+                        UpdateStatusText("Installing trusted CA certificate failed", true);
                         return false;
                     }
                 }
@@ -1176,7 +1213,7 @@ namespace S29CertGenerator
 
         private void buttonExecute_Click(object sender, EventArgs e)
         {
-            ConvertAllJsonRequestFiles(textBoxCaCertsFile.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
+            ConvertAllJsonRequestFiles(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
         }
     }
 }
