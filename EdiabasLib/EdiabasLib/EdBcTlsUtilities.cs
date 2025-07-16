@@ -906,7 +906,16 @@ namespace EdiabasLib
                     jksStore.Load(stream, password.ToCharArray());
                 }
 
+                if (cert == null)
+                {
+                    return string.Empty;
+                }
+
                 string alias = jksStore.GetCertificateAlias(cert);
+                if (alias == null)
+                {
+                    return string.Empty;
+                }
                 return alias;
             }
             catch (Exception)
