@@ -60,6 +60,14 @@ namespace S29CertGenerator
                 }
             }
 
+            if (!LoadCaCerts(textBoxCaCertsFile.Text))
+            {
+                if (!string.IsNullOrEmpty(_ediabasPath))
+                {
+                    SetCaCertsFile(_ediabasPath);
+                }
+            }
+
             UpdateStatusText(string.Empty);
         }
 
@@ -126,9 +134,10 @@ namespace S29CertGenerator
             {
                 bool caKeyValid = LoadCaKey(textBoxCaCeyFile.Text);
                 bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
+                bool cacertsValid = LoadCaCerts(textBoxCaCertsFile.Text);
                 bool isValid = IsSettingValid();
 
-                if (caKeyValid && istaKeyValid && isValid)
+                if (caKeyValid && istaKeyValid && cacertsValid && isValid)
                 {
                     buttonExecute.Enabled = true;
                     buttonExecute.Focus();
@@ -381,7 +390,29 @@ namespace S29CertGenerator
             }
 
             textBoxIstaKeyFile.Text = istaKeyFile;
+            return true;
+        }
 
+        private bool SetCaCertsFile(string ediabasPath)
+        {
+            if (string.IsNullOrEmpty(ediabasPath) || !Directory.Exists(ediabasPath))
+            {
+                return false;
+            }
+
+            string istaFolder = Directory.GetParent(ediabasPath)?.FullName;
+            if (string.IsNullOrEmpty(istaFolder))
+            {
+                return false;
+            }
+
+            string caCertsFile = Path.Combine(istaFolder, "PSdZ", "Security", "cacerts");
+            if (!File.Exists(caCertsFile))
+            {
+                caCertsFile = string.Empty;
+            }
+
+            textBoxCaCertsFile.Text = caCertsFile;
             return true;
         }
 
@@ -460,6 +491,30 @@ namespace S29CertGenerator
                 return false;
             }
         }
+
+        private bool LoadCaCerts(string caCertsFile)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(caCertsFile) || !File.Exists(caCertsFile))
+                {
+                    return false;
+                }
+
+                string certAlias = EdBcTlsUtilities.JksStoreGetCertAlias(null, caCertsFile);
+                if (certAlias == null)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
 
         private Org.BouncyCastle.X509.X509Certificate LoadIstaSubCaCert(bool forceUpdate)
         {

@@ -47,6 +47,8 @@
             textBoxIstaKeyFile = new System.Windows.Forms.TextBox();
             openIstaKeyFileDialog = new System.Windows.Forms.OpenFileDialog();
             checkBoxForceCreate = new System.Windows.Forms.CheckBox();
+            textBoxCaCertsFile = new System.Windows.Forms.TextBox();
+            buttonSelectCaCertsFile = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -82,20 +84,20 @@
             // buttonClose
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.Location = new System.Drawing.Point(610, 374);
+            buttonClose.Location = new System.Drawing.Point(610, 422);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
-            buttonClose.TabIndex = 15;
+            buttonClose.TabIndex = 17;
             buttonClose.Text = "Close";
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += buttonClose_Click;
             // 
             // buttonSelectJsonRequestFolder
             // 
-            buttonSelectJsonRequestFolder.Location = new System.Drawing.Point(12, 99);
+            buttonSelectJsonRequestFolder.Location = new System.Drawing.Point(12, 128);
             buttonSelectJsonRequestFolder.Name = "buttonSelectJsonRequestFolder";
             buttonSelectJsonRequestFolder.Size = new System.Drawing.Size(179, 23);
-            buttonSelectJsonRequestFolder.TabIndex = 6;
+            buttonSelectJsonRequestFolder.TabIndex = 8;
             buttonSelectJsonRequestFolder.Text = "Select JSON Request Dir";
             buttonSelectJsonRequestFolder.UseVisualStyleBackColor = true;
             buttonSelectJsonRequestFolder.Click += buttonSelectJsonRequestFolder_Click;
@@ -103,18 +105,18 @@
             // textBoxJsonRequestFolder
             // 
             textBoxJsonRequestFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxJsonRequestFolder.Location = new System.Drawing.Point(197, 99);
+            textBoxJsonRequestFolder.Location = new System.Drawing.Point(197, 128);
             textBoxJsonRequestFolder.Name = "textBoxJsonRequestFolder";
             textBoxJsonRequestFolder.ReadOnly = true;
             textBoxJsonRequestFolder.Size = new System.Drawing.Size(488, 23);
-            textBoxJsonRequestFolder.TabIndex = 7;
+            textBoxJsonRequestFolder.TabIndex = 9;
             // 
             // buttonSelectCertOutputFolder
             // 
-            buttonSelectCertOutputFolder.Location = new System.Drawing.Point(12, 157);
+            buttonSelectCertOutputFolder.Location = new System.Drawing.Point(12, 186);
             buttonSelectCertOutputFolder.Name = "buttonSelectCertOutputFolder";
             buttonSelectCertOutputFolder.Size = new System.Drawing.Size(179, 23);
-            buttonSelectCertOutputFolder.TabIndex = 10;
+            buttonSelectCertOutputFolder.TabIndex = 12;
             buttonSelectCertOutputFolder.Text = "Select Cert Output Dir";
             buttonSelectCertOutputFolder.UseVisualStyleBackColor = true;
             buttonSelectCertOutputFolder.Click += buttonSelectCertOutputFolder_Click;
@@ -122,19 +124,19 @@
             // textBoxCertOutputFolder
             // 
             textBoxCertOutputFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxCertOutputFolder.Location = new System.Drawing.Point(197, 157);
+            textBoxCertOutputFolder.Location = new System.Drawing.Point(197, 186);
             textBoxCertOutputFolder.Name = "textBoxCertOutputFolder";
             textBoxCertOutputFolder.ReadOnly = true;
             textBoxCertOutputFolder.Size = new System.Drawing.Size(488, 23);
-            textBoxCertOutputFolder.TabIndex = 11;
+            textBoxCertOutputFolder.TabIndex = 13;
             // 
             // buttonExecute
             // 
             buttonExecute.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonExecute.Location = new System.Drawing.Point(529, 374);
+            buttonExecute.Location = new System.Drawing.Point(529, 422);
             buttonExecute.Name = "buttonExecute";
             buttonExecute.Size = new System.Drawing.Size(75, 23);
-            buttonExecute.TabIndex = 14;
+            buttonExecute.TabIndex = 16;
             buttonExecute.Text = "Execute";
             buttonExecute.UseVisualStyleBackColor = true;
             buttonExecute.Click += buttonExecute_Click;
@@ -143,20 +145,20 @@
             // 
             richTextBoxStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            richTextBoxStatus.Location = new System.Drawing.Point(12, 186);
+            richTextBoxStatus.Location = new System.Drawing.Point(12, 215);
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            richTextBoxStatus.Size = new System.Drawing.Size(673, 182);
-            richTextBoxStatus.TabIndex = 12;
+            richTextBoxStatus.Size = new System.Drawing.Size(673, 201);
+            richTextBoxStatus.TabIndex = 14;
             richTextBoxStatus.Text = "";
             // 
             // buttonSelectJsonResponseFolder
             // 
-            buttonSelectJsonResponseFolder.Location = new System.Drawing.Point(12, 128);
+            buttonSelectJsonResponseFolder.Location = new System.Drawing.Point(12, 157);
             buttonSelectJsonResponseFolder.Name = "buttonSelectJsonResponseFolder";
             buttonSelectJsonResponseFolder.Size = new System.Drawing.Size(179, 23);
-            buttonSelectJsonResponseFolder.TabIndex = 8;
+            buttonSelectJsonResponseFolder.TabIndex = 10;
             buttonSelectJsonResponseFolder.Text = "Select JSON Response Dir";
             buttonSelectJsonResponseFolder.UseVisualStyleBackColor = true;
             buttonSelectJsonResponseFolder.Click += buttonSelectJsonResponseFolder_Click;
@@ -164,18 +166,18 @@
             // textBoxJsonResponseFolder
             // 
             textBoxJsonResponseFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxJsonResponseFolder.Location = new System.Drawing.Point(197, 128);
+            textBoxJsonResponseFolder.Location = new System.Drawing.Point(197, 157);
             textBoxJsonResponseFolder.Name = "textBoxJsonResponseFolder";
             textBoxJsonResponseFolder.ReadOnly = true;
             textBoxJsonResponseFolder.Size = new System.Drawing.Size(488, 23);
-            textBoxJsonResponseFolder.TabIndex = 9;
+            textBoxJsonResponseFolder.TabIndex = 11;
             // 
             // buttonSelectS29Folder
             // 
-            buttonSelectS29Folder.Location = new System.Drawing.Point(12, 70);
+            buttonSelectS29Folder.Location = new System.Drawing.Point(12, 99);
             buttonSelectS29Folder.Name = "buttonSelectS29Folder";
             buttonSelectS29Folder.Size = new System.Drawing.Size(179, 23);
-            buttonSelectS29Folder.TabIndex = 4;
+            buttonSelectS29Folder.TabIndex = 6;
             buttonSelectS29Folder.Text = "Select S29 Dir";
             buttonSelectS29Folder.UseVisualStyleBackColor = true;
             buttonSelectS29Folder.Click += buttonSelectS29Folder_Click;
@@ -183,11 +185,11 @@
             // textBoxS29Folder
             // 
             textBoxS29Folder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxS29Folder.Location = new System.Drawing.Point(197, 70);
+            textBoxS29Folder.Location = new System.Drawing.Point(197, 99);
             textBoxS29Folder.Name = "textBoxS29Folder";
             textBoxS29Folder.ReadOnly = true;
             textBoxS29Folder.Size = new System.Drawing.Size(488, 23);
-            textBoxS29Folder.TabIndex = 5;
+            textBoxS29Folder.TabIndex = 7;
             // 
             // buttonSelectIstaKeyFile
             // 
@@ -216,13 +218,32 @@
             // 
             // checkBoxForceCreate
             // 
+            checkBoxForceCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             checkBoxForceCreate.AutoSize = true;
-            checkBoxForceCreate.Location = new System.Drawing.Point(12, 374);
+            checkBoxForceCreate.Location = new System.Drawing.Point(12, 426);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
             checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
-            checkBoxForceCreate.TabIndex = 13;
+            checkBoxForceCreate.TabIndex = 15;
             checkBoxForceCreate.Text = "Force create cert";
             checkBoxForceCreate.UseVisualStyleBackColor = true;
+            // 
+            // textBoxCaCertsFile
+            // 
+            textBoxCaCertsFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxCaCertsFile.Location = new System.Drawing.Point(197, 70);
+            textBoxCaCertsFile.Name = "textBoxCaCertsFile";
+            textBoxCaCertsFile.ReadOnly = true;
+            textBoxCaCertsFile.Size = new System.Drawing.Size(488, 23);
+            textBoxCaCertsFile.TabIndex = 5;
+            // 
+            // buttonSelectCaCertsFile
+            // 
+            buttonSelectCaCertsFile.Location = new System.Drawing.Point(12, 70);
+            buttonSelectCaCertsFile.Name = "buttonSelectCaCertsFile";
+            buttonSelectCaCertsFile.Size = new System.Drawing.Size(179, 23);
+            buttonSelectCaCertsFile.TabIndex = 4;
+            buttonSelectCaCertsFile.Text = "Select CaCerts file";
+            buttonSelectCaCertsFile.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -230,7 +251,9 @@
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(697, 409);
+            ClientSize = new System.Drawing.Size(697, 457);
+            Controls.Add(buttonSelectCaCertsFile);
+            Controls.Add(textBoxCaCertsFile);
             Controls.Add(checkBoxForceCreate);
             Controls.Add(textBoxIstaKeyFile);
             Controls.Add(buttonSelectIstaKeyFile);
@@ -281,5 +304,7 @@
         private System.Windows.Forms.TextBox textBoxIstaKeyFile;
         private System.Windows.Forms.OpenFileDialog openIstaKeyFileDialog;
         private System.Windows.Forms.CheckBox checkBoxForceCreate;
+        private System.Windows.Forms.TextBox textBoxCaCertsFile;
+        private System.Windows.Forms.Button buttonSelectCaCertsFile;
     }
 }
