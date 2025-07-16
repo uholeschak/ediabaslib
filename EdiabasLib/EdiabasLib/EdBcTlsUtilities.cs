@@ -898,6 +898,44 @@ namespace EdiabasLib
             }
         }
 
+        public static string GetCaCertFileName(X509Certificate cert, string caFolder)
+        {
+            try
+            {
+                if (cert == null || string.IsNullOrEmpty(caFolder) || !Directory.Exists(caFolder))
+                {
+                    return null;
+                }
+
+                byte[] certBytes = cert.GetEncoded();
+                IEnumerable<string> certFiles = Directory.EnumerateFiles(caFolder, "*.*", SearchOption.AllDirectories);
+                foreach (string certFile in certFiles)
+                {
+                    try
+                    {
+                        X509CertificateStructure certStruct = LoadBcCertificateResource(certFile);
+                        if (certStruct != null)
+                        {
+                            if (Arrays.AreEqual(certBytes, certStruct.GetEncoded()))
+                            {
+                                return certFile;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                return string.Empty;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static string JksStoreGetCertAlias(X509Certificate cert, string fileName, string password = "changeit")
         {
             try
