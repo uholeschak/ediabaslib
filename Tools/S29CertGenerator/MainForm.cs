@@ -533,6 +533,16 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                if (string.IsNullOrEmpty(certAlias))
+                {
+                    string bakFile = caCertsFile + ".bak";
+                    if (File.Exists(caCertsFile))
+                    {
+                        File.Copy(caCertsFile, bakFile, true);
+                        UpdateStatusText("CACerts backup created", true);
+                    }
+                }
+
                 UpdateStatusText("CA public certificate is already installed", true);
                 return true;
             }

@@ -4,10 +4,8 @@ using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Pkix;
@@ -23,7 +21,6 @@ using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace EdiabasLib
@@ -921,6 +918,37 @@ namespace EdiabasLib
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public static bool JksStoreInstallCert(X509Certificate cert, string fileName, string password = "changeit")
+        {
+            try
+            {
+                JksStore jksStore = new JksStore();
+                using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    jksStore.Load(stream, password.ToCharArray());
+                }
+
+                string alias = cert.SubjectDN?.ToString();
+                if (string.IsNullOrEmpty(alias))
+                {
+                    return false;
+                }
+
+                alias = alias.Replace(" ", "_");
+                jksStore.SetCertificateEntry(alias, cert);
+
+                using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite))
+                {
+                    jksStore.Save(stream, password.ToCharArray());
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
     }
