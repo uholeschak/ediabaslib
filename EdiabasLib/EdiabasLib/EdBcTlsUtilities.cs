@@ -949,6 +949,7 @@ namespace EdiabasLib
                 }
 
                 alias = alias.Replace(" ", "_");
+                fingerprint = fingerprint.Replace(":", "");
                 alias += "_" + fingerprint;
                 jksStore.SetCertificateEntry(alias, cert);
 
