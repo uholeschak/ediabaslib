@@ -611,13 +611,30 @@ namespace S29CertGenerator
                 }
 
                 string fileNameHash = Path.GetFileNameWithoutExtension(caFileName);
-                if (string.Compare(fileNameHash, subjectHash, StringComparison.Ordinal) != 0)
+                if (string.IsNullOrEmpty(fileNameHash))
                 {
-                    UpdateStatusText($"Trusted CA certificate file name hash mismatch: {fileNameHash} != {subjectHash}", true);
-                    return false;
+                    string newCaFile = EdBcTlsUtilities.StoreCaCert(caCert, trustStoreFolder);
+                    if (string.IsNullOrEmpty(newCaFile))
+                    {
+                        UpdateStatusText("Trusted CA certificate installation failed", true);
+                        return false;
+                    }
+
+                    string newCaFileName = Path.GetFileName(newCaFile);
+                    UpdateStatusText($"Trusted CA certificate installed: {newCaFileName}", true);
+                }
+                else
+                {
+                    if (string.Compare(fileNameHash, subjectHash, StringComparison.Ordinal) != 0)
+                    {
+                        UpdateStatusText($"Trusted CA certificate file name hash mismatch: {fileNameHash} != {subjectHash}", true);
+                        return false;
+                    }
+
+                    string currentCaFileName = Path.GetFileName(caFileName);
+                    UpdateStatusText($"Trusted CA certificate is already installed: {currentCaFileName}", true);
                 }
 
-                UpdateStatusText("Trusted CA certificate is already installed", true);
                 return true;
             }
             catch (Exception e)
