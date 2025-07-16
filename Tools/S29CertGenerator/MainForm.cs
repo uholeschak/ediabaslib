@@ -596,10 +596,24 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate caCert = _caPublicCertificates[0].Certificate;
+                string subjectHash = EdBcTlsUtilities.CreateSubjectHash(caCert);
+                if (string.IsNullOrEmpty(subjectHash))
+                {
+                    UpdateStatusText("CA public certificate subject hash is empty", true);
+                    return false;
+                }
+
                 string caFileName = EdBcTlsUtilities.GetCaCertFileName(caCert, trustStoreFolder);
                 if (caFileName == null)
                 {
                     UpdateStatusText("Trusted folder reading failed", true);
+                    return false;
+                }
+
+                string fileNameHash = Path.GetFileNameWithoutExtension(caFileName);
+                if (string.Compare(fileNameHash, subjectHash, StringComparison.Ordinal) != 0)
+                {
+                    UpdateStatusText($"Trusted CA certificate file name hash mismatch: {fileNameHash} != {subjectHash}", true);
                     return false;
                 }
 

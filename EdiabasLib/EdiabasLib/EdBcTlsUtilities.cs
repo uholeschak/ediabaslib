@@ -898,6 +898,54 @@ namespace EdiabasLib
             }
         }
 
+        public static string CreateSubjectHash(X509Certificate cert)
+        {
+            try
+            {
+                if (cert == null)
+                {
+                    return null;
+                }
+
+                X509Name subjectDNCanonical = new X509Name(cert.SubjectDN.ToString().ToLower());
+                Asn1Sequence asn1Object = subjectDNCanonical.ToAsn1Object() as Asn1Sequence;
+                if (asn1Object == null)
+                {
+                    return null;
+                }
+
+                List<byte[]> terms = new List<byte[]>();
+                int finalLen = 0;
+                foreach (var asn1Obj in asn1Object.ToArray())
+                {
+                    byte[] term = asn1Obj.GetEncoded();
+                    term[9] = 0x0c; // change tag from 0x13 (printable string) to 0x0c
+                    terms.Add(term);
+                    finalLen += term.Length;
+                }
+
+                byte[] finalEncForw = new byte[finalLen];
+                int j = 0;
+                foreach (byte[] term in terms)
+                {
+                    foreach (byte b in term)
+                    {
+                        finalEncForw[j++] = b;
+                    }
+                }
+
+                System.Security.Cryptography.HashAlgorithm hash = System.Security.Cryptography.SHA1.Create();
+                byte[] hashBytes = hash.ComputeHash(finalEncForw);
+                ulong ret = (((ulong)hashBytes[0]) | ((ulong)hashBytes[1] << 8) | ((ulong)hashBytes[2] << 16) | ((ulong)hashBytes[3] << 24)) & 0xffffffff;
+                string hashString = ret.ToString("X2").PadLeft(8, '0').ToLower();
+                return hashString;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         public static string GetCaCertFileName(X509Certificate cert, string caFolder)
         {
             try
