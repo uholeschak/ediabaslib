@@ -94,5 +94,17 @@ namespace S29CertGenerator.Properties {
                 this["IstaKeyFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string TrustStoreFolder {
+            get {
+                return ((string)(this["TrustStoreFolder"]));
+            }
+            set {
+                this["TrustStoreFolder"] = value;
+            }
+        }
     }
 }

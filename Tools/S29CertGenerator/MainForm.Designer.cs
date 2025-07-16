@@ -49,6 +49,8 @@
             checkBoxForceCreate = new System.Windows.Forms.CheckBox();
             textBoxCaCertsFile = new System.Windows.Forms.TextBox();
             buttonSelectCaCertsFile = new System.Windows.Forms.Button();
+            textBoxTrustStoreFolder = new System.Windows.Forms.TextBox();
+            buttonSelectTrustStoreFolder = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -84,7 +86,7 @@
             // buttonClose
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.Location = new System.Drawing.Point(610, 422);
+            buttonClose.Location = new System.Drawing.Point(610, 455);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
             buttonClose.TabIndex = 17;
@@ -133,7 +135,7 @@
             // buttonExecute
             // 
             buttonExecute.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonExecute.Location = new System.Drawing.Point(529, 422);
+            buttonExecute.Location = new System.Drawing.Point(529, 455);
             buttonExecute.Name = "buttonExecute";
             buttonExecute.Size = new System.Drawing.Size(75, 23);
             buttonExecute.TabIndex = 16;
@@ -145,11 +147,11 @@
             // 
             richTextBoxStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            richTextBoxStatus.Location = new System.Drawing.Point(12, 215);
+            richTextBoxStatus.Location = new System.Drawing.Point(12, 244);
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            richTextBoxStatus.Size = new System.Drawing.Size(673, 201);
+            richTextBoxStatus.Size = new System.Drawing.Size(673, 205);
             richTextBoxStatus.TabIndex = 14;
             richTextBoxStatus.Text = "";
             // 
@@ -220,7 +222,7 @@
             // 
             checkBoxForceCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             checkBoxForceCreate.AutoSize = true;
-            checkBoxForceCreate.Location = new System.Drawing.Point(12, 426);
+            checkBoxForceCreate.Location = new System.Drawing.Point(12, 459);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
             checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
             checkBoxForceCreate.TabIndex = 15;
@@ -245,13 +247,34 @@
             buttonSelectCaCertsFile.Text = "Select CaCerts file";
             buttonSelectCaCertsFile.UseVisualStyleBackColor = true;
             // 
+            // textBoxTrustStoreFolder
+            // 
+            textBoxTrustStoreFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxTrustStoreFolder.Location = new System.Drawing.Point(197, 215);
+            textBoxTrustStoreFolder.Name = "textBoxTrustStoreFolder";
+            textBoxTrustStoreFolder.ReadOnly = true;
+            textBoxTrustStoreFolder.Size = new System.Drawing.Size(488, 23);
+            textBoxTrustStoreFolder.TabIndex = 18;
+            // 
+            // buttonSelectTrustStoreFolder
+            // 
+            buttonSelectTrustStoreFolder.Location = new System.Drawing.Point(12, 215);
+            buttonSelectTrustStoreFolder.Name = "buttonSelectTrustStoreFolder";
+            buttonSelectTrustStoreFolder.Size = new System.Drawing.Size(179, 23);
+            buttonSelectTrustStoreFolder.TabIndex = 19;
+            buttonSelectTrustStoreFolder.Text = "Select Truststore Dir";
+            buttonSelectTrustStoreFolder.UseVisualStyleBackColor = true;
+            buttonSelectTrustStoreFolder.Click += buttonSelectTrustStoreFolder_Click;
+            // 
             // MainForm
             // 
             AcceptButton = buttonExecute;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(697, 457);
+            ClientSize = new System.Drawing.Size(697, 490);
+            Controls.Add(buttonSelectTrustStoreFolder);
+            Controls.Add(textBoxTrustStoreFolder);
             Controls.Add(buttonSelectCaCertsFile);
             Controls.Add(textBoxCaCertsFile);
             Controls.Add(checkBoxForceCreate);
@@ -306,5 +329,7 @@
         private System.Windows.Forms.CheckBox checkBoxForceCreate;
         private System.Windows.Forms.TextBox textBoxCaCertsFile;
         private System.Windows.Forms.Button buttonSelectCaCertsFile;
+        private System.Windows.Forms.TextBox textBoxTrustStoreFolder;
+        private System.Windows.Forms.Button buttonSelectTrustStoreFolder;
     }
 }

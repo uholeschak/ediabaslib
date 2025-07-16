@@ -100,6 +100,7 @@ namespace S29CertGenerator
                 textBoxJsonRequestFolder.Text = Properties.Settings.Default.JsonRequestFolder;
                 textBoxJsonResponseFolder.Text = Properties.Settings.Default.JsonResponseFolder;
                 textBoxCertOutputFolder.Text = Properties.Settings.Default.CertOutputFolder;
+                textBoxTrustStoreFolder.Text = Properties.Settings.Default.TrustStoreFolder;
                 textBoxIstaKeyFile.Text = Properties.Settings.Default.IstaKeyFile;
                 return true;
             }
@@ -118,6 +119,7 @@ namespace S29CertGenerator
                 Properties.Settings.Default.JsonRequestFolder = textBoxJsonRequestFolder.Text;
                 Properties.Settings.Default.JsonResponseFolder = textBoxJsonResponseFolder.Text;
                 Properties.Settings.Default.CertOutputFolder = textBoxCertOutputFolder.Text;
+                Properties.Settings.Default.TrustStoreFolder = textBoxTrustStoreFolder.Text;
                 Properties.Settings.Default.IstaKeyFile = textBoxIstaKeyFile.Text;
                 Properties.Settings.Default.Save();
                 return true;
@@ -199,6 +201,7 @@ namespace S29CertGenerator
                 string jsonRequestFolder = textBoxJsonRequestFolder.Text.Trim();
                 string jsonResponseFolder = textBoxJsonResponseFolder.Text.Trim();
                 string certOutputFolder = textBoxCertOutputFolder.Text.Trim();
+                string trustStoreFolder = textBoxTrustStoreFolder.Text.Trim();
 
                 if (!ignoreKeyFiles)
                 {
@@ -229,6 +232,11 @@ namespace S29CertGenerator
                 }
 
                 if (string.IsNullOrEmpty(certOutputFolder) || !Directory.Exists(certOutputFolder))
+                {
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(trustStoreFolder) || !Directory.Exists(trustStoreFolder))
                 {
                     return false;
                 }
@@ -345,9 +353,16 @@ namespace S29CertGenerator
                 return false;
             }
 
+            string securityFolder = Directory.GetParent(s29Folder)?.FullName;
+            if (string.IsNullOrEmpty(securityFolder))
+            {
+                return false;
+            }
+
             string jsonRequestFolder = Path.Combine(s29Folder, "JSONRequests");
             string jsonResponseFolder = Path.Combine(s29Folder, "JSONResponses");
             string certOutputFolder = Path.Combine(s29Folder, "Certificates");
+            string trustStoreFolder = Path.Combine(securityFolder, "SSL_Truststore");
 
             if (!Directory.Exists(jsonRequestFolder))
             {
@@ -366,6 +381,12 @@ namespace S29CertGenerator
                 certOutputFolder = string.Empty;
             }
             textBoxCertOutputFolder.Text = certOutputFolder;
+
+            if (!Directory.Exists(trustStoreFolder))
+            {
+                trustStoreFolder = string.Empty;
+            }
+            textBoxTrustStoreFolder.Text = trustStoreFolder;
 
             return true;
         }
@@ -1125,6 +1146,30 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 textBoxCertOutputFolder.Text = folderBrowserDialog.SelectedPath;
+                UpdateDisplay();
+            }
+        }
+
+        private void buttonSelectTrustStoreFolder_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string trustStoreFolder = textBoxTrustStoreFolder.Text;
+
+            if (Directory.Exists(trustStoreFolder))
+            {
+                initDir = trustStoreFolder;
+            }
+            else
+            {
+                trustStoreFolder = string.Empty;
+            }
+
+            folderBrowserDialog.InitialDirectory = initDir;
+            folderBrowserDialog.SelectedPath = trustStoreFolder;
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxTrustStoreFolder.Text = folderBrowserDialog.SelectedPath;
                 UpdateDisplay();
             }
         }
