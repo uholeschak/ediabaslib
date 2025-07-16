@@ -895,5 +895,24 @@ namespace EdiabasLib
                 return false;
             }
         }
+
+        public static string JksStoreGetCertAlias(X509Certificate cert, string fileName, string password = "changeit")
+        {
+            try
+            {
+                JksStore jksStore = new JksStore();
+                using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    jksStore.Load(stream, password.ToCharArray());
+                }
+
+                string alias = jksStore.GetCertificateAlias(cert);
+                return alias;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }
