@@ -56,6 +56,11 @@ namespace EdiabasLib
 
         public static string Fingerprint(X509CertificateStructure c)
         {
+            if (c == null)
+            {
+                return string.Empty;
+            }
+
             byte[] der = c.GetEncoded();
             byte[] hash = Sha256DigestOf(der);
             byte[] hexBytes = Hex.Encode(hash);
@@ -937,7 +942,14 @@ namespace EdiabasLib
                     return false;
                 }
 
+                string fingerprint = Fingerprint(cert.CertificateStructure);
+                if (string.IsNullOrEmpty(fingerprint))
+                {
+                    return false;
+                }
+
                 alias = alias.Replace(" ", "_");
+                alias += "_" + fingerprint;
                 jksStore.SetCertificateEntry(alias, cert);
 
                 using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.ReadWrite))
