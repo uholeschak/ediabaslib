@@ -20,6 +20,7 @@ using Org.BouncyCastle.Utilities.IO.Pem;
 using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -977,6 +978,45 @@ namespace EdiabasLib
                 }
 
                 return string.Empty;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static string StoreCaCert(X509Certificate cert, string caFolder)
+        {
+            try
+            {
+                if (cert == null || string.IsNullOrEmpty(caFolder) || !Directory.Exists(caFolder))
+                {
+                    return null;
+                }
+
+                string subjectHash = CreateSubjectHash(cert);
+                string caFileName = null;
+                for (int i = 0; i < 100; i++)
+                {
+                    string fileName = Path.Combine(caFolder, subjectHash + "." + i.ToString(CultureInfo.InvariantCulture));
+                    if (!File.Exists(fileName))
+                    {
+                        caFileName = fileName;
+                        break;
+                    }
+                }
+
+                if (caFileName == null)
+                {
+                    return null;
+                }
+
+                using (Org.BouncyCastle.OpenSsl.PemWriter pemWriter = new Org.BouncyCastle.OpenSsl.PemWriter(new StreamWriter(caFileName)))
+                {
+                    pemWriter.WriteObject(cert);
+                }
+
+                return caFileName;
             }
             catch (Exception)
             {
