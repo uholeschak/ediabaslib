@@ -41,8 +41,8 @@
             richTextBoxStatus = new System.Windows.Forms.RichTextBox();
             buttonSelectJsonResponseFolder = new System.Windows.Forms.Button();
             textBoxJsonResponseFolder = new System.Windows.Forms.TextBox();
-            buttonSelectS29Folder = new System.Windows.Forms.Button();
-            textBoxS29Folder = new System.Windows.Forms.TextBox();
+            buttonSelectSecurityFolder = new System.Windows.Forms.Button();
+            textBoxSecurityFolder = new System.Windows.Forms.TextBox();
             buttonSelectIstaKeyFile = new System.Windows.Forms.Button();
             textBoxIstaKeyFile = new System.Windows.Forms.TextBox();
             openIstaKeyFileDialog = new System.Windows.Forms.OpenFileDialog();
@@ -175,24 +175,24 @@
             textBoxJsonResponseFolder.Size = new System.Drawing.Size(488, 23);
             textBoxJsonResponseFolder.TabIndex = 11;
             // 
-            // buttonSelectS29Folder
+            // buttonSelectSecurityFolder
             // 
-            buttonSelectS29Folder.Location = new System.Drawing.Point(12, 99);
-            buttonSelectS29Folder.Name = "buttonSelectS29Folder";
-            buttonSelectS29Folder.Size = new System.Drawing.Size(179, 23);
-            buttonSelectS29Folder.TabIndex = 6;
-            buttonSelectS29Folder.Text = "Select S29 Dir";
-            buttonSelectS29Folder.UseVisualStyleBackColor = true;
-            buttonSelectS29Folder.Click += buttonSelectS29Folder_Click;
+            buttonSelectSecurityFolder.Location = new System.Drawing.Point(12, 99);
+            buttonSelectSecurityFolder.Name = "buttonSelectSecurityFolder";
+            buttonSelectSecurityFolder.Size = new System.Drawing.Size(179, 23);
+            buttonSelectSecurityFolder.TabIndex = 6;
+            buttonSelectSecurityFolder.Text = "Select EDIABAS Sec Dir";
+            buttonSelectSecurityFolder.UseVisualStyleBackColor = true;
+            buttonSelectSecurityFolder.Click += buttonSelectSecurityFolder_Click;
             // 
-            // textBoxS29Folder
+            // textBoxSecurityFolder
             // 
-            textBoxS29Folder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxS29Folder.Location = new System.Drawing.Point(197, 99);
-            textBoxS29Folder.Name = "textBoxS29Folder";
-            textBoxS29Folder.ReadOnly = true;
-            textBoxS29Folder.Size = new System.Drawing.Size(488, 23);
-            textBoxS29Folder.TabIndex = 7;
+            textBoxSecurityFolder.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxSecurityFolder.Location = new System.Drawing.Point(197, 99);
+            textBoxSecurityFolder.Name = "textBoxSecurityFolder";
+            textBoxSecurityFolder.ReadOnly = true;
+            textBoxSecurityFolder.Size = new System.Drawing.Size(488, 23);
+            textBoxSecurityFolder.TabIndex = 7;
             // 
             // buttonSelectIstaKeyFile
             // 
@@ -245,7 +245,7 @@
             buttonSelectCaCertsFile.Name = "buttonSelectCaCertsFile";
             buttonSelectCaCertsFile.Size = new System.Drawing.Size(179, 23);
             buttonSelectCaCertsFile.TabIndex = 4;
-            buttonSelectCaCertsFile.Text = "Select CaCerts file";
+            buttonSelectCaCertsFile.Text = "Select PSdZ CaCerts file";
             buttonSelectCaCertsFile.UseVisualStyleBackColor = true;
             // 
             // textBoxTrustStoreFolder
@@ -293,8 +293,8 @@
             Controls.Add(checkBoxForceCreate);
             Controls.Add(textBoxIstaKeyFile);
             Controls.Add(buttonSelectIstaKeyFile);
-            Controls.Add(textBoxS29Folder);
-            Controls.Add(buttonSelectS29Folder);
+            Controls.Add(textBoxSecurityFolder);
+            Controls.Add(buttonSelectSecurityFolder);
             Controls.Add(textBoxJsonResponseFolder);
             Controls.Add(buttonSelectJsonResponseFolder);
             Controls.Add(richTextBoxStatus);
@@ -334,8 +334,8 @@
         private System.Windows.Forms.RichTextBox richTextBoxStatus;
         private System.Windows.Forms.Button buttonSelectJsonResponseFolder;
         private System.Windows.Forms.TextBox textBoxJsonResponseFolder;
-        private System.Windows.Forms.Button buttonSelectS29Folder;
-        private System.Windows.Forms.TextBox textBoxS29Folder;
+        private System.Windows.Forms.Button buttonSelectSecurityFolder;
+        private System.Windows.Forms.TextBox textBoxSecurityFolder;
         private System.Windows.Forms.Button buttonSelectIstaKeyFile;
         private System.Windows.Forms.TextBox textBoxIstaKeyFile;
         private System.Windows.Forms.OpenFileDialog openIstaKeyFileDialog;

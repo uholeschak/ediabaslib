@@ -48,8 +48,8 @@ namespace S29CertGenerator
             {
                 if (!string.IsNullOrEmpty(_ediabasPath))
                 {
-                    textBoxS29Folder.Text = Path.Combine(_ediabasPath, EdiabasSecurityDirName, EdiabasS29DirName);
-                    SyncFolders(textBoxS29Folder.Text);
+                    textBoxSecurityFolder.Text = Path.Combine(_ediabasPath, EdiabasSecurityDirName);
+                    SyncFolders(textBoxSecurityFolder.Text);
                 }
             }
 
@@ -97,7 +97,7 @@ namespace S29CertGenerator
             try
             {
                 textBoxCaCeyFile.Text = Properties.Settings.Default.CaKeyFile;
-                textBoxS29Folder.Text = Properties.Settings.Default.S29Folder;
+                textBoxSecurityFolder.Text = Properties.Settings.Default.SecurityFolder;
                 textBoxJsonRequestFolder.Text = Properties.Settings.Default.JsonRequestFolder;
                 textBoxJsonResponseFolder.Text = Properties.Settings.Default.JsonResponseFolder;
                 textBoxCertOutputFolder.Text = Properties.Settings.Default.CertOutputFolder;
@@ -116,7 +116,7 @@ namespace S29CertGenerator
             try
             {
                 Properties.Settings.Default.CaKeyFile = textBoxCaCeyFile.Text;
-                Properties.Settings.Default.S29Folder = textBoxS29Folder.Text;
+                Properties.Settings.Default.SecurityFolder = textBoxSecurityFolder.Text;
                 Properties.Settings.Default.JsonRequestFolder = textBoxJsonRequestFolder.Text;
                 Properties.Settings.Default.JsonResponseFolder = textBoxJsonResponseFolder.Text;
                 Properties.Settings.Default.CertOutputFolder = textBoxCertOutputFolder.Text;
@@ -201,7 +201,7 @@ namespace S29CertGenerator
             {
                 string caKeyFile = textBoxCaCeyFile.Text.Trim();
                 string istaKeyFile = textBoxIstaKeyFile.Text.Trim();
-                string s29Folder = textBoxS29Folder.Text.Trim();
+                string s29Folder = textBoxSecurityFolder.Text.Trim();
                 string jsonRequestFolder = textBoxJsonRequestFolder.Text.Trim();
                 string jsonResponseFolder = textBoxJsonResponseFolder.Text.Trim();
                 string certOutputFolder = textBoxCertOutputFolder.Text.Trim();
@@ -350,19 +350,14 @@ namespace S29CertGenerator
             return true;
         }
 
-        private bool SyncFolders(string s29Folder)
+        private bool SyncFolders(string securityFolder)
         {
-            if (string.IsNullOrEmpty(s29Folder) || !Directory.Exists(s29Folder))
+            if (string.IsNullOrEmpty(securityFolder) || !Directory.Exists(securityFolder))
             {
                 return false;
             }
 
-            string securityFolder = Directory.GetParent(s29Folder)?.FullName;
-            if (string.IsNullOrEmpty(securityFolder))
-            {
-                return false;
-            }
-
+            string s29Folder = Path.Combine(securityFolder, EdiabasS29DirName);
             string jsonRequestFolder = Path.Combine(s29Folder, "JSONRequests");
             string jsonResponseFolder = Path.Combine(s29Folder, "JSONResponses");
             string certOutputFolder = Path.Combine(s29Folder, "Certificates");
@@ -1289,10 +1284,10 @@ namespace S29CertGenerator
             }
         }
 
-        private void buttonSelectS29Folder_Click(object sender, EventArgs e)
+        private void buttonSelectSecurityFolder_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
-            string requestFolder = textBoxS29Folder.Text;
+            string requestFolder = textBoxSecurityFolder.Text;
 
             if (Directory.Exists(requestFolder))
             {
@@ -1308,8 +1303,8 @@ namespace S29CertGenerator
             DialogResult result = folderBrowserDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                textBoxS29Folder.Text = folderBrowserDialog.SelectedPath;
-                SyncFolders(textBoxS29Folder.Text);
+                textBoxSecurityFolder.Text = folderBrowserDialog.SelectedPath;
+                SyncFolders(textBoxSecurityFolder.Text);
                 UpdateDisplay();
             }
         }

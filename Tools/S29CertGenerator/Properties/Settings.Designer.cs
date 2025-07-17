@@ -74,12 +74,12 @@ namespace S29CertGenerator.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string S29Folder {
+        public string SecurityFolder {
             get {
-                return ((string)(this["S29Folder"]));
+                return ((string)(this["SecurityFolder"]));
             }
             set {
-                this["S29Folder"] = value;
+                this["SecurityFolder"] = value;
             }
         }
         
