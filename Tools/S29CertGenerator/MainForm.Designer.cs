@@ -37,7 +37,7 @@
             textBoxJsonRequestFolder = new System.Windows.Forms.TextBox();
             buttonSelectCertOutputFolder = new System.Windows.Forms.Button();
             textBoxCertOutputFolder = new System.Windows.Forms.TextBox();
-            buttonExecute = new System.Windows.Forms.Button();
+            buttonInstall = new System.Windows.Forms.Button();
             richTextBoxStatus = new System.Windows.Forms.RichTextBox();
             buttonSelectJsonResponseFolder = new System.Windows.Forms.Button();
             textBoxJsonResponseFolder = new System.Windows.Forms.TextBox();
@@ -132,16 +132,16 @@
             textBoxCertOutputFolder.Size = new System.Drawing.Size(488, 23);
             textBoxCertOutputFolder.TabIndex = 13;
             // 
-            // buttonExecute
+            // buttonInstall
             // 
-            buttonExecute.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonExecute.Location = new System.Drawing.Point(529, 455);
-            buttonExecute.Name = "buttonExecute";
-            buttonExecute.Size = new System.Drawing.Size(75, 23);
-            buttonExecute.TabIndex = 16;
-            buttonExecute.Text = "Execute";
-            buttonExecute.UseVisualStyleBackColor = true;
-            buttonExecute.Click += buttonExecute_Click;
+            buttonInstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonInstall.Location = new System.Drawing.Point(529, 455);
+            buttonInstall.Name = "buttonInstall";
+            buttonInstall.Size = new System.Drawing.Size(75, 23);
+            buttonInstall.TabIndex = 16;
+            buttonInstall.Text = "Install";
+            buttonInstall.UseVisualStyleBackColor = true;
+            buttonInstall.Click += buttonInstall_Click;
             // 
             // richTextBoxStatus
             // 
@@ -268,7 +268,7 @@
             // 
             // MainForm
             // 
-            AcceptButton = buttonExecute;
+            AcceptButton = buttonInstall;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
@@ -285,7 +285,7 @@
             Controls.Add(textBoxJsonResponseFolder);
             Controls.Add(buttonSelectJsonResponseFolder);
             Controls.Add(richTextBoxStatus);
-            Controls.Add(buttonExecute);
+            Controls.Add(buttonInstall);
             Controls.Add(textBoxCertOutputFolder);
             Controls.Add(buttonSelectCertOutputFolder);
             Controls.Add(textBoxJsonRequestFolder);
@@ -317,7 +317,7 @@
         private System.Windows.Forms.TextBox textBoxJsonRequestFolder;
         private System.Windows.Forms.Button buttonSelectCertOutputFolder;
         private System.Windows.Forms.TextBox textBoxCertOutputFolder;
-        private System.Windows.Forms.Button buttonExecute;
+        private System.Windows.Forms.Button buttonInstall;
         private System.Windows.Forms.RichTextBox richTextBoxStatus;
         private System.Windows.Forms.Button buttonSelectJsonResponseFolder;
         private System.Windows.Forms.TextBox textBoxJsonResponseFolder;

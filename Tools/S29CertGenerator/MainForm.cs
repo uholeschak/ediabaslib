@@ -141,12 +141,12 @@ namespace S29CertGenerator
 
                 if (caKeyValid && istaKeyValid && cacertsValid && isValid)
                 {
-                    buttonExecute.Enabled = true;
-                    buttonExecute.Focus();
+                    buttonInstall.Enabled = true;
+                    buttonInstall.Focus();
                 }
                 else
                 {
-                    buttonExecute.Enabled = false;
+                    buttonInstall.Enabled = false;
                 }
             }
             catch (Exception)
@@ -999,7 +999,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ConvertAllJsonRequestFiles(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, bool forceUpdate = false)
+        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, bool forceUpdate = false)
         {
             try
             {
@@ -1242,9 +1242,9 @@ namespace S29CertGenerator
             }
         }
 
-        private void buttonExecute_Click(object sender, EventArgs e)
+        private void buttonInstall_Click(object sender, EventArgs e)
         {
-            ConvertAllJsonRequestFiles(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
+            InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
         }
     }
 }
