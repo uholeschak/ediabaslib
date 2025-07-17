@@ -598,8 +598,11 @@ namespace S29CertGenerator
                     File.Move(bakFile, caCertsFile, true);
                     UpdateStatusText("CACerts backup restored", true);
                 }
+                else
+                {
+                    UpdateStatusText("No CACerts backup found", true);
+                }
 
-                UpdateStatusText("No CACerts backup found", true);
                 return true;
             }
             catch (Exception e)
@@ -1155,11 +1158,13 @@ namespace S29CertGenerator
             {
                 UpdateStatusText(string.Empty);
 
-                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = LoadIstaSubCaCert(forceUpdate);
-                if (x509SubCaCert == null)
+                string thumbprintCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
+                string thumbprintSubCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
+                if (!string.IsNullOrEmpty(thumbprintCa) || !string.IsNullOrEmpty(thumbprintSubCa))
                 {
-                    UpdateStatusText("Failed to create SubCA certificate", true);
-                    return false;
+                    EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
+                    EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
+                    UpdateStatusText("CA thumbprints cleared in ISTA config", true);
                 }
 
                 if (!string.IsNullOrEmpty(caCertsFile))
