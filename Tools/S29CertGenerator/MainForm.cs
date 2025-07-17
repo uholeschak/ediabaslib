@@ -6,6 +6,7 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -742,6 +743,9 @@ namespace S29CertGenerator
                     return null;
                 }
 
+                Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
+                UpdateStatusText($"CA certificate valid until: {issuerCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
+
                 X509Certificate2 caCert = null;
                 X509Certificate2 subCaCert = null;
                 Org.BouncyCastle.X509.X509Certificate x509CaCert = null;
@@ -763,7 +767,6 @@ namespace S29CertGenerator
                         x509CaCert = new X509CertificateParser().ReadCertificate(caCert.GetRawCertData());
                         x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
 
-                        Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
                         if (!issuerCert.GetPublicKey().Equals(x509CaCert.GetPublicKey()))
                         {
                             UpdateStatusText("CA certificate public key does not match CA public certificate", true);
@@ -776,9 +779,9 @@ namespace S29CertGenerator
                             certValid = false;
                         }
 
-                        if (DateTime.UtcNow > subCaCert.NotAfter.AddDays(-7.0))
+                        if (DateTime.UtcNow > subCaCert.NotAfter.AddMonths(-1))
                         {
-                            UpdateStatusText("SubCA certificate remaining time topo short", true);
+                            UpdateStatusText($"SubCA certificate remaining time too short: {subCaCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
                             certValid = false;
                         }
 
@@ -822,6 +825,7 @@ namespace S29CertGenerator
                     return null;
                 }
 
+                UpdateStatusText($"SubCA certificate valid until: {x509SubCaCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
                 UpdateStatusText("SubCA certificates loaded", true);
                 return x509SubCaCert;
             }
