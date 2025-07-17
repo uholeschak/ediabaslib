@@ -588,7 +588,28 @@ namespace S29CertGenerator
             }
         }
 
-        private bool InstallTrustesCaCert(string trustStoreFolder)
+        private bool UninstallCaCert(string caCertsFile)
+        {
+            try
+            {
+                string bakFile = caCertsFile + ".bak";
+                if (File.Exists(bakFile))
+                {
+                    File.Move(bakFile, caCertsFile, true);
+                    UpdateStatusText("CACerts backup restored", true);
+                }
+
+                UpdateStatusText("No CACerts backup found", true);
+                return true;
+            }
+            catch (Exception e)
+            {
+                UpdateStatusText($"Uninstall CA certificate exception: {e.Message}", true);
+                return false;
+            }
+        }
+
+        private bool InstallTrustedCaCert(string trustStoreFolder)
         {
             try
             {
@@ -643,6 +664,54 @@ namespace S29CertGenerator
             catch (Exception e)
             {
                 UpdateStatusText($"Install CA certificate exception: {e.Message}", true);
+                return false;
+            }
+        }
+
+        private bool UninstallTrustedCaCert(string trustStoreFolder)
+        {
+            try
+            {
+                if (_caPublicCertificates == null || _caPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("CA public certificate is not loaded", true);
+                    return false;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate caCert = _caPublicCertificates[0].Certificate;
+                string subjectHash = EdBcTlsUtilities.CreateSubjectHash(caCert);
+                if (string.IsNullOrEmpty(subjectHash))
+                {
+                    UpdateStatusText("CA public certificate subject hash is empty", true);
+                    return false;
+                }
+
+                string caFileName = EdBcTlsUtilities.GetCaCertFileName(caCert, trustStoreFolder);
+                if (caFileName == null)
+                {
+                    UpdateStatusText("Trusted folder reading failed", true);
+                    return false;
+                }
+
+                string fileNameHash = Path.GetFileNameWithoutExtension(caFileName);
+                if (!string.IsNullOrEmpty(fileNameHash))
+                {
+                    if (string.Compare(fileNameHash, subjectHash, StringComparison.Ordinal) != 0)
+                    {
+                        UpdateStatusText($"Trusted CA certificate file name hash mismatch: {fileNameHash} != {subjectHash}", true);
+                        return false;
+                    }
+
+                    File.Delete(caFileName);
+                    string currentCaFileName = Path.GetFileName(caFileName);
+                    UpdateStatusText($"Trusted CA certificate uninstalled: {currentCaFileName}", true);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                UpdateStatusText($"Uninstall CA certificate exception: {e.Message}", true);
                 return false;
             }
         }
@@ -1026,7 +1095,7 @@ namespace S29CertGenerator
 
                 if (!string.IsNullOrEmpty(trustStoreFolder))
                 {
-                    if (!InstallTrustesCaCert(trustStoreFolder))
+                    if (!InstallTrustedCaCert(trustStoreFolder))
                     {
                         UpdateStatusText("Installing trusted CA certificate failed", true);
                         return false;
@@ -1069,6 +1138,84 @@ namespace S29CertGenerator
 
                     UpdateStatusText(string.Empty, true);
                     ConvertJsonRequestFile(x509SubCaCert, jsonFile, jsonResponseFolder, certOutputFolder);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Convert request files exception: {ex.Message}", true);
+                return false;
+            }
+        }
+
+        protected bool UninstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, bool forceUpdate = false)
+        {
+            try
+            {
+                UpdateStatusText(string.Empty);
+
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = LoadIstaSubCaCert(forceUpdate);
+                if (x509SubCaCert == null)
+                {
+                    UpdateStatusText("Failed to create SubCA certificate", true);
+                    return false;
+                }
+
+                if (!string.IsNullOrEmpty(caCertsFile))
+                {
+                    if (!UninstallCaCert(caCertsFile))
+                    {
+                        UpdateStatusText("Uninstalling CA certificate failed", true);
+                        return false;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(trustStoreFolder))
+                {
+                    if (!UninstallTrustedCaCert(trustStoreFolder))
+                    {
+                        UpdateStatusText("Uninstalling trusted CA certificate failed", true);
+                        return false;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(jsonRequestFolder) || !Directory.Exists(jsonRequestFolder))
+                {
+                    UpdateStatusText($"Request folder is not existing: {jsonRequestFolder}", true);
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(jsonResponseFolder) || !Directory.Exists(jsonResponseFolder))
+                {
+                    UpdateStatusText($"Response folder is not existing: {jsonResponseFolder}", true);
+                    return false;
+                }
+
+                if (string.IsNullOrEmpty(certOutputFolder) || !Directory.Exists(certOutputFolder))
+                {
+                    UpdateStatusText($"Output folder is not existing: {certOutputFolder}", true);
+                    return false;
+                }
+
+                DirectoryInfo directoryInfo = new DirectoryInfo(jsonRequestFolder);
+                FileInfo[] files = directoryInfo.GetFiles();
+                foreach (FileInfo fileInfo in files)
+                {
+                    string jsonFile = fileInfo.FullName;
+                    string baseFileName = Path.GetFileName(jsonFile);
+                    if (!baseFileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
+                    if (string.Compare(baseFileName, "template.json", StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        continue;
+                    }
+
+                    File.Delete(jsonFile);
+                    UpdateStatusText($"Request file deleted: {baseFileName}", true);
                 }
 
                 return true;
@@ -1252,7 +1399,7 @@ namespace S29CertGenerator
 
         private void buttonUninstall_Click(object sender, EventArgs e)
         {
-
+            UninstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
         }
     }
 }
