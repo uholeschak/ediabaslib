@@ -1198,17 +1198,10 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                DirectoryInfo directoryInfo = new DirectoryInfo(jsonRequestFolder);
-                FileInfo[] files = directoryInfo.GetFiles();
-                foreach (FileInfo fileInfo in files)
+                string[] requestFiles = Directory.GetFiles(jsonRequestFolder, "*.json", SearchOption.TopDirectoryOnly);
+                foreach (string jsonFile in requestFiles)
                 {
-                    string jsonFile = fileInfo.FullName;
                     string baseFileName = Path.GetFileName(jsonFile);
-                    if (!baseFileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
-                    {
-                        continue;
-                    }
-
                     if (string.Compare(baseFileName, "template.json", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         continue;
@@ -1216,6 +1209,22 @@ namespace S29CertGenerator
 
                     File.Delete(jsonFile);
                     UpdateStatusText($"Request file deleted: {baseFileName}", true);
+                }
+
+                string[] responseFiles = Directory.GetFiles(jsonResponseFolder, "*.json", SearchOption.TopDirectoryOnly);
+                foreach (string jsonFile in responseFiles)
+                {
+                    string baseFileName = Path.GetFileName(jsonFile);
+                    File.Delete(jsonFile);
+                    UpdateStatusText($"Response file deleted: {baseFileName}", true);
+                }
+
+                string[] certFiles = Directory.GetFiles(certOutputFolder, "S29-*.pem", SearchOption.TopDirectoryOnly);
+                foreach (string certFile in certFiles)
+                {
+                    string baseFileName = Path.GetFileName(certFile);
+                    File.Delete(certFile);
+                    UpdateStatusText($"Certificate file deleted: {baseFileName}", true);
                 }
 
                 return true;
