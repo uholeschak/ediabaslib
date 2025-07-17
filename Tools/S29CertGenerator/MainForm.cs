@@ -142,11 +142,14 @@ namespace S29CertGenerator
                 if (caKeyValid && istaKeyValid && cacertsValid && isValid)
                 {
                     buttonInstall.Enabled = true;
+                    buttonUninstall.Enabled = true;
+
                     buttonInstall.Focus();
                 }
                 else
                 {
                     buttonInstall.Enabled = false;
+                    buttonUninstall.Enabled = false;
                 }
             }
             catch (Exception)
@@ -1245,6 +1248,11 @@ namespace S29CertGenerator
         private void buttonInstall_Click(object sender, EventArgs e)
         {
             InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
+        }
+
+        private void buttonUninstall_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

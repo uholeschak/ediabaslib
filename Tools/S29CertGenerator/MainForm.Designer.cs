@@ -51,6 +51,7 @@
             buttonSelectCaCertsFile = new System.Windows.Forms.Button();
             textBoxTrustStoreFolder = new System.Windows.Forms.TextBox();
             buttonSelectTrustStoreFolder = new System.Windows.Forms.Button();
+            buttonUninstall = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -89,7 +90,7 @@
             buttonClose.Location = new System.Drawing.Point(610, 455);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
-            buttonClose.TabIndex = 17;
+            buttonClose.TabIndex = 20;
             buttonClose.Text = "Close";
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += buttonClose_Click;
@@ -135,10 +136,10 @@
             // buttonInstall
             // 
             buttonInstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonInstall.Location = new System.Drawing.Point(529, 455);
+            buttonInstall.Location = new System.Drawing.Point(448, 455);
             buttonInstall.Name = "buttonInstall";
             buttonInstall.Size = new System.Drawing.Size(75, 23);
-            buttonInstall.TabIndex = 16;
+            buttonInstall.TabIndex = 18;
             buttonInstall.Text = "Install";
             buttonInstall.UseVisualStyleBackColor = true;
             buttonInstall.Click += buttonInstall_Click;
@@ -152,7 +153,7 @@
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             richTextBoxStatus.Size = new System.Drawing.Size(673, 205);
-            richTextBoxStatus.TabIndex = 14;
+            richTextBoxStatus.TabIndex = 16;
             richTextBoxStatus.Text = "";
             // 
             // buttonSelectJsonResponseFolder
@@ -225,7 +226,7 @@
             checkBoxForceCreate.Location = new System.Drawing.Point(12, 459);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
             checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
-            checkBoxForceCreate.TabIndex = 15;
+            checkBoxForceCreate.TabIndex = 17;
             checkBoxForceCreate.Text = "Force create cert";
             checkBoxForceCreate.UseVisualStyleBackColor = true;
             // 
@@ -254,17 +255,28 @@
             textBoxTrustStoreFolder.Name = "textBoxTrustStoreFolder";
             textBoxTrustStoreFolder.ReadOnly = true;
             textBoxTrustStoreFolder.Size = new System.Drawing.Size(488, 23);
-            textBoxTrustStoreFolder.TabIndex = 18;
+            textBoxTrustStoreFolder.TabIndex = 15;
             // 
             // buttonSelectTrustStoreFolder
             // 
             buttonSelectTrustStoreFolder.Location = new System.Drawing.Point(12, 215);
             buttonSelectTrustStoreFolder.Name = "buttonSelectTrustStoreFolder";
             buttonSelectTrustStoreFolder.Size = new System.Drawing.Size(179, 23);
-            buttonSelectTrustStoreFolder.TabIndex = 19;
+            buttonSelectTrustStoreFolder.TabIndex = 14;
             buttonSelectTrustStoreFolder.Text = "Select Truststore Dir";
             buttonSelectTrustStoreFolder.UseVisualStyleBackColor = true;
             buttonSelectTrustStoreFolder.Click += buttonSelectTrustStoreFolder_Click;
+            // 
+            // buttonUninstall
+            // 
+            buttonUninstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonUninstall.Location = new System.Drawing.Point(529, 455);
+            buttonUninstall.Name = "buttonUninstall";
+            buttonUninstall.Size = new System.Drawing.Size(75, 23);
+            buttonUninstall.TabIndex = 19;
+            buttonUninstall.Text = "Uninstall";
+            buttonUninstall.UseVisualStyleBackColor = true;
+            buttonUninstall.Click += buttonUninstall_Click;
             // 
             // MainForm
             // 
@@ -273,6 +285,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(697, 490);
+            Controls.Add(buttonUninstall);
             Controls.Add(buttonSelectTrustStoreFolder);
             Controls.Add(textBoxTrustStoreFolder);
             Controls.Add(buttonSelectCaCertsFile);
@@ -331,5 +344,6 @@
         private System.Windows.Forms.Button buttonSelectCaCertsFile;
         private System.Windows.Forms.TextBox textBoxTrustStoreFolder;
         private System.Windows.Forms.Button buttonSelectTrustStoreFolder;
+        private System.Windows.Forms.Button buttonUninstall;
     }
 }
