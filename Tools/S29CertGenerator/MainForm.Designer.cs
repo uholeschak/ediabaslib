@@ -52,6 +52,7 @@
             textBoxTrustStoreFolder = new System.Windows.Forms.TextBox();
             buttonSelectTrustStoreFolder = new System.Windows.Forms.Button();
             buttonUninstall = new System.Windows.Forms.Button();
+            openCaCertsFileDialog = new System.Windows.Forms.OpenFileDialog();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -247,6 +248,7 @@
             buttonSelectCaCertsFile.TabIndex = 4;
             buttonSelectCaCertsFile.Text = "Select PSdZ CaCerts file";
             buttonSelectCaCertsFile.UseVisualStyleBackColor = true;
+            buttonSelectCaCertsFile.Click += buttonSelectCaCertsFile_Click;
             // 
             // textBoxTrustStoreFolder
             // 
@@ -277,6 +279,11 @@
             buttonUninstall.Text = "Uninstall";
             buttonUninstall.UseVisualStyleBackColor = true;
             buttonUninstall.Click += buttonUninstall_Click;
+            // 
+            // openCaCertsFileDialog
+            // 
+            openCaCertsFileDialog.Filter = "CaCerts|cacerts|All files|*.*";
+            openCaCertsFileDialog.Title = "select CaCerts file";
             // 
             // MainForm
             // 
@@ -345,5 +352,6 @@
         private System.Windows.Forms.TextBox textBoxTrustStoreFolder;
         private System.Windows.Forms.Button buttonSelectTrustStoreFolder;
         private System.Windows.Forms.Button buttonUninstall;
+        private System.Windows.Forms.OpenFileDialog openCaCertsFileDialog;
     }
 }

@@ -1284,6 +1284,27 @@ namespace S29CertGenerator
             }
         }
 
+        private void buttonSelectCaCertsFile_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string certFile = textBoxCaCertsFile.Text;
+            string fileName = string.Empty;
+            if (File.Exists(certFile))
+            {
+                fileName = Path.GetFileName(certFile);
+                initDir = Path.GetDirectoryName(certFile);
+            }
+
+            openCaCertsFileDialog.FileName = fileName;
+            openCaCertsFileDialog.InitialDirectory = initDir ?? string.Empty;
+            DialogResult result = openCaCertsFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxCaCertsFile.Text = openCaCertsFileDialog.FileName;
+                UpdateDisplay();
+            }
+        }
+
         private void buttonSelectSecurityFolder_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
