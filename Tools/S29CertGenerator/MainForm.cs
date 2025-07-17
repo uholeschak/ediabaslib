@@ -738,7 +738,7 @@ namespace S29CertGenerator
                 AsymmetricKeyParameter istaPublicKey = _istaPublicCertificates[0].Certificate.GetPublicKey();
                 if (istaPublicKey == null)
                 {
-                    UpdateStatusText($"ISTA public key is not found", true);
+                    UpdateStatusText("ISTA public key is not found", true);
                     return null;
                 }
 
