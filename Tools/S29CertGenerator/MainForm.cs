@@ -892,7 +892,7 @@ namespace S29CertGenerator
                     return null;
                 }
 
-                UpdateStatusText("CA certificates installed", true);
+                UpdateStatusText("CA thumbprints installed in ISTA config", true);
                 return x509SubCaCert;
             }
             catch (Exception e)
