@@ -289,17 +289,19 @@ namespace EdiabasLib
                     return false; // No subject name provided
                 }
 
+                bool deleted = false;
                 using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
                 {
                     x509Store.Open(OpenFlags.ReadWrite);
                     foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false))
                     {
                         x509Store.Remove(x509Certificate);
+                        deleted = true;
                     }
                     x509Store.Close();
                 }
 
-                return true;
+                return deleted;
             }
             catch (Exception)
             {
@@ -316,17 +318,19 @@ namespace EdiabasLib
                     return false; // No thumbprint provided
                 }
 
+                bool deleted = false;
                 using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
                 {
                     x509Store.Open(OpenFlags.ReadWrite);
                     foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false))
                     {
                         x509Store.Remove(x509Certificate);
+                        deleted = true;
                     }
                     x509Store.Close();
                 }
 
-                return true;
+                return deleted;
             }
             catch (Exception)
             {
