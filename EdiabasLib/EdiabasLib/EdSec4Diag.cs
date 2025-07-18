@@ -280,21 +280,57 @@ namespace EdiabasLib
             }
         }
 
-        public static void DeleteCertificateBySubjectName(string subjectName)
+        public static bool DeleteCertificateBySubjectName(string subjectName)
         {
-            if (string.IsNullOrEmpty(subjectName))
+            try
             {
-                return; // No subject name provided
-            }
-
-            using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
-            {
-                x509Store.Open(OpenFlags.ReadWrite);
-                foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false))
+                if (string.IsNullOrEmpty(subjectName))
                 {
-                    x509Store.Remove(x509Certificate);
+                    return false; // No subject name provided
                 }
-                x509Store.Close();
+
+                using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+                {
+                    x509Store.Open(OpenFlags.ReadWrite);
+                    foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindBySubjectName, subjectName, false))
+                    {
+                        x509Store.Remove(x509Certificate);
+                    }
+                    x509Store.Close();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public static bool DeleteCertificateByThumbprint(string thumbprint)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(thumbprint))
+                {
+                    return false; // No thumbprint provided
+                }
+
+                using (X509Store x509Store = new X509Store(StoreName.My, StoreLocation.CurrentUser))
+                {
+                    x509Store.Open(OpenFlags.ReadWrite);
+                    foreach (X509Certificate2 x509Certificate in x509Store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false))
+                    {
+                        x509Store.Remove(x509Certificate);
+                    }
+                    x509Store.Close();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
