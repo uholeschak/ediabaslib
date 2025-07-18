@@ -73,12 +73,13 @@ namespace S29CertGenerator
             try
             {
                 textBoxCaCeyFile.Text = Properties.Settings.Default.CaKeyFile;
+                textBoxIstaKeyFile.Text = Properties.Settings.Default.IstaKeyFile;
+                textBoxCaCertsFile.Text = Properties.Settings.Default.CaCertsFile;
                 textBoxSecurityFolder.Text = Properties.Settings.Default.SecurityFolder;
                 textBoxJsonRequestFolder.Text = Properties.Settings.Default.JsonRequestFolder;
                 textBoxJsonResponseFolder.Text = Properties.Settings.Default.JsonResponseFolder;
                 textBoxCertOutputFolder.Text = Properties.Settings.Default.CertOutputFolder;
                 textBoxTrustStoreFolder.Text = Properties.Settings.Default.TrustStoreFolder;
-                textBoxIstaKeyFile.Text = Properties.Settings.Default.IstaKeyFile;
                 return true;
             }
             catch (Exception)
@@ -92,12 +93,13 @@ namespace S29CertGenerator
             try
             {
                 Properties.Settings.Default.CaKeyFile = textBoxCaCeyFile.Text;
+                Properties.Settings.Default.IstaKeyFile = textBoxIstaKeyFile.Text;
+                Properties.Settings.Default.CaCertsFile = textBoxCaCertsFile.Text;
                 Properties.Settings.Default.SecurityFolder = textBoxSecurityFolder.Text;
                 Properties.Settings.Default.JsonRequestFolder = textBoxJsonRequestFolder.Text;
                 Properties.Settings.Default.JsonResponseFolder = textBoxJsonResponseFolder.Text;
                 Properties.Settings.Default.CertOutputFolder = textBoxCertOutputFolder.Text;
                 Properties.Settings.Default.TrustStoreFolder = textBoxTrustStoreFolder.Text;
-                Properties.Settings.Default.IstaKeyFile = textBoxIstaKeyFile.Text;
                 Properties.Settings.Default.Save();
                 return true;
             }

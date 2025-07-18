@@ -106,5 +106,17 @@ namespace S29CertGenerator.Properties {
                 this["TrustStoreFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string CaCertsFile {
+            get {
+                return ((string)(this["CaCertsFile"]));
+            }
+            set {
+                this["CaCertsFile"] = value;
+            }
+        }
     }
 }
