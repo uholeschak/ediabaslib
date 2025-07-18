@@ -1161,6 +1161,10 @@ namespace S29CertGenerator
                 string thumbprintSubCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
                 if (!string.IsNullOrEmpty(thumbprintCa) || !string.IsNullOrEmpty(thumbprintSubCa))
                 {
+                    EdSec4Diag.DeleteCertificateByThumbprint(thumbprintCa);
+                    EdSec4Diag.DeleteCertificateByThumbprint(thumbprintSubCa);
+                    UpdateStatusText("CA certificates deleted in store", true);
+
                     EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
                     EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
                     UpdateStatusText("CA thumbprints cleared in ISTA config", true);
