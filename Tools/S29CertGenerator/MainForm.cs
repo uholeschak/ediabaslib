@@ -1163,7 +1163,7 @@ namespace S29CertGenerator
                 {
                     if (EdSec4Diag.DeleteCertificateByThumbprint(thumbprintCa))
                     {
-                        UpdateStatusText($"CA certificate deleted from store", true);
+                        UpdateStatusText("CA certificate deleted from store", true);
                     }
                     else
                     {
@@ -1172,7 +1172,7 @@ namespace S29CertGenerator
 
                     if (EdSec4Diag.DeleteCertificateByThumbprint(thumbprintSubCa))
                     {
-                        UpdateStatusText($"SubCA certificate deleted from store", true);
+                        UpdateStatusText("SubCA certificate deleted from store", true);
                     }
                     else
                     {
