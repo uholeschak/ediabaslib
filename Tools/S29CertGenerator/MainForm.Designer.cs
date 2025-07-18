@@ -53,6 +53,7 @@
             buttonSelectTrustStoreFolder = new System.Windows.Forms.Button();
             buttonUninstall = new System.Windows.Forms.Button();
             openCaCertsFileDialog = new System.Windows.Forms.OpenFileDialog();
+            buttonResetSettings = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -91,7 +92,7 @@
             buttonClose.Location = new System.Drawing.Point(610, 455);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
-            buttonClose.TabIndex = 20;
+            buttonClose.TabIndex = 21;
             buttonClose.Text = "Close";
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += buttonClose_Click;
@@ -140,7 +141,7 @@
             buttonInstall.Location = new System.Drawing.Point(448, 455);
             buttonInstall.Name = "buttonInstall";
             buttonInstall.Size = new System.Drawing.Size(75, 23);
-            buttonInstall.TabIndex = 18;
+            buttonInstall.TabIndex = 19;
             buttonInstall.Text = "Install";
             buttonInstall.UseVisualStyleBackColor = true;
             buttonInstall.Click += buttonInstall_Click;
@@ -275,7 +276,7 @@
             buttonUninstall.Location = new System.Drawing.Point(529, 455);
             buttonUninstall.Name = "buttonUninstall";
             buttonUninstall.Size = new System.Drawing.Size(75, 23);
-            buttonUninstall.TabIndex = 19;
+            buttonUninstall.TabIndex = 20;
             buttonUninstall.Text = "Uninstall";
             buttonUninstall.UseVisualStyleBackColor = true;
             buttonUninstall.Click += buttonUninstall_Click;
@@ -285,6 +286,17 @@
             openCaCertsFileDialog.Filter = "CaCerts|cacerts|All files|*.*";
             openCaCertsFileDialog.Title = "select CaCerts file";
             // 
+            // buttonResetSettings
+            // 
+            buttonResetSettings.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonResetSettings.Location = new System.Drawing.Point(131, 455);
+            buttonResetSettings.Name = "buttonResetSettings";
+            buttonResetSettings.Size = new System.Drawing.Size(118, 23);
+            buttonResetSettings.TabIndex = 18;
+            buttonResetSettings.Text = "Reset Settings";
+            buttonResetSettings.UseVisualStyleBackColor = true;
+            buttonResetSettings.Click += buttonResetSettings_Click;
+            // 
             // MainForm
             // 
             AcceptButton = buttonInstall;
@@ -292,6 +304,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(697, 490);
+            Controls.Add(buttonResetSettings);
             Controls.Add(buttonUninstall);
             Controls.Add(buttonSelectTrustStoreFolder);
             Controls.Add(textBoxTrustStoreFolder);
@@ -353,5 +366,6 @@
         private System.Windows.Forms.Button buttonSelectTrustStoreFolder;
         private System.Windows.Forms.Button buttonUninstall;
         private System.Windows.Forms.OpenFileDialog openCaCertsFileDialog;
+        private System.Windows.Forms.Button buttonResetSettings;
     }
 }

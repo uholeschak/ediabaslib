@@ -44,39 +44,7 @@ namespace S29CertGenerator
             checkBoxForceCreate.Checked = false;
 
             LoadSettings();
-            if (!IsSettingValid(true))
-            {
-                if (!string.IsNullOrEmpty(_ediabasPath))
-                {
-                    textBoxSecurityFolder.Text = Path.Combine(_ediabasPath, EdiabasSecurityDirName);
-                    SyncFolders(textBoxSecurityFolder.Text);
-                }
-            }
-
-            if (!LoadCaKey(textBoxCaCeyFile.Text))
-            {
-                if (!string.IsNullOrEmpty(_ediabasPath))
-                {
-                    SetCaKeyFile(_ediabasPath);
-                }
-            }
-
-            if (!LoadIstaKey(textBoxIstaKeyFile.Text))
-            {
-                if (!string.IsNullOrEmpty(_ediabasPath))
-                {
-                    SetIstaKeyFile(_ediabasPath);
-                }
-            }
-
-            if (!LoadCaCerts(textBoxCaCertsFile.Text))
-            {
-                if (!string.IsNullOrEmpty(_ediabasPath))
-                {
-                    SetCaCertsFile(_ediabasPath);
-                }
-            }
-
+            ValidateSetting();
             UpdateStatusText(string.Empty);
         }
 
@@ -201,6 +169,42 @@ namespace S29CertGenerator
             richTextBoxStatus.SelectionStart = richTextBoxStatus.TextLength;
             richTextBoxStatus.Update();
             richTextBoxStatus.ScrollToCaret();
+        }
+
+        private void ValidateSetting(bool force = false)
+        {
+            if (force || !IsSettingValid(true))
+            {
+                if (!string.IsNullOrEmpty(_ediabasPath))
+                {
+                    textBoxSecurityFolder.Text = Path.Combine(_ediabasPath, EdiabasSecurityDirName);
+                    SyncFolders(textBoxSecurityFolder.Text);
+                }
+            }
+
+            if (force || !LoadCaKey(textBoxCaCeyFile.Text))
+            {
+                if (!string.IsNullOrEmpty(_ediabasPath))
+                {
+                    SetCaKeyFile(_ediabasPath);
+                }
+            }
+
+            if (force || !LoadIstaKey(textBoxIstaKeyFile.Text))
+            {
+                if (!string.IsNullOrEmpty(_ediabasPath))
+                {
+                    SetIstaKeyFile(_ediabasPath);
+                }
+            }
+
+            if (force || !LoadCaCerts(textBoxCaCertsFile.Text))
+            {
+                if (!string.IsNullOrEmpty(_ediabasPath))
+                {
+                    SetCaCertsFile(_ediabasPath);
+                }
+            }
         }
 
         private bool IsSettingValid(bool ignoreKeyFiles = false)
@@ -1477,6 +1481,12 @@ namespace S29CertGenerator
         private void buttonUninstall_Click(object sender, EventArgs e)
         {
             UninstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
+        }
+
+        private void buttonResetSettings_Click(object sender, EventArgs e)
+        {
+            ValidateSetting(true);
+            UpdateDisplay();
         }
     }
 }
