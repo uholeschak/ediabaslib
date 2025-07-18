@@ -53,6 +53,14 @@ namespace S29CertGenerator
                 }
             }
 
+            if (!LoadCaKey(textBoxCaCeyFile.Text))
+            {
+                if (!string.IsNullOrEmpty(_ediabasPath))
+                {
+                    SetCaKeyFile(_ediabasPath);
+                }
+            }
+
             if (!LoadIstaKey(textBoxIstaKeyFile.Text))
             {
                 if (!string.IsNullOrEmpty(_ediabasPath))
@@ -387,6 +395,23 @@ namespace S29CertGenerator
             }
             textBoxTrustStoreFolder.Text = trustStoreFolder;
 
+            return true;
+        }
+
+        private bool SetCaKeyFile(string ediabasPath)
+        {
+            if (string.IsNullOrEmpty(ediabasPath) || !Directory.Exists(ediabasPath))
+            {
+                return false;
+            }
+
+            string caKeyFile = Path.Combine(AppContext.BaseDirectory, "rootCA_EC.pfx");
+            if (!File.Exists(caKeyFile))
+            {
+                caKeyFile = string.Empty;
+            }
+
+            textBoxCaCeyFile.Text = caKeyFile;
             return true;
         }
 
