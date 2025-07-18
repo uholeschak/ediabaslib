@@ -14,6 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\CarSimulator\TestCert\rootCA_EC.pfx" Link="rootCA_EC.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
