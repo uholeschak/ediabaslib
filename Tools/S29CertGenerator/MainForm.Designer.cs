@@ -89,7 +89,7 @@
             // buttonClose
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.Location = new System.Drawing.Point(610, 455);
+            buttonClose.Location = new System.Drawing.Point(610, 484);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
             buttonClose.TabIndex = 21;
@@ -138,7 +138,7 @@
             // buttonInstall
             // 
             buttonInstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonInstall.Location = new System.Drawing.Point(448, 455);
+            buttonInstall.Location = new System.Drawing.Point(448, 484);
             buttonInstall.Name = "buttonInstall";
             buttonInstall.Size = new System.Drawing.Size(75, 23);
             buttonInstall.TabIndex = 19;
@@ -154,7 +154,7 @@
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            richTextBoxStatus.Size = new System.Drawing.Size(673, 205);
+            richTextBoxStatus.Size = new System.Drawing.Size(673, 204);
             richTextBoxStatus.TabIndex = 16;
             richTextBoxStatus.Text = "";
             // 
@@ -225,10 +225,10 @@
             // 
             checkBoxForceCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             checkBoxForceCreate.AutoSize = true;
-            checkBoxForceCreate.Location = new System.Drawing.Point(12, 459);
+            checkBoxForceCreate.Location = new System.Drawing.Point(12, 487);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
             checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
-            checkBoxForceCreate.TabIndex = 17;
+            checkBoxForceCreate.TabIndex = 18;
             checkBoxForceCreate.Text = "Force create cert";
             checkBoxForceCreate.UseVisualStyleBackColor = true;
             // 
@@ -273,7 +273,7 @@
             // buttonUninstall
             // 
             buttonUninstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonUninstall.Location = new System.Drawing.Point(529, 455);
+            buttonUninstall.Location = new System.Drawing.Point(529, 484);
             buttonUninstall.Name = "buttonUninstall";
             buttonUninstall.Size = new System.Drawing.Size(75, 23);
             buttonUninstall.TabIndex = 20;
@@ -289,10 +289,10 @@
             // buttonResetSettings
             // 
             buttonResetSettings.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonResetSettings.Location = new System.Drawing.Point(131, 455);
+            buttonResetSettings.Location = new System.Drawing.Point(529, 454);
             buttonResetSettings.Name = "buttonResetSettings";
-            buttonResetSettings.Size = new System.Drawing.Size(118, 23);
-            buttonResetSettings.TabIndex = 18;
+            buttonResetSettings.Size = new System.Drawing.Size(156, 23);
+            buttonResetSettings.TabIndex = 17;
             buttonResetSettings.Text = "Reset Settings";
             buttonResetSettings.UseVisualStyleBackColor = true;
             buttonResetSettings.Click += buttonResetSettings_Click;
@@ -303,7 +303,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(697, 490);
+            ClientSize = new System.Drawing.Size(697, 519);
             Controls.Add(buttonResetSettings);
             Controls.Add(buttonUninstall);
             Controls.Add(buttonSelectTrustStoreFolder);
