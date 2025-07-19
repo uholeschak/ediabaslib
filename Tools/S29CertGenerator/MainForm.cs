@@ -1182,7 +1182,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool UninstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, bool forceUpdate = false)
+        protected bool UninstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder)
         {
             try
             {
@@ -1477,12 +1477,15 @@ namespace S29CertGenerator
 
         private void buttonInstall_Click(object sender, EventArgs e)
         {
-            InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
+            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked))
+            {
+                checkBoxForceCreate.Checked = false;
+            }
         }
 
         private void buttonUninstall_Click(object sender, EventArgs e)
         {
-            UninstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked);
+            UninstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text);
         }
 
         private void buttonResetSettings_Click(object sender, EventArgs e)
