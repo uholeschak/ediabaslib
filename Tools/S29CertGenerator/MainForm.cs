@@ -52,6 +52,12 @@ namespace S29CertGenerator
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
+            comboBoxVinList.BeginUpdate();
+            comboBoxVinList.Items.Clear();
+            comboBoxVinList.Items.Add(string.Empty);
+            comboBoxVinList.SelectedIndex = 0;
+            comboBoxVinList.EndUpdate();
+
             UpdateDisplay();
         }
 
@@ -1505,25 +1511,6 @@ namespace S29CertGenerator
             }
         }
 
-        private void buttonInstall_Click(object sender, EventArgs e)
-        {
-            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked))
-            {
-                checkBoxForceCreate.Checked = false;
-            }
-        }
-
-        private void buttonUninstall_Click(object sender, EventArgs e)
-        {
-            UninstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text);
-        }
-
-        private void buttonResetSettings_Click(object sender, EventArgs e)
-        {
-            ValidateSetting(true);
-            UpdateDisplay();
-        }
-
         private void buttonSearchVehicles_Click(object sender, EventArgs e)
         {
             UpdateStatusText("Searching for DoIP vehicles...");
@@ -1547,30 +1534,49 @@ namespace S29CertGenerator
                         }
                     }
 
-                    if (vinList.Count > 0)
+                    comboBoxVinList.BeginUpdate();
+                    comboBoxVinList.Items.Clear();
+                    comboBoxVinList.Items.Add(string.Empty);
+                    foreach (string vin in vinList.OrderBy(v => v))
                     {
-                        comboBoxVinList.BeginUpdate();
-                        foreach (string vin in vinList.OrderBy(v => v))
+                        if (!comboBoxVinList.Items.Contains(vin))
                         {
-                            if (!comboBoxVinList.Items.Contains(vin))
-                            {
-                                comboBoxVinList.Items.Add(vin);
-                            }
+                            comboBoxVinList.Items.Add(vin);
                         }
-                        comboBoxVinList.SelectedIndex = 0;
-                        comboBoxVinList.EndUpdate();
-                        UpdateStatusText($"Found {vinList.Count} DoIP vehicles", true);
                     }
-                    else
+
+                    if (comboBoxVinList.Items.Count > 1)
                     {
-                        UpdateStatusText("No DoIP vehicles found", true);
+                        comboBoxVinList.SelectedIndex = 1;
                     }
+
+                    comboBoxVinList.EndUpdate();
+                    UpdateStatusText($"Found {vinList.Count} DoIP vehicles", true);
 
                     UpdateDisplay();
                 }));
             });
 
             _taskActive = true;
+            UpdateDisplay();
+        }
+
+        private void buttonInstall_Click(object sender, EventArgs e)
+        {
+            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked))
+            {
+                checkBoxForceCreate.Checked = false;
+            }
+        }
+
+        private void buttonUninstall_Click(object sender, EventArgs e)
+        {
+            UninstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text);
+        }
+
+        private void buttonResetSettings_Click(object sender, EventArgs e)
+        {
+            ValidateSetting(true);
             UpdateDisplay();
         }
     }

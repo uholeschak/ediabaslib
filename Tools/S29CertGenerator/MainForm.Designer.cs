@@ -94,7 +94,7 @@
             buttonClose.Location = new System.Drawing.Point(610, 520);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
-            buttonClose.TabIndex = 21;
+            buttonClose.TabIndex = 23;
             buttonClose.Text = "Close";
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += buttonClose_Click;
@@ -143,7 +143,7 @@
             buttonInstall.Location = new System.Drawing.Point(448, 520);
             buttonInstall.Name = "buttonInstall";
             buttonInstall.Size = new System.Drawing.Size(75, 23);
-            buttonInstall.TabIndex = 19;
+            buttonInstall.TabIndex = 21;
             buttonInstall.Text = "Install";
             buttonInstall.UseVisualStyleBackColor = true;
             buttonInstall.Click += buttonInstall_Click;
@@ -157,7 +157,7 @@
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             richTextBoxStatus.Size = new System.Drawing.Size(673, 211);
-            richTextBoxStatus.TabIndex = 16;
+            richTextBoxStatus.TabIndex = 18;
             richTextBoxStatus.Text = "";
             // 
             // buttonSelectJsonResponseFolder
@@ -230,7 +230,7 @@
             checkBoxForceCreate.Location = new System.Drawing.Point(12, 523);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
             checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
-            checkBoxForceCreate.TabIndex = 18;
+            checkBoxForceCreate.TabIndex = 20;
             checkBoxForceCreate.Text = "Force create cert";
             checkBoxForceCreate.UseVisualStyleBackColor = true;
             // 
@@ -278,7 +278,7 @@
             buttonUninstall.Location = new System.Drawing.Point(529, 520);
             buttonUninstall.Name = "buttonUninstall";
             buttonUninstall.Size = new System.Drawing.Size(75, 23);
-            buttonUninstall.TabIndex = 20;
+            buttonUninstall.TabIndex = 22;
             buttonUninstall.Text = "Uninstall";
             buttonUninstall.UseVisualStyleBackColor = true;
             buttonUninstall.Click += buttonUninstall_Click;
@@ -294,7 +294,7 @@
             buttonResetSettings.Location = new System.Drawing.Point(529, 490);
             buttonResetSettings.Name = "buttonResetSettings";
             buttonResetSettings.Size = new System.Drawing.Size(156, 23);
-            buttonResetSettings.TabIndex = 17;
+            buttonResetSettings.TabIndex = 19;
             buttonResetSettings.Text = "Reset Settings";
             buttonResetSettings.UseVisualStyleBackColor = true;
             buttonResetSettings.Click += buttonResetSettings_Click;
@@ -304,19 +304,20 @@
             buttonSearchVehicles.Location = new System.Drawing.Point(12, 244);
             buttonSearchVehicles.Name = "buttonSearchVehicles";
             buttonSearchVehicles.Size = new System.Drawing.Size(179, 23);
-            buttonSearchVehicles.TabIndex = 22;
+            buttonSearchVehicles.TabIndex = 16;
             buttonSearchVehicles.Text = "Search DoIP Vehicles";
             buttonSearchVehicles.UseVisualStyleBackColor = true;
             buttonSearchVehicles.Click += buttonSearchVehicles_Click;
             // 
             // comboBoxVinList
             // 
+            comboBoxVinList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             comboBoxVinList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxVinList.FormattingEnabled = true;
             comboBoxVinList.Location = new System.Drawing.Point(197, 244);
             comboBoxVinList.Name = "comboBoxVinList";
             comboBoxVinList.Size = new System.Drawing.Size(488, 23);
-            comboBoxVinList.TabIndex = 23;
+            comboBoxVinList.TabIndex = 17;
             // 
             // MainForm
             // 
