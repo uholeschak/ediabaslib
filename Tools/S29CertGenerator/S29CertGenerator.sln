@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36203.30 d17.14
+VisualStudioVersion = 17.14.36203.30
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S29CertGenerator", "S29CertGenerator.csproj", "{7C13760B-8B03-AB89-1883-13F30A0E81E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{7C13760B-8B03-AB89-1883-13F30A0E81E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C13760B-8B03-AB89-1883-13F30A0E81E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C13760B-8B03-AB89-1883-13F30A0E81E5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

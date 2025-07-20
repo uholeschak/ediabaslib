@@ -8,10 +8,13 @@
     <ImplicitUsings>disable</ImplicitUsings>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Include="..\..\EdiabasLib\EdiabasLib\EdBcTlsUtilities.cs" Link="EdBcTlsUtilities.cs" />
-    <Compile Include="..\..\EdiabasLib\EdiabasLib\EdSec4Diag.cs" Link="EdSec4Diag.cs" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>NU1702</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>NU1702</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Include="..\CarSimulator\TestCert\rootCA_EC.pfx" Link="rootCA_EC.pfx">
@@ -22,6 +25,10 @@
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
