@@ -305,7 +305,7 @@
             buttonSearchVehicles.Name = "buttonSearchVehicles";
             buttonSearchVehicles.Size = new System.Drawing.Size(179, 23);
             buttonSearchVehicles.TabIndex = 22;
-            buttonSearchVehicles.Text = "Search Vehicles";
+            buttonSearchVehicles.Text = "Search DoIP Vehicles";
             buttonSearchVehicles.UseVisualStyleBackColor = true;
             buttonSearchVehicles.Click += buttonSearchVehicles_Click;
             // 

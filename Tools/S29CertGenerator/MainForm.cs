@@ -115,12 +115,13 @@ namespace S29CertGenerator
         {
             try
             {
+                bool active = _taskActive;
                 bool caKeyValid = LoadCaKey(textBoxCaCeyFile.Text);
                 bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
                 bool cacertsValid = LoadCaCerts(textBoxCaCertsFile.Text);
                 bool isValid = IsSettingValid();
 
-                if (caKeyValid && istaKeyValid && cacertsValid && isValid)
+                if (caKeyValid && istaKeyValid && cacertsValid && isValid && !active)
                 {
                     buttonInstall.Enabled = true;
                     buttonUninstall.Enabled = true;
@@ -132,6 +133,9 @@ namespace S29CertGenerator
                     buttonInstall.Enabled = false;
                     buttonUninstall.Enabled = false;
                 }
+
+                buttonSearchVehicles.Enabled = !active;
+                buttonClose.Enabled = !active;
             }
             catch (Exception)
             {
@@ -1519,7 +1523,7 @@ namespace S29CertGenerator
 
         private void buttonSearchVehicles_Click(object sender, EventArgs e)
         {
-            UpdateStatusText("Searching for vehicles...");
+            UpdateStatusText("Searching for DoIP vehicles...");
             comboBoxVinList.Items.Clear();
 
             SearchVehiclesTask().ContinueWith(task =>
@@ -1552,17 +1556,18 @@ namespace S29CertGenerator
                         }
                         comboBoxVinList.SelectedIndex = 0;
                         comboBoxVinList.EndUpdate();
-                        UpdateStatusText($"Found {vinList.Count} vehicles", true);
+                        UpdateStatusText($"Found {vinList.Count} DoIP vehicles", true);
                     }
                     else
                     {
-                        UpdateStatusText("No vehicles found", true);
+                        UpdateStatusText("No DoIP vehicles found", true);
                     }
+
                     UpdateDisplay();
-                    }));
-                _taskActive = true;
+                }));
             });
 
+            _taskActive = true;
             UpdateDisplay();
         }
     }
