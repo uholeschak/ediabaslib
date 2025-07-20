@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace S29CertGenerator
@@ -23,6 +24,7 @@ namespace S29CertGenerator
         private List<X509CertificateEntry> _caPublicCertificates;
         private AsymmetricKeyParameter _istaKeyResource;
         private List<X509CertificateEntry> _istaPublicCertificates;
+        private volatile bool _taskActive = false;
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegValueIstaLocation = @"InstallLocation";
         public const string EdiabasDirName = @"Ediabas";
@@ -265,6 +267,27 @@ namespace S29CertGenerator
             {
                 return false;
             }
+        }
+
+        private async Task<List<EdInterfaceEnet.EnetConnection>> SearchVehiclesTask()
+        {
+            // ReSharper disable once ConvertClosureToMethodGroup
+            return await Task.Run(() => SearchVehicles()).ConfigureAwait(false);
+        }
+
+        private List<EdInterfaceEnet.EnetConnection> SearchVehicles()
+        {
+            List<EdInterfaceEnet.EnetConnection> detectedVehicles;
+            using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false))
+            {
+                detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll,
+                    new List<EdInterfaceEnet.CommunicationMode>()
+                    {
+                        EdInterfaceEnet.CommunicationMode.DoIp
+                    });
+            }
+
+            return detectedVehicles;
         }
 
         private string DetectEdiabasPath()
@@ -1491,6 +1514,55 @@ namespace S29CertGenerator
         private void buttonResetSettings_Click(object sender, EventArgs e)
         {
             ValidateSetting(true);
+            UpdateDisplay();
+        }
+
+        private void buttonSearchVehicles_Click(object sender, EventArgs e)
+        {
+            UpdateStatusText("Searching for vehicles...");
+            comboBoxVinList.Items.Clear();
+
+            SearchVehiclesTask().ContinueWith(task =>
+            {
+                _taskActive = false;
+                List<string> vinList = new List<string>();
+                BeginInvoke((Action)(() =>
+                {
+                    List<EdInterfaceEnet.EnetConnection> detectedVehicles = task.Result;
+                    if (detectedVehicles != null)
+                    {
+                        foreach (EdInterfaceEnet.EnetConnection enetConnection in detectedVehicles)
+                        {
+                            if (!string.IsNullOrEmpty(enetConnection.Vin))
+                            {
+                                vinList.Add(enetConnection.Vin);
+                            }
+                        }
+                    }
+
+                    if (vinList.Count > 0)
+                    {
+                        comboBoxVinList.BeginUpdate();
+                        foreach (string vin in vinList.OrderBy(v => v))
+                        {
+                            if (!comboBoxVinList.Items.Contains(vin))
+                            {
+                                comboBoxVinList.Items.Add(vin);
+                            }
+                        }
+                        comboBoxVinList.SelectedIndex = 0;
+                        comboBoxVinList.EndUpdate();
+                        UpdateStatusText($"Found {vinList.Count} vehicles", true);
+                    }
+                    else
+                    {
+                        UpdateStatusText("No vehicles found", true);
+                    }
+                    UpdateDisplay();
+                    }));
+                _taskActive = true;
+            });
+
             UpdateDisplay();
         }
     }

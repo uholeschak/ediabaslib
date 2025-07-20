@@ -54,6 +54,8 @@
             buttonUninstall = new System.Windows.Forms.Button();
             openCaCertsFileDialog = new System.Windows.Forms.OpenFileDialog();
             buttonResetSettings = new System.Windows.Forms.Button();
+            buttonSearchVehicles = new System.Windows.Forms.Button();
+            comboBoxVinList = new System.Windows.Forms.ComboBox();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -89,7 +91,7 @@
             // buttonClose
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.Location = new System.Drawing.Point(610, 484);
+            buttonClose.Location = new System.Drawing.Point(610, 520);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
             buttonClose.TabIndex = 21;
@@ -138,7 +140,7 @@
             // buttonInstall
             // 
             buttonInstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonInstall.Location = new System.Drawing.Point(448, 484);
+            buttonInstall.Location = new System.Drawing.Point(448, 520);
             buttonInstall.Name = "buttonInstall";
             buttonInstall.Size = new System.Drawing.Size(75, 23);
             buttonInstall.TabIndex = 19;
@@ -150,11 +152,11 @@
             // 
             richTextBoxStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            richTextBoxStatus.Location = new System.Drawing.Point(12, 244);
+            richTextBoxStatus.Location = new System.Drawing.Point(12, 273);
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            richTextBoxStatus.Size = new System.Drawing.Size(673, 204);
+            richTextBoxStatus.Size = new System.Drawing.Size(673, 211);
             richTextBoxStatus.TabIndex = 16;
             richTextBoxStatus.Text = "";
             // 
@@ -225,7 +227,7 @@
             // 
             checkBoxForceCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             checkBoxForceCreate.AutoSize = true;
-            checkBoxForceCreate.Location = new System.Drawing.Point(12, 487);
+            checkBoxForceCreate.Location = new System.Drawing.Point(12, 523);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
             checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
             checkBoxForceCreate.TabIndex = 18;
@@ -273,7 +275,7 @@
             // buttonUninstall
             // 
             buttonUninstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonUninstall.Location = new System.Drawing.Point(529, 484);
+            buttonUninstall.Location = new System.Drawing.Point(529, 520);
             buttonUninstall.Name = "buttonUninstall";
             buttonUninstall.Size = new System.Drawing.Size(75, 23);
             buttonUninstall.TabIndex = 20;
@@ -289,7 +291,7 @@
             // buttonResetSettings
             // 
             buttonResetSettings.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonResetSettings.Location = new System.Drawing.Point(529, 454);
+            buttonResetSettings.Location = new System.Drawing.Point(529, 490);
             buttonResetSettings.Name = "buttonResetSettings";
             buttonResetSettings.Size = new System.Drawing.Size(156, 23);
             buttonResetSettings.TabIndex = 17;
@@ -297,13 +299,34 @@
             buttonResetSettings.UseVisualStyleBackColor = true;
             buttonResetSettings.Click += buttonResetSettings_Click;
             // 
+            // buttonSearchVehicles
+            // 
+            buttonSearchVehicles.Location = new System.Drawing.Point(12, 244);
+            buttonSearchVehicles.Name = "buttonSearchVehicles";
+            buttonSearchVehicles.Size = new System.Drawing.Size(179, 23);
+            buttonSearchVehicles.TabIndex = 22;
+            buttonSearchVehicles.Text = "Search Vehicles";
+            buttonSearchVehicles.UseVisualStyleBackColor = true;
+            buttonSearchVehicles.Click += buttonSearchVehicles_Click;
+            // 
+            // comboBoxVinList
+            // 
+            comboBoxVinList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxVinList.FormattingEnabled = true;
+            comboBoxVinList.Location = new System.Drawing.Point(197, 244);
+            comboBoxVinList.Name = "comboBoxVinList";
+            comboBoxVinList.Size = new System.Drawing.Size(488, 23);
+            comboBoxVinList.TabIndex = 23;
+            // 
             // MainForm
             // 
             AcceptButton = buttonInstall;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(697, 519);
+            ClientSize = new System.Drawing.Size(697, 555);
+            Controls.Add(comboBoxVinList);
+            Controls.Add(buttonSearchVehicles);
             Controls.Add(buttonResetSettings);
             Controls.Add(buttonUninstall);
             Controls.Add(buttonSelectTrustStoreFolder);
@@ -367,5 +390,7 @@
         private System.Windows.Forms.Button buttonUninstall;
         private System.Windows.Forms.OpenFileDialog openCaCertsFileDialog;
         private System.Windows.Forms.Button buttonResetSettings;
+        private System.Windows.Forms.Button buttonSearchVehicles;
+        private System.Windows.Forms.ComboBox comboBoxVinList;
     }
 }
