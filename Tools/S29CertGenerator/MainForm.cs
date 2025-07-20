@@ -1,6 +1,7 @@
 using EdiabasLib;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
@@ -1016,9 +1017,16 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                AsymmetricKeyParameter publicKeyParameter = EdBcTlsUtilities.ConvertPemToPublicKey(publicKey);
+                if (publicKeyParameter == null)
+                {
+                    UpdateStatusText($"Failed to convert public key in request file: {baseJsonFile}", true);
+                    return false;
+                }
+
                 string jsonResponseFileName = $"ResponseContainer_service-29-{certReqProfile}-{vin17}.json";
                 string jsonResponseFile = Path.Combine(jsonResponseFolder, jsonResponseFileName);
-                if (!GenerateCertificate(x509SubCaCert, publicKey, vin17, certOutputFolder, jsonResponseFile))
+                if (!GenerateCertificate(x509SubCaCert, publicKeyParameter, vin17, certOutputFolder, jsonResponseFile))
                 {
                     return false;
                 }
@@ -1032,7 +1040,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool GenerateCertificate(Org.BouncyCastle.X509.X509Certificate x509SubCaCert, string publicKey, string vehicleVin, string certOutputFolder, string jsonResponseFile = null)
+        protected bool GenerateCertificate(Org.BouncyCastle.X509.X509Certificate x509SubCaCert, AsymmetricKeyParameter publicKeyParameter, string vehicleVin, string certOutputFolder, string jsonResponseFile = null)
         {
             try
             {
@@ -1044,10 +1052,9 @@ namespace S29CertGenerator
 
                 string vin17 = vehicleVin.Trim().ToUpperInvariant();
                 UpdateStatusText($"VIN: {vin17}", true);
-                AsymmetricKeyParameter publicKeyParameter = EdBcTlsUtilities.ConvertPemToPublicKey(publicKey);
                 if (publicKeyParameter == null)
                 {
-                    UpdateStatusText("Failed to convert public key", true);
+                    UpdateStatusText("Public key is not provided", true);
                     return false;
                 }
 
@@ -1241,6 +1248,26 @@ namespace S29CertGenerator
                         UpdateStatusText(string.Empty, true);
                         ConvertJsonRequestFile(x509SubCaCert, jsonFile, jsonResponseFolder, certOutputFolder);
                     }
+                }
+                else
+                {
+                    string machineName = EdSec4Diag.GetMachineName();
+                    string machinePublicFile = Path.Combine(certOutputFolder, machineName + EdSec4Diag.S29MachinePublicName);
+                    if (!File.Exists(machinePublicFile))
+                    {
+                        UpdateStatusText($"Machine public key file does not existing: {machinePublicFile}", true);
+                        UpdateStatusText("Exceute EDIABAS or EdiabasLib in SSL mode first", true);
+                        return false;
+                    }
+
+                    AsymmetricKeyParameter publicKeyParameter = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
+                    if (publicKeyParameter == null)
+                    {
+                        UpdateStatusText($"Failed to load public key from file: {machinePublicFile}", true);
+                        return false;
+                    }
+
+                    GenerateCertificate(x509SubCaCert, publicKeyParameter, vehicleVin, certOutputFolder);
                 }
 
                 return true;

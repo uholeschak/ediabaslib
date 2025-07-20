@@ -26,6 +26,7 @@ namespace EdiabasLib
         public const string S29IstaCnName = "Service29-ISTA-S29";
         public const string S29ThumbprintCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca";
         public const string S29ThumbprintSubCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa";
+        public const string S29MachinePublicName = "_public.pem";
         public const string IstaPkcs12KeyPwd = "G#8x!9sD2@qZ6&lF1";
         public static byte[] RoleMask = new byte[] { 0, 0, 5, 75 };
 
@@ -235,6 +236,17 @@ namespace EdiabasLib
 #else
             return new X509Certificate2(encodedCert);
 #endif
+        }
+
+        public static string GetMachineName()
+        {
+            string machineName = Environment.MachineName;
+            if (string.IsNullOrEmpty(machineName))
+            {
+                machineName = "LocalMachine";
+            }
+
+            return machineName;
         }
 
 #if !ANDROID
