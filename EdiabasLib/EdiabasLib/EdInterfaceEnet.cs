@@ -3164,14 +3164,9 @@ namespace EdiabasLib
                     return false;
                 }
 
-                string machineName = Environment.MachineName;
-                if (string.IsNullOrEmpty(machineName))
-                {
-                    machineName = "LocalMachine";
-                }
-
+                string machineName = EdSec4Diag.GetMachineName();
                 string machinePrivateFile = Path.Combine(certPath, machineName + ".p12");
-                string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
+                string machinePublicFile = Path.Combine(certPath, machineName + EdSec4Diag.S29MachinePublicName);
 
                 string p12Password;
                 using (SHA256 algorithm = SHA256.Create())

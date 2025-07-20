@@ -916,14 +916,9 @@ namespace EdiabasLibConfigTool
                 string certPath = Path.Combine(s29BasePath, "Certificates");
                 if (Directory.Exists(certPath))
                 {
-                    string machineName = Environment.MachineName;
-                    if (string.IsNullOrEmpty(machineName))
-                    {
-                        machineName = "LocalMachine";
-                    }
-
+                    string machineName = EdSec4Diag.GetMachineName();
                     string machinePrivateFile = Path.Combine(certPath, machineName + ".p12");
-                    string machinePublicFile = Path.Combine(certPath, machineName + "_public.pem");
+                    string machinePublicFile = Path.Combine(certPath, machineName + EdSec4Diag.S29MachinePublicName);
 
                     if (File.Exists(machinePrivateFile))
                     {
