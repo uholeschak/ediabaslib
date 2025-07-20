@@ -981,14 +981,10 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.NullValueHandling = NullValueHandling.Ignore;
-                serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                serializer.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
-
                 EdSec4Diag.Sec4DiagRequestData requestData;
                 using (StreamReader file = File.OpenText(jsonRequestFile))
                 {
+                    JsonSerializer serializer = new JsonSerializer();
                     requestData = serializer.Deserialize(file, typeof(EdSec4Diag.Sec4DiagRequestData)) as EdSec4Diag.Sec4DiagRequestData;
                 }
 
@@ -1006,7 +1002,6 @@ namespace S29CertGenerator
                 }
 
                 string vin17 = vin.Trim().ToUpperInvariant();
-                UpdateStatusText($"VIN: {vin17}", true);
                 string publicKey = requestData.PublicKey;
                 if (string.IsNullOrWhiteSpace(publicKey))
                 {
@@ -1021,22 +1016,50 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                string jsonResponseFileName = $"ResponseContainer_service-29-{certReqProfile}-{vin17}.json";
+                string jsonResponseFile = Path.Combine(jsonResponseFolder, jsonResponseFileName);
+                if (!GenerateCertificate(x509SubCaCert, publicKey, vin17, certOutputFolder, jsonResponseFile))
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Convert request file exception: {ex.Message}", true);
+                return false;
+            }
+        }
+
+        protected bool GenerateCertificate(Org.BouncyCastle.X509.X509Certificate x509SubCaCert, string publicKey, string vehicleVin, string certOutputFolder, string jsonResponseFile = null)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(vehicleVin))
+                {
+                    UpdateStatusText("Vehicle VIN is empty", true);
+                    return false;
+                }
+
+                string vin17 = vehicleVin.Trim().ToUpperInvariant();
+                UpdateStatusText($"VIN: {vin17}", true);
                 AsymmetricKeyParameter publicKeyParameter = EdBcTlsUtilities.ConvertPemToPublicKey(publicKey);
                 if (publicKeyParameter == null)
                 {
-                    UpdateStatusText($"Failed to convert public key in request file: {baseJsonFile}", true);
+                    UpdateStatusText("Failed to convert public key", true);
                     return false;
                 }
 
                 if (_caPublicCertificates == null || _caPublicCertificates.Count < 1)
                 {
-                    UpdateStatusText($"CA public certificate is not loaded", true);
+                    UpdateStatusText("CA public certificate is not loaded", true);
                     return false;
                 }
 
                 if (_caKeyResource == null)
                 {
-                    UpdateStatusText($"CA private key is not loaded", true);
+                    UpdateStatusText("CA private key is not loaded", true);
                     return false;
                 }
 
@@ -1049,7 +1072,7 @@ namespace S29CertGenerator
                 AsymmetricKeyParameter istaPublicKey = _istaPublicCertificates[0].Certificate.GetPublicKey();
                 if (istaPublicKey == null)
                 {
-                    UpdateStatusText($"ISTA public key is not found", true);
+                    UpdateStatusText("ISTA public key is not found", true);
                     return false;
                 }
 
@@ -1113,24 +1136,32 @@ namespace S29CertGenerator
 
                 UpdateStatusText($"Certificate stored: {outputCertFileName}", true);
 
-                EdSec4Diag.Sec4DiagResponseData responseData = new EdSec4Diag.Sec4DiagResponseData
+                if (!string.IsNullOrEmpty(jsonResponseFile))
                 {
-                    Vin17 = vin17,
-                    Certificate = s29CertData,
-                    CertificateChain = certChain.ToArray()
-                };
-
-                string jsonResponseFileName = $"ResponseContainer_service-29-{certReqProfile}-{vin17}.json";
-                string jsonResponseFile = Path.Combine(jsonResponseFolder, jsonResponseFileName);
-                using (StreamWriter sw = new StreamWriter(jsonResponseFile))
-                {
-                    using (JsonWriter writer = new JsonTextWriter(sw))
+                    EdSec4Diag.Sec4DiagResponseData responseData = new EdSec4Diag.Sec4DiagResponseData
                     {
-                        serializer.Serialize(writer, responseData);
+                        Vin17 = vin17,
+                        Certificate = s29CertData,
+                        CertificateChain = certChain.ToArray()
+                    };
+
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.NullValueHandling = NullValueHandling.Ignore;
+                    serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                    serializer.StringEscapeHandling = StringEscapeHandling.EscapeHtml;
+
+                    using (StreamWriter sw = new StreamWriter(jsonResponseFile))
+                    {
+                        using (JsonWriter writer = new JsonTextWriter(sw))
+                        {
+                            serializer.Serialize(writer, responseData);
+                        }
                     }
+
+                    string jsonResponseFileName = Path.GetFileName(jsonResponseFile);
+                    UpdateStatusText($"Response file created: {jsonResponseFileName}", true);
                 }
 
-                UpdateStatusText($"Response file created: {jsonResponseFileName}", true);
                 return true;
             }
             catch (Exception ex)
@@ -1140,7 +1171,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, bool forceUpdate = false)
+        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string vehicleVin, bool forceUpdate = false)
         {
             try
             {
@@ -1189,24 +1220,27 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                DirectoryInfo directoryInfo = new DirectoryInfo(jsonRequestFolder);
-                FileInfo[] files = directoryInfo.GetFiles().OrderBy(p => p.LastWriteTime).ToArray();
-                foreach (FileInfo fileInfo in files)
+                if (string.IsNullOrEmpty(vehicleVin))
                 {
-                    string jsonFile = fileInfo.FullName;
-                    string baseFileName = Path.GetFileName(jsonFile);
-                    if (!baseFileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                    DirectoryInfo directoryInfo = new DirectoryInfo(jsonRequestFolder);
+                    FileInfo[] files = directoryInfo.GetFiles().OrderBy(p => p.LastWriteTime).ToArray();
+                    foreach (FileInfo fileInfo in files)
                     {
-                        continue;
-                    }
+                        string jsonFile = fileInfo.FullName;
+                        string baseFileName = Path.GetFileName(jsonFile);
+                        if (!baseFileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
 
-                    if (string.Compare(baseFileName, "template.json", StringComparison.OrdinalIgnoreCase) == 0)
-                    {
-                        continue;
-                    }
+                        if (string.Compare(baseFileName, "template.json", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            continue;
+                        }
 
-                    UpdateStatusText(string.Empty, true);
-                    ConvertJsonRequestFile(x509SubCaCert, jsonFile, jsonResponseFolder, certOutputFolder);
+                        UpdateStatusText(string.Empty, true);
+                        ConvertJsonRequestFile(x509SubCaCert, jsonFile, jsonResponseFolder, certOutputFolder);
+                    }
                 }
 
                 return true;
@@ -1563,7 +1597,8 @@ namespace S29CertGenerator
 
         private void buttonInstall_Click(object sender, EventArgs e)
         {
-            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, checkBoxForceCreate.Checked))
+            string vehicleVin = comboBoxVinList.SelectedItem as string;
+            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, vehicleVin, checkBoxForceCreate.Checked))
             {
                 checkBoxForceCreate.Checked = false;
             }
