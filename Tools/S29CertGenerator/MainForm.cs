@@ -62,7 +62,10 @@ namespace S29CertGenerator
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-
+            if (_taskActive)
+            {
+                e.Cancel = true;
+            }
         }
 
         private void buttonClose_Click(object sender, System.EventArgs e)
