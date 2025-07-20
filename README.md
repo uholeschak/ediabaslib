@@ -32,7 +32,8 @@ Now there is also a library existing that is working with Mono for Android. For 
 ### Deep OBD
 Additionally an Android application _[Deep OBD](docs/Deep_OBD_for_BMW_and_VAG.md)_ is existing, that is configurable via [XML](docs/Page_specification.md). Generation of XML code could be simplified with the integrated configuration generator.  
 Download app from Google Play: [https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd](https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd)  
-[![updatestar](https://www.updatestar.com/img/rating_4stars.png)](https://deep-obd.updatestar.com) Rated by updatestar.com: [https://deep-obd.updatestar.com](https://deep-obd.updatestar.com)  
+[![updatestar](https://www.updatestar.com/img/rating_4stars.png)](https://deep-obd.updatestar.com)  
+Rated by updatestar.com: [https://deep-obd.updatestar.com](https://deep-obd.updatestar.com)  
 
 _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * Standard FTDI based USB "INPA compatible" D-CAN/K-Line adapters (all protocols)
