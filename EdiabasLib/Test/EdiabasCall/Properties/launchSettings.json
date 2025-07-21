@@ -13,13 +13,20 @@
       "commandName": "Project",
       "commandLineArgs": "--ifh=\"ENET\" -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\" -j \"STATUS_REGENERATION_CSF\""
     },
-    "GetTLSCert": {
+    "CreateTLSCert": {
       "commandName": "Project",
-      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ApiTrace=1;IfhTrace=3;IfhnTrace=3;SystemTraceIfh=7;RemoteHost=192.168.150.10;SSLPort=3496;Authentication=S29;NetworkProtocol=SSL\" -s \"C:\\EDIABAS\\Ecu\\F01\" -j \"IDENT_FUNKTIONAL\""
+      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ApiTrace=1;IfhTrace=3;IfhnTrace=3;SystemTraceIfh=7;RemoteHost=192.168.150.10;SSLPort=3496;Authentication=S29;NetworkProtocol=SSL\" -s \"C:\\EDIABAS\\Ecu\\F01\" -j \"IDENT\""
     },
-    "VM-GetTLSCert": {
+    "VM-CreateTLSCert": {
       "commandName": "Project",
-      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ApiTrace=1;IfhTrace=3;IfhnTrace=3;SystemTraceIfh=7;RemoteHost=192.168.150.10;SSLPort=3496;Authentication=S29;NetworkProtocol=SSL;selectCertificate=S29-WBAJM71000B055940\" -s \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ecu\\F01\" -p \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ediabas\\BIN\" -j \"IDENT_FUNKTIONAL\"",
+      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ApiTrace=1;IfhTrace=3;IfhnTrace=3;SystemTraceIfh=7;RemoteHost=192.168.150.10;SSLPort=3496;Authentication=S29;NetworkProtocol=SSL\" -p \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ediabas\\BIN\" -s \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ecu\\F01\" -j \"IDENT\"",
+      "remoteDebugEnabled": true,
+      "remoteDebugMachine": "VM-WIN11",
+      "authenticationMode": "Windows"
+    },
+    "VM-AuthMode": {
+      "commandName": "Project",
+      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ApiTrace=1;IfhTrace=3;IfhnTrace=3;SystemTraceIfh=7;RemoteHost=192.168.150.10;SSLPort=3496;Authentication=S29;NetworkProtocol=SSL;selectCertificate=S29-WBAJM71000B055940\" -p \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ediabas\\BIN\" -s \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ecu\\IPB_APP2\" -j \"STATUS_LESEN#ARG;SEC4DIAG_READ_AUTH_MODE\" -j \"STATUS_VCM_GET_FA\" -j \"STATUS_LESEN#ARG;STATUS_VCM_GET_ECU_LIST_ALL\" -j \"STATUS_LESEN#ARG;VCM_DID_ISTUFE\"",
       "remoteDebugEnabled": true,
       "remoteDebugMachine": "VM-WIN11",
       "authenticationMode": "Windows"
