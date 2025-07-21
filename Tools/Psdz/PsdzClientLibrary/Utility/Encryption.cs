@@ -2,7 +2,9 @@
 using System.Globalization;
 using System.IO;
 using System.Security;
+using System.Security.AccessControl;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 
 namespace PsdzClient.Utility
@@ -199,6 +201,87 @@ namespace PsdzClient.Utility
             finally
             {
                 aesManaged?.Dispose();
+            }
+        }
+
+        // [UH] added
+        public static string DecryptFile(string fileName)
+        {
+            try
+            {
+                if (!File.Exists(fileName))
+                {
+                    return null;
+                }
+                string text = Decrypt(ReadAllText(fileName));
+                if (string.IsNullOrEmpty(text))
+                {
+                    return null;
+                }
+                return text;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        // [UH] added
+        public static bool EncryptFile(string contents, string fileName)
+        {
+            try
+            {
+                string encryptedText = Encrypt(contents);
+                if (string.IsNullOrEmpty(encryptedText))
+                {
+                    return false;
+                }
+
+                using (FileStream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    using (StreamWriter streamWriter = new StreamWriter(fileStream))
+                    {
+                        streamWriter.Write(encryptedText);
+                        streamWriter.Flush();
+                        streamWriter.Close();
+                    }
+                }
+
+                FileSecurity accessControl = File.GetAccessControl(fileName);
+                accessControl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, AccessControlType.Allow));
+                File.SetAccessControl(fileName, accessControl);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        // [UH] added
+        public static string ReadAllText(string path)
+        {
+            try
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                {
+                    byte[] array = new byte[2048];
+                    UTF8Encoding utf8Encoding = new UTF8Encoding(true);
+                    int num;
+
+                    while ((num = fileStream.Read(array, 0, array.Length)) > 0)
+                    {
+                        stringBuilder.Append(utf8Encoding.GetString(array, 0, num));
+                    }
+                }
+                string text = stringBuilder.ToString();
+                return text;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 

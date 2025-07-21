@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
+    <ProjectReference Include="..\Psdz\PsdzClientLibrary\PsdzClientLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>

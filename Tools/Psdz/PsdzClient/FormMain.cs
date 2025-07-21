@@ -579,84 +579,6 @@ namespace PsdzClient
             UpdateCurrentOptions();
         }
 
-        private string DecryptFile(string fileName)
-        {
-            try
-            {
-                if (!File.Exists(fileName))
-                {
-                    return null;
-                }
-                string text = Utility.Encryption.Decrypt(ReadAllText(fileName));
-                if (string.IsNullOrEmpty(text))
-                {
-                    return null;
-                }
-                return text;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private bool EncryptFile(string contents, string fileName)
-        {
-            try
-            {
-                string encryptedText = Utility.Encryption.Encrypt(contents);
-                if (string.IsNullOrEmpty(encryptedText))
-                {
-                    return false;
-                }
-
-                using (FileStream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    using (StreamWriter streamWriter = new StreamWriter(fileStream))
-                    {
-                        streamWriter.Write(encryptedText);
-                        streamWriter.Flush();
-                        streamWriter.Close();
-                    }
-                }
-
-                FileSecurity accessControl = File.GetAccessControl(fileName);
-                accessControl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, AccessControlType.Allow));
-                File.SetAccessControl(fileName, accessControl);
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        private string ReadAllText(string path)
-        {
-            try
-            {
-                StringBuilder stringBuilder = new StringBuilder();
-                using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
-                {
-                    byte[] array = new byte[2048];
-                    UTF8Encoding utf8Encoding = new UTF8Encoding(true);
-                    int num;
-
-                    while ((num = fileStream.Read(array, 0, array.Length)) > 0)
-                    {
-                        stringBuilder.Append(utf8Encoding.GetString(array, 0, num));
-                    }
-                }
-                string text = stringBuilder.ToString();
-                return text;
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
         private async Task<bool> StopProgrammingServiceTask(string istaFolder, bool force)
         {
             // ReSharper disable once ConvertClosureToMethodGroup
@@ -1145,7 +1067,7 @@ namespace PsdzClient
                 _decryptEditMode = false;
                 UpdateDisplay();
 
-                if (!EncryptFile(text, fileName))
+                if (!Utility.Encryption.EncryptFile(text, fileName))
                 {
                     UpdateStatus(Resources.EncryptionFailed);
                     return;
@@ -1163,7 +1085,7 @@ namespace PsdzClient
 
                 string fileName = openFileDialogDecrypt.FileName;
                 _lastDecryptFileName = fileName;
-                string text = DecryptFile(fileName);
+                string text = Utility.Encryption.DecryptFile(fileName);
                 if (string.IsNullOrEmpty(text))
                 {
                     UpdateStatus(Resources.DecryptionFailed);
