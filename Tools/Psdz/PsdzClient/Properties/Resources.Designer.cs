@@ -61,6 +61,24 @@ namespace PsdzClient.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Decrypt ähnelt.
+        /// </summary>
+        internal static string ButtonDecrypt {
+            get {
+                return ResourceManager.GetString("ButtonDecrypt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Encrypt ähnelt.
+        /// </summary>
+        internal static string ButtonEncrypt {
+            get {
+                return ResourceManager.GetString("ButtonEncrypt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Container conversion failed. ähnelt.
         /// </summary>
         internal static string ContainerError {

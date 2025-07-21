@@ -134,6 +134,7 @@ namespace PsdzClient
             buttonVehicleSearch.Enabled = ipEnabled && !editMode;
             buttonInternalTest.Enabled = !active && !editMode;
             buttonDecryptFile.Enabled = !active;
+            buttonDecryptFile.Text = editMode ? Resources.ButtonEncrypt : Resources.ButtonDecrypt;
             buttonStopHost.Enabled = !active && hostRunning && !editMode;
             buttonConnect.Enabled = !active && !vehicleConnected && !editMode;
             buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected && !editMode;
