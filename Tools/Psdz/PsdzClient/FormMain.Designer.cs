@@ -67,60 +67,42 @@ namespace PsdzClient
             // 
             // textBoxIstaFolder
             // 
-            this.textBoxIstaFolder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxIstaFolder.Location = new System.Drawing.Point(93, 12);
+            resources.ApplyResources(this.textBoxIstaFolder, "textBoxIstaFolder");
             this.textBoxIstaFolder.Name = "textBoxIstaFolder";
-            this.textBoxIstaFolder.Size = new System.Drawing.Size(647, 20);
-            this.textBoxIstaFolder.TabIndex = 1;
             // 
             // buttonClose
             // 
-            this.buttonClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.buttonClose, "buttonClose");
             this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonClose.Location = new System.Drawing.Point(697, 626);
             this.buttonClose.Name = "buttonClose";
-            this.buttonClose.Size = new System.Drawing.Size(75, 23);
-            this.buttonClose.TabIndex = 26;
-            this.buttonClose.Text = "Close";
             this.buttonClose.UseVisualStyleBackColor = true;
             this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
             // 
             // buttonAbort
             // 
-            this.buttonAbort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.buttonAbort, "buttonAbort");
             this.buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonAbort.Location = new System.Drawing.Point(616, 626);
             this.buttonAbort.Name = "buttonAbort";
-            this.buttonAbort.Size = new System.Drawing.Size(75, 23);
-            this.buttonAbort.TabIndex = 25;
-            this.buttonAbort.Text = "Abort";
             this.buttonAbort.UseVisualStyleBackColor = true;
             this.buttonAbort.Click += new System.EventHandler(this.buttonAbort_Click);
             // 
             // folderBrowserDialogIsta
             // 
+            resources.ApplyResources(this.folderBrowserDialogIsta, "folderBrowserDialogIsta");
             this.folderBrowserDialogIsta.RootFolder = System.Environment.SpecialFolder.MyComputer;
             this.folderBrowserDialogIsta.ShowNewFolderButton = false;
             // 
             // buttonIstaFolder
             // 
-            this.buttonIstaFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonIstaFolder.Location = new System.Drawing.Point(746, 10);
+            resources.ApplyResources(this.buttonIstaFolder, "buttonIstaFolder");
             this.buttonIstaFolder.Name = "buttonIstaFolder";
-            this.buttonIstaFolder.Size = new System.Drawing.Size(30, 23);
-            this.buttonIstaFolder.TabIndex = 2;
-            this.buttonIstaFolder.Text = "...";
             this.buttonIstaFolder.UseVisualStyleBackColor = true;
             this.buttonIstaFolder.Click += new System.EventHandler(this.buttonIstaFolder_Click);
             // 
             // buttonStopHost
             // 
-            this.buttonStopHost.Location = new System.Drawing.Point(12, 97);
+            resources.ApplyResources(this.buttonStopHost, "buttonStopHost");
             this.buttonStopHost.Name = "buttonStopHost";
-            this.buttonStopHost.Size = new System.Drawing.Size(75, 23);
-            this.buttonStopHost.TabIndex = 12;
-            this.buttonStopHost.Text = "Stop Host";
             this.buttonStopHost.UseVisualStyleBackColor = true;
             this.buttonStopHost.Click += new System.EventHandler(this.buttonStopHost_Click);
             // 
@@ -130,255 +112,174 @@ namespace PsdzClient
             // 
             // ipAddressControlVehicleIp
             // 
+            resources.ApplyResources(this.ipAddressControlVehicleIp, "ipAddressControlVehicleIp");
             this.ipAddressControlVehicleIp.AllowInternalTab = false;
             this.ipAddressControlVehicleIp.AutoHeight = true;
             this.ipAddressControlVehicleIp.BackColor = System.Drawing.SystemColors.Window;
             this.ipAddressControlVehicleIp.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.ipAddressControlVehicleIp.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ipAddressControlVehicleIp.Location = new System.Drawing.Point(93, 68);
-            this.ipAddressControlVehicleIp.MinimumSize = new System.Drawing.Size(87, 20);
             this.ipAddressControlVehicleIp.Name = "ipAddressControlVehicleIp";
             this.ipAddressControlVehicleIp.ReadOnly = false;
-            this.ipAddressControlVehicleIp.Size = new System.Drawing.Size(87, 20);
-            this.ipAddressControlVehicleIp.TabIndex = 6;
-            this.ipAddressControlVehicleIp.Text = "...";
             // 
             // labelVehicleIp
             // 
-            this.labelVehicleIp.AutoSize = true;
-            this.labelVehicleIp.Location = new System.Drawing.Point(12, 73);
+            resources.ApplyResources(this.labelVehicleIp, "labelVehicleIp");
             this.labelVehicleIp.Name = "labelVehicleIp";
-            this.labelVehicleIp.Size = new System.Drawing.Size(57, 13);
-            this.labelVehicleIp.TabIndex = 5;
-            this.labelVehicleIp.Text = "Vehicle Ip:";
             // 
             // buttonConnect
             // 
-            this.buttonConnect.Location = new System.Drawing.Point(93, 97);
+            resources.ApplyResources(this.buttonConnect, "buttonConnect");
             this.buttonConnect.Name = "buttonConnect";
-            this.buttonConnect.Size = new System.Drawing.Size(75, 23);
-            this.buttonConnect.TabIndex = 13;
-            this.buttonConnect.Text = "Connect";
             this.buttonConnect.UseVisualStyleBackColor = true;
             this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
             // 
             // buttonDisconnect
             // 
-            this.buttonDisconnect.Location = new System.Drawing.Point(174, 97);
+            resources.ApplyResources(this.buttonDisconnect, "buttonDisconnect");
             this.buttonDisconnect.Name = "buttonDisconnect";
-            this.buttonDisconnect.Size = new System.Drawing.Size(75, 23);
-            this.buttonDisconnect.TabIndex = 14;
-            this.buttonDisconnect.Text = "Disconnect";
             this.buttonDisconnect.UseVisualStyleBackColor = true;
             this.buttonDisconnect.Click += new System.EventHandler(this.buttonDisconnect_Click);
             // 
             // buttonModILevel
             // 
-            this.buttonModILevel.Location = new System.Drawing.Point(336, 97);
+            resources.ApplyResources(this.buttonModILevel, "buttonModILevel");
             this.buttonModILevel.Name = "buttonModILevel";
-            this.buttonModILevel.Size = new System.Drawing.Size(75, 23);
-            this.buttonModILevel.TabIndex = 16;
-            this.buttonModILevel.Text = "Mod. ILevel";
             this.buttonModILevel.UseVisualStyleBackColor = true;
             this.buttonModILevel.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
             // labelIstaFolder
             // 
-            this.labelIstaFolder.AutoSize = true;
-            this.labelIstaFolder.Location = new System.Drawing.Point(12, 15);
+            resources.ApplyResources(this.labelIstaFolder, "labelIstaFolder");
             this.labelIstaFolder.Name = "labelIstaFolder";
-            this.labelIstaFolder.Size = new System.Drawing.Size(59, 13);
-            this.labelIstaFolder.TabIndex = 0;
-            this.labelIstaFolder.Text = "Ista Folder:";
             // 
             // buttonModFa
             // 
-            this.buttonModFa.Location = new System.Drawing.Point(417, 97);
+            resources.ApplyResources(this.buttonModFa, "buttonModFa");
             this.buttonModFa.Name = "buttonModFa";
-            this.buttonModFa.Size = new System.Drawing.Size(75, 23);
-            this.buttonModFa.TabIndex = 17;
-            this.buttonModFa.Text = "Gen.Tal";
             this.buttonModFa.UseVisualStyleBackColor = true;
             this.buttonModFa.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
             // buttonExecuteTal
             // 
-            this.buttonExecuteTal.Location = new System.Drawing.Point(498, 97);
+            resources.ApplyResources(this.buttonExecuteTal, "buttonExecuteTal");
             this.buttonExecuteTal.Name = "buttonExecuteTal";
-            this.buttonExecuteTal.Size = new System.Drawing.Size(75, 23);
-            this.buttonExecuteTal.TabIndex = 18;
-            this.buttonExecuteTal.Text = "Execute Tal";
             this.buttonExecuteTal.UseVisualStyleBackColor = true;
             this.buttonExecuteTal.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
             // progressBarEvent
             // 
-            this.progressBarEvent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.progressBarEvent.Location = new System.Drawing.Point(12, 626);
+            resources.ApplyResources(this.progressBarEvent, "progressBarEvent");
             this.progressBarEvent.Name = "progressBarEvent";
-            this.progressBarEvent.Size = new System.Drawing.Size(140, 23);
-            this.progressBarEvent.TabIndex = 23;
             // 
             // labelProgressEvent
             // 
-            this.labelProgressEvent.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.labelProgressEvent.AutoSize = true;
-            this.labelProgressEvent.Location = new System.Drawing.Point(158, 631);
+            resources.ApplyResources(this.labelProgressEvent, "labelProgressEvent");
             this.labelProgressEvent.Name = "labelProgressEvent";
-            this.labelProgressEvent.Size = new System.Drawing.Size(21, 13);
-            this.labelProgressEvent.TabIndex = 24;
-            this.labelProgressEvent.Text = "0%";
             // 
             // checkBoxIcom
             // 
-            this.checkBoxIcom.AutoSize = true;
-            this.checkBoxIcom.Location = new System.Drawing.Point(186, 70);
+            resources.ApplyResources(this.checkBoxIcom, "checkBoxIcom");
             this.checkBoxIcom.Name = "checkBoxIcom";
-            this.checkBoxIcom.Size = new System.Drawing.Size(53, 17);
-            this.checkBoxIcom.TabIndex = 7;
-            this.checkBoxIcom.Text = "ICOM";
             this.checkBoxIcom.UseVisualStyleBackColor = true;
             // 
             // buttonVehicleSearch
             // 
-            this.buttonVehicleSearch.Location = new System.Drawing.Point(255, 66);
+            resources.ApplyResources(this.buttonVehicleSearch, "buttonVehicleSearch");
             this.buttonVehicleSearch.Name = "buttonVehicleSearch";
-            this.buttonVehicleSearch.Size = new System.Drawing.Size(75, 23);
-            this.buttonVehicleSearch.TabIndex = 8;
-            this.buttonVehicleSearch.Text = "Search";
             this.buttonVehicleSearch.UseVisualStyleBackColor = true;
             this.buttonVehicleSearch.Click += new System.EventHandler(this.buttonVehicleSearch_Click);
             // 
             // buttonCreateOptions
             // 
-            this.buttonCreateOptions.Location = new System.Drawing.Point(255, 97);
+            resources.ApplyResources(this.buttonCreateOptions, "buttonCreateOptions");
             this.buttonCreateOptions.Name = "buttonCreateOptions";
-            this.buttonCreateOptions.Size = new System.Drawing.Size(75, 23);
-            this.buttonCreateOptions.TabIndex = 15;
-            this.buttonCreateOptions.Text = "Create Opt.";
             this.buttonCreateOptions.UseVisualStyleBackColor = true;
             this.buttonCreateOptions.Click += new System.EventHandler(this.buttonFunc_Click);
             // 
             // checkedListBoxOptions
             // 
-            this.checkedListBoxOptions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.checkedListBoxOptions, "checkedListBoxOptions");
             this.checkedListBoxOptions.CheckOnClick = true;
-            this.checkedListBoxOptions.Location = new System.Drawing.Point(12, 153);
             this.checkedListBoxOptions.Name = "checkedListBoxOptions";
-            this.checkedListBoxOptions.Size = new System.Drawing.Size(764, 154);
-            this.checkedListBoxOptions.TabIndex = 21;
             this.checkedListBoxOptions.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBoxOptions_ItemCheck);
             // 
             // comboBoxOptionType
             // 
-            this.comboBoxOptionType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.comboBoxOptionType, "comboBoxOptionType");
             this.comboBoxOptionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxOptionType.FormattingEnabled = true;
-            this.comboBoxOptionType.Location = new System.Drawing.Point(93, 126);
             this.comboBoxOptionType.Name = "comboBoxOptionType";
-            this.comboBoxOptionType.Size = new System.Drawing.Size(683, 21);
-            this.comboBoxOptionType.TabIndex = 20;
             this.comboBoxOptionType.SelectedIndexChanged += new System.EventHandler(this.comboBoxOptionType_SelectedIndexChanged);
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 129);
+            resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
-            this.label1.TabIndex = 19;
-            this.label1.Text = "Operation:";
             // 
             // labelLanguage
             // 
-            this.labelLanguage.AutoSize = true;
-            this.labelLanguage.Location = new System.Drawing.Point(12, 44);
+            resources.ApplyResources(this.labelLanguage, "labelLanguage");
             this.labelLanguage.Name = "labelLanguage";
-            this.labelLanguage.Size = new System.Drawing.Size(58, 13);
-            this.labelLanguage.TabIndex = 3;
-            this.labelLanguage.Text = "Language:";
             // 
             // comboBoxLanguage
             // 
-            this.comboBoxLanguage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.comboBoxLanguage, "comboBoxLanguage");
             this.comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxLanguage.FormattingEnabled = true;
-            this.comboBoxLanguage.Location = new System.Drawing.Point(93, 41);
             this.comboBoxLanguage.Name = "comboBoxLanguage";
-            this.comboBoxLanguage.Size = new System.Drawing.Size(683, 21);
-            this.comboBoxLanguage.TabIndex = 4;
             this.comboBoxLanguage.SelectedIndexChanged += new System.EventHandler(this.comboBoxLanguage_SelectedIndexChanged);
             // 
             // buttonInternalTest
             // 
-            this.buttonInternalTest.Location = new System.Drawing.Point(336, 66);
+            resources.ApplyResources(this.buttonInternalTest, "buttonInternalTest");
             this.buttonInternalTest.Name = "buttonInternalTest";
-            this.buttonInternalTest.Size = new System.Drawing.Size(75, 23);
-            this.buttonInternalTest.TabIndex = 9;
-            this.buttonInternalTest.Text = "Int. Test";
             this.buttonInternalTest.UseVisualStyleBackColor = true;
             this.buttonInternalTest.Click += new System.EventHandler(this.buttonInternalTest_Click);
             // 
             // openFileDialogTest
             // 
             this.openFileDialogTest.DefaultExt = "*.xml";
-            this.openFileDialogTest.Filter = "*.xml|*.xml|*.*|*.*";
+            resources.ApplyResources(this.openFileDialogTest, "openFileDialogTest");
             this.openFileDialogTest.ShowReadOnly = true;
             this.openFileDialogTest.SupportMultiDottedExtensions = true;
             // 
             // checkBoxGenServiceModules
             // 
-            this.checkBoxGenServiceModules.AutoSize = true;
-            this.checkBoxGenServiceModules.Location = new System.Drawing.Point(498, 70);
+            resources.ApplyResources(this.checkBoxGenServiceModules, "checkBoxGenServiceModules");
             this.checkBoxGenServiceModules.Name = "checkBoxGenServiceModules";
-            this.checkBoxGenServiceModules.Size = new System.Drawing.Size(104, 17);
-            this.checkBoxGenServiceModules.TabIndex = 11;
-            this.checkBoxGenServiceModules.Text = "Service modules";
             this.checkBoxGenServiceModules.UseVisualStyleBackColor = true;
             // 
             // buttonDecryptFile
             // 
-            this.buttonDecryptFile.Location = new System.Drawing.Point(417, 66);
+            resources.ApplyResources(this.buttonDecryptFile, "buttonDecryptFile");
             this.buttonDecryptFile.Name = "buttonDecryptFile";
-            this.buttonDecryptFile.Size = new System.Drawing.Size(75, 23);
-            this.buttonDecryptFile.TabIndex = 10;
-            this.buttonDecryptFile.Text = "Decrypt";
             this.buttonDecryptFile.UseVisualStyleBackColor = true;
             this.buttonDecryptFile.Click += new System.EventHandler(this.buttonDecryptFile_Click);
             // 
             // openFileDialogDecrypt
             // 
-            this.openFileDialogDecrypt.Filter = "*.*|*.*";
+            resources.ApplyResources(this.openFileDialogDecrypt, "openFileDialogDecrypt");
             this.openFileDialogDecrypt.ShowReadOnly = true;
             this.openFileDialogDecrypt.SupportMultiDottedExtensions = true;
             // 
             // textBoxStatus
             // 
-            this.textBoxStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            resources.ApplyResources(this.textBoxStatus, "textBoxStatus");
             this.textBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.textBoxStatus.DetectUrls = false;
-            this.textBoxStatus.Location = new System.Drawing.Point(12, 313);
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ReadOnly = true;
-            this.textBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(760, 307);
-            this.textBoxStatus.TabIndex = 22;
-            this.textBoxStatus.Text = "";
             // 
             // saveFileDialogDecrypt
             // 
-            this.saveFileDialogDecrypt.Filter = "*.*|*.*";
+            resources.ApplyResources(this.saveFileDialogDecrypt, "saveFileDialogDecrypt");
             // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
-            this.ClientSize = new System.Drawing.Size(784, 661);
             this.Controls.Add(this.textBoxStatus);
             this.Controls.Add(this.buttonDecryptFile);
             this.Controls.Add(this.checkBoxGenServiceModules);
@@ -406,11 +307,8 @@ namespace PsdzClient
             this.Controls.Add(this.buttonAbort);
             this.Controls.Add(this.buttonClose);
             this.Controls.Add(this.textBoxIstaFolder);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(800, 700);
             this.Name = "FormMain";
-            this.Text = "PsdzClient";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
             this.Load += new System.EventHandler(this.FormMain_Load);
