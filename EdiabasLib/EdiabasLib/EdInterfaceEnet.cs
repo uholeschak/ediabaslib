@@ -706,13 +706,13 @@ namespace EdiabasLib
                         {
                             DoIpS29Path = certificatesPath;
                         }
-
+#if false
                         string s29JsonRequestPath = Path.Combine(s29BasePath, "JsonRequests");
                         if (Directory.Exists(s29JsonRequestPath))
                         {
                             DoIpS29JsonRequestPath = s29JsonRequestPath;
                         }
-#if false
+
                         string s29JsonResponsePath = Path.Combine(s29BasePath, "JsonResponses");
                         if (Directory.Exists(s29JsonResponsePath))
                         {
@@ -1414,10 +1414,12 @@ namespace EdiabasLib
 
                             if (string.IsNullOrEmpty(DoIpS29SelectCert))
                             {
-                                if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath, EdSec4Diag.CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly))
+                                if (!string.IsNullOrEmpty(DoIpS29JsonRequestPath))
                                 {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request failed");
-                                    continue;
+                                    if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath, EdSec4Diag.CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly))
+                                    {
+                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request generation failed");
+                                    }
                                 }
 
                                 if (!string.IsNullOrEmpty(DoIpS29JsonResponsePath))
