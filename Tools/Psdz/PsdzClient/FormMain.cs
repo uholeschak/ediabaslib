@@ -66,6 +66,7 @@ namespace PsdzClient
         private CancellationTokenSource _cts;
         private string _lastTestFileName;
         private string _lastDecryptFileName;
+        private bool _decryptEditMode;
 
         private readonly ProgrammingJobs.ExecutionMode _executionMode;
 
@@ -107,6 +108,7 @@ namespace PsdzClient
             bool hostRunning = false;
             bool vehicleConnected = false;
             bool talPresent = false;
+            bool editMode = _decryptEditMode;
             if (!active)
             {
                 hostRunning = PsdzServiceStarter.IsThisServerInstanceRunning();
@@ -127,18 +129,18 @@ namespace PsdzClient
             ipAddressControlVehicleIp.Enabled = ipEnabled;
             checkBoxIcom.Enabled = ipEnabled;
             checkBoxGenServiceModules.Enabled = !active && !hostRunning;
-            buttonVehicleSearch.Enabled = ipEnabled;
-            buttonInternalTest.Enabled = !active;
+            buttonVehicleSearch.Enabled = ipEnabled && !editMode;
+            buttonInternalTest.Enabled = !active && !editMode;
             buttonDecryptFile.Enabled = !active;
-            buttonStopHost.Enabled = !active && hostRunning;
-            buttonConnect.Enabled = !active && !vehicleConnected;
-            buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
-            buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && optionsDict == null;
-            buttonModILevel.Enabled = modifyTal;
-            buttonModFa.Enabled = modifyTal;
-            buttonExecuteTal.Enabled = modifyTal && talPresent;
-            buttonClose.Enabled = !active;
-            buttonAbort.Enabled = active && abortPossible;
+            buttonStopHost.Enabled = !active && hostRunning && !editMode;
+            buttonConnect.Enabled = !active && !vehicleConnected && !editMode;
+            buttonDisconnect.Enabled = !active && hostRunning && vehicleConnected && !editMode;
+            buttonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && optionsDict == null && !editMode;
+            buttonModILevel.Enabled = modifyTal && !editMode;
+            buttonModFa.Enabled = modifyTal && !editMode;
+            buttonExecuteTal.Enabled = modifyTal && talPresent && !editMode;
+            buttonClose.Enabled = !active && !editMode;
+            buttonAbort.Enabled = (active && abortPossible) || editMode;
             checkedListBoxOptions.Enabled = !active && hostRunning && vehicleConnected;
 
             if (!vehicleConnected)
@@ -682,10 +684,17 @@ namespace PsdzClient
 
         private void buttonAbort_Click(object sender, EventArgs e)
         {
+            if (_decryptEditMode)
+            {
+                textBoxStatus.ReadOnly = true;
+                _decryptEditMode = false;
+            }
             if (TaskActive)
             {
                 _cts?.Cancel();
             }
+
+            UpdateDisplay();
         }
 
         private void buttonIstaFolder_Click(object sender, EventArgs e)
@@ -1105,6 +1114,9 @@ namespace PsdzClient
             }
 
             UpdateStatus(text);
+            textBoxStatus.ReadOnly = false;
+            _decryptEditMode = true;
+            UpdateDisplay();
         }
 
         private void checkedListBoxOptions_ItemCheck(object sender, ItemCheckEventArgs e)
