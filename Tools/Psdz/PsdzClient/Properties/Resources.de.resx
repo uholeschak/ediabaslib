@@ -123,6 +123,9 @@
   <data name="DecryptionFailed" xml:space="preserve">
     <value>Dateientschlüsselung fehlgeschlagen.</value>
   </data>
+  <data name="EncryptionFailed" xml:space="preserve">
+    <value>Dateiverschlüsselung fehlgeschlagen.</value>
+  </data>
   <data name="NoResponse" xml:space="preserve">
     <value>Keine Antwort</value>
   </data>

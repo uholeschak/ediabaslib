@@ -62,6 +62,7 @@ namespace PsdzClient
             this.buttonDecryptFile = new System.Windows.Forms.Button();
             this.openFileDialogDecrypt = new System.Windows.Forms.OpenFileDialog();
             this.textBoxStatus = new System.Windows.Forms.RichTextBox();
+            this.saveFileDialogDecrypt = new System.Windows.Forms.SaveFileDialog();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -367,6 +368,10 @@ namespace PsdzClient
             this.textBoxStatus.TabIndex = 22;
             this.textBoxStatus.Text = "";
             // 
+            // saveFileDialogDecrypt
+            // 
+            this.saveFileDialogDecrypt.Filter = "*.*|*.*";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
@@ -447,6 +452,7 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonDecryptFile;
         private System.Windows.Forms.OpenFileDialog openFileDialogDecrypt;
         private System.Windows.Forms.RichTextBox textBoxStatus;
+        private System.Windows.Forms.SaveFileDialog saveFileDialogDecrypt;
     }
 }
 

@@ -79,6 +79,15 @@ namespace PsdzClient.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die File encryption failed. ähnelt.
+        /// </summary>
+        internal static string EncryptionFailed {
+            get {
+                return ResourceManager.GetString("EncryptionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die No response ähnelt.
         /// </summary>
         internal static string NoResponse {

@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -597,6 +599,38 @@ namespace PsdzClient
             }
         }
 
+        private bool EncryptFile(string contents, string fileName)
+        {
+            try
+            {
+                string encryptedText = Utility.Encryption.Encrypt(contents);
+                if (string.IsNullOrEmpty(encryptedText))
+                {
+                    return false;
+                }
+
+                using (FileStream fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    using (StreamWriter streamWriter = new StreamWriter(fileStream))
+                    {
+                        streamWriter.Write(encryptedText);
+                        streamWriter.Flush();
+                        streamWriter.Close();
+                    }
+                }
+
+                FileSecurity accessControl = File.GetAccessControl(fileName);
+                accessControl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, AccessControlType.Allow));
+                File.SetAccessControl(fileName, accessControl);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private string ReadAllText(string path)
         {
             try
@@ -1095,27 +1129,52 @@ namespace PsdzClient
                 }
             }
 
-            openFileDialogDecrypt.InitialDirectory = initialDirectory;
-            openFileDialogDecrypt.FileName = initialFileName;
-
-            if (openFileDialogDecrypt.ShowDialog(this) != DialogResult.OK)
+            if (_decryptEditMode)
             {
-                return;
+                saveFileDialogDecrypt.InitialDirectory = initialDirectory;
+                saveFileDialogDecrypt.FileName = initialFileName;
+                if (saveFileDialogDecrypt.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                string fileName = saveFileDialogDecrypt.FileName;
+                string text = textBoxStatus.Text;
+                textBoxStatus.ReadOnly = true;
+                _decryptEditMode = false;
+                UpdateDisplay();
+
+                if (!EncryptFile(text, fileName))
+                {
+                    UpdateStatus(Resources.EncryptionFailed);
+                    return;
+                }
+            }
+            else
+            {
+                openFileDialogDecrypt.InitialDirectory = initialDirectory;
+                openFileDialogDecrypt.FileName = initialFileName;
+
+                if (openFileDialogDecrypt.ShowDialog(this) != DialogResult.OK)
+                {
+                    return;
+                }
+
+                string fileName = openFileDialogDecrypt.FileName;
+                _lastDecryptFileName = fileName;
+                string text = DecryptFile(fileName);
+                if (string.IsNullOrEmpty(text))
+                {
+                    UpdateStatus(Resources.DecryptionFailed);
+                    return;
+                }
+
+                UpdateStatus(text);
+
+                textBoxStatus.ReadOnly = false;
+                _decryptEditMode = true;
             }
 
-            string fileName = openFileDialogDecrypt.FileName;
-            _lastDecryptFileName = fileName;
-            string text = DecryptFile(fileName);
-
-            if (string.IsNullOrEmpty(text))
-            {
-                UpdateStatus(Resources.DecryptionFailed);
-                return;
-            }
-
-            UpdateStatus(text);
-            textBoxStatus.ReadOnly = false;
-            _decryptEditMode = true;
             UpdateDisplay();
         }
 
