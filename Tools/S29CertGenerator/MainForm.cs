@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -911,6 +913,13 @@ namespace S29CertGenerator
                     return true; // No modification needed
                 }
 
+                string bakFile = clientConfigFile + ".bak";
+                if (!File.Exists(bakFile))
+                {
+                    File.Copy(clientConfigFile, bakFile, true);
+                    UpdateStatusText("Client config backup created", true);
+                }
+
                 // Save the modified XML document
                 string xmlText;
                 using (MemoryStream memoryStream = new MemoryStream())
@@ -932,6 +941,12 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                if (!SetFileFullAccessControl(clientConfigFile))
+                {
+                    UpdateStatusText("Failed to set full access control for client configuration file", true);
+                    return false;
+                }
+
                 UpdateStatusText("Client configuration modified", true);
                 return true;
             }
@@ -941,6 +956,23 @@ namespace S29CertGenerator
                 return false;
             }
         }
+
+        private bool SetFileFullAccessControl(string fileName)
+        {
+            try
+            {
+                FileInfo fInfo = new FileInfo(fileName);
+                FileSecurity accessControl = fInfo.GetAccessControl();
+                accessControl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, AccessControlType.Allow));
+                fInfo.SetAccessControl(accessControl);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private Org.BouncyCastle.X509.X509Certificate LoadIstaSubCaCert(bool forceUpdate)
         {
             try
