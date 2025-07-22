@@ -1256,7 +1256,7 @@ namespace S29CertGenerator
                     if (!File.Exists(machinePublicFile))
                     {
                         UpdateStatusText($"Machine public key file does not existing: {machinePublicFile}", true);
-                        UpdateStatusText("Exceute EDIABAS or EdiabasLib in SSL mode first to generate the key files.", true);
+                        UpdateStatusText("Execute EDIABAS or EdiabasLib in SSL mode first to generate the key files.", true);
                         return false;
                     }
 
