@@ -15,6 +15,7 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
@@ -922,11 +923,18 @@ namespace S29CertGenerator
 
                 // Save the modified XML document
                 string xmlText;
-                using (MemoryStream memoryStream = new MemoryStream())
+                XmlWriterSettings settings = new XmlWriterSettings();
+                settings.Encoding = Encoding.UTF8;
+                settings.Indent = false;
+                settings.OmitXmlDeclaration = true;
+                settings.NewLineOnAttributes = false;
+                using (StringWriter sw = new StringWriter())
                 {
-                    xDoc.Save(memoryStream, SaveOptions.DisableFormatting);
-                    memoryStream.Position = 0;
-                    xmlText = Encoding.UTF8.GetString(memoryStream.ToArray());
+                    using (XmlWriter xw = XmlWriter.Create(sw, settings))
+                    {
+                        xDoc.Save(xw);
+                    }
+                    xmlText = sw.ToString();
                 }
 
                 if (string.IsNullOrEmpty(xmlText))
@@ -957,6 +965,7 @@ namespace S29CertGenerator
             }
         }
 
+        // Using the function from PsdzClient.Utility.Encryption fails (.NetFramework)
         private bool SetFileFullAccessControl(string fileName)
         {
             try
