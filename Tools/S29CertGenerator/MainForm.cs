@@ -26,7 +26,7 @@ namespace S29CertGenerator
         private List<X509CertificateEntry> _caPublicCertificates;
         private AsymmetricKeyParameter _istaKeyResource;
         private List<X509CertificateEntry> _istaPublicCertificates;
-        private XDocument _clientConfigDoc;
+        private string _clientConfigText;
         private volatile bool _taskActive = false;
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegValueIstaLocation = @"InstallLocation";
@@ -633,7 +633,7 @@ namespace S29CertGenerator
 
         private bool LoadClientConfiguration(string clientConfigFile)
         {
-            _clientConfigDoc = null;
+            _clientConfigText = null;
 
             try
             {
@@ -653,8 +653,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                XDocument xDoc = XDocument.Parse(text);
-                _clientConfigDoc = xDoc;
+                _clientConfigText = text;
                 return true;
             }
             catch (Exception)
@@ -847,13 +846,14 @@ namespace S29CertGenerator
         {
             try
             {
-                if (_clientConfigDoc == null)
+                if (string.IsNullOrEmpty(_clientConfigText))
                 {
                     UpdateStatusText("Client configuration is not loaded", true);
                     return false;
                 }
 
-                List<XElement> environments = _clientConfigDoc.Root?.Elements().Where(p => p.Name.LocalName == "Environments").ToList();
+                XDocument xDoc = XDocument.Parse(_clientConfigText);
+                List<XElement> environments = xDoc.Root?.Elements().Where(p => p.Name.LocalName == "Environments").ToList();
                 if (environments == null || environments.Count != 1)
                 {
                     UpdateStatusText("Client configuration contains no Environments nodes", true);
@@ -915,7 +915,7 @@ namespace S29CertGenerator
                 string xmlText;
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
-                    _clientConfigDoc.Save(memoryStream, SaveOptions.DisableFormatting);
+                    xDoc.Save(memoryStream, SaveOptions.DisableFormatting);
                     memoryStream.Position = 0;
                     xmlText = Encoding.UTF8.GetString(memoryStream.ToArray());
                 }
