@@ -56,6 +56,8 @@
             buttonResetSettings = new System.Windows.Forms.Button();
             buttonSearchVehicles = new System.Windows.Forms.Button();
             comboBoxVinList = new System.Windows.Forms.ComboBox();
+            textBoxClientConfigurationFile = new System.Windows.Forms.TextBox();
+            buttonSelectClientConfigurationFile = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -91,10 +93,10 @@
             // buttonClose
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.Location = new System.Drawing.Point(610, 520);
+            buttonClose.Location = new System.Drawing.Point(610, 570);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
-            buttonClose.TabIndex = 23;
+            buttonClose.TabIndex = 25;
             buttonClose.Text = "Close";
             buttonClose.UseVisualStyleBackColor = true;
             buttonClose.Click += buttonClose_Click;
@@ -140,10 +142,10 @@
             // buttonInstall
             // 
             buttonInstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonInstall.Location = new System.Drawing.Point(448, 520);
+            buttonInstall.Location = new System.Drawing.Point(448, 570);
             buttonInstall.Name = "buttonInstall";
             buttonInstall.Size = new System.Drawing.Size(75, 23);
-            buttonInstall.TabIndex = 21;
+            buttonInstall.TabIndex = 23;
             buttonInstall.Text = "Install";
             buttonInstall.UseVisualStyleBackColor = true;
             buttonInstall.Click += buttonInstall_Click;
@@ -152,12 +154,12 @@
             // 
             richTextBoxStatus.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             richTextBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            richTextBoxStatus.Location = new System.Drawing.Point(12, 273);
+            richTextBoxStatus.Location = new System.Drawing.Point(12, 302);
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            richTextBoxStatus.Size = new System.Drawing.Size(673, 211);
-            richTextBoxStatus.TabIndex = 18;
+            richTextBoxStatus.Size = new System.Drawing.Size(673, 232);
+            richTextBoxStatus.TabIndex = 20;
             richTextBoxStatus.Text = "";
             // 
             // buttonSelectJsonResponseFolder
@@ -227,10 +229,10 @@
             // 
             checkBoxForceCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             checkBoxForceCreate.AutoSize = true;
-            checkBoxForceCreate.Location = new System.Drawing.Point(12, 523);
+            checkBoxForceCreate.Location = new System.Drawing.Point(12, 573);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
             checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
-            checkBoxForceCreate.TabIndex = 20;
+            checkBoxForceCreate.TabIndex = 22;
             checkBoxForceCreate.Text = "Force create cert";
             checkBoxForceCreate.UseVisualStyleBackColor = true;
             // 
@@ -275,10 +277,10 @@
             // buttonUninstall
             // 
             buttonUninstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonUninstall.Location = new System.Drawing.Point(529, 520);
+            buttonUninstall.Location = new System.Drawing.Point(529, 570);
             buttonUninstall.Name = "buttonUninstall";
             buttonUninstall.Size = new System.Drawing.Size(75, 23);
-            buttonUninstall.TabIndex = 22;
+            buttonUninstall.TabIndex = 24;
             buttonUninstall.Text = "Uninstall";
             buttonUninstall.UseVisualStyleBackColor = true;
             buttonUninstall.Click += buttonUninstall_Click;
@@ -291,20 +293,20 @@
             // buttonResetSettings
             // 
             buttonResetSettings.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonResetSettings.Location = new System.Drawing.Point(529, 490);
+            buttonResetSettings.Location = new System.Drawing.Point(529, 540);
             buttonResetSettings.Name = "buttonResetSettings";
             buttonResetSettings.Size = new System.Drawing.Size(156, 23);
-            buttonResetSettings.TabIndex = 19;
+            buttonResetSettings.TabIndex = 21;
             buttonResetSettings.Text = "Reset Settings";
             buttonResetSettings.UseVisualStyleBackColor = true;
             buttonResetSettings.Click += buttonResetSettings_Click;
             // 
             // buttonSearchVehicles
             // 
-            buttonSearchVehicles.Location = new System.Drawing.Point(12, 244);
+            buttonSearchVehicles.Location = new System.Drawing.Point(12, 273);
             buttonSearchVehicles.Name = "buttonSearchVehicles";
             buttonSearchVehicles.Size = new System.Drawing.Size(179, 23);
-            buttonSearchVehicles.TabIndex = 16;
+            buttonSearchVehicles.TabIndex = 18;
             buttonSearchVehicles.Text = "Search DoIP Vehicles";
             buttonSearchVehicles.UseVisualStyleBackColor = true;
             buttonSearchVehicles.Click += buttonSearchVehicles_Click;
@@ -314,10 +316,28 @@
             comboBoxVinList.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             comboBoxVinList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             comboBoxVinList.FormattingEnabled = true;
-            comboBoxVinList.Location = new System.Drawing.Point(197, 244);
+            comboBoxVinList.Location = new System.Drawing.Point(197, 273);
             comboBoxVinList.Name = "comboBoxVinList";
             comboBoxVinList.Size = new System.Drawing.Size(488, 23);
-            comboBoxVinList.TabIndex = 17;
+            comboBoxVinList.TabIndex = 19;
+            // 
+            // textBoxClientConfigurationFile
+            // 
+            textBoxClientConfigurationFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxClientConfigurationFile.Location = new System.Drawing.Point(197, 244);
+            textBoxClientConfigurationFile.Name = "textBoxClientConfigurationFile";
+            textBoxClientConfigurationFile.ReadOnly = true;
+            textBoxClientConfigurationFile.Size = new System.Drawing.Size(488, 23);
+            textBoxClientConfigurationFile.TabIndex = 17;
+            // 
+            // buttonSelectClientConfigurationFile
+            // 
+            buttonSelectClientConfigurationFile.Location = new System.Drawing.Point(12, 244);
+            buttonSelectClientConfigurationFile.Name = "buttonSelectClientConfigurationFile";
+            buttonSelectClientConfigurationFile.Size = new System.Drawing.Size(179, 23);
+            buttonSelectClientConfigurationFile.TabIndex = 16;
+            buttonSelectClientConfigurationFile.Text = "Select ClientConfiguration";
+            buttonSelectClientConfigurationFile.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
@@ -325,7 +345,9 @@
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(697, 555);
+            ClientSize = new System.Drawing.Size(697, 605);
+            Controls.Add(buttonSelectClientConfigurationFile);
+            Controls.Add(textBoxClientConfigurationFile);
             Controls.Add(comboBoxVinList);
             Controls.Add(buttonSearchVehicles);
             Controls.Add(buttonResetSettings);
@@ -393,5 +415,7 @@
         private System.Windows.Forms.Button buttonResetSettings;
         private System.Windows.Forms.Button buttonSearchVehicles;
         private System.Windows.Forms.ComboBox comboBoxVinList;
+        private System.Windows.Forms.TextBox textBoxClientConfigurationFile;
+        private System.Windows.Forms.Button buttonSelectClientConfigurationFile;
     }
 }

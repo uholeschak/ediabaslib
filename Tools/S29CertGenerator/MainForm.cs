@@ -25,6 +25,7 @@ namespace S29CertGenerator
         private List<X509CertificateEntry> _caPublicCertificates;
         private AsymmetricKeyParameter _istaKeyResource;
         private List<X509CertificateEntry> _istaPublicCertificates;
+        private string _clientConfiguration;
         private volatile bool _taskActive = false;
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegValueIstaLocation = @"InstallLocation";
@@ -92,6 +93,7 @@ namespace S29CertGenerator
                 textBoxJsonResponseFolder.Text = Properties.Settings.Default.JsonResponseFolder;
                 textBoxCertOutputFolder.Text = Properties.Settings.Default.CertOutputFolder;
                 textBoxTrustStoreFolder.Text = Properties.Settings.Default.TrustStoreFolder;
+                textBoxClientConfigurationFile.Text = Properties.Settings.Default.ClientConfigurationFile;
                 return true;
             }
             catch (Exception)
@@ -112,6 +114,7 @@ namespace S29CertGenerator
                 Properties.Settings.Default.JsonResponseFolder = textBoxJsonResponseFolder.Text;
                 Properties.Settings.Default.CertOutputFolder = textBoxCertOutputFolder.Text;
                 Properties.Settings.Default.TrustStoreFolder = textBoxTrustStoreFolder.Text;
+                Properties.Settings.Default.ClientConfigurationFile = textBoxClientConfigurationFile.Text;
                 Properties.Settings.Default.Save();
                 return true;
             }
@@ -129,6 +132,7 @@ namespace S29CertGenerator
                 bool caKeyValid = LoadCaKey(textBoxCaCeyFile.Text);
                 bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
                 bool cacertsValid = LoadCaCerts(textBoxCaCertsFile.Text);
+                bool clientConfigValid = LoadClientConfiguration(textBoxClientConfigurationFile.Text);
                 bool isValid = IsSettingValid();
 
                 if (caKeyValid && istaKeyValid && cacertsValid && isValid && !active)
@@ -222,6 +226,12 @@ namespace S29CertGenerator
                 {
                     SetCaCertsFile(_ediabasPath);
                 }
+            }
+
+            if (force || !LoadClientConfiguration(textBoxClientConfigurationFile.Text))
+            {
+                string appDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                SetClientConfiguration(appDataFolder);
             }
         }
 
@@ -504,6 +514,23 @@ namespace S29CertGenerator
             return true;
         }
 
+        private bool SetClientConfiguration(string appDataFolder)
+        {
+            if (string.IsNullOrEmpty(appDataFolder) || !Directory.Exists(appDataFolder))
+            {
+                return false;
+            }
+
+            string clientConfigFile = Path.Combine(appDataFolder, "BMW", "ISPI", "config", "iLean", "ISPI Admin Client", "ClientConfiguration.enc");
+            if (!File.Exists(clientConfigFile))
+            {
+                clientConfigFile = string.Empty;
+            }
+
+            textBoxClientConfigurationFile.Text = clientConfigFile;
+            return true;
+        }
+
         private bool LoadCaKey(string caKeyFile)
         {
             _caKeyResource = null;
@@ -595,6 +622,32 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool LoadClientConfiguration(string clientConfigFile)
+        {
+            _clientConfiguration = null;
+
+            try
+            {
+                if (string.IsNullOrEmpty(clientConfigFile) || !File.Exists(clientConfigFile))
+                {
+                    return false;
+                }
+
+                string text = PsdzClient.Utility.Encryption.DecryptFile(clientConfigFile);
+                if (string.IsNullOrEmpty(text))
+                {
+                    return false;
+                }
+
+                _clientConfiguration = text;
                 return true;
             }
             catch (Exception)

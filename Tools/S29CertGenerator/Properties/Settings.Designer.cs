@@ -118,5 +118,17 @@ namespace S29CertGenerator.Properties {
                 this["CaCertsFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ClientConfigurationFile {
+            get {
+                return ((string)(this["ClientConfigurationFile"]));
+            }
+            set {
+                this["ClientConfigurationFile"] = value;
+            }
+        }
     }
 }
