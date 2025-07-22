@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
+using System.Xml.XPath;
 
 namespace S29CertGenerator
 {
@@ -653,6 +654,12 @@ namespace S29CertGenerator
                 }
 
                 XDocument xDoc = XDocument.Parse(text);
+                IEnumerable<XElement> environments = xDoc.Root?.Descendants().Where(p => p.Name.LocalName == "Environments");
+                if (environments == null || environments.Count() != 1)
+                {
+                    return false; // No environments found in the configuration
+                }
+
                 _clientConfigDoc = xDoc;
                 return true;
             }
