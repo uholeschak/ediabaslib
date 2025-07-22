@@ -135,7 +135,7 @@ namespace S29CertGenerator
                 bool clientConfigValid = LoadClientConfiguration(textBoxClientConfigurationFile.Text);
                 bool isValid = IsSettingValid();
 
-                if (caKeyValid && istaKeyValid && cacertsValid && isValid && !active)
+                if (caKeyValid && istaKeyValid && cacertsValid && clientConfigValid && isValid && !active)
                 {
                     buttonInstall.Enabled = true;
                     buttonUninstall.Enabled = true;
@@ -453,7 +453,7 @@ namespace S29CertGenerator
 
         private bool SetCaKeyFile(string ediabasPath)
         {
-            if (string.IsNullOrEmpty(ediabasPath) || !Directory.Exists(ediabasPath))
+            if (string.IsNullOrWhiteSpace(ediabasPath) || !Directory.Exists(ediabasPath))
             {
                 return false;
             }
@@ -470,7 +470,7 @@ namespace S29CertGenerator
 
         private bool SetIstaKeyFile(string ediabasPath)
         {
-            if (string.IsNullOrEmpty(ediabasPath) || !Directory.Exists(ediabasPath))
+            if (string.IsNullOrWhiteSpace(ediabasPath) || !Directory.Exists(ediabasPath))
             {
                 return false;
             }
@@ -493,7 +493,7 @@ namespace S29CertGenerator
 
         private bool SetCaCertsFile(string ediabasPath)
         {
-            if (string.IsNullOrEmpty(ediabasPath) || !Directory.Exists(ediabasPath))
+            if (string.IsNullOrWhiteSpace(ediabasPath) || !Directory.Exists(ediabasPath))
             {
                 return false;
             }
@@ -516,7 +516,7 @@ namespace S29CertGenerator
 
         private bool SetClientConfiguration(string appDataFolder)
         {
-            if (string.IsNullOrEmpty(appDataFolder) || !Directory.Exists(appDataFolder))
+            if (string.IsNullOrWhiteSpace(appDataFolder) || !Directory.Exists(appDataFolder))
             {
                 return false;
             }
@@ -538,7 +538,7 @@ namespace S29CertGenerator
 
             try
             {
-                if (string.IsNullOrEmpty(caKeyFile) || !File.Exists(caKeyFile))
+                if (string.IsNullOrWhiteSpace(caKeyFile) || !File.Exists(caKeyFile))
                 {
                     return false;
                 }
@@ -576,7 +576,7 @@ namespace S29CertGenerator
 
             try
             {
-                if (string.IsNullOrEmpty(istaKeyFile) || !File.Exists(istaKeyFile))
+                if (string.IsNullOrWhiteSpace(istaKeyFile) || !File.Exists(istaKeyFile))
                 {
                     return false;
                 }
@@ -611,7 +611,7 @@ namespace S29CertGenerator
         {
             try
             {
-                if (string.IsNullOrEmpty(caCertsFile) || !File.Exists(caCertsFile))
+                if (string.IsNullOrWhiteSpace(caCertsFile) || !File.Exists(caCertsFile))
                 {
                     return false;
                 }
@@ -636,7 +636,12 @@ namespace S29CertGenerator
 
             try
             {
-                if (string.IsNullOrEmpty(clientConfigFile) || !File.Exists(clientConfigFile))
+                if (string.IsNullOrWhiteSpace(clientConfigFile))
+                {
+                    return true;
+                }
+
+                if (!File.Exists(clientConfigFile))
                 {
                     return false;
                 }
