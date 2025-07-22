@@ -843,7 +843,7 @@ namespace S29CertGenerator
             }
         }
 
-        private bool ModifyClientConfiguration()
+        private bool ModifyClientConfiguration(string clientConfigFile)
         {
             try
             {
@@ -909,6 +909,27 @@ namespace S29CertGenerator
                 {
                     UpdateStatusText("Client configuration is already modified", true);
                     return true; // No modification needed
+                }
+
+                // Save the modified XML document
+                string xmlText;
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    _clientConfigDoc.Save(memoryStream, SaveOptions.DisableFormatting);
+                    memoryStream.Position = 0;
+                    xmlText = Encoding.UTF8.GetString(memoryStream.ToArray());
+                }
+
+                if (string.IsNullOrEmpty(xmlText))
+                {
+                    UpdateStatusText("Client configuration XML is empty", true);
+                    return false;
+                }
+
+                if (!PsdzClient.Utility.Encryption.EncryptFile(xmlText, clientConfigFile))
+                {
+                    UpdateStatusText("Encrypt client configuration failed", true);
+                    return false;
                 }
 
                 UpdateStatusText("Client configuration modified", true);
@@ -1315,7 +1336,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string vehicleVin, bool forceUpdate = false)
+        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string clientConfigFile, string vehicleVin, bool forceUpdate = false)
         {
             try
             {
@@ -1346,9 +1367,9 @@ namespace S29CertGenerator
                     }
                 }
 
-                if (_clientConfigDoc != null)
+                if (!string.IsNullOrEmpty(clientConfigFile))
                 {
-                    if (!ModifyClientConfiguration())
+                    if (!ModifyClientConfiguration(clientConfigFile))
                     {
                         UpdateStatusText("Modifying client configuration failed", true);
                         return false;
@@ -1771,7 +1792,7 @@ namespace S29CertGenerator
         private void buttonInstall_Click(object sender, EventArgs e)
         {
             string vehicleVin = comboBoxVinList.SelectedItem as string;
-            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, vehicleVin, checkBoxForceCreate.Checked))
+            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, textBoxClientConfigurationFile.Text, vehicleVin, checkBoxForceCreate.Checked))
             {
                 checkBoxForceCreate.Checked = false;
             }
