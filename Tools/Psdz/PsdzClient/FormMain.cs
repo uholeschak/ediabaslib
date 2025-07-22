@@ -1072,6 +1072,12 @@ namespace PsdzClient
                     UpdateStatus(Resources.EncryptionFailed);
                     return;
                 }
+
+                if (!Utility.Encryption.SetFileFullAccessControl(fileName))
+                {
+                    UpdateStatus(Resources.EncryptionFailed);
+                    return;
+                }
             }
             else
             {

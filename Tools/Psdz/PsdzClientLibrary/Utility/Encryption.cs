@@ -247,10 +247,22 @@ namespace PsdzClient.Utility
                     }
                 }
 
-                FileSecurity accessControl = File.GetAccessControl(fileName);
-                accessControl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, AccessControlType.Allow));
-                File.SetAccessControl(fileName, accessControl);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
+        public static bool SetFileFullAccessControl(string fileName)
+        {
+            try
+            {
+                FileInfo fInfo = new FileInfo(fileName);
+                FileSecurity accessControl = fInfo.GetAccessControl();
+                accessControl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, AccessControlType.Allow));
+                fInfo.SetAccessControl(accessControl);
                 return true;
             }
             catch (Exception)
