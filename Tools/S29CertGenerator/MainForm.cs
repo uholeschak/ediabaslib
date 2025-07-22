@@ -654,10 +654,16 @@ namespace S29CertGenerator
                 }
 
                 XDocument xDoc = XDocument.Parse(text);
-                IEnumerable<XElement> environments = xDoc.Root?.Descendants().Where(p => p.Name.LocalName == "Environments");
-                if (environments == null || environments.Count() != 1)
+                List<XElement> environments = xDoc.Root?.Descendants().Where(p => p.Name.LocalName == "Environments").ToList();
+                if (environments == null || environments.Count != 1)
                 {
                     return false; // No environments found in the configuration
+                }
+
+                List<XElement> environment = environments[0]?.Descendants().Where(p => p.Name.LocalName == "Environment").ToList();
+                if (environment == null || environment.Count == 0)
+                {
+                    return false; // No single environment found in the configuration
                 }
 
                 _clientConfigDoc = xDoc;
