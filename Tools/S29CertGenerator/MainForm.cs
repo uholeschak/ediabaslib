@@ -1,7 +1,6 @@
 using EdiabasLib;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
@@ -14,6 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace S29CertGenerator
 {
@@ -25,7 +25,7 @@ namespace S29CertGenerator
         private List<X509CertificateEntry> _caPublicCertificates;
         private AsymmetricKeyParameter _istaKeyResource;
         private List<X509CertificateEntry> _istaPublicCertificates;
-        private string _clientConfiguration;
+        private XDocument _clientConfigDoc;
         private volatile bool _taskActive = false;
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegValueIstaLocation = @"InstallLocation";
@@ -632,7 +632,7 @@ namespace S29CertGenerator
 
         private bool LoadClientConfiguration(string clientConfigFile)
         {
-            _clientConfiguration = null;
+            _clientConfigDoc = null;
 
             try
             {
@@ -652,7 +652,8 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                _clientConfiguration = text;
+                XDocument xDoc = XDocument.Parse(text);
+                _clientConfigDoc = xDoc;
                 return true;
             }
             catch (Exception)
