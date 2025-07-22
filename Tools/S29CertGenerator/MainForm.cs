@@ -654,18 +654,6 @@ namespace S29CertGenerator
                 }
 
                 XDocument xDoc = XDocument.Parse(text);
-                List<XElement> environments = xDoc.Root?.Descendants().Where(p => p.Name.LocalName == "Environments").ToList();
-                if (environments == null || environments.Count != 1)
-                {
-                    return false; // No environments found in the configuration
-                }
-
-                List<XElement> environment = environments[0]?.Descendants().Where(p => p.Name.LocalName == "Environment").ToList();
-                if (environment == null || environment.Count == 0)
-                {
-                    return false; // No single environment found in the configuration
-                }
-
                 _clientConfigDoc = xDoc;
                 return true;
             }
@@ -855,6 +843,83 @@ namespace S29CertGenerator
             }
         }
 
+        private bool ModifyClientConfiguration()
+        {
+            try
+            {
+                if (_clientConfigDoc == null)
+                {
+                    UpdateStatusText("Client configuration is not loaded", true);
+                    return false;
+                }
+
+                List<XElement> environments = _clientConfigDoc.Root?.Elements().Where(p => p.Name.LocalName == "Environments").ToList();
+                if (environments == null || environments.Count != 1)
+                {
+                    UpdateStatusText("Client configuration contains no Environments nodes", true);
+                    return false;
+                }
+
+                List<XElement> environment = environments[0]?.Elements().Where(p => p.Name.LocalName == "Environment").ToList();
+                if (environment == null || environment.Count == 0)
+                {
+                    UpdateStatusText("Client configuration contains no Environment nodes", true);
+                    return false;
+                }
+
+                bool hasLocalhost = false;
+                bool xmlModified = false;
+                foreach (XElement envElement in environment)
+                {
+                    List<XElement> nameElements = envElement.Elements().Where(p => p.Name.LocalName == "Name").ToList();
+                    if (nameElements.Count != 1)
+                    {
+                        continue;
+                    }
+
+                    string envName = nameElements[0].Value.Trim();
+                    if (string.IsNullOrEmpty(envName) || string.Compare(envName, "Localhost", StringComparison.OrdinalIgnoreCase) != 0)
+                    {
+                        continue; // Skip environments that are not for ISPI Admin Client
+                    }
+
+                    List<XElement> servicesElements = envElement.Elements().Where(p => p.Name.LocalName == "ServerAddressServices").ToList();
+                    if (servicesElements.Count != 1)
+                    {
+                        continue; // Skip if no services address is found
+                    }
+
+                    hasLocalhost = true;
+                    string servicesValue = servicesElements[0].Value;
+                    if (!string.IsNullOrEmpty(servicesValue))
+                    {
+                        servicesElements[0].Value = string.Empty;
+                        xmlModified = true;
+                    }
+                    break;
+                }
+
+                if (!hasLocalhost)
+                {
+                    UpdateStatusText("Client configuration contains no Localhost environment", true);
+                    return false;
+                }
+
+                if (!xmlModified)
+                {
+                    UpdateStatusText("Client configuration is already modified", true);
+                    return true; // No modification needed
+                }
+
+                UpdateStatusText("Client configuration modified", true);
+                return true;
+            }
+            catch (Exception e)
+            {
+                UpdateStatusText($"Modify client configuration exception: {e.Message}", true);
+                return false;
+            }
+        }
         private Org.BouncyCastle.X509.X509Certificate LoadIstaSubCaCert(bool forceUpdate)
         {
             try
@@ -1277,6 +1342,15 @@ namespace S29CertGenerator
                     if (!InstallTrustedCaCert(trustStoreFolder))
                     {
                         UpdateStatusText("Installing trusted CA certificate failed", true);
+                        return false;
+                    }
+                }
+
+                if (_clientConfigDoc != null)
+                {
+                    if (!ModifyClientConfiguration())
+                    {
+                        UpdateStatusText("Modifying client configuration failed", true);
                         return false;
                     }
                 }
