@@ -139,6 +139,11 @@ namespace S29CertGenerator
                 bool clientConfigValid = LoadClientConfiguration(textBoxClientConfigurationFile.Text);
                 bool isValid = IsSettingValid();
 
+                if (!clientConfigValid && string.IsNullOrEmpty(textBoxClientConfigurationFile.Text))
+                {
+                    clientConfigValid = true;
+                }
+
                 if (caKeyValid && istaKeyValid && cacertsValid && clientConfigValid && isValid && !active)
                 {
                     buttonInstall.Enabled = true;
@@ -642,7 +647,7 @@ namespace S29CertGenerator
             {
                 if (string.IsNullOrWhiteSpace(clientConfigFile))
                 {
-                    return true;
+                    return false;
                 }
 
                 if (!File.Exists(clientConfigFile))
@@ -1842,6 +1847,26 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 textBoxTrustStoreFolder.Text = folderBrowserDialog.SelectedPath;
+                UpdateDisplay();
+            }
+        }
+
+        private void buttonSelectClientConfigurationFile_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string configFile = textBoxClientConfigurationFile.Text;
+            string fileName = string.Empty;
+            if (File.Exists(configFile))
+            {
+                fileName = Path.GetFileName(configFile);
+                initDir = Path.GetDirectoryName(configFile);
+            }
+            openClientConfigFileDialog.FileName = fileName;
+            openClientConfigFileDialog.InitialDirectory = initDir ?? string.Empty;
+            DialogResult result = openClientConfigFileDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                textBoxClientConfigurationFile.Text = openClientConfigFileDialog.FileName;
                 UpdateDisplay();
             }
         }

@@ -58,6 +58,7 @@
             comboBoxVinList = new System.Windows.Forms.ComboBox();
             textBoxClientConfigurationFile = new System.Windows.Forms.TextBox();
             buttonSelectClientConfigurationFile = new System.Windows.Forms.Button();
+            openClientConfigFileDialog = new System.Windows.Forms.OpenFileDialog();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -338,6 +339,13 @@
             buttonSelectClientConfigurationFile.TabIndex = 16;
             buttonSelectClientConfigurationFile.Text = "Select ClientConfiguration";
             buttonSelectClientConfigurationFile.UseVisualStyleBackColor = true;
+            buttonSelectClientConfigurationFile.Click += buttonSelectClientConfigurationFile_Click;
+            // 
+            // openClientConfigFileDialog
+            // 
+            openClientConfigFileDialog.DefaultExt = "enc";
+            openClientConfigFileDialog.Filter = "Enc|*.enc|All files|*.*";
+            openClientConfigFileDialog.Title = "Select Client Config file";
             // 
             // MainForm
             // 
@@ -417,5 +425,6 @@
         private System.Windows.Forms.ComboBox comboBoxVinList;
         private System.Windows.Forms.TextBox textBoxClientConfigurationFile;
         private System.Windows.Forms.Button buttonSelectClientConfigurationFile;
+        private System.Windows.Forms.OpenFileDialog openClientConfigFileDialog;
     }
 }
