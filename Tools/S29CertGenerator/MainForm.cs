@@ -870,7 +870,6 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                bool hasLocalhost = false;
                 bool xmlModified = false;
                 foreach (XElement envElement in environment)
                 {
@@ -892,7 +891,6 @@ namespace S29CertGenerator
                         continue; // Skip if no services address is found
                     }
 
-                    hasLocalhost = true;
                     string servicesValue = servicesElements[0].Value;
                     if (!string.IsNullOrEmpty(servicesValue))
                     {
@@ -902,15 +900,9 @@ namespace S29CertGenerator
                     break;
                 }
 
-                if (!hasLocalhost)
-                {
-                    UpdateStatusText("Client configuration contains no Localhost environment", true);
-                    return false;
-                }
-
                 if (!xmlModified)
                 {
-                    UpdateStatusText("Client configuration is already modified", true);
+                    UpdateStatusText("Client configuration not modified", true);
                     return true; // No modification needed
                 }
 
