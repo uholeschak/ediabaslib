@@ -957,6 +957,31 @@ namespace S29CertGenerator
             }
         }
 
+        private bool RevertClientConfiguration(string clientConfigFile)
+        {
+            try
+            {
+                string bakFile = clientConfigFile + ".bak";
+                if (File.Exists(bakFile))
+                {
+                    File.Move(bakFile, clientConfigFile, true);
+                    UpdateStatusText("Client configuration backup restored", true);
+                }
+                else
+                {
+                    UpdateStatusText("No Client configuration backup found", true);
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                UpdateStatusText($"Revert client configuration exception: {e.Message}", true);
+                return false;
+            }
+        }
+
+
         // Using the function from PsdzClient.Utility.Encryption fails (.NetFramework)
         private bool SetFileFullAccessControl(string fileName)
         {
@@ -1479,7 +1504,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool UninstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder)
+        protected bool UninstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string clientConfigFile)
         {
             try
             {
@@ -1517,6 +1542,15 @@ namespace S29CertGenerator
                     if (!UninstallCaCert(caCertsFile))
                     {
                         UpdateStatusText("Uninstalling CA certificate failed", true);
+                        return false;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(clientConfigFile))
+                {
+                    if (!RevertClientConfiguration(clientConfigFile))
+                    {
+                        UpdateStatusText("Reverting client configuration failed", true);
                         return false;
                     }
                 }
@@ -1833,7 +1867,7 @@ namespace S29CertGenerator
 
         private void buttonUninstall_Click(object sender, EventArgs e)
         {
-            UninstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text);
+            UninstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, textBoxClientConfigurationFile.Text);
         }
 
         private void buttonResetSettings_Click(object sender, EventArgs e)
