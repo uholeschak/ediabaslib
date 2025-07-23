@@ -894,6 +894,7 @@ namespace S29CertGenerator
                     string servicesValue = servicesElements[0].Value;
                     if (!string.IsNullOrEmpty(servicesValue))
                     {
+                        UpdateStatusText($"Removing ServerAddressServices for environment '{envName}'", true);
                         servicesElements[0].Value = string.Empty;
                         xmlModified = true;
                     }
@@ -1863,11 +1864,13 @@ namespace S29CertGenerator
             {
                 checkBoxForceCreate.Checked = false;
             }
+            UpdateDisplay();
         }
 
         private void buttonUninstall_Click(object sender, EventArgs e)
         {
             UninstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, textBoxClientConfigurationFile.Text);
+            UpdateDisplay();
         }
 
         private void buttonResetSettings_Click(object sender, EventArgs e)
