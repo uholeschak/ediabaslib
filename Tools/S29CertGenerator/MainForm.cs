@@ -886,18 +886,29 @@ namespace S29CertGenerator
                     }
 
                     List<XElement> servicesElements = envElement.Elements().Where(p => p.Name.LocalName == "ServerAddressServices").ToList();
-                    if (servicesElements.Count != 1)
+                    if (servicesElements.Count == 1)
                     {
-                        continue; // Skip if no services address is found
+                        string servicesValue = servicesElements[0].Value;
+                        if (!string.IsNullOrEmpty(servicesValue))
+                        {
+                            UpdateStatusText($"Removing ServerAddressServices for environment '{envName}'", true);
+                            servicesElements[0].Value = string.Empty;
+                            xmlModified = true;
+                        }
                     }
 
-                    string servicesValue = servicesElements[0].Value;
-                    if (!string.IsNullOrEmpty(servicesValue))
+                    List<XElement> busLogicElements = envElement.Elements().Where(p => p.Name.LocalName == "ServerAddressBuslogik").ToList();
+                    if (busLogicElements.Count == 1)
                     {
-                        UpdateStatusText($"Removing ServerAddressServices for environment '{envName}'", true);
-                        servicesElements[0].Value = string.Empty;
-                        xmlModified = true;
+                        string busLogicValue = busLogicElements[0].Value;
+                        if (!string.IsNullOrEmpty(busLogicValue))
+                        {
+                            UpdateStatusText($"Removing ServerAddressBuslogik for environment '{envName}'", true);
+                            servicesElements[0].Value = string.Empty;
+                            xmlModified = true;
+                        }
                     }
+
                     break;
                 }
 
