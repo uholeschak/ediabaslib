@@ -948,6 +948,20 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                string clientConfigXml = Path.ChangeExtension(clientConfigFile, ".xml");
+                if (File.Exists(clientConfigXml))
+                {
+                    try
+                    {
+                        File.Delete(clientConfigXml); // Remove the plain XML file if it exists
+                        UpdateStatusText("Client configuration XML file removed", true);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
                 UpdateStatusText("Client configuration modified", true);
                 return true;
             }
