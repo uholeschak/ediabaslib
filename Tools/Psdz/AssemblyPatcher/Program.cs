@@ -44,9 +44,6 @@ namespace AssemblyPatcher
 
             [Option('c', "no_icom_check", Required = false, HelpText = "Disable ICOM version check")]
             public bool NoIcomCheck { get; set; }
-
-            [Option('s', "no_service_client", Required = false, HelpText = "Disable ISTA service client")]
-            public bool DisableServiceClient { get; set; }
         }
 
         static int Main(string[] args)
@@ -57,7 +54,6 @@ namespace AssemblyPatcher
                 Options.DebugOption debugOpt = Options.DebugOption.None;
                 bool overwriteConfig = false;
                 bool noIcomVerCheck = true;
-                bool disableServiceClient = false;
                 bool hasErrors = false;
                 Parser parser = new Parser(with =>
                 {
@@ -74,7 +70,6 @@ namespace AssemblyPatcher
                         debugOpt = o.DebugOpt;
                         overwriteConfig = o.OverwriteConfig;
                         noIcomVerCheck = o.NoIcomCheck;
-                        disableServiceClient = o.DisableServiceClient;
                     })
                     .WithNotParsed(errs =>
                     {
@@ -696,32 +691,6 @@ namespace AssemblyPatcher
                         catch (Exception)
                         {
                             // ignored
-                        }
-
-                        if (disableServiceClient)
-                        {
-                            try
-                            {
-                                Target target = new Target
-                                {
-                                    Namespace = "BMW.ISPI.IstaServices.Client",
-                                    Class = "IstaServiceClient`1",
-                                    Method = "IsAvailable",
-                                };
-                                IList<Instruction> instructions = patcher.GetInstructionList(target);
-                                if (instructions != null)
-                                {
-                                    Console.WriteLine("IstaServiceClient.IsAvailable found");
-                                    instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_0));
-                                    instructions.Insert(1, Instruction.Create(OpCodes.Ret));
-                                    patched = true;
-                                    Console.WriteLine("IstaServiceClient.IsAvailable disabled");
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                // ignored
-                            }
                         }
 
                         try
