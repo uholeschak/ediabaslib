@@ -42,7 +42,7 @@ mkdir "!LOGCONVPATH!" || EXIT /b 1
 copy "!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\*.*" "!LOGCONVPATH!" || EXIT /b 1
 
 mkdir "!APINETPATH!" || EXIT /b 1
-copy "!BATPATH!apiNET\bin\Release\*.dll" "!APINETPATH!" || EXIT /b 1
+copy "!BATPATH!apiNET\bin\Release\net48\*.dll" "!APINETPATH!" || EXIT /b 1
 
 mkdir "!CANADAPTERPATH!" || EXIT /b 1
 copy "!BATPATH!CanAdapter\CanAdapter\Release\*.hex" "!CANADAPTERPATH!" || EXIT /b 1
