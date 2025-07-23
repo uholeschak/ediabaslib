@@ -7,8 +7,11 @@ set "DATESTR=%date:~6,4%%date:~3,2%%date:~0,2%"
 echo !DATESTR!
 set "PACKAGEPATH=!BATPATH!Package\"
 set "EDIABASTESTPATH=!PACKAGEPATH!EdiabasTest\"
+set "EDIABASTESTSRCPATH=!BATPATH!EdiabasTest\bin\Release\net48\"
 set "TOOLPATH=!PACKAGEPATH!EdiabasLibConfigTool\"
 set "TOOLSRCPATH=!BATPATH!EdiabasLibConfigTool\artifacts\bin\EdiabasLibConfigTool\release\"
+set "S29CERTGENPATH=!PACKAGEPATH!S29CertGenerator\"
+set "S29CERTGENSRCPATH=!BATPATH!..\Tools\S29CertGenerator\artifacts\bin\S29CertGenerator\release\"
 set "LOGCONVPATH=!PACKAGEPATH!LogfileConverter\"
 set "APINETPATH=!PACKAGEPATH!ApiNet\"
 set "CANADAPTERPATH=!PACKAGEPATH!CanAdapter\"
@@ -21,14 +24,19 @@ timeout /T 1 /NOBREAK > nul
 mkdir "!PACKAGEPATH!" || EXIT /b 1
 
 mkdir "!EDIABASTESTPATH!" || EXIT /b 1
-copy "!BATPATH!EdiabasTest\bin\Release\EdiabasTest.exe" "!EDIABASTESTPATH!" || EXIT /b 1
-copy "!BATPATH!EdiabasTest\bin\Release\*.dll" "!EDIABASTESTPATH!" || EXIT /b 1
-copy "!BATPATH!EdiabasTest\bin\Release\EdiabasLib.config" "!EDIABASTESTPATH!" || EXIT /b 1
+copy "!EDIABASTESTSRCPATH!EdiabasTest.exe" "!EDIABASTESTPATH!" || EXIT /b 1
+copy "!EDIABASTESTSRCPATH!*.dll" "!EDIABASTESTPATH!" || EXIT /b 1
+copy "!EDIABASTESTSRCPATH!*.config" "!EDIABASTESTPATH!" || EXIT /b 1
 
 mkdir "!TOOLPATH!" || EXIT /b 1
 copy "!TOOLSRCPATH!*.dll" "!TOOLPATH!" || EXIT /b 1
 xcopy /y /e "!TOOLSRCPATH!\*.*" "!TOOLPATH!" || EXIT /b 1
 del "!TOOLPATH!*.pdb"
+
+mkdir "!S29CERTGENPATH!" || EXIT /b 1
+copy "!S29CERTGENSRCPATH!*.dll" "!S29CERTGENPATH!" || EXIT /b 1
+xcopy /y /e "!S29CERTGENSRCPATH!\*.*" "!S29CERTGENPATH!" || EXIT /b 1
+del "!S29CERTGENPATH!*.pdb"
 
 mkdir "!LOGCONVPATH!" || EXIT /b 1
 copy "!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\*.*" "!LOGCONVPATH!" || EXIT /b 1
