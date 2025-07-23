@@ -904,7 +904,7 @@ namespace S29CertGenerator
                         if (!string.IsNullOrEmpty(busLogicValue))
                         {
                             UpdateStatusText($"Removing ServerAddressBuslogik for environment '{envName}'", true);
-                            servicesElements[0].Value = string.Empty;
+                            busLogicElements[0].Value = string.Empty;
                             xmlModified = true;
                         }
                     }
