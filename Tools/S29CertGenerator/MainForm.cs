@@ -948,20 +948,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                string clientConfigXml = Path.ChangeExtension(clientConfigFile, ".xml");
-                if (File.Exists(clientConfigXml))
-                {
-                    try
-                    {
-                        File.Delete(clientConfigXml); // Remove the plain XML file if it exists
-                        UpdateStatusText("Client configuration XML file removed", true);
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                }
-
+                DeleteClientConfigXml(clientConfigFile);
                 UpdateStatusText("Client configuration modified", true);
                 return true;
             }
@@ -980,6 +967,7 @@ namespace S29CertGenerator
                 if (File.Exists(bakFile))
                 {
                     File.Move(bakFile, clientConfigFile, true);
+                    DeleteClientConfigXml(clientConfigFile);
                     UpdateStatusText("Client configuration backup restored", true);
                 }
                 else
@@ -996,6 +984,32 @@ namespace S29CertGenerator
             }
         }
 
+        private bool DeleteClientConfigXml(string clientConfigFile)
+        {
+            try
+            {
+                string clientConfigXml = Path.ChangeExtension(clientConfigFile, ".xml");
+                if (File.Exists(clientConfigXml))
+                {
+                    try
+                    {
+                        File.Delete(clientConfigXml); // Remove the plain XML file if it exists
+                        UpdateStatusText("Client configuration XML file removed", true);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                UpdateStatusText($"Delete client configuration XML exception: {e.Message}", true);
+                return false;
+            }
+        }
 
         // Using the function from PsdzClient.Utility.Encryption fails (.NetFramework)
         private bool SetFileFullAccessControl(string fileName)
