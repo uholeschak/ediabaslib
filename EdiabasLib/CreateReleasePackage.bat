@@ -107,6 +107,7 @@ xcopy /y /q "!BATPATH!EnetAdapter\Release\openwrt*.bin" "!ENETADAPTERPATH!" || E
 xcopy /y /q "!BATPATH!EnetAdapter\Release\*.img" "!ENETADAPTERPATH!" || EXIT /b 1
 xcopy /y /q "!BATPATH!EnetAdapter\EnetWifiSettings.dat" "!ENETADAPTERPATH!" || EXIT /b 1
 
+echo copy sample config
 mkdir "!ANDROIDSAMPLEPATH!" || EXIT /b 1
 xcopy /y /e /q "!BATPATH!..\BmwDeepObd\Xml\*.*" "!ANDROIDSAMPLEPATH!" || EXIT /b 1
 
