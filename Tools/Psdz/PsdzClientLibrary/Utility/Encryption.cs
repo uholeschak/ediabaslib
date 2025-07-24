@@ -33,7 +33,7 @@ namespace PsdzClient.Utility
             {
                 return string.Empty;
             }
-            AesManaged aesManaged = null;
+            Aes aesManaged = null;
             MemoryStream memoryStream = null;
             try
             {
@@ -118,7 +118,7 @@ namespace PsdzClient.Utility
             }
             try
             {
-                using (AesManaged aesManaged = InializeAesProvider())
+                using (Aes aesManaged = InializeAesProvider())
                 {
                     using (MemoryStream memoryStream = new MemoryStream())
                     {
@@ -168,10 +168,10 @@ namespace PsdzClient.Utility
             return SecureStringHelper.ConvertToSecureString(Decrypt(input));
         }
 
-        public static AesManaged InializeAesProvider()
+        public static Aes InializeAesProvider()
         {
-            AesManaged aesManaged = null;
-            AesManaged aesManaged2 = null;
+            Aes aesManaged = null;
+            Aes aesManaged2 = null;
             try
             {
                 string clientID = GetClientID();
@@ -179,11 +179,9 @@ namespace PsdzClient.Utility
                 string text = ReverseString(volumeSNr);
                 string s = clientID.Substring(0, clientID.Length / 2);
                 string s2 = text + clientID.Substring(clientID.Length / 2) + volumeSNr;
-                aesManaged = new AesManaged
-                {
-                    Key = Encoding.UTF8.GetBytes(s2),
-                    IV = Encoding.UTF8.GetBytes(s)
-                };
+                aesManaged = Aes.Create();
+                aesManaged.Key = Encoding.UTF8.GetBytes(s2);
+                aesManaged.IV = Encoding.UTF8.GetBytes(s);
                 aesManaged2 = aesManaged;
                 aesManaged = null;
                 return aesManaged2;
