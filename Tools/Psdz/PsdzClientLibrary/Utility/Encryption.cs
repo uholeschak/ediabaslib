@@ -335,6 +335,7 @@ namespace PsdzClient.Utility
             MemoryStream memoryStream = null;
             CryptoStream cryptoStream = null;
             StreamReader streamReader = null;
+#pragma warning disable SYSLIB0022 // Typ oder Element ist veraltet
             RijndaelManaged rijndaelManaged = null;
             try
             {
@@ -351,6 +352,7 @@ namespace PsdzClient.Utility
                 streamReader = new StreamReader(cryptoStream, detectEncodingFromByteOrderMarks: true);
                 result = streamReader.ReadToEnd();
             }
+#pragma warning restore SYSLIB0022 // Typ oder Element ist veraltet
             catch (CryptographicException)
             {
                 //Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.DecryptPassword", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
