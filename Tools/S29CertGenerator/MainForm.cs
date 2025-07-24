@@ -958,7 +958,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                if (!SetFileFullAccessControl(clientConfigFile))
+                if (!PsdzClient.Utility.Encryption.SetFileFullAccessControl(clientConfigFile))
                 {
                     UpdateStatusText("Failed to set full access control for client configuration file", true);
                     return false;
@@ -1023,23 +1023,6 @@ namespace S29CertGenerator
             catch (Exception e)
             {
                 UpdateStatusText($"Delete client configuration XML exception: {e.Message}", true);
-                return false;
-            }
-        }
-
-        // Using the function from PsdzClient.Utility.Encryption fails (.NetFramework)
-        private bool SetFileFullAccessControl(string fileName)
-        {
-            try
-            {
-                FileInfo fInfo = new FileInfo(fileName);
-                FileSecurity accessControl = fInfo.GetAccessControl();
-                accessControl.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, AccessControlType.Allow));
-                fInfo.SetAccessControl(accessControl);
-                return true;
-            }
-            catch (Exception)
-            {
                 return false;
             }
         }

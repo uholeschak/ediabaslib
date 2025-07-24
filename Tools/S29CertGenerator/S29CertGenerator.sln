@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "S29CertGenerator", "S29Cert
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzClientLibrary", "..\Psdz\PsdzClientLibrary\PsdzClientLibrary.csproj", "{EEF1264D-D00F-44D4-B21C-D65CF54E149E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiInternal", "..\..\EdiabasLib\ApiInternal\ApiInternal.csproj", "{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,14 +21,6 @@ Global
 		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EEF1264D-D00F-44D4-B21C-D65CF54E149E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EEF1264D-D00F-44D4-B21C-D65CF54E149E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EEF1264D-D00F-44D4-B21C-D65CF54E149E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EEF1264D-D00F-44D4-B21C-D65CF54E149E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

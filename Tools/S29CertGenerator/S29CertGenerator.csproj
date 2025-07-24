@@ -17,6 +17,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\Encryption.cs" Link="Encryption.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\MachineIdentifier.cs" Link="MachineIdentifier.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\SecureStringHelper.cs" Link="SecureStringHelper.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\TokenObject.cs" Link="TokenObject.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\WMIInfo.cs" Link="WMIInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\CarSimulator\TestCert\rootCA_EC.pfx" Link="rootCA_EC.pfx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -31,7 +39,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
-    <ProjectReference Include="..\Psdz\PsdzClientLibrary\PsdzClientLibrary.csproj" />
   </ItemGroup>
 
   <ItemGroup>
