@@ -415,10 +415,10 @@ namespace PsdzClient.Utility
 
         private static string GeneratePasswordHash(string passwordString)
         {
-            SHA256Managed sHA256Managed = null;
+            SHA256 sHA256Managed = null;
             try
             {
-                sHA256Managed = new SHA256Managed();
+                sHA256Managed = SHA256.Create();
                 byte[] array = sHA256Managed.ComputeHash(Encoding.ASCII.GetBytes(passwordString ?? string.Empty));
                 StringBuilder stringBuilder = new StringBuilder();
                 byte[] array2 = array;
