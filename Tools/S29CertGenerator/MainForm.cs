@@ -1335,6 +1335,8 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509s29Cert = new X509CertificateParser().ReadCertificate(s29Cert.GetRawCertData());
+                s29Cert.Dispose();
+
                 List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
                 x509CertChain.Add(x509s29Cert);
                 x509CertChain.Add(x509SubCaCert);
@@ -1356,7 +1358,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                string s29CertData = Convert.ToBase64String(s29Cert.GetRawCertData());
+                string s29CertData = Convert.ToBase64String(x509s29Cert.GetEncoded());
 
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.AppendLine(EdBcTlsUtilities.BeginCertificate);
