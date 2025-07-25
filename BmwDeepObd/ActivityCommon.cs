@@ -1,6 +1,35 @@
 //#define IO_TEST
+using Android.App.Backup;
+using Android.Bluetooth;
+using Android.Content;
+using Android.Content.PM;
+using Android.Content.Res;
+using Android.Hardware.Usb;
+using Android.Locations;
+using Android.Net;
+using Android.Net.Wifi;
+using Android.OS;
+using Android.OS.Storage;
+using Android.Views;
+using Android.Widget;
+using AndroidX.AppCompat.App;
+using AndroidX.Core.App;
+using AndroidX.Core.Content;
+using AndroidX.Core.Content.PM;
+using AndroidX.DocumentFile.Provider;
+using AndroidX.Lifecycle;
+using BmwDeepObd.Dialogs;
+using BmwFileReader;
+using EdiabasLib;
+using Hoho.Android.UsbSerial.Driver;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Pkcs;
+using Skydoves.BalloonLib;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -10,45 +39,18 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Android.Bluetooth;
-using Android.Content;
-using Android.Hardware.Usb;
-using Android.Net;
-using Android.Net.Wifi;
-using Android.OS;
-using Android.Widget;
-using EdiabasLib;
-using Hoho.Android.UsbSerial.Driver;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
-using System.ComponentModel;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using Android.Content.PM;
-using Android.Content.Res;
-using Android.Locations;
-using Android.OS.Storage;
-using Android.Views;
-using AndroidX.Core.App;
-using BmwFileReader;
 using UdsFileReader;
-using AndroidX.AppCompat.App;
-using AndroidX.Core.Content;
-using AndroidX.Core.Content.PM;
-using AndroidX.DocumentFile.Provider;
-using BmwDeepObd.Dialogs;
-using AndroidX.Lifecycle;
-using Android.App.Backup;
-using System.Runtime.Versioning;
-using Skydoves.BalloonLib;
 
 // ReSharper disable StringLiteralTypo
 // ReSharper disable IdentifierTypo
@@ -6420,8 +6422,26 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
-        public string GenS29Certificate(Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair machineKeyPair, string vin)
+        public string GenS29Certificate(AsymmetricCipherKeyPair machineKeyPair, string trustedCertPath, string vin)
         {
+            try
+            {
+                string[] pfxFiles = Directory.GetFiles(trustedCertPath, "*.pfx", SearchOption.TopDirectoryOnly);
+                if (pfxFiles.Length != 1)
+                {
+                    return null;
+                }
+
+                AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(pfxFiles[0], string.Empty, out X509CertificateEntry[] publicCertificateEntries);
+                if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
             return null;
         }
 

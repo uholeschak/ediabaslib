@@ -45,7 +45,7 @@ namespace EdiabasLib
             Rejected
         }
 
-        public delegate string GenS29CertDelegate(AsymmetricCipherKeyPair machineKeyPair, string vin);
+        public delegate string GenS29CertDelegate(AsymmetricCipherKeyPair machineKeyPair, string trustedCertPath, string vin);
 
 #if ANDROID
         public class ConnectParameterType
@@ -1423,7 +1423,7 @@ namespace EdiabasLib
                             string selectCert = DoIpS29SelectCert;
                             if (string.IsNullOrEmpty(selectCert) && SharedDataActive.GenS29CertHandler != null)
                             {
-                                selectCert = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair, SharedDataActive.EnetHostConn?.Vin);
+                                selectCert = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair, DoIpSslSecurityPath, SharedDataActive.EnetHostConn?.Vin);
                             }
 
                             if (string.IsNullOrEmpty(selectCert))
