@@ -52,6 +52,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using Org.BouncyCastle.Asn1.X509;
 using UdsFileReader;
 
 // ReSharper disable StringLiteralTypo
@@ -6424,7 +6425,7 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
-        public Org.BouncyCastle.X509.X509Certificate GenS29Certificate(AsymmetricKeyParameter machinePublicKey, string trustedCertPath, string vin)
+        public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, string trustedCertPath, string vin)
         {
             try
             {
@@ -6469,7 +6470,16 @@ namespace BmwDeepObd
 
                 Org.BouncyCastle.X509.X509Certificate x509s29Cert = new X509CertificateParser().ReadCertificate(s29Cert.GetRawCertData());
                 s29Cert.Dispose();
-                return x509s29Cert;
+
+                List<X509CertificateStructure> certList = new List<X509CertificateStructure>();
+                certList.Add(x509s29Cert.CertificateStructure);
+
+                foreach (X509CertificateEntry certEntry in publicCertificateEntries)
+                {
+                    certList.Add(certEntry.Certificate.CertificateStructure);
+                }
+
+                return certList;
             }
             catch (Exception)
             {
