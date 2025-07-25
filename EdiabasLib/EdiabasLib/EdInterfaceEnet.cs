@@ -45,7 +45,7 @@ namespace EdiabasLib
             Rejected
         }
 
-        public delegate string GenS29CertDelegate(AsymmetricCipherKeyPair machineKeyPair, string trustedCertPath, string vin);
+        public delegate Org.BouncyCastle.X509.X509Certificate GenS29CertDelegate(AsymmetricKeyParameter machinePublicKey, string trustedCertPath, string vin);
 
 #if ANDROID
         public class ConnectParameterType
@@ -1423,7 +1423,19 @@ namespace EdiabasLib
                             string selectCert = DoIpS29SelectCert;
                             if (string.IsNullOrEmpty(selectCert) && SharedDataActive.GenS29CertHandler != null)
                             {
-                                selectCert = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair, DoIpSslSecurityPath, SharedDataActive.EnetHostConn?.Vin);
+                                string vin = SharedDataActive.EnetHostConn?.Vin;
+                                if (string.IsNullOrEmpty(vin))
+                                {
+                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "VIN not available for S29 certificate generation");
+                                    continue;
+                                }
+
+                                Org.BouncyCastle.X509.X509Certificate x509s29Cert = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair.Public, DoIpSslSecurityPath, vin);
+                                if (x509s29Cert == null)
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "S29 certificate generation failed for VIN: {0}", vin);
+                                    continue;
+                                }
                             }
 
                             if (string.IsNullOrEmpty(selectCert))
