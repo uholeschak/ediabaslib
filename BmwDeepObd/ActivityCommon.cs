@@ -5641,7 +5641,11 @@ namespace BmwDeepObd
             Thread detectThread = new Thread(() =>
             {
                 List<EdInterfaceEnet.EnetConnection> detectedVehicles;
-                using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false) { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData) })
+                using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false) { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, vin =>
+                    {
+                        return null;
+                    })
+                })
                 {
                     detectedVehicles = edInterface.DetectedVehicles("auto:all");
                 }
@@ -6266,7 +6270,10 @@ namespace BmwDeepObd
                     break;
 
                 case InterfaceType.Enet:
-                    connectParameter = new EdInterfaceEnet.ConnectParameterType(NetworkData);
+                    connectParameter = new EdInterfaceEnet.ConnectParameterType(NetworkData, vin =>
+                    {
+                        return null;
+                    });
                     if (Emulator && !string.IsNullOrEmpty(EmulatorEnetIp))
                     {
                         // broadcast is not working with emulator
@@ -6412,7 +6419,10 @@ namespace BmwDeepObd
                     remoteHost = EmulatorEnetIp;
                 }
                 edInterfaceEnet.RemoteHost = remoteHost;
-                connectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData);
+                connectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, vin =>
+                {
+                    return null;
+                });
             }
 
             ediabas.CloseSgbd();

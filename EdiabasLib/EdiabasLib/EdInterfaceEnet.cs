@@ -48,12 +48,16 @@ namespace EdiabasLib
 #if ANDROID
         public class ConnectParameterType
         {
-            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData)
+            public delegate string GenS29CertDelegate(string vin);
+
+            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, GenS29CertDelegate genS29CertHandler)
             {
                 NetworkData = networkData;
+                GenS29CertHandler = genS29CertHandler;
             }
 
             public TcpClientWithTimeout.NetworkData NetworkData { get; }
+            public GenS29CertDelegate GenS29CertHandler { get; }
         }
 #endif
 
