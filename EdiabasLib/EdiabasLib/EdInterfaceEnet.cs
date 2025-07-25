@@ -45,7 +45,7 @@ namespace EdiabasLib
             Rejected
         }
 
-        public delegate string GenS29CertDelegate(AsymmetricCipherKeyPair machineKeyPair, string vin);
+        public delegate List<X509CertificateStructure> GenS29CertDelegate(AsymmetricKeyParameter machinePublicKey, string trustedCertPath, string vin);
 
 #if ANDROID
         public class ConnectParameterType
@@ -1421,36 +1421,50 @@ namespace EdiabasLib
                             }
 
                             string selectCert = DoIpS29SelectCert;
+                            SharedDataActive.S29SelectCert = null;
                             if (string.IsNullOrEmpty(selectCert) && SharedDataActive.GenS29CertHandler != null)
                             {
-                                selectCert = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair, SharedDataActive.EnetHostConn?.Vin);
-                            }
-
-                            if (string.IsNullOrEmpty(selectCert))
-                            {
-                                if (!string.IsNullOrEmpty(DoIpS29JsonRequestPath))
+                                string vin = SharedDataActive.EnetHostConn?.Vin;
+                                List<X509CertificateStructure> certList = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair.Public, DoIpSslSecurityPath, vin);
+                                if (certList != null && certList.Count > 1)
                                 {
-                                    if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath, EdSec4Diag.CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly))
-                                    {
-                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request generation failed");
-                                    }
+                                    SharedDataActive.S29SelectCert = certList;
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "S29 certificates generated: {0}", certList.Count);
                                 }
-
-                                if (!string.IsNullOrEmpty(DoIpS29JsonResponsePath))
+                                else
                                 {
-                                    if (StoreResponseJsonCerts(SharedDataActive, DoIpS29JsonResponsePath, DoIpS29Path))
-                                    {
-                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 response certificate stored in: {0}", DoIpS29JsonResponsePath);
-                                    }
+                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "S29 certificate generation failed");
                                 }
                             }
-                            else
+
+                            if (SharedDataActive.S29SelectCert == null)
                             {
-                                if (!LoadS29Cert(SharedDataActive, DoIpS29Path, selectCert))
+                                if (string.IsNullOrEmpty(selectCert))
                                 {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected S29 certificate load failed: {0}", selectCert);
-                                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
-                                    break;
+                                    if (!string.IsNullOrEmpty(DoIpS29JsonRequestPath))
+                                    {
+                                        if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath, EdSec4Diag.CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly))
+                                        {
+                                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request generation failed");
+                                        }
+                                    }
+
+                                    if (!string.IsNullOrEmpty(DoIpS29JsonResponsePath))
+                                    {
+                                        if (StoreResponseJsonCerts(SharedDataActive, DoIpS29JsonResponsePath, DoIpS29Path))
+                                        {
+                                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 response certificate stored in: {0}", DoIpS29JsonResponsePath);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (!LoadS29Cert(SharedDataActive, DoIpS29Path, selectCert))
+                                    {
+                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected S29 certificate load failed: {0}", selectCert);
+                                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
+                                        break;
+                                    }
                                 }
                             }
                         }
