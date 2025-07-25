@@ -25,35 +25,35 @@ mkdir "!PACKAGEPATH!" || EXIT /b 1
 
 echo copy EdiabasTest
 mkdir "!EDIABASTESTPATH!" || EXIT /b 1
-xcopy /y /q "!EDIABASTESTSRCPATH!EdiabasTest.exe" "!EDIABASTESTPATH!" || EXIT /b 1
-xcopy /y /q "!EDIABASTESTSRCPATH!*.dll" "!EDIABASTESTPATH!" || EXIT /b 1
-xcopy /y /q "!EDIABASTESTSRCPATH!*.config" "!EDIABASTESTPATH!" || EXIT /b 1
+xcopy /y /q "!EDIABASTESTSRCPATH!EdiabasTest.exe" "!EDIABASTESTPATH!" > nul || EXIT /b 1
+xcopy /y /q "!EDIABASTESTSRCPATH!*.dll" "!EDIABASTESTPATH!" > nul || EXIT /b 1
+xcopy /y /q "!EDIABASTESTSRCPATH!*.config" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 
 echo copy Tools
 mkdir "!TOOLPATH!" || EXIT /b 1
-xcopy /y /q "!TOOLSRCPATH!*.dll" "!TOOLPATH!" || EXIT /b 1
-xcopy /y /e /q "!TOOLSRCPATH!\*.*" "!TOOLPATH!" || EXIT /b 1
+xcopy /y /q "!TOOLSRCPATH!*.dll" "!TOOLPATH!" > nul || EXIT /b 1
+xcopy /y /e /q "!TOOLSRCPATH!\*.*" "!TOOLPATH!" > nul || EXIT /b 1
 del "!TOOLPATH!*.pdb"
 
 echo copy S29CertGenerator
 mkdir "!S29CERTGENPATH!" || EXIT /b 1
-xcopy /y /q "!S29CERTGENSRCPATH!*.dll" "!S29CERTGENPATH!" || EXIT /b 1
-xcopy /y /e /q "!S29CERTGENSRCPATH!\*.*" "!S29CERTGENPATH!" || EXIT /b 1
+xcopy /y /q "!S29CERTGENSRCPATH!*.dll" "!S29CERTGENPATH!" > nul || EXIT /b 1
+xcopy /y /e /q "!S29CERTGENSRCPATH!\*.*" "!S29CERTGENPATH!" > nul || EXIT /b 1
 del "!S29CERTGENPATH!*.pdb"
 
 echo copy LogFileConverter
 mkdir "!LOGCONVPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\*.*" "!LOGCONVPATH!" || EXIT /b 1
+xcopy /y /q "!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\*.*" "!LOGCONVPATH!" > nul || EXIT /b 1
 
 echo copy apiNET
 mkdir "!APINETPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!apiNET\bin\Release\net48\*.dll" "!APINETPATH!" || EXIT /b 1
+xcopy /y /q "!BATPATH!apiNET\bin\Release\net48\*.dll" "!APINETPATH!" > nul || EXIT /b 1
 
 echo copy CanAdapter
 mkdir "!CANADAPTERPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapter\CanAdapter\Release\*.hex" "!CANADAPTERPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapter\Pld\*.jed" "!CANADAPTERPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapter\UpdateLoader\bin\*.exe" "!CANADAPTERPATH!" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapter\CanAdapter\Release\*.hex" "!CANADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapter\Pld\*.jed" "!CANADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapter\UpdateLoader\bin\*.exe" "!CANADAPTERPATH!" > nul || EXIT /b 1
 
 echo copy adapter firmware
 mkdir "!CANADAPTERELMPATH!" || EXIT /b 1
