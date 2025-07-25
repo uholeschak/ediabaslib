@@ -5641,10 +5641,7 @@ namespace BmwDeepObd
             Thread detectThread = new Thread(() =>
             {
                 List<EdInterfaceEnet.EnetConnection> detectedVehicles;
-                using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false) { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, vin =>
-                    {
-                        return null;
-                    })
+                using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false) { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate)
                 })
                 {
                     detectedVehicles = edInterface.DetectedVehicles("auto:all");
@@ -6270,10 +6267,7 @@ namespace BmwDeepObd
                     break;
 
                 case InterfaceType.Enet:
-                    connectParameter = new EdInterfaceEnet.ConnectParameterType(NetworkData, vin =>
-                    {
-                        return null;
-                    });
+                    connectParameter = new EdInterfaceEnet.ConnectParameterType(NetworkData, GenS29Certificate);
                     if (Emulator && !string.IsNullOrEmpty(EmulatorEnetIp))
                     {
                         // broadcast is not working with emulator
@@ -6419,14 +6413,16 @@ namespace BmwDeepObd
                     remoteHost = EmulatorEnetIp;
                 }
                 edInterfaceEnet.RemoteHost = remoteHost;
-                connectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, vin =>
-                {
-                    return null;
-                });
+                connectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate);
             }
 
             ediabas.CloseSgbd();
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
+        }
+
+        public string GenS29Certificate(Org.BouncyCastle.Crypto.AsymmetricCipherKeyPair machineKeyPair, string vin)
+        {
+            return null;
         }
 
         public static bool SetEdiabasUdsCanId(EdiabasNet ediabas, VehicleInfoVag.EcuAddressEntry ecuAddressEntry = null)
@@ -7718,9 +7714,9 @@ namespace BmwDeepObd
                     try
                     {
                         StringBuilder sbPackages = new StringBuilder();
-#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+#pragma warning disable CA1416 // Plattformkompatibilitï¿½t ï¿½berprï¿½fen
                         IList<PackageInfo> installedPackages = GetInstalledPackages(PackageInfoFlags.MatchSystemOnly);
-#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+#pragma warning restore CA1416 // Plattformkompatibilitï¿½t ï¿½berprï¿½fen
                         if (installedPackages != null)
                         {
                             foreach (PackageInfo packageInfoLocal in installedPackages)
