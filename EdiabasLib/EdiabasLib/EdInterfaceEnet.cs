@@ -45,11 +45,11 @@ namespace EdiabasLib
             Rejected
         }
 
+        public delegate string GenS29CertDelegate(string vin);
+
 #if ANDROID
         public class ConnectParameterType
         {
-            public delegate string GenS29CertDelegate(string vin);
-
             public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, GenS29CertDelegate genS29CertHandler)
             {
                 NetworkData = networkData;
@@ -57,6 +57,7 @@ namespace EdiabasLib
             }
 
             public TcpClientWithTimeout.NetworkData NetworkData { get; }
+
             public GenS29CertDelegate GenS29CertHandler { get; }
         }
 #endif
@@ -385,6 +386,7 @@ namespace EdiabasLib
 
             private bool _disposed;
             public object NetworkData;
+            public GenS29CertDelegate GenS29CertHandler;
             public EnetConnection EnetHostConn;
             public TcpClient TcpDiagClient;
             public Stream TcpDiagStream;
@@ -1222,11 +1224,13 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}", RemoteHostProtected);
                 SharedDataActive.NetworkData = null;
+                SharedDataActive.GenS29CertHandler = null;
                 SharedDataActive.TransmitCancelEvent.Reset();
 #if ANDROID
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
                     SharedDataActive.NetworkData = connectParameter.NetworkData;
+                    SharedDataActive.GenS29CertHandler = connectParameter.GenS29CertHandler;
                 }
 #endif
                 string[] protocolParts = VehicleProtocolProtected.Split(',');
@@ -1416,7 +1420,13 @@ namespace EdiabasLib
                                 continue;
                             }
 
-                            if (string.IsNullOrEmpty(DoIpS29SelectCert))
+                            string selectCert = DoIpS29SelectCert;
+                            if (string.IsNullOrEmpty(selectCert) && SharedDataActive.GenS29CertHandler != null)
+                            {
+                                selectCert = SharedDataActive.GenS29CertHandler(SharedDataActive.EnetHostConn.Vin);
+                            }
+
+                            if (string.IsNullOrEmpty(selectCert))
                             {
                                 if (!string.IsNullOrEmpty(DoIpS29JsonRequestPath))
                                 {
@@ -1436,9 +1446,9 @@ namespace EdiabasLib
                             }
                             else
                             {
-                                if (!LoadS29Cert(SharedDataActive, DoIpS29Path, DoIpS29SelectCert))
+                                if (!LoadS29Cert(SharedDataActive, DoIpS29Path, selectCert))
                                 {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected S29 certificate load failed: {0}", DoIpS29SelectCert);
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected S29 certificate load failed: {0}", selectCert);
                                     EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
                                     break;
                                 }
