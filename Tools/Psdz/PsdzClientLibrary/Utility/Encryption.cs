@@ -335,24 +335,22 @@ namespace PsdzClient.Utility
             MemoryStream memoryStream = null;
             CryptoStream cryptoStream = null;
             StreamReader streamReader = null;
-#pragma warning disable SYSLIB0022 // Typ oder Element ist veraltet
-            RijndaelManaged rijndaelManaged = null;
+            Aes aes = null;
             try
             {
-                rijndaelManaged = new RijndaelManaged();
+                aes = Aes.Create();
                 TokenObject tokenObject = GenerateTokens(deviceIdent);
-                rijndaelManaged.Mode = CipherMode.CBC;
-                rijndaelManaged.Padding = PaddingMode.None;
-                rijndaelManaged.FeedbackSize = 128;
-                rijndaelManaged.Key = Encoding.UTF8.GetBytes(tokenObject.Password);
-                rijndaelManaged.IV = Encoding.UTF8.GetBytes(tokenObject.Token);
-                ICryptoTransform transform = rijndaelManaged.CreateDecryptor(rijndaelManaged.Key, rijndaelManaged.IV);
+                aes.Mode = CipherMode.CBC;
+                aes.Padding = PaddingMode.None;
+                aes.FeedbackSize = 128;
+                aes.Key = Encoding.UTF8.GetBytes(tokenObject.Password);
+                aes.IV = Encoding.UTF8.GetBytes(tokenObject.Token);
+                ICryptoTransform transform = aes.CreateDecryptor(aes.Key, aes.IV);
                 memoryStream = new MemoryStream(Convert.FromBase64String(encryptedPassWord));
                 cryptoStream = new CryptoStream(memoryStream, transform, CryptoStreamMode.Read);
                 streamReader = new StreamReader(cryptoStream, detectEncodingFromByteOrderMarks: true);
                 result = streamReader.ReadToEnd();
             }
-#pragma warning restore SYSLIB0022 // Typ oder Element ist veraltet
             catch (CryptographicException)
             {
                 //Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.DecryptPassword", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
@@ -392,7 +390,7 @@ namespace PsdzClient.Utility
                 {
                     memoryStream?.Close();
                 }
-                rijndaelManaged?.Dispose();
+                aes?.Dispose();
             }
             return result;
         }
