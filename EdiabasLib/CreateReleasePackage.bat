@@ -60,59 +60,59 @@ mkdir "!CANADAPTERELMPATH!" || EXIT /b 1
 
 echo copy default
 mkdir "!CANADAPTERELMPATH!default" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\default\production\*.hex" "!CANADAPTERELMPATH!default" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\default\production\*.hex" "!CANADAPTERELMPATH!default" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\default\production\*.hex" "!CANADAPTERELMPATH!default" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\default\production\*.hex" "!CANADAPTERELMPATH!default" > nul || EXIT /b 1
 
 echo copy def115200
 mkdir "!CANADAPTERELMPATH!def115200" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\def115200\production\*.hex" "!CANADAPTERELMPATH!def115200" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\def115200\production\*.hex" "!CANADAPTERELMPATH!def115200" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\def115200\production\*.hex" "!CANADAPTERELMPATH!def115200" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\def115200\production\*.hex" "!CANADAPTERELMPATH!def115200" > nul || EXIT /b 1
 
 echo copy bc04
 mkdir "!CANADAPTERELMPATH!bc04" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\bc04\production\*.hex" "!CANADAPTERELMPATH!bc04" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\bc04\production\*.hex" "!CANADAPTERELMPATH!bc04" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\bc04\production\*.hex" "!CANADAPTERELMPATH!bc04" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\bc04\production\*.hex" "!CANADAPTERELMPATH!bc04" > nul || EXIT /b 1
 
 echo copy hc04
 mkdir "!CANADAPTERELMPATH!hc04" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\hc04\production\*.hex" "!CANADAPTERELMPATH!hc04" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\hc04\production\*.hex" "!CANADAPTERELMPATH!hc04" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\hc04\production\*.hex" "!CANADAPTERELMPATH!hc04" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\hc04\production\*.hex" "!CANADAPTERELMPATH!hc04" > nul || EXIT /b 1
 
 echo copy spp_uart
 mkdir "!CANADAPTERELMPATH!spp_uart" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\spp_uart\production\*.hex" "!CANADAPTERELMPATH!spp_uart" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\Bluetooth\spp_uart\release\*.*" "!CANADAPTERELMPATH!spp_uart" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\spp_uart\production\*.hex" "!CANADAPTERELMPATH!spp_uart" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\spp_uart\production\*.hex" "!CANADAPTERELMPATH!spp_uart" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\Bluetooth\spp_uart\release\*.*" "!CANADAPTERELMPATH!spp_uart" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\spp_uart\production\*.hex" "!CANADAPTERELMPATH!spp_uart" > nul || EXIT /b 1
 
 echo copy spp_uart2
 mkdir "!CANADAPTERELMPATH!spp_uart2" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\spp_uart2\production\*.hex" "!CANADAPTERELMPATH!spp_uart2" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\spp_uart2\production\*.hex" "!CANADAPTERELMPATH!spp_uart2" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\spp_uart2\production\*.hex" "!CANADAPTERELMPATH!spp_uart2" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\spp_uart2\production\*.hex" "!CANADAPTERELMPATH!spp_uart2" > nul || EXIT /b 1
 
 echo copy esp8266
 mkdir "!CANADAPTERELMPATH!esp8266" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\esp8266\production\*.hex" "!CANADAPTERELMPATH!esp8266" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\Esp8266\*.bin" "!CANADAPTERELMPATH!esp8266" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\esp8266\production\*.hex" "!CANADAPTERELMPATH!esp8266" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\Esp8266\*.bin" "!CANADAPTERELMPATH!esp8266" > nul || EXIT /b 1
 
 echo copy yc1021
 mkdir "!CANADAPTERELMPATH!yc1021" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\yc1021\production\*.hex" "!CANADAPTERELMPATH!yc1021" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\YC1021\*.bin" "!CANADAPTERELMPATH!yc1021" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\yc1021\production\*.hex" "!CANADAPTERELMPATH!yc1021" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\yc1021\production\*.hex" "!CANADAPTERELMPATH!yc1021" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\YC1021\*.bin" "!CANADAPTERELMPATH!yc1021" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\yc1021\production\*.hex" "!CANADAPTERELMPATH!yc1021" > nul || EXIT /b 1
 
 echo copy ENET
 mkdir "!ENETADAPTERPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!EnetAdapter\Release\mini.bin" "!ENETADAPTERPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!EnetAdapter\Release\openwrt*.bin" "!ENETADAPTERPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!EnetAdapter\Release\*.img" "!ENETADAPTERPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!EnetAdapter\EnetWifiSettings.dat" "!ENETADAPTERPATH!" || EXIT /b 1
+xcopy /y /q "!BATPATH!EnetAdapter\Release\mini.bin" "!ENETADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!EnetAdapter\Release\openwrt*.bin" "!ENETADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!EnetAdapter\Release\*.img" "!ENETADAPTERPATH!" > nul  || EXIT /b 1
+xcopy /y /q "!BATPATH!EnetAdapter\EnetWifiSettings.dat" "!ENETADAPTERPATH!" > nul || EXIT /b 1
 
 echo copy sample config
 mkdir "!ANDROIDSAMPLEPATH!" || EXIT /b 1
-xcopy /y /e /q "!BATPATH!..\BmwDeepObd\Xml\*.*" "!ANDROIDSAMPLEPATH!" || EXIT /b 1
+xcopy /y /e /q "!BATPATH!..\BmwDeepObd\Xml\*.*" "!ANDROIDSAMPLEPATH!" > nul || EXIT /b 1
 
 mkdir "!ECUPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!Test\Ecu\adapter_prg.prg" "!ECUPATH!" || EXIT /b 1
+xcopy /y /q "!BATPATH!Test\Ecu\adapter_prg.prg" "!ECUPATH!" > nul || EXIT /b 1
 
 set PACKAGEZIP="!BATPATH!Binaries-!DATESTR!.zip"
 if exist "!PACKAGEZIP!" del /f /q "!PACKAGEZIP!"
