@@ -2,7 +2,7 @@
 SETLOCAL EnableDelayedExpansion
 
 set "BATPATH=%~dp0"
-set "SAMPLEPATH=!BATPATH!Sample\"
+set "SAMPLEPATH=!BATPATH!..\Xml\Sample\"
 
 set SAMPLEZIP="!BATPATH!..\Assets\Sample.zip"
 if exist "!SAMPLEZIP!" del /f /q "!SAMPLEZIP!"
