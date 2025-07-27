@@ -1,4 +1,4 @@
-For NET9 up to date buld tools are required.
+For NET9 up to date build tools are required.
 Visual Studio is updating the workload very late, so a manual update is required before the build:
 
 donet workload update
@@ -18,4 +18,4 @@ msiexec /x <GUID> IGNOREDEPENDENCIES=ALL
 In the Assets folder the encrypted ECU package Ecu.bin has to be copied before the build.
 The ECU package could be extracted from an existing .aab file (which is a zip) at the location assets1\assets\Ecu.bin.
 
-When modifying Xml\Sample\* files execute Xml\CreateSampleZip.bat to update the Assets\Sample.zip.
+When modifying Xml\Sample\* files execute Scripts\CreateAssetZips.bat to update the Assets\Sample.zip.
