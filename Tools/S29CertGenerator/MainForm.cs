@@ -852,6 +852,7 @@ namespace S29CertGenerator
 
         private bool ModifyClientConfiguration(string clientConfigFile)
         {
+            string bakFile = clientConfigFile + ".bak";
             try
             {
                 if (string.IsNullOrEmpty(_clientConfigText))
@@ -885,7 +886,8 @@ namespace S29CertGenerator
                     }
 
                     string envName = nameElements[0].Value.Trim();
-                    if (string.IsNullOrEmpty(envName) || string.Compare(envName, "Localhost", StringComparison.OrdinalIgnoreCase) != 0)
+                    if (string.IsNullOrEmpty(envName) ||
+                        string.Compare(envName, "Localhost", StringComparison.OrdinalIgnoreCase) != 0)
                     {
                         continue; // Skip environments that are not for ISPI Admin Client
                     }
@@ -923,7 +925,6 @@ namespace S29CertGenerator
                     return true; // No modification needed
                 }
 
-                string bakFile = clientConfigFile + ".bak";
                 if (!File.Exists(bakFile))
                 {
                     File.Copy(clientConfigFile, bakFile, true);
@@ -972,6 +973,13 @@ namespace S29CertGenerator
             {
                 UpdateStatusText($"Modify client configuration exception: {e.Message}", true);
                 return false;
+            }
+            finally
+            {
+                if (File.Exists(bakFile))
+                {
+                    UpdateStatusText("WARNING: Before using ISTA Launcher you have to uninstall the license!", true);
+                }
             }
         }
 
