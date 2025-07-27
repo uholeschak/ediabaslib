@@ -6479,13 +6479,19 @@ namespace BmwDeepObd
                     certList.Add(certEntry.Certificate.CertificateStructure);
                 }
 
+                List<Org.BouncyCastle.X509.X509Certificate> x509CertList = EdBcTlsUtilities.ConvertToX509CertList(certList);
+                List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate> { issuerCert };
+                if (!EdBcTlsUtilities.ValidateCertChain(x509CertList, rootCerts))
+                {
+                    return null;
+                }
+
                 return certList;
             }
             catch (Exception)
             {
                 return null;
             }
-            return null;
         }
 
         public static bool SetEdiabasUdsCanId(EdiabasNet ediabas, VehicleInfoVag.EcuAddressEntry ecuAddressEntry = null)

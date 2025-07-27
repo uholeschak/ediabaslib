@@ -3145,6 +3145,16 @@ namespace EdiabasLib
                 {
                     try
                     {
+                        string fileExt = Path.GetExtension(certFile);
+                        if (string.IsNullOrEmpty(fileExt) || fileExt.Length < 2)
+                        {
+                            continue;
+                        }
+
+                        if (!fileExt.Skip(1).All(char.IsDigit))
+                        {
+                            continue;
+                        }
 #if NET9_0_OR_GREATER
                         X509Certificate2 cert = X509CertificateLoader.LoadCertificateFromFile(certFile);
 #else
