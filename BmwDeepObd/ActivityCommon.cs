@@ -6425,7 +6425,7 @@ namespace BmwDeepObd
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
         }
 
-        public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, string trustedCertPath, string vin)
+        public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin)
         {
             try
             {
@@ -6434,12 +6434,12 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                if (string.IsNullOrEmpty(trustedCertPath))
+                if (string.IsNullOrEmpty(trustedKeyPath))
                 {
                     return null;
                 }
 
-                if (!Directory.Exists(trustedCertPath))
+                if (!Directory.Exists(trustedKeyPath))
                 {
                     return null;
                 }
@@ -6449,7 +6449,7 @@ namespace BmwDeepObd
                     return null;
                 }
 
-                string[] pfxFiles = Directory.GetFiles(trustedCertPath, "*.pfx", SearchOption.TopDirectoryOnly);
+                string[] pfxFiles = Directory.GetFiles(trustedKeyPath, "*.pfx", SearchOption.TopDirectoryOnly);
                 if (pfxFiles.Length != 1)
                 {
                     return null;
@@ -6480,7 +6480,7 @@ namespace BmwDeepObd
                 }
 
                 List<Org.BouncyCastle.X509.X509Certificate> x509CertList = EdBcTlsUtilities.ConvertToX509CertList(certList);
-                List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate> { issuerCert };
+                List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
                 if (!EdBcTlsUtilities.ValidateCertChain(x509CertList, rootCerts))
                 {
                     return null;
