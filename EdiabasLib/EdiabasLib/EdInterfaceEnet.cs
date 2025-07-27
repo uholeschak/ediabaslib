@@ -45,7 +45,7 @@ namespace EdiabasLib
             Rejected
         }
 
-        public delegate List<X509CertificateStructure> GenS29CertDelegate(AsymmetricKeyParameter machinePublicKey, string trustedCertPath, string vin);
+        public delegate List<X509CertificateStructure> GenS29CertDelegate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin);
 
 #if ANDROID
         public class ConnectParameterType
@@ -1425,7 +1425,7 @@ namespace EdiabasLib
                             if (string.IsNullOrEmpty(selectCert) && SharedDataActive.GenS29CertHandler != null)
                             {
                                 string vin = SharedDataActive.EnetHostConn?.Vin;
-                                List<X509CertificateStructure> certList = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair.Public, DoIpSslSecurityPath, vin);
+                                List<X509CertificateStructure> certList = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair.Public, SharedDataActive.TrustedCaStructs, DoIpSslSecurityPath, vin);
                                 if (certList != null && certList.Count > 1)
                                 {
                                     SharedDataActive.S29SelectCert = certList;
