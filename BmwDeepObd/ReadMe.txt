@@ -18,4 +18,4 @@ msiexec /x <GUID> IGNOREDEPENDENCIES=ALL
 In the Assets folder the encrypted ECU package Ecu.bin has to be copied before the build.
 The ECU package could be extracted from an existing .aab file (which is a zip) at the location assets1\assets\Ecu.bin.
 
-When modifying Xml\Sample\* files execute Scripts\CreateAssetZips.bat to update the Assets\Sample.zip.
+When modifying Xml\Sample\* files execute Scripts\CreateAssetZips.bat to update the Assets\Sample.zip and Assets\CaCerts.zip.
