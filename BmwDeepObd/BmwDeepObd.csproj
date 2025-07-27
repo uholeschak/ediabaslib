@@ -35,6 +35,7 @@
     <AndroidAsset Remove="Assets\.gitignore" />
     <AndroidAsset Update="Assets\Ecu.bin" AssetPack="assets1" DeliveryType="InstallTime" />
     <AndroidAsset Update="Assets\Sample.zip" AssetPack="assets1" DeliveryType="InstallTime" />
+    <AndroidAsset Update="Assets\CaCerts.zip" AssetPack="assets1" DeliveryType="InstallTime" />
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="Mono.Android" RootMode="visible" />
