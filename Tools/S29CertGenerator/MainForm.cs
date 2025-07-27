@@ -993,6 +993,7 @@ namespace S29CertGenerator
                     File.Move(bakFile, clientConfigFile, true);
                     DeleteClientConfigXml(clientConfigFile);
                     UpdateStatusText("Client configuration backup restored", true);
+                    UpdateStatusText("WARNING: To use ISTA Launcher again a reboot is required!", true);
                 }
                 else
                 {
