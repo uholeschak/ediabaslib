@@ -240,7 +240,15 @@ namespace EdiabasLib
 
         public static string GetMachineName()
         {
+#if ANDROID
+            string machineName = Android.OS.Build.Fingerprint;
+            if (!string.IsNullOrEmpty(machineName))
+            {
+                machineName = new string(machineName.Where(char.IsAsciiLetterOrDigit).ToArray());
+            }
+#else
             string machineName = Environment.MachineName;
+#endif
             if (string.IsNullOrEmpty(machineName))
             {
                 machineName = "LocalMachine";
