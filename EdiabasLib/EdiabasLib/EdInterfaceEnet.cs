@@ -495,7 +495,7 @@ namespace EdiabasLib
         protected int DoIpPort = 13400;
         protected int DoIpSslPort = 3496;
         protected bool DoIpBcSsl = true;
-        protected string DoIpSslSecurityPath = string.Empty;
+        protected string DoIpSslSecurityPathProtected = string.Empty;
         protected string DoIpS29Path = string.Empty;
         protected string DoIpS29SelectCert = string.Empty;
         protected string DoIpS29JsonRequestPath = string.Empty;
@@ -698,12 +698,12 @@ namespace EdiabasLib
                 prop = EdiabasProtected?.GetConfigProperty("SslSecurityPath");
                 if (!string.IsNullOrEmpty(prop))
                 {
-                    DoIpSslSecurityPath = prop;
+                    DoIpSslSecurityPathProtected = prop;
                 }
 
-                if (!string.IsNullOrEmpty(DoIpSslSecurityPath) && Directory.Exists(DoIpSslSecurityPath))
+                if (!string.IsNullOrEmpty(DoIpSslSecurityPathProtected) && Directory.Exists(DoIpSslSecurityPathProtected))
                 {
-                    string parentDir = Directory.GetParent(DoIpSslSecurityPath)?.FullName;
+                    string parentDir = Directory.GetParent(DoIpSslSecurityPathProtected)?.FullName;
                     if (!string.IsNullOrEmpty(parentDir))
                     {
                         string s29BasePath = Path.Combine(parentDir, "S29");
@@ -859,8 +859,8 @@ namespace EdiabasLib
                             string iniSslSecPath = ediabasIni.GetValue(IniFileSslSection, "SecurityPath", string.Empty);
                             if (!string.IsNullOrEmpty(iniSslSecPath))
                             {
-                                DoIpSslSecurityPath = iniSslSecPath;
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using DoIpSslSecurityPath from ini file: {0}", DoIpSslSecurityPath);
+                                DoIpSslSecurityPathProtected = iniSslSecPath;
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Using DoIpSslSecurityPath from ini file: {0}", DoIpSslSecurityPathProtected);
                             }
 
                             string iniVehicleProtocol = ediabasIni.GetValue(IniFileEnetSection, "VehicleProtocol", string.Empty);
@@ -1408,9 +1408,9 @@ namespace EdiabasLib
                         diagDoIpSsl = string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
                         if (diagDoIpSsl)
                         {
-                            if (!GetTrustedCAs(SharedDataActive, DoIpSslSecurityPath))
+                            if (!GetTrustedCAs(SharedDataActive, DoIpSslSecurityPathProtected))
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No trusted certificates found in path: {0}", DoIpSslSecurityPath);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No trusted certificates found in path: {0}", DoIpSslSecurityPathProtected);
                                 continue;
                             }
 
@@ -1425,7 +1425,7 @@ namespace EdiabasLib
                             if (string.IsNullOrEmpty(selectCert) && SharedDataActive.GenS29CertHandler != null)
                             {
                                 string vin = SharedDataActive.EnetHostConn?.Vin;
-                                List<X509CertificateStructure> certList = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair.Public, SharedDataActive.TrustedCaStructs, DoIpSslSecurityPath, vin);
+                                List<X509CertificateStructure> certList = SharedDataActive.GenS29CertHandler(SharedDataActive.MachineKeyPair.Public, SharedDataActive.TrustedCaStructs, DoIpSslSecurityPathProtected, vin);
                                 if (certList != null && certList.Count > 1)
                                 {
                                     SharedDataActive.S29SelectCert = certList;
@@ -1908,6 +1908,18 @@ namespace EdiabasLib
             set
             {
                 HostIdentServiceProtected = value;
+            }
+        }
+
+        public string DoIpSslSecurityPath
+        {
+            get
+            {
+                return DoIpSslSecurityPathProtected;
+            }
+            set
+            {
+                DoIpSslSecurityPathProtected = value;
             }
         }
 
