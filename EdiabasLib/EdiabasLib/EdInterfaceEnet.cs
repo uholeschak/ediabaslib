@@ -699,19 +699,18 @@ namespace EdiabasLib
                 if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpSslSecurityPathProtected = prop;
-                }
 
-                if (!string.IsNullOrEmpty(DoIpSslSecurityPathProtected) && Directory.Exists(DoIpSslSecurityPathProtected))
-                {
-                    string parentDir = Directory.GetParent(DoIpSslSecurityPathProtected)?.FullName;
-                    if (!string.IsNullOrEmpty(parentDir))
+                    if (Directory.Exists(DoIpSslSecurityPathProtected))
                     {
-                        string s29BasePath = Path.Combine(parentDir, "S29");
-                        string certificatesPath = Path.Combine(s29BasePath, "Certificates");
-                        if (Directory.Exists(certificatesPath))
+                        string parentDir = Directory.GetParent(DoIpSslSecurityPathProtected)?.FullName;
+                        if (!string.IsNullOrEmpty(parentDir))
                         {
-                            DoIpS29PathProtected = certificatesPath;
-                        }
+                            string s29BasePath = Path.Combine(parentDir, "S29");
+                            string certificatesPath = Path.Combine(s29BasePath, "Certificates");
+                            if (Directory.Exists(certificatesPath))
+                            {
+                                DoIpS29PathProtected = certificatesPath;
+                            }
 #if false
                         string s29JsonRequestPath = Path.Combine(s29BasePath, "JsonRequests");
                         if (Directory.Exists(s29JsonRequestPath))
@@ -725,6 +724,7 @@ namespace EdiabasLib
                             DoIpS29JsonResponsePath = s29JsonResponsePath;
                         }
 #endif
+                        }
                     }
                 }
 
