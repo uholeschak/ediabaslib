@@ -6647,7 +6647,9 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string caCertsDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.SecuritySubDir, ActivityCommon.CaCertsSubDir);
+                string securityDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.SecuritySubDir);
+                string caCertsDir = Path.Combine(securityDir, ActivityCommon.CaCertsSubDir);
+                string certsDir = Path.Combine(securityDir, ActivityCommon.CertsSubDir);
                 string caCertInfoFile = Path.Combine(caCertsDir, CaCertInfoFileName);
                 if (!force && File.Exists(caCertInfoFile))
                 {
@@ -6694,16 +6696,25 @@ namespace BmwDeepObd
                     }
                 }
 
-                if (Directory.Exists(caCertsDir))
+                if (Directory.Exists(securityDir))
                 {
                     try
                     {
-                        Directory.Delete(caCertsDir, true);
+                        Directory.Delete(securityDir, true);
                     }
                     catch (Exception)
                     {
                         // ignored
                     }
+                }
+
+                try
+                {
+                    Directory.CreateDirectory(certsDir);
+                }
+                catch (Exception)
+                {
+                    // ignored
                 }
 
                 ActivityCommon.ExtractZipFile(assets, null, resourceName, caCertsDir, null, null, null, null);
