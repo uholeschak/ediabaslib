@@ -808,6 +808,8 @@ namespace BmwDeepObd
         public const string TraceBackupDir = "TraceBackup";
         public const string ConfigBaseSubDir = "Configurations";
         public const string ConfigSampleSubDir = "Sample";
+        public const string SecuritySubDir = "Security";
+        public const string CaCertsSubDir = "CaCerts";
         public const string PackageAssembliesDir = "PackageAssemblies";
         public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
