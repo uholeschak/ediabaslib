@@ -496,7 +496,7 @@ namespace EdiabasLib
         protected int DoIpSslPort = 3496;
         protected bool DoIpBcSsl = true;
         protected string DoIpSslSecurityPathProtected = string.Empty;
-        protected string DoIpS29Path = string.Empty;
+        protected string DoIpS29PathProtected = string.Empty;
         protected string DoIpS29SelectCert = string.Empty;
         protected string DoIpS29JsonRequestPath = string.Empty;
         protected string DoIpS29JsonResponsePath = string.Empty;
@@ -710,7 +710,7 @@ namespace EdiabasLib
                         string certificatesPath = Path.Combine(s29BasePath, "Certificates");
                         if (Directory.Exists(certificatesPath))
                         {
-                            DoIpS29Path = certificatesPath;
+                            DoIpS29PathProtected = certificatesPath;
                         }
 #if false
                         string s29JsonRequestPath = Path.Combine(s29BasePath, "JsonRequests");
@@ -731,7 +731,7 @@ namespace EdiabasLib
                 prop = EdiabasProtected?.GetConfigProperty("S29Path");
                 if (!string.IsNullOrEmpty(prop))
                 {
-                    DoIpS29Path = prop;
+                    DoIpS29PathProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("selectCertificate");
@@ -881,9 +881,9 @@ namespace EdiabasLib
                 if (string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0 &&
                     string.IsNullOrEmpty(DoIpS29SelectCert))
                 {   // always create cert in ssl mode
-                    if (!CreateS29Certs(null, DoIpS29Path))
+                    if (!CreateS29Certs(null, DoIpS29PathProtected))
                     {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "S29 certificate generation failed path: {0}", DoIpS29Path);
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "S29 certificate generation failed path: {0}", DoIpS29PathProtected);
                     }
                 }
             }
@@ -1414,9 +1414,9 @@ namespace EdiabasLib
                                 continue;
                             }
 
-                            if (!CreateS29Certs(SharedDataActive, DoIpS29Path))
+                            if (!CreateS29Certs(SharedDataActive, DoIpS29PathProtected))
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}", DoIpS29Path);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No S29 certificates found in path: {0}", DoIpS29PathProtected);
                                 continue;
                             }
 
@@ -1451,7 +1451,7 @@ namespace EdiabasLib
 
                                     if (!string.IsNullOrEmpty(DoIpS29JsonResponsePath))
                                     {
-                                        if (StoreResponseJsonCerts(SharedDataActive, DoIpS29JsonResponsePath, DoIpS29Path))
+                                        if (StoreResponseJsonCerts(SharedDataActive, DoIpS29JsonResponsePath, DoIpS29PathProtected))
                                         {
                                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 response certificate stored in: {0}", DoIpS29JsonResponsePath);
                                         }
@@ -1459,7 +1459,7 @@ namespace EdiabasLib
                                 }
                                 else
                                 {
-                                    if (!LoadS29Cert(SharedDataActive, DoIpS29Path, selectCert))
+                                    if (!LoadS29Cert(SharedDataActive, DoIpS29PathProtected, selectCert))
                                     {
                                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Selected S29 certificate load failed: {0}", selectCert);
                                         EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_SEC_0036);
@@ -1920,6 +1920,18 @@ namespace EdiabasLib
             set
             {
                 DoIpSslSecurityPathProtected = value;
+            }
+        }
+
+        public string DoIpS29Path
+        {
+            get
+            {
+                return DoIpS29PathProtected;
+            }
+            set
+            {
+                DoIpS29PathProtected = value;
             }
         }
 
