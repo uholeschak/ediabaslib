@@ -1370,7 +1370,7 @@ namespace BmwDeepObd
                 ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
             }
 
-            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress, _appDataDir);
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local

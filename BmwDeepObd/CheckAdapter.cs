@@ -400,7 +400,7 @@ public class CheckAdapter : IDisposable
             {
                 EdInterfaceClass = new EdInterfaceObd()
             };
-            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress, _appDataDir);
         }
 
         _transmitCancelEvent.Reset();
