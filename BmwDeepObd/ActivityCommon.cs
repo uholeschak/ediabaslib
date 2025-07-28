@@ -614,6 +614,7 @@ namespace BmwDeepObd
                 this.ConfigFileName = string.Empty;
                 this.CheckCpuUsage = true;
                 this.ExtractSampleFiles = true;
+                this.ExtractCaCertFiles = true;
                 this.VerifyEcuFiles = true;
                 this.SelectedEnetIp = string.Empty;
                 this.SelectedElmWifiIp = string.Empty;
@@ -647,6 +648,7 @@ namespace BmwDeepObd
             public bool DataLogTemporaryShown { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool ExtractSampleFiles { get; set; }
+            public bool ExtractCaCertFiles { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool VerifyEcuMd5 { get; set; }
             public int CommErrorsCount { get; set; }

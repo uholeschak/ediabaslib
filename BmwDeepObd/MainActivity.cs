@@ -5086,6 +5086,14 @@ namespace BmwDeepObd
                         }
                     }
 
+                    if (_instanceData.ExtractCaCertFiles)
+                    {
+                        if (ExtractCaCertFiles())
+                        {
+                            _instanceData.ExtractCaCertFiles = false;
+                        }
+                    }
+
                     if (_instanceData.VerifyEcuFiles || _instanceData.VerifyEcuMd5)
                     {
                         bool checkMd5 = _instanceData.VerifyEcuMd5;
