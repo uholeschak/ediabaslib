@@ -481,7 +481,7 @@ namespace EdiabasLib
         protected AutoResetEvent UdpEvent;
         protected AutoResetEvent IcomEvent;
 
-        protected string NetworkProtocol = NetworkProtocolTcp;
+        protected string NetworkProtocolProtected = NetworkProtocolTcp;
         protected string RemoteHostProtected = AutoIp;
         protected string VehicleProtocolProtected = ProtocolHsfz + "," + ProtocolDoIp;
         protected int TesterAddress = 0xF4;
@@ -546,13 +546,13 @@ namespace EdiabasLib
                 string prop = EdiabasProtected?.GetConfigProperty("EnetNetworkProtocol");
                 if (!string.IsNullOrEmpty(prop))
                 {
-                    NetworkProtocol = prop;
+                    NetworkProtocolProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("NetworkProtocol");
                 if (!string.IsNullOrEmpty(prop))
                 {
-                    NetworkProtocol = prop;
+                    NetworkProtocolProtected = prop;
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
@@ -878,7 +878,7 @@ namespace EdiabasLib
                     ConnectTimeout = TcpConnectTimeoutMin;
                 }
 
-                if (string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0 &&
+                if (string.Compare(NetworkProtocolProtected, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0 &&
                     string.IsNullOrEmpty(DoIpS29SelectCert))
                 {   // always create cert in ssl mode
                     if (!CreateS29Certs(null, DoIpS29PathProtected))
@@ -1405,7 +1405,7 @@ namespace EdiabasLib
                         }
 
                         SharedDataActive.EnetHostConn = detectedVehicles[0];
-                        diagDoIpSsl = string.Compare(NetworkProtocol, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
+                        diagDoIpSsl = string.Compare(NetworkProtocolProtected, NetworkProtocolSsl, StringComparison.OrdinalIgnoreCase) == 0;
                         if (diagDoIpSsl)
                         {
                             if (!GetTrustedCAs(SharedDataActive, DoIpSslSecurityPathProtected))
@@ -1873,6 +1873,18 @@ namespace EdiabasLib
                 SharedDataActive.TransmitCancelEvent.Reset();
             }
             return true;
+        }
+
+        public string NetworkProtocol
+        {
+            get
+            {
+                return NetworkProtocolProtected;
+            }
+            set
+            {
+                NetworkProtocolProtected = value;
+            }
         }
 
         public string RemoteHost
