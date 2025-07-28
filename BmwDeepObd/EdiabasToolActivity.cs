@@ -2325,7 +2325,7 @@ namespace BmwDeepObd
             ClearLists();
             UpdateDisplay();
 
-            _activityCommon.SetEdiabasInterface(_ediabas, _instanceData.DeviceAddress);
+            _activityCommon.SetEdiabasInterface(_ediabas, _instanceData.DeviceAddress, _appDataDir);
 
             UpdateLogInfo();
 

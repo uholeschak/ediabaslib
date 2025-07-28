@@ -6356,7 +6356,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress)
+        public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress, string appDataDir = null)
         {
             PackageInfo packageInfo = GetPackageInfo();
             if (packageInfo != null)
@@ -6423,6 +6423,16 @@ namespace BmwDeepObd
                     remoteHost = EmulatorEnetIp;
                 }
                 edInterfaceEnet.RemoteHost = remoteHost;
+
+                if (!string.IsNullOrEmpty(appDataDir))
+                {
+                    string securityDir = Path.Combine(appDataDir, SecuritySubDir);
+                    string caCertsDir = Path.Combine(securityDir, CaCertsSubDir);
+                    string certsDir = Path.Combine(securityDir, CertsSubDir);
+                    edInterfaceEnet.DoIpSslSecurityPath = caCertsDir;
+                    edInterfaceEnet.DoIpS29Path = certsDir;
+                }
+
                 connectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate);
             }
 

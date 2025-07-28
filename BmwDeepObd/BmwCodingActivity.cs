@@ -1173,7 +1173,7 @@ namespace BmwDeepObd
                 }
 
                 _ediabas.EdInterfaceClass.EnableTransmitCache = false;
-                _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+                _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress, _appDataDir);
             }
         }
 
