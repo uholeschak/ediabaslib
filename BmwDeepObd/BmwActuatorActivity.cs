@@ -37,6 +37,7 @@ namespace BmwDeepObd
         }
 
         // Intent extra
+        public const string ExtraAppDataDir = "app_data_dir";
         public const string ExtraEcuName = "ecu_name";
         public const string ExtraEcuDir = "ecu_dir";
         public const string ExtraSimulationDir = "simulation_dir";
@@ -77,6 +78,7 @@ namespace BmwDeepObd
         private Thread _jobThread;
         private bool _activityActive;
         private bool _ediabasJobAbort;
+        private string _appDataDir;
         private string _ecuDir;
         private string _simulationDir;
         private string _traceDir;
@@ -117,6 +119,7 @@ namespace BmwDeepObd
 
             }, BroadcastReceived);
 
+            _appDataDir = Intent.GetStringExtra(ExtraAppDataDir);
             _ecuDir = Intent.GetStringExtra(ExtraEcuDir);
             _simulationDir = Intent.GetStringExtra(ExtraSimulationDir);
             _traceDir = Intent.GetStringExtra(ExtraTraceDir);
@@ -321,7 +324,7 @@ namespace BmwDeepObd
                 ActivityCommon.SetEdiabasConfigProperties(_ediabas, _traceDir, _simulationDir, _traceAppend);
             }
 
-            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress);
+            _activityCommon.SetEdiabasInterface(_ediabas, _deviceAddress, _appDataDir);
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local

@@ -2584,6 +2584,7 @@ namespace BmwDeepObd
                 BmwActuatorActivity.IntentEcuInfo = _ecuInfo;
                 Intent serverIntent = new Intent(this, typeof(BmwActuatorActivity));
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuName, _ecuInfo.Name);
+                serverIntent.PutExtra(BmwActuatorActivity.ExtraAppDataDir, _appDataDir);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraEcuDir, _ecuDir);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraSimulationDir, _simulationDir);
                 serverIntent.PutExtra(BmwActuatorActivity.ExtraTraceDir, _traceDir);
