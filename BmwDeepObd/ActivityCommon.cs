@@ -6356,7 +6356,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress, string appDataDir = null)
+        public void SetEdiabasInterface(EdiabasNet ediabas, string btDeviceAddress, string appDataDir)
         {
             PackageInfo packageInfo = GetPackageInfo();
             if (packageInfo != null)
