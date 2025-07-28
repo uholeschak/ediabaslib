@@ -614,6 +614,7 @@ namespace BmwDeepObd
                 this.ConfigFileName = string.Empty;
                 this.CheckCpuUsage = true;
                 this.ExtractSampleFiles = true;
+                this.ExtractCaCertFiles = true;
                 this.VerifyEcuFiles = true;
                 this.SelectedEnetIp = string.Empty;
                 this.SelectedElmWifiIp = string.Empty;
@@ -647,6 +648,7 @@ namespace BmwDeepObd
             public bool DataLogTemporaryShown { get; set; }
             public bool CheckCpuUsage { get; set; }
             public bool ExtractSampleFiles { get; set; }
+            public bool ExtractCaCertFiles { get; set; }
             public bool VerifyEcuFiles { get; set; }
             public bool VerifyEcuMd5 { get; set; }
             public int CommErrorsCount { get; set; }
@@ -808,6 +810,8 @@ namespace BmwDeepObd
         public const string TraceBackupDir = "TraceBackup";
         public const string ConfigBaseSubDir = "Configurations";
         public const string ConfigSampleSubDir = "Sample";
+        public const string SecuritySubDir = "Security";
+        public const string CaCertsSubDir = "CaCerts";
         public const string PackageAssembliesDir = "PackageAssemblies";
         public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";

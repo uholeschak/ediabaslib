@@ -173,6 +173,7 @@ namespace BmwDeepObd
         private const long EcuExtractSize = 2900000000;         // extracted ecu files size
         private const string EcuPackInfoXmlName = "EcuPackInfo.xml";
         private const string SampleInfoFileName = "SampleInfo.xml";
+        private const string CaCertInfoFileName = "CaCertsInfo.xml";
         private const string ContentFileName = "Content.xml";
         private const string TranslationFileNameMain = "TranslationMain.xml";
         private const int MenuGroupRecentId = 1;
@@ -5085,6 +5086,14 @@ namespace BmwDeepObd
                         }
                     }
 
+                    if (_instanceData.ExtractCaCertFiles)
+                    {
+                        if (ExtractCaCertFiles())
+                        {
+                            _instanceData.ExtractCaCertFiles = false;
+                        }
+                    }
+
                     if (_instanceData.VerifyEcuFiles || _instanceData.VerifyEcuMd5)
                     {
                         bool checkMd5 = _instanceData.VerifyEcuMd5;
@@ -6050,6 +6059,7 @@ namespace BmwDeepObd
                     }
 
                     ExtractSampleFiles(true);
+                    ExtractCaCertFiles(true);
 
                     // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                     if (!extractFailed)
@@ -6593,6 +6603,115 @@ namespace BmwDeepObd
                 xmlInfo.Add(new XAttribute("Name", resourceName));
                 xmlInfo.Add(new XAttribute("AppVer", _activityCommon.VersionCode));
                 xmlInfo.Save(sampleInfoFile);
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private bool ExtractCaCertFiles(bool force = false)
+        {
+            try
+            {
+                if (_activityCommon == null)
+                {
+                    return false;
+                }
+
+                AssetManager assets = ActivityCommon.GetPackageContext()?.Assets;
+                if (assets == null)
+                {
+                    return false;
+                }
+
+                string resourceName = null;
+                string[] assetFiles = assets.List(string.Empty);
+                if (assetFiles != null)
+                {
+                    Regex regex = new Regex(@"^CaCerts.*\.zip$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                    foreach (string fileName in assetFiles)
+                    {
+                        if (regex.IsMatch(fileName))
+                        {
+                            resourceName = fileName;
+                            break;
+                        }
+                    }
+                }
+
+                if (string.IsNullOrEmpty(resourceName))
+                {
+                    return false;
+                }
+
+                string caCertsDir = Path.Combine(_instanceData.AppDataPath, ActivityCommon.SecuritySubDir, ActivityCommon.CaCertsSubDir);
+                string caCertInfoFile = Path.Combine(caCertsDir, CaCertInfoFileName);
+                if (!force && File.Exists(caCertInfoFile))
+                {
+                    bool validInfoData = true;
+
+                    XDocument xmlInfoRead = XDocument.Load(caCertInfoFile);
+                    XAttribute nameAttr = xmlInfoRead.Root?.Attribute("Name");
+                    if (nameAttr == null)
+                    {
+                        validInfoData = false;
+                    }
+                    else
+                    {
+                        if (string.Compare(nameAttr.Value, resourceName, StringComparison.OrdinalIgnoreCase) != 0)
+                        {
+                            validInfoData = false;
+                        }
+                    }
+
+                    XAttribute verAttr = xmlInfoRead.Root?.Attribute("AppVer");
+                    if (verAttr == null)
+                    {
+                        validInfoData = false;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            Int64 verValue = XmlConvert.ToInt64(verAttr.Value);
+                            if (verValue != _activityCommon.VersionCode)
+                            {
+                                validInfoData = false;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            validInfoData = false;
+                        }
+                    }
+
+                    if (validInfoData)
+                    {
+                        return true;
+                    }
+                }
+
+                if (Directory.Exists(caCertsDir))
+                {
+                    try
+                    {
+                        Directory.Delete(caCertsDir, true);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                ActivityCommon.ExtractZipFile(assets, null, resourceName, caCertsDir, null, null, null, null);
+
+                XElement xmlInfo = new XElement("Info");
+                xmlInfo.Add(new XAttribute("Name", resourceName));
+                xmlInfo.Add(new XAttribute("AppVer", _activityCommon.VersionCode));
+                xmlInfo.Save(caCertInfoFile);
 
                 return true;
             }
