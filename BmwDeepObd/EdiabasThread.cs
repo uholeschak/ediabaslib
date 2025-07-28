@@ -491,6 +491,11 @@ namespace BmwDeepObd
                         string certsDir = Path.Combine(securityDir, ActivityCommon.CertsSubDir);
                         edInterfaceEnet.DoIpSslSecurityPath = caCertsDir;
                         edInterfaceEnet.DoIpS29Path = certsDir;
+                        edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
+                    }
+                    else
+                    {
+                        edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolTcp;
                     }
                 }
 
