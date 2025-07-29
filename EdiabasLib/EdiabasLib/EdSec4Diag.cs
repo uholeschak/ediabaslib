@@ -244,7 +244,14 @@ namespace EdiabasLib
             string machineName = Android.OS.Build.Fingerprint;
             if (!string.IsNullOrEmpty(machineName))
             {
-                machineName = new string(machineName.Where(char.IsAsciiLetterOrDigit).ToArray());
+                const int maxLength = 16;
+                char[] machineBytes = machineName.Where(char.IsAsciiLetterOrDigit).ToArray();
+
+                if (machineBytes.Length > maxLength)
+                {
+                    machineBytes = machineBytes.Take(maxLength).ToArray();
+                }
+                machineName = new string(machineBytes);
             }
 #else
             string machineName = Environment.MachineName;

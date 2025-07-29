@@ -6423,26 +6423,30 @@ namespace BmwDeepObd
                     remoteHost = EmulatorEnetIp;
                 }
                 edInterfaceEnet.RemoteHost = remoteHost;
-
-                if (!string.IsNullOrEmpty(appDataDir))
-                {
-                    string securityDir = Path.Combine(appDataDir, SecuritySubDir);
-                    string caCertsDir = Path.Combine(securityDir, CaCertsSubDir);
-                    string certsDir = Path.Combine(securityDir, CertsSubDir);
-                    edInterfaceEnet.DoIpSslSecurityPath = caCertsDir;
-                    edInterfaceEnet.DoIpS29Path = certsDir;
-                    edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
-                }
-                else
-                {
-                    edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolTcp;
-                }
+                SetDoIpSslProperties(edInterfaceEnet, appDataDir);
 
                 connectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate);
             }
 
             ediabas.CloseSgbd();
             ediabas.EdInterfaceClass.ConnectParameter = connectParameter;
+        }
+
+        public static bool SetDoIpSslProperties(EdInterfaceEnet edInterfaceEnet, string appDataDir)
+        {
+            if (!string.IsNullOrEmpty(appDataDir))
+            {
+                string securityDir = Path.Combine(appDataDir, SecuritySubDir);
+                string caCertsDir = Path.Combine(securityDir, CaCertsSubDir);
+                string certsDir = Path.Combine(securityDir, CertsSubDir);
+                edInterfaceEnet.DoIpSslSecurityPath = caCertsDir;
+                edInterfaceEnet.DoIpS29Path = certsDir;
+                edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
+                return true;
+            }
+
+            edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolTcp;
+            return false;
         }
 
         public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin)
