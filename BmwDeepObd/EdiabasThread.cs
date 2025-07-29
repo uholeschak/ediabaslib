@@ -483,20 +483,7 @@ namespace BmwDeepObd
                         edInterfaceEnet.RemoteHost = portName;
                     }
 
-                    string appDataDir = instanceData.AppDataPath;
-                    if (!string.IsNullOrEmpty(appDataDir))
-                    {
-                        string securityDir = Path.Combine(appDataDir, ActivityCommon.SecuritySubDir);
-                        string caCertsDir = Path.Combine(securityDir, ActivityCommon.CaCertsSubDir);
-                        string certsDir = Path.Combine(securityDir, ActivityCommon.CertsSubDir);
-                        edInterfaceEnet.DoIpSslSecurityPath = caCertsDir;
-                        edInterfaceEnet.DoIpS29Path = certsDir;
-                        edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
-                    }
-                    else
-                    {
-                        edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolTcp;
-                    }
+                    ActivityCommon.SetDoIpSslProperties(edInterfaceEnet, instanceData.AppDataPath);
                 }
 
                 Ediabas.CloseSgbd();
