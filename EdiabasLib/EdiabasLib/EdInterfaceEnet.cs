@@ -179,24 +179,39 @@ namespace EdiabasLib
                     return 1;
                 }
 
-                if (DiagPort < enetConnection.DiagPort)
+                if (ConnectionType < enetConnection.ConnectionType)
                 {
                     return -1;
                 }
 
-                if (DiagPort > enetConnection.DiagPort)
+                if (ConnectionType > enetConnection.ConnectionType)
                 {
                     return 1;
                 }
 
-                if (ControlPort < enetConnection.ControlPort)
+                if (ConnectionType == InterfaceType.DirectHsfz)
                 {
-                    return -1;
-                }
+                    if (DiagPort < enetConnection.DiagPort)
+                    {
+                        return -1;
+                    }
 
-                if (ControlPort > enetConnection.ControlPort)
-                {
-                    return 1;
+                    if (DiagPort > enetConnection.DiagPort)
+                    {
+                        return 1;
+                    }
+
+                    if (ControlPort < enetConnection.ControlPort)
+                    {
+                        return -1;
+                    }
+
+                    if (ControlPort > enetConnection.ControlPort)
+                    {
+                        return 1;
+                    }
+
+                    return 0;
                 }
 
                 if (DoIpPort < enetConnection.DoIpPort)
