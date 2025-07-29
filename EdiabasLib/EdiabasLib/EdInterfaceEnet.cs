@@ -72,13 +72,14 @@ namespace EdiabasLib
                 Icom
             }
 
-            public EnetConnection(InterfaceType connectionType, IPAddress ipAddress, int diagPort = -1, int controlPort = -1, int doIpPort = -1)
+            public EnetConnection(InterfaceType connectionType, IPAddress ipAddress, int diagPort = -1, int controlPort = -1, int doIpPort = -1, int sslPort = -1)
             {
                 ConnectionType = connectionType;
                 IpAddress = ipAddress;
                 DiagPort = diagPort;
                 ControlPort = controlPort;
                 DoIpPort = doIpPort;
+                SslPort = sslPort;
                 Mac = string.Empty;
                 Vin = string.Empty;
             }
@@ -88,6 +89,7 @@ namespace EdiabasLib
             public int DiagPort { get; }
             public int ControlPort { get; }
             public int DoIpPort { get; }
+            public int SslPort { get; }
             public string Mac { get; set; }
             public string Vin { get; set; }
             private int? hashCode;
@@ -106,9 +108,24 @@ namespace EdiabasLib
                     sb.Append(":");
                     sb.Append(ProtocolDoIp);
 
+                    int skipped = 0;
                     if (DoIpPort >= 0)
                     {
                         sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DoIpPort));
+                    }
+                    else
+                    {
+                        skipped++;
+                    }
+
+                    if (SslPort >= 0)
+                    {
+                        while (skipped > 0)
+                        {
+                            sb.Append(":");
+                            skipped--;
+                        }
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", SslPort));
                     }
                 }
                 else
@@ -168,6 +185,36 @@ namespace EdiabasLib
                 }
 
                 if (DiagPort > enetConnection.DiagPort)
+                {
+                    return 1;
+                }
+
+                if (ControlPort < enetConnection.ControlPort)
+                {
+                    return -1;
+                }
+
+                if (ControlPort > enetConnection.ControlPort)
+                {
+                    return 1;
+                }
+
+                if (DoIpPort < enetConnection.DoIpPort)
+                {
+                    return -1;
+                }
+
+                if (DoIpPort > enetConnection.DoIpPort)
+                {
+                    return 1;
+                }
+
+                if (SslPort < enetConnection.SslPort)
+                {
+                    return -1;
+                }
+
+                if (SslPort > enetConnection.SslPort)
                 {
                     return 1;
                 }
@@ -1297,6 +1344,7 @@ namespace EdiabasLib
                         int hostDiagPort = -1;
                         int hostControlPort = -1;
                         int hostDoIpPort = -1;
+                        int hostSslPort = -1;
                         EnetConnection.InterfaceType connectionType = EnetConnection.InterfaceType.DirectHsfz;
                         bool protocolSpecified = false;
 
@@ -1365,9 +1413,20 @@ namespace EdiabasLib
                                     hostDoIpPort = (int)portValue;
                                 }
                             }
+
+                            if (hostParts.Length >= hostPos + 1)
+                            {
+                                Int64 portValue = EdiabasNet.StringToValue(hostParts[hostPos], out bool valid);
+                                hostPos++;
+
+                                if (valid)
+                                {
+                                    hostSslPort = (int)portValue;
+                                }
+                            }
                         }
 
-                        SharedDataActive.EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort, hostDoIpPort);
+                        SharedDataActive.EnetHostConn = new EnetConnection(connectionType, IPAddress.Parse(hostIp), hostDiagPort, hostControlPort, hostDoIpPort, hostSslPort);
                     }
                 }
 
