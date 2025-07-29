@@ -1474,7 +1474,26 @@ namespace PsdzClient
             }
 
             _databaseExtractPath = Path.Combine(_databasePath, "Extract");
-            if (!Directory.Exists(_databaseExtractPath))
+            string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            string programFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+
+            bool adminRequired = false;
+            if (PathStartWith(_databaseExtractPath, programFiles))
+            {
+                adminRequired = true;
+            }
+            else if (PathStartWith(_databaseExtractPath, programFilesX86))
+            {
+                adminRequired = true;
+            }
+
+            if (adminRequired)
+            {
+                log.ErrorFormat("PsdzDatabase: Path rejected, requires admin rights: {0}", _databaseExtractPath);
+                _databaseExtractPath = null;
+            }
+
+            if (!string.IsNullOrEmpty(_databaseExtractPath) && !Directory.Exists(_databaseExtractPath))
             {
                 try
                 {
@@ -5346,6 +5365,50 @@ namespace PsdzClient
             log.InfoFormat("GetSwiVersion Ver: {0}", swiVersion);
             return swiVersion;
         }
+
+        public static string NormalizePath(string path)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(path))
+                {
+                    return null;
+                }
+
+                return Path.GetFullPath(new Uri(path).LocalPath)
+                    .TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                    .ToUpperInvariant();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public static bool PathStartWith(string fullPath, string subPath)
+        {
+            try
+            {
+                string fullPathNorm = NormalizePath(fullPath);
+                string subPathNorm = NormalizePath(subPath);
+                if (string.IsNullOrEmpty(fullPathNorm) || string.IsNullOrEmpty(subPathNorm))
+                {
+                    return false;
+                }
+
+                if (fullPathNorm.IndexOf(subPathNorm, StringComparison.OrdinalIgnoreCase) > -1)
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return false;
+        }
+
 
         public bool EvaluateXepRulesById(string id, Vehicle vehicle, IFFMDynamicResolver ffmResolver, string objectId = null)
         {
