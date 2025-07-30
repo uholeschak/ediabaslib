@@ -24,18 +24,21 @@ timeout /T 1 /NOBREAK > nul
 mkdir "!PACKAGEPATH!" || EXIT /b 1
 
 echo Copying EdiabasTest
+forfiles /P !EDIABASTESTSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!EDIABASTESTPATH!" || EXIT /b 1
 xcopy /y /q "!EDIABASTESTSRCPATH!EdiabasTest.exe" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 xcopy /y /q "!EDIABASTESTSRCPATH!*.dll" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 xcopy /y /q "!EDIABASTESTSRCPATH!*.config" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 
 echo Copying Tools
+forfiles /P !TOOLSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!TOOLPATH!" || EXIT /b 1
 xcopy /y /q "!TOOLSRCPATH!*.dll" "!TOOLPATH!" > nul || EXIT /b 1
 xcopy /y /e /q "!TOOLSRCPATH!\*.*" "!TOOLPATH!" > nul || EXIT /b 1
 del "!TOOLPATH!*.pdb"
 
 echo Copying S29CertGenerator
+forfiles /P !S29CERTGENSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!S29CERTGENPATH!" || EXIT /b 1
 xcopy /y /q "!S29CERTGENSRCPATH!*.dll" "!S29CERTGENPATH!" > nul || EXIT /b 1
 xcopy /y /e /q "!S29CERTGENSRCPATH!\*.*" "!S29CERTGENPATH!" > nul || EXIT /b 1
