@@ -13,6 +13,7 @@ set "TOOLSRCPATH=!BATPATH!EdiabasLibConfigTool\artifacts\bin\EdiabasLibConfigToo
 set "S29CERTGENPATH=!PACKAGEPATH!S29CertGenerator\"
 set "S29CERTGENSRCPATH=!BATPATH!..\Tools\S29CertGenerator\artifacts\bin\S29CertGenerator\release\"
 set "LOGCONVPATH=!PACKAGEPATH!LogfileConverter\"
+set "LOGCONVSRCPATH=!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\"
 set "APINETPATH=!PACKAGEPATH!ApiNet\"
 set "CANADAPTERPATH=!PACKAGEPATH!CanAdapter\"
 set "CANADAPTERELMPATH=!PACKAGEPATH!CanAdapterElm\"
@@ -45,8 +46,9 @@ xcopy /y /e /q "!S29CERTGENSRCPATH!\*.*" "!S29CERTGENPATH!" > nul || EXIT /b 1
 del "!S29CERTGENPATH!*.pdb"
 
 echo Copying LogFileConverter
+forfiles /P !LOGCONVSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!LOGCONVPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\*.*" "!LOGCONVPATH!" > nul || EXIT /b 1
+xcopy /y /q "!LOGCONVSRCPATH!*.*" "!LOGCONVPATH!" > nul || EXIT /b 1
 
 echo Copying apiNET
 mkdir "!APINETPATH!" || EXIT /b 1
