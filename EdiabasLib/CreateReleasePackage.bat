@@ -16,6 +16,7 @@ set "LOGCONVPATH=!PACKAGEPATH!LogfileConverter\"
 set "LOGCONVSRCPATH=!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\"
 set "APINETPATH=!PACKAGEPATH!ApiNet\"
 set "CANADAPTERPATH=!PACKAGEPATH!CanAdapter\"
+set "CANADAPTERSRCPATH=!BATPATH!CanAdapter\"
 set "CANADAPTERELMPATH=!PACKAGEPATH!CanAdapterElm\"
 set "ENETADAPTERPATH=!PACKAGEPATH!EnetAdapter\"
 set "ANDROIDSAMPLEPATH=!PACKAGEPATH!AndroidSamples\"
@@ -55,10 +56,11 @@ mkdir "!APINETPATH!" || EXIT /b 1
 xcopy /y /q "!BATPATH!apiNET\bin\Release\net48\*.dll" "!APINETPATH!" > nul || EXIT /b 1
 
 echo Copying CanAdapter
+forfiles /P !CANADAPTERSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!CANADAPTERPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapter\CanAdapter\Release\*.hex" "!CANADAPTERPATH!" > nul || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapter\Pld\*.jed" "!CANADAPTERPATH!" > nul || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapter\UpdateLoader\bin\*.exe" "!CANADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!CANADAPTERSRCPATH!CanAdapter\Release\*.hex" "!CANADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!CANADAPTERSRCPATH!Pld\*.jed" "!CANADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!CANADAPTERSRCPATH!UpdateLoader\bin\*.exe" "!CANADAPTERPATH!" > nul || EXIT /b 1
 
 echo Copying adapter firmware:
 mkdir "!CANADAPTERELMPATH!" || EXIT /b 1
