@@ -471,72 +471,114 @@ namespace AssemblyPatcher
                                     }
                                 }
 
-                                int templateIndex = -1;
-                                for (int index = 0; index < instructionsTemplate.Count; index++)
+                                if (patchIndex >= 0)
                                 {
-                                    Instruction instruction = instructionsTemplate[index];
-                                    if (instruction.OpCode == OpCodes.Ldarg_0
-                                        && index + 5 < instructionsTemplate.Count)
+                                    int templateIndex = -1;
+                                    for (int index = 0; index < instructionsTemplate.Count; index++)
                                     {
-                                        if (instructionsTemplate[index + 1].OpCode != OpCodes.Callvirt)
+                                        Instruction instruction = instructionsTemplate[index];
+                                        if (instruction.OpCode == OpCodes.Ldarg_0
+                                            && index + 5 < instructionsTemplate.Count)
                                         {
-                                            continue;
+                                            if (instructionsTemplate[index + 1].OpCode != OpCodes.Callvirt)
+                                            {
+                                                continue;
+                                            }
+                                            if (instructionsTemplate[index + 2].OpCode != OpCodes.Stloc_3)
+                                            {
+                                                continue;
+                                            }
+                                            if (instructionsTemplate[index + 3].OpCode != OpCodes.Ldloca_S)
+                                            {
+                                                continue;
+                                            }
+                                            if (instructionsTemplate[index + 4].OpCode != OpCodes.Call)
+                                            {
+                                                continue;
+                                            }
+                                            if (instructionsTemplate[index + 5].OpCode != OpCodes.Callvirt)
+                                            {
+                                                continue;
+                                            }
+
+                                            Console.WriteLine("get_IsDoIP found at index: {0}", index);
+                                            templateIndex = index + 1;
+                                            break;
                                         }
-                                        if (instructionsTemplate[index + 2].OpCode != OpCodes.Stloc_3)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructionsTemplate[index + 3].OpCode != OpCodes.Ldloca_S)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructionsTemplate[index + 4].OpCode != OpCodes.Call)
-                                        {
-                                            continue;
-                                        }
-                                        if (instructionsTemplate[index + 5].OpCode != OpCodes.Callvirt)
-                                        {
-                                            continue;
-                                        }
-
-                                        Console.WriteLine("get_IsDoIP found at index: {0}", index);
-                                        templateIndex = index + 1;
-                                        break;
-                                    }
-                                }
-
-                                if (templateIndex < 0)
-                                {
-                                    Console.WriteLine("get_IsDoIP template not found");
-                                }
-
-                                if (patchIndex >= 0 && templateIndex >= 0)
-                                {
-                                    List<Instruction> insertInstructions = new List<Instruction>();
-                                    insertInstructions.Add(instructionsTemplate[templateIndex + 0].Clone());    // callvirt get_IsDoIP()
-                                    insertInstructions.Add(new Instruction(OpCodes.Stloc_0));
-
-                                    Local localTemp1 = instructionsTemplate[templateIndex + 2].Operand as Local;
-                                    Local local1 = new Local(localTemp1.Type);
-                                    locals.Add(local1);
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldloca_S, local1));
-
-                                    insertInstructions.Add(instructionsTemplate[templateIndex + 3].Clone());    // call get_Value()
-
-                                    instructions.RemoveAt(patchIndex);  // callvirt
-                                    int offset = 0;
-                                    foreach (Instruction insertInstruction in insertInstructions)
-                                    {
-                                        instructions.Insert(patchIndex + offset, insertInstruction);
-                                        offset++;
                                     }
 
-                                    Console.WriteLine("ConnectionManager UseTheDoipPort patched");
-                                    patched = true;
+                                    if (templateIndex < 0)
+                                    {
+                                        Console.WriteLine("get_IsDoIP template not found");
+                                    }
+
+                                    if (patchIndex >= 0 && templateIndex >= 0)
+                                    {
+                                        List<Instruction> insertInstructions = new List<Instruction>();
+                                        insertInstructions.Add(instructionsTemplate[templateIndex + 0].Clone());    // callvirt get_IsDoIP()
+                                        insertInstructions.Add(new Instruction(OpCodes.Stloc_0));
+
+                                        Local localTemp1 = instructionsTemplate[templateIndex + 2].Operand as Local;
+                                        Local local1 = new Local(localTemp1.Type);
+                                        locals.Add(local1);
+                                        insertInstructions.Add(new Instruction(OpCodes.Ldloca_S, local1));
+
+                                        insertInstructions.Add(instructionsTemplate[templateIndex + 3].Clone());    // call get_Value()
+
+                                        instructions.RemoveAt(patchIndex);  // callvirt
+                                        int offset = 0;
+                                        foreach (Instruction insertInstruction in insertInstructions)
+                                        {
+                                            instructions.Insert(patchIndex + offset, insertInstruction);
+                                            offset++;
+                                        }
+
+                                        Console.WriteLine("ConnectionManager UseTheDoipPort patched");
+                                        patched = true;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("UseTheDoipPort appears to have already been patched or is not existing");
+                                    }
                                 }
                                 else
                                 {
-                                    Console.WriteLine("UseTheDoipPort appears to have already been patched or is not existing");
+                                    patchIndex = -1;
+                                    for (int index = 0; index < instructions.Count; index++)
+                                    {
+                                        Instruction instruction = instructions[index];
+                                        if (instruction.OpCode == OpCodes.Ldarg_0
+                                            && index + 2 < instructions.Count)
+                                        {
+                                            if (instructions[index + 1].OpCode != OpCodes.Call)
+                                            {
+                                                continue;
+                                            }
+                                            if (instructions[index + 2].OpCode != OpCodes.Ret)
+                                            {
+                                                continue;
+                                            }
+
+                                            Console.WriteLine("get_AvoidTlsConnection found at index: {0}", index);
+                                            patchIndex = index;
+                                            break;
+                                        }
+                                    }
+
+                                    if (patchIndex >= 0)
+                                    {
+                                        instructions.RemoveAt(patchIndex);  // ldarg.0
+                                        instructions.RemoveAt(patchIndex);  // call
+                                        instructions.RemoveAt(patchIndex);  // get_AvoidTlsConnection
+                                        instructions.Insert(patchIndex, Instruction.Create(OpCodes.Ldc_I4_1));
+                                        instructions.Insert(patchIndex + 1, Instruction.Create(OpCodes.Ret));
+                                        Console.WriteLine("ConnectionManager UseTheDoipPort patched (get_AvoidTlsConnection removed)");
+                                        patched = true;
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("UseTheDoipPort appears to have already been patched or is not existing");
+                                    }
                                 }
                             }
                         }
