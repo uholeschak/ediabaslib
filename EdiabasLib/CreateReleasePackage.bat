@@ -13,8 +13,10 @@ set "TOOLSRCPATH=!BATPATH!EdiabasLibConfigTool\artifacts\bin\EdiabasLibConfigToo
 set "S29CERTGENPATH=!PACKAGEPATH!S29CertGenerator\"
 set "S29CERTGENSRCPATH=!BATPATH!..\Tools\S29CertGenerator\artifacts\bin\S29CertGenerator\release\"
 set "LOGCONVPATH=!PACKAGEPATH!LogfileConverter\"
+set "LOGCONVSRCPATH=!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\"
 set "APINETPATH=!PACKAGEPATH!ApiNet\"
 set "CANADAPTERPATH=!PACKAGEPATH!CanAdapter\"
+set "CANADAPTERSRCPATH=!BATPATH!CanAdapter\"
 set "CANADAPTERELMPATH=!PACKAGEPATH!CanAdapterElm\"
 set "ENETADAPTERPATH=!PACKAGEPATH!EnetAdapter\"
 set "ANDROIDSAMPLEPATH=!PACKAGEPATH!AndroidSamples\"
@@ -24,36 +26,41 @@ timeout /T 1 /NOBREAK > nul
 mkdir "!PACKAGEPATH!" || EXIT /b 1
 
 echo Copying EdiabasTest
+forfiles /P !EDIABASTESTSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!EDIABASTESTPATH!" || EXIT /b 1
 xcopy /y /q "!EDIABASTESTSRCPATH!EdiabasTest.exe" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 xcopy /y /q "!EDIABASTESTSRCPATH!*.dll" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 xcopy /y /q "!EDIABASTESTSRCPATH!*.config" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 
 echo Copying Tools
+forfiles /P !TOOLSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!TOOLPATH!" || EXIT /b 1
 xcopy /y /q "!TOOLSRCPATH!*.dll" "!TOOLPATH!" > nul || EXIT /b 1
 xcopy /y /e /q "!TOOLSRCPATH!\*.*" "!TOOLPATH!" > nul || EXIT /b 1
 del "!TOOLPATH!*.pdb"
 
 echo Copying S29CertGenerator
+forfiles /P !S29CERTGENSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!S29CERTGENPATH!" || EXIT /b 1
 xcopy /y /q "!S29CERTGENSRCPATH!*.dll" "!S29CERTGENPATH!" > nul || EXIT /b 1
 xcopy /y /e /q "!S29CERTGENSRCPATH!\*.*" "!S29CERTGENPATH!" > nul || EXIT /b 1
 del "!S29CERTGENPATH!*.pdb"
 
 echo Copying LogFileConverter
+forfiles /P !LOGCONVSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!LOGCONVPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!..\Tools\LogfileConverter\artifacts\bin\LogfileConverter\release\*.*" "!LOGCONVPATH!" > nul || EXIT /b 1
+xcopy /y /q "!LOGCONVSRCPATH!*.*" "!LOGCONVPATH!" > nul || EXIT /b 1
 
 echo Copying apiNET
 mkdir "!APINETPATH!" || EXIT /b 1
 xcopy /y /q "!BATPATH!apiNET\bin\Release\net48\*.dll" "!APINETPATH!" > nul || EXIT /b 1
 
 echo Copying CanAdapter
+forfiles /P !CANADAPTERSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!CANADAPTERPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapter\CanAdapter\Release\*.hex" "!CANADAPTERPATH!" > nul || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapter\Pld\*.jed" "!CANADAPTERPATH!" > nul || EXIT /b 1
-xcopy /y /q "!BATPATH!CanAdapter\UpdateLoader\bin\*.exe" "!CANADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!CANADAPTERSRCPATH!CanAdapter\Release\*.hex" "!CANADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!CANADAPTERSRCPATH!Pld\*.jed" "!CANADAPTERPATH!" > nul || EXIT /b 1
+xcopy /y /q "!CANADAPTERSRCPATH!UpdateLoader\bin\*.exe" "!CANADAPTERPATH!" > nul || EXIT /b 1
 
 echo Copying adapter firmware:
 mkdir "!CANADAPTERELMPATH!" || EXIT /b 1
