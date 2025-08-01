@@ -857,7 +857,7 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
-                                        Console.WriteLine("*** 'ENET::remotehost=' appears to have already been patched or is not existing");
+                                        Console.WriteLine("Info: 'ENET::remotehost=' appears to have already been patched or is not existing");
                                     }
                                 }
                             }
@@ -969,7 +969,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("*** \"ENET\", \"_\", \"Rheingold\", \"\" appears to have already been patched or is not existing");
+                                    Console.WriteLine("Info: \"ENET\", \"_\", \"Rheingold\", \"\" appears to have already been patched or is not existing");
                                 }
                             }
                         }
