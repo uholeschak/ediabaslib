@@ -982,6 +982,112 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.VehicleCommunication",
+                                Class = "ECUKom",
+                                Method = "InitializeEnetDevice",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("ECUKom.InitializeEnetDevice found");
+                                int patchIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldstr &&
+                                        string.Compare(instruction.Operand.ToString(), "ENET", StringComparison.OrdinalIgnoreCase) == 0
+                                        && index + 3 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 1].Operand.ToString(), "_", StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 2].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 2].Operand.ToString(), "Rheingold", StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 3].Operand.ToString(), "", StringComparison.OrdinalIgnoreCase) != 0)
+                                        {
+                                            continue;
+                                        }
+
+                                        Console.WriteLine("\"ENET\", \"_\", \"Rheingold\", \"\" found at index: {0}", index);
+                                        patchIndex = index + 3;
+                                        break;
+                                    }
+                                }
+
+                                int templateIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldstr &&
+                                        string.Compare(instruction.Operand.ToString(), "RemoteHost={0};selectCertificate={1};SSLPort={2};Authentication=S29;NetworkProtocol=SSL", StringComparison.OrdinalIgnoreCase) == 0
+                                        && index + 4 < instructions.Count)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Ldarg_1)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 2].OpCode != OpCodes.Callvirt)     // get_IPAddress()
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldloc_0)
+                                        {
+                                            continue;
+                                        }
+                                        if (instructions[index + 4].OpCode != OpCodes.Callvirt)    // get_CertificateFilePathWithoutEnding()
+                                        {
+                                            continue;
+                                        }
+
+                                        Console.WriteLine("Format template found at index: {0}", index);
+                                        templateIndex = index + 1;
+                                        break;
+                                    }
+                                }
+
+                                if (templateIndex < 0)
+                                {
+                                    Console.WriteLine("*** Format template not found");
+                                }
+
+                                if (patchIndex >= 0 && templateIndex >= 0)
+                                {
+                                    List<Instruction> insertInstructions = new List<Instruction>();
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, "RemoteHost="));
+                                    insertInstructions.Add(instructions[templateIndex + 0].Clone());    // Ldarg_1
+                                    insertInstructions.Add(instructions[templateIndex + 1].Clone());    // get_IPAddress()
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, ";DiagnosticPort=6801;ControlPort=6811"));
+                                    insertInstructions.Add(Instruction.Create(OpCodes.Call,
+                                        patcher.BuildCall(typeof(System.String), "Concat", typeof(String), new[] { typeof(String), typeof(String), typeof(String) })));
+
+                                    instructions.RemoveAt(patchIndex);
+                                    int offset = 0;
+                                    foreach (Instruction insertInstruction in insertInstructions)
+                                    {
+                                        instructions.Insert(patchIndex + offset, insertInstruction);
+                                        offset++;
+                                    }
+                                    patched = true;
+                                    Console.WriteLine("InitVCI InitializeEnetDevice patched");
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Info: \"ENET\", \"_\", \"Rheingold\", \"\" appears to have already been patched or is not existing");
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.Psdz.Client",
                                 Class = "PsdzServiceStarter",
                                 Method = "StartServerInstance",
