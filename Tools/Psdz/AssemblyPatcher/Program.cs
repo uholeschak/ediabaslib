@@ -966,7 +966,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Info: \"ENET\", \"_\", \"Rheingold\", \"\" appears to have already been patched or is not existing");
+                                    Console.WriteLine("*** \"ENET\", \"_\", \"Rheingold\", \"\" appears to have already been patched or is not existing");
                                 }
                             }
                         }
