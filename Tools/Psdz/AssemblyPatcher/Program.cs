@@ -257,7 +257,7 @@ namespace AssemblyPatcher
 
                     if (!File.Exists(file))
                     {
-                        Console.WriteLine("Assembly not existing: {0}", file);
+                        Console.WriteLine("*** Assembly not existing: {0}", file);
                         return 1;
                     }
 
@@ -543,6 +543,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
+                                    Console.WriteLine("get_IsEEES25Vehicle not found, searching for get_AvoidTlsConnection");
                                     patchIndex = -1;
                                     for (int index = 0; index < instructions.Count; index++)
                                     {
@@ -822,7 +823,7 @@ namespace AssemblyPatcher
                                             (instructions[patchIndex + 7].OpCode != OpCodes.Ldarg_2) ||     // ldarg.2
                                             (instructions[patchIndex + 8].OpCode != OpCodes.Callvirt))      // callvirt	instance bool BMW.Rheingold.VehicleCommunication.Ediabas.API::apiInitExt(string, string, string, string, bool)
                                         {
-                                            Console.WriteLine("InitVCI patch location invalid");
+                                            Console.WriteLine("*** InitVCI patch location invalid");
                                         }
                                         else
                                         {
@@ -1469,7 +1470,7 @@ namespace AssemblyPatcher
             }
             catch (Exception e)
             {
-                Console.WriteLine("Exception: {0}", e.Message);
+                Console.WriteLine("*** Exception: {0}", e.Message);
                 return 1;
             }
 
