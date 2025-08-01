@@ -102,35 +102,35 @@ namespace AssemblyPatcher
                 string patchCtorNamespace = ConfigurationManager.AppSettings["PatchCtorNamespace"];
                 if (string.IsNullOrEmpty(patchCtorNamespace))
                 {
-                    Console.WriteLine("PatchCtorNamespace not configured");
+                    Console.WriteLine("*** PatchCtorNamespace not configured");
                     return 1;
                 }
 
                 string patchCtorClass = ConfigurationManager.AppSettings["PatchCtorClass"];
                 if (string.IsNullOrEmpty(patchCtorClass))
                 {
-                    Console.WriteLine("PatchCtorClass not configured");
+                    Console.WriteLine("*** PatchCtorClass not configured");
                     return 1;
                 }
 
                 string patchMethod1Namespace = ConfigurationManager.AppSettings["PatchMethod1Namespace"];
                 if (string.IsNullOrEmpty(patchMethod1Namespace))
                 {
-                    Console.WriteLine("PatchMethod1Namespace not configured");
+                    Console.WriteLine("*** PatchMethod1Namespace not configured");
                     return 1;
                 }
 
                 string patchMethod1Class = ConfigurationManager.AppSettings["PatchMethod1Class"];
                 if (string.IsNullOrEmpty(patchMethod1Class))
                 {
-                    Console.WriteLine("PatchMethod1Class not configured");
+                    Console.WriteLine("*** PatchMethod1Class not configured");
                     return 1;
                 }
 
                 string patchMethod1Name = ConfigurationManager.AppSettings["PatchMethod1Name"];
                 if (string.IsNullOrEmpty(patchMethod1Name))
                 {
-                    Console.WriteLine("PatchMethod1Name not configured");
+                    Console.WriteLine("*** PatchMethod1Name not configured");
                     return 1;
                 }
 
@@ -143,35 +143,35 @@ namespace AssemblyPatcher
                 string patchMethod2Namespace = ConfigurationManager.AppSettings["PatchMethod2Namespace"];
                 if (string.IsNullOrEmpty(patchMethod2Namespace))
                 {
-                    Console.WriteLine("PatchMethod2Namespace not configured");
+                    Console.WriteLine("*** PatchMethod2Namespace not configured");
                     return 1;
                 }
 
                 string patchMethod2Class = ConfigurationManager.AppSettings["PatchMethod2Class"];
                 if (string.IsNullOrEmpty(patchMethod2Class))
                 {
-                    Console.WriteLine("PatchMethod2Class not configured");
+                    Console.WriteLine("*** PatchMethod2Class not configured");
                     return 1;
                 }
 
                 string patchMethod2Name = ConfigurationManager.AppSettings["PatchMethod2Name"];
                 if (string.IsNullOrEmpty(patchMethod2Name))
                 {
-                    Console.WriteLine("PatchMethod2Name not configured");
+                    Console.WriteLine("*** PatchMethod2Name not configured");
                     return 1;
                 }
 
                 string licFileName = ConfigurationManager.AppSettings["LicFileName"];
                 if (string.IsNullOrEmpty(licFileName))
                 {
-                    Console.WriteLine("LicFileName not configured");
+                    Console.WriteLine("*** LicFileName not configured");
                     return 1;
                 }
 
                 string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
                 if (string.IsNullOrEmpty(codeBase))
                 {
-                    Console.WriteLine("Assembly location not found");
+                    Console.WriteLine("*** Assembly location not found");
                     return 1;
                 }
 
@@ -180,7 +180,7 @@ namespace AssemblyPatcher
                 string appDir = Path.GetDirectoryName(path);
                 if (string.IsNullOrEmpty(appDir))
                 {
-                    Console.WriteLine("Assembly location not found");
+                    Console.WriteLine("*** Assembly location not found");
                     return 1;
                 }
 
@@ -195,7 +195,7 @@ namespace AssemblyPatcher
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Copy license failed: {0}", e.Message);
+                        Console.WriteLine("*** Copy license failed: {0}", e.Message);
                         return 1;
                     }
                 }
@@ -203,7 +203,7 @@ namespace AssemblyPatcher
                 string exeFile = Path.Combine(inputDir, "ISTAGUI.exe");
                 if (!UpdateExeConfig(exeFile, noIcomVerCheck, overwriteConfig))
                 {
-                    Console.WriteLine("Update config file failed for: {0}", exeFile);
+                    Console.WriteLine("*** Update config file failed for: {0}", exeFile);
                     return 1;
                 }
 
@@ -538,7 +538,7 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
-                                        Console.WriteLine("UseTheDoipPort appears to have already been patched or is not existing");
+                                        Console.WriteLine("*** UseTheDoipPort appears to have already been patched or is not existing");
                                     }
                                 }
                                 else
@@ -577,7 +577,7 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
-                                        Console.WriteLine("UseTheDoipPort appears to have already been patched or is not existing");
+                                        Console.WriteLine("*** UseTheDoipPort appears to have already been patched or is not existing");
                                     }
                                 }
                             }
@@ -635,7 +635,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("CheckVoltageForEthernetConnection appears to have already been patched or is not existing");
+                                    Console.WriteLine("*** CheckVoltageForEthernetConnection appears to have already been patched or is not existing");
                                 }
                             }
                         }
@@ -856,7 +856,7 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
-                                        Console.WriteLine("'ENET::remotehost=' appears to have already been patched or is not existing");
+                                        Console.WriteLine("*** 'ENET::remotehost=' appears to have already been patched or is not existing");
                                     }
                                 }
                             }
@@ -943,7 +943,7 @@ namespace AssemblyPatcher
 
                                 if (templateIndex < 0)
                                 {
-                                    Console.WriteLine("Format template not found");
+                                    Console.WriteLine("*** Format template not found");
                                 }
 
                                 if (patchIndex >= 0 && templateIndex >= 0)
@@ -968,7 +968,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("\"ENET\", \"_\", \"Rheingold\", \"\" appears to have already been patched or is not existing");
+                                    Console.WriteLine("*** \"ENET\", \"_\", \"Rheingold\", \"\" appears to have already been patched or is not existing");
                                 }
                             }
                         }
@@ -1024,7 +1024,7 @@ namespace AssemblyPatcher
                                     }
                                     else
                                     {
-                                        Console.WriteLine("Patching StartServerInstance failed");
+                                        Console.WriteLine("*** Patching StartServerInstance failed");
                                     }
                                 }
                             }
@@ -1081,7 +1081,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Pathing File.Create failed");
+                                    Console.WriteLine("*** Patching File.Create failed");
                                 }
                             }
                         }
@@ -1177,7 +1177,7 @@ namespace AssemblyPatcher
 
                                 if (removeIndex < 0 || getBnTypeIndex < 0)
                                 {
-                                    Console.WriteLine("HandleMissingEcus not found");
+                                    Console.WriteLine("*** HandleMissingEcus not found");
                                 }
 
                                 int insertIndex = -1;
@@ -1228,7 +1228,7 @@ namespace AssemblyPatcher
 
                                 if (insertIndex < 0)
                                 {
-                                    Console.WriteLine("set_IDENT_SUCCESSFULLY not found");
+                                    Console.WriteLine("*** set_IDENT_SUCCESSFULLY not found");
                                 }
 
                                 if (removeIndex >= 0 && insertIndex >= 0)
@@ -1260,7 +1260,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Patching doVehicleShortTest failed");
+                                    Console.WriteLine("*** Patching doVehicleShortTest failed");
                                 }
                             }
                         }
@@ -1342,7 +1342,7 @@ namespace AssemblyPatcher
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Patching ClearAndReadErrorInfoMemory failed");
+                                    Console.WriteLine("*** Patching ClearAndReadErrorInfoMemory failed");
                                 }
                             }
                         }
@@ -1454,7 +1454,7 @@ namespace AssemblyPatcher
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine("Patch exception: File={0}, Msg={1}", relPath, ex.Message);
+                                Console.WriteLine("*** Patch exception: File={0}, Msg={1}", relPath, ex.Message);
                             }
                         }
                     }
@@ -1463,7 +1463,7 @@ namespace AssemblyPatcher
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine("Patch exception: File={0}, Msg={1}", file, ex.Message);
+                        Console.WriteLine("*** Patch exception: File={0}, Msg={1}", file, ex.Message);
                     }
                 }
             }
