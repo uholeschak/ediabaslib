@@ -58,6 +58,8 @@ namespace PsdzClient.Core.Container
 
         private const int _portDoIPW2V = 51562;
 
+        private readonly string[] _sgbmIdsToCheck = new string[2] { "SWFK-0000CED0", "SWFK-0000CFBC" };
+
         // [UH] adapted for EdiabasNet
         private ApiInternal api;
 
@@ -82,6 +84,8 @@ namespace PsdzClient.Core.Container
         //private ServiceControllerPermission scp;
 
         //private bool serviceIsRunning;
+
+        private bool isTestCertReqCallExecuted;
 
         private readonly IInteractionService interactionService;
 
@@ -177,6 +181,9 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        [XmlIgnore]
+        public bool IpbWithoutCertificates { get; private set; }
+
         public string VciIpAddress => VCI?.IPAddress;
 
         public VCIDeviceType VCIDeviceType => VCI.VCIType;
@@ -236,7 +243,12 @@ namespace PsdzClient.Core.Container
 
         public BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP)
         {
-            BoolResultObject result = InitVCI(vciDevice, logging: true, isDoIP);
+            return InitVCI(vciDevice, isDoIP, firstInitialisation: false);
+        }
+
+        public BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP, bool firstInitialisation)
+        {
+            BoolResultObject result = InitVCI(vciDevice, logging: true, isDoIP, firstInitialisation);
             if (isProblemHandlingTraceRunning)
             {
                 SetLogLevelToMax();
@@ -479,10 +491,10 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        public BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP)
+        public BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP, bool firstInitialisation)
         {
             BoolResultObject boolResultObject = new BoolResultObject();
-            BoolResultObject isS29Successful = new BoolResultObject();
+            BoolResultObject boolResultObject2 = new BoolResultObject();
             if (device == null)
             {
                 Log.Warning("ECUKom.InitVCI()", "failed because device was null");
@@ -498,23 +510,18 @@ namespace PsdzClient.Core.Container
                 CreateEdiabasPublicKeyIfNotExist(device);
                 if (isDoIP2 || isDoIP)
                 {
-                    isS29Successful = HandleS29Authentication(device);
-                    if (!isS29Successful.Result)
+                    boolResultObject2 = HandleS29Authentication(device);
+                    if (!boolResultObject2.Result)
                     {
-                        boolResultObject.Result = isS29Successful.Result;
-                        boolResultObject.ErrorMessage = isS29Successful.ErrorMessage;
-                        boolResultObject.Time = DateTime.Now;
-                        boolResultObject.ErrorCode = isS29Successful.ErrorCode;
-                        boolResultObject.ErrorCodeInt = isS29Successful.ErrorCodeInt;
-                        return boolResultObject;
+                        return boolResultObject2;
                     }
                 }
                 else
                 {
-                    IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient();
-                    if (istaIcsServiceClient.IsAvailable())
+                    IstaIcsServiceClient ics = new IstaIcsServiceClient();
+                    if (ics.IsAvailable())
                     {
-                        if (!istaIcsServiceClient.GetSec4DiagEnabledInBackground())
+                        if (!ics.GetSec4DiagEnabledInBackground())
                         {
                             Log.Warning(Log.CurrentMethod(), "Sec4DiagEnbaledInBackground is false");
                         }
@@ -522,106 +529,43 @@ namespace PsdzClient.Core.Container
                         {
                             Task.Run(delegate
                             {
-                                isS29Successful = TestSubCACall(device);
+                                TestSubCACall(device);
+                                if (!isTestCertReqCallExecuted && IsActiveLBPFeatureSwitchForCallCertreqProfiles(ics))
+                                {
+                                    TestCertReqCall();
+                                    isTestCertReqCallExecuted = true;
+                                }
                             });
                         }
                     }
                 }
-                switch (device.VCIType)
-                {
-                    case VCIDeviceType.ICOM:
-                        if (isDoIP2 && isS29Successful.Result)
-                        {
-                            boolResultObject.Result = InitEdiabasForDoIP(device);
-                            break;
-                        }
-                        if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
-                        {
-                            boolResultObject.Result = api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
-                            break;
-                        }
-                        if (!isDoIP)
-                        {
-                            boolResultObject.Result = api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
-                        }
-                        if (isDoIP && isS29Successful.Result)
-                        {
-                            boolResultObject.Result = InitEdiabasForDoIP(device);
-                        }
-                        break;
-                    case VCIDeviceType.ENET:
-                        if (device.IsDoIP)
-                        {
-                            if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
-                            {
-                                string reserved = $"RemoteHost={device.IPAddress};selectCertificate={service.CertificateFilePathWithoutEnding};SSLPort={3496};Authentication=S29;NetworkProtocol=SSL";
-                                boolResultObject.Result = api.apiInitExt("ENET", "_", "Rheingold", reserved);
-                            }
-                        }
-                        else
-                        {
-                            boolResultObject.Result = api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=6801;ControlPort=6811");
-                        }
-                        break;
-                    case VCIDeviceType.TELESERVICE:
-                    {
-                        string text = string.Format(CultureInfo.InvariantCulture, "CompoundID={0};UsePdmResult={1}", device.DevId, device.UsePdmResult ? "true" : "false");
-                        Log.Info("ECUKom.InitVCI()", "calling TELESERVICE api init with parameter: {0}", text);
-                        boolResultObject.Result = api.apiInitExt("TELE", "_", "Rheingold", text);
-                        break;
-                    }
-                    case VCIDeviceType.PTT:
-                        boolResultObject.Result = false;    // [UH] modified
-                        break;
-                    case VCIDeviceType.SIM:
-                        boolResultObject.Result = true;
-                        break;
-                    default:
-                        boolResultObject.Result = api.apiInit();
-                        break;
-                }
+                boolResultObject.Result = InitializeDevice(device, logging, isDoIP, isDoIP2);
                 if (api.apiErrorCode() != 0)
                 {
-                    Log.Warning("ECUKom.InitVCI()", "failed when init IFH with : {0} / {1}", api.apiErrorCode(), api.apiErrorText());
+                    Log.Warning(Log.CurrentMethod(), "failed when init IFH with : {0} / {1}", api.apiErrorCode(), api.apiErrorText());
                 }
                 api.apiSetConfig("TracePath", Path.GetFullPath(pathString));
                 if (boolResultObject.Result)
                 {
                     vci = device as VCIDevice;
-                    if (logging)
-                    {
-                        api.apiGetConfig("TracePath", out var cfgValue);
-                        Log.Info("ECUKom.InitVCI()", "Ediabas TracePath is loaded: {0}", cfgValue);
-                        api.apiGetConfig("EdiabasVersion", out var cfgValue2);
-                        Log.Info("ECUKom.InitVCI()", "Ediabas version loaded: {0}", cfgValue2);
-                        api.apiGetConfig("IfhVersion", out var cfgValue3);
-                        Log.Info("ECUKom.InitVCI()", "IfhVersion version loaded: {0}", cfgValue3);
-                        api.apiGetConfig("Session", out var cfgValue4);
-                        Log.Info("ECUKom.InitVCI()", "Session name: {0}", cfgValue4);
-                        api.apiGetConfig("Interface", out var cfgValue5);
-                        Log.Info("ECUKom.InitVCI()", "Interface type loaded: {0}", cfgValue5);
-                    }
+                    LogDeviceInfo(logging);
                     SetEcuPath(logging);
                 }
-                if (!boolResultObject.Result)
+                else
                 {
-                    int num = api.apiErrorCode();
-                    boolResultObject.ErrorCode = num.ToString();
-                    boolResultObject.ErrorMessage = api.apiErrorText();
-                    if (num >= 350 && num <= 395)
+                    SetErrorCode(boolResultObject);
+                }
+                if (boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState(device))
+                {
+                    if (IpbWithoutCertificates && firstInitialisation)
                     {
-                        boolResultObject.ErrorCodeInt = 0;
+                        boolResultObject.SetValues(result: false, "ZgwIssue", "IPB connected without Sec4Diag");
+                        boolResultObject.ErrorCodeInt = 162;
                     }
                     else
                     {
-                        boolResultObject.ErrorCodeInt = 2;
+                        boolResultObject.SetValues(result: false, 0.ToString(), "Authentication failed with Vehicle!");
                     }
-                }
-                if (boolResultObject.Result && isS29Successful.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState())
-                {
-                    boolResultObject.Result = false;
-                    boolResultObject.ErrorCodeInt = 0;
-                    boolResultObject.ErrorMessage = "Authentifation failed with Vehicle!";
                 }
                 return boolResultObject;
             }
@@ -635,11 +579,124 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        private bool CheckAuthentificationState()
+        private bool IsActiveLBPFeatureSwitchForCallCertreqProfiles(IstaIcsServiceClient ics)
+        {
+#if false
+            if (ics.IsAvailable() || IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
+            {
+                return ics.GetFeatureEnabledStatus("ExecuteServiceCallCertreqprofiles", ics.IsAvailable()).IsActive;
+            }
+#endif
+            return false;
+        }
+
+        private bool InitializeDevice(IVciDevice device, bool logging, bool isDoIP, bool slpDoIpFromIcom)
+        {
+            switch (device.VCIType)
+            {
+                case VCIDeviceType.ICOM:
+                    return InitializeIcomDevice(device, logging, isDoIP, slpDoIpFromIcom);
+                case VCIDeviceType.ENET:
+                    return InitializeEnetDevice(device);
+                case VCIDeviceType.TELESERVICE:
+                    return InitializeTeleserviceDevice(device, logging);
+                case VCIDeviceType.PTT:
+                    return InitializePttDevice(device, logging, isDoIP);
+                case VCIDeviceType.SIM:
+                    return true;
+                default:
+                    return api.apiInit();
+            }
+        }
+
+        private bool InitializePttDevice(IVciDevice device, bool logging, bool isDoIP)
+        {
+            if (isDoIP)
+            {
+                string reserved = $"RemoteHost={device.IPAddress};selectCertificate={sec4DiagHandler.CertificateFilePathWithoutEnding};SSLPort={3496};Authentication=S29;NetworkProtocol=SSL";
+                return api.apiInitExt("ENET", "_", "Rheingold", reserved);
+            }
+
+            return false;   // [UH]
+        }
+
+        private bool InitializeIcomDevice(IVciDevice device, bool logging, bool isDoIP, bool slpDoIpFromIcom)
+        {
+            if (slpDoIpFromIcom || isDoIP)
+            {
+                return InitEdiabasForDoIP(device);
+            }
+            if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
+            {
+                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
+            }
+            if (!isDoIP)
+            {
+                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
+            }
+            return false;
+        }
+
+        private bool InitializeEnetDevice(IVciDevice device)
+        {
+            if (device.IsDoIP && ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
+            {
+                string reserved = $"RemoteHost={device.IPAddress};selectCertificate={service.CertificateFilePathWithoutEnding};SSLPort={3496};Authentication=S29;NetworkProtocol=SSL";
+                return api.apiInitExt("ENET", "_", "Rheingold", reserved);
+            }
+            return api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=6801;ControlPort=6811");
+        }
+
+        private bool InitializeTeleserviceDevice(IVciDevice device, bool logging)
+        {
+            string text = string.Format(CultureInfo.InvariantCulture, "CompoundID={0};UsePdmResult={1}", device.DevId, device.UsePdmResult ? "true" : "false");
+            Log.Info(Log.CurrentMethod(), "calling TELESERVICE api init with parameter: {0}", text);
+            return api.apiInitExt("TELE", "_", "Rheingold", text);
+        }
+
+        private void LogDeviceInfo(bool logging)
+        {
+            if (logging)
+            {
+                string method = Log.CurrentMethod();
+                api.apiGetConfig("TracePath", out var cfgValue);
+                Log.Info(method, "Ediabas TracePath is loaded: {0}", cfgValue);
+                api.apiGetConfig("EdiabasVersion", out var cfgValue2);
+                Log.Info(method, "Ediabas version loaded: {0}", cfgValue2);
+                api.apiGetConfig("IfhVersion", out var cfgValue3);
+                Log.Info(method, "IfhVersion version loaded: {0}", cfgValue3);
+                api.apiGetConfig("Session", out var cfgValue4);
+                Log.Info(method, "Session name: {0}", cfgValue4);
+                api.apiGetConfig("Interface", out var cfgValue5);
+                Log.Info(method, "Interface type loaded: {0}", cfgValue5);
+            }
+        }
+
+        private void SetErrorCode(BoolResultObject result)
+        {
+            int num = api.apiErrorCode();
+            result.ErrorCode = num.ToString();
+            result.ErrorMessage = api.apiErrorText();
+            if (num >= 350 && num <= 395)
+            {
+                result.ErrorCodeInt = 0;
+            }
+            else
+            {
+                result.ErrorCodeInt = 2;
+            }
+        }
+
+        private bool CheckAuthentificationState(IVciDevice device)
         {
             if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
             {
                 IEcuJob ecuJob = ApiJob("IPB_APP2", "STATUS_LESEN", "ARG;SEC4DIAG_READ_AUTH_MODE");
+                if (api.apiErrorCode() == 162)
+                {
+                    CheckIfGatewayChangeForNcarIsRequired(device);
+                    return false;
+                }
                 if (ecuJob.IsOkay())
                 {
                     uint? num = ecuJob.getuintResult("STAT_ROLL_MASK_WERT");
@@ -647,7 +704,6 @@ namespace PsdzClient.Core.Container
                     if (num == service.RoleMaskAsInt)
                     {
                         //ImportantLoggingItem.AddMessagesToLog("S29-Authentification-Ediabas", "Authentification: $" + stringResult);
-                        Log.Info("S29-Authentification-Ediabas", "Authentification: $" + stringResult);
                         return true;
                     }
                     return false;
@@ -686,6 +742,55 @@ namespace PsdzClient.Core.Container
                 api.apiSetConfig("EDIABASUnload", "1");
                 api.apiEnd();
             }
+        }
+
+        private bool CheckIfGatewayChangeForNcarIsRequired(IVciDevice device)
+        {
+            End();
+            string reserved = string.Empty;
+            IpbWithoutCertificates = false;
+            string method = Log.CurrentMethod();
+            switch (device.VCIType)
+            {
+                case VCIDeviceType.ICOM:
+                    reserved = $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162}";
+                    break;
+                case VCIDeviceType.ENET:
+                    reserved = "RemoteHost=" + device.IPAddress + ";";
+                    break;
+                case VCIDeviceType.PTT:
+                    reserved = "RPLUS:ICOM_P:remotehost=127.0.0.1;Port=6408";
+                    break;
+            }
+            if (ApiInitExt("ENET", "_", "Rheingold", reserved))
+            {
+                SetEcuPath(logging: false);
+                IEcuJob ecuJob = ApiJob("IPB_APP2", "SVK_LESEN", "");
+                while (api.apiState() == 0)
+                {
+                    SleepUtility.TaskDelay(200, "ECUKom.CheckIfGatewayChangeForNcarIsRequired - IPB_APP2, SVK_Lesen").GetAwaiter().GetResult();
+                }
+                if (ecuJob.IsOkay())
+                {
+                    for (int i = 1; i < ecuJob.JobResultSets; i++)
+                    {
+                        string stringResult = ecuJob.getStringResult((ushort)i, "SGBM_ID");
+                        Log.Info(method, "SGBM_ID: '" + stringResult + "'");
+                        if (stringResult != null && stringResult.Length >= 13 && _sgbmIdsToCheck.Contains(stringResult.Substring(0, 13)))
+                        {
+                            Log.Info(method, "Searched SGBM_ID has been recognised.");
+                            IpbWithoutCertificates = true;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    Log.Error(method, "The Job SVK_LESEN was not successful.");
+                }
+            }
+            Log.Info(method, $"The return value '{IpbWithoutCertificates}'");
+            return IpbWithoutCertificates;
         }
 
         private BoolResultObject HandleS29Authentication(IVciDevice device)
@@ -817,6 +922,21 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        private void TestCertReqCall()
+        {
+            try
+            {
+                if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service) && ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out var service2))
+                {
+                    RequestCertReqProfil(service, service2);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException("TestCertReqCall", exception);
+            }
+        }
+
         private BoolResultObject TestSubCACall(IVciDevice device)
         {
             BoolResultObject boolResultObject = new BoolResultObject();
@@ -945,6 +1065,24 @@ namespace PsdzClient.Core.Container
                 {
                     string value = $"Successfull: {webCallResponse.IsSuccessful}, HTTPStatusCode: {(webCallResponse.HttpStatus.HasValue ? webCallResponse.HttpStatus : new HttpStatusCode?(HttpStatusCode.ServiceUnavailable))}, Certificates exist: {!string.IsNullOrEmpty(webCallResponse.Response?.Certificate)}";
                     service2.AddServiceCode(ServiceCodes.S4D01_CallSec4DiagInBackground_nu_LF, value, LayoutGroup.D, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
+                }
+                return webCallResponse;
+            }
+#endif
+            throw new InvalidOperationException("IDataContext service not found.");
+        }
+
+        private WebCallResponse<bool> RequestCertReqProfil(ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
+        {
+            WebCallResponse<bool> webCallResponse = new WebCallResponse<bool>();
+#if false
+            if (ServiceLocator.Current.TryGetService<IstaLoginServiceClient>(out var service))
+            {
+                webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).GetCertReqProfil(BackendServiceType.Sec4DiagCertReqProfil, service.GetUserTokenByOperationId()?.UserToken);
+                if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service2))
+                {
+                    string value = $"Successfull: {webCallResponse.IsSuccessful}, HTTPStatusCode: {(webCallResponse.HttpStatus.HasValue ? webCallResponse.HttpStatus : new HttpStatusCode?(HttpStatusCode.ServiceUnavailable))}/{(webCallResponse.HttpStatus.HasValue ? webCallResponse.HttpStatus.ToString() : HttpStatusCode.ServiceUnavailable.ToString())}";
+                    service2.AddServiceCode(ServiceCodes.S4D01_CallSec4DiagInBackground_nu_LF, value, LayoutGroup.D);
                 }
                 return webCallResponse;
             }
