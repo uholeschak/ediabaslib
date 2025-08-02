@@ -11,6 +11,8 @@ namespace PsdzClient.Core.Container
 
         bool IsProblemHandlingTraceRunning { get; set; }
 
+        bool IpbWithoutCertificates { get; }
+
         string VciIpAddress { get; }
 
         VCIDeviceType VCIDeviceType { get; }
@@ -28,6 +30,8 @@ namespace PsdzClient.Core.Container
         string GetEdiabasIniFilePath(string iniFilename);
 
         BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP);
+
+        BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP, bool firstInitialisation);
 
         bool Refresh(bool isDoIP);
 
