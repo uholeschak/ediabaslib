@@ -824,19 +824,24 @@ namespace PsdzClient.Core.Container
                     {
                         if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection())
                         {
+                            //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_004", TYPES.Sec4Diag);
+                            Log.Error(method, "ErrorCode: SEC4DIAG_Error_004");
                             boolResultObject.ErrorCodeInt = 3;
                             return boolResultObject;
                         }
-                        Log.Info(method, "caThumbPrint or subCaThumbPrint is empty. Requesting new Certificates");
+                        //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_001", TYPES.Sec4Diag);
+                        Log.Info(method, "Code: SEC4DIAG_001");
                         WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
                         if (webCallResponse2.IsSuccessful)
                         {
-                            Log.Info(method, "Request was succesfull. Using new Certificates");
+                            //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
+                            Log.Info(method, "Code: SEC4DIAG_003");
                             boolResultObject.Result = webCallResponse2.IsSuccessful;
                         }
                         else
                         {
-                            Log.Info(method, "Request was not succesfull. Aborting Session");
+                            //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_001", TYPES.Sec4Diag);
+                            Log.Error(method, "ErrorCode: SEC4DIAG_Error_001");
                             boolResultObject.Result = webCallResponse2.IsSuccessful;
                             boolResultObject.StatusCode = (int)(webCallResponse2.HttpStatus.HasValue ? webCallResponse2.HttpStatus.Value : ((HttpStatusCode)0));
                             boolResultObject.ErrorCodeInt = 1;
@@ -844,7 +849,8 @@ namespace PsdzClient.Core.Container
                         }
                         return boolResultObject;
                     }
-                    Log.Info(method, "caThumbPrint and subCaThumbPrint are not empty. Searching for Certificates in Windows Store");
+                    //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
+                    Log.Info(method, "Code: SEC4DIAG_002");
                     X509Certificate2Collection subCaCertificate = new X509Certificate2Collection();
                     X509Certificate2Collection caCertificate = new X509Certificate2Collection();
                     Sec4DiagCertificateState sec4DiagCertificateState = service.SearchForCertificatesInWindowsStore(configString, configString2, out subCaCertificate, out caCertificate);
@@ -852,12 +858,15 @@ namespace PsdzClient.Core.Container
                     {
                         TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
                         //interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
+                        //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_007", TYPES.Sec4Diag);
+                        Log.Info(method, "Code: SEC4DIAG_007");
                         boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
                         return boolResultObject;
                     }
                     if (sec4DiagCertificateState == Sec4DiagCertificateState.Valid && subCaCertificate.Count == 1 && caCertificate.Count == 1)
                     {
-                        Log.Info(method, "Certificates are found and are valid");
+                        //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_004", TYPES.Sec4Diag);
+                        Log.Info(method, "Code: SEC4DIAG_004");
                         boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
                         return boolResultObject;
                     }
@@ -865,17 +874,21 @@ namespace PsdzClient.Core.Container
                     {
                         case Sec4DiagCertificateState.NotYetExpired:
                             {
-                                Log.Info(method, "Certificates are valid valid (even if the 3 weeks are over) but we are trying to request new once.");
+                                //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_004", TYPES.Sec4Diag);
+                                Log.Info(method, "Code: SEC4DIAG_004");
                                 WebCallResponse<Sec4DiagResponseData> webCallResponse4 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
                                 if (webCallResponse4.IsSuccessful)
                                 {
-                                    Log.Info(method, "Certificates are found and are valid (even if they where 3 Weeks overtime). Requesting new Certificates was successful");
+                                    //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_005", TYPES.Sec4Diag);
+                                    Log.Info(method, "Code: SEC4DIAG_005");
                                     boolResultObject.Result = webCallResponse4.IsSuccessful;
                                 }
                                 else
                                 {
                                     TimeSpan subCAZertifikateRemainingTime2 = GetSubCAZertifikateRemainingTime();
                                     //interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.SubCaBackendErrorButTokenStillValid", subCAZertifikateRemainingTime2.Days).Localize());
+                                    Log.Info(method, "Code: SEC4DIAG_006");
+                                    //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_006", TYPES.Sec4Diag);
                                     boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
                                 }
                                 return boolResultObject;
@@ -883,16 +896,19 @@ namespace PsdzClient.Core.Container
                         case Sec4DiagCertificateState.Expired:
                         case Sec4DiagCertificateState.NotFound:
                             {
-                                Log.Info(method, "Not Certificates are found or the max time of 4 Weeks are over. Requesting new certificates");
+                                //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_002", TYPES.Sec4Diag);
+                                Log.Error(method, "ErrorCode: SEC4DIAG_Error_002");
                                 WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
                                 if (webCallResponse3.IsSuccessful)
                                 {
-                                    Log.Info(method, "Request was successfull. using new Certificates");
+                                    //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
+                                    Log.Info(method, "Code: SEC4DIAG_003");
                                     boolResultObject.Result = webCallResponse3.IsSuccessful;
                                 }
                                 else
                                 {
-                                    Log.Info(method, "Request was not sucessfull. Aborting Session");
+                                    //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_001", TYPES.Sec4Diag);
+                                    Log.Info(method, "ErrorCode: SEC4DIAG_Error_001");
                                     boolResultObject.Result = webCallResponse3.IsSuccessful;
                                     boolResultObject.StatusCode = (int)(webCallResponse3.HttpStatus.HasValue ? webCallResponse3.HttpStatus.Value : ((HttpStatusCode)0));
                                     boolResultObject.ErrorCodeInt = 1;
@@ -901,12 +917,14 @@ namespace PsdzClient.Core.Container
                                 return boolResultObject;
                             }
                         default:
-                            Log.Info(method, "No Certificestes are found. Aborting Session");
+                            //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_003", TYPES.Sec4Diag);
+                            Log.Error(method, "ErrorCode: SEC4DIAG_Error_003");
                             boolResultObject.Result = false;
                             return boolResultObject;
                     }
                 }
-                Log.Error("HandleS29Authentication", "ISec4DiagHandler or IBackendCallsWatchDog not found");
+                //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_005", TYPES.Sec4Diag);
+                Log.Error("HandleS29Authentication", "ErrorCode: SEC4DIAG_Error_005");
                 boolResultObject.Result = false;
                 boolResultObject.ErrorMessage = "ISec4DiagHandler or IBackendCallsWatchDog not found";
                 boolResultObject.ErrorCodeInt = 1;
