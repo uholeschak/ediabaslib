@@ -49,7 +49,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
 
     // ToDo: Check on update
-    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum BrandName
     {
         [EnumMember]
@@ -77,8 +76,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         TOYOTA
     }
 
-    [AuthorAPI(SelectableTypeDeclaration = true)]
     //[Obsolete("Legacy Property, the ChassisType is retrieved from the Database and not used in test modules, thus it can be deleted.")]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum ChassisType
     {
         LIM,

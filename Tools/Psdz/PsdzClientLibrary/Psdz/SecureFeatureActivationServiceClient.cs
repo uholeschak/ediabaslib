@@ -30,7 +30,9 @@ namespace BMW.Rheingold.Psdz.Client
 
         public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackage(IEnumerable<string> backendUrlList, IEnumerable<string> crl, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
         {
+#pragma warning disable CS0612 // Type or member is obsolete
             return CallFunction((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackage(backendUrlList, crl, client, system, retries, timeout, vin, svt, secureTokenRequest));
+#pragma warning restore CS0612 // Type or member is obsolete
         }
 
         public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackageWithoutCrlFiles(IEnumerable<string> backendUrlList, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)

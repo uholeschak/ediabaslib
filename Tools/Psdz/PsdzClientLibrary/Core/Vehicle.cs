@@ -2510,7 +2510,9 @@ namespace PsdzClient.Core
         {
             if ((ConfigSettings.IsProgrammingEnabled() || (considerLogisticBase && ConfigSettings.IsLogisticBaseEnabled())) && GetProgrammingEnabledForBn(ConfigSettings.getConfigString("BMW.Rheingold.Programming.BN", "BN2020,BN2020_MOTORBIKE")))
             {
+#pragma warning disable CS0618 // Type or member is obsolete
                 return ConfigSettings.OperationalMode != OperationalMode.TELESERVICE;
+#pragma warning restore CS0618 // Type or member is obsolete
             }
             return false;
         }

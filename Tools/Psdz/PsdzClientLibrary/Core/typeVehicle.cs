@@ -20,7 +20,7 @@ namespace PsdzClient.Core
 
         private string serialEngineField;
 
-        private string batteryInfo;
+        //private string batteryInfo;
 
         private BrandName? brandNameField;
 
@@ -174,7 +174,7 @@ namespace PsdzClient.Core
 
         private string aEUeberarbeitungField;
 
-        private string kraftstoffartEinbaulageField;
+        //private string kraftstoffartEinbaulageField;
 
         //private ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX> perceivedSymptomsField;
 
