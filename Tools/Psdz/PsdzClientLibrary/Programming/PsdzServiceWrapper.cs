@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
-using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using System;
+using System.Diagnostics;
 
 namespace BMW.Rheingold.Programming
 {
@@ -45,7 +40,6 @@ namespace BMW.Rheingold.Programming
         public ISecureDiagnosticsService SecureDiagnosticsService => psdzServiceClient.SecureDiagnosticsService;
 
         public string ExpectedPsdzVersion { get; private set; }
-
 
         public PsdzServiceWrapper(PsdzConfig psdzConfig)
         {
@@ -139,12 +133,15 @@ namespace BMW.Rheingold.Programming
 
         public IKdsService KdsService => psdzServiceClient.KdsService;
 
+        public IHttpConfigurationService HttpConfigurationService => psdzServiceClient.HttpConfigurationService;
+
         // [UH] added
         public string PsdzServiceLogDir => psdzServiceHostLogDir;
 
         public string PsdzServiceLogFilePath => psdzServiceHostLogFilePath;
 
         public string PsdzLogFilePath => psdzLogFilePath;
+
 
         public void AddPsdzEventListener(IPsdzEventListener psdzEventListener)
 		{
@@ -193,6 +190,7 @@ namespace BMW.Rheingold.Programming
             }
         }
 
+        // [UH] modified
         public bool StartHostIfNotRunning(IVehicle vehicle = null)
         {
             try
@@ -231,46 +229,62 @@ namespace BMW.Rheingold.Programming
             return true;
         }
 
-		public void DoInitSettings()
+        public void DoInitSettings()
 		{
-			if (this.IsPsdzInitialized && this.PsdzVersion == null && this.ExpectedPsdzVersion == null)
-			{
-				this.DoSettingsForInitializedPsdz();
-			}
+            if (IsPsdzInitialized && PsdzVersion == null && ExpectedPsdzVersion == null)
+            {
+                DoSettingsForInitializedPsdz();
+            }
 		}
 
-		public bool Shutdown()
+        public bool Shutdown()
 		{
-			try
-			{
-				if (this.IsPsdzInitialized)
-				{
-					this.CloseConnectionsToPsdzHost();
-					this.ConnectionManagerService.RequestShutdown();
-				}
-			}
-			catch (Exception)
+            try
             {
+                if (IsPsdzInitialized)
+                {
+                    CloseConnectionsToPsdzHost();
+                    Log.Info("PsdzServiceWrapper.Shutdown()", "PSdZ host: Closed connections.");
+                    ConnectionManagerService.RequestShutdown();
+                    Log.Info("PsdzServiceWrapper.Shutdown()", "PSdZ host: Shutdown requested.");
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("PsdzServiceWrapper.Shutdown()", exception);
                 return false;
             }
 
             return true;
         }
 
-		private void DoSettingsForInitializedPsdz()
+        private void DoSettingsForInitializedPsdz()
         {
-			if (this.psdzLoglevel != null && !this.psdzServiceArgs.IsTestRun)
-			{
-				this.psdzServiceClient.LogService.SetLogLevel(this.psdzLoglevel.Value);
-			}
+#if false
+            int configint = ConfigSettings.getConfigint("DebugLevel", 0);
+            if (configint > 0 && configint < 6)
+            {
+                psdzLoglevel = (PsdzLoglevel)configint;
+            }
+#endif
+            if (psdzLoglevel.HasValue && !psdzServiceArgs.IsTestRun)
+            {
+                psdzServiceClient.LogService.SetLogLevel(psdzLoglevel.Value);
+            }
+#if false
+            if (Enum.TryParse<ProdiasLoglevel>(ConfigSettings.getConfigString("BMW.Rheingold.Programming.Prodias.LogLevel", null), out var result))
+            {
+                prodiasLoglevel = result;
+            }
+#endif
+            if (prodiasLoglevel.HasValue)
+            {
+                psdzServiceClient.ConnectionManagerService.SetProdiasLogLevel(prodiasLoglevel.Value);
+            }
+            ExpectedPsdzVersion = psdzServiceClient.ConfigurationService.GetExpectedPsdzVersion();
+            PsdzVersion = psdzServiceClient.ConfigurationService.GetPsdzVersion();
+        }
 
-            if (this.prodiasLoglevel != null)
-			{
-				this.psdzServiceClient.ConnectionManagerService.SetProdiasLogLevel(this.prodiasLoglevel.Value);
-			}
-			this.ExpectedPsdzVersion = this.psdzServiceClient.ConfigurationService.GetExpectedPsdzVersion();
-			this.PsdzVersion = this.psdzServiceClient.ConfigurationService.GetPsdzVersion();
-		}
         private TestRunParams BuildTestRunParams(IVehicle vehicle)
         {
             return new TestRunParams
