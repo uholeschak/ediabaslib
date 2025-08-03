@@ -1012,10 +1012,6 @@ namespace PsdzClient.Programming
                 {   // [UH] simplified
                     VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
                 }
-                if (string.IsNullOrEmpty(VecInfo.Abgas))
-                {
-                    VecInfo.Abgas = "KAT";
-                }
                 if (!string.IsNullOrEmpty(VecInfo.Motor) && !(VecInfo.Motor == "UNBEK"))
                 {
                     return;

@@ -12,7 +12,272 @@ namespace PsdzClient.Core
 {
 	public abstract class typeVehicle : INotifyPropertyChanged
 	{
-		public typeVehicle(ClientContext clientContext)
+        private string vIN17Field;
+
+        private string serialBodyShellField;
+
+        private string serialGearBoxField;
+
+        private string serialEngineField;
+
+        private string batteryInfo;
+
+        private BrandName? brandNameField;
+
+        private ObservableCollection<ECU> eCUField;
+
+        //private ObservableCollection<ZFSResult> zFSField;
+
+        private bool zFS_SUCCESSFULLYField;
+
+        private ECU selectedECUField;
+
+        //private ObservableCollection<typeCBSInfo> cBSField;
+
+        private string typField;
+
+        private string basicTypeField;
+
+        private string driveTypeField;
+
+        private string warrentyTypeField;
+
+        private string markeField;
+
+        private string ueberarbeitungField;
+
+        private string prodartField;
+
+        private string ereiheField;
+
+        private string mainSeriesSgbdField;
+
+        private string mainSeriesSgbdAdditionalField;
+
+        private BNType bNTypeField;
+
+        private string baureiheField;
+
+        private string roadMapField;
+
+        private ChassisType chassisTypeField;
+
+        private string karosserieField;
+
+        private EMotor eMotorField;
+
+        private List<HeatMotor> heatMotorsField;
+
+        private GenericMotor genericMotorField;
+
+        private string motorField;
+
+        private string hubraumField;
+
+        private string landField;
+
+        private string lenkungField;
+
+        private string getriebeField;
+
+        private string countryOfAssemblyField;
+
+        private string baseVersionField;
+
+        private string antriebField;
+
+        private bool productionDateFieldSpecified;
+
+        private DateTime? firstRegistrationField;
+
+        private string modelljahrField;
+
+        private string modellmonatField;
+
+        private string modelltagField;
+
+        private string baustandsJahrField;
+
+        private string baustandsMonatField;
+
+        private string elektrischeReichweiteField;
+
+        private string aeBezeichnungField;
+
+        private string iLevelField;
+
+        private decimal? gwszField;
+
+        private GwszUnitType? gwszUnitField;
+
+        private ObservableCollection<FFMResult> fFMField;
+
+        private string iLevelWerkField;
+
+        private string iLevelBackupField;
+
+        private FA faField;
+
+        private string zCSField;
+
+        //private ObservableCollection<InfoObject> historyInfoObjectsField;
+
+        //private TestPlanType testplanField;
+
+        private bool simulatedPartsField;
+
+        private VCIDevice vCIField;
+
+        private VCIDevice mIBField;
+
+        //private ObservableCollection<technicalCampaignType> technicalCampaignsField;
+
+        private string leistungField;
+
+        private string leistungsklasseField;
+
+        private string kraftstoffartField;
+
+        private string eCTypeApprovalField;
+
+        private DateTime lastSaveDateField;
+
+        private DateTime lastChangeDateField;
+
+        //private ObservableCollection<typeServiceHistoryEntry> serviceHistoryField;
+
+        //private ObservableCollection<typeDiagCode> diagCodesField;
+
+        private string motorarbeitsverfahrenField;
+
+        private string drehmomentField;
+
+        private string hybridkennzeichenField;
+
+        //private ObservableCollection<DTC> combinedFaultsField;
+
+        private ObservableCollection<decimal> installedAdaptersField;
+
+        private string vIN17_OEMField;
+
+        private string mOTKraftstoffartField;
+
+        private string mOTEinbaulageField;
+
+        private string mOTBezeichnungField;
+
+        private string baureihenverbundField;
+
+        private string aEKurzbezeichnungField;
+
+        private string aELeistungsklasseField;
+
+        private string aEUeberarbeitungField;
+
+        private string kraftstoffartEinbaulageField;
+
+        //private ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX> perceivedSymptomsField;
+
+        private string progmanVersionField;
+
+        private string connectImageField;
+
+        private string connectIMIBImageField;
+
+        private VisibilityType connectIPStateField;
+
+        private VisibilityType connectIMIBIPStateField;
+
+        private VisibilityType connectStateField;
+
+        private VisibilityType connectIMIBStateField;
+
+        private string status_FunctionNameField;
+
+        private StateType status_FunctionStateField;
+
+        private DateTime status_FunctionStateLastChangeTimeField;
+
+        private bool status_FunctionStateLastChangeTimeFieldSpecified;
+
+        private double status_FunctionProgressField;
+
+        private string kl15VoltageField;
+
+        private string kl30VoltageField;
+
+        private bool pADVehicleField;
+
+        private int pwfStateField;
+
+        private DateTime klVoltageLastMessageTimeField;
+
+        private bool klVoltageLastMessageTimeFieldSpecified;
+
+        private string applicationVersionField;
+
+        private bool fASTAAlreadyDoneField;
+
+        private IdentificationLevel vehicleIdentLevelField;
+
+        private bool vehicleIdentAlreadyDoneField;
+
+        private bool vehicleShortTestAsSessionEntryField;
+
+        private bool pannenfallField;
+
+        private int selectedDiagBUSField;
+
+        private bool dOMRequestFailedField;
+
+        private bool ssl2RequestFailedField;
+
+        private bool tecCampaignsRequestFailedField;
+
+        private bool repHistoryRequestFailedField;
+
+        private bool kL15OverrideVoltageCheckField;
+
+        private bool kL15FaultILevelAlreadyAlertedField;
+
+        private bool gWSZReadoutSuccessField;
+
+        private string refSchemaField;
+
+        private string versionField;
+
+        private DateTime vehicleLifeStartDate;
+
+        private double vehicleSystemTime;
+
+        private List<DealerSessionProperty> dealerSessionProperties;
+
+        private DateTime productionDate;
+
+        private string modelljahr;
+
+        private string modellmonat;
+
+        private string modelltag;
+
+        private string chassisCode;
+
+        private bool orderDataRequestFailed;
+
+        //private BackendsAvailabilityIndicator backendsAvailabilityIndicator;
+
+        private bool isSendFastaDataForbiddenField;
+
+        private bool isSendOBFCMDataForbidden;
+
+        // [UH] added
+        private ClientContext _clientContext;
+
+        public string F2Date { get; set; }
+
+        public string SoftwareId { get; set; }
+
+        public typeVehicle(ClientContext clientContext)
         {
             this._clientContext = clientContext;
             //perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
@@ -40,7 +305,7 @@ namespace PsdzClient.Core
             chassisTypeField = ChassisType.UNKNOWN;
             gwszField = null;
             gwszUnitField = GwszUnitType.km;
-            //simulatedPartsField = false;
+            simulatedPartsField = false;
             leistungsklasseField = "-";
             connectImageField = "grafik/gif/icon_offl_ACTIV.gif";
             connectIMIBImageField = "grafik/gif/icon_imib_INACTIV.gif";
@@ -59,8 +324,7 @@ namespace PsdzClient.Core
             pannenfallField = false;
             selectedDiagBUSField = 0;
             dOMRequestFailedField = false;
-            cVDRequestFailedField = false;
-            cvsRequestFailedField = false;
+            ssl2RequestFailedField = false;
             tecCampaignsRequestFailedField = false;
             repHistoryRequestFailedField = false;
             kL15OverrideVoltageCheckField = false;
@@ -69,6 +333,7 @@ namespace PsdzClient.Core
             refSchemaField = "http://www.bmw.com/Rheingold/Vehicle.xsd";
             versionField = "3.42.20.10700";
             dealerSessionProperties = new List<DealerSessionProperty>();
+            //backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
         }
 
         public string VIN17
@@ -135,18 +400,18 @@ namespace PsdzClient.Core
             }
         }
 
-        public bool IsSendFastaDataForbiddenBitsQueueFull
+        public bool OrderDataRequestFailed
         {
             get
             {
-                return isSendFastaDataForbiddenBitsQueueFullField;
+                return orderDataRequestFailed;
             }
             set
             {
-                if (!isSendFastaDataForbiddenBitsQueueFullField.Equals(value))
+                if (orderDataRequestFailed != value)
                 {
-                    isSendFastaDataForbiddenBitsQueueFullField = value;
-                    OnPropertyChanged("IsSendFastaDataForbidden");
+                    orderDataRequestFailed = value;
+                    OnPropertyChanged("OrderDataRequestFailed");
                 }
             }
         }
@@ -859,30 +1124,6 @@ namespace PsdzClient.Core
             }
         }
 
-        public string Abgas
-        {
-            get
-            {
-                return abgasField;
-            }
-            set
-            {
-                if (abgasField != null)
-                {
-                    if (!abgasField.Equals(value))
-                    {
-                        abgasField = value;
-                        OnPropertyChanged("Abgas");
-                    }
-                }
-                else
-                {
-                    abgasField = value;
-                    OnPropertyChanged("Abgas");
-                }
-            }
-        }
-
         public DateTime ProductionDate
         {
             get
@@ -1489,22 +1730,6 @@ namespace PsdzClient.Core
                 {
                     motorarbeitsverfahrenField = value;
                     OnPropertyChanged("Motorarbeitsverfahren");
-                }
-            }
-        }
-
-        public bool OrderDataRequestFailed
-        {
-            get
-            {
-                return orderDataRequestFailed;
-            }
-            set
-            {
-                if (orderDataRequestFailed != value)
-                {
-                    orderDataRequestFailed = value;
-                    OnPropertyChanged("OrderDataRequestFailed");
                 }
             }
         }
@@ -2269,40 +2494,6 @@ namespace PsdzClient.Core
         }
 
         [DefaultValue(false)]
-        public bool CVDRequestFailed
-        {
-            get
-            {
-                return cVDRequestFailedField;
-            }
-            set
-            {
-                if (!cVDRequestFailedField.Equals(value))
-                {
-                    cVDRequestFailedField = value;
-                    OnPropertyChanged("CVDRequestFailed");
-                }
-            }
-        }
-
-        [DefaultValue(false)]
-        public bool CvsRequestFailed
-        {
-            get
-            {
-                return cvsRequestFailedField;
-            }
-            set
-            {
-                if (!cvsRequestFailedField.Equals(value))
-                {
-                    cvsRequestFailedField = value;
-                    OnPropertyChanged("CvsRequestFailed");
-                }
-            }
-        }
-
-        [DefaultValue(false)]
         public bool TecCampaignsRequestFailed
         {
             get
@@ -2514,277 +2705,5 @@ namespace PsdzClient.Core
         {
             get { return _clientContext; }
         }
-
-        private string vIN17Field;
-
-        private bool isSendFastaDataForbiddenField;
-
-        private bool isSendFastaDataForbiddenBitsQueueFullField;
-
-        private string serialBodyShellField;
-
-        private string serialGearBoxField;
-
-        private string serialEngineField;
-
-        //private string batteryInfo;
-
-        private BrandName? brandNameField;
-
-        private ObservableCollection<ECU> eCUField;
-
-        //private ObservableCollection<ZFSResult> zFSField;
-
-        private bool zFS_SUCCESSFULLYField;
-
-        private ECU selectedECUField;
-
-        //private ObservableCollection<typeCBSInfo> cBSField;
-
-        private string typField;
-
-        private string basicTypeField;
-
-        private string driveTypeField;
-
-        private string warrentyTypeField;
-
-        private string markeField;
-
-        private string ueberarbeitungField;
-
-        private string prodartField;
-
-        private string ereiheField;
-
-        private string mainSeriesSgbdField;
-
-        private string mainSeriesSgbdAdditionalField;
-
-        private BNType bNTypeField;
-
-        private string baureiheField;
-
-        private string roadMapField;
-
-        private ChassisType chassisTypeField;
-
-        private string karosserieField;
-
-        private EMotor eMotorField;
-
-        private List<HeatMotor> heatMotorsField;
-
-        private GenericMotor genericMotorField;
-
-        private string motorField;
-
-        private string hubraumField;
-
-        private string landField;
-
-        private string lenkungField;
-
-        private string getriebeField;
-
-        private string countryOfAssemblyField;
-
-        private string baseVersionField;
-
-        private string antriebField;
-
-        private string abgasField;
-
-        private bool productionDateFieldSpecified;
-
-        private DateTime? firstRegistrationField;
-
-        //private string modelljahrField;
-
-        //private string modellmonatField;
-
-        //private string modelltagField;
-
-        private string baustandsJahrField;
-
-        private string baustandsMonatField;
-
-        private string elektrischeReichweiteField;
-
-        private string aeBezeichnungField;
-
-        private string iLevelField;
-
-        private decimal? gwszField;
-
-        private GwszUnitType? gwszUnitField;
-
-        private ObservableCollection<FFMResult> fFMField;
-
-        private string iLevelWerkField;
-
-        private string iLevelBackupField;
-
-        private FA faField;
-
-        private string zCSField;
-
-        //private ObservableCollection<InfoObject> historyInfoObjectsField;
-
-        //private TestPlanType testplanField;
-
-        private bool simulatedPartsField;
-
-        private VCIDevice vCIField;
-
-        private VCIDevice mIBField;
-
-        //private ObservableCollection<technicalCampaignType> technicalCampaignsField;
-
-        private string leistungField;
-
-        private string leistungsklasseField;
-
-        private string kraftstoffartField;
-
-        private string eCTypeApprovalField;
-
-        private DateTime lastSaveDateField;
-
-        private DateTime lastChangeDateField;
-
-        //private ObservableCollection<typeServiceHistoryEntry> serviceHistoryField;
-
-        //private ObservableCollection<typeDiagCode> diagCodesField;
-
-        private string motorarbeitsverfahrenField;
-
-        private string drehmomentField;
-
-        private string hybridkennzeichenField;
-
-        //private ObservableCollection<DTC> combinedFaultsField;
-
-        private ObservableCollection<decimal> installedAdaptersField;
-
-        private string vIN17_OEMField;
-
-        private string mOTKraftstoffartField;
-
-        private string mOTEinbaulageField;
-
-        private string mOTBezeichnungField;
-
-        private string baureihenverbundField;
-
-        private string aEKurzbezeichnungField;
-
-        private string aELeistungsklasseField;
-
-        private string aEUeberarbeitungField;
-
-        //private string kraftstoffartEinbaulageField;
-
-        //private ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX> perceivedSymptomsField;
-
-        private string progmanVersionField;
-
-        private string connectImageField;
-
-        private string connectIMIBImageField;
-
-        private VisibilityType connectIPStateField;
-
-        private VisibilityType connectIMIBIPStateField;
-
-        private VisibilityType connectStateField;
-
-        private VisibilityType connectIMIBStateField;
-
-        private string status_FunctionNameField;
-
-        private StateType status_FunctionStateField;
-
-        private DateTime status_FunctionStateLastChangeTimeField;
-
-        private bool status_FunctionStateLastChangeTimeFieldSpecified;
-
-        private double status_FunctionProgressField;
-
-        private string kl15VoltageField;
-
-        private string kl30VoltageField;
-
-        private bool pADVehicleField;
-
-        private int pwfStateField;
-
-        private DateTime klVoltageLastMessageTimeField;
-
-        private bool klVoltageLastMessageTimeFieldSpecified;
-
-        private string applicationVersionField;
-
-        private bool fASTAAlreadyDoneField;
-
-        private IdentificationLevel vehicleIdentLevelField;
-
-        private bool vehicleIdentAlreadyDoneField;
-
-        private bool vehicleShortTestAsSessionEntryField;
-
-        private bool pannenfallField;
-
-        private int selectedDiagBUSField;
-
-        private bool dOMRequestFailedField;
-
-        private bool ssl2RequestFailedField;
-
-        private bool cVDRequestFailedField;
-
-        private bool cvsRequestFailedField;
-
-        private bool tecCampaignsRequestFailedField;
-
-        private bool repHistoryRequestFailedField;
-
-        private bool kL15OverrideVoltageCheckField;
-
-        private bool kL15FaultILevelAlreadyAlertedField;
-
-        private bool gWSZReadoutSuccessField;
-
-        private string refSchemaField;
-
-        private string versionField;
-
-        private DateTime vehicleLifeStartDate;
-
-        private double vehicleSystemTime;
-
-        private List<DealerSessionProperty> dealerSessionProperties;
-
-        private DateTime productionDate;
-
-        private string modelljahr;
-
-        private string modellmonat;
-
-        private string modelltag;
-
-        private string chassisCode;
-
-        private bool orderDataRequestFailed;
-
-        //private BackendsAvailabilityIndicator backendsAvailabilityIndicator;
-
-        private bool isSendOBFCMDataForbidden;
-
-        public string F2Date { get; set; }
-
-        public string SoftwareId { get; set; }
-
-        private ClientContext _clientContext;
-	}
+    }
 }
