@@ -29,20 +29,6 @@ namespace PsdzClient.Programming
 
         public static Type PsdzServiceType { get; set; }
 
-        public IPsdz Psdz
-        {
-            get
-            {
-#if false
-                if (PsdzServiceType != 0)
-                {
-                    return _psdzWebServiceWrapper;
-                }
-#endif
-                return _psdzServiceHostWrapper;
-            }
-        }
-
         // [UH] added
         public string PsdzServiceLogDir
         {
@@ -52,12 +38,26 @@ namespace PsdzClient.Programming
             }
         }
 
+        public IPsdz Psdz
+        {
+            get
+            {
+#if false
+                if (PsdzServiceType != Type.PsdzServiceHost)
+                {
+                    return _psdzWebServiceWrapper;
+                }
+#endif
+                return _psdzServiceHostWrapper;
+            }
+        }
+
         public string PsdzServiceLogFilePath
         {
             get
             {
 #if false
-                if (PsdzServiceType != 0)
+                if (PsdzServiceType != Type.PsdzServiceHost)
                 {
                     return _psdzWebServiceWrapper.PsdzServiceLogFilePath;
                 }
@@ -71,7 +71,7 @@ namespace PsdzClient.Programming
             get
             {
 #if false
-                if (PsdzServiceType != 0)
+                if (PsdzServiceType != Type.PsdzServiceHost)
                 {
                     return _psdzWebServiceWrapper.PsdzLogFilePath;
                 }
@@ -80,13 +80,14 @@ namespace PsdzClient.Programming
             }
         }
 
-        public PsdzServiceGateway(PsdzConfig psdzConfig = null, Action psdzServiceHostStarter = null)
+        public PsdzServiceGateway(PsdzConfig psdzConfig, Action psdzServiceHostStarter = null)
         {
             _psdzServiceHostStarter = psdzServiceHostStarter;
             _psdzConfig = psdzConfig;
             _psdzServiceHostWrapper = new PsdzServiceWrapper(_psdzConfig);
             //_psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(null, BMW.Rheingold.CoreFramework.LicenseHelper.DealerInstance.GetDistributionPartnerNumber(5)));
-            PsdzServiceType = ((ConfigSettings.getConfigString("BMW.Rheingold.Programming.PsdzServiceType", "PsdzServiceHost") == "PsdzWebService") ? Type.PsdzWebService : Type.PsdzServiceHost);
+            CommonServiceWrapper commonServiceWrapper = new CommonServiceWrapper();
+            PsdzServiceType = (commonServiceWrapper.GetFeatureEnabledStatus("PsdzWebservice", commonServiceWrapper.IsAvailable()).IsActive ? Type.PsdzWebService : Type.PsdzServiceHost);
         }
 
         public bool StartIfNotRunning(IVehicle vehicle = null)

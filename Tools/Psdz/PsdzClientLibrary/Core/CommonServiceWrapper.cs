@@ -11,7 +11,12 @@ namespace PsdzClient.Core
         {
         }
 
-        public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature)
+        public bool IsAvailable()
+        {
+            return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.ILeanActive", defaultValue: false);
+        }
+
+        public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature, bool checkLbps = true)
         {
             string configString = ConfigSettings.getConfigString(LBPFeatureSwitches.FeatureRegistryKey(feature));
             if (!string.IsNullOrEmpty(configString) && bool.TryParse(configString, out var result))
