@@ -29,5 +29,9 @@ namespace BMW.Rheingold.Psdz.Model
         string Type { get; }
 
         string Zeitkriterium { get; }
+
+#if !OLD_PSDZ_HOST
+        string Vin { get; }
+#endif
     }
 }

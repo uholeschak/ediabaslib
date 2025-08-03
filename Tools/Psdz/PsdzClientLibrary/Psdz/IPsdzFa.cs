@@ -10,6 +10,8 @@ namespace BMW.Rheingold.Psdz.Model
     {
         string AsXml { get; }
 
+#if OLD_PSDZ_HOST
         string Vin { get; }
+#endif
     }
 }

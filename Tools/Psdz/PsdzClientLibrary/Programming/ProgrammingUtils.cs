@@ -230,6 +230,7 @@ namespace BMW.Rheingold.Programming.Common
             return true;
         }
 
+        // From BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa
         public static string CompareFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faCurrent, BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faTarget)
         {
             if (faCurrent != null && faTarget != null)
