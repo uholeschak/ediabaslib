@@ -114,6 +114,118 @@ namespace PsdzClient.Core
             }
         }
 
+        internal class EcuKomSamples
+        {
+            private string ecu;
+
+            private string job;
+
+            private string param;
+
+            private ushort set;
+
+            private string type;
+
+            private string result;
+
+            private int satz;
+
+            public string Ecu
+            {
+                get
+                {
+                    return ecu;
+                }
+                set
+                {
+                    ecu = value;
+                }
+            }
+
+            public string Job
+            {
+                get
+                {
+                    return job;
+                }
+                set
+                {
+                    job = value;
+                }
+            }
+
+            public string Param
+            {
+                get
+                {
+                    return param;
+                }
+                set
+                {
+                    param = value;
+                }
+            }
+
+            public ushort Set
+            {
+                get
+                {
+                    return set;
+                }
+                set
+                {
+                    set = value;
+                }
+            }
+
+            public string Type
+            {
+                get
+                {
+                    return type;
+                }
+                set
+                {
+                    type = value;
+                }
+            }
+
+            public string Result
+            {
+                get
+                {
+                    return result;
+                }
+                set
+                {
+                    result = value;
+                }
+            }
+
+            public int Satz
+            {
+                get
+                {
+                    return satz;
+                }
+                set
+                {
+                    satz = value;
+                }
+            }
+
+            internal EcuKomSamples(string ecu, string job, string param, ushort set, string type, string result, int satz)
+            {
+                this.ecu = ecu;
+                this.job = job;
+                this.param = param;
+                this.set = set;
+                this.type = type;
+                this.result = result;
+                this.satz = satz;
+            }
+        }
+
         private const string ILevelBN2020RegexPattern = "([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}";
 
         private static readonly DateTime LciDateE36 = DateTime.Parse("1998-03-01", CultureInfo.InvariantCulture);
@@ -514,6 +626,10 @@ namespace PsdzClient.Core
                 {
                     ProcessILevelJobResultsEES25(instance, vecInfo, ecuJob);
                 }
+                else
+                {
+                    HandleReadILevelForGzgwFallback(instance, vecInfo, ecuKom, retryCount);
+                }
             }
             else
             {
@@ -584,6 +700,15 @@ namespace PsdzClient.Core
             if (ecuJob.IsOkay())
             {
                 ProcessILevelJobResults(reactor, vecInfo, ecuJob);
+            }
+        }
+
+        private void HandleReadILevelForGzgwFallback(Reactor reactor, IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
+        {
+            IEcuJob ecuJob = SendStatusLesenNcarFallbackJobMmi(ecuKom, retryCount);
+            if (ecuJob.IsOkay())
+            {
+                ProcessILevelJobResultsEES25(reactor, vecInfo, ecuJob);
             }
         }
 
@@ -1421,6 +1546,340 @@ namespace PsdzClient.Core
             return ecuKom.ApiJobWithRetries(ecu.VARIANTE, job, param, string.Empty, 1);
         }
 
+        public IEcuJob SendStatusLesenNcarFallbackJobMmi(IEcuKom ecuKom, int retryCount)
+        {
+            return ecuKom.ApiJobWithRetries("IDCEVO25", "STATUS_LESEN", "ARG;VCM_DID_ISTUFE", string.Empty, retryCount);
+        }
+
+        public string SgbdNext(IEcuKom ecuKom)
+        {
+            Dictionary<string, EcuKomSamples> dictionary = new Dictionary<string, EcuKomSamples>();
+            dictionary.Add("FIELD", new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x1828", 1, "string[]", "STAT_LOG_CHANNEL_NAMES[].LOG_CHANNEL_NAME", -1));
+            dictionary.Add("FIELD2D", new EcuKomSamples("MARS01", "STEUERN_ROUTINE", "ID;0x1118;STR", 1, "double[,]", "IKE_ENTRIES[].CHILD_SA_ENTRIES[].PROTOCOL", -1));
+            dictionary.Add("FIELDxD", new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x0000", 1, "int[,,,,,]", "A[].B[].C[].D[].E[].F[].V", -1));
+            List<EcuKomSamples> list = new List<EcuKomSamples>();
+            foreach (KeyValuePair<string, EcuKomSamples> item in dictionary)
+            {
+                list.Add(item.Value);
+            }
+            DoNewJob(ecuKom);
+            DoNewBinaryJob(ecuKom);
+            return DoSgbdNextJob(ecuKom, list);
+        }
+
+        internal string DoNewJob(IEcuKom ecukom)
+        {
+            try
+            {
+                string defaultRes = null;
+                string defaultRes2 = null;
+                byte[] defaultRes3 = null;
+                byte[] defaultRes4 = null;
+                long[] defaultRes5 = null;
+                byte[,] defaultRes6 = new byte[3, 3];
+                byte[,] defaultRes7 = null;
+                byte[,] defaultRes8 = null;
+                string[] defaultRes9 = null;
+                long[,,,] defaultRes10 = null;
+                long[,,,] defaultRes11 = new long[0, 0, 0, 0];
+                long[,,,] defaultRes12 = new long[4, 2, 3, 5];
+                long[,,,] defaultRes13 = new long[5, 5, 5, 5];
+                long[,,] defaultRes14 = null;
+                long[,,] defaultRes15 = new long[0, 0, 0];
+                long[,,] defaultRes16 = new long[2, 3, 5];
+                long[,,] defaultRes17 = new long[5, 5, 5];
+                long[,,] defaultRes18 = null;
+                long[,,] defaultRes19 = new long[0, 0, 0];
+                long[,,] defaultRes20 = new long[2, 3, 5];
+                long[,,] defaultRes21 = new long[5, 5, 5];
+                long[,,] defaultRes22 = null;
+                long[,,] defaultRes23 = new long[0, 0, 0];
+                long[,,] defaultRes24 = new long[2, 3, 5];
+                long[,,] defaultRes25 = new long[5, 5, 5];
+                long[,,] defaultRes26 = null;
+                long[,,] defaultRes27 = new long[0, 0, 0];
+                long[,,] defaultRes28 = new long[2, 3, 5];
+                long[,,] defaultRes29 = new long[5, 5, 5];
+                long[,,] defaultRes30 = null;
+                long[,,] defaultRes31 = new long[0, 0, 0];
+                long[,,] defaultRes32 = new long[2, 3, 5];
+                long[,,] defaultRes33 = new long[5, 5, 5];
+                long[,,] defaultRes34 = null;
+                long[,,] defaultRes35 = new long[0, 0, 0];
+                long[,,] defaultRes36 = new long[2, 3, 5];
+                long[,,] defaultRes37 = new long[5, 5, 5];
+                long[,,] defaultRes38 = null;
+                long[,,] defaultRes39 = new long[0, 0, 0];
+                long[,,] defaultRes40 = new long[2, 3, 5];
+                long[,,] defaultRes41 = new long[5, 5, 5];
+                string text = "";
+                text += 8405239;
+                IEcuJob ecuJob = ecukom.ApiJob("BCP_SP21", "FS_LESEN_DETAIL", text, string.Empty);
+                if (ecuJob != null && ecuJob.IsDone())
+                {
+                    defaultRes3 = ecuJob.getResultsAs("F_HEX_CODE", defaultRes3);
+                    defaultRes4 = ecuJob.getResultsAs("F_HEX_CODE", defaultRes4);
+                    defaultRes6 = ecuJob.getResultsAs("F_UW_BN", defaultRes6, -2);
+                    defaultRes7 = ecuJob.getResultsAs("F_UW_BN", defaultRes7, -2);
+                    defaultRes8 = ecuJob.getResultsAs("F_UW_BN_X", defaultRes8, -2);
+                    defaultRes5 = ecuJob.getResultsAs("F_UW_KM", defaultRes5, -2);
+                    defaultRes = ecuJob.getResultsAs("JOB_STATUS", defaultRes);
+                    defaultRes2 = ecuJob.getResultsAs("VARIANTE", defaultRes2, 0);
+                    defaultRes9 = ecuJob.getResultsAs("TEXTRESULT", defaultRes9, -2);
+                    defaultRes10 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes10, -2);
+                    defaultRes11 = ecuJob.getResultsAs("A[].B[].C[].W", defaultRes11, -2);
+                    defaultRes12 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes12, -2);
+                    defaultRes13 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes13, -2);
+                    defaultRes14 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes14, 0);
+                    defaultRes15 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes15, 0);
+                    defaultRes16 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes16, 0);
+                    defaultRes17 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes17, 0);
+                    defaultRes18 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes18, 1);
+                    defaultRes19 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes19, 1);
+                    defaultRes20 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes20, 1);
+                    defaultRes21 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes21, 1);
+                    defaultRes22 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes22, 2);
+                    defaultRes23 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes23, 2);
+                    defaultRes24 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes24, 2);
+                    defaultRes25 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes25, 2);
+                    defaultRes26 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes26, 3);
+                    defaultRes27 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes27, 3);
+                    defaultRes28 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes28, 3);
+                    defaultRes29 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes29, 3);
+                    defaultRes30 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes30, 4);
+                    defaultRes31 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes31, 4);
+                    defaultRes32 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes32, 4);
+                    defaultRes33 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes33, 4);
+                    defaultRes34 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes34, 5);
+                    defaultRes35 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes35, 5);
+                    defaultRes36 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes36, 5);
+                    defaultRes37 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes37, 5);
+                    defaultRes38 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes38);
+                    defaultRes39 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes39);
+                    defaultRes40 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes40);
+                    defaultRes41 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes41);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("VehicleIdent.GetVin17()", exception);
+            }
+            return null;
+        }
+
+        internal string DoNewBinaryJob(IEcuKom ecukom)
+        {
+            try
+            {
+                byte[,,,,] defaultRes = null;
+                byte[,,,,] defaultRes2 = new byte[0, 0, 0, 0, 0];
+                byte[,,,,] defaultRes3 = new byte[4, 2, 3, 5, 4];
+                byte[,,,,] defaultRes4 = new byte[5, 5, 5, 5, 5];
+                byte[,,,] defaultRes5 = null;
+                byte[,,,] defaultRes6 = new byte[0, 0, 0, 0];
+                byte[,,,] defaultRes7 = new byte[2, 3, 5, 4];
+                byte[,,,] defaultRes8 = new byte[5, 5, 5, 5];
+                byte[,,,] defaultRes9 = null;
+                byte[,,,] defaultRes10 = new byte[0, 0, 0, 0];
+                byte[,,,] defaultRes11 = new byte[2, 3, 5, 4];
+                byte[,,,] defaultRes12 = new byte[5, 5, 5, 5];
+                byte[,,,] defaultRes13 = null;
+                byte[,,,] defaultRes14 = new byte[0, 0, 0, 0];
+                byte[,,,] defaultRes15 = new byte[2, 3, 5, 4];
+                byte[,,,] defaultRes16 = new byte[5, 5, 5, 5];
+                byte[,,,] defaultRes17 = null;
+                byte[,,,] defaultRes18 = new byte[0, 0, 0, 0];
+                byte[,,,] defaultRes19 = new byte[2, 3, 5, 4];
+                byte[,,,] defaultRes20 = new byte[5, 5, 5, 5];
+                byte[,,,] defaultRes21 = null;
+                byte[,,,] defaultRes22 = new byte[0, 0, 0, 0];
+                byte[,,,] defaultRes23 = new byte[2, 3, 5, 4];
+                byte[,,,] defaultRes24 = new byte[5, 5, 5, 5];
+                byte[,,,] defaultRes25 = null;
+                byte[,,,] defaultRes26 = new byte[0, 0, 0, 0];
+                byte[,,,] defaultRes27 = new byte[2, 3, 5, 4];
+                byte[,,,] defaultRes28 = new byte[5, 5, 5, 5];
+                byte[,,,] defaultRes29 = null;
+                byte[,,,] defaultRes30 = new byte[0, 0, 0, 0];
+                byte[,,,] defaultRes31 = new byte[2, 3, 5, 4];
+                byte[,,,] defaultRes32 = new byte[5, 5, 5, 5];
+                string text = "";
+                text += 8405239;
+                IEcuJob ecuJob = ecukom.ApiJob("BCP_SP21", "FS_LESEN_DETAIL_BINARY", text, string.Empty);
+                if (ecuJob != null && ecuJob.IsDone())
+                {
+                    defaultRes = ecuJob.getResultsAs("A[].B[].C[].V1", defaultRes, -2);
+                    defaultRes2 = ecuJob.getResultsAs("A[].B[].C[].V1", defaultRes2, -2);
+                    defaultRes3 = ecuJob.getResultsAs("A[].B[].C[].V1", defaultRes3, -2);
+                    defaultRes4 = ecuJob.getResultsAs("A[].B[].C[].V1", defaultRes4, -2);
+                    defaultRes5 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes5, 0);
+                    defaultRes6 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes6, 0);
+                    defaultRes7 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes7, 0);
+                    defaultRes8 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes8, 0);
+                    defaultRes9 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes9, 1);
+                    defaultRes10 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes10, 1);
+                    defaultRes11 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes11, 1);
+                    defaultRes12 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes12, 1);
+                    defaultRes13 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes13, 2);
+                    defaultRes14 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes14, 2);
+                    defaultRes15 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes15, 2);
+                    defaultRes16 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes16, 2);
+                    defaultRes17 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes17, 3);
+                    defaultRes18 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes18, 3);
+                    defaultRes19 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes19, 3);
+                    defaultRes20 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes20, 3);
+                    defaultRes21 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes21, 4);
+                    defaultRes22 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes22, 4);
+                    defaultRes23 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes23, 4);
+                    defaultRes24 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes24, 4);
+                    defaultRes25 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes25, 5);
+                    defaultRes26 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes26, 5);
+                    defaultRes27 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes27, 5);
+                    defaultRes28 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes28, 5);
+                    defaultRes29 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes29);
+                    defaultRes30 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes30);
+                    defaultRes31 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes31);
+                    defaultRes32 = ecuJob.getResultsAs("A[].B[].C[].V", defaultRes32);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("VehicleIdent.GetVin17()", exception);
+            }
+            return null;
+        }
+
+
+        internal string DoExistingJob(IEcuKom ecukom)
+        {
+            try
+            {
+                string defaultRes = null;
+                string defaultRes2 = null;
+                byte[] defaultRes3 = null;
+                long[] array = null;
+                byte[,] array2 = new byte[3, 3];
+                string text = "";
+                text += 8405239;
+                IEcuJob ecuJob = ecukom.ApiJob("BCP_SP21", "FS_LESEN_DETAIL", text, string.Empty);
+                if (ecuJob != null && ecuJob.IsDone())
+                {
+                    defaultRes3 = ecuJob.getResultAs("F_HEX_CODE", defaultRes3, getLast: true);
+                    for (int i = 0; i < array2.GetLength(0); i++)
+                    {
+                        byte[] resultAs = ecuJob.getResultAs<byte[]>((ushort)(i + 1), "F_UW_BN");
+                        if (resultAs != null)
+                        {
+                            for (int j = 0; j < resultAs.Length; j++)
+                            {
+                                array2[i, j] = resultAs[j];
+                            }
+                        }
+                    }
+                    if (array == null || array.Length < ecuJob.JobResultSets)
+                    {
+                        array = (long[])__initArray<long>(new int[1] { ecuJob.JobResultSets }, long.MaxValue);
+                    }
+                    for (int k = 0; k < array.Length; k++)
+                    {
+                        array[k] = ecuJob.getResultAs((ushort)(k + 1), "F_UW_KM", array[k]);
+                    }
+                    defaultRes = ecuJob.getResultAs("JOB_STATUS", defaultRes, getLast: true);
+                    defaultRes2 = ecuJob.getResultAs(0, "VARIANTE", defaultRes2);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("VehicleIdent.GetVin17()", exception);
+            }
+            return null;
+        }
+
+        internal string DoSgbdNextJob(IEcuKom ecuKom, List<EcuKomSamples> ecuKomSamples)
+        {
+            foreach (EcuKomSamples ecuKomSample in ecuKomSamples)
+            {
+                try
+                {
+                    IEcuJob ecuJob = ecuKom.ApiJob(ecuKomSample.Ecu, ecuKomSample.Job, ecuKomSample.Param, string.Empty);
+                    if (ecuJob != null && ecuJob.IsDone())
+                    {
+                        switch (ecuKomSample.Type)
+                        {
+                            case "string[]":
+                            {
+                                string[] defaultRes3 = null;
+                                defaultRes3 = ecuJob.getResultsAs(ecuKomSample.Result, defaultRes3);
+                                break;
+                            }
+                            case "double[,]":
+                            {
+                                double[,] defaultRes2 = null;
+                                defaultRes2 = ecuJob.getResultsAs(ecuKomSample.Result, defaultRes2);
+                                break;
+                            }
+                            case "int[,,,,,]":
+                            {
+                                int[,,,,,] defaultRes = null;
+                                defaultRes = ecuJob.getResultsAs(ecuKomSample.Result, defaultRes);
+                                break;
+                            }
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Log.WarningException("VehicleIdent.GetVin17()", exception);
+                }
+            }
+            return null;
+        }
+
+        internal Array __initArray<T>(int[] sizes, object initValue)
+        {
+            Array array = null;
+            try
+            {
+                Type type = typeof(T);
+                if (type.BaseType == typeof(Array))
+                {
+                    type = type.GetElementType();
+                }
+                array = Array.CreateInstance(type, sizes);
+                T val = default(T);
+                if (initValue != null && typeof(T).IsAssignableFrom(initValue.GetType()))
+                {
+                    val = (T)initValue;
+                }
+                int num = sizes[0];
+                for (int i = 1; i < sizes.Length; i++)
+                {
+                    num *= sizes[i];
+                }
+                int[] array2 = new int[sizes.Length];
+                for (int j = 0; j < num; j++)
+                {
+                    array.SetValue(val, array2);
+                    array2[sizes.Length - 1]++;
+                    for (int num2 = sizes.Length - 1; num2 >= 0; num2--)
+                    {
+                        if (array2[num2] == sizes[num2])
+                        {
+                            array2[num2] = 0;
+                            if (num2 > 0)
+                            {
+                                array2[num2 - 1]++;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return array;
+        }
+
         public string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom)
         {
             Dictionary<string, EcuKomConfig> dictionary = new Dictionary<string, EcuKomConfig>();
@@ -1477,6 +1936,8 @@ namespace PsdzClient.Core
             List<EcuKomConfig> list = new List<EcuKomConfig>();
             dictionary.Add("IPB_APP1", new EcuKomConfig("IPB_APP1", "STATUS_LESEN", "ARG;VIN", 1, "STAT_VIN_TEXT"));
             list.Add(dictionary["IPB_APP1"]);
+            dictionary.Add("G_AIRBAG", new EcuKomConfig("G_AIRBAG", "STATUS_LESEN", "ARG;VIN", 1, "STAT_VIN_TEXT"));
+            list.Add(dictionary["G_AIRBAG"]);
             return ReadVinFromEcus(ecuKom, list);
         }
 
