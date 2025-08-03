@@ -1,15 +1,33 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using static PsdzClient.Core.ValidationRuleInternalResult;
 
 namespace PsdzClient.Core
 {
 	public class VehicleCharacteristicVehicleHelper : VehicleCharacteristicAbstract
 	{
+        // [UH] replaced
+        //	private IDataProviderRuleEvaluation dataProvider;
+        PsdzDatabase dataProvider;
+
+        private string characteristicValue;
+
+        // changed to string
+        private string characteristicRootsNodeClass;
+
+        private decimal characteristicId;
+
+        private IVehicleRuleEvaluation vehicle;
+
+        private long datavalueId;
+
+        private ValidationRuleInternalResults internalResult;
+
         public VehicleCharacteristicVehicleHelper(IVehicleRuleEvaluation vehicle)
         {
             //dbConnector = DatabaseProviderFactory.Instance;
@@ -394,17 +412,17 @@ namespace PsdzClient.Core
                 rootClassValue = 0;
             }
 
-            foreach (HeatMotor hm2 in vehicle.HeatMotors)
+            foreach (HeatMotor hm in vehicle.HeatMotors)
             {
-                ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm2.DriveId && r.Type == ValidationRuleInternalResult.CharacteristicType.HeatMotor && r.CharacteristicId == rootClassValue);
-                decimal num = dataProvider.LookupVehicleCharIdByName(getProperty(hm2), characteristicNodeclass);
+                ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm.DriveId && r.Type == CharacteristicType.HeatMotor && r.CharacteristicId == rootClassValue);
+                decimal num = dataProvider.LookupVehicleCharIdByName(getProperty(hm), characteristicNodeclass);
                 bool flag = num == (decimal)datavalueId;
                 if (validationRuleInternalResult == null)
                 {
                     validationRuleInternalResult = new ValidationRuleInternalResult
                     {
-                        Type = ValidationRuleInternalResult.CharacteristicType.HeatMotor,
-                        Id = hm2.DriveId,
+                        Type = CharacteristicType.HeatMotor,
+                        Id = hm.DriveId,
                         CharacteristicId = rootClassValue
                     };
                     if (!(internalResult.RuleExpression is OrExpression))
@@ -434,25 +452,10 @@ namespace PsdzClient.Core
                     validationRuleInternalResult.IsValid &= flag;
                 }
             }
-            value = string.Join(",", vehicle.HeatMotors.Select((HeatMotor hm) => getProperty(hm)));
+            value = string.Join(",", vehicle.HeatMotors.Select((HeatMotor arg) => getProperty(arg)));
             bool flag2 = (from r in internalResult
                 group r by r.Id).Any((IGrouping<string, ValidationRuleInternalResult> g) => g.All((ValidationRuleInternalResult c) => c.IsValid));
             return (internalResult.RuleExpression is NotExpression) ? (!flag2) : flag2;
         }
-
-        //	private IDataProviderRuleEvaluation dataProvider;
-        PsdzDatabase dataProvider;
-
-		private string characteristicValue;
-
-        private string characteristicRootsNodeClass;
-
-        private decimal characteristicId;
-
-        private IVehicleRuleEvaluation vehicle;
-
-        private long datavalueId;
-
-		private ValidationRuleInternalResults internalResult;
-	}
+    }
 }
