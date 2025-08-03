@@ -191,7 +191,7 @@ namespace PsdzClient.Core
                     }
                     return "F01";
                 }
-            IL_0272:
+                IL_0272:
                 return "-";
             }
             if (!(vecInfo.Prodart == "M"))

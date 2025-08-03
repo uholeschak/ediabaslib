@@ -374,6 +374,23 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
+            ObservableCollection<ECU> eCU = vecInfo.ECU;
+            if (eCU != null)
+            {
+                foreach (ECU item in eCU)
+                {
+                    if (item.ECU_GROBNAME.Equals("EMA_LI"))
+                    {
+                        hashSet.AddIfNotContains(78);
+                        break;
+                    }
+                    if (item.ECU_GROBNAME.Equals("EMA_RE"))
+                    {
+                        hashSet.AddIfNotContains(77);
+                        break;
+                    }
+                }
+            }
             CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
         }
     }
