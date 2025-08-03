@@ -386,6 +386,7 @@ namespace PsdzClient.Core
             return dataProvider.LookupVehicleCharIdByName(vehicle.Sportausfuehrung, 99999999847L) == (decimal)datavalueId;
         }
 
+        // [UH] adapted
         private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, long datavalueId, ValidationRuleInternalResults internalResult, out string value, string rootNodeClass, decimal characteristicNodeclass)
         {
             if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal rootClassValue))

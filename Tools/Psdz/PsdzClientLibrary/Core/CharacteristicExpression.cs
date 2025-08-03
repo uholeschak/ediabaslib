@@ -103,7 +103,8 @@ namespace PsdzClient.Core
             }
             else
             {
-                flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult, vec);
+                // [UH]  VehicleHelper replaced
+                flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult);
             }
             ruleEvaluationServices.Logger.Debug("CharacteristicExpression.Evaluate()", "rule: {0}={1} result: {2} (session context: {3}) [original rule: {4}={5}]", CharacteristicRoot, CharacteristicValue, flag, value, dataclassId, datavalueId);
             return flag;
