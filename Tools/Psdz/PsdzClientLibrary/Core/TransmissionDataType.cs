@@ -3,53 +3,53 @@ using System;
 
 namespace PsdzClient.Core
 {
-    public class TransmissionDataType : ICloneable, IEquatable<TransmissionDataType>, ITransmissionDataType
+    public class TransmissionDataType : IEquatable<TransmissionDataType>, ICloneable
     {
-        public string TransmissionClassValue { get; private set; }
+        public string TransmissionClassValue { get; set; }
 
-        public string TransmissionClassVersion { get; private set; }
+        public string TransmissionClassVersion { get; set; }
 
-        public bool IsDataFromVehicle { get; private set; }
+        public bool IsDataFromVehicle { get; set; }
+
+        public string VtgSerialNumber { get; set; }
+
+        public int VtgCalculatedCharacteristicCurve { get; set; }
 
         public TransmissionDataType()
         {
         }
 
-        public TransmissionDataType(string classValue, string classVersion, bool isDataFromVehicle)
+        public TransmissionDataType(string classValue, string classVersion, string vtgSerialNumber, int vtgCalculatedCharacteristicsCurve, bool isDataFromVehicle)
         {
             TransmissionClassValue = classValue;
             TransmissionClassVersion = classVersion;
+            VtgCalculatedCharacteristicCurve = vtgCalculatedCharacteristicsCurve;
+            VtgSerialNumber = vtgSerialNumber;
             IsDataFromVehicle = isDataFromVehicle;
         }
 
-        public void UpdateTransmissionDataValues(string classValue, string classVersion, bool isFromVehicle)
+        public void UpdateTransmissionDataValues(string classValue, string classVersion, string vtgSerialNumber, int vtgCalculatedCharacteristicsCurve, bool isFromVehicle)
         {
             TransmissionClassValue = classValue;
             TransmissionClassVersion = classVersion;
+            VtgCalculatedCharacteristicCurve = vtgCalculatedCharacteristicsCurve;
+            VtgSerialNumber = vtgSerialNumber;
             IsDataFromVehicle = isFromVehicle;
         }
 
         public bool IsAnyValueEmpty()
         {
-            if (!string.IsNullOrEmpty(TransmissionClassValue))
-            {
-                return string.IsNullOrEmpty(TransmissionClassVersion);
-            }
-            return true;
+            return string.IsNullOrEmpty(TransmissionClassValue) || string.IsNullOrEmpty(TransmissionClassVersion);
         }
 
         public bool Equals(TransmissionDataType other)
         {
-            if (other != null && string.Equals(TransmissionClassValue, other.TransmissionClassValue, StringComparison.InvariantCultureIgnoreCase) && string.Equals(TransmissionClassVersion, other.TransmissionClassVersion, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return IsDataFromVehicle == other.IsDataFromVehicle;
-            }
-            return false;
+            return other != null && string.Equals(TransmissionClassValue, other.TransmissionClassValue, StringComparison.InvariantCultureIgnoreCase) && string.Equals(TransmissionClassVersion, other.TransmissionClassVersion, StringComparison.InvariantCultureIgnoreCase) && VtgCalculatedCharacteristicCurve == other.VtgCalculatedCharacteristicCurve && string.Equals(VtgSerialNumber, other.VtgSerialNumber, StringComparison.InvariantCultureIgnoreCase) && IsDataFromVehicle == other.IsDataFromVehicle;
         }
 
         public object Clone()
         {
-            return new TransmissionDataType(TransmissionClassValue, TransmissionClassVersion, IsDataFromVehicle);
+            return new TransmissionDataType(TransmissionClassValue, TransmissionClassVersion, VtgSerialNumber, VtgCalculatedCharacteristicCurve, IsDataFromVehicle);
         }
     }
 }

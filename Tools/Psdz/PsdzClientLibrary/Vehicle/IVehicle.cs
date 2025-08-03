@@ -315,7 +315,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool OrderDataRequestFailed { get; set; }
 
-        ITransmissionDataType TransmissionDataType { get; }
+        TransmissionDataType TransmissionDataType { get; }
 
         DateTime? C_DATETIME { get; }
 

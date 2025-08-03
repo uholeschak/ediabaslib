@@ -115,6 +115,15 @@ namespace PsdzClient.Core
             }
         }
 
+        [XmlIgnore]
+        public string VehicleModelRecognition { get; set; }
+
+        [XmlIgnore]
+        public string TempTypeKeyLeadFromDb { get; set; }
+
+        [XmlIgnore]
+        public string TempTypeKeyBasicFromFbm { get; set; }
+
         public Vehicle(ClientContext clientContext) : base(clientContext)
         {
             TransmissionDataType = new TransmissionDataType();
@@ -937,8 +946,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [XmlIgnore]
-        public ITransmissionDataType TransmissionDataType { get; private set; }
+        public TransmissionDataType TransmissionDataType { get; }
 
         [XmlIgnore]
         public PsdzDatabase.BatteryEnum BatteryType

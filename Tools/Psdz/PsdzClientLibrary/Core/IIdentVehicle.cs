@@ -17,7 +17,7 @@ namespace PsdzClient.Core
 
         List<string> sxCodes { get; set; }
 
-        ITransmissionDataType TransmissionDataType { get; }
+        TransmissionDataType TransmissionDataType { get; }
 
         BordnetType BordnetType { get; set; }
 
@@ -32,6 +32,14 @@ namespace PsdzClient.Core
         DateTime? C_DATETIME { get; }
 
         DateTime? LastProgramDate { get; set; }
+
+        string SoftwareId { get; set; }
+
+        string VehicleModelRecognition { get; set; }
+
+        string TempTypeKeyLeadFromDb { get; set; }
+
+        string TempTypeKeyBasicFromFbm { get; set; }
 
         IReactorFa GetFaInstance();
 

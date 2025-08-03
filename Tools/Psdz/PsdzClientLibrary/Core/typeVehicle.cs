@@ -2781,6 +2781,10 @@ namespace PsdzClient.Core
 
         private bool isSendOBFCMDataForbidden;
 
+        public string F2Date { get; set; }
+
+        public string SoftwareId { get; set; }
+
         private ClientContext _clientContext;
 	}
 }
