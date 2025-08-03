@@ -8,6 +8,7 @@ namespace PsdzClient.Core
 {
     public abstract class VehicleCharacteristicAbstract
     {
+        // ToDo: Check on update
         public enum VehicleCharacteristic : long
         {
             Motor = 40142338L,
@@ -69,6 +70,7 @@ namespace PsdzClient.Core
             Sportausfuehrung = 99999999846L
         }
 
+        // ToDo: Check on update
         protected bool ComputeCharacteristic(string vehicleCode, params object[] param)
         {
             if (Enum.TryParse<VehicleCharacteristic>(vehicleCode, out var result))
@@ -225,7 +227,7 @@ namespace PsdzClient.Core
                             case (VehicleCharacteristic)9L:
                             case (VehicleCharacteristic)11L:
                             case (VehicleCharacteristic)13L:
-                                goto IL_0699;
+                                goto IL_0702;
                         }
                     }
                     VehicleCharacteristic num4 = vehicleCharacteristic2 - 99999999905L;
@@ -236,6 +238,11 @@ namespace PsdzClient.Core
                             case (VehicleCharacteristic)4L:
                                 return ComputeMOTKraftstoffart(param);
                             case (VehicleCharacteristic)0L:
+                                // [UH] adapted
+                                if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is PsdzDatabase.Characteristics xepCharacteristics)
+                                {
+                                    identVehicle.TempTypeKeyLeadFromDb = xepCharacteristics.Name;
+                                }
                                 ComputeTypeKeyLead(param);
                                 return ComputeBasicType(param);
                             case (VehicleCharacteristic)5L:
@@ -259,10 +266,10 @@ namespace PsdzClient.Core
                             return ComputeMOTBezeichnung(param);
                     }
                 }
-                goto IL_0699;
+                goto IL_0702;
             }
             return false;
-        IL_0699:
+        IL_0702:
             return ComputeDefault(param);
         }
 
