@@ -21,8 +21,7 @@ namespace PsdzClient.Programming
             {
                 return BusObject.Unknown;
             }
-            ServiceLocator.Current.GetService<IFasta2Service>()?.AddServiceCode(ServiceCodes.MAP01_PsdzValuesAreNotMapped_nu_LF, "PSdZ value '" + psdzBus.Name + "' not mapped", LayoutGroup.X, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
-            return new BusObject(psdzBus.Id, psdzBus.Name);
+            return new BusObject(psdzBus.Id, psdzBus.Name, psdzBus.DirectAccess);
 #endif
         }
 
