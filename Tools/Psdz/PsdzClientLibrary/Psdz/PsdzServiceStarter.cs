@@ -100,7 +100,7 @@ namespace BMW.Rheingold.Psdz.Client
 
         private static bool IsPsdzServiceHostRunning(int istaProcessId)
         {
-            if (File.Exists(istaPIDfilePath))
+            if (File.Exists(istaPIDfilePath))   // [UH] check for PID file support
             {
                 checkForPsdzInstancesLogFile();
                 Logger.Info($"Checking for already running PsdzServiceHost instances for ISTA Process ID {istaProcessId} ...");
@@ -132,6 +132,7 @@ namespace BMW.Rheingold.Psdz.Client
                 }
             }
 
+            // [UH] old code
             Process[] processesByName = Process.GetProcessesByName(PsdzServiceHostProcessName);
             if (istaProcessId == 0)
             {
