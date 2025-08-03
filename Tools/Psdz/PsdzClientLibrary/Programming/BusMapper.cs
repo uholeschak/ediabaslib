@@ -19,7 +19,7 @@ namespace PsdzClient.Programming
 #else
             if (psdzBus == null)
             {
-                return new BusObject(0, "UNKNOWN");
+                return BusObject.Unknown;
             }
             ServiceLocator.Current.GetService<IFasta2Service>()?.AddServiceCode(ServiceCodes.MAP01_PsdzValuesAreNotMapped_nu_LF, "PSdZ value '" + psdzBus.Name + "' not mapped", LayoutGroup.X, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
             return new BusObject(psdzBus.Id, psdzBus.Name);
@@ -42,7 +42,7 @@ namespace PsdzClient.Programming
 #else
             if (bus == null)
             {
-                return new PsdzBus(0, "UNKNOWN", pDirectAccess: true);
+                return PsdzBus.BUSNAME_UNKNOWN;
             }
             return new PsdzBus(bus.Id, bus.Name, bus.DirectAddress);
 #endif
