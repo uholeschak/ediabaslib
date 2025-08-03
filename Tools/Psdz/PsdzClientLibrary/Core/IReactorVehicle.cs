@@ -95,7 +95,7 @@ namespace PsdzClient.Core
 
         string Drehmoment { get; set; }
 
-        IEMotor EMotor { get; set; }
+        EMotor EMotor { get; set; }
 
         string VINRangeType { get; set; }
 
@@ -126,5 +126,7 @@ namespace PsdzClient.Core
         string LifeCycle { get; set; }
 
         string Sportausfuehrung { get; set; }
+
+        string F2Date { get; set; }
     }
 }

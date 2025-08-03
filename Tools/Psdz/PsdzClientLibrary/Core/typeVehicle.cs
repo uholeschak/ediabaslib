@@ -90,11 +90,11 @@ namespace PsdzClient.Core
 
         private DateTime? firstRegistrationField;
 
-        private string modelljahrField;
+        //private string modelljahrField;
 
-        private string modellmonatField;
+        //private string modellmonatField;
 
-        private string modelltagField;
+        //private string modelltagField;
 
         private string baustandsJahrField;
 

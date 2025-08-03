@@ -38,8 +38,6 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public BNMixed BNMixed { get; set; }
 
-        IEMotor IVehicleRuleEvaluation.EMotor => base.EMotor;
-
         [XmlIgnore]
         IReactorFa IReactorVehicle.FA
         {
@@ -52,22 +50,6 @@ namespace PsdzClient.Core
                 if (base.FA != value)
                 {
                     base.FA = (FA)value;
-                }
-            }
-        }
-
-        [XmlIgnore]
-        IEMotor IReactorVehicle.EMotor
-        {
-            get
-            {
-                return base.EMotor;
-            }
-            set
-            {
-                if (base.EMotor != value)
-                {
-                    base.EMotor = (EMotor)value;
                 }
             }
         }

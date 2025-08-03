@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace PsdzClient.Core
 {
+    // ToDo: Check on update
     public class ReactorEngine
     {
         private MultisourceLogic multisourceLogic;
@@ -650,6 +651,14 @@ namespace PsdzClient.Core
             log.Info("Reactor.DumpReactorState()", "Vehicle state: " + Environment.NewLine + " " + text);
         }
 
+        public void SetF2Date(string value, DataSource source)
+        {
+            AssignPropertyAndExecuteFallback(delegate
+            {
+                AssignF2Date(value, source);
+            });
+        }
+
         private void AssignPropertyAndExecuteFallback(Action setBody, Action fallback = null)
         {
             lock (obj)
@@ -690,6 +699,18 @@ namespace PsdzClient.Core
         private void AssignModellJahr(string value, DataSource source)
         {
             vehicle.Modelljahr = multisourceLogic.SetProperty(value, source, "Modelljahr");
+        }
+
+        private void AssignF2Date(string value, DataSource source)
+        {
+            if (!string.IsNullOrEmpty(value))
+            {
+                vehicle.F2Date = multisourceLogic.SetProperty(value, source, "F2Date");
+            }
+            else
+            {
+                vehicle.F2Date = "-";
+            }
         }
 
         private void Vehicle_PropertyChanged(object sender, PropertyChangedEventArgs e)

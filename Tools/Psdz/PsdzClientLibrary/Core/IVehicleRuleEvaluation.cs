@@ -39,7 +39,7 @@ namespace PsdzClient.Core
 
         string Getriebe { get; set; }
 
-        IEMotor EMotor { get; }
+        EMotor EMotor { get; }
 
         string Hubraum { get; set; }
 
