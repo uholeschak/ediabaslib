@@ -217,6 +217,7 @@ namespace BMW.Rheingold.Psdz.Client
             processStartInfo.CreateNoWindow = true;
             processStartInfo.Environment["PSDZSERVICEHOST_LOGDIR"] = psdzServiceHostLogDir;
 
+            // [UH] check for PID file support start
             bool pidFileSupport = false;
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(processStartInfo.FileName);
             if (fileVersionInfo.FileVersion != null)
@@ -251,6 +252,7 @@ namespace BMW.Rheingold.Psdz.Client
                     processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\"", tempFileName, istaProcessId);
                 }
             }
+            // [UH] check for PID file support end
             Logger.Info($"PsdzServiceHost start arguments: {processStartInfo.Arguments}");
             EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, HostReadyEventName);
             EventWaitHandle eventWaitHandle2 = new EventWaitHandle(false, EventResetMode.AutoReset, HostFailedEventName);
@@ -262,6 +264,7 @@ namespace BMW.Rheingold.Psdz.Client
             {
                 case 0:
                 {
+                    // [UH] check for PID file support start
                     if (pidFileSupport)
                     {
                         checkForPsdzInstancesLogFile();
@@ -277,6 +280,7 @@ namespace BMW.Rheingold.Psdz.Client
                             Logger.Error($"Failed to append PID file: {istaPIDfilePath} - {e.Message}");
                         }
                     }
+                    // [UH] check for PID file support end
                     Logger.Info("Start of new PsdzServiceHost instance successful!");
                     return PsdzServiceStartResult.PsdzStartOk;
                 }
