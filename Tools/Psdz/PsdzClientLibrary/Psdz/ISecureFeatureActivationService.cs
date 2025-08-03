@@ -29,6 +29,7 @@ namespace BMW.Rheingold.Psdz
     [ServiceKnownType(typeof(PsdzReadLcsResultCto))]
     [ServiceKnownType(typeof(PsdzReadSecureEcuModeResultCto))]
     [ServiceKnownType(typeof(PsdzSecureTokenRequestCto))]
+    [ServiceKnownType(typeof(PsdzSecureTokenForVehicleEto))]
     [ServiceKnownType(typeof(PsdzEcuLcsValueCto))]
     [ServiceKnownType(typeof(PsdzDiscoverFeatureStatusResultCto))]
     public interface ISecureFeatureActivationService
@@ -43,7 +44,7 @@ namespace BMW.Rheingold.Psdz
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
-        //[Obsolete]
+        [Obsolete]
         IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackage(IEnumerable<string> backendUrlList, IEnumerable<string> crl, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest);
 
         [OperationContract]
@@ -101,6 +102,10 @@ namespace BMW.Rheingold.Psdz
 
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzEcuFailureResponseCto> WriteSecureTokenToECUs(IPsdzConnection pConnection, IPsdzSecureTokenForVehicleEto secureToken, IEnumerable<IPsdzEcuIdentifier> ecus, IPsdzSvt svt);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzEcuFailureResponseCto> DeleteSecureToken(IPsdzConnection pConnection, IPsdzEcuIdentifier psdzEcuIdentifier, IPsdzFeatureIdCto psdzFeatureId);
 
         [OperationContract]
@@ -110,5 +115,9 @@ namespace BMW.Rheingold.Psdz
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzEcuFailureResponseCto> ResetEcusFlashMode(IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecusToBeReset, bool performWithFlashMode);
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestTokenDirectForVehicleOffline(string requestFilePath, string client, string system, IPsdzVin vin, IPsdzSvt svtIst, IPsdzSecureTokenRequestCto secureTokenRequest);
     }
 }
