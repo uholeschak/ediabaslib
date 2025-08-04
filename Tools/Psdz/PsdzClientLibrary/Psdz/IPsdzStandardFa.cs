@@ -30,7 +30,8 @@ namespace BMW.Rheingold.Psdz.Model
 
         string Zeitkriterium { get; }
 
-#if !OLD_PSDZ_HOST
+#if !OLD_PSDZ_FA
+#warning OLD_PSDZ_FA activated. Do not use for release builds.
         string Vin { get; }
 #endif
     }

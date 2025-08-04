@@ -42,7 +42,7 @@ namespace BMW.Rheingold.Psdz.Model
 
         [DataMember]
         public string Zeitkriterium { get; set; }
-#if !OLD_PSDZ_HOST
+#if !OLD_PSDZ_FA
         [DataMember]
         public string Vin { get; set; }
 #endif
@@ -55,7 +55,7 @@ namespace BMW.Rheingold.Psdz.Model
             }
             if (FaVersion == psdzStandardFa.FaVersion && string.Equals(Entwicklungsbaureihe, psdzStandardFa.Entwicklungsbaureihe) && string.Equals(Type, psdzStandardFa.Type) && string.Equals(Zeitkriterium, psdzStandardFa.Zeitkriterium) && IsValid.Equals(psdzStandardFa.IsValid) && string.Equals(Lackcode, psdzStandardFa.Lackcode) && string.Equals(Polstercode, psdzStandardFa.Polstercode) && StringSequenceEqual(EWords, psdzStandardFa.EWords) && StringSequenceEqual(HOWords, psdzStandardFa.HOWords) && StringSequenceEqual(Salapas, psdzStandardFa.Salapas))
             {
-#if OLD_PSDZ_HOST
+#if OLD_PSDZ_FA
                 return true;
 #else
                 return string.Equals(Vin, psdzStandardFa.Vin);
@@ -97,7 +97,7 @@ namespace BMW.Rheingold.Psdz.Model
                 num6 = this.Salapas.OrderBy((string x) => x).Aggregate(17, (int current, string sgbmId) => (current * 397) ^ sgbmId.ToLowerInvariant().GetHashCode());
             }
             int num7 = (num5 ^ num6) * 397;
-#if OLD_PSDZ_HOST
+#if OLD_PSDZ_FA
             return num7;
 #else
             return num7 ^ ((this.Vin != null) ? this.Vin.GetHashCode() : 0);
