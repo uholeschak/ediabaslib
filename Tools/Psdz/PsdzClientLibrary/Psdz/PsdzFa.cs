@@ -13,9 +13,10 @@ namespace BMW.Rheingold.Psdz.Model
         [DataMember]
         public string AsXml { get; set; }
 
+#if OLD_PSDZ_FA
         [DataMember]
         public string Vin { get; set; }
-
+#endif
         public override bool Equals(object obj)
         {
             PsdzFa psdzFa = obj as PsdzFa;

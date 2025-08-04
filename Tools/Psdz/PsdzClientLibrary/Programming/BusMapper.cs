@@ -12,7 +12,7 @@ namespace PsdzClient.Programming
     {
         public static IBusObject MapToBus(PsdzBus psdzBus)
         {
-#if OLD_PSDZ_HOST
+#if OLD_PSDZ_BUS
             int id = (int)psdzBus;
             string name = Enum.GetName(typeof(PsdzBus), psdzBus) ?? "UNKNOWN";
             return new BusObject(id, name);
@@ -27,7 +27,7 @@ namespace PsdzClient.Programming
 
         public static PsdzBus MapToPsdzBus(IBusObject bus)
         {
-#if OLD_PSDZ_HOST
+#if OLD_PSDZ_BUS
             if (bus == null)
             {
                 return PsdzBus.Unknown;

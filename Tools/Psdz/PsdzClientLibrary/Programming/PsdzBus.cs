@@ -3,8 +3,8 @@ using System;
 
 namespace BMW.Rheingold.Psdz.Model.Ecu
 {
-#if OLD_PSDZ_HOST
-#warning OLD_PSDZ_HOST activated. Do not use for release builds.
+#if OLD_PSDZ_BUS
+#warning OLD_PSDZ_BUS activated. Do not use for release builds.
     public enum PsdzBus
     {
         Unknown = -1,
