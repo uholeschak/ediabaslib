@@ -8648,7 +8648,18 @@ namespace BmwDeepObd
                 string selectedLocale = GetLocaleSetting(context);
                 if (!string.IsNullOrEmpty(selectedLocale))
                 {
-                    locale = new Java.Util.Locale(selectedLocale);
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
+                    {
+#pragma warning disable CA1416
+                        locale = Java.Util.Locale.Of(selectedLocale);
+#pragma warning restore CA1416
+                    }
+                    else
+                    {
+#pragma warning disable CA1422
+                        locale = new Java.Util.Locale(selectedLocale);
+#pragma warning restore CA1422
+                    }
                 }
 
                 string language = locale?.Language;
@@ -13247,7 +13258,20 @@ using System.Threading;"
                     return context;
                 }
 
-                Java.Util.Locale locale = new Java.Util.Locale(selectedLocale);
+                Java.Util.Locale locale;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
+                {
+#pragma warning disable CA1416
+                    locale = Java.Util.Locale.Of(selectedLocale);
+#pragma warning restore CA1416
+                }
+                else
+                {
+#pragma warning disable CA1422
+                    locale = new Java.Util.Locale(selectedLocale);
+#pragma warning restore CA1422
+                }
+
                 Resources resources = context.Resources;
                 Configuration configuration = resources?.Configuration;
                 if (configuration != null)
