@@ -8646,6 +8646,19 @@ namespace BmwDeepObd
             return GetCurrentLanguageStatic(iso3, _context);
         }
 
+        public static Java.Util.Locale GetJavaLocale(string locale)
+        {
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
+            {
+#pragma warning disable CA1416
+                return Java.Util.Locale.Of(locale);
+#pragma warning restore CA1416
+            }
+#pragma warning disable CA1422
+            return new Java.Util.Locale(locale);
+#pragma warning restore CA1422
+        }
+
         public static string GetCurrentLanguageStatic(bool iso3 = false, Context context = null)
         {
             try
@@ -8654,18 +8667,7 @@ namespace BmwDeepObd
                 string selectedLocale = GetLocaleSetting(context);
                 if (!string.IsNullOrEmpty(selectedLocale))
                 {
-                    if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
-                    {
-#pragma warning disable CA1416
-                        locale = Java.Util.Locale.Of(selectedLocale);
-#pragma warning restore CA1416
-                    }
-                    else
-                    {
-#pragma warning disable CA1422
-                        locale = new Java.Util.Locale(selectedLocale);
-#pragma warning restore CA1422
-                    }
+                    locale = GetJavaLocale(selectedLocale);
                 }
 
                 string language = locale?.Language;
@@ -13264,20 +13266,7 @@ using System.Threading;"
                     return context;
                 }
 
-                Java.Util.Locale locale;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
-                {
-#pragma warning disable CA1416
-                    locale = Java.Util.Locale.Of(selectedLocale);
-#pragma warning restore CA1416
-                }
-                else
-                {
-#pragma warning disable CA1422
-                    locale = new Java.Util.Locale(selectedLocale);
-#pragma warning restore CA1422
-                }
-
+                Java.Util.Locale locale = GetJavaLocale(selectedLocale);
                 Resources resources = context.Resources;
                 Configuration configuration = resources?.Configuration;
                 if (configuration != null)
