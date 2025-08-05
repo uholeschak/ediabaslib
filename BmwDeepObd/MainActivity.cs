@@ -3182,7 +3182,18 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string[] requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsFineLocation : ActivityCommon.PermissionsCombinedLocation;
+                string[] requestPermissions;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
+                {
+#pragma warning disable CA1416
+                    requestPermissions = ActivityCommon.PermissionsNearbyWifi;
+#pragma warning restore CA1416
+                }
+                else
+                {
+                    requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsFineLocation : ActivityCommon.PermissionsCombinedLocation;
+                }
+
                 if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
                 {
                     LocationPermissionsGranted();

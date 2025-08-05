@@ -883,6 +883,12 @@ namespace BmwDeepObd
             Android.Manifest.Permission.BluetoothConnect,
         };
 
+        [SupportedOSPlatform("android36.0")]
+        public static readonly string[] PermissionsNearbyWifi =
+        {
+            Android.Manifest.Permission.NearbyWifiDevices,
+        };
+
         public static readonly string[] PermissionsFineLocation =
         {
             Android.Manifest.Permission.AccessFineLocation,
