@@ -495,6 +495,7 @@ namespace PsdzClient.Core.Container
             string result = null;
             try
             {
+                // [UH] adapted for EdiabasNet
                 if (api.apiGetConfig("TracePath", out string value))
                 {
                     result = value;
