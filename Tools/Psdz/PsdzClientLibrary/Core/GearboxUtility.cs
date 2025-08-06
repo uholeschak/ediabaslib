@@ -8,6 +8,7 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
+    // ToDo: Check on update
     public static class GearboxUtility
     {
         private static DateTime legacyDetectionConditionDate = new DateTime(2020, 7, 1);
@@ -51,7 +52,6 @@ namespace PsdzClient.Core
             }
         }
 
-        // ToDo: Check on update
         public static void PerformGearboxAssignments(Vehicle vehicle)
         {
             if (!useLegacyGearboxTypeDetection(vehicle))
@@ -97,7 +97,6 @@ namespace PsdzClient.Core
             }
         }
 
-        // ToDo: Check on update
         public static bool HasVehicleGearboxECU(Vehicle vehicle)
         {
             if ("W10".Equals(vehicle.Motor, StringComparison.OrdinalIgnoreCase))
