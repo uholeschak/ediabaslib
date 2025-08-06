@@ -1200,6 +1200,7 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, 0);
         }
 
+        // [UH] fastaprotcoller removed
         public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, string callerMember = "")
         {
             if (retries > 5)
@@ -1241,6 +1242,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        // [UH] fastaprotcoller removed
         public ECUJob apiJob(string ecu, string job, string param, string resultFilter, string callerMember = "")
         {
             try
@@ -1282,9 +1284,10 @@ namespace PsdzClient.Core.Container
             return eCUJob2;
         }
 
+        // [UH] fastaprotcoller removed
         public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, string callerMember = "")
         {
-            //TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
+            TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
             try
             {
                 if (string.IsNullOrEmpty(ecu))
@@ -1532,7 +1535,7 @@ namespace PsdzClient.Core.Container
             }
             finally
             {
-                //TimeMetricsUtility.Instance.ApiJobEnd(ecu, jobName, param, -1);
+                TimeMetricsUtility.Instance.ApiJobEnd(ecu, jobName, param, -1);
             }
         }
 
