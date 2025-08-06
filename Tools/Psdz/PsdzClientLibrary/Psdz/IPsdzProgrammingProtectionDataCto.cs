@@ -9,5 +9,7 @@ namespace BMW.Rheingold.Psdz
         IList<IPsdzEcuIdentifier> ProgrammingProtectionEcus { get; }
 
         IList<IPsdzSgbmId> SWEList { get; }
+
+        byte[] SWEData { get; }
     }
 }

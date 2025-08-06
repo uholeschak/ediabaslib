@@ -16,5 +16,8 @@ namespace BMW.Rheingold.Psdz
 
         [DataMember]
         public IList<IPsdzSgbmId> SWEList { get; set; }
+
+        [DataMember]
+        public byte[] SWEData { get; set; }
     }
 }
