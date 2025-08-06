@@ -28,6 +28,7 @@ namespace PsdzClient.Core.Container
         CacheFirst
     }
 
+    // ToDo: Check on update
     public class ECUKom : IEcuKom, IEcuKomApi
     {
         private const int STANDARD_EDIABAS_LOGLEVEL = 0;
@@ -186,7 +187,17 @@ namespace PsdzClient.Core.Container
 
         public string VciIpAddress => VCI?.IPAddress;
 
-        public VCIDeviceType VCIDeviceType => VCI.VCIType;
+        public VCIDeviceType VCIDeviceType
+        {
+            get
+            {
+                if (VCI == null)
+                {
+                    return VCIDeviceType.UNKNOWN;
+                }
+                return VCI.VCIType;
+            }
+        }
 
         public IEcuJob DefaultApiJob(string ecu, string job, string param, string resultFilter)
         {
