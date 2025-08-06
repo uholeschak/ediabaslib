@@ -514,19 +514,18 @@ namespace PsdzClient.Core.Container
             BoolResultObject boolResultObject2 = new BoolResultObject();
             if (device == null)
             {
-                Log.Warning("ECUKom.InitVCI()", "failed because device was null");
-                boolResultObject.Result = false;
-                boolResultObject.ErrorMessage = "failed because device was nul";
-                boolResultObject.Time = DateTime.Now;
+                Log.Warning(Log.CurrentMethod(), "failed because device was null");
+                boolResultObject.SetValues(result: false, "DeviceNull", "Device was null");
                 return boolResultObject;
             }
             bool isDoIP2 = device.IsDoIP;
+            string pathString = ConfigSettings.getPathString("BMW.Rheingold.Logging.Directory.Current", "..\\..\\..\\logs");
             try
             {
-                string pathString = ConfigSettings.getPathString("BMW.Rheingold.Logging.Directory.Current", "..\\..\\..\\logs");
                 CreateEdiabasPublicKeyIfNotExist(device);
                 if (isDoIP2 || isDoIP)
                 {
+                    IpbWithoutCertificates = false;
                     boolResultObject2 = HandleS29Authentication(device);
                     if (!boolResultObject2.Result)
                     {
@@ -588,9 +587,8 @@ namespace PsdzClient.Core.Container
             }
             catch (Exception ex)
             {
-                Log.WarningException("ECUKom.InitVCI()", ex);
-                boolResultObject.ErrorMessage = ex.Message;
-                boolResultObject.Result = true;
+                Log.WarningException(Log.CurrentMethod(), ex);
+                boolResultObject.SetValues(result: true, "Exception", ex.Message);
                 boolResultObject.ErrorCodeInt = 5;
                 return boolResultObject;
             }
