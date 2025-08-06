@@ -388,6 +388,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        // [UH] ediabas added
         public static ECUKom DeSerialize(string filename, EdiabasNet ediabas = null)
         {
             Log.Info("ECUKom.DeSerialize()", "called");
@@ -401,7 +402,7 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUKom.DeSerialize()", exception);
-                eCUKom = new ECUKom("Rheingold");
+                eCUKom = new ECUKom("Rheingold", ediabas);  // [UH] ediabas added
             }
             VCIDevice vCIDevice = new VCIDevice(VCIDeviceType.SIM, "SIM", filename);
             vCIDevice.Serial = filename;
