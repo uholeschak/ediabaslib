@@ -1555,7 +1555,7 @@ namespace PsdzClient.Core.Container
         {
             if (!(callerMember == "run") && !UseConfigFileTraces())
             {
-                if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Logging.Level.Trace.Enabled", defaultValue: false))
+                if (ConfigSettings.GetFeatureEnabledStatus("LogTracingMaximum").IsActive || ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Logging.Level.Trace.Enabled", defaultValue: false))
                 {
                     int configint = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Level.Trace.Ediabas", 6);
                     int configint2 = ConfigSettings.getConfigint("BMW.Rheingold.Logging.Trace.Ediabas.Size", 32767);
@@ -1630,7 +1630,7 @@ namespace PsdzClient.Core.Container
 
         public ECUJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter, string callerMember)
         {
-            //TimeMetricsUtility.Instance.ApiJobStart(ecu, job, string.Empty, paramlen);
+            TimeMetricsUtility.Instance.ApiJobStart(ecu, job, string.Empty, paramlen);
             try
             {
                 if (string.IsNullOrEmpty(ecu))
@@ -1848,7 +1848,7 @@ namespace PsdzClient.Core.Container
             }
             finally
             {
-                //TimeMetricsUtility.Instance.ApiJobEnd(ecu, job, string.Empty, paramlen);
+                TimeMetricsUtility.Instance.ApiJobEnd(ecu, job, string.Empty, paramlen);
             }
         }
 
