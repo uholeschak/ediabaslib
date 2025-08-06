@@ -755,8 +755,10 @@ namespace PsdzClient.Core.Container
                 {
                     SleepUtility.ThreadSleep(200, "ECUKom.CreateEdiabasPubglickeyIfNotExist - F01, IDENT");
                 }
-                api.apiSetConfig("EDIABASUnload", "1");
-                api.apiEnd();
+                if (api.apiErrorCode() != 162 || !CheckIfGatewayChangeForNcarIsRequired(device))
+                {
+                    End();
+                }
             }
         }
 
