@@ -1001,18 +1001,18 @@ namespace PsdzClient.Core.Container
                     }
                     if (string.IsNullOrEmpty(configString) || string.IsNullOrEmpty(configString2))
                     {
-                        //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_001", TYPES.Sec4Diag);
+                        ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_001", TYPES.Sec4Diag);
                         Log.Info(method, "Code: SEC4DIAG_001");
                         WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2, testRun: true);
                         if (webCallResponse2.IsSuccessful)
                         {
-                            //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
+                            ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
                             Log.Info(method, "Code: SEC4DIAG_003");
                             boolResultObject.Result = webCallResponse2.IsSuccessful;
                         }
                         else
                         {
-                            //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_001", TYPES.Sec4Diag);
+                            ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_001", TYPES.Sec4Diag);
                             Log.Error(method, "ErrorCode: SEC4DIAG_Error_001");
                             boolResultObject.Result = webCallResponse2.IsSuccessful;
                             boolResultObject.StatusCode = (int)(webCallResponse2.HttpStatus.HasValue ? webCallResponse2.HttpStatus.Value : ((HttpStatusCode)0));
@@ -1021,7 +1021,7 @@ namespace PsdzClient.Core.Container
                         }
                         return boolResultObject;
                     }
-                    //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
+                    ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
                     Log.Info(method, "Code: SEC4DIAG_002");
                     X509Certificate2Collection subCaCertificate = new X509Certificate2Collection();
                     X509Certificate2Collection caCertificate = new X509Certificate2Collection();
@@ -1044,18 +1044,18 @@ namespace PsdzClient.Core.Container
                         case Sec4DiagCertificateState.Expired:
                         case Sec4DiagCertificateState.NotFound:
                             {
-                                //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_002", TYPES.Sec4Diag);
+                                ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_002", TYPES.Sec4Diag);
                                 Log.Error(method, "ErrorCode: SEC4DIAG_Error_002");
                                 WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2, testRun: true);
                                 if (webCallResponse3.IsSuccessful)
                                 {
-                                    //ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
+                                    ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
                                     Log.Info(method, "Code: SEC4DIAG_003");
                                     boolResultObject.Result = webCallResponse3.IsSuccessful;
                                 }
                                 else
                                 {
-                                    //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_001", TYPES.Sec4Diag);
+                                    ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_001", TYPES.Sec4Diag);
                                     Log.Info(method, "ErrorCode: SEC4DIAG_Error_001");
                                     boolResultObject.Result = webCallResponse3.IsSuccessful;
                                     boolResultObject.StatusCode = (int)webCallResponse3.HttpStatus.Value;
@@ -1065,7 +1065,7 @@ namespace PsdzClient.Core.Container
                                 return boolResultObject;
                             }
                         default:
-                            //ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_003", TYPES.Sec4Diag);
+                            ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_003", TYPES.Sec4Diag);
                             Log.Error(method, "ErrorCode: SEC4DIAG_Error_003");
                             boolResultObject.Result = false;
                             return boolResultObject;
@@ -1086,7 +1086,6 @@ namespace PsdzClient.Core.Container
                 return boolResultObject;
             }
         }
-
 
         private TimeSpan GetSubCAZertifikateRemainingTime()
         {
