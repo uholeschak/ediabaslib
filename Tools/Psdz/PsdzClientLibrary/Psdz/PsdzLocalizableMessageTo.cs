@@ -10,7 +10,7 @@ using BMW.Rheingold.Psdz.Model.Sfa.LocalizableMessageTo;
 namespace BMW.Rheingold.Psdz.Model.Sfa
 {
     [DataContract]
-    public class PsdzLocalizableMessageTo : ILocalizableMessage, ILocalizableMessageTo
+    public class PsdzLocalizableMessageTo : ILocalizableMessageTo, ILocalizableMessage
     {
         [DataMember]
         public int MessageId { get; set; }
