@@ -2102,7 +2102,7 @@ namespace BmwDeepObd
                 {
                     if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
                     {
-                        if (RequestLocationPermissions())
+                        if (RequestWifiPermissions())
                         {
                             return;
                         }
@@ -3168,7 +3168,7 @@ namespace BmwDeepObd
             StoragePermissionGranted();
         }
 
-        public bool RequestLocationPermissions()
+        public bool RequestWifiPermissions()
         {
             try
             {
