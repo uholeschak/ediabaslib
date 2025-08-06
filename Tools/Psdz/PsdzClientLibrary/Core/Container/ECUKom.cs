@@ -1646,10 +1646,6 @@ namespace PsdzClient.Core.Container
                     obj.JobResult = new List<ECUResult>();
                     return obj;
                 }
-                if (!VehicleCommunication.validLicense)
-                {
-                    throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-                }
                 if (param == null)
                 {
                     param = new byte[0];
@@ -2107,10 +2103,6 @@ namespace PsdzClient.Core.Container
             ECUJob eCUJob = null;
             bool flag = false;
             DateTime dateTime = DateTime.Now.AddMilliseconds(timeout);
-            if (!VehicleCommunication.validLicense)
-            {
-                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
-            }
             try
             {
                 while (!flag && dateTime > DateTime.Now)
