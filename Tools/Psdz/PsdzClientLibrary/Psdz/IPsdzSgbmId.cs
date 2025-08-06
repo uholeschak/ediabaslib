@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model
 {
+    // ToDo: Check on update
     public interface IPsdzSgbmId : IComparable<IPsdzSgbmId>
     {
         string HexString { get; }
@@ -21,5 +22,7 @@ namespace BMW.Rheingold.Psdz.Model
         string ProcessClass { get; }
 
         int SubVersion { get; }
+
+        string SGBMIDVersion { get; }
     }
 }

@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz.Client
 	public class PsdzServiceClient : IDisposable, IPsdzService
 	{
         // ToDo: Check all clients on update
+        // Search for: [OperationContract] [DataContract]
         private readonly ConfigurationServiceClient configurationService;
 
         private readonly ConnectionFactoryServiceClient connectionFactoryService;
