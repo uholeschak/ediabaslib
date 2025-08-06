@@ -10,33 +10,6 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
     [DataContract]
     public class SignedNcd
     {
-        public byte[] NcdConvertedFromBase64
-        {
-            get
-            {
-                return Convert.FromBase64String(this.ncd);
-            }
-        }
-
-        internal new string ToString
-        {
-            get
-            {
-                return string.Concat(new string[]
-                {
-                    "BTLD-SGBM-NO :",
-                    this.btld,
-                    " - CAFD-SGBM-ID:",
-                    this.cafd,
-                    " - Ncd: ",
-                    string.Join("/", new string[]
-                    {
-                        this.ncd
-                    })
-                });
-            }
-        }
-
         [DataMember(Name = "ncd")]
         public readonly string ncd;
 
@@ -45,5 +18,12 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 
         [DataMember(Name = "CAFD-SGBM-ID")]
         public readonly string cafd;
+
+        public byte[] NcdConvertedFromBase64 => Convert.FromBase64String(ncd);
+
+        public override string ToString()
+        {
+            return "BTLD-SGBM-NO :" + btld + " - CAFD-SGBM-ID:" + cafd + " - Ncd: " + ncd;
+        }
     }
 }

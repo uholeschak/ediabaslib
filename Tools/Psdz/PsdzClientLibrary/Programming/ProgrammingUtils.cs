@@ -270,44 +270,30 @@ namespace BMW.Rheingold.Programming.Common
 
         public static IEnumerable<IPsdzSgbmId> RemoveCafdsCalculatedOnSCB(IEnumerable<string> cafdList, IEnumerable<IPsdzSgbmId> sweList)
         {
-            IEnumerable<string> cafdList2 = cafdList;
-            if (cafdList2 != null && !cafdList2.Any<string>())
+            IEnumerable<string> enumerable = cafdList;
+            if (enumerable != null && !enumerable.Any())
             {
                 return sweList;
             }
-
-            IEnumerable<IPsdzSgbmId> enumerable = from x in sweList
-                where !"CAFD".Equals(x.ProcessClass) && !cafdList.Contains(x.Id)
-                select x;
-            return enumerable;
+            IEnumerable<IPsdzSgbmId> enumerable2 = sweList.Where((IPsdzSgbmId x) => !"CAFD".Equals(x.ProcessClass) && !cafdList.Contains(x.Id));
+            //Logging(enumerable2, sweList);
+            return enumerable2;
         }
 
         public static bool CheckIfThereAreAnyNcdInTheRequest(RequestJson jsonContentObj)
         {
-            bool? flag;
-            if (jsonContentObj == null)
+            jsonContentObj?.calcEcuData?.ecuData?.ForEach(delegate (EcuData f)
             {
-                flag = null;
-            }
-            else
-            {
-                EcuData[] ecuData2 = jsonContentObj.ecuData;
-                flag = ((ecuData2 != null) ? new bool?(ecuData2.Any<EcuData>()) : null);
-            }
-
-            if (flag.HasValue)
-            {
-                return flag.Value;
-            }
-
-            return false;
+                Log.Info(Log.CurrentMethod(), "Request for NCD Calculation created for Bltld: " + f.btld + " Cafd: " + string.Join("/", f.cafd.Select((string c) => c).ToArray()));
+            });
+            return jsonContentObj?.calcEcuData?.ecuData?.Any() == true;
         }
 
         public static IEnumerable<string> CafdCalculatedInSCB(RequestJson jsonContentObj)
         {
-            if (jsonContentObj != null && jsonContentObj.ecuData != null)
+            if (jsonContentObj != null && jsonContentObj.calcEcuData?.ecuData != null)
             {
-                return jsonContentObj.ecuData.SelectMany((EcuData a) => a.CafdId);
+                return jsonContentObj.calcEcuData?.ecuData.SelectMany((EcuData a) => a.CafdId);
             }
 
             return new string[0];
