@@ -226,6 +226,7 @@ namespace PsdzClient.Core.Container
             ServiceLocator.Current.TryGetService<IInteractionService>(out interactionService);
             ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out backendCallsWatchDog);
             ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
+            // [UH] EDIABAS_MONITOR removed
         }
 
         // [UH] ediabas added
@@ -238,7 +239,10 @@ namespace PsdzClient.Core.Container
         {
             try
             {
-                api.apiSetConfig("EDIABASUnload", "1");
+                if (VCIDeviceType != VCIDeviceType.PTT)
+                {
+                    api.apiSetConfig("EDIABASUnload", "1");
+                }
                 api.apiEnd();
             }
             catch (Exception exception)
