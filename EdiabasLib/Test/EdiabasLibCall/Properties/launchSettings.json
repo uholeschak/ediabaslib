@@ -2,7 +2,7 @@
   "profiles": {
     "AUTH_MODE": {
       "commandName": "Project",
-      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ObdComPort=BLUETOOTH:009876543210#1234;EnetRemoteHost=127.0.0.1;SslBC=1;EnetNetworkProtocol=SSL;SslSecurityPath=C:\\EDIABAS\\Security\\SSL_Truststore;selectCertificate=S29-WBAJM71000B055940;EnetVehicleProtocol=DoIP;EnetDoipGatewayAddress=FFFF;IfhTrace=2;ApiTrace=1\" -s \"C:\\EDIABAS\\Ecu\\IPB_APP2\" -j \"_VERSIONINFO\" -j \"STATUS_LESEN#ARG;SEC4DIAG_READ_AUTH_MODE\" -j \"STATUS_VCM_GET_FA\" -j \"STATUS_LESEN#ARG;STATUS_VCM_GET_ECU_LIST_ALL\" -j \"STATUS_LESEN#ARG;VCM_DID_ISTUFE\"",
+      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ObdComPort=BLUETOOTH:009876543210#1234;EnetRemoteHost=127.0.0.1;SslBC=1;EnetNetworkProtocol=SSL;SslSecurityPath=C:\\EDIABAS\\Security\\SSL_Truststore;selectCertificate=S29-WBAJM71000B055940;EnetVehicleProtocol=DoIP;EnetDoipGatewayAddress=FFFF;IfhTrace=2;ApiTrace=1\" -s \"C:\\EDIABAS\\Ecu\\IPB_APP2\" -j \"_VERSIONINFO\" -j \"STATUS_LESEN#ARG;SEC4DIAG_READ_AUTH_MODE\" -j \"STATUS_VCM_GET_FA\" -j \"STATUS_LESEN#ARG;STATUS_VCM_GET_ECU_LIST_ALL\" -j \"STATUS_LESEN#ARG;VCM_DID_ISTUFE\" -j \"SVK_LESEN\"",
       "nativeDebugging": true
     },
     "TLS": {
