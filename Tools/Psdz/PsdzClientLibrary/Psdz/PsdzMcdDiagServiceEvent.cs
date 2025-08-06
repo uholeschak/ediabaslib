@@ -9,7 +9,7 @@ using BMW.Rheingold.Psdz.Model.Localization;
 namespace BMW.Rheingold.Psdz.Model.Events
 {
     [DataContract]
-    public class PsdzMcdDiagServiceEvent : PsdzEvent, ILocalizableMessage, IPsdzMcdDiagServiceEvent, IPsdzEvent
+    public class PsdzMcdDiagServiceEvent : PsdzEvent, IPsdzMcdDiagServiceEvent, IPsdzEvent, ILocalizableMessage
     {
         [DataMember]
         public int ErrorId { get; set; }
