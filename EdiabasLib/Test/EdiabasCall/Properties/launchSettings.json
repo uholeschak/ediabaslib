@@ -26,7 +26,7 @@
     },
     "VM-AuthMode": {
       "commandName": "Project",
-      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ApiTrace=1;IfhTrace=3;IfhnTrace=3;SystemTraceIfh=7;RemoteHost=192.168.150.10;SSLPort=3496;Authentication=S29;NetworkProtocol=SSL;selectCertificate=S29-WBAJM71000B055940\" -p \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ediabas\\BIN\" -s \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ecu\\IPB_APP2\" -j \"STATUS_LESEN#ARG;SEC4DIAG_READ_AUTH_MODE\" -j \"STATUS_VCM_GET_FA\" -j \"STATUS_LESEN#ARG;STATUS_VCM_GET_ECU_LIST_ALL\" -j \"STATUS_LESEN#ARG;VCM_DID_ISTUFE\"",
+      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ApiTrace=1;IfhTrace=3;IfhnTrace=3;SystemTraceIfh=7;RemoteHost=192.168.150.10;SSLPort=3496;Authentication=S29;NetworkProtocol=SSL;selectCertificate=S29-WBAJM71000B055940\" -p \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ediabas\\BIN\" -s \"C:\\Program Files\\BMW\\ISPI\\TRIC\\ISTA\\Ecu\\IPB_APP2\" -j \"STATUS_LESEN#ARG;SEC4DIAG_READ_AUTH_MODE\" -j \"STATUS_VCM_GET_FA\" -j \"STATUS_LESEN#ARG;STATUS_VCM_GET_ECU_LIST_ALL\" -j \"STATUS_LESEN#ARG;VCM_DID_ISTUFE\" -j \"SVK_LESEN\"",
       "remoteDebugEnabled": true,
       "remoteDebugMachine": "VM-WIN11",
       "authenticationMode": "Windows"
