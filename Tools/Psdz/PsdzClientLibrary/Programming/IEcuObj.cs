@@ -53,6 +53,7 @@ namespace PsdzClient.Programming
         Zim12CanFd
     }
 
+    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuObj
     {
