@@ -82,7 +82,7 @@ namespace PsdzClient.Core
                     PublicKey = ConvertToPEM(EdiabasPublicKey)
                 };
             }
-            empty = ((!ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Sec4Diag.Only.Use.TIS", defaultValue: false)) ? CertReqProfile.EnumType.crp_subCA_4ISTA.ToString() : CertReqProfile.EnumType.crp_subCA_4ISTA_TISonly.ToString());
+            empty = CertReqProfile.EnumType.crp_subCA_4ISTA.ToString();
             Sec4DiagRequestData sec4DiagRequestData = new Sec4DiagRequestData();
             sec4DiagRequestData.CertReqProfile = empty;
             sec4DiagRequestData.Vin17 = vin17;
@@ -326,7 +326,11 @@ namespace PsdzClient.Core
         {
             Org.BouncyCastle.X509.X509Certificate x509Certificate = CreateCertificateFromBase64(subCa);
             Org.BouncyCastle.X509.X509Certificate x509Certificate2 = CreateCertificateFromBase64(ca);
-            X509Certificate2 s29Cert = GenerateCertificate(x509Certificate, EdiabasPublicKey, device.VIN);
+            X509Certificate2 s29Cert = new X509Certificate2();
+            if (!testRun)
+            {
+                s29Cert = GenerateCertificate(x509Certificate, EdiabasPublicKey, device.VIN);
+            }
             Sec4DiagCertificates = new Sec4DiagCertificates
             {
                 SubCaCert = new X509Certificate2(x509Certificate.GetEncoded()),
