@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
@@ -20,6 +10,17 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
+using static ICSharpCode.SharpZipLib.Zip.ExtendedUnixData;
 
 namespace BMW.Rheingold.Programming.Common
 {
@@ -270,30 +271,53 @@ namespace BMW.Rheingold.Programming.Common
 
         public static IEnumerable<IPsdzSgbmId> RemoveCafdsCalculatedOnSCB(IEnumerable<string> cafdList, IEnumerable<IPsdzSgbmId> sweList)
         {
-            IEnumerable<string> enumerable = cafdList;
-            if (enumerable != null && !enumerable.Any())
+            List<string> list = cafdList.ToList();
+            if (!list.Any())
             {
                 return sweList;
             }
-            IEnumerable<IPsdzSgbmId> enumerable2 = sweList.Where((IPsdzSgbmId x) => !"CAFD".Equals(x.ProcessClass) && !cafdList.Contains(x.Id));
-            //Logging(enumerable2, sweList);
+            IEnumerable<IPsdzSgbmId> enumerable2 = sweList.Where(x => !"CAFD".Equals(x.ProcessClass) && !list.Contains(x.Id));
             return enumerable2;
         }
 
         public static bool CheckIfThereAreAnyNcdInTheRequest(RequestJson jsonContentObj)
         {
-            jsonContentObj?.calcEcuData?.ecuData?.ForEach(delegate (EcuData f)
+            EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
+#if ENABLE_OLD_REQUEST_JSON
+            if (ecuData == null || ecuData.Length == 0)
             {
-                Log.Info(Log.CurrentMethod(), "Request for NCD Calculation created for Bltld: " + f.btld + " Cafd: " + string.Join("/", f.cafd.Select((string c) => c).ToArray()));
-            });
-            return jsonContentObj?.calcEcuData?.ecuData?.Any() == true;
+                // For backward compatibility with old request JSON format
+                ecuData = jsonContentObj?.ecuData;
+            }
+#endif
+            if (ecuData != null)
+            {
+                foreach (EcuData data in ecuData)
+                {
+                    Log.Info(Log.CurrentMethod(), "Request for NCD Calculation created for Bltld: " + data.btld + " Cafd: " + string.Join("/", data.cafd.Select((string c) => c).ToArray()));
+                }
+
+                if (ecuData.Any())
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public static IEnumerable<string> CafdCalculatedInSCB(RequestJson jsonContentObj)
         {
-            if (jsonContentObj != null && jsonContentObj.calcEcuData?.ecuData != null)
+            EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
+#if ENABLE_OLD_REQUEST_JSON
+            if (ecuData == null || ecuData.Length == 0)
             {
-                return jsonContentObj.calcEcuData?.ecuData.SelectMany((EcuData a) => a.CafdId);
+                // For backward compatibility with old request JSON format
+                ecuData = jsonContentObj?.ecuData;
+            }
+#endif
+            if (ecuData != null)
+            {
+                return ecuData.SelectMany(a => a.CafdId);
             }
 
             return new string[0];

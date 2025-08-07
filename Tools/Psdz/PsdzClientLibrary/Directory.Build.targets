@@ -1,5 +1,5 @@
 ﻿<Project>
    <PropertyGroup>
-     <DefineConstants>$(DefineConstants);_OLD_PSDZ_BUS;_OLD_PSDZ_FA</DefineConstants>
+     <DefineConstants>$(DefineConstants);_OLD_PSDZ_BUS;_OLD_PSDZ_FA;ENABLE_OLD_REQUEST_JSON</DefineConstants>
    </PropertyGroup>
 </Project>

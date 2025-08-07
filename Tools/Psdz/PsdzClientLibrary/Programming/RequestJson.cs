@@ -29,6 +29,10 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
         [DataMember(Name = "currEcuData")]
         public readonly EcuDataGroup currEcuData;
 
+#if ENABLE_OLD_REQUEST_JSON
+        [DataMember(Name = "ecuData")]
+        public readonly EcuData[] ecuData;
+#endif
         internal string FaAsXml => Encoding.Default.GetString(Convert.FromBase64String(fa));
 
         public RequestJson(string fa)
