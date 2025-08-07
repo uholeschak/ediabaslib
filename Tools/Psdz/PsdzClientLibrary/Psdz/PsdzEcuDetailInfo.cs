@@ -15,13 +15,16 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
 
         public override bool Equals(object obj)
         {
-            PsdzEcuDetailInfo psdzEcuDetailInfo = obj as PsdzEcuDetailInfo;
-            return psdzEcuDetailInfo != null && this.ByteValue == psdzEcuDetailInfo.ByteValue;
+            if (obj is PsdzEcuDetailInfo psdzEcuDetailInfo)
+            {
+                return ByteValue == psdzEcuDetailInfo.ByteValue;
+            }
+            return false;
         }
 
         public override int GetHashCode()
         {
-            return this.ByteValue.GetHashCode();
+            return ByteValue.GetHashCode();
         }
     }
 }
