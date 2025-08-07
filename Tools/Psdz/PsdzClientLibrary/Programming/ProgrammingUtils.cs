@@ -284,10 +284,10 @@ namespace BMW.Rheingold.Programming.Common
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
 #if ENABLE_OLD_REQUEST_JSON
-            if (ecuData == null || ecuData.Length == 0)
+            if (ecuData == null && jsonContentObj?.ecuData != null)
             {
                 // For backward compatibility with old request JSON format
-                ecuData = jsonContentObj?.ecuData;
+                ecuData = jsonContentObj.ecuData;
             }
 #endif
             if (ecuData != null)
@@ -309,10 +309,10 @@ namespace BMW.Rheingold.Programming.Common
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
 #if ENABLE_OLD_REQUEST_JSON
-            if (ecuData == null || ecuData.Length == 0)
+            if (ecuData == null && jsonContentObj?.ecuData != null)
             {
                 // For backward compatibility with old request JSON format
-                ecuData = jsonContentObj?.ecuData;
+                ecuData = jsonContentObj.ecuData;
             }
 #endif
             if (ecuData != null)
