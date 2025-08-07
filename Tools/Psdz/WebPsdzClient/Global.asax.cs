@@ -133,7 +133,7 @@ namespace WebPsdzClient
                 if (!string.IsNullOrEmpty(hostAddress) &&
                     (string.Compare(hostAddress, "127.0.0.1", StringComparison.OrdinalIgnoreCase) == 0 ||
                      string.Compare(hostAddress, "::1", StringComparison.OrdinalIgnoreCase) == 0 ||
-                     hostAddress.StartsWith("192.168.10.", StringComparison.OrdinalIgnoreCase))
+                     hostAddress.StartsWith("192.168.150.", StringComparison.OrdinalIgnoreCase))
                     )
                 {
                     valid = true;
