@@ -9,9 +9,9 @@ using BMW.Rheingold.Psdz.Model.Localization;
 
 namespace BMW.Rheingold.Psdz.Model.Events
 {
-    [KnownType(typeof(PsdzEcuIdentifier))]
     [DataContract]
-    public class PsdzEvent : ILocalizableMessage, IPsdzEvent
+    [KnownType(typeof(PsdzEcuIdentifier))]
+    public class PsdzEvent : IPsdzEvent, ILocalizableMessage
     {
         [DataMember]
         public IPsdzEcuIdentifier EcuId { get; set; }

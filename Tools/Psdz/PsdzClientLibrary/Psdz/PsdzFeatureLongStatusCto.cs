@@ -8,8 +8,8 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Model.Sfa
 {
-    [KnownType(typeof(PsdzEcuIdentifier))]
     [DataContract]
+    [KnownType(typeof(PsdzEcuIdentifier))]
     [KnownType(typeof(PsdzFeatureConditionCto))]
     [KnownType(typeof(PsdzFeatureIdCto))]
     public class PsdzFeatureLongStatusCto : IPsdzFeatureLongStatusCto
