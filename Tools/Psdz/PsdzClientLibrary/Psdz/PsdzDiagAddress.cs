@@ -15,13 +15,16 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
 
         public override bool Equals(object obj)
         {
-            PsdzDiagAddress psdzDiagAddress = obj as PsdzDiagAddress;
-            return psdzDiagAddress != null && this.Offset == psdzDiagAddress.Offset;
+            if (obj is PsdzDiagAddress psdzDiagAddress)
+            {
+                return Offset == psdzDiagAddress.Offset;
+            }
+            return false;
         }
 
         public override int GetHashCode()
         {
-            return this.Offset.GetHashCode();
+            return Offset.GetHashCode();
         }
     }
 }
