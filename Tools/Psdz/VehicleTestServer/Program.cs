@@ -54,7 +54,7 @@ namespace VehicleTestServer
 
             if (string.IsNullOrEmpty(vehicleIp))
             {
-                vehicleIp = "127.0.0.1";
+                vehicleIp = EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll;
             }
             outWriter.WriteLine("Vehicle IP: {0}", vehicleIp);
 
