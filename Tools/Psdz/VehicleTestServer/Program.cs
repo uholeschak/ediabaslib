@@ -1,31 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
+﻿using CommandLine;
+using EdiabasLib;
+using System;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using EdiabasLib;
-using HttpMultipartParser;
-using ISimpleHttpListener.Rx.Enum;
-using ISimpleHttpListener.Rx.Model;
-using SimpleHttpListener.Rx.Extension;
-using SimpleHttpListener.Rx.Model;
-using SimpleHttpListener.Rx.Service;
 
 namespace VehicleTestServer
 {
     class Program
     {
+        public class Options
+        {
+            public Options()
+            {
+                VehicleIp = string.Empty;
+            }
+
+            [Option('v', "vehicle", Required = false, HelpText = "Vehicle IP, default is 127.0.0.1")]
+            public string VehicleIp { get; set; }
+        }
+
         static int Main(string[] args)
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             TextWriter outWriter = Console.Out;
-            EdiabasNet ediabas = EdiabasSetup();
+            string vehicleIp = null;
+            bool hasErrors = false;
+            Parser parser = new Parser(with =>
+            {
+                //ignore case for enum values
+                with.CaseInsensitiveEnumValues = true;
+                with.EnableDashDash = true;
+                with.HelpWriter = Console.Out;
+            });
+
+            parser.ParseArguments<Options>(args)
+                .WithParsed<Options>(o =>
+                {
+                    vehicleIp = o.VehicleIp;
+                })
+                .WithNotParsed(errs =>
+                {
+                    string errors = string.Join("\n", errs);
+                    outWriter.WriteLine("Option parsing errors:\n{0}", string.Join("\n", errors));
+
+                    hasErrors = true;
+                });
+
+            if (hasErrors)
+            {
+                return 1;
+            }
+
+            if (string.IsNullOrEmpty(vehicleIp))
+            {
+                vehicleIp = "127.0.0.1";
+            }
+            outWriter.WriteLine("Vehicle IP: {0}", vehicleIp);
+
+            EdiabasNet ediabas = EdiabasSetup(vehicleIp);
             EdWebServer edWebServer = new EdWebServer(ediabas, message =>
             {
                 outWriter?.WriteLine(message);
@@ -45,14 +78,14 @@ namespace VehicleTestServer
             return 0;
         }
 
-        private static EdiabasNet EdiabasSetup()
+        private static EdiabasNet EdiabasSetup(string vehicleIp)
         {
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             EdiabasNet ediabas = new EdiabasNet
             {
                 EdInterfaceClass = edInterfaceEnet,
             };
-            edInterfaceEnet.RemoteHost = "127.0.0.1";
+            edInterfaceEnet.RemoteHost = vehicleIp;
             edInterfaceEnet.VehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
             edInterfaceEnet.IcomAllocate = false;
 
