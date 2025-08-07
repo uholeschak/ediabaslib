@@ -1470,8 +1470,8 @@ namespace PsdzClient.Programming
                             return false;
                         }
 
-                        IEnumerable<string> cafdCalculatedInSCB = ProgrammingUtils.CafdCalculatedInSCB(requestJson);
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Cafd in SCB: {0}", cafdCalculatedInSCB.Count());
+                        List<string> cafdCalculatedInSCB = ProgrammingUtils.CafdCalculatedInSCB(requestJson).ToList();
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Cafd in SCB: {0}", cafdCalculatedInSCB.Count);
                         foreach (string cafd in cafdCalculatedInSCB)
                         {
                             log.InfoFormat(CultureInfo.InvariantCulture, " Cafd: {0}", cafd);
@@ -1479,7 +1479,7 @@ namespace PsdzClient.Programming
                         cts?.Token.ThrowIfCancellationRequested();
 
                         log.InfoFormat(CultureInfo.InvariantCulture, "Requesting SWE list");
-                        IEnumerable<IPsdzSgbmId> sweList = ProgrammingService.Psdz.LogicService.RequestSweList(PsdzContext.Tal, true);
+                        List<IPsdzSgbmId> sweList = ProgrammingService.Psdz.LogicService.RequestSweList(PsdzContext.Tal, true).ToList();
                         log.InfoFormat(CultureInfo.InvariantCulture, "Swe list: {0}", sweList.Count());
                         foreach (IPsdzSgbmId psdzSgbmId in sweList)
                         {
@@ -1487,8 +1487,8 @@ namespace PsdzClient.Programming
                         }
                         cts?.Token.ThrowIfCancellationRequested();
 
-                        IEnumerable<IPsdzSgbmId> sgbmIds = ProgrammingUtils.RemoveCafdsCalculatedOnSCB(cafdCalculatedInSCB, sweList);
-                        IEnumerable<IPsdzSgbmId> softwareEntries = ProgrammingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds);
+                        List<IPsdzSgbmId> sgbmIds = ProgrammingUtils.RemoveCafdsCalculatedOnSCB(cafdCalculatedInSCB, sweList).ToList();
+                        List<IPsdzSgbmId> softwareEntries = ProgrammingService.Psdz.MacrosService.CheckSoftwareEntries(sgbmIds).ToList();
                         int softwareEntryCount = softwareEntries.Count();
                         log.InfoFormat(CultureInfo.InvariantCulture, "Sw entries: {0}", softwareEntryCount);
                         foreach (IPsdzSgbmId psdzSgbmId in softwareEntries)
