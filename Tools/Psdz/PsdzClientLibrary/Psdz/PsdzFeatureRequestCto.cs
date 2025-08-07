@@ -8,11 +8,11 @@ using BMW.Rheingold.Psdz.Model.SecurityManagement;
 
 namespace BMW.Rheingold.Psdz.Model.Sfa
 {
-    [KnownType(typeof(PsdzValidityConditionCto))]
-    [KnownType(typeof(PsdzEcuUidCto))]
-    [KnownType(typeof(PsdzFeatureSpecificFieldCto))]
     [DataContract]
     [KnownType(typeof(PsdzFeatureIdCto))]
+    [KnownType(typeof(PsdzEcuUidCto))]
+    [KnownType(typeof(PsdzValidityConditionCto))]
+    [KnownType(typeof(PsdzFeatureSpecificFieldCto))]
     public class PsdzFeatureRequestCto : IPsdzFeatureRequestCto
     {
         [DataMember]

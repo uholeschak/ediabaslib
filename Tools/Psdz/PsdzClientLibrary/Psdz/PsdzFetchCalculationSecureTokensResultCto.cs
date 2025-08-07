@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Sfa
 {
+    [DataContract]
     [KnownType(typeof(PsdzDetailedStatusCto))]
     [KnownType(typeof(PsdzSecurityBackendRequestFailureCto))]
     [KnownType(typeof(PsdzSecureTokenEto))]
-    [DataContract]
+    [KnownType(typeof(PsdzSecureTokenForVehicleEto))]
     public class PsdzFetchCalculationSecureTokensResultCto : IPsdzFetchCalculationSecureTokensResultCto
     {
         [DataMember]
@@ -33,6 +34,9 @@ namespace BMW.Rheingold.Psdz.Model.Sfa
 
         [DataMember]
         public IList<IPsdzSecureTokenEto> SecureTokens { get; set; }
+
+        [DataMember]
+        public IPsdzSecureTokenForVehicleEto SecureTokenForVehicle { get; set; }
 
         [DataMember]
         public PsdzTokenOverallStatusEtoEnum TokenOverallStatusEto { get; set; }

@@ -40,7 +40,7 @@ namespace BMW.Rheingold.Psdz.Model.Sfa
         UNDEFINED
     }
 
-	public interface IPsdzFetchCalculationSecureTokensResultCto
+    public interface IPsdzFetchCalculationSecureTokensResultCto
     {
         IList<IPsdzDetailedStatusCto> DetailedStatus { get; }
 
@@ -55,6 +55,8 @@ namespace BMW.Rheingold.Psdz.Model.Sfa
         PsdzSecurityBackendRequestProgressStatusToEnum ProgressStatus { get; }
 
         IList<IPsdzSecureTokenEto> SecureTokens { get; set; }
+
+        IPsdzSecureTokenForVehicleEto SecureTokenForVehicle { get; }
 
         PsdzTokenOverallStatusEtoEnum TokenOverallStatusEto { get; }
 
