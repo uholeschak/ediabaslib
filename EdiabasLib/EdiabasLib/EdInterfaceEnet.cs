@@ -3944,25 +3944,7 @@ namespace EdiabasLib
                     }
                     else if (telLen > SharedDataActive.TcpDiagBuffer.Length)
                     {   // telegram too large -> remove all
-                        NetworkStream diagNetworkStream = SharedDataActive.TcpDiagStream as NetworkStream;
-                        SslStream diagSslStream = SharedDataActive.TcpDiagStream as SslStream;
-                        if (diagNetworkStream != null)
-                        {
-                            while (diagNetworkStream.DataAvailable)
-                            {
-                                diagNetworkStream.ReadByte();
-                            }
-                        }
-
-                        if (diagSslStream != null)
-                        {
-                            diagSslStream.ReadTimeout = 1;
-                            while (diagSslStream.ReadByte() >= 0)
-                            {
-                            }
-                            diagSslStream.ReadTimeout = SslAuthTimeout;
-                        }
-
+                        ClearNetworkStream(SharedDataActive.TcpDiagStream);
                         SharedDataActive.TcpDiagRecLen = 0;
                     }
                     else
@@ -4088,24 +4070,7 @@ namespace EdiabasLib
                     }
                     else if (telLen > SharedDataActive.TcpDiagBuffer.Length)
                     {   // telegram too large -> remove all
-                        NetworkStream diagNetworkStream = SharedDataActive.TcpDiagStream as NetworkStream;
-                        SslStream diagSslStream = SharedDataActive.TcpDiagStream as SslStream;
-                        if (diagNetworkStream != null)
-                        {
-                            while (diagNetworkStream.DataAvailable)
-                            {
-                                diagNetworkStream.ReadByte();
-                            }
-                        }
-
-                        if (diagSslStream != null)
-                        {
-                            diagSslStream.ReadTimeout = 1;
-                            while (diagSslStream.ReadByte() >= 0)
-                            {
-                            }
-                            diagSslStream.ReadTimeout = SslAuthTimeout;
-                        }
+                        ClearNetworkStream(SharedDataActive.TcpDiagStream);
                         SharedDataActive.TcpDiagRecLen = 0;
                     }
                     else
@@ -4897,6 +4862,34 @@ namespace EdiabasLib
             }
 
             return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        public static void ClearNetworkStream(Stream tcpClientStream)
+        {
+            if (tcpClientStream == null)
+            {
+                return;
+            }
+
+
+            NetworkStream diagNetworkStream = tcpClientStream as NetworkStream;
+            SslStream diagSslStream = tcpClientStream as SslStream;
+            if (diagNetworkStream != null)
+            {
+                while (diagNetworkStream.DataAvailable)
+                {
+                    diagNetworkStream.ReadByte();
+                }
+            }
+
+            if (diagSslStream != null)
+            {
+                diagSslStream.ReadTimeout = 1;
+                while (diagSslStream.ReadByte() >= 0)
+                {
+                }
+                diagSslStream.ReadTimeout = SslAuthTimeout;
+            }
         }
 
         public static void AppendS29DataBlock(ref List<byte> buffer, byte[] dataBlock)
