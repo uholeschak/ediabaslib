@@ -2210,10 +2210,8 @@ namespace CarSimulator
                 return;
             }
 
-            string streamName = tcpClientStream.GetType().Name;
             NetworkStream networkStream = tcpClientStream as NetworkStream;
             SslStream sslStream = tcpClientStream as SslStream;
-            Stream tlsStream = streamName == EdBcTlsUtilities.TlsStreamName ? tcpClientStream : null;
 
             if (networkStream != null)
             {
@@ -2232,13 +2230,6 @@ namespace CarSimulator
                 }
                 sslStream.ReadTimeout = SslAuthTimeout;
                 return;
-            }
-
-            if (tlsStream != null)
-            {
-                while (tlsStream.ReadByte() >= 0)
-                {
-                }
             }
         }
 
@@ -3367,7 +3358,8 @@ namespace CarSimulator
             {
                 if (bmwTcpClientData.TcpClientStream != null)
                 {
-                    if (bmwTcpClientData.BcTlsServerProtocol != null)
+                    SslStream sslStream = bmwTcpClientData.TcpClientStream as SslStream;
+                    if (bmwTcpClientData.BcTlsServerProtocol != null || sslStream != null)
                     {
                         TcpClient client = bmwTcpClientData.TcpClientConnection;
                         if (client != null && client.Available <= 0)
