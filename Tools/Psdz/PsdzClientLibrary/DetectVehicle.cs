@@ -2,6 +2,7 @@
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
+using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
@@ -11,8 +12,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using PsdzClient.Contracts;
 
 namespace PsdzClient
 {
@@ -834,9 +835,19 @@ namespace PsdzClient
             }
 
             Sec4DiagHandler sec4DiagHandler = new Sec4DiagHandler();
+            string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
+            string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
+            Sec4DiagCertificateState sec4DiagCertificateState = sec4DiagHandler.SearchForCertificatesInWindowsStore(configString, configString2, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate);
+            if (sec4DiagCertificateState != Sec4DiagCertificateState.Valid)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: Certificates state {0}", sec4DiagCertificateState);
+                return false;
+            }
+
             VCIDevice vciDevice = new VCIDevice(VCIDeviceType.ENET, "Detect", enetConnection.ToString());
             vciDevice.VIN = enetConnection.Vin;
-            BoolResultObject boolResultObject = sec4DiagHandler.CertificatesAreFoundAndValid(vciDevice, null, null);
+
+            BoolResultObject boolResultObject = sec4DiagHandler.CertificatesAreFoundAndValid(vciDevice, subCaCertificate, caCertificate);
             if (!boolResultObject.Result)
             {
                 log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate failed");
