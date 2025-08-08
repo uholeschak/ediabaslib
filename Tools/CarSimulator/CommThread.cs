@@ -133,6 +133,7 @@ namespace CarSimulator
                 DoIpSsl = doIpSsl;
                 TcpClientConnection = null;
                 TcpClientStream = null;
+                BcTlsServerProtocol = null;
                 LastTcpRecTick = DateTime.MinValue.Ticks;
                 LastTcpSendTick = DateTime.MinValue.Ticks;
                 LastTesterAddress = null;
@@ -148,6 +149,7 @@ namespace CarSimulator
             public readonly bool DoIpSsl;
             public TcpClient TcpClientConnection;
             public Stream TcpClientStream;
+            public TlsServerProtocol BcTlsServerProtocol;
             public long LastTcpRecTick;
             public long LastTcpSendTick;
             public uint? LastTesterAddress;
@@ -3259,6 +3261,7 @@ namespace CarSimulator
                 // ignored
             }
 
+            bmwTcpClientData.BcTlsServerProtocol = null;
             if (changed)
             {
                 GetClientConnections();
@@ -3297,11 +3300,11 @@ namespace CarSimulator
                     {
                         if (ServerUseBcSsl)
                         {
-                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData.TcpClientConnection, ServerCertFile, _serverCAs);
+                            bmwTcpClientData.TcpClientStream = CreateBcSslStream(bmwTcpClientData, ServerCertFile, _serverCAs);
                         }
                         else
                         {
-                            bmwTcpClientData.TcpClientStream = CreateSslStream(bmwTcpClientData.TcpClientConnection, _serverCertificate);
+                            bmwTcpClientData.TcpClientStream = CreateSslStream(bmwTcpClientData, _serverCertificate);
                         }
                     }
                     else
@@ -3364,8 +3367,16 @@ namespace CarSimulator
             {
                 if (bmwTcpClientData.TcpClientStream != null)
                 {
-                    NetworkStream networkStream = bmwTcpClientData.TcpClientStream as NetworkStream;
+                    if (bmwTcpClientData.BcTlsServerProtocol != null)
+                    {
+                        if (bmwTcpClientData.BcTlsServerProtocol.ApplicationDataAvailable <= 0)
+                        {
+                            //Debug.WriteLine("DoIp No data available [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort);
+                            //return false;
+                        }
+                    }
 
+                    NetworkStream networkStream = bmwTcpClientData.TcpClientStream as NetworkStream;
                     if (networkStream != null && !networkStream.DataAvailable)
                     {
                         Debug.WriteLine("DoIp No data available [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort);
@@ -3744,9 +3755,15 @@ namespace CarSimulator
             }
         }
 
-        private SslStream CreateSslStream(TcpClient client, X509Certificate2 serverCertificate)
+        private SslStream CreateSslStream(BmwTcpClientData bmwTcpClientData, X509Certificate2 serverCertificate)
         {
             if (serverCertificate == null)
+            {
+                return null;
+            }
+
+            TcpClient client = bmwTcpClientData?.TcpClientConnection;
+            if (client == null)
             {
                 return null;
             }
@@ -3786,9 +3803,15 @@ namespace CarSimulator
             }
         }
 
-        private Stream CreateBcSslStream(TcpClient client, string serverCertFile, List<X509CertificateStructure> certificateAuthorities)
+        private Stream CreateBcSslStream(BmwTcpClientData bmwTcpClientData, string serverCertFile, List<X509CertificateStructure> certificateAuthorities)
         {
             if (string.IsNullOrEmpty(serverCertFile))
+            {
+                return null;
+            }
+
+            TcpClient client = bmwTcpClientData?.TcpClientConnection;
+            if (client == null)
             {
                 return null;
             }
@@ -3804,11 +3827,13 @@ namespace CarSimulator
                 tlsServer.HandshakeTimeout = SslAuthTimeout;
                 tlsProtocol.Accept(tlsServer);
                 sslStream = tlsProtocol.Stream;
+                bmwTcpClientData.BcTlsServerProtocol = tlsProtocol;
                 return sslStream;
             }
             catch (Exception e)
             {
                 Debug.WriteLine("CreateBcSslStream Exception: {0}", e.Message);
+                bmwTcpClientData.BcTlsServerProtocol = null;
                 sslStream?.Close();
                 throw;
             }
