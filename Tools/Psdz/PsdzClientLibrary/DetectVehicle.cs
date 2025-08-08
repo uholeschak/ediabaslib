@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
@@ -12,6 +6,13 @@ using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using PsdzClient.Contracts;
 
 namespace PsdzClient
 {
@@ -822,6 +823,27 @@ namespace PsdzClient
             }
 
             return voltage;
+        }
+
+        public bool GenerateCertificate(EdInterfaceEnet.EnetConnection enetConnection)
+        {
+            if (enetConnection == null || string.IsNullOrEmpty(enetConnection.Vin))
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: No VIN");
+                return false;
+            }
+
+            Sec4DiagHandler sec4DiagHandler = new Sec4DiagHandler();
+            VCIDevice vciDevice = new VCIDevice(VCIDeviceType.ENET, "Detect", enetConnection.ToString());
+            vciDevice.VIN = enetConnection.Vin;
+            BoolResultObject boolResultObject = sec4DiagHandler.CertificatesAreFoundAndValid(vciDevice, null, null);
+            if (!boolResultObject.Result)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate failed");
+                return false;
+            }
+
+            return true;
         }
 
         public bool SetVehicleLifeStartDate(Vehicle vehicle)
