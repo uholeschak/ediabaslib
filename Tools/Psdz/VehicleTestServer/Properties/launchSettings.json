@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VehicleTestServer": {
+      "commandName": "Project",
+      "commandLineArgs": "-v auto:all"
+    }
+  }
+}
