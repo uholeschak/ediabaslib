@@ -3369,17 +3369,18 @@ namespace CarSimulator
                 {
                     if (bmwTcpClientData.BcTlsServerProtocol != null)
                     {
-                        if (bmwTcpClientData.BcTlsServerProtocol.ApplicationDataAvailable <= 0)
+                        TcpClient client = bmwTcpClientData.TcpClientConnection;
+                        if (client != null && client.Available <= 0)
                         {
                             //Debug.WriteLine("DoIp No data available [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort);
-                            //return false;
+                            return false;
                         }
                     }
 
                     NetworkStream networkStream = bmwTcpClientData.TcpClientStream as NetworkStream;
                     if (networkStream != null && !networkStream.DataAvailable)
                     {
-                        Debug.WriteLine("DoIp No data available [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort);
+                        //Debug.WriteLine("DoIp No data available [{0}], Port={1}", bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort);
                         return false;
                     }
 
