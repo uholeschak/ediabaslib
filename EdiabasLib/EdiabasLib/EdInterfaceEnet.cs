@@ -452,6 +452,7 @@ namespace EdiabasLib
             public EnetConnection EnetHostConn;
             public TcpClient TcpDiagClient;
             public Stream TcpDiagStream;
+            public TlsClientProtocol BcTlsClientProtocol;
             public bool DiagDoIp;
             public bool DiagDoIpSsl;
             public AutoResetEvent TcpDiagStreamRecEvent;
@@ -1752,6 +1753,7 @@ namespace EdiabasLib
                 result = false;
             }
 
+            SharedDataActive.BcTlsClientProtocol = null;
             if (!TcpControlDisconnect(SharedDataActive))
             {
                 result = false;
@@ -3209,10 +3211,12 @@ namespace EdiabasLib
                 tlsClient.HandshakeTimeout = SslAuthTimeout;
                 clientProtocol.Connect(tlsClient);
                 Stream sslStream = clientProtocol.Stream;
+                sharedData.BcTlsClientProtocol = clientProtocol;
                 return sslStream;
             }
             catch (Exception ex)
             {
+                sharedData.BcTlsClientProtocol = null;
                 if (ex is TlsException tlsException)
                 {
                     EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** CreateBcSslStream TLS exception: " + EdiabasNet.GetExceptionText(tlsException));
