@@ -1038,6 +1038,7 @@ namespace BmwDeepObd
                                 //url = @"http://ulrich3.local.holeschak.de:3000";
                                 url = @"https://ulrich3.local.holeschak.de:8443";
                                 //url = @"http://coding-server.local.holeschak.de:8008";
+                                //url = @"http://192.168.150.133:8000/";
                             }
                         }
                         else
