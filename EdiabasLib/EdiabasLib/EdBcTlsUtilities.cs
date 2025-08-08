@@ -30,7 +30,6 @@ namespace EdiabasLib
     {
         public const string BeginCertificate = "-----BEGIN CERTIFICATE-----";
         public const string EndCertificate = "-----END CERTIFICATE-----";
-        public const string TlsStreamName = "TlsStream";
 
         private class CertPathChecker
             : PkixCertPathChecker
