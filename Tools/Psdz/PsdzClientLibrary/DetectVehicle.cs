@@ -40,16 +40,21 @@ namespace PsdzClient
 
         private PsdzDatabase _pdszDatabase;
         private ClientContext _clientContext;
+        private string _istaFolder;
+        private Sec4DiagHandler _sec4DiagHandler;
         private bool _disposed;
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
 
+        public Sec4DiagHandler DiagHandler => _sec4DiagHandler;
+
         public List<PsdzDatabase.EcuInfo> EcuListPsdz { get; private set; }
 
-        public DetectVehicle(PsdzDatabase pdszDatabase, ClientContext clientContext, string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
+        public DetectVehicle(PsdzDatabase pdszDatabase, ClientContext clientContext, string istaFolder, string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
         {
             _pdszDatabase = pdszDatabase;
             _clientContext = clientContext;
+            _istaFolder = istaFolder;
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet(null, true)
             {
@@ -64,6 +69,7 @@ namespace PsdzClient
             {
                 icomAllocate = allowAllocate && enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
                 hostAddress = enetConnection.ToString();
+                GenerateCertificate(enetConnection);
             }
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.VehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
@@ -828,33 +834,52 @@ namespace PsdzClient
 
         public bool GenerateCertificate(EdInterfaceEnet.EnetConnection enetConnection)
         {
-            if (enetConnection == null || string.IsNullOrEmpty(enetConnection.Vin))
+            try
             {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: No VIN");
+                if (enetConnection == null)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: No connecton");
+                    return false;
+                }
+
+                if (_sec4DiagHandler == null)
+                {
+                    _sec4DiagHandler = new Sec4DiagHandler(_istaFolder);
+                }
+
+                string vin = enetConnection.Vin;
+                if (string.IsNullOrEmpty(vin))
+                {
+                    vin = "VIN";
+                }
+
+                _sec4DiagHandler.EdiabasPublicKey = _sec4DiagHandler.GetPublicKeyFromEdiabas();
+                string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
+                string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
+                Sec4DiagCertificateState sec4DiagCertificateState = _sec4DiagHandler.SearchForCertificatesInWindowsStore(configString, configString2, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate);
+                if (sec4DiagCertificateState != Sec4DiagCertificateState.Valid)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: Certificates state {0}", sec4DiagCertificateState);
+                    return false;
+                }
+
+                VCIDevice vciDevice = new VCIDevice(VCIDeviceType.ENET, "Detect", "GenerateCertificate");
+                vciDevice.VIN = vin;
+
+                BoolResultObject boolResultObject = _sec4DiagHandler.CertificatesAreFoundAndValid(vciDevice, subCaCertificate, caCertificate);
+                if (!boolResultObject.Result)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate failed");
+                    return false;
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate Exception: {0}", e.Message);
                 return false;
             }
-
-            Sec4DiagHandler sec4DiagHandler = new Sec4DiagHandler();
-            string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
-            string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
-            Sec4DiagCertificateState sec4DiagCertificateState = sec4DiagHandler.SearchForCertificatesInWindowsStore(configString, configString2, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate);
-            if (sec4DiagCertificateState != Sec4DiagCertificateState.Valid)
-            {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: Certificates state {0}", sec4DiagCertificateState);
-                return false;
-            }
-
-            VCIDevice vciDevice = new VCIDevice(VCIDeviceType.ENET, "Detect", enetConnection.ToString());
-            vciDevice.VIN = enetConnection.Vin;
-
-            BoolResultObject boolResultObject = sec4DiagHandler.CertificatesAreFoundAndValid(vciDevice, subCaCertificate, caCertificate);
-            if (!boolResultObject.Result)
-            {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate failed");
-                return false;
-            }
-
-            return true;
         }
 
         public bool SetVehicleLifeStartDate(Vehicle vehicle)

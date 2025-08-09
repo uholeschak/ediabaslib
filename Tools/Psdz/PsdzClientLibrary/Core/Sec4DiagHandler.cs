@@ -45,8 +45,15 @@ namespace PsdzClient.Core
 
         private string _certificateFileNameWithoutEnding { get; } = $"certificates_{Process.GetCurrentProcess().Id}";
 
-        public Sec4DiagHandler()
+        // [UH] istaFolder added
+        public Sec4DiagHandler(string istaFolder = null)
         {
+            if (!string.IsNullOrEmpty(istaFolder))
+            {
+                _ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
+                _istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
+            }
+
             IstaKeyPair = LoadKeyPairFromFile(_istaKeyPairPath, "G#8x!9sD2@qZ6&lF1");
             Service29KeyPair = GenerateKeyPair();
         }
