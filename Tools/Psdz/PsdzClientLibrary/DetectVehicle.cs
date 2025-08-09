@@ -2,6 +2,8 @@
 using BmwFileReader;
 using EdiabasLib;
 using log4net;
+using Org.BouncyCastle.Asn1.X509;
+using Org.BouncyCastle.Crypto;
 using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
@@ -41,12 +43,9 @@ namespace PsdzClient
         private PsdzDatabase _pdszDatabase;
         private ClientContext _clientContext;
         private string _istaFolder;
-        private Sec4DiagHandler _sec4DiagHandler;
         private bool _disposed;
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
-
-        public Sec4DiagHandler DiagHandler => _sec4DiagHandler;
 
         public List<PsdzDatabase.EcuInfo> EcuListPsdz { get; private set; }
 
@@ -69,12 +68,13 @@ namespace PsdzClient
             {
                 icomAllocate = allowAllocate && enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
                 hostAddress = enetConnection.ToString();
-                GenerateCertificate(enetConnection);
             }
+
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.VehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
             edInterfaceEnet.IcomAllocate = icomAllocate;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
+            edInterfaceEnet.ConnectParameter = new EdInterfaceEnet.ConnectParameterType(GenS29Certificate);
 
             ResetValues();
         }
@@ -832,31 +832,27 @@ namespace PsdzClient
             return voltage;
         }
 
-        public bool GenerateCertificate(EdInterfaceEnet.EnetConnection enetConnection)
+        public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin)
+        {
+            GenerateCertificate(vin);
+            return null;
+        }
+
+        public bool GenerateCertificate(string vin)
         {
             try
             {
-                if (enetConnection == null)
+                if (string.IsNullOrEmpty(vin))
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: No connecton");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: No VIN");
                     return false;
                 }
 
-                if (_sec4DiagHandler == null)
-                {
-                    _sec4DiagHandler = new Sec4DiagHandler(_istaFolder);
-                }
-
-                string vin = enetConnection.Vin;
-                if (string.IsNullOrEmpty(vin))
-                {
-                    vin = "VIN";
-                }
-
-                _sec4DiagHandler.EdiabasPublicKey = _sec4DiagHandler.GetPublicKeyFromEdiabas();
+                Sec4DiagHandler sec4DiagHandler = new Sec4DiagHandler(_istaFolder);
+                sec4DiagHandler.EdiabasPublicKey = sec4DiagHandler.GetPublicKeyFromEdiabas();
                 string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
                 string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
-                Sec4DiagCertificateState sec4DiagCertificateState = _sec4DiagHandler.SearchForCertificatesInWindowsStore(configString, configString2, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate);
+                Sec4DiagCertificateState sec4DiagCertificateState = sec4DiagHandler.SearchForCertificatesInWindowsStore(configString, configString2, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate);
                 if (sec4DiagCertificateState != Sec4DiagCertificateState.Valid)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: Certificates state {0}", sec4DiagCertificateState);
@@ -866,7 +862,7 @@ namespace PsdzClient
                 VCIDevice vciDevice = new VCIDevice(VCIDeviceType.ENET, "Detect", "GenerateCertificate");
                 vciDevice.VIN = vin;
 
-                BoolResultObject boolResultObject = _sec4DiagHandler.CertificatesAreFoundAndValid(vciDevice, subCaCertificate, caCertificate);
+                BoolResultObject boolResultObject = sec4DiagHandler.CertificatesAreFoundAndValid(vciDevice, subCaCertificate, caCertificate);
                 if (!boolResultObject.Result)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate failed");
