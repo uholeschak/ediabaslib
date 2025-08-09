@@ -47,9 +47,13 @@ namespace EdiabasLib
 
         public delegate List<X509CertificateStructure> GenS29CertDelegate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin);
 
-#if ANDROID
         public class ConnectParameterType
         {
+            public ConnectParameterType(GenS29CertDelegate genS29CertHandler)
+            {
+                GenS29CertHandler = genS29CertHandler;
+            }
+#if ANDROID
             public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, GenS29CertDelegate genS29CertHandler)
             {
                 NetworkData = networkData;
@@ -57,10 +61,10 @@ namespace EdiabasLib
             }
 
             public TcpClientWithTimeout.NetworkData NetworkData { get; }
-
+#else
             public GenS29CertDelegate GenS29CertHandler { get; }
-        }
 #endif
+        }
 
         public class EnetConnection : IComparable<EnetConnection>, IEquatable<EnetConnection>
         {
@@ -1289,13 +1293,14 @@ namespace EdiabasLib
                 SharedDataActive.NetworkData = null;
                 SharedDataActive.GenS29CertHandler = null;
                 SharedDataActive.TransmitCancelEvent.Reset();
-#if ANDROID
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
+#if ANDROID
                     SharedDataActive.NetworkData = connectParameter.NetworkData;
+#endif
                     SharedDataActive.GenS29CertHandler = connectParameter.GenS29CertHandler;
                 }
-#endif
+
                 string[] protocolParts = VehicleProtocolProtected.Split(',');
                 if (protocolParts.Length < 1)
                 {
