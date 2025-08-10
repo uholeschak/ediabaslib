@@ -43,7 +43,7 @@ namespace PsdzClient
         private PsdzDatabase _pdszDatabase;
         private ClientContext _clientContext;
         private string _istaFolder;
-        private string _doIpSecurityPath;
+        private string _doIpSslSecurityPath;
         private string _doIpS29Path;
         private bool _disposed;
         private bool _abortRequest;
@@ -57,9 +57,9 @@ namespace PsdzClient
             _clientContext = clientContext;
             _istaFolder = istaFolder;
 
-            string securityPath = Path.Combine(istaFolder, "EDIABAS", "Security");
-            _doIpSecurityPath = Path.Combine(securityPath, "SSL_Truststore");
-            _doIpS29Path = Path.Combine(securityPath, "S29", "Certificates");
+            string securityPath = Path.Combine(istaFolder, "EDIABAS", EdInterfaceEnet.DoIpSecurityDir);
+            _doIpSslSecurityPath = Path.Combine(securityPath, EdInterfaceEnet.DoIpSslTrustDir);
+            _doIpS29Path = Path.Combine(securityPath, EdInterfaceEnet.DoIpS29Dir, EdInterfaceEnet.DoIpCertificatesDir);
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet(null, true)
             {
@@ -80,7 +80,7 @@ namespace PsdzClient
             edInterfaceEnet.VehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
             edInterfaceEnet.IcomAllocate = icomAllocate;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
-            edInterfaceEnet.DoIpSslSecurityPath = _doIpSecurityPath;
+            edInterfaceEnet.DoIpSslSecurityPath = _doIpSslSecurityPath;
             edInterfaceEnet.DoIpS29Path = _doIpS29Path;
             edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
             edInterfaceEnet.ConnectParameter = new EdInterfaceEnet.ConnectParameterType(GenS29Certificate);
@@ -847,7 +847,7 @@ namespace PsdzClient
             {
                 if (string.IsNullOrEmpty(vin))
                 {
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: No VIN");
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: VIN missing");
                     return null;
                 }
 

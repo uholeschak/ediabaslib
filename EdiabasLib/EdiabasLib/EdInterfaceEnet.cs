@@ -502,6 +502,10 @@ namespace EdiabasLib
         public const string AutoIpAll = ":all";
         public const string ProtocolHsfz = "HSFZ";
         public const string ProtocolDoIp = "DoIP";
+        public const string DoIpSecurityDir = "Security";
+        public const string DoIpS29Dir = "S29";
+        public const string DoIpCertificatesDir = "Certificates";
+        public const string DoIpSslTrustDir = "SSL_Truststore";
         protected const string MutexName = "EdiabasLib_InterfaceEnet";
         protected const int TransBufferSize = 0x10010; // transmit buffer size
         protected const int TcpConnectTimeoutMin = 1000;
@@ -773,8 +777,8 @@ namespace EdiabasLib
                         string parentDir = Directory.GetParent(DoIpSslSecurityPathProtected)?.FullName;
                         if (!string.IsNullOrEmpty(parentDir))
                         {
-                            string s29BasePath = Path.Combine(parentDir, "S29");
-                            string certificatesPath = Path.Combine(s29BasePath, "Certificates");
+                            string s29BasePath = Path.Combine(parentDir, DoIpS29Dir);
+                            string certificatesPath = Path.Combine(s29BasePath, DoIpCertificatesDir);
                             if (Directory.Exists(certificatesPath))
                             {
                                 DoIpS29PathProtected = certificatesPath;
