@@ -13,7 +13,7 @@ If not specified, the subdirectory `Trace` will be used. If the the subdirectory
 * `EcuPath`: Path to the ecu files location.
 * `RetryComm`: 1=Retry communication.
 * `EnetRemoteHost`: Remote host for ENET protocol. Possible values are:
-	* `ip address:<protocol>:<diag port>:<control port>`: No broadcast, directly connect to specified host. Optionally the protcol (`HSFZ` or `DoIP`) and the communication ports could be specified.
+	* `ip address:<protocol>:<diag port>:<control port>`: No broadcast, directly connect to specified host. Optionally the protocol (`HSFZ` or `DoIP`) and the communication ports could be specified.
 	* `auto`: Broadcast to subnet `HostIdentService`, Identical to EDIABAS `RemoteHost = Autodetect`. When multiple network adapters are present, this may work unreliable. Use `auto:all` instead.
 	* `auto:all`: Broadcast to all network interfaces.
 	* `auto:<interface name>`: Broadcast to all interfaces that start with `<interface name>` (case ignored).
