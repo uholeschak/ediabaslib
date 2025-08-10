@@ -74,7 +74,8 @@ namespace EdiabasLib
                 DirectHsfz,
                 DirectDoIp,
                 Enet,
-                Icom
+                Icom,
+                Undefined
             }
 
             public EnetConnection(InterfaceType connectionType, IPAddress ipAddress, int diagPort = -1, int controlPort = -1, int doIpPort = -1, int sslPort = -1)
@@ -133,7 +134,7 @@ namespace EdiabasLib
                         sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", SslPort));
                     }
                 }
-                else
+                else if (ConnectionType != InterfaceType.Undefined)
                 {
                     sb.Append(":");
                     sb.Append(ProtocolHsfz);

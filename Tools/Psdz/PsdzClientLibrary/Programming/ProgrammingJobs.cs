@@ -1027,8 +1027,19 @@ namespace PsdzClient.Programming
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Ip: {0}, Diag: {1}, Control: {2}, ICOM: {3}", ipAddress, diagPort, controlPort, icomConnection);
-                EdInterfaceEnet.EnetConnection.InterfaceType interfaceType = icomConnection ?
-                        EdInterfaceEnet.EnetConnection.InterfaceType.Icom : EdInterfaceEnet.EnetConnection.InterfaceType.DirectHsfz;
+                EdInterfaceEnet.EnetConnection.InterfaceType interfaceType = EdInterfaceEnet.EnetConnection.InterfaceType.DirectHsfz;
+                if (icomConnection)
+                {
+                    interfaceType = EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
+                }
+                else
+                {
+                    if (ProgrammingService.PsdzDatabase.IsExecutable())
+                    {
+                        interfaceType = EdInterfaceEnet.EnetConnection.InterfaceType.Undefined;
+                    }
+                }
+
                 EdInterfaceEnet.EnetConnection enetConnection;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (icomConnection)
