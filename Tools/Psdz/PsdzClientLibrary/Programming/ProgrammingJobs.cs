@@ -1155,19 +1155,32 @@ namespace PsdzClient.Programming
 
                 // From ConnectionManager.ConnectToProject
                 string bauIStufe = PsdzContext.DetectVehicle.ILevelShip;
-                string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, diagPort);
+                bool isDoIp = PsdzContext.DetectVehicle.IsDoIp;
                 IPsdzConnection psdzConnection;
                 if (icomConnection)
                 {
+                    string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, diagPort);
                     psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
                         psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, addTimeout, series,
                         bauIStufe, IcomConnectionType.Ip, false);
                 }
                 else
                 {
-                    psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
-                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
-                        bauIStufe);
+                    int useDiagPort = isDoIp ? 13400 : diagPort;
+                    string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, useDiagPort);
+
+                    if (isDoIp)
+                    {
+                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
+                            psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
+                            bauIStufe, true);
+                    }
+                    else
+                    {
+                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
+                            psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
+                            bauIStufe);
+                    }
                 }
 
                 Vehicle vehicle = new Vehicle(ClientContext);
