@@ -47,24 +47,30 @@ namespace EdiabasLib
 
         public delegate List<X509CertificateStructure> GenS29CertDelegate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin);
 
+        public delegate void VehicleConnectedDelegate(bool connected, string vin, bool isDoIp);
+
         public class ConnectParameterType
         {
 #if ANDROID
-            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, GenS29CertDelegate genS29CertHandler)
+            public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, GenS29CertDelegate genS29CertHandler, VehicleConnectedDelegate vehicleConnectedHandler = null)
             {
                 NetworkData = networkData;
                 GenS29CertHandler = genS29CertHandler;
+                VehicleConnectedHandler = vehicleConnectedHandler;
             }
 #else
-            public ConnectParameterType(GenS29CertDelegate genS29CertHandler)
+            public ConnectParameterType(GenS29CertDelegate genS29CertHandler, VehicleConnectedDelegate vehicleConnectedHandler = null)
             {
                 GenS29CertHandler = genS29CertHandler;
+                VehicleConnectedHandler = vehicleConnectedHandler;
             }
 #endif
 #if ANDROID
             public TcpClientWithTimeout.NetworkData NetworkData { get; }
 #endif
             public GenS29CertDelegate GenS29CertHandler { get; }
+
+            public VehicleConnectedDelegate VehicleConnectedHandler { get; }
         }
 
         public class EnetConnection : IComparable<EnetConnection>, IEquatable<EnetConnection>
@@ -455,6 +461,7 @@ namespace EdiabasLib
             private bool _disposed;
             public object NetworkData;
             public GenS29CertDelegate GenS29CertHandler;
+            public VehicleConnectedDelegate VehicleConnectedHandler;
             public EnetConnection EnetHostConn;
             public TcpClient TcpDiagClient;
             public Stream TcpDiagStream;
@@ -1298,6 +1305,7 @@ namespace EdiabasLib
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}", RemoteHostProtected);
                 SharedDataActive.NetworkData = null;
                 SharedDataActive.GenS29CertHandler = null;
+                SharedDataActive.VehicleConnectedHandler = null;
                 SharedDataActive.TransmitCancelEvent.Reset();
                 if (ConnectParameter is ConnectParameterType connectParameter)
                 {
@@ -1305,6 +1313,7 @@ namespace EdiabasLib
                     SharedDataActive.NetworkData = connectParameter.NetworkData;
 #endif
                     SharedDataActive.GenS29CertHandler = connectParameter.GenS29CertHandler;
+                    SharedDataActive.VehicleConnectedHandler = connectParameter.VehicleConnectedHandler;
                 }
 
                 string[] protocolParts = VehicleProtocolProtected.Split(',');
@@ -1695,9 +1704,9 @@ namespace EdiabasLib
                     }
                 }
 
-                if (Connected)
+                if (SharedDataActive.VehicleConnectedHandler != null)
                 {
-
+                    SharedDataActive.VehicleConnectedHandler(Connected, SharedDataActive.EnetHostConn?.Vin, SharedDataActive.DiagDoIp);
                 }
 
                 if (!Connected)

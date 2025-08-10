@@ -51,6 +51,8 @@ namespace PsdzClient
 
         public List<PsdzDatabase.EcuInfo> EcuListPsdz { get; private set; }
 
+        public bool IsDoIp { get; protected set; }
+
         public DetectVehicle(PsdzDatabase pdszDatabase, ClientContext clientContext, string istaFolder, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
         {
             _pdszDatabase = pdszDatabase;
@@ -90,7 +92,7 @@ namespace PsdzClient
             edInterfaceEnet.DoIpSslSecurityPath = _doIpSslSecurityPath;
             edInterfaceEnet.DoIpS29Path = _doIpS29Path;
             edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
-            edInterfaceEnet.ConnectParameter = new EdInterfaceEnet.ConnectParameterType(GenS29Certificate);
+            edInterfaceEnet.ConnectParameter = new EdInterfaceEnet.ConnectParameterType(GenS29Certificate, VehicleConnected);
 
             ResetValues();
         }
@@ -895,6 +897,19 @@ namespace PsdzClient
             {
                 log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate Exception: {0}", e.Message);
                 return null;
+            }
+        }
+
+        void VehicleConnected(bool connected, string vin, bool isDoIp)
+        {
+            if (connected)
+            {
+                IsDoIp = isDoIp;
+                LogInfoFormat("VehicleConnected: Connected, VIN: {0}, DoIP: {1}", vin, isDoIp);
+            }
+            else
+            {
+                LogInfoFormat("VehicleConnected: Disconnected, VIN: {0}, DoIP: {1}", vin, isDoIp);
             }
         }
 
