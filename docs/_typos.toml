@@ -1,0 +1,16 @@
+[default]
+extend-ignore-identifiers-re = [
+    "FS_.+",
+    "SG_.+",
+    "STAT_.+",
+    "STATUS_.+",
+]
+
+[default.extend-identifiers]
+MergeResultDictionarys = "MergeResultDictionarys"
+# STAT_OELDRUCKSCHALTER_EIN_WERT = "STAT_OELDRUCKSCHALTER_EIN_WERT"
+
+[default.extend-words]
+informations = "informations"
+modul = "modul"
+universale = "universale"
