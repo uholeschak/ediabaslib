@@ -94,7 +94,7 @@ If the port is omitted in the IP settings, the default port is 23 in hotspot mod
 * _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
 	* _Send trace file_: Send the trace file from the last vehicle communication.
 	* _Open trace file_: Open the trace file from the last vehicle communication with an external app that supports zip files.
-    * _Resend trace file_: Retry sending of the last trace file. Only visible if sending has failed.
+	* _Resend trace file_: Retry sending of the last trace file. Only visible if sending has failed.
 	* _Open last trace file_: Open the last trace file with an external app that supports zip files, if sending has failed previously.
 * _Translations_: (Only for non German languages) This menu opens a submenu that allows configuration of automatic ECU text translation with various translations engines. Most engines require an API key, but some have also special access tokens. Free translation if very limited in most cases and you have to pay for larger text amount.
 	* _Translate ECU text_: If this menu item is checked, automatic ECU text translation is active.
