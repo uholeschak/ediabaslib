@@ -599,7 +599,8 @@ namespace PsdzClient
                 detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll,
                     new List<EdInterfaceEnet.CommunicationMode>()
                     {
-                        EdInterfaceEnet.CommunicationMode.Hsfz
+                        EdInterfaceEnet.CommunicationMode.Hsfz,
+                        EdInterfaceEnet.CommunicationMode.DoIp,
                     });
             }
 

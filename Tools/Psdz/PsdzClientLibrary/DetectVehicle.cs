@@ -51,12 +51,13 @@ namespace PsdzClient
 
         public List<PsdzDatabase.EcuInfo> EcuListPsdz { get; private set; }
 
-        public DetectVehicle(PsdzDatabase pdszDatabase, ClientContext clientContext, string istaFolder, string ecuPath, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
+        public DetectVehicle(PsdzDatabase pdszDatabase, ClientContext clientContext, string istaFolder, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
         {
             _pdszDatabase = pdszDatabase;
             _clientContext = clientContext;
             _istaFolder = istaFolder;
 
+            string ecuPath = Path.Combine(istaFolder, @"Ecu");
             string securityPath = Path.Combine(istaFolder, "EDIABAS", EdInterfaceEnet.DoIpSecurityDir);
             _doIpSslSecurityPath = Path.Combine(securityPath, EdInterfaceEnet.DoIpSslTrustDir);
             _doIpS29Path = Path.Combine(securityPath, EdInterfaceEnet.DoIpS29Dir, EdInterfaceEnet.DoIpCertificatesDir);
@@ -76,8 +77,14 @@ namespace PsdzClient
                 hostAddress = enetConnection.ToString();
             }
 
+            string vehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
+            if (_pdszDatabase.IsExecutable())
+            {
+                vehicleProtocol += "," + EdInterfaceEnet.ProtocolDoIp;
+            }
+
             edInterfaceEnet.RemoteHost = hostAddress;
-            edInterfaceEnet.VehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
+            edInterfaceEnet.VehicleProtocol = vehicleProtocol;
             edInterfaceEnet.IcomAllocate = icomAllocate;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
             edInterfaceEnet.DoIpSslSecurityPath = _doIpSslSecurityPath;

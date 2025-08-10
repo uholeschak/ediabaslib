@@ -999,7 +999,6 @@ namespace PsdzClient.Programming
                 UpdateStatus(sbResult.ToString());
 
                 CacheResponseType = CacheType.NoResponse;
-                string ecuPath = Path.Combine(istaFolder, @"Ecu");
                 bool icomConnection = useIcom;
                 if (hostParts.Length > 1)
                 {
@@ -1028,8 +1027,8 @@ namespace PsdzClient.Programming
                 }
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Ip: {0}, Diag: {1}, Control: {2}, ICOM: {3}", ipAddress, diagPort, controlPort, icomConnection);
-                EdInterfaceEnet.EnetConnection.InterfaceType interfaceType =
-                    icomConnection ? EdInterfaceEnet.EnetConnection.InterfaceType.Icom : EdInterfaceEnet.EnetConnection.InterfaceType.DirectHsfz;
+                EdInterfaceEnet.EnetConnection.InterfaceType interfaceType = icomConnection ?
+                        EdInterfaceEnet.EnetConnection.InterfaceType.Icom : EdInterfaceEnet.EnetConnection.InterfaceType.DirectHsfz;
                 EdInterfaceEnet.EnetConnection enetConnection;
                 // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
                 if (icomConnection)
@@ -1041,7 +1040,7 @@ namespace PsdzClient.Programming
                     enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress));
                 }
 
-                PsdzContext.DetectVehicle = new DetectVehicle(ProgrammingService.PsdzDatabase, ClientContext, istaFolder, ecuPath, enetConnection, useIcom, addTimeout);
+                PsdzContext.DetectVehicle = new DetectVehicle(ProgrammingService.PsdzDatabase, ClientContext, istaFolder, enetConnection, useIcom, addTimeout);
                 DetectVehicle.DetectResult detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast(() =>
                 {
                     if (cts != null)
