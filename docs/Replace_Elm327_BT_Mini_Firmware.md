@@ -36,7 +36,7 @@ This chapter describes how to replace the ELM327 BT V1.5 HW: V01_M_V2.3 adapter 
   * BT 2.x name: 0x1900, 1 byte length (max 32) and 32 byte BT name ASCII chars
   * BLE name: 0x1920, 1 byte length (max 24) and 32 byte BLE name ASCII chars
   * BaudRate: 0x1940 (2 bytes, low byte first); default value: 0x04E2 is 38400 baud (for `default` PIC firmware), change to 0x01A1 for 115200 baud (for `def115200` or `yc1021` firmware)
-* Optionally you may use the preconfigured settings file `modified_v1.bin` from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest), if it's exacly matching your device firmware. **This is not recommended!**
+* Optionally you may use the preconfigured settings file `modified_v1.bin` from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest), if it's exactly matching your device firmware. **This is not recommended!**
 * Write the changed binary back to the 24C32/24C64A eeprom (again powered from programmer, not from obd side).  
 
 ## Step2: Program the PIC18F25K80

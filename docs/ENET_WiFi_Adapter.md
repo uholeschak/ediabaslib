@@ -27,7 +27,7 @@ For BMW pre F-series use the [Bluetooth adapter](Replacement_firmware_for_ELM327
 ## Adapter cable
 You could also use an ENET adapter cable, in this case you have to configure the Android LAN adapter with an Auto IP address (APIPA address),
 for example `169.254.1.10 / 255.255.0.0`.  
-This is required because the vehicle will not get a DHCP address and will fall back to Auto IP adress mode.  
+This is required because the vehicle will not get a DHCP address and will fall back to Auto IP address mode.  
 When using Ethernet as vehicle connection Yantex translation is not available because Android always tries to use Ethernet as internet connection (which is not available in this case).  
 
 Another solution is to use an OpenWrt WiFi router (e.g. `MT7620A`), update the firmware from the manufacturer and connect the cable to one of the LAN ports (not WAN) of the router.  
