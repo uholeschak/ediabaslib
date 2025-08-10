@@ -522,9 +522,9 @@ namespace EdiabasLibConfigTool
                     bool updateNodes = false;
                     if (!string.IsNullOrEmpty(ediabasBaseDir))
                     {
-                        string securityPath = Path.Combine(ediabasBaseDir, "Security");
-                        string sslSecurityPath = Path.Combine(securityPath, "SSL_Truststore");
-                        string s29BasePath = Path.Combine(securityPath, "S29");
+                        string securityPath = Path.Combine(ediabasBaseDir, EdInterfaceEnet.DoIpSecurityDir);
+                        string sslSecurityPath = Path.Combine(securityPath, EdInterfaceEnet.DoIpSslTrustDir);
+                        string s29BasePath = Path.Combine(securityPath, EdInterfaceEnet.DoIpS29Dir);
                         if (Directory.Exists(sslSecurityPath) && Directory.Exists(s29BasePath))
                         {
                             updateNodes = true;
@@ -863,14 +863,14 @@ namespace EdiabasLibConfigTool
                     return true;
                 }
 
-                string s29BasePath = Path.Combine(ediabasBaseDir, "Security", "S29");
+                string s29BasePath = Path.Combine(ediabasBaseDir, EdInterfaceEnet.DoIpSecurityDir, EdInterfaceEnet.DoIpS29Dir);
                 if (!Directory.Exists(s29BasePath))
                 {
                     return true;
                 }
 
                 bool result = true;
-                string certPath = Path.Combine(s29BasePath, "Certificates");
+                string certPath = Path.Combine(s29BasePath, EdInterfaceEnet.DoIpCertificatesDir);
                 if (Directory.Exists(certPath))
                 {
                     string machineName = EdSec4Diag.GetMachineName();
