@@ -24,6 +24,7 @@ using EdiabasLib;
 using Hoho.Android.UsbSerial.Driver;
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
@@ -52,7 +53,6 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using Org.BouncyCastle.Asn1.X509;
 using UdsFileReader;
 
 // ReSharper disable StringLiteralTypo
@@ -5657,7 +5657,7 @@ namespace BmwDeepObd
             Thread detectThread = new Thread(() =>
             {
                 List<EdInterfaceEnet.EnetConnection> detectedVehicles;
-                using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false) { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate)
+                using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false) { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate, VehicleConnected)
                 })
                 {
                     detectedVehicles = edInterface.DetectedVehicles("auto:all");
@@ -6522,6 +6522,13 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        void VehicleConnected(bool connected, string vin, bool isDoIp)
+        {
+#if DEBUG
+            Android.Util.Log.Info(Tag, string.Format("VehicleConnected: Connected: {0}, VIN: {1}, DoIP: {2}", connected, vin, isDoIp));
+#endif
         }
 
         public static bool SetEdiabasUdsCanId(EdiabasNet ediabas, VehicleInfoVag.EcuAddressEntry ecuAddressEntry = null)
