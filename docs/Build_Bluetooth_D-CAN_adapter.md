@@ -89,6 +89,6 @@ internal 1.5 KOhm pull up resistor on USBDP.
 Up to 50mA can be drawn from this pin to power external logic if required. This pin can also be used to supply the VCCIO pin.
 
 # Atmel PB4 overvoltage problem
-OBD pin 1 go to R6 1K and then the Atmega PB4, in paralell with this is R5 47K to ground.  
+OBD pin 1 go to R6 1K and then the Atmega PB4, in parallel with this is R5 47K to ground.  
 This creates a voltage divider that reduces the 12V to 11.75V, the absolute maximum rating is 5.5V for the Atmega.  
 A possible solution is to move the 47K resistor to R6 and then replaced R5 with a 18K resistor.

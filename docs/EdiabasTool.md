@@ -21,7 +21,7 @@ Only those files will be displayed that contain the text of the search field.
 In the next step a job must be selected in the _Jobs_ drop down. In this case we select `FS_LESEN` to read the module errors.  
 Optionally the result values could be filtered by selecting check boxes in the _Results_ drop down (if implemented in the ECU file). If no results are selected, all results will be generated.  
 Additionally job arguments could be added to the _Arguments_ field.  
-If the BMW mode ist selected and the current job is `STATUS_LESEN`, `STATUS_BLOCK_LESEN`, `STEUERN`, `STEUERN_IO` or `STEUERN_ROUTINE` and the ECU file contains a table `SG_FUNKTIONEN`, the argument assistant is available.  
+If the BMW mode is selected and the current job is `STATUS_LESEN`, `STATUS_BLOCK_LESEN`, `STEUERN`, `STEUERN_IO` or `STEUERN_ROUTINE` and the ECU file contains a table `SG_FUNKTIONEN`, the argument assistant is available.  
 The argument assistant is similar to the one in tool32, more information could be found in the tool32 manual `Anleitung_STATUS_STEUERN_UDS.pdf` (In the EDIABAS folder `Doku\English` and `Doku\deutsch`).  
 In contrast to the original tool32 there is no limit in the number of arguments.  
 The _Informations_ area displays informations for the last selected field above (job, arguments or results).  
