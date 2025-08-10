@@ -43,6 +43,8 @@ namespace PsdzClient
         private PsdzDatabase _pdszDatabase;
         private ClientContext _clientContext;
         private string _istaFolder;
+        private string _doIpSecurityPath;
+        private string _doIpS29Path;
         private bool _disposed;
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
@@ -54,6 +56,10 @@ namespace PsdzClient
             _pdszDatabase = pdszDatabase;
             _clientContext = clientContext;
             _istaFolder = istaFolder;
+
+            string securityPath = Path.Combine(istaFolder, "EDIABAS", "Security");
+            _doIpSecurityPath = Path.Combine(securityPath, "SSL_Truststore");
+            _doIpS29Path = Path.Combine(securityPath, "S29", "Certificates");
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet(null, true)
             {
@@ -74,6 +80,9 @@ namespace PsdzClient
             edInterfaceEnet.VehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
             edInterfaceEnet.IcomAllocate = icomAllocate;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
+            edInterfaceEnet.DoIpSslSecurityPath = _doIpSecurityPath;
+            edInterfaceEnet.DoIpS29Path = _doIpS29Path;
+            edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
             edInterfaceEnet.ConnectParameter = new EdInterfaceEnet.ConnectParameterType(GenS29Certificate);
 
             ResetValues();
@@ -834,18 +843,12 @@ namespace PsdzClient
 
         public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin)
         {
-            GenerateCertificate(vin);
-            return null;
-        }
-
-        public bool GenerateCertificate(string vin)
-        {
             try
             {
                 if (string.IsNullOrEmpty(vin))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: No VIN");
-                    return false;
+                    return null;
                 }
 
                 Sec4DiagHandler sec4DiagHandler = new Sec4DiagHandler(_istaFolder);
@@ -856,7 +859,7 @@ namespace PsdzClient
                 if (sec4DiagCertificateState != Sec4DiagCertificateState.Valid)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: Certificates state {0}", sec4DiagCertificateState);
-                    return false;
+                    return null;
                 }
 
                 VCIDevice vciDevice = new VCIDevice(VCIDeviceType.ENET, "Detect", "GenerateCertificate");
@@ -866,15 +869,25 @@ namespace PsdzClient
                 if (!boolResultObject.Result)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate failed");
-                    return false;
+                    return null;
                 }
 
-                return true;
+                string certFile = Path.Combine(_doIpS29Path, sec4DiagHandler.CertificateFilePathWithoutEnding + ".pem");
+                if (!File.Exists(certFile))
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "GenerateCertificate: Certificate file does not exist: {0}", certFile);
+                    return null;
+                }
+
+                List<X509CertificateStructure> certificates = EdBcTlsUtilities.LoadBcCertificateResources(certFile);
+                File.Delete(certFile);
+
+                return certificates;
             }
             catch (Exception e)
             {
                 log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate Exception: {0}", e.Message);
-                return false;
+                return null;
             }
         }
 

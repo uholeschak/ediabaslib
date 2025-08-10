@@ -49,21 +49,22 @@ namespace EdiabasLib
 
         public class ConnectParameterType
         {
-            public ConnectParameterType(GenS29CertDelegate genS29CertHandler)
-            {
-                GenS29CertHandler = genS29CertHandler;
-            }
 #if ANDROID
             public ConnectParameterType(TcpClientWithTimeout.NetworkData networkData, GenS29CertDelegate genS29CertHandler)
             {
                 NetworkData = networkData;
                 GenS29CertHandler = genS29CertHandler;
             }
-
-            public TcpClientWithTimeout.NetworkData NetworkData { get; }
 #else
-            public GenS29CertDelegate GenS29CertHandler { get; }
+            public ConnectParameterType(GenS29CertDelegate genS29CertHandler)
+            {
+                GenS29CertHandler = genS29CertHandler;
+            }
 #endif
+#if ANDROID
+            public TcpClientWithTimeout.NetworkData NetworkData { get; }
+#endif
+            public GenS29CertDelegate GenS29CertHandler { get; }
         }
 
         public class EnetConnection : IComparable<EnetConnection>, IEquatable<EnetConnection>
