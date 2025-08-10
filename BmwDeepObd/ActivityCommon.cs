@@ -6524,10 +6524,13 @@ namespace BmwDeepObd
             }
         }
 
-        void VehicleConnected(bool connected, string vin, bool isDoIp)
+        void VehicleConnected(bool connected, bool reconnect, string vin, bool isDoIp)
         {
 #if DEBUG
-            Android.Util.Log.Info(Tag, string.Format("VehicleConnected: Connected: {0}, VIN: {1}, DoIP: {2}", connected, vin, isDoIp));
+            if (!reconnect)
+            {
+                Android.Util.Log.Info(Tag, string.Format("VehicleConnected: Connected: {0}, VIN: {1}, DoIP: {2}", connected, vin, isDoIp));
+            }
 #endif
         }
 
