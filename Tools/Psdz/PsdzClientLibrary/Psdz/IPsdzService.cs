@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Client;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,6 +40,10 @@ namespace BMW.Rheingold.Psdz
         ISecureFeatureActivationService SecureFeatureActivationService { get; }
 
         ISecurityManagementService SecurityManagementService { get; }
+
+        IHttpConfigurationService HttpConfigurationService { get; }
+
+        ISecureDiagnosticsService SecureDiagnosticsService { get; }
 
         ISecureCodingService SecureCodingService { get; }
 
