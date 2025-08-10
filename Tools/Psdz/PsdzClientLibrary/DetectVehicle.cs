@@ -860,7 +860,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                if (!ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out ISec4DiagHandler sec4DiagHandler))
+                if (!ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var sec4DiagHandler))
                 {
                     sec4DiagHandler = new Sec4DiagHandler(_istaFolder);
                     ServiceLocator.Current.AddService(sec4DiagHandler);
