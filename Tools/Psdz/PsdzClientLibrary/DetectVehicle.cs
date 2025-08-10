@@ -860,7 +860,12 @@ namespace PsdzClient
                     return null;
                 }
 
-                Sec4DiagHandler sec4DiagHandler = new Sec4DiagHandler(_istaFolder);
+                if (!ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out ISec4DiagHandler sec4DiagHandler))
+                {
+                    sec4DiagHandler = new Sec4DiagHandler(_istaFolder);
+                    ServiceLocator.Current.AddService(sec4DiagHandler);
+                }
+
                 sec4DiagHandler.EdiabasPublicKey = sec4DiagHandler.GetPublicKeyFromEdiabas();
                 string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
                 string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
