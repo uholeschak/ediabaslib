@@ -139,7 +139,7 @@
     <value>Vehicle not detected</value>
   </data>
   <data name="VehicleIp" xml:space="preserve">
-    <value>Vehicle IP address: {0}, ICOM: {1}</value>
+    <value>Vehicle IP address: {0}, ICom: {1}, DoIP: {2}</value>
   </data>
   <data name="VehicleSearching" xml:space="preserve">
     <value>Searching vehicle ...</value>

@@ -124,7 +124,7 @@ namespace PsdzClient.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle IP address: {0}, ICOM: {1} ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle IP address: {0}, ICom: {1}, DoIP: {2} ähnelt.
         /// </summary>
         internal static string VehicleIp {
             get {

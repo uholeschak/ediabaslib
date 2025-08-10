@@ -918,10 +918,12 @@ namespace PsdzClient
                     {
                         if (connectionSelected != null)
                         {
-                            bool iCom = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
+                            bool isICom = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
+                            bool isDoIp = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.DirectDoIp;
+
                             ipAddressControlVehicleIp.Text = connectionSelected.IpAddress.ToString();
-                            checkBoxIcom.Checked = iCom;
-                            sb.AppendLine(string.Format(Resources.VehicleIp, connectionSelected.IpAddress, iCom));
+                            checkBoxIcom.Checked = isICom;
+                            sb.AppendLine(string.Format(Resources.VehicleIp, connectionSelected.IpAddress, isICom, isDoIp));
                             ipValid = true;
                         }
                     }
