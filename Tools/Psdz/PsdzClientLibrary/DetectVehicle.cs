@@ -900,16 +900,19 @@ namespace PsdzClient
             }
         }
 
-        void VehicleConnected(bool connected, string vin, bool isDoIp)
+        void VehicleConnected(bool connected, bool reconnect, string vin, bool isDoIp)
         {
-            if (connected)
+            if (!reconnect)
             {
-                IsDoIp = isDoIp;
-                LogInfoFormat("VehicleConnected: Connected, VIN: {0}, DoIP: {1}", vin, isDoIp);
-            }
-            else
-            {
-                LogInfoFormat("VehicleConnected: Disconnected, VIN: {0}, DoIP: {1}", vin, isDoIp);
+                if (connected)
+                {
+                    IsDoIp = isDoIp;
+                    LogInfoFormat("VehicleConnected: Connected, VIN: {0}, DoIP: {1}", vin, isDoIp);
+                }
+                else
+                {
+                    LogInfoFormat("VehicleConnected: Disconnected, VIN: {0}, DoIP: {1}", vin, isDoIp);
+                }
             }
         }
 

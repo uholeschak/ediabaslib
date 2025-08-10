@@ -47,7 +47,7 @@ namespace EdiabasLib
 
         public delegate List<X509CertificateStructure> GenS29CertDelegate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin);
 
-        public delegate void VehicleConnectedDelegate(bool connected, string vin, bool isDoIp);
+        public delegate void VehicleConnectedDelegate(bool connected, bool reconnect, string vin, bool isDoIp);
 
         public class ConnectParameterType
         {
@@ -1706,7 +1706,7 @@ namespace EdiabasLib
 
                 if (SharedDataActive.VehicleConnectedHandler != null)
                 {
-                    SharedDataActive.VehicleConnectedHandler(Connected, SharedDataActive.EnetHostConn?.Vin, SharedDataActive.DiagDoIp);
+                    SharedDataActive.VehicleConnectedHandler(Connected, reconnect, SharedDataActive.EnetHostConn?.Vin, SharedDataActive.DiagDoIp);
                 }
 
                 if (!Connected)
