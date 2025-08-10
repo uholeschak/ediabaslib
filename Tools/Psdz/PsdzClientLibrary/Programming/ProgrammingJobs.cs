@@ -1,18 +1,4 @@
-﻿using System;
-using System.Buffers;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
-using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
@@ -35,7 +21,21 @@ using log4net;
 using log4net.Config;
 using Microsoft.Win32;
 using PsdzClient.Core;
+using PsdzClientLibrary.Psdz;
 using PsdzClientLibrary.Resources;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
+using System.Xml.Serialization;
 using VCIDeviceType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType;
 
 namespace PsdzClient.Programming
@@ -1156,6 +1156,16 @@ namespace PsdzClient.Programming
                 // From ConnectionManager.ConnectToProject
                 string bauIStufe = PsdzContext.DetectVehicle.ILevelShip;
                 bool isDoIp = PsdzContext.DetectVehicle.IsDoIp;
+
+                Vehicle vehicle = new Vehicle(ClientContext);
+                vehicle.VCI.VCIType = icomConnection ? VCIDeviceType.ICOM : VCIDeviceType.ENET;
+                vehicle.VCI.IPAddress = ipAddress;
+                vehicle.VCI.Port = diagPort;
+                vehicle.VCI.NetworkType = "LAN";
+                vehicle.VCI.VIN = PsdzContext.DetectVehicle.Vin;
+                vehicle.VCI.IsDoIP = isDoIp;
+                PsdzContext.VecInfo = vehicle;
+
                 IPsdzConnection psdzConnection;
                 if (icomConnection)
                 {
@@ -1174,6 +1184,9 @@ namespace PsdzClient.Programming
                         psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
                             psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
                             bauIStufe, true);
+                        ConnectionManager connectionManager = new ConnectionManager(ProgrammingService.Psdz, vehicle, null);
+                        connectionManager.RegisterCallbackAndPassCertificatesToPsdz(psdzConnection);
+                        ProgrammingService.Psdz.SecureDiagnosticsService.UnlockGateway(psdzConnection);
                     }
                     else
                     {
@@ -1182,14 +1195,6 @@ namespace PsdzClient.Programming
                             bauIStufe);
                     }
                 }
-
-                Vehicle vehicle = new Vehicle(ClientContext);
-                vehicle.VCI.VCIType = icomConnection ? VCIDeviceType.ICOM : VCIDeviceType.ENET;
-                vehicle.VCI.IPAddress = ipAddress;
-                vehicle.VCI.Port = diagPort;
-                vehicle.VCI.NetworkType = "LAN";
-                vehicle.VCI.VIN = PsdzContext.DetectVehicle.Vin;
-                PsdzContext.VecInfo = vehicle;
 
                 ProgrammingService.CreateEcuProgrammingInfos(PsdzContext.VecInfo);
                 if (!PsdzContext.UpdateVehicle(ProgrammingService))

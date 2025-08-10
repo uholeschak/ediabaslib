@@ -92,7 +92,7 @@ namespace PsdzClientLibrary.Psdz
         internal int ConnectionPort { get; set; }
 
         // [UH] arguments removed
-        internal ConnectionManager(IPsdz psdz, IVehicle vehicle, IEcuKom ecuKom, IProgMsgListener progMsgListener, bool shouldSetConnectionToDcan = false, int connectionPort = -1)
+        internal ConnectionManager(IPsdz psdz, IVehicle vehicle, IProgMsgListener progMsgListener, bool shouldSetConnectionToDcan = false, int connectionPort = -1)
             : base(progMsgListener)
         {
             //PsdzConnectionManager = new PsdzConnectionManager(psdz, protocoller);
