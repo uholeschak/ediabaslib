@@ -10,7 +10,7 @@ This chapter describes how to replace the ELM327 Wifi V1.5 HW: V01W_M_V1.0 adapt
 
 ### ELM327 Wifi V1.5 HW: V01W_M_V1.0 board connections:
 
-[![ELM327 Wifi V1.5 HW: V01W_M_V1.0 board progamming connections big](elm327_wifi_annotated_esp8266x_and_pic18f25k80_prog_connections_Small.png "ELM327 Wifi V1.5 HW: V01W_M_V1.0 board programming connections")](elm327_wifi_annotated_esp8266x_and_pic18f25k80_prog_connections_Big.png)
+[![ELM327 Wifi V1.5 HW: V01W_M_V1.0 board programming connections big](elm327_wifi_annotated_esp8266x_and_pic18f25k80_prog_connections_Small.png "ELM327 Wifi V1.5 HW: V01W_M_V1.0 board programming connections")](elm327_wifi_annotated_esp8266x_and_pic18f25k80_prog_connections_Big.png)
 
 ## Step1: Program the ESP8266ex Soc
 * Connect your Usb to serial (take care ESP8266ex is not 5v tolerant!) to U0RXD (connects to TX), U0TXD (connects to RX) and GND

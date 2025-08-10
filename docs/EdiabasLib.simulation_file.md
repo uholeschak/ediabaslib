@@ -77,7 +77,7 @@ The address is defined as follows for the different protocols:
 * UDS ISO 14229: The address is the 16 bit CAN address.
 * TP2.0: The address is the 8 bit ECU address.
 * KWP 2000, ISO 9141: The address is the 8 bit ECU wake address.
-* Other: The adress is encoded in the request telegram and not required in the section entry.  
+* Other: The address is encoded in the request telegram and not required in the section entry.  
 
 The section name has to be prefixed by the address in hex:`[<addr>.<section name>]`.  
 
@@ -85,7 +85,7 @@ The section name has to be prefixed by the address in hex:`[<addr>.<section name
 The request values could be matched by a mask combined with an operator.  
 The syntax is `<two digit hex value><operator><two digit hex mask>`.  
 Valid operators are `&`, `|`.
-Example: The two highes bits have to be hex `80` and the 6 lower bits are ignored: `80&C0` or `80|3F`
+Example: The two highest bits have to be hex `80` and the 6 lower bits are ignored: `80&C0` or `80|3F`
 
 ### Variable request length
 If the request length is variable, `..` could be appended to the base request telegram.  

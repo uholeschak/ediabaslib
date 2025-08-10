@@ -4,7 +4,7 @@ There is now a replacement firmware available for ELM327L based Bluetooth and Wi
 * K-Line support (all protocols).
 * New: Support for the VAG protocols KWP2000, KWP1281, TP2.0 (cars until 4.2012).
 * Contains a bootstrap loader that allows firmware update without opening the device.
-* Firmware updates are possible with the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_, if the repacement firmware [has already been programmed](#programming-of-the-processor).
+* Firmware updates are possible with the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_, if the replacement firmware [has already been programmed](#programming-of-the-processor).
 * Reduced power consumption due to use of sleep mode.
 * Flashing of a modified [ELM327 firmware](#elm327-v15-firmware) is possible.
 * Two firmware versions are available:
@@ -68,7 +68,7 @@ The latest firmware version will be always included in the _[Deep OBD app](Deep_
 Also you can get compiled firmware files from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
 
 ## ELM327 V2.3 firmware
-There is improved ELM327 V2.3 compatible firmware available. It switches adapter to a mode compatible with most ELM327 softwares. 
+There is improved ELM327 V2.3 compatible firmware available. It switches adapter to a mode compatible with most ELM327 software. 
 Flashing can be done over bluetooth with the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_ (at the moment this is only available for Bluetooth adapters).
 Afterwards you can flash the Deep OBD replacement firmware over Bluetooth firmware again.  
 Binariy files (complete `ELM327V23.X.production.unified.hex`) and (update `ELM327V23.X.production.hex`) could also found in the the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.

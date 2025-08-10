@@ -13,5 +13,5 @@ If you want that any of the data mentioned above should be deleted, send an emai
 [ulrich@holeschak.de](mailto:ulrich@holeschak.de)  
 Add the following information:
 * _Anonymous app id_ from the app main menu.
-* Email adress if this has been explicitly added to trace data.
+* Email address if this has been explicitly added to trace data.
 * Type of data or all that should be deleted.

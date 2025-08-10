@@ -57,13 +57,13 @@ When changing the item type, the search filter is cleared and closed.
 * _Read_: This button executes the selected job and displays the result in the specified format next to the button.
 * _Search results_: If the result list for a job becomes too large, the results could be filtered with the search widget of the title bar.
 * _Additional functions_: If available in this area some special functions are displayed.
-  * _Ediabas tool_: This button swithes directly to the [EDIABAS tool](EdiabasTool.md) with the current SGBD loaded.
+  * _Ediabas tool_: This button switches directly to the [EDIABAS tool](EdiabasTool.md) with the current SGBD loaded.
   * _Actuator functions_: (BMW only) Known actuator functions from the BMW database could be executed directly.
-  * _Coding_: (VAG only) Execute coding funtions.
-  * _Coding 2_: (VAG only) Execute coding 2 funtions.
-  * _Adaption_: (VAG only) Execute adaption funtions.
-  * _Login_: (VAG only) Execute login funtions.
-  * _Security access_: (VAG only) Execute security access funtions.
+  * _Coding_: (VAG only) Execute coding functions.
+  * _Coding 2_: (VAG only) Execute coding 2 functions.
+  * _Adaption_: (VAG only) Execute adaption functions.
+  * _Login_: (VAG only) Execute login functions.
+  * _Security access_: (VAG only) Execute security access functions.
 
 With the _Save_ button on the main configuration page the configuration will be stored and used as default on the main page.
 Hint: A long click on the ECU list opens a submenu that allows to change the order of the ECU entries in the list.

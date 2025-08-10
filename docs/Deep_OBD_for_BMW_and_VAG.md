@@ -68,7 +68,7 @@ This could be also used in hotspot mode (Hotspot active and WiFi off) if the ENE
 * _Adapter IP_: This menu displays the currently manually assigned WiFi adapter IP and allows to edit the IP and port.  
 If the Android device is in hotspot mode (Hotspot active and WiFi off), communication with the adapter is only possible if the IP is assigned manually.  
 This is especially useful for adapters with ESP8266 chip, because they could be configured to connect to the Android hotspot automatically.  
-If the port is ommitted in the IP settings, the default port is 23 in hotspot mode (Hotspot active and WiFi off) and if the IP address is 192.168.4.1 (ESP8266). In all other cases the default port is 35000.
+If the port is omitted in the IP settings, the default port is 23 in hotspot mode (Hotspot active and WiFi off) and if the IP address is 192.168.4.1 (ESP8266). In all other cases the default port is 35000.
 * _Configuration generator_: Simple [XML configuration files](Page_specification.md) could be generated automatically using the informations obtained from the vehicle. This menu opens the [configuration generator](Configuration_Generator.md) which allows to create new or modify existing XML files by simply selecting the ECU and job informations.
 * _Configuration_: This submenu contains configuration selection and editing functions.
 	* _Select_: This menu allows the selection of the [configuration file](Page_specification.md) _(*.cccfg file)_. When using the [configuration generator](Configuration_Generator.md) the configuration is selected automatically. After selection the file will be compiled.
@@ -86,7 +86,7 @@ If the port is ommitted in the IP settings, the default port is 23 in hotspot mo
 	* _Close_: Close the current configuration.
 * _Ediabas tool_: This is a port of the tool32.exe windows application. Selecting the menu will open the [Ediabas tool](EdiabasTool.md) page.
 * _Coding_: This submenu allow to access the [BMW coding](BMW_Coding.md) online service.
-* _Extract ECU files_: The EUC files are very large, so they have to be extraced at first app start. With this menu item files could be extracted again. An internet connection is required to check for update information.
+* _Extract ECU files_: The EUC files are very large, so they have to be extracted at first app start. With this menu item files could be extracted again. An internet connection is required to check for update information.
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
 	* _Create trace file_: If the checkbox of this menu is active, a _ifh.trc_ file will be created when the application is connected. The trace file will be created in the _Log_ subdirectory.
 	* _Append trace file_: If this checkbox is enabled the trace file is always appended. Otherwise the trace file will be overridden after selection of a new configuration or restart of the application.
@@ -124,7 +124,7 @@ https://translate.googleapis.com/translate_a/single?client=gtx&dt=t
 The location of the log and trace files depends from the Android version.  
 Beginning with Android KitKat (4.4) writing to the external SdCard is not possible any more. For older Android versions log and trace files are stored in a subdirectory relative to _de.holeschak.bmw_deep_obd_ on the external SDCard. For KitKat and above the data could be found in the directory _Android\data\de.holeschak.bmw_deep_obd\files_ of the external SDCard.  
 The standard log files are stored in the subdirectory _Log_, whereas the [Ediabas tool](EdiabasTool.md) uses the subdirectory _LogEdiabasTool_ and the [configuration generator](Configuration_Generator.md) the subdirectory _LogConfigTool_.  
-The sending of the trace files failes, the backup trace files are stored in the subdirectory _TraceBackup_.
+The sending of the trace files fails, the backup trace files are stored in the subdirectory _TraceBackup_.
 
 ## Background image
 It's possible to replace the background image. Simply store a custom _Background.jpg_ file in the directory _de.holeschak.bmw_deep_obd\files\Images_ (The _Images_ subdirectory has to be created first).
