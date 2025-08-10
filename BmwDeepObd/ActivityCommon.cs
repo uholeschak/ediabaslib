@@ -8,7 +8,6 @@ using Android.Hardware.Usb;
 using Android.Locations;
 using Android.Net;
 using Android.Net.Wifi;
-using Android.Nfc.Tech;
 using Android.OS;
 using Android.OS.Storage;
 using Android.Views;
