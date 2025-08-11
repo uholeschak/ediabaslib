@@ -884,6 +884,7 @@ namespace PsdzClient
                 VCIDevice vciDevice = new VCIDevice(VCIDeviceType.ENET, "Detect", "GenerateCertificate");
                 vciDevice.VIN = vin;
 
+                sec4DiagHandler.Sec4DiagCertificates = null;    // force creation of new certificates
                 BoolResultObject boolResultObject = sec4DiagHandler.CertificatesAreFoundAndValid(vciDevice, subCaCertificate, caCertificate);
                 if (!boolResultObject.Result)
                 {
