@@ -45,6 +45,7 @@ namespace PsdzClient
         private string _istaFolder;
         private string _doIpSslSecurityPath;
         private string _doIpS29Path;
+        private List<X509CertificateStructure> _lastCertificates;
         private bool _disposed;
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
@@ -867,7 +868,13 @@ namespace PsdzClient
                 if (string.IsNullOrEmpty(vin))
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "GenerateCertificate: VIN missing");
+                    _lastCertificates = null;
                     return null;
+                }
+
+                if (_lastCertificates != null)
+                {
+                    return _lastCertificates;
                 }
 
                 ISec4DiagHandler sec4DiagHandler = GetSec4DiagHandler();
@@ -902,6 +909,7 @@ namespace PsdzClient
                 List<X509CertificateStructure> certificates = EdBcTlsUtilities.LoadBcCertificateResources(certFile);
                 File.Delete(certFile);
 
+                _lastCertificates = certificates;
                 return certificates;
             }
             catch (Exception e)
@@ -1252,6 +1260,7 @@ namespace PsdzClient
             base.ResetValues();
             _abortRequest = false;
             _abortFunc = null;
+            _lastCertificates = null;
             EcuListPsdz = new List<PsdzDatabase.EcuInfo>();
         }
 
