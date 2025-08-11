@@ -4230,183 +4230,199 @@ namespace EdiabasLib
             {
                 return false;
             }
-            try
+
+            for (int retries = 0; retries < 3; retries++)
             {
-                lock (SharedDataActive.TcpDiagStreamRecLock)
+                try
                 {
-                    SharedDataActive.TcpDiagStreamRecEvent.Reset();
-                    SharedDataActive.TcpDiagRecQueue.Clear();
-                }
-
-                if (SharedDataActive.DoIpRoutingState == DoIpRoutingState.None)
-                {
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Routing activation required");
-                    if (!DoIpRoutingActivation(enableLogging))
+                    lock (SharedDataActive.TcpDiagStreamRecLock)
                     {
-                        InterfaceDisconnect(true);
-                        if (!InterfaceConnect(true))
+                        SharedDataActive.TcpDiagStreamRecEvent.Reset();
+                        SharedDataActive.TcpDiagRecQueue.Clear();
+                    }
+
+                    if (SharedDataActive.DoIpRoutingState == DoIpRoutingState.None)
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Routing activation required");
+                        if (!DoIpRoutingActivation(enableLogging))
                         {
-                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
-                            SharedDataActive.ReconnectRequired = true;
-                            return false;
-                        }
-                    }
-                }
-
-                uint targetAddr = sendData[1];
-                uint sourceAddr = sendData[2];
-                if (sourceAddr == 0xF1)
-                {
-                    sourceAddr = (uint)DoIpTesterAddress;
-                }
-
-                int dataOffset = 3;
-                int dataLength = sendData[0] & 0x3F;
-                if (dataLength == 0)
-                {   // with length byte
-                    if (sendData[3] == 0)
-                    {
-                        dataLength = (sendData[4] << 8) | sendData[5];
-                        dataOffset = 6;
-                    }
-                    else
-                    {
-                        dataLength = sendData[3];
-                        dataOffset = 4;
-                    }
-                }
-
-                int payloadLength = dataLength + 4;
-                DataBuffer[0] = DoIpProtoVer;
-                DataBuffer[1] = ~DoIpProtoVer & 0xFF;
-                DataBuffer[2] = 0x80;   // diagostic message
-                DataBuffer[3] = 0x01;
-                DataBuffer[4] = (byte)((payloadLength >> 24) & 0xFF);
-                DataBuffer[5] = (byte)((payloadLength >> 16) & 0xFF);
-                DataBuffer[6] = (byte)((payloadLength >> 8) & 0xFF);
-                DataBuffer[7] = (byte)(payloadLength & 0xFF);
-                DataBuffer[8] = (byte)(sourceAddr >> 8);
-                DataBuffer[9] = (byte)sourceAddr;
-                DataBuffer[10] = (byte)(targetAddr >> 8);
-                DataBuffer[11] = (byte)targetAddr;
-                Array.Copy(sendData, dataOffset, DataBuffer, 12, dataLength);
-                int sendLength = dataLength + 12;
-                lock (SharedDataActive.TcpDiagStreamSendLock)
-                {
-                    WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
-                }
-
-                // wait for ack
-                int recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging);
-                if (recLen < 0)
-                {
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
-                    if (!DoIpRoutingActivation(enableLogging))
-                    {
-                        InterfaceDisconnect(true);
-                        if (!InterfaceConnect(true))
-                        {
-                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
-                            SharedDataActive.ReconnectRequired = true;
-                            return false;
+                            InterfaceDisconnect(true);
+                            if (!InterfaceConnect(true))
+                            {
+                                if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                                SharedDataActive.ReconnectRequired = true;
+                                return false;
+                            }
                         }
                     }
 
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
-                    lock (SharedDataActive.TcpDiagStreamSendLock)
+                    uint targetAddr = sendData[1];
+                    uint sourceAddr = sendData[2];
+                    if (sourceAddr == 0xF1)
                     {
-                        WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
-                    }
-                    recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging);
-                    if (recLen < 0)
-                    {
-                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
-                        return false;
-                    }
-                }
-
-                uint payloadType = 0x0000;
-                if (recLen >= 8)
-                {
-                    payloadType = (((uint)AckBuffer[2] << 8) | AckBuffer[3]);
-                }
-
-                if (payloadType == 0x8003)
-                {   // NACK
-                    if ((recLen < 13) || (AckBuffer[12] != 0x00))
-                    {
-                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: aborting");
-                        InterfaceDisconnect(true);
-                        SharedDataActive.ReconnectRequired = true;
-                        return false;
+                        sourceAddr = (uint)DoIpTesterAddress;
                     }
 
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
-                    if (!DoIpRoutingActivation(enableLogging))
-                    {
-                        InterfaceDisconnect(true);
-                        if (!InterfaceConnect(true))
+                    int dataOffset = 3;
+                    int dataLength = sendData[0] & 0x3F;
+                    if (dataLength == 0)
+                    {   // with length byte
+                        if (sendData[3] == 0)
                         {
-                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
-                            SharedDataActive.ReconnectRequired = true;
-                            return false;
+                            dataLength = (sendData[4] << 8) | sendData[5];
+                            dataOffset = 6;
+                        }
+                        else
+                        {
+                            dataLength = sendData[3];
+                            dataOffset = 4;
                         }
                     }
 
+                    int payloadLength = dataLength + 4;
+                    DataBuffer[0] = DoIpProtoVer;
+                    DataBuffer[1] = ~DoIpProtoVer & 0xFF;
+                    DataBuffer[2] = 0x80;   // diagostic message
+                    DataBuffer[3] = 0x01;
+                    DataBuffer[4] = (byte)((payloadLength >> 24) & 0xFF);
+                    DataBuffer[5] = (byte)((payloadLength >> 16) & 0xFF);
+                    DataBuffer[6] = (byte)((payloadLength >> 8) & 0xFF);
+                    DataBuffer[7] = (byte)(payloadLength & 0xFF);
+                    DataBuffer[8] = (byte)(sourceAddr >> 8);
+                    DataBuffer[9] = (byte)sourceAddr;
+                    DataBuffer[10] = (byte)(targetAddr >> 8);
+                    DataBuffer[11] = (byte)targetAddr;
+                    Array.Copy(sendData, dataOffset, DataBuffer, 12, dataLength);
+                    int sendLength = dataLength + 12;
                     lock (SharedDataActive.TcpDiagStreamSendLock)
                     {
                         WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
                     }
 
-                    recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging);
+                    // wait for ack
+                    int recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging);
                     if (recLen < 0)
                     {
-                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
-                        return false;
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
+                        if (!DoIpRoutingActivation(enableLogging))
+                        {
+                            InterfaceDisconnect(true);
+                            if (!InterfaceConnect(true))
+                            {
+                                if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                                SharedDataActive.ReconnectRequired = true;
+                                return false;
+                            }
+                        }
+
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
+                        lock (SharedDataActive.TcpDiagStreamSendLock)
+                        {
+                            WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                        }
+                        recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging);
+                        if (recLen < 0)
+                        {
+                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                            return false;
+                        }
                     }
 
-                    payloadType = 0x0000;
+                    uint payloadType = 0x0000;
                     if (recLen >= 8)
                     {
                         payloadType = (((uint)AckBuffer[2] << 8) | AckBuffer[3]);
                     }
-                }
 
-                if (payloadType != 0x8002)
-                {   // No Ack
-                    if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** No Ack received");
-                    return false;
-                }
+                    if (payloadType == 0x8003)
+                    {   // NACK
+                        if ((recLen < 13) || (AckBuffer[12] != 0x00))
+                        {
+                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: aborting");
+                            InterfaceDisconnect(true);
+                            SharedDataActive.ReconnectRequired = true;
+                            return false;
+                        }
 
-                if ((recLen < 13) || (recLen - 1 > sendLength) || (recLen - 13 > MaxDoIpAckLength) || (AckBuffer[12] != 0x00))
-                {
-                    if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
-                    return false;
-                }
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
+                        if (!DoIpRoutingActivation(enableLogging))
+                        {
+                            InterfaceDisconnect(true);
+                            if (!InterfaceConnect(true))
+                            {
+                                if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                                SharedDataActive.ReconnectRequired = true;
+                                return false;
+                            }
+                        }
 
-                if (AckBuffer[8] != DataBuffer[10] ||
-                    AckBuffer[9] != DataBuffer[11] ||
-                    AckBuffer[10] != DataBuffer[8] ||
-                    AckBuffer[11] != DataBuffer[9])
-                {
-                    if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack address not matching");
-                    return false;
-                }
+                        lock (SharedDataActive.TcpDiagStreamSendLock)
+                        {
+                            WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                        }
 
-                for (int i = 13; i < recLen; i++)
-                {
-                    if (AckBuffer[i] != DataBuffer[i - 1])
-                    {
-                        if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data not matching");
+                        recLen = ReceiveDoIpAck(AckBuffer, ConnectTimeout + DoIpTimeoutAcknowledge, enableLogging);
+                        if (recLen < 0)
+                        {
+                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                            return false;
+                        }
+
+                        payloadType = 0x0000;
+                        if (recLen >= 8)
+                        {
+                            payloadType = (((uint)AckBuffer[2] << 8) | AckBuffer[3]);
+                        }
+                    }
+
+                    if (payloadType != 0x8002)
+                    {   // No Ack
+                        if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** No Ack received");
                         return false;
                     }
+
+                    if ((recLen < 13) || (recLen - 1 > sendLength) || (recLen - 13 > MaxDoIpAckLength) || (AckBuffer[12] != 0x00))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
+                        return false;
+                    }
+
+                    if (AckBuffer[8] != DataBuffer[10] ||
+                        AckBuffer[9] != DataBuffer[11] ||
+                        AckBuffer[10] != DataBuffer[8] ||
+                        AckBuffer[11] != DataBuffer[9])
+                    {
+                        if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack address not matching");
+                        return false;
+                    }
+
+                    for (int i = 13; i < recLen; i++)
+                    {
+                        if (AckBuffer[i] != DataBuffer[i - 1])
+                        {
+                            if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data not matching");
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SendDoIpData exception: {0}", EdiabasNet.GetExceptionText(ex));
+                    InterfaceDisconnect(true);
+                    if (!InterfaceConnect(true))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                        SharedDataActive.ReconnectRequired = true;
+                        return false;
+                    }
+
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: retrying");
                 }
             }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
+
+            return false;
         }
 
         protected bool ReceiveEnetData(byte[] receiveData, int timeout)
