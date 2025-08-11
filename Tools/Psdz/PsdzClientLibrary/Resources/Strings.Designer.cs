@@ -113,6 +113,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Battery voltage reading failed. ähnelt.
+        /// </summary>
+        internal static string BatteryVoltageReadError {
+            get {
+                return ResourceManager.GetString("BatteryVoltageReadError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Warning:
         ///The battery voltage {0:0.00}V is out of valid range:
         ///{1:0.00}V - {2:0.00}V.

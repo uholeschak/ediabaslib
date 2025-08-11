@@ -1239,6 +1239,8 @@ namespace PsdzClient.Programming
 #endif
                 if (!CheckVoltage(cts, sbResult, true))
                 {
+                    sbResult.AppendLine(Strings.BatteryVoltageReadError);
+                    UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
@@ -1396,6 +1398,8 @@ namespace PsdzClient.Programming
 
                 if (!CheckVoltage(cts, sbResult))
                 {
+                    sbResult.AppendLine(Strings.BatteryVoltageReadError);
+                    UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
@@ -1543,6 +1547,8 @@ namespace PsdzClient.Programming
 
                         if (!CheckVoltage(cts, sbResult))
                         {
+                            sbResult.AppendLine(Strings.BatteryVoltageReadError);
+                            UpdateStatus(sbResult.ToString());
                             return false;
                         }
 
@@ -1557,6 +1563,8 @@ namespace PsdzClient.Programming
 
                         if (!CheckVoltage(cts, sbResult))
                         {
+                            sbResult.AppendLine(Strings.BatteryVoltageReadError);
+                            UpdateStatus(sbResult.ToString());
                             return false;
                         }
 #if false
@@ -1757,6 +1765,8 @@ namespace PsdzClient.Programming
                         {
                             if (!CheckVoltage(cts, sbResult))
                             {
+                                sbResult.AppendLine(Strings.BatteryVoltageReadError);
+                                UpdateStatus(sbResult.ToString());
                                 return false;
                             }
 
@@ -1780,6 +1790,8 @@ namespace PsdzClient.Programming
 #endif
                         if (!CheckVoltage(cts, sbResult))
                         {
+                            sbResult.AppendLine(Strings.BatteryVoltageReadError);
+                            UpdateStatus(sbResult.ToString());
                             return false;
                         }
 
@@ -1931,6 +1943,8 @@ namespace PsdzClient.Programming
 
                             if (!CheckVoltage(cts, sbResult))
                             {
+                                sbResult.AppendLine(Strings.BatteryVoltageReadError);
+                                UpdateStatus(sbResult.ToString());
                                 return false;
                             }
 
@@ -1992,6 +2006,8 @@ namespace PsdzClient.Programming
 
                                 if (!CheckVoltage(cts, sbResult))
                                 {
+                                    sbResult.AppendLine(Strings.BatteryVoltageReadError);
+                                    UpdateStatus(sbResult.ToString());
                                     return false;
                                 }
 
@@ -2200,6 +2216,8 @@ namespace PsdzClient.Programming
                 restartBuildTal:
                 if (!CheckVoltage(cts, sbResult))
                 {
+                    sbResult.AppendLine(Strings.BatteryVoltageReadError);
+                    UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
@@ -3258,7 +3276,7 @@ namespace PsdzClient.Programming
                 CacheResponseType = CacheType.NoResponse;
                 for (; ; )
                 {
-                    double voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage(() =>
+                    double? voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage(() =>
                     {
                         if (cts != null)
                         {
@@ -3266,6 +3284,12 @@ namespace PsdzClient.Programming
                         }
                         return false;
                     });
+
+                    if (voltage == null)
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage error");
+                        return false;
+                    }
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
 

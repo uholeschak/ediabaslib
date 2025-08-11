@@ -440,4 +440,7 @@ Coding is available only for F series or higher.</value>
   <data name="CertificatesNotPresent" xml:space="preserve">
     <value>Certifiates for secure connection missing.</value>
   </data>
+  <data name="BatteryVoltageReadError" xml:space="preserve">
+    <value>Battery voltage reading failed.</value>
+  </data>
 </root>

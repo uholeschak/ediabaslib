@@ -780,7 +780,7 @@ namespace PsdzClient
             }
         }
 
-        public double ReadBatteryVoltage(AbortDelegate abortFunc)
+        public double? ReadBatteryVoltage(AbortDelegate abortFunc)
         {
             double voltage = -1;
 
@@ -790,14 +790,14 @@ namespace PsdzClient
                 if (!Connect())
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "ReadBatteryVoltage Connect failed");
-                    return -1;
+                    return null;
                 }
 
                 foreach (JobInfo jobInfo in ReadVoltageJobsBmwFast)
                 {
                     if (_abortRequest)
                     {
-                        return -1;
+                        return null;
                     }
 
                     LogInfoFormat("Read voltage job: {0}, {1}, {2}",
@@ -841,7 +841,7 @@ namespace PsdzClient
             catch (Exception ex)
             {
                 log.ErrorFormat(CultureInfo.InvariantCulture, "ReadBatteryVoltage Exception: {0}", ex.Message);
-                return -1;
+                return null;
             }
             finally
             {
