@@ -1184,6 +1184,14 @@ namespace PsdzClient.Programming
                         psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
                             psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
                             bauIStufe, true);
+                        ISec4DiagHandler sec4DiagHandler = PsdzContext.DetectVehicle.GetSec4DiagHandler();
+                        if (sec4DiagHandler == null || sec4DiagHandler.Sec4DiagCertificates == null)
+                        {
+                            sbResult.AppendLine(Strings.CertificatesNotPresent);
+                            UpdateStatus(sbResult.ToString());
+                            return false;
+                        }
+
                         ConnectionManager connectionManager = new ConnectionManager(ProgrammingService.Psdz, vehicle, null);
                         connectionManager.RegisterCallbackAndPassCertificatesToPsdz(psdzConnection);
                         ProgrammingService.Psdz.SecureDiagnosticsService.UnlockGateway(psdzConnection);

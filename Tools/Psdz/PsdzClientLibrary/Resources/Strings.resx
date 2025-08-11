@@ -434,4 +434,10 @@ Coding is available only for F series or higher.</value>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
     <value>Vehicle series not detected.</value>
   </data>
+  <data name="RequestedFlashSetupFailed" xml:space="preserve">
+    <value>Requesting planned development failed.</value>
+  </data>
+  <data name="CertificatesNotPresent" xml:space="preserve">
+    <value>Certifiates for secure connection missing.</value>
+  </data>
 </root>

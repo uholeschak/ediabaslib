@@ -125,6 +125,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Certifiates for secure connection missing. ähnelt.
+        /// </summary>
+        internal static string CertificatesNotPresent {
+            get {
+                return ResourceManager.GetString("CertificatesNotPresent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Context not found. ähnelt.
         /// </summary>
         internal static string ContextMissing {
@@ -483,6 +492,15 @@ namespace PsdzClientLibrary.Resources {
         internal static string RequestEcuContextFailed {
             get {
                 return ResourceManager.GetString("RequestEcuContextFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Requesting planned development failed. ähnelt.
+        /// </summary>
+        internal static string RequestedFlashSetupFailed {
+            get {
+                return ResourceManager.GetString("RequestedFlashSetupFailed", resourceCulture);
             }
         }
         

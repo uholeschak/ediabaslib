@@ -267,8 +267,8 @@ Vermutlich haben Sie eine kostenpflichtig Option ausgewählt.</value>
   <data name="RequestEcuContextFailed" xml:space="preserve">
     <value>Steuergeräte Kontext anfragen fehlgeschlagen.</value>
   </data>
-  <data name="RequestedFlashSetupFailed" xml:space="preserve">
-    <value>Sollverbauung abrufen fehlgeschlagen.</value>
+  <data name="RequestedPlannedConstructionFailed" xml:space="preserve">
+    <value>Geplante Konstruktion abfragen fehlgeschlagen.</value>
   </data>
   <data name="RequestingEcuContext" xml:space="preserve">
     <value>Steuergeräte Kontext anfragen ...</value>
@@ -433,5 +433,11 @@ Kodieren ist nur verfügbar für F Modelle oder höher.</value>
   </data>
   <data name="VehicleSeriesNotDetected" xml:space="preserve">
     <value>Fahrzeugserie nicht erkannt.</value>
+  </data>
+  <data name="RequestedFlashSetupFailed" xml:space="preserve">
+    <value>Sollverbauung abrufen fehlgeschlagen.</value>
+  </data>
+  <data name="CertificatesNotPresent" xml:space="preserve">
+    <value>Zertifikate für sichere Verbindung nicht vorhanden.</value>
   </data>
 </root>
