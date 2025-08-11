@@ -3269,7 +3269,7 @@ namespace PsdzClient.Programming
             }
 
             if (PsdzContext.DetectVehicle.IsDoIp)
-            {
+            {   // Parallel connections in DoIp mode are unstable.
                 return true;
             }
 
