@@ -1164,7 +1164,7 @@ namespace PsdzClient.Programming
                 vehicle.VCI.NetworkType = "LAN";
                 vehicle.VCI.VIN = PsdzContext.DetectVehicle.Vin;
                 vehicle.VCI.IsDoIP = isDoIp;
-                PsdzContext.VecInfo = vehicle;
+                vehicle.VIN17 = PsdzContext.DetectVehicle.Vin;
 
                 IPsdzConnection psdzConnection;
                 if (icomConnection)
@@ -1196,6 +1196,7 @@ namespace PsdzClient.Programming
                     }
                 }
 
+                PsdzContext.VecInfo = vehicle;
                 ProgrammingService.CreateEcuProgrammingInfos(PsdzContext.VecInfo);
                 if (!PsdzContext.UpdateVehicle(ProgrammingService))
                 {
