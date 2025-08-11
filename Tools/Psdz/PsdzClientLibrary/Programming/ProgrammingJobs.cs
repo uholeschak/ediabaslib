@@ -3268,6 +3268,11 @@ namespace PsdzClient.Programming
                 return false;
             }
 
+            if (PsdzContext.DetectVehicle.IsDoIp)
+            {
+                return true;
+            }
+
             CacheType cacheTypeOld = CacheResponseType;
             bool icomAllocated = PsdzContext.DetectVehicle.IsIcomAllocated();
 
