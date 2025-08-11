@@ -4109,61 +4109,122 @@ namespace EdiabasLib
 
         protected bool SendEnetData(byte[] sendData, int length, bool enableLogging)
         {
-            if (SharedDataActive.TcpDiagStream == null)
+            for (int retries = 0; retries < 3; retries++)
             {
-                return false;
-            }
-            try
-            {
-                lock (SharedDataActive.TcpDiagStreamRecLock)
+                try
                 {
-                    SharedDataActive.TcpDiagStreamRecEvent.Reset();
-                    SharedDataActive.TcpDiagRecQueue.Clear();
-                }
-
-                byte targetAddr = sendData[1];
-                byte sourceAddr = sendData[2];
-                if (sourceAddr == 0xF1)
-                {
-                    sourceAddr = (byte)TesterAddress;
-                }
-
-                int dataOffset = 3;
-                int dataLength = sendData[0] & 0x3F;
-                if (dataLength == 0)
-                {   // with length byte
-                    if (sendData[3] == 0)
+                    if (SharedDataActive.TcpDiagStream == null)
                     {
-                        dataLength = (sendData[4] << 8) | sendData[5];
-                        dataOffset = 6;
+                        return false;
                     }
-                    else
-                    {
-                        dataLength = sendData[3];
-                        dataOffset = 4;
-                    }
-                }
-                int payloadLength = dataLength + 2;
-                DataBuffer[0] = (byte)((payloadLength >> 24) & 0xFF);
-                DataBuffer[1] = (byte)((payloadLength >> 16) & 0xFF);
-                DataBuffer[2] = (byte)((payloadLength >> 8) & 0xFF);
-                DataBuffer[3] = (byte)(payloadLength & 0xFF);
-                DataBuffer[4] = 0x00;   // Payoad type: Diag message
-                DataBuffer[5] = 0x01;
-                DataBuffer[6] = sourceAddr;
-                DataBuffer[7] = targetAddr;
-                Array.Copy(sendData, dataOffset, DataBuffer, 8, dataLength);
-                int sendLength = dataLength + 8;
-                lock (SharedDataActive.TcpDiagStreamSendLock)
-                {
-                    WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
-                }
 
-                // wait for ack
-                int recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpEnetAckTimeout, enableLogging);
-                if (recLen < 0)
+                    lock (SharedDataActive.TcpDiagStreamRecLock)
+                    {
+                        SharedDataActive.TcpDiagStreamRecEvent.Reset();
+                        SharedDataActive.TcpDiagRecQueue.Clear();
+                    }
+
+                    byte targetAddr = sendData[1];
+                    byte sourceAddr = sendData[2];
+                    if (sourceAddr == 0xF1)
+                    {
+                        sourceAddr = (byte)TesterAddress;
+                    }
+
+                    int dataOffset = 3;
+                    int dataLength = sendData[0] & 0x3F;
+                    if (dataLength == 0)
+                    {   // with length byte
+                        if (sendData[3] == 0)
+                        {
+                            dataLength = (sendData[4] << 8) | sendData[5];
+                            dataOffset = 6;
+                        }
+                        else
+                        {
+                            dataLength = sendData[3];
+                            dataOffset = 4;
+                        }
+                    }
+                    int payloadLength = dataLength + 2;
+                    DataBuffer[0] = (byte)((payloadLength >> 24) & 0xFF);
+                    DataBuffer[1] = (byte)((payloadLength >> 16) & 0xFF);
+                    DataBuffer[2] = (byte)((payloadLength >> 8) & 0xFF);
+                    DataBuffer[3] = (byte)(payloadLength & 0xFF);
+                    DataBuffer[4] = 0x00;   // Payoad type: Diag message
+                    DataBuffer[5] = 0x01;
+                    DataBuffer[6] = sourceAddr;
+                    DataBuffer[7] = targetAddr;
+                    Array.Copy(sendData, dataOffset, DataBuffer, 8, dataLength);
+                    int sendLength = dataLength + 8;
+                    lock (SharedDataActive.TcpDiagStreamSendLock)
+                    {
+                        WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                    }
+
+                    // wait for ack
+                    int recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpEnetAckTimeout, enableLogging);
+                    if (recLen < 0)
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
+                        InterfaceDisconnect(true);
+                        if (!InterfaceConnect(true))
+                        {
+                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** Reconnect failed");
+                            SharedDataActive.ReconnectRequired = true;
+                            return false;
+                        }
+
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
+                        lock (SharedDataActive.TcpDiagStreamSendLock)
+                        {
+                            WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                        }
+                        recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpEnetAckTimeout, enableLogging);
+                        if (recLen < 0)
+                        {
+                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                            return false;
+                        }
+                    }
+
+                    if ((recLen == 6) && (AckBuffer[5] == 0xFF))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
+                        lock (SharedDataActive.TcpDiagStreamSendLock)
+                        {
+                            WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
+                        }
+                        recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpEnetAckTimeout, enableLogging);
+                        if (recLen < 0)
+                        {
+                            if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
+                            return false;
+                        }
+                    }
+
+                    if ((recLen < 6) || (recLen > sendLength) || (recLen > MaxAckLength) || (AckBuffer[5] != 0x02))
+                    {
+                        if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
+                        return false;
+                    }
+
+                    AckBuffer[4] = DataBuffer[4];
+                    AckBuffer[5] = DataBuffer[5];
+                    for (int i = 4; i < recLen; i++)
+                    {
+                        if (AckBuffer[i] != DataBuffer[i])
+                        {
+                            if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data not matching");
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+                catch (Exception ex)
                 {
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No ack received");
+                    if (enableLogging) EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SendEnetData exception: {0}", EdiabasNet.GetExceptionText(ex));
                     InterfaceDisconnect(true);
                     if (!InterfaceConnect(true))
                     {
@@ -4172,67 +4233,22 @@ namespace EdiabasLib
                         return false;
                     }
 
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: resending");
-                    lock (SharedDataActive.TcpDiagStreamSendLock)
-                    {
-                        WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
-                    }
-                    recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpEnetAckTimeout, enableLogging);
-                    if (recLen < 0)
-                    {
-                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
-                        return false;
-                    }
-                }
-
-                if ((recLen == 6) && (AckBuffer[5] == 0xFF))
-                {
-                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Nack received: resending");
-                    lock (SharedDataActive.TcpDiagStreamSendLock)
-                    {
-                        WriteNetworkStream(SharedDataActive.TcpDiagStream, DataBuffer, 0, sendLength);
-                    }
-                    recLen = ReceiveEnetAck(AckBuffer, ConnectTimeout + TcpEnetAckTimeout, enableLogging);
-                    if (recLen < 0)
-                    {
-                        if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** No resend ack received");
-                        return false;
-                    }
-                }
-
-                if ((recLen < 6) || (recLen > sendLength) || (recLen > MaxAckLength) || (AckBuffer[5] != 0x02))
-                {
-                    if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack frame invalid");
-                    return false;
-                }
-
-                AckBuffer[4] = DataBuffer[4];
-                AckBuffer[5] = DataBuffer[5];
-                for (int i = 4; i < recLen; i++)
-                {
-                    if (AckBuffer[i] != DataBuffer[i])
-                    {
-                        if (enableLogging) EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, AckBuffer, 0, recLen, "*** Ack data not matching");
-                        return false;
-                    }
+                    if (enableLogging) EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Reconnected: retrying");
                 }
             }
-            catch (Exception)
-            {
-                return false;
-            }
-            return true;
+
+            return false;
         }
 
         protected bool SendDoIpData(byte[] sendData, int length, bool enableLogging)
         {
-            if (SharedDataActive.TcpDiagStream == null)
-            {
-                return false;
-            }
-
             for (int retries = 0; retries < 3; retries++)
             {
+                if (SharedDataActive.TcpDiagStream == null)
+                {
+                    return false;
+                }
+
                 try
                 {
                     lock (SharedDataActive.TcpDiagStreamRecLock)
