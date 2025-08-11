@@ -850,6 +850,16 @@ namespace PsdzClient
             return voltage;
         }
 
+        public ISec4DiagHandler GetSec4DiagHandler()
+        {
+            if (!ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var sec4DiagHandler))
+            {
+                sec4DiagHandler = new Sec4DiagHandler(_istaFolder);
+                ServiceLocator.Current.AddService(sec4DiagHandler);
+            }
+            return sec4DiagHandler;
+        }
+
         public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin)
         {
             try
@@ -860,12 +870,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                if (!ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var sec4DiagHandler))
-                {
-                    sec4DiagHandler = new Sec4DiagHandler(_istaFolder);
-                    ServiceLocator.Current.AddService(sec4DiagHandler);
-                }
-
+                ISec4DiagHandler sec4DiagHandler = GetSec4DiagHandler();
                 sec4DiagHandler.EdiabasPublicKey = sec4DiagHandler.GetPublicKeyFromEdiabas();
                 string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
                 string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
