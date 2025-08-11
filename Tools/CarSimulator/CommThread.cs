@@ -137,6 +137,7 @@ namespace CarSimulator
                 LastTcpRecTick = DateTime.MinValue.Ticks;
                 LastTcpSendTick = DateTime.MinValue.Ticks;
                 LastTesterAddress = null;
+                TcpLastResponse = null;
                 ClientPublicKey = null;
                 ServerChallenge = null;
             }
@@ -2990,6 +2991,9 @@ namespace CarSimulator
                     bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
                     bmwTcpClientData.TcpNackIndex = 0;
                     bmwTcpClientData.TcpDataIndex = 0;
+                    bmwTcpClientData.TcpLastResponse = null;
+                    bmwTcpClientData.ClientPublicKey = null;
+                    bmwTcpClientData.ServerChallenge = null;
                     Debug.WriteLine("Diag connected [{0}], Port={1}, Local={2}, Remote={3}",
                         bmwTcpClientData.Index, bmwTcpClientData.BmwTcpChannel.DiagPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
@@ -3306,6 +3310,9 @@ namespace CarSimulator
                     bmwTcpClientData.LastTcpSendTick = DateTime.MinValue.Ticks;
                     bmwTcpClientData.TcpNackIndex = 0;
                     bmwTcpClientData.TcpDataIndex = 0;
+                    bmwTcpClientData.TcpLastResponse = null;
+                    bmwTcpClientData.ClientPublicKey = null;
+                    bmwTcpClientData.ServerChallenge = null;
                     Debug.WriteLine("DoIp connected [{0}], Port={1}, Local={2}, Remote={3}",
                         bmwTcpClientData.Index, bmwTcpClientData.UsedDoIpPort,
                         bmwTcpClientData.TcpClientConnection.Client.LocalEndPoint.ToString(),
@@ -6881,8 +6888,8 @@ namespace CarSimulator
                         {
                             Debug.WriteLine("Authentication Configuration -> PKI certificate");
                             byte[] dummyResponse = { 0x83, _receiveData[2], _receiveData[1], 0x69, subFunction, 0x02, 0x00 };   // PKI certificate
-                            bmwTcpClientData.ClientPublicKey = null;
-                            bmwTcpClientData.ServerChallenge = null;
+                            //bmwTcpClientData.ClientPublicKey = null;
+                            //bmwTcpClientData.ServerChallenge = null;
                             ObdSend(dummyResponse, bmwTcpClientData);
                         }
                         else
