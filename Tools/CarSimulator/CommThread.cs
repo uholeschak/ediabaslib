@@ -3909,7 +3909,7 @@ namespace CarSimulator
                     long timeDiff = (receiveTime - lastReceiveTime) / TickResolMs;
                     lastReceiveTime = receiveTime;
                     Debug.WriteLine("CAN rec: {0:X03} {1}", canMsg.ID, BitConverter.ToString(canMsg.DATA, 0, canMsg.LEN).Replace("-", " "));
-                    Debug.WriteLine("Rec({0}): {1}", frameType, timeDiff);
+                    Debug.WriteLine("Rec({0}): {1}ms", frameType, timeDiff);
 #endif
                     if (recLen == 0)
                     {   // first telegram
@@ -4267,6 +4267,7 @@ namespace CarSimulator
                             {
 #if CAN_DEBUG
                                 Debug.WriteLine("CAN rec FC: {0:X03} {1}", canMsg.ID, BitConverter.ToString(canMsg.DATA, 0, canMsg.LEN).Replace("-", " "));
+                                Debug.WriteLine("Rec delay: {0}ms", _receiveStopWatch.ElapsedMilliseconds);
 #endif
                                 byte sourceRec = canMsg.DATA[0];
                                 byte frameType = (byte)((canMsg.DATA[1] >> 4) & 0x0F);
@@ -4292,7 +4293,7 @@ namespace CarSimulator
                                 }
 #endif
                             }
-                            if (_receiveStopWatch.ElapsedMilliseconds > 1000)
+                            if (_receiveStopWatch.ElapsedMilliseconds > 3000)
                             {
 #if CAN_DEBUG
                                 Debug.WriteLine("CAN FC rec timeout");
