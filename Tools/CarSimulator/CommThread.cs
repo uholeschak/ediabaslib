@@ -4266,7 +4266,7 @@ namespace CarSimulator
                             if (stsResult == TPCANStatus.PCAN_ERROR_OK)
                             {
 #if CAN_DEBUG
-                                //Debug.WriteLine(string.Format("CAN rec FC: {0:X03} {1}", canMsg.ID, BitConverter.ToString(canMsg.DATA, 0, canMsg.LEN).Replace("-", " ")));
+                                Debug.WriteLine("CAN rec FC: {0:X03} {1}", canMsg.ID, BitConverter.ToString(canMsg.DATA, 0, canMsg.LEN).Replace("-", " "));
 #endif
                                 byte sourceRec = canMsg.DATA[0];
                                 byte frameType = (byte)((canMsg.DATA[1] >> 4) & 0x0F);
@@ -4285,7 +4285,7 @@ namespace CarSimulator
                                     return false;
                                 }
 #if CAN_DEBUG
-                                Debug.WriteLine(string.Format("CAN ignored: {0:X03} {1}", canMsg.ID, BitConverter.ToString(canMsg.DATA, 0, canMsg.LEN).Replace("-", " ")));
+                                Debug.WriteLine("CAN ignored: {0:X03} {1}", canMsg.ID, BitConverter.ToString(canMsg.DATA, 0, canMsg.LEN).Replace("-", " "));
                                 if (!sourceValid)
                                 {
                                     Debug.WriteLine("Source address mismatch: received={0:X02}, expected={1:X02}", sourceRec, sourceAddr);
@@ -4294,6 +4294,9 @@ namespace CarSimulator
                             }
                             if (_receiveStopWatch.ElapsedMilliseconds > 1000)
                             {
+#if CAN_DEBUG
+                                Debug.WriteLine("CAN FC rec timeout");
+#endif
                                 _receiveStopWatch.Stop();
                                 return false;
                             }
@@ -4380,7 +4383,7 @@ namespace CarSimulator
                     len = 6;
                 }
 #if CAN_DEBUG
-                //Debug.WriteLine("Send CC: Source={0:X02} Target={1:X02} Len={2}", sourceAddr, targetAddr, len);
+                Debug.WriteLine("Send CC: Source={0:X02} Target={1:X02} Len={2}", sourceAddr, targetAddr, len);
 #endif
                 sendMsg.ID = (uint)(0x600 + sourceAddr);
 #if CAN_DYN_LEN
@@ -4398,7 +4401,7 @@ namespace CarSimulator
                 blockCount++;
                 //Thread.Sleep(900);    // timeout test
 #if CAN_DEBUG
-                //Debug.WriteLine(string.Format("CAN send CC: {0:X03} {1}", sendMsg.ID, BitConverter.ToString(sendMsg.DATA, 0, sendMsg.LEN).Replace("-", " ")));
+                Debug.WriteLine("CAN send CC: {0:X03} {1}", sendMsg.ID, BitConverter.ToString(sendMsg.DATA, 0, sendMsg.LEN).Replace("-", " "));
 #endif
                 stsResult = PCANBasic.Write(_pcanHandle, ref sendMsg);
                 if (stsResult != TPCANStatus.PCAN_ERROR_OK)
