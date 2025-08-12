@@ -847,6 +847,11 @@ namespace BmwDeepObd
                     _instanceData.AutoStart = false;
                     if (!_instanceData.Offline)
                     {
+                        if (RequestWifiPermissions())
+                        {
+                            return true;
+                        }
+
                         if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
                         {
                             if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataDir, (sender, args) =>
