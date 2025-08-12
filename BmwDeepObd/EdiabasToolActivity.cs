@@ -256,6 +256,11 @@ namespace BmwDeepObd
             {
                 if (_buttonConnect.Checked)
                 {
+                    if (RequestWifiPermissions())
+                    {
+                        return;
+                    }
+
                     ExecuteSelectedJob(_checkBoxContinuous.Checked);
                 }
                 else
@@ -608,6 +613,13 @@ namespace BmwDeepObd
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
                     break;
+
+                case ActivityCommon.RequestPermissionLocation:
+                    if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
+                    {
+                        UpdateOptionsMenu();
+                    }
+                    break;
             }
         }
 
@@ -835,6 +847,11 @@ namespace BmwDeepObd
                     _instanceData.AutoStart = false;
                     if (!_instanceData.Offline)
                     {
+                        if (RequestWifiPermissions())
+                        {
+                            return true;
+                        }
+
                         if (string.IsNullOrEmpty(_instanceData.DeviceAddress))
                         {
                             if (!_activityCommon.RequestBluetoothDeviceSelect((int)ActivityRequest.RequestSelectDevice, _appDataDir, (sender, args) =>
@@ -1594,10 +1611,21 @@ namespace BmwDeepObd
 
         private void AdapterIpConfig()
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (!EdiabasClose())
             {
                 return;
             }
+
+            if (RequestWifiPermissions())
+            {
+                return;
+            }
+
             _activityCommon.SelectAdapterIp((sender, args) =>
             {
                 if (_activityCommon == null)
@@ -1606,6 +1634,21 @@ namespace BmwDeepObd
                 }
                 UpdateOptionsMenu();
             });
+        }
+
+        private bool RequestWifiPermissions()
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            if (_activityCommon.SelectedInterface != ActivityCommon.InterfaceType.Enet)
+            {
+                return false;
+            }
+
+            return _activityCommon.RequestWifiPermissions();
         }
 
         private JobInfo GetSelectedJob()
