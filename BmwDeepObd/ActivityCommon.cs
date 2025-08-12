@@ -5997,6 +5997,41 @@ namespace BmwDeepObd
             }
         }
 
+        public bool RequestWifiPermissions()
+        {
+            try
+            {
+                if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+                {
+                    return false;
+                }
+
+                string[] requestPermissions;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
+                {
+#pragma warning disable CA1416
+                    requestPermissions = PermissionsNearbyWifi;
+#pragma warning restore CA1416
+                }
+                else
+                {
+                    requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? PermissionsFineLocation : PermissionsCombinedLocation;
+                }
+
+                if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
+                {
+                    return false;
+                }
+
+                ActivityCompat.RequestPermissions(_activity, requestPermissions, RequestPermissionLocation);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool ShowBatteryWarning(double? batteryVoltage, byte[] adapterSerial)
         {
             if (adapterSerial != null && adapterSerial.Length > 0)
