@@ -3671,12 +3671,9 @@ namespace BmwDeepObd
                 return;
             }
 
-            if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
+            if (RequestWifiPermissions())
             {
-                if (RequestWifiPermissions())
-                {
-                    return;
-                }
+                return;
             }
 
             _activityCommon.SelectAdapterIp((sender, args) =>

@@ -256,6 +256,11 @@ namespace BmwDeepObd
             {
                 if (_buttonConnect.Checked)
                 {
+                    if (RequestWifiPermissions())
+                    {
+                        return;
+                    }
+
                     ExecuteSelectedJob(_checkBoxContinuous.Checked);
                 }
                 else
@@ -607,6 +612,13 @@ namespace BmwDeepObd
                         .SetMessage(Resource.String.access_permission_rejected)
                         .SetTitle(Resource.String.alert_title_warning)
                         .Show();
+                    break;
+
+                case ActivityCommon.RequestPermissionLocation:
+                    if (grantResults.Length > 0 && grantResults.All(permission => permission == Permission.Granted))
+                    {
+                        UpdateOptionsMenu();
+                    }
                     break;
             }
         }
@@ -1594,10 +1606,21 @@ namespace BmwDeepObd
 
         private void AdapterIpConfig()
         {
+            if (_activityCommon == null)
+            {
+                return;
+            }
+
             if (!EdiabasClose())
             {
                 return;
             }
+
+            if (RequestWifiPermissions())
+            {
+                return;
+            }
+
             _activityCommon.SelectAdapterIp((sender, args) =>
             {
                 if (_activityCommon == null)
@@ -1606,6 +1629,21 @@ namespace BmwDeepObd
                 }
                 UpdateOptionsMenu();
             });
+        }
+
+        private bool RequestWifiPermissions()
+        {
+            if (_activityCommon == null)
+            {
+                return false;
+            }
+
+            if (_activityCommon.SelectedInterface != ActivityCommon.InterfaceType.Enet)
+            {
+                return false;
+            }
+
+            return _activityCommon.RequestWifiPermissions();
         }
 
         private JobInfo GetSelectedJob()
