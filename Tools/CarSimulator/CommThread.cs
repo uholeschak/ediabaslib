@@ -4096,7 +4096,7 @@ namespace CarSimulator
                 if (_receiveStopWatch.ElapsedMilliseconds > 1000)
                 {
 #if CAN_DEBUG
-                    Debug.WriteLine("Rec Timeout");
+                    Debug.WriteLine("Rec Timeout: {0}ms", (object)_receiveStopWatch.ElapsedMilliseconds);
 #endif
                     _receiveStopWatch.Stop();
                     return false;
@@ -4293,10 +4293,10 @@ namespace CarSimulator
                                 }
 #endif
                             }
-                            if (_receiveStopWatch.ElapsedMilliseconds > 3000)
+                            if (_receiveStopWatch.ElapsedMilliseconds > 1000)
                             {
 #if CAN_DEBUG
-                                Debug.WriteLine("CAN FC rec timeout");
+                                Debug.WriteLine("CAN FC rec timeout: {0}ms", (object)_receiveStopWatch.ElapsedMilliseconds);
 #endif
                                 _receiveStopWatch.Stop();
                                 return false;
