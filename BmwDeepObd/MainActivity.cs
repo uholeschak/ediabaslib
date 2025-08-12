@@ -209,8 +209,8 @@ namespace BmwDeepObd
         private bool _storageAccessGranted;
         private bool _notificationRequested;
         private bool _notificationGranted;
-        private bool _locationPersissionRequested;
-        private bool _locationPersissionGranted;
+        private bool _locationPermissionRequested;
+        private bool _locationPermissionGranted;
         private bool _overlayPermissionRequested;
         private bool _overlayPermissionGranted;
         private bool _storageManagerPermissionRequested;
@@ -700,8 +700,8 @@ namespace BmwDeepObd
             _storageAccessGranted = false;
             _notificationRequested = false;
             _notificationGranted = false;
-            _locationPersissionRequested = false;
-            _locationPersissionGranted = false;
+            _locationPermissionRequested = false;
+            _locationPermissionGranted = false;
             _overlayPermissionRequested = false;
             _overlayPermissionGranted = false;
             _storageManagerPermissionRequested = false;
@@ -2100,12 +2100,9 @@ namespace BmwDeepObd
 
                 if (!ActivityCommon.CommActive && autoConnect == ConnectActionArgs.AutoConnectMode.None)
                 {
-                    if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
+                    if (RequestWifiPermissions(true))
                     {
-                        if (RequestWifiPermissions(true))
-                        {
-                            return;
-                        }
+                        return;
                     }
 
                     if (_activityCommon.ShowConnectWarning(action =>
@@ -3172,37 +3169,42 @@ namespace BmwDeepObd
         {
             try
             {
+                if (_activityCommon == null)
+                {
+                    return false;
+                }
+
                 if (Build.VERSION.SdkInt < BuildVersionCodes.O)
                 {
                     return false;
                 }
 
-                if (_locationPersissionGranted || _locationPersissionRequested)
+                if (_locationPermissionGranted || _locationPermissionRequested)
                 {
                     return false;
                 }
 
-                string[] requestPermissions;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
+                if (_activityCommon.SelectedInterface != ActivityCommon.InterfaceType.Enet)
                 {
-#pragma warning disable CA1416
-                    requestPermissions = ActivityCommon.PermissionsNearbyWifi;
-#pragma warning restore CA1416
-                }
-                else
-                {
-                    requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsFineLocation : ActivityCommon.PermissionsCombinedLocation;
-                }
-
-                if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
-                {
-                    LocationPermissionsGranted();
                     return false;
                 }
 
-                _locationPersissionRequested = true;
-                ActivityCompat.RequestPermissions(this, requestPermissions, ActivityCommon.RequestPermissionLocation);
-                _instanceData.AutoStart = autoStart;
+                if (!_activityCommon.RequestWifiPermissions(granted =>
+                    {
+                        if (granted)
+                        {
+                            LocationPermissionsGranted();
+                        }
+                        else
+                        {
+                            _locationPermissionRequested = true;
+                            _instanceData.AutoStart = autoStart;
+                        }
+                    }))
+                {
+                    return false;
+                }
+
                 return true;
             }
             catch (Exception)
@@ -3214,7 +3216,7 @@ namespace BmwDeepObd
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         private bool LocationPermissionsGranted(EventHandler<EventArgs> handler = null)
         {
-            _locationPersissionGranted = true;
+            _locationPermissionGranted = true;
 
             if (Build.VERSION.SdkInt >= BuildVersionCodes.P)
             {
