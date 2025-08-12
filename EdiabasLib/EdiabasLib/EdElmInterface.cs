@@ -1124,7 +1124,11 @@ namespace EdiabasLib
             StringBuilder stringBuilder = new StringBuilder();
             while (DataAvailable())
             {
+#if ANDROID
+                int data = _inStream.ReadByte();
+#else
                 int data = _inStream.ReadByteAsync(_cancelEvent);
+#endif
                 if (data >= 0)
                 {
                     stringBuilder.Append(ConvertToChar(data));
@@ -1152,7 +1156,11 @@ namespace EdiabasLib
             {
                 while (DataAvailable())
                 {
+#if ANDROID
+                    int data = _inStream.ReadByte();
+#else
                     int data = _inStream.ReadByteAsync(_cancelEvent);
+#endif
                     if (data >= 0)
                     {
                         stringBuilder.Append(ConvertToChar(data));
@@ -1210,7 +1218,11 @@ namespace EdiabasLib
             {
                 while (DataAvailable())
                 {
+#if ANDROID
+                    int data = _inStream.ReadByte();
+#else
                     int data = _inStream.ReadByteAsync(_cancelEvent);
+#endif
                     if (data < 0)
                     {
                         break;
@@ -1531,7 +1543,12 @@ namespace EdiabasLib
             _inStream.Flush();
             while (DataAvailable())
             {
-                if (_inStream.ReadByteAsync(_cancelEvent) < 0)
+#if ANDROID
+                int data = _inStream.ReadByte();
+#else
+                int data = _inStream.ReadByteAsync(_cancelEvent);
+#endif
+                if (data < 0)
                 {
                     break;
                 }
