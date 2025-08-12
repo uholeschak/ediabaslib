@@ -779,6 +779,7 @@ namespace BmwDeepObd
         public delegate void UpdateCheckDelegate(bool success, bool updateAvailable, int? appVer, string message);
         public delegate void EnetSsidWarnDelegate(SsidWarnAction action);
         public delegate void WifiConnectedWarnDelegate();
+        public delegate void WifiPermissionGranted(bool granted);
         public delegate void InitThreadFinishDelegate(bool result);
         public delegate bool InitThreadProgressDelegate(long progress);
         public delegate void CopyDocumentsThreadFinishDelegate(bool result, bool aborted);
@@ -5997,7 +5998,7 @@ namespace BmwDeepObd
             }
         }
 
-        public bool RequestWifiPermissions()
+        public bool RequestWifiPermissions(WifiPermissionGranted grantedHandler = null)
         {
             try
             {
@@ -6020,10 +6021,19 @@ namespace BmwDeepObd
 
                 if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
                 {
+                    if (grantedHandler != null)
+                    {
+                        grantedHandler.Invoke(true);
+                    }
                     return false;
                 }
 
                 ActivityCompat.RequestPermissions(_activity, requestPermissions, RequestPermissionLocation);
+                if (grantedHandler != null)
+                {
+                    grantedHandler.Invoke(false);
+                }
+
                 return true;
             }
             catch (Exception)

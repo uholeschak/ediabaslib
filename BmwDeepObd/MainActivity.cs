@@ -3189,27 +3189,22 @@ namespace BmwDeepObd
                     return false;
                 }
 
-                string[] requestPermissions;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
+                if (!_activityCommon.RequestWifiPermissions(granted =>
+                    {
+                        if (granted)
+                        {
+                            LocationPermissionsGranted();
+                        }
+                        else
+                        {
+                            _locationPermissionRequested = true;
+                            _instanceData.AutoStart = autoStart;
+                        }
+                    }))
                 {
-#pragma warning disable CA1416
-                    requestPermissions = ActivityCommon.PermissionsNearbyWifi;
-#pragma warning restore CA1416
-                }
-                else
-                {
-                    requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? ActivityCommon.PermissionsFineLocation : ActivityCommon.PermissionsCombinedLocation;
-                }
-
-                if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(this, permission) == Permission.Granted))
-                {
-                    LocationPermissionsGranted();
                     return false;
                 }
 
-                _locationPermissionRequested = true;
-                ActivityCompat.RequestPermissions(this, requestPermissions, ActivityCommon.RequestPermissionLocation);
-                _instanceData.AutoStart = autoStart;
                 return true;
             }
             catch (Exception)
