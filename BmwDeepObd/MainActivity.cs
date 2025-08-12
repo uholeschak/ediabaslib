@@ -2102,7 +2102,7 @@ namespace BmwDeepObd
                 {
                     if (_activityCommon.SelectedInterface == ActivityCommon.InterfaceType.Enet)
                     {
-                        if (RequestWifiPermissions())
+                        if (RequestWifiPermissions(true))
                         {
                             return;
                         }
@@ -3168,7 +3168,7 @@ namespace BmwDeepObd
             StoragePermissionGranted();
         }
 
-        public bool RequestWifiPermissions()
+        public bool RequestWifiPermissions(bool autoStart = false)
         {
             try
             {
@@ -3202,7 +3202,7 @@ namespace BmwDeepObd
 
                 _locationPersissionRequested = true;
                 ActivityCompat.RequestPermissions(this, requestPermissions, ActivityCommon.RequestPermissionLocation);
-                _instanceData.AutoStart = true;
+                _instanceData.AutoStart = autoStart;
                 return true;
             }
             catch (Exception)
@@ -7089,6 +7089,12 @@ namespace BmwDeepObd
             {
                 return;
             }
+
+            if (RequestWifiPermissions())
+            {
+                return;
+            }
+
             _activityCommon.SelectAdapterIp((sender, args) =>
             {
                 if (_activityCommon == null)
