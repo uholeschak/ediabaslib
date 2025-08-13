@@ -3245,7 +3245,6 @@ namespace PsdzClient.Programming
             return false;
         }
 
-
         private string GetFaString(IPsdzFa ifa)
         {
             if (ifa != null)
@@ -3270,6 +3269,7 @@ namespace PsdzClient.Programming
 
             if (PsdzContext.DetectVehicle.IsDoIp)
             {   // Parallel connections in DoIp mode are unstable.
+                log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage Disabled voltage check in DoIP mode");
                 return true;
             }
 
