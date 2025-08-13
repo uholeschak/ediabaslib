@@ -238,11 +238,13 @@ namespace PsdzClient.Core
                             case (VehicleCharacteristic)4L:
                                 return ComputeMOTKraftstoffart(param);
                             case (VehicleCharacteristic)0L:
+#if !NO_DATABASE
                                 // [UH] adapted
                                 if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is PsdzDatabase.Characteristics xepCharacteristics)
                                 {
                                     identVehicle.TempTypeKeyLeadFromDb = xepCharacteristics.Name;
                                 }
+#endif
                                 ComputeTypeKeyLead(param);
                                 return ComputeBasicType(param);
                             case (VehicleCharacteristic)5L:
