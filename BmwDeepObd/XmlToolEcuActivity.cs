@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Text;
 using Android.Content;
 using Android.Content.Res;
 using Android.Hardware.Usb;
@@ -11,11 +5,18 @@ using Android.OS;
 using Android.Views;
 using Android.Views.InputMethods;
 using Android.Widget;
-using BmwFileReader;
-using EdiabasLib;
 using AndroidX.AppCompat.App;
 using BmwDeepObd.Dialogs;
+using BmwFileReader;
+using EdiabasLib;
 using Skydoves.BalloonLib;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using static Android.Util.EventLogTags;
 
 namespace BmwDeepObd
 {
@@ -1926,7 +1927,13 @@ namespace BmwDeepObd
         private void StoreResults()
         {
             UpdateResultSettings(_selectedResult);
-            _ecuInfo.PageName = _editTextPageName.Text;
+            string pageName = _editTextPageName.Text?.Trim();
+            if (string.IsNullOrEmpty(pageName))
+            {
+                pageName = _ecuInfo.Description;
+            }
+            _ecuInfo.PageName = pageName;
+
             _ecuInfo.EcuName = _editTextEcuName.Text;
             _ecuInfo.DisplayMode = _checkBoxDisplayTypeGrid.Checked ? JobReader.PageInfo.DisplayModeType.Grid : JobReader.PageInfo.DisplayModeType.List;
 

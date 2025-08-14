@@ -6762,14 +6762,14 @@ namespace BmwDeepObd
 
                         if (unitText.ToLowerInvariant().StartsWith("mon"))
                         {
-                            unitText = "m/s²";
+                            unitText = "m/sï¿½";
                         }
                         if (valueUnit.ToLowerInvariant().StartsWith("mon"))
                         {
-                            valueUnit = "m/s²";
+                            valueUnit = "m/sï¿½";
                         }
-                        unitText = Regex.Replace(unitText, @"²", "2");
-                        valueUnit = Regex.Replace(valueUnit, @"²", "2");
+                        unitText = Regex.Replace(unitText, @"ï¿½", "2");
+                        valueUnit = Regex.Replace(valueUnit, @"ï¿½", "2");
 
                         string valueUnitLower = valueUnit.ToLowerInvariant();
                         string unitTextLower = unitText.ToLowerInvariant();
@@ -7950,13 +7950,20 @@ namespace BmwDeepObd
             }
             else
             {
-                int selectCount = 0;
-                if (ecuInfo.JobList != null && ecuInfo.JobListValid)
+                int itemCount = 0;
+                if (ecuInfo.JobList != null)
                 {
-                    selectCount = ecuInfo.JobList.Count(job => job.Selected);
+                    if (ecuInfo.JobListValid)
+                    {
+                        itemCount = ecuInfo.JobList.Count(job => job.Selected);
+                    }
+                    else
+                    {
+                        itemCount = ecuInfo.JobList.Count;
+                    }
                 }
 
-                if ((selectCount > 0) || !string.IsNullOrEmpty(ecuInfo.MwTabFileName))
+                if ((itemCount > 0) || !string.IsNullOrEmpty(ecuInfo.MwTabFileName))
                 {
                     new AlertDialog.Builder(this)
                         .SetPositiveButton(Resource.String.button_yes, (sender, args) =>
@@ -8161,7 +8168,7 @@ namespace BmwDeepObd
             if (stringsNode != null)
             {
                 string pageName = GetStringEntry(DisplayNamePage, ns, stringsNode);
-                if (pageName != null)
+                if (!string.IsNullOrEmpty(pageName))
                 {
                     ecuInfo.PageName = pageName;
                 }
