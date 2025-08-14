@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 public class RulesInfo
 {
-    public const string DatabaseVersion = "4.53.40";
+    public const string DatabaseVersion = "4.54.40";
 
-    public const string DatabaseDate = "05/26/2025 09:52:49";
+    public const string DatabaseDate = "07/24/2025 12:22:23";
 
     public static List<string> RuleNames = new List<string> { "Marke", "SALAPA", "IStufeX", "Produktlinie", "Baustand", "E-Bezeichnung", "Baureihenverbund", "E-Maschine", "EcuClique", "EcuRepresentative", "Motor", "IStufe", "Motor Leistungsklasse", "Produktionsdatum", "Hybridkennzeichen", "Basisausf?hrung", "Motor ?berarbeitung", "Lenkung", "Typschl?ssel", "Baureihe", "Getriebe", "Verkaufsbezeichnung", "Motor Hubraum", "Motor Kraftstoffart/Einbaulage", "Country", "Motor 8-stellig", "Antrieb", "Motor Kraftstoffart", "elektrische Reichweite", "Karosserie", "Sicherheitsfahrzeug", "T?ren", "Montageland", "ProtectionVehicleService", "AE Bezeichnung", "EcuVariant", "HEAT 8-stellig", "HEAT Motorbaureihe" };
 
@@ -43,6 +43,9 @@ public class RulesInfo
             {20000120250294, FaultRule_20000120250294},
             {20000120250295, FaultRule_20000120250294},
             {20000575028352, FaultRule_20000120250294},
+            {20000947716863, FaultRule_20000947716863},
+            {20000947718944, FaultRule_20000947716863},
+            {20000639274032, FaultRule_20000639274032},
             {20000177062749, FaultRule_20000177062749},
             {20000177062747, FaultRule_20000177062747},
             {20000177062748, FaultRule_20000177062747},
@@ -174,7 +177,6 @@ public class RulesInfo
             {20000576316265, FaultRule_20000576316265},
             {20000077730922, FaultRule_20000077730922},
             {20000493596872, FaultRule_20000493596872},
-            {20000639274032, FaultRule_20000639274032},
             {5348310155, FaultRule_5348310155},
             {5348337547, FaultRule_5348337547},
             {20000026543019, FaultRule_20000026543019},
@@ -613,7 +615,6 @@ public class RulesInfo
             {20000900564673, FaultRule_20000900563895},
             {20000900564674, FaultRule_20000900563895},
             {20000900564936, FaultRule_20000900563895},
-            {20000900565068, FaultRule_20000900563895},
             {20000900565191, FaultRule_20000900563895},
             {20000717689289, FaultRule_20000717689289},
             {20000696155031, FaultRule_20000696155031},
@@ -829,6 +830,8 @@ public class RulesInfo
             {20000116545966, FaultRule_20000116545966},
             {20000114482546, FaultRule_20000114482546},
             {20000691227569, FaultRule_20000691227569},
+            {20000965759296, FaultRule_20000965759296},
+            {20000965759297, FaultRule_20000965759296},
             {64643467915, FaultRule_64643467915},
             {20000131084912, FaultRule_20000131084912},
             {20000131077712, FaultRule_20000131077712},
@@ -845,6 +848,7 @@ public class RulesInfo
             {20000639330458, FaultRule_20000639330326},
             {20000639330459, FaultRule_20000639330326},
             {20000484809139, FaultRule_20000484809139},
+            {20000945735059, FaultRule_20000945735059},
             {20000596112168, FaultRule_20000596112168},
             {20001044803777, FaultRule_20001044803777},
             {20001044803778, FaultRule_20001044803777},
@@ -3381,6 +3385,7 @@ public class RulesInfo
             {20001016639061, FaultRule_20000699051931},
             {20000563830144, FaultRule_20000563830144},
             {20000326743469, FaultRule_20000326743469},
+            {20000563823512, FaultRule_20000563823512},
             {20000717726217, FaultRule_20000717726217},
             {20000720240568, FaultRule_20000720240568},
             {20000720240569, FaultRule_20000720240568},
@@ -3405,6 +3410,11 @@ public class RulesInfo
             {20000484809529, FaultRule_20000484809529},
             {20000184390115, FaultRule_20000184390115},
             {20000475295413, FaultRule_20000184390115},
+            {20001061382577, FaultRule_20001061382577},
+            {20001061382579, FaultRule_20001061382577},
+            {20001061467827, FaultRule_20001061382577},
+            {20001061467829, FaultRule_20001061382577},
+            {20001061546408, FaultRule_20001061382577},
             {20000326660061, FaultRule_20000326660061},
             {20000326660062, FaultRule_20000326660061},
             {20000326660063, FaultRule_20000326660061},
@@ -3470,6 +3480,7 @@ public class RulesInfo
             {20000720240956, FaultRule_20000720240956},
             {20000120135532, FaultRule_20000120135532},
             {20000120135534, FaultRule_20000120135532},
+            {20000830250042, FaultRule_20000830250042},
             {20001046475286, FaultRule_20001046475286},
             {20001046475287, FaultRule_20001046475286},
             {20000576308895, FaultRule_20000576308895},
@@ -3998,6 +4009,25 @@ public class RulesInfo
             {20000374541629, FaultRule_20000325212178},
             {20000374541652, FaultRule_20000325212178},
             {20000374541653, FaultRule_20000325212178},
+            {20000586099089, FaultRule_20000325212178},
+            {20000586099212, FaultRule_20000325212178},
+            {20000586099215, FaultRule_20000325212178},
+            {20000586099471, FaultRule_20000325212178},
+            {20000891194399, FaultRule_20000325212178},
+            {20000891197146, FaultRule_20000325212178},
+            {20001075821321, FaultRule_20000325212178},
+            {20001075821322, FaultRule_20000325212178},
+            {20001075821323, FaultRule_20000325212178},
+            {20001076476181, FaultRule_20000325212178},
+            {20001076476182, FaultRule_20000325212178},
+            {20001076476183, FaultRule_20000325212178},
+            {20001077141152, FaultRule_20000325212178},
+            {20001077141153, FaultRule_20000325212178},
+            {20001077141154, FaultRule_20000325212178},
+            {20001077516381, FaultRule_20000325212178},
+            {20001077516382, FaultRule_20000325212178},
+            {20001077516383, FaultRule_20000325212178},
+            {20001077516385, FaultRule_20000325212178},
             {14191285515, FaultRule_14191285515},
             {20000325212147, FaultRule_20000325212147},
             {20000325211818, FaultRule_20000325211818},
@@ -4121,7 +4151,6 @@ public class RulesInfo
             {20000160405417, FaultRule_20000147432007},
             {14174151307, FaultRule_14174151307},
             {20000505513115, FaultRule_20000505513115},
-            {20000325213225, FaultRule_20000325213225},
             {20000722004362, FaultRule_20000722004362},
             {20000722004363, FaultRule_20000722004362},
             {20000722005278, FaultRule_20000722004362},
@@ -4150,24 +4179,42 @@ public class RulesInfo
             {20000590768326, FaultRule_52110260875},
             {20000603387228, FaultRule_52110260875},
             {20000603387229, FaultRule_52110260875},
-            {20000889036121, FaultRule_20000889036121},
-            {20000889036123, FaultRule_20000889036121},
-            {20000889036124, FaultRule_20000889036121},
-            {20000889036125, FaultRule_20000889036121},
-            {20000889036126, FaultRule_20000889036121},
-            {20000889036127, FaultRule_20000889036121},
-            {20000889036128, FaultRule_20000889036121},
-            {20000889036129, FaultRule_20000889036121},
-            {20000891118895, FaultRule_20000889036121},
-            {20000891118896, FaultRule_20000889036121},
-            {20000958941203, FaultRule_20000889036121},
-            {20000961108221, FaultRule_20000889036121},
-            {20000961108222, FaultRule_20000889036121},
-            {20000961592161, FaultRule_20000889036121},
-            {20000961592162, FaultRule_20000889036121},
-            {20000961712791, FaultRule_20000889036121},
-            {20000961712792, FaultRule_20000889036121},
-            {20000961712793, FaultRule_20000889036121},
+            {20000830250043, FaultRule_20000830250043},
+            {20000830250173, FaultRule_20000830250043},
+            {20000830250176, FaultRule_20000830250043},
+            {20000830250179, FaultRule_20000830250043},
+            {20000830250432, FaultRule_20000830250043},
+            {20000830250691, FaultRule_20000830250043},
+            {20000830250692, FaultRule_20000830250043},
+            {20000830250693, FaultRule_20000830250043},
+            {20000889036121, FaultRule_20000830250043},
+            {20000889036123, FaultRule_20000830250043},
+            {20000889036124, FaultRule_20000830250043},
+            {20000889036125, FaultRule_20000830250043},
+            {20000889036126, FaultRule_20000830250043},
+            {20000889036127, FaultRule_20000830250043},
+            {20000889036128, FaultRule_20000830250043},
+            {20000889036129, FaultRule_20000830250043},
+            {20000891117042, FaultRule_20000830250043},
+            {20000891117043, FaultRule_20000830250043},
+            {20000891118895, FaultRule_20000830250043},
+            {20000891118896, FaultRule_20000830250043},
+            {20000891197141, FaultRule_20000830250043},
+            {20000891197142, FaultRule_20000830250043},
+            {20000891197145, FaultRule_20000830250043},
+            {20000958941203, FaultRule_20000830250043},
+            {20000961108221, FaultRule_20000830250043},
+            {20000961108222, FaultRule_20000830250043},
+            {20000961592161, FaultRule_20000830250043},
+            {20000961592162, FaultRule_20000830250043},
+            {20000961712791, FaultRule_20000830250043},
+            {20000961712792, FaultRule_20000830250043},
+            {20000961712793, FaultRule_20000830250043},
+            {20001075851141, FaultRule_20000830250043},
+            {20001076476184, FaultRule_20000830250043},
+            {20001076595081, FaultRule_20000830250043},
+            {20001077141151, FaultRule_20000830250043},
+            {20001077516384, FaultRule_20000830250043},
             {60924005003, FaultRule_60924005003},
             {51198700811, FaultRule_51198700811},
             {59708766603, FaultRule_59708766603},
@@ -5436,11 +5483,10 @@ public class RulesInfo
             {20000772880477, EcuFuncRule_20000772880477},
             {20000772880476, EcuFuncRule_20000772880476},
             {20001046790316, EcuFuncRule_20001046790316},
+            {20001073954955, EcuFuncRule_20001073954955},
             {20001068273871, EcuFuncRule_20001068273871},
             {20000909256852, EcuFuncRule_20000909256852},
-            {20001060105283, EcuFuncRule_20001060105283},
-            {20001065877304, EcuFuncRule_20001060105283},
-            {20001060105282, EcuFuncRule_20001060105282},
+            {20001065877304, EcuFuncRule_20001065877304},
             {20000944265579, EcuFuncRule_20000944265579},
             {20000725222648, EcuFuncRule_20000725222648},
             {20000739653964, EcuFuncRule_20000725222648},
@@ -5668,6 +5714,7 @@ public class RulesInfo
             {20000816126581, EcuFuncRule_20000816126581},
             {20000862425685, EcuFuncRule_20000862425685},
             {20000944262559, EcuFuncRule_20000862425685},
+            {20000998139238, EcuFuncRule_20000998139238},
             {20000895199814, EcuFuncRule_20000895199814},
             {20000895199815, EcuFuncRule_20000895199814},
             {20000895199816, EcuFuncRule_20000895199814},
@@ -5684,10 +5731,10 @@ public class RulesInfo
             {20000958941401, EcuFuncRule_20000958941401},
             {20001041898381, EcuFuncRule_20001041898381},
             {20001058499661, EcuFuncRule_20001058499661},
-            {20001065580921, EcuFuncRule_20001065580921},
-            {20001064703691, EcuFuncRule_20001064703691},
+            {20001073954954, EcuFuncRule_20001073954954},
             {20001048542724, EcuFuncRule_20001048542724},
-            {20001060105284, EcuFuncRule_20001048542724},
+            {20001073954953, EcuFuncRule_20001073954953},
+            {20001073954956, EcuFuncRule_20001073954956},
             {20001065877303, EcuFuncRule_20001065877303},
             {20001066189851, EcuFuncRule_20001066189851},
             {20000725031974, EcuFuncRule_20000725031974},
@@ -6419,6 +6466,16 @@ public class RulesInfo
             {20000735365253, EcuFuncRule_20000735365251},
             {20000735365254, EcuFuncRule_20000735365251},
             {20000735365255, EcuFuncRule_20000735365251},
+            {20001016789232, EcuFuncRule_20000735365251},
+            {20001016789233, EcuFuncRule_20000735365251},
+            {20001016789234, EcuFuncRule_20000735365251},
+            {20001016789235, EcuFuncRule_20000735365251},
+            {20001016789236, EcuFuncRule_20000735365251},
+            {20001017380716, EcuFuncRule_20000735365251},
+            {20001017380717, EcuFuncRule_20000735365251},
+            {20001017380718, EcuFuncRule_20000735365251},
+            {20001017380719, EcuFuncRule_20000735365251},
+            {20001017380961, EcuFuncRule_20000735365251},
             {20000633715036, EcuFuncRule_20000633715036},
             {20000772374332, EcuFuncRule_20000772374332},
             {20000893227951, EcuFuncRule_20000893227951},
@@ -6560,6 +6617,7 @@ public class RulesInfo
             {20000169159631, EcuFuncRule_20000169159507},
             {20000611648798, EcuFuncRule_20000611648798},
             {20000725107254, EcuFuncRule_20000611648798},
+            {20000989014428, EcuFuncRule_20000611648798},
             {2000001206849, EcuFuncRule_2000001206849},
             {2000001206896, EcuFuncRule_2000001206849},
             {2000001256676, EcuFuncRule_2000001256676},
@@ -6765,8 +6823,8 @@ public class RulesInfo
             {20000725189258, EcuFuncRule_20000511449563},
             {20000725223826, EcuFuncRule_20000511449563},
             {20000725226609, EcuFuncRule_20000511449563},
-            {20001040517882, EcuFuncRule_20000511449563},
-            {20001040536506, EcuFuncRule_20000511449563},
+            {20001066760003, EcuFuncRule_20000511449563},
+            {20001066761104, EcuFuncRule_20000511449563},
             {20000942168713, EcuFuncRule_20000942168713},
             {20000942168714, EcuFuncRule_20000942168713},
             {20000942168715, EcuFuncRule_20000942168713},
@@ -7278,6 +7336,8 @@ public class RulesInfo
             {20000788384554, EcuFuncRule_20000647360269},
             {20000728943365, EcuFuncRule_20000728943365},
             {20000731181992, EcuFuncRule_20000728943365},
+            {20001035405155, EcuFuncRule_20001035405155},
+            {20001074625381, EcuFuncRule_20001074625381},
             {20000822961585, EcuFuncRule_20000822961585},
             {20000822961587, EcuFuncRule_20000822961585},
             {20000822961588, EcuFuncRule_20000822961585},
@@ -7338,11 +7398,8 @@ public class RulesInfo
             {20001042161131, EcuFuncRule_20001042161131},
             {20001066920781, EcuFuncRule_20001066920781},
             {20001048542725, EcuFuncRule_20001048542725},
-            {20001061625691, EcuFuncRule_20001048542725},
-            {20001061625692, EcuFuncRule_20001061625692},
-            {20001065877302, EcuFuncRule_20001061625692},
-            {20001061625693, EcuFuncRule_20001061625693},
-            {20001065877301, EcuFuncRule_20001061625693},
+            {20001065877302, EcuFuncRule_20001065877302},
+            {20001065877301, EcuFuncRule_20001065877301},
             {20001061249933, EcuFuncRule_20001061249933},
             {20001061249937, EcuFuncRule_20001061249933},
             {20000949609747, EcuFuncRule_20000949609747},
@@ -7446,10 +7503,9 @@ public class RulesInfo
             {20000724997464, EcuFuncRule_20000724997464},
             {20000960530001, EcuFuncRule_20000960530001},
             {20000972445783, EcuFuncRule_20000960530001},
-            {20000981113971, EcuFuncRule_20000960530001},
             {20000993585968, EcuFuncRule_20000960530001},
-            {20001017633855, EcuFuncRule_20000960530001},
             {20001060028111, EcuFuncRule_20000960530001},
+            {20001066711831, EcuFuncRule_20000960530001},
             {20000772881442, EcuFuncRule_20000772881442},
             {20000725093149, EcuFuncRule_20000725093149},
             {20000788700745, EcuFuncRule_20000725093149},
@@ -9171,7 +9227,7 @@ public class RulesInfo
         {
             {2000064235450, DiagObjectRule_2000064235450},
             {2000014725343, DiagObjectRule_2000014725343},
-            {2000096173298, DiagObjectRule_2000096173298},
+            {20001077181193, DiagObjectRule_20001077181193},
             {20000880977903, DiagObjectRule_20000880977903},
             {20000457480331, DiagObjectRule_20000457480331},
             {20000426103142, DiagObjectRule_20000426103142},
@@ -9207,7 +9263,7 @@ public class RulesInfo
             {20000743688452, DiagObjectRule_2000075577650},
             {20000975926421, DiagObjectRule_20000975926421},
             {20000825070111, DiagObjectRule_20000825070111},
-            {20000941997481, DiagObjectRule_20000941997481},
+            {20001062488941, DiagObjectRule_20001062488941},
             {20001039889943, DiagObjectRule_20001039889943},
             {20000827798812, DiagObjectRule_20000827798812},
             {20001040079603, DiagObjectRule_20001040079603},
@@ -9219,7 +9275,7 @@ public class RulesInfo
             {20001013494408, DiagObjectRule_20001013494408},
             {20000334081671, DiagObjectRule_20000334081671},
             {20000332786224, DiagObjectRule_20000332786224},
-            {20000659277073, DiagObjectRule_20000659277073},
+            {20001067427661, DiagObjectRule_20001067427661},
             {20001013946702, DiagObjectRule_20001013946702},
             {20001013946701, DiagObjectRule_20001013946701},
             {2000092763755, DiagObjectRule_2000092763755},
@@ -9233,6 +9289,7 @@ public class RulesInfo
             {20000961621332, DiagObjectRule_20000961621332},
             {2000018079168, DiagObjectRule_2000018079168},
             {20001000741412, DiagObjectRule_20001000741412},
+            {2000101929710, DiagObjectRule_2000101929710},
             {2000008978993, DiagObjectRule_2000008978993},
             {2000008804416, DiagObjectRule_2000008804416},
             {2000008801802, DiagObjectRule_2000008801802},
@@ -9303,13 +9360,16 @@ public class RulesInfo
             {20000899967581, DiagObjectRule_2000059010891},
             {20000814579761, DiagObjectRule_20000814579761},
             {20000901253762, DiagObjectRule_20000901253762},
+            {2000056642035, DiagObjectRule_2000056642035},
+            {20001076595541, DiagObjectRule_2000056642035},
             {2000081239066, DiagObjectRule_2000081239066},
             {20000802350607, DiagObjectRule_20000802350607},
             {20000952860551, DiagObjectRule_20000952860551},
             {2000037591489, DiagObjectRule_2000037591489},
+            {2000054671809, DiagObjectRule_2000054671809},
             {20001041744391, DiagObjectRule_20001041744391},
             {2000053244742, DiagObjectRule_2000053244742},
-            {20000993361063, DiagObjectRule_20000993361063},
+            {20001074561311, DiagObjectRule_20001074561311},
             {20000983415862, DiagObjectRule_20000983415862},
             {20000983415864, DiagObjectRule_20000983415864},
             {20000983415863, DiagObjectRule_20000983415864},
@@ -9327,7 +9387,6 @@ public class RulesInfo
             {20000898330421, DiagObjectRule_20000898330421},
             {2000056546691, DiagObjectRule_2000056546691},
             {2000033739223, DiagObjectRule_2000033739223},
-            {2000054671809, DiagObjectRule_2000033739223},
             {20000732772016, DiagObjectRule_2000033739223},
             {20000735349241, DiagObjectRule_2000033739223},
             {2000070403433, DiagObjectRule_2000070403433},
@@ -9338,8 +9397,6 @@ public class RulesInfo
             {20000806045621, DiagObjectRule_20000806045621},
             {20000968058921, DiagObjectRule_20000968058921},
             {2000015131166, DiagObjectRule_2000015131166},
-            {20000947940931, DiagObjectRule_20000947940931},
-            {2000056642035, DiagObjectRule_2000056642035},
             {20000724611263, DiagObjectRule_20000724611263},
             {2000050746655, DiagObjectRule_2000050746655},
             {20000993956041, DiagObjectRule_20000993956041},
@@ -9393,7 +9450,9 @@ public class RulesInfo
             {2000099203096, DiagObjectRule_2000099203096},
             {2000098887712, DiagObjectRule_2000099203096},
             {2000089121586, DiagObjectRule_2000089121586},
+            {2000091492573, DiagObjectRule_2000091492573},
             {2000088894369, DiagObjectRule_2000088894369},
+            {2000108042494, DiagObjectRule_2000108042494},
             {2000099124360, DiagObjectRule_2000099124360},
             {2000098964021, DiagObjectRule_2000098964021},
             {2000088808733, DiagObjectRule_2000088808733},
@@ -9401,6 +9460,7 @@ public class RulesInfo
             {2000095188451, DiagObjectRule_2000095188451},
             {2000099218894, DiagObjectRule_2000099218894},
             {2000105738957, DiagObjectRule_2000105738957},
+            {2000016041637, DiagObjectRule_2000016041637},
             {20001015314662, DiagObjectRule_20001015314662},
             {20001015314663, DiagObjectRule_20001015314663},
             {2000038082158, DiagObjectRule_2000038082158},
@@ -9424,10 +9484,11 @@ public class RulesInfo
             {20000438769485, DiagObjectRule_20000438769485},
             {2000035038877, DiagObjectRule_20000438769485},
             {2000018440301, DiagObjectRule_2000018440301},
+            {20001077533191, DiagObjectRule_20001077533191},
             {20000825070112, DiagObjectRule_20000825070112},
             {2000008981466, DiagObjectRule_2000008981466},
             {2000008981409, DiagObjectRule_2000008981409},
-            {20000999229922, DiagObjectRule_2000008981409},
+            {20001067373881, DiagObjectRule_2000008981409},
             {20000581017381, DiagObjectRule_20000581017381},
             {2000042610873, DiagObjectRule_2000042610873},
             {2000033635178, DiagObjectRule_2000042610873},
@@ -9664,7 +9725,7 @@ public class RulesInfo
             {20001058501902, DiagObjectRule_20001058501902},
             {2000016407341, DiagObjectRule_2000016407341},
             {20000400974755, DiagObjectRule_20000400974755},
-            {20000400974754, DiagObjectRule_20000400974755},
+            {20001072366322, DiagObjectRule_20000400974755},
             {20000400974753, DiagObjectRule_20000400974755},
             {20000400974752, DiagObjectRule_20000400974755},
             {20000400971899, DiagObjectRule_20000400974755},
@@ -9800,7 +9861,7 @@ public class RulesInfo
             {20000346431125, DiagObjectRule_20000346431125},
             {20000345777021, DiagObjectRule_20000345777021},
             {20000656068773, DiagObjectRule_20000656068773},
-            {20001064382792, DiagObjectRule_20001064382792},
+            {20001074256082, DiagObjectRule_20001074256082},
             {20000609097431, DiagObjectRule_20000609097431},
             {20000470884221, DiagObjectRule_20000470884221},
             {20000461301363, DiagObjectRule_20000461301363},
@@ -10021,7 +10082,7 @@ public class RulesInfo
             {2000058466184, DiagObjectRule_2000058466184},
             {2000060872235, DiagObjectRule_2000058466184},
             {2000059475820, DiagObjectRule_2000059475820},
-            {20000732763065, DiagObjectRule_20000732763065},
+            {20001070570035, DiagObjectRule_20001070570035},
             {2000064122104, DiagObjectRule_2000064122104},
             {2000080072973, DiagObjectRule_2000064122104},
             {2000103535836, DiagObjectRule_2000064122104},
@@ -10264,13 +10325,13 @@ public class RulesInfo
             {20000390738232, DiagObjectRule_20000390738232},
             {20000389810649, DiagObjectRule_20000389810649},
             {20000704084141, DiagObjectRule_20000704084141},
-            {20000836030711, DiagObjectRule_20000836030711},
-            {2000012940083, DiagObjectRule_20000836030711},
-            {20000400971897, DiagObjectRule_20000836030711},
-            {2000013325741, DiagObjectRule_20000836030711},
-            {20000400971895, DiagObjectRule_20000836030711},
-            {20000975583424, DiagObjectRule_20000836030711},
-            {2000034222000, DiagObjectRule_20000836030711},
+            {20001065707472, DiagObjectRule_20001065707472},
+            {2000012940083, DiagObjectRule_20001065707472},
+            {20000400971897, DiagObjectRule_20001065707472},
+            {2000013325741, DiagObjectRule_20001065707472},
+            {20000400971895, DiagObjectRule_20001065707472},
+            {20000975583424, DiagObjectRule_20001065707472},
+            {2000034222000, DiagObjectRule_20001065707472},
             {2000008899530, DiagObjectRule_2000008899530},
             {20000097012593, DiagObjectRule_20000097012593},
             {2000003767951, DiagObjectRule_20000097012593},
@@ -10544,7 +10605,6 @@ public class RulesInfo
             {2000046993907, DiagObjectRule_2000046993907},
             {2000008963835, DiagObjectRule_2000008963835},
             {2000003769518, DiagObjectRule_2000003769518},
-            {2000016041637, DiagObjectRule_2000016041637},
             {2000008804820, DiagObjectRule_2000008804820},
             {2000008804039, DiagObjectRule_2000008804039},
             {2000008852839, DiagObjectRule_2000008852839},
@@ -10597,7 +10657,7 @@ public class RulesInfo
             {2000066129847, DiagObjectRule_2000066129847},
             {2000008809025, DiagObjectRule_2000008809025},
             {2000008895150, DiagObjectRule_2000008895150},
-            {20000904433961, DiagObjectRule_20000904433961},
+            {20001065942393, DiagObjectRule_20001065942393},
             {2000072431258, DiagObjectRule_2000072431258},
             {20000828385015, DiagObjectRule_20000828385015},
             {2000058369108, DiagObjectRule_20000828385015},
@@ -10615,10 +10675,11 @@ public class RulesInfo
             {2000073191208, DiagObjectRule_20000828385015},
             {20000828385354, DiagObjectRule_20000828385015},
             {2000072429414, DiagObjectRule_2000072429414},
-            {2000078970631, DiagObjectRule_2000078970631},
-            {2000075440279, DiagObjectRule_2000078970631},
-            {20001033227162, DiagObjectRule_2000078970631},
-            {20001033227161, DiagObjectRule_2000078970631},
+            {2000107753357, DiagObjectRule_2000107753357},
+            {2000078970631, DiagObjectRule_2000107753357},
+            {2000075440279, DiagObjectRule_2000107753357},
+            {20001033227162, DiagObjectRule_2000107753357},
+            {20001033227161, DiagObjectRule_2000107753357},
             {20000982519554, DiagObjectRule_20000982519554},
             {20000901211841, DiagObjectRule_20000901211841},
             {20000788329944, DiagObjectRule_20000788329944},
@@ -10636,13 +10697,14 @@ public class RulesInfo
             {20000793367039, DiagObjectRule_20000793367039},
             {20001036243166, DiagObjectRule_20001036243166},
             {2000068323068, DiagObjectRule_2000068323068},
+            {20001074561312, DiagObjectRule_20001074561312},
             {2000097757995, DiagObjectRule_2000097757995},
-            {20001035837565, DiagObjectRule_20001035837565},
-            {20000993361062, DiagObjectRule_20000993361062},
+            {20001035837565, DiagObjectRule_2000097757995},
             {20001066190681, DiagObjectRule_20001066190681},
             {2000088939031, DiagObjectRule_2000088939031},
             {2000076899615, DiagObjectRule_2000076899615},
             {20000800729677, DiagObjectRule_2000076899615},
+            {2000106438288, DiagObjectRule_2000076899615},
             {20001053124621, DiagObjectRule_20001053124621},
             {2000090370001, DiagObjectRule_20001053124621},
             {20000904507371, DiagObjectRule_20001053124621},
@@ -10671,8 +10733,10 @@ public class RulesInfo
             {20000921267181, DiagObjectRule_2000091929949},
             {2000077655277, DiagObjectRule_2000077655277},
             {2000077847945, DiagObjectRule_2000077847945},
-            {20000862322821, DiagObjectRule_20000862322821},
+            {20001080075871, DiagObjectRule_20001080075871},
+            {20000862322821, DiagObjectRule_20001080075871},
             {20000786830166, DiagObjectRule_20000786830166},
+            {20001074475795, DiagObjectRule_20001074475795},
             {2000091984224, DiagObjectRule_2000091984224},
             {20000919842092, DiagObjectRule_2000091984224},
             {2000099983976, DiagObjectRule_2000091984224},
@@ -10719,6 +10783,8 @@ public class RulesInfo
             {2000058491660, DiagObjectRule_2000071622150},
             {2000082576865, DiagObjectRule_2000071622150},
             {2000051408448, DiagObjectRule_2000071622150},
+            {2000070725163, DiagObjectRule_2000071622150},
+            {2000070725104, DiagObjectRule_2000071622150},
             {2000061163421, DiagObjectRule_2000071622150},
             {2000076303686, DiagObjectRule_2000071622150},
             {2000077298383, DiagObjectRule_2000071622150},
@@ -10752,9 +10818,10 @@ public class RulesInfo
             {20000993867852, DiagObjectRule_20000993867852},
             {2000034831237, DiagObjectRule_2000034831237},
             {2000045709466, DiagObjectRule_2000045709466},
-            {20001070570034, DiagObjectRule_20001070570034},
+            {20001074475796, DiagObjectRule_20001074475796},
             {20001057404371, DiagObjectRule_20001057404371},
             {2000103702001, DiagObjectRule_2000103702001},
+            {20001067459773, DiagObjectRule_20001067459773},
             {20001035837564, DiagObjectRule_20001035837564},
             {20000779616762, DiagObjectRule_20000779616762},
             {20000687353492, DiagObjectRule_20000687353492},
@@ -10771,7 +10838,6 @@ public class RulesInfo
             {20000668164212, DiagObjectRule_20000668164212},
             {2000089140765, DiagObjectRule_2000089140765},
             {20000989092835, DiagObjectRule_20000989092835},
-            {20000829719291, DiagObjectRule_20000829719291},
             {20000754604051, DiagObjectRule_20000754604051},
             {2000055886149, DiagObjectRule_2000055886149},
             {2000051914443, DiagObjectRule_2000055886149},
@@ -10782,11 +10848,10 @@ public class RulesInfo
             {2000074624648, DiagObjectRule_2000074183263},
             {2000070982587, DiagObjectRule_2000074183263},
             {2000074624624, DiagObjectRule_2000074183263},
-            {2000070725163, DiagObjectRule_2000074183263},
-            {2000070725104, DiagObjectRule_2000074183263},
             {2000011679116, DiagObjectRule_2000011679116},
             {2000011882275, DiagObjectRule_2000011882275},
             {2000016296546, DiagObjectRule_2000011882275},
+            {2000106828908, DiagObjectRule_2000106828908},
             {2000032650657, DiagObjectRule_2000032650657},
             {20000750075371, DiagObjectRule_2000032650657},
             {20000707475627, DiagObjectRule_20000707475627},
@@ -10838,7 +10903,8 @@ public class RulesInfo
             {20000982598401, DiagObjectRule_20000982598401},
             {20000691454244, DiagObjectRule_20000691454244},
             {2000089836834, DiagObjectRule_2000089836834},
-            {2000099215517, DiagObjectRule_2000099215517},
+            {2000105850213, DiagObjectRule_2000105850213},
+            {2000099215517, DiagObjectRule_2000105850213},
             {2000008893576, DiagObjectRule_2000008893576},
             {2000039288328, DiagObjectRule_2000039288328},
             {2000010065868, DiagObjectRule_2000039288328},
@@ -10860,7 +10926,7 @@ public class RulesInfo
             {2000105742485, DiagObjectRule_2000105742485},
             {2000045955241, DiagObjectRule_2000105742485},
             {20000725610592, DiagObjectRule_20000725610592},
-            {20000943984151, DiagObjectRule_20000943984151},
+            {20001067134972, DiagObjectRule_20001067134972},
             {2000017070981, DiagObjectRule_2000017070981},
             {2000008979814, DiagObjectRule_2000017070981},
             {2000016296921, DiagObjectRule_2000017070981},
@@ -10870,6 +10936,7 @@ public class RulesInfo
             {20000794449493, DiagObjectRule_20000794449493},
             {2000099386798, DiagObjectRule_2000099386798},
             {2000036029259, DiagObjectRule_2000036029259},
+            {2000106040865, DiagObjectRule_2000106040865},
             {20000834312454, DiagObjectRule_20000834312454},
             {20000863318638, DiagObjectRule_20000834312454},
             {20000834312456, DiagObjectRule_20000834312454},
@@ -10981,6 +11048,8 @@ public class RulesInfo
             {2000040379388, DiagObjectRule_2000040379388},
             {2000040484915, DiagObjectRule_2000040484915},
             {20000178983248, DiagObjectRule_20000178983248},
+            {20001077052882, DiagObjectRule_20001077052882},
+            {20001077181192, DiagObjectRule_20001077181192},
             {2000011715648, DiagObjectRule_2000011715648},
             {20000963113221, DiagObjectRule_20000963113221},
             {20001037024681, DiagObjectRule_20001037024681},
@@ -11010,7 +11079,6 @@ public class RulesInfo
             {2000034401072, DiagObjectRule_2000034401072},
             {20000345919581, DiagObjectRule_2000034401072},
             {2000090089778, DiagObjectRule_2000090089778},
-            {2000091492573, DiagObjectRule_2000091492573},
             {2000011286521, DiagObjectRule_2000011286521},
             {2000008898906, DiagObjectRule_2000008898906},
             {2000013164342, DiagObjectRule_2000008898906},
@@ -11062,7 +11130,7 @@ public class RulesInfo
             {2000008967148, DiagObjectRule_2000008967148},
             {2000097648856, DiagObjectRule_2000097648856},
             {20001062139522, DiagObjectRule_2000097648856},
-            {2000096173350, DiagObjectRule_2000096173350},
+            {20001077052883, DiagObjectRule_20001077052883},
             {20000949738771, DiagObjectRule_20000949738771},
             {2000063223801, DiagObjectRule_2000063223801},
             {20000632993163, DiagObjectRule_2000063223801},
@@ -11174,7 +11242,7 @@ public class RulesInfo
             {20000896152555, DiagObjectRule_2000013046253},
             {20000897631623, DiagObjectRule_2000013046253},
             {2000089869697, DiagObjectRule_2000013046253},
-            {20000914925682, DiagObjectRule_2000013046253},
+            {20001080421183, DiagObjectRule_2000013046253},
             {20000968416328, DiagObjectRule_2000013046253},
             {2000088545818, DiagObjectRule_2000013046253},
             {20000939477433, DiagObjectRule_2000013046253},
@@ -11194,16 +11262,16 @@ public class RulesInfo
             {20000961696573, DiagObjectRule_2000013046253},
             {2000092096238, DiagObjectRule_2000013046253},
             {2000103682418, DiagObjectRule_2000013046253},
-            {20001072150692, DiagObjectRule_2000013046253},
+            {20001077301069, DiagObjectRule_2000013046253},
             {2000089472187, DiagObjectRule_2000013046253},
             {20000894666337, DiagObjectRule_2000013046253},
             {2000089762985, DiagObjectRule_2000013046253},
             {20000897623188, DiagObjectRule_2000013046253},
             {20000897634176, DiagObjectRule_2000013046253},
             {20000897734791, DiagObjectRule_2000013046253},
-            {20000984331015, DiagObjectRule_2000013046253},
-            {20001056042091, DiagObjectRule_2000013046253},
-            {20000984331012, DiagObjectRule_2000013046253},
+            {2000096173350, DiagObjectRule_2000013046253},
+            {20001077181191, DiagObjectRule_2000013046253},
+            {2000096173298, DiagObjectRule_2000013046253},
             {2000090076698, DiagObjectRule_2000013046253},
             {20000900760654, DiagObjectRule_2000013046253},
             {2000090081809, DiagObjectRule_2000013046253},
@@ -11229,6 +11297,7 @@ public class RulesInfo
             {51211908747, DiagObjectRule_2000013046253},
             {20000505510715, DiagObjectRule_2000013046253},
             {20000550639731, DiagObjectRule_2000013046253},
+            {20000830252567, DiagObjectRule_2000013046253},
             {2000003779982, DiagObjectRule_2000003779982},
             {2000003777128, DiagObjectRule_2000003779982},
             {2000003777136, DiagObjectRule_2000003779982},
@@ -11813,7 +11882,7 @@ public class RulesInfo
             {2000033153334, DiagObjectRule_20000827056451},
             {20000403882093, DiagObjectRule_20000827056451},
             {2000035170051, DiagObjectRule_20000827056451},
-            {20000446404342, DiagObjectRule_20000827056451},
+            {20001072123162, DiagObjectRule_20000827056451},
             {2000008816067, DiagObjectRule_2000008816067},
             {2000008890382, DiagObjectRule_2000008890382},
             {2000003774048, DiagObjectRule_2000008890382},
@@ -11973,6 +12042,9 @@ public class RulesInfo
             {2000015720797, DiagObjectRule_2000008891666},
             {20000157284331, DiagObjectRule_2000008891666},
             {20000157696341, DiagObjectRule_2000008891666},
+            {2000101599695, DiagObjectRule_2000101599695},
+            {20001015176122, DiagObjectRule_2000101599695},
+            {2000102636660, DiagObjectRule_2000101599695},
             {2000069875091, DiagObjectRule_2000069875091},
             {20000698733964, DiagObjectRule_2000069875091},
             {2000003774904, DiagObjectRule_2000003774904},
@@ -12672,6 +12744,18 @@ public class RulesInfo
         return result;
     }
 
+    private bool FaultRule_20000947716863()
+    {
+        bool result = ((!(IsValidRuleString("E-Bezeichnung", "NA5")) && !(IsValidRuleString("E-Bezeichnung", "NA6")) && (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW"))) || ((IsValidRuleString("E-Bezeichnung", "NA5") || IsValidRuleString("E-Bezeichnung", "NA6")) && IsValidRuleString("Marke", "BMW PKW") && (RuleNum("Baustand") >= 202607)));
+        return result;
+    }
+
+    private bool FaultRule_20000639274032()
+    {
+        bool result = ((!(IsValidRuleString("E-Bezeichnung", "U06")) && (IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LU") || IsValidRuleString("Produktlinie", "21LU") || IsValidRuleString("Produktlinie", "21LI") || IsValidRuleString("Produktlinie", "21LG") || IsValidRuleString("Produktlinie", "21LK")) && !(IsValidRuleString("Hybridkennzeichen", "PHEV"))) || (IsValidRuleString("E-Bezeichnung", "U06") && IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "PHEV") && (RuleNum("IStufeX") >= 2211500)));
+        return result;
+    }
+
     private bool FaultRule_20000177062749()
     {
         bool result = ((!(IsValidRuleString("Typschl?ssel", "0613")) && !(IsValidRuleString("Typschl?ssel", "0603")) && !(IsValidRuleString("Typschl?ssel", "0612")) && !(IsValidRuleString("Typschl?ssel", "0611")) && !(IsValidRuleString("Typschl?ssel", "0602")) && !(IsValidRuleString("Typschl?ssel", "0601")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "K48")) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "KA1")));
@@ -13179,12 +13263,6 @@ public class RulesInfo
     private bool FaultRule_20000493596872()
     {
         bool result = (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "G08"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Hybridkennzeichen", "BEVE") && IsValidRuleString("E-Bezeichnung", "G08") && (RuleNum("IStufeX") >= 2107400)) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && (RuleNum("Baustand") >= 202107)));
-        return result;
-    }
-
-    private bool FaultRule_20000639274032()
-    {
-        bool result = (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("Produktlinie", "35LU") || IsValidRuleString("Produktlinie", "21LU") || IsValidRuleString("Produktlinie", "21LI") || IsValidRuleString("Produktlinie", "21LG") || IsValidRuleString("Produktlinie", "21LK")) && !(IsValidRuleString("Hybridkennzeichen", "PHEV")) && !(IsValidRuleString("E-Bezeichnung", "U06"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("E-Bezeichnung", "U06") && (RuleNum("IStufeX") >= 2211500)));
         return result;
     }
 
@@ -14466,6 +14544,12 @@ public class RulesInfo
         return result;
     }
 
+    private bool FaultRule_20000965759296()
+    {
+        bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuRepresentative", "DME")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuRepresentative", "DME2")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuRepresentative", "DDE")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW")) && IsValidRuleString("EcuRepresentative", "DDE2")));
+        return result;
+    }
+
     private bool FaultRule_64643467915()
     {
         bool result = (((IsValidRuleString("Marke", "TORQEEDO") && IsValidRuleString("Typschl?ssel", "9A34")) || (IsValidRuleString("Marke", "BMW i") && (IsValidRuleString("Typschl?ssel", "1Z21") || IsValidRuleString("Typschl?ssel", "1Z22") || IsValidRuleString("Typschl?ssel", "1Z23") || IsValidRuleString("Typschl?ssel", "1Z41") || IsValidRuleString("Typschl?ssel", "1Z42") || IsValidRuleString("Typschl?ssel", "1Z43") || IsValidRuleString("Typschl?ssel", "1Z61") || IsValidRuleString("Typschl?ssel", "1Z62") || IsValidRuleString("Typschl?ssel", "1Z63") || IsValidRuleString("Typschl?ssel", "1Z81") || IsValidRuleString("Typschl?ssel", "1Z82") || IsValidRuleString("Typschl?ssel", "1Z83") || IsValidRuleString("Typschl?ssel", "7Z21") || IsValidRuleString("Typschl?ssel", "7Z22") || IsValidRuleString("Typschl?ssel", "7Z23") || IsValidRuleString("Typschl?ssel", "7Z41") || IsValidRuleString("Typschl?ssel", "7Z42") || IsValidRuleString("Typschl?ssel", "7Z43") || IsValidRuleString("Typschl?ssel", "7Z61") || IsValidRuleString("Typschl?ssel", "7Z62") || IsValidRuleString("Typschl?ssel", "7Z63") || IsValidRuleString("Typschl?ssel", "7Z81") || IsValidRuleString("Typschl?ssel", "7Z82") || IsValidRuleString("Typschl?ssel", "7Z83")) && IsValidRuleString("E-Bezeichnung", "I01")) || (IsValidRuleString("Marke", "KARSAN") && IsValidRuleString("Typschl?ssel", "9A41")) || (IsValidRuleString("Marke", "DANNAR") && IsValidRuleString("Typschl?ssel", "9A43")) || (IsValidRuleString("Marke", "KARSAN") && IsValidRuleString("Typschl?ssel", "9A45")) || (IsValidRuleString("Marke", "BAOHANG") && IsValidRuleString("Typschl?ssel", "9A47")) || (IsValidRuleString("Marke", "BPW") && IsValidRuleString("Typschl?ssel", "9A54")) || (IsValidRuleString("Marke", "MOTIV") && IsValidRuleString("Typschl?ssel", "9A14"))) && IsValidRuleString("Country", "US"));
@@ -14544,9 +14628,15 @@ public class RulesInfo
         return result;
     }
 
+    private bool FaultRule_20000945735059()
+    {
+        bool result = ((IsValidRuleString("E-Bezeichnung", "G20") || IsValidRuleString("E-Bezeichnung", "G21")) && IsValidRuleString("Marke", "BMW PKW") && !((RuleNum("IStufeX") >= 2407500)));
+        return result;
+    }
+
     private bool FaultRule_20000596112168()
     {
-        bool result = ((IsValidRuleString("E-Bezeichnung", "G68") && IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2503530) && (RuleNum("IStufeX") <= 2507500)))) || (!(IsValidRuleString("E-Bezeichnung", "G68")) && IsValidRuleString("Marke", "BMW PKW")) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")));
+        bool result = ((IsValidRuleString("E-Bezeichnung", "G68") && IsValidRuleString("Marke", "BMW PKW") && !(((RuleNum("IStufeX") >= 2503530) && (RuleNum("IStufeX") <= 2603500)))) || (!(IsValidRuleString("E-Bezeichnung", "G68")) && IsValidRuleString("Marke", "BMW PKW")) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")));
         return result;
     }
 
@@ -19446,6 +19536,12 @@ public class RulesInfo
         return result;
     }
 
+    private bool FaultRule_20000563823512()
+    {
+        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuRepresentative", "SME"));
+        return result;
+    }
+
     private bool FaultRule_20000717726217()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Hybridkennzeichen", "PHEV"));
@@ -19527,6 +19623,12 @@ public class RulesInfo
     private bool FaultRule_20000184390115()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA")) && IsValidRuleString("EcuClique", "kafas04"));
+        return result;
+    }
+
+    private bool FaultRule_20001061382577()
+    {
+        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(((RuleNum("IStufeX") >= 2507400) && (RuleNum("IStufeX") <= 2607490))));
         return result;
     }
 
@@ -19671,6 +19773,12 @@ public class RulesInfo
     private bool FaultRule_20000120135532()
     {
         bool result = (IsValidRuleString("Country", "DE") || IsValidRuleString("Country", "CN"));
+        return result;
+    }
+
+    private bool FaultRule_20000830250042()
+    {
+        bool result = (IsValidRuleString("E-Bezeichnung", "K25") && IsValidRuleString("Marke", "BMW MOTORRAD"));
         return result;
     }
 
@@ -20004,12 +20112,6 @@ public class RulesInfo
         return result;
     }
 
-    private bool FaultRule_20000325213225()
-    {
-        bool result = (IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("E-Bezeichnung", "KA1")));
-        return result;
-    }
-
     private bool FaultRule_20000722004362()
     {
         bool result = (IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("EcuClique", "BMS-MP")));
@@ -20058,7 +20160,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool FaultRule_20000889036121()
+    private bool FaultRule_20000830250043()
     {
         bool result = (IsValidRuleString("Marke", "BMW MOTORRAD") && (IsValidRuleString("Baureihenverbund", "X001") || IsValidRuleString("Baureihenverbund", "XS01")));
         return result;
@@ -21684,6 +21786,12 @@ public class RulesInfo
         return result;
     }
 
+    private bool EcuFuncRule_20001073954955()
+    {
+        bool result = ((!(IsValidRuleString("E-Bezeichnung", "K06")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || ((IsValidRuleString("E-Bezeichnung", "KA2") || IsValidRuleString("E-Bezeichnung", "KA3")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "518")));
+        return result;
+    }
+
     private bool EcuFuncRule_20001068273871()
     {
         bool result = ((!(IsValidRuleString("E-Bezeichnung", "KA4")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || (!(IsValidRuleString("E-Bezeichnung", "K06")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || (!(IsValidRuleString("E-Bezeichnung", "KR2")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || (!(IsValidRuleString("E-Bezeichnung", "KA5")) && IsValidRuleString("Marke", "BMW MOTORRAD")));
@@ -21696,15 +21804,9 @@ public class RulesInfo
         return result;
     }
 
-    private bool EcuFuncRule_20001060105283()
+    private bool EcuFuncRule_20001065877304()
     {
         bool result = (((IsValidRuleString("E-Bezeichnung", "KA1") || IsValidRuleString("E-Bezeichnung", "KA5")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "681") && (RuleNum("IStufeX") >= 2403500)) || ((IsValidRuleString("E-Bezeichnung", "KA3") || IsValidRuleString("E-Bezeichnung", "KA4")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "68B")) || (IsValidRuleString("E-Bezeichnung", "KA3") && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "660")));
-        return result;
-    }
-
-    private bool EcuFuncRule_20001060105282()
-    {
-        bool result = (((IsValidRuleString("E-Bezeichnung", "KA3") || IsValidRuleString("E-Bezeichnung", "KA4")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "68B")) || (IsValidRuleString("E-Bezeichnung", "KA3") && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "660")) || ((IsValidRuleString("E-Bezeichnung", "KA1") || IsValidRuleString("E-Bezeichnung", "KA5")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "681") && (RuleNum("IStufeX") >= 2403500)));
         return result;
     }
 
@@ -22188,6 +22290,12 @@ public class RulesInfo
         return result;
     }
 
+    private bool EcuFuncRule_20000998139238()
+    {
+        bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("SALAPA", "807")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("SALAPA", "8AA")));
+        return result;
+    }
+
     private bool EcuFuncRule_20000895199814()
     {
         bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "6NX")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Basisausf?hrung", "US")));
@@ -22260,21 +22368,27 @@ public class RulesInfo
         return result;
     }
 
-    private bool EcuFuncRule_20001065580921()
+    private bool EcuFuncRule_20001073954954()
     {
-        bool result = ((IsValidRuleString("E-Bezeichnung", "KA1") && IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("SALAPA", "53B")) && (RuleNum("Produktionsdatum") >= 202408)) || (!(IsValidRuleString("E-Bezeichnung", "K06")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || (!(IsValidRuleString("E-Bezeichnung", "KR2")) && IsValidRuleString("Marke", "BMW MOTORRAD")));
-        return result;
-    }
-
-    private bool EcuFuncRule_20001064703691()
-    {
-        bool result = ((IsValidRuleString("E-Bezeichnung", "KA1") && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "53B")) || (!(IsValidRuleString("E-Bezeichnung", "K06")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || (!(IsValidRuleString("E-Bezeichnung", "KR2")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || (IsValidRuleString("E-Bezeichnung", "KA2") && IsValidRuleString("Marke", "BMW MOTORRAD")) || (IsValidRuleString("E-Bezeichnung", "KA1") && IsValidRuleString("Marke", "BMW MOTORRAD") && (RuleNum("Produktionsdatum") <= 202407)));
+        bool result = ((IsValidRuleString("E-Bezeichnung", "KA1") && IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("SALAPA", "53B")) && (RuleNum("Produktionsdatum") >= 202408)) || (!(IsValidRuleString("E-Bezeichnung", "K06")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || (!(IsValidRuleString("E-Bezeichnung", "KR2")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || ((IsValidRuleString("E-Bezeichnung", "KA5") || IsValidRuleString("E-Bezeichnung", "KA4")) && IsValidRuleString("Marke", "BMW MOTORRAD") && !(IsValidRuleString("SALAPA", "53B"))));
         return result;
     }
 
     private bool EcuFuncRule_20001048542724()
     {
         bool result = ((IsValidRuleString("E-Bezeichnung", "KA1") && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "681") && IsValidRuleString("SALAPA", "690") && (RuleNum("IStufeX") >= 2403500)) || (IsValidRuleString("E-Bezeichnung", "KA3") && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "690") && IsValidRuleString("SALAPA", "68B")) || (IsValidRuleString("E-Bezeichnung", "KA5") && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "690")));
+        return result;
+    }
+
+    private bool EcuFuncRule_20001073954953()
+    {
+        bool result = ((IsValidRuleString("E-Bezeichnung", "KA2") && IsValidRuleString("Marke", "BMW MOTORRAD")) || (IsValidRuleString("E-Bezeichnung", "KA1") && IsValidRuleString("Marke", "BMW MOTORRAD") && (RuleNum("Produktionsdatum") <= 202407)) || ((IsValidRuleString("E-Bezeichnung", "KA1") || IsValidRuleString("E-Bezeichnung", "KA5") || IsValidRuleString("E-Bezeichnung", "KA4")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "53B")) || (!(IsValidRuleString("E-Bezeichnung", "K06")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || (!(IsValidRuleString("E-Bezeichnung", "KR2")) && IsValidRuleString("Marke", "BMW MOTORRAD")));
+        return result;
+    }
+
+    private bool EcuFuncRule_20001073954956()
+    {
+        bool result = ((IsValidRuleString("E-Bezeichnung", "KA2") || IsValidRuleString("E-Bezeichnung", "KA3")) && IsValidRuleString("Marke", "BMW MOTORRAD"));
         return result;
     }
 
@@ -24762,6 +24876,18 @@ public class RulesInfo
         return result;
     }
 
+    private bool EcuFuncRule_20001035405155()
+    {
+        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "ALPINA")) && !(IsValidRuleString("Basisausf?hrung", "US")));
+        return result;
+    }
+
+    private bool EcuFuncRule_20001074625381()
+    {
+        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "ALPINA")) && IsValidRuleString("Basisausf?hrung", "US"));
+        return result;
+    }
+
     private bool EcuFuncRule_20000822961585()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "RR25")));
@@ -24960,13 +25086,13 @@ public class RulesInfo
         return result;
     }
 
-    private bool EcuFuncRule_20001061625692()
+    private bool EcuFuncRule_20001065877302()
     {
         bool result = (IsValidRuleString("E-Bezeichnung", "KA3") && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "660"));
         return result;
     }
 
-    private bool EcuFuncRule_20001061625693()
+    private bool EcuFuncRule_20001065877301()
     {
         bool result = (IsValidRuleString("E-Bezeichnung", "KA3") && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "68B"));
         return result;
@@ -27288,7 +27414,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_2000096173298()
+    private bool DiagObjectRule_20001077181193()
     {
         bool result = (((IsValidRuleString("E-Bezeichnung", "KA1") || IsValidRuleString("E-Bezeichnung", "KA2") || IsValidRuleString("E-Bezeichnung", "KA3")) && IsValidRuleString("Marke", "BMW MOTORRAD")) || ((IsValidRuleString("E-Bezeichnung", "KA5") || IsValidRuleString("E-Bezeichnung", "KA4")) && IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "530")));
         return result;
@@ -27474,7 +27600,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20000941997481()
+    private bool DiagObjectRule_20001062488941()
     {
         bool result = (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "eme_i01") || IsValidRuleString("EcuClique", "eme_i12") || IsValidRuleString("EcuClique", "eme_f18") || IsValidRuleString("EcuClique", "eme_g12") || IsValidRuleString("EcuClique", "eme_f45") || IsValidRuleString("EcuClique", "eme_f30"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "ccu_01") || IsValidRuleString("EcuClique", "CCU_22") || IsValidRuleString("EcuClique", "ccu_p1"))));
         return result;
@@ -27546,7 +27672,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20000659277073()
+    private bool DiagObjectRule_20001067427661()
     {
         bool result = (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && !(IsValidRuleString("Motor 8-stellig", "B38A12U0")) && IsValidRuleString("Motor", "B38")) || (IsValidRuleString("Marke", "BMW i") && (IsValidRuleString("E-Bezeichnung", "I12") || IsValidRuleString("E-Bezeichnung", "I15"))) || (IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "TOYOTA")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "S63") || IsValidRuleString("Motor", "N63") || IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B36") || IsValidRuleString("Motor", "B58") || IsValidRuleString("Motor", "B32") || IsValidRuleString("Motor", "B42") || IsValidRuleString("Motor", "S58"))) || (IsValidRuleString("Marke", "INEOS") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B58") && IsValidRuleString("Motor Leistungsklasse", "M")) || (IsValidRuleString("Marke", "FRAZER") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B38") && IsValidRuleString("Motor Leistungsklasse", "M")) || (IsValidRuleString("Marke", "KARMA") && IsValidRuleString("Motor ?berarbeitung", "0") && IsValidRuleString("Motor", "B38")) || (IsValidRuleString("Marke", "VINFAST") && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B48") && (IsValidRuleString("Motor Leistungsklasse", "O") || IsValidRuleString("Motor Leistungsklasse", "M"))));
         return result;
@@ -27621,6 +27747,12 @@ public class RulesInfo
     private bool DiagObjectRule_20001000741412()
     {
         bool result = (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "S68")));
+        return result;
+    }
+
+    private bool DiagObjectRule_2000101929710()
+    {
+        bool result = (((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B48")) && IsValidRuleString("Motor Kraftstoffart/Einbaulage", "B") && IsValidRuleString("Motor ?berarbeitung", "0")) || (IsValidRuleString("Marke", "TOYOTA") && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B58")) && IsValidRuleString("Motor ?berarbeitung", "1")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "B58") && (IsValidRuleString("Motor ?berarbeitung", "0") || IsValidRuleString("Motor ?berarbeitung", "1"))) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B38") || IsValidRuleString("Motor", "B48") || IsValidRuleString("Motor", "B36") || IsValidRuleString("Motor", "B42")) && IsValidRuleString("Motor ?berarbeitung", "1")));
         return result;
     }
 
@@ -27978,6 +28110,12 @@ public class RulesInfo
         return result;
     }
 
+    private bool DiagObjectRule_2000056642035()
+    {
+        bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "6U2")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "6U3")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("SALAPA", "6UQ")));
+        return result;
+    }
+
     private bool DiagObjectRule_2000081239066()
     {
         bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "823") && IsValidRuleString("SALAPA", "5AX")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5AU") && IsValidRuleString("SALAPA", "823")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "823") && IsValidRuleString("SALAPA", "5DX")));
@@ -28002,6 +28140,12 @@ public class RulesInfo
         return result;
     }
 
+    private bool DiagObjectRule_2000054671809()
+    {
+        bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "mgu_02_a") || IsValidRuleString("EcuClique", "mgu_02_l"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "hu_mgu")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "ipb_app1")));
+        return result;
+    }
+
     private bool DiagObjectRule_20001041744391()
     {
         bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "wave_01") || IsValidRuleString("EcuClique", "wave_11") || IsValidRuleString("EcuClique", "icon_25"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8LB")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8LR")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "8LA")));
@@ -28014,9 +28158,9 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20000993361063()
+    private bool DiagObjectRule_20001074561311()
     {
-        bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("HEAT 8-stellig", "HA0001N0") || IsValidRuleString("HEAT 8-stellig", "HA0002N0") || IsValidRuleString("HEAT 8-stellig", "HA0003N0") || IsValidRuleString("HEAT 8-stellig", "HA0004N0") || IsValidRuleString("HEAT 8-stellig", "HB0002N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N0") || IsValidRuleString("HEAT 8-stellig", "HB0003N0"))) || (IsValidRuleString("Marke", "MINI PKW") && (IsValidRuleString("HEAT 8-stellig", "HC0001N0") || IsValidRuleString("HEAT 8-stellig", "HC0002N0"))));
+        bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("HEAT 8-stellig", "HA0001N0") || IsValidRuleString("HEAT 8-stellig", "HA0002N0") || IsValidRuleString("HEAT 8-stellig", "HA0003N0") || IsValidRuleString("HEAT 8-stellig", "HA0004N0") || IsValidRuleString("HEAT 8-stellig", "HB0002N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N0") || IsValidRuleString("HEAT 8-stellig", "HB0003N0") || IsValidRuleString("HEAT 8-stellig", "HB0003N1") || IsValidRuleString("HEAT 8-stellig", "HA0003N1") || IsValidRuleString("HEAT 8-stellig", "HA0001N1"))) || (IsValidRuleString("Marke", "MINI PKW") && (IsValidRuleString("HEAT 8-stellig", "HC0001N0") || IsValidRuleString("HEAT 8-stellig", "HC0002N0"))));
         return result;
     }
 
@@ -28149,18 +28293,6 @@ public class RulesInfo
     private bool DiagObjectRule_2000015131166()
     {
         bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuRepresentative", "BCP")) || (IsValidRuleString("Marke", "TOYOTA") && IsValidRuleString("E-Bezeichnung", "J29")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LU") || IsValidRuleString("Produktlinie", "21LU") || IsValidRuleString("Produktlinie", "21LG") || IsValidRuleString("Produktlinie", "21LK"))) || (IsValidRuleString("Marke", "ROLLS-ROYCE PKW") && IsValidRuleString("Produktlinie", "35LR")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "ALPINA")) && !(IsValidRuleString("EcuClique", "libb_12v"))));
-        return result;
-    }
-
-    private bool DiagObjectRule_20000947940931()
-    {
-        bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5AU")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5DX")));
-        return result;
-    }
-
-    private bool DiagObjectRule_2000056642035()
-    {
-        bool result = (((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5AU")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("SALAPA", "6UQ")) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("SALAPA", "5DX")));
         return result;
     }
 
@@ -28316,7 +28448,7 @@ public class RulesInfo
 
     private bool DiagObjectRule_2000016365430()
     {
-        bool result = (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "nbtevo") || IsValidRuleString("EcuClique", "hu_mgu"))) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "enavevo") || IsValidRuleString("EcuClique", "bis01"))) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "mgu_02_a") || IsValidRuleString("EcuClique", "mgu_02_l"))));
+        bool result = (((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "mgu_02_a") || IsValidRuleString("EcuClique", "mgu_02_l"))) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "nbtevo") || IsValidRuleString("EcuClique", "hu_mgu"))) || ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("EcuClique", "enavevo") || IsValidRuleString("EcuClique", "bis01"))) || ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "idcevo25")));
         return result;
     }
 
@@ -28452,9 +28584,21 @@ public class RulesInfo
         return result;
     }
 
+    private bool DiagObjectRule_2000091492573()
+    {
+        bool result = ((IsValidRuleString("E-Bezeichnung", "KA1") || IsValidRuleString("E-Bezeichnung", "KA3") || IsValidRuleString("E-Bezeichnung", "KA5")) && IsValidRuleString("Marke", "BMW MOTORRAD"));
+        return result;
+    }
+
     private bool DiagObjectRule_2000088894369()
     {
         bool result = ((IsValidRuleString("E-Bezeichnung", "KA2") && IsValidRuleString("Marke", "BMW MOTORRAD")) || (IsValidRuleString("E-Bezeichnung", "KA1") && IsValidRuleString("Marke", "BMW MOTORRAD")) || (IsValidRuleString("E-Bezeichnung", "KA3") && IsValidRuleString("Marke", "BMW MOTORRAD")));
+        return result;
+    }
+
+    private bool DiagObjectRule_2000108042494()
+    {
+        bool result = ((IsValidRuleString("E-Bezeichnung", "KA2") || IsValidRuleString("E-Bezeichnung", "KA4")) && IsValidRuleString("Marke", "BMW MOTORRAD"));
         return result;
     }
 
@@ -28497,6 +28641,12 @@ public class RulesInfo
     private bool DiagObjectRule_2000105738957()
     {
         bool result = ((IsValidRuleString("E-Bezeichnung", "KA4") && IsValidRuleString("Marke", "BMW MOTORRAD")) || (IsValidRuleString("E-Bezeichnung", "KA5") && IsValidRuleString("Marke", "BMW MOTORRAD")));
+        return result;
+    }
+
+    private bool DiagObjectRule_2000016041637()
+    {
+        bool result = ((IsValidRuleString("E-Bezeichnung", "M13") && IsValidRuleString("Marke", "ZINORO") && IsValidRuleString("Motor", "B38") && IsValidRuleString("Motor ?berarbeitung", "0")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("Motor", "B36") && IsValidRuleString("Motor ?berarbeitung", "0")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Motor", "B38") && IsValidRuleString("Motor ?berarbeitung", "0") && !(IsValidRuleString("Motor 8-stellig", "B38A12U0"))) || ((IsValidRuleString("E-Bezeichnung", "I12") || IsValidRuleString("E-Bezeichnung", "I15")) && IsValidRuleString("Marke", "BMW i") && IsValidRuleString("Motor", "B38") && IsValidRuleString("Motor ?berarbeitung", "0")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("Motor", "B32") || IsValidRuleString("Motor", "B42")) && IsValidRuleString("Motor ?berarbeitung", "0")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && (IsValidRuleString("Motor", "B46") || IsValidRuleString("Motor", "B48")) && IsValidRuleString("Motor Kraftstoffart/Einbaulage", "A") && IsValidRuleString("Motor ?berarbeitung", "0")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "S58")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor Leistungsklasse", "T") && IsValidRuleString("Motor", "S63") && (IsValidRuleString("Motor ?berarbeitung", "0") || IsValidRuleString("Motor ?berarbeitung", "2") || IsValidRuleString("Motor ?berarbeitung", "4"))) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("Motor", "N63") && (IsValidRuleString("Motor ?berarbeitung", "2") || IsValidRuleString("Motor ?berarbeitung", "1") || IsValidRuleString("Motor ?berarbeitung", "3"))));
         return result;
     }
 
@@ -28611,6 +28761,12 @@ public class RulesInfo
     private bool DiagObjectRule_2000018440301()
     {
         bool result = ((IsValidRuleString("Marke", "BMW i") && IsValidRuleString("EcuClique", "eps_i1")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "eps_i1")) || (IsValidRuleString("Marke", "MINI PKW") && IsValidRuleString("EcuClique", "eps_i1")) || (IsValidRuleString("Marke", "ZINORO") && IsValidRuleString("EcuClique", "eps_i1")));
+        return result;
+    }
+
+    private bool DiagObjectRule_20001077533191()
+    {
+        bool result = ((IsValidRuleString("Marke", "BMW i") && IsValidRuleString("EcuClique", "hvs_02") && (RuleNum("IStufeX") <= 2507536)) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "hvs_02") && (RuleNum("IStufeX") <= 2507536)));
         return result;
     }
 
@@ -30030,7 +30186,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20001064382792()
+    private bool DiagObjectRule_20001074256082()
     {
         bool result = ((IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F90") || IsValidRuleString("E-Bezeichnung", "F91") || IsValidRuleString("E-Bezeichnung", "F92") || IsValidRuleString("E-Bezeichnung", "F93") || IsValidRuleString("E-Bezeichnung", "F95") || IsValidRuleString("E-Bezeichnung", "F96") || IsValidRuleString("E-Bezeichnung", "F97") || IsValidRuleString("E-Bezeichnung", "F98") || IsValidRuleString("E-Bezeichnung", "G05") || IsValidRuleString("E-Bezeichnung", "G07") || IsValidRuleString("E-Bezeichnung", "G14") || IsValidRuleString("E-Bezeichnung", "G15") || IsValidRuleString("E-Bezeichnung", "G16") || IsValidRuleString("E-Bezeichnung", "G80") || IsValidRuleString("E-Bezeichnung", "G82") || IsValidRuleString("E-Bezeichnung", "G83"))) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("EcuClique", "bdc_g05") && IsValidRuleString("SALAPA", "407")) || ((IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW")) && IsValidRuleString("SALAPA", "4UR")) || (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("E-Bezeichnung", "G06") && IsValidRuleString("Motor", "B48")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44")) && IsValidRuleString("SALAPA", "563")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44")) && IsValidRuleString("SALAPA", "4P1")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44")) && IsValidRuleString("SALAPA", "4P2")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44")) && IsValidRuleString("SALAPA", "4P3")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44")) && IsValidRuleString("SALAPA", "4P4")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44")) && IsValidRuleString("SALAPA", "4P5")) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("E-Bezeichnung", "F40") || IsValidRuleString("E-Bezeichnung", "F44")) && IsValidRuleString("SALAPA", "4W1")));
         return result;
@@ -31092,7 +31248,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20000732763065()
+    private bool DiagObjectRule_20001070570035()
     {
         bool result = ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("Produktlinie", "21LU") || IsValidRuleString("Produktlinie", "21LI") || IsValidRuleString("Produktlinie", "21LG") || IsValidRuleString("Produktlinie", "21LK")));
         return result;
@@ -31638,7 +31794,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20000836030711()
+    private bool DiagObjectRule_20001065707472()
     {
         bool result = ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "TOYOTA")));
         return result;
@@ -32508,12 +32664,6 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_2000016041637()
-    {
-        bool result = ((IsValidRuleString("Marke", "MINI PKW") && !(IsValidRuleString("Motor", "N16")) && !(IsValidRuleString("Motor", "N18")) && !(IsValidRuleString("Motor", "N12")) && !(IsValidRuleString("Motor", "N14")) && !(IsValidRuleString("Motor", "B38"))) || (IsValidRuleString("Marke", "BMW PKW") && !(IsValidRuleString("Motor", "N20")) && !(IsValidRuleString("Motor", "N55")) && !(IsValidRuleString("Motor", "N13")) && !(IsValidRuleString("Motor", "N74")) && !(IsValidRuleString("Motor", "N54")) && !(IsValidRuleString("Motor", "B38")) && !(IsValidRuleString("Motor", "S55"))) || (IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Motor ?berarbeitung", "1") && IsValidRuleString("Motor", "B38")) || ((IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Motor ?berarbeitung", "0") && !(IsValidRuleString("Motor 8-stellig", "B38A12U0")) && IsValidRuleString("Motor", "B38")));
-        return result;
-    }
-
     private bool DiagObjectRule_2000008804820()
     {
         bool result = ((IsValidRuleString("Marke", "MINI PKW") && (IsValidRuleString("E-Bezeichnung", "R50") || IsValidRuleString("E-Bezeichnung", "R52") || IsValidRuleString("E-Bezeichnung", "R53")) && (IsValidRuleString("EcuClique", "d40tmca") || IsValidRuleString("EcuClique", "d60tmca"))) || (IsValidRuleString("Marke", "BMW PKW") && (IsValidRuleString("Motor", "M47") || IsValidRuleString("Motor", "M57") || IsValidRuleString("Motor", "M67"))));
@@ -32760,7 +32910,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20000904433961()
+    private bool DiagObjectRule_20001065942393()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("E-Bezeichnung", "U06")));
         return result;
@@ -32784,7 +32934,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_2000078970631()
+    private bool DiagObjectRule_2000107753357()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "BMW i")));
         return result;
@@ -32892,21 +33042,15 @@ public class RulesInfo
         return result;
     }
 
+    private bool DiagObjectRule_20001074561312()
+    {
+        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("HEAT 8-stellig", "HA0001N0") || IsValidRuleString("HEAT 8-stellig", "HA0002N0") || IsValidRuleString("HEAT 8-stellig", "HA0003N0") || IsValidRuleString("HEAT 8-stellig", "HA0004N0") || IsValidRuleString("HEAT 8-stellig", "HB0002N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N0") || IsValidRuleString("HEAT 8-stellig", "HB0003N0") || IsValidRuleString("HEAT 8-stellig", "HA0002N1")));
+        return result;
+    }
+
     private bool DiagObjectRule_2000097757995()
     {
-        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("HEAT 8-stellig", "HA0001N0") || IsValidRuleString("HEAT 8-stellig", "HA0002N0") || IsValidRuleString("HEAT 8-stellig", "HA0003N0") || IsValidRuleString("HEAT 8-stellig", "HA0004N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N0") || IsValidRuleString("HEAT 8-stellig", "HB0003N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N1") || IsValidRuleString("HEAT 8-stellig", "HB0003N1") || IsValidRuleString("HEAT 8-stellig", "HA0003N1") || IsValidRuleString("HEAT 8-stellig", "HA0001N1") || IsValidRuleString("HEAT 8-stellig", "HA0002N1")));
-        return result;
-    }
-
-    private bool DiagObjectRule_20001035837565()
-    {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("HEAT 8-stellig", "HA0001N0") || IsValidRuleString("HEAT 8-stellig", "HA0002N0") || IsValidRuleString("HEAT 8-stellig", "HA0003N0") || IsValidRuleString("HEAT 8-stellig", "HA0004N0") || IsValidRuleString("HEAT 8-stellig", "HB0002N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N0") || IsValidRuleString("HEAT 8-stellig", "HB0003N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N1") || IsValidRuleString("HEAT 8-stellig", "HB0003N1") || IsValidRuleString("HEAT 8-stellig", "HA0003N1") || IsValidRuleString("HEAT 8-stellig", "HA0001N1") || IsValidRuleString("HEAT 8-stellig", "HA0002N1")));
-        return result;
-    }
-
-    private bool DiagObjectRule_20000993361062()
-    {
-        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && (IsValidRuleString("HEAT 8-stellig", "HA0001N0") || IsValidRuleString("HEAT 8-stellig", "HA0002N0") || IsValidRuleString("HEAT 8-stellig", "HA0003N0") || IsValidRuleString("HEAT 8-stellig", "HA0004N0") || IsValidRuleString("HEAT 8-stellig", "HB0002N0") || IsValidRuleString("HEAT 8-stellig", "HB0001N0") || IsValidRuleString("HEAT 8-stellig", "HB0003N0")));
         return result;
     }
 
@@ -33000,7 +33144,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20000862322821()
+    private bool DiagObjectRule_20001080075871()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "ib_g70"));
         return result;
@@ -33009,6 +33153,12 @@ public class RulesInfo
     private bool DiagObjectRule_20000786830166()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "ib_i20"));
+        return result;
+    }
+
+    private bool DiagObjectRule_20001074475795()
+    {
+        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "ipb_app1") && IsValidRuleString("EcuClique", "ipb_app2"));
         return result;
     }
 
@@ -33168,9 +33318,9 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20001070570034()
+    private bool DiagObjectRule_20001074475796()
     {
-        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("EcuRepresentative", "IPB")));
+        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && !(IsValidRuleString("EcuClique", "ipb_app1")) && !(IsValidRuleString("EcuClique", "ipb_app2")));
         return result;
     }
 
@@ -33183,6 +33333,12 @@ public class RulesInfo
     private bool DiagObjectRule_2000103702001()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsFaultRuleValid(20000419793941));
+        return result;
+    }
+
+    private bool DiagObjectRule_20001067459773()
+    {
+        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("EcuClique", "BCP_SP21"));
         return result;
     }
 
@@ -33252,12 +33408,6 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20000829719291()
-    {
-        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("EcuClique", "ib_g70"));
-        return result;
-    }
-
     private bool DiagObjectRule_20000754604051()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsValidRuleString("Hybridkennzeichen", "PHEV") && IsValidRuleString("EcuClique", "hvsgr_01"));
@@ -33285,6 +33435,12 @@ public class RulesInfo
     private bool DiagObjectRule_2000011882275()
     {
         bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "TOYOTA")) && (IsValidRuleString("EcuClique", "ihka_g11") || IsValidRuleString("EcuClique", "ihka1rr") || IsValidRuleString("EcuClique", "ihka_g05") || IsValidRuleString("EcuClique", "ihka_g09") || IsValidRuleString("EcuClique", "ihkarr25")));
+        return result;
+    }
+
+    private bool DiagObjectRule_2000106828908()
+    {
+        bool result = ((IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "TOYOTA")) && IsFaultRuleValid(20000419793941) && (IsValidRuleString("EcuClique", "ihka_g11") || IsValidRuleString("EcuClique", "ihka1rr") || IsValidRuleString("EcuClique", "ihka_g05") || IsValidRuleString("EcuClique", "ihka_g09") || IsValidRuleString("EcuClique", "ihkarr25")));
         return result;
     }
 
@@ -33486,7 +33642,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_2000099215517()
+    private bool DiagObjectRule_2000105850213()
     {
         bool result = ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "BMW i")) && IsFaultRuleValid(20000419793941));
         return result;
@@ -33570,7 +33726,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_20000943984151()
+    private bool DiagObjectRule_20001067134972()
     {
         bool result = ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "BMW i")) && IsValidRuleString("Hybridkennzeichen", "PHEV"));
         return result;
@@ -33603,6 +33759,12 @@ public class RulesInfo
     private bool DiagObjectRule_2000036029259()
     {
         bool result = ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW") || IsValidRuleString("Marke", "TOYOTA") || IsValidRuleString("Marke", "WIESMANN") || IsValidRuleString("Marke", "BMW i") || IsValidRuleString("Marke", "BRILLIANCE") || IsValidRuleString("Marke", "ALPINA")) && (IsValidRuleString("Produktlinie", "35LK") || IsValidRuleString("Produktlinie", "35LR") || IsValidRuleString("Produktlinie", "35LG") || IsValidRuleString("Produktlinie", "35LU") || IsValidRuleString("Produktlinie", "21LU") || IsValidRuleString("Produktlinie", "21LI") || IsValidRuleString("Produktlinie", "21LG") || IsValidRuleString("Produktlinie", "21LK")));
+        return result;
+    }
+
+    private bool DiagObjectRule_2000106040865()
+    {
+        bool result = ((IsValidRuleString("Marke", "ZINORO") || IsValidRuleString("Marke", "ROLLS-ROYCE PKW") || IsValidRuleString("Marke", "BMW PKW") || IsValidRuleString("Marke", "MINI PKW")) && IsFaultRuleValid(20000419793941) && IsValidRuleString("EcuClique", "hkfm_g11"));
         return result;
     }
 
@@ -33972,6 +34134,18 @@ public class RulesInfo
         return result;
     }
 
+    private bool DiagObjectRule_20001077052882()
+    {
+        bool result = (IsValidRuleString("Marke", "BMW MOTORRAD") && IsFaultRuleValid(20000550639731) && IsValidRuleString("EcuVariant", "x_slz03"));
+        return result;
+    }
+
+    private bool DiagObjectRule_20001077181192()
+    {
+        bool result = (IsValidRuleString("Marke", "BMW MOTORRAD") && IsFaultRuleValid(20000830252567) && IsValidRuleString("EcuVariant", "x_slz_4"));
+        return result;
+    }
+
     private bool DiagObjectRule_2000011715648()
     {
         bool result = (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("Baureihe", "S") && (IsValidRuleString("EcuClique", "BMS-MP") || IsValidRuleString("EcuClique", "BMS-O") || IsValidRuleString("EcuClique", "BMSX")));
@@ -34047,12 +34221,6 @@ public class RulesInfo
     private bool DiagObjectRule_2000090089778()
     {
         bool result = (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "KA1") && IsValidRuleString("SALAPA", "20B") && (RuleNum("IStufeX") <= 2403540));
-        return result;
-    }
-
-    private bool DiagObjectRule_2000091492573()
-    {
-        bool result = (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("E-Bezeichnung", "KA1"));
         return result;
     }
 
@@ -34200,7 +34368,7 @@ public class RulesInfo
         return result;
     }
 
-    private bool DiagObjectRule_2000096173350()
+    private bool DiagObjectRule_20001077052883()
     {
         bool result = (IsValidRuleString("Marke", "BMW MOTORRAD") && IsValidRuleString("SALAPA", "530") && IsFaultRuleValid(20000550639731) && IsValidRuleString("EcuVariant", "x_slz03"));
         return result;
@@ -36537,6 +36705,12 @@ public class RulesInfo
     private bool DiagObjectRule_2000008891666()
     {
         bool result = (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "lmv_84"));
+        return result;
+    }
+
+    private bool DiagObjectRule_2000101599695()
+    {
+        bool result = (IsValidRuleString("Marke", "BMW PKW") && IsValidRuleString("EcuClique", "lmv_g65"));
         return result;
     }
 
