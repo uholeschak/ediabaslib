@@ -8168,7 +8168,7 @@ namespace BmwDeepObd
             if (stringsNode != null)
             {
                 string pageName = GetStringEntry(DisplayNamePage, ns, stringsNode);
-                if (pageName != null)
+                if (!string.IsNullOrEmpty(pageName))
                 {
                     ecuInfo.PageName = pageName;
                 }
