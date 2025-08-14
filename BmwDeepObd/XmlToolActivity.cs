@@ -126,6 +126,7 @@ namespace BmwDeepObd
                 InitReadValues();
 
                 PageName = name;
+                PageNameInitial = name;
                 EcuName = name;
                 EcuFunctionNames = null;
                 DisplayMode = displayMode;
@@ -286,6 +287,8 @@ namespace BmwDeepObd
             public bool NoUpdate { get; set; }
 
             public string PageName { get; set; }
+
+            public string PageNameInitial { get; set; }
 
             public string EcuName { get; set; }
 
@@ -4019,6 +4022,7 @@ namespace BmwDeepObd
                                                             {
                                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT_FUNKTIONAL ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
                                                                 ecuInfo.PageName = title;
+                                                                ecuInfo.PageNameInitial = title;
                                                                 ecuInfo.Description = title;
                                                                 ecuInfo.DescriptionTransRequired = false;
                                                             }
@@ -4123,6 +4127,7 @@ namespace BmwDeepObd
                                                             _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "IDENT ECU variant found for: Sgbd={0}, Name={1}, Group={2}, Title={3}",
                                                                 ecuSgbdName, ecuName, groupName, title);
                                                             ecuInfo.PageName = title;
+                                                            ecuInfo.PageNameInitial = title;
                                                             ecuInfo.Description = title;
                                                             ecuInfo.DescriptionTransRequired = false;
                                                         }
@@ -4441,6 +4446,7 @@ namespace BmwDeepObd
                                             {
                                                 _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "ECU variant found for: Sgbd={0}, Title={1}", ecuSgbdName, title);
                                                 ecuInfoAdd.PageName = title;
+                                                ecuInfoAdd.PageNameInitial = title;
                                                 ecuInfoAdd.Description = title;
                                                 ecuInfoAdd.DescriptionTransRequired = false;
                                             }
@@ -4768,6 +4774,7 @@ namespace BmwDeepObd
                                     else
                                     {
                                         ecuInfo.PageName = title;
+                                        ecuInfo.PageNameInitial = title;
                                         ecuInfo.Description = title;
                                         ecuInfo.DescriptionTransRequired = false;
                                     }
@@ -7826,6 +7833,7 @@ namespace BmwDeepObd
                             else
                             {
                                 ecuInfo.PageName = title;
+                                ecuInfo.PageNameInitial = title;
                                 ecuInfo.Description = title;
                                 ecuInfo.DescriptionTransRequired = false;
                             }
