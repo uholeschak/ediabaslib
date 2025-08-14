@@ -16,7 +16,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using static Android.Util.EventLogTags;
 
 namespace BmwDeepObd
 {
