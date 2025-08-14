@@ -1928,9 +1928,9 @@ namespace BmwDeepObd
         {
             UpdateResultSettings(_selectedResult);
             string pageName = _editTextPageName.Text?.Trim();
-            if (string.IsNullOrEmpty(pageName))
+            if (string.IsNullOrEmpty(pageName) && !string.IsNullOrEmpty(_ecuInfo.PageNameInitial))
             {
-                pageName = _ecuInfo.Description;
+                pageName = _ecuInfo.PageNameInitial;
             }
             _ecuInfo.PageName = pageName;
 
