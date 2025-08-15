@@ -2608,7 +2608,7 @@ namespace EdiabasLib
                                 doIpString = doIpString.Trim();
                                 if (!string.IsNullOrEmpty(doIpString))
                                 {
-                                    if (string.Compare(doIpString, "Yes", StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (string.Compare(doIpString, "Yes", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
                                         isDoIp = true;
                                     }
