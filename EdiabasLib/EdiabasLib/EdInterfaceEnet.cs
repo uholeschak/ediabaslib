@@ -1563,9 +1563,19 @@ namespace EdiabasLib
                     if (SharedDataActive.DiagDoIp)
                     {
                         diagPort = doIpPort;
-                        if (SharedDataActive.EnetHostConn.DoIpPort >= 0)
+                        if (SharedDataActive.DiagDoIpSsl)
                         {
-                            diagPort = SharedDataActive.EnetHostConn.DoIpPort;
+                            if (SharedDataActive.EnetHostConn.SslPort >= 0)
+                            {
+                                diagPort = SharedDataActive.EnetHostConn.SslPort;
+                            }
+                        }
+                        else
+                        {
+                            if (SharedDataActive.EnetHostConn.DoIpPort >= 0)
+                            {
+                                diagPort = SharedDataActive.EnetHostConn.DoIpPort;
+                            }
                         }
                     }
                     else
@@ -1575,49 +1585,49 @@ namespace EdiabasLib
                         {
                             diagPort = SharedDataActive.EnetHostConn.DiagPort;
                         }
+                    }
 
-                        if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn.DiagPort >= 0)
+                    if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
+                    {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
+                        IcomEvent?.Reset();
+                        using (CancellationTokenSource cts = new CancellationTokenSource())
                         {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
-                            IcomEvent?.Reset();
-                            using (CancellationTokenSource cts = new CancellationTokenSource())
+                            if (!IcomAllocateDevice(SharedDataActive.EnetHostConn.IpAddress.ToString(), true, cts, (success, code) =>
                             {
-                                if (!IcomAllocateDevice(SharedDataActive.EnetHostConn.IpAddress.ToString(), true, cts, (success, code) =>
+                                if (success && code == 0)
                                 {
-                                    if (success && code == 0)
-                                    {
-                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM ok: Code={0}", code);
-                                    }
-                                    else
-                                    {
-                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM rejected: Code={0}", code);
-                                    }
-
-                                    IcomEvent?.Set();
-                                }))
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM ok: Code={0}", code);
+                                }
+                                else
                                 {
-                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM error");
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM rejected: Code={0}", code);
                                 }
 
-                                int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent, SharedDataActive.TransmitCancelEvent }, 2000);
-                                if (waitResult != 0)
-                                {
-                                    if (waitResult == WaitHandle.WaitTimeout)
-                                    {
-                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM timeout");
-                                    }
-                                    else
-                                    {
-                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM cancelled");
-                                    }
-                                    cts.Cancel();
-                                    IcomEvent?.WaitOne(1000);
-                                    // reset allocate active after cancel
-                                    SharedDataActive.IcomAllocateActive = false;
-                                }
+                                IcomEvent?.Set();
+                            }))
+                            {
+                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM error");
                             }
-                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
+
+                            int waitResult = WaitHandle.WaitAny(new WaitHandle[] { IcomEvent, SharedDataActive.TransmitCancelEvent }, 2000);
+                            if (waitResult != 0)
+                            {
+                                if (waitResult == WaitHandle.WaitTimeout)
+                                {
+                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM timeout");
+                                }
+                                else
+                                {
+                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM cancelled");
+                                }
+                                cts.Cancel();
+                                IcomEvent?.WaitOne(1000);
+                                // reset allocate active after cancel
+                                SharedDataActive.IcomAllocateActive = false;
+                            }
                         }
+                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM finished");
                     }
 
                     try
@@ -1791,7 +1801,7 @@ namespace EdiabasLib
                 SharedDataActive.DisposeS29Certs();
             }
 
-            if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn != null && SharedDataActive.EnetHostConn.DiagPort >= 0)
+            if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn != null && SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
 
