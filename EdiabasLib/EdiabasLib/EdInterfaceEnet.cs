@@ -506,6 +506,10 @@ namespace EdiabasLib
         public const int DoIpGwAddrDefault = 0x0010;
         public const int DiagPortDefault = 6801;
         public const int ControlPortDefault = 6811;
+        public const int IcomDiagPortDefault = 50160;
+        public const int IcomControlPortDefault = 50161;
+        public const int IcomDoIpPortDefault = 50162;
+        public const int IcomSslPortDefault = 50163;
         public const string NetworkProtocolTcp = "TCP";
         public const string NetworkProtocolSsl = "SSL";
         public const string AutoIp = "auto";
@@ -2620,11 +2624,11 @@ namespace EdiabasLib
                             {
                                 if (isDoIp)
                                 {
-                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, -1, -1, 50162, 50163);
+                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, -1, -1, IcomDoIpPortDefault, IcomSslPortDefault);
                                 }
                                 else
                                 {
-                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, 50160, 50161);
+                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, IcomDiagPortDefault, IcomControlPortDefault);
                                 }
                             }
                         }
