@@ -363,7 +363,7 @@ namespace Ediabas
                                 portValue = -1;
                             }
 
-                            if (portValue != 6801)
+                            if (portValue != EdInterfaceEnet.DiagPortDefault)
                             {
                                 logFormat(ApiLogLevel.Normal, "Invalid Port: {0}", portValue);
                                 validConfig = false;

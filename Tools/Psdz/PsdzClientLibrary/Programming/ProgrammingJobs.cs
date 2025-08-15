@@ -1005,8 +1005,8 @@ namespace PsdzClient.Programming
                     icomConnection = true;
                 }
 
-                int diagPort = icomConnection ? EdInterfaceEnet.IcomDiagPortDefault : 6801;
-                int controlPort = icomConnection ? EdInterfaceEnet.IcomControlPortDefault : 6811;
+                int diagPort = icomConnection ? EdInterfaceEnet.IcomDiagPortDefault : EdInterfaceEnet.DiagPortDefault;
+                int controlPort = icomConnection ? EdInterfaceEnet.IcomControlPortDefault : EdInterfaceEnet.ControlPortDefault;
 
                 if (hostParts.Length >= 2)
                 {
@@ -1169,7 +1169,7 @@ namespace PsdzClient.Programming
                 IPsdzConnection psdzConnection;
                 if (icomConnection)
                 {
-                    int useDiagPort = isDoIp ? 50163 : diagPort;
+                    int useDiagPort = isDoIp ? EdInterfaceEnet.IcomSslPortDefault : diagPort;
                     string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, useDiagPort);
 
                     if (isDoIp)
