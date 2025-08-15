@@ -1469,15 +1469,6 @@ namespace EdiabasLib
                 }
 
                 int diagPort;
-                if (communicationModes.Contains(CommunicationMode.DoIp))
-                {
-                    if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
-                    {
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Disable DoIp for ICOM");
-                        communicationModes.Remove(CommunicationMode.DoIp);
-                    }
-                }
-
                 if (communicationModes.Count == 0)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No valid vehicle protocol specified: {0}", VehicleProtocolProtected);
