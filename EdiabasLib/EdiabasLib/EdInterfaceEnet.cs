@@ -2600,6 +2600,19 @@ namespace EdiabasLib
                                 }
                             }
 
+                            bool isDoIp = false;
+                            if (attrDict.TryGetValue("DOIP", out string doIpString))
+                            {
+                                doIpString = doIpString.Trim();
+                                if (!string.IsNullOrEmpty(doIpString))
+                                {
+                                    if (string.Compare(doIpString, "Yes", StringComparison.OrdinalIgnoreCase) != 0)
+                                    {
+                                        isDoIp = true;
+                                    }
+                                }
+                            }
+
                             if (gatewayAddr >= 0 && enetChannel && isFree)
                             {
                                 addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, 50160, 50161);
