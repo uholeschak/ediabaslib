@@ -1005,8 +1005,8 @@ namespace PsdzClient.Programming
                     icomConnection = true;
                 }
 
-                int diagPort = icomConnection ? 50160 : 6801;
-                int controlPort = icomConnection ? 50161 : 6811;
+                int diagPort = icomConnection ? EdInterfaceEnet.IcomDiagPortDefault : 6801;
+                int controlPort = icomConnection ? EdInterfaceEnet.IcomControlPortDefault : 6811;
 
                 if (hostParts.Length >= 2)
                 {

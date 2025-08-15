@@ -88,8 +88,8 @@ namespace PsdzClient
                     _ediabas.SetConfigProperty("ControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
                 }
 
-                _ediabas.SetConfigProperty("PortDoIP", "50162");
-                _ediabas.SetConfigProperty("SSLPort", "50163");
+                _ediabas.SetConfigProperty("PortDoIP", EdInterfaceEnet.IcomDoIpPortDefault.ToString(CultureInfo.InvariantCulture));
+                _ediabas.SetConfigProperty("SSLPort", EdInterfaceEnet.IcomSslPortDefault.ToString(CultureInfo.InvariantCulture));
             }
 
             string vehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
