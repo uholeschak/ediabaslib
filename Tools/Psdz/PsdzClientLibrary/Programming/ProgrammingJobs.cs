@@ -1169,10 +1169,21 @@ namespace PsdzClient.Programming
                 IPsdzConnection psdzConnection;
                 if (icomConnection)
                 {
-                    string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, diagPort);
-                    psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
-                        psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, addTimeout, series,
-                        bauIStufe, IcomConnectionType.Ip, false);
+                    int useDiagPort = isDoIp ? 50163 : diagPort;
+                    string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, useDiagPort);
+
+                    if (isDoIp)
+                    {
+                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
+                            psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, addTimeout, series,
+                            bauIStufe, IcomConnectionType.Ip, false, true);
+                    }
+                    else
+                    {
+                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
+                            psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, addTimeout, series,
+                            bauIStufe, IcomConnectionType.Ip, false);
+                    }
                 }
                 else
                 {
@@ -1184,17 +1195,6 @@ namespace PsdzClient.Programming
                         psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
                             psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
                             bauIStufe, true);
-                        ISec4DiagHandler sec4DiagHandler = PsdzContext.DetectVehicle.GetSec4DiagHandler();
-                        if (sec4DiagHandler == null || sec4DiagHandler.Sec4DiagCertificates == null)
-                        {
-                            sbResult.AppendLine(Strings.CertificatesNotPresent);
-                            UpdateStatus(sbResult.ToString());
-                            return false;
-                        }
-
-                        ConnectionManager connectionManager = new ConnectionManager(ProgrammingService.Psdz, vehicle, null);
-                        connectionManager.RegisterCallbackAndPassCertificatesToPsdz(psdzConnection);
-                        ProgrammingService.Psdz.SecureDiagnosticsService.UnlockGateway(psdzConnection);
                     }
                     else
                     {
@@ -1202,6 +1202,21 @@ namespace PsdzClient.Programming
                             psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
                             bauIStufe);
                     }
+                }
+
+                if (isDoIp)
+                {
+                    ISec4DiagHandler sec4DiagHandler = PsdzContext.DetectVehicle.GetSec4DiagHandler();
+                    if (sec4DiagHandler == null || sec4DiagHandler.Sec4DiagCertificates == null)
+                    {
+                        sbResult.AppendLine(Strings.CertificatesNotPresent);
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
+
+                    ConnectionManager connectionManager = new ConnectionManager(ProgrammingService.Psdz, vehicle, null);
+                    connectionManager.RegisterCallbackAndPassCertificatesToPsdz(psdzConnection);
+                    ProgrammingService.Psdz.SecureDiagnosticsService.UnlockGateway(psdzConnection);
                 }
 
                 PsdzContext.VecInfo = vehicle;
