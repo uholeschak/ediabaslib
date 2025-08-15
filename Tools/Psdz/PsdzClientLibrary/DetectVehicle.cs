@@ -77,7 +77,19 @@ namespace PsdzClient
             if (enetConnection != null)
             {
                 icomAllocate = allowAllocate && enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
-                hostAddress = enetConnection.ToString();
+                hostAddress = enetConnection.IpAddress.ToString();
+
+                if (enetConnection.DiagPort >= 0)
+                {
+                    _ediabas.SetConfigProperty("DiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
+                }
+                if (enetConnection.ControlPort >= 0)
+                {
+                    _ediabas.SetConfigProperty("ControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
+                }
+
+                _ediabas.SetConfigProperty("PortDoIP", "50162");
+                _ediabas.SetConfigProperty("SSLPort", "50163");
             }
 
             string vehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
