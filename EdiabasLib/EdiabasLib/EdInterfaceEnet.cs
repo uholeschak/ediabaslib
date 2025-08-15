@@ -115,7 +115,9 @@ namespace EdiabasLib
 
                 StringBuilder sb = new StringBuilder();
                 sb.Append(IpAddress);
-                if (ConnectionType == InterfaceType.DirectDoIp)
+
+                bool isDoIp = ConnectionType == InterfaceType.DirectDoIp || DoIpPort >= 0 || SslPort >= 0;
+                if (isDoIp)
                 {
                     sb.Append(":");
                     sb.Append(ProtocolDoIp);
@@ -2615,7 +2617,14 @@ namespace EdiabasLib
 
                             if (gatewayAddr >= 0 && enetChannel && isFree)
                             {
-                                addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, 50160, 50161);
+                                if (isDoIp)
+                                {
+                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, -1, -1, 50162, 50163);
+                                }
+                                else
+                                {
+                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, 50160, 50161);
+                                }
                             }
                         }
                     }
