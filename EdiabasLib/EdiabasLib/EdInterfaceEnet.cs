@@ -2233,15 +2233,6 @@ namespace EdiabasLib
                                                         {
                                                             UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
                                                         }, ipUdpIdent.Address, SharedDataActive.NetworkData);
-
-                                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': SrvLoc broadcast={1} Port={2}",
-                                                            netInterface.Name, broadcastAddress, UdpSrvLocPort));
-
-                                                        IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
-                                                        TcpClientWithTimeout.ExecuteNetworkCommand(() =>
-                                                        {
-                                                            UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
-                                                        }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
                                                     }
 
                                                     if (protocolDoIp)
@@ -2255,6 +2246,15 @@ namespace EdiabasLib
                                                             UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
                                                         }, ipUdpDoIpIdent.Address, SharedDataActive.NetworkData);
                                                     }
+
+                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending: '{0}': SrvLoc broadcast={1} Port={2}",
+                                                        netInterface.Name, broadcastAddress, UdpSrvLocPort));
+
+                                                    IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
+                                                    TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                                                    {
+                                                        UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                                    }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
 
                                                     broadcastSend = true;
                                                 }
@@ -2300,12 +2300,6 @@ namespace EdiabasLib
 
                                                         IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
                                                         UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
-
-                                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
-                                                            adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpSrvLocPort));
-
-                                                        IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
-                                                        UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
                                                     }
 
                                                     if (protocolDoIp)
@@ -2316,6 +2310,12 @@ namespace EdiabasLib
                                                         IPEndPoint ipUdpDoIpIdent = new IPEndPoint(broadcastAddress, DoIpPort);
                                                         UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
                                                     }
+
+                                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc: '{0}': Ip={1} Mask={2} Broadcast={3} Port={4}",
+                                                        adapter.Name, ipAddressInfo.Address, ipAddressInfo.IPv4Mask, broadcastAddress, UdpSrvLocPort));
+
+                                                    IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
+                                                    UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
 
                                                     broadcastSend = true;
                                                 }
@@ -2343,13 +2343,6 @@ namespace EdiabasLib
                                 {
                                     UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
                                 }, ipUdpIdent.Address, SharedDataActive.NetworkData);
-
-                                IPEndPoint ipUdpSvrLoc = new IPEndPoint(hostIpAddress ?? IPAddress.Parse(HostIdentServiceProtected), UdpSrvLocPort);
-                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address, UdpSrvLocPort));
-                                TcpClientWithTimeout.ExecuteNetworkCommand(() =>
-                                {
-                                    UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
-                                }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
                             }
 
                             if (protocolDoIp)
@@ -2361,6 +2354,13 @@ namespace EdiabasLib
                                     UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
                                 }, ipUdpDoIpIdent.Address, SharedDataActive.NetworkData);
                             }
+
+                            IPEndPoint ipUdpSvrLoc = new IPEndPoint(hostIpAddress ?? IPAddress.Parse(HostIdentServiceProtected), UdpSrvLocPort);
+                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address, UdpSrvLocPort));
+                            TcpClientWithTimeout.ExecuteNetworkCommand(() =>
+                            {
+                                UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                            }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
 
                             broadcastSend = true;
                         }
