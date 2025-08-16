@@ -918,8 +918,23 @@ namespace PsdzClient
                     {
                         if (connectionSelected != null)
                         {
-                            bool isICom = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
-                            bool isDoIp = connectionSelected.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.DirectDoIp;
+                            bool isICom = false;
+                            bool isDoIp = false;
+                            switch (connectionSelected.ConnectionType)
+                            {
+                                case EdInterfaceEnet.EnetConnection.InterfaceType.DirectDoIp:
+                                    isDoIp = true;
+                                    break;
+
+                                case EdInterfaceEnet.EnetConnection.InterfaceType.Icom:
+                                    isICom = true;
+                                    if (connectionSelected.DoIpPort >= 0 || connectionSelected.SslPort >= 0)
+                                    {
+                                        isDoIp = true;
+                                    }
+                                    break;
+
+                            }
 
                             ipAddressControlVehicleIp.Text = connectionSelected.IpAddress.ToString();
                             checkBoxIcom.Checked = isICom;
