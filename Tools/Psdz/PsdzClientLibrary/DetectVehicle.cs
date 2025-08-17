@@ -77,8 +77,7 @@ namespace PsdzClient
             if (enetConnection != null)
             {
                 icomAllocate = allowAllocate && enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
-                hostAddress = enetConnection.IpAddress.ToString();
-
+                hostAddress = string.Format(CultureInfo.InvariantCulture, "{0}:50160:50161", enetConnection.IpAddress.ToString());
                 if (enetConnection.DiagPort >= 0)
                 {
                     _ediabas.SetConfigProperty("DiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));

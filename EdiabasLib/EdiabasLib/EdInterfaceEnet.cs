@@ -1392,14 +1392,15 @@ namespace EdiabasLib
 
                         if (hostParts.Length >= hostPos + 1)
                         {
-                            protocolSpecified = true;
                             if (string.Compare(hostParts[hostPos], ProtocolHsfz, StringComparison.OrdinalIgnoreCase) == 0)
                             {
+                                protocolSpecified = true;
                                 hostPos++;
                                 connectionType = EnetConnection.InterfaceType.DirectHsfz;
                             }
                             else if (string.Compare(hostParts[hostPos], ProtocolDoIp, StringComparison.OrdinalIgnoreCase) == 0)
                             {
+                                protocolSpecified = true;
                                 hostPos++;
                                 connectionType = EnetConnection.InterfaceType.DirectDoIp;
                             }
@@ -1584,7 +1585,7 @@ namespace EdiabasLib
                     }
                     else
                     {
-                        diagPort = SharedDataActive.DiagDoIp ? doIpPort : DiagnosticPort;
+                        diagPort = DiagnosticPort;
                         if (SharedDataActive.EnetHostConn.DiagPort >= 0)
                         {
                             diagPort = SharedDataActive.EnetHostConn.DiagPort;
