@@ -1374,11 +1374,13 @@ namespace EdiabasLib
 
                         if (SharedDataActive.EnetHostConn.DoIpPort >= 0 || SharedDataActive.EnetHostConn.SslPort >= 0)
                         {
-                            communicationModes.Remove(CommunicationMode.Hsfz);
+                            communicationModes.Clear();
+                            communicationModes.Add(CommunicationMode.DoIp);
                         }
                         else if(SharedDataActive.EnetHostConn.DiagPort >= 0 || SharedDataActive.EnetHostConn.ControlPort >= 0)
                         {
-                            communicationModes.Remove(CommunicationMode.DoIp);
+                            communicationModes.Clear();
+                            communicationModes.Add(CommunicationMode.Hsfz);
                         }
                     }
                     else
