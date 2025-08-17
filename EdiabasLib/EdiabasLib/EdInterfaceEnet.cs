@@ -1371,6 +1371,15 @@ namespace EdiabasLib
                         SharedDataActive.EnetHostConn = detectedVehicles[0];
                         EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}, Type={2}",
                             SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.EnetHostConn.DiagPort, SharedDataActive.EnetHostConn.ConnectionType));
+
+                        if (SharedDataActive.EnetHostConn.DoIpPort >= 0 || SharedDataActive.EnetHostConn.SslPort >= 0)
+                        {
+                            communicationModes.Remove(CommunicationMode.Hsfz);
+                        }
+                        else if(SharedDataActive.EnetHostConn.DiagPort >= 0 || SharedDataActive.EnetHostConn.ControlPort >= 0)
+                        {
+                            communicationModes.Remove(CommunicationMode.DoIp);
+                        }
                     }
                     else
                     {
