@@ -2094,6 +2094,13 @@ namespace EdiabasLib
                 return null;
             }
 
+#if ANDROID
+            if (ConnectParameter is ConnectParameterType connectParameter)
+            {
+                SharedDataActive.NetworkData = connectParameter.NetworkData;
+            }
+#endif
+
             return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries, communicationModes);
         }
 
