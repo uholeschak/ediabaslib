@@ -1372,12 +1372,14 @@ namespace EdiabasLib
                         EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}, Type={2}",
                             SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.EnetHostConn.DiagPort, SharedDataActive.EnetHostConn.ConnectionType));
 
-                        if (SharedDataActive.EnetHostConn.DoIpPort >= 0 || SharedDataActive.EnetHostConn.SslPort >= 0)
+                        if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.DirectDoIp ||
+                            SharedDataActive.EnetHostConn.DoIpPort >= 0 || SharedDataActive.EnetHostConn.SslPort >= 0)
                         {
                             communicationModes.Clear();
                             communicationModes.Add(CommunicationMode.DoIp);
                         }
-                        else if(SharedDataActive.EnetHostConn.DiagPort >= 0 || SharedDataActive.EnetHostConn.ControlPort >= 0)
+                        else if(SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.DirectHsfz ||
+                                SharedDataActive.EnetHostConn.DiagPort >= 0 || SharedDataActive.EnetHostConn.ControlPort >= 0)
                         {
                             communicationModes.Clear();
                             communicationModes.Add(CommunicationMode.Hsfz);
