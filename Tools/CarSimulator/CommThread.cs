@@ -2387,6 +2387,14 @@ namespace CarSimulator
                     if (valid)
                     {
                         SendDoIpUdpMessage(bytes, ip, DoIpDiagPort);
+
+                        IPAddress ipIcom = IPAddress.Parse(IcomVehicleAddress);
+                        IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, false, out _, out byte[] networkMask);
+                        byte[] ipLocalBytes = ipIcomLocal?.GetAddressBytes();
+                        if (ipLocalBytes != null && ipLocalBytes.Length == 4 && networkMask != null && networkMask.Length == 4)
+                        {
+                            StopIcomIdentBroadcast();
+                        }
                     }
                 }
 
@@ -2558,6 +2566,15 @@ namespace CarSimulator
                         }
                     }
                 }
+            }
+        }
+
+        private void StopIcomIdentBroadcast()
+        {
+            if (_icomIdentBroadcastCount > 0)
+            {
+                Debug.WriteLine("Stopping ICOM ident broadcast");
+                _icomIdentBroadcastCount = 0;
             }
         }
 
@@ -6310,13 +6327,9 @@ namespace CarSimulator
                         ObdSend(_sendData, bmwTcpClientData);
                         index++;
                     }
-                    standardResponse = true;
 
-                    if (_icomIdentBroadcastCount > 0)
-                    {
-                        Debug.WriteLine("Stopping ICOM ident broadcast");
-                        _icomIdentBroadcastCount = 0;
-                    }
+                    StopIcomIdentBroadcast();
+                    standardResponse = true;
                 }
             }
             else if (!_klineResponder &&
