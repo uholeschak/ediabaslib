@@ -2542,7 +2542,7 @@ namespace CarSimulator
             {
                 if (_icomIdentBroadcastCount > 0)
                 {
-                    if (_timeIcomIdentBroadcast.ElapsedMilliseconds > 500)
+                    if (_timeIcomIdentBroadcast.ElapsedMilliseconds > 2000)
                     {
                         IPAddress ipIcomBroadcast = GetLocalIpAddress(IPAddress.Parse(IcomVehicleAddress), true, out _, out _);
                         if (ipIcomBroadcast == null ||
@@ -2629,7 +2629,7 @@ namespace CarSimulator
                         Debug.WriteLine("ICOM changed to up");
                         _timeIcomIdentBroadcast.Reset();
                         _timeIcomIdentBroadcast.Start();
-                        _icomIdentBroadcastCount = 3;
+                        _icomIdentBroadcastCount = 20;
                     }
                 }
 
@@ -6311,6 +6311,12 @@ namespace CarSimulator
                         index++;
                     }
                     standardResponse = true;
+
+                    if (_icomIdentBroadcastCount > 0)
+                    {
+                        Debug.WriteLine("Stopping ICOM ident broadcast");
+                        _icomIdentBroadcastCount = 0;
+                    }
                 }
             }
             else if (!_klineResponder &&
