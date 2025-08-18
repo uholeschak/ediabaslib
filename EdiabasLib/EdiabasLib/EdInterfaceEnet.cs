@@ -506,6 +506,8 @@ namespace EdiabasLib
         public const int DoIpGwAddrDefault = 0x0010;
         public const int DiagPortDefault = 6801;
         public const int ControlPortDefault = 6811;
+        public const int DoIpPortDefault = 13400;
+        public const int DoIpSslPortDefault = 3496;
         public const int IcomDiagPortDefault = 50160;
         public const int IcomControlPortDefault = 50161;
         public const int IcomDoIpPortDefault = 50162;
@@ -564,6 +566,8 @@ namespace EdiabasLib
         protected int UdpMaxResponses;
         protected IPAddress UdpIpFilter;
         protected int? UdpDiagPortFilter;
+        protected int? UdpDoIpPortFilter;
+        protected int? UdpDoIpSslFilter;
         protected AutoResetEvent UdpEvent;
         protected AutoResetEvent IcomEvent;
 
@@ -578,8 +582,8 @@ namespace EdiabasLib
         protected int UdpSrvLocPort = 427;
         protected int DiagnosticPort = DiagPortDefault;
         protected int ControlPort = ControlPortDefault;
-        protected int DoIpPort = 13400;
-        protected int DoIpSslPort = 3496;
+        protected int DoIpPort = DoIpPortDefault;
+        protected int DoIpSslPort = DoIpSslPortDefault;
         protected bool DoIpBcSsl = true;
         protected string DoIpSslSecurityPathProtected = string.Empty;
         protected string DoIpS29PathProtected = string.Empty;
@@ -2191,9 +2195,22 @@ namespace EdiabasLib
                 UdpIpFilter = hostIpAddress;
 
                 UdpDiagPortFilter = null;
+                UdpDoIpPortFilter = null;
+                UdpDoIpSslFilter = null;
+
                 if (DiagnosticPort != DiagPortDefault)
                 {
                     UdpDiagPortFilter = DiagnosticPort;
+                }
+
+                if (DoIpPort != DoIpPortDefault)
+                {
+                    UdpDoIpPortFilter = DoIpPort;
+                }
+
+                if (DoIpSslPort != DoIpSslPortDefault)
+                {
+                    UdpDoIpSslFilter = DoIpSslPort;
                 }
 
                 if (UdpIpFilter != null)
@@ -2204,6 +2221,16 @@ namespace EdiabasLib
                 if (UdpDiagPortFilter != null)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: UDP diag port filter: {0}", UdpDiagPortFilter.Value);
+                }
+
+                if (UdpDoIpPortFilter != null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: UDP DoIp port filter: {0}", UdpDoIpPortFilter.Value);
+                }
+
+                if (UdpDoIpSslFilter != null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: UDP DoIp SSL port filter: {0}", UdpDoIpSslFilter.Value);
                 }
 
                 StartUdpListen();
@@ -2669,7 +2696,23 @@ namespace EdiabasLib
 
                 if (addListConn != null)
                 {
-                    if (UdpDiagPortFilter != null && UdpDiagPortFilter != addListConn.DiagPort)
+                    if (UdpDiagPortFilter != null && addListConn.DiagPort >= 0 && UdpDiagPortFilter != addListConn.DiagPort)
+                    {
+                        addListConn = null;
+                    }
+                }
+
+                if (addListConn != null)
+                {
+                    if (UdpDoIpPortFilter != null && addListConn.DoIpPort >= 0 && UdpDoIpPortFilter != addListConn.DoIpPort)
+                    {
+                        addListConn = null;
+                    }
+                }
+
+                if (addListConn != null)
+                {
+                    if (UdpDoIpSslFilter != null && addListConn.SslPort >= 0 && UdpDoIpSslFilter != addListConn.SslPort)
                     {
                         addListConn = null;
                     }
