@@ -2552,9 +2552,16 @@ namespace CarSimulator
                         }
                         else
                         {
-                            _timeIcomIdentBroadcast.Reset();
-                            _timeIcomIdentBroadcast.Start();
                             _icomIdentBroadcastCount--;
+                            if (_icomIdentBroadcastCount > 0)
+                            {
+                                _timeIcomIdentBroadcast.Reset();
+                                _timeIcomIdentBroadcast.Start();
+                            }
+                            else
+                            {
+                                Debug.WriteLine("ICOM ident broadcast timed out");
+                            }
                         }
                     }
                 }
