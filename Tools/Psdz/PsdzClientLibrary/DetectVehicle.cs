@@ -67,7 +67,6 @@ namespace PsdzClient
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet(null, true)
             {
-                EdInterfaceClass = edInterfaceEnet,
                 AbortJobFunc = AbortEdiabasJob
             };
             _ediabas.SetConfigProperty("EcuPath", ecuPath);
@@ -97,6 +96,8 @@ namespace PsdzClient
             edInterfaceEnet.DoIpS29Path = _doIpS29Path;
             edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
             edInterfaceEnet.ConnectParameter = new EdInterfaceEnet.ConnectParameterType(GenS29Certificate, VehicleConnected);
+
+            _ediabas.EdInterfaceClass = edInterfaceEnet;
 
             ResetValues();
         }
