@@ -88,6 +88,8 @@ namespace PsdzClient
                 _ediabas.SetConfigProperty("SSLPort", EdInterfaceEnet.IcomSslPortDefault.ToString(CultureInfo.InvariantCulture));
             }
 
+            _ediabas.EdInterfaceClass = edInterfaceEnet;
+
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.VehicleProtocol = vehicleProtocol;
             edInterfaceEnet.IcomAllocate = icomAllocate;
@@ -96,8 +98,6 @@ namespace PsdzClient
             edInterfaceEnet.DoIpS29Path = _doIpS29Path;
             edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
             edInterfaceEnet.ConnectParameter = new EdInterfaceEnet.ConnectParameterType(GenS29Certificate, VehicleConnected);
-
-            _ediabas.EdInterfaceClass = edInterfaceEnet;
 
             ResetValues();
         }
