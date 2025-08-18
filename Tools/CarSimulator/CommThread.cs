@@ -2387,14 +2387,6 @@ namespace CarSimulator
                     if (valid)
                     {
                         SendDoIpUdpMessage(bytes, ip, DoIpDiagPort);
-
-                        IPAddress ipIcom = IPAddress.Parse(IcomVehicleAddress);
-                        IPAddress ipIcomLocal = GetLocalIpAddress(ipIcom, false, out _, out byte[] networkMask);
-                        byte[] ipLocalBytes = ipIcomLocal?.GetAddressBytes();
-                        if (ipLocalBytes != null && ipLocalBytes.Length == 4 && networkMask != null && networkMask.Length == 4)
-                        {
-                            StopIcomIdentBroadcast();
-                        }
                     }
                 }
 
@@ -2571,10 +2563,13 @@ namespace CarSimulator
 
         private void StopIcomIdentBroadcast()
         {
-            if (_icomIdentBroadcastCount > 0)
+            lock (_networkChangeLock)
             {
-                Debug.WriteLine("Stopping ICOM ident broadcast");
-                _icomIdentBroadcastCount = 0;
+                if (_icomIdentBroadcastCount > 0)
+                {
+                    Debug.WriteLine("Stopping ICOM ident broadcast");
+                    _icomIdentBroadcastCount = 0;
+                }
             }
         }
 
@@ -2644,9 +2639,14 @@ namespace CarSimulator
                     if (!_icomUp && isUp)
                     {
                         Debug.WriteLine("ICOM changed to up");
-                        _timeIcomIdentBroadcast.Reset();
-                        _timeIcomIdentBroadcast.Start();
-                        _icomIdentBroadcastCount = 20;
+                        bool isHszfz = ((_enetCommType & EnetCommType.Hsfz) == EnetCommType.Hsfz);
+                        if (isHszfz)
+                        {
+                            Debug.WriteLine("Starting ICOM ident broadcast in HSFZ mode");
+                            _timeIcomIdentBroadcast.Reset();
+                            _timeIcomIdentBroadcast.Start();
+                            _icomIdentBroadcastCount = 20;
+                        }
                     }
                 }
 
