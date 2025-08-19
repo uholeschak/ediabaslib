@@ -568,6 +568,7 @@ namespace EdiabasLib
         protected int? UdpDiagPortFilter;
         protected int? UdpDoIpPortFilter;
         protected int? UdpDoIpSslFilter;
+        protected string UdpIcomOwnerFilter;
         protected AutoResetEvent UdpEvent;
         protected AutoResetEvent IcomEvent;
 
@@ -1363,11 +1364,12 @@ namespace EdiabasLib
                     }
                 }
 
+                bool ignoreIcomOwner = !IcomAllocate;
                 if (SharedDataActive.EnetHostConn == null)
                 {
                     if (RemoteHostProtected.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
                     {
-                        List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries, communicationModes);
+                        List<EnetConnection> detectedVehicles = DetectedVehicles(RemoteHostProtected, 1, UdpDetectRetries, communicationModes, ignoreIcomOwner);
                         if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
                         {
                             return false;
@@ -1507,7 +1509,7 @@ namespace EdiabasLib
                     if (SharedDataActive.DiagDoIp)
                     {
                         string hostIp = SharedDataActive.EnetHostConn.IpAddress.ToString();
-                        List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.DoIp });
+                        List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.DoIp }, ignoreIcomOwner);
                         if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
                         {
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "No DoIp UDP response for host: {0}", hostIp);
@@ -2121,7 +2123,7 @@ namespace EdiabasLib
             return DetectedVehicles(remoteHostConfig, -1, UdpDetectRetries, communicationModes);
         }
 
-        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries, List<CommunicationMode> communicationModes)
+        public List<EnetConnection> DetectedVehicles(string remoteHostConfig, int maxVehicles, int maxRetries, List<CommunicationMode> communicationModes, bool ignoreIcomOwner = false)
         {
             if (IsSimulationMode())
             {
@@ -2197,6 +2199,7 @@ namespace EdiabasLib
                 UdpDiagPortFilter = null;
                 UdpDoIpPortFilter = null;
                 UdpDoIpSslFilter = null;
+                UdpIcomOwnerFilter = null;
 
                 if (DiagnosticPort != DiagPortDefault)
                 {
@@ -2211,6 +2214,11 @@ namespace EdiabasLib
                 if (DoIpSslPort != DoIpSslPortDefault)
                 {
                     UdpDoIpSslFilter = DoIpSslPort;
+                }
+
+                if (!ignoreIcomOwner)
+                {
+                    UdpIcomOwnerFilter = IcomOwner;
                 }
 
                 if (UdpIpFilter != null)
@@ -2231,6 +2239,11 @@ namespace EdiabasLib
                 if (UdpDoIpSslFilter != null)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: UDP DoIp SSL port filter: {0}", UdpDoIpSslFilter.Value);
+                }
+
+                if (UdpIcomOwnerFilter != null)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: UDP ICOM owner filter: {0}", UdpIcomOwnerFilter);
                 }
 
                 StartUdpListen();
@@ -2646,9 +2659,9 @@ namespace EdiabasLib
                             if (attrDict.TryGetValue("OWNER", out string ownerString))
                             {
                                 ownerString = ownerString.Trim();
-                                if (!string.IsNullOrEmpty(ownerString))
+                                if (!string.IsNullOrEmpty(ownerString) && !string.IsNullOrEmpty(UdpIcomOwnerFilter))
                                 {
-                                    if (string.Compare(ownerString, IcomOwner, StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (string.Compare(ownerString, UdpIcomOwnerFilter, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         isFree = false;
                                     }
