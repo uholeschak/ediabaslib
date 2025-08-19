@@ -568,6 +568,7 @@ namespace EdiabasLib
         protected int? UdpDiagPortFilter;
         protected int? UdpDoIpPortFilter;
         protected int? UdpDoIpSslFilter;
+        protected string UdpIcomOwnerFilter;
         protected AutoResetEvent UdpEvent;
         protected AutoResetEvent IcomEvent;
 
@@ -2197,6 +2198,7 @@ namespace EdiabasLib
                 UdpDiagPortFilter = null;
                 UdpDoIpPortFilter = null;
                 UdpDoIpSslFilter = null;
+                UdpIcomOwnerFilter = IcomOwner;
 
                 if (DiagnosticPort != DiagPortDefault)
                 {
@@ -2646,9 +2648,9 @@ namespace EdiabasLib
                             if (attrDict.TryGetValue("OWNER", out string ownerString))
                             {
                                 ownerString = ownerString.Trim();
-                                if (!string.IsNullOrEmpty(ownerString))
+                                if (!string.IsNullOrEmpty(ownerString) && !string.IsNullOrEmpty(UdpIcomOwnerFilter))
                                 {
-                                    if (string.Compare(ownerString, IcomOwner, StringComparison.OrdinalIgnoreCase) != 0)
+                                    if (string.Compare(ownerString, UdpIcomOwnerFilter, StringComparison.OrdinalIgnoreCase) != 0)
                                     {
                                         isFree = false;
                                     }
