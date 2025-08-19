@@ -21,8 +21,8 @@
     <NoWarn>1701;1702;BG8400;BG8605;BG8606;CS0114</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.10.1.2" />
-    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.0.7" />
-    <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="8.11.1" />
+    <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.10.1.3" />
+    <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.1.1" />
+    <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="8.11.1.1" />
   </ItemGroup>
 </Project>
