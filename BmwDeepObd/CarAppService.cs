@@ -1079,8 +1079,10 @@ namespace BmwDeepObd
                 }
                 else
                 {
+#pragma warning disable CS0618 // Type or member is obsolete
                     listTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
                     listTemplate.SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
+#pragma warning restore CS0618 // Type or member is obsolete
                 }
 
                 if (loading)
@@ -1438,9 +1440,22 @@ namespace BmwDeepObd
                     }
                 }
 
-                ListTemplate.Builder listTemplate = new ListTemplate.Builder()
-                    .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                    .SetTitle(pageTitle);
+                ListTemplate.Builder listTemplate = new ListTemplate.Builder();
+                if (CarAppApiLevel >= 7)
+                {
+                    Header.Builder headerBuilder = new Header.Builder()
+                        .SetStartHeaderAction(AndroidX.Car.App.Model.Action.Back)
+                        .SetTitle(pageTitle);
+                    listTemplate.SetHeader(headerBuilder.Build());
+                }
+                else
+                {
+#pragma warning disable CS0618 // Type or member is obsolete
+                    listTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
+                    listTemplate.SetTitle(pageTitle);
+#pragma warning restore CS0618 // Type or member is obsolete
+                }
+
                 if (loading)
                 {
                     listTemplate.SetLoading(true);
