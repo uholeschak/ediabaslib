@@ -1079,8 +1079,8 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    listTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                        .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
+                    listTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
+                    listTemplate.SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
                 }
 
                 if (loading)
