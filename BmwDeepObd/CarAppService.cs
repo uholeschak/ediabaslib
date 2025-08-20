@@ -1069,9 +1069,20 @@ namespace BmwDeepObd
                     }
                 }
 
-                ListTemplate.Builder listTemplate = new ListTemplate.Builder()
-                    .SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
-                    .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
+                ListTemplate.Builder listTemplate = new ListTemplate.Builder();
+                if (CarAppApiLevel >= 5)
+                {
+                    Header.Builder headerBuilder = new Header.Builder()
+                        .SetStartHeaderAction(AndroidX.Car.App.Model.Action.Back)
+                        .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
+                    listTemplate.SetHeader(headerBuilder.Build());
+                }
+                else
+                {
+                    listTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.Back)
+                        .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
+                }
+
                 if (loading)
                 {
                     listTemplate.SetLoading(true);
