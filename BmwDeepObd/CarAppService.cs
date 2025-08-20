@@ -1070,7 +1070,7 @@ namespace BmwDeepObd
                 }
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder();
-                if (CarAppApiLevel >= 5)
+                if (CarAppApiLevel >= 7)
                 {
                     Header.Builder headerBuilder = new Header.Builder()
                         .SetStartHeaderAction(AndroidX.Car.App.Model.Action.Back)
