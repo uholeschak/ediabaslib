@@ -543,12 +543,12 @@ namespace BmwDeepObd
                 }
                 itemBuilderPages.AddItem(rowPageList.Build());
 
-                ActionStrip.Builder actionStripBuilder = null;
+                AndroidX.Car.App.Model.Action actionButton = null;
                 if (!isConnectingCopy && !fgServiceStartingCopy && configFileValidCopy)
                 {
                     if (connectedCopy)
                     {
-                        AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
+                        AndroidX.Car.App.Model.Action.Builder actionButtonBuilder = new AndroidX.Car.App.Model.Action.Builder()
                             .SetTitle(ResourceContext.GetString(Resource.String.car_service_button_disconnect))
                             .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
@@ -559,12 +559,11 @@ namespace BmwDeepObd
                                 }
                             })));
 
-                        actionStripBuilder = new ActionStrip.Builder();
-                        actionStripBuilder.AddAction(actionButton.Build());
+                        actionButton = actionButtonBuilder.Build();
                     }
                     else
                     {
-                        AndroidX.Car.App.Model.Action.Builder actionButton = new AndroidX.Car.App.Model.Action.Builder()
+                        AndroidX.Car.App.Model.Action.Builder actionButtonBuilder = new AndroidX.Car.App.Model.Action.Builder()
                             .SetTitle(ResourceContext.GetString(Resource.String.car_service_button_connect))
                             .SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                             {
@@ -575,8 +574,7 @@ namespace BmwDeepObd
                                 }
                             })));
 
-                        actionStripBuilder = new ActionStrip.Builder();
-                        actionStripBuilder.AddAction(actionButton.Build());
+                        actionButton = actionButtonBuilder.Build();
                     }
                 }
 
@@ -668,12 +666,12 @@ namespace BmwDeepObd
                 }
 
                 ListTemplate.Builder listTemplate = new ListTemplate.Builder();
+                Header.Builder headerBuilder = null;
                 if (CarAppApiLevel >= 7)
                 {
-                    Header.Builder headerBuilder = new Header.Builder()
+                    headerBuilder = new Header.Builder()
                         .SetStartHeaderAction(AndroidX.Car.App.Model.Action.AppIcon)
                         .SetTitle(ResourceContext.GetString(Resource.String.app_name));
-                    listTemplate.SetHeader(headerBuilder.Build());
                 }
                 else
                 {
@@ -698,10 +696,26 @@ namespace BmwDeepObd
                     listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilderLoggingLock.Build(),
                         ResourceContext.GetString(Resource.String.settings_caption_lock_logging)));
 
-                    if (actionStripBuilder != null)
+                    if (actionButton != null)
                     {
-                        listTemplate.SetActionStrip(actionStripBuilder.Build());
+                        if (headerBuilder != null)
+                        {
+                            headerBuilder.AddEndHeaderAction(actionButton);
+                        }
+                        else
+                        {
+#pragma warning disable CS0618 // Type or member is obsolete
+                            ActionStrip.Builder actionStripBuilder = new ActionStrip.Builder()
+                                .AddAction(actionButton);
+                            listTemplate.SetActionStrip(actionStripBuilder.Build());
+#pragma warning restore CS0618 // Type or member is obsolete
+                        }
                     }
+                }
+
+                if (headerBuilder != null)
+                {
+                    listTemplate.SetHeader(headerBuilder.Build());
                 }
 
                 RequestUpdate();
@@ -1840,12 +1854,27 @@ namespace BmwDeepObd
                     return longMessageTemplate.Build();
                 }
 
-                MessageTemplate.Builder messageTemplate = new MessageTemplate.Builder(itemMessage)
-                    .SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
-
-                if (!string.IsNullOrEmpty(title))
+                MessageTemplate.Builder messageTemplate = new MessageTemplate.Builder(itemMessage);
+                if (CarAppApiLevel >= 7)
                 {
-                    messageTemplate.SetTitle(title);
+                    Header.Builder headerBuilder = new Header.Builder()
+                    .SetStartHeaderAction(AndroidX.Car.App.Model.Action.Back);
+
+                    if (!string.IsNullOrEmpty(title))
+                    {
+                        headerBuilder.SetTitle(title);
+                    }
+                    messageTemplate.SetHeader(headerBuilder.Build());
+                }
+                else
+                {
+#pragma warning disable CS0618 // Type or member is obsolete
+                    messageTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
+                    if (!string.IsNullOrEmpty(title))
+                    {
+                        messageTemplate.SetTitle(title);
+                    }
+#pragma warning restore CS0618 // Type or member is obsolete
                 }
 
                 return messageTemplate.Build();
