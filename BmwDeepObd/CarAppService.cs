@@ -1838,47 +1838,34 @@ namespace BmwDeepObd
                         actionButton = actionButtonBuilder.Build();
                     }
 
-                    LongMessageTemplate.Builder longMessageTemplate = new LongMessageTemplate.Builder(itemMessage)
+                    LongMessageTemplate.Builder longMessageTemplateBuilder = new LongMessageTemplate.Builder(itemMessage)
                         .SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
                     if (!string.IsNullOrEmpty(title))
                     {
-                        longMessageTemplate.SetTitle(title);
+                        longMessageTemplateBuilder.SetTitle(title);
                     }
 
                     if (actionButton != null)
                     {
                         ActionStrip.Builder actionStripBuilder = new ActionStrip.Builder();
                         actionStripBuilder.AddAction(actionButton);
-                        longMessageTemplate.SetActionStrip(actionStripBuilder.Build());
+                        longMessageTemplateBuilder.SetActionStrip(actionStripBuilder.Build());
                     }
 
-                    return longMessageTemplate.Build();
+                    return longMessageTemplateBuilder.Build();
                 }
 
-                MessageTemplate.Builder messageTemplate = new MessageTemplate.Builder(itemMessage);
-                if (CarAppApiLevel >= 7)
-                {
-                    Header.Builder headerBuilder = new Header.Builder()
-                    .SetStartHeaderAction(AndroidX.Car.App.Model.Action.Back);
-
-                    if (!string.IsNullOrEmpty(title))
-                    {
-                        headerBuilder.SetTitle(title);
-                    }
-                    messageTemplate.SetHeader(headerBuilder.Build());
-                }
-                else
-                {
+                // CarAppApiLevel < 2
+                MessageTemplate.Builder messageTemplateBuilder = new MessageTemplate.Builder(itemMessage);
 #pragma warning disable CS0618 // Type or member is obsolete
-                    messageTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
-                    if (!string.IsNullOrEmpty(title))
-                    {
-                        messageTemplate.SetTitle(title);
-                    }
-#pragma warning restore CS0618 // Type or member is obsolete
+                messageTemplateBuilder.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
+                if (!string.IsNullOrEmpty(title))
+                {
+                    messageTemplateBuilder.SetTitle(title);
                 }
+#pragma warning restore CS0618 // Type or member is obsolete
 
-                return messageTemplate.Build();
+                return messageTemplateBuilder.Build();
             }
         }
 
