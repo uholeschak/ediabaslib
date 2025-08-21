@@ -130,4 +130,5 @@ if exist "!PACKAGEZIP!" del /f /q "!PACKAGEZIP!"
 "!PATH_7ZIP!\7z.exe" a -tzip -aoa "!PACKAGEZIP!" "!PACKAGEPATH!*" || EXIT /b 1
 
 echo Package successfully created
+timeout /T 1
 exit /b 0
