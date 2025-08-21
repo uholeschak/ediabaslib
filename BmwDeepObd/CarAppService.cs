@@ -473,45 +473,44 @@ namespace BmwDeepObd
                     lockTypeLoggingCopy = _lockTypeLogging;
                 }
 
-                ItemList.Builder itemBuilderPages = new ItemList.Builder();
-
-                Row.Builder rowPageList = new Row.Builder()
+                ItemList.Builder itemBuilderPagesBuilder = new ItemList.Builder();
+                Row.Builder rowPageListBuilder = new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
                 if (!(useServiceCopy && connectedCopy))
                 {
                     if (fgServiceStartingCopy)
                     {
-                        rowPageList.AddText(ResourceContext.GetString(Resource.String.service_status_caption));
-                        rowPageList.AddText(GetForegroundServiceStatus());
+                        rowPageListBuilder.AddText(ResourceContext.GetString(Resource.String.service_status_caption));
+                        rowPageListBuilder.AddText(GetForegroundServiceStatus());
                         if (CarAppApiLevel >= 5)
                         {
-                            rowPageList.SetEnabled(false);
+                            rowPageListBuilder.SetEnabled(false);
                         }
                     }
                     else if (isConnectingCopy)
                     {
-                        rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_app_processing));
+                        rowPageListBuilder.AddText(ResourceContext.GetString(Resource.String.car_service_app_processing));
                     }
                     else
                     {
                         if (!useServiceCopy)
                         {
-                            rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_fg_service_disabled));
+                            rowPageListBuilder.AddText(ResourceContext.GetString(Resource.String.car_service_fg_service_disabled));
                         }
                         else
                         {
                             if (configFileValidCopy)
                             {
-                                rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_disconnected));
+                                rowPageListBuilder.AddText(ResourceContext.GetString(Resource.String.car_service_disconnected));
                             }
                             else
                             {
-                                rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_no_config));
+                                rowPageListBuilder.AddText(ResourceContext.GetString(Resource.String.car_service_no_config));
                             }
                         }
                     }
 
-                    rowPageList.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
+                    rowPageListBuilder.SetOnClickListener(ParkedOnlyOnClickListener.Create(new ActionListener((page) =>
                     {
                         if (fgServiceStartingCopy)
                         {
@@ -527,9 +526,9 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    rowPageList.AddText(ResourceContext.GetString(Resource.String.car_service_page_list_show));
-                    rowPageList.SetBrowsable(true);
-                    rowPageList.SetOnClickListener(new ActionListener((page) =>
+                    rowPageListBuilder.AddText(ResourceContext.GetString(Resource.String.car_service_page_list_show));
+                    rowPageListBuilder.SetBrowsable(true);
+                    rowPageListBuilder.SetOnClickListener(new ActionListener((page) =>
                     {
                         try
                         {
@@ -541,7 +540,7 @@ namespace BmwDeepObd
                         }
                     }));
                 }
-                itemBuilderPages.AddItem(rowPageList.Build());
+                itemBuilderPagesBuilder.AddItem(rowPageListBuilder.Build());
 
                 AndroidX.Car.App.Model.Action actionButton = null;
                 if (!isConnectingCopy && !fgServiceStartingCopy && configFileValidCopy)
@@ -578,7 +577,7 @@ namespace BmwDeepObd
                     }
                 }
 
-                ItemList.Builder itemBuilderCommLock = new ItemList.Builder();
+                ItemList.Builder itemBuilderCommLockBuilder = new ItemList.Builder();
 
                 bool disableLock = connectedCopy || isConnectingCopy;
                 foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
@@ -591,7 +590,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    Toggle.Builder toggle = new Toggle.Builder(new CheckListener(isChecked =>
+                    Toggle.Builder toggleBuilder = new Toggle.Builder(new CheckListener(isChecked =>
                         {
                             if (disableLock || !isChecked)
                             {
@@ -606,23 +605,23 @@ namespace BmwDeepObd
                     {
                         if (disableLock || lockTypeCommCopy == lockType || invalidType)
                         {
-                            toggle.SetEnabled(false);
+                            toggleBuilder.SetEnabled(false);
                         }
                     }
 
-                    Row.Builder itemRow = new Row.Builder()
+                    Row.Builder itemRowBuilder = new Row.Builder()
                         .SetTitle(itemTitle)
-                        .SetToggle(toggle.Build());
+                        .SetToggle(toggleBuilder.Build());
 
                     if (!string.IsNullOrEmpty(itemText))
                     {
-                        itemRow.AddText(itemText);
+                        itemRowBuilder.AddText(itemText);
                     }
 
-                    itemBuilderCommLock.AddItem(itemRow.Build());
+                    itemBuilderCommLockBuilder.AddItem(itemRowBuilder.Build());
                 }
 
-                ItemList.Builder itemBuilderLoggingLock = new ItemList.Builder();
+                ItemList.Builder itemBuilderLoggingLockBuilder = new ItemList.Builder();
 
                 foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
                 {
@@ -634,7 +633,7 @@ namespace BmwDeepObd
                         continue;
                     }
 
-                    Toggle.Builder toggle = new Toggle.Builder(new CheckListener(isChecked =>
+                    Toggle.Builder toggleBuilder = new Toggle.Builder(new CheckListener(isChecked =>
                         {
                             if (disableLock || !isChecked)
                             {
@@ -649,23 +648,23 @@ namespace BmwDeepObd
                     {
                         if (disableLock || lockTypeLoggingCopy == lockType || invalidType)
                         {
-                            toggle.SetEnabled(false);
+                            toggleBuilder.SetEnabled(false);
                         }
                     }
 
-                    Row.Builder itemRow = new Row.Builder()
+                    Row.Builder itemRowBuilder = new Row.Builder()
                         .SetTitle(itemTitle)
-                        .SetToggle(toggle.Build());
+                        .SetToggle(toggleBuilder.Build());
 
                     if (!string.IsNullOrEmpty(itemText))
                     {
-                        itemRow.AddText(itemText);
+                        itemRowBuilder.AddText(itemText);
                     }
 
-                    itemBuilderLoggingLock.AddItem(itemRow.Build());
+                    itemBuilderLoggingLockBuilder.AddItem(itemRowBuilder.Build());
                 }
 
-                ListTemplate.Builder listTemplate = new ListTemplate.Builder();
+                ListTemplate.Builder listTemplateBuilder = new ListTemplate.Builder();
                 Header.Builder headerBuilder = null;
                 if (CarAppApiLevel >= 7)
                 {
@@ -676,24 +675,24 @@ namespace BmwDeepObd
                 else
                 {
 #pragma warning disable CS0618 // Type or member is obsolete
-                    listTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon);
-                    listTemplate.SetTitle(ResourceContext.GetString(Resource.String.app_name));
+                    listTemplateBuilder.SetHeaderAction(AndroidX.Car.App.Model.Action.AppIcon);
+                    listTemplateBuilder.SetTitle(ResourceContext.GetString(Resource.String.app_name));
 #pragma warning restore CS0618 // Type or member is obsolete
                 }
 
                 if (loading)
                 {
-                    listTemplate.SetLoading(true);
+                    listTemplateBuilder.SetLoading(true);
                 }
                 else
                 {
-                    listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilderPages.Build(),
+                    listTemplateBuilder.AddSectionedList(SectionedItemList.Create(itemBuilderPagesBuilder.Build(),
                         ResourceContext.GetString(Resource.String.car_service_section_pages)));
 
-                    listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilderCommLock.Build(),
+                    listTemplateBuilder.AddSectionedList(SectionedItemList.Create(itemBuilderCommLockBuilder.Build(),
                         ResourceContext.GetString(Resource.String.settings_caption_lock_communication)));
 
-                    listTemplate.AddSectionedList(SectionedItemList.Create(itemBuilderLoggingLock.Build(),
+                    listTemplateBuilder.AddSectionedList(SectionedItemList.Create(itemBuilderLoggingLockBuilder.Build(),
                         ResourceContext.GetString(Resource.String.settings_caption_lock_logging)));
 
                     if (actionButton != null)
@@ -707,7 +706,7 @@ namespace BmwDeepObd
 #pragma warning disable CS0618 // Type or member is obsolete
                             ActionStrip.Builder actionStripBuilder = new ActionStrip.Builder()
                                 .AddAction(actionButton);
-                            listTemplate.SetActionStrip(actionStripBuilder.Build());
+                            listTemplateBuilder.SetActionStrip(actionStripBuilder.Build());
 #pragma warning restore CS0618 // Type or member is obsolete
                         }
                     }
@@ -715,12 +714,12 @@ namespace BmwDeepObd
 
                 if (headerBuilder != null)
                 {
-                    listTemplate.SetHeader(headerBuilder.Build());
+                    listTemplateBuilder.SetHeader(headerBuilder.Build());
                 }
 
                 RequestUpdate();
 
-                return listTemplate.Build();
+                return listTemplateBuilder.Build();
             }
 
             public override bool ContentChanged()
@@ -997,11 +996,11 @@ namespace BmwDeepObd
                     pageListCopy = _pageList;
                 }
 
-                ItemList.Builder itemBuilder = new ItemList.Builder();
+                ItemList.Builder itemBuilderBuilder = new ItemList.Builder();
 
                 if (!connectedCopy)
                 {
-                    itemBuilder.AddItem(new Row.Builder()
+                    itemBuilderBuilder.AddItem(new Row.Builder()
                         .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list))
                         .AddText(ResourceContext.GetString(Resource.String.car_service_disconnected))
                         .Build());
@@ -1024,7 +1023,7 @@ namespace BmwDeepObd
                             string pageName = pageInfo.Name;
                             bool activePage = pageInfo.ActivePage;
 
-                            Row.Builder row = new Row.Builder()
+                            Row.Builder rowBuilder = new Row.Builder()
                                 .SetTitle(pageName)
                                 .SetBrowsable(true)
                                 .SetOnClickListener(new ActionListener((page) =>
@@ -1069,60 +1068,60 @@ namespace BmwDeepObd
                             {
                                 if (pageInfo.ErrorResetActive)
                                 {
-                                    row.AddText(ResourceContext.GetString(Resource.String.car_service_error_reset_active));
+                                    rowBuilder.AddText(ResourceContext.GetString(Resource.String.car_service_error_reset_active));
                                 }
 
                                 if (CarAppApiLevel >= 5)
                                 {
-                                    row.SetEnabled(false);
+                                    rowBuilder.SetEnabled(false);
                                 }
                             }
                             else if (activePage)
                             {
-                                row.AddText(ResourceContext.GetString(Resource.String.car_service_active_page));
+                                rowBuilder.AddText(ResourceContext.GetString(Resource.String.car_service_active_page));
                             }
 
-                            itemBuilder.AddItem(row.Build());
+                            itemBuilderBuilder.AddItem(rowBuilder.Build());
                             pageIndex++;
                         }
 
                         if (pageIndex == 0)
                         {
-                            itemBuilder.AddItem(new Row.Builder()
+                            itemBuilderBuilder.AddItem(new Row.Builder()
                                 .SetTitle(ResourceContext.GetString(Resource.String.car_service_no_pages))
                                 .Build());
                         }
                     }
                 }
 
-                ListTemplate.Builder listTemplate = new ListTemplate.Builder();
+                ListTemplate.Builder listTemplateBuilder = new ListTemplate.Builder();
                 if (CarAppApiLevel >= 7)
                 {
                     Header.Builder headerBuilder = new Header.Builder()
                         .SetStartHeaderAction(AndroidX.Car.App.Model.Action.Back)
                         .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
-                    listTemplate.SetHeader(headerBuilder.Build());
+                    listTemplateBuilder.SetHeader(headerBuilder.Build());
                 }
                 else
                 {
 #pragma warning disable CS0618 // Type or member is obsolete
-                    listTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
-                    listTemplate.SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
+                    listTemplateBuilder.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
+                    listTemplateBuilder.SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
 #pragma warning restore CS0618 // Type or member is obsolete
                 }
 
                 if (loading)
                 {
-                    listTemplate.SetLoading(true);
+                    listTemplateBuilder.SetLoading(true);
                 }
                 else
                 {
-                    listTemplate.SetSingleList(itemBuilder.Build());
+                    listTemplateBuilder.SetSingleList(itemBuilderBuilder.Build());
                 }
 
                 RequestUpdate();
 
-                return listTemplate.Build();
+                return listTemplateBuilder.Build();
             }
 
             public override bool ContentChanged()
@@ -1376,7 +1375,7 @@ namespace BmwDeepObd
 
                                     if (!string.IsNullOrEmpty(rowTitle) && sbText.Length > 0)
                                     {
-                                        Row.Builder row = new Row.Builder()
+                                        Row.Builder rowBuilder = new Row.Builder()
                                             .SetTitle(rowTitle)
                                             .AddText(sbText.ToString())
                                             .SetOnClickListener(new ActionListener((page) =>
@@ -1401,7 +1400,7 @@ namespace BmwDeepObd
                                                 }
                                             }));
 
-                                        itemBuilder.AddItem(row.Build());
+                                        itemBuilder.AddItem(rowBuilder.Build());
                                         lineIndex++;
                                     }
                                 }
@@ -1414,10 +1413,10 @@ namespace BmwDeepObd
 
                         if (lineIndex == 0 && !loading)
                         {
-                            Row.Builder row = new Row.Builder()
+                            Row.Builder rowBuilder = new Row.Builder()
                                 .SetTitle(ResourceContext.GetString(Resource.String.error_no_error));
 
-                            itemBuilder.AddItem(row.Build());
+                            itemBuilder.AddItem(rowBuilder.Build());
                         }
                     }
                     else if (dataListCopy != null)
@@ -1433,15 +1432,15 @@ namespace BmwDeepObd
                             string rowTitle = dataEntry.Title;
                             string result = dataEntry.Result;
 
-                            Row.Builder row = new Row.Builder()
+                            Row.Builder rowBuilder = new Row.Builder()
                                 .SetTitle(rowTitle);
 
                             if (!string.IsNullOrEmpty(result))
                             {
-                                row.AddText(result);
+                                rowBuilder.AddText(result);
                             }
 
-                            row.SetOnClickListener(new ActionListener((page) =>
+                            rowBuilder.SetOnClickListener(new ActionListener((page) =>
                             {
                                 try
                                 {
@@ -1453,7 +1452,7 @@ namespace BmwDeepObd
                                 }
                             }));
 
-                            itemBuilder.AddItem(row.Build());
+                            itemBuilder.AddItem(rowBuilder.Build());
                             lineIndex++;
                         }
 
@@ -1466,34 +1465,34 @@ namespace BmwDeepObd
                     }
                 }
 
-                ListTemplate.Builder listTemplate = new ListTemplate.Builder();
+                ListTemplate.Builder listTemplateBuilder = new ListTemplate.Builder();
                 if (CarAppApiLevel >= 7)
                 {
                     Header.Builder headerBuilder = new Header.Builder()
                         .SetStartHeaderAction(AndroidX.Car.App.Model.Action.Back)
                         .SetTitle(pageTitle);
-                    listTemplate.SetHeader(headerBuilder.Build());
+                    listTemplateBuilder.SetHeader(headerBuilder.Build());
                 }
                 else
                 {
 #pragma warning disable CS0618 // Type or member is obsolete
-                    listTemplate.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
-                    listTemplate.SetTitle(pageTitle);
+                    listTemplateBuilder.SetHeaderAction(AndroidX.Car.App.Model.Action.Back);
+                    listTemplateBuilder.SetTitle(pageTitle);
 #pragma warning restore CS0618 // Type or member is obsolete
                 }
 
                 if (loading)
                 {
-                    listTemplate.SetLoading(true);
+                    listTemplateBuilder.SetLoading(true);
                 }
                 else
                 {
-                    listTemplate.SetSingleList(itemBuilder.Build());
+                    listTemplateBuilder.SetSingleList(itemBuilder.Build());
                 }
 
                 RequestUpdate();
 
-                return listTemplate.Build();
+                return listTemplateBuilder.Build();
             }
 
             public void OnScreenResult(Java.Lang.Object p0)
