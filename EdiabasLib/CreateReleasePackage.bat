@@ -25,6 +25,10 @@ if exist "!PACKAGEPATH!" rmdir /s /q "!PACKAGEPATH!"
 timeout /T 1 /NOBREAK > nul
 mkdir "!PACKAGEPATH!" || EXIT /b 1
 
+echo The following solutions have to be rebuild as release before creating the package:
+echo EdiabasLib, S29CertGenerator, LogFileConverter, UpdateLoader,
+echo PIC firmware binaries
+
 echo Copying EdiabasTest
 forfiles /P !EDIABASTESTSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!EDIABASTESTPATH!" || EXIT /b 1
@@ -126,4 +130,5 @@ if exist "!PACKAGEZIP!" del /f /q "!PACKAGEZIP!"
 "!PATH_7ZIP!\7z.exe" a -tzip -aoa "!PACKAGEZIP!" "!PACKAGEPATH!*" || EXIT /b 1
 
 echo Package successfully created
+timeout /T 1
 exit /b 0
