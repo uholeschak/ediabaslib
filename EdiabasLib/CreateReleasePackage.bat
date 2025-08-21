@@ -26,7 +26,8 @@ timeout /T 1 /NOBREAK > nul
 mkdir "!PACKAGEPATH!" || EXIT /b 1
 
 echo The following solutions have to be rebuild as release before creating the package:
-echo EdiabasLib, S29CertGenerator and LogFileConverter
+echo EdiabasLib, S29CertGenerator, LogFileConverter, UpdateLoader,
+echo PIC firmware binaries
 
 echo Copying EdiabasTest
 forfiles /P !EDIABASTESTSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
