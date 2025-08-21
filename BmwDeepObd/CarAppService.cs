@@ -476,6 +476,7 @@ namespace BmwDeepObd
                 ItemList.Builder itemBuilderPagesBuilder = new ItemList.Builder();
                 Row.Builder rowPageListBuilder = new Row.Builder()
                     .SetTitle(ResourceContext.GetString(Resource.String.car_service_page_list));
+
                 if (!(useServiceCopy && connectedCopy))
                 {
                     if (fgServiceStartingCopy)
@@ -578,8 +579,8 @@ namespace BmwDeepObd
                 }
 
                 ItemList.Builder itemBuilderCommLockBuilder = new ItemList.Builder();
-
                 bool disableLock = connectedCopy || isConnectingCopy;
+
                 foreach (ActivityCommon.LockType lockType in Enum.GetValues(typeof(ActivityCommon.LockType)))
                 {
                     string itemTitle = GetLockTypeTitle(lockType);
@@ -666,6 +667,7 @@ namespace BmwDeepObd
 
                 ListTemplate.Builder listTemplateBuilder = new ListTemplate.Builder();
                 Header.Builder headerBuilder = null;
+
                 if (CarAppApiLevel >= 7)
                 {
                     headerBuilder = new Header.Builder()
