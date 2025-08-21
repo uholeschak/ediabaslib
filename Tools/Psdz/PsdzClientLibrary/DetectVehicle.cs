@@ -71,11 +71,13 @@ namespace PsdzClient
             };
             _ediabas.SetConfigProperty("EcuPath", ecuPath);
 
+            bool isIcom = false;
             bool icomAllocate = false;
             string hostAddress = EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll;
             if (enetConnection != null)
             {
-                icomAllocate = allowAllocate && enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
+                isIcom = enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom;
+                icomAllocate = allowAllocate && isIcom;
                 hostAddress = enetConnection.ToString();
             }
 
@@ -84,8 +86,11 @@ namespace PsdzClient
             {
                 vehicleProtocol += "," + EdInterfaceEnet.ProtocolDoIp;
                 hostAddress = hostAddress.Replace(":" + EdInterfaceEnet.ProtocolHsfz, string.Empty);
-                _ediabas.SetConfigProperty("PortDoIP", EdInterfaceEnet.IcomDoIpPortDefault.ToString(CultureInfo.InvariantCulture));
-                _ediabas.SetConfigProperty("SSLPort", EdInterfaceEnet.IcomSslPortDefault.ToString(CultureInfo.InvariantCulture));
+                if (isIcom)
+                {
+                    _ediabas.SetConfigProperty("PortDoIP", EdInterfaceEnet.IcomDoIpPortDefault.ToString(CultureInfo.InvariantCulture));
+                    _ediabas.SetConfigProperty("SSLPort", EdInterfaceEnet.IcomSslPortDefault.ToString(CultureInfo.InvariantCulture));
+                }
             }
 
             _ediabas.EdInterfaceClass = edInterfaceEnet;
