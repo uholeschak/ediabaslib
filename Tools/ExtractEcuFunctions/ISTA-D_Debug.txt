@@ -694,4 +694,5 @@ Allow folder access after ISTA copy:
 ====================================
 C:\Program Files\BMW\ISPI\TRIC\ISTA\Ediabas\Security\S29
 C:\Program Files\BMW\ISPI\TRIC\ISTA\Logs
-
+C:\ProgramData\BMW\ISPI\logs\TRIC\[All Subfolders]
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\[All Subfolders except: Microsoft*]
