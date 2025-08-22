@@ -44,13 +44,15 @@ namespace PsdzClient
         private ClientContext _clientContext;
         private string _istaFolder;
         private string _doIpSslSecurityPath;
-        private string _doIpS29Path;
+        private string _doIpS29BasePath;
+        private string _doIpS29CertPath;
         private List<X509CertificateStructure> _lastCertificates;
         private bool _disposed;
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
 
-        public string DoIpS29Path => _doIpS29Path;
+        public string DoIpS29BasePath => _doIpS29BasePath;
+        public string DoIpS29CertPath => _doIpS29CertPath;
 
         public List<PsdzDatabase.EcuInfo> EcuListPsdz { get; private set; }
 
@@ -65,7 +67,8 @@ namespace PsdzClient
             string ecuPath = Path.Combine(istaFolder, @"Ecu");
             string securityPath = Path.Combine(istaFolder, "EDIABAS", EdInterfaceEnet.DoIpSecurityDir);
             _doIpSslSecurityPath = Path.Combine(securityPath, EdInterfaceEnet.DoIpSslTrustDir);
-            _doIpS29Path = Path.Combine(securityPath, EdInterfaceEnet.DoIpS29Dir, EdInterfaceEnet.DoIpCertificatesDir);
+            _doIpS29BasePath = Path.Combine(securityPath, EdInterfaceEnet.DoIpS29Dir);
+            _doIpS29CertPath = Path.Combine(_doIpS29BasePath, EdInterfaceEnet.DoIpCertificatesDir);
 
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet(null, true)
@@ -103,7 +106,7 @@ namespace PsdzClient
             edInterfaceEnet.IcomAllocate = icomAllocate;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
             edInterfaceEnet.DoIpSslSecurityPath = _doIpSslSecurityPath;
-            edInterfaceEnet.DoIpS29Path = _doIpS29Path;
+            edInterfaceEnet.DoIpS29Path = _doIpS29CertPath;
             edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
             edInterfaceEnet.ConnectParameter = new EdInterfaceEnet.ConnectParameterType(GenS29Certificate, VehicleConnected);
 
@@ -911,7 +914,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                string certFile = Path.Combine(_doIpS29Path, sec4DiagHandler.CertificateFilePathWithoutEnding + ".pem");
+                string certFile = Path.Combine(_doIpS29CertPath, sec4DiagHandler.CertificateFilePathWithoutEnding + ".pem");
                 if (!File.Exists(certFile))
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "GenerateCertificate: Certificate file does not exist: {0}", certFile);
