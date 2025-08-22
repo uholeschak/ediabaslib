@@ -50,6 +50,8 @@ namespace PsdzClient
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
 
+        public string DoIpS29Path => _doIpS29Path;
+
         public List<PsdzDatabase.EcuInfo> EcuListPsdz { get; private set; }
 
         public bool IsDoIp { get; protected set; }
@@ -64,6 +66,7 @@ namespace PsdzClient
             string securityPath = Path.Combine(istaFolder, "EDIABAS", EdInterfaceEnet.DoIpSecurityDir);
             _doIpSslSecurityPath = Path.Combine(securityPath, EdInterfaceEnet.DoIpSslTrustDir);
             _doIpS29Path = Path.Combine(securityPath, EdInterfaceEnet.DoIpS29Dir, EdInterfaceEnet.DoIpCertificatesDir);
+
             EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
             _ediabas = new EdiabasNet(null, true)
             {

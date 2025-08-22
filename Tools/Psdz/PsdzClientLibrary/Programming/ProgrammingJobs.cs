@@ -1052,6 +1052,13 @@ namespace PsdzClient.Programming
                 }
 
                 PsdzContext.DetectVehicle = new DetectVehicle(ProgrammingService.PsdzDatabase, ClientContext, istaFolder, enetConnection, useIcom, addTimeout);
+                if (!EdiabasNet.IsDirectoryWritable(PsdzContext.DetectVehicle.DoIpS29Path))
+                {
+                    sbResult.AppendLine(string.Format(Strings.DirectoryWriteProtected, PsdzContext.DetectVehicle.DoIpS29Path));
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 DetectVehicle.DetectResult detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast(() =>
                 {
                     if (cts != null)

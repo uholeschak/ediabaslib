@@ -188,6 +188,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The directory is write protected: &apos;{0}&apos; ähnelt.
+        /// </summary>
+        internal static string DirectoryWriteProtected {
+            get {
+                return ResourceManager.GetString("DirectoryWriteProtected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Error: {0} ähnelt.
         /// </summary>
         internal static string ExceptionMsg {

@@ -443,4 +443,7 @@ Coding is available only for F series or higher.</value>
   <data name="BatteryVoltageReadError" xml:space="preserve">
     <value>Battery voltage reading failed.</value>
   </data>
+  <data name="DirectoryWriteProtected" xml:space="preserve">
+    <value>The directory is write protected: '{0}'</value>
+  </data>
 </root>

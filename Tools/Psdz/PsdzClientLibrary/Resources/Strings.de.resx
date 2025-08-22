@@ -443,4 +443,7 @@ Kodieren ist nur verfügbar für F Modelle oder höher.</value>
   <data name="BatteryVoltageReadError" xml:space="preserve">
     <value>Die Batteriespannung konnte nicht gelesen werden.</value>
   </data>
+  <data name="DirectoryWriteProtected" xml:space="preserve">
+    <value>Das Verzeichnis ist schreibgeschützt: {0} </value>
+  </data>
 </root>
