@@ -689,3 +689,9 @@ netsh interface ipv4 show excludedportrange protocol=tcp
 Exclude port 3496:
 Reboot in safe mode (restart + shift)
 netsh int ipv4 add excludedportrange protocol=tcp startport=3496 numberofports=1
+
+Allow folder access after ISTA copy:
+====================================
+C:\Program Files\BMW\ISPI\TRIC\ISTA\Ediabas\Security\S29
+C:\Program Files\BMW\ISPI\TRIC\ISTA\Logs
+
