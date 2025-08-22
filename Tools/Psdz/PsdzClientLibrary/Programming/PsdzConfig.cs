@@ -5,6 +5,7 @@ using System.IO;
 using System.Management;
 using System.Text.RegularExpressions;
 using BMW.Rheingold.Psdz;
+using EdiabasLib;
 using PsdzClient.Core;
 
 namespace PsdzClient.Programming
@@ -27,14 +28,27 @@ namespace PsdzClient.Programming
         {
             string psdzHostSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\hostx64" : @"PSdZ\host";
             HostPath = Path.Combine(istaFolder, psdzHostSubDir);
-            PsdzServiceHostLogDir = Path.Combine(istaFolder, @"logs\client");
+            string logsDir = Path.Combine(istaFolder, "logs");
+            PsdzServiceHostLogDir = Path.Combine(logsDir, "client");
             ClientLogPath = PsdzServiceHostLogDir;
             PsdzServiceHostLogFilePath = Path.Combine(PsdzServiceHostLogDir, @"PsdzServiceHost.log");
             PsdzLogFilePath = Path.Combine(PsdzServiceHostLogDir, @"psdz.log");
+
+            if (!EdiabasNet.IsDirectoryWritable(logsDir))
+            {
+                throw new UnauthorizedAccessException($"Directory is write protected: '{logsDir}'");
+            }
+
             if (!Directory.Exists(PsdzServiceHostLogDir))
             {
                 Directory.CreateDirectory(PsdzServiceHostLogDir);
             }
+
+            if (!EdiabasNet.IsDirectoryWritable(PsdzServiceHostLogDir))
+            {
+                throw new UnauthorizedAccessException($"Directory is write protected: '{PsdzServiceHostLogDir}'");
+            }
+
             PsdzServiceArgs = CreateServiceArgs(false, istaFolder, PsdzLogFilePath, dealerId);
             Log.Info("PsdzConfig.PsdzConfig()", "Hostpath:               {0}", HostPath);
             Log.Info("PsdzConfig.PsdzConfig()", "PSdZ Logging directory: {0}", PsdzServiceHostLogDir);
