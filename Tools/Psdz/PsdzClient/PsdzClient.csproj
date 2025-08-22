@@ -23,7 +23,6 @@
     <Product>PsdzClient</Product>
     <Copyright>Copyright ©  2021</Copyright>
     <Platforms>AnyCPU;x86</Platforms>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Properties\Resources.resx" />
