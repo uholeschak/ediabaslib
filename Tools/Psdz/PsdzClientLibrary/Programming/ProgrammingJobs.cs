@@ -496,6 +496,13 @@ namespace PsdzClient.Programming
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Starting programming service MultiSession={0}", ConfigSettings.GetActivateSdpOnlinePatch());
                     ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
+                    if (!EdiabasNet.IsDirectoryWritable(ProgrammingService.BackupDataPath))
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.DirectoryWriteProtected, ProgrammingService.BackupDataPath));
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
+
                     ClientContext.Database = ProgrammingService.PsdzDatabase;
                     if (ServiceInitializedEvent != null)
                     {
