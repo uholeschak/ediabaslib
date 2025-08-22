@@ -1485,6 +1485,14 @@ namespace PsdzClient.Programming
                     log.InfoFormat(CultureInfo.InvariantCulture, "Checking NCD availability");
                     PsdzSecureCodingConfigCto secureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(ProgrammingService);
                     secureCodingConfig.ConnectionTimeout = CodingConnectionTimeout;
+
+                    if (!EdiabasNet.IsDirectoryWritable(secureCodingConfig.NcdRootDirectory))
+                    {
+                        sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.DirectoryWriteProtected, secureCodingConfig.NcdRootDirectory));
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
+
                     IPsdzCheckNcdResultEto psdzCheckNcdResultEto = ProgrammingService.Psdz.SecureCodingService.CheckNcdAvailabilityForGivenTal(PsdzContext.Tal, secureCodingConfig.NcdRootDirectory, psdzVin);
                     log.InfoFormat(CultureInfo.InvariantCulture, "Ncd EachSigned: {0}", psdzCheckNcdResultEto.isEachNcdSigned);
                     foreach (IPsdzDetailedNcdInfoEto detailedNcdInfo in psdzCheckNcdResultEto.DetailedNcdStatus)
