@@ -6574,7 +6574,7 @@ namespace BmwDeepObd
 #if DEBUG
             if (!reconnect)
             {
-                Android.Util.Log.Info(Tag, string.Format("VehicleConnected: Connected: {0}, VIN: {1}, DoIP: {2}", connected, vin, isDoIp));
+                Android.Util.Log.Info(Tag, string.Format("VehicleConnected: Connected: {0}, VIN: {1}, DoIP: {2}", connected, vin ?? string.Empty, isDoIp));
             }
 #endif
         }
