@@ -702,3 +702,4 @@ After update delete all content in:
 ===================================
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\FASTAOut
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Transactions
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Temp\[All files and folders except ncd]
