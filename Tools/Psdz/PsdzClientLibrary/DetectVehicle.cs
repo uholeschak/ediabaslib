@@ -941,11 +941,11 @@ namespace PsdzClient
                 if (connected)
                 {
                     IsDoIp = isDoIp;
-                    LogInfoFormat("VehicleConnected: Connected, VIN: {0}, DoIP: {1}", vin, isDoIp);
+                    LogInfoFormat("VehicleConnected: Connected, VIN: {0}, DoIP: {1}", vin ?? string.Empty, isDoIp);
                 }
                 else
                 {
-                    LogInfoFormat("VehicleConnected: Disconnected, VIN: {0}, DoIP: {1}", vin, isDoIp);
+                    LogInfoFormat("VehicleConnected: Disconnected, VIN: {0}, DoIP: {1}", vin ?? string.Empty, isDoIp);
                 }
             }
         }
