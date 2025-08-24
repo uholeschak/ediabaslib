@@ -696,3 +696,8 @@ C:\Program Files\BMW\ISPI\TRIC\ISTA\Ediabas\Security\S29
 C:\Program Files\BMW\ISPI\TRIC\ISTA\Logs
 C:\ProgramData\BMW\ISPI\logs\TRIC\[All Subfolders]
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\[All Subfolders except: Microsoft*]
+
+After update delete all content in:
+===================================
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\ExecutionBreak
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Testdaten
