@@ -698,6 +698,7 @@ C:\ProgramData\BMW\ISPI\logs\TRIC\[All Subfolders]
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\[All Subfolders except: Microsoft*]
 
 After update delete all content in:
+(Create folders if missing)
 ===================================
-C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\ExecutionBreak
-C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Testdaten
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\FASTAOut
+C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Transactions
