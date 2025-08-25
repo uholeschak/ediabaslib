@@ -1429,7 +1429,7 @@ namespace EdiabasLibConfigTool
                             object istaMainProdVer = key.GetValue(RegValueIstaMainProdVer);
                             if (istaMainProdVer is string istaVerStr)
                             {
-                                if (Version.TryParse(istaVerStr, out Version istaVer))
+                                if (Version.TryParse(istaVerStr, out Version _))
                                 {
                                     return RegistryView.Registry32;
                                 }
