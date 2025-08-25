@@ -52,6 +52,8 @@ namespace EdiabasLibConfigTool
         public const string RegKeyRheingoldNameStart = @"BMW.Rheingold.";
         public const string RegKeyIstaBinPath = @"BMW.Rheingold.ISTAGUI.BinPathModifications";
         public const string RegKeyIstaIdesBinPath = @"BMW.Rheingold.ISTAGUI.EdiabasIDESBinPathModifications";
+        public const string RegKeyIstaIcomNextPackageVer = @"IcomNext.Package.Version";
+        public const string RegKeyIstaIcomNextPackageVerComp = @"IcomNext.Package.Version.Compatible";
         public const string RegKeyIstaBinFull = RegKeyReingold + @": " + RegKeyIstaBinPath;
         public const string RegKeyIstaIdesBinFull = RegKeyReingold + @": " + RegKeyIstaIdesBinPath;
         public const string RegKeyIstaOpMode = @"BMW.Rheingold.OperationalMode";
@@ -1359,6 +1361,30 @@ namespace EdiabasLibConfigTool
 
         public static RegistryView? GetIstaReg()
         {
+            bool has64BitIcom = false;
+            try
+            {
+                using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
+                {
+                    using (RegistryKey key = localMachine64.OpenSubKey(RegKeyReingold, false))
+                    {
+                        if (key != null)
+                        {
+                            string[] valueNames = key.GetValueNames();
+                            if (valueNames.Any(x => string.Compare(x, RegKeyIstaIcomNextPackageVerComp, StringComparison.OrdinalIgnoreCase) != 0 ||
+                                                            string.Compare(x, RegKeyIstaIcomNextPackageVer, StringComparison.OrdinalIgnoreCase) != 0))
+                            {
+                                has64BitIcom = true;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
             try
             {
                 using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
