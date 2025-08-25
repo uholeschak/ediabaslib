@@ -1469,6 +1469,8 @@ namespace EdiabasLibConfigTool
                 return false;
             }
 
+            bool result = false;
+            bool opModeSet = false;
             try
             {
                 using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryViewIsta.Value))
@@ -1490,6 +1492,7 @@ namespace EdiabasLibConfigTool
                                 }
 
                                 key.SetValue(RegKeyIstaOpMode, "ISTA_PLUS");     // show ediabas.ini option in ISTA
+                                opModeSet = true;
                             }
                             else
                             {
@@ -1503,7 +1506,8 @@ namespace EdiabasLibConfigTool
                                     key.DeleteValue(RegKeyIstaIdesBinPath, false);
                                 }
                             }
-                            return true;
+
+                            result = true;
                         }
                     }
                 }
@@ -1513,7 +1517,28 @@ namespace EdiabasLibConfigTool
                 // ignored
             }
 
-            return false;
+            if (opModeSet && registryViewIsta.Value == RegistryView.Registry64)
+            {   // remove 32 bit registry entry
+                try
+                {
+                    using (RegistryKey localMachine = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
+                    {
+                        using (RegistryKey key = localMachine.OpenSubKey(RegKeyReingold, true))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(RegKeyIstaOpMode, false);
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return result;
         }
 
         public static PatchRegType IsIstaRegPresent(RegistryView? registryViewIsta, bool idesBin = false)
