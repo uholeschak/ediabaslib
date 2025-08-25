@@ -894,102 +894,27 @@ namespace PsdzClient.Core
                     {
                         return (!currentConfigValues.ContainsKey(key)) ? defaultValue : ((currentConfigValues[key].Value == null) ? null : Convert.ToString(currentConfigValues[key].Value, CultureInfo.InvariantCulture));
                     }
-                    try
+                    string text = GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold", key, setOrigin) ?? GetRegistryValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin) ?? GetRegistryValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, setOrigin);
+                    if (text != null)
                     {
-                        object value = Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold", key, null);
-                        if (value != null)
-                        {
-                            string text = string.Empty;
-                            if (value is string text2)
-                            {
-                                text = text2;
-                                if (!string.IsNullOrEmpty(text))
-                                {
-                                    if (setOrigin)
-                                    {
-                                        currentConfigValues[key].Origin = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold";
-                                    }
-                                    return text;
-                                }
-                            }
-                            if (value is string[] array)
-                            {
-                                string[] array2 = array;
-                                foreach (string text3 in array2)
-                                {
-                                    text += text3;
-                                }
-                                if (!string.IsNullOrEmpty(text))
-                                {
-                                    if (setOrigin)
-                                    {
-                                        currentConfigValues[key].Origin = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold";
-                                    }
-                                    return text;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Warning("ConfigSettings.getConfigString()", "Read configuration for \"{0}\" failed: {1}", key, ex);
-                    }
-                    try
-                    {
-                        object value2 = Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, null);
-                        if (value2 != null)
-                        {
-                            string text4 = string.Empty;
-                            if (value2 is string text5)
-                            {
-                                text4 = text5;
-                                if (!string.IsNullOrEmpty(text4))
-                                {
-                                    if (setOrigin)
-                                    {
-                                        currentConfigValues[key].Origin = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
-                                    }
-                                    return text4;
-                                }
-                            }
-                            if (value2 is string[] array3)
-                            {
-                                string[] array2 = array3;
-                                foreach (string text6 in array2)
-                                {
-                                    text4 += text6;
-                                }
-                                if (!string.IsNullOrEmpty(text4))
-                                {
-                                    if (setOrigin)
-                                    {
-                                        currentConfigValues[key].Origin = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
-                                    }
-                                    return text4;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception ex2)
-                    {
-                        Log.Warning("ConfigSettings.getConfigString()", "Read configuration for \"{0}\" failed: {1}", key, ex2);
+                        return text;
                     }
                 }
                 try
                 {
-                    string text7 = ConfigurationManager.AppSettings[key];
-                    if (!string.IsNullOrEmpty(text7))
+                    string text2 = ConfigurationManager.AppSettings[key];
+                    if (!string.IsNullOrEmpty(text2))
                     {
                         if (setOrigin)
                         {
                             currentConfigValues[key].Origin = "Configuration file";
                         }
-                        return text7;
+                        return text2;
                     }
                 }
-                catch (Exception ex3)
+                catch (Exception ex)
                 {
-                    Log.Warning("ConfigSettings.getConfigString()", "Read configuration for \"{0}\" failed: {1}", key, ex3);
+                    Log.Warning("ConfigSettings.getConfigString()", "Read configuration for \"{0}\" failed: {1}", key, ex);
                 }
             }
             catch (Exception exception)
@@ -997,6 +922,52 @@ namespace PsdzClient.Core
                 Log.ErrorException("ConfigSettings.getConfigString()", exception);
             }
             return defaultValue;
+        }
+
+        private static string GetRegistryValue(string registryLocation, string key, bool setOrigin)
+        {
+            try
+            {
+                object value = Registry.GetValue(registryLocation, key, null);
+                if (value != null)
+                {
+                    string text = string.Empty;
+                    if (value is string text2)
+                    {
+                        text = text2;
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            if (setOrigin)
+                            {
+                                currentConfigValues[key].Origin = registryLocation;
+                            }
+                            return text;
+                        }
+                    }
+                    if (value is string[] array)
+                    {
+                        string[] array2 = array;
+                        foreach (string text3 in array2)
+                        {
+                            text += text3;
+                        }
+                        if (!string.IsNullOrEmpty(text))
+                        {
+                            if (setOrigin)
+                            {
+                                currentConfigValues[key].Origin = registryLocation;
+                            }
+                            return text;
+                        }
+                    }
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Log.Warning("ConfigSettings.getConfigString()", "Read configuration for \"{0}\" failed: {1}", key, ex);
+                return null;
+            }
         }
 
         public static bool getConfigStringAsBoolean(string key)
