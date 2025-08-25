@@ -1400,12 +1400,14 @@ namespace EdiabasLibConfigTool
                             {
                                 if (Version.TryParse(istaVerStr, out Version istaVer))
                                 {
-                                    Version istVer64Bit = new Version("4.55");
-                                    if (istaVer >= istVer64Bit)
+                                    Version istaVerReg64Bit = new Version("4.55");  // full 64 bit registry support from ISTA 4.55
+                                    if (istaVer >= istaVerReg64Bit)
                                     {
                                         return RegistryView.Registry64;
                                     }
                                 }
+
+                                return RegistryView.Registry32;
                             }
                         }
                     }
@@ -1420,40 +1422,17 @@ namespace EdiabasLibConfigTool
             {
                 using (RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32))
                 {
-                    using (RegistryKey key = localMachine32.OpenSubKey(RegKeyReingold, false))
+                    using (RegistryKey key = localMachine32.OpenSubKey(RegKeyIsta, false))
                     {
                         if (key != null)
                         {
-                            string[] valueNames = key.GetValueNames();
-                            if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart, StringComparison.OrdinalIgnoreCase) &&
-                                                    (string.Compare(x, RegKeyIstaBinPath, StringComparison.OrdinalIgnoreCase) != 0 ||
-                                                    string.Compare(x, RegKeyIstaIdesBinPath, StringComparison.OrdinalIgnoreCase) != 0)))
+                            object istaMainProdVer = key.GetValue(RegValueIstaMainProdVer);
+                            if (istaMainProdVer is string istaVerStr)
                             {
-                                return RegistryView.Registry32;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            try
-            {
-                using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
-                {
-                    using (RegistryKey key = localMachine64.OpenSubKey(RegKeyReingold, false))
-                    {
-                        if (key != null)
-                        {
-                            string[] valueNames = key.GetValueNames();
-                            if (valueNames.Any(x => x.StartsWith(RegKeyRheingoldNameStart, StringComparison.OrdinalIgnoreCase) &&
-                                                    (string.Compare(x, RegKeyIstaBinPath, StringComparison.OrdinalIgnoreCase) != 0 ||
-                                                     string.Compare(x, RegKeyIstaIdesBinPath, StringComparison.OrdinalIgnoreCase) != 0)))
-                            {
-                                return RegistryView.Registry64;
+                                if (Version.TryParse(istaVerStr, out Version istaVer))
+                                {
+                                    return RegistryView.Registry32;
+                                }
                             }
                         }
                     }
