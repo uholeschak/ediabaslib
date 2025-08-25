@@ -1165,8 +1165,12 @@ namespace EdiabasLibConfigTool
                 {
                     case PatchType.Istad:
                     case PatchType.IstadExt:
-                        RegistryView? registryViewIsta = GetIstaReg();
-                        if (IsIstaRegPresent(registryViewIsta) != PatchRegType.None)
+                        if (IsIstaRegPresent(RegistryView.Registry32) != PatchRegType.None)
+                        {
+                            return true;
+                        }
+
+                        if (IsIstaRegPresent(RegistryView.Registry64) != PatchRegType.None)
                         {
                             return true;
                         }
