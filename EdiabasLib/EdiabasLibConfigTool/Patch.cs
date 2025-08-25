@@ -805,6 +805,23 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
+        public static bool RemoveIstaReg(StringBuilder sr)
+        {
+            // ReSharper disable once ReplaceWithSingleAssignment.True
+            bool result = true;
+            if (!RemoveIstaReg(sr, RegistryView.Registry32))
+            {
+                result = false;
+            }
+
+            if (!RemoveIstaReg(sr, RegistryView.Registry64))
+            {
+                result = false;
+            }
+
+            return result;
+        }
+
         public static bool RemoveIstaReg(StringBuilder sr, RegistryView? registryViewIsta)
         {
             if (registryViewIsta != null)
@@ -1244,7 +1261,10 @@ namespace EdiabasLibConfigTool
                 }
 
                 sr.AppendFormat(Resources.Strings.PatchDirectory, dirName);
-                RemoveIstaReg(sr, registryViewIsta);
+                if (registryViewIsta != null)
+                {
+                    RemoveIstaReg(sr);
+                }
 
                 if (!string.IsNullOrEmpty(ediabasDir))
                 {
@@ -1343,9 +1363,12 @@ namespace EdiabasLibConfigTool
                 result = false;
             }
 
-            if (!RemoveIstaReg(sr, registryViewIsta))
+            if (registryViewIsta != null)
             {
-                result = false;
+                if (!RemoveIstaReg(sr))
+                {
+                    result = false;
+                }
             }
 
             if (!string.IsNullOrEmpty(ediabasDir))
@@ -1361,7 +1384,6 @@ namespace EdiabasLibConfigTool
 
         public static RegistryView? GetIstaReg()
         {
-            bool has64BitIcom = false;
             try
             {
                 using (RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
@@ -1374,7 +1396,7 @@ namespace EdiabasLibConfigTool
                             if (valueNames.Any(x => string.Compare(x, RegKeyIstaIcomNextPackageVerComp, StringComparison.OrdinalIgnoreCase) != 0 ||
                                                             string.Compare(x, RegKeyIstaIcomNextPackageVer, StringComparison.OrdinalIgnoreCase) != 0))
                             {
-                                has64BitIcom = true;
+                                return RegistryView.Registry64;
                             }
                         }
                     }
