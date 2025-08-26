@@ -1085,17 +1085,7 @@ namespace PsdzClient.Core
         {
             try
             {
-                string configString = getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", key, null);
-                if (configString == null)
-                {
-                    configString = getConfigString("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null);
-                    if (configString != null)
-                    {
-                        return configString;
-                    }
-                    return defaultValue;
-                }
-                return configString;
+                return getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", key, null) ?? getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null) ?? getConfigString("HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", key, null) ?? defaultValue;
             }
             catch (Exception exception)
             {
@@ -1144,8 +1134,14 @@ namespace PsdzClient.Core
 
         public static bool putGlobalConfigString(string key, string value)
         {
-            return PutGlobalConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold", key, value);
+            bool flag = PutGlobalConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold", key, value);
+            if (!flag)
+            {
+                flag = PutGlobalConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold", key, value);
+            }
+            return flag;
         }
+
 
         public static IDictionary<string, string> GetKeyValuePairs(string configKey)
         {
@@ -1311,9 +1307,9 @@ namespace PsdzClient.Core
 
         public static bool ShowReleaseNotesOnIstaStart()
         {
-            if (!IsOssModeActive && !IsLightModeActive)
+            if (!IsOssModeActive && !IsLightModeActive && SelectedBrand != UiBrand.TOYOTA)
             {
-                return getConfigStringAsBoolean("BMW.Rheingold.ISTAGUI.Pages.StartPage.ShowReleaseNotes", defaultValue: false);
+                return getConfigStringAsBoolean("BMW.Rheingold.ISTAGUI.Pages.StartPage.ShowReleaseNotes", defaultValue: true);
             }
             return false;
         }
@@ -1354,21 +1350,25 @@ namespace PsdzClient.Core
             string configString = getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", "PatchVersion", string.Empty);
             if (string.IsNullOrEmpty(configString))
             {
-                return false;
+                configString = getConfigString("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "PatchVersion", string.Empty);
+                if (string.IsNullOrEmpty(configString))
+                {
+                    return false;
+                }
             }
             try
             {
                 List<int> list = (from c in appVersion.Split(new string[1] { "." }, StringSplitOptions.RemoveEmptyEntries)
-                    select int.Parse(c)).ToList();
+                                  select int.Parse(c)).ToList();
                 List<int> list2 = (from c in configString.Split(new string[1] { "." }, StringSplitOptions.RemoveEmptyEntries)
-                    select int.Parse(c)).ToList();
+                                   select int.Parse(c)).ToList();
                 if (list.Count != list2.Count)
                 {
                     return false;
                 }
-                for (int i = 0; i < list.Count; i++)
+                for (int num = 0; num < list.Count; num++)
                 {
-                    if (list[i] != list2[i])
+                    if (list[num] != list2[num])
                     {
                         Log.Info(Log.CurrentMethod(), "Patch and App Version are not the same");
                         return false;
@@ -1382,6 +1382,7 @@ namespace PsdzClient.Core
             }
             return true;
         }
+
 
         public static string GetHyphenedDbVersionForOnlinePatches(string dataBaseVersion)
         {
@@ -1406,23 +1407,7 @@ namespace PsdzClient.Core
 
         public static bool GetUseConwoyStorage()
         {
-            string configString = getConfigString("BMW.Rheingold.OnlinePatch.UseConwoyStorage");
-            if (!string.IsNullOrEmpty(configString) && bool.TryParse(configString, out var result))
-            {
-                return result;
-            }
-            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
-            {
-                if (istaIcsServiceClient.IsAvailable())
-                {
-                    string useConwoyStorage = istaIcsServiceClient.GetUseConwoyStorage();
-                    if (!string.IsNullOrEmpty(useConwoyStorage) && bool.TryParse(useConwoyStorage, out var result2))
-                    {
-                        return result2;
-                    }
-                }
-            }
-            return false;
+            return GetFeatureEnabledStatus("ConwoyStorage").IsActive;
         }
 
         // replaced by EnablePsdzMultiSession
@@ -1431,22 +1416,12 @@ namespace PsdzClient.Core
 #if true
             return ClientContext.EnablePsdzMultiSession();
 #else
-            string configString = getConfigString("BMW.Rheingold.Programming.Sdp.Patch.Enabled");
-            if (!string.IsNullOrEmpty(configString) && bool.TryParse(configString, out var result))
+            if (IsOssModeActive)
             {
-                return result;
+                Log.Info(Log.CurrentMethod(), "SDP patch not enabled in AOS mode.");
+                return false;
             }
-            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
-            {
-                if (istaIcsServiceClient.IsAvailable())
-                {
-                    string activateSdpOnlinePatch = istaIcsServiceClient.GetActivateSdpOnlinePatch();
-                    if (!string.IsNullOrEmpty(activateSdpOnlinePatch) && bool.TryParse(activateSdpOnlinePatch, out var result2))
-                    {
-                        return result2;
-                    }
-                }
-            }
+            return GetFeatureEnabledStatus("SdpOnlinePatchAndMultisession").IsActive;
 #endif
         }
 
@@ -1491,9 +1466,9 @@ namespace PsdzClient.Core
         {
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
             {
-                if (istaIcsServiceClient.IsAvailable())
+                if (istaIcsServiceClient.IsAvailable() /*|| IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA")*/)
                 {
-                    return istaIcsServiceClient.GetFeatureEnabledStatus(feature);
+                    return istaIcsServiceClient.GetFeatureEnabledStatus(feature/*, istaIcsServiceClient.IsAvailable()*/);
                 }
             }
             return (IsActive: false, Message: "Could not get " + feature + " from IstaIcsServiceClient, return default value");
