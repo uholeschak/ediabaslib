@@ -96,6 +96,8 @@ namespace PsdzClient.Core.Container
 
         public List<ECUJob> jobList = new List<ECUJob>();
 
+        //public uint EdiabasHandle { get; }
+
         public string APP
         {
             get
@@ -206,6 +208,7 @@ namespace PsdzClient.Core.Container
 
         public IEcuJob ApiJobWithRetries(string variant, string job, string param, string resultFilter, int retries)
         {
+            // [UH] fastaprotcoller removed
             return apiJob(variant, job, param, resultFilter, retries, null, "ApiJobWithRetries");
         }
 
@@ -526,7 +529,14 @@ namespace PsdzClient.Core.Container
                 if (isDoIP2 || isDoIP)
                 {
                     IpbWithoutCertificates = false;
-                    boolResultObject2 = HandleS29Authentication(device);
+                    if (!device.IsSimulation)
+                    {
+                        boolResultObject2 = HandleS29Authentication(device);
+                    }
+                    else
+                    {
+                        boolResultObject2.Result = true;
+                    }
                     if (!boolResultObject2.Result)
                     {
                         return boolResultObject2;
@@ -535,7 +545,7 @@ namespace PsdzClient.Core.Container
                 else
                 {
                     IstaIcsServiceClient ics = new IstaIcsServiceClient();
-                    if (ics.IsAvailable())
+                    if (ConfigSettings.IsILeanActive && ics.IsAvailable())
                     {
                         if (!ics.GetSec4DiagEnabledInBackground())
                         {
@@ -554,6 +564,13 @@ namespace PsdzClient.Core.Container
                             });
                         }
                     }
+                    else if (ConfigSettings.IsOssModeActive)
+                    {
+                        Task.Run(delegate
+                        {
+                            TestSubCACall(device);
+                        });
+                    }
                 }
                 boolResultObject.Result = InitializeDevice(device, logging, isDoIP, isDoIP2);
                 if (api.apiErrorCode() != 0)
@@ -571,7 +588,7 @@ namespace PsdzClient.Core.Container
                 {
                     SetErrorCode(boolResultObject);
                 }
-                if (boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState(device))
+                if (!device.IsSimulation && boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState(device))
                 {
                     if (IpbWithoutCertificates && firstInitialisation)
                     {

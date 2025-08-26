@@ -176,6 +176,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool IsMarkedToDefault { get; set; }
 
+        bool IsSimulation { get; set; }
+
         bool CheckChannel(string channelId);
 
         double? GetClamp15();

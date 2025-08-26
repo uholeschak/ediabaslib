@@ -7,6 +7,8 @@ namespace PsdzClient.Core.Container
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuKom : IEcuKomApi
     {
+        //uint EdiabasHandle { get; }
+
         bool IsInSimulationMode { get; }
 
         bool IsProblemHandlingTraceRunning { get; set; }

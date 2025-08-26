@@ -46,6 +46,9 @@ namespace PsdzClient.Core
         public bool IsDoIP { get; set; }
 
         [XmlIgnore]
+        public bool IsSimulation { get; set; }
+
+        [XmlIgnore]
         public bool IsAlive => !IsDead;
 
         [XmlIgnore]
