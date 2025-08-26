@@ -57,7 +57,7 @@ You could test reading the value with _Test_ button below.
 ## The main menu
 The application has a configuration menu with the following options:
 * _Manufacturer_: Select the car manufacturer with this menu point first. The default is BMW, the other manufacturers are from the VAG group (VW, Audi, Skoda). The VAG mode is still experimental, only for vehicles until 2017-08 and requires a [Bluetooth D-CAN/K-Line adapter](Build Bluetooth D-CAN adapter.md).
-* _Device_: With this menu the [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) could be selected.  If the device is not coupled already, searching for new devices is possible. This menu is only enabled if a configuration with _interface_ type _BLUETOOTH_ has been selected.
+* _Adapter_: With this menu the [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) could be selected.  If the device is not coupled already, searching for new devices is possible. This menu is only enabled if a configuration with _interface_ type _BLUETOOTH_ has been selected.
 * _Adapter configuration_: When using a FTDI USB or Bluetooth (non ELM327) adapter, this menu item opens the adapter configuration page. The following settings are available (depending from adapter type):
 	* _CAN baud rate_: (500kbit/100kbit) or K-Line (CAN off)
 	* _Separation time_: Separation time between CAN telegrams. The default is 0, only change this value if there are communication problems.
@@ -69,7 +69,6 @@ This could be also used in hotspot mode (Hotspot active and WiFi off) if the ENE
 If the Android device is in hotspot mode (Hotspot active and WiFi off), communication with the adapter is only possible if the IP is assigned manually.  
 This is especially useful for adapters with ESP8266 chip, because they could be configured to connect to the Android hotspot automatically.  
 If the port is omitted in the IP settings, the default port is 23 in hotspot mode (Hotspot active and WiFi off) and if the IP address is 192.168.4.1 (ESP8266). In all other cases the default port is 35000.
-* _Configuration generator_: Simple [XML configuration files](Page_specification.md) could be generated automatically using the informations obtained from the vehicle. This menu opens the [configuration generator](Configuration_Generator.md) which allows to create new or modify existing XML files by simply selecting the ECU and job informations.
 * _Configuration_: This submenu contains configuration selection and editing functions.
 	* _Select_: This menu allows the selection of the [configuration file](Page_specification.md) _(*.cccfg file)_. When using the [configuration generator](Configuration_Generator.md) the configuration is selected automatically. After selection the file will be compiled.
 	* _Recent configurations_: In this submenu the last 10 recently used configurations are accessible.
@@ -84,6 +83,7 @@ If the port is omitted in the IP settings, the default port is 23 in hotspot mod
 	* _Edit other file_: Allows to select and edit any configuration _(*.cccpage file)_.
 	* _Reset XML editor_: Resets the last selected XML editor. A new editor has be to be selected again when editing files.
 	* _Close_: Close the current configuration.
+* _Configuration generator_: Simple [XML configuration files](Page_specification.md) could be generated automatically using the informations obtained from the vehicle. This menu opens the [configuration generator](Configuration_Generator.md) which allows to create new or modify existing XML files by simply selecting the ECU and job informations.
 * _Ediabas tool_: This is a port of the tool32.exe windows application. Selecting the menu will open the [Ediabas tool](EdiabasTool.md) page.
 * _Coding_: This submenu allow to access the [BMW coding](BMW_Coding.md) online service.
 * _Extract ECU files_: The EUC files are very large, so they have to be extracted at first app start. With this menu item files could be extracted again. An internet connection is required to check for update information.
@@ -91,16 +91,15 @@ If the port is omitted in the IP settings, the default port is 23 in hotspot mod
 	* _Create trace file_: If the checkbox of this menu is active, a _ifh.trc_ file will be created when the application is connected. The trace file will be created in the _Log_ subdirectory.
 	* _Append trace file_: If this checkbox is enabled the trace file is always appended. Otherwise the trace file will be overridden after selection of a new configuration or restart of the application.
 	* _Log data_: This checkbox enables logging of the display data to a log file. Only those lines are logged, that have a _log_tag_ property in the [configuration file](Page_specification.md). The _logfile_ property in the _page_ node has to be specified as well to activate logging. When using the [configuration generator](#ConfigurationGenerator) _log_tag_ is set by default to the job name and _logfile_ to the ECU name. Data will be logged in the _Log_ subdirectory.
+* _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
+	* _Send trace file_: Send the trace file from the last vehicle communication.
+	* _Open trace file_: Open the trace file from the last vehicle communication with an external app that supports zip files.
+	* _Resend trace file_: Retry sending of the last trace file. Only visible if sending has failed.
+	* _Open last trace file_: Open the last trace file with an external app that supports zip files, if sending has failed previously.
 * _Translations_: (Only for non German languages) This menu opens a submenu that allows configuration of automatic ECU text translation with various translations engines. Most engines require an API key, but some have also special access tokens. Free translation if very limited in most cases and you have to pay for larger text amount.
 	* _Translate ECU text_: If this menu item is checked, automatic ECU text translation is active.
 	* _Translation configuration_: For automatic translation with various translation providers. For translation an API Key may be required. This menu assists to select and configure a translation provider. For using [Google translation APIs](#google-translation-apis) the URLs have to be copied first.
 	* _Clear translation cache_: To enforce a new translation this menu resets the translation cache.
-* _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
-	* _Send trace file_: Send the trace file from the last vehicle communication.
-	* _Open trace file_: Open the trace file from the last vehicle communication with an external app that supports zip files.
-	* _Resend trace file_: Resend the last trace file, if sending has failed previously.
-	* _Open last trace file_: Open the last trace file with an external app that supports zip files, if sending has failed previously.
-* _Resend trace file_: Retry sending of the last trace file. Only visible if sending has failed.
 * _Global settings_: Opens the [global app settings](GlobalSettings.md) page.
 * _Online help_: Displays this help page.
 * _App info_: Displays the app version and unique app id.

@@ -1,6 +1,6 @@
 # Documentation table of contents
 * _[Deep OBD](Deep_OBD_for_BMW_and_VAG.md)_
-	* [HowTo create Deep OBD pages](Page_specification.md)
+    * [HowTo create Deep OBD pages](Page_specification.md)
     * [BMW coding](BMW_Coding.md)
     * [Android Auto](Deep_OBD_for_BMW_and_VAG.md#android-auto)
 * [Ediabas result types and formats](EDIABAS_result_types_and_formats.md)
