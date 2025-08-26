@@ -1656,6 +1656,8 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.PsdzWebservice_Activate\"", "    <add key=\"BMW.Rheingold.PsdzWebservice_Activate\" value=\"false\" />"),
                     ("\"BMW.Rheingold.UseJreWithTLS13Support_Activate\"", "    <add key=\"BMW.Rheingold.UseJreWithTLS13Support_Activate\" value=\"true\" />"),
                     ("\"BMW.Rheingold.Programming.Sdp.Patch.Enabled\"", "    <add key=\"BMW.Rheingold.Programming.Sdp.Patch.Enabled\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.OnlinePatch.Serviceprogram.IsActive\"", "    <add key=\"BMW.Rheingold.OnlinePatch.Serviceprogram.IsActive\" value=\"false\" />"),
+                    ("\"BMW.Rheingold.OnlinePatch.Validity.IsActive\"", "    <add key=\"BMW.Rheingold.OnlinePatch.Validity.IsActive\" value=\"false\" />"),
                     ("\"BMW.Rheingold.Diagnostics.EnableRsuProcessHandling\"", "    <add key=\"BMW.Rheingold.Diagnostics.EnableRsuProcessHandling\" value=\"false\" />"),
                     ("\"BMW.Rheingold.ISTAGUI.Dialogs.AdministrationDialog.ShowPTTSelection\"", "    <add key=\"BMW.Rheingold.ISTAGUI.Dialogs.AdministrationDialog.ShowPTTSelection\" value=\"true\" />"),
                     ("\"BMW.Rheingold.CoreFramework.TRICZentralActive\"", "    <add key=\"BMW.Rheingold.CoreFramework.TRICZentralActive\" value=\"false\" />"),
