@@ -1468,7 +1468,7 @@ namespace PsdzClient.Core
             {
                 if (istaIcsServiceClient.IsAvailable() /*|| IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA")*/)
                 {
-                    return istaIcsServiceClient.GetFeatureEnabledStatus(feature/*, istaIcsServiceClient.IsAvailable()*/);
+                    return istaIcsServiceClient.GetFeatureEnabledStatus(feature, istaIcsServiceClient.IsAvailable());
                 }
             }
             return (IsActive: false, Message: "Could not get " + feature + " from IstaIcsServiceClient, return default value");
