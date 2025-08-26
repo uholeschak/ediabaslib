@@ -75,7 +75,7 @@ namespace PsdzClient.Programming
         private static string[] GetPsdzJvmOptions(string psdzBinaryPath, string psdzLogFilePath)
         {
             int num = 1024;
-            if (Environment.Is64BitOperatingSystem)
+            if (Environment.Is64BitOperatingSystem) // [UH] replaced
             {
                 int totalPhysicalMemoryInGb = GetTotalPhysicalMemoryInGb();
                 int configint = ConfigSettings.getConfigint("BMW.Rheingold.CoreFramework.ParallelOperationsLimit", -1);

@@ -9,9 +9,9 @@ using System.Xml;
 
 namespace BMW.Rheingold.Psdz
 {
-	[DataContract]
-	public class PsdzServiceArgs
-	{
+    [DataContract]
+    public class PsdzServiceArgs
+    {
         [DataMember]
         public ClientConfigArgs ClientConfigArgs { get; set; }
 
@@ -76,5 +76,5 @@ namespace BMW.Rheingold.Psdz
             stringBuilder.AppendFormat(CultureInfo.InvariantCulture, "\nClientConfigArgs\n{0}", ClientConfigArgs?.ToString());
             return stringBuilder.ToString();
         }
-	}
+    }
 }
