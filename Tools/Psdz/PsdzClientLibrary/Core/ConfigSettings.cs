@@ -326,6 +326,19 @@ namespace PsdzClient.Core
             }
         }
 
+        public static bool IsConwoyDataProviderConigured
+        {
+            get
+            {
+                if (!isConwoyDataProviderConigured.HasValue)
+                {
+                    string configString = getConfigString("BMW.Rheingold.DatabaseProvider.DatabaseProviderFactory.DatabaseProvider", "DatabaseProviderSQLite");
+                    isConwoyDataProviderConigured = configString == "ConWoyDataProvider";
+                }
+                return isConwoyDataProviderConigured.Value;
+            }
+        }
+
         public static event EventHandler<EventArgs> LanguageChangedEventhandler;
 
         static ConfigSettings()
@@ -352,7 +365,7 @@ namespace PsdzClient.Core
 
         public static string GetLogisticBaseVersion()
         {
-            return Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", null) as string;
+            return (Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", null) ?? Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA", "LogisticBaseVersion", null)) as string;
         }
 
         public static string GetSwiDataUX()
@@ -365,11 +378,24 @@ namespace PsdzClient.Core
             return GetIstaConfigString("SWIDataRSU", null);
         }
 
+        public static bool IsQaEnvironment()
+        {
+            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
+            {
+                if (istaIcsServiceClient.IsAvailable())
+                {
+                    return istaIcsServiceClient.GetEnvironment().ToLower().Contains("qa");
+                }
+            }
+            return false;
+        }
+
         private static ISet<string> RetrieveAllKeys()
         {
             ISet<string> set = new HashSet<string>();
             IList<string> list = new List<string>();
             IList<string> list2 = new List<string>();
+            IList<string> list3 = new List<string>();
             using (RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\BMWGroup\\ISPI\\Rheingold"))
             {
                 if (registryKey != null)
@@ -384,6 +410,13 @@ namespace PsdzClient.Core
                     list2 = registryKey2.GetValueNames().ToList();
                 }
             }
+            using (RegistryKey registryKey3 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE\\BMWGroup\\ISPI\\Rheingold"))
+            {
+                if (registryKey3 != null)
+                {
+                    list3 = registryKey3.GetValueNames().ToList();
+                }
+            }
             string[] allKeys = ConfigurationManager.AppSettings.AllKeys;
             foreach (string item2 in list)
             {
@@ -392,6 +425,10 @@ namespace PsdzClient.Core
             foreach (string item3 in list2)
             {
                 set.Add(item3);
+            }
+            foreach (string item4 in list3)
+            {
+                set.Add(item4);
             }
             string[] array = allKeys;
             foreach (string item in array)
