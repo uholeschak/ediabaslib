@@ -523,15 +523,6 @@ namespace PsdzClient.Core
             }
         }
 
-        public static bool ShouldUseIdentNuget(bool isNewVehicleIdent)
-        {
-            if (isNewVehicleIdent)
-            {
-                return getConfigStringAsBoolean("BMW.Rheingold.UseIdentNuget", defaultValue: true);
-            }
-            return false;
-        }
-
         public static DateTime GetConfigDateTime(string key, DateTime defaultValue)
         {
             AddNewKey(key, defaultValue);
