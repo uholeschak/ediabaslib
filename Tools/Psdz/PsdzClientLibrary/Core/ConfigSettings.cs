@@ -25,10 +25,11 @@ namespace PsdzClient.Core
         ISTA_PLUS,
         ISTA_LIGHT,
         ISTA_POWERTRAIN,
-        TELESERVICE,
         RITA,
         ISTAHV,
-        [Obsolete("Please remove it in the future. TeleserviceConsole is removed from the code")]
+        [Obsolete("This OperationalMode is only used by Testmodules. ISTA does not have anymore TELESERVICE")]
+        TELESERVICE,
+        [Obsolete("This OperationalMode is only used by Testmodules. ISTA does not have anymore TeleServiceConsole")]
         TeleServiceConsole
     }
 
@@ -86,6 +87,8 @@ namespace PsdzClient.Core
 
         private const string BMW_RHEINGOLD_GLOBALCONFIG_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\Rheingold";
 
+        private const string BMW_RHEINGOLD_GLOBALCONFIG_64_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
+
         private const string BMW_RHEINGOLD_PERSISTENCY_DATASTORE = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold\\Persistency";
 
         private const string BMW_RHEINGOLD_PERSISTENCYACROSSSESSION_DATASTORE = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold\\AcrossPersistency";
@@ -94,11 +97,15 @@ namespace PsdzClient.Core
 
         private const string BMW_ISTA_GLOBALCONFIG_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMWGroup\\ISPI\\ISTA";
 
+        private const string BMW_ISTA_GLOBALCONFIG_64_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\BMWGroup\\ISPI\\ISTA";
+
         private const string BMW_ISTA_CONFIG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\ISTA";
 
         private const string BMW_ISTA_KEY = "SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
 
         public const string BMW_ISTALAUNCHER_CONFIG_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\BMW\\ISPI\\TRIC\\ISTALauncher";
+
+        public const string BMW_ISTALAUNCHER_CONFIG_64_KEY = "HKEY_LOCAL_MACHINE\\SOFTWARE\\BMW\\ISPI\\TRIC\\ISTALauncher";
 
         private const string CONFIG_FILE = "Configuration file";
 
@@ -127,6 +134,8 @@ namespace PsdzClient.Core
         private static bool areSDPPacksInvalid;
 
         private static bool? ignoreRegKeys;
+
+        private static bool? isConwoyDataProviderConigured;
 
         private static bool runIstaRsuRepairMode;
 
@@ -224,15 +233,13 @@ namespace PsdzClient.Core
         {
             get
             {
-                if (OperationalMode != 0)
+                if (OperationalMode != OperationalMode.ISTA)
                 {
                     return OperationalMode == OperationalMode.ISTA_PLUS;
                 }
                 return true;
             }
         }
-
-        public static bool IsISTAModeTS => OperationalMode == OperationalMode.TELESERVICE;
 #pragma warning restore CS0618 // Type or member is obsolete
 
         public static UiBrand SelectedBrand
