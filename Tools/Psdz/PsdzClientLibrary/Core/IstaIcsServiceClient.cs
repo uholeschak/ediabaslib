@@ -230,7 +230,8 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-        public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature)
+        // [UH] get from registry or default value
+        public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature, bool checkLbps = true)
         {
             string configString = ConfigSettings.getConfigString(LBPFeatureSwitches.FeatureRegistryKey(feature));
             if (!string.IsNullOrEmpty(configString) && bool.TryParse(configString, out var result))
@@ -246,6 +247,16 @@ namespace PsdzClient.Core
             return false;
         }
 
+        public string GetLoginDbOperationRetryCount()
+        {
+            return string.Empty;
+        }
+
+        public string GetLoginDbTimeoutTermToTermRule()
+        {
+            return string.Empty;
+        }
+
         public bool GetSec4DiagEnabledInBackground()
         {
             return false;
@@ -254,6 +265,21 @@ namespace PsdzClient.Core
         public string GetNVIWhitelisteEReihe()
         {
             return string.Empty;
+        }
+
+        public string GetTricCloudUrl()
+        {
+            return string.Empty;
+        }
+
+        public int? GetJvmHeapspace()
+        {
+            return null;
+        }
+
+        public int? GetTimeoutLengthWebserviceStart()
+        {
+            return null;
         }
     }
 }
