@@ -1,11 +1,12 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient.Utility;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
@@ -84,7 +85,7 @@ namespace PsdzClient.Core
             }
             else
             {
-                flag = vec.hasSA(saLaPaById.Name);
+                flag = VehicleHelper.HasSA(vec, saLaPaById.Name);
                 logger.Debug("SaLaPaExpression.Evaluate()", "SALAPA: {0} result:{1} [original rule: {2}]", saLaPaById.Name, flag, value);
             }
             return flag;

@@ -1531,10 +1531,6 @@ namespace PsdzClient.Core
 
         public typeECU_Transaction getECUTransaction(ECU transECU, string transId)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
             if (transECU == null)
             {
                 return null;
@@ -1565,10 +1561,6 @@ namespace PsdzClient.Core
 
         public bool hasBusType(BusType bus)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
             if (base.ECU != null)
             {
                 foreach (ECU item in base.ECU)
@@ -1582,12 +1574,8 @@ namespace PsdzClient.Core
             return false;
         }
 
-        public bool hasSA(string checkSA)
+        public bool HasSA(string checkSA)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
             if (string.IsNullOrEmpty(checkSA))
             {
                 Log.Warning("CoreFramework.hasSA()", "checkSA was null or empty");
@@ -1654,10 +1642,6 @@ namespace PsdzClient.Core
 
         public bool? hasFFM(string checkFFM)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
             if (string.IsNullOrEmpty(checkFFM))
             {
                 Log.Warning("CoreFramework.hasFFM()", "checkFFM was null or empty");
@@ -1698,10 +1682,6 @@ namespace PsdzClient.Core
 
         public ECU getECU(long? sgAdr)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
             try
             {
                 foreach (ECU item in base.ECU)
@@ -1737,10 +1717,6 @@ namespace PsdzClient.Core
 
         public ECU getECU(long? sgAdr, long? subAddress)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
             try
             {
                 foreach (ECU item in base.ECU)
@@ -1770,10 +1746,6 @@ namespace PsdzClient.Core
 
         public IEcu getECUbyECU_SGBD(string ECU_SGBD)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed!!!");
-            }
             if (string.IsNullOrEmpty(ECU_SGBD))
             {
                 return null;
@@ -1801,10 +1773,6 @@ namespace PsdzClient.Core
 
         public IEcu getECUbyTITLE_ECUTREE(string grobName)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
             if (string.IsNullOrEmpty(grobName))
             {
                 return null;
@@ -1828,10 +1796,6 @@ namespace PsdzClient.Core
 
         public ECU getECUbyECU_GRUPPE(string ECU_GRUPPE)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
             if (string.IsNullOrEmpty(ECU_GRUPPE))
             {
                 Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "parameter was null or empty");
@@ -1874,10 +1838,6 @@ namespace PsdzClient.Core
 
         public uint getDiagProtECUCount(typeDiagProtocoll ecuDiag)
         {
-            if (!CoreFramework.validLicense)
-            {
-                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
-            }
             uint num = 0u;
             try
             {

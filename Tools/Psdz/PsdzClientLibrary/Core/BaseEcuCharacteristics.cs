@@ -778,7 +778,7 @@ namespace PsdzClient.Core
                     {
                         continue;
                     }
-                    string group = array3[1];
+                    string text2 = array3[1];
                     if (vecInfo.getECU(result) != null || !array3[2].Contains(value))
                     {
                         continue;
@@ -811,24 +811,24 @@ namespace PsdzClient.Core
                         goto IL_01cb;
                     }
                     goto end_IL_0039;
-                IL_0219:
+                    IL_0219:
                     string[] array4 = array3[3].Split('&');
                     bool flag = true;
                     string[] array5 = array4;
-                    foreach (string text2 in array5)
+                    foreach (string text3 in array5)
                     {
-                        if (!string.IsNullOrEmpty(text2))
+                        if (!string.IsNullOrEmpty(text3))
                         {
-                            flag = ((!text2.StartsWith("-", StringComparison.Ordinal)) ? (flag & vecInfo.hasSA(text2)) : (flag & !vecInfo.hasSA(text2.Replace("-", string.Empty))));
+                            flag = ((!text3.StartsWith("-", StringComparison.Ordinal)) ? (flag & vecInfo.HasSA(text3)) : (flag & !vecInfo.HasSA(text3.Replace("-", string.Empty))));
                         }
                     }
                     if (flag)
                     {
-                        ECU item = CreateECU(result, group, vecInfo.VCI?.VCIType);
+                        ECU item = CreateECU(result, text2, vecInfo.VCI?.VCIType);
                         vecInfo.ECU.AddIfNotContains(item);
                     }
                     goto end_IL_0039;
-                IL_01cb:
+                    IL_01cb:
                     if (string.IsNullOrEmpty(array3[6]) || array3[6].Length != 6)
                     {
                         goto IL_0219;
@@ -838,7 +838,7 @@ namespace PsdzClient.Core
                     {
                         goto IL_0219;
                     }
-                end_IL_0039:;
+                    end_IL_0039:;
                 }
                 catch (Exception exception)
                 {

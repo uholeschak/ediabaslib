@@ -225,7 +225,7 @@ namespace PsdzClient.Core
                 vecInfo.ECU = new ObservableCollection<ECU>();
             }
             HashSet<int> hashSet = new HashSet<int>();
-            if (vecInfo.hasSA("369"))
+            if (vecInfo.HasSA("369"))
             {
                 hashSet.Add(92);
             }

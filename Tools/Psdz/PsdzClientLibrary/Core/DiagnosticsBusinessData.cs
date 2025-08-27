@@ -254,19 +254,7 @@ namespace PsdzClient.Core
             "MFxx", "MFx-S", "MRKxx"
         };
 
-        private const string rsuStopModuleName = "ABL-DIT-AG6510_RSU_STOP";
-
-        private const string rsuStartModuleName = "ABL-DIT-AG6510_RSU_START";
-
-        private const string checkVoltageModuleName = "ABL-LIF-FAHRZEUGDATEN__BATTERIE";
-
-        private const string requestApplicationNumberAndUpgradeModuleName = "ABL-GEN-DETERMINE_REFURBISH_SWID";
-
-        private const string serviceHistoryActionModuleName = "ABL-WAR-AS6100_SERVICEHISTORIE_AIR";
-
-        private readonly string[] VarianteListFor14DigitSerialNumber = new string[9] { "NBT", "NBTEVO", "ENTRYNAV", "ENAVEVO", "ENTRY", "HU_MGU", "BIS01", "MGU_02_L", "MGU_02_A" };
-
-        private string[] maxGrpListMINI = new string[31]
+        private readonly string[] maxGrpListMINI = new string[31]
         {
             "D_0008", "D_0012", "D_0013", "D_0031", "D_003B", "D_0044", "D_0050", "D_0057", "D_005B", "D_0060",
             "D_0068", "D_006A", "D_0070", "D_0074", "D_0076", "D_007F", "D_0080", "D_0081", "D_009A", "D_009C",
@@ -274,7 +262,7 @@ namespace PsdzClient.Core
             "D_ZKE_GM"
         };
 
-        private string[] maxGrpListBMWRest = new string[60]
+        private readonly string[] maxGrpListBMWRest = new string[60]
         {
             "D_0014", "D_009A", "D_0022", "D_0040", "D_0013", "D_0000", "D_0008", "D_0012", "D_0032", "D_003B",
             "D_0044", "D_0048", "D_0050", "D_0056", "D_0057", "D_005B", "D_0060", "D_0065", "D_0066", "D_0068",
@@ -284,53 +272,65 @@ namespace PsdzClient.Core
             "D_FLA", "D_MOTOR", "D_SIM", "D_STVL2", "D_STVR2", "D_SZM", "D_VGSG", "D_VVT", "D_ZKE_GM", "D_ZUHEIZ"
         };
 
-        private List<string> ereiheForGrpListBMWRest = new List<string>
+        private readonly List<string> ereiheForGrpListBMWRest = new List<string>
         {
             "E30", "E31", "E32", "E34", "E36", "E38", "E39", "E46", "E83", "E85",
             "E86"
         };
 
-        private string[] maxGrpListBMW = new string[37]
+        private readonly string[] maxGrpListBMW = new string[37]
         {
-            "D_0000", "D_0012", "D_0032", "D_003B", "D_0044", "D_0056", "D_0057", "D_005B", "D_0068", "D_006A",
-            "D_0070", "D_0072", "D_0074", "D_007F", "D_0081", "D_0080", "D_009C", "D_00A4", "D_00B0", "D_00BB",
-            "D_00C0", "D_00C8", "D_00CE", "D_00D0", "D_00E8", "D_00EA", "D_00ED", "D_00F0", "D_ABSKWP", "D_EGS",
-            "D_MOTOR", "D_SZM", "D_VGSG", "D_VVT", "D_VVT2", "D_ZKE_GM", "D_ZUHEIZ"
+        "D_0000", "D_0012", "D_0032", "D_003B", "D_0044", "D_0056", "D_0057", "D_005B", "D_0068", "D_006A",
+        "D_0070", "D_0072", "D_0074", "D_007F", "D_0081", "D_0080", "D_009C", "D_00A4", "D_00B0", "D_00BB",
+        "D_00C0", "D_00C8", "D_00CE", "D_00D0", "D_00E8", "D_00EA", "D_00ED", "D_00F0", "D_ABSKWP", "D_EGS",
+        "D_MOTOR", "D_SZM", "D_VGSG", "D_VVT", "D_VVT2", "D_ZKE_GM", "D_ZUHEIZ"
         };
 
-        private List<string> ereiheForGrpListBMW = new List<string> { "E52", "E53" };
+        private readonly List<string> ereiheForGrpListBMW = new List<string> { "E52", "E53" };
 
-        private string[] maxGrpListFull = new string[96]
+        private readonly string[] maxGrpListFull = new string[96]
         {
-            "d_egs", "d_0000", "d_0008", "d_000d", "d_0010", "d_0011", "d_0012", "d_motor", "d_0013", "d_0014",
-            "d_0015", "d_0016", "d_0020", "d_0021", "d_0022", "d_0024", "d_0028", "d_002c", "d_002e", "d_0030",
-            "d_0032", "d_0035", "d_0036", "d_003b", "d_0040", "d_0044", "d_0045", "d_0050", "d_0056", "d_0057",
-            "d_0059", "d_005a", "d_005b", "d_0060", "d_0068", "d_0069", "d_006a", "d_006c", "d_0070", "d_0071",
-            "d_0072", "d_007f", "d_0080", "d_0086", "d_0099", "d_009a", "d_009b", "d_009c", "d_009d", "d_009e",
-            "d_00a0", "d_00a4", "d_00a6", "d_00a7", "d_00ac", "d_00b0", "d_00b9", "d_00bb", "d_00c0", "d_00c8",
-            "d_00cd", "d_00d0", "d_00da", "d_00e0", "d_00e8", "d_00ed", "d_00f0", "d_00f5", "d_00ff", "d_b8_d0",
-            "", "d_m60_10", "d_m60_12", "d_spmbt", "d_spmft", "d_szm", "d_zke3bt", "d_zke3ft", "d_zke3pm", "d_zke3sb",
-            "d_zke3sd", "d_zke_gm", "d_zuheiz", "d_sitz_f", "d_sitz_b", "d_0047", "d_0048", "d_00ce", "d_00ea", "d_abskwp",
-            "d_0031", "d_0019", "d_smac", "d_0081", "d_xen_l", "d_xen_r"
+        "d_egs", "d_0000", "d_0008", "d_000d", "d_0010", "d_0011", "d_0012", "d_motor", "d_0013", "d_0014",
+        "d_0015", "d_0016", "d_0020", "d_0021", "d_0022", "d_0024", "d_0028", "d_002c", "d_002e", "d_0030",
+        "d_0032", "d_0035", "d_0036", "d_003b", "d_0040", "d_0044", "d_0045", "d_0050", "d_0056", "d_0057",
+        "d_0059", "d_005a", "d_005b", "d_0060", "d_0068", "d_0069", "d_006a", "d_006c", "d_0070", "d_0071",
+        "d_0072", "d_007f", "d_0080", "d_0086", "d_0099", "d_009a", "d_009b", "d_009c", "d_009d", "d_009e",
+        "d_00a0", "d_00a4", "d_00a6", "d_00a7", "d_00ac", "d_00b0", "d_00b9", "d_00bb", "d_00c0", "d_00c8",
+        "d_00cd", "d_00d0", "d_00da", "d_00e0", "d_00e8", "d_00ed", "d_00f0", "d_00f5", "d_00ff", "d_b8_d0",
+        "", "d_m60_10", "d_m60_12", "d_spmbt", "d_spmft", "d_szm", "d_zke3bt", "d_zke3ft", "d_zke3pm", "d_zke3sb",
+        "d_zke3sd", "d_zke_gm", "d_zuheiz", "d_sitz_f", "d_sitz_b", "d_0047", "d_0048", "d_00ce", "d_00ea", "d_abskwp",
+        "d_0031", "d_0019", "d_smac", "d_0081", "d_xen_l", "d_xen_r"
         };
 
-        private string[] newFaultMemoryEnabledESeriesLifeCycles = new string[8] { "F95-1", "F96-1", "G05-1", "G06-1", "G07-1", "G09-0", "G18-1", "RR25-0" };
+        private readonly string[] varianteListFor14DigitSerialNumber = new string[9] { "NBT", "NBTEVO", "ENTRYNAV", "ENAVEVO", "ENTRY", "HU_MGU", "BIS01", "MGU_02_L", "MGU_02_A" };
+
+        private readonly string[] newFaultMemoryEnabledESeriesLifeCycles = new string[8] { "F95-1", "F96-1", "G05-1", "G06-1", "G07-1", "G09-0", "G18-1", "RR25-0" };
 
         private readonly List<string> ereiheWithoutFA = new List<string>
-        {
-            "E36", "E38", "E39", "E52", "E53", "R50", "R52", "R53", "E83", "E85",
-            "E86", "E30", "E31", "E32", "E34"
-        };
+    {
+        "E36", "E38", "E39", "E52", "E53", "R50", "R52", "R53", "E83", "E85",
+        "E86", "E30", "E31", "E32", "E34"
+    };
+
+        private const string RsuStopModuleName = "ABL-DIT-AG6510_RSU_STOP";
+
+        private const string RsuStartModuleName = "ABL-DIT-AG6510_RSU_START";
+
+        private const string CheckVoltageModuleName = "ABL-LIF-FAHRZEUGDATEN__BATTERIE";
+
+        private const string RequestApplicationNumberAndUpgradeModuleName = "ABL-GEN-DETERMINE_REFURBISH_SWID";
+
+        private const string ServiceHistoryActionModuleName = "ABL-WAR-AS6100_SERVICEHISTORIE_AIR";
 
         private static IDictionary<string, string> Mapping = new Dictionary<string, string>
-        {
-            { "STATUS_VCM_BACKUP_FAHRZEUGAUFTRAG_LESEN", "STATUS_VCM_BACKUP_FAHRZEUGAUFTRAG_LESEN_SP2021" },
-            { "STATUS_LESEN", "STATUS_LESEN" },
-            { "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR" },
-            { "STATUS_GWSZ_ANZEIGE", "STATUS_LESEN" },
-            { "CBS_DATEN_LESEN", "STATUS_CBS_DATEN_LESEN" },
-            { "CBS_INFO", "STATUS_CBS_INFO" }
-        };
+    {
+        { "STATUS_VCM_BACKUP_FAHRZEUGAUFTRAG_LESEN", "STATUS_VCM_BACKUP_FAHRZEUGAUFTRAG_LESEN_SP2021" },
+        { "STATUS_LESEN", "STATUS_LESEN" },
+        { "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR" },
+        { "STATUS_GWSZ_ANZEIGE", "STATUS_LESEN" },
+        { "CBS_DATEN_LESEN", "STATUS_CBS_DATEN_LESEN" },
+        { "CBS_INFO", "STATUS_CBS_INFO" }
+    };
 
         public List<string> ProductLinesEpmBlacklist => new List<string> { "PL0", "PL2", "PL3", "PL3-ALT", "PL4", "PL5", "PL5-ALT", "PL6", "PL6-ALT", "PL7" };
 
@@ -814,7 +814,7 @@ namespace PsdzClient.Core
                         case "PL0":
                             if (vecInfo.Ereihe == "E36")
                             {
-                                foreach (ECU item in vecInfo.ECU)
+                                foreach (IEcu item in vecInfo.ECU)
                                 {
                                     if (item.ID_SG_ADR == 128)
                                     {
@@ -1018,15 +1018,15 @@ namespace PsdzClient.Core
         }
 
         // ToDo: Check on update
-        public BNType GetBNType(IVehicle vecInfo)
+        public BNType GetBNType(IVehicle vehicle)
         {
-            return (BNType)GetBordnetType(vecInfo.Baureihenverbund, vecInfo.Prodart, vecInfo.Ereihe, new NugetLogger());
+            return (BNType)GetBordnetType(vehicle.Baureihenverbund, vehicle.Prodart, vehicle.Ereihe, new NugetLogger());
         }
 
         // ToDo: Check on update
         public void BN2000HandleKMMFixes(IVehicle vecInfo, IEcuKom ecuKom, bool resetMOSTDone, IProgressMonitor monitor, int retryCount, DoECUIdentDelegate doECUIdentDelegate)
         {
-            if ((vecInfo.hasSA("6VC") || vecInfo.hasSA("612") || vecInfo.hasSA("633")) && vecInfo.getECU(54L) == null)
+            if ((vecInfo.HasSA("6VC") || vecInfo.HasSA("612") || vecInfo.HasSA("633")) && vecInfo.getECU(54L) == null)
             {
                 ECU eCU = new ECU();
                 eCU.BUS = BusType.MOST;
@@ -1036,7 +1036,7 @@ namespace PsdzClient.Core
                 vecInfo.AddEcu(eCU);
                 doECUIdentDelegate(vecInfo, eCU, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
-            if (vecInfo.hasSA("610") && vecInfo.getECU(61L) == null)
+            if (vecInfo.HasSA("610") && vecInfo.getECU(61L) == null)
             {
                 ECU eCU2 = new ECU();
                 eCU2.BUS = BusType.MOST;
@@ -1046,7 +1046,7 @@ namespace PsdzClient.Core
                 vecInfo.AddEcu(eCU2);
                 doECUIdentDelegate(vecInfo, eCU2, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
-            if (vecInfo.hasSA("672") && vecInfo.getECU(60L) == null)
+            if (vecInfo.HasSA("672") && vecInfo.getECU(60L) == null)
             {
                 ECU eCU3 = new ECU();
                 eCU3.BUS = BusType.MOST;
@@ -1056,7 +1056,7 @@ namespace PsdzClient.Core
                 vecInfo.AddEcu(eCU3);
                 doECUIdentDelegate(vecInfo, eCU3, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
-            if (vecInfo.hasSA("696") && vecInfo.getECU(49L) == null)
+            if (vecInfo.HasSA("696") && vecInfo.getECU(49L) == null)
             {
                 ECU eCU4 = new ECU();
                 eCU4.BUS = BusType.MOST;
@@ -1103,7 +1103,7 @@ namespace PsdzClient.Core
             IEcu eCUbyECU_GRUPPE = vecInfo.getECUbyECU_GRUPPE("D_RLS");
             if (eCUbyECU_GRUPPE == null && "e89x".Equals(vecInfo.MainSeriesSgbd, StringComparison.OrdinalIgnoreCase))
             {
-                if (vecInfo.hasSA("521"))
+                if (vecInfo.HasSA("521"))
                 {
                     eCUbyECU_GRUPPE = new ECU();
                     eCUbyECU_GRUPPE.ECU_GRUPPE = "D_RLS";
@@ -1128,7 +1128,7 @@ namespace PsdzClient.Core
             if (eCUbyECU_GRUPPE2 != null && !eCUbyECU_GRUPPE2.IDENT_SUCCESSFULLY)
             {
                 IEcu eCUbyECU_GRUPPE3 = vecInfo.getECUbyECU_GRUPPE("D_MMI");
-                if ((eCUbyECU_GRUPPE3.IDENT_SUCCESSFULLY && string.Compare(eCUbyECU_GRUPPE3.VARIANTE, "RAD2", StringComparison.OrdinalIgnoreCase) == 0) || vecInfo.hasSA("6VC") || vecInfo.getECUbyECU_SGBD("CMEDIAR") != null)
+                if ((eCUbyECU_GRUPPE3.IDENT_SUCCESSFULLY && string.Compare(eCUbyECU_GRUPPE3.VARIANTE, "RAD2", StringComparison.OrdinalIgnoreCase) == 0) || vecInfo.HasSA("6VC") || vecInfo.getECUbyECU_SGBD("CMEDIAR") != null)
                 {
                     Log.Info("VehicleIdent.doECUIdent()", "found RAD2 with built-in USB/audio (SA 6FL/6ND/6NE)");
                     ecusToRemoveKMM.Add(eCUbyECU_GRUPPE2);
@@ -1234,7 +1234,7 @@ namespace PsdzClient.Core
 
         public void Add14DigitFakeSerialNumberToFstdat(IVehicle vecInfo, IEnumerable<IEcuJob> jobList)
         {
-            IEnumerable<IEcu> enumerable = vecInfo.ECU.Where((IEcu x) => VarianteListFor14DigitSerialNumber.Contains(x.VARIANTE) && x.SERIENNUMMER != null && x.SERIENNUMMER.Length == 14);
+            IEnumerable<IEcu> enumerable = vecInfo.ECU.Where((IEcu x) => varianteListFor14DigitSerialNumber.Contains(x.VARIANTE) && x.SERIENNUMMER != null && x.SERIENNUMMER.Length == 14);
             IEnumerable<IEcuJob> source = jobList.Where((IEcuJob x) => x.JobName.Equals("SERIENNUMMER_LESEN"));
             Dictionary<IEcu, ECUJob> dictionary = new Dictionary<IEcu, ECUJob>();
             foreach (IEcu ecu in enumerable)
@@ -1268,7 +1268,7 @@ namespace PsdzClient.Core
         {
             foreach (IEcu ecu in ecus)
             {
-                if (!(ecu is ECU eCU) || !VarianteListFor14DigitSerialNumber.Contains(eCU.VARIANTE))
+                if (!(ecu is ECU eCU) || !varianteListFor14DigitSerialNumber.Contains(eCU.VARIANTE))
                 {
                     continue;
                 }
@@ -1298,7 +1298,21 @@ namespace PsdzClient.Core
                 }
             }
         }
-
+#if false
+        public void ShowIsarPopup(IVehicle vecInfo, IFFMDynamicResolver fFMResolver, IInteractionService services)
+        {
+            InfoObject documentAndValidateAgainstRuleEvaluation = DocumentUtlitiy.GetDocumentAndValidateAgainstRuleEvaluation(vecInfo, fFMResolver, "POP-IDE%");
+            if (documentAndValidateAgainstRuleEvaluation != null)
+            {
+                services.Register(new InteractionISARPopupModel
+                {
+                    Html = documentAndValidateAgainstRuleEvaluation.Content.TransformedDocument,
+                    Title = documentAndValidateAgainstRuleEvaluation.Title,
+                    DialogSize = 2
+                });
+            }
+        }
+#endif
         public bool ShouldNotValidateFAForOldCars(string ereihe, DateTime constructionDate)
         {
             if (ereiheWithoutFA.Contains(ereihe) || (ereihe == "E46" && constructionDate < new DateTime(2004, 4, 1)))
@@ -1428,7 +1442,6 @@ namespace PsdzClient.Core
             return result;
         }
 
-
         public IEcuJob ClampShutdownManagement(IVehicle vecInfo, IEcuKom ecuKom, int retryCount = 2, int i_geschw_schwelle = 30)
         {
             IEcuJob clampJob = null;
@@ -1542,6 +1555,10 @@ namespace PsdzClient.Core
                 Log.Info(Log.CurrentMethod(), "No G_KOMBI and G_MMI ecu group exists in the vehicle. CCM readout will be skipped.");
                 return null;
             }
+            if (ecu.VARIANTE == "IDCEVO25")
+            {
+                param = "ARG;BMW_CC_DATA_RECORD";
+            }
             Log.Info(Log.CurrentMethod(), "CCM readout will use '" + ecu.VARIANTE + "' ecu.");
             return ecuKom.ApiJobWithRetries(ecu.VARIANTE, job, param, string.Empty, 1);
         }
@@ -1553,12 +1570,23 @@ namespace PsdzClient.Core
 
         public string SgbdNext(IEcuKom ecuKom)
         {
-            Dictionary<string, EcuKomSamples> dictionary = new Dictionary<string, EcuKomSamples>();
-            dictionary.Add("FIELD", new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x1828", 1, "string[]", "STAT_LOG_CHANNEL_NAMES[].LOG_CHANNEL_NAME", -1));
-            dictionary.Add("FIELD2D", new EcuKomSamples("MARS01", "STEUERN_ROUTINE", "ID;0x1118;STR", 1, "double[,]", "IKE_ENTRIES[].CHILD_SA_ENTRIES[].PROTOCOL", -1));
-            dictionary.Add("FIELDxD", new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x0000", 1, "int[,,,,,]", "A[].B[].C[].D[].E[].F[].V", -1));
+            Dictionary<string, EcuKomSamples> obj = new Dictionary<string, EcuKomSamples>
+        {
+            {
+                "FIELD",
+                new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x1828", 1, "string[]", "STAT_LOG_CHANNEL_NAMES[].LOG_CHANNEL_NAME", -1)
+            },
+            {
+                "FIELD2D",
+                new EcuKomSamples("MARS01", "STEUERN_ROUTINE", "ID;0x1118;STR", 1, "double[,]", "IKE_ENTRIES[].CHILD_SA_ENTRIES[].PROTOCOL", -1)
+            },
+            {
+                "FIELDxD",
+                new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x0000", 1, "int[,,,,,]", "A[].B[].C[].D[].E[].F[].V", -1)
+            }
+        };
             List<EcuKomSamples> list = new List<EcuKomSamples>();
-            foreach (KeyValuePair<string, EcuKomSamples> item in dictionary)
+            foreach (KeyValuePair<string, EcuKomSamples> item in obj)
             {
                 list.Add(item.Value);
             }
@@ -1748,7 +1776,6 @@ namespace PsdzClient.Core
             }
             return null;
         }
-
 
         internal string DoExistingJob(IEcuKom ecukom)
         {

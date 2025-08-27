@@ -82,8 +82,10 @@ namespace PsdzClient
 
         public enum BatteryEnum
         {
+            Unknown,
             Pb,
             LFP,
+            LFP_NCAR,
             PbNew
         }
 
@@ -3173,11 +3175,15 @@ namespace PsdzClient
                 {
                     "F80", "F82", "F83", "F90", "F91", "F92", "F93", "G80", "G81", "G82",
                     "G83"
-                }.Contains(vecInfo.Ereihe) || (vecInfo.Ereihe.StartsWith("N", StringComparison.OrdinalIgnoreCase) && vecInfo.IsBev()))
+                }.Contains(vecInfo.Ereihe))
             {
                 return BatteryEnum.LFP;
             }
-            if (vecInfo.IsBev() || vecInfo.IsPhev() || vecInfo.IsHybr() || vecInfo.IsErex() || vecInfo.Ereihe.Equals("I01") || vecInfo.hasSA("1CE"))
+            if ((vecInfo.Ereihe.StartsWith("N", StringComparison.OrdinalIgnoreCase) || vecInfo.Ereihe.StartsWith("Z", StringComparison.OrdinalIgnoreCase)) && vecInfo.IsBev())
+            {
+                return BatteryEnum.LFP_NCAR;
+            }
+            if (vecInfo.IsBev() || vecInfo.IsPhev() || vecInfo.IsHybr() || vecInfo.IsErex() || vecInfo.Ereihe.Equals("I01") || vecInfo.HasSA("1CE"))
             {
                 return BatteryEnum.PbNew;
             }
@@ -3186,7 +3192,7 @@ namespace PsdzClient
 
         public static bool IsVehicleAnAlpina(Vehicle vehicle)
         {
-            return vehicle.hasSA("920");
+            return vehicle.HasSA("920");
         }
 
         // ToDo: Check on update

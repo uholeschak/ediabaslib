@@ -358,6 +358,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool hasBusType(BusType bus);
 
-        bool hasSA(string checkSA);
+        bool HasSA(string checkSA);
     }
 }

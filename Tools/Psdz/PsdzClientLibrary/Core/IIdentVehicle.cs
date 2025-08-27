@@ -43,10 +43,12 @@ namespace PsdzClient.Core
 
         IReactorFa GetFaInstance();
 
-        bool hasSA(string checkSA);
+        bool HasSA(string checkSA);
 
         void AddEcu(IIdentEcu ecu);
 
         bool IsPreE65Vehicle();
+
+        bool IsVehicleWithOnlyVin7();
     }
 }

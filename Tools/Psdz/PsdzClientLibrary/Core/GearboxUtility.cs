@@ -65,7 +65,7 @@ namespace PsdzClient.Core
             else if (HasVehicleGearboxECU(vehicle) || vehicle.getECU(24L) != null)
             {
                 ECU eCU = vehicle.getECU(24L);
-                if ((eCU == null && (vehicle.VehicleIdentLevel == IdentificationLevel.VINVehicleReadout || vehicle.VehicleIdentLevel == IdentificationLevel.VINVehicleReadoutOnlineUpdated)) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "DKG", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "GSGE", 0, 4, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "SMG", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "SSG", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "GSD", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || vehicle.hasSA("2MK") || vehicle.hasSA("206") || vehicle.hasSA("2TC"))
+                if ((eCU == null && (vehicle.VehicleIdentLevel == IdentificationLevel.VINVehicleReadout || vehicle.VehicleIdentLevel == IdentificationLevel.VINVehicleReadoutOnlineUpdated)) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "DKG", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "GSGE", 0, 4, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "SMG", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "SSG", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || (eCU != null && !string.IsNullOrEmpty(eCU.VARIANTE) && string.Compare(eCU.VARIANTE, 0, "GSD", 0, 3, StringComparison.OrdinalIgnoreCase) == 0) || vehicle.HasSA("2MK") || vehicle.HasSA("206") || vehicle.HasSA("2TC"))
                 {
                     if ("AUT".Equals(vehicle.Getriebe, StringComparison.OrdinalIgnoreCase))
                     {
@@ -107,7 +107,7 @@ namespace PsdzClient.Core
             {
                 return true;
             }
-            if (vehicle.hasSA("205") || vehicle.hasSA("206") || vehicle.hasSA("2TB") || vehicle.hasSA("2TC") || vehicle.hasSA("2MK"))
+            if (vehicle.HasSA("205") || vehicle.HasSA("206") || vehicle.HasSA("2TB") || vehicle.HasSA("2TC") || vehicle.HasSA("2MK"))
             {
                 return true;
             }

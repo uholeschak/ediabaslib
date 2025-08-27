@@ -915,6 +915,7 @@ namespace PsdzClient.Programming
                     IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
                     VecInfo.BNType = service.GetBNType(VecInfo);
                 }
+                // [UH] Extra block start
                 if (string.IsNullOrEmpty(VecInfo.Prodart))
                 {
                     if (!VecInfo.Classification.IsMotorcycle())
@@ -979,15 +980,16 @@ namespace PsdzClient.Programming
                                 break;
                         }
                     }
-                    if (VecInfo.hasSA("807") && VecInfo.Prodart == "P")
+                    if (VecInfo.HasSA("807") && VecInfo.Prodart == "P")
                     {
                         VecInfo.Land = "JP";
                     }
-                    if (VecInfo.hasSA("8AA") && VecInfo.Prodart == "P")
+                    if (VecInfo.HasSA("8AA") && VecInfo.Prodart == "P")
                     {
                         VecInfo.Land = "CHN";
                     }
                 }
+                // [UH] Extra block end
                 if (string.IsNullOrEmpty(VecInfo.Modelljahr) && !string.IsNullOrEmpty(VecInfo.ILevelWerk))
                 {
                     try
@@ -1212,7 +1214,7 @@ namespace PsdzClient.Programming
                         return false;
                     }
 
-                    if (!transmissionSaByTypeKey.Any(sa => VecInfo.hasSA(sa.Item1)))
+                    if (!transmissionSaByTypeKey.Any(sa => VecInfo.HasSA(sa.Item1)))
                     {
                         List<Tuple<string, string>> list = transmissionSaByTypeKey.Where(sa => sa.Item2 == "T").ToList();
                         if (list.Count == 1)
