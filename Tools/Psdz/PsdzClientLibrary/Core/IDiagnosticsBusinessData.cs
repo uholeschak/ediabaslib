@@ -38,9 +38,9 @@ namespace PsdzClient.Core
 
         bool IsNewFaultMemoryEnabled(IVehicle vecInfo);
 
-        string GetMainSeriesSgbd(Vehicle vecInfo);
+        string GetMainSeriesSgbd(IIdentVehicle vecInfo);
 
-        string GetMainSeriesSgbdAdditional(Vehicle vecInfo);
+        string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo);
 
         List<int> GetGatewayEcuAdresses(IVehicle vecInfo);
 

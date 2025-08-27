@@ -737,12 +737,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        public new string GetMainSeriesSgbd(Vehicle vecInfo)
+        public new string GetMainSeriesSgbd(IIdentVehicle vecInfo)
         {
             return base.GetMainSeriesSgbd(vecInfo);
         }
 
-        public string GetMainSeriesSgbdAdditional(Vehicle vecInfo)
+        public string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo)
         {
             return GetMainSeriesSgbdAdditional(vecInfo, new NugetLogger());
         }
