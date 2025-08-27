@@ -735,7 +735,6 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-
         private void CreateEdiabasPublicKeyIfNotExist(IVciDevice device)
         {
             if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service) && service.CheckIfEdiabasPublicKeyExists())
@@ -989,6 +988,7 @@ namespace PsdzClient.Core.Container
             {
                 if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service) && ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out var service2))
                 {
+                    service.EdiabasPublicKey = service.GetPublicKeyFromEdiabas();
                     string configString = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty);
                     string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty);
                     if (ConfigSettings.IsOssModeActive)
@@ -1164,8 +1164,9 @@ namespace PsdzClient.Core.Container
         {
             if (ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
             {
-                string reserved = $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162};selectCertificate={service.CertificateFilePathWithoutEnding};SSLPort={50163};Authentication=S29;NetworkProtocol=SSL";
-                return ApiInitExt("ENET", "_", "Rheingold", reserved);
+                string text = "";
+                text = (device.IsSimulation ? $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162}" : $"RemoteHost={device.IPAddress};DiagnosticPort={50160};ControlPort={50161};PortDoIP={50162};selectCertificate={service.CertificateFilePathWithoutEnding};SSLPort={50163};Authentication=S29;NetworkProtocol=SSL");
+                return ApiInitExt("ENET", "_", "Rheingold", text);
             }
             return false;
         }
