@@ -630,8 +630,6 @@ namespace PsdzClient.Core.Container
                     return InitializeIcomDevice(device, logging, isDoIP, slpDoIpFromIcom);
                 case VCIDeviceType.ENET:
                     return InitializeEnetDevice(device);
-                case VCIDeviceType.TELESERVICE:
-                    return InitializeTeleserviceDevice(device, logging);
                 case VCIDeviceType.PTT:
                     return InitializePttDevice(device, logging, isDoIP);
                 case VCIDeviceType.SIM:
@@ -677,13 +675,6 @@ namespace PsdzClient.Core.Container
                 return api.apiInitExt("ENET", "_", "Rheingold", reserved);
             }
             return api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=6801;ControlPort=6811");
-        }
-
-        private bool InitializeTeleserviceDevice(IVciDevice device, bool logging)
-        {
-            string text = string.Format(CultureInfo.InvariantCulture, "CompoundID={0};UsePdmResult={1}", device.DevId, device.UsePdmResult ? "true" : "false");
-            Log.Info(Log.CurrentMethod(), "calling TELESERVICE api init with parameter: {0}", text);
-            return api.apiInitExt("TELE", "_", "Rheingold", text);
         }
 
         private void LogDeviceInfo(bool logging)

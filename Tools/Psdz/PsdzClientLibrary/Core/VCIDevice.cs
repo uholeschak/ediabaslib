@@ -16,10 +16,132 @@ namespace PsdzClient.Core
         public enum DeviceTypeDetails
         {
             ICOM = 1,
-            ICOMNext,
+            ICOMNext = 2,
             Unspecified = 0
         }
-        
+
+        private readonly HashSet<DeviceState> connectableStates = new HashSet<DeviceState>
+        {
+            DeviceState.Init,
+            DeviceState.Lost,
+            DeviceState.Sleep,
+            DeviceState.Free,
+            DeviceState.Found,
+            DeviceState.Unregistered,
+            DeviceState.Unsupported
+        };
+
+        private string receivingIP;
+
+        private bool isMarkedToDefault;
+
+        private BasicFeaturesVci basicFeaturesVci;
+
+        private string accuCapacityField;
+
+        private string kl15VoltageField;
+
+        private string kl30VoltageField;
+
+        private string ownerField;
+
+        private string descriptionField;
+
+        private string stateField;
+
+        private long leastSigBitsField;
+
+        private bool leastSigBitsSpecified1Field;
+
+        private long mostSigBitsField;
+
+        private bool mostSigBitsSpecified1Field;
+
+        private long reserveHandleField;
+
+        private DateTime scanDateField;
+
+        private string serviceField;
+
+        private string kl15TriggerField;
+
+        private string kl30TriggerField;
+
+        private string uUIDField;
+
+        private string imageVersionBootField;
+
+        private string imageVersionApplicationField;
+
+        private string imageVersionPackageField;
+
+        private string counterField;
+
+        private VCIDeviceType vCITypeField;
+
+        private VCIReservationType vCIReservationField;
+
+        private string signalStrengthField;
+
+        private string gatewayField;
+
+        private string vciChannelsField;
+
+        private string netmaskField;
+
+        private string networkTypeField;
+
+        private string iPAddressField;
+
+        private int? portField;
+
+        private int? controlPortField;
+
+        private string devIdField;
+
+        private string devTypeField;
+
+        private string devTypeExtField;
+
+        private string macAddressField;
+
+        private string wlanMacAddressField;
+
+        private string description1Field;
+
+        private string serialField;
+
+        private string vINField;
+
+        private string imagenameField;
+
+        private string colorField;
+
+        private string iFHParameterField;
+
+        private string iFHReservedField;
+
+        private bool forceReInitField;
+
+        private bool usePdmResultField;
+
+        private string pwfStateField;
+
+        private bool connectionLossRecognizedField;
+
+        private bool reconnectFailedField;
+
+        private bool underVoltageRecognizedField;
+
+        private DateTime underVoltageRecognizedLastTimeField;
+
+        private bool underVoltageRecognizedLastTimeFieldSpecified;
+
+        private bool communicationDisturbanceRecognizedField;
+
+        // [UH] added
+        private ClientContext _clientContext;
+
         public VCIDevice(VCIDeviceType vciType, string devid, string description)
 		{
 			this.ScanDate = DateTime.Now;
@@ -226,29 +348,50 @@ namespace PsdzClient.Core
 			return false;
 		}
 
-		public string getVCIDescription(VCIDeviceType devType)
-		{
-			switch (devType)
-			{
-				case VCIDeviceType.ENET:
-					return "Ethernet connection";
-				case VCIDeviceType.ICOM:
-					return "Vehicle diagnostic interface";
-				case VCIDeviceType.IMIB:
-					return "Measurement interface";
-				case VCIDeviceType.EDIABAS:
-					return "Ediabas connection";
-				case VCIDeviceType.SIM:
-					return "Simulation";
-				case VCIDeviceType.TELESERVICE:
-					return "Teleservice";
-				case VCIDeviceType.PTT:
-					return "PassThruDevice";
-			}
-			return "Unknown";
-		}
+        public string getVCIDescription(VCIDeviceType devType)
+        {
+            switch (ConfigSettings.CurrentUICulture)
+            {
+                case "de-DE":
+                    switch (devType)
+                    {
+                        case VCIDeviceType.ICOM:
+                            return "Fahrzeug Diagnoseinterface";
+                        case VCIDeviceType.IMIB:
+                            return "Messtechnik Interface";
+                        case VCIDeviceType.ENET:
+                            return "Ethernet Direktverbindung";
+                        case VCIDeviceType.EDIABAS:
+                            return "Ediabas Direktverbindung";
+                        case VCIDeviceType.SIM:
+                            return "Simulation";
+                        case VCIDeviceType.PTT:
+                            return "PassThruDevice";
+                        default:
+                            return "Unbekannt";
+                    }
+                default:
+                    switch (devType)
+                    {
+                        case VCIDeviceType.ICOM:
+                            return "Vehicle diagnostic interface";
+                        case VCIDeviceType.IMIB:
+                            return "Measurement interface";
+                        case VCIDeviceType.ENET:
+                            return "Ethernet connection";
+                        case VCIDeviceType.EDIABAS:
+                            return "Ediabas connection";
+                        case VCIDeviceType.SIM:
+                            return "Simulation";
+                        case VCIDeviceType.PTT:
+                            return "PassThruDevice";
+                        default:
+                            return "Unknown";
+                    }
+            }
+        }
 
-		public string ToAttrList()
+        public string ToAttrList()
 		{
 			return this.ToAttrList(false);
 		}
@@ -1657,119 +1800,5 @@ namespace PsdzClient.Core
 				propertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
-
-		private readonly HashSet<DeviceState> connectableStates = new HashSet<DeviceState>
-		{
-			DeviceState.Init,
-			DeviceState.Lost,
-			DeviceState.Sleep,
-			DeviceState.Free,
-			DeviceState.Found,
-			DeviceState.Unregistered
-		};
-
-		private string receivingIP;
-
-		private bool isMarkedToDefault;
-
-		private string accuCapacityField;
-
-		private string kl15VoltageField;
-
-		private string kl30VoltageField;
-
-		private string ownerField;
-
-		private string descriptionField;
-
-		private string stateField;
-
-		private long leastSigBitsField;
-
-		private bool leastSigBitsSpecified1Field;
-
-		private long mostSigBitsField;
-
-		private bool mostSigBitsSpecified1Field;
-
-		private long reserveHandleField;
-
-		private DateTime scanDateField;
-
-		private string serviceField;
-
-		private string kl15TriggerField;
-
-		private string kl30TriggerField;
-
-		private string uUIDField;
-
-		private string imageVersionBootField;
-
-		private string imageVersionApplicationField;
-
-		private string imageVersionPackageField;
-
-		private string counterField;
-
-		private VCIDeviceType vCITypeField;
-
-		private VCIReservationType vCIReservationField;
-
-		private string signalStrengthField;
-
-		private string gatewayField;
-
-		private string vciChannelsField;
-
-		private string netmaskField;
-
-		private string networkTypeField;
-
-		private string iPAddressField;
-
-		private int? portField;
-
-		private int? controlPortField;
-
-		private string devIdField;
-
-		private string devTypeField;
-
-		private string macAddressField;
-
-		private string description1Field;
-
-		private string serialField;
-
-		private string vINField;
-
-		private string imagenameField;
-
-		private string colorField;
-
-		private string iFHParameterField;
-
-		private string iFHReservedField;
-
-		private bool forceReInitField;
-
-		private bool usePdmResultField;
-
-		private string pwfStateField;
-
-		private bool connectionLossRecognizedField;
-
-		private bool reconnectFailedField;
-
-		private bool underVoltageRecognizedField;
-
-		private DateTime underVoltageRecognizedLastTimeField;
-
-		private bool underVoltageRecognizedLastTimeFieldSpecified;
-
-		private bool communicationDisturbanceRecognizedField;
-
-        private ClientContext _clientContext;
     }
 }

@@ -16,21 +16,16 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
-    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum VCIDeviceType
     {
-        ENET,
-        ICOM,
-        IMIB,
-        EDIABAS,
-        SIM,
-        VIRTUALCHANNEL,
-        OMITEC,
-        INFOSESSION,
-        TELESERVICE,
-        IRAM,
-        PTT,
-        UNKNOWN
+        ENET = 0,
+        ICOM = 1,
+        IMIB = 2,
+        EDIABAS = 3,
+        SIM = 4,
+        INFOSESSION = 5,
+        PTT = 7,
+        UNKNOWN = 8
     }
 
     public enum DeviceState
@@ -49,7 +44,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         Unregistered,
         Blocked,
         FreeNvm,
-        FirmwareOutdated
+        FirmwareOutdated,
+        Unsupported
     }
 
     public enum NetworkType
