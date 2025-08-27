@@ -52,7 +52,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     {
         Unknown = -1,
         LAN,
-        WLAN
+        WLAN,
+        directLAN
     }
 
     [AuthorAPI(SelectableTypeDeclaration = true)]

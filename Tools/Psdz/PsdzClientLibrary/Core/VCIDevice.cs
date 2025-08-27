@@ -333,7 +333,7 @@ namespace PsdzClient.Core
             {
                 if (NetworkType == "0" || NetworkType == "2")
                 {
-                    if (LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.LAN /*&& LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.DatabaseProvider.NetworkType.directLAN*/)
+                    if (LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.LAN && LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.directLAN)
                     {
                         return false;
                     }
