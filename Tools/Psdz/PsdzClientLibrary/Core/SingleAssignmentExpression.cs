@@ -29,7 +29,7 @@ namespace PsdzClient.Core
             switch (type)
             {
                 case EExpressionType.COUNTRY:
-                    singleAssignmentExpression = new CountryExpression();
+                    singleAssignmentExpression = new CountryExpression();   // [UH] dataProvider removed
                     break;
                 case EExpressionType.ECUCLIQUE:
                     singleAssignmentExpression = new EcuCliqueExpression();
@@ -50,7 +50,7 @@ namespace PsdzClient.Core
                     singleAssignmentExpression = new EquipmentExpression();
                     break;
                 case EExpressionType.ISTUFE:
-                    singleAssignmentExpression = new IStufeExpression();
+                    singleAssignmentExpression = new IStufeExpression();   // [UH] dataProvider removed
                     break;
                 case EExpressionType.SALAPA:
                     singleAssignmentExpression = new SaLaPaExpression();
