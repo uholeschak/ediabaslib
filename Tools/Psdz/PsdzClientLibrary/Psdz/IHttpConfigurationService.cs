@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Model.Exceptions;
+﻿using BMW.Rheingold.Psdz.Model.Exceptions;
 using System.ServiceModel;
 
 namespace BMW.Rheingold.Psdz

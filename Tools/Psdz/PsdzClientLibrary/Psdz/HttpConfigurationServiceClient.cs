@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Client;
+﻿using BMW.Rheingold.Psdz.Client;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 

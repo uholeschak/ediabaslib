@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
+using System.Collections.Generic;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -28,5 +25,19 @@ namespace BMW.Rheingold.Psdz
         public bool UseProgrammingCounter;
 
         public IPsdzSecureCodingConfigCto SecureCodingConfig;
+
+        public IEnumerable<IPsdzDiagAddress> EcusNotToSwitchProgrammingMode;
+
+        public IEnumerable<IPsdzDiagAddress> EcusToPreventUdsFallback;
+
+        public IPsdzProgrammingProtectionDataCto ProgrammingProtectionDataCto;
+
+        public IEnumerable<IPsdzProgrammingTokenCto> ProgrammingTokens;
+
+        public bool IgnoreSignatureForProgrammingToken;
+
+        public bool ExpectedSgbmidValidationActive;
+
+        public bool ExpectedSgbmIdValidationForSmacTransferStartActive;
     }
 }
