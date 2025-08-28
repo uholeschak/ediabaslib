@@ -8,8 +8,8 @@ using BMW.Rheingold.Psdz.Model.Tal.TalStatus;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
-    [KnownType(typeof(PsdzFailureCause))]
     [DataContract]
+    [KnownType(typeof(PsdzFailureCause))]
     public class PsdzTalElement : IPsdzTalElement
     {
         [DataMember]

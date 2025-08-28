@@ -21,7 +21,7 @@ namespace BMW.Rheingold.Psdz.Model.Tal
         Running
     }
 
-	public interface IPsdzTal : IPsdzTalElement
+    public interface IPsdzTal : IPsdzTalElement
     {
         IEnumerable<IPsdzEcuIdentifier> AffectedEcus { get; }
 
@@ -34,5 +34,7 @@ namespace BMW.Rheingold.Psdz.Model.Tal
         PsdzTalExecutionState TalExecutionState { get; }
 
         IEnumerable<IPsdzTalLine> TalLines { get; }
+
+        IPsdzExecutionTime PsdzExecutionTime { get; }
     }
 }
