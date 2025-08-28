@@ -62,6 +62,7 @@ namespace PsdzClient.Core
             }
         }
 
+        // [UH] XEP_SALAPAS replaced
         public static ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
@@ -148,9 +149,9 @@ namespace PsdzClient.Core
             return text;
         }
 
-        public static BusType getECUBus(Vehicle vecInfo, long? ID_SG_ADR, string ecuGroup = null)
+        public static BusType getECUBus(Vehicle vecInfo, long? iD_SG_ADR, string ecuGroup = null)
         {
-            return GetCharacteristics(vecInfo)?.getBus(ID_SG_ADR, vecInfo.VCI?.VCIType, ecuGroup) ?? BusType.UNKNOWN;
+            return GetCharacteristics(vecInfo)?.GetBus(iD_SG_ADR, vecInfo.VCI?.VCIType, ecuGroup) ?? BusType.UNKNOWN;
         }
 
         // ToDo: Check on update
@@ -801,7 +802,7 @@ namespace PsdzClient.Core
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
             {
-                return characteristics.getECU_GROBNAME(sgAdr);
+                return characteristics.GetECU_GROBNAME(sgAdr);
             }
             return string.Empty;
         }
@@ -811,10 +812,11 @@ namespace PsdzClient.Core
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
             {
-                return characteristics.getECU_GROBNAMEByEcuGroup(ecuGroup);
+                return characteristics.GetECU_GROBNAMEByEcuGroup(ecuGroup);
             }
             return string.Empty;
         }
+
         private static void ValidateIfDiagnosticsHasValidLicense()
         {
         }

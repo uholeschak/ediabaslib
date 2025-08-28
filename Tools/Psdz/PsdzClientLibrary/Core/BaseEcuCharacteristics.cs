@@ -15,165 +15,177 @@ namespace PsdzClient.Core
 {
 	public abstract class BaseEcuCharacteristics
 	{
-		internal string brSgbd;
+        internal string brSgbd;
 
-		internal string compatibilityInfo;
+        internal string compatibilityInfo;
 
-		internal string sitInfo;
+        internal string sitInfo;
 
-		internal double? rootHorizontalBusStep;
+        internal double? rootHorizontalBusStep;
 
-		internal ReadOnlyCollection<IEcuLogisticsEntry> ecuTable;
+        internal ReadOnlyCollection<IEcuLogisticsEntry> ecuTable;
 
-		internal ReadOnlyCollection<IBusLogisticsEntry> busTable;
+        internal ReadOnlyCollection<IBusLogisticsEntry> busTable;
 
-		internal ReadOnlyCollection<ICombinedEcuHousingEntry> combinedEcuHousingTable;
+        internal ReadOnlyCollection<ICombinedEcuHousingEntry> combinedEcuHousingTable;
 
-		internal ReadOnlyCollection<IBusInterConnectionEntry> interConnectionTable;
+        internal ReadOnlyCollection<IBusInterConnectionEntry> interConnectionTable;
 
-		internal ReadOnlyCollection<ISGBDBusLogisticsEntry> variantTable;
+        internal ReadOnlyCollection<ISGBDBusLogisticsEntry> variantTable;
 
-		internal ReadOnlyCollection<IBusNameEntry> busNameTable;
+        internal ReadOnlyCollection<IBusNameEntry> busNameTable;
 
-		internal ReadOnlyCollection<IXGBMBusLogisticsEntry> xgbdTable;
+        internal ReadOnlyCollection<IXGBMBusLogisticsEntry> xgbdTable;
 
-		internal HashSet<int> minimalConfiguration;
+        internal HashSet<int> minimalConfiguration = new HashSet<int>();
 
-		internal HashSet<int> excludedConfiguration;
+        internal HashSet<int> excludedConfiguration = new HashSet<int>();
 
-		internal HashSet<int> optionalConfiguration;
+        internal HashSet<int> optionalConfiguration = new HashSet<int>();
 
-		internal HashSet<int> unsureConfiguration;
+        internal HashSet<int> unsureConfiguration = new HashSet<int>();
 
-		internal HashSet<int[]> xorConfiguration;
+        internal HashSet<int[]> xorConfiguration = new HashSet<int[]>();
 
-		private const string RESOURCE_CHARACTERISTIC_CONFIGURATION_PATH = "BMW.Rheingold.Diagnostics.EcuCharacteristics.Xml.";
+        private const string RESOURCE_CHARACTERISTIC_CONFIGURATION_PATH = "BMW.Rheingold.Diagnostics.EcuCharacteristics.Xml.";
 
-		public string BordnetName { get; set; }
+        public string BordnetName { get; set; }
 
         public BaseEcuCharacteristics()
-		{
-			minimalConfiguration = new HashSet<int>();
-			excludedConfiguration = new HashSet<int>();
-			optionalConfiguration = new HashSet<int>();
-			unsureConfiguration = new HashSet<int>();
-			xorConfiguration = new HashSet<int[]>();
-		}
+        {
+        }
 
         public BaseEcuCharacteristics(string xmlCharacteristic)
-		{
-			minimalConfiguration = new HashSet<int>();
-			excludedConfiguration = new HashSet<int>();
-			optionalConfiguration = new HashSet<int>();
-			unsureConfiguration = new HashSet<int>();
-			xorConfiguration = new HashSet<int[]>();
-			IEcuTreeConfiguration ecuTreeConfiguration = null;
-			ValidationEventHandler veh = delegate (object sender, ValidationEventArgs e)
-			{
-				Log.Warning("BaseEcuCharacteristics.Constructor", string.Format(CultureInfo.InvariantCulture, "Validation: {0}", e.Message));
-			};
-			if (xmlCharacteristic.Contains("<?xml"))
-			{
-				XmlDocument xmlDocument = new XmlDocument();
-				xmlDocument.LoadXml(xmlCharacteristic);
-				EcuTreeConfiguration.Deserialize(xmlDocument.InnerXml, out var obj, out var _);
-				ecuTreeConfiguration = obj;
-			}
-			if (ecuTreeConfiguration == null)
-			{
-				throw new ArgumentNullException("EcuTreeConfiguration");
-			}
-			brSgbd = ecuTreeConfiguration.MainSeriesSgbd;
-			compatibilityInfo = ecuTreeConfiguration.CompatibilityInfo;
-			sitInfo = ecuTreeConfiguration.SitInfo;
-			rootHorizontalBusStep = ecuTreeConfiguration.RootHorizontalBusStep;
-			ecuTable = ecuTreeConfiguration.EcuLogisticsList;
-			busTable = ecuTreeConfiguration.BusLogisticsList;
-			combinedEcuHousingTable = ecuTreeConfiguration.CombinedEcuHousingList;
-			interConnectionTable = ecuTreeConfiguration.BusInterConnectionList;
-			variantTable = ecuTreeConfiguration.SGBDBusLogisticsList;
-			busNameTable = ecuTreeConfiguration.BusNameList;
-			xgbdTable = ecuTreeConfiguration.XGBMBusLogisticsList;
-			minimalConfiguration = new HashSet<int>(ecuTreeConfiguration.MinimalConfigurationList);
-			excludedConfiguration = new HashSet<int>(ecuTreeConfiguration.ExcludedConfigurationList);
-			optionalConfiguration = new HashSet<int>(ecuTreeConfiguration.OptionalConfigurationList);
-			unsureConfiguration = new HashSet<int>(ecuTreeConfiguration.UnsureConfigurationList);
-			xorConfiguration = new HashSet<int[]>(ecuTreeConfiguration.XorConfigurationList);
-		}
+        {
+            IEcuTreeConfiguration ecuTreeConfiguration = null;
+            ValidationEventHandler veh = delegate (object sender, ValidationEventArgs e)
+            {
+                Log.Warning("BaseEcuCharacteristics.Constructor", string.Format(CultureInfo.InvariantCulture, "Validation: {0}", e.Message));
+            };
+            if (xmlCharacteristic.Contains("<?xml"))
+            {
+                XmlDocument xmlDocument = new XmlDocument();
+                xmlDocument.LoadXml(xmlCharacteristic);
+                EcuTreeConfiguration.Deserialize(xmlDocument.InnerXml, out var obj, out var _);
+                ecuTreeConfiguration = obj;
+            }
+            else if (ConfigSettings.getConfigStringAsBoolean("EcuCharacteristicsVerificationEnabled", defaultValue: false))
+            {
+                string text = Path.Combine(ConfigSettings.GetTempFolder(), xmlCharacteristic);
+                if (File.Exists(text))
+                {
+                    XmlTextReader reader = new XmlTextReader(text);
+                    XmlDocument xmlDocument2 = new XmlDocument();
+                    xmlDocument2.Load(reader);
+                    EcuTreeConfiguration.Deserialize(xmlDocument2.InnerXml, out var obj2, out var _);
+                    ecuTreeConfiguration = obj2;
+                    Log.Info("BaseEcuCharateristics.Constructor(xml)", "Characteristics {0} loaded.", text);
+                }
+                else
+                {
+                    ecuTreeConfiguration = LoadCharacteristicsFromAssembly(xmlCharacteristic, veh);
+                    Log.Info("BaseEcuCharateristics.Constructor(xml)", "Characteristics {0} loaded from Assembly.", xmlCharacteristic);
+                }
+            }
+            else
+            {
+                ecuTreeConfiguration = LoadCharacteristicsFromAssembly(xmlCharacteristic, veh);
+            }
+            if (ecuTreeConfiguration == null)
+            {
+                throw new ArgumentNullException("EcuTreeConfiguration");
+            }
+            brSgbd = ecuTreeConfiguration.MainSeriesSgbd;
+            compatibilityInfo = ecuTreeConfiguration.CompatibilityInfo;
+            sitInfo = ecuTreeConfiguration.SitInfo;
+            rootHorizontalBusStep = ecuTreeConfiguration.RootHorizontalBusStep;
+            ecuTable = ecuTreeConfiguration.EcuLogisticsList;
+            busTable = ecuTreeConfiguration.BusLogisticsList;
+            combinedEcuHousingTable = ecuTreeConfiguration.CombinedEcuHousingList;
+            interConnectionTable = ecuTreeConfiguration.BusInterConnectionList;
+            variantTable = ecuTreeConfiguration.SGBDBusLogisticsList;
+            busNameTable = ecuTreeConfiguration.BusNameList;
+            xgbdTable = ecuTreeConfiguration.XGBMBusLogisticsList;
+            minimalConfiguration = new HashSet<int>(ecuTreeConfiguration.MinimalConfigurationList);
+            excludedConfiguration = new HashSet<int>(ecuTreeConfiguration.ExcludedConfigurationList);
+            optionalConfiguration = new HashSet<int>(ecuTreeConfiguration.OptionalConfigurationList);
+            unsureConfiguration = new HashSet<int>(ecuTreeConfiguration.UnsureConfigurationList);
+            xorConfiguration = new HashSet<int[]>(ecuTreeConfiguration.XorConfigurationList);
+        }
 
-		private IEcuTreeConfiguration LoadCharacteristicsFromAssembly(string xmlCharacteristic, ValidationEventHandler veh)
-		{
-			using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BMW.Rheingold.Diagnostics.EcuCharacteristics.Xml." + xmlCharacteristic))
-			{
-				return LoadCharacteristics(xmlCharacteristic, veh, stream);
-			}
-		}
+        private IEcuTreeConfiguration LoadCharacteristicsFromAssembly(string xmlCharacteristic, ValidationEventHandler veh)
+        {
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BMW.Rheingold.Diagnostics.EcuCharacteristics.Xml." + xmlCharacteristic))
+            {
+                return LoadCharacteristics(xmlCharacteristic, veh, stream);
+            }
+        }
 
-		private IEcuTreeConfiguration LoadCharacteristics(string xmlCharacteristic, ValidationEventHandler veh, Stream stream)
-		{
-			if (stream != null)
-			{
-				if (!EcuTreeConfiguration.ValidateFile(stream, veh))
-				{
-					Log.Error("BaseEcuCharacteristics.Constructor", string.Format(CultureInfo.InvariantCulture, "Validation failed: {0}", xmlCharacteristic));
-				}
-				return EcuTreeConfiguration.ReadFromStream(stream);
-			}
-			throw new IOException(string.Format(CultureInfo.InvariantCulture, "XmlCharacteristic ('{0}') could not be found!", xmlCharacteristic));
-		}
+        private IEcuTreeConfiguration LoadCharacteristics(string xmlCharacteristic, ValidationEventHandler veh, Stream stream)
+        {
+            if (stream != null)
+            {
+                if (!EcuTreeConfiguration.ValidateFile(stream, veh))
+                {
+                    Log.Error("BaseEcuCharacteristics.Constructor", string.Format(CultureInfo.InvariantCulture, "Validation failed: {0}", xmlCharacteristic));
+                }
+                return EcuTreeConfiguration.ReadFromStream(stream);
+            }
+            throw new IOException(string.Format(CultureInfo.InvariantCulture, "XmlCharacteristic ('{0}') could not be found!", xmlCharacteristic));
+        }
 
-		public IEcuLogisticsEntry GetEcuLogisticsEntry(Vehicle vecInfo, ECU ecu)
-		{
-			return GetEcuLogisticsEntry(vecInfo, (IEcu)ecu);
-		}
+        public IEcuLogisticsEntry GetEcuLogisticsEntry(Vehicle vecInfo, ECU ecu)
+        {
+            return GetEcuLogisticsEntry(vecInfo, (IEcu)ecu);
+        }
 
-		public IEcuLogisticsEntry GetEcuLogisticsEntry(Vehicle vecInfo, IEcu ecu)
-		{
-			if (ecuTable != null && ecu != null)
-			{
-				return ecuTable.FirstOrDefault((IEcuLogisticsEntry item) => item.DiagAddress == ecu.ID_SG_ADR && item.SubDiagAddress == ecu.ID_LIN_SLAVE_ADR);
-			}
-			return null;
-		}
+        public IEcuLogisticsEntry GetEcuLogisticsEntry(Vehicle vecInfo, IEcu ecu)
+        {
+            if (ecuTable != null && ecu != null)
+            {
+                return ecuTable.FirstOrDefault((IEcuLogisticsEntry item) => item.DiagAddress == ecu.ID_SG_ADR && item.SubDiagAddress == ecu.ID_LIN_SLAVE_ADR);
+            }
+            return null;
+        }
 
-		public virtual bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
-		{
-			if (variantTable != null && ecu != null && !string.IsNullOrEmpty(ecu.VARIANTE))
-			{
-				ISGBDBusLogisticsEntry iSGBDBusLogisticsEntry = variantTable.FirstOrDefault((ISGBDBusLogisticsEntry x) => string.Equals(x.Variant, ecu.VARIANTE, StringComparison.OrdinalIgnoreCase));
-				if (iSGBDBusLogisticsEntry != null)
-				{
-					if (busType != iSGBDBusLogisticsEntry.Bus)
-					{
-						if (iSGBDBusLogisticsEntry.SubBusList != null)
-						{
-							return iSGBDBusLogisticsEntry.SubBusList.Contains(busType);
-						}
-						return false;
-					}
-					return true;
-				}
-			}
-			IEcuLogisticsEntry ecuLogisticsEntry = GetEcuLogisticsEntry(vecInfo, ecu);
-			if (ecuLogisticsEntry != null)
-			{
-				if (ecuLogisticsEntry.Bus != busType)
-				{
-					if (ecuLogisticsEntry.SubBusList != null)
-					{
-						return ecuLogisticsEntry.SubBusList.Contains(busType);
-					}
-					return false;
-				}
-				return true;
-			}
-			return false;
-		}
+        public virtual bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        {
+            if (variantTable != null && ecu != null && !string.IsNullOrEmpty(ecu.VARIANTE))
+            {
+                ISGBDBusLogisticsEntry iSGBDBusLogisticsEntry = variantTable.FirstOrDefault((ISGBDBusLogisticsEntry x) => string.Equals(x.Variant, ecu.VARIANTE, StringComparison.OrdinalIgnoreCase));
+                if (iSGBDBusLogisticsEntry != null)
+                {
+                    if (busType != iSGBDBusLogisticsEntry.Bus)
+                    {
+                        if (iSGBDBusLogisticsEntry.SubBusList != null)
+                        {
+                            return iSGBDBusLogisticsEntry.SubBusList.Contains(busType);
+                        }
+                        return false;
+                    }
+                    return true;
+                }
+            }
+            IEcuLogisticsEntry ecuLogisticsEntry = GetEcuLogisticsEntry(vecInfo, ecu);
+            if (ecuLogisticsEntry != null)
+            {
+                if (ecuLogisticsEntry.Bus != busType)
+                {
+                    if (ecuLogisticsEntry.SubBusList != null)
+                    {
+                        return ecuLogisticsEntry.SubBusList.Contains(busType);
+                    }
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
 
-		public virtual void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
-		{
-			CalculateECUConfiguration(vecInfo, ffmResolver, null, null);
-		}
+        public virtual void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            CalculateECUConfiguration(vecInfo, ffmResolver, null, null);
+        }
 
         public virtual ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
@@ -306,7 +318,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public virtual BusType getBus(long? sgAdr, VCIDeviceType? deviceType, string group = null)
+        public virtual BusType GetBus(long? sgAdr, VCIDeviceType? deviceType, string group = null)
         {
             ValidateIfDiagnosticsHasValidLicense();
             if (!sgAdr.HasValue)
@@ -338,7 +350,7 @@ namespace PsdzClient.Core
             return BusType.UNKNOWN;
         }
 
-        public BusType getBus(long? sgAdr, long? subAdr, VCIDeviceType? deviceType, string group = null)
+        public BusType GetBus(long? sgAdr, long? subAdr, VCIDeviceType? deviceType, string group = null)
         {
             ValidateIfDiagnosticsHasValidLicense();
             if (!sgAdr.HasValue)
@@ -377,7 +389,7 @@ namespace PsdzClient.Core
             return BusType.UNKNOWN;
         }
 
-        public virtual string getECU_GROBNAME(long? sgAdr)
+        public virtual string GetECU_GROBNAME(long? sgAdr)
         {
             ValidateIfDiagnosticsHasValidLicense();
             if (!sgAdr.HasValue)
@@ -408,7 +420,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        public virtual string getECU_GROBNAMEByEcuGroup(string ecuGroup)
+        public virtual string GetECU_GROBNAMEByEcuGroup(string ecuGroup)
         {
             ValidateIfDiagnosticsHasValidLicense();
             if (string.IsNullOrEmpty(ecuGroup))
@@ -434,145 +446,146 @@ namespace PsdzClient.Core
             return null;
         }
 
-        public virtual string getECU_GRUPPE(long? sgAdr)
-		{
-			ValidateIfDiagnosticsHasValidLicense();
-			if (!sgAdr.HasValue)
-			{
-				Log.Info(GetType().Name + ".getECU_GRUPPE()", "sgAdr was null");
-				return string.Empty;
-			}
-			if (sgAdr < 0L && sgAdr > 255L)
-			{
-				Log.Info(GetType().Name + ".getECU_GRUPPE()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
-				return string.Empty;
-			}
-			try
-			{
-				foreach (IEcuLogisticsEntry item in ecuTable)
-				{
-					if (item.DiagAddress == sgAdr)
-					{
-						return item.GroupSgbd;
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
-			}
-			return string.Empty;
-		}
+        public virtual string GetECU_GRUPPE(long? sgAdr)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            if (!sgAdr.HasValue)
+            {
+                Log.Info(GetType().Name + ".getECU_GRUPPE()", "sgAdr was null");
+                return string.Empty;
+            }
+            if (sgAdr < 0 && sgAdr > 255)
+            {
+                Log.Info(GetType().Name + ".getECU_GRUPPE()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+                return string.Empty;
+            }
+            try
+            {
+                foreach (IEcuLogisticsEntry item in ecuTable)
+                {
+                    if (item.DiagAddress == sgAdr)
+                    {
+                        return item.GroupSgbd;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
+            }
+            return string.Empty;
+        }
 
-		public virtual bool getEcuCoordinates(long? sgAdr, out int col, out int row)
-		{
-			ValidateIfDiagnosticsHasValidLicense();
-			if (!sgAdr.HasValue)
-			{
-				Log.Info(GetType().Name + ".getEcuCoordinates()", "sgAdr was null");
-				col = -1;
-				row = -1;
-				return false;
-			}
-			if (sgAdr < 0L && sgAdr > 255L)
-			{
-				Log.Info(GetType().Name + ".getEcuCoordinates()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
-				col = -1;
-				row = -1;
-				return false;
-			}
-			try
-			{
-				foreach (IEcuLogisticsEntry item in ecuTable)
-				{
-					if (item.DiagAddress == sgAdr)
-					{
-						row = item.Row;
-						col = item.Column;
-						return true;
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
-			}
-			col = -1;
-			row = -1;
-			return false;
-		}
+        public virtual bool GetEcuCoordinates(long? sgAdr, out int col, out int row)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            if (!sgAdr.HasValue)
+            {
+                Log.Info(GetType().Name + ".getEcuCoordinates()", "sgAdr was null");
+                col = -1;
+                row = -1;
+                return false;
+            }
+            if (sgAdr < 0 && sgAdr > 255)
+            {
+                Log.Info(GetType().Name + ".getEcuCoordinates()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+                col = -1;
+                row = -1;
+                return false;
+            }
+            try
+            {
+                foreach (IEcuLogisticsEntry item in ecuTable)
+                {
+                    if (item.DiagAddress == sgAdr)
+                    {
+                        row = item.Row;
+                        col = item.Column;
+                        return true;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
+            }
+            col = -1;
+            row = -1;
+            return false;
+        }
 
-		public bool getEcuCoordinates(long? sgAdr, long? subAdr, out int col, out int row)
-		{
-			ValidateIfDiagnosticsHasValidLicense();
-			if (!sgAdr.HasValue)
-			{
-				Log.Warning(GetType().Name + ".getEcuCoordinates()", "sgAdr was null");
-				col = -1;
-				row = -1;
-				return false;
-			}
-			if (sgAdr < 0L && sgAdr > 255L)
-			{
-				Log.Warning(GetType().Name + ".getEcuCoordinates()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
-				col = -1;
-				row = -1;
-				return false;
-			}
-			try
-			{
-				foreach (IEcuLogisticsEntry item in ecuTable)
-				{
-					if (subAdr.HasValue && !(subAdr < 0L))
-					{
-						if (item.DiagAddress == sgAdr && item.SubDiagAddress == subAdr)
-						{
-							row = item.Row;
-							col = item.Column;
-							return true;
-						}
-					}
-					else if (item.DiagAddress == sgAdr)
-					{
-						row = item.Row;
-						col = item.Column;
-						return true;
-					}
-				}
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
-			}
-			col = -1;
-			row = -1;
-			return false;
-		}
+        public bool GetEcuCoordinates(long? sgAdr, long? subAdr, out int col, out int row)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            if (!sgAdr.HasValue)
+            {
+                Log.Warning(GetType().Name + ".getEcuCoordinates()", "sgAdr was null");
+                col = -1;
+                row = -1;
+                return false;
+            }
+            if (sgAdr < 0 && sgAdr > 255)
+            {
+                Log.Warning(GetType().Name + ".getEcuCoordinates()", "sgAdr out of range. sgAdr was: {0}", sgAdr);
+                col = -1;
+                row = -1;
+                return false;
+            }
+            try
+            {
+                foreach (IEcuLogisticsEntry item in ecuTable)
+                {
+                    if (!subAdr.HasValue || subAdr < 0)
+                    {
+                        if (item.DiagAddress == sgAdr)
+                        {
+                            row = item.Row;
+                            col = item.Column;
+                            return true;
+                        }
+                    }
+                    else if (item.DiagAddress == sgAdr && item.SubDiagAddress == subAdr)
+                    {
+                        row = item.Row;
+                        col = item.Column;
+                        return true;
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(GetType().Name + ".getECU_GRUPPE()", exception);
+            }
+            col = -1;
+            row = -1;
+            return false;
+        }
 
-		public bool IsTypeKeyListed(string typeKey)
-		{
-			if (!string.IsNullOrEmpty(compatibilityInfo) && !string.IsNullOrEmpty(typeKey))
-			{
-				string[] array = compatibilityInfo.Split('\n');
-				foreach (string text in array)
-				{
-					try
-					{
-						if (!string.IsNullOrEmpty(text) && text.Length >= 10 && text.Trim().Split(';')[2].Contains(typeKey))
-						{
-							Log.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} found", typeKey);
-							return true;
-						}
-					}
-					catch (Exception exception)
-					{
-						Log.WarningException(GetType().Name + ".IsTypeKeyListed()", exception);
-					}
-				}
-			}
-			Log.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} NOT found", typeKey);
-			return false;
-		}
+        public bool IsTypeKeyListed(string typeKey)
+        {
+            if (!string.IsNullOrEmpty(compatibilityInfo) && !string.IsNullOrEmpty(typeKey))
+            {
+                string[] array = compatibilityInfo.Split('\n');
+                foreach (string text in array)
+                {
+                    try
+                    {
+                        if (string.IsNullOrEmpty(text) || text.Length < 10 || !text.Trim().Split(';')[2].Contains(typeKey))
+                        {
+                            continue;
+                        }
+                        Log.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} found", typeKey);
+                        return true;
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.WarningException(GetType().Name + ".IsTypeKeyListed()", exception);
+                    }
+                }
+            }
+            Log.Info(GetType().Name + ".IsTypeKeyListed()", "type key: {0} NOT found", typeKey);
+            return false;
+        }
 
         public void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
@@ -606,6 +619,7 @@ namespace PsdzClient.Core
                         if (vecInfo.getECU(num) == null)
                         {
                             string ecuVariant = array2[1];
+                            // [UH] database replaced
                             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
                             if (database != null)
                             {
@@ -630,37 +644,36 @@ namespace PsdzClient.Core
             }
         }
 
-
         internal string GetBusAlias(BusType bus)
-		{
-			if (busNameTable != null)
-			{
-				foreach (IBusNameEntry item in busNameTable)
-				{
-					if (item.Bus == bus)
-					{
-						return item.Name;
-					}
-				}
-			}
-			return bus.ToString();
-		}
+        {
+            if (busNameTable != null)
+            {
+                foreach (IBusNameEntry item in busNameTable)
+                {
+                    if (item.Bus == bus)
+                    {
+                        return item.Name;
+                    }
+                }
+            }
+            return bus.ToString();
+        }
 
-		protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
-		{
+        protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
-			if (database == null)
+            if (database == null)
             {
                 return false;
             }
 
             PsdzDatabase.EcuGroup ecuGroupByName = database.GetEcuGroupByName(groupName);
-			if (ecuGroupByName != null)
-			{
-				return database.EvaluateXepRulesById(ecuGroupByName.Id, vecInfo, ffmResolver);
-			}
-			return false;
-		}
+            if (ecuGroupByName != null)
+            {
+                return database.EvaluateXepRulesById(ecuGroupByName.Id, vecInfo, ffmResolver);
+            }
+            return false;
+        }
 
         protected ECU CreateECU(long adr, string group, VCIDeviceType? deviceType)
         {
@@ -668,9 +681,9 @@ namespace PsdzClient.Core
             {
                 ID_SG_ADR = adr,
                 IDENT_SUCCESSFULLY = false,
-                BUS = getBus(adr, deviceType, group),
+                BUS = GetBus(adr, deviceType, group),
                 ECU_GRUPPE = group,
-                ECU_GROBNAME = getECU_GROBNAME(adr)
+                ECU_GROBNAME = GetECU_GROBNAME(adr)
             };
         }
 
@@ -679,9 +692,9 @@ namespace PsdzClient.Core
             ECU eCU = new ECU();
             eCU.ID_SG_ADR = adr;
             eCU.IDENT_SUCCESSFULLY = false;
-            eCU.ECU_GRUPPE = getECU_GRUPPE(adr);
-            eCU.BUS = getBus(adr, deviceType, eCU.ECU_GRUPPE);
-            eCU.ECU_GROBNAME = getECU_GROBNAME(adr);
+            eCU.ECU_GRUPPE = GetECU_GRUPPE(adr);
+            eCU.BUS = GetBus(adr, deviceType, eCU.ECU_GRUPPE);
+            eCU.ECU_GROBNAME = GetECU_GROBNAME(adr);
             return eCU;
         }
 
@@ -869,16 +882,17 @@ namespace PsdzClient.Core
                     ECU eCU = CreateECU(item, vecInfo.VCI?.VCIType);
                     eCU.ID_SG_ADR = item;
                     eCU.IDENT_SUCCESSFULLY = false;
-                    eCU.ECU_GRUPPE = getECU_GRUPPE(item);
-                    eCU.BUS = getBus(item, vecInfo.VCI?.VCIType, eCU.ECU_GRUPPE);
+                    eCU.ECU_GRUPPE = GetECU_GRUPPE(item);
+                    eCU.BUS = GetBus(item, vecInfo.VCI?.VCIType, eCU.ECU_GRUPPE);
                     vecInfo.ECU.AddIfNotContains(eCU);
                 }
             }
         }
 
+        // [UH] cleaned
         private void ValidateIfDiagnosticsHasValidLicense()
-		{
-		}
+        {
+        }
 
         private void LogMissingBus(string ecuGroup, long? ecuAddress, VCIDeviceType? deviceType)
         {
@@ -894,5 +908,5 @@ namespace PsdzClient.Core
                 }
             }
         }
-	}
+    }
 }
