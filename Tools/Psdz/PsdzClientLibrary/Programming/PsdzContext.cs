@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
@@ -21,6 +13,15 @@ using BmwFileReader;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Utility;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PsdzClient.Programming
 {
@@ -1214,22 +1215,25 @@ namespace PsdzClient.Programming
                         return false;
                     }
 
-                    if (!transmissionSaByTypeKey.Any(sa => VecInfo.HasSA(sa.Item1)))
+                    if (!transmissionSaByTypeKey.Any((Tuple<string, string> sa) => VecInfo.HasSA(sa.Item1)))
                     {
-                        List<Tuple<string, string>> list = transmissionSaByTypeKey.Where(sa => sa.Item2 == "T").ToList();
-                        if (list.Count == 1)
+                        List<Tuple<string, string>> list = transmissionSaByTypeKey.Where((Tuple<string, string> sa) => sa.Item2 == "T").ToList();
+                        if (list.Count > 1)
+                        {
+                            Log.Error(Log.CurrentMethod(), "More than 1 SA (" + string.Join(",", list) + ") of type 'T' found for type key " + VecInfo.VINRangeType);
+                        }
+                        else if (list.Count == 1)
                         {
                             string text = list.First().Item1;
-                            if (string.IsNullOrEmpty(text))
-                            {
-                                VecInfo.FA.SA.Add(text);
-                            }
+                            Log.Info(Log.CurrentMethod(), "Adding SA of type 'T': " + text + " for transmission overriding purposes");
+                            VecInfo.FA.SA.Add(text);
                         }
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Error(Log.CurrentMethod(), "An error occured while enriching FA with type T transmission SA.", ex);
                 return false;
             }
 
