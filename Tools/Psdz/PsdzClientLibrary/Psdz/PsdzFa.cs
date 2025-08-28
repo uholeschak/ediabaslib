@@ -19,13 +19,16 @@ namespace BMW.Rheingold.Psdz.Model
 #endif
         public override bool Equals(object obj)
         {
-            PsdzFa psdzFa = obj as PsdzFa;
-            return psdzFa != null && base.Equals(psdzFa) && string.Equals(this.Vin, psdzFa.Vin);
+            if (obj is PsdzFa psdzFa && base.Equals((object)psdzFa))
+            {
+                return string.Equals(base.Vin, psdzFa.Vin);
+            }
+            return false;
         }
 
         public override int GetHashCode()
         {
-            return base.GetHashCode() * 397 ^ ((this.Vin != null) ? this.Vin.GetHashCode() : 0);
+            return (base.GetHashCode() * 397) ^ ((base.Vin != null) ? base.Vin.GetHashCode() : 0);
         }
     }
 }
