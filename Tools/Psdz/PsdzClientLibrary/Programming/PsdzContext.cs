@@ -1140,8 +1140,6 @@ namespace PsdzClient.Programming
                     {
                         VecInfo.FA.ZUSBAU_WORT.AddIfNotContains(zbWord);
                     }
-
-                    OverrideVehicleCharacteristics(programmingService);
                 }
             }
             catch (Exception)
@@ -1197,49 +1195,6 @@ namespace PsdzClient.Programming
                 }
             }
         }
-
-        public bool OverrideVehicleCharacteristics(ProgrammingService programmingService)
-        {
-            try
-            {
-                if (VecInfo == null)
-                {
-                    return false;
-                }
-
-                if (!string.IsNullOrEmpty(VecInfo.VINRangeType))
-                {
-                    List<Tuple<string, string>> transmissionSaByTypeKey = programmingService.PsdzDatabase.GetTransmissionSaByTypeKey(VecInfo.VINRangeType);
-                    if (transmissionSaByTypeKey == null)
-                    {
-                        return false;
-                    }
-
-                    if (!transmissionSaByTypeKey.Any((Tuple<string, string> sa) => VecInfo.HasSA(sa.Item1)))
-                    {
-                        List<Tuple<string, string>> list = transmissionSaByTypeKey.Where((Tuple<string, string> sa) => sa.Item2 == "T").ToList();
-                        if (list.Count > 1)
-                        {
-                            Log.Error(Log.CurrentMethod(), "More than 1 SA (" + string.Join(",", list) + ") of type 'T' found for type key " + VecInfo.VINRangeType);
-                        }
-                        else if (list.Count == 1)
-                        {
-                            string text = list.First().Item1;
-                            Log.Info(Log.CurrentMethod(), "Adding SA of type 'T': " + text + " for transmission overriding purposes");
-                            VecInfo.FA.SA.Add(text);
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(Log.CurrentMethod(), "An error occured while enriching FA with type T transmission SA.", ex);
-                return false;
-            }
-
-            return true;
-        }
-
 
         public string GetLocalizedSaString()
         {
