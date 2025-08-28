@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 using BMW.Rheingold.Psdz.Model.Localization;
 
 namespace BMW.Rheingold.Psdz.Model.Events
 {
     [DataContract]
-    public class PsdzTransactionProgressEvent : PsdzTransactionEvent, ILocalizableMessage, IPsdzEvent, IPsdzTransactionEvent, IPsdzTransactionProgressEvent
+    public class PsdzTransactionProgressEvent : PsdzTransactionEvent, IPsdzTransactionProgressEvent, IPsdzTransactionEvent, IPsdzEvent, ILocalizableMessage
     {
         [DataMember]
         public int Progress { get; set; }

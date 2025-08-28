@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.Psdz.Model.Sfa;
-using BMW.Rheingold.Psdz;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 

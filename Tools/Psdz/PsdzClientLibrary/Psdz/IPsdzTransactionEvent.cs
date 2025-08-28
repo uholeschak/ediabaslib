@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model.Localization;
+﻿using BMW.Rheingold.Psdz.Model.Localization;
 using BMW.Rheingold.Psdz.Model.Tal;
 
 namespace BMW.Rheingold.Psdz.Model.Events
@@ -16,8 +11,8 @@ namespace BMW.Rheingold.Psdz.Model.Events
         Finished,
         FinishedWithError
     }
-    
-    public interface IPsdzTransactionEvent : ILocalizableMessage, IPsdzEvent
+
+    public interface IPsdzTransactionEvent : IPsdzEvent, ILocalizableMessage
     {
         PsdzTransactionInfo TransactionInfo { get; }
 
