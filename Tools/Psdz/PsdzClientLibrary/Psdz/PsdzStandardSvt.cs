@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Comparer;
 using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Model
 {
-    [KnownType(typeof(PsdzEcu))]
     [DataContract]
+    [KnownType(typeof(PsdzEcu))]
+    [KnownType(typeof(PsdzSmartActuatorMasterEcu))]
+    [KnownType(typeof(PsdzSmartActuatorEcu))]
     public class PsdzStandardSvt : IPsdzStandardSvt
     {
+        private static readonly IEqualityComparer<PsdzStandardSvt> PsdzStandardSvtComparerInstance = new PsdzStandardSvtComparer();
+
         [DataMember]
         public string AsString { get; set; }
 
@@ -30,14 +31,12 @@ namespace BMW.Rheingold.Psdz.Model
 
         public override bool Equals(object obj)
         {
-            return PsdzStandardSvt.PsdzStandardSvtComparerInstance.Equals(this, obj as PsdzStandardSvt);
+            return PsdzStandardSvtComparerInstance.Equals(this, obj as PsdzStandardSvt);
         }
 
         public override int GetHashCode()
         {
-            return PsdzStandardSvt.PsdzStandardSvtComparerInstance.GetHashCode(this);
+            return PsdzStandardSvtComparerInstance.GetHashCode(this);
         }
-
-        private static readonly IEqualityComparer<PsdzStandardSvt> PsdzStandardSvtComparerInstance = new PsdzStandardSvtComparer();
     }
 }

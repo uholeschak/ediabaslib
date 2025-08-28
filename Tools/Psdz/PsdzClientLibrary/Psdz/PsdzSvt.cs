@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BMW.Rheingold.Psdz.Model
 {
     [DataContract]
-    public class PsdzSvt : PsdzStandardSvt, IPsdzStandardSvt, IPsdzSvt
+    public class PsdzSvt : PsdzStandardSvt, IPsdzSvt, IPsdzStandardSvt
     {
         [DataMember]
         public bool IsValid { get; set; }
@@ -18,13 +18,16 @@ namespace BMW.Rheingold.Psdz.Model
 
         public override bool Equals(object obj)
         {
-            PsdzSvt psdzSvt = obj as PsdzSvt;
-            return psdzSvt != null && base.Equals(psdzSvt) && this.IsValid.Equals(psdzSvt.IsValid) && string.Equals(this.Vin, psdzSvt.Vin);
+            if (obj is PsdzSvt psdzSvt && base.Equals((object)psdzSvt) && IsValid.Equals(psdzSvt.IsValid))
+            {
+                return string.Equals(Vin, psdzSvt.Vin);
+            }
+            return false;
         }
 
         public override int GetHashCode()
         {
-            return (base.GetHashCode() * 397 ^ this.IsValid.GetHashCode()) * 397 ^ ((this.Vin != null) ? this.Vin.GetHashCode() : 0);
+            return (((base.GetHashCode() * 397) ^ IsValid.GetHashCode()) * 397) ^ ((Vin != null) ? Vin.GetHashCode() : 0);
         }
     }
 }
