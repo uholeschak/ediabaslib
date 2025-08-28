@@ -15,12 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
-using static ICSharpCode.SharpZipLib.Zip.ExtendedUnixData;
 
 namespace BMW.Rheingold.Programming.Common
 {
@@ -349,7 +344,14 @@ namespace BMW.Rheingold.Programming.Common
                 UseAep = false,
                 ProgrammingModeSwitch = true,
                 CodingModeSwitch = false,
-                SecureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(programmingService)
+                SecureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(programmingService),
+                EcusNotToSwitchProgrammingMode = null,
+                EcusToPreventUdsFallback = null,
+                ProgrammingProtectionDataCto = null,
+                ProgrammingTokens = new List<IPsdzProgrammingTokenCto>(),
+                IgnoreSignatureForProgrammingToken = true,
+                ExpectedSgbmidValidationActive = false,
+                ExpectedSgbmIdValidationForSmacTransferStartActive = false
             };
             return talExecutionSettings;
         }
