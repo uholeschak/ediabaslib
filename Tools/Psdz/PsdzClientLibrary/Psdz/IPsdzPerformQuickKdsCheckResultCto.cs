@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace BMW.Rheingold.Psdz.Model.Kds
 {
@@ -15,7 +11,7 @@ namespace BMW.Rheingold.Psdz.Model.Kds
         SUCCESS,
         TIMEOUT
     }
-    
+
     public interface IPsdzPerformQuickKdsCheckResultCto
     {
         PsdzKdsActionStatusEto KdsActionStatus { get; }
@@ -25,5 +21,7 @@ namespace BMW.Rheingold.Psdz.Model.Kds
         IPsdzKdsIdCto KdsId { get; }
 
         IList<IPsdzKdsQuickCheckResultCto> KdsQuickCheckResult { get; }
+
+        long ActionErrorCode { get; }
     }
 }

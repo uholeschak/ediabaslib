@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Kds
 {
-    [KnownType(typeof(PsdzKdsFailureResponseCto))]
     [DataContract]
-    [KnownType(typeof(PsdzKdsQuickCheckResultCto))]
+    [KnownType(typeof(PsdzKdsFailureResponseCto))]
     [KnownType(typeof(PsdzKdsIdCto))]
+    [KnownType(typeof(PsdzKdsQuickCheckResultCto))]
     public class PsdzPerformQuickKdsCheckResultCto : IPsdzPerformQuickKdsCheckResultCto
     {
         [DataMember]
@@ -24,5 +20,8 @@ namespace BMW.Rheingold.Psdz.Model.Kds
 
         [DataMember]
         public IList<IPsdzKdsQuickCheckResultCto> KdsQuickCheckResult { get; set; }
+
+        [DataMember]
+        public long ActionErrorCode { get; set; }
     }
 }

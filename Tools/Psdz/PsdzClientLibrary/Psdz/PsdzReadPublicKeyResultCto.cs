@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Kds
 {
     [DataContract]
-    [KnownType(typeof(PsdzKdsPublicKeyResultCto))]
     [KnownType(typeof(PsdzKdsFailureResponseCto))]
+    [KnownType(typeof(PsdzKdsPublicKeyResultCto))]
     public class PsdzReadPublicKeyResultCto : IPsdzReadPublicKeyResultCto
     {
         [DataMember]
