@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
@@ -20,6 +16,7 @@ namespace BMW.Rheingold.Psdz
     [ServiceKnownType(typeof(PsdzVin))]
     [ServiceKnownType(typeof(PsdzTal))]
     [ServiceKnownType(typeof(PsdzSecureCodingConfigCto))]
+    [ServiceKnownType(typeof(PsdzProgrammingProtectionDataCto))]
     public interface ITalExecutionService
     {
         [OperationContract]
