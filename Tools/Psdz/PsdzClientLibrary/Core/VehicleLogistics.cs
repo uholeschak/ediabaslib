@@ -154,6 +154,61 @@ namespace PsdzClient.Core
             return GetCharacteristics(vecInfo)?.GetBus(iD_SG_ADR, vecInfo.VCI?.VCIType, ecuGroup) ?? BusType.UNKNOWN;
         }
 
+        public static bool getECUTreeCoordinates(Vehicle vecInfo, ECU ecu, out int column, out int row)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            column = -1;
+            row = -1;
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                characteristics.GetEcuCoordinates(ecu.ID_SG_ADR, ecu.ID_LIN_SLAVE_ADR, out column, out row);
+                return true;
+            }
+            return false;
+        }
+
+        public static string getECU_GROBNAME(Vehicle vecInfo, long? sgAdr)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                return characteristics.GetECU_GROBNAME(sgAdr);
+            }
+            return string.Empty;
+        }
+
+        public static string getECU_GROBNAMEByEcuGroup(Vehicle vecInfo, string ecuGroup)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                return characteristics.GetECU_GROBNAMEByEcuGroup(ecuGroup);
+            }
+            return string.Empty;
+        }
+
+        public static string getFASTAConfig(string produktart)
+        {
+            ValidateIfDiagnosticsHasValidLicense();
+            if (string.IsNullOrEmpty(produktart))
+            {
+                return string.Empty;
+            }
+            string text = produktart.ToUpper();
+            if (!(text == "M"))
+            {
+                if (text == "P")
+                {
+                    return "fasta6_pkw.cfg";
+                }
+                return null;
+            }
+            return "fasta6_ux.cfg";
+        }
+
         // ToDo: Check on update
         // [UH] changed to public
         public static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
@@ -556,6 +611,7 @@ namespace PsdzClient.Core
             }
         }
 
+        // [UH] vehicle added
         public static void DecodeVCMBackupFA(byte[] faAsByteArray, Vehicle vehicle)
         {
             if (faAsByteArray == null || faAsByteArray.Length < 160)
@@ -663,10 +719,10 @@ namespace PsdzClient.Core
             fA.HO_WORT_ANZ = (short)fA.E_WORT.Count;
             fA.ZUSBAU_ANZ = 0;
             fA.AlreadyDone = true;
-            vehicle.FA = fA;
+            vehicle.FA = fA;    // [UH] replaced
         }
 
-        public static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
+        private static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
         {
             return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
         }
@@ -795,26 +851,6 @@ namespace PsdzClient.Core
                 throw;
             }
             return null;
-        }
-
-        public static string getECU_GROBNAME(Vehicle vecInfo, long? sgAdr)
-        {
-            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
-            if (characteristics != null)
-            {
-                return characteristics.GetECU_GROBNAME(sgAdr);
-            }
-            return string.Empty;
-        }
-
-        public static string getECU_GROBNAMEByEcuGroup(Vehicle vecInfo, string ecuGroup)
-        {
-            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
-            if (characteristics != null)
-            {
-                return characteristics.GetECU_GROBNAMEByEcuGroup(ecuGroup);
-            }
-            return string.Empty;
         }
 
         private static void ValidateIfDiagnosticsHasValidLicense()
