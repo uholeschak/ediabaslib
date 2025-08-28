@@ -1422,7 +1422,7 @@ namespace PsdzClient
         private static readonly ILog log = LogManager.GetLogger(typeof(PsdzDatabase));
 
         // ToDo: Check on update
-        public static List<decimal> EngineRootNodeClasses = new List<decimal>
+        public static readonly List<decimal> EngineRootNodeClasses = new List<decimal>
         {
             40141570m, 40142338m, 40142722m, 40143106m, 40145794m, 99999999866m, 99999999868m, 99999999870m, 99999999872m, 99999999874m,
             99999999876m, 99999999878m, 99999999880m, 99999999909m, 99999999910m, 99999999918m, 99999999701m, 99999999702m, 99999999703m, 99999999704m,
@@ -3196,7 +3196,7 @@ namespace PsdzClient
         }
 
         // ToDo: Check on update
-        // from VehicleIdent
+        // from VehicleIdent, public
         public static string GetProdArt(Vehicle vecInfo)
         {
             string result = "P";

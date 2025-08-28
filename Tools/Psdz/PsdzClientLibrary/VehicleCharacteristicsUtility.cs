@@ -12,11 +12,6 @@ namespace PsdzClientLibrary
             return HasEcu(vec, "MRR_30");
         }
 
-        public static bool HasFrr30v(this IVehicle vec)
-        {
-            return HasEcu(vec, "FRR_30V");
-        }
-
         public static bool HasHuMgu(this IVehicle vec)
         {
             return HasEcu(vec, "HU_MGU");
@@ -32,23 +27,14 @@ namespace PsdzClientLibrary
             return HasEcu(vec, "NBTEVO");
         }
 
-        public static bool HasEnavevoOrNbtevo(this IVehicle vec)
+        public static bool HasAmpt70(this IVehicle vec)
         {
-            if (!HasNbtevo(vec))
-            {
-                return HasEnavevo(vec);
-            }
-            return true;
+            return HasEcu(vec, "AMPT70");
         }
 
         public static bool HasAmph70(this IVehicle vec)
         {
             return HasEcu(vec, "AMPH70");
-        }
-
-        public static bool HasAmpt70(this IVehicle vec)
-        {
-            return HasEcu(vec, "AMPT70");
         }
 
         public static bool IsBev(this IVehicle vec)

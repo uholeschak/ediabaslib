@@ -35,6 +35,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
+    // ToDo: Check on update
     public enum BordnetType
     {
         BN2000,
@@ -46,7 +47,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         BEV2010,
         UNKNOWN
     }
-
 
     // ToDo: Check on update
     public enum BrandName
