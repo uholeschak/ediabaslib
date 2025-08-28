@@ -8,11 +8,12 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
-    [KnownType(typeof(PsdzTalLine))]
     [DataContract]
     [KnownType(typeof(PsdzEcuIdentifier))]
+    [KnownType(typeof(PsdzTalLine))]
     [KnownType(typeof(PsdzTalExecutionState))]
-    public class PsdzTal : PsdzTalElement, IPsdzTalElement, IPsdzTal
+    [KnownType(typeof(PsdzExecutionTime))]
+    public class PsdzTal : PsdzTalElement, IPsdzTal, IPsdzTalElement
     {
         [DataMember(IsRequired = true)]
         public IEnumerable<IPsdzEcuIdentifier> AffectedEcus { get; set; }
@@ -31,5 +32,8 @@ namespace BMW.Rheingold.Psdz.Model.Tal
 
         [DataMember(IsRequired = true)]
         public IEnumerable<IPsdzTalLine> TalLines { get; set; }
+
+        [DataMember]
+        public IPsdzExecutionTime PsdzExecutionTime { get; set; }
     }
 }

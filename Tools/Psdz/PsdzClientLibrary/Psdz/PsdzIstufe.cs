@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace BMW.Rheingold.Psdz.Model
 {
     [DataContract]
-    public class PsdzIstufe : IComparable<IPsdzIstufe>, IPsdzIstufe
+    public class PsdzIstufe : IPsdzIstufe, IComparable<IPsdzIstufe>
     {
         [DataMember]
         public bool IsValid { get; set; }
@@ -21,14 +21,14 @@ namespace BMW.Rheingold.Psdz.Model
         {
             if (other != null)
             {
-                return string.Compare(this.Value, other.Value, true, CultureInfo.InvariantCulture);
+                return string.Compare(Value, other.Value, ignoreCase: true, CultureInfo.InvariantCulture);
             }
             return 1;
         }
 
         public override string ToString()
         {
-            return this.Value;
+            return Value;
         }
     }
 }
