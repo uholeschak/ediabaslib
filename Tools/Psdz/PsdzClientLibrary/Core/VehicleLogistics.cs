@@ -781,6 +781,7 @@ namespace PsdzClient.Core
             return CreateCharacteristicsInstance<T>(vecInfo, storedXmlFileName, storedXmlFileName);
         }
 
+        // [UH] public
         public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name) where T : BaseEcuCharacteristics
         {
             try
@@ -812,7 +813,7 @@ namespace PsdzClient.Core
             IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
             if (service != null)
             {
-                service.AddServiceCode(bNT01_BnTopologieNotFound_nu_LF, text2, LayoutGroup.X, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null);
+                service.AddServiceCode(bNT01_BnTopologieNotFound_nu_LF, text2, LayoutGroup.X);
             }
             else
             {
