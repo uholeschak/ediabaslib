@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model
 {
@@ -25,7 +20,7 @@ namespace BMW.Rheingold.Psdz.Model
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "TargetSelector: Project={0}, VehicleInfo={1}", this.Project, this.VehicleInfo);
+            return string.Format(CultureInfo.InvariantCulture, "TargetSelector: Project={0}, VehicleInfo={1}", Project, VehicleInfo);
         }
     }
 }

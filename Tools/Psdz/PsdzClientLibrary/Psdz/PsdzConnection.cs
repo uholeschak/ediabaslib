@@ -23,7 +23,7 @@ namespace BMW.Rheingold.Psdz.Model
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Connection: [Id: {0}, TargetSelector: {1}, Port: {2}],", this.Id, this.TargetSelector, this.Port);
+            return string.Format(CultureInfo.InvariantCulture, "Connection: [Id: {0}, TargetSelector: {1}, Port: {2}],", Id, TargetSelector, Port);
         }
     }
 }
