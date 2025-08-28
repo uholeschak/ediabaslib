@@ -19,18 +19,25 @@ namespace BMW.Rheingold.Psdz.Model.Swt
 
         public override bool Equals(object obj)
         {
-            PsdzSwtApplicationId psdzSwtApplicationId = obj as PsdzSwtApplicationId;
-            return psdzSwtApplicationId != null && psdzSwtApplicationId.ApplicationNumber == this.ApplicationNumber && psdzSwtApplicationId.UpgradeIndex == this.UpgradeIndex;
+            if (obj is PsdzSwtApplicationId psdzSwtApplicationId)
+            {
+                if (psdzSwtApplicationId.ApplicationNumber == ApplicationNumber)
+                {
+                    return psdzSwtApplicationId.UpgradeIndex == UpgradeIndex;
+                }
+                return false;
+            }
+            return false;
         }
 
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return ToString().GetHashCode();
         }
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0:X4}{1:X4}", this.ApplicationNumber, this.UpgradeIndex);
+            return string.Format(CultureInfo.InvariantCulture, "{0:X4}{1:X4}", ApplicationNumber, UpgradeIndex);
         }
     }
 }
