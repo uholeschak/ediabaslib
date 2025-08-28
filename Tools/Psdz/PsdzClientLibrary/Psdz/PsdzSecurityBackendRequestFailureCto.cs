@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.Serialization;
 using BMW.Rheingold.Psdz.Model.Sfa.LocalizableMessageTo;
 
 namespace BMW.Rheingold.Psdz.Model.Sfa
 {
-    [KnownType(typeof(PsdzLocalizableMessageTo))]
     [DataContract]
+    [KnownType(typeof(PsdzLocalizableMessageTo))]
     public class PsdzSecurityBackendRequestFailureCto : IPsdzSecurityBackendRequestFailureCto
     {
         [DataMember]

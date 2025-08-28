@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.SecureCoding.SignatureResultCto;
 
 namespace BMW.Rheingold.Psdz.Model.Sfa.RequestNcdSignatureResponseCto
@@ -11,7 +7,7 @@ namespace BMW.Rheingold.Psdz.Model.Sfa.RequestNcdSignatureResponseCto
     [DataContract]
     [KnownType(typeof(PsdzSignatureResultCto))]
     [KnownType(typeof(PsdzSecurityBackendRequestFailureCto))]
-    internal class PsdzRequestNcdSignatureResponseCto : IPsdzRequestNcdSignatureResponseCto
+    public class PsdzRequestNcdSignatureResponseCto : IPsdzRequestNcdSignatureResponseCto
     {
         [DataMember]
         public IList<IPsdzSignatureResultCto> SignatureResultCtoList { get; internal set; }

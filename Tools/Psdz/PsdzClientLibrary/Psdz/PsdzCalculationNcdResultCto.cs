@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.SecureCoding
 {
+    [DataContract]
     [KnownType(typeof(PsdzCalculatedNcdsEto))]
     [KnownType(typeof(PsdzScbResultCto))]
-    [DataContract]
     public class PsdzCalculationNcdResultCto : IPsdzCalculationNcdResultCto
     {
-        [DataMember]
-        public string CalculatedNcdAsString { get; set; }
-
         [DataMember]
         public IList<IPsdzCalculatedNcdsEto> CalculatedNcds { get; set; }
 
