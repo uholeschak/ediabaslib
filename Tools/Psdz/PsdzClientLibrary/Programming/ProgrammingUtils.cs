@@ -355,5 +355,23 @@ namespace BMW.Rheingold.Programming.Common
             };
             return talExecutionSettings;
         }
+
+        public static void LogTalExecutionSettings(string methodeName, TalExecutionSettings talExecutionSettings)
+        {
+            Log.Info(methodeName, "{0}: '{1}'", "Parallel", talExecutionSettings.Parallel);
+            Log.Info(methodeName, "{0}: '{1}'", "TaMaxRepeat", talExecutionSettings.TaMaxRepeat);
+            Log.Info(methodeName, "{0}: '{1}'", "UseFlaMode", talExecutionSettings.UseFlaMode);
+            Log.Info(methodeName, "{0}: '{1}'", "UseProgrammingCounter", talExecutionSettings.UseProgrammingCounter);
+            Log.Info(methodeName, "{0}: '{1}'", "UseAep", talExecutionSettings.UseAep);
+            Log.Info(methodeName, "{0}: '{1}'", "ProgrammingModeSwitch", talExecutionSettings.ProgrammingModeSwitch);
+            Log.Info(methodeName, "{0}: '{1}'", "CodingModeSwitch", talExecutionSettings.CodingModeSwitch);
+            Log.Info(methodeName, "{0}: '{1}'", "HddUpdateURL", talExecutionSettings.HddUpdateURL);
+            Log.Info(methodeName, "{0}: '{1}'", "IgnoreSignatureForProgrammingToken", talExecutionSettings.IgnoreSignatureForProgrammingToken);
+            Log.Info(methodeName, "{0} is not null: '{1}'", "SecureCodingConfig", talExecutionSettings.SecureCodingConfig != null);
+            Log.Info(methodeName, "{0} is not null: '{1}'", "EcusNotToSwitchProgrammingMode", talExecutionSettings.EcusNotToSwitchProgrammingMode != null);
+            Log.Info(methodeName, "{0} is not null: '{1}'", "EcusToPreventUdsFallback", talExecutionSettings.EcusToPreventUdsFallback != null);
+            Log.Info(methodeName, "{0} is not null: '{1}'", "ProgrammingProtectionDataCto", talExecutionSettings.ProgrammingProtectionDataCto != null);
+            Log.Info(methodeName, "{0} is not null: '{1}'", "ProgrammingTokens", talExecutionSettings.ProgrammingTokens != null);
+        }
     }
 }

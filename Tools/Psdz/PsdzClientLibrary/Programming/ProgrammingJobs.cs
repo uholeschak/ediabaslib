@@ -1649,6 +1649,7 @@ namespace PsdzClient.Programming
                         talExecutionSettings.Parallel = false;
                         talExecutionSettings.TaMaxRepeat = 3;
                         ((PsdzSecureCodingConfigCto)talExecutionSettings.SecureCodingConfig).ConnectionTimeout = CodingConnectionTimeout;
+                        ProgrammingUtils.LogTalExecutionSettings(Log.CurrentMethod(), talExecutionSettings);
 
                         bool backupFailed = false;
                         bool executeBackupTal = true;
