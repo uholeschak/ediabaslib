@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -16,6 +10,13 @@ using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace BMW.Rheingold.Programming.API
 {
@@ -221,6 +222,19 @@ namespace BMW.Rheingold.Programming.API
                 }
             }
             return systemVerbauTabelle;
+        }
+
+        public IVehicleProfileChecksum Build(IPsdzReadVpcFromVcmCto vpcInput)
+        {
+            if (vpcInput == null)
+            {
+                return null;
+            }
+            return new VehicleProfileChecksum
+            {
+                VpcVersion = vpcInput.VpcVersion,
+                VpcCrc = vpcInput.VpcCrc
+            };
         }
 
         public void FillOrderNumbers(IPsdzSollverbauung sollVerbauung, IDictionary<string, string> result)
