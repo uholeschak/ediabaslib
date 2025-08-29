@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model.Ecu;
+﻿using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
@@ -26,10 +21,12 @@ namespace BMW.Rheingold.Psdz.Model.Tal
         Unknown,
         EcuActivate,
         EcuPoll,
-        EcuMirrorDeploy
+        EcuMirrorDeploy,
+        SmacTransferStart,
+        SmacTransferStatus
     }
 
-	public interface IPsdzTalLine : IPsdzTalElement
+    public interface IPsdzTalLine : IPsdzTalElement
     {
         IPsdzEcuIdentifier EcuIdentifier { get; }
 
@@ -44,6 +41,22 @@ namespace BMW.Rheingold.Psdz.Model.Tal
         PsdzIdRestore IdRestore { get; }
 
         PsdzSFADeploy SFADeploy { get; }
+
+        PsdzIdBackup IdBackup { get; }
+
+        PsdzFscBackup FscBackup { get; }
+
+        PsdzHddUpdate HddUpdate { get; }
+
+        PsdzSmacTransferStart SmacTransferStart { get; }
+
+        PsdzSmacTransferStatus SmacTransferStatus { get; }
+
+        PsdzEcuMirrorDeploy EcuMirrorDeploy { get; }
+
+        PsdzEcuActivate EcuActivate { get; }
+
+        PsdzEcuPoll EcuPoll { get; }
 
         PsdzTaCategories TaCategories { get; }
 

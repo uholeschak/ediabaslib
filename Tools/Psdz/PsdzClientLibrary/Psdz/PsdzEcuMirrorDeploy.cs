@@ -3,7 +3,7 @@
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
     [DataContract]
-    public class PsdzHddUpdate : PsdzTaCategory
+    public class PsdzEcuMirrorDeploy : PsdzTaCategory
     {
     }
 }
