@@ -11,5 +11,7 @@ namespace BMW.Rheingold.Psdz.Model.Tal
         bool IsEmpty { get; }
 
         IEnumerable<IPsdzTa> Tas { get; }
+
+        PsdzTaExecutionState? ExecutionState { get; }
     }
 }

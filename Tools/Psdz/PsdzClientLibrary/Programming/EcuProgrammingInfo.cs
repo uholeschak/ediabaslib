@@ -1,4 +1,13 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Programming;
+using BMW.Rheingold.Programming.API;
+using BMW.Rheingold.Programming.Common;
+using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using BMW.Rheingold.Psdz.Model.Swt;
+using BMW.Rheingold.Psdz.Model.Tal;
+using PsdzClient.Core;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -8,14 +17,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Programming;
-using BMW.Rheingold.Programming.API;
-using BMW.Rheingold.Programming.Common;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Swt;
-using BMW.Rheingold.Psdz.Model.Tal;
-using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
@@ -31,7 +32,17 @@ namespace PsdzClient.Programming
 
 	public class EcuProgrammingInfo : INotifyPropertyChanged, IEcuProgrammingInfo
 	{
-		public EcuProgrammingInfo(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder, bool withInitData = true)
+        protected EcuProgrammingInfoData data;
+
+        private ObservableCollectionEx<ProgrammingAction> programmingActionList;
+
+        private EcuScheduledState scheduled;
+
+        public IProgrammingAction this[ProgrammingActionType type] => GetProgrammingAction(type);
+
+        internal EcuProgrammingInfoData Data => data;
+
+        public EcuProgrammingInfo(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder, bool withInitData = true)
 		{
 			if (ecu == null)
 			{
@@ -83,22 +94,6 @@ namespace PsdzClient.Programming
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;
-
-		public IProgrammingAction this[ProgrammingActionType type]
-		{
-			get
-			{
-				return this.GetProgrammingAction(type);
-			}
-		}
-
-		internal EcuProgrammingInfoData Data
-		{
-			get
-			{
-				return this.data;
-			}
-		}
 
 		public IEcu Ecu
 		{
@@ -603,134 +598,167 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		internal static ISet<ProgrammingActionType> MapProgrammingActionType(IPsdzTalLine talLine)
-		{
-			ISet<ProgrammingActionType> set = new HashSet<ProgrammingActionType>();
-			switch (talLine.TaCategories)
-			{
-				case PsdzTaCategories.BlFlash:
-				case PsdzTaCategories.GatewayTableDeploy:
-				case PsdzTaCategories.SwDeploy:
-					set.Add(ProgrammingActionType.Programming);
-					return set;
-				case PsdzTaCategories.CdDeploy:
-					set.Add(ProgrammingActionType.Coding);
-					return set;
-				case PsdzTaCategories.FscBackup:
-					set.Add(ProgrammingActionType.FscBakup);
-					return set;
-				case PsdzTaCategories.FscDeploy:
-					using (IEnumerator<PsdzSwtActionType?> enumerator = (from ta in talLine.FscDeploy.Tas.OfType<PsdzFscDeployTa>()
-																		 select ta.Action).GetEnumerator())
-					{
-						while (enumerator.MoveNext())
-						{
-							PsdzSwtActionType? psdzSwtActionType = enumerator.Current;
-							if (psdzSwtActionType != null)
-							{
-								switch (psdzSwtActionType.GetValueOrDefault())
-								{
-									case PsdzSwtActionType.ActivateStore:
-										set.Add(ProgrammingActionType.FscStore);
-										continue;
-									case PsdzSwtActionType.ActivateUpdate:
-									case PsdzSwtActionType.ActivateUpgrade:
-									case PsdzSwtActionType.WriteVin:
-										set.Add(ProgrammingActionType.FscActivate);
-										continue;
-									case PsdzSwtActionType.Deactivate:
-										set.Add(ProgrammingActionType.FscDeactivate);
-										continue;
-								}
-							}
-							throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported FSC action {0}.", psdzSwtActionType));
-						}
-						return set;
-					}
-				case PsdzTaCategories.HddUpdate:
-					set.Add(ProgrammingActionType.HddUpdate);
-					return set;
-				case PsdzTaCategories.HwDeinstall:
-					set.Add(ProgrammingActionType.Unmounting);
-					return set;
-				case PsdzTaCategories.HwInstall:
-					set.Add(ProgrammingActionType.Mounting);
-					return set;
-				case PsdzTaCategories.IbaDeploy:
-					set.Add(ProgrammingActionType.IbaDeploy);
-					return set;
-				case PsdzTaCategories.IdBackup:
-					set.Add(ProgrammingActionType.IdSave);
-					return set;
-				case PsdzTaCategories.IdRestore:
-					set.Add(ProgrammingActionType.IdRestore);
-					return set;
-				case PsdzTaCategories.SFADeploy:
-					if (talLine.SFADeploy.Tas.OfType<PsdzSFAWriteTA>().Any<PsdzSFAWriteTA>())
-					{
-						set.Add(ProgrammingActionType.SFAWrite);
-					}
-					if (talLine.SFADeploy.Tas.OfType<PsdzSFADeleteTA>().Any<PsdzSFADeleteTA>())
-					{
-						set.Add(ProgrammingActionType.SFADelete);
-					}
-					if (talLine.SFADeploy.Tas.OfType<PsdzSFAVerifyTA>().Any<PsdzSFAVerifyTA>())
-					{
-						set.Add(ProgrammingActionType.SFAVerfy);
-						return set;
-					}
-					return set;
-				case PsdzTaCategories.Unknown:
-					return set;
-				case PsdzTaCategories.EcuActivate:
-				case PsdzTaCategories.EcuPoll:
-				case PsdzTaCategories.EcuMirrorDeploy:
-					Log.Warning(Log.CurrentMethod(), string.Format(CultureInfo.InvariantCulture, "Unimplemented TA category type {0}.", talLine.TaCategories), Array.Empty<object>());
-					return set;
-			}
-			throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported TA category type {0}.", talLine.TaCategories));
-		}
+        internal static ISet<ProgrammingActionType> MapProgrammingActionType(IPsdzTalLine talLine)
+        {
+            ISet<ProgrammingActionType> set = new HashSet<ProgrammingActionType>();
+            switch (talLine.TaCategories)
+            {
+                case PsdzTaCategories.BlFlash:
+                case PsdzTaCategories.GatewayTableDeploy:
+                case PsdzTaCategories.SwDeploy:
+                case PsdzTaCategories.EcuActivate:
+                case PsdzTaCategories.EcuPoll:
+                case PsdzTaCategories.EcuMirrorDeploy:
+                case PsdzTaCategories.SmacTransferStart:
+                case PsdzTaCategories.SmacTransferStatus:
+                    set.Add(ProgrammingActionType.Programming);
+                    break;
+                case PsdzTaCategories.CdDeploy:
+                    set.Add(ProgrammingActionType.Coding);
+                    break;
+                case PsdzTaCategories.FscBackup:
+                    set.Add(ProgrammingActionType.FscBakup);
+                    break;
+                case PsdzTaCategories.FscDeploy:
+                    foreach (PsdzSwtActionType? item in from ta in talLine.FscDeploy.Tas.OfType<PsdzFscDeployTa>()
+                                                        select ta.Action)
+                    {
+                        switch (item)
+                        {
+                            case PsdzSwtActionType.ActivateStore:
+                                set.Add(ProgrammingActionType.FscStore);
+                                break;
+                            case PsdzSwtActionType.ActivateUpdate:
+                            case PsdzSwtActionType.ActivateUpgrade:
+                            case PsdzSwtActionType.WriteVin:
+                                set.Add(ProgrammingActionType.FscActivate);
+                                break;
+                            case PsdzSwtActionType.Deactivate:
+                                set.Add(ProgrammingActionType.FscDeactivate);
+                                break;
+                            default:
+                                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported FSC action {0}.", item));
+                        }
+                    }
+                    break;
+                case PsdzTaCategories.HddUpdate:
+                    set.Add(ProgrammingActionType.HddUpdate);
+                    break;
+                case PsdzTaCategories.HwDeinstall:
+                    set.Add(ProgrammingActionType.Unmounting);
+                    break;
+                case PsdzTaCategories.HwInstall:
+                    set.Add(ProgrammingActionType.Mounting);
+                    break;
+                case PsdzTaCategories.IbaDeploy:
+                    set.Add(ProgrammingActionType.IbaDeploy);
+                    break;
+                case PsdzTaCategories.IdBackup:
+                    set.Add(ProgrammingActionType.IdSave);
+                    break;
+                case PsdzTaCategories.IdRestore:
+                    set.Add(ProgrammingActionType.IdRestore);
+                    break;
+                case PsdzTaCategories.SFADeploy:
+                    if (talLine.SFADeploy.Tas.OfType<PsdzSFAWriteTA>().Any())
+                    {
+                        set.Add(ProgrammingActionType.SFAWrite);
+                    }
+                    if (talLine.SFADeploy.Tas.OfType<PsdzSFADeleteTA>().Any())
+                    {
+                        set.Add(ProgrammingActionType.SFADelete);
+                    }
+                    if (talLine.SFADeploy.Tas.OfType<PsdzSFAVerifyTA>().Any())
+                    {
+                        set.Add(ProgrammingActionType.SFAVerfy);
+                    }
+                    break;
+                default:
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported TA category type {0}.", talLine.TaCategories));
+                case PsdzTaCategories.Unknown:
+                    break;
+            }
+            return set;
+        }
 
-		private IList<SgbmIdChange> GetSgbmIds(IPsdzTalLine talLine)
-		{
-			IList<SgbmIdChange> list = new List<SgbmIdChange>();
-			foreach (IPsdzTa psdzTa in talLine.TaCategory.Tas)
-			{
-				IPsdzSgbmId sgbmId = psdzTa.SgbmId;
-				if (sgbmId != null)
-				{
-					SgbmIdentifier sgbmIdentifier = new SgbmIdentifier();
-					sgbmIdentifier.ProcessClass = sgbmId.ProcessClass;
-					sgbmIdentifier.Id = sgbmId.IdAsLong;
-					sgbmIdentifier.MainVersion = sgbmId.MainVersion;
-					sgbmIdentifier.SubVersion = sgbmId.SubVersion;
-					sgbmIdentifier.PatchVersion = sgbmId.PatchVersion;
-					list.Add(new SgbmIdChange(this.GetSgbmIdActual(sgbmId), sgbmIdentifier.ToString()));
-				}
-			}
-			return list;
-		}
+        private IList<SgbmIdChange> GetSgbmIds(IPsdzTalLine talLine)
+        {
+            IList<SgbmIdChange> list = new List<SgbmIdChange>();
+            foreach (IPsdzTa ta in talLine.TaCategory.Tas)
+            {
+                if (talLine.TaCategories == PsdzTaCategories.SmacTransferStart || talLine.TaCategories == PsdzTaCategories.SmacTransferStatus)
+                {
+                    if (!(Ecu is SmartActuatorECU smacEcu))
+                    {
+                        Log.Warning(Log.CurrentMethod(), "'" + Ecu.EcuUid + "' seems to be Master and not Smac");
+                        continue;
+                    }
+                    Log.Info(Log.CurrentMethod(), $"Found SmacTransfer TalLine: '{ta.Id}'");
+                    if (talLine.TaCategories == PsdzTaCategories.SmacTransferStart)
+                    {
+                        list.AddRange(GetSmacTransferStartSgbmIds(ta, smacEcu));
+                    }
+                }
+                else
+                {
+                    IPsdzSgbmId sgbmId = ta.SgbmId;
+                    if (sgbmId != null)
+                    {
+                        SgbmIdentifier sgbmIdentifier = BuildSgmbIdentifier(sgbmId);
+                        list.Add(new SgbmIdChange(GetSgbmIdActual(sgbmId), sgbmIdentifier.ToString()));
+                    }
+                }
+            }
+            return list;
+        }
 
-		private string GetSgbmIdActual(IPsdzSgbmId target)
-		{
-			if (this.SvkCurrent != null && this.SvkCurrent.SgbmIds != null)
-			{
-				using (IEnumerator<ISgbmId> enumerator = this.data.SvkCurrent.SgbmIds.GetEnumerator())
-				{
-					while (enumerator.MoveNext())
-					{
-						ISgbmId sgbmId = enumerator.Current;
-						if (sgbmId != null && target.ProcessClass == sgbmId.ProcessClass && target.IdAsLong == sgbmId.Id)
-						{
-							return sgbmId.ToString();
-						}
-					}
-				}
-			}
-			return "--";
-		}
+        private List<SgbmIdChange> GetSmacTransferStartSgbmIds(IPsdzTa ta, SmartActuatorECU smacEcu)
+        {
+            List<SgbmIdChange> list = new List<SgbmIdChange>();
+            IList<IPsdzSgbmId> value;
+            if (!(ta is PsdzSmacTransferStartTA psdzSmacTransferStartTA))
+            {
+                Log.Error(Log.CurrentMethod(), $"TA '{ta}' is not of type PsdzSmacTransferStartTA");
+            }
+            else if (psdzSmacTransferStartTA.SmartActuatorData.TryGetValue(smacEcu.SmacID, out value))
+            {
+                foreach (IPsdzSgbmId item in value)
+                {
+                    SgbmIdentifier sgbmIdentifier = BuildSgmbIdentifier(item);
+                    list.Add(new SgbmIdChange(GetSgbmIdActual(item), sgbmIdentifier.ToString()));
+                }
+            }
+            return list;
+        }
 
-		private IDictionary<ProgrammingActionType, IList<SgbmIdChange>> CalculateActionStates(IEnumerable<IPsdzTalLine> talLines)
+        private SgbmIdentifier BuildSgmbIdentifier(IPsdzSgbmId id)
+        {
+            return new SgbmIdentifier
+            {
+                ProcessClass = id.ProcessClass,
+                Id = id.IdAsLong,
+                MainVersion = id.MainVersion,
+                SubVersion = id.SubVersion,
+                PatchVersion = id.PatchVersion
+            };
+        }
+
+        private string GetSgbmIdActual(IPsdzSgbmId target)
+        {
+            if (SvkCurrent != null && SvkCurrent.SgbmIds != null)
+            {
+                foreach (ISgbmId sgbmId in data.SvkCurrent.SgbmIds)
+                {
+                    if (sgbmId != null && target.ProcessClass == sgbmId.ProcessClass && target.IdAsLong == sgbmId.Id)
+                    {
+                        return sgbmId.ToString();
+                    }
+                }
+            }
+            return "--";
+        }
+
+        private IDictionary<ProgrammingActionType, IList<SgbmIdChange>> CalculateActionStates(IEnumerable<IPsdzTalLine> talLines)
 		{
 			Dictionary<ProgrammingActionType, IList<SgbmIdChange>> dictionary = new Dictionary<ProgrammingActionType, IList<SgbmIdChange>>();
 			foreach (IPsdzTalLine talLine in talLines)
@@ -796,11 +824,5 @@ namespace PsdzClient.Programming
 				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Convert(Expression.Property(Expression.Constant(this, typeof(EcuProgrammingInfo)), "State"), typeof(object)), Array.Empty<ParameterExpression>()));
 			}
 		}
-
-		protected EcuProgrammingInfoData data;
-
-		private ObservableCollectionEx<ProgrammingAction> programmingActionList;
-
-		private EcuScheduledState scheduled;
 	}
 }

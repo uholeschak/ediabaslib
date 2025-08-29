@@ -1,24 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
-    [KnownType(typeof(PsdzSwDeployTa))]
+    [DataContract]
+    [KnownType(typeof(PsdzTa))]
+    [KnownType(typeof(PsdzTaExecutionState))]
+    [KnownType(typeof(PsdzIdRestoreTa))]
+    [KnownType(typeof(PsdzIdRestoreLightTa))]
+    [KnownType(typeof(PsdzIdBackupLightTa))]
     [KnownType(typeof(PsdzFscDeployTa))]
+    [KnownType(typeof(PsdzBlFlashTa))]
+    [KnownType(typeof(PsdzIbaDeployTa))]
+    [KnownType(typeof(PsdzSwDeployTa))]
     [KnownType(typeof(PsdzSFADeleteTA))]
     [KnownType(typeof(PsdzSFAVerifyTA))]
-    [KnownType(typeof(PsdzIdBackupLightTa))]
-    [KnownType(typeof(PsdzIdRestoreTa))]
-    [KnownType(typeof(PsdzBlFlashTa))]
-    [KnownType(typeof(PsdzIdRestoreLightTa))]
-    [KnownType(typeof(PsdzIbaDeployTa))]
-    [KnownType(typeof(PsdzTa))]
     [KnownType(typeof(PsdzSFAWriteTA))]
-    [DataContract]
+    [KnownType(typeof(PsdzHddUpdateTA))]
+    [KnownType(typeof(PsdzSmacSwDeployOnMasterTA))]
+    [KnownType(typeof(PsdzSmacEcuMirrorDeployOnMasterTA))]
+    [KnownType(typeof(PsdzSmacTransferStartTA))]
+    [KnownType(typeof(PsdzSmacTransferStatusTA))]
+    [KnownType(typeof(PsdzEcuMirrorDeployTa))]
+    [KnownType(typeof(PsdzEcuActivateTa))]
+    [KnownType(typeof(PsdzEcuPollTa))]
     public class PsdzTaCategory : IPsdzTaCategory
     {
         [DataMember]
@@ -26,5 +31,8 @@ namespace BMW.Rheingold.Psdz.Model.Tal
 
         [DataMember]
         public IEnumerable<IPsdzTa> Tas { get; set; }
+
+        [DataMember]
+        public PsdzTaExecutionState? ExecutionState { get; set; }
     }
 }
