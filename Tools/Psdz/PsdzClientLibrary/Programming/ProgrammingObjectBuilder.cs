@@ -656,13 +656,13 @@ namespace BMW.Rheingold.Programming.API
         }
 
         internal IIstufenTriple Build(IPsdzIstufenTriple istufenTriple)
-		{
-			if (istufenTriple == null)
-			{
-				return null;
-			}
-			return new IntegrationLevelTriple(istufenTriple.Shipment, istufenTriple.Last, istufenTriple.Current);
-		}
+        {
+            if (istufenTriple == null)
+            {
+                return null;
+            }
+            return new IntegrationLevelTriple(istufenTriple.Shipment, istufenTriple.Last, istufenTriple.Current);
+        }
 
         internal SystemVerbauKennung Build(ISvk svkInput)
         {
