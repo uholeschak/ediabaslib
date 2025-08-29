@@ -81,7 +81,7 @@ namespace PsdzClient.Core
             string empty = string.Empty;
             if (ConfigSettings.IsOssModeActive)
             {
-                empty = CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly.ToString();
+                empty = CertReqProfile.EnumType.crp_M2M_3rdParty_4_CUST_ReadWriteControl.ToString();
                 return new Sec4DiagRequestData
                 {
                     CertReqProfile = empty,
