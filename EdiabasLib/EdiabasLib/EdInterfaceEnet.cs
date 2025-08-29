@@ -1555,7 +1555,7 @@ namespace EdiabasLib
                                 {
                                     if (!string.IsNullOrEmpty(DoIpS29JsonRequestPath))
                                     {
-                                        if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath, EdSec4Diag.CertReqProfile.EnumType.crp_M2M_3dParty_4_CUST_ControlOnly))
+                                        if (!CreateRequestJson(SharedDataActive, DoIpS29JsonRequestPath, EdSec4Diag.CertReqProfile.EnumType.crp_M2M_3rdParty_4_CUST_ReadWriteControl))
                                         {
                                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "External S29 certificate request generation failed");
                                         }
