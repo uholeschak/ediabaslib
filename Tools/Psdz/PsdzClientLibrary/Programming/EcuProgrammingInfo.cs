@@ -530,73 +530,67 @@ namespace PsdzClient.Programming
 			return programmingAction;
 		}
 
-		internal void Reset(EcuScheduledState remove, IList<IEcuProgrammingInfo> exchangeScheduled)
-		{
-			this.programmingActionList.Clear();
-			if (remove == EcuScheduledState.NothingScheduled)
-			{
-				this.Scheduled = EcuScheduledState.NothingScheduled;
-				if (!exchangeScheduled.Any((IEcuProgrammingInfo ecu) => ecu.Ecu.ID_SG_ADR == this.Ecu.ID_SG_ADR))
-				{
-					this.IsExchangeScheduled = false;
-				}
-				this.IsExchangeDone = false;
-			}
-			else
-			{
-				this.Scheduled &= ~remove;
-			}
-			this.IsCodingDisabled = this.IsCodingSelectionDisabled;
-			this.IsProgrammingDisabled = this.IsProgrammingSelectionDisabled;
-			this.IsExchangeScheduledDisabled = false;
-			this.IsExchangeDoneDisabled = false;
-		}
+        internal void Reset(EcuScheduledState remove, IList<IEcuProgrammingInfo> exchangeScheduled)
+        {
+            programmingActionList.Clear();
+            if (remove == EcuScheduledState.NothingScheduled)
+            {
+                Scheduled = EcuScheduledState.NothingScheduled;
+                if (!exchangeScheduled.Any((IEcuProgrammingInfo ecu) => ecu.Ecu.ID_SG_ADR == Ecu.ID_SG_ADR))
+                {
+                    IsExchangeScheduled = false;
+                }
+                IsExchangeDone = false;
+            }
+            else
+            {
+                Scheduled &= ~remove;
+            }
+            IsCodingDisabled = IsCodingSelectionDisabled;
+            IsProgrammingDisabled = IsProgrammingSelectionDisabled;
+            IsExchangeScheduledDisabled = false;
+            IsExchangeDoneDisabled = false;
+        }
 
-		internal void SetCodingScheduled()
-		{
-			this.IsCodingDisabled = true;
-			this.Scheduled |= EcuScheduledState.CodingScheduledByLogistic;
-		}
+        internal void SetCodingScheduled()
+        {
+            IsCodingDisabled = true;
+            Scheduled |= EcuScheduledState.CodingScheduledByLogistic;
+        }
 
-		internal void SetProgrammingScheduled()
-		{
-			this.IsProgrammingDisabled = true;
-			this.Scheduled |= EcuScheduledState.ProgrammingScheduledByLogistic;
-		}
+        internal void SetProgrammingScheduled()
+        {
+            IsProgrammingDisabled = true;
+            Scheduled |= EcuScheduledState.ProgrammingScheduledByLogistic;
+        }
 
-		internal bool UpdateSingleProgrammingAction(ProgrammingActionType type, ProgrammingActionState state)
-		{
-			using (IEnumerator<ProgrammingAction> enumerator = this.programmingActionList.GetEnumerator())
-			{
-				while (enumerator.MoveNext())
-				{
-					ProgrammingAction programmingAction = enumerator.Current;
-					if (programmingAction.Type == type)
-					{
-						programmingAction.StateProgramming = state;
-						return true;
-					}
-				}
-				return false;
-			}
-		}
+        internal bool UpdateSingleProgrammingAction(ProgrammingActionType type, ProgrammingActionState state)
+        {
+            foreach (ProgrammingAction programmingAction in programmingActionList)
+            {
+                if (programmingAction.Type == type)
+                {
+                    Log.Info("EcuProgrammingInfo.UpdateSingleProgrammingAction", "ECU: 0x{0:X2} - Action: {1} - State: {2}", Ecu.ID_SG_ADR, type, state);
+                    programmingAction.StateProgramming = state;
+                    return true;
+                }
+            }
+            return false;
+        }
 
-		internal bool UpdateSingleProgrammingAction(ProgrammingActionType type, ProgrammingActionState state, bool executed)
-		{
-			using (IEnumerator<ProgrammingAction> enumerator = this.programmingActionList.GetEnumerator())
-			{
-				while (enumerator.MoveNext())
-				{
-					ProgrammingAction programmingAction = enumerator.Current;
-					if (programmingAction.Type == type)
-					{
-						programmingAction.UpdateState(state, executed);
-						return true;
-					}
-				}
-				return false;
-			}
-		}
+        internal bool UpdateSingleProgrammingAction(ProgrammingActionType type, ProgrammingActionState state, bool executed)
+        {
+            foreach (ProgrammingAction programmingAction in programmingActionList)
+            {
+                if (programmingAction.Type == type)
+                {
+                    programmingAction.UpdateState(state, executed);
+                    Log.Info("EcuProgrammingInfo.UpdateSingleProgrammingAction", "ECU: 0x{0:X2} - Action: {1} - State: {2}", Ecu.ID_SG_ADR, type, programmingAction.StateProgramming);
+                    return true;
+                }
+            }
+            return false;
+        }
 
         internal static ISet<ProgrammingActionType> MapProgrammingActionType(IPsdzTalLine talLine)
         {
@@ -759,70 +753,66 @@ namespace PsdzClient.Programming
         }
 
         private IDictionary<ProgrammingActionType, IList<SgbmIdChange>> CalculateActionStates(IEnumerable<IPsdzTalLine> talLines)
-		{
-			Dictionary<ProgrammingActionType, IList<SgbmIdChange>> dictionary = new Dictionary<ProgrammingActionType, IList<SgbmIdChange>>();
-			foreach (IPsdzTalLine talLine in talLines)
-			{
-				foreach (ProgrammingActionType key in EcuProgrammingInfo.MapProgrammingActionType(talLine))
-				{
-					if (!dictionary.ContainsKey(key))
-					{
-						dictionary.Add(key, new List<SgbmIdChange>());
-					}
-					IList<SgbmIdChange> sgbmIds = this.GetSgbmIds(talLine);
-					dictionary[key].AddRange(sgbmIds);
-				}
-			}
-			return dictionary;
-		}
+        {
+            Dictionary<ProgrammingActionType, IList<SgbmIdChange>> dictionary = new Dictionary<ProgrammingActionType, IList<SgbmIdChange>>();
+            foreach (IPsdzTalLine talLine in talLines)
+            {
+                foreach (ProgrammingActionType item in MapProgrammingActionType(talLine))
+                {
+                    if (!dictionary.ContainsKey(item))
+                    {
+                        dictionary.Add(item, new List<SgbmIdChange>());
+                    }
+                    IList<SgbmIdChange> sgbmIds = GetSgbmIds(talLine);
+                    dictionary[item].AddRange(sgbmIds);
+                }
+            }
+            return dictionary;
+        }
 
-		private void OnProgrammingActionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
-			NotifyCollectionChangedAction action = e.Action;
-			if (action == NotifyCollectionChangedAction.Add)
-			{
-				foreach (object obj in e.NewItems)
-				{
-					INotifyPropertyChanged notifyPropertyChanged = obj as INotifyPropertyChanged;
-					if (notifyPropertyChanged != null)
-					{
-						notifyPropertyChanged.PropertyChanged += this.OnPropertyChanged;
-					}
-				}
-				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Convert(Expression.Property(Expression.Constant(this, typeof(EcuProgrammingInfo)), "State"), typeof(object)), Array.Empty<ParameterExpression>()));
-				this.OnPropertyChanged("Item[]");
-				return;
-			}
-			if (action != NotifyCollectionChangedAction.Remove)
-			{
-				return;
-			}
-			foreach (object obj2 in e.NewItems)
-			{
-				INotifyPropertyChanged notifyPropertyChanged2 = obj2 as INotifyPropertyChanged;
-				if (notifyPropertyChanged2 != null)
-				{
-					notifyPropertyChanged2.PropertyChanged -= this.OnPropertyChanged;
-				}
-			}
-			this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Convert(Expression.Property(Expression.Constant(this, typeof(EcuProgrammingInfo)), "State"), typeof(object)), Array.Empty<ParameterExpression>()));
-			this.OnPropertyChanged("Item[]");
-		}
+        private void OnProgrammingActionsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (object newItem in e.NewItems)
+                    {
+                        if (newItem is INotifyPropertyChanged notifyPropertyChanged2)
+                        {
+                            notifyPropertyChanged2.PropertyChanged += OnPropertyChanged;
+                        }
+                    }
+                    this.PropertyChanged.NotifyPropertyChanged(this, () => State);
+                    OnPropertyChanged("Item[]");
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (object newItem2 in e.NewItems)
+                    {
+                        if (newItem2 is INotifyPropertyChanged notifyPropertyChanged)
+                        {
+                            notifyPropertyChanged.PropertyChanged -= OnPropertyChanged;
+                        }
+                    }
+                    this.PropertyChanged.NotifyPropertyChanged(this, () => State);
+                    OnPropertyChanged("Item[]");
+                    break;
+            }
+        }
 
-		private void OnPropertyChanged(string propertyName)
-		{
-			if (this.PropertyChanged != null)
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
 
-		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
-			if ("StateProgramming".Equals(e.PropertyName) || "IsSelected".Equals(e.PropertyName))
-			{
-				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Convert(Expression.Property(Expression.Constant(this, typeof(EcuProgrammingInfo)), "State"), typeof(object)), Array.Empty<ParameterExpression>()));
-			}
-		}
-	}
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if ("StateProgramming".Equals(e.PropertyName) || "IsSelected".Equals(e.PropertyName))
+            {
+                this.PropertyChanged.NotifyPropertyChanged(this, () => State);
+            }
+        }
+    }
 }
