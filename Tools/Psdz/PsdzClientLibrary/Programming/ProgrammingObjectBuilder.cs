@@ -10,13 +10,12 @@ using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
+using BMW.Rheingold.Psdz.Model.Sfa;
 
 namespace BMW.Rheingold.Programming.API
 {
@@ -462,6 +461,19 @@ namespace BMW.Rheingold.Programming.API
         public IEcuIdentifier BuildEcuIdentifier(string baseVariant, int diagAddrAsInt)
         {
             return new EcuId(baseVariant, diagAddrAsInt);
+        }
+
+        public IEcuFailureResponse BuildFailureEcu(IPsdzEcuFailureResponseCto failedEcu)
+        {
+            if (failedEcu == null)
+            {
+                return null;
+            }
+            return new EcuFailureResponse
+            {
+                Ecu = BuildEcuIdentifier(failedEcu.EcuIdentifierCto.BaseVariant, failedEcu.EcuIdentifierCto.DiagAddrAsInt),
+                Reason = failedEcu.Cause.Description
+            };
         }
 
         public ISwtApplicationId BuildSwtApplicationId(int appNo, int upgradeIdx)
