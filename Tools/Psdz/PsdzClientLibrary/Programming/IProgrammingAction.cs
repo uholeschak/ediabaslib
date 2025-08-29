@@ -31,13 +31,13 @@ namespace PsdzClient.Programming
 
         IProgrammingActionData DataContext { get; }
 
-        string GetShortType();
-
-        bool Select(bool value);
+        IList<int> AffectedEcuDiagAddr { get; }
 
         ProgrammingActionType Type { get; }
 
-        IList<ISgbmIdChange> SgbmIds { get; }
+        string GetShortType();
+
+        bool Select(bool value);
 
         bool RequiresEscalation();
     }

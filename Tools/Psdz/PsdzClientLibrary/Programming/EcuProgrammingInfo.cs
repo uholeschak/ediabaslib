@@ -509,26 +509,27 @@ namespace PsdzClient.Programming
 														  }));
 		}
 
-		internal ProgrammingAction AddSingleProgrammingAction(ProgrammingActionType type, bool isSelected, int order, string channel, string assemblyNumberSetPoint, IList<SgbmIdChange> sgbmIdList = null, string extraTitle = null)
-		{
-			bool isExpertModeEnabled = true;
-			ProgrammingAction programmingAction = new ProgrammingAction(this.Ecu, type, isExpertModeEnabled, order);
-			programmingAction.Select(isSelected);
-			programmingAction.Channel = channel;
-			programmingAction.Note = ((this.Category != null) ? this.Category : string.Empty);
-			if (sgbmIdList != null)
-			{
-				programmingAction.SgbmIds.AddRange(sgbmIdList);
-			}
-			if (!string.IsNullOrEmpty(extraTitle))
-			{
-				ProgrammingAction programmingAction2 = programmingAction;
-				programmingAction2.Title = programmingAction2.Title + Environment.NewLine + extraTitle;
-			}
-			this.programmingActionList.Add(programmingAction);
-			this.data.ProgrammingActionData.Add(programmingAction.DataContext);
-			return programmingAction;
-		}
+        internal ProgrammingAction AddSingleProgrammingAction(ProgrammingActionType type, bool isSelected, int order, string channel, string assemblyNumberSetPoint, IList<SgbmIdChange> sgbmIdList = null, string extraTitle = null, IList<int> ecuDiagAddr = null, bool isSystemSfaAction = false)
+        {
+            bool isExpertModeEnabled = ProgrammingUtils.IsExpertModeEnabled;
+            ProgrammingAction programmingAction = (isSystemSfaAction ? new SystemSfaProgrammingAction(Ecu, type, isExpertModeEnabled, order) : new ProgrammingAction(Ecu, type, isExpertModeEnabled, order));
+            programmingAction.Select(isSelected);
+            programmingAction.Channel = channel;
+            programmingAction.Note = ((Category != null) ? Category : string.Empty);
+            programmingAction.AffectedEcuDiagAddr = ecuDiagAddr;
+            if (sgbmIdList != null)
+            {
+                programmingAction.SgbmIds.AddRange(sgbmIdList);
+            }
+            if (!string.IsNullOrEmpty(extraTitle))
+            {
+                programmingAction.Title = programmingAction.Title + Environment.NewLine + extraTitle;
+            }
+            programmingActionList.Add(programmingAction);
+            data.ProgrammingActionData.Add(programmingAction.DataContext);
+            Log.Info("EcuProgrammingInfo.AddSingleProgrammingAction()", "ECU: 0x{0:X2} - Action: {1} - State: {2}", Ecu.ID_SG_ADR, programmingAction.Type, programmingAction.StateProgramming);
+            return programmingAction;
+        }
 
         internal void Reset(EcuScheduledState remove, IList<IEcuProgrammingInfo> exchangeScheduled)
         {

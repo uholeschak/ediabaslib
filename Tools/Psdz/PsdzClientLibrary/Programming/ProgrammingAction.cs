@@ -45,23 +45,35 @@ namespace PsdzClient.Programming
 
 	public class ProgrammingAction : IComparable<IProgrammingAction>, INotifyPropertyChanged, IProgrammingAction
 	{
-		internal ProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order)
-		{
-			this.data = new ProgrammingActionData();
-			this.ParentEcu = parentEcu;
-			this.data.ParentEcu = parentEcu;
-			this.data.Type = type;
-			this.data.IsEditable = isEditable;
-			this.data.Order = order;
-			this.data.StateProgramming = ProgrammingActionState.ActionPlanned;
-			this.SgbmIds = new List<ISgbmIdChange>();
-			//this.EscalationSteps = new List<IEscalationStep>();
-			//this.Title = ProgrammingAction.BuildTitle(this.Type, this.ParentEcu, ConfigSettings.CurrentUICulture);
-			this.data.Channel = string.Empty;
-			this.data.Note = string.Empty;
-		}
+        private ProgrammingActionData data;
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        private string assemblyNumberSetPoint;
+
+        //private string pn;
+
+        private IList<ISgbmIdChange> sgbmIds;
+
+        private typeDiagObjectState stateDiag;
+
+        protected string titleTextId;
+
+        internal ProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order)
+        {
+            data = new ProgrammingActionData();
+            ParentEcu = parentEcu;
+            data.ParentEcu = parentEcu;
+            data.Type = type;
+            data.IsEditable = isEditable;
+            data.Order = order;
+            data.StateProgramming = ProgrammingActionState.ActionPlanned;
+            SgbmIds = new List<ISgbmIdChange>();
+            //EscalationSteps = new List<IEscalationStep>();
+            Title = BuildTitle(Type, ParentEcu, ConfigSettings.CurrentUICulture);
+            data.Channel = string.Empty;
+            data.Note = string.Empty;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
 		public DateTime StartExecution { get; internal set; }
 
@@ -166,21 +178,23 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		public IEcu ParentEcu { get; private set; }
+        public IEcu ParentEcu { get; private set; }
 
-		public string PartNumber
-		{
-			get
-			{
-				if (this.ParentEcu == null)
-				{
-					return null;
-				}
-				return this.ParentEcu.ID_BMW_NR;
-			}
-		}
+        public IList<int> AffectedEcuDiagAddr { get; internal set; }
 
-		public ProgrammingActionState StateProgramming
+        public string PartNumber
+        {
+            get
+            {
+                if (ParentEcu == null)
+                {
+                    return null;
+                }
+                return ParentEcu.ID_BMW_NR;
+            }
+        }
+
+        public ProgrammingActionState StateProgramming
 		{
 			get
 			{
@@ -209,115 +223,58 @@ namespace PsdzClient.Programming
 			}
 		}
 
-		//public ICollection<IEscalationStep> EscalationSteps { get; private set; }
+        //public ICollection<IEscalationStep> EscalationSteps { get; private set; }
 
-		//internal IList<LocalizedText> TitleExtension { get; set; }
+        internal IList<LocalizedText> TitleExtension { get; set; }
 
-		//public ITherapyPlanActionData ActionData { get; set; }
+        //public ITherapyPlanActionData ActionData { get; set; }
 
-		internal static string BuildTherapyPlanType(ProgrammingActionType type)
-		{
-			if (type <= ProgrammingActionType.FscStore)
-			{
-				if (type <= ProgrammingActionType.Unmounting)
-				{
-					if (type <= ProgrammingActionType.BootloaderProgramming)
-					{
-						if (type == ProgrammingActionType.Programming || type == ProgrammingActionType.BootloaderProgramming)
-						{
-							return SwiActionCategory.PRG.ToString();
-						}
-					}
-					else
-					{
-						if (type == ProgrammingActionType.Coding)
-						{
-							return SwiActionCategory.COD.ToString();
-						}
-						if (type == ProgrammingActionType.Unmounting)
-						{
-							return SwiActionCategory.UNM.ToString();
-						}
-					}
-				}
-				else if (type <= ProgrammingActionType.Replacement)
-				{
-					if (type == ProgrammingActionType.Mounting)
-					{
-						return SwiActionCategory.MNT.ToString();
-					}
-					if (type == ProgrammingActionType.Replacement)
-					{
-						return "HWA";
-					}
-				}
-				else
-				{
-					if (type == ProgrammingActionType.FscBakup)
-					{
-						return "FCB";
-					}
-					if (type == ProgrammingActionType.FscStore)
-					{
-						return "FCS";
-					}
-				}
-			}
-			else if (type <= ProgrammingActionType.IdSave)
-			{
-				if (type <= ProgrammingActionType.FscDeactivate)
-				{
-					if (type == ProgrammingActionType.FscActivate)
-					{
-						return SwiActionCategory.FCA.ToString();
-					}
-					if (type == ProgrammingActionType.FscDeactivate)
-					{
-						return SwiActionCategory.FCD.ToString();
-					}
-				}
-				else
-				{
-					if (type == ProgrammingActionType.HddUpdate)
-					{
-						return SwiActionCategory.HDD.ToString();
-					}
-					if (type == ProgrammingActionType.IdSave)
-					{
-						return "IDS";
-					}
-				}
-			}
-			else if (type <= ProgrammingActionType.IbaDeploy)
-			{
-				if (type == ProgrammingActionType.IdRestore)
-				{
-					return SwiActionCategory.IDR.ToString();
-				}
-				if (type == ProgrammingActionType.IbaDeploy)
-				{
-					return "IBD";
-				}
-			}
-			else
-			{
-				if (type == ProgrammingActionType.SFAWrite)
-				{
-					return "SFW";
-				}
-				if (type == ProgrammingActionType.SFADelete)
-				{
-					return "SFD";
-				}
-				if (type == ProgrammingActionType.SFAVerfy)
-				{
-					return "SFV";
-				}
-			}
-			return "---";
-		}
+        internal static string BuildTherapyPlanType(ProgrammingActionType type)
+        {
+            switch (type)
+            {
+                case ProgrammingActionType.Programming:
+                case ProgrammingActionType.BootloaderProgramming:
+                    return SwiActionCategory.PRG.ToString();
+                case ProgrammingActionType.Coding:
+                    return SwiActionCategory.COD.ToString();
+                case ProgrammingActionType.FscActivate:
+                    return SwiActionCategory.FCA.ToString();
+                case ProgrammingActionType.FscBakup:
+                    return "FCB";
+                case ProgrammingActionType.FscDeactivate:
+                    return SwiActionCategory.FCD.ToString();
+                case ProgrammingActionType.FscStore:
+                    return "FCS";
+                case ProgrammingActionType.HddUpdate:
+                    return SwiActionCategory.HDD.ToString();
+                case ProgrammingActionType.HDDUpdateAndroid:
+                    return "HDA";
+                case ProgrammingActionType.IbaDeploy:
+                    return "IBD";
+                case ProgrammingActionType.IdRestore:
+                    return SwiActionCategory.IDR.ToString();
+                case ProgrammingActionType.IdSave:
+                    return "IDS";
+                case ProgrammingActionType.Mounting:
+                    return SwiActionCategory.MNT.ToString();
+                case ProgrammingActionType.Unmounting:
+                    return SwiActionCategory.UNM.ToString();
+                case ProgrammingActionType.Replacement:
+                    return "HWA";
+                case ProgrammingActionType.SFAWrite:
+                    return "SFW";
+                case ProgrammingActionType.SFADelete:
+                    return "SFD";
+                case ProgrammingActionType.SFAVerfy:
+                    return "SFV";
+                default:
+                    Log.Warning("TherapyPlanActionProgrammingManual.BuildTherapyPlanType()", "Unsupported programming action type \"{0}\". Using \"{1}\" instead.", type, "---");
+                    return "---";
+            }
+        }
 
-		internal bool IsFailureIgnored
+        internal bool IsFailureIgnored
 		{
 			get
 			{
@@ -354,7 +311,40 @@ namespace PsdzClient.Programming
 			return true;
 		}
 
-		internal void UpdateState(ProgrammingActionState state, bool executed)
+        public IList<LocalizedText> GetLocalizedObjectTitle(IList<string> lang)
+        {
+            IList<LocalizedText> list = BuildTitle(Type, ParentEcu, lang, titleTextId);
+            if (TitleExtension != null && TitleExtension.Any())
+            {
+                IList<LocalizedText> list2 = new List<LocalizedText>();
+                {
+                    foreach (string l in lang)
+                    {
+                        LocalizedText localizedText = list.Single((LocalizedText t) => l.Equals(t.Language));
+                        LocalizedText localizedText2 = TitleExtension.Single((LocalizedText t) => l.Equals(t.Language));
+                        localizedText.TextItem += localizedText2.TextItem;
+                        list2.Add(localizedText);
+                    }
+                    return list2;
+                }
+            }
+            return list;
+        }
+
+        public static IList<LocalizedText> BuildTitle(ProgrammingActionType type, IEcu ecu, IList<string> lang, string textIdentifierOverride = null)
+        {
+            List<LocalizedText> list = new List<LocalizedText>();
+            list.AddRange(lang.Select((string x) => new LocalizedText(BuildTitle(type, ecu, x, textIdentifierOverride), x)));
+            return list;
+        }
+
+        protected static string BuildTitle(ProgrammingActionType type, IEcu ecu, string lang, string textIdentifierOverride = null)
+        {
+            string arg = new FormatedData(textIdentifierOverride ?? ("#ProgrammingActionType." + type)).Localize(new CultureInfo(lang));
+            return string.Format(CultureInfo.InvariantCulture, "{0} {1}", arg, ecu.TITLE_ECUTREE);
+        }
+
+        internal void UpdateState(ProgrammingActionState state, bool executed)
 		{
 			if (this.IsFailureIgnored && executed && state != ProgrammingActionState.ActionSuccessful)
 			{
@@ -561,15 +551,5 @@ namespace PsdzClient.Programming
 				return this.data;
 			}
 		}
-
-		private ProgrammingActionData data;
-
-		private string assemblyNumberSetPoint;
-
-		//private string pn;
-
-		private IList<ISgbmIdChange> sgbmIds;
-
-		private typeDiagObjectState stateDiag;
-	}
+    }
 }
