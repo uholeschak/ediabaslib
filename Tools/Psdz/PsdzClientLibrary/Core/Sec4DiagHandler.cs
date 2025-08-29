@@ -344,10 +344,7 @@ namespace PsdzClient.Core
                 CaCert = new X509Certificate2(x509Certificate2.GetEncoded()),
                 S29Cert = s29Cert
             };
-            if (!CoreFramework.OSSModeActive)
-            {
-                InstallCertificates(Sec4DiagCertificates);
-            }
+            InstallCertificates(Sec4DiagCertificates);
             if (!testRun)
             {
                 WriteCertificateToFile(Sec4DiagCertificates);
