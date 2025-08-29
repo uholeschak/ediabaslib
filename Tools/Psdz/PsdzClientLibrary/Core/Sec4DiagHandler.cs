@@ -352,12 +352,13 @@ namespace PsdzClient.Core
             Log.Info(Log.CurrentMethod(), "Certificates installed and written to file. Thumbprint added to Registry.");
         }
 
+        // [UH] using arg certificate parameter instead of Sec4DiagCertificates property
         private void InstallCertificates(ISec4DiagCertificates sec4DiagCertificates)
         {
-            ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", Sec4DiagCertificates.CaCert.Thumbprint, overrideIsMaster: true);
-            ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", Sec4DiagCertificates.SubCaCert.Thumbprint, overrideIsMaster: true);
-            InstallCertificate(Sec4DiagCertificates.SubCaCert);
-            InstallCertificate(Sec4DiagCertificates.CaCert);
+            ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", sec4DiagCertificates.CaCert.Thumbprint, overrideIsMaster: true);
+            ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", sec4DiagCertificates.SubCaCert.Thumbprint, overrideIsMaster: true);
+            InstallCertificate(sec4DiagCertificates.SubCaCert);
+            InstallCertificate(sec4DiagCertificates.CaCert);
         }
 
         public BoolResultObject CertificatesAreFoundAndValid(IVciDevice device, X509Certificate2Collection subCaCertificate, X509Certificate2Collection caCertificate)
