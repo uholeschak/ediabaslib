@@ -330,6 +330,7 @@ namespace BMW.Rheingold.Programming.API
                 eCU.ID_SG_ADR = eCU.EcuIdentifier.DiagAddrAsInt;
             }
             eCU.IsSmartActuator = ecuInput.IsSmartActuator;
+            // [UH] database replaced start
             PsdzDatabase database = ClientContext.GetDatabase(this.vehicle);
             if (database != null)
             {
@@ -358,6 +359,7 @@ namespace BMW.Rheingold.Programming.API
                     Log.Warning("ProgrammingObjectBuilder.Build", "No valid ECU variant found for \"{0}\".", ecuInput.BnTnName);
                 }
             }
+            // [UH] database replaced end
             if (eCU.IsSmartActuator)
             {
                 if (!(ecuInput is PsdzSmartActuatorEcu psdzSmartActuatorEcu))
