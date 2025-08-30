@@ -42,260 +42,258 @@ namespace PsdzClient.Programming
 
         internal EcuProgrammingInfoData Data => data;
 
-        public EcuProgrammingInfo(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder, bool withInitData = true)
-		{
-			if (ecu == null)
-			{
-				throw new ArgumentNullException("ecu");
-			}
-			if (programmingObjectBuilder == null)
-			{
-				throw new ArgumentNullException("programmingObjectBuilder");
-			}
-			if (withInitData)
-			{
-				this.InitData(ecu, programmingObjectBuilder);
-			}
-			this.Init();
-		}
+        public IEcu Ecu
+        {
+            get
+            {
+                return data.Ecu;
+            }
+            private set
+            {
+                data.Ecu = value;
+            }
+        }
 
-		internal EcuProgrammingInfo()
-		{
-			this.Ecu = null;
-			this.Init();
-			this.SvkCurrent = null;
-		}
+        public bool IsCodingDisabled
+        {
+            get
+            {
+                return data.IsCodingDisabled;
+            }
+            set
+            {
+                data.IsCodingDisabled = value;
+            }
+        }
 
-		private void Init()
-		{
-			this.scheduled = EcuScheduledState.NothingScheduled;
-			//this.XepSwiActionList = new Collection<XEP_SWIACTION>();
-			this.programmingActionList = new ObservableCollectionEx<ProgrammingAction>();
-			this.programmingActionList.CollectionChanged += this.OnProgrammingActionsCollectionChanged;
-		}
+        public bool IsCodingScheduled
+        {
+            get
+            {
+                return data.IsCodingScheduled;
+            }
+            set
+            {
+                if (value && !Scheduled.HasFlag(EcuScheduledState.CodingScheduledByUser))
+                {
+                    Scheduled |= EcuScheduledState.CodingScheduledByUser;
+                }
+                else if (!value && Scheduled.HasFlag(EcuScheduledState.CodingScheduledByUser))
+                {
+                    Scheduled &= ~EcuScheduledState.CodingScheduledByUser;
+                }
+            }
+        }
 
-		protected void InitData(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder)
-		{
-			if (this.data == null)
-			{
-				this.data = new EcuProgrammingInfoData();
-			}
-			this.Ecu = ecu;
-			this.data.EcuTitle = this.Ecu.TITLE_ECUTREE;
-			try
-			{
-				this.SvkCurrent = programmingObjectBuilder.Build(ecu.SVK);
-			}
-			catch (Exception exception)
-			{
-				Log.WarningException("EcuProgrammingInfo.EcuProgrammingInfo()", exception);
-				this.SvkCurrent = null;
-			}
-		}
+        public bool IsProgrammingDisabled
+        {
+            get
+            {
+                return data.IsProgrammingDisabled;
+            }
+            set
+            {
+                data.IsProgrammingDisabled = value;
+            }
+        }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public bool IsProgrammingSelectionDisabled
+        {
+            get
+            {
+                return data.IsProgrammingSelectionDisabled;
+            }
+            set
+            {
+                data.IsProgrammingSelectionDisabled = value;
+            }
+        }
 
-		public IEcu Ecu
-		{
-			get
-			{
-				return this.data.Ecu;
-			}
-			private set
-			{
-				this.data.Ecu = value;
-			}
-		}
+        public bool IsCodingSelectionDisabled
+        {
+            get
+            {
+                return data.IsCodingSelectionDisabled;
+            }
+            set
+            {
+                data.IsCodingSelectionDisabled = value;
+            }
+        }
 
-		public bool IsCodingDisabled
-		{
-			get
-			{
-				return this.data.IsCodingDisabled;
-			}
-			set
-			{
-				this.data.IsCodingDisabled = value;
-			}
-		}
+        public bool IsProgrammingScheduled
+        {
+            get
+            {
+                return data.IsProgrammingScheduled;
+            }
+            set
+            {
+                if (value && !Scheduled.HasFlag(EcuScheduledState.ProgrammingScheduledByUser))
+                {
+                    Scheduled |= EcuScheduledState.ProgrammingScheduledByUser;
+                }
+                else if (!value && Scheduled.HasFlag(EcuScheduledState.ProgrammingScheduledByUser))
+                {
+                    Scheduled &= ~EcuScheduledState.ProgrammingScheduledByUser;
+                }
+            }
+        }
 
-		public bool IsCodingScheduled
-		{
-			get
-			{
-				return this.data.IsCodingScheduled;
-			}
-			set
-			{
-				if (value && !this.Scheduled.HasFlag(EcuScheduledState.CodingScheduledByUser))
-				{
-					this.Scheduled |= EcuScheduledState.CodingScheduledByUser;
-					return;
-				}
-				if (!value && this.Scheduled.HasFlag(EcuScheduledState.CodingScheduledByUser))
-				{
-					this.Scheduled &= ~EcuScheduledState.CodingScheduledByUser;
-				}
-			}
-		}
+        public IEnumerable<IProgrammingAction> ProgrammingActions => programmingActionList;
 
-		public bool IsProgrammingDisabled
-		{
-			get
-			{
-				return this.data.IsProgrammingDisabled;
-			}
-			set
-			{
-				this.data.IsProgrammingDisabled = value;
-			}
-		}
+        public double ProgressValue
+        {
+            get
+            {
+                return data.ProgressValue;
+            }
+            set
+            {
+                data.ProgressValue = value;
+                OnPropertyChanged("ProgressValue");
+            }
+        }
 
-		public bool IsProgrammingSelectionDisabled
-		{
-			get
-			{
-				return this.data.IsProgrammingSelectionDisabled;
-			}
-			set
-			{
-				this.data.IsProgrammingSelectionDisabled = value;
-			}
-		}
+        public EcuScheduledState Scheduled
+        {
+            get
+            {
+                return scheduled;
+            }
+            private set
+            {
+                if (scheduled != value)
+                {
+                    scheduled = value;
+                    data.IsProgrammingScheduled = Scheduled.HasFlag(EcuScheduledState.ProgrammingScheduledByUser) || Scheduled.HasFlag(EcuScheduledState.ProgrammingScheduledByLogistic);
+                    data.IsCodingScheduled = Scheduled.HasFlag(EcuScheduledState.CodingScheduledByUser) || Scheduled.HasFlag(EcuScheduledState.CodingScheduledByLogistic);
+                }
+            }
+        }
 
-		public bool IsCodingSelectionDisabled
-		{
-			get
-			{
-				return this.data.IsCodingSelectionDisabled;
-			}
-			set
-			{
-				this.data.IsCodingSelectionDisabled = value;
-			}
-		}
-
-		public bool IsProgrammingScheduled
-		{
-			get
-			{
-				return this.data.IsProgrammingScheduled;
-			}
-			set
-			{
-				if (value && !this.Scheduled.HasFlag(EcuScheduledState.ProgrammingScheduledByUser))
-				{
-					this.Scheduled |= EcuScheduledState.ProgrammingScheduledByUser;
-					return;
-				}
-				if (!value && this.Scheduled.HasFlag(EcuScheduledState.ProgrammingScheduledByUser))
-				{
-					this.Scheduled &= ~EcuScheduledState.ProgrammingScheduledByUser;
-				}
-			}
-		}
-
-		public IEnumerable<IProgrammingAction> ProgrammingActions
-		{
-			get
-			{
-				return this.programmingActionList;
-			}
-		}
-
-		public double ProgressValue
-		{
-			get
-			{
-				return this.data.ProgressValue;
-			}
-			set
-			{
-				this.data.ProgressValue = value;
-				this.OnPropertyChanged("ProgressValue");
-			}
-		}
-
-		public EcuScheduledState Scheduled
-		{
-			get
-			{
-				return this.scheduled;
-			}
-			private set
-			{
-				if (this.scheduled != value)
-				{
-					this.scheduled = value;
-					this.data.IsProgrammingScheduled = (this.Scheduled.HasFlag(EcuScheduledState.ProgrammingScheduledByUser) || this.Scheduled.HasFlag(EcuScheduledState.ProgrammingScheduledByLogistic));
-					this.data.IsCodingScheduled = (this.Scheduled.HasFlag(EcuScheduledState.CodingScheduledByUser) || this.Scheduled.HasFlag(EcuScheduledState.CodingScheduledByLogistic));
-				}
-			}
-		}
-
-		public ProgrammingActionState? State
-		{
-			get
-			{
-				ProgrammingActionState? programmingActionState = null;
+        public ProgrammingActionState? State
+        {
+            get
+            {
+                ProgrammingActionState? programmingActionState = null;
 #if false
-				foreach (IProgrammingAction programmingAction in this.ProgrammingActions)
-				{
-					if (programmingAction.IsSelected)
-					{
-						programmingActionState = new ProgrammingActionState?(programmingAction.StateProgramming);
-						if (programmingActionState != null)
-						{
-							ProgrammingActionState? programmingActionState2 = programmingActionState;
-							if (!(programmingActionState2.GetValueOrDefault() == ProgrammingActionState.ActionSuccessful & programmingActionState2 != null))
-							{
-								break;
-							}
-						}
-					}
-				}
+                foreach (IProgrammingAction programmingAction in ProgrammingActions)
+                {
+                    if (programmingAction.IsSelected)
+                    {
+                        programmingActionState = programmingAction.StateProgramming;
+                        if (programmingActionState.HasValue && programmingActionState != ProgrammingActionState.ActionSuccessful)
+                        {
+                            break;
+                        }
+                    }
+                }
 #endif
-				return programmingActionState;
-			}
-		}
+                return programmingActionState;
+            }
+        }
 
-		public IStandardSvk SvkCurrent
-		{
-			get
-			{
-				return this.data.SvkCurrent;
-			}
-			internal set
-			{
-				this.data.SvkCurrent = value;
-				this.OnPropertyChanged("SvkCurrent");
-			}
-		}
+        public IStandardSvk SvkCurrent
+        {
+            get
+            {
+                return data.SvkCurrent;
+            }
+            internal set
+            {
+                data.SvkCurrent = value;
+                OnPropertyChanged("SvkCurrent");
+            }
+        }
 
-		public IStandardSvk SvkTarget
-		{
-			get
-			{
-				return this.data.SvkTarget;
-			}
-			internal set
-			{
-				this.data.SvkTarget = value;
-				this.OnPropertyChanged("SvkTarget");
-			}
-		}
+        public IStandardSvk SvkTarget
+        {
+            get
+            {
+                return data.SvkTarget;
+            }
+            internal set
+            {
+                data.SvkTarget = value;
+                OnPropertyChanged("SvkTarget");
+            }
+        }
 
-		public string Category
-		{
-			get
-			{
-				return this.data.Category;
-			}
-			set
-			{
-				this.data.Category = value;
-			}
-		}
+        public string Category
+        {
+            get
+            {
+                return data.Category;
+            }
+            set
+            {
+                data.Category = value;
+            }
+        }
+
+        internal EcuProgrammingInfo(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder, bool withInitData = true)
+        {
+            if (ecu == null)
+            {
+                throw new ArgumentNullException("ecu");
+            }
+            if (programmingObjectBuilder == null)
+            {
+                throw new ArgumentNullException("programmingObjectBuilder");
+            }
+            if (withInitData)
+            {
+                InitData(ecu, programmingObjectBuilder);
+            }
+            Init();
+        }
+
+        internal EcuProgrammingInfo()
+        {
+            Ecu = null;
+            Init();
+            SvkCurrent = null;
+        }
+
+        private void Init()
+        {
+            scheduled = EcuScheduledState.NothingScheduled;
+            //XepSwiActionList = new Collection<XEP_SWIACTION>();
+            programmingActionList = new ObservableCollectionEx<ProgrammingAction>();
+            programmingActionList.CollectionChanged += OnProgrammingActionsCollectionChanged;
+        }
+
+        protected void InitData(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder)
+        {
+            if (data == null)
+            {
+                data = new EcuProgrammingInfoData();
+            }
+            Ecu = ecu;
+            data.EcuTitle = Ecu.TITLE_ECUTREE;
+#if false
+            if (Ecu is ECU eCU && eCU.XepEcuClique != null && eCU.XepEcuClique.TITLEID.HasValue)
+            {
+                data.EcuDescription = eCU.XepEcuClique.Title;
+            }
+            else
+#endif
+            {
+                data.EcuDescription = data.EcuTitle;
+            }
+            try
+            {
+                SvkCurrent = programmingObjectBuilder.Build(ecu.SVK);
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("EcuProgrammingInfo.EcuProgrammingInfo()", exception);
+                SvkCurrent = null;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
 		public int FlashOrder
 		{
