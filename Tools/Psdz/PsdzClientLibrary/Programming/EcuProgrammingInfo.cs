@@ -9,14 +9,10 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
@@ -805,72 +801,72 @@ namespace PsdzClient.Programming
             return set;
         }
 
-	internal static IEnumerable<IPsdzTa> FilterTalsByProgrammingActionType(IPsdzTalLine talLine, ProgrammingActionType programmingActionType)
-	{
-		switch (programmingActionType)
-		{
-		case ProgrammingActionType.FscStore:
-			if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
-			{
-				return new List<PsdzFscDeployTa>();
-			}
-			return from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
-				where ta.Action == PsdzSwtActionType.ActivateStore
-				select ta;
-		case ProgrammingActionType.FscActivate:
-			if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
-			{
-				return new List<PsdzFscDeployTa>();
-			}
-			return from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
-				where ta.Action == PsdzSwtActionType.ActivateUpdate || ta.Action == PsdzSwtActionType.ActivateUpgrade || ta.Action == PsdzSwtActionType.WriteVin
-				select ta;
-		case ProgrammingActionType.FscDeactivate:
-			if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
-			{
-				return new List<PsdzFscDeployTa>();
-			}
-			return from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
-				where ta.Action == PsdzSwtActionType.Deactivate
-				select ta;
-		case ProgrammingActionType.SFAWrite:
-			if (talLine.TaCategories != PsdzTaCategories.SFADeploy)
-			{
-				return new List<PsdzSFAWriteTA>();
-			}
-			return talLine.TaCategory.Tas.OfType<PsdzSFAWriteTA>();
-		case ProgrammingActionType.SFADelete:
-			if (talLine.TaCategories != PsdzTaCategories.SFADeploy)
-			{
-				return new List<PsdzSFADeleteTA>();
-			}
-			return talLine.TaCategory.Tas.OfType<PsdzSFADeleteTA>();
-		case ProgrammingActionType.SFAVerfy:
-			if (talLine.TaCategories != PsdzTaCategories.SFADeploy)
-			{
-				return new List<PsdzSFAVerifyTA>();
-			}
-			return talLine.TaCategory.Tas.OfType<PsdzSFAVerifyTA>();
-		default:
-		{
-			ISet<ProgrammingActionType> set = MapProgrammingActionType(talLine);
-			if (set.Count == 0)
-			{
-				Log.Warning(Log.CurrentMethod(), "talLineActionTypes was empty. Assuming all tas are of the correct type.");
-				return talLine.TaCategory.Tas;
-			}
-			if (set.Count > 1)
-			{
-				Log.Warning(Log.CurrentMethod(), "talLineActionTypes had multiple values yet fell through to the default handling. This likely means that MapProgrammingActionType has been changed with more special cases, so updating this method as well would probably not be amiss.");
-			}
-			if (!set.Contains(programmingActionType))
-			{
-				return new List<IPsdzTa>();
-			}
-			return talLine.TaCategory.Tas;
-		}
-		}
-	}
+        internal static IEnumerable<IPsdzTa> FilterTalsByProgrammingActionType(IPsdzTalLine talLine, ProgrammingActionType programmingActionType)
+        {
+            switch (programmingActionType)
+            {
+                case ProgrammingActionType.FscStore:
+                    if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
+                    {
+                        return new List<PsdzFscDeployTa>();
+                    }
+                    return from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
+                           where ta.Action == PsdzSwtActionType.ActivateStore
+                           select ta;
+                case ProgrammingActionType.FscActivate:
+                    if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
+                    {
+                        return new List<PsdzFscDeployTa>();
+                    }
+                    return from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
+                           where ta.Action == PsdzSwtActionType.ActivateUpdate || ta.Action == PsdzSwtActionType.ActivateUpgrade || ta.Action == PsdzSwtActionType.WriteVin
+                           select ta;
+                case ProgrammingActionType.FscDeactivate:
+                    if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
+                    {
+                        return new List<PsdzFscDeployTa>();
+                    }
+                    return from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
+                           where ta.Action == PsdzSwtActionType.Deactivate
+                           select ta;
+                case ProgrammingActionType.SFAWrite:
+                    if (talLine.TaCategories != PsdzTaCategories.SFADeploy)
+                    {
+                        return new List<PsdzSFAWriteTA>();
+                    }
+                    return talLine.TaCategory.Tas.OfType<PsdzSFAWriteTA>();
+                case ProgrammingActionType.SFADelete:
+                    if (talLine.TaCategories != PsdzTaCategories.SFADeploy)
+                    {
+                        return new List<PsdzSFADeleteTA>();
+                    }
+                    return talLine.TaCategory.Tas.OfType<PsdzSFADeleteTA>();
+                case ProgrammingActionType.SFAVerfy:
+                    if (talLine.TaCategories != PsdzTaCategories.SFADeploy)
+                    {
+                        return new List<PsdzSFAVerifyTA>();
+                    }
+                    return talLine.TaCategory.Tas.OfType<PsdzSFAVerifyTA>();
+                default:
+                    {
+                        ISet<ProgrammingActionType> set = MapProgrammingActionType(talLine);
+                        if (set.Count == 0)
+                        {
+                            Log.Warning(Log.CurrentMethod(), "talLineActionTypes was empty. Assuming all tas are of the correct type.");
+                            return talLine.TaCategory.Tas;
+                        }
+                        if (set.Count > 1)
+                        {
+                            Log.Warning(Log.CurrentMethod(), "talLineActionTypes had multiple values yet fell through to the default handling. This likely means that MapProgrammingActionType has been changed with more special cases, so updating this method as well would probably not be amiss.");
+                        }
+                        if (!set.Contains(programmingActionType))
+                        {
+                            return new List<IPsdzTa>();
+                        }
+                        return talLine.TaCategory.Tas;
+                    }
+            }
+        }
 
         private IList<SgbmIdChange> GetSgbmIds(IPsdzTalLine talLine)
         {
