@@ -57,24 +57,6 @@ namespace PsdzClient.Programming
 
         protected string titleTextId;
 
-        internal ProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order)
-        {
-            data = new ProgrammingActionData();
-            ParentEcu = parentEcu;
-            data.ParentEcu = parentEcu;
-            data.Type = type;
-            data.IsEditable = isEditable;
-            data.Order = order;
-            data.StateProgramming = ProgrammingActionState.ActionPlanned;
-            SgbmIds = new List<ISgbmIdChange>();
-            //EscalationSteps = new List<IEscalationStep>();
-            Title = BuildTitle(Type, ParentEcu, ConfigSettings.CurrentUICulture);
-            data.Channel = string.Empty;
-            data.Note = string.Empty;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public DateTime StartExecution { get; internal set; }
 
         public DateTime EndExecution { get; internal set; }
@@ -211,6 +193,38 @@ namespace PsdzClient.Programming
 
         public ITherapyPlanActionData ActionData { get; set; }
 
+        internal bool IsFailureIgnored
+        {
+            get
+            {
+                if (Type != ProgrammingActionType.FscActivate && Type != ProgrammingActionType.FscBakup && Type != ProgrammingActionType.FscDeactivate && Type != ProgrammingActionType.FscStore && Type != ProgrammingActionType.IdRestore)
+                {
+                    return Type == ProgrammingActionType.IdSave;
+                }
+                return true;
+            }
+        }
+
+        public IProgrammingActionData DataContext => data;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        internal ProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order)
+        {
+            data = new ProgrammingActionData();
+            ParentEcu = parentEcu;
+            data.ParentEcu = parentEcu;
+            data.Type = type;
+            data.IsEditable = isEditable;
+            data.Order = order;
+            data.StateProgramming = ProgrammingActionState.ActionPlanned;
+            SgbmIds = new List<ISgbmIdChange>();
+            //EscalationSteps = new List<IEscalationStep>();
+            Title = BuildTitle(Type, ParentEcu, ConfigSettings.CurrentUICulture);
+            data.Channel = string.Empty;
+            data.Note = string.Empty;
+        }
+
         internal static string BuildTherapyPlanType(ProgrammingActionType type)
         {
             switch (type)
@@ -256,42 +270,38 @@ namespace PsdzClient.Programming
             }
         }
 
-        internal bool IsFailureIgnored
-		{
-			get
-			{
-				return this.Type == ProgrammingActionType.FscActivate || this.Type == ProgrammingActionType.FscBakup || this.Type == ProgrammingActionType.FscDeactivate || this.Type == ProgrammingActionType.FscStore || this.Type == ProgrammingActionType.IdRestore || this.Type == ProgrammingActionType.IdSave;
-			}
-		}
+        public int CompareTo(IProgrammingAction other)
+        {
+            if (Order < other.Order)
+            {
+                return -1;
+            }
+            if (Order > other.Order)
+            {
+                return 1;
+            }
+            return 0;
+        }
 
-		public int CompareTo(IProgrammingAction other)
-		{
-			if (this.Order < other.Order)
-			{
-				return -1;
-			}
-			if (this.Order > other.Order)
-			{
-				return 1;
-			}
-			return 0;
-		}
+        public bool RequiresEscalation()
+        {
+            if (StateProgramming != ProgrammingActionState.ActionSuccessful)
+            {
+                return data.IsEscalationActionType;
+            }
+            return false;
+        }
 
-		public bool RequiresEscalation()
-		{
-			return this.StateProgramming != ProgrammingActionState.ActionSuccessful && this.data.IsEscalationActionType;
-		}
+        public string GetShortType()
+        {
+            return Type.ToString().Substring(0, 1);
+        }
 
-		public string GetShortType()
-		{
-			return this.Type.ToString().Substring(0, 1);
-		}
-
-		public bool Select(bool value)
-		{
-			this.IsSelected = value;
-			return true;
-		}
+        public bool Select(bool value)
+        {
+            IsSelected = value;
+            return true;
+        }
 
         public IList<LocalizedText> GetLocalizedObjectTitle(IList<string> lang)
         {
@@ -327,211 +337,227 @@ namespace PsdzClient.Programming
         }
 
         internal void UpdateState(ProgrammingActionState state, bool executed)
-		{
-			if (this.IsFailureIgnored && executed && state != ProgrammingActionState.ActionSuccessful)
-			{
-				this.StateProgramming = ProgrammingActionState.ActionWarning;
-				return;
-			}
-			if (this.IsFailureIgnored && !executed && (state == ProgrammingActionState.ActionFailed || state == ProgrammingActionState.MissingPrerequisitesForAction))
-			{
-				this.StateProgramming = ProgrammingActionState.ActionWarning;
-				return;
-			}
-			this.StateProgramming = state;
-		}
+        {
+            if (IsFailureIgnored && executed && state != ProgrammingActionState.ActionSuccessful)
+            {
+                StateProgramming = ProgrammingActionState.ActionWarning;
+            }
+            else if (IsFailureIgnored && !executed && (state == ProgrammingActionState.ActionFailed || state == ProgrammingActionState.MissingPrerequisitesForAction))
+            {
+                StateProgramming = ProgrammingActionState.ActionWarning;
+            }
+            else
+            {
+                StateProgramming = state;
+            }
+        }
 
-		internal void UpdateState(IEnumerable<IPsdzTalLine> talLines)
-		{
-			ProgrammingActionState? programmingActionState = null;
-			foreach (IPsdzTalLine talLine in talLines)
-			{
-				ProgrammingActionState value = this.CalculateProgrammingState(talLine);
-				if (programmingActionState == null || value.CompareTo(programmingActionState) > 0)
-				{
-					programmingActionState = new ProgrammingActionState?(value);
-				}
-			}
-			if (programmingActionState != null)
-			{
-				this.UpdateState(programmingActionState.Value, false);
-			}
-		}
+        internal void UpdateState(IEnumerable<IPsdzTalLine> talLines)
+        {
+            ProgrammingActionState? programmingActionState = null;
+            foreach (IPsdzTalLine talLine in talLines)
+            {
+                ProgrammingActionState value = CalculateProgrammingState(talLine);
+                if (!programmingActionState.HasValue || value.CompareTo(programmingActionState) > 0)
+                {
+                    programmingActionState = value;
+                }
+            }
+            if (programmingActionState.HasValue)
+            {
+                UpdateState(programmingActionState.Value, executed: false);
+            }
+        }
 
-		internal void Update(IEnumerable<IPsdzTalLine> talLines, int escalationSteps)
-		{
-			DateTime? dateTime = null;
-			DateTime? dateTime2 = null;
-			ProgrammingActionState? programmingActionState = null;
-			foreach (IPsdzTalLine psdzTalLine in talLines)
-			{
-				ProgrammingActionState value = this.CalculateProgrammingState(psdzTalLine);
-				if (programmingActionState == null || value.CompareTo(programmingActionState) > 0)
-				{
-					programmingActionState = new ProgrammingActionState?(value);
-				}
-				if (dateTime == null || psdzTalLine.StartTime < dateTime)
-				{
-					dateTime = new DateTime?(psdzTalLine.StartTime);
-				}
-				if (dateTime2 == null || psdzTalLine.EndTime > dateTime2)
-				{
-					dateTime2 = new DateTime?(psdzTalLine.EndTime);
-				}
-			}
-		}
+        internal void Update(IEnumerable<IPsdzTalLine> talLines, int escalationSteps)
+        {
+            DateTime? dateTime = null;
+            DateTime? dateTime2 = null;
+            ProgrammingActionState? programmingActionState = null;
+            foreach (IPsdzTalLine talLine in talLines)
+            {
+                ProgrammingActionState value = CalculateProgrammingState(talLine);
+                if (!programmingActionState.HasValue || value.CompareTo(programmingActionState) > 0)
+                {
+                    programmingActionState = value;
+                }
+                if (dateTime.HasValue)
+                {
+                    DateTime startTime = talLine.StartTime;
+                    DateTime? dateTime3 = dateTime;
+                    if (!(startTime < dateTime3))
+                    {
+                        goto IL_009b;
+                    }
+                }
+                dateTime = talLine.StartTime;
+                goto IL_009b;
+                IL_009b:
+                if (dateTime2.HasValue)
+                {
+                    DateTime startTime = talLine.EndTime;
+                    DateTime? dateTime3 = dateTime2;
+                    if (!(startTime > dateTime3))
+                    {
+                        continue;
+                    }
+                }
+                dateTime2 = talLine.EndTime;
+            }
+            if (!programmingActionState.HasValue || !dateTime.HasValue || !dateTime2.HasValue)
+            {
+                return;
+            }
+#if false
+            if (escalationSteps == 0)
+            {
+                UpdateState(programmingActionState.Value, executed: true);
+                StartExecution = dateTime.Value;
+                EndExecution = dateTime2.Value;
+                if (RequiresEscalation())
+                {
+                    EscalationStep escalationStep = new EscalationStep
+                    {
+                        StartTime = StartExecution,
+                        EndTime = EndExecution,
+                        Step = 1,
+                        State = StateProgramming
+                    };
+                    escalationStep.AddErrorList(talLines);
+                    EscalationSteps.Add(escalationStep);
+                }
+            }
+            else
+            {
+                EscalationStep escalationStep2 = new EscalationStep
+                {
+                    StartTime = dateTime.Value,
+                    EndTime = dateTime2.Value,
+                    Step = escalationSteps + 1,
+                    State = programmingActionState.Value
+                };
+                StateProgramming = escalationStep2.State;
+                if (escalationStep2.EndTime > EndExecution)
+                {
+                    EndExecution = escalationStep2.EndTime;
+                }
+                escalationStep2.AddErrorList(talLines);
+                EscalationSteps.Add(escalationStep2);
+            }
+#endif
+        }
 
-		private ProgrammingActionState CalculateProgrammingState(IPsdzTalLine talLine)
-		{
-			ProgrammingActionState programmingActionState;
-			if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
-			{
-				programmingActionState = this.MapState(talLine.ExecutionState);
-			}
-			else
-			{
-				programmingActionState = ProgrammingActionState.ActionSuccessful;
-				foreach (IPsdzTa psdzTa in this.GetFscTas(talLine.FscDeploy))
-				{
-					ProgrammingActionState programmingActionState2 = this.MapState(psdzTa.ExecutionState);
-					if (programmingActionState2.CompareTo(programmingActionState) > 0)
-					{
-						programmingActionState = programmingActionState2;
-					}
-				}
-			}
-			return programmingActionState;
-		}
+        private ProgrammingActionState CalculateProgrammingState(IPsdzTalLine talLine)
+        {
+            ProgrammingActionState programmingActionState;
+            if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
+            {
+                programmingActionState = MapState(talLine.ExecutionState);
+            }
+            else
+            {
+                programmingActionState = ProgrammingActionState.ActionSuccessful;
+                foreach (IPsdzTa fscTa in GetFscTas(talLine.FscDeploy))
+                {
+                    ProgrammingActionState programmingActionState2 = MapState(fscTa.ExecutionState);
+                    if (programmingActionState2.CompareTo(programmingActionState) > 0)
+                    {
+                        programmingActionState = programmingActionState2;
+                    }
+                }
+            }
+            return programmingActionState;
+        }
 
-		private ProgrammingActionState MapState(PsdzTaExecutionState? executionStateInput)
-		{
-			if (executionStateInput != null)
-			{
-				PsdzTaExecutionState value = executionStateInput.Value;
-				switch (value)
-				{
-					case PsdzTaExecutionState.Executable:
-					case PsdzTaExecutionState.Inactive:
-						break;
-					case PsdzTaExecutionState.NotExecutable:
-						return ProgrammingActionState.MissingPrerequisitesForAction;
-					case PsdzTaExecutionState.AbortedByError:
-					case PsdzTaExecutionState.AbortedByUser:
-					case PsdzTaExecutionState.FinishedWithError:
-						return ProgrammingActionState.ActionFailed;
-					case PsdzTaExecutionState.Finished:
-					case PsdzTaExecutionState.FinishedWithWarnings:
-						return ProgrammingActionState.ActionSuccessful;
-					case PsdzTaExecutionState.Running:
-						return ProgrammingActionState.ActionInProcess;
-					default:
-						throw new ArgumentException(string.Format("Unsupported TA execution state: {0}", value));
-				}
-			}
-			else
-			{
-				Log.Warning("ProgrammingAction.MapState", "input is null. 'TaExecutionState.Inactive' will be used.", Array.Empty<object>());
-			}
-			return ProgrammingActionState.ActionPlanned;
-		}
 
-		private void SetStateDiag()
-		{
-			ProgrammingActionState stateProgramming = this.data.StateProgramming;
-			if (stateProgramming <= ProgrammingActionState.ActionPlanned)
-			{
-				if (stateProgramming - ProgrammingActionState.ActionSuccessful <= 1)
-				{
-					this.State = typeDiagObjectState.Performed;
-                    return;
-				}
-				if (stateProgramming == ProgrammingActionState.ActionPlanned)
-				{
-                    this.State = typeDiagObjectState.NotCalled;
-                    return;
-				}
-			}
-			else
-			{
-				if (stateProgramming == ProgrammingActionState.MissingPrerequisitesForAction)
-				{
-                    this.State = typeDiagObjectState.NotCalled;
-                    return;
-				}
-				if (stateProgramming == ProgrammingActionState.ActionFailed)
-				{
-					this.State = typeDiagObjectState.Canceled;
-                    return;
-				}
-				if (stateProgramming == ProgrammingActionState.ActionInProcess)
-				{
-					this.State = typeDiagObjectState.Running;
-					return;
-				}
-			}
-			throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported programming state {0}.", this.data.StateProgramming));
-		}
+        private ProgrammingActionState MapState(PsdzTaExecutionState? executionStateInput)
+        {
+            PsdzTaExecutionState psdzTaExecutionState;
+            if (executionStateInput.HasValue)
+            {
+                psdzTaExecutionState = executionStateInput.Value;
+            }
+            else
+            {
+                Log.Warning("ProgrammingAction.MapState", "input is null. 'TaExecutionState.Inactive' will be used.");
+                psdzTaExecutionState = PsdzTaExecutionState.Inactive;
+            }
+            switch (psdzTaExecutionState)
+            {
+                case PsdzTaExecutionState.Executable:
+                case PsdzTaExecutionState.Inactive:
+                    return ProgrammingActionState.ActionPlanned;
+                case PsdzTaExecutionState.NotExecutable:
+                    return ProgrammingActionState.MissingPrerequisitesForAction;
+                case PsdzTaExecutionState.AbortedByError:
+                case PsdzTaExecutionState.AbortedByUser:
+                case PsdzTaExecutionState.FinishedWithError:
+                    return ProgrammingActionState.ActionFailed;
+                case PsdzTaExecutionState.Finished:
+                case PsdzTaExecutionState.FinishedWithWarnings:
+                    return ProgrammingActionState.ActionSuccessful;
+                case PsdzTaExecutionState.Running:
+                    return ProgrammingActionState.ActionInProcess;
+                default:
+                    throw new ArgumentException($"Unsupported TA execution state: {psdzTaExecutionState}");
+            }
+        }
 
-		private ICollection<IPsdzTa> GetFscTas(PsdzFscDeploy fscDeploy)
-		{
-			IEnumerable<PsdzFscDeployTa> source = fscDeploy.Tas.OfType<PsdzFscDeployTa>();
-			ICollection<IPsdzTa> collection = new List<IPsdzTa>();
-			ProgrammingActionType type = this.data.Type;
-			if (type != ProgrammingActionType.FscStore)
-			{
-				if (type != ProgrammingActionType.FscActivate)
-				{
-					if (type != ProgrammingActionType.FscDeactivate)
-					{
-					}
-					else
-					{
-						collection.AddRange(source.Where(delegate (PsdzFscDeployTa ta)
-						{
-							PsdzSwtActionType? action = ta.Action;
-							return action.GetValueOrDefault() == PsdzSwtActionType.Deactivate & action != null;
-						}));
-					}
-				}
-				else
-				{
-					collection.AddRange(source.Where(delegate (PsdzFscDeployTa ta)
-					{
-						PsdzSwtActionType? action = ta.Action;
-						if (!(action.GetValueOrDefault() == PsdzSwtActionType.ActivateUpdate & action != null))
-						{
-							action = ta.Action;
-							return action.GetValueOrDefault() == PsdzSwtActionType.ActivateUpgrade & action != null;
-						}
-						return true;
-					}));
-				}
-			}
-			else
-			{
-				collection.AddRange(source.Where(delegate (PsdzFscDeployTa ta)
-				{
-					PsdzSwtActionType? action = ta.Action;
-					return action.GetValueOrDefault() == PsdzSwtActionType.ActivateStore & action != null;
-				}));
-			}
-			return collection;
-		}
+        private void SetStateDiag()
+        {
+            switch (data.StateProgramming)
+            {
+                case ProgrammingActionState.ActionFailed:
+                    State = typeDiagObjectState.Canceled;
+                    break;
+                case ProgrammingActionState.ActionInProcess:
+                    State = typeDiagObjectState.Running;
+                    break;
+                case ProgrammingActionState.ActionSuccessful:
+                case ProgrammingActionState.ActionWarning:
+                    State = typeDiagObjectState.Performed;
+                    break;
+                case ProgrammingActionState.ActionPlanned:
+                case ProgrammingActionState.MissingPrerequisitesForAction:
+                    State = typeDiagObjectState.NotCalled;
+                    break;
+                default:
+                    throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported programming state {0}.", data.StateProgramming));
+            }
+            if (ActionData != null)
+            {
+                ActionData.SetState(State);
+            }
+        }
 
-		private void OnPropertyChanged(string propertyName)
-		{
-			if (this.PropertyChanged != null)
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+        private ICollection<IPsdzTa> GetFscTas(PsdzFscDeploy fscDeploy)
+        {
+            IEnumerable<PsdzFscDeployTa> source = fscDeploy.Tas.OfType<PsdzFscDeployTa>();
+            ICollection<IPsdzTa> collection = new List<IPsdzTa>();
+            switch (data.Type)
+            {
+                case ProgrammingActionType.FscActivate:
+                    collection.AddRange(source.Where((PsdzFscDeployTa ta) => ta.Action == PsdzSwtActionType.ActivateUpdate || ta.Action == PsdzSwtActionType.ActivateUpgrade));
+                    break;
+                case ProgrammingActionType.FscDeactivate:
+                    collection.AddRange(source.Where((PsdzFscDeployTa ta) => ta.Action == PsdzSwtActionType.Deactivate));
+                    break;
+                case ProgrammingActionType.FscStore:
+                    collection.AddRange(source.Where((PsdzFscDeployTa ta) => ta.Action == PsdzSwtActionType.ActivateStore));
+                    break;
+                default:
+                    Log.Warning("ProgrammingAction.GetFscTas", "Could not get TAs for FscDeploy since programming type {0} not supported", data.Type);
+                    break;
+            }
+            return collection;
+        }
 
-		public IProgrammingActionData DataContext
-		{
-			get
-			{
-				return this.data;
-			}
-		}
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 }
