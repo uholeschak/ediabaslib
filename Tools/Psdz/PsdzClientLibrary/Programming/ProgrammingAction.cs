@@ -75,108 +75,98 @@ namespace PsdzClient.Programming
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-		public DateTime StartExecution { get; internal set; }
+        public DateTime StartExecution { get; internal set; }
 
-		public DateTime EndExecution { get; internal set; }
+        public DateTime EndExecution { get; internal set; }
 
-		public IList<ISgbmIdChange> SgbmIds
-		{
-			get
-			{
-				return this.sgbmIds;
-			}
-			internal set
-			{
-				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Property(Expression.Constant(this, typeof(ProgrammingAction)), "SgbmIds"), Array.Empty<ParameterExpression>()), ref this.sgbmIds, value);
-			}
-		}
-
-		public string Title { get; internal set; }
-
-		public typeDiagObjectState State
-		{
-			get
-			{
-				return this.stateDiag;
-			}
-			internal set
-			{
-				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Convert(Expression.Property(Expression.Constant(this, typeof(ProgrammingAction)), "State"), typeof(object)), Array.Empty<ParameterExpression>()), ref this.stateDiag, value);
-			}
-		}
-
-		public string AssemblyNumberSetPoint
-		{
-			get
-			{
-				return this.assemblyNumberSetPoint;
-			}
-			internal set
+        public IList<ISgbmIdChange> SgbmIds
+        {
+            get
             {
-				this.PropertyChanged.NotifyPropertyChanged(this, Expression.Lambda<Func<object>>(Expression.Property(Expression.Constant(this, typeof(ProgrammingAction)), "AssemblyNumberSetPoint"), Array.Empty<ParameterExpression>()), ref this.assemblyNumberSetPoint, value);
-			}
-		}
+                return sgbmIds;
+            }
+            internal set
+            {
+                this.PropertyChanged.NotifyPropertyChanged(this, () => SgbmIds, ref sgbmIds, value);
+                if (ActionData != null)
+                {
+                    ActionData.SetSgbmIds(value);
+                }
+            }
+        }
 
-		public string Channel
-		{
-			get
-			{
-				return this.data.Channel;
-			}
-			internal set
-			{
-				this.data.Channel = value;
-			}
-		}
+        public string Title { get; internal set; }
 
-		public bool IsEditable
-		{
-			get
-			{
-				return this.data.IsEditable;
-			}
-		}
+        public typeDiagObjectState State
+        {
+            get
+            {
+                return stateDiag;
+            }
+            internal set
+            {
+                this.PropertyChanged.NotifyPropertyChanged(this, () => State, ref stateDiag, value);
+                if (ActionData != null)
+                {
+                    ActionData.SetState(value);
+                }
+            }
+        }
 
-		public bool IsFlashAction
-		{
-			get
-			{
-				return this.data.IsFlashAction;
-			}
-		}
+        public string AssemblyNumberSetPoint
+        {
+            get
+            {
+                return assemblyNumberSetPoint;
+            }
+            internal set
+            {
+                this.PropertyChanged.NotifyPropertyChanged(this, () => AssemblyNumberSetPoint, ref assemblyNumberSetPoint, value);
+            }
+        }
 
-		public bool IsSelected
-		{
-			get
-			{
-				return this.data.IsSelected;
-			}
-			private set
-			{
-				this.data.IsSelected = value;
-				this.OnPropertyChanged("IsSelected");
-			}
-		}
+        public string Channel
+        {
+            get
+            {
+                return data.Channel;
+            }
+            internal set
+            {
+                data.Channel = value;
+            }
+        }
 
-		public string Note
-		{
-			get
-			{
-				return this.data.Note;
-			}
-			internal set
-			{
-				this.data.Note = value;
-			}
-		}
+        public bool IsEditable => data.IsEditable;
 
-		public int Order
-		{
-			get
-			{
-				return this.data.Order;
-			}
-		}
+        public bool IsFlashAction => data.IsFlashAction;
+
+        public bool IsSelected
+        {
+            get
+            {
+                return data.IsSelected;
+            }
+            private set
+            {
+                data.IsSelected = value;
+                OnPropertyChanged("IsSelected");
+            }
+        }
+
+        public string Note
+        {
+            get
+            {
+                return data.Note;
+            }
+            internal set
+            {
+                data.Note = value;
+            }
+        }
+
+        public int Order => data.Order;
 
         public IEcu ParentEcu { get; private set; }
 
@@ -195,39 +185,31 @@ namespace PsdzClient.Programming
         }
 
         public ProgrammingActionState StateProgramming
-		{
-			get
-			{
-				return this.data.StateProgramming;
-			}
-			internal set
-			{
-				this.data.StateProgramming = value;
-				this.SetStateDiag();
-			}
-		}
+        {
+            get
+            {
+                return data.StateProgramming;
+            }
+            internal set
+            {
+                data.StateProgramming = value;
+                if (ActionData != null)
+                {
+                    ActionData.SetStateProgramming(value);
+                }
+                SetStateDiag();
+            }
+        }
 
-		public ProgrammingActionType Type
-		{
-			get
-			{
-				return this.data.Type;
-			}
-		}
+        public ProgrammingActionType Type => data.Type;
 
-		public string InfoType
-		{
-			get
-			{
-				return ProgrammingAction.BuildTherapyPlanType(this.Type);
-			}
-		}
+        public string InfoType => BuildTherapyPlanType(Type);
 
         //public ICollection<IEscalationStep> EscalationSteps { get; private set; }
 
         internal IList<LocalizedText> TitleExtension { get; set; }
 
-        //public ITherapyPlanActionData ActionData { get; set; }
+        public ITherapyPlanActionData ActionData { get; set; }
 
         internal static string BuildTherapyPlanType(ProgrammingActionType type)
         {
