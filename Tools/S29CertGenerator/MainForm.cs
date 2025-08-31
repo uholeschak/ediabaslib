@@ -992,6 +992,11 @@ namespace S29CertGenerator
                 {
                     File.Move(bakFile, clientConfigFile, true);
                     File.SetLastWriteTime(clientConfigFile, DateTime.Now);
+                    if (!PsdzClient.Utility.Encryption.SetFileFullAccessControl(clientConfigFile))
+                    {
+                        UpdateStatusText("Failed to set full access control for client configuration file", true);
+                        return false;
+                    }
                     DeleteClientConfigXml(clientConfigFile);
                     UpdateStatusText("Client configuration backup restored", true);
                     UpdateStatusText("WARNING: To use ISTA Launcher again, a reboot is required to reload the configuration!", true);
