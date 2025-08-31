@@ -38,9 +38,7 @@ namespace EdiabasLib
                 [EnumMember]
                 crp_subCA_4ISTA,
                 [EnumMember]
-                crp_subCA_4ISTA_TISonly,
-                [EnumMember]
-                crp_M2M_3dParty_4_CUST_ControlOnly
+                crp_M2M_3rdParty_4_CUST_ReadWriteControl
             }
         }
 
