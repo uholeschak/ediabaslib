@@ -372,6 +372,7 @@ namespace BMW.Rheingold.Programming.Common
             Log.Info(methodeName, "{0} is not null: '{1}'", "EcusToPreventUdsFallback", talExecutionSettings.EcusToPreventUdsFallback != null);
             Log.Info(methodeName, "{0} is not null: '{1}'", "ProgrammingProtectionDataCto", talExecutionSettings.ProgrammingProtectionDataCto != null);
             Log.Info(methodeName, "{0} is not null: '{1}'", "ProgrammingTokens", talExecutionSettings.ProgrammingTokens != null);
+            SecureCodingConfigWrapper.LogSettings();
         }
     }
 }
