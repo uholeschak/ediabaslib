@@ -99,19 +99,36 @@ namespace PsdzClient.Programming
 				this.SecureCodingConfigCto.BackendSignatureEtoEnum = PsdzBackendSignatureEtoEnum.MUST_NOT;
 				this.SecureCodingConfigCto.NcdRecalculationEtoEnum = PsdzNcdRecalculationEtoEnum.ALLOW;
 			}
-			this.SecureCodingConfigCto.ConnectionTimeout = 5000;
-			this.SecureCodingConfigCto.ScbPollingTimeout = 120;
-			this.SecureCodingConfigCto.NcdRootDirectory = Path.Combine(programmingService.BackupDataPath, NcdRoot);
-			this.SecureCodingConfigCto.Retries = 3;
-			this.SecureCodingConfigCto.Crls = null;
-			this.SecureCodingConfigCto.SwlSecBackendUrls = null;
-			this.SecureCodingConfigCto.ScbUrls = new List<string>
-			{
-				string.Empty
-				//BackendConnector.GetBackendServiceUrl(BackendServiceType.SecureCoding, ContextError.SecureCoding).ResultObject
-			};
-			this.SecureCodingConfigCto.PsdzAuthenticationTypeEto = PsdzAuthenticationTypeEto.SSL;
-		}
+            SecureCodingConfigCto.ConnectionTimeout = 5000;
+            SecureCodingConfigCto.ScbPollingTimeout = 120;
+            SecureCodingConfigCto.NcdRootDirectory = Path.Combine(programmingService.BackupDataPath, NcdRoot);	// [uH] replaced
+            SecureCodingConfigCto.Retries = 3;
+            SecureCodingConfigCto.Crls = null;
+            SecureCodingConfigCto.SwlSecBackendUrls = null;
+            SecureCodingConfigCto.ScbUrls = new List<string>
+            {
+                string.Empty    // [UH] URL removed
+                /*GetBackendServiceUrl(BackendServiceType.SecureCoding, errorManager, ContextError.SecureCoding).ResultObject */
+            };
+            SecureCodingConfigCto.PsdzAuthenticationTypeEto = PsdzAuthenticationTypeEto.SSL;
+        }
+
+        internal static void LogSettings()
+        {
+            if (instance != null)
+            {
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", $"BackendNcdCalculationEtoEnum: {instance.BackendNcdCalculationEtoEnum:G}");
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", $"BackendSignatureEtoEnum: {instance.BackendSignatureEtoEnum:G}");
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", $"NcdRecalculationEtoEnum: {instance.NcdRecalculationEtoEnum:G}");
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", $"ConnectionTimeout: {instance.ConnectionTimeout:D}");
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", $"ScbPollingTimeout: {instance.ScbPollingTimeout:D}");
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", "NcdRootDirectory: " + instance.NcdRootDirectory);
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", $"Retries: {instance.Retries:D}");
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", "Crls: " + ConvertListToString(instance.Crls));
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", "SwlSecBackendUrls: " + ConvertListToString(instance.SwlSecBackendUrls));
+                Log.Info("SecureCodingConfigWrapper.LogSettings()", "ScbUrls: " + ConvertListToString(instance.ScbUrls));
+            }
+        }
 
         private static string ConvertListToString(IList<string> list)
         {
