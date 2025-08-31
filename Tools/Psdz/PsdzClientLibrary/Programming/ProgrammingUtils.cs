@@ -89,6 +89,9 @@ namespace BMW.Rheingold.Programming.Common
                 set2.Add(TaCategories.BlFlash);
                 set2.Add(TaCategories.SwDeploy);
                 set2.Add(TaCategories.IbaDeploy);
+                set2.Add(TaCategories.EcuMirrorDeploy);
+                set2.Add(TaCategories.EcuActivate);
+                set2.Add(TaCategories.EcuPoll);
             }
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.Code))
             {
