@@ -928,6 +928,11 @@ namespace S29CertGenerator
                 if (!File.Exists(bakFile))
                 {
                     File.Copy(clientConfigFile, bakFile, true);
+                    if (!PsdzClient.Utility.Encryption.SetFileFullAccessControl(bakFile))
+                    {
+                        UpdateStatusText("Failed to set full access control for client backup file", true);
+                        return false;
+                    }
                     UpdateStatusText("Client config backup created", true);
                 }
 
