@@ -1,10 +1,11 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Model.SecureCoding;
+using PsdzClient.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model.SecureCoding;
 
 namespace PsdzClient.Programming
 {
@@ -12,23 +13,27 @@ namespace PsdzClient.Programming
     {
         public const string NcdRoot = "ncd";
 
-		private PsdzSecureCodingConfigCto SecureCodingConfigCto { get; }
+        private static PsdzSecureCodingConfigCto instance;
 
-		public static PsdzSecureCodingConfigCto GetSecureCodingConfig(ProgrammingService programmingService)
-		{
-			if (SecureCodingConfigWrapper.instance == null)
-			{
-				object obj = SecureCodingConfigWrapper.@lock;
-				lock (obj)
-				{
-					if (SecureCodingConfigWrapper.instance == null)
-					{
-						SecureCodingConfigWrapper.instance = new SecureCodingConfigWrapper(programmingService).SecureCodingConfigCto;
-					}
-				}
-			}
-			return SecureCodingConfigWrapper.instance;
-		}
+        private static readonly object @lock = new object();
+
+        private PsdzSecureCodingConfigCto SecureCodingConfigCto { get; }
+
+        // [UH] error manager replaced
+        public static PsdzSecureCodingConfigCto GetSecureCodingConfig(ProgrammingService programmingService)
+        {
+            if (instance == null)
+            {
+                lock (@lock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new SecureCodingConfigWrapper(programmingService).SecureCodingConfigCto;
+                    }
+                }
+            }
+            return instance;
+        }
 
         public static void ChangeNcdRecalculationValueTo(ProgrammingService programmingService, PsdzNcdRecalculationEtoEnum psdzNcdRecalculation)
 		{
@@ -108,17 +113,13 @@ namespace PsdzClient.Programming
 			this.SecureCodingConfigCto.PsdzAuthenticationTypeEto = PsdzAuthenticationTypeEto.SSL;
 		}
 
-        public static string ConvertListToString(IList<string> list)
-		{
-			if (list != null && list.Any<string>())
-			{
-				return string.Join(", ", list.ToArray<string>());
-			}
-			return string.Empty;
-		}
-
-		private static PsdzSecureCodingConfigCto instance;
-
-		private static readonly object @lock = new object();
+        private static string ConvertListToString(IList<string> list)
+        {
+            if (list == null || !list.Any())
+            {
+                return string.Empty;
+            }
+            return string.Join(", ", list.ToArray());
+        }
 	}
 }
