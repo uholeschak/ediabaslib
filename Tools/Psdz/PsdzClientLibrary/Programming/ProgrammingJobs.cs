@@ -3505,6 +3505,12 @@ namespace PsdzClient.Programming
                     {
                         serializer.Serialize(fileStream, OperationState);
                     }
+
+                    if (!Utility.Encryption.SetFileFullAccessControl(fileName))
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "SaveOperationState SetFileFullAccessControl failed: {0}", fileName);
+                        return false;
+                    }
                 }
             }
             catch (Exception ex)
