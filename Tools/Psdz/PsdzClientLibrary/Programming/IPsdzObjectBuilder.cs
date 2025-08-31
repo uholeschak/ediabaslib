@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
@@ -39,7 +36,9 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
         IdDelete,
         EcuActivate,
         EcuPoll,
-        EcuMirrorDeploy
+        EcuMirrorDeploy,
+        SmacTransferStart,
+        SmacTransferStatus
     }
 
     [AuthorAPI(SelectableTypeDeclaration = true)]
