@@ -367,6 +367,7 @@ namespace BMW.Rheingold.Programming.Common
             return enumerable2;
         }
 
+        // [UH] From SecureCodingLogic
         public static bool CheckIfThereAreAnyNcdInTheRequest(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
@@ -392,6 +393,7 @@ namespace BMW.Rheingold.Programming.Common
             return false;
         }
 
+        // [UH] From SecureCodingLogic.GetCafdCalculatedInSCB
         public static IEnumerable<string> CafdCalculatedInSCB(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
