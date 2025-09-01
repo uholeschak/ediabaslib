@@ -9,6 +9,7 @@ using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Core;
+using PsdzClient.Core.Container;
 using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
@@ -19,8 +20,22 @@ using System.Text.RegularExpressions;
 
 namespace BMW.Rheingold.Programming.Common
 {
-	public class ProgrammingUtils
-	{
+    public class ProgrammingUtils
+    {
+        [Flags]
+        [AuthorAPI(SelectableTypeDeclaration = true)]
+        public enum KmmFlashFlags
+        {
+            FlashNormal = 1,
+            FlashCD = 2,
+            FlashDVD = 4,
+            FlashMOSTSync = 8,
+            FlashMOSTAsync = 0x10,
+            FlashMOSTControl = 0x20,
+            FlashCAN = 0x40,
+            FlashByteFlight = 0x80
+        }
+
         private static TaCategories[] DisabledTaCategories = new TaCategories[1] { TaCategories.Unknown };
 
         public static readonly TaCategories[] EnabledTaCategories = (from TaCategories x in Enum.GetValues(typeof(TaCategories))
@@ -58,6 +73,38 @@ namespace BMW.Rheingold.Programming.Common
             {
                 return !ecu.IsVirtualOrVirtualBusCheck();
             }
+            return false;
+        }
+
+        public static bool WriteBn2000Istufen(IEcuKom ecuKom, string groupSgbd, string iStufeWerk, string iStufeHo, string iStufeHoBackup)
+        {
+            if (ecuKom == null)
+            {
+                throw new ArgumentNullException("ecuKom");
+            }
+            if (groupSgbd == null)
+            {
+                throw new ArgumentNullException("groupSgbd");
+            }
+            if (iStufeWerk == null)
+            {
+                throw new ArgumentNullException("iStufeWerk");
+            }
+            if (iStufeHo == null)
+            {
+                throw new ArgumentNullException("iStufeHo");
+            }
+            if (iStufeHoBackup == null)
+            {
+                throw new ArgumentNullException("iStufeHoBackup");
+            }
+            string text = string.Format(CultureInfo.InvariantCulture, "{0};{1};{2}", iStufeWerk, iStufeHo, iStufeHoBackup);
+            if (ecuKom.ApiJob(groupSgbd, "I_STUFE_SCHREIBEN", text, string.Empty).IsOkay())
+            {
+                Log.Info("ProgrammingUtils.WriteBn2000Istufen()", "Integration level ({0}) successfully written! (SGBD: '{1}')", text, groupSgbd);
+                return true;
+            }
+            Log.Error("ProgrammingUtils.WriteBn2000Istufen()", "Failed to write integration level ({0})! (SGBD: '{1}')", text, groupSgbd);
             return false;
         }
 
@@ -127,6 +174,48 @@ namespace BMW.Rheingold.Programming.Common
                 }
             }
             return programmingTaskFlags;
+        }
+
+        internal static void UpdateSingleProgrammingAction(ProgrammingEventManager eventManager, EcuProgrammingInfo ecuProgrammingInfo, ProgrammingActionType type, ProgrammingActionState state)
+        {
+            if (ecuProgrammingInfo.UpdateSingleProgrammingAction(type, state))
+            {
+                eventManager?.OnProgrammingActionStateChanged(ecuProgrammingInfo.Ecu, type, state);
+            }
+        }
+
+        private static IList<string> GetProgrammingChannels(KmmFlashFlags kmmFlashFlags)
+        {
+            IList<string> list = new List<string>();
+            if ((kmmFlashFlags & KmmFlashFlags.FlashNormal) == KmmFlashFlags.FlashNormal)
+            {
+                list.Add("K-LINE");
+            }
+            if ((kmmFlashFlags & KmmFlashFlags.FlashCAN) == KmmFlashFlags.FlashCAN)
+            {
+                list.Add("D-CAN");
+            }
+            if ((kmmFlashFlags & KmmFlashFlags.FlashMOSTControl) == KmmFlashFlags.FlashMOSTControl)
+            {
+                list.Add("MOST-CONTROL");
+            }
+            if ((kmmFlashFlags & KmmFlashFlags.FlashMOSTAsync) == KmmFlashFlags.FlashMOSTAsync)
+            {
+                list.Add("MOST-ASYNC");
+            }
+            if ((kmmFlashFlags & KmmFlashFlags.FlashMOSTSync) == KmmFlashFlags.FlashMOSTSync)
+            {
+                list.Add("MOST-SYNC");
+            }
+            if ((kmmFlashFlags & KmmFlashFlags.FlashCD) == KmmFlashFlags.FlashCD)
+            {
+                list.Add("CD");
+            }
+            if ((kmmFlashFlags & KmmFlashFlags.FlashDVD) == KmmFlashFlags.FlashDVD)
+            {
+                list.Add("DVD");
+            }
+            return list;
         }
 
         internal static string NormalizeXmlText(string xmlText)
