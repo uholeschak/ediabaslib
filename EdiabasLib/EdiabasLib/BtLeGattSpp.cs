@@ -206,8 +206,10 @@ namespace EdiabasLib
                         BluetoothGattCharacteristic gattCharacteristicSppWrite = gattServiceSpp.GetCharacteristic(gattSppInfo.CharacteristicWriteUuid);
                         if (gattCharacteristicSppRead != null && gattCharacteristicSppWrite != null)
                         {
-                            if (((gattCharacteristicSppRead.Properties & (GattProperty.Read | GattProperty.Notify)) == (GattProperty.Read | GattProperty.Notify)) &&
-                                ((gattCharacteristicSppWrite.Properties & GattProperty.Write) == GattProperty.Write))
+                            bool validRead = (gattCharacteristicSppRead.Properties & (GattProperty.Read | GattProperty.Notify)) == (GattProperty.Read | GattProperty.Notify) ||
+                                             (gattCharacteristicSppRead.Properties & (GattProperty.Write | GattProperty.Notify)) == (GattProperty.Write | GattProperty.Notify);
+                            bool validWrite = (gattCharacteristicSppWrite.Properties & GattProperty.Write) == (GattProperty.Write);
+                            if (validRead && validWrite)
                             {
                                 _gattCharacteristicSppRead = gattCharacteristicSppRead;
                                 _gattCharacteristicSppWrite = gattCharacteristicSppWrite;
@@ -246,7 +248,9 @@ namespace EdiabasLib
                             }
 
                             LogString(string.Format("GATT properties: {0}", gattCharacteristic.Properties));
-                            if ((gattCharacteristic.Properties & (GattProperty.Read | GattProperty.Notify)) == (GattProperty.Read | GattProperty.Notify))
+                            bool validRead = (gattCharacteristic.Properties & (GattProperty.Read | GattProperty.Notify)) == (GattProperty.Read | GattProperty.Notify) ||
+                                             (gattCharacteristic.Properties & (GattProperty.Write | GattProperty.Notify)) == (GattProperty.Write | GattProperty.Notify);
+                            if (validRead)
                             {
                                 if (gattCharacteristicSppRead != null)
                                 {
@@ -257,7 +261,8 @@ namespace EdiabasLib
                                 gattCharacteristicSppRead = gattCharacteristic;
                             }
 
-                            if ((gattCharacteristic.Properties & (GattProperty.Write)) == (GattProperty.Write))
+                            bool validWrite = (gattCharacteristic.Properties & GattProperty.Write) == (GattProperty.Write);
+                            if (validWrite)
                             {
                                 if (gattCharacteristicSppWrite != null)
                                 {
