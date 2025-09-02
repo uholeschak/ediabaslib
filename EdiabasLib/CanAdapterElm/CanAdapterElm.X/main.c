@@ -1783,6 +1783,9 @@ bool set_bt_baud()
     RCSTAbits.SPEN = 1;
 
 #if defined (REQUIRES_BT_BAUD_AT)
+#if defined(REQUIRES_BT_CRLF)
+#error REQUIRES_BT_BAUD_AT and REQUIRES_BT_CRLF defined
+#endif
     return send_bt_config((uint8_t *) bt_baud, 2, BT_CONFIG_RETRIES_BAUD);
 #else
     return send_bt_config((uint8_t *) bt_baud, sizeof(bt_baud) - 1, BT_CONFIG_RETRIES_BAUD);
@@ -1921,7 +1924,7 @@ bool init_bt()
         eeprom_write(EEP_ADDR_BT_INIT, 0xFF);
         eeprom_write(EEP_ADDR_BT_INIT + 1, 0xFF);
     }
-#else
+#else   // defined(REQUIRES_BT_FACTORY)
     if (init_bt_required)
     {
 #if defined(REQUIRES_BT_BAUD)
