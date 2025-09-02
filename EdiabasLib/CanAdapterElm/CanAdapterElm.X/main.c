@@ -103,6 +103,7 @@
 #define REQUIRES_BT_CRLF
 //#define REQUIRES_BT_ASSIGN
 #define REQUIRES_BT_NAME_0
+#define REQUIRES_BT_PIN
 #define BT_COMMAND_PAUSE 50         // bluetooth command pause
 #define BT_RESPONSE_TIMEOUT 500
 #define BT_PIN_LENGTH 4
@@ -118,6 +119,7 @@
 //#define REQUIRES_BT_CRLF
 //#define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
+#define REQUIRES_BT_PIN
 #define BT_COMMAND_PAUSE 500        // bluetooth command pause
 #define BT_RESPONSE_TIMEOUT 1500    // bluetooth command response timeout
 #define BT_PIN_LENGTH 4
@@ -132,6 +134,7 @@
 #define REQUIRES_BT_CRLF
 #define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
+#define REQUIRES_BT_PIN
 #define BT_COMMAND_PAUSE 50         // bluetooth command pause
 #define BT_RESPONSE_TIMEOUT 500
 #define BT_PIN_LENGTH 16
@@ -1770,6 +1773,7 @@ bool set_bt_baud()
 }
 #endif
 
+#if defined (REQUIRES_BT_PIN)
 bool set_bt_pin()
 {
     temp_buffer[0] = 'A';
@@ -1805,6 +1809,7 @@ bool set_bt_pin()
 
     return send_bt_config(temp_buffer, len, BT_CONFIG_RETRIES_DEF);
 }
+#endif
 
 bool set_bt_name()
 {
@@ -1878,10 +1883,12 @@ bool init_bt()
             eeprom_write(EEP_ADDR_BT_INIT + 1, ~0x01);
         }
     }
+#if defined (REQUIRES_BT_PIN)
     if (!set_bt_pin())
     {
         result = false;
     }
+#endif
     if (!set_bt_name())
     {
         result = false;
@@ -1900,10 +1907,12 @@ bool init_bt()
             result = false;
         }
 #endif
+#if defined (REQUIRES_BT_PIN)
         if (!set_bt_pin())
         {
             result = false;
         }
+#endif
         if (!set_bt_name())
         {
             result = false;
@@ -2269,7 +2278,7 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
         }
         if ((len >= 6) && (buffer[3] & 0x7F) == 0x04)
         {      // bt pin
-#if defined(ALLOW_BT_CONFIG)
+#if defined(ALLOW_BT_CONFIG) && defined(REQUIRES_BT_PIN)
             if ((buffer[3] & 0x80) == 0x00)
             {   // write
                 for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
