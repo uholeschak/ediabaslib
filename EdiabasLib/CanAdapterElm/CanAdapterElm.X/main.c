@@ -101,6 +101,7 @@
 #define REQUIRES_BT_FACTORY
 //#define REQUIRES_BT_BAUD
 #define REQUIRES_BT_CRLF
+#define REQUIRES_BT_CHECK_CRLF
 //#define REQUIRES_BT_ASSIGN
 #define REQUIRES_BT_NAME_0
 #define REQUIRES_BT_PIN
@@ -118,6 +119,7 @@
 #define REQUIRES_BT_BAUD
 #define REQUIRES_BT_BAUD_AT
 //#define REQUIRES_BT_CRLF
+//#define REQUIRES_BT_CHECK_CRLF
 //#define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
 #define REQUIRES_BT_PIN
@@ -133,6 +135,7 @@
 //#define REQUIRES_BT_BAUD
 #define REQUIRES_INIT_BT
 #define REQUIRES_BT_CRLF
+#define REQUIRES_BT_CHECK_CRLF
 #define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
 #define REQUIRES_BT_PIN
@@ -3973,7 +3976,7 @@ void interrupt high_priority high_isr (void)
                             case 1:
                                 if (rec_data == 'K')
                                 {
-#if defined(REQUIRES_BT_CRLF)
+#if defined(REQUIRES_BT_CHECK_CRLF)
                                     rec_chksum++;
 #else
                                     T1CONbits.TMR1ON = 0;   // stop timer
@@ -3984,7 +3987,7 @@ void interrupt high_priority high_isr (void)
                                 }
                                 rec_chksum = 0;
                                 break;
-#if defined(REQUIRES_BT_CRLF)
+#if defined(REQUIRES_BT_CHECK_CRLF)
                             case 2:
                                 if (rec_data == '\r')
                                 {
