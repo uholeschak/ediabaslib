@@ -2164,11 +2164,20 @@ void read_eeprom()
 
     memset(pin_buffer, 0x00, sizeof(pin_buffer));
     uint8_t pin_len = 0;
+#if defined (ALLOW_EMPTY_PIN)
+    bool empty_pin = false;
+#endif
     for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
     {
         temp_value1 = eeprom_read(EEP_ADDR_BT_PIN + i);
         if (temp_value1 < '0' || temp_value1 > '9')
         {
+#if defined (ALLOW_EMPTY_PIN)
+            if (i == 0 && temp_value1 == 0)
+            {
+                empty_pin = true;
+            }
+#endif
             temp_value1 = 0;
             break;
         }
@@ -2178,7 +2187,11 @@ void read_eeprom()
         }
         pin_buffer[i] = temp_value1;
     }
-    if (pin_len < 4)
+    if (pin_len < 4
+#if defined (ALLOW_EMPTY_PIN)
+        && !empty_pin
+#endif
+        )
     {
         static const uint8_t default_pin[] = {'1', '2', '3', '4'};
         memcpy(pin_buffer, default_pin, sizeof(default_pin));
