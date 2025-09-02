@@ -3968,5 +3968,492 @@
         <property key="wpo-lto" value="false"/>
       </XC8-config-global>
     </conf>
+    <conf name="hc06" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <targetDevice>PIC18F25K80</targetDevice>
+        <targetHeader></targetHeader>
+        <targetPluginBoard></targetPluginBoard>
+        <platformTool>PICkit3PlatformTool</platformTool>
+        <languageToolchain>XC8</languageToolchain>
+        <languageToolchainVersion>1.33</languageToolchainVersion>
+        <platform>3</platform>
+      </toolsSet>
+      <packs>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.2.72"/>
+      </packs>
+      <ScriptingSettings>
+      </ScriptingSettings>
+      <compileType>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+        <archiverTool>
+        </archiverTool>
+        <loading>
+          <makeArtifact PL="bootloader"
+                        CT="1"
+                        CN="hc06"
+                        AC="true"
+                        BL="true"
+                        WD="bootloader"
+                        BC="${MAKE}  -f Makefile CONF=hc06"
+                        DBC="${MAKE}  -f Makefile CONF=hc06 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/hc06&quot; &quot;dist/hc06&quot;"
+                        OP="dist/hc06/production/bootloader.production.hex"
+                        DOP="dist/hc06/debug/bootloader.debug.hex"
+                        FL="dist/hc06/production/bootloader.production.hex"
+                        PD="dist/hc06/production/bootloader.production.elf"
+                        DD="dist/hc06/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <useAlternateLoadableFile>false</useAlternateLoadableFile>
+          <parseOnProdLoad>false</parseOnProdLoad>
+          <alternateLoadableFile></alternateLoadableFile>
+        </loading>
+        <subordinates>
+        </subordinates>
+      </compileType>
+      <makeCustomizationType>
+        <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
+        <makeCustomizationPreStep></makeCustomizationPreStep>
+        <makeCustomizationPostStepEnabled>false</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStep></makeCustomizationPostStep>
+        <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
+        <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
+        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
+      </makeCustomizationType>
+      <HI-TECH-COMP>
+        <property key="additional-warnings" value="true"/>
+        <property key="asmlist" value="true"/>
+        <property key="call-prologues" value="false"/>
+        <property key="default-bitfield-type" value="true"/>
+        <property key="default-char-type" value="true"/>
+        <property key="define-macros" value="ADAPTER_TYPE=0x09"/>
+        <property key="disable-optimizations" value="false"/>
+        <property key="extra-include-directories" value=""/>
+        <property key="favor-optimization-for" value="+speed,-space"/>
+        <property key="garbage-collect-data" value="true"/>
+        <property key="garbage-collect-functions" value="true"/>
+        <property key="identifier-length" value="255"/>
+        <property key="local-generation" value="false"/>
+        <property key="operation-mode" value="pro"/>
+        <property key="opt-xc8-compiler-strict_ansi" value="false"/>
+        <property key="optimization-assembler" value="true"/>
+        <property key="optimization-assembler-files" value="true"/>
+        <property key="optimization-debug" value="false"/>
+        <property key="optimization-invariant-enable" value="false"/>
+        <property key="optimization-invariant-value" value="16"/>
+        <property key="optimization-level" value="-O3"/>
+        <property key="optimization-speed" value="true"/>
+        <property key="optimization-stable-enable" value="false"/>
+        <property key="preprocess-assembler" value="true"/>
+        <property key="short-enums" value="true"/>
+        <property key="tentative-definitions" value=""/>
+        <property key="undefine-macros" value=""/>
+        <property key="use-cci" value="false"/>
+        <property key="use-iar" value="false"/>
+        <property key="verbose" value="false"/>
+        <property key="warning-level" value="0"/>
+        <property key="what-to-do" value="ignore"/>
+      </HI-TECH-COMP>
+      <HI-TECH-LINK>
+        <property key="additional-options-checksum" value="0800-7FFD@7FFEw2"/>
+        <property key="additional-options-checksumAVR" value=""/>
+        <property key="additional-options-code-offset" value="0x800"/>
+        <property key="additional-options-command-line" value=""/>
+        <property key="additional-options-errata" value=""/>
+        <property key="additional-options-extend-address" value="false"/>
+        <property key="additional-options-trace-type" value=""/>
+        <property key="additional-options-use-response-files" value="false"/>
+        <property key="backup-reset-condition-flags" value="false"/>
+        <property key="calibrate-oscillator" value="false"/>
+        <property key="calibrate-oscillator-value" value="0x3400"/>
+        <property key="clear-bss" value="true"/>
+        <property key="code-model-external" value="wordwrite"/>
+        <property key="code-model-rom" value=""/>
+        <property key="create-html-files" value="false"/>
+        <property key="data-model-ram" value=""/>
+        <property key="data-model-size-of-double" value="24"/>
+        <property key="data-model-size-of-double-gcc" value="short-double"/>
+        <property key="data-model-size-of-float" value="24"/>
+        <property key="data-model-size-of-float-gcc" value="short-float"/>
+        <property key="display-class-usage" value="false"/>
+        <property key="display-hex-usage" value="false"/>
+        <property key="display-overall-usage" value="true"/>
+        <property key="display-psect-usage" value="false"/>
+        <property key="extra-lib-directories" value=""/>
+        <property key="fill-flash-options-addr" value="0x0800:0x7FFF"/>
+        <property key="fill-flash-options-const" value="0xFFFF"/>
+        <property key="fill-flash-options-how" value="1"/>
+        <property key="fill-flash-options-inc-const" value="1"/>
+        <property key="fill-flash-options-increment" value=""/>
+        <property key="fill-flash-options-seq" value=""/>
+        <property key="fill-flash-options-what" value="2"/>
+        <property key="format-hex-file-for-download" value="false"/>
+        <property key="initialize-data" value="true"/>
+        <property key="input-libraries" value="libm"/>
+        <property key="keep-generated-startup.as" value="false"/>
+        <property key="link-in-c-library" value="true"/>
+        <property key="link-in-c-library-gcc" value=""/>
+        <property key="link-in-peripheral-library" value="true"/>
+        <property key="managed-stack" value="false"/>
+        <property key="opt-xc8-linker-file" value="false"/>
+        <property key="opt-xc8-linker-link_startup" value="false"/>
+        <property key="opt-xc8-linker-serial" value=""/>
+        <property key="program-the-device-with-default-config-words" value="true"/>
+        <property key="remove-unused-sections" value="true"/>
+      </HI-TECH-LINK>
+      <PICkit3PlatformTool>
+        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="Freeze Peripherals" value="true"/>
+        <property key="SecureSegment.SegmentProgramming" value="FullChipProgramming"/>
+        <property key="ToolFirmwareFilePath"
+                  value="Press to browse for a specific firmware version"/>
+        <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
+        <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="memories.aux" value="false"/>
+        <property key="memories.bootflash" value="true"/>
+        <property key="memories.configurationmemory" value="true"/>
+        <property key="memories.configurationmemory2" value="true"/>
+        <property key="memories.dataflash" value="true"/>
+        <property key="memories.eeprom" value="true"/>
+        <property key="memories.flashdata" value="true"/>
+        <property key="memories.id" value="true"/>
+        <property key="memories.instruction.ram" value="true"/>
+        <property key="memories.instruction.ram.ranges"
+                  value="${memories.instruction.ram.ranges}"/>
+        <property key="memories.programmemory" value="true"/>
+        <property key="memories.programmemory.ranges" value="0-7fff"/>
+        <property key="poweroptions.powerenable" value="false"/>
+        <property key="programmertogo.imagename" value=""/>
+        <property key="programoptions.donoteraseauxmem" value="false"/>
+        <property key="programoptions.eraseb4program" value="true"/>
+        <property key="programoptions.pgmspeed" value="2"/>
+        <property key="programoptions.preservedataflash" value="false"/>
+        <property key="programoptions.preservedataflash.ranges"
+                  value="${programoptions.preservedataflash.ranges}"/>
+        <property key="programoptions.preserveeeprom" value="true"/>
+        <property key="programoptions.preserveeeprom.ranges" value="0x0000 - 0x03FF"/>
+        <property key="programoptions.preserveprogram.ranges" value=""/>
+        <property key="programoptions.preserveprogramrange" value="false"/>
+        <property key="programoptions.preserveuserid" value="false"/>
+        <property key="programoptions.programcalmem" value="false"/>
+        <property key="programoptions.programuserotp" value="false"/>
+        <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
+        <property key="programoptions.usehighvoltageonmclr" value="false"/>
+        <property key="programoptions.uselvpprogramming" value="false"/>
+        <property key="voltagevalue" value="5.0"/>
+      </PICkit3PlatformTool>
+      <Simulator>
+        <property key="codecoverage.enabled" value="Disable"/>
+        <property key="codecoverage.enableoutputtofile" value="false"/>
+        <property key="codecoverage.outputfile" value=""/>
+        <property key="oscillator.auxfrequency" value="120"/>
+        <property key="oscillator.auxfrequencyunit" value="Mega"/>
+        <property key="oscillator.frequency" value="1"/>
+        <property key="oscillator.frequencyunit" value="Mega"/>
+        <property key="oscillator.rcfrequency" value="250"/>
+        <property key="oscillator.rcfrequencyunit" value="Kilo"/>
+        <property key="performancedata.show" value="false"/>
+        <property key="periphADC1.altscl" value="false"/>
+        <property key="periphADC1.minTacq" value=""/>
+        <property key="periphADC1.tacqunits" value="microseconds"/>
+        <property key="periphADC2.altscl" value="false"/>
+        <property key="periphADC2.minTacq" value=""/>
+        <property key="periphADC2.tacqunits" value="microseconds"/>
+        <property key="periphComp1.gte" value="gt"/>
+        <property key="periphComp2.gte" value="gt"/>
+        <property key="periphComp3.gte" value="gt"/>
+        <property key="periphComp4.gte" value="gt"/>
+        <property key="periphComp5.gte" value="gt"/>
+        <property key="periphComp6.gte" value="gt"/>
+        <property key="reset.scl" value="false"/>
+        <property key="reset.type" value="MCLR"/>
+        <property key="tracecontrol.include.timestamp" value="summarydataenabled"/>
+        <property key="tracecontrol.select" value="0"/>
+        <property key="tracecontrol.stallontracebufferfull" value="false"/>
+        <property key="tracecontrol.timestamp" value="0"/>
+        <property key="tracecontrol.tracebufmax" value="546000"/>
+        <property key="tracecontrol.tracefile" value="defmplabxtrace.log"/>
+        <property key="tracecontrol.traceresetonrun" value="false"/>
+        <property key="uart10io.output" value="window"/>
+        <property key="uart10io.outputfile" value=""/>
+        <property key="uart10io.uartioenabled" value="false"/>
+        <property key="uart1io.output" value="window"/>
+        <property key="uart1io.outputfile" value=""/>
+        <property key="uart1io.uartioenabled" value="false"/>
+        <property key="uart2io.output" value="window"/>
+        <property key="uart2io.outputfile" value=""/>
+        <property key="uart2io.uartioenabled" value="false"/>
+        <property key="uart3io.output" value="window"/>
+        <property key="uart3io.outputfile" value=""/>
+        <property key="uart3io.uartioenabled" value="false"/>
+        <property key="uart4io.output" value="window"/>
+        <property key="uart4io.outputfile" value=""/>
+        <property key="uart4io.uartioenabled" value="false"/>
+        <property key="uart5io.output" value="window"/>
+        <property key="uart5io.outputfile" value=""/>
+        <property key="uart5io.uartioenabled" value="false"/>
+        <property key="uart6io.output" value="window"/>
+        <property key="uart6io.outputfile" value=""/>
+        <property key="uart6io.uartioenabled" value="false"/>
+        <property key="uart7io.output" value="window"/>
+        <property key="uart7io.outputfile" value=""/>
+        <property key="uart7io.uartioenabled" value="false"/>
+        <property key="uart8io.output" value="window"/>
+        <property key="uart8io.outputfile" value=""/>
+        <property key="uart8io.uartioenabled" value="false"/>
+        <property key="uart9io.output" value="window"/>
+        <property key="uart9io.outputfile" value=""/>
+        <property key="uart9io.uartioenabled" value="false"/>
+        <property key="warningmessagebreakoptions.W0001_CORE_BITREV_MODULO_EN"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0002_CORE_SECURE_MEMORYACCESS"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0003_CORE_SW_RESET" value="report"/>
+        <property key="warningmessagebreakoptions.W0004_CORE_WDT_RESET" value="report"/>
+        <property key="warningmessagebreakoptions.W0005_CORE_IOPUW_RESET"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0006_CORE_CODE_GUARD_PFC_RESET"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0007_CORE_DO_LOOP_STACK_UNDERFLOW"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0008_CORE_DO_LOOP_STACK_OVERFLOW"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0009_CORE_NESTED_DO_LOOP_RANGE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0010_CORE_SIM32_ODD_WORDACCESS"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0011_CORE_SIM32_UNIMPLEMENTED_RAMACCESS"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0012_CORE_STACK_OVERFLOW_RESET"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0013_CORE_STACK_UNDERFLOW_RESET"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0014_CORE_INVALID_OPCODE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0015_CORE_INVALID_ALT_WREG_SET"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0101_SIM_UPDATE_FAILED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0102_SIM_PERIPH_MISSING"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0103_SIM_PERIPH_FAILED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0104_SIM_FAILED_TO_INIT_TOOL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0105_SIM_INVALID_FIELD"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0106_SIM_PERIPH_PARTIAL_SUPPORT"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0201_ADC_NO_STIMULUS_FILE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0202_ADC_GO_DONE_BIT" value="report"/>
+        <property key="warningmessagebreakoptions.W0203_ADC_MINIMUM_2_TAD"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0204_ADC_TAD_TOO_SMALL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0205_ADC_UNEXPECTED_TRANSITION"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0206_ADC_SAMP_TIME_TOO_SHORT"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0207_ADC_NO_PINS_SCANNED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0208_ADC_UNSUPPORTED_CLOCK_SOURCE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0209_ADC_ANALOG_CHANNEL_DIGITAL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0210_ADC_ANALOG_CHANNEL_OUTPUT"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0211_ADC_PIN_INVALID_CHANNEL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0212_ADC_BAND_GAP_NOT_SUPPORTED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0213_ADC_RESERVED_SSRC"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0214_ADC_POSITIVE_INPUT_DIGITAL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0215_ADC_POSITIVE_INPUT_OUTPUT"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0216_ADC_NEGATIVE_INPUT_DIGITAL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0217_ADC_NEGATIVE_INPUT_OUTPUT"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0218_ADC_REFERENCE_HIGH_DIGITAL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0219_ADC_REFERENCE_HIGH_OUTPUT"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0220_ADC_REFERENCE_LOW_DIGITAL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0221_ADC_REFERENCE_LOW_OUTPUT"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0222_ADC_OVERFLOW" value="report"/>
+        <property key="warningmessagebreakoptions.W0223_ADC_UNDERFLOW" value="report"/>
+        <property key="warningmessagebreakoptions.W0224_ADC_CTMU_NOT_SUPPORTED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0225_ADC_INVALID_CH0S"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0226_ADC_VBAT_NOT_SUPPORTED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0227_ADC_INVALID_ADCS"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0228_ADC_INVALID_ADCS"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0229_ADC_INVALID_ADCS"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0230_ADC_TRIGSEL_NOT_SUPPORTED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0400_PWM_PWM_FASTER_THAN_FOSC"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0700_CLC_GENERAL_WARNING"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0701_CLC_CLCOUT_AS_INPUT"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W0702_CLC_CIRCULAR_LOOP"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W1201_DATAFLASH_MEM_OUTSIDE_RANGE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W1202_DATAFLASH_ERASE_WHILE_LOCKED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W1203_DATAFLASH_WRITE_WHILE_LOCKED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W1401_DMA_PERIPH_NOT_AVAIL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W1402_DMA_INVALID_IRQ" value="report"/>
+        <property key="warningmessagebreakoptions.W1403_DMA_INVALID_SFR" value="report"/>
+        <property key="warningmessagebreakoptions.W1404_DMA_INVALID_DMA_ADDR"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W1405_DMA_IRQ_DIR_MISMATCH"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W1600_PPS_INVALID_MAP" value="report"/>
+        <property key="warningmessagebreakoptions.W2001_INPUTCAPTURE_TMR3_UNAVAILABLE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W2002_INPUTCAPTURE_CAPTURE_EMPTY"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W2003_INPUTCAPTURE_SYNCSEL_NOT_AVIALABLE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W2004_INPUTCAPTURE_BAD_SYNC_SOURCE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W2501_OUTPUTCOMPARE_SYNCSEL_NOT_AVIALABLE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W2502_OUTPUTCOMPARE_BAD_SYNC_SOURCE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W2503_OUTPUTCOMPARE_BAD_TRIGGER_SOURCE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9001_TMR_GATE_AND_EXTCLOCK_ENABLED"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9002_TMR_NO_PIN_AVAILABLE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9003_TMR_INVALID_CLOCK_SOURCE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9201_UART_TX_OVERFLOW"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9202_UART_TX_CAPTUREFILE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9203_UART_TX_INVALIDINTERRUPTMODE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9204_UART_RX_EMPTY_QUEUE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9205_UART_TX_BADFILE" value="report"/>
+        <property key="warningmessagebreakoptions.W9401_CVREF_INVALIDSOURCESELECTION"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9402_CVREF_INPUT_OUTPUTPINCONFLICT"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9601_COMP_FVR_SOURCE_UNAVAILABLE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9602_COMP_DAC_SOURCE_UNAVAILABLE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9603_COMP_CVREF_SOURCE_UNAVAILABLE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9801_FVR_INVALID_MODE_SELECTION"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9801_SCL_BAD_SUBTYPE_INDICATION"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9802_SCL_FILE_NOT_FOUND"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9803_SCL_FAILED_TO_READ_FILE"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9804_SCL_UNRECOGNIZED_LABEL"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.W9805_SCL_UNRECOGNIZED_VAR"
+                  value="report"/>
+        <property key="warningmessagebreakoptions.displaywarningmessagesoption"
+                  value=""/>
+        <property key="warningmessagebreakoptions.warningmessages" value="holdstate"/>
+      </Simulator>
+      <Tool>
+        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="Freeze Peripherals" value="true"/>
+        <property key="SecureSegment.SegmentProgramming" value="FullChipProgramming"/>
+        <property key="ToolFirmwareFilePath"
+                  value="Press to browse for a specific firmware version"/>
+        <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
+        <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
+        <property key="memories.aux" value="false"/>
+        <property key="memories.bootflash" value="true"/>
+        <property key="memories.configurationmemory" value="true"/>
+        <property key="memories.configurationmemory2" value="true"/>
+        <property key="memories.dataflash" value="true"/>
+        <property key="memories.eeprom" value="true"/>
+        <property key="memories.flashdata" value="true"/>
+        <property key="memories.id" value="true"/>
+        <property key="memories.instruction.ram" value="true"/>
+        <property key="memories.instruction.ram.ranges"
+                  value="${memories.instruction.ram.ranges}"/>
+        <property key="memories.programmemory" value="true"/>
+        <property key="memories.programmemory.ranges" value="0-7fff"/>
+        <property key="poweroptions.powerenable" value="false"/>
+        <property key="programmertogo.imagename" value=""/>
+        <property key="programoptions.donoteraseauxmem" value="false"/>
+        <property key="programoptions.eraseb4program" value="true"/>
+        <property key="programoptions.pgmspeed" value="2"/>
+        <property key="programoptions.preservedataflash" value="false"/>
+        <property key="programoptions.preservedataflash.ranges"
+                  value="${programoptions.preservedataflash.ranges}"/>
+        <property key="programoptions.preserveeeprom" value="true"/>
+        <property key="programoptions.preserveeeprom.ranges" value="0x0000 - 0x03FF"/>
+        <property key="programoptions.preserveprogram.ranges" value=""/>
+        <property key="programoptions.preserveprogramrange" value="false"/>
+        <property key="programoptions.preserveuserid" value="false"/>
+        <property key="programoptions.programcalmem" value="false"/>
+        <property key="programoptions.programuserotp" value="false"/>
+        <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
+        <property key="programoptions.usehighvoltageonmclr" value="false"/>
+        <property key="programoptions.uselvpprogramming" value="false"/>
+        <property key="voltagevalue" value="5.0"/>
+      </Tool>
+      <XC8-CO>
+        <property key="coverage-enable" value=""/>
+        <property key="stack-guidance" value="false"/>
+      </XC8-CO>
+      <XC8-config-global>
+        <property key="advanced-elf" value="true"/>
+        <property key="constdata-progmem" value="false"/>
+        <property key="gcc-opt-driver-new" value="false"/>
+        <property key="gcc-opt-std" value="--std=c89"/>
+        <property key="gcc-output-file-format" value="dwarf-3"/>
+        <property key="mapped-progmem" value="false"/>
+        <property key="omit-pack-options" value="false"/>
+        <property key="omit-pack-options-new" value="1"/>
+        <property key="output-file-format" value="-mcof,+elf"/>
+        <property key="smart-io-format" value=""/>
+        <property key="stack-size-high" value="auto"/>
+        <property key="stack-size-low" value="auto"/>
+        <property key="stack-size-main" value="auto"/>
+        <property key="stack-type" value="compiled"/>
+        <property key="user-pack-device-support" value=""/>
+        <property key="wpo-lto" value="false"/>
+      </XC8-config-global>
+    </conf>
   </confs>
 </configurationDescriptor>
