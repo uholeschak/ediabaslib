@@ -114,6 +114,7 @@
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
 //#define REQUIRES_BT_FACTORY
+//#define REQUIRES_BT_RESET
 #define REQUIRES_BT_BAUD
 #define REQUIRES_BT_BAUD_AT
 //#define REQUIRES_BT_CRLF
@@ -1741,6 +1742,19 @@ bool set_bt_init()
 }
 #endif
 
+#if defined(REQUIRES_BT_RESET)
+bool set_bt_reset()
+{
+    static const char bt_default[] = "AT+RESET";
+#if defined(REQUIRES_BT_CRLF)
+        "\r\n"
+#endif
+    ;
+
+    return send_bt_config((uint8_t *) bt_default, sizeof(bt_default) - 1, BT_CONFIG_RETRIES_DEF);
+}
+#endif
+
 #if defined(REQUIRES_BT_FACTORY) || defined(REQUIRES_BT_BAUD)
 bool set_bt_baud()
 {
@@ -1893,6 +1907,12 @@ bool init_bt()
     {
         result = false;
     }
+#if defined (REQUIRES_BT_RESET)
+    if (!set_bt_reset())
+    {
+        result = false;
+    }
+#endif
     if (!result)
     {   // force init at next restart
         eeprom_write(EEP_ADDR_BT_INIT, 0xFF);
@@ -1917,6 +1937,12 @@ bool init_bt()
         {
             result = false;
         }
+#if defined (REQUIRES_BT_RESET)
+        if (!set_bt_reset())
+        {
+            result = false;
+        }
+#endif
         if (result)
         {
             eeprom_write(EEP_ADDR_BT_INIT, 0x01);
