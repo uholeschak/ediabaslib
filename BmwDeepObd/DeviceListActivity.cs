@@ -1861,11 +1861,8 @@ namespace BmwDeepObd
                 itemList.Add(GetString(Resource.String.bt_device_select));
                 operationList.Add(BtOperation.SelectAdapter);
 
-                if (!leDevice)
-                {
-                    itemList.Add(GetString(Resource.String.bt_device_pair));
-                    operationList.Add(BtOperation.PairDevice);
-                }
+                itemList.Add(GetString(Resource.String.bt_device_pair));
+                operationList.Add(BtOperation.PairDevice);
             }
 
             Java.Lang.ICharSequence[] items = new Java.Lang.ICharSequence[itemList.Count];
