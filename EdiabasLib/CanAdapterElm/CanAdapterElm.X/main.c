@@ -112,6 +112,7 @@
 // HC04
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
+#define ALLOW_EMPTY_PIN
 //#define REQUIRES_BT_FACTORY
 #define REQUIRES_BT_BAUD
 #define REQUIRES_BT_BAUD_AT
@@ -1880,7 +1881,15 @@ bool init_bt()
     }
     if (!set_bt_pin())
     {
+#if defined (ALLOW_EMPTY_PIN)
+        pin_buffer[0] = 0;
+        if (!set_bt_pin())
+        {
+            result = false;
+        }
+#else
         result = false;
+#endif
     }
     if (!set_bt_name())
     {
