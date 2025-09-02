@@ -150,6 +150,23 @@
 #elif ADAPTER_TYPE == 0x08
 // Standard fimrware with baud rate 115200 (e.g. YC1021 with external Bluetooth board)
 #define REQUIRES_BT_REC_TIMOUT
+#elif ADAPTER_TYPE == 0x09
+// HC06 LE
+#define ALLOW_BT_CONFIG
+#define ALLOW_FACTORY_RESET
+//#define REQUIRES_BT_FACTORY
+#define REQUIRES_BT_RESET
+#define REQUIRES_BT_BAUD
+//#define REQUIRES_BT_BAUD_AT
+#define REQUIRES_BT_CRLF
+//#define REQUIRES_BT_CHECK_CRLF
+//#define REQUIRES_BT_ASSIGN
+//#define REQUIRES_BT_NAME_0
+//#define REQUIRES_BT_PIN
+#define BT_COMMAND_PAUSE 50        // bluetooth command pause
+#define BT_RESPONSE_TIMEOUT 500    // bluetooth command response timeout
+#define BT_PIN_LENGTH 4
+#define BT_NAME_LENGTH 14
 #elif ADAPTER_TYPE == 0x10
 // ELM327 Wifi v1.5 Mini ESP8266ex
 // has LED_OBD_RX and LED_RS_TX swapped
