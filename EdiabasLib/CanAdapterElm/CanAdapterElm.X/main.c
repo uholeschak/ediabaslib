@@ -2302,6 +2302,12 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
             }
             memcpy(buffer + 4, pin_buffer, sizeof(pin_buffer));
             len = 5 + sizeof(pin_buffer);
+#if defined (ALLOW_EMPTY_PIN)
+            if (pin_buffer[0] == 0)
+            {
+                len = 5;    // no pin;
+            }
+#endif
 #else
             len = 5;    // no pin
 #endif
