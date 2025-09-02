@@ -1887,6 +1887,10 @@ bool init_bt()
         {
             result = false;
         }
+        else
+        {
+            eeprom_write(EEP_ADDR_BT_PIN, 0);
+        }
 #else
         result = false;
 #endif
