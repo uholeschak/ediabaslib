@@ -103,6 +103,7 @@
 #define REQUIRES_BT_CRLF
 //#define REQUIRES_BT_ASSIGN
 #define REQUIRES_BT_NAME_0
+#define REQUIRES_BT_PIN
 #define BT_COMMAND_PAUSE 50         // bluetooth command pause
 #define BT_RESPONSE_TIMEOUT 500
 #define BT_PIN_LENGTH 4
@@ -112,13 +113,13 @@
 // HC04
 #define ALLOW_BT_CONFIG
 #define ALLOW_FACTORY_RESET
-#define ALLOW_EMPTY_PIN
 //#define REQUIRES_BT_FACTORY
 #define REQUIRES_BT_BAUD
 #define REQUIRES_BT_BAUD_AT
 //#define REQUIRES_BT_CRLF
 //#define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
+#define REQUIRES_BT_PIN
 #define BT_COMMAND_PAUSE 500        // bluetooth command pause
 #define BT_RESPONSE_TIMEOUT 1500    // bluetooth command response timeout
 #define BT_PIN_LENGTH 4
@@ -133,6 +134,7 @@
 #define REQUIRES_BT_CRLF
 #define REQUIRES_BT_ASSIGN
 //#define REQUIRES_BT_NAME_0
+#define REQUIRES_BT_PIN
 #define BT_COMMAND_PAUSE 50         // bluetooth command pause
 #define BT_RESPONSE_TIMEOUT 500
 #define BT_PIN_LENGTH 16
@@ -1771,6 +1773,7 @@ bool set_bt_baud()
 }
 #endif
 
+#if defined (REQUIRES_BT_PIN)
 bool set_bt_pin()
 {
     temp_buffer[0] = 'A';
@@ -1806,6 +1809,7 @@ bool set_bt_pin()
 
     return send_bt_config(temp_buffer, len, BT_CONFIG_RETRIES_DEF);
 }
+#endif
 
 bool set_bt_name()
 {
@@ -1879,22 +1883,12 @@ bool init_bt()
             eeprom_write(EEP_ADDR_BT_INIT + 1, ~0x01);
         }
     }
+#if defined (REQUIRES_BT_PIN)
     if (!set_bt_pin())
     {
-#if defined (ALLOW_EMPTY_PIN)
-        pin_buffer[0] = 0;
-        if (!set_bt_pin())
-        {
-            result = false;
-        }
-        else
-        {
-            eeprom_write(EEP_ADDR_BT_PIN, 0);
-        }
-#else
         result = false;
-#endif
     }
+#endif
     if (!set_bt_name())
     {
         result = false;
@@ -1913,22 +1907,12 @@ bool init_bt()
             result = false;
         }
 #endif
+#if defined (REQUIRES_BT_PIN)
         if (!set_bt_pin())
         {
-#if defined (ALLOW_EMPTY_PIN)
-            pin_buffer[0] = 0;
-            if (!set_bt_pin())
-            {
-                result = false;
-            }
-            else
-            {
-                eeprom_write(EEP_ADDR_BT_PIN, 0);
-            }
-#else
             result = false;
-#endif
         }
+#endif
         if (!set_bt_name())
         {
             result = false;
@@ -2176,20 +2160,11 @@ void read_eeprom()
 
     memset(pin_buffer, 0x00, sizeof(pin_buffer));
     uint8_t pin_len = 0;
-#if defined (ALLOW_EMPTY_PIN)
-    bool empty_pin = false;
-#endif
     for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
     {
         temp_value1 = eeprom_read(EEP_ADDR_BT_PIN + i);
         if (temp_value1 < '0' || temp_value1 > '9')
         {
-#if defined (ALLOW_EMPTY_PIN)
-            if (i == 0 && temp_value1 == 0)
-            {
-                empty_pin = true;
-            }
-#endif
             temp_value1 = 0;
             break;
         }
@@ -2199,11 +2174,7 @@ void read_eeprom()
         }
         pin_buffer[i] = temp_value1;
     }
-    if (pin_len < 4
-#if defined (ALLOW_EMPTY_PIN)
-        && !empty_pin
-#endif
-        )
+    if (pin_len < 4)
     {
         static const uint8_t default_pin[] = {'1', '2', '3', '4'};
         memcpy(pin_buffer, default_pin, sizeof(default_pin));
@@ -2307,7 +2278,7 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
         }
         if ((len >= 6) && (buffer[3] & 0x7F) == 0x04)
         {      // bt pin
-#if defined(ALLOW_BT_CONFIG)
+#if defined(ALLOW_BT_CONFIG) && defined(REQUIRES_BT_PIN)
             if ((buffer[3] & 0x80) == 0x00)
             {   // write
                 for (uint8_t i = 0; i < sizeof(pin_buffer); i++)
@@ -2327,12 +2298,6 @@ bool internal_telegram(uint8_t *buffer, uint16_t len)
             }
             memcpy(buffer + 4, pin_buffer, sizeof(pin_buffer));
             len = 5 + sizeof(pin_buffer);
-#if defined (ALLOW_EMPTY_PIN)
-            if (pin_buffer[0] == 0)
-            {
-                len = 5;    // no pin;
-            }
-#endif
 #else
             len = 5;    // no pin
 #endif
