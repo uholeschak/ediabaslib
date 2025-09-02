@@ -1915,7 +1915,19 @@ bool init_bt()
 #endif
         if (!set_bt_pin())
         {
+#if defined (ALLOW_EMPTY_PIN)
+            pin_buffer[0] = 0;
+            if (!set_bt_pin())
+            {
+                result = false;
+            }
+            else
+            {
+                eeprom_write(EEP_ADDR_BT_PIN, 0);
+            }
+#else
             result = false;
+#endif
         }
         if (!set_bt_name())
         {
