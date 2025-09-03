@@ -151,7 +151,8 @@ namespace EdiabasLib
                     return false;
                 }
 
-                for (int i = 0; i < 10; i++)
+                int retry = 0;
+                for (;;)
                 {
                     if (_btGattConnectEvent.WaitOne(1000))
                     {
@@ -160,6 +161,8 @@ namespace EdiabasLib
                             LogString("*** GATT connection timeout");
                             return false;
                         }
+
+                        break;
                     }
 
                     if (cancelEvent != null)
@@ -170,9 +173,19 @@ namespace EdiabasLib
                             return false;
                         }
                     }
+                    else
+                    {
+                        retry++;
+                        if (retry > 10)
+                        {
+                            LogString("*** GATT connection timeout");
+                            return false;
+                        }
+                    }
                 }
 
-                for (int i = 0; i < 10; i++)
+                retry = 0;
+                for (;;)
                 {
                     if (_btGattDiscoveredEvent.WaitOne(1000))
                     {
@@ -181,6 +194,7 @@ namespace EdiabasLib
                             LogString("*** GATT service discovery timeout");
                             return false;
                         }
+                        break;
                     }
 
                     if (cancelEvent != null)
@@ -188,6 +202,15 @@ namespace EdiabasLib
                         if (cancelEvent.WaitOne(0))
                         {
                             LogString("*** GATT connection cancelled");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        retry++;
+                        if (retry > 10)
+                        {
+                            LogString("*** GATT service discovery timeout");
                             return false;
                         }
                     }
