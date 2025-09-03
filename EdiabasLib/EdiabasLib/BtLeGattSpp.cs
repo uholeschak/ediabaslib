@@ -126,7 +126,7 @@ namespace EdiabasLib
             }
         }
 
-        public bool ConnectLeGattDevice(Context context, BluetoothDevice device)
+        public bool ConnectLeGattDevice(Context context, BluetoothDevice device, ManualResetEvent cancelEvent = null)
         {
             if (Build.VERSION.SdkInt < BuildVersionCodes.M)
             {
@@ -151,18 +151,69 @@ namespace EdiabasLib
                     return false;
                 }
 
-                _btGattConnectEvent.WaitOne(3000);
-                if (_gattConnectionState != State.Connected)
+                int retry = 0;
+                for (;;)
                 {
-                    LogString("*** GATT connection timeout");
-                    return false;
+                    if (_btGattConnectEvent.WaitOne(1000))
+                    {
+                        if (_gattConnectionState != State.Connected)
+                        {
+                            LogString("*** GATT connection timeout");
+                            return false;
+                        }
+
+                        break;
+                    }
+
+                    if (cancelEvent != null)
+                    {
+                        if (cancelEvent.WaitOne(0))
+                        {
+                            LogString("*** GATT connection cancelled");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        retry++;
+                        if (retry > 10)
+                        {
+                            LogString("*** GATT connection timeout");
+                            return false;
+                        }
+                    }
                 }
 
-                _btGattDiscoveredEvent.WaitOne(2000);
-                if (!_gattServicesDiscovered)
+                retry = 0;
+                for (;;)
                 {
-                    LogString("*** GATT service discovery timeout");
-                    return false;
+                    if (_btGattDiscoveredEvent.WaitOne(1000))
+                    {
+                        if (!_gattServicesDiscovered)
+                        {
+                            LogString("*** GATT service discovery timeout");
+                            return false;
+                        }
+                        break;
+                    }
+
+                    if (cancelEvent != null)
+                    {
+                        if (cancelEvent.WaitOne(0))
+                        {
+                            LogString("*** GATT connection cancelled");
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        retry++;
+                        if (retry > 10)
+                        {
+                            LogString("*** GATT service discovery timeout");
+                            return false;
+                        }
+                    }
                 }
 
                 IList<BluetoothGattService> services = _bluetoothGatt.Services;
@@ -500,23 +551,26 @@ namespace EdiabasLib
                     return;
                 }
 
-                if (newState == ProfileState.Connected)
+                switch (newState)
                 {
+                    case ProfileState.Connected:
 #if DEBUG
-                    Android.Util.Log.Info(Tag, "Connected to GATT server.");
+                        Android.Util.Log.Info(Tag, "Connected to GATT server.");
 #endif
-                    _btLeGattSpp._gattConnectionState = State.Connected;
-                    _btLeGattSpp._gattServicesDiscovered = false;
-                    _btLeGattSpp._btGattConnectEvent.Set();
-                    gatt.DiscoverServices();
-                }
-                else if (newState == ProfileState.Disconnected)
-                {
+                        _btLeGattSpp._gattConnectionState = State.Connected;
+                        _btLeGattSpp._gattServicesDiscovered = false;
+                        _btLeGattSpp._btGattConnectEvent.Set();
+                        gatt.DiscoverServices();
+                        break;
+
+                    case ProfileState.Disconnected:
 #if DEBUG
-                    Android.Util.Log.Info(Tag, "Disconnected from GATT server.");
+                        Android.Util.Log.Info(Tag, "Disconnected from GATT server.");
 #endif
-                    _btLeGattSpp._gattConnectionState = State.Disconnected;
-                    _btLeGattSpp._gattServicesDiscovered = false;
+                        _btLeGattSpp._gattConnectionState = State.Disconnected;
+                        _btLeGattSpp._gattServicesDiscovered = false;
+                        _btLeGattSpp._btGattConnectEvent.Set();
+                        break;
                 }
             }
 
@@ -540,6 +594,8 @@ namespace EdiabasLib
 #if DEBUG
                     Android.Util.Log.Info(Tag, string.Format("GATT services discovery failed: {0}", status));
 #endif
+                    _btLeGattSpp._gattServicesDiscovered = false;
+                    _btLeGattSpp._btGattDiscoveredEvent.Set();
                 }
             }
 
