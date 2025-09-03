@@ -1094,7 +1094,7 @@ namespace BmwDeepObd
                             {
                                 try
                                 {
-                                    if (!_btLeGattSpp.ConnectLeGattDevice(this, device))
+                                    if (!_btLeGattSpp.ConnectLeGattDevice(this, device, _transmitCancelEvent))
                                     {
                                         LogString("Connect to LE GATT device failed");
                                     }
