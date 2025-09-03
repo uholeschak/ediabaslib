@@ -151,6 +151,42 @@ namespace EdiabasLib
                     return false;
                 }
 
+                if (device.BondState != Bond.Bonded)
+                {
+                    LogString("Waiting for device bonding");
+                    device.CreateBond();
+
+                    int bondRetry = 0;
+                    for (;;)
+                    {
+                        if (device.BondState == Bond.Bonded)
+                        {
+                            LogString("Device bonded");
+                            break;
+                        }
+
+                        if (cancelEvent != null)
+                        {
+                            if (cancelEvent.WaitOne(0))
+                            {
+                                LogString("*** GATT bonding cancelled");
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            bondRetry++;
+                            if (bondRetry > 10)
+                            {
+                                LogString("*** Device bonding timeout");
+                                return false;
+                            }
+                        }
+
+                        Thread.Sleep(1000);
+                    }
+                }
+
                 int retry = 0;
                 for (;;)
                 {
@@ -176,7 +212,7 @@ namespace EdiabasLib
                     else
                     {
                         retry++;
-                        if (retry > 10)
+                        if (retry > 5)
                         {
                             LogString("*** GATT connection timeout");
                             return false;
@@ -208,7 +244,7 @@ namespace EdiabasLib
                     else
                     {
                         retry++;
-                        if (retry > 10)
+                        if (retry > 5)
                         {
                             LogString("*** GATT service discovery timeout");
                             return false;
