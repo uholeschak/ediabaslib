@@ -214,7 +214,7 @@ namespace EdiabasLib
                             _btLeGattSpp ??= new BtLeGattSpp();
 
                             // ReSharper disable once ConvertIfStatementToConditionalTernaryExpression
-                            if (!_btLeGattSpp.ConnectLeGattDevice(context, device))
+                            if (!_btLeGattSpp.ConnectLeGattDevice(context, device, TransmitCancelEvent))
                             {
                                 CustomAdapter.Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "Connect to LE GATT device failed");
                             }
