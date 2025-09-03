@@ -666,6 +666,10 @@ namespace CarSimulator
                     adapterName = "Default 115200";
                     break;
 
+                case 9:
+                    adapterName = "HC06 LE";
+                    break;
+
                 case 16:
                     adapterName = "ESP8622";
                     break;
