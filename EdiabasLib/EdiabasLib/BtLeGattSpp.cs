@@ -151,6 +151,7 @@ namespace EdiabasLib
                     return false;
                 }
 
+                bool isBonding = false;
                 if (device.BondState != Bond.Bonded)
                 {
                     LogString("Waiting for device bonding");
@@ -163,6 +164,17 @@ namespace EdiabasLib
                         {
                             LogString("Device bonded");
                             break;
+                        }
+
+                        if (device.BondState == Bond.Bonding)
+                        {
+                            isBonding = true;
+                        }
+
+                        if (isBonding && device.BondState == Bond.None)
+                        {
+                            LogString("*** Device bonding failed");
+                            return false;
                         }
 
                         if (cancelEvent != null)
