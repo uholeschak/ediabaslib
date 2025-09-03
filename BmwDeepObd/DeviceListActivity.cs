@@ -1827,11 +1827,16 @@ namespace BmwDeepObd
         /// </summary>
         private void SelectBtDeviceAction(string name, string address, bool paired)
         {
+            bool leDevice = false;
             BluetoothDevice device = null;
 
             try
             {
                 device = _btAdapter.GetRemoteDevice(address.ToUpperInvariant());
+                if (device != null && device.Type == BluetoothDeviceType.Le)
+                {
+                    leDevice = true;
+                }
             }
             catch (Exception)
             {
@@ -1856,8 +1861,11 @@ namespace BmwDeepObd
                 itemList.Add(GetString(Resource.String.bt_device_select));
                 operationList.Add(BtOperation.SelectAdapter);
 
-                itemList.Add(GetString(Resource.String.bt_device_pair));
-                operationList.Add(BtOperation.PairDevice);
+                if (!leDevice)
+                {
+                    itemList.Add(GetString(Resource.String.bt_device_pair));
+                    operationList.Add(BtOperation.PairDevice);
+                }
             }
 
             Java.Lang.ICharSequence[] items = new Java.Lang.ICharSequence[itemList.Count];
