@@ -1111,160 +1111,163 @@ namespace BmwDeepObd
                             }
                         }
 
-                        if (adapterType == AdapterTypeDetect.AdapterType.ConnectionFailed)
+                        if (deviceType != BluetoothDeviceType.Le)
                         {
-                            try
+                            if (adapterType == AdapterTypeDetect.AdapterType.ConnectionFailed)
                             {
-                                if (mtcBtService || bondState == Bond.Bonded)
+                                try
                                 {
-                                    LogString("Connect with CreateRfcommSocketToServiceRecord");
-                                    bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
-                                }
-                                else
-                                {
-                                    LogString("Connect with CreateInsecureRfcommSocketToServiceRecord");
-                                    bluetoothSocket = device.CreateInsecureRfcommSocketToServiceRecord(SppUuid);
-                                }
-
-                                if (bluetoothSocket != null)
-                                {
-                                    if (!BluetoothConnect(bluetoothSocket))
+                                    if (mtcBtService || bondState == Bond.Bonded)
                                     {
-                                        // sometimes the second connect is working
+                                        LogString("Connect with CreateRfcommSocketToServiceRecord");
+                                        bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                                    }
+                                    else
+                                    {
+                                        LogString("Connect with CreateInsecureRfcommSocketToServiceRecord");
+                                        bluetoothSocket = device.CreateInsecureRfcommSocketToServiceRecord(SppUuid);
+                                    }
+
+                                    if (bluetoothSocket != null)
+                                    {
                                         if (!BluetoothConnect(bluetoothSocket))
                                         {
-                                            throw new Exception("Bt connect failed");
-                                        }
-                                    }
-
-                                    if (_transmitCancelEvent.WaitOne(0))
-                                    {
-                                        throw new Exception("Aborted");
-                                    }
-
-                                    if (_connectedEvent.WaitOne(connectTimeout))
-                                    {
-                                        Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
-                                    }
-
-                                    LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    bluetoothInStream = bluetoothSocket.InputStream;
-                                    bluetoothOutStream = bluetoothSocket.OutputStream;
-                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothInStream, bluetoothOutStream, _transmitCancelEvent);
-                                    if (mtcBtService && adapterType == AdapterTypeDetect.AdapterType.Unknown)
-                                    {
-                                        for (int retry = 0; retry < 20; retry++)
-                                        {
-                                            LogString("Retry connect");
-
-                                            bluetoothInStream?.Close();
-                                            bluetoothOutStream?.Close();
-                                            bluetoothSocket.Close();
-
-                                            bluetoothInStream = null;
-                                            bluetoothOutStream = null;
-
-                                            bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                                            // sometimes the second connect is working
                                             if (!BluetoothConnect(bluetoothSocket))
                                             {
                                                 throw new Exception("Bt connect failed");
                                             }
+                                        }
 
-                                            if (_transmitCancelEvent.WaitOne(0))
-                                            {
-                                                throw new Exception("Aborted");
-                                            }
+                                        if (_transmitCancelEvent.WaitOne(0))
+                                        {
+                                            throw new Exception("Aborted");
+                                        }
 
-                                            if (_connectedEvent.WaitOne(connectTimeout))
-                                            {
-                                                Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
-                                            }
+                                        if (_connectedEvent.WaitOne(connectTimeout))
+                                        {
+                                            Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
+                                        }
 
-                                            LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
-                                            bluetoothInStream = bluetoothSocket.InputStream;
-                                            bluetoothOutStream = bluetoothSocket.OutputStream;
-                                            adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothInStream, bluetoothOutStream, _transmitCancelEvent);
-                                            if (adapterType != AdapterTypeDetect.AdapterType.Unknown &&
-                                                adapterType != AdapterTypeDetect.AdapterType.ConnectionFailed)
+                                        LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
+                                        bluetoothInStream = bluetoothSocket.InputStream;
+                                        bluetoothOutStream = bluetoothSocket.OutputStream;
+                                        adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothInStream, bluetoothOutStream, _transmitCancelEvent);
+                                        if (mtcBtService && adapterType == AdapterTypeDetect.AdapterType.Unknown)
+                                        {
+                                            for (int retry = 0; retry < 20; retry++)
                                             {
-                                                break;
+                                                LogString("Retry connect");
+
+                                                bluetoothInStream?.Close();
+                                                bluetoothOutStream?.Close();
+                                                bluetoothSocket.Close();
+
+                                                bluetoothInStream = null;
+                                                bluetoothOutStream = null;
+
+                                                bluetoothSocket = device.CreateRfcommSocketToServiceRecord(SppUuid);
+                                                if (!BluetoothConnect(bluetoothSocket))
+                                                {
+                                                    throw new Exception("Bt connect failed");
+                                                }
+
+                                                if (_transmitCancelEvent.WaitOne(0))
+                                                {
+                                                    throw new Exception("Aborted");
+                                                }
+
+                                                if (_connectedEvent.WaitOne(connectTimeout))
+                                                {
+                                                    Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
+                                                }
+
+                                                LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
+                                                bluetoothInStream = bluetoothSocket.InputStream;
+                                                bluetoothOutStream = bluetoothSocket.OutputStream;
+                                                adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothInStream, bluetoothOutStream, _transmitCancelEvent);
+                                                if (adapterType != AdapterTypeDetect.AdapterType.Unknown &&
+                                                    adapterType != AdapterTypeDetect.AdapterType.ConnectionFailed)
+                                                {
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                LogString("*** Connect exception: " + EdiabasNet.GetExceptionText(ex));
-                                adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
-                            }
-                            finally
-                            {
-                                bluetoothInStream?.Close();
-                                bluetoothOutStream?.Close();
-                                bluetoothSocket?.Close();
-
-                                bluetoothInStream = null;
-                                bluetoothOutStream = null;
-                            }
-                        }
-
-                        if (adapterType == AdapterTypeDetect.AdapterType.ConnectionFailed && !mtcBtService)
-                        {
-                            try
-                            {
-                                LogString("Connect with createRfcommSocket");
-                                // this socket sometimes looses data for long telegrams
-                                nint createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
-                                    "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
-                                if (createRfcommSocket == nint.Zero)
+                                catch (Exception ex)
                                 {
-                                    throw new Exception("No createRfcommSocket");
+                                    LogString("*** Connect exception: " + EdiabasNet.GetExceptionText(ex));
+                                    adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
                                 }
-                                nint rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
-                                    createRfcommSocket, new Android.Runtime.JValue(1));
-                                if (rfCommSocket == nint.Zero)
+                                finally
                                 {
-                                    throw new Exception("No rfCommSocket");
-                                }
-                                bluetoothSocket = GetObject<BluetoothSocket>(rfCommSocket,
-                                    Android.Runtime.JniHandleOwnership.TransferLocalRef);
-                                if (bluetoothSocket != null)
-                                {
-                                    if (!BluetoothConnect(bluetoothSocket))
-                                    {
-                                        throw new Exception("Bt connect failed");
-                                    }
+                                    bluetoothInStream?.Close();
+                                    bluetoothOutStream?.Close();
+                                    bluetoothSocket?.Close();
 
-                                    if (_transmitCancelEvent.WaitOne(0))
-                                    {
-                                        throw new Exception("Aborted");
-                                    }
-
-                                    if (_connectedEvent.WaitOne(connectTimeout))
-                                    {
-                                        Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
-                                    }
-
-                                    LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
-                                    bluetoothInStream = bluetoothSocket.InputStream;
-                                    bluetoothOutStream = bluetoothSocket.OutputStream;
-                                    adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothInStream, bluetoothOutStream, _transmitCancelEvent);
+                                    bluetoothInStream = null;
+                                    bluetoothOutStream = null;
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                LogString("*** Connect exception: " + EdiabasNet.GetExceptionText(ex));
-                                adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
-                            }
-                            finally
-                            {
-                                bluetoothInStream?.Close();
-                                bluetoothOutStream?.Close();
-                                bluetoothSocket?.Close();
 
-                                bluetoothInStream = null;
-                                bluetoothOutStream = null;
+                            if (adapterType == AdapterTypeDetect.AdapterType.ConnectionFailed && !mtcBtService)
+                            {
+                                try
+                                {
+                                    LogString("Connect with createRfcommSocket");
+                                    // this socket sometimes looses data for long telegrams
+                                    nint createRfcommSocket = Android.Runtime.JNIEnv.GetMethodID(device.Class.Handle,
+                                        "createRfcommSocket", "(I)Landroid/bluetooth/BluetoothSocket;");
+                                    if (createRfcommSocket == nint.Zero)
+                                    {
+                                        throw new Exception("No createRfcommSocket");
+                                    }
+                                    nint rfCommSocket = Android.Runtime.JNIEnv.CallObjectMethod(device.Handle,
+                                        createRfcommSocket, new Android.Runtime.JValue(1));
+                                    if (rfCommSocket == nint.Zero)
+                                    {
+                                        throw new Exception("No rfCommSocket");
+                                    }
+                                    bluetoothSocket = GetObject<BluetoothSocket>(rfCommSocket,
+                                        Android.Runtime.JniHandleOwnership.TransferLocalRef);
+                                    if (bluetoothSocket != null)
+                                    {
+                                        if (!BluetoothConnect(bluetoothSocket))
+                                        {
+                                            throw new Exception("Bt connect failed");
+                                        }
+
+                                        if (_transmitCancelEvent.WaitOne(0))
+                                        {
+                                            throw new Exception("Aborted");
+                                        }
+
+                                        if (_connectedEvent.WaitOne(connectTimeout))
+                                        {
+                                            Thread.Sleep(EdBluetoothInterface.BtConnectDelay);
+                                        }
+
+                                        LogString(bluetoothSocket.IsConnected ? "Bt device is connected" : "Bt device is not connected");
+                                        bluetoothInStream = bluetoothSocket.InputStream;
+                                        bluetoothOutStream = bluetoothSocket.OutputStream;
+                                        adapterType = _adapterTypeDetect.AdapterTypeDetection(bluetoothInStream, bluetoothOutStream, _transmitCancelEvent);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogString("*** Connect exception: " + EdiabasNet.GetExceptionText(ex));
+                                    adapterType = AdapterTypeDetect.AdapterType.ConnectionFailed;
+                                }
+                                finally
+                                {
+                                    bluetoothInStream?.Close();
+                                    bluetoothOutStream?.Close();
+                                    bluetoothSocket?.Close();
+
+                                    bluetoothInStream = null;
+                                    bluetoothOutStream = null;
+                                }
                             }
                         }
                     }
