@@ -1827,16 +1827,11 @@ namespace BmwDeepObd
         /// </summary>
         private void SelectBtDeviceAction(string name, string address, bool paired)
         {
-            bool leDevice = false;
             BluetoothDevice device = null;
 
             try
             {
                 device = _btAdapter.GetRemoteDevice(address.ToUpperInvariant());
-                if (device != null && device.Type == BluetoothDeviceType.Le)
-                {
-                    leDevice = true;
-                }
             }
             catch (Exception)
             {
