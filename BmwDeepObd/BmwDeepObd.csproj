@@ -105,6 +105,7 @@
     <ProjectReference Include="..\EdiabasLib\EdiabasLibAndroidNet\EdiabasLibAndroidNet.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="HexFiles\Type9\" />
     <Folder Include="HexFiles\Type2\" />
     <Folder Include="HexFiles\Type3\" />
     <Folder Include="HexFiles\Type4\" />
@@ -137,6 +138,12 @@
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\spp_uart2\production\ELM327V23.X.production.hex" Link="HexFiles\Type7\ELM327V23.X.production.hex" />
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\spp_uart\production\ELM327V23.X.production.hex" Link="HexFiles\Type5\ELM327V23.X.production.hex" />
     <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\yc1021\production\ELM327V23.X.production.hex" Link="HexFiles\Type6\ELM327V23.X.production.hex" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\dist\hc06\production\CanAdapterElm.X.production.hex" Link="HexFiles\Type9\CanAdapterElm.X.production.hex" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\EdiabasLib\CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\hc06\production\ELM327V23.X.production.hex" Link="HexFiles\Type9\ELM327V23.X.production.hex" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
