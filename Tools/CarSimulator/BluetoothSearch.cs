@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using InTheHand.Bluetooth;
 using InTheHand.Net.Sockets;
 
 namespace CarSimulator
@@ -15,7 +16,8 @@ namespace CarSimulator
         private InTheHand.Net.Bluetooth.Factory.IBluetoothClient _icli;
 #endif
         private readonly List<BluetoothDeviceInfo> _deviceList;
-        private volatile bool _searching;
+        private volatile bool _searchingBt;
+        private volatile bool _searchingLe;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
         private bool _autoSelect;
@@ -47,7 +49,7 @@ namespace CarSimulator
 
         private bool StartDeviceSearch()
         {
-            if (_searching)
+            if (_searchingBt || _searchingLe)
             {
                 return false;
             }
@@ -112,17 +114,45 @@ namespace CarSimulator
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
 #else
-                Task searchTask = new Task(() =>
+#if false
+                Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync();
+                _searchingLe = true;
+                scanTask.ContinueWith(t =>
+                {
+                    _searchingLe = false;
+                    UpdateButtonStatus();
+                    if (t.IsCompletedSuccessfully)
+                    {
+                        BluetoothDevice[] devices = t.Result.ToArray();
+                        BeginInvoke((Action)(() =>
+                        {
+                            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+                        }));
+                    }
+                    else if (t.IsFaulted)
+                    {
+                        UpdateStatusText(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message));
+                    }
+                });
+#endif
+                IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync();
+                _searchingBt = true;
+                Task.Run(async () =>
                 {
                     try
                     {
-                        IReadOnlyCollection<BluetoothDeviceInfo> devices = _cli.DiscoverDevices();
-                        _searching = false;
-                        UpdateButtonStatus();
+                        await foreach (BluetoothDeviceInfo device in devices)
+                        {
+                            BeginInvoke((Action)(() =>
+                            {
+                                UpdateDeviceList(new[] { device }, false);
+                            }));
+                        }
 
+                        _searchingBt = false;
+                        UpdateButtonStatus();
                         BeginInvoke((Action)(() =>
                         {
-                            UpdateDeviceList(devices.ToArray(), true);
                             UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
                             if (_autoSelect)
                             {
@@ -133,12 +163,12 @@ namespace CarSimulator
                     }
                     catch (Exception ex)
                     {
+                        _searchingBt = false;
+                        UpdateButtonStatus();
                         UpdateStatusText(string.Format("Searching failed: {0}", ex.Message));
                     }
                 });
 
-                searchTask.Start();
-                _searching = true;
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
 #endif
@@ -267,9 +297,11 @@ namespace CarSimulator
                 BeginInvoke((Action) UpdateButtonStatus);
                 return;
             }
+
+            bool searching = _searchingBt || _searchingLe;
             BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
-            buttonSearch.Enabled = !_searching && _cli != null;
-            buttonCancel.Enabled = !_searching;
+            buttonSearch.Enabled = !searching && _cli != null;
+            buttonCancel.Enabled = searching;
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
         }
 
@@ -315,7 +347,7 @@ namespace CarSimulator
 
         private void BluetoothSearch_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_searching)
+            if (_searchingBt || _searchingLe)
             {
                 e.Cancel = true;
             }
@@ -366,7 +398,7 @@ namespace CarSimulator
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            if (_searching)
+            if (_searchingBt || _searchingLe)
             {
                 DialogResult = DialogResult.None;
             }
