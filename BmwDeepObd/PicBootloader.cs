@@ -37,6 +37,8 @@ namespace BmwDeepObd
             new FirmwareInfo("Type7.ELM327V23.X.production.hex", 0x030C, Device.Families.PIC18, true),
             new FirmwareInfo("Type8.CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18),
             new FirmwareInfo("Type8.ELM327V23.X.production.hex", 0x030C, Device.Families.PIC18, true),
+            new FirmwareInfo("Type9.CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18),
+            new FirmwareInfo("Type9.ELM327V23.X.production.hex", 0x030C, Device.Families.PIC18, true),
             new FirmwareInfo("Type16.CanAdapterElm.X.production.hex", 0x030C, Device.Families.PIC18)
         };
 
