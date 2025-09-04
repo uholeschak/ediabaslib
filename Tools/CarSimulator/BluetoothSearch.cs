@@ -11,11 +11,35 @@ namespace CarSimulator
 {
     public partial class BluetoothSearch : Form
     {
+        public class BluetoothItem
+        {
+            public BluetoothItem(BluetoothDeviceInfo deviceInfo)
+            {
+                DeviceInfo = deviceInfo;
+                Device = null;
+                Address = deviceInfo.DeviceAddress.ToString();
+                Name = deviceInfo.DeviceName;
+            }
+
+            public BluetoothItem(BluetoothDevice device)
+            {
+                Device = device;
+                DeviceInfo = null;
+                Address = device.Id;
+                Name = device.Name;
+            }
+
+            public BluetoothDeviceInfo DeviceInfo { get; }
+            public BluetoothDevice Device { get; }
+            public string Address { get; set; }
+            public string Name { get; set; }
+        }
+
         private readonly BluetoothClient _cli;
 #if BT3
         private InTheHand.Net.Bluetooth.Factory.IBluetoothClient _icli;
 #endif
-        private readonly List<BluetoothDeviceInfo> _deviceList;
+        private readonly List<BluetoothItem> _deviceList;
         private volatile bool _searchingBt;
         private volatile bool _searchingLe;
         private ListViewItem _selectedItem;
@@ -43,7 +67,7 @@ namespace CarSimulator
             {
                 UpdateStatusText(ex.Message);
             }
-            _deviceList = new List<BluetoothDeviceInfo>();
+            _deviceList = new List<BluetoothItem>();
             UpdateButtonStatus();
         }
 
@@ -114,7 +138,7 @@ namespace CarSimulator
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
 #else
-#if false
+#if true
                 Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync();
                 _searchingLe = true;
                 scanTask.ContinueWith(t =>
@@ -126,7 +150,8 @@ namespace CarSimulator
                         BluetoothDevice[] devices = t.Result.ToArray();
                         BeginInvoke((Action)(() =>
                         {
-                            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+                            UpdateDeviceList(devices.Select(d => new BluetoothItem(d)).ToArray(), false);
+                            ShowSearchEndMessage();
                         }));
                     }
                     else if (t.IsFaulted)
@@ -145,7 +170,7 @@ namespace CarSimulator
                         {
                             BeginInvoke((Action)(() =>
                             {
-                                UpdateDeviceList(new[] { device }, false);
+                                UpdateDeviceList(new[] { new BluetoothItem(device) }, false);
                             }));
                         }
 
@@ -153,12 +178,7 @@ namespace CarSimulator
                         UpdateButtonStatus();
                         BeginInvoke((Action)(() =>
                         {
-                            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
-                            if (_autoSelect)
-                            {
-                                DialogResult = DialogResult.OK;
-                                Close();
-                            }
+                            ShowSearchEndMessage();
                         }));
                     }
                     catch (Exception ex)
@@ -181,7 +201,7 @@ namespace CarSimulator
             return true;
         }
 
-        private void UpdateDeviceList(BluetoothDeviceInfo[] devices, bool completed)
+        private void UpdateDeviceList(BluetoothItem[] devices, bool completed)
         {
             _ignoreSelection = true;
             listViewDevices.BeginUpdate();
@@ -195,11 +215,11 @@ namespace CarSimulator
                 }
                 else
                 {
-                    foreach (BluetoothDeviceInfo device in devices.OrderBy(dev => dev.DeviceAddress.ToString()))
+                    foreach (BluetoothItem device in devices.OrderBy(dev => dev.Address))
                     {
                         for (int i = 0; i < _deviceList.Count; i++)
                         {
-                            if (_deviceList[i].DeviceAddress == device.DeviceAddress)
+                            if (_deviceList[i].Address == device.Address)
                             {
                                 _deviceList.RemoveAt(i);
                                 i--;
@@ -209,10 +229,10 @@ namespace CarSimulator
                     }
                 }
 
-                foreach (BluetoothDeviceInfo device in _deviceList.OrderBy(dev => dev.DeviceAddress.ToString()))
+                foreach (BluetoothItem device in _deviceList.OrderBy(dev => dev.Address))
                 {
                     ListViewItem listViewItem =
-                        new ListViewItem(new[] { device.DeviceAddress.ToString(), device.DeviceName })
+                        new ListViewItem(new[] { device.Address, device.Name })
                         {
                             Tag = device
                         };
@@ -303,6 +323,21 @@ namespace CarSimulator
             buttonSearch.Enabled = !searching && _cli != null;
             buttonCancel.Enabled = searching;
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
+        }
+
+        public void ShowSearchEndMessage()
+        {
+            if (_searchingBt || _searchingLe)
+            {
+                return;
+            }
+
+            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+            if (_autoSelect)
+            {
+                DialogResult = DialogResult.OK;
+                Close();
+            }
         }
 
         public void UpdateStatusText(string text)
