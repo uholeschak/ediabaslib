@@ -2028,5 +2028,306 @@
         <property key="linker-serial" value=""/>
       </pic-as-linker>
     </conf>
+    <conf name="hc06" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <targetDevice>PIC18F25K80</targetDevice>
+        <targetHeader></targetHeader>
+        <targetPluginBoard></targetPluginBoard>
+        <platformTool>PICkit3PlatformTool</platformTool>
+        <languageToolchain>pic-as</languageToolchain>
+        <languageToolchainVersion>2.46</languageToolchainVersion>
+        <platform>3</platform>
+      </toolsSet>
+      <packs>
+        <pack name="PIC18F-K_DFP" vendor="Microchip" version="1.13.292"/>
+      </packs>
+      <ScriptingSettings>
+      </ScriptingSettings>
+      <compileType>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+        <archiverTool>
+        </archiverTool>
+        <loading>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="default"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=default"
+                        DBC="${MAKE}  -f Makefile CONF=default TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/default&quot; &quot;dist/default&quot;"
+                        OP="dist/default/production/bootloader.production.hex"
+                        DOP="dist/default/debug/bootloader.debug.hex"
+                        FL="dist/default/production/bootloader.production.hex"
+                        PD="dist/default/production/bootloader.production.elf"
+                        DD="dist/default/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="spp_uart"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=spp_uart"
+                        DBC="${MAKE}  -f Makefile CONF=spp_uart TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/spp_uart&quot; &quot;dist/spp_uart&quot;"
+                        OP="dist/spp_uart/production/bootloader.production.hex"
+                        DOP="dist/spp_uart/debug/bootloader.debug.hex"
+                        FL="dist/spp_uart/production/bootloader.production.hex"
+                        PD="dist/spp_uart/production/bootloader.production.elf"
+                        DD="dist/spp_uart/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="spp_uart2"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=spp_uart2"
+                        DBC="${MAKE}  -f Makefile CONF=spp_uart2 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/spp_uart2&quot; &quot;dist/spp_uart2&quot;"
+                        OP="dist/spp_uart2/production/bootloader.production.hex"
+                        DOP="dist/spp_uart2/debug/bootloader.debug.hex"
+                        FL="dist/spp_uart2/production/bootloader.production.hex"
+                        PD="dist/spp_uart2/production/bootloader.production.elf"
+                        DD="dist/spp_uart2/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="yc1021"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=yc1021"
+                        DBC="${MAKE}  -f Makefile CONF=yc1021 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/yc1021&quot; &quot;dist/yc1021&quot;"
+                        OP="dist/yc1021/production/bootloader.production.hex"
+                        DOP="dist/yc1021/debug/bootloader.debug.hex"
+                        FL="dist/yc1021/production/bootloader.production.hex"
+                        PD="dist/yc1021/production/bootloader.production.elf"
+                        DD="dist/yc1021/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="def115200"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=def115200"
+                        DBC="${MAKE}  -f Makefile CONF=def115200 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/def115200&quot; &quot;dist/def115200&quot;"
+                        OP="dist/def115200/production/bootloader.production.hex"
+                        DOP="dist/def115200/debug/bootloader.debug.hex"
+                        FL="dist/def115200/production/bootloader.production.hex"
+                        PD="dist/def115200/production/bootloader.production.elf"
+                        DD="dist/def115200/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="hc04"
+                        AC="true"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=hc04"
+                        DBC="${MAKE}  -f Makefile CONF=hc04 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/hc04&quot; &quot;dist/hc04&quot;"
+                        OP="dist/hc04/production/bootloader.production.hex"
+                        DOP="dist/hc04/debug/bootloader.debug.hex"
+                        FL="dist/hc04/production/bootloader.production.hex"
+                        PD="dist/hc04/production/bootloader.production.elf"
+                        DD="dist/hc04/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="bc04"
+                        AC="false"
+                        BL="false"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=bc04"
+                        DBC="${MAKE}  -f Makefile CONF=bc04 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/bc04&quot; &quot;dist/bc04&quot;"
+                        OP="dist/bc04/production/bootloader.production.hex"
+                        DOP="dist/bc04/debug/bootloader.debug.hex"
+                        FL="dist/bc04/production/bootloader.production.hex"
+                        PD="dist/bc04/production/bootloader.production.elf"
+                        DD="dist/bc04/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <makeArtifact PL="../bootloader"
+                        CT="1"
+                        CN="hc06"
+                        AC="false"
+                        BL="true"
+                        WD="../bootloader"
+                        BC="${MAKE}  -f Makefile CONF=hc06"
+                        DBC="${MAKE}  -f Makefile CONF=hc06 TYPE_IMAGE=DEBUG_RUN"
+                        CC="rm -rf &quot;build/hc06&quot; &quot;dist/hc06&quot;"
+                        OP="dist/hc06/production/bootloader.production.hex"
+                        DOP="dist/hc06/debug/bootloader.debug.hex"
+                        FL="dist/hc06/production/bootloader.production.hex"
+                        PD="dist/hc06/production/bootloader.production.elf"
+                        DD="dist/hc06/debug/bootloader.debug.elf">
+          </makeArtifact>
+          <useAlternateLoadableFile>false</useAlternateLoadableFile>
+          <parseOnProdLoad>false</parseOnProdLoad>
+          <alternateLoadableFile></alternateLoadableFile>
+        </loading>
+        <subordinates>
+        </subordinates>
+      </compileType>
+      <makeCustomizationType>
+        <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
+        <makeUseCleanTarget>false</makeUseCleanTarget>
+        <makeCustomizationPreStep></makeCustomizationPreStep>
+        <makeCustomizationPostStepEnabled>true</makeCustomizationPostStepEnabled>
+        <makeCustomizationPostStep>hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O${ImagePath} ${ImagePath} &amp;&amp; IF EXIST "dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" hexmate -FILL=0xFFFF@0x0800:0x7FFD +-CK=0800-7FFD@7FFEw-2g1 -FORMAT=INHX32 -O"dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}" "dist\${ConfName}\${IMAGE_TYPE}\ELM327V23.X.${IMAGE_TYPE}.unified.${OUTPUT_SUFFIX}"</makeCustomizationPostStep>
+        <makeCustomizationPutChecksumInUserID>false</makeCustomizationPutChecksumInUserID>
+        <makeCustomizationEnableLongLines>false</makeCustomizationEnableLongLines>
+        <makeCustomizationNormalizeHexFile>false</makeCustomizationNormalizeHexFile>
+      </makeCustomizationType>
+      <PICkit3PlatformTool>
+        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="Freeze Peripherals" value="true"/>
+        <property key="SecureSegment.SegmentProgramming" value="FullChipProgramming"/>
+        <property key="ToolFirmwareFilePath"
+                  value="Press to browse for a specific firmware version"/>
+        <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
+        <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
+        <property key="memories.aux" value="false"/>
+        <property key="memories.bootflash" value="true"/>
+        <property key="memories.configurationmemory" value="true"/>
+        <property key="memories.configurationmemory2" value="true"/>
+        <property key="memories.dataflash" value="true"/>
+        <property key="memories.eeprom" value="true"/>
+        <property key="memories.flashdata" value="true"/>
+        <property key="memories.id" value="true"/>
+        <property key="memories.instruction.ram" value="true"/>
+        <property key="memories.instruction.ram.ranges"
+                  value="${memories.instruction.ram.ranges}"/>
+        <property key="memories.programmemory" value="false"/>
+        <property key="memories.programmemory.ranges" value="0-7fff"/>
+        <property key="poweroptions.powerenable" value="false"/>
+        <property key="programmertogo.imagename" value=""/>
+        <property key="programoptions.donoteraseauxmem" value="false"/>
+        <property key="programoptions.eraseb4program" value="true"/>
+        <property key="programoptions.pgmspeed" value="2"/>
+        <property key="programoptions.preservedataflash" value="false"/>
+        <property key="programoptions.preservedataflash.ranges"
+                  value="${programoptions.preservedataflash.ranges}"/>
+        <property key="programoptions.preserveeeprom" value="false"/>
+        <property key="programoptions.preserveeeprom.ranges" value="0-03ff"/>
+        <property key="programoptions.preserveprogram.ranges" value=""/>
+        <property key="programoptions.preserveprogramrange" value="false"/>
+        <property key="programoptions.preserveuserid" value="false"/>
+        <property key="programoptions.programcalmem" value="false"/>
+        <property key="programoptions.programuserotp" value="false"/>
+        <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
+        <property key="programoptions.usehighvoltageonmclr" value="false"/>
+        <property key="programoptions.uselvpprogramming" value="false"/>
+        <property key="voltagevalue" value="5.0"/>
+      </PICkit3PlatformTool>
+      <Tool>
+        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="Freeze Peripherals" value="true"/>
+        <property key="SecureSegment.SegmentProgramming" value="FullChipProgramming"/>
+        <property key="ToolFirmwareFilePath"
+                  value="Press to browse for a specific firmware version"/>
+        <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
+        <property key="debugoptions.debug-startup" value="Use system settings"/>
+        <property key="debugoptions.reset-behaviour" value="Use system settings"/>
+        <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="event.recorder.debugger.behavior" value="Running"/>
+        <property key="event.recorder.enabled" value="false"/>
+        <property key="event.recorder.scvd.files" value=""/>
+        <property key="hwtoolclock.frcindebug" value="false"/>
+        <property key="lastid" value=""/>
+        <property key="memories.aux" value="false"/>
+        <property key="memories.bootflash" value="true"/>
+        <property key="memories.configurationmemory" value="true"/>
+        <property key="memories.configurationmemory2" value="true"/>
+        <property key="memories.dataflash" value="true"/>
+        <property key="memories.eeprom" value="true"/>
+        <property key="memories.flashdata" value="true"/>
+        <property key="memories.id" value="true"/>
+        <property key="memories.instruction.ram" value="true"/>
+        <property key="memories.instruction.ram.ranges"
+                  value="${memories.instruction.ram.ranges}"/>
+        <property key="memories.programmemory" value="false"/>
+        <property key="memories.programmemory.ranges" value="0-7fff"/>
+        <property key="poweroptions.powerenable" value="false"/>
+        <property key="programmertogo.imagename" value=""/>
+        <property key="programoptions.donoteraseauxmem" value="false"/>
+        <property key="programoptions.eraseb4program" value="true"/>
+        <property key="programoptions.pgmspeed" value="2"/>
+        <property key="programoptions.preservedataflash" value="false"/>
+        <property key="programoptions.preservedataflash.ranges"
+                  value="${programoptions.preservedataflash.ranges}"/>
+        <property key="programoptions.preserveeeprom" value="false"/>
+        <property key="programoptions.preserveeeprom.ranges" value="0-03ff"/>
+        <property key="programoptions.preserveprogram.ranges" value=""/>
+        <property key="programoptions.preserveprogramrange" value="false"/>
+        <property key="programoptions.preserveuserid" value="false"/>
+        <property key="programoptions.programcalmem" value="false"/>
+        <property key="programoptions.programuserotp" value="false"/>
+        <property key="programoptions.testmodeentrymethod" value="VDDFirst"/>
+        <property key="programoptions.usehighvoltageonmclr" value="false"/>
+        <property key="programoptions.uselvpprogramming" value="false"/>
+        <property key="voltagevalue" value="5.0"/>
+      </Tool>
+      <pic-as-assembler>
+        <property key="fmax-errors" value="20"/>
+        <property key="list-custom-assembler-options" value=""/>
+        <property key="list-custom-preprocessor-options" value=""/>
+        <property key="list-ddefine-symbols" value=""/>
+        <property key="list-define-symbols" value="ADAPTER_TYPE=0x09"/>
+        <property key="list-include-directories" value=""/>
+        <property key="suppress-warnings" value="false"/>
+        <property key="verbose" value="false"/>
+        <property key="warning-level" value="0"/>
+        <property key="xassembler-with-cpp" value="true"/>
+      </pic-as-assembler>
+      <pic-as-global>
+        <property key="custom-dfp" value=""/>
+        <property key="dfp-override" value="1"/>
+        <property key="instruction-set" value="std"/>
+        <property key="summary-class" value="false"/>
+        <property key="summary-file" value="false"/>
+        <property key="summary-hex" value="false"/>
+        <property key="summary-mem" value="true"/>
+        <property key="summary-psect" value="false"/>
+        <property key="summary-sha1" value="false"/>
+        <property key="summary-sha256" value="false"/>
+        <property key="summary-xml" value="false"/>
+        <property key="summary-xmlfull" value="false"/>
+      </pic-as-global>
+      <pic-as-linker>
+        <property key="linker-callgraph" value="std"/>
+        <property key="linker-checksum" value=""/>
+        <property key="linker-custom-options" value=""/>
+        <property key="linker-fill" value=""/>
+        <property key="linker-format-hex-file-for-download" value="false"/>
+        <property key="linker-libraries" value=""/>
+        <property key="linker-library-search-paths" value=""/>
+        <property key="linker-map-file-generation" value="true"/>
+        <property key="linker-maxi-chip" value="false"/>
+        <property key="linker-produce-intel-hex-extended-address-zero-output"
+                  value="false"/>
+        <property key="linker-ram" value=""/>
+        <property key="linker-reserve" value=""/>
+        <property key="linker-rom" value=""/>
+        <property key="linker-serial" value=""/>
+      </pic-as-linker>
+    </conf>
   </confs>
 </configurationDescriptor>
