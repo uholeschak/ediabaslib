@@ -156,7 +156,7 @@ namespace CarSimulator
                     }
                     else if (t.IsFaulted)
                     {
-                        UpdateStatusText(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message));
+                        ShowSearchEndMessage(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message));
                     }
                 });
 #endif
@@ -176,16 +176,13 @@ namespace CarSimulator
 
                         _searchingBt = false;
                         UpdateButtonStatus();
-                        BeginInvoke((Action)(() =>
-                        {
-                            ShowSearchEndMessage();
-                        }));
+                        ShowSearchEndMessage();
                     }
                     catch (Exception ex)
                     {
                         _searchingBt = false;
                         UpdateButtonStatus();
-                        UpdateStatusText(string.Format("Searching failed: {0}", ex.Message));
+                        ShowSearchEndMessage(string.Format("Searching failed: {0}", ex.Message));
                     }
                 });
 
@@ -325,10 +322,16 @@ namespace CarSimulator
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
         }
 
-        public void ShowSearchEndMessage()
+        public void ShowSearchEndMessage(string errorMessage = null)
         {
             if (_searchingBt || _searchingLe)
             {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                UpdateStatusText(errorMessage);
                 return;
             }
 
