@@ -44,6 +44,9 @@ The standard ICOM configuration page could be found at: `http://XXXX:58000` (no 
 * `EnetAddRecTimeout`: Additional ENET standard additional receive timeout, default is 1000
 * `EnetAddRecTimeoutIcom`: Additional ENET ICOM additional receive timeout, default is 2000
 * `EnetIcomAllocate`: 1=Allocate ICOM before connecting, default is 0. This parameter is only used, if the diagnostic port has been set.
+* `ObdKeepConnectionOpen`: 0=Close the OBD transport (Bluetooth SPP / custom Wi-Fi) after each job (default),  
+  1=Keep the transport connection open across jobs.  
+  Useful for repeated polling or batch jobs to reduce reconnect delays. May prevent other apps from using the adapter while open and can cause stability issues with some devices.
 
 ## FTDI D2XX driver properties
 Android supports access to FTDI USB D-CAN/K-Line adapters directly. For the PC platform use the COM port to access the adapter.  
