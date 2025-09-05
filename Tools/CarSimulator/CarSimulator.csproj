@@ -93,9 +93,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
-    <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.43" />
-    <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.2">
-        <RuntimeFramework>net8.0-windows7.0</RuntimeFramework>
+    <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.43" GeneratePathProperty="true">
+        <ExcludeAssets>all</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.2" GeneratePathProperty="true">
+        <ExcludeAssets>all</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="SimpleWifi.netstandard.Lsh" Version="2.1.1" />
     <PackageReference Include="Singulink.Net.Dhcp" Version="1.0.3" />
