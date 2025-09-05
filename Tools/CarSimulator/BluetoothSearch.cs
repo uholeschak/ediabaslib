@@ -42,6 +42,7 @@ namespace CarSimulator
         private readonly List<BluetoothItem> _deviceList;
         private volatile bool _searchingBt;
         private volatile bool _searchingLe;
+        private volatile string _errorText;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
         private bool _autoSelect;
@@ -89,6 +90,7 @@ namespace CarSimulator
             }
 #endif
             UpdateDeviceList(null, true);
+            _errorText = null;
 
             try
             {
@@ -332,6 +334,7 @@ namespace CarSimulator
             if (!string.IsNullOrEmpty(errorMessage))
             {
                 UpdateStatusText(errorMessage);
+                _errorText = errorMessage;
             }
 
             if (_searchingBt || _searchingLe)
@@ -339,7 +342,11 @@ namespace CarSimulator
                 return;
             }
 
-            if (string.IsNullOrEmpty(errorMessage))
+            if (!string.IsNullOrEmpty(_errorText))
+            {
+                UpdateStatusText(_errorText);
+            }
+            else
             {
                 UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
             }
