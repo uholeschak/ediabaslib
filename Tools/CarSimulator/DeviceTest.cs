@@ -139,7 +139,7 @@ namespace CarSimulator
             }
         }
 
-        private BluetoothDeviceInfo DiscoverBtDevice()
+        private BluetoothSearch.BluetoothItem DiscoverBtDevice()
         {
             try
             {
@@ -547,7 +547,11 @@ namespace CarSimulator
                     BluetoothDeviceInfo device = null;
                     _form.Invoke((Action) (() =>
                     {
-                        device = DiscoverBtDevice();
+                        BluetoothSearch.BluetoothItem item = DiscoverBtDevice();
+                        if (item != null)
+                        {
+                            device = item.DeviceInfo;
+                        }
                     }));
 
                     if (device == null)

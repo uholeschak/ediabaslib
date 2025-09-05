@@ -138,7 +138,6 @@ namespace CarSimulator
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
 #else
-#if true
                 Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync();
                 _searchingLe = true;
                 scanTask.ContinueWith(t =>
@@ -159,7 +158,7 @@ namespace CarSimulator
                         ShowSearchEndMessage(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message));
                     }
                 });
-#endif
+
                 IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync();
                 _searchingBt = true;
                 Task.Run(async () =>
@@ -297,12 +296,12 @@ namespace CarSimulator
             UpdateButtonStatus();
         }
 
-        public BluetoothDeviceInfo GetSelectedBtDevice()
+        public BluetoothItem GetSelectedBtDevice()
         {
-            BluetoothDeviceInfo devInfo = null;
+            BluetoothItem devInfo = null;
             if (listViewDevices.SelectedItems.Count > 0)
             {
-                devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothDeviceInfo;
+                devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothItem;
             }
             return devInfo;
         }
@@ -316,7 +315,7 @@ namespace CarSimulator
             }
 
             bool searching = _searchingBt || _searchingLe;
-            BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
+            BluetoothItem devInfo = GetSelectedBtDevice();
             buttonSearch.Enabled = !searching && _cli != null;
             buttonCancel.Enabled = searching;
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
@@ -324,18 +323,27 @@ namespace CarSimulator
 
         public void ShowSearchEndMessage(string errorMessage = null)
         {
-            if (_searchingBt || _searchingLe)
+            if (InvokeRequired)
             {
+                BeginInvoke((Action)(() => ShowSearchEndMessage(errorMessage)));
                 return;
             }
 
             if (!string.IsNullOrEmpty(errorMessage))
             {
                 UpdateStatusText(errorMessage);
+            }
+
+            if (_searchingBt || _searchingLe)
+            {
                 return;
             }
 
-            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+            if (string.IsNullOrEmpty(errorMessage))
+            {
+                UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+            }
+
             if (_autoSelect)
             {
                 DialogResult = DialogResult.OK;
