@@ -65,11 +65,12 @@
             // columnHeaderName
             // 
             columnHeaderName.Text = "Name";
-            columnHeaderName.Width = 300;
+            columnHeaderName.Width = 320;
             // 
             // columnHeaderBtType
             // 
             columnHeaderBtType.Text = "Type";
+            columnHeaderBtType.Width = 50;
             // 
             // buttonCancel
             // 

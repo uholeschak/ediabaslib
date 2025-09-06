@@ -408,7 +408,7 @@ namespace CarSimulator
 
         private void BluetoothSearch_Shown(object sender, EventArgs e)
         {
-            listViewDevices.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
+            listViewDevices.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
             UpdateButtonStatus();
             PerformSearch();
         }
