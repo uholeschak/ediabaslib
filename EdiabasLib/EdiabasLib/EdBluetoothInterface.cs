@@ -136,13 +136,7 @@ namespace EdiabasLib
                         {
                             Ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** BluetoothDeviceInfo is null");
                         }
-#if BT3
-                        InTheHand.Net.Bluetooth.BluetoothSecurity.SetPin(btAddress, pin);
-                        InTheHand.Net.BluetoothEndPoint ep =
-                            new InTheHand.Net.BluetoothEndPoint(btAddress, InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
-                        BtClient = new InTheHand.Net.Sockets.BluetoothClient();
-                        BtClient.SetPin(pin);
-#else
+
                         if (device != null)
                         {
                             if (!device.Authenticated)
@@ -154,7 +148,7 @@ namespace EdiabasLib
                         InTheHand.Net.BluetoothEndPoint ep =
                             new InTheHand.Net.BluetoothEndPoint(btAddress, InTheHand.Net.Bluetooth.BluetoothService.SerialPort);
                         BtClient = new InTheHand.Net.Sockets.BluetoothClient();
-#endif
+
                         try
                         {
                             BtClient.Connect(ep);
