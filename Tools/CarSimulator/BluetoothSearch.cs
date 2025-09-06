@@ -33,6 +33,21 @@ namespace CarSimulator
             public BluetoothDevice Device { get; }
             public string Address { get; set; }
             public string Name { get; set; }
+            public string DeviceType {
+                get
+                {
+                    if (DeviceInfo != null)
+                    {
+                        return "BT";
+                    }
+                    if (Device != null)
+                    {
+                        return "BLE";
+                    }
+
+                    return string.Empty;
+                }
+            }
         }
 
         private readonly BluetoothClient _cli;
@@ -191,7 +206,7 @@ namespace CarSimulator
                 foreach (BluetoothItem device in _deviceList.OrderBy(dev => dev.Address))
                 {
                     ListViewItem listViewItem =
-                        new ListViewItem(new[] { device.Address, device.Name })
+                        new ListViewItem(new[] { device.Address, device.Name, device.DeviceType })
                         {
                             Tag = device
                         };
