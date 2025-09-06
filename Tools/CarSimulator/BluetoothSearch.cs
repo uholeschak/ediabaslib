@@ -203,6 +203,11 @@ namespace CarSimulator
             {
                 foreach (ListViewItem listViewItem in listViewDevices.Items)
                 {
+                    if (listViewItem.Tag == null || _selectedItem.Tag == null)
+                    {
+                        continue;
+                    }
+
                     if (listViewItem.Tag.GetType() != _selectedItem.Tag.GetType())
                     {
                         continue;
