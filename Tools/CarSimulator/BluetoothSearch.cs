@@ -36,10 +36,8 @@ namespace CarSimulator
         }
 
         private readonly BluetoothClient _cli;
-#if BT3
-        private InTheHand.Net.Bluetooth.Factory.IBluetoothClient _icli;
-#endif
         private readonly List<BluetoothItem> _deviceList;
+        private object _searchLock = new object();
         private volatile bool _searchingBt;
         private volatile bool _searchingLe;
         private volatile string _errorText;
@@ -56,13 +54,6 @@ namespace CarSimulator
             try
             {
                 _cli = new BluetoothClient();
-#if BT3
-                FieldInfo impField = typeof(BluetoothClient).GetField("m_impl", BindingFlags.NonPublic | BindingFlags.Instance);
-                if (impField != null)
-                {
-                    _icli = impField.GetValue(_cli) as InTheHand.Net.Bluetooth.Factory.IBluetoothClient;
-                }
-#endif
             }
             catch (Exception ex)
             {
@@ -74,77 +65,38 @@ namespace CarSimulator
 
         private bool StartDeviceSearch()
         {
-            if (_searchingBt || _searchingLe)
+            lock (_searchLock)
             {
-                return false;
+                if (_searchingBt || _searchingLe)
+                {
+                    return false;
+                }
             }
 
             if (_cli == null)
             {
                 return false;
             }
-#if BT3
-            if (_icli == null)
-            {
-                return false;
-            }
-#endif
+
             UpdateDeviceList(null, true);
             _errorText = null;
 
             try
             {
                 _deviceList.Clear();
-#if BT3
-                IAsyncResult asyncResult = _icli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
-                {
-                    if (ar.IsCompleted)
-                    {
-                        _searching = false;
-                        UpdateButtonStatus();
 
-                        try
-                        {
-                            BluetoothDeviceInfo[] devices = _cli.EndDiscoverDevices(ar);
-                            BeginInvoke((Action)(() =>
-                            {
-                                UpdateDeviceList(devices, true);
-                                UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
-                            }));
-                        }
-                        catch (Exception ex)
-                        {
-                            UpdateStatusText(string.Format("Searching failed: {0}", ex.Message));
-                        }
-                    }
-                }, this, (p1, p2) =>
-                {
-                    BluetoothDeviceInfo deviceInfo = new BluetoothDeviceInfo(p1.DeviceAddress);
-                    try
-                    {
-                        deviceInfo.Refresh();
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-
-                    BeginInvoke((Action)(() =>
-                    {
-                        UpdateDeviceList(new[] { deviceInfo }, false);
-                    }));
-
-                }, this);
-
-                _searching = true;
-                UpdateStatusText("Searching ...");
-                UpdateButtonStatus();
-#else
                 Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync();
-                _searchingLe = true;
+                lock (_searchLock)
+                {
+                    _searchingLe = true;
+                }
+
                 scanTask.ContinueWith(t =>
                 {
-                    _searchingLe = false;
+                    lock (_searchLock)
+                    {
+                        _searchingLe = false;
+                    }
                     UpdateButtonStatus();
                     if (t.IsCompletedSuccessfully)
                     {
@@ -162,7 +114,11 @@ namespace CarSimulator
                 });
 
                 IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync();
-                _searchingBt = true;
+                lock (_searchLock)
+                {
+                    _searchingBt = true;
+                }
+
                 Task.Run(async () =>
                 {
                     try
@@ -175,13 +131,19 @@ namespace CarSimulator
                             }));
                         }
 
-                        _searchingBt = false;
+                        lock (_searchLock)
+                        {
+                            _searchingBt = false;
+                        }
                         UpdateButtonStatus();
                         ShowSearchEndMessage();
                     }
                     catch (Exception ex)
                     {
-                        _searchingBt = false;
+                        lock (_searchLock)
+                        {
+                            _searchingBt = false;
+                        }
                         UpdateButtonStatus();
                         ShowSearchEndMessage(string.Format("Searching failed: {0}", ex.Message));
                     }
@@ -189,7 +151,6 @@ namespace CarSimulator
 
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
-#endif
             }
             catch (Exception)
             {
@@ -337,9 +298,12 @@ namespace CarSimulator
                 _errorText = errorMessage;
             }
 
-            if (_searchingBt || _searchingLe)
+            lock (_searchLock)
             {
-                return;
+                if (_searchingBt || _searchingLe)
+                {
+                    return;
+                }
             }
 
             if (!string.IsNullOrEmpty(_errorText))
@@ -387,12 +351,6 @@ namespace CarSimulator
             }
         }
 
-        private bool IsWinVistaOrHigher()
-        {
-            OperatingSystem os = Environment.OSVersion;
-            return (os.Platform == PlatformID.Win32NT) && (os.Version.Major >= 6);
-        }
-
         private void BluetoothSearch_FormClosed(object sender, FormClosedEventArgs e)
         {
             _cli?.Dispose();
@@ -400,9 +358,12 @@ namespace CarSimulator
 
         private void BluetoothSearch_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_searchingBt || _searchingLe)
+            lock (_searchLock)
             {
-                e.Cancel = true;
+                if (_searchingBt || _searchingLe)
+                {
+                    e.Cancel = true;
+                }
             }
         }
 
@@ -412,6 +373,7 @@ namespace CarSimulator
             {
                 return;
             }
+
             if (listViewDevices.SelectedItems.Count > 0)
             {
                 _selectedItem = listViewDevices.SelectedItems[0];
@@ -451,9 +413,12 @@ namespace CarSimulator
 
         private void buttonCancel_Click(object sender, EventArgs e)
         {
-            if (_searchingBt || _searchingLe)
+            lock (_searchLock)
             {
-                DialogResult = DialogResult.None;
+                if (_searchingBt || _searchingLe)
+                {
+                    DialogResult = DialogResult.None;
+                }
             }
         }
     }
