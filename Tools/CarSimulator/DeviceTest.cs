@@ -1306,22 +1306,28 @@ namespace CarSimulator
             }
 
             Array.Clear(receiveData, 0, receiveData.Length);
-            NetworkStream networkStream = _dataStream as NetworkStream;
-            if (networkStream == null)
-            {
-                return 0;
-            }
-
             try
             {
+                NetworkStream networkStream = _dataStream as NetworkStream;
                 // header byte
-                networkStream.ReadTimeout = RecTimeout;
+                if (networkStream != null)
+                {
+                    networkStream.ReadTimeout = RecTimeout;
+                }
+
                 for (int i = 0; i < 4; i++)
                 {
                     int data;
                     try
                     {
-                        data = networkStream.ReadByte();
+                        if (networkStream != null)
+                        {
+                            data = networkStream.ReadByte();
+                        }
+                        else
+                        {
+                            data = _dataStream.ReadByteAsync();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -1331,18 +1337,7 @@ namespace CarSimulator
 
                     if (data < 0)
                     {
-                        while (networkStream.DataAvailable)
-                        {
-                            try
-                            {
-                                _dataStream.ReadByte();
-                            }
-                            catch (Exception)
-                            {
-                                break;
-                            }
-                        }
-
+                        PurgeInStream(_dataStream);
                         Debug.WriteLine("Rec Timeout 1: {0}", (object)BitConverter.ToString(receiveData, 0, i).Replace("-", " "));
                         return 0;
                     }
@@ -1352,19 +1347,10 @@ namespace CarSimulator
 
                 if ((receiveData[0] & 0x80) != 0x80)
                 {   // 0xC0: Broadcast
-                    while (networkStream.DataAvailable)
-                    {
-                        try
-                        {
-                            _dataStream.ReadByte();
-                        }
-                        catch (Exception)
-                        {
-                            break;
-                        }
-                    }
+                    PurgeInStream(_dataStream);
                     return 0;
                 }
+
                 int recLength = receiveData[0] & 0x3F;
                 if (recLength == 0)
                 {   // with length byte
@@ -1390,18 +1376,7 @@ namespace CarSimulator
 
                     if (data < 0)
                     {
-                        while (networkStream.DataAvailable)
-                        {
-                            try
-                            {
-                                _dataStream.ReadByte();
-                            }
-                            catch (Exception)
-                            {
-                                break;
-                            }
-                        }
-
+                        PurgeInStream(_dataStream);
                         Debug.WriteLine("Rec Timeout 2: {0}", (object)BitConverter.ToString(receiveData, 0, i + 4).Replace("-", " "));
                         Debug.WriteLine("Rec Length={0}, Expected={1}", i + 4, recLength);
                         return 0;
@@ -1413,17 +1388,7 @@ namespace CarSimulator
                 if (CommThread.CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
                     Debug.WriteLine("ReceiveBmwFast CRC invalid");
-                    while (networkStream.DataAvailable)
-                    {
-                        try
-                        {
-                            _dataStream.ReadByte();
-                        }
-                        catch (Exception)
-                        {
-                            break;
-                        }
-                    }
+                    PurgeInStream(_dataStream);
                     return 0;
                 }
                 return recLength;
@@ -1433,6 +1398,46 @@ namespace CarSimulator
                 Debug.WriteLine("ReceiveBmwFast Exception: {0}", ex.Message);
                 return 0;
             }
+        }
+
+        private bool PurgeInStream(Stream inStream)
+        {
+            if (inStream == null)
+            {
+                return false;
+            }
+
+            NetworkStream networkStream = inStream as NetworkStream;
+            if (networkStream != null)
+            {
+                while (networkStream.DataAvailable)
+                {
+                    try
+                    {
+                        inStream.ReadByte();
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                while (inStream.HasData())
+                {
+                    try
+                    {
+                        inStream.ReadByteAsync();
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }
