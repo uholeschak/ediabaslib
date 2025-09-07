@@ -206,7 +206,7 @@ namespace CarSimulator
                     }
                     UpdateButtonStatus();
 
-                    if (t.IsCanceled)
+                    if (_ctsLe.IsCancellationRequested)
                     {
                         ShowSearchEndMessage("Cancelled");
                         return;
@@ -227,7 +227,7 @@ namespace CarSimulator
                     {
                         ShowSearchEndMessage(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message));
                     }
-                }, _ctsLe.Token);
+                });
 
                 IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
                 lock (_searchLock)
@@ -240,12 +240,17 @@ namespace CarSimulator
                 {
                     try
                     {
-                        await foreach (BluetoothDeviceInfo device in devices.WithCancellation(_ctsBt.Token))
+                        await foreach (BluetoothDeviceInfo device in devices)
                         {
                             BeginInvoke((Action)(() =>
                             {
                                 UpdateDeviceList(new[] { new BluetoothItem(device) }, false);
                             }));
+
+                            if (_ctsBt.IsCancellationRequested)
+                            {
+                                break;
+                            }
                         }
 
                         lock (_searchLock)
@@ -253,6 +258,13 @@ namespace CarSimulator
                             _searchingBt = false;
                         }
                         UpdateButtonStatus();
+
+                        if (_ctsBt.IsCancellationRequested)
+                        {
+                            ShowSearchEndMessage("Cancelled");
+                            return;
+                        }
+
                         ShowSearchEndMessage();
                     }
                     catch (Exception ex)
@@ -261,6 +273,7 @@ namespace CarSimulator
                         {
                             _searchingBt = false;
                         }
+
                         UpdateButtonStatus();
                         ShowSearchEndMessage(string.Format("Searching failed: {0}", ex.Message));
                     }
