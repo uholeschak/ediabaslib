@@ -174,6 +174,21 @@ namespace CarSimulator
             }
         }
 
+        private bool ConnectBtDevice(BluetoothSearch.BluetoothItem devInfo)
+        {
+            if (devInfo == null)
+            {
+                return false;
+            }
+
+            BluetoothDeviceInfo device = devInfo.DeviceInfo;
+            if (device == null)
+            {
+                return false;
+            }
+            return ConnectBtDevice(device);
+        }
+
         private bool ConnectBtDevice(BluetoothDeviceInfo device)
         {
             try
@@ -267,6 +282,22 @@ namespace CarSimulator
             {
                 return 0;
             }
+        }
+
+        private bool RemoveBtDevice(BluetoothSearch.BluetoothItem devInfo)
+        {
+            if (devInfo == null)
+            {
+                return false;
+            }
+
+            BluetoothDeviceInfo device = devInfo.DeviceInfo;
+            if (device == null)
+            {
+                return false;
+            }
+
+            return BluetoothSecurity.RemoveDevice(device.DeviceAddress);
         }
 
         private bool ConnectWifiDevice(string comPort, string btDeviceName, out bool espLink)
@@ -535,17 +566,17 @@ namespace CarSimulator
                 else
                 {
                     _form.UpdateTestStatusText("Discovering devices ...");
-                    BluetoothDeviceInfo device = null;
+                    BluetoothSearch.BluetoothItem devInfo = null;
                     _form.Invoke((Action) (() =>
                     {
                         BluetoothSearch.BluetoothItem item = DiscoverBtDevice();
                         if (item != null)
                         {
-                            device = item.DeviceInfo;
+                            devInfo = item;
                         }
                     }));
 
-                    if (device == null)
+                    if (devInfo == null)
                     {
                         _form.UpdateTestStatusText("No device selected", true);
                         return false;
@@ -558,7 +589,7 @@ namespace CarSimulator
                         for (; ; )
                         {
                             _form.UpdateTestStatusText("Connecting ...");
-                            if (!ConnectBtDevice(device))
+                            if (!ConnectBtDevice(devInfo))
                             {
                                 _form.UpdateTestStatusText("Connection failed", true);
                                 return false;
@@ -582,14 +613,14 @@ namespace CarSimulator
                             }
 
                             DisconnectStream();
-                            BluetoothSecurity.RemoveDevice(device.DeviceAddress);
+                            RemoveBtDevice(devInfo);
                             retry = 0;
                         }
                     }
                     finally
                     {
                         DisconnectStream();
-                        BluetoothSecurity.RemoveDevice(device.DeviceAddress);
+                        RemoveBtDevice(devInfo);
 
                         int removeDevices = CleanupBtDevices(new string[] { DefaultBtName, DefaultBtNameStd });
                         if (removeDevices > 0)
