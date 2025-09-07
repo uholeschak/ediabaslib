@@ -315,7 +315,6 @@ namespace EdiabasLib
 
                 return !(lhs == rhs);
             }
-
         }
 
         protected class SharedData : IDisposable

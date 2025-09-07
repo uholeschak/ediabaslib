@@ -1,17 +1,16 @@
-﻿using System;
+﻿using InTheHand.Bluetooth;
+using InTheHand.Net.Sockets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using InTheHand.Bluetooth;
-using InTheHand.Net.Sockets;
 
 namespace CarSimulator
 {
     public partial class BluetoothSearch : Form
     {
-        public class BluetoothItem
+        public class BluetoothItem : IComparable<BluetoothItem>, IEquatable<BluetoothItem>
         {
             public BluetoothItem(BluetoothDeviceInfo deviceInfo)
             {
@@ -33,6 +32,8 @@ namespace CarSimulator
             public BluetoothDevice Device { get; }
             public string Address { get; set; }
             public string Name { get; set; }
+            private int? hashCode;
+
             public string DeviceType {
                 get
                 {
@@ -48,6 +49,87 @@ namespace CarSimulator
 
                     return string.Empty;
                 }
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{0} {1}", Name, DeviceType);
+            }
+
+            public int CompareTo(BluetoothItem bluetoothItem)
+            {
+                if (bluetoothItem == null)
+                {
+                    return 0;
+                }
+
+                int result = string.Compare(Address, bluetoothItem.Address, StringComparison.Ordinal);
+                if (result != 0)
+                {
+                    return result;
+                }
+
+                result = string.Compare(DeviceType, bluetoothItem.DeviceType, StringComparison.Ordinal);
+                if (result != 0)
+                {
+                    return result;
+                }
+
+                return 0;
+            }
+
+            public override bool Equals(object obj)
+            {
+                BluetoothItem bluetoothItem = obj as BluetoothItem;
+                if ((object)bluetoothItem == null)
+                {
+                    return false;
+                }
+
+                return Equals(bluetoothItem);
+            }
+
+            public bool Equals(BluetoothItem bluetoothItem)
+            {
+                if ((object)bluetoothItem == null)
+                {
+                    return false;
+                }
+
+                return string.Compare(Address, bluetoothItem.Address, StringComparison.Ordinal) == 0 &&
+                       string.Compare(DeviceType, bluetoothItem.DeviceType, StringComparison.Ordinal) == 0;
+            }
+
+            public override int GetHashCode()
+            {
+                // ReSharper disable NonReadonlyMemberInGetHashCode
+                if (!hashCode.HasValue)
+                {
+                    hashCode = ToString().GetHashCode();
+                }
+
+                return hashCode.Value;
+                // ReSharper restore NonReadonlyMemberInGetHashCode
+            }
+
+            public static bool operator == (BluetoothItem lhs, BluetoothItem rhs)
+            {
+                if ((object)lhs == null || (object)rhs == null)
+                {
+                    return Object.Equals(lhs, rhs);
+                }
+
+                return lhs.Equals(rhs);
+            }
+
+            public static bool operator != (BluetoothItem lhs, BluetoothItem rhs)
+            {
+                if ((object)lhs == null || (object)rhs == null)
+                {
+                    return !Object.Equals(lhs, rhs);
+                }
+
+                return !(lhs == rhs);
             }
         }
 
@@ -190,11 +272,11 @@ namespace CarSimulator
                 }
                 else
                 {
-                    foreach (BluetoothItem device in devices.OrderBy(dev => dev.Address))
+                    foreach (BluetoothItem device in devices.Order())
                     {
                         for (int i = 0; i < _deviceList.Count; i++)
                         {
-                            if (_deviceList[i].Address == device.Address && _deviceList[i].DeviceType == device.DeviceType)
+                            if (_deviceList[i] == device)
                             {
                                 _deviceList.RemoveAt(i);
                                 i--;
@@ -204,7 +286,7 @@ namespace CarSimulator
                     }
                 }
 
-                foreach (BluetoothItem device in _deviceList.OrderBy(dev => dev.Address))
+                foreach (BluetoothItem device in _deviceList.Order())
                 {
                     ListViewItem listViewItem =
                         new ListViewItem(new[] { device.Address, device.Name, device.DeviceType })
