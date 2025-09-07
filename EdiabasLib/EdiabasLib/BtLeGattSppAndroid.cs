@@ -772,15 +772,15 @@ namespace EdiabasLib
 
                 while (Length > 0)
                 {
-                    byte[] readBuffer = new byte[MaxWriteLength];
-                    int length = Read(readBuffer, 0, readBuffer.Length);
+                    byte[] writeBuffer = new byte[MaxWriteLength];
+                    int length = Read(writeBuffer, 0, writeBuffer.Length);
                     if (length <= 0)
                     {
-                        throw new IOException("Stream write: read chunk failed");
+                        throw new IOException("Stream write: write chunk failed");
                     }
 
                     byte[] sendData = new byte[length];
-                    Array.Copy(readBuffer, 0, sendData, 0, length);
+                    Array.Copy(writeBuffer, 0, sendData, 0, length);
 
 #if DEBUG
                     Android.Util.Log.Info(Tag, string.Format("GATT SPP data write: {0} '{1}'",
