@@ -383,7 +383,7 @@ namespace CarSimulator
             bool searching = _searchingBt || _searchingLe;
             BluetoothItem devInfo = GetSelectedBtDevice();
             buttonSearch.Enabled = !searching && _cli != null;
-            buttonCancel.Enabled = searching;
+            buttonCancel.Enabled = !searching;
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
         }
 
@@ -520,7 +520,11 @@ namespace CarSimulator
             {
                 if (_searchingBt || _searchingLe)
                 {
+                }
+                else
+                {
                     DialogResult = DialogResult.None;
+                    Close();
                 }
             }
         }
