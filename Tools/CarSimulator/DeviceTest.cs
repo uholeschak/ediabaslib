@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using EdiabasLib;
+using InTheHand.Bluetooth;
 using InTheHand.Net;
 using InTheHand.Net.Bluetooth;
 using InTheHand.Net.Sockets;
@@ -24,6 +25,7 @@ namespace CarSimulator
         private readonly WlanClient _wlanClient;
         private readonly MainForm _form;
         private BluetoothClient _btClient;
+        private BtLeGattSpp _btLeGattSpp;
         private NetworkStream _dataStream;
         private Stream _dataStreamWrite;
         private Thread _workerThread;
@@ -182,11 +184,38 @@ namespace CarSimulator
             }
 
             BluetoothDeviceInfo device = devInfo.DeviceInfo;
-            if (device == null)
+            if (device != null)
+            {
+                return ConnectBtDevice(device);
+            }
+
+            BluetoothDevice btDevice = devInfo.Device;
+            if (btDevice != null)
+            {
+                return ConnectBtLeDevice(btDevice);
+            }
+
+            return false;
+        }
+
+        private bool ConnectBtLeDevice(BluetoothDevice device)
+        {
+            try
+            {
+                _btLeGattSpp = new BtLeGattSpp();
+                if (!_btLeGattSpp.ConnectLeGattDevice(device))
+                {
+                    return false;
+                }
+
+                //_dataStream = _btLeGattSpp.BtGattSppInStream;
+                _dataStreamWrite = _btLeGattSpp.BtGattSppOutStream;
+            }
+            catch (Exception)
             {
                 return false;
             }
-            return ConnectBtDevice(device);
+            return true;
         }
 
         private bool ConnectBtDevice(BluetoothDeviceInfo device)
@@ -455,6 +484,19 @@ namespace CarSimulator
             catch (Exception)
             {
                 _btClient = null;
+            }
+
+            try
+            {
+                if (_btLeGattSpp != null)
+                {
+                    _btLeGattSpp.Dispose();
+                    _btLeGattSpp = null;
+                }
+            }
+            catch (Exception)
+            {
+                _btLeGattSpp = null;
             }
         }
 
