@@ -26,7 +26,7 @@ namespace CarSimulator
         private readonly MainForm _form;
         private BluetoothClient _btClient;
         private BtLeGattSpp _btLeGattSpp;
-        private NetworkStream _dataStream;
+        private Stream _dataStream;
         private Stream _dataStreamWrite;
         private Thread _workerThread;
         private string _responseFileE61;
@@ -1306,16 +1306,22 @@ namespace CarSimulator
             }
 
             Array.Clear(receiveData, 0, receiveData.Length);
+            NetworkStream networkStream = _dataStream as NetworkStream;
+            if (networkStream == null)
+            {
+                return 0;
+            }
+
             try
             {
                 // header byte
-                _dataStream.ReadTimeout = RecTimeout;
+                networkStream.ReadTimeout = RecTimeout;
                 for (int i = 0; i < 4; i++)
                 {
                     int data;
                     try
                     {
-                        data = _dataStream.ReadByte();
+                        data = networkStream.ReadByte();
                     }
                     catch (Exception ex)
                     {
@@ -1325,7 +1331,7 @@ namespace CarSimulator
 
                     if (data < 0)
                     {
-                        while (_dataStream.DataAvailable)
+                        while (networkStream.DataAvailable)
                         {
                             try
                             {
@@ -1346,7 +1352,7 @@ namespace CarSimulator
 
                 if ((receiveData[0] & 0x80) != 0x80)
                 {   // 0xC0: Broadcast
-                    while (_dataStream.DataAvailable)
+                    while (networkStream.DataAvailable)
                     {
                         try
                         {
@@ -1384,7 +1390,7 @@ namespace CarSimulator
 
                     if (data < 0)
                     {
-                        while (_dataStream.DataAvailable)
+                        while (networkStream.DataAvailable)
                         {
                             try
                             {
@@ -1407,7 +1413,7 @@ namespace CarSimulator
                 if (CommThread.CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
                     Debug.WriteLine("ReceiveBmwFast CRC invalid");
-                    while (_dataStream.DataAvailable)
+                    while (networkStream.DataAvailable)
                     {
                         try
                         {
