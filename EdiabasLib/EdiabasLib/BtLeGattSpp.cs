@@ -37,11 +37,6 @@ namespace EdiabasLib
             Connected
         }
 
-#if DEBUG
-        private static readonly string Tag = typeof(BtLeGattSpp).FullName;
-#endif
-        private static readonly Guid GattCharacteristicConfig = new Guid("00002902-0000-1000-8000-00805f9b34fb");
-
         private static readonly List<GattSppInfo> _gattSppInfoList = new List<GattSppInfo>()
         {
             new GattSppInfo("Deep OBD", new Guid("0000ffe0-0000-1000-8000-00805f9b34fb"),
