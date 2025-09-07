@@ -14,7 +14,7 @@
     <NoWarn>1701;1702</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\EdiabasLib\BtLeGattSpp.cs" Link="BtLeGattSpp.cs" />
+    <Compile Include="..\EdiabasLib\BtLeGattSppAndroid.cs" Link="BtLeGattSppAndroid.cs" />
     <Compile Include="..\EdiabasLib\EdBase32.cs" Link="EdBase32.cs" />
     <Compile Include="..\EdiabasLib\EdBcTlsClient.cs" Link="EdBcTlsClient.cs" />
     <Compile Include="..\EdiabasLib\EdBcTlsUtilities.cs" Link="EdBcTlsUtilities.cs" />
