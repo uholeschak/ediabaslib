@@ -3,6 +3,7 @@ using InTheHand.Net.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -138,6 +139,8 @@ namespace CarSimulator
         private object _searchLock = new object();
         private volatile bool _searchingBt;
         private volatile bool _searchingLe;
+        private CancellationTokenSource _ctsBt;
+        private CancellationTokenSource _ctsLe;
         private volatile string _errorText;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
@@ -179,11 +182,17 @@ namespace CarSimulator
             UpdateDeviceList(null, true);
             _errorText = null;
 
+            CancelDispose();
+
+            _ctsBt = new CancellationTokenSource();
+            _ctsLe = new CancellationTokenSource();
+
             try
             {
                 _deviceList.Clear();
 
-                Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync();
+                // BLE
+                Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(null, _ctsLe.Token);
                 lock (_searchLock)
                 {
                     _searchingLe = true;
@@ -196,6 +205,13 @@ namespace CarSimulator
                         _searchingLe = false;
                     }
                     UpdateButtonStatus();
+
+                    if (t.IsCanceled)
+                    {
+                        ShowSearchEndMessage("Cancelled");
+                        return;
+                    }
+
                     if (t.IsCompletedSuccessfully)
                     {
                         BluetoothDevice[] devices = t.Result.ToArray();
@@ -204,24 +220,27 @@ namespace CarSimulator
                             UpdateDeviceList(devices.Select(d => new BluetoothItem(d)).ToArray(), false);
                             ShowSearchEndMessage();
                         }));
+                        return;
                     }
-                    else if (t.IsFaulted)
+
+                    if (t.IsFaulted)
                     {
                         ShowSearchEndMessage(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message));
                     }
-                });
+                }, _ctsLe.Token);
 
-                IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync();
+                IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
                 lock (_searchLock)
                 {
                     _searchingBt = true;
                 }
 
+                // EDR
                 Task.Run(async () =>
                 {
                     try
                     {
-                        await foreach (BluetoothDeviceInfo device in devices)
+                        await foreach (BluetoothDeviceInfo device in devices.WithCancellation(_ctsBt.Token))
                         {
                             BeginInvoke((Action)(() =>
                             {
@@ -250,9 +269,16 @@ namespace CarSimulator
                 UpdateStatusText("Searching ...");
                 UpdateButtonStatus();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                UpdateStatusText("Searching failed");
+                lock (_searchLock)
+                {
+                    _searchingBt = false;
+                    _searchingLe = false;
+                }
+
+                UpdateButtonStatus();
+                ShowSearchEndMessage(string.Format("Searching failed: {0}", ex.Message));
                 return false;
             }
             return true;
@@ -383,7 +409,7 @@ namespace CarSimulator
             bool searching = _searchingBt || _searchingLe;
             BluetoothItem devInfo = GetSelectedBtDevice();
             buttonSearch.Enabled = !searching && _cli != null;
-            buttonCancel.Enabled = !searching;
+            buttonCancel.Enabled = true;
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
         }
 
@@ -408,6 +434,8 @@ namespace CarSimulator
                     return;
                 }
             }
+
+            CancelDispose();
 
             if (!string.IsNullOrEmpty(_errorText))
             {
@@ -454,9 +482,25 @@ namespace CarSimulator
             }
         }
 
+        private void CancelDispose()
+        {
+            if (_ctsBt != null)
+            {
+                _ctsBt.Dispose();
+                _ctsBt = null;
+            }
+
+            if (_ctsLe != null)
+            {
+                _ctsLe.Dispose();
+                _ctsLe = null;
+            }
+        }
+
         private void BluetoothSearch_FormClosed(object sender, FormClosedEventArgs e)
         {
             _cli?.Dispose();
+            CancelDispose();
         }
 
         private void BluetoothSearch_FormClosing(object sender, FormClosingEventArgs e)
@@ -520,6 +564,8 @@ namespace CarSimulator
             {
                 if (_searchingBt || _searchingLe)
                 {
+                    _ctsBt?.Cancel();
+                    _ctsLe?.Cancel();
                 }
                 else
                 {
