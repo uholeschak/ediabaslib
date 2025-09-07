@@ -38,8 +38,9 @@ namespace CarSimulator
                 {
                     if (DeviceInfo != null)
                     {
-                        return "BT";
+                        return "EDR";
                     }
+
                     if (Device != null)
                     {
                         return "BLE";
@@ -193,7 +194,7 @@ namespace CarSimulator
                     {
                         for (int i = 0; i < _deviceList.Count; i++)
                         {
-                            if (_deviceList[i].Address == device.Address)
+                            if (_deviceList[i].Address == device.Address && _deviceList[i].DeviceType == device.DeviceType)
                             {
                                 _deviceList.RemoveAt(i);
                                 i--;
