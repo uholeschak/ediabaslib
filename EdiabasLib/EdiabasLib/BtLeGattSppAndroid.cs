@@ -403,6 +403,12 @@ namespace EdiabasLib
                     LogString("*** No GATT SPP characteristic found");
                     return false;
                 }
+#if DEBUG
+                Android.Util.Log.Info(Tag, $"Read UUID: {_gattCharacteristicSppRead.Uuid}, Properties: {_gattCharacteristicSppRead.Properties}");
+                Android.Util.Log.Info(Tag, $"Write UUID: {_gattCharacteristicSppWrite.Uuid}, Properties: {_gattCharacteristicSppWrite.Properties}");
+#endif
+                LogString($"GATT Read UUID: {_gattCharacteristicSppRead.Uuid}, Properties: {_gattCharacteristicSppRead.Properties}");
+                LogString($"GATT Write UUID: {_gattCharacteristicSppWrite.Uuid}, Properties: {_gattCharacteristicSppWrite.Properties}");
 
                 if (!_bluetoothGatt.SetCharacteristicNotification(_gattCharacteristicSppRead, true))
                 {
