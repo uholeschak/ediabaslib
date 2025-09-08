@@ -1326,7 +1326,7 @@ namespace CarSimulator
                         }
                         else
                         {
-                            data = _dataStream.ReadByteAsync();
+                            data = _dataStream.ReadByteAsync(null, RecTimeout);
                         }
                     }
                     catch (Exception ex)
@@ -1428,7 +1428,7 @@ namespace CarSimulator
                 {
                     try
                     {
-                        inStream.ReadByteAsync();
+                        inStream.ReadByte();
                     }
                     catch (Exception)
                     {
