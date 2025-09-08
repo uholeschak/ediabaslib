@@ -1,12 +1,13 @@
+using InTheHand.Bluetooth;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using InTheHand.Bluetooth;
-using System.Diagnostics;
 
 namespace EdiabasLib
 {
@@ -326,46 +327,22 @@ namespace EdiabasLib
         {
             try
             {
-                // In InTheHand.Bluetooth, the characteristic is the sender, not e.Characteristic
-                GattCharacteristic characteristic = sender as GattCharacteristic;
-                if (characteristic != null)
+                byte[] value = e.Value;
+                if (value != null && value.Length > 0)
                 {
-                    ReceiveGattSppData(characteristic, e.Value);
+#if DEBUG
+                    string dataText = Encoding.UTF8.GetString(value);
+                    dataText = dataText.Replace("\r", "");
+                    Debug.WriteLine($"GATT SPP data received: {BitConverter.ToString(value).Replace("-", "")} '{dataText}'");
+#endif
+                    _btGattSppInStream?.Write(value, 0, value.Length);
+                    _btGattReceivedEvent.Set();
                 }
             }
             catch (Exception ex)
             {
                 LogString($"OnCharacteristicValueChanged error: {ex.Message}");
             }
-        }
-
-        // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ReceiveGattSppData(GattCharacteristic characteristic, byte[] value)
-        {
-            try
-            {
-                if (characteristic.Uuid == _gattCharacteristicSppRead?.Uuid)
-                {
-                    if (value != null && value.Length > 0)
-                    {
-#if DEBUG
-                        string dataText = Encoding.UTF8.GetString(value);
-                        dataText = dataText.Replace("\r", "");
-                        Debug.WriteLine($"GATT SPP data received: {BitConverter.ToString(value).Replace("-", "")} '{dataText}'");
-#endif
-                        _btGattSppInStream?.Write(value, 0, value.Length);
-                        _btGattReceivedEvent.Set();
-                        return true;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogString($"ReceiveGattSppData error: {ex.Message}");
-                return false;
-            }
-
-            return false;
         }
 
         public void BtGattDisconnect()
