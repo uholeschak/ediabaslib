@@ -146,7 +146,14 @@ namespace EdiabasLib
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
 
-                return Task.Run(async () => await ConnectAsync(cancelEvent)).Result;
+                bool connectResult = Task.Run(async () => await ConnectAsync(cancelEvent)).Result;
+                if (!connectResult)
+                {
+                    BtGattDisconnect();
+                    return false;
+                }
+
+                return true;
             }
             catch (Exception ex)
             {
@@ -193,18 +200,21 @@ namespace EdiabasLib
                 List<GattService> services = await _bluetoothGatt.GetPrimaryServicesAsync();
                 if (services == null || !services.Any())
                 {
+#if DEBUG
+                    Debug.WriteLine("No GATT services found");
+#endif
                     LogString("*** No GATT services found");
                     return false;
                 }
 
 #if DEBUG
-                foreach (var gattService in services)
+                foreach (GattService gattService in services)
                 {
                     Debug.WriteLine($"GATT service: UUID={gattService.Uuid}");
                     try
                     {
-                        var characteristics = await gattService.GetCharacteristicsAsync();
-                        foreach (var gattCharacteristic in characteristics)
+                        IReadOnlyList<GattCharacteristic> characteristics = await gattService.GetCharacteristicsAsync();
+                        foreach (GattCharacteristic gattCharacteristic in characteristics)
                         {
                             Debug.WriteLine($"GATT characteristic: {gattCharacteristic.Uuid}");
                             Debug.WriteLine($"GATT properties: {gattCharacteristic.Properties}");
@@ -272,7 +282,7 @@ namespace EdiabasLib
                             GattCharacteristic gattCharacteristicSppWrite = null;
                             bool sppValid = true;
 
-                            var characteristics = await gattService.GetCharacteristicsAsync();
+                            IReadOnlyList<GattCharacteristic> characteristics = await gattService.GetCharacteristicsAsync();
                             foreach (var gattCharacteristic in characteristics)
                             {
                                 LogString($"GATT properties: {gattCharacteristic.Properties}");
@@ -321,6 +331,9 @@ namespace EdiabasLib
 
                 if (_gattCharacteristicSppRead == null || _gattCharacteristicSppWrite == null)
                 {
+#if DEBUG
+                    Debug.WriteLine("No GATT SPP characteristic found");
+#endif
                     LogString("*** No GATT SPP characteristic found");
                     return false;
                 }
@@ -333,6 +346,9 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
+#if DEBUG
+                Debug.WriteLine($"ConnectAsync exception: {ex.Message}");
+#endif
                 LogString($"*** ConnectAsync exception: {ex.Message}");
                 return false;
             }

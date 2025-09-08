@@ -208,7 +208,7 @@ namespace CarSimulator
                     return false;
                 }
 
-                //_dataStream = _btLeGattSpp.BtGattSppInStream;
+                _dataStream = _btLeGattSpp.BtGattSppInStream;
                 _dataStreamWrite = _btLeGattSpp.BtGattSppOutStream;
             }
             catch (Exception)
