@@ -45,29 +45,23 @@ namespace EdiabasLib
 
         private bool _disposed;
         private readonly LogStringDelegate _logStringHandler;
-        private AutoResetEvent _btGattConnectEvent;
-        private AutoResetEvent _btGattDiscoveredEvent;
         private AutoResetEvent _btGattReceivedEvent;
         private BluetoothDevice _bluetoothDevice;
         private RemoteGattServer _bluetoothGatt;
         private GattCharacteristic _gattCharacteristicSppRead;
         private GattCharacteristic _gattCharacteristicSppWrite;
         private volatile ConnectionState _gattConnectionState = ConnectionState.Disconnected;
-        private volatile bool _gattServicesDiscovered;
         private MemoryQueueBufferStream _btGattSppInStream;
         private BGattOutputStream _btGattSppOutStream;
         private CancellationTokenSource _cancellationTokenSource;
 
         public ConnectionState GattConnectionState => _gattConnectionState;
-        public bool GattServicesDiscovered => _gattServicesDiscovered;
         public MemoryQueueBufferStream BtGattSppInStream => _btGattSppInStream;
         public BGattOutputStream BtGattSppOutStream => _btGattSppOutStream;
 
         public BtLeGattSpp(LogStringDelegate logStringHandler = null)
         {
             _logStringHandler = logStringHandler;
-            _btGattConnectEvent = new AutoResetEvent(false);
-            _btGattDiscoveredEvent = new AutoResetEvent(false);
             _btGattReceivedEvent = new AutoResetEvent(false);
             _cancellationTokenSource = new CancellationTokenSource();
         }
@@ -101,18 +95,6 @@ namespace EdiabasLib
                         _cancellationTokenSource = null;
                     }
 
-                    if (_btGattConnectEvent != null)
-                    {
-                        _btGattConnectEvent.Dispose();
-                        _btGattConnectEvent = null;
-                    }
-
-                    if (_btGattDiscoveredEvent != null)
-                    {
-                        _btGattDiscoveredEvent.Dispose();
-                        _btGattDiscoveredEvent = null;
-                    }
-
                     if (_btGattReceivedEvent != null)
                     {
                         _btGattReceivedEvent.Dispose();
@@ -133,7 +115,6 @@ namespace EdiabasLib
 
                 _bluetoothDevice = device;
                 _gattConnectionState = ConnectionState.Connecting;
-                _gattServicesDiscovered = false;
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
 
@@ -150,7 +131,6 @@ namespace EdiabasLib
             {
                 LogString($"*** ConnectLeGattDevice exception: {ex.Message}");
                 _gattConnectionState = ConnectionState.Disconnected;
-                _gattServicesDiscovered = false;
                 return false;
             }
         }
@@ -177,9 +157,6 @@ namespace EdiabasLib
                     Debug.WriteLine("Connected to GATT server.");
 #endif
                     _gattConnectionState = ConnectionState.Connected;
-                    _gattServicesDiscovered = true; // InTheHand automatically discovers services
-                    _btGattConnectEvent.Set();
-                    _btGattDiscoveredEvent.Set();
                 }
                 else
                 {
@@ -411,9 +388,7 @@ namespace EdiabasLib
                 }
 
                 _gattCharacteristicSppWrite = null;
-
                 _gattConnectionState = ConnectionState.Disconnected;
-                _gattServicesDiscovered = false;
 
                 _bluetoothGatt = null;
                 _bluetoothDevice = null;
