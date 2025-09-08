@@ -223,7 +223,7 @@ namespace EdiabasLib
                 // Look for known SPP characteristics
                 foreach (GattSppInfo gattSppInfo in _gattSppInfoList)
                 {
-                    var gattServiceSpp = services.FirstOrDefault(s => s.Uuid == gattSppInfo.ServiceUuid);
+                    GattService gattServiceSpp = services.FirstOrDefault(s => s.Uuid == gattSppInfo.ServiceUuid);
                     if (gattServiceSpp != null)
                     {
                         try
