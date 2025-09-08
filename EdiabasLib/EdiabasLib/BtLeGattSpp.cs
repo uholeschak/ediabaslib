@@ -48,14 +48,12 @@ namespace EdiabasLib
         private AutoResetEvent _btGattConnectEvent;
         private AutoResetEvent _btGattDiscoveredEvent;
         private AutoResetEvent _btGattReceivedEvent;
-        private AutoResetEvent _btGattWriteEvent;
         private BluetoothDevice _bluetoothDevice;
         private RemoteGattServer _bluetoothGatt;
         private GattCharacteristic _gattCharacteristicSppRead;
         private GattCharacteristic _gattCharacteristicSppWrite;
         private volatile ConnectionState _gattConnectionState = ConnectionState.Disconnected;
         private volatile bool _gattServicesDiscovered;
-        private bool _gattWriteStatus = false;
         private MemoryQueueBufferStream _btGattSppInStream;
         private BGattOutputStream _btGattSppOutStream;
         private CancellationTokenSource _cancellationTokenSource;
@@ -71,7 +69,6 @@ namespace EdiabasLib
             _btGattConnectEvent = new AutoResetEvent(false);
             _btGattDiscoveredEvent = new AutoResetEvent(false);
             _btGattReceivedEvent = new AutoResetEvent(false);
-            _btGattWriteEvent = new AutoResetEvent(false);
             _cancellationTokenSource = new CancellationTokenSource();
         }
 
@@ -120,12 +117,6 @@ namespace EdiabasLib
                     {
                         _btGattReceivedEvent.Dispose();
                         _btGattReceivedEvent = null;
-                    }
-
-                    if (_btGattWriteEvent != null)
-                    {
-                        _btGattWriteEvent.Dispose();
-                        _btGattWriteEvent = null;
                     }
                 }
 
@@ -494,6 +485,9 @@ namespace EdiabasLib
                     int length = Read(writeBuffer, 0, writeBuffer.Length);
                     if (length <= 0)
                     {
+#if DEBUG
+                        Debug.WriteLine("Stream write: write chunk failed");
+#endif
                         throw new IOException("Stream write: write chunk failed");
                     }
 
@@ -503,28 +497,17 @@ namespace EdiabasLib
 #if DEBUG
                     Debug.WriteLine($"GATT SPP data write: {BitConverter.ToString(sendData).Replace("-", "")} '{Encoding.UTF8.GetString(sendData)}'");
 #endif
-                    _btLeGattSpp._gattWriteStatus = false;
-
                     try
                     {
-                        await _btLeGattSpp._gattCharacteristicSppWrite.WriteValueWithoutResponseAsync(sendData);
-                        _btLeGattSpp._gattWriteStatus = true;
-                        _btLeGattSpp._btGattWriteEvent.Set();
+                        await _btLeGattSpp._gattCharacteristicSppWrite.WriteValueWithResponseAsync(sendData);
                     }
                     catch (Exception ex)
                     {
+#if DEBUG
+                        Debug.WriteLine($"WriteCharacteristic error: {ex.Message}");
+#endif
                         _btLeGattSpp.LogString($"WriteCharacteristic error: {ex.Message}");
                         throw new IOException($"WriteCharacteristic failed: {ex.Message}");
-                    }
-
-                    if (!_btLeGattSpp._btGattWriteEvent.WaitOne(2000))
-                    {
-                        throw new IOException("WriteCharacteristic timeout");
-                    }
-
-                    if (!_btLeGattSpp._gattWriteStatus)
-                    {
-                        throw new IOException("WriteCharacteristic status failure");
                     }
                 }
             }
