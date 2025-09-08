@@ -410,6 +410,9 @@ namespace EdiabasLib
                 if (_btLeGattSpp._gattConnectionState != ConnectionState.Connected ||
                     _btLeGattSpp._gattCharacteristicSppWrite == null)
                 {
+#if DEBUG
+                    Debug.WriteLine("Write GATT disconnected");
+#endif
                     throw new IOException("GATT disconnected");
                 }
 
@@ -438,7 +441,7 @@ namespace EdiabasLib
 #endif
                     try
                     {
-                        await _btLeGattSpp._gattCharacteristicSppWrite.WriteValueWithResponseAsync(sendData);
+                        await _btLeGattSpp._gattCharacteristicSppWrite.WriteValueWithoutResponseAsync(sendData);
                     }
                     catch (Exception ex)
                     {
