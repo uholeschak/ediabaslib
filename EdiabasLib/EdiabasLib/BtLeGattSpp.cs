@@ -41,7 +41,7 @@ namespace EdiabasLib
         private static readonly List<GattSppInfo> _gattSppInfoList = new List<GattSppInfo>()
         {
             new GattSppInfo("Deep OBD", new Guid("0000ffe0-0000-1000-8000-00805f9b34fb"),
-                new Guid("0000ffe1-0000-1000-8000-00805f9b34fb"), new Guid("0000ffe1-0000-1000-8000-00805f9b34fb")),
+                new Guid("0000ffe1-0000-1000-8000-00805f9b34fb"), new Guid("0000ffe2-0000-1000-8000-00805f9b34fb")),
         };
 
         private bool _disposed;
@@ -213,9 +213,13 @@ namespace EdiabasLib
 
                             if (gattCharacteristicSppRead != null && gattCharacteristicSppWrite != null)
                             {
-                                bool validRead = (gattCharacteristicSppRead.Properties & (GattCharacteristicProperties.Read | GattCharacteristicProperties.Notify)) != 0 ||
-                                                 (gattCharacteristicSppRead.Properties & (GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify)) != 0;
-                                bool validWrite = (gattCharacteristicSppWrite.Properties & GattCharacteristicProperties.Write) != 0;
+                                bool validRead = (gattCharacteristicSppRead.Properties & (GattCharacteristicProperties.Read | GattCharacteristicProperties.Notify)) == (GattCharacteristicProperties.Read | GattCharacteristicProperties.Notify) ||
+                                                 (gattCharacteristicSppRead.Properties & (GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify)) == (GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify);
+                                bool validWrite = (gattCharacteristicSppWrite.Properties & GattCharacteristicProperties.Write) == GattCharacteristicProperties.Write;
+                                if (validWrite && gattCharacteristicSppRead != gattCharacteristicSppWrite)
+                                {
+                                    validWrite = (gattCharacteristicSppWrite.Properties & (GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify)) == GattCharacteristicProperties.Write;
+                                }
                                 if (validRead && validWrite)
                                 {
                                     _gattCharacteristicSppRead = gattCharacteristicSppRead;
@@ -255,8 +259,8 @@ namespace EdiabasLib
                             foreach (var gattCharacteristic in characteristics)
                             {
                                 LogString($"GATT properties: {gattCharacteristic.Properties}");
-                                bool validRead = (gattCharacteristic.Properties & (GattCharacteristicProperties.Read | GattCharacteristicProperties.Notify)) != 0 ||
-                                                 (gattCharacteristic.Properties & (GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify)) != 0;
+                                bool validRead = (gattCharacteristic.Properties & (GattCharacteristicProperties.Read | GattCharacteristicProperties.Notify)) == (GattCharacteristicProperties.Read | GattCharacteristicProperties.Notify) ||
+                                                 (gattCharacteristic.Properties & (GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify)) == (GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify);
                                 if (validRead)
                                 {
                                     if (gattCharacteristicSppRead != null)
@@ -267,8 +271,12 @@ namespace EdiabasLib
                                     gattCharacteristicSppRead = gattCharacteristic;
                                 }
 
-                                bool validWrite = (gattCharacteristic.Properties & GattCharacteristicProperties.Write) != 0 &&
-                                                  (gattCharacteristic.Properties & GattCharacteristicProperties.Notify) == 0;
+                                bool validWrite = (gattCharacteristic.Properties & GattCharacteristicProperties.Write) == GattCharacteristicProperties.Write;
+                                if (validWrite && gattCharacteristicSppRead != null && gattCharacteristicSppRead != gattCharacteristic)
+                                {
+                                    validWrite = (gattCharacteristic.Properties & (GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify)) == (GattCharacteristicProperties.Write);
+                                }
+
                                 if (validWrite)
                                 {
                                     if (gattCharacteristicSppWrite != null)
@@ -307,10 +315,37 @@ namespace EdiabasLib
                     return false;
                 }
 
+#if DEBUG
+                Debug.WriteLine($"Read UUID: {_gattCharacteristicSppRead.Uuid}, Properties: {_gattCharacteristicSppRead.Properties}");
+                Debug.WriteLine($"Write UUID: {_gattCharacteristicSppWrite.Uuid}, Properties: {_gattCharacteristicSppWrite.Properties}");
+#endif
+
                 // Enable notifications for read characteristic
                 _gattCharacteristicSppRead.CharacteristicValueChanged += OnCharacteristicValueChanged;
                 await _gattCharacteristicSppRead.StartNotificationsAsync();
+#if false
+                byte[] sendData = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
+                _btGattSppOutStream.Write(sendData, 0, sendData.Length);
 
+                while (_btGattReceivedEvent.WaitOne(2000))
+                {
+#if DEBUG
+                    Debug.WriteLine("GATT SPP data received");
+#endif
+                }
+
+                while (_btGattSppInStream.HasData())
+                {
+                    int data = _btGattSppInStream.ReadByteAsync();
+                    if (data < 0)
+                    {
+                        break;
+                    }
+#if DEBUG
+                    Debug.WriteLine(string.Format("GATT SPP byte: {0:X02}", data));
+#endif
+                }
+#endif
                 return true;
             }
             catch (Exception ex)
@@ -416,7 +451,7 @@ namespace EdiabasLib
                     throw new IOException("GATT disconnected");
                 }
 
-                Task.Run(async () => await WriteAsync()).Wait();
+                Task.Run(async () => await WriteAsync()).Wait(2000);
             }
 
             private async Task WriteAsync()
@@ -441,7 +476,7 @@ namespace EdiabasLib
 #endif
                     try
                     {
-                        await _btLeGattSpp._gattCharacteristicSppWrite.WriteValueWithoutResponseAsync(sendData);
+                        await _btLeGattSpp._gattCharacteristicSppWrite.WriteValueWithResponseAsync(sendData);
                     }
                     catch (Exception ex)
                     {
