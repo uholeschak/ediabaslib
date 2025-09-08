@@ -451,7 +451,7 @@ namespace EdiabasLib
                     throw new IOException("GATT disconnected");
                 }
 
-                Task.Run(async () => await WriteAsync()).Wait();
+                Task.Run(async () => await WriteAsync()).Wait(2000);
             }
 
             private async Task WriteAsync()
