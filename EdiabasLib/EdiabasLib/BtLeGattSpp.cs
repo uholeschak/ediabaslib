@@ -106,7 +106,7 @@ namespace EdiabasLib
             }
         }
 
-        public bool ConnectLeGattDevice(BluetoothDevice device, ManualResetEvent cancelEvent = null)
+        public bool ConnectLeGattDevice(string deviceId, ManualResetEvent cancelEvent = null)
         {
             try
             {
@@ -117,7 +117,7 @@ namespace EdiabasLib
                 _btGattSppOutStream = new BGattOutputStream(this);
                 _cancellationTokenSource = new CancellationTokenSource();
 
-                Task<bool> connectTask = ConnectAsync(device);
+                Task<bool> connectTask = ConnectAsync(deviceId);
                 while (!connectTask.IsCompleted)
                 {
                     if (cancelEvent != null)
@@ -150,12 +150,12 @@ namespace EdiabasLib
             }
         }
 
-        private async Task<bool> ConnectAsync(BluetoothDevice device)
+        private async Task<bool> ConnectAsync(string deviceId)
         {
             try
             {
                 // Connect to GATT server
-                BluetoothDevice bluetoothDevice = await BluetoothDevice.FromIdAsync(device.Id);
+                BluetoothDevice bluetoothDevice = await BluetoothDevice.FromIdAsync(deviceId);
                 if (bluetoothDevice == null)
                 {
 #if DEBUG
