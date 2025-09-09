@@ -203,7 +203,7 @@ namespace CarSimulator
             try
             {
                 _btLeGattSpp = new BtLeGattSpp();
-                if (!_btLeGattSpp.ConnectLeGattDevice(device))
+                if (!_btLeGattSpp.ConnectLeGattDevice(device.Id))
                 {
                     DisconnectStream();
                     return false;
