@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
     <OutputType>WinExe</OutputType>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
@@ -24,10 +24,12 @@
     <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.43" />
-    <PackageReference Include="InTheHand.Net.Bluetooth">
-      <Version>4.2.2</Version>
-    </PackageReference>
+      <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.43" GeneratePathProperty="true">
+          <ExcludeAssets>all</ExcludeAssets>
+      </PackageReference>
+      <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.2" GeneratePathProperty="true">
+          <ExcludeAssets>all</ExcludeAssets>
+      </PackageReference>
     <PackageReference Include="SimpleWifi.netstandard.Lsh" Version="2.1.1" />
     <PackageReference Include="System.IO.Ports" Version="9.0.8" />
   </ItemGroup>
