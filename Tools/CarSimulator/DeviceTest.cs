@@ -202,14 +202,8 @@ namespace CarSimulator
         {
             try
             {
-                BluetoothDevice bluetoothDevice = BluetoothDevice.FromIdAsync(device.Id).Result;
-                if (bluetoothDevice == null)
-                {
-                    return false;
-                }
-
                 _btLeGattSpp = new BtLeGattSpp();
-                if (!_btLeGattSpp.ConnectLeGattDevice(bluetoothDevice))
+                if (!_btLeGattSpp.ConnectLeGattDevice(device))
                 {
                     DisconnectStream();
                     return false;

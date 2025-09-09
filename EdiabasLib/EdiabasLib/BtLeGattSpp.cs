@@ -47,7 +47,6 @@ namespace EdiabasLib
         private bool _disposed;
         private readonly LogStringDelegate _logStringHandler;
         private AutoResetEvent _btGattReceivedEvent;
-        private BluetoothDevice _bluetoothDevice;
         private RemoteGattServer _bluetoothGatt;
         private GattCharacteristic _gattCharacteristicSppRead;
         private GattCharacteristic _gattCharacteristicSppWrite;
@@ -113,13 +112,12 @@ namespace EdiabasLib
             {
                 BtGattDisconnect();
 
-                _bluetoothDevice = device;
                 _gattConnectionState = ConnectionState.Connecting;
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
                 _cancellationTokenSource = new CancellationTokenSource();
 
-                Task<bool> connectTask = ConnectAsync();
+                Task<bool> connectTask = ConnectAsync(device);
                 while (!connectTask.IsCompleted)
                 {
                     if (cancelEvent != null)
@@ -152,12 +150,22 @@ namespace EdiabasLib
             }
         }
 
-        private async Task<bool> ConnectAsync()
+        private async Task<bool> ConnectAsync(BluetoothDevice device)
         {
             try
             {
                 // Connect to GATT server
-                _bluetoothGatt = _bluetoothDevice.Gatt;
+                BluetoothDevice bluetoothDevice = await BluetoothDevice.FromIdAsync(device.Id);
+                if (bluetoothDevice == null)
+                {
+#if DEBUG
+                    Debug.WriteLine("Bluetooth device not available");
+#endif
+                    LogString("*** Bluetooth device not available");
+                    return false;
+                }
+
+                _bluetoothGatt = bluetoothDevice.Gatt;
                 if (_bluetoothGatt == null)
                 {
                     LogString("*** GATT server not available");
@@ -429,8 +437,6 @@ namespace EdiabasLib
                     }
                     _bluetoothGatt = null;
                 }
-
-                _bluetoothDevice = null;
 
                 if (_btGattSppInStream != null)
                 {
