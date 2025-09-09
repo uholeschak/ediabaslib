@@ -31,6 +31,11 @@ namespace EdiabasLib
 #if ANDROID
             return inStream.IsDataAvailable();
 #else
+            if (inStream is NetworkStream networkStream)
+            {
+                return networkStream.DataAvailable;
+            }
+
             return inStream.Length > 0;
 #endif
         }
