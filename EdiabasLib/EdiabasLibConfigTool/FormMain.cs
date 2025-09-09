@@ -34,9 +34,6 @@ namespace EdiabasLibConfigTool
         private readonly Wifi _wifi;
         private readonly WlanClient _wlanClient;
         private readonly Test _test;
-#if BT3
-        private InTheHand.Net.Bluetooth.Factory.IBluetoothClient _icli;
-#endif
         private bool _lastActiveProbing;
         private string _ediabasDirBmw;
         private string _ediabasDirVag;
@@ -44,6 +41,8 @@ namespace EdiabasLibConfigTool
         private string _initMessage;
         private volatile bool _launchingSettings;
         private volatile bool _searching;
+        private CancellationTokenSource _ctsBt;
+        private CancellationTokenSource _ctsLe;
         private volatile bool _vehicleTaskActive;
         private List<EdInterfaceEnet.EnetConnection> _detectedVehicles;
         private ListViewItem _selectedItem;
@@ -115,13 +114,6 @@ namespace EdiabasLibConfigTool
             try
             {
                 _cli = new BluetoothClient();
-#if BT3
-                FieldInfo impField = typeof(BluetoothClient).GetField("m_impl", BindingFlags.NonPublic | BindingFlags.Instance);
-                if (impField != null)
-                {
-                    _icli = impField.GetValue(_cli) as InTheHand.Net.Bluetooth.Factory.IBluetoothClient;
-                }
-#endif
             }
             catch (Exception ex)
             {
@@ -730,82 +722,57 @@ namespace EdiabasLibConfigTool
             {
                 return false;
             }
-#if BT3
-            if (_icli == null)
-            {
-                return false;
-            }
-#endif
+
             try
             {
                 _test.TestOk = false;
                 _test.ConfigPossible = false;
                 _deviceList.Clear();
-#if BT3
-                IAsyncResult asyncResult = _icli.BeginDiscoverDevices(255, true, false, true, IsWinVistaOrHigher(), ar =>
-                {
-                    if (ar.IsCompleted)
-                    {
-                        _searching = false;
-                        UpdateButtonStatus();
 
-                        try
+                CancelDispose();
+
+                _ctsBt = new CancellationTokenSource();
+                _ctsLe = new CancellationTokenSource();
+
+                IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
+                _searching = true;
+
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await foreach (BluetoothDeviceInfo device in devices)
                         {
-                            BluetoothDeviceInfo[] devices = _cli.EndDiscoverDevices(ar);
                             BeginInvoke((Action)(() =>
                             {
-                                UpdateDeviceList(devices, true);
-                                ShowSearchEndMessage();
+                                UpdateDeviceList(new[] { device }, false);
                             }));
-                        }
-                        catch (Exception ex)
-                        {
-                            string message = ex.Message;
-                            if (string.IsNullOrEmpty(message))
+
+                            if (_ctsBt.IsCancellationRequested)
                             {
-                                UpdateStatusText(Resources.Strings.SearchingFailed);
-                            }
-                            else
-                            {
-                                UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, message));
+                                break;
                             }
                         }
-                    }
-                }, this, (p1, p2) =>
-                {
-                    BluetoothDeviceInfo deviceInfo = new BluetoothDeviceInfo(p1.DeviceAddress);
-                    try
-                    {
-                        deviceInfo.Refresh();
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
 
-                    BeginInvoke((Action)(() =>
-                    {
-                        UpdateDeviceList(new[] { deviceInfo }, false);
-                    }));
-
-                }, this);
-#else
-                Task searchTask = new Task(() =>
-                {
-                    try
-                    {
-                        IReadOnlyCollection<BluetoothDeviceInfo> devices = _cli.DiscoverDevices();
                         _searching = false;
                         UpdateButtonStatus();
+
+                        if (_ctsBt.IsCancellationRequested)
+                        {
+                            ShowSearchEndMessage();
+                            return;
+                        }
 
                         BeginInvoke((Action)(() =>
                         {
-                            UpdateDeviceList(devices.ToArray(), true);
                             ShowSearchEndMessage();
                         }));
                     }
                     catch (Exception ex)
                     {
+                        _searching = false;
+                        UpdateButtonStatus();
+
                         string message = ex.Message;
                         if (string.IsNullOrEmpty(message))
                         {
@@ -818,9 +785,6 @@ namespace EdiabasLibConfigTool
                     }
                 });
 
-                searchTask.Start();
-#endif
-                _searching = true;
                 UpdateButtonStatus();
             }
             catch (Exception)
@@ -939,6 +903,21 @@ namespace EdiabasLibConfigTool
             listViewDevices.EndUpdate();
             _ignoreSelection = false;
             UpdateButtonStatus();
+        }
+
+        private void CancelDispose()
+        {
+            if (_ctsBt != null)
+            {
+                _ctsBt.Dispose();
+                _ctsBt = null;
+            }
+
+            if (_ctsLe != null)
+            {
+                _ctsLe.Dispose();
+                _ctsLe = null;
+            }
         }
 
         private async Task<List<EdInterfaceEnet.EnetConnection>> SearchVehiclesTask()
@@ -1098,6 +1077,8 @@ namespace EdiabasLibConfigTool
         {
             if (!_searching && !_vehicleTaskActive)
             {
+                CancelDispose();
+
                 StringBuilder sb = new StringBuilder();
                 if (_removedUsbDevices > 0)
                 {
@@ -1191,6 +1172,8 @@ namespace EdiabasLibConfigTool
 
             _cli?.Dispose();
             _test?.Dispose();
+            CancelDispose();
+
             try
             {
                 Properties.Settings.Default.IstadDir = _ediabasDirIstad ?? string.Empty;
