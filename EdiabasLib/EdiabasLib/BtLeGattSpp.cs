@@ -417,7 +417,19 @@ namespace EdiabasLib
                 _gattCharacteristicSppWrite = null;
                 _gattConnectionState = ConnectionState.Disconnected;
 
-                _bluetoothGatt = null;
+                if (_bluetoothGatt != null)
+                {
+                    try
+                    {
+                        _bluetoothGatt.Disconnect();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                    _bluetoothGatt = null;
+                }
+
                 _bluetoothDevice = null;
 
                 if (_btGattSppInStream != null)
