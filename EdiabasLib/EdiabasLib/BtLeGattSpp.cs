@@ -64,7 +64,6 @@ namespace EdiabasLib
         {
             _logStringHandler = logStringHandler;
             _btGattReceivedEvent = new AutoResetEvent(false);
-            _cancellationTokenSource = new CancellationTokenSource();
         }
 
         public void Dispose()
@@ -118,6 +117,7 @@ namespace EdiabasLib
                 _gattConnectionState = ConnectionState.Connecting;
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
+                _cancellationTokenSource = new CancellationTokenSource();
 
                 Task<bool> connectTask = ConnectAsync();
                 while (!connectTask.IsCompleted)
@@ -127,6 +127,7 @@ namespace EdiabasLib
                         if (cancelEvent.WaitOne(0))
                         {
                             LogString("*** GATT connection cancelled");
+                            _cancellationTokenSource.Cancel();
                             return false;
                         }
                     }
@@ -163,8 +164,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                // ConnectAsync returns Task (void), not Task<bool>
-                await _bluetoothGatt.ConnectAsync();
+                _bluetoothGatt.ConnectAsync().Wait(_cancellationTokenSource.Token);
 
                 // Check connection status
                 if (_bluetoothGatt.IsConnected)
