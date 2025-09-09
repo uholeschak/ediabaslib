@@ -119,7 +119,22 @@ namespace EdiabasLib
                 _btGattSppInStream = new MemoryQueueBufferStream(true);
                 _btGattSppOutStream = new BGattOutputStream(this);
 
-                bool connectResult = Task.Run(async () => await ConnectAsync(cancelEvent)).Result;
+                Task<bool> connectTask = ConnectAsync();
+                while (!connectTask.IsCompleted)
+                {
+                    if (cancelEvent != null)
+                    {
+                        if (cancelEvent.WaitOne(0))
+                        {
+                            LogString("*** GATT connection cancelled");
+                            return false;
+                        }
+                    }
+
+                    Thread.Sleep(100);
+                }
+
+                bool connectResult = connectTask.Result;
                 if (!connectResult)
                 {
                     BtGattDisconnect();
@@ -136,7 +151,7 @@ namespace EdiabasLib
             }
         }
 
-        private async Task<bool> ConnectAsync(ManualResetEvent cancelEvent)
+        private async Task<bool> ConnectAsync()
         {
             try
             {
