@@ -389,7 +389,7 @@ namespace EdiabasLib
                 if (value != null && value.Length > 0)
                 {
 #if DEBUG
-                    string dataText = Encoding.UTF8.GetString(value);
+                    string dataText = Encoding.ASCII.GetString(value);
                     dataText = dataText.Replace("\r", "");
                     Debug.WriteLine($"GATT SPP data received: {BitConverter.ToString(value).Replace("-", "")} '{dataText}'");
 #endif
@@ -505,7 +505,9 @@ namespace EdiabasLib
                     Array.Copy(writeBuffer, 0, sendData, 0, length);
 
 #if DEBUG
-                    Debug.WriteLine($"GATT SPP data write: {BitConverter.ToString(sendData).Replace("-", "")} '{Encoding.UTF8.GetString(sendData)}'");
+                    string dataText = Encoding.ASCII.GetString(sendData);
+                    dataText = dataText.Replace("\r", "");
+                    Debug.WriteLine($"GATT SPP data write: {BitConverter.ToString(sendData).Replace("-", "")} '{dataText}'");
 #endif
                     try
                     {
