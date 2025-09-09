@@ -1,0 +1,16 @@
+﻿<Project>
+  <Target Name="EmbedNugetPackages" BeforeTargets="PrepareForBuild">
+    <Message Text="Include NuGet files" Importance="High" />
+    <Message Text="@(PackageReference ->'packageid:%(identity) version = &quot;%(version)&quot;', '%0d%0a')" Importance="High" />
+    <Message Text="NuGet path InTheHand.Net.Bluetooth: $(PkgInTheHand_Net_Bluetooth)" Importance="High" />
+    <Message Text="NuGet path InTheHand.BluetoothLE: $(PkgInTheHand_BluetoothLE)" Importance="High" />
+    <ItemGroup>
+      <Reference Include="InTheHand.Net.Bluetooth.dll">
+        <HintPath>$(PkgInTheHand_Net_Bluetooth)\lib\net8.0-windows7.0\InTheHand.Net.Bluetooth.dll</HintPath>
+      </Reference>
+      <Reference Include="InTheHand.BluetoothLE.dll">
+        <HintPath>$(PkgInTheHand_BluetoothLE)\lib\net8.0-windows10.0.19041\InTheHand.BluetoothLE.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+  </Target>
+</Project>
