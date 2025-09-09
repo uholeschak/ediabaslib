@@ -335,6 +335,7 @@ namespace CarSimulator
                     listViewDevices.Items.Add(listViewItem);
                 }
             }
+
             // select last selected item
             if (_selectedItem != null)
             {
@@ -382,7 +383,6 @@ namespace CarSimulator
                                     }
                                 }
                             }
-                            break;
                         }
                     }
                 }
