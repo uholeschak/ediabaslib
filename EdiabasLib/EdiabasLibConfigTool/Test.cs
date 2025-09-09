@@ -757,12 +757,7 @@ namespace EdiabasLibConfigTool
                     }
                     Thread.Sleep(100);
                 }
-#if BT3
-                BluetoothSecurity.SetPin(device.DeviceAddress, pin);
-                BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
-                _btClient = new BluetoothClient();
-                _btClient.SetPin(pin);
-#else
+
                 device.Refresh();
                 if (!device.Authenticated)
                 {
@@ -770,7 +765,7 @@ namespace EdiabasLibConfigTool
                 }
                 BluetoothEndPoint ep = new BluetoothEndPoint(device.DeviceAddress, BluetoothService.SerialPort);
                 _btClient = new BluetoothClient();
-#endif
+
                 try
                 {
                     _btClient.Connect(ep);
