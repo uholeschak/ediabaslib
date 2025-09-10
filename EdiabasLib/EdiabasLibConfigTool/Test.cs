@@ -1,4 +1,12 @@
-﻿using System;
+﻿using EdiabasLib;
+using InTheHand.Bluetooth;
+using InTheHand.Net;
+using InTheHand.Net.Bluetooth;
+using InTheHand.Net.Sockets;
+using SimpleWifi;
+using SimpleWifi.Win32;
+using SimpleWifi.Win32.Interop;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -13,13 +21,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using EdiabasLib;
-using InTheHand.Net;
-using InTheHand.Net.Bluetooth;
-using InTheHand.Net.Sockets;
-using SimpleWifi;
-using SimpleWifi.Win32;
-using SimpleWifi.Win32.Interop;
+using static EdiabasLibConfigTool.FormMain;
 
 namespace EdiabasLibConfigTool
 {
@@ -34,6 +36,7 @@ namespace EdiabasLibConfigTool
         private const int EspLinkPort = 23;
         private readonly FormMain _form;
         private BluetoothClient _btClient;
+        private BtLeGattSpp _btLeGattSpp;
         private Stream _dataStream;
         private Stream _dataStreamWrite;
         private HttpClient _httpClient;
@@ -253,7 +256,7 @@ namespace EdiabasLibConfigTool
                 return true;
             }
 
-            BluetoothDeviceInfo devInfo = _form.GetSelectedBtDevice();
+            BluetoothItem devInfo = _form.GetSelectedBtDevice();
             if (devInfo != null)
             {
                 string pin = _form.BluetoothPin;
@@ -738,6 +741,50 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
+        private bool ConnectBtDevice(BluetoothItem devInfo, string pin)
+        {
+            if (devInfo == null)
+            {
+                return false;
+            }
+
+            BluetoothDeviceInfo device = devInfo.DeviceInfo;
+            if (device != null)
+            {
+                return ConnectBtDevice(device, pin);
+            }
+
+            BluetoothDevice btDevice = devInfo.Device;
+            if (btDevice != null)
+            {
+                return ConnectBtLeDevice(btDevice);
+            }
+
+            return false;
+        }
+
+        private bool ConnectBtLeDevice(BluetoothDevice device)
+        {
+            try
+            {
+                _btLeGattSpp = new BtLeGattSpp();
+                if (!_btLeGattSpp.ConnectLeGattDevice(device.Id))
+                {
+                    DisconnectStream();
+                    return false;
+                }
+
+                _dataStream = _btLeGattSpp.BtGattSppInStream;
+                _dataStreamWrite = _btLeGattSpp.BtGattSppOutStream;
+            }
+            catch (Exception)
+            {
+                DisconnectStream();
+                return false;
+            }
+            return true;
+        }
+
         private bool ConnectBtDevice(BluetoothDeviceInfo device, string pin)
         {
             try
@@ -832,6 +879,19 @@ namespace EdiabasLibConfigTool
             catch (Exception)
             {
                 _btClient = null;
+            }
+
+            try
+            {
+                if (_btLeGattSpp != null)
+                {
+                    _btLeGattSpp.Dispose();
+                    _btLeGattSpp = null;
+                }
+            }
+            catch (Exception)
+            {
+                _btLeGattSpp = null;
             }
 
             try

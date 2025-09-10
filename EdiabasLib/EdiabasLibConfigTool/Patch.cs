@@ -14,6 +14,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Xml.Linq;
+using static EdiabasLibConfigTool.FormMain;
 
 namespace EdiabasLibConfigTool
 {
@@ -389,7 +390,7 @@ namespace EdiabasLibConfigTool
         }
 
         public static bool UpdateConfigFile(PatchType patchType, string configFile, string ediabasDir, string iniFile, int adapterType,
-            BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
+            BluetoothItem devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
         {
             try
             {
@@ -448,7 +449,7 @@ namespace EdiabasLibConfigTool
                 }
                 else if (devInfo != null)
                 {
-                    string portValue = string.Format("BLUETOOTH:{0}#{1}", devInfo.DeviceAddress, pin);
+                    string portValue = string.Format("BLUETOOTH:{0}#{1}", devInfo.Address, pin);
 
                     UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
                     UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
@@ -1215,7 +1216,7 @@ namespace EdiabasLibConfigTool
         }
 
         public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName, string ediabasDir,
-            BluetoothDeviceInfo devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
+            BluetoothItem devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
         {
             if (string.IsNullOrEmpty(dirName))
             {

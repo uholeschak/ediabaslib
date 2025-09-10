@@ -164,12 +164,13 @@ namespace EdiabasLibConfigTool
         private string _ediabasDirVag;
         private string _ediabasDirIstad;
         private string _initMessage;
+        private object _searchLock = new object();
         private volatile bool _launchingSettings;
         private volatile bool _searchingBt;
         private volatile bool _searchingLe;
+        private volatile bool _vehicleTaskActive;
         private CancellationTokenSource _ctsBt;
         private CancellationTokenSource _ctsLe;
-        private volatile bool _vehicleTaskActive;
         private List<EdInterfaceEnet.EnetConnection> _detectedVehicles;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
@@ -326,20 +327,28 @@ namespace EdiabasLibConfigTool
                     return false;
                 }
 
-                if (_launchingSettings)
+                lock (_searchLock)
                 {
-                    return false;
+                    if (_launchingSettings)
+                    {
+                        return false;
+                    }
+
+                    _launchingSettings = true;
                 }
 
 #pragma warning disable CA1416
-                _launchingSettings = true;
                 IAsyncOperation<bool> launchUri =
                     Windows.System.Launcher.LaunchUriAsync(new Uri("ms-settings:" + settingsType));
                 launchUri.AsTask().ContinueWith(task =>
                 {
                     if (InvokeRequired)
                     {
-                        _launchingSettings = false;
+                        lock (_searchLock)
+                        {
+                            _launchingSettings = false;
+                        }
+
                         BeginInvoke((Action)UpdateButtonStatus);
                     }
                 });
@@ -348,7 +357,11 @@ namespace EdiabasLibConfigTool
             }
             catch (Exception)
             {
-                _launchingSettings = false;
+                lock (_searchLock)
+                {
+                    _launchingSettings = false;
+                }
+
                 return false;
             }
             finally
@@ -819,9 +832,12 @@ namespace EdiabasLibConfigTool
 
         private bool StartDeviceSearch()
         {
-            if (_searchingBt || _searchingLe)
+            lock (_searchLock)
             {
-                return false;
+                if (_searchingBt || _searchingLe)
+                {
+                    return false;
+                }
             }
 
             UpdateStatusText(Resources.Strings.Searching);
@@ -862,7 +878,10 @@ namespace EdiabasLibConfigTool
                 _ctsLe = new CancellationTokenSource();
 
                 IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
-                _searchingBt = true;
+                lock (_searchLock)
+                {
+                    _searchingBt = true;
+                }
 
                 Task.Run(async () =>
                 {
@@ -881,7 +900,11 @@ namespace EdiabasLibConfigTool
                             }
                         }
 
-                        _searchingBt = false;
+                        lock (_searchLock)
+                        {
+                            _searchingBt = false;
+                        }
+
                         UpdateButtonStatus();
 
                         if (_ctsBt.IsCancellationRequested)
@@ -897,7 +920,11 @@ namespace EdiabasLibConfigTool
                     }
                     catch (Exception ex)
                     {
-                        _searchingBt = false;
+                        lock (_searchLock)
+                        {
+                            _searchingBt = false;
+                        }
+
                         UpdateButtonStatus();
 
                         string message = ex.Message;
@@ -1064,12 +1091,12 @@ namespace EdiabasLibConfigTool
             return detectedVehicles;
         }
 
-        public BluetoothDeviceInfo GetSelectedBtDevice()
+        public BluetoothItem GetSelectedBtDevice()
         {
-            BluetoothDeviceInfo devInfo = null;
+            BluetoothItem devInfo = null;
             if (listViewDevices.SelectedItems.Count > 0)
             {
-                devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothDeviceInfo;
+                devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothItem;
             }
             return devInfo;
         }
@@ -1126,12 +1153,17 @@ namespace EdiabasLibConfigTool
                 return;
             }
 
-            bool processing = _launchingSettings || _searchingBt || _searchingLe || _vehicleTaskActive;
+            bool processing;
+            lock (_searchLock)
+            {
+                processing = _launchingSettings || _searchingBt || _searchingLe || _vehicleTaskActive;
+            }
+
             comboBoxLanguage.Enabled = !processing && !_test.ThreadActive;
             buttonSearch.Enabled = !processing && !_test.ThreadActive;
             buttonClose.Enabled = !processing && !_test.ThreadActive;
 
-            BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
+            BluetoothItem devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
             EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
             AccessPoint ap = GetSelectedAp();
@@ -1200,28 +1232,39 @@ namespace EdiabasLibConfigTool
             UpdateStatusText(string.Empty);
         }
 
-        public void ShowSearchEndMessage()
+        public void ShowSearchEndMessage(string errorMessage = null)
         {
-            if (!_searchingBt && !_searchingLe && !_vehicleTaskActive)
+            if (InvokeRequired)
             {
-                CancelDispose();
-
-                StringBuilder sb = new StringBuilder();
-                if (_removedUsbDevices > 0)
-                {
-                    string ftdiVid = string.Format(CultureInfo.InvariantCulture, "{0:X4}h", FtdiDefaultVid);
-                    string ftdiPids232R = string.Format(CultureInfo.InvariantCulture, "{0:X4}h/{1:X4}h", FtdiDefaultPid232R, FtdiDefaultPidXSer);
-                    sb.Append(string.Format(CultureInfo.InvariantCulture, Resources.Strings.UsbAdaptersHidden, ftdiVid, ftdiPids232R));
-                }
-
-                if (sb.Length > 0)
-                {
-                    sb.Append("\r\n");
-                }
-                sb.Append(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
-
-                UpdateStatusText(sb.ToString());
+                BeginInvoke((Action)(() => ShowSearchEndMessage(errorMessage)));
+                return;
             }
+
+            lock (_searchLock)
+            {
+                if (_searchingBt || _searchingLe || _vehicleTaskActive)
+                {
+                    return;
+                }
+            }
+
+            CancelDispose();
+
+            StringBuilder sb = new StringBuilder();
+            if (_removedUsbDevices > 0)
+            {
+                string ftdiVid = string.Format(CultureInfo.InvariantCulture, "{0:X4}h", FtdiDefaultVid);
+                string ftdiPids232R = string.Format(CultureInfo.InvariantCulture, "{0:X4}h/{1:X4}h", FtdiDefaultPid232R, FtdiDefaultPidXSer);
+                sb.Append(string.Format(CultureInfo.InvariantCulture, Resources.Strings.UsbAdaptersHidden, ftdiVid, ftdiPids232R));
+            }
+
+            if (sb.Length > 0)
+            {
+                sb.Append("\r\n");
+            }
+            sb.Append(listViewDevices.Items.Count > 0 ? Resources.Strings.DevicesFound : Resources.Strings.DevicesNotFound);
+
+            UpdateStatusText(sb.ToString());
         }
 
         public void UpdateStatusText(string text, bool appendText = false)
@@ -1383,7 +1426,7 @@ namespace EdiabasLibConfigTool
         private void buttonPatch_Click(object sender, EventArgs e)
         {
             ClearInitMessage();
-            BluetoothDeviceInfo devInfo = GetSelectedBtDevice();
+            BluetoothItem devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
             EdInterfaceEnet.EnetConnection enetConnection = GetSelectedEnetDevice();
             Patch.UsbInfo usbInfo = GetSelectedUsbInfo();

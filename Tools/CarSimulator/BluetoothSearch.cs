@@ -136,7 +136,7 @@ namespace CarSimulator
 
         private readonly BluetoothClient _cli;
         private readonly List<BluetoothItem> _deviceList;
-        private object _searchLock = new object();
+        private readonly object _searchLock = new object();
         private volatile bool _searchingBt;
         private volatile bool _searchingLe;
         private CancellationTokenSource _ctsBt;
