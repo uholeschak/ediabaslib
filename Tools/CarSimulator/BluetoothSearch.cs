@@ -363,6 +363,7 @@ namespace CarSimulator
             }
             else
             {
+                int matchCount = 0;
                 foreach (ListViewItem listViewItem in listViewDevices.Items)
                 {
                     if (listViewItem.SubItems.Count > 1)
@@ -377,14 +378,23 @@ namespace CarSimulator
                                 {
                                     if (deviceName.Contains(selectName))
                                     {
-                                        listViewItem.Selected = true;
-                                        _autoSelect = true;
+                                        if (matchCount == 0)
+                                        {
+                                            listViewItem.Selected = true;
+                                        }
+
+                                        matchCount++;
                                         break;
                                     }
                                 }
                             }
                         }
                     }
+                }
+
+                if (matchCount == 1)
+                {
+                    _autoSelect = true;
                 }
             }
 
