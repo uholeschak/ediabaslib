@@ -1203,8 +1203,8 @@ namespace EdiabasLibConfigTool
             buttonPatchIstad.Enabled = istadValid && allowPatch;
             buttonRestoreIstad.Enabled = istadValid && allowRestore && Patch.IsPatched(_ediabasDirIstad, Patch.PatchType.Istad);
 
-            textBoxBluetoothPin.Enabled = !_test.ThreadActive;
-            textBoxWifiPassword.Enabled = !_test.ThreadActive;
+            textBoxBluetoothPin.Enabled = !_test.ThreadActive && devInfo?.DeviceInfo != null;
+            textBoxWifiPassword.Enabled = !_test.ThreadActive && ap != null;
             if ((devInfo != null) || (wlanIface != null))
             {
                 if (_test.TestOk && _test.ConfigPossible)
