@@ -54,7 +54,7 @@ namespace CarSimulator
 
             public override string ToString()
             {
-                return string.Format("{0} {1}", Name, DeviceType);
+                return string.Format("{0} / {1}", Name, DeviceType);
             }
 
             public int CompareTo(BluetoothItem bluetoothItem)

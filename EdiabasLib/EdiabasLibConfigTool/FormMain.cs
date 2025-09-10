@@ -70,7 +70,7 @@ namespace EdiabasLibConfigTool
 
             public override string ToString()
             {
-                return string.Format("{0} {1}", Name, DeviceType);
+                return string.Format("{0} / {1}", Name, DeviceType);
             }
 
             public int CompareTo(BluetoothItem bluetoothItem)
@@ -956,7 +956,7 @@ namespace EdiabasLibConfigTool
                 foreach (BluetoothItem device in _deviceList.Order())
                 {
                     ListViewItem listViewItem =
-                        new ListViewItem(new[] { device.Address, device.Name })
+                        new ListViewItem(new[] { device.Address, device.ToString() })
                         {
                             Tag = device
                         };
