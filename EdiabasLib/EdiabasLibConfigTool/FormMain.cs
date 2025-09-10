@@ -877,6 +877,46 @@ namespace EdiabasLibConfigTool
                 _ctsBt = new CancellationTokenSource();
                 _ctsLe = new CancellationTokenSource();
 
+                // BLE
+                Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(null, _ctsLe.Token);
+                lock (_searchLock)
+                {
+                    _searchingLe = true;
+                }
+
+                scanTask.ContinueWith(t =>
+                {
+                    lock (_searchLock)
+                    {
+                        _searchingLe = false;
+                    }
+                    UpdateButtonStatus();
+
+                    if (_ctsLe.IsCancellationRequested)
+                    {
+                        ShowSearchEndMessage(true);
+                        return;
+                    }
+
+                    if (t.IsCompletedSuccessfully)
+                    {
+                        BluetoothDevice[] devices = t.Result.ToArray();
+                        BeginInvoke((Action)(() =>
+                        {
+                            UpdateDeviceList(devices.Select(d => new BluetoothItem(d)).ToArray(), false);
+                            ShowSearchEndMessage();
+                        }));
+                        return;
+                    }
+
+                    if (t.IsFaulted)
+                    {
+                        UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, t.Exception?.GetBaseException().Message));
+
+                        ShowSearchEndMessage(true);
+                    }
+                });
+
                 IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
                 lock (_searchLock)
                 {
