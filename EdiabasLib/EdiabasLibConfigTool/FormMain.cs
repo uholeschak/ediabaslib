@@ -19,18 +19,143 @@ using System.Runtime.Versioning;
 using System.Drawing;
 using Windows.Foundation;
 using System.Diagnostics;
+using InTheHand.Bluetooth;
 
 namespace EdiabasLibConfigTool
 {
     [SupportedOSPlatform("windows")]
     public partial class FormMain : Form
     {
+        public class BluetoothItem : IComparable<BluetoothItem>, IEquatable<BluetoothItem>
+        {
+            public BluetoothItem(BluetoothDeviceInfo deviceInfo)
+            {
+                DeviceInfo = deviceInfo;
+                Device = null;
+                Address = deviceInfo.DeviceAddress.ToString();
+                Name = deviceInfo.DeviceName;
+            }
+
+            public BluetoothItem(BluetoothDevice device)
+            {
+                Device = device;
+                DeviceInfo = null;
+                Address = device.Id;
+                Name = device.Name;
+            }
+
+            public BluetoothDeviceInfo DeviceInfo { get; }
+            public BluetoothDevice Device { get; }
+            public string Address { get; set; }
+            public string Name { get; set; }
+            private int? hashCode;
+
+            public string DeviceType
+            {
+                get
+                {
+                    if (DeviceInfo != null)
+                    {
+                        return "EDR";
+                    }
+
+                    if (Device != null)
+                    {
+                        return "BLE";
+                    }
+
+                    return string.Empty;
+                }
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{0} {1}", Name, DeviceType);
+            }
+
+            public int CompareTo(BluetoothItem bluetoothItem)
+            {
+                if (bluetoothItem == null)
+                {
+                    return 0;
+                }
+
+                int result = string.Compare(Address, bluetoothItem.Address, StringComparison.Ordinal);
+                if (result != 0)
+                {
+                    return result;
+                }
+
+                result = string.Compare(DeviceType, bluetoothItem.DeviceType, StringComparison.Ordinal);
+                if (result != 0)
+                {
+                    return result;
+                }
+
+                return 0;
+            }
+
+            public override bool Equals(object obj)
+            {
+                BluetoothItem bluetoothItem = obj as BluetoothItem;
+                if ((object)bluetoothItem == null)
+                {
+                    return false;
+                }
+
+                return Equals(bluetoothItem);
+            }
+
+            public bool Equals(BluetoothItem bluetoothItem)
+            {
+                if ((object)bluetoothItem == null)
+                {
+                    return false;
+                }
+
+                return string.Compare(Address, bluetoothItem.Address, StringComparison.Ordinal) == 0 &&
+                       string.Compare(DeviceType, bluetoothItem.DeviceType, StringComparison.Ordinal) == 0;
+            }
+
+            public override int GetHashCode()
+            {
+                // ReSharper disable NonReadonlyMemberInGetHashCode
+                if (!hashCode.HasValue)
+                {
+                    hashCode = ToString().GetHashCode();
+                }
+
+                return hashCode.Value;
+                // ReSharper restore NonReadonlyMemberInGetHashCode
+            }
+
+            public static bool operator ==(BluetoothItem lhs, BluetoothItem rhs)
+            {
+                if ((object)lhs == null || (object)rhs == null)
+                {
+                    return Object.Equals(lhs, rhs);
+                }
+
+                return lhs.Equals(rhs);
+            }
+
+            public static bool operator !=(BluetoothItem lhs, BluetoothItem rhs)
+            {
+                if ((object)lhs == null || (object)rhs == null)
+                {
+                    return !Object.Equals(lhs, rhs);
+                }
+
+                return !(lhs == rhs);
+            }
+        }
+
         public const int FtdiDefaultVid = 0x0403;
         public const int FtdiDefaultPid232R = 0x6001;
         public const int FtdiDefaultPidXSer = 0x6015;
 
         private readonly BluetoothClient _cli;
-        private readonly List<BluetoothDeviceInfo> _deviceList;
+        private readonly List<BluetoothItem> _deviceList;
         private readonly Wifi _wifi;
         private readonly WlanClient _wlanClient;
         private readonly Test _test;
@@ -40,7 +165,8 @@ namespace EdiabasLibConfigTool
         private string _ediabasDirIstad;
         private string _initMessage;
         private volatile bool _launchingSettings;
-        private volatile bool _searching;
+        private volatile bool _searchingBt;
+        private volatile bool _searchingLe;
         private CancellationTokenSource _ctsBt;
         private CancellationTokenSource _ctsLe;
         private volatile bool _vehicleTaskActive;
@@ -119,7 +245,8 @@ namespace EdiabasLibConfigTool
             {
                 sr.Append(string.Format(Resources.Strings.BtInitError, ex.Message));
             }
-            _deviceList = new List<BluetoothDeviceInfo>();
+
+            _deviceList = new List<BluetoothItem>();
             try
             {
                 _wifi = new Wifi();
@@ -692,7 +819,7 @@ namespace EdiabasLibConfigTool
 
         private bool StartDeviceSearch()
         {
-            if (_searching)
+            if (_searchingBt || _searchingLe)
             {
                 return false;
             }
@@ -711,7 +838,7 @@ namespace EdiabasLibConfigTool
                         _detectedVehicles = detectedVehicles;
                     }
 
-                    UpdateDeviceList(Array.Empty<BluetoothDeviceInfo>(), false);
+                    UpdateDeviceList(Array.Empty<BluetoothItem>(), false);
                     UpdateButtonStatus();
                     ShowSearchEndMessage();
                 }));
@@ -735,7 +862,7 @@ namespace EdiabasLibConfigTool
                 _ctsLe = new CancellationTokenSource();
 
                 IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
-                _searching = true;
+                _searchingBt = true;
 
                 Task.Run(async () =>
                 {
@@ -745,7 +872,7 @@ namespace EdiabasLibConfigTool
                         {
                             BeginInvoke((Action)(() =>
                             {
-                                UpdateDeviceList(new[] { device }, false);
+                                UpdateDeviceList(new[] { new BluetoothItem(device) }, false);
                             }));
 
                             if (_ctsBt.IsCancellationRequested)
@@ -754,7 +881,7 @@ namespace EdiabasLibConfigTool
                             }
                         }
 
-                        _searching = false;
+                        _searchingBt = false;
                         UpdateButtonStatus();
 
                         if (_ctsBt.IsCancellationRequested)
@@ -770,7 +897,7 @@ namespace EdiabasLibConfigTool
                     }
                     catch (Exception ex)
                     {
-                        _searching = false;
+                        _searchingBt = false;
                         UpdateButtonStatus();
 
                         string message = ex.Message;
@@ -795,7 +922,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        private void UpdateDeviceList(BluetoothDeviceInfo[] devices, bool completed)
+        private void UpdateDeviceList(BluetoothItem[] devices, bool completed)
         {
             _ignoreSelection = true;
             listViewDevices.BeginUpdate();
@@ -812,11 +939,11 @@ namespace EdiabasLibConfigTool
                 }
                 else
                 {
-                    foreach (BluetoothDeviceInfo device in devices.OrderBy(dev => dev.DeviceAddress.ToString()))
+                    foreach (BluetoothItem device in devices.Order())
                     {
                         for (int i = 0; i < _deviceList.Count; i++)
                         {
-                            if (_deviceList[i].DeviceAddress == device.DeviceAddress)
+                            if (_deviceList[i] == device)
                             {
                                 _deviceList.RemoveAt(i);
                                 i--;
@@ -826,10 +953,10 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                foreach (BluetoothDeviceInfo device in _deviceList.OrderBy(dev => dev.DeviceAddress.ToString()))
+                foreach (BluetoothItem device in _deviceList.Order())
                 {
                     ListViewItem listViewItem =
-                        new ListViewItem(new[] { device.DeviceAddress.ToString(), device.DeviceName })
+                        new ListViewItem(new[] { device.Address, device.Name })
                         {
                             Tag = device
                         };
@@ -999,7 +1126,7 @@ namespace EdiabasLibConfigTool
                 return;
             }
 
-            bool processing = _launchingSettings || _searching || _vehicleTaskActive;
+            bool processing = _launchingSettings || _searchingBt || _searchingLe || _vehicleTaskActive;
             comboBoxLanguage.Enabled = !processing && !_test.ThreadActive;
             buttonSearch.Enabled = !processing && !_test.ThreadActive;
             buttonClose.Enabled = !processing && !_test.ThreadActive;
@@ -1075,7 +1202,7 @@ namespace EdiabasLibConfigTool
 
         public void ShowSearchEndMessage()
         {
-            if (!_searching && !_vehicleTaskActive)
+            if (!_searchingBt && !_searchingLe && !_vehicleTaskActive)
             {
                 CancelDispose();
 
