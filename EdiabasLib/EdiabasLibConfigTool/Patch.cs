@@ -449,7 +449,8 @@ namespace EdiabasLibConfigTool
                 }
                 else if (devInfo != null)
                 {
-                    string portValue = string.Format("BLUETOOTH:{0}#{1}", devInfo.Address, pin);
+                    string btParam = devInfo.Device != null ? EdBluetoothInterface.TypeBle : pin;
+                    string portValue = string.Format("BLUETOOTH:{0}#{1}", devInfo.Address, btParam);
 
                     UpdateConfigNode(settingsNode, @"ObdComPort", portValue);
                     UpdateConfigNode(settingsNode, KeyInterface, interfaceValue);
