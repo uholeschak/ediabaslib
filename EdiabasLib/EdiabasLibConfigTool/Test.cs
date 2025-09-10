@@ -987,43 +987,35 @@ namespace EdiabasLibConfigTool
             }
             try
             {
-                NetworkStream networkStream = _dataStream as NetworkStream;
+                MemoryQueueBufferStream memoryQueueStream = _dataStream as MemoryQueueBufferStream;
+                if (memoryQueueStream == null)
+                {
+                    _dataStream.ReadTimeout = 1000;
+                }
+
                 // header byte
-                _dataStream.ReadTimeout = 1000;
                 for (int i = 0; i < 4; i++)
                 {
                     int data;
                     try
                     {
-                        data = _dataStream.ReadByte();
+                        if (memoryQueueStream != null)
+                        {
+                            data = memoryQueueStream.ReadByteAsync();
+                        }
+                        else
+                        {
+                            data = _dataStream.ReadByte();
+                        }
                     }
                     catch (Exception)
                     {
                         data = -1;
                     }
+
                     if (data < 0)
                     {
-                        if (networkStream != null)
-                        {
-                            while (networkStream.DataAvailable)
-                            {
-                                try
-                                {
-                                    networkStream.ReadByte();
-                                }
-                                catch (Exception)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (_serialPort.IsOpen)
-                            {
-                                _serialPort.DiscardInBuffer();
-                            }
-                        }
+                        PurgeInStream(_dataStream);
                         return 0;
                     }
                     receiveData[i] = (byte)data;
@@ -1031,27 +1023,7 @@ namespace EdiabasLibConfigTool
 
                 if ((receiveData[0] & 0xC0) != 0x80)
                 {   // 0xC0: Broadcast
-                    if (networkStream != null)
-                    {
-                        while (networkStream.DataAvailable)
-                        {
-                            try
-                            {
-                                networkStream.ReadByte();
-                            }
-                            catch (Exception)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (_serialPort.IsOpen)
-                        {
-                            _serialPort.DiscardInBuffer();
-                        }
-                    }
+                    PurgeInStream(_dataStream);
                     return 0;
                 }
 
@@ -1070,7 +1042,14 @@ namespace EdiabasLibConfigTool
                     int data;
                     try
                     {
-                        data = _dataStream.ReadByte();
+                        if (memoryQueueStream != null)
+                        {
+                            data = memoryQueueStream.ReadByteAsync();
+                        }
+                        else
+                        {
+                            data = _dataStream.ReadByte();
+                        }
                     }
                     catch (Exception)
                     {
@@ -1078,27 +1057,7 @@ namespace EdiabasLibConfigTool
                     }
                     if (data < 0)
                     {
-                        if (networkStream != null)
-                        {
-                            while (networkStream.DataAvailable)
-                            {
-                                try
-                                {
-                                    networkStream.ReadByte();
-                                }
-                                catch (Exception)
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (_serialPort.IsOpen)
-                            {
-                                _serialPort.DiscardInBuffer();
-                            }
-                        }
+                        PurgeInStream(_dataStream);
                         return 0;
                     }
                     receiveData[i + 4] = (byte)data;
@@ -1106,27 +1065,7 @@ namespace EdiabasLibConfigTool
 
                 if (CalcChecksumBmwFast(receiveData, recLength) != receiveData[recLength])
                 {
-                    if (networkStream != null)
-                    {
-                        while (networkStream.DataAvailable)
-                        {
-                            try
-                            {
-                                networkStream.ReadByte();
-                            }
-                            catch (Exception)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (_serialPort.IsOpen)
-                        {
-                            _serialPort.DiscardInBuffer();
-                        }
-                    }
+                    PurgeInStream(_dataStream);
                     return 0;
                 }
                 return recLength;
@@ -1135,6 +1074,50 @@ namespace EdiabasLibConfigTool
             {
                 return 0;
             }
+        }
+
+        private bool PurgeInStream(Stream inStream)
+        {
+            if (inStream == null)
+            {
+                return false;
+            }
+
+            NetworkStream networkStream = inStream as NetworkStream;
+            if (_serialPort.IsOpen)
+            {
+                _serialPort.DiscardInBuffer();
+            }
+            else if (networkStream != null)
+            {
+                while (networkStream.DataAvailable)
+                {
+                    try
+                    {
+                        inStream.ReadByte();
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                while (inStream.HasData())
+                {
+                    try
+                    {
+                        inStream.ReadByte();
+                    }
+                    catch (Exception)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return true;
         }
 
         public static byte CalcChecksumBmwFast(byte[] data, int length)
