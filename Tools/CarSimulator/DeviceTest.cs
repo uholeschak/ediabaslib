@@ -1368,7 +1368,14 @@ namespace CarSimulator
                     int data;
                     try
                     {
-                        data = _dataStream.ReadByte();
+                        if (networkStream != null)
+                        {
+                            data = networkStream.ReadByte();
+                        }
+                        else
+                        {
+                            data = _dataStream.ReadByteAsync(null, RecTimeout);
+                        }
                     }
                     catch (Exception ex)
                     {
