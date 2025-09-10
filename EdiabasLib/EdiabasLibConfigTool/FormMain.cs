@@ -909,7 +909,8 @@ namespace EdiabasLibConfigTool
 
                         if (_ctsBt.IsCancellationRequested)
                         {
-                            ShowSearchEndMessage();
+                            UpdateStatusText(Resources.Strings.SearchingFailed);
+                            ShowSearchEndMessage(true);
                             return;
                         }
 
@@ -936,6 +937,8 @@ namespace EdiabasLibConfigTool
                         {
                             UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, message));
                         }
+
+                        ShowSearchEndMessage(true);
                     }
                 });
 
@@ -1232,11 +1235,11 @@ namespace EdiabasLibConfigTool
             UpdateStatusText(string.Empty);
         }
 
-        public void ShowSearchEndMessage(string errorMessage = null)
+        public void ShowSearchEndMessage(bool error = false)
         {
             if (InvokeRequired)
             {
-                BeginInvoke((Action)(() => ShowSearchEndMessage(errorMessage)));
+                BeginInvoke((Action)(() => ShowSearchEndMessage(error)));
                 return;
             }
 
@@ -1249,6 +1252,11 @@ namespace EdiabasLibConfigTool
             }
 
             CancelDispose();
+
+            if (error)
+            {
+                return;
+            }
 
             StringBuilder sb = new StringBuilder();
             if (_removedUsbDevices > 0)
