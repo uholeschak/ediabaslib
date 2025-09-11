@@ -903,6 +903,7 @@ namespace EdiabasLibConfigTool
 
                         if (_ctsLe.IsCancellationRequested)
                         {
+                            UpdateStatusText(Resources.Strings.SearchingFailed);
                             ShowSearchEndMessage(true);
                             return;
                         }
@@ -965,6 +966,8 @@ namespace EdiabasLibConfigTool
                         if (_ctsBt.IsCancellationRequested)
                         {
                             UpdateStatusText(Resources.Strings.SearchingFailed);
+                            ShowSearchEndMessage(true);
+                            return;
                         }
 
                         ShowSearchEndMessage();
