@@ -191,6 +191,12 @@ namespace CarSimulator
             {
                 _deviceList.Clear();
 
+                lock (_searchLock)
+                {
+                    _searchingBt = true;
+                    _searchingLe = true;
+                }
+
                 try
                 {
                     // BLE
@@ -201,11 +207,6 @@ namespace CarSimulator
                     };
 
                     Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(options, _ctsLe.Token);
-                    lock (_searchLock)
-                    {
-                        _searchingLe = true;
-                    }
-
                     scanTask.ContinueWith(t =>
                     {
                         lock (_searchLock)
@@ -250,11 +251,6 @@ namespace CarSimulator
 
                 // EDR
                 IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
-                lock (_searchLock)
-                {
-                    _searchingBt = true;
-                }
-
                 Task.Run(async () =>
                 {
                     try
