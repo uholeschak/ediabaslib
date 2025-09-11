@@ -428,6 +428,7 @@ namespace CarSimulator
             listViewDevices.EndUpdate();
             _ignoreSelection = false;
             UpdateButtonStatus();
+            ResizeHeader();
         }
 
         public BluetoothItem GetSelectedBtDevice()
@@ -438,6 +439,11 @@ namespace CarSimulator
                 devInfo = listViewDevices.SelectedItems[0].Tag as BluetoothItem;
             }
             return devInfo;
+        }
+
+        public void ResizeHeader()
+        {
+            listViewDevices.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
         public void UpdateButtonStatus()
@@ -587,7 +593,7 @@ namespace CarSimulator
 
         private void BluetoothSearch_Shown(object sender, EventArgs e)
         {
-            listViewDevices.AutoResizeColumn(2, ColumnHeaderAutoResizeStyle.HeaderSize);
+            ResizeHeader();
             UpdateButtonStatus();
             PerformSearch();
         }
