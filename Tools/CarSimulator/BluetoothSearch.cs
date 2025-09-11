@@ -191,43 +191,46 @@ namespace CarSimulator
             {
                 _deviceList.Clear();
 
-                // BLE
-                Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(null, _ctsLe.Token);
-                lock (_searchLock)
+                if (Bluetooth.GetAvailabilityAsync().Result)
                 {
-                    _searchingLe = true;
-                }
-
-                scanTask.ContinueWith(t =>
-                {
+                    // BLE
+                    Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(null, _ctsLe.Token);
                     lock (_searchLock)
                     {
-                        _searchingLe = false;
-                    }
-                    UpdateButtonStatus();
-
-                    if (_ctsLe.IsCancellationRequested)
-                    {
-                        ShowSearchEndMessage("Cancelled");
-                        return;
+                        _searchingLe = true;
                     }
 
-                    if (t.IsCompletedSuccessfully)
+                    scanTask.ContinueWith(t =>
                     {
-                        BluetoothDevice[] devices = t.Result.ToArray();
-                        BeginInvoke((Action)(() =>
+                        lock (_searchLock)
                         {
-                            UpdateDeviceList(devices.Select(d => new BluetoothItem(d)).ToArray(), false);
-                            ShowSearchEndMessage();
-                        }));
-                        return;
-                    }
+                            _searchingLe = false;
+                        }
+                        UpdateButtonStatus();
 
-                    if (t.IsFaulted)
-                    {
-                        ShowSearchEndMessage(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message));
-                    }
-                });
+                        if (_ctsLe.IsCancellationRequested)
+                        {
+                            ShowSearchEndMessage("Cancelled");
+                            return;
+                        }
+
+                        if (t.IsCompletedSuccessfully)
+                        {
+                            BluetoothDevice[] devices = t.Result.ToArray();
+                            BeginInvoke((Action)(() =>
+                            {
+                                UpdateDeviceList(devices.Select(d => new BluetoothItem(d)).ToArray(), false);
+                                ShowSearchEndMessage();
+                            }));
+                            return;
+                        }
+
+                        if (t.IsFaulted)
+                        {
+                            ShowSearchEndMessage(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message));
+                        }
+                    });
+                }
 
                 IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
                 lock (_searchLock)
