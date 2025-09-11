@@ -194,7 +194,13 @@ namespace CarSimulator
                 try
                 {
                     // BLE
-                    Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(null, _ctsLe.Token);
+                    RequestDeviceOptions options = new RequestDeviceOptions
+                    {
+                        AcceptAllDevices = true,
+                        Timeout = TimeSpan.FromSeconds(10)
+                    };
+
+                    Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(options, _ctsLe.Token);
                     lock (_searchLock)
                     {
                         _searchingLe = true;
