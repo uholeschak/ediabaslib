@@ -877,52 +877,66 @@ namespace EdiabasLibConfigTool
                 _ctsBt = new CancellationTokenSource();
                 _ctsLe = new CancellationTokenSource();
 
-                // BLE
-                Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(null, _ctsLe.Token);
                 lock (_searchLock)
                 {
+                    _searchingBt = true;
                     _searchingLe = true;
                 }
 
-                scanTask.ContinueWith(t =>
+                try
+                {
+                    // BLE
+                    RequestDeviceOptions options = new RequestDeviceOptions
+                    {
+                        AcceptAllDevices = true,
+                        Timeout = TimeSpan.FromSeconds(10)
+                    };
+
+                    Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(options, _ctsLe.Token);
+                    scanTask.ContinueWith(t =>
+                    {
+                        lock (_searchLock)
+                        {
+                            _searchingLe = false;
+                        }
+                        UpdateButtonStatus();
+
+                        if (_ctsLe.IsCancellationRequested)
+                        {
+                            ShowSearchEndMessage(true);
+                            return;
+                        }
+
+                        if (t.IsCompletedSuccessfully)
+                        {
+                            BluetoothDevice[] devices = t.Result.ToArray();
+                            BeginInvoke((Action)(() =>
+                            {
+                                UpdateDeviceList(devices.Select(d => new BluetoothItem(d)).ToArray(), false);
+                                ShowSearchEndMessage();
+                            }));
+                            return;
+                        }
+
+                        if (t.IsFaulted)
+                        {
+                            UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, t.Exception?.GetBaseException().Message));
+                            ShowSearchEndMessage(true);
+                        }
+                    });
+                }
+                catch (Exception ex)
                 {
                     lock (_searchLock)
                     {
                         _searchingLe = false;
                     }
-                    UpdateButtonStatus();
 
-                    if (_ctsLe.IsCancellationRequested)
-                    {
-                        ShowSearchEndMessage(true);
-                        return;
-                    }
-
-                    if (t.IsCompletedSuccessfully)
-                    {
-                        BluetoothDevice[] devices = t.Result.ToArray();
-                        BeginInvoke((Action)(() =>
-                        {
-                            UpdateDeviceList(devices.Select(d => new BluetoothItem(d)).ToArray(), false);
-                            ShowSearchEndMessage();
-                        }));
-                        return;
-                    }
-
-                    if (t.IsFaulted)
-                    {
-                        UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, t.Exception?.GetBaseException().Message));
-
-                        ShowSearchEndMessage(true);
-                    }
-                });
-
-                IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
-                lock (_searchLock)
-                {
-                    _searchingBt = true;
+                    UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, ex.Message));
+                    ShowSearchEndMessage(true);
                 }
 
+                IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
                 Task.Run(async () =>
                 {
                     try
