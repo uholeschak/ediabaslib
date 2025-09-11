@@ -226,7 +226,8 @@ namespace CarSimulator
                             BluetoothDevice[] devices = t.Result.ToArray();
                             BeginInvoke((Action)(() =>
                             {
-                                UpdateDeviceList(devices.Select(d => new BluetoothItem(d)).ToArray(), false);
+                                BluetoothItem[] items = devices.Select(device => new BluetoothItem(device)).ToArray();
+                                UpdateDeviceList(items, false);
                                 ShowSearchEndMessage();
                             }));
                             return;
