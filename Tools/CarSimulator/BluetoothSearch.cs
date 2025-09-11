@@ -191,7 +191,7 @@ namespace CarSimulator
             {
                 _deviceList.Clear();
 
-                if (Bluetooth.GetAvailabilityAsync().Result)
+                try
                 {
                     // BLE
                     Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(null, _ctsLe.Token);
@@ -231,14 +231,24 @@ namespace CarSimulator
                         }
                     });
                 }
+                catch (Exception ex)
+                {
+                    lock (_searchLock)
+                    {
+                        _searchingLe = false;
+                    }
 
+                    UpdateButtonStatus();
+                    ShowSearchEndMessage(string.Format("Searching failed: {0}", ex.Message));
+                }
+
+                // EDR
                 IAsyncEnumerable<BluetoothDeviceInfo> devices = _cli.DiscoverDevicesAsync(_ctsBt.Token);
                 lock (_searchLock)
                 {
                     _searchingBt = true;
                 }
 
-                // EDR
                 Task.Run(async () =>
                 {
                     try
