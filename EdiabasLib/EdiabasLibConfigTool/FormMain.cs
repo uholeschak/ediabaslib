@@ -921,8 +921,9 @@ namespace EdiabasLibConfigTool
                         if (t.IsFaulted)
                         {
                             UpdateStatusText(string.Format(Resources.Strings.SearchingFailedMessage, t.Exception?.GetBaseException().Message));
-                            ShowSearchEndMessage(true);
                         }
+
+                        ShowSearchEndMessage(true);
                     });
                 }
                 catch (Exception ex)
@@ -964,14 +965,9 @@ namespace EdiabasLibConfigTool
                         if (_ctsBt.IsCancellationRequested)
                         {
                             UpdateStatusText(Resources.Strings.SearchingFailed);
-                            ShowSearchEndMessage(true);
-                            return;
                         }
 
-                        BeginInvoke((Action)(() =>
-                        {
-                            ShowSearchEndMessage();
-                        }));
+                        ShowSearchEndMessage();
                     }
                     catch (Exception ex)
                     {

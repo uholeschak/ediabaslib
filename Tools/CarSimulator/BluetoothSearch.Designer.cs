@@ -75,7 +75,7 @@
             // buttonCancel
             // 
             buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonCancel.Location = new System.Drawing.Point(519, 332);
+            buttonCancel.Location = new System.Drawing.Point(519, 441);
             buttonCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(88, 27);
@@ -87,7 +87,7 @@
             // buttonOk
             // 
             buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            buttonOk.Location = new System.Drawing.Point(423, 332);
+            buttonOk.Location = new System.Drawing.Point(423, 441);
             buttonOk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new System.Drawing.Size(88, 27);
@@ -99,14 +99,16 @@
             // 
             textBoxStatus.Location = new System.Drawing.Point(13, 335);
             textBoxStatus.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            textBoxStatus.Multiline = true;
             textBoxStatus.Name = "textBoxStatus";
             textBoxStatus.ReadOnly = true;
-            textBoxStatus.Size = new System.Drawing.Size(306, 23);
+            textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            textBoxStatus.Size = new System.Drawing.Size(594, 100);
             textBoxStatus.TabIndex = 3;
             // 
             // buttonSearch
             // 
-            buttonSearch.Location = new System.Drawing.Point(327, 332);
+            buttonSearch.Location = new System.Drawing.Point(327, 441);
             buttonSearch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSearch.Name = "buttonSearch";
             buttonSearch.Size = new System.Drawing.Size(88, 27);
@@ -121,7 +123,7 @@
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonCancel;
-            ClientSize = new System.Drawing.Size(620, 371);
+            ClientSize = new System.Drawing.Size(620, 480);
             Controls.Add(buttonSearch);
             Controls.Add(textBoxStatus);
             Controls.Add(buttonOk);

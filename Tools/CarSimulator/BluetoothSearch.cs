@@ -3,6 +3,7 @@ using InTheHand.Net.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -141,7 +142,6 @@ namespace CarSimulator
         private volatile bool _searchingLe;
         private CancellationTokenSource _ctsBt;
         private CancellationTokenSource _ctsLe;
-        private volatile string _errorText;
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
         private bool _autoSelect;
@@ -180,7 +180,6 @@ namespace CarSimulator
             }
 
             UpdateDeviceList(null, true);
-            _errorText = null;
 
             CancelDispose();
 
@@ -217,7 +216,8 @@ namespace CarSimulator
 
                         if (_ctsLe.IsCancellationRequested)
                         {
-                            ShowSearchEndMessage("Cancelled");
+                            UpdateStatusText("Cancelled", true);
+                            ShowSearchEndMessage(true);
                             return;
                         }
 
@@ -230,13 +230,14 @@ namespace CarSimulator
                                 UpdateDeviceList(items, false);
                                 ShowSearchEndMessage();
                             }));
-                            return;
                         }
 
                         if (t.IsFaulted)
                         {
-                            ShowSearchEndMessage(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message));
+                            UpdateStatusText(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message), true);
                         }
+
+                        ShowSearchEndMessage(true);
                     });
                 }
                 catch (Exception ex)
@@ -247,7 +248,8 @@ namespace CarSimulator
                     }
 
                     UpdateButtonStatus();
-                    ShowSearchEndMessage(string.Format("Searching failed: {0}", ex.Message));
+                    UpdateStatusText(string.Format("Searching failed: {0}", ex.Message), true);
+                    ShowSearchEndMessage(true);
                 }
 
                 // EDR
@@ -277,8 +279,7 @@ namespace CarSimulator
 
                         if (_ctsBt.IsCancellationRequested)
                         {
-                            ShowSearchEndMessage("Cancelled");
-                            return;
+                            UpdateStatusText("Cancelled", true);
                         }
 
                         ShowSearchEndMessage();
@@ -291,7 +292,8 @@ namespace CarSimulator
                         }
 
                         UpdateButtonStatus();
-                        ShowSearchEndMessage(string.Format("Searching failed: {0}", ex.Message));
+                        UpdateStatusText(string.Format("Searching failed: {0}", ex.Message), true);
+                        ShowSearchEndMessage(true);
                     }
                 });
 
@@ -307,7 +309,8 @@ namespace CarSimulator
                 }
 
                 UpdateButtonStatus();
-                ShowSearchEndMessage(string.Format("Searching failed: {0}", ex.Message));
+                UpdateStatusText(string.Format("Searching failed: {0}", ex.Message), true);
+                ShowSearchEndMessage(true);
                 return false;
             }
             return true;
@@ -452,18 +455,12 @@ namespace CarSimulator
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
         }
 
-        public void ShowSearchEndMessage(string errorMessage = null)
+        public void ShowSearchEndMessage(bool error = false)
         {
             if (InvokeRequired)
             {
-                BeginInvoke((Action)(() => ShowSearchEndMessage(errorMessage)));
+                BeginInvoke((Action)(() => ShowSearchEndMessage(error)));
                 return;
-            }
-
-            if (!string.IsNullOrEmpty(errorMessage))
-            {
-                UpdateStatusText(errorMessage);
-                _errorText = errorMessage;
             }
 
             lock (_searchLock)
@@ -476,15 +473,12 @@ namespace CarSimulator
 
             CancelDispose();
 
-            if (!string.IsNullOrEmpty(_errorText))
+            if (error)
             {
-                UpdateStatusText(_errorText);
-            }
-            else
-            {
-                UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
+                return;
             }
 
+            UpdateStatusText(listViewDevices.Items.Count > 0 ? "Devices found" : "No devices found");
             if (_autoSelect)
             {
                 DialogResult = DialogResult.OK;
@@ -492,18 +486,37 @@ namespace CarSimulator
             }
         }
 
-        public void UpdateStatusText(string text)
+        public void UpdateStatusText(string text, bool appendText = false)
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateStatusText(text);
+                    UpdateStatusText(text, appendText);
                 }));
                 return;
             }
-            string message = text;
-            textBoxStatus.Text = message;
+
+            StringBuilder sb = new StringBuilder();
+            if (appendText)
+            {
+                string lastText = textBoxStatus.Text;
+                if (!string.IsNullOrEmpty(lastText))
+                {
+                    sb.Append(lastText);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(text))
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append("\r\n");
+                }
+                sb.Append(text);
+            }
+
+            textBoxStatus.Text = sb.ToString();
             textBoxStatus.SelectionStart = textBoxStatus.TextLength;
             textBoxStatus.Update();
             textBoxStatus.ScrollToCaret();
