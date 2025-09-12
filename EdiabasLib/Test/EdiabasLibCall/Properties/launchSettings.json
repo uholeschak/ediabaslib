@@ -19,6 +19,11 @@
       "commandName": "Project",
       "commandLineArgs": "--ifh=\"ENET\" --cfg=\"EnetRemoteHost=auto:all;IfhTrace=2;ApiTrace=1\" -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\"",
       "nativeDebugging": true
+    },
+    "BLE": {
+      "commandName": "Project",
+      "commandLineArgs": "--ifh=\"STD:OBD\" --cfg=\"ObdComPort=BLUETOOTH:009876543210#BLE;EnetRemoteHost=auto:all;IfhTrace=2;ApiTrace=1\" -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\"",
+      "nativeDebugging": true
     }
   }
 }

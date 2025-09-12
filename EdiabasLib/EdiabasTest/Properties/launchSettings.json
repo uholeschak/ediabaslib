@@ -2,11 +2,11 @@
   "profiles": {
     "AbgleichLesen": {
       "commandName": "Project",
-      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ObdComPort=BLUETOOTH:00BA5556F4BC#1234%3bIfhTrace=2\" -s \"C:\\EDIABAS\\Ecu\\D70BX7A0\" -j \"IDENT\" -j \"abgleich_lesen#agr\""
+      "commandLineArgs": "--ifh=\"ENET\" --cfg=\"ObdComPort=BLUETOOTH:00BA5556F4BC#1234;IfhTrace=2\" -s \"C:\\EDIABAS\\Ecu\\D70BX7A0\" -j \"IDENT\" -j \"abgleich_lesen#agr\""
     },
     "CCLesen": {
       "commandName": "Project",
-      "commandLineArgs": "--ifh=\"STD:OBD\" --cfg=\"ObdComPort=BLUETOOTH:009876543210#1234%3bIfhTrace=3\" -s \"C:\\EDIABAS\\Ecu\\C_ASCT\" -j \"IDENT\" -j \"C_C_LESEN#|010100000000000000FF000000060006000F000000FFFFFF00FFFF03\"",
+      "commandLineArgs": "--ifh=\"STD:OBD\" --cfg=\"ObdComPort=BLUETOOTH:009876543210#1234;IfhTrace=3\" -s \"C:\\EDIABAS\\Ecu\\C_ASCT\" -j \"IDENT\" -j \"C_C_LESEN#|010100000000000000FF000000060006000F000000FFFFFF00FFFF03\"",
       "nativeDebugging": true
     }
   }
