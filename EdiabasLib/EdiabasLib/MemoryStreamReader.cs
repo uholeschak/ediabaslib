@@ -35,7 +35,7 @@ namespace EdiabasLib
             try
             {
                 _fs = new FileStream(realPath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.None);
-                _mmFile = MemoryMappedFile.CreateFromFile(_fs, null, 0, MemoryMappedFileAccess.Read, null, HandleInheritability.None, false);
+                _mmFile = MemoryMappedFile.CreateFromFile(_fs, null, 0, MemoryMappedFileAccess.Read, HandleInheritability.None, false);
                 _mmStream = _mmFile.CreateViewStream(0, 0, MemoryMappedFileAccess.Read);
             }
             catch (Exception)
