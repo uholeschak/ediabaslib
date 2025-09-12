@@ -24,6 +24,7 @@ namespace EdiabasTest
 
         static int Main(string[] args)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             string cfgString = null;
             string sgbdFile = null;
             string comPort = null;
