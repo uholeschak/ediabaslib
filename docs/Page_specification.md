@@ -1,5 +1,5 @@
 # Defining pages for _Deep OBD for BMW and VAG_
-Each page (tab) is defined in a single XML (`*.ccpage`) file. A general documentation of all XML tags could be found in the `BmwDeepObd.xsd` file. The documentation will be displayed in the XML editor when the `.xsd` is added as `xs:shema` in the XML file.  
+Each page (tab) is defined in a single XML (`*.ccpage`) file. A general documentation of all XML tags could be found in the `BmwDeepObd.xsd` file. The documentation will be displayed in the XML editor when the `.xsd` is added as a schema instance reference in the XML file.  
 Table of contents:
 * [Simple jobs](#simple-jobs)
 * [Reading errors](#reading-errors)

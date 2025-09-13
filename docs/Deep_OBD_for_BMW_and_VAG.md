@@ -33,8 +33,8 @@ More details could be found here: [Supported adapter types](AdapterTypes.md)
 
 ## First start
 At the first start of the _Deep OBD app_ you will be asked to extract the ECU files. The extracted files are very large and requires approximately 2.5GB on the external SDCard. An internet connection is required for this to check for update information.  
-In the next step a configuration _(*.cccfg file)_ must be created. The easiest way to do so is to use the [configuration generator](#ConfigurationGenerator). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page_specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.  
-Before connecting to the vehicle via Bluetooth a [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) has to be selected (or you will be asked when connecting). It's recommended to pair the adapter in the android Bluetooth menu before using it in the _Deep OBD app_, because this way a connection password could be assigned.
+In the next step a configuration _(*.cccfg file)_ must be created. The easiest way to do so is to use the [configuration generator](Configuration_Generator.md). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page_specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.  
+Before connecting to the vehicle via Bluetooth a [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) has to be selected (or you will be asked when connecting). It's recommended to pair the adapter in the Android Bluetooth menu before using it in the _Deep OBD app_, because this way a connection password could be assigned.
 
 ### Your first configuration
 Follow the next steps to generate your first configuration (BMW):
@@ -56,17 +56,17 @@ You could test reading the value with _Test_ button below.
 
 ## The main menu
 The application has a configuration menu with the following options:
-* _Manufacturer_: Select the car manufacturer with this menu point first. The default is BMW, the other manufacturers are from the VAG group (VW, Audi, Skoda). The VAG mode is still experimental, only for vehicles until 2017-08 and requires a [Bluetooth D-CAN/K-Line adapter](Build Bluetooth D-CAN adapter.md).
-* _Adapter_: With this menu the [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) could be selected.  If the device is not coupled already, searching for new devices is possible. This menu is only enabled if a configuration with _interface_ type _BLUETOOTH_ has been selected.
+* _Manufacturer_: Select the car manufacturer with this menu point first. The default is BMW, the other manufacturers are from the VAG group (VW, Audi, Skoda). The VAG mode is still experimental, only for vehicles until 2017-08 and requires a [Bluetooth D-CAN/K-Line adapter](Build_Bluetooth_D-CAN_adapter.md).
+* _Adapter_: With this menu the [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) could be selected.  If the device is not paired already, searching for new devices is possible. This menu is only enabled if a configuration with _interface_ type _BLUETOOTH_ has been selected.
 * _Adapter configuration_: When using a FTDI USB or Bluetooth (non ELM327) adapter, this menu item opens the adapter configuration page. The following settings are available (depending from adapter type):
 	* _CAN baud rate_: (500kbit/100kbit) or K-Line (CAN off)
 	* _Separation time_: Separation time between CAN telegrams. The default is 0, only change this value if there are communication problems.
 	* _Block size_: Size of CAN telegram blocks. The default is 0, only change this value if there are communication problems.
 	* _Firmware update_: If a new firmware is available for the adapter, the update could be initiated with this button.
-* _ENET IP_: This menu displays the currently manually assigned ENET IP and allows to search for vehicles and edit the IP manually.  
+* _ENET IP_: This menu displays the currently manually assigned ENET IP address and allows to search for vehicles and edit the IP address manually.  
 This could be also used in hotspot mode (Hotspot active and WiFi off) if the ENET network is connected to the Android hotspot.
-* _Adapter IP_: This menu displays the currently manually assigned WiFi adapter IP and allows to edit the IP and port.  
-If the Android device is in hotspot mode (Hotspot active and WiFi off), communication with the adapter is only possible if the IP is assigned manually.  
+* _Adapter IP_: This menu displays the currently manually assigned WiFi adapter IP address and allows to edit the IP address and port.  
+If the Android device is in hotspot mode (Hotspot active and WiFi off), communication with the adapter is only possible if the IP address is assigned manually.  
 This is especially useful for adapters with ESP8266 chip, because they could be configured to connect to the Android hotspot automatically.  
 If the port is omitted in the IP settings, the default port is 23 in hotspot mode (Hotspot active and WiFi off) and if the IP address is 192.168.4.1 (ESP8266). In all other cases the default port is 35000.
 * _Configuration_: This submenu contains configuration selection and editing functions.
@@ -90,7 +90,7 @@ If the port is omitted in the IP settings, the default port is 23 in hotspot mod
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
 	* _Create trace file_: If the checkbox of this menu is active, a _ifh.trc_ file will be created when the application is connected. The trace file will be created in the _Log_ subdirectory.
 	* _Append trace file_: If this checkbox is enabled the trace file is always appended. Otherwise the trace file will be overridden after selection of a new configuration or restart of the application.
-	* _Log data_: This checkbox enables logging of the display data to a log file. Only those lines are logged, that have a _log_tag_ property in the [configuration file](Page_specification.md). The _logfile_ property in the _page_ node has to be specified as well to activate logging. When using the [configuration generator](#ConfigurationGenerator) _log_tag_ is set by default to the job name and _logfile_ to the ECU name. Data will be logged in the _Log_ subdirectory.
+	* _Log data_: This checkbox enables logging of the display data to a log file. Only those lines are logged, that have a _log_tag_ property in the [configuration file](Page_specification.md). The _logfile_ property in the _page_ node has to be specified as well to activate logging. When using the [configuration generator](Configuration_Generator.md) _log_tag_ is set by default to the job name and _logfile_ to the ECU name. Data will be logged in the _Log_ subdirectory.
 * _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
 	* _Send trace file_: Send the trace file from the last vehicle communication.
 	* _Open trace file_: Open the trace file from the last vehicle communication with an external app that supports zip files.

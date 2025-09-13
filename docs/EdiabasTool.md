@@ -13,6 +13,7 @@ All jobs are displayed that match the filter words in the job or the result name
 	* _Append trace file_: If this checkbox is enabled the trace file is always appended. Otherwise the trace file will be overridden after selection of a new _SGBD_ file.
 	* _Log data_: The job result data will be logged to file with the same base name as the .prg file and the extension .txt. The log file will be created in the `LogEdiabasTool` subdirectory.
 * _Online help_: Displays this help page.
+
 When selecting `.grp` or `.prg` files the search field in the caption could be used to filter files. This speeds up file selection.  
 Only those files will be displayed that contain the text of the search field.
 
