@@ -1,10 +1,10 @@
 ## Project Description
 
-.NET BMW and VAG Ediabas interpreter library
+.NET BMW and VAG Ediabas interpreter library.
 
 # Features
 This .NET assembly is small and fast replacement for the BMW and VAG Ediabas toolset.  
-It's running on all platforms that support .NET framework (Windows, Windows CE, Mono).  
+It runs on all platforms that support .NET framework (Windows, Windows CE, Mono).  
 The code is speed optimized, but improved for multiple calls of the same job.  
 This means the first job call is slow and the next are faster.
 
@@ -14,22 +14,23 @@ Now a variant that can be used with cars from the VAG group has been released, b
 
 For testing, there is a console application [EdiabasTest](docs/EdiabasTest_parameters.md) with command line parameters.
 
-**More informations could be found in the [Documentation](docs/Documentation.md) section.**  
+**More information can be found in the [Documentation](docs/Documentation.md) section.**  
+
 **These are expert tools, I have no time for detailed support. Please search the internet for _EDIABAS_, _Tool32_, _INPA_, _ISTA-D_, _ISTA-P_ e.g. or use forums to get help.**
 
-If you want to support the development you could donate a small amount.  
+If you want to support the development you can donate a small amount.  
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ)
 
 # Binary Compatibility
-A binary compatible api32.dll wrapper is existing, it's possible to replace the existing EDIABAS api32.dll with the EdiabasLib api32.dll and the applications are still working (The dll requires [.NET Framework 4.8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) or higher, [.NET 8.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and [VS C++ Runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [VS C++ Runtime 32 bit](https://aka.ms/vs/17/release/vc_redist.x86.exe) to be installed)!  
-This has been tested with Tool32, INPA and Rheingold. Since EdiabasNet is ignoring the EDIABAS.INI file you have to put your own EdiabasLib.config in the api32.dll directory.
+A binary compatible api32.dll wrapper is included, it's possible to replace the existing EDIABAS api32.dll with the EdiabasLib api32.dll and the applications still work (The dll requires [.NET Framework 4.8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) or higher, [.NET 8.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and [VS C++ Runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [VS C++ Runtime 32 bit](https://aka.ms/vs/17/release/vc_redist.x86.exe) to be installed)!  
+This has been tested with Tool32, INPA and Rheingold. Since EdiabasNet ignores the EDIABAS.INI file you have to put your own EdiabasLib.config file in the api32.dll directory.
 A compatible apiNET32.dll is also available, so it should be easy to port existing .NET applications that use the original EDIABAS library.
 
 # Android
-Now there is also a library existing that is working with Mono for Android. For communication, either FTDI USB or Bluetooth Serial Port Protocol (SSP) protocol could be used.
+Now there is also included a library that works with Mono for Android. For communication, either FTDI USB or Bluetooth Serial Port Protocol (SSP) protocol can be used.
 
 ### Deep OBD
-Additionally an Android application _[Deep OBD](docs/Deep_OBD_for_BMW_and_VAG.md)_ is existing, that is configurable via [XML](docs/Page_specification.md). Generation of XML code could be simplified with the integrated configuration generator.  
+Additionally an Android application _[Deep OBD](docs/Deep_OBD_for_BMW_and_VAG.md)_ exists, that is configurable via [XML](docs/Page_specification.md). Generation of XML code can be simplified with the integrated configuration generator.  
 Download app from Google Play: [https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd](https://play.google.com/store/apps/details?id=de.holeschak.bmw_deep_obd)  
 [![updatestar](https://www.updatestar.com/img/rating_4stars.png)](https://deep-obd.updatestar.com)  
 Rated by updatestar.com: [https://deep-obd.updatestar.com](https://deep-obd.updatestar.com)  
@@ -39,7 +40,7 @@ _Deep OBD for BMW and VAG_ supports several OBD II adapters:
 * ELM327 Bluetooth and WiFi adapters based on PIC18F2480 microcontroller (no MCP2515 chip). Recommended ELM327 versions are 1.4b, 1.5 and origin 2.1. (D-CAN protocol only)
 * ELM327 Bluetooth adapters based on PIC18F25K80 microcontroller with [Replacement firmware for ELM327](docs/Replacement_firmware_for_ELM327.md) D-CAN and K-Line (all protocols, including VAG KWP2000, KWP1281 and TP2.0). Programmed adapters are now available.
 
-More details could be found here: [Supported adapter types](docs/AdapterTypes.md)
+More details can be found here: [Supported adapter types](docs/AdapterTypes.md)
 
 ![Bluetooth adapter top](docs/README_BluetoothAdapterTopSmall.png)
 * Custom [Bluetooth D-CAN/K-Line adapter](docs/Build_Bluetooth_D-CAN_adapter.md) (BMW-FAST protocol over D-CAN and K-Line)
