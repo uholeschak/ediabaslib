@@ -86,7 +86,7 @@ If the port is omitted in the IP settings, the default port is 23 in hotspot mod
 * _Configuration generator_: Simple [XML configuration files](Page_specification.md) could be generated automatically using the informations obtained from the vehicle. This menu opens the [configuration generator](Configuration_Generator.md) which allows to create new or modify existing XML files by simply selecting the ECU and job informations.
 * _Ediabas tool_: This is a port of the tool32.exe windows application. Selecting the menu will open the [Ediabas tool](EdiabasTool.md) page.
 * _Coding_: This submenu allow to access the [BMW coding](BMW_Coding.md) online service.
-* _Extract ECU files_: The EUC files are very large, so they have to be extracted at first app start. With this menu item files could be extracted again. An internet connection is required to check for update information.
+* _Extract ECU files_: The ECU files are very large, so they have to be extracted at first app start. With this menu item files could be extracted again. An internet connection is required to check for update information.
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
 	* _Create trace file_: If the checkbox of this menu is active, a _ifh.trc_ file will be created when the application is connected. The trace file will be created in the _Log_ subdirectory.
 	* _Append trace file_: If this checkbox is enabled the trace file is always appended. Otherwise the trace file will be overridden after selection of a new configuration or restart of the application.
