@@ -12,9 +12,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <NoWarn>1701;1702;NU1702</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+    <NoWarn>1701;1702;NU1702</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.43" GeneratePathProperty="true">
