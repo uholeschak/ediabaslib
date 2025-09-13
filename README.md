@@ -3,7 +3,7 @@
 .NET BMW and VAG Ediabas interpreter library
 
 # Features
-This .NET assembly is small and fast replacement for the BWM and VAG Ediabas toolset.  
+This .NET assembly is small and fast replacement for the BMW and VAG Ediabas toolset.  
 It's running on all platforms that support .NET framework (Windows, Windows CE, Mono).  
 The code is speed optimized, but improved for multiple calls of the same job.  
 This means the first job call is slow and the next are faster.
