@@ -7,10 +7,10 @@ This page allows to change some global app settings.
   * _Dark_: Dark theme is selected.
   * _Light_: Light theme is selected.
 * _Translator_ options:
-  * _Yandex.Translate_: Use Yandex.Translate for translation (Api Key required).
-  * _IBM Watson_: Use IBM Watson for translation (Api Key required).
+  * _Yandex.Translate_: Use Yandex.Translate for translation (API Key required).
+  * _IBM Watson_: Use IBM Watson for translation (API Key required).
 * _Translator keep alive_ options:
-  * _Keep IBM Watson Api Key alive once a day_: The IBM Watson Api Key expires after one month if unused. The auto login keeps the key alive.
+  * _Keep IBM Watson API Key alive once a day_: The IBM Watson API Key expires after one month if unused. The auto login keeps the key alive.
 * _Title bar_ options:
   * _Auto hide title bar on main page_: Auto hide title bar 3 seconds after connecting. You could hide / show the title bar with a swipe gesture at the top edge of the app or display the bar with a long click and release on the main page.
   * _Suppress unused title bars_: Title bars without special functions are hidden by default. You could hide / show the title bar with a swipe gesture at the top edge of the app.
@@ -77,14 +77,14 @@ This page allows to change some global app settings.
   * _Delete file or directory from app_: Delete a file or directory from the app folder.
 * _Storage media_ options:
   * _Default or storage location_: If the default storage media for the ECU files is not appropriate, a different media could be selected here.  
-  The application storage directory on the media will be always fixed to _de.holeschak.bmw_deep_obd_.
+  The application storage directory on the media will be always fixed to `de.holeschak.bmw_deep_obd`.
 * _Debug_ options:
   * _Collect debug information for trace files_: More data is collected while reading vehicle information to improve trace files.
   * _Bluetooth HCI snoop log file_: Current Bluetooth HCI snoop log file name. You could enable HCI snoop logging with the button _Configure snoop log_.
 * _Settings_ options:
   * _Default settings_: Restore the default settings for the global settings page.
-  * _Export settings_: Export settings to _DeepObbSettings.xml_ in the selected storage media folder subdirectory _Exports_. You could select if you also want to export private data.  
+  * _Export settings_: Export settings to `DeepObbSettings.xml` in the selected storage media folder subdirectory `Exports`. You could select if you also want to export private data.  
   You should not pass on private data files to other people.
-  * _Import settings_: Import settings from _DeepObbSettings.xml_ in the selected storage media folder subdirectory _Exports_.
+  * _Import settings_: Import settings from `DeepObbSettings.xml` in the selected storage media folder subdirectory `Exports`.
 
 ![Global settings](GlobalSettings_AppGlobalSettingsSmall.png)

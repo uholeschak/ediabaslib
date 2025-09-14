@@ -7,7 +7,7 @@ For testing without a vehicle, the interface type _Simulation_ has to be selecte
 If no [simulation files](EdiabasLib.simulation_file.md) are present in the selected directory, the checkbox is unset and the communication is disabled.
 * _Adapter_: With this menu the [Bluetooth adapter](Deep_OBD_for_BMW_and_VAG.md#supported-adapters) could be selected. If the device is not coupled already, searching for new devices is possible. This menu is only enabled if interface type _BLUETOOTH_ has been selected.
 * _Adapter configuration_: When using a FTDI USB, Bluetooth or WiFi (with the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md)) adapter this menu allows the adapter configuration. Depending on the adapter type only the CAN baudrate/K-Line interface or more specific parameters could be specified.
-* _Add errors page_: When this checkbox is selected (which is the default) and _Errors_ page will be generated when writing the configuration file. This page will read the error memory of all detected ECUs.
+* _Add errors page_: When this checkbox is selected (which is the default) an _Errors_ page will be generated when writing the configuration file. This page will read the error memory of all detected ECUs.
 * _Detect motorbikes_: Activates special detection telegrams for motorbikes. This is not enabled by default and slows down normal car detection.
 * _Configuration_: With this submenu you could select if the configuration is created automatically or manually:
 	* _Automatic_: The ECU configuration will be read from the vehicle with the _Read_ button. This option is only available in BMW mode.
@@ -24,8 +24,9 @@ If no [simulation files](EdiabasLib.simulation_file.md) are present in the selec
 	* _Translation configuration_: For automatic translation with various translation providers. For translation a (free) API Key is required. This menu assists to select and configure a translation provider.
 	* _Clear translation cache_: The translations are stored together with the ECU configuration files. To enforce a new translation this menu resets the translation cache.
 * _Online help_: Displays this help page.
+
 The vehicle type is detected automatically when pressing the _Read_ button (_automatic mode_).  
-If the _manual mode_ is used this button is named _Edit_ and opens a submenu that allows to add or remove ECU files. Therefore you have to identify the required .GRP or .PRG files on the info page of each ECU in INPA. In VAG mode it's possible to search for ECUs, but this process is very time consuming.
+If the _manual mode_ is used this button is named _Edit_ and opens a submenu that allows to add or remove ECU files. Therefore you have to identify the required `.GRP` or `.PRG` files on the info page of each ECU in INPA. In VAG mode it's possible to search for ECUs, but this process is very time consuming.
 
 ![Generator menu](Configuration_Generator_AppGeneratorMenuSmall.png)
 
