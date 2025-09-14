@@ -40,7 +40,7 @@ The standard ICOM configuration page could be found at: `http://XXXX:58000` (no 
 * `AdsComPort`: COM port name for ADS interface (if not specified ObdComPort will be used).
 * `AppendTrace`: 0=Override old log file, 1=Always append the logfiles.
 * `LockTrace`: 0=Allow changing `IfhTrace` level from the application, 1=Prevent changing the `IfhTrace` level from the application.
-* `CompatMode`: EDIABAS 7.6.0 has incomplatible changes in mathematical function. This prevents using old ECU files. Setting this value to 1 (what is the default), keeps the behaviour of EDIABAS 7.3.0.
+* `CompatMode`: EDIABAS 7.6.0 has incompatible changes in mathematical function. This prevents using old ECU files. Setting this value to 1 (what is the default), keeps the behaviour of EDIABAS 7.3.0.
 * `EnetAddRecTimeout`: Additional ENET standard additional receive timeout, default is 1000
 * `EnetAddRecTimeoutIcom`: Additional ENET ICOM additional receive timeout, default is 2000
 * `EnetIcomAllocate`: 1=Allocate ICOM before connecting, default is 0. This parameter is only used, if the diagnostic port has been set.
