@@ -24,7 +24,7 @@ set COMPORT=%3
 )
 
 if "%1"=="lib" (
-set "EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\net48\EdiabasTest.exe"
+set "EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\artifacts\bin\EdiabasTest\debug\EdiabasTest.exe"
 set "OUTFILE=output_lib.log"
 rem set ADD_ARGS=-p !COMPORT! -o "!OUTFILE!" -a -c
 set ADD_ARGS=--ifh="!IFH!" -o "!OUTFILE!" -a -c
