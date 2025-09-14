@@ -7,10 +7,10 @@ This page allows to change some global app settings.
   * _Dark_: Dark theme is selected.
   * _Light_: Light theme is selected.
 * _Translator_ options:
-  * _Yandex.Translate_: Use Yandex.Translate for translation (Api Key required).
-  * _IBM Watson_: Use IBM Watson for translation (Api Key required).
+  * _Yandex.Translate_: Use Yandex.Translate for translation (API Key required).
+  * _IBM Watson_: Use IBM Watson for translation (API Key required).
 * _Translator keep alive_ options:
-  * _Keep IBM Watson Api Key alive once a day_: The IBM Watson Api Key expires after one month if unused. The auto login keeps the key alive.
+  * _Keep IBM Watson API Key alive once a day_: The IBM Watson API Key expires after one month if unused. The auto login keeps the key alive.
 * _Title bar_ options:
   * _Auto hide title bar on main page_: Auto hide title bar 3 seconds after connecting. You could hide / show the title bar with a swipe gesture at the top edge of the app or display the bar with a long click and release on the main page.
   * _Suppress unused title bars_: Title bars without special functions are hidden by default. You could hide / show the title bar with a swipe gesture at the top edge of the app.
