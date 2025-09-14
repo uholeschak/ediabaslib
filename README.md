@@ -8,7 +8,7 @@ It runs on all platforms that support .NET framework (Windows, Windows CE, Mono)
 The code is speed optimized, but improved for multiple calls of the same job.  
 This means the first job call is slow and the next are faster.
 
-The library can directly read and interpret .GRP and .PRG files, the internal interface is similar to the EDIABAS API or the Tool32.exe GUI interface.  
+The library can directly read and interpret `.GRP` and `.PRG` files, the internal interface is similar to the EDIABAS API or the Tool32.exe GUI interface.  
 At the moment the D-CAN, BMW-FAST, KWP-2000*, KWP-2000 BMW, DS2, DS1, Concept 3, ISO9141 (Concept 2) and Concept 1 concepts are supported. If you send me EDIABAS log files from other concepts I could add them if possible.  
 Now a variant that can be used with cars from the VAG group has been released, but it requires an adapter with the [Replacement firmware for ELM327](docs/Replacement_firmware_for_ELM327.md). In this mode, the protocols KWP2000, KWP1281 and TP2.0 are supported (cars until 4.2012).  
 
@@ -22,9 +22,9 @@ If you want to support the development you can donate a small amount.
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ)
 
 # Binary Compatibility
-A binary compatible api32.dll wrapper is included, it's possible to replace the existing EDIABAS api32.dll with the EdiabasLib api32.dll and the applications still work (The dll requires [.NET Framework 4.8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) or higher, [.NET 8.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and [VS C++ Runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [VS C++ Runtime 32 bit](https://aka.ms/vs/17/release/vc_redist.x86.exe) to be installed)!  
-This has been tested with Tool32, INPA and Rheingold. Since EdiabasNet ignores the EDIABAS.INI file you have to put your own EdiabasLib.config file in the api32.dll directory.
-A compatible apiNET32.dll is also available, so it should be easy to port existing .NET applications that use the original EDIABAS library.
+A binary compatible `api32.dll` wrapper is included, it's possible to replace the existing EDIABAS `api32.dll` with the EdiabasLib `api32.dll` and the applications still work! (The DLL requires [.NET Framework 4.8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) or higher, [.NET 8.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and [VS C++ Runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [VS C++ Runtime 32 bit](https://aka.ms/vs/17/release/vc_redist.x86.exe) to be installed)  
+This has been tested with Tool32, INPA and Rheingold. Since EdiabasNet ignores the `EDIABAS.INI` file you have to put your own `EdiabasLib.config` file in the `api32.dll` directory.
+A compatible `apiNET32.dll` is also available, so it should be easy to port existing .NET applications that use the original EDIABAS library.
 
 # Android
 Now there is also included a library that works with Mono for Android. For communication, either FTDI USB or Bluetooth Serial Port Protocol (SSP) protocol can be used.

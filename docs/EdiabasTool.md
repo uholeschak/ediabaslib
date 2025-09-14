@@ -11,7 +11,7 @@ All jobs are displayed that match the filter words in the job or the result name
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
 	* _Create trace file_: If the checkbox of this menu is active, a `ifh.trc` file will be created when executing jobs. The trace file will be created in the `LogEdiabasTools` subdirectory.
 	* _Append trace file_: If this checkbox is enabled the trace file is always appended. Otherwise the trace file will be overridden after selection of a new _SGBD_ file.
-	* _Log data_: The job result data will be logged to file with the same base name as the .prg file and the extension .txt. The log file will be created in the `LogEdiabasTool` subdirectory.
+	* _Log data_: The job result data will be logged to file with the same base name as the `.prg` file and the extension `.txt`. The log file will be created in the `LogEdiabasTool` subdirectory.
 * _Online help_: Displays this help page.
 
 When selecting `.grp` or `.prg` files the search field in the caption could be used to filter files. This speeds up file selection.  
@@ -23,7 +23,7 @@ In the next step a job must be selected in the _Jobs_ drop down. In this case we
 Optionally the result values could be filtered by selecting check boxes in the _Results_ drop down (if implemented in the ECU file). If no results are selected, all results will be generated.  
 Additionally job arguments could be added to the _Arguments_ field.  
 If the BMW mode is selected and the current job is `STATUS_LESEN`, `STATUS_BLOCK_LESEN`, `STEUERN`, `STEUERN_IO` or `STEUERN_ROUTINE` and the ECU file contains a table `SG_FUNKTIONEN`, the argument assistant is available.  
-The argument assistant is similar to the one in tool32, more information could be found in the tool32 manual `Anleitung_STATUS_STEUERN_UDS.pdf` (In the EDIABAS folder `Doku\English` and `Doku\deutsch`).  
+The argument assistant is similar to the one in tool32, more information could be found in the tool32 manual `Anleitung_STATUS_STEUERN_UDS.pdf` (In the EDIABAS folders `Doku\English` and `Doku\deutsch`).  
 In contrast to the original tool32 there is no limit in the number of arguments.  
 The _Informations_ area displays informations for the last selected field above (job, arguments or results).  
 With a click on the _DISCONNECTED_ button the job will be executed once or continuously, if the check box _Continuous_ has been checked. The job results are displayed in the _Informations_ area.  

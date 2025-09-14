@@ -26,7 +26,7 @@ If no [simulation files](EdiabasLib.simulation_file.md) are present in the selec
 * _Online help_: Displays this help page.
 
 The vehicle type is detected automatically when pressing the _Read_ button (_automatic mode_).  
-If the _manual mode_ is used this button is named _Edit_ and opens a submenu that allows to add or remove ECU files. Therefore you have to identify the required .GRP or .PRG files on the info page of each ECU in INPA. In VAG mode it's possible to search for ECUs, but this process is very time consuming.
+If the _manual mode_ is used this button is named _Edit_ and opens a submenu that allows to add or remove ECU files. Therefore you have to identify the required `.GRP` or `.PRG` files on the info page of each ECU in INPA. In VAG mode it's possible to search for ECUs, but this process is very time consuming.
 
 ![Generator menu](Configuration_Generator_AppGeneratorMenuSmall.png)
 

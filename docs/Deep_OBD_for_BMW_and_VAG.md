@@ -33,7 +33,7 @@ More details could be found here: [Supported adapter types](AdapterTypes.md)
 
 ## First start
 At the first start of the _Deep OBD app_ you will be asked to extract the ECU files. The extracted files are very large and requires approximately 2.5GB on the external SDCard. An internet connection is required for this to check for update information.  
-In the next step a configuration _(*.cccfg file)_ must be created. The easiest way to do so is to use the [configuration generator](Configuration_Generator.md). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page_specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.  
+In the next step a configuration (`*.cccfg` file) must be created. The easiest way to do so is to use the [configuration generator](Configuration_Generator.md). For complex scenarios you could manually create configuration files (see [HowTo create Deep OBD pages](Page_specification.md)). After loading and compiling the configuration file, all tabs included in the file will be visible on the main page.  
 Before connecting to the vehicle via Bluetooth a [Bluetooth adapter](Build_Bluetooth_D-CAN_adapter.md) has to be selected (or you will be asked when connecting). It's recommended to pair the adapter in the Android Bluetooth menu before using it in the _Deep OBD app_, because this way a connection password could be assigned.
 
 ### Your first configuration
@@ -70,17 +70,17 @@ If the Android device is in hotspot mode (Hotspot active and WiFi off), communic
 This is especially useful for adapters with ESP8266 chip, because they could be configured to connect to the Android hotspot automatically.  
 If the port is omitted in the IP settings, the default port is 23 in hotspot mode (Hotspot active and WiFi off) and if the IP address is 192.168.4.1 (ESP8266). In all other cases the default port is 35000.
 * _Configuration_: This submenu contains configuration selection and editing functions.
-	* _Select_: This menu allows the selection of the [configuration file](Page_specification.md) _(*.cccfg file)_. When using the [configuration generator](Configuration_Generator.md) the configuration is selected automatically. After selection the file will be compiled.
+	* _Select_: This menu allows the selection of the [configuration file](Page_specification.md) (`*.cccfg` file). When using the [configuration generator](Configuration_Generator.md) the configuration is selected automatically. After selection the file will be compiled.
 	* _Recent configurations_: In this submenu the last 10 recently used configurations are accessible.
-	* _Edit_: Edit the current configuration main _(*.cccfg file)_. A suitable XML editor has to be be installed.
-	* _Edit pages list_: Edit the current pages list _(*.cccpages file)_.
-	* _Edit current page_: Submenu to edit the currently active page _(*.cccpage file)_.
+	* _Edit_: Edit the current configuration main (`*.cccfg` file). A suitable XML editor has to be be installed.
+	* _Edit pages list_: Edit the current pages list (`*.cccpages` file).
+	* _Edit current page_: Submenu to edit the currently active page (`*.cccpage` file).
 		* _Edit page_: Edit the currently active page in the XML editor.
 		* _Font size_: Change the page font size directly without XML editor. This is only possible if the _fontsize_ tag is present in the XML file.
 		* _Gauges landscape_: Change the number of gauges in landscape mode directly without XML editor. This is only possible if the _gauges-landscape_ tag is present in the XML file.
 		* _Gauges portrait_: Change the number of gauges in portrait mode directly without XML editor. This is only possible if the _gauges-portrait_ tag is present in the XML file.
 		* _Result display order_: Change order of the displayed results directly without XML editor. This is only possible if the _display-order_ tag is present for all _display_ nodes the XML file.
-	* _Edit other file_: Allows to select and edit any configuration _(*.cccpage file)_.
+	* _Edit other file_: Allows to select and edit any configuration (`*.cccpage` file).
 	* _Reset XML editor_: Resets the last selected XML editor. A new editor has be to be selected again when editing files.
 	* _Close_: Close the current configuration.
 * _Configuration generator_: Simple [XML configuration files](Page_specification.md) could be generated automatically using the informations obtained from the vehicle. This menu opens the [configuration generator](Configuration_Generator.md) which allows to create new or modify existing XML files by simply selecting the ECU and job informations.
@@ -88,9 +88,9 @@ If the port is omitted in the IP settings, the default port is 23 in hotspot mod
 * _Coding_: This submenu allow to access the [BMW coding](BMW_Coding.md) online service.
 * _Extract ECU files_: The ECU files are very large, so they have to be extracted at first app start. With this menu item files could be extracted again. An internet connection is required to check for update information.
 * _Data logging_: Selecting this menu entry will open a sub menu with multiple data logging options:
-	* _Create trace file_: If the checkbox of this menu is active, a _ifh.trc_ file will be created when the application is connected. The trace file will be created in the _Log_ subdirectory.
+	* _Create trace file_: If the checkbox of this menu is active, a `ifh.trc` file will be created when the application is connected. The trace file will be created in the `Log` subdirectory.
 	* _Append trace file_: If this checkbox is enabled the trace file is always appended. Otherwise the trace file will be overridden after selection of a new configuration or restart of the application.
-	* _Log data_: This checkbox enables logging of the display data to a log file. Only those lines are logged, that have a _log_tag_ property in the [configuration file](Page_specification.md). The _logfile_ property in the _page_ node has to be specified as well to activate logging. When using the [configuration generator](Configuration_Generator.md) _log_tag_ is set by default to the job name and _logfile_ to the ECU name. Data will be logged in the _Log_ subdirectory.
+	* _Log data_: This checkbox enables logging of the display data to a log file. Only those lines are logged, that have a _log_tag_ property in the [configuration file](Page_specification.md). The _logfile_ property in the _page_ node has to be specified as well to activate logging. When using the [configuration generator](Configuration_Generator.md) _log_tag_ is set by default to the job name and _logfile_ to the ECU name. Data will be logged in the `Log` subdirectory.
 * _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
 	* _Send trace file_: Send the trace file from the last vehicle communication.
 	* _Open trace file_: Open the trace file from the last vehicle communication with an external app that supports zip files.
@@ -121,12 +121,12 @@ https://translate.googleapis.com/translate_a/single?client=gtx&dt=t
 
 ## Log and trace files location
 The location of the log and trace files depends from the Android version.  
-Beginning with Android KitKat (4.4) writing to the external SdCard is not possible any more. For older Android versions log and trace files are stored in a subdirectory relative to _de.holeschak.bmw_deep_obd_ on the external SDCard. For KitKat and above the data could be found in the directory _Android\data\de.holeschak.bmw_deep_obd\files_ of the external SDCard.  
-The standard log files are stored in the subdirectory _Log_, whereas the [Ediabas tool](EdiabasTool.md) uses the subdirectory _LogEdiabasTool_ and the [configuration generator](Configuration_Generator.md) the subdirectory _LogConfigTool_.  
-The sending of the trace files fails, the backup trace files are stored in the subdirectory _TraceBackup_.
+Beginning with Android KitKat (4.4) writing to the external SdCard is not possible any more. For older Android versions log and trace files are stored in a subdirectory relative to `de.holeschak.bmw_deep_obd` on the external SDCard. For KitKat and above the data could be found in the directory `Android\data\de.holeschak.bmw_deep_obd\files` of the external SDCard.  
+The standard log files are stored in the subdirectory `Log`, whereas the [Ediabas tool](EdiabasTool.md) uses the subdirectory `LogEdiabasTool` and the [configuration generator](Configuration_Generator.md) the subdirectory `LogConfigTool`.  
+The sending of the trace files fails, the backup trace files are stored in the subdirectory `TraceBackup`.
 
 ## Background image
-It's possible to replace the background image. Simply store a custom _Background.jpg_ file in the directory _de.holeschak.bmw_deep_obd\files\Images_ (The _Images_ subdirectory has to be created first).
+It's possible to replace the background image. Simply store a custom `Background.jpg` file in the directory `de.holeschak.bmw_deep_obd\files\Images` (The `Images` subdirectory has to be created first).
 
 ## Android Auto
 Android Auto is now available in the release version of the _Deep OBD app_.
