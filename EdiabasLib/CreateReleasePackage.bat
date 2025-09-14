@@ -32,9 +32,9 @@ echo PIC firmware binaries
 echo Copying EdiabasTest
 forfiles /P !EDIABASTESTSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!EDIABASTESTPATH!" || EXIT /b 1
-xcopy /y /q "!EDIABASTESTSRCPATH!EdiabasTest.exe" "!EDIABASTESTPATH!" > nul || EXIT /b 1
+xcopy /y /q "!EDIABASTESTSRCPATH!*.exe" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 xcopy /y /q "!EDIABASTESTSRCPATH!*.dll" "!EDIABASTESTPATH!" > nul || EXIT /b 1
-xcopy /y /q "!EDIABASTESTSRCPATH!*.config" "!EDIABASTESTPATH!" > nul || EXIT /b 1
+xcopy /y /e /q "!EDIABASTESTSRCPATH!\*.*" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 
 echo Copying Tools
 forfiles /P !TOOLSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
