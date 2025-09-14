@@ -3,11 +3,12 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{9AB90187-7B38-4A26-B06E-1F8B5C998F86}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
     <AssemblyTitle>EdiabasLibCall</AssemblyTitle>
     <Product>EdiabasLibCall</Product>
     <Copyright>Copyright ©  2014</Copyright>
     <Nullable>disable</Nullable>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;NU1702</NoWarn>
