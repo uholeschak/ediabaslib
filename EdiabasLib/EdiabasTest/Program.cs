@@ -358,7 +358,7 @@ namespace EdiabasTest
                         }
                         else if (resultData.OpData is double)
                         {
-                            sbResult.Append(string.Format(Culture, "R: {0}", (Double)resultData.OpData));
+                            sbResult.Append(string.Format(Culture, "R: {0:G8}", (Double)resultData.OpData));
                         }
                         else if (resultData.OpData is long)
                         {
