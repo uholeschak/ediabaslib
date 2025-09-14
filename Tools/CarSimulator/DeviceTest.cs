@@ -632,7 +632,7 @@ namespace CarSimulator
                     {
                         for (; ; )
                         {
-                            _form.UpdateTestStatusText("Connecting ...");
+                            _form.UpdateTestStatusText(string.Format("Connecting to: '{0}' ...", devInfo));
                             if (!ConnectBtDevice(devInfo))
                             {
                                 _form.UpdateTestStatusText("Connection failed", true);
