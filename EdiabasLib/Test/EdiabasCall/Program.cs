@@ -57,6 +57,9 @@ namespace EdiabasCall
 
         static int Main(string[] args)
         {
+#if NET
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
             _is64Bit = Environment.Is64BitProcess;
 
             string cfgString = null;
