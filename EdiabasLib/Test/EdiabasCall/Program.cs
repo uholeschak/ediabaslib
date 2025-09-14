@@ -484,7 +484,7 @@ namespace EdiabasCall
                                             {
                                                 if (API.apiResultReal(out double resultDouble, resultName, set))
                                                 {
-                                                    sbResult.Append(string.Format(Culture, "R: {0:G8}", resultDouble));
+                                                    sbResult.Append(string.Format(Culture, "R: {0:0.000000}", resultDouble));
                                                 }
                                                 break;
                                             }
