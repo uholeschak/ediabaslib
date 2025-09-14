@@ -34,7 +34,7 @@ set COVERAGE=1
 goto argsok
 )
 if "%1"=="apilib" (
-set "EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\net48\EdiabasLibCall.exe"
+set "EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\artifacts\bin\EdiabasLibCall\debug\EdiabasLibCall.exe"
 set OUTFILE=output_apilib.log
 set ADD_ARGS=-o !OUTFILE! --ifh="!IFH!" --device="_" -a -c
 rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
