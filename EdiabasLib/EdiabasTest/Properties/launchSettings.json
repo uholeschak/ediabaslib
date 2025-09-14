@@ -13,6 +13,11 @@
       "commandName": "Project",
       "commandLineArgs": "--ifh=\"STD:OBD\" --cfg=\"ObdComPort=BLUETOOTH:C90DDA24FBF5#BLE;EnetRemoteHost=auto:all;IfhTrace=2;ApiTrace=1\" -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\" -j \"STATUS_REGENERATION_CSF\"",
       "nativeDebugging": true
+    },
+    "EDR": {
+      "commandName": "Project",
+      "commandLineArgs": "--ifh=\"STD:OBD\" --cfg=\"ObdComPort=BLUETOOTH:009876543210#1234;EnetRemoteHost=auto:all;IfhTrace=2;ApiTrace=1\" -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\" -j \"STATUS_REGENERATION_CSF\"",
+      "nativeDebugging": true
     }
   }
 }
