@@ -161,7 +161,7 @@
   <string name="compile_start">Compiling user code</string>
   <string name="compile_missing_assemblies">Missing system assemblies:</string>
   <string name="compile_crash">The app crashed during compilation of the user code.\nThere is a known compiler bug:\nDon\'t use complex initialized structures or arrays in the code,\ninitialize them in the constructor.</string>
-  <string name="compile_compat_id_warn">The configuration has been created with a different BWM database, some entries may be incompatible.\nTo correct this, open every ECU, that is marked with * in the page title, in the configuration generator, check the entries and store the configuration again.</string>
+  <string name="compile_compat_id_warn">The configuration has been created with a different BMW database, some entries may be incompatible.\nTo correct this, open every ECU, that is marked with * in the page title, in the configuration generator, check the entries and store the configuration again.</string>
 
   <!-- Download -->
   <string formatted="false" name="download_manual">If you have problems with the automatic download of the ECU files you could download them from&lt;br&gt;&lt;a href=\'{0}\'&gt;{0}&lt;/a&gt;&lt;br&gt;and install them manually.&lt;br&gt;Do you want to use manual installation?</string>

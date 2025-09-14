@@ -6,7 +6,7 @@ There is now a replacement firmware available for ELM327L based Bluetooth and Wi
 * Contains a bootstrap loader that allows firmware update without opening the device.
 * Firmware updates are possible with the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_, if the replacement firmware [has already been programmed](#programming-of-the-processor).
 * Reduced power consumption due to use of sleep mode.
-* Flashing of a modified [ELM327 firmware](#elm327-v15-firmware) is possible.
+* Flashing of a modified [ELM327 firmware](#elm327-firmware) is possible.
 * Two firmware versions are available:
   * Unmodified Bluetooth and WiFi adapter: Baud rate 38400.
   * Modified Bluetooth adapter (recommended) with replaced [OpenSource Bluetooth firmware](Custom_Bluetooth_firmware.md): Baud rate 115200 and alterable Bluetooth pin (16 digits) and name (31 chars).
@@ -35,7 +35,7 @@ To perform the factory reset you have to open the adapter and connect the unused
 If the firmware updated failed, use [firmware update failure](#firmware-update-failure) procedure.
 
 ## Use the adapter with INPA, Tool32 or ISTA-D
-You could use the Bluetooth adapter on a windows (10 or higher) PC (with INPA, Tool32 or ISTA-D as a replacement for an OBD or ADS adapter. The following steps are required to establish the connection:
+You could use the Bluetooth adapter on a windows (10 or higher) PC (with INPA, Tool32 or ISTA-D) as a replacement for an OBD or ADS adapter. The following steps are required to establish the connection:
 * Install [.NET Framework 4.8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) or higher, [.NET 8.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0),  
 and [VS C++ Runtime 64 bit](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [VS C++ Runtime 32 bit](https://aka.ms/vs/17/release/vc_redist.x86.exe).
 * For Windows 11: Allow location access for all apps in the system settings to enable WiFi access. ![Location Settings](Location_Settings_Win11.png)
@@ -68,7 +68,7 @@ There are two firmware files, the complete file (`CanAdapterElm.X.production.uni
 The latest firmware version will be always included in the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_.  
 Also you can get compiled firmware files from the [latest binary](https://github.com/uholeschak/ediabaslib/releases/latest) package.
 
-## ELM327 V2.3 firmware
+## ELM327 firmware
 There is improved ELM327 V2.3 compatible firmware available. It switches adapter to a mode compatible with most ELM327 software. 
 Flashing can be done over bluetooth with the _[Deep OBD app](Deep_OBD_for_BMW_and_VAG.md)_ (at the moment this is only available for Bluetooth adapters).
 Afterwards you can flash the Deep OBD replacement firmware over Bluetooth firmware again.  

@@ -12,7 +12,7 @@
 	* [ELM WiFi ESP8266ex firmware](Replace_Elm327_Wifi_Mini_Firmware.md)
 * [ENET WiFi Adapter](ENET_WiFi_Adapter.md)
 * [Build a Bluetooth D-CAN/K-Line adapter](Build_Bluetooth_D-CAN_adapter.md)
-* [Properties of the EdiabasLib.config file](EdiabasLib.config_file.md)
+* [Properties of the `EdiabasLib.config` file](EdiabasLib.config_file.md)
 * [EdiabasLib simulation file](EdiabasLib.simulation_file.md)
 * [Command line parameters for LogfileConverter](LogfileConverter_parameters.md)
 * [Command line parameters for EdiabasTest](EdiabasTest_parameters.md)

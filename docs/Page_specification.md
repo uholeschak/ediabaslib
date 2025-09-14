@@ -1,5 +1,5 @@
 # Defining pages for _Deep OBD for BMW and VAG_
-Each page (tab) is defined in a single XML (`*.ccpage`) file. A general documentation of all XML tags could be found in the `BmwDeepObd.xsd` file. The documentation will be displayed in the XML editor when the `.xsd` is added as `xs:shema` in the XML file.  
+Each page (tab) is defined in a single XML (`*.ccpage`) file. A general documentation of all XML tags could be found in the `BmwDeepObd.xsd` file. The documentation will be displayed in the XML editor when the `.xsd` is added as a schema instance reference in the XML file.  
 Table of contents:
 * [Simple jobs](#simple-jobs)
 * [Reading errors](#reading-errors)
@@ -723,7 +723,7 @@ Now all `*.page` or `*.pages` can be added to a configuration file `*.cccfg`. Th
 * `ecu_path`: Directory of the ecu files (`*.grp` and `*.prg`) relative to the configuration file.
 * `log_path`: Directory for the data logging files. Logging could be enabled by adding a `log_tag` property to the `display` node of the `*.page` file. If the directory is not existing it will be created.
 * `append_log`: Setting this property to true will always append the log file.
-* `manufacturer`: Select the car manufacturer with this property. Possible values are `BWM`, `VW`, `Audi`, `Seat` and `Skoda`.
+* `manufacturer`: Select the car manufacturer with this property. Possible values are `BMW`, `VW`, `Audi`, `Seat` and `Skoda`.
 * `interface`: Specify the communication interface in this property. Possible values are `BLUETOOTH` , `ENET`, `ELMWIFI`, `DEEPOBDWIFI` and `FTDI`. When using a manufacturer from the VAG group, only `BLUETOOTH` and `DEEPOBDWIFI` is allowed.
 ``` xml
 <?xml version="1.0" encoding="utf-8"?>
