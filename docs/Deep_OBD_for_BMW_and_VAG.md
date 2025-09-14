@@ -92,7 +92,7 @@ If the port is omitted in the IP settings, the default port is 23 in hotspot mod
 	* _Append trace file_: If this checkbox is enabled the trace file is always appended. Otherwise the trace file will be overridden after selection of a new configuration or restart of the application.
 	* _Log data_: This checkbox enables logging of the display data to a log file. Only those lines are logged, that have a _log_tag_ property in the [configuration file](Page_specification.md). The _logfile_ property in the _page_ node has to be specified as well to activate logging. When using the [configuration generator](Configuration_Generator.md) _log_tag_ is set by default to the job name and _logfile_ to the ECU name. Data will be logged in the `Log` subdirectory.
 * _Trace file_: Selecting this menu entry will open a sub menu with options for trace file handling.
-	* _Send trace file_: Send the trace file from the last vehicle communication.
+	* _Send trace file_: Send the trace file from the last vehicle communication to the author of Ediabaslib/Deep OBD for further study and bugfixing/enhacements. Important: Data sent is compressed and anonymous.
 	* _Open trace file_: Open the trace file from the last vehicle communication with an external app that supports zip files.
 	* _Resend trace file_: Retry sending of the last trace file. Only visible if sending has failed.
 	* _Open last trace file_: Open the last trace file with an external app that supports zip files, if sending has failed previously.
@@ -123,7 +123,7 @@ https://translate.googleapis.com/translate_a/single?client=gtx&dt=t
 The location of the log and trace files depends from the Android version.  
 Beginning with Android KitKat (4.4) writing to the external SdCard is not possible any more. For older Android versions log and trace files are stored in a subdirectory relative to `de.holeschak.bmw_deep_obd` on the external SDCard. For KitKat and above the data could be found in the directory `Android\data\de.holeschak.bmw_deep_obd\files` of the external SDCard.  
 The standard log files are stored in the subdirectory `Log`, whereas the [Ediabas tool](EdiabasTool.md) uses the subdirectory `LogEdiabasTool` and the [configuration generator](Configuration_Generator.md) the subdirectory `LogConfigTool`.  
-The sending of the trace files fails, the backup trace files are stored in the subdirectory `TraceBackup`.
+If sending of the trace files fails, the backup trace files are stored in the subdirectory `TraceBackup`.
 
 ## Background image
 It's possible to replace the background image. Simply store a custom `Background.jpg` file in the directory `de.holeschak.bmw_deep_obd\files\Images` (The `Images` subdirectory has to be created first).
