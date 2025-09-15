@@ -3,35 +3,23 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{9AB90187-7B38-4A26-B06E-1F8B5C998F86}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyTitle>EdiabasLibCall</AssemblyTitle>
     <Product>EdiabasLibCall</Product>
     <Copyright>Copyright ©  2014</Copyright>
-    <Nullable>disable</Nullable>
-    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;NU1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;NU1702</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.43" GeneratePathProperty="true">
-      <ExcludeAssets>all</ExcludeAssets>
-    </PackageReference>
-    <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.2" GeneratePathProperty="true">
-      <ExcludeAssets>all</ExcludeAssets>
-    </PackageReference>
-    <PackageReference Include="NDesk.Options.Core" Version="1.2.8" />
-    <PackageReference Include="Ranges" Version="1.0.5" />
-    <PackageReference Include="System.IO.MemoryMappedFiles" Version="4.3.0" />
-    <PackageReference Include="System.IO.Ports" Version="9.0.9" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\EdiabasCall\Program.cs" Link="Program.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\apiNET\apiNET464.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="NDesk.Options.Core" Version="1.2.8" />
+    <PackageReference Include="Ranges" Version="1.0.5" />
   </ItemGroup>
 </Project>
