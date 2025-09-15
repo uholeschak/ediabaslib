@@ -24,6 +24,8 @@ namespace CarSimulator
         public const string Api32DllName = @"api32.dll";
         public const string ResponseFileStd = "g31_coding.txt";
         public const string ResponseFileE61 = "e61.txt";
+        public const string RegKeyFtdiBus = @"SYSTEM\CurrentControlSet\Enum\FTDIBUS";
+        public const string RegValueFtdiLatencyTimer = @"LatencyTimer";
         public const int DefaultSslPort = 3496;
         private const string EcuDirName = "Ecu";
         private const string ResponseDirName = "Response";
@@ -316,6 +318,80 @@ namespace CarSimulator
                 return false;
             }
             return true;
+        }
+
+        public static List<string> GetFtdiRegKeys(string comPort)
+        {
+            if (string.IsNullOrEmpty(comPort))
+            {
+                return null;
+            }
+
+            List<string> regKeys = new List<string>();
+            try
+            {
+                using (RegistryKey ftdiBusKey = Registry.LocalMachine.OpenSubKey(RegKeyFtdiBus, false))
+                {
+                    if (ftdiBusKey != null)
+                    {
+                        foreach (string subKeyName in ftdiBusKey.GetSubKeyNames())
+                        {
+                            string paramKeyName = subKeyName + @"\0000\Device Parameters";
+                            using (RegistryKey paramKey = ftdiBusKey.OpenSubKey(paramKeyName))
+                            {
+                                if (paramKey != null)
+                                {
+                                    string portName = paramKey.GetValue("PortName") as string;
+                                    if (string.Compare(portName, comPort, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        regKeys.Add(RegKeyFtdiBus + @"\" + paramKeyName);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            return regKeys;
+        }
+
+        public static List<int> GetFtdiLatencyTimer(string comPort)
+        {
+            List<string> regKeys = GetFtdiRegKeys(comPort);
+            if (regKeys == null)
+            {
+                return null;
+            }
+
+            List<int> latencyTimers = new List<int>();
+            foreach (string regKey in regKeys)
+            {
+                try
+                {
+                    using (RegistryKey ftdiKey = Registry.LocalMachine.OpenSubKey(regKey, false))
+                    {
+                        if (ftdiKey != null)
+                        {
+                            object latencyTimer = ftdiKey.GetValue(RegValueFtdiLatencyTimer);
+                            if (latencyTimer is int latencyValue)
+                            {
+                                latencyTimers.Add(latencyValue);
+                            }
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return latencyTimers;
         }
 
         private void UpdatePorts()
@@ -792,6 +868,21 @@ namespace CarSimulator
             groupBoxConcepts.Enabled = !active;
         }
 
+        private bool CheckPortLatencyTime(string comPort)
+        {
+            List<int> regLatencyTimers = GetFtdiLatencyTimer(comPort);
+            if (regLatencyTimers != null)
+            {
+                int maxRegLatencyTimer = regLatencyTimers.Max();
+                if (maxRegLatencyTimer > 1)
+                {
+                    MessageBox.Show(string.Format("Port latency time too large: {0}ms", maxRegLatencyTimer));
+                    return false;
+                }
+            }
+            return true;
+        }
+
         private void UpdateCommThreadConfig()
         {
             _commThread.Moving = checkBoxMoving.Checked;
@@ -812,7 +903,12 @@ namespace CarSimulator
                     return;
                 }
 
-                string selectedPort = listPorts.SelectedItem.ToString();
+                string selectedPort = listPorts.SelectedItem?.ToString();
+                if (!CheckPortLatencyTime(selectedPort))
+                {
+                    return;
+                }
+
                 CommThread.ConceptType conceptType = CommThread.ConceptType.ConceptBwmFast;
                 if (radioButtonKwp2000Bmw.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000Bmw;
                 if (radioButtonKwp2000S.Checked) conceptType = CommThread.ConceptType.ConceptKwp2000S;
@@ -1011,7 +1107,12 @@ namespace CarSimulator
 
         private void buttonDeviceTest_Click(object sender, EventArgs e)
         {
-            string selectedPort = listPorts.SelectedItem.ToString();
+            string selectedPort = listPorts.SelectedItem?.ToString();
+            if (!CheckPortLatencyTime(selectedPort))
+            {
+                return;
+            }
+
             string btDeviceName = checkBoxBtNameStd.Checked ? DeviceTest.DefaultBtNameStd : DeviceTest.DefaultBtName;
             _deviceTest.MaxErrorVoltage = checkBoxHighTestVoltage.Checked ? 147 : 0;
             _deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort, btDeviceName);
