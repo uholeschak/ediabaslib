@@ -13,8 +13,7 @@
       <EmbeddedResource Include="$(PkgInTheHand_Net_Bluetooth)\lib\net462\InTheHand.Net.Bluetooth.dll">
         <Link>InTheHand.Net.Bluetooth.dll</Link>
       </EmbeddedResource>
-      <EmbeddedResource Include="$(PkgInTheHand_BluetoothLE)\lib\netstandard2.0\InTheHand.BluetoothLE.dll">
-        <Link>InTheHand.BluetoothLE.dll</Link>
+      <EmbeddedResource Include="$(ProjectDir)\Binaries\net462\*.dll">
       </EmbeddedResource>
       <EmbeddedResource Include="$(PkgBouncyCastle_Cryptography)\lib\net461\BouncyCastle.Cryptography.dll">
         <Link>BouncyCastle.Cryptography.dll</Link>
