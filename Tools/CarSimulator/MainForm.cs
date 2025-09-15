@@ -871,7 +871,7 @@ namespace CarSimulator
         private bool CheckPortLatencyTime(string comPort)
         {
             List<int> regLatencyTimers = GetFtdiLatencyTimer(comPort);
-            if (regLatencyTimers != null)
+            if (regLatencyTimers != null && regLatencyTimers.Count > 0)
             {
                 int maxRegLatencyTimer = regLatencyTimers.Max();
                 if (maxRegLatencyTimer > 1)
