@@ -175,10 +175,23 @@ namespace Ediabas
         {
             get
             {
+#if NET
+                string location = Assembly.GetExecutingAssembly().Location;
+                if (string.IsNullOrEmpty(location) || !File.Exists(location))
+                {
+                    return null;
+                }
+                return Path.GetDirectoryName(location);
+#else
                 string codeBase = Assembly.GetExecutingAssembly().CodeBase;
                 UriBuilder uri = new UriBuilder(codeBase);
                 string path = Uri.UnescapeDataString(uri.Path);
+                if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                {
+                    return null;
+                }
                 return Path.GetDirectoryName(path);
+#endif
             }
         }
 
