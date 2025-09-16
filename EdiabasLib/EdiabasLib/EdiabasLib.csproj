@@ -20,6 +20,9 @@
     <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.2" GeneratePathProperty="true" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" GeneratePathProperty="true" />
   </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.4948" GeneratePathProperty="true" />
+  </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows10.0.26100.0' ">
       <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.43" GeneratePathProperty="true" />
       <PackageReference Include="System.IO.Ports" Version="9.0.9" />
