@@ -7,7 +7,7 @@ set "DATESTR=%date:~6,4%%date:~3,2%%date:~0,2%"
 echo !DATESTR!
 set "PACKAGEPATH=!BATPATH!Package\"
 set "EDIABASTESTPATH=!PACKAGEPATH!EdiabasTest\"
-set "EDIABASTESTSRCPATH=!BATPATH!EdiabasTest\artifacts\bin\EdiabasTest\release\"
+set "EDIABASTESTSRCPATH=!BATPATH!EdiabasTest\bin\Release\net48\"
 set "TOOLPATH=!PACKAGEPATH!EdiabasLibConfigTool\"
 set "TOOLSRCPATH=!BATPATH!EdiabasLibConfigTool\artifacts\bin\EdiabasLibConfigTool\release\"
 set "S29CERTGENPATH=!PACKAGEPATH!S29CertGenerator\"
@@ -32,9 +32,9 @@ echo PIC firmware binaries
 echo Copying EdiabasTest
 forfiles /P !EDIABASTESTSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
 mkdir "!EDIABASTESTPATH!" || EXIT /b 1
-xcopy /y /q "!EDIABASTESTSRCPATH!*.exe" "!EDIABASTESTPATH!" > nul || EXIT /b 1
+xcopy /y /q "!EDIABASTESTSRCPATH!EdiabasTest.exe" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 xcopy /y /q "!EDIABASTESTSRCPATH!*.dll" "!EDIABASTESTPATH!" > nul || EXIT /b 1
-xcopy /y /e /q "!EDIABASTESTSRCPATH!\*.*" "!EDIABASTESTPATH!" > nul || EXIT /b 1
+xcopy /y /q "!EDIABASTESTSRCPATH!*.config" "!EDIABASTESTPATH!" > nul || EXIT /b 1
 
 echo Copying Tools
 forfiles /P !TOOLSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
