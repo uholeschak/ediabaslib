@@ -8,10 +8,9 @@
     <Message Text="NuGet path InTheHand.Net.Bluetooth: $(PkgInTheHand_Net_Bluetooth)" Importance="High" />
     <Message Text="NuGet path BouncyCastle.Cryptography: $(PkgBouncyCastle_Cryptography)" Importance="High" />
     <Message Text="NuGet path Newtonsoft.Json: $(PkgNewtonsoft_Json)" Importance="High" />
-    <Message Text="NuGet path Microsoft.Windows.SDK.Contracts: $(PkgMicrosoft_Windows_SDK_Contracts)" Importance="High" />
     <ItemGroup>
       <Reference Include="$(ProjectDir)\Binaries\net462\InTheHand.BluetoothLEMod.dll"/>
-      <EmbeddedResource Include="$(ProjectDir)\Binaries\net462\*.dll"/>
+      <EmbeddedResource Include="$(ProjectDir)\Binaries\net462\InTheHand.BluetoothLEMod.dll"/>
       <EmbeddedResource Include="$(PkgInTheHand_Net_Bluetooth)\lib\net462\*.dll" />
       <EmbeddedResource Include="$(PkgBouncyCastle_Cryptography)\lib\net461\*.dll" />
       <EmbeddedResource Include="$(PkgNewtonsoft_Json)\lib\net45\*.dll" />
