@@ -17,10 +17,6 @@
     <AssemblyOriginatorKeyFile>ApiInternal.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
 </Project>
