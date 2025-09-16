@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}</ProjectGuid>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFrameworks>net8.0-windows10.0.26100.0;net48</TargetFrameworks>
     <AssemblyTitle>EdiabasLib interface wrapper</AssemblyTitle>
     <Product>EdiabasLib</Product>
     <Description>EdiabasLib interface wrapper</Description>
@@ -15,6 +15,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>ApiInternal.snk</AssemblyOriginatorKeyFile>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj" />
