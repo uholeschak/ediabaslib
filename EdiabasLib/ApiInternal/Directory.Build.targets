@@ -1,10 +1,8 @@
 ﻿<Project>
   <Target Name="EmbedProjectOutputs" BeforeTargets="PrepareForBuild">
-    <Message Text="Embedding EdiabasLib" Importance="High" />
+    <Message Text="Embedding EdiabasLib $(TargetFramework)" Importance="High" />
     <ItemGroup>
-        <EmbeddedResource Include="$(ProjectDir)\..\EdiabasLib\bin\$(Configuration)\net48\EdiabasLib.dll">
-          <Link>EdiabasLib.dll</Link>
-        </EmbeddedResource>
+        <EmbeddedResource Include="$(ProjectDir)\..\EdiabasLib\bin\$(Configuration)\$(TargetFramework)\EdiabasLib.dll" />
     </ItemGroup>
   </Target>
 </Project>
