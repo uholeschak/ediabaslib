@@ -9,18 +9,14 @@
     <Message Text="NuGet path BouncyCastle.Cryptography: $(PkgBouncyCastle_Cryptography)" Importance="High" />
     <Message Text="NuGet path Newtonsoft.Json: $(PkgNewtonsoft_Json)" Importance="High" />
     <Message Text="NuGet path Microsoft.Windows.SDK.Contracts: $(PkgMicrosoft_Windows_SDK_Contracts)" Importance="High" />
+    <Message Text="NuGet path Microsoft.Net.Http: $(PkgMicrosoft_Net_Http)" Importance="High" />
     <ItemGroup>
-      <Reference Include="$(ProjectDir)\Binaries\net462\*.dll"/>
+      <Reference Include="$(ProjectDir)\Binaries\net462\InTheHand.BluetoothLEMod.dll"/>
       <EmbeddedResource Include="$(ProjectDir)\Binaries\net462\*.dll"/>
-      <EmbeddedResource Include="$(PkgInTheHand_Net_Bluetooth)\lib\net462\InTheHand.Net.Bluetooth.dll">
-        <Link>InTheHand.Net.Bluetooth.dll</Link>
-      </EmbeddedResource>
-      <EmbeddedResource Include="$(PkgBouncyCastle_Cryptography)\lib\net461\BouncyCastle.Cryptography.dll">
-        <Link>BouncyCastle.Cryptography.dll</Link>
-      </EmbeddedResource>
-      <EmbeddedResource Include="$(PkgNewtonsoft_Json)\lib\net45\Newtonsoft.Json.dll">
-        <Link>Newtonsoft.Json.dll</Link>
-      </EmbeddedResource>
+      <EmbeddedResource Include="$(PkgMicrosoft_Net_Http)\lib\net45\*.dll"/>
+      <EmbeddedResource Include="$(PkgInTheHand_Net_Bluetooth)\lib\net462\*.dll" />
+      <EmbeddedResource Include="$(PkgBouncyCastle_Cryptography)\lib\net461\*.dll" />
+      <EmbeddedResource Include="$(PkgNewtonsoft_Json)\lib\net45\*.dll" />
     </ItemGroup>
   </Target>
 </Project>
