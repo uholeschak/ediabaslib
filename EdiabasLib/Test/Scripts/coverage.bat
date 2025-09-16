@@ -24,7 +24,7 @@ set COMPORT=%3
 )
 
 if "%1"=="lib" (
-set "EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\artifacts\bin\EdiabasTest\debug\EdiabasTest.exe"
+set "EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\net48\EdiabasTest.exe"
 set "OUTFILE=output_lib.log"
 rem set ADD_ARGS=-p !COMPORT! -o "!OUTFILE!" -a -c
 set ADD_ARGS=--ifh="!IFH!" -o "!OUTFILE!" -a -c
@@ -34,7 +34,7 @@ set COVERAGE=1
 goto argsok
 )
 if "%1"=="apilib" (
-set "EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\artifacts\bin\EdiabasLibCall\debug\EdiabasLibCall.exe"
+set "EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\net48\EdiabasLibCall.exe"
 set OUTFILE=output_apilib.log
 set ADD_ARGS=-o !OUTFILE! --ifh="!IFH!" --device="_" -a -c
 rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
