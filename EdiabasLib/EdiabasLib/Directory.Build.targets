@@ -2,18 +2,27 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);BLUETOOTH</DefineConstants>
   </PropertyGroup>
-  <Target Name="EmbedNugetPackages" BeforeTargets="PrepareForBuild" Condition=" '$(TargetFramework)' == 'net48' ">
-    <Message Text="Embedding NuGet packages" Importance="High" />
+  <Target Name="EmbedNugetPackages" BeforeTargets="PrepareForBuild">
+    <Message Text="Embedding NuGet packages $(TargetFramework)" Importance="High" />
     <Message Text="@(PackageReference ->'packageid:%(identity) version = &quot;%(version)&quot;', '%0d%0a')" Importance="High" />
-    <Message Text="NuGet path InTheHand.Net.Bluetooth: $(PkgInTheHand_Net_Bluetooth)" Importance="High" />
-    <Message Text="NuGet path BouncyCastle.Cryptography: $(PkgBouncyCastle_Cryptography)" Importance="High" />
-    <Message Text="NuGet path Newtonsoft.Json: $(PkgNewtonsoft_Json)" Importance="High" />
-    <ItemGroup>
+    <Message Text="NuGet path InTheHand.Net.Bluetooth $(TargetFramework): $(PkgInTheHand_Net_Bluetooth)" Importance="High" />
+    <Message Text="NuGet path InTheHand.BluetoothLE $(TargetFramework): $(PkgInTheHand_BluetoothLE)" Importance="High" />
+    <Message Text="NuGet path BouncyCastle.Cryptography $(TargetFramework): $(PkgBouncyCastle_Cryptography)" Importance="High" />
+    <Message Text="NuGet path Newtonsoft.Json $(TargetFramework): $(PkgNewtonsoft_Json)" Importance="High" />
+    <Message Text="NuGet path System.IO.Ports $(TargetFramework): $(PkgSystem_IO_Ports)" Importance="High" />
+      <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
       <Reference Include="$(ProjectDir)\Binaries\net462\InTheHand.BluetoothLEMod.dll"/>
       <EmbeddedResource Include="$(ProjectDir)\Binaries\net462\InTheHand.BluetoothLEMod.dll"/>
       <EmbeddedResource Include="$(PkgInTheHand_Net_Bluetooth)\lib\net462\*.dll" />
       <EmbeddedResource Include="$(PkgBouncyCastle_Cryptography)\lib\net461\*.dll" />
       <EmbeddedResource Include="$(PkgNewtonsoft_Json)\lib\net45\*.dll" />
+    </ItemGroup>
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows10.0.26100.0' ">
+        <EmbeddedResource Include="$(PkgInTheHand_Net_Bluetooth)\lib\net8.0-windows10.0.19041\*.dll" />
+        <EmbeddedResource Include="$(PkgInTheHand_BluetoothLE)\lib\net8.0-windows10.0.19041\*.dll" />
+        <EmbeddedResource Include="$(PkgBouncyCastle_Cryptography)\lib\net6.0\*.dll" />
+        <EmbeddedResource Include="$(PkgNewtonsoft_Json)\lib\net6.0\*.dll" />
+        <EmbeddedResource Include="$(PkgSystem_IO_Ports)\lib\net8.0\*.dll" />
     </ItemGroup>
   </Target>
 </Project>
