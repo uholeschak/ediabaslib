@@ -9,12 +9,6 @@
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <ApplicationIcon>AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>1701;1702;NU1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>1701;1702;NU1702</NoWarn>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\EdiabasLib\BmwFileReader\SgFunctions.cs">
       <Link>SgFunctions.cs</Link>

@@ -64,10 +64,10 @@ namespace CarSimulator
             set => _enableBle = value;
         }
 
-        [SupportedOSPlatform("windows")]
         public MainForm()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
             InitializeComponent();
 
