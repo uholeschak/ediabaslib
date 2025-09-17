@@ -235,6 +235,8 @@ namespace EdiabasLibConfigTool
             }
             comboBoxLanguage.SelectedIndex = selIndex;
 
+            checkBoxEnableBle.Checked = _enableBle;
+
             listViewDevices.Columns[0].AutoResize(ColumnHeaderAutoResizeStyle.None);
             textBoxBluetoothPin.Text = @"1234";
             textBoxWifiPassword.Text = @"deepobdbmw";
