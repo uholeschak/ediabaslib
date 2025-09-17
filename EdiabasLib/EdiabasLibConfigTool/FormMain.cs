@@ -198,6 +198,8 @@ namespace EdiabasLibConfigTool
 
         public FormMain()
         {
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+
             InitializeComponent();
 
             try
