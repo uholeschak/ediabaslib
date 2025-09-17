@@ -152,15 +152,22 @@ namespace CarSimulator
                 _ediabas = null;
             }
 
-            Properties.Settings.Default.RootFolder = _rootFolder;
-            Properties.Settings.Default.EcuFolder = _ecuFolder;
-            Properties.Settings.Default.ServerDoIP = _serverUseDoIP;
-            Properties.Settings.Default.ServerCertFile = _serverCertFile;
-            Properties.Settings.Default.ServerCertPwd = _serverCertPwd;
-            Properties.Settings.Default.ServerSslPort = _serverSslPort;
-            Properties.Settings.Default.ServerUseBcSsl = _serverUseBcSsl;
-            Properties.Settings.Default.EnableBLE = _enableBle;
-            Properties.Settings.Default.Save();
+            try
+            {
+                Properties.Settings.Default.RootFolder = _rootFolder;
+                Properties.Settings.Default.EcuFolder = _ecuFolder;
+                Properties.Settings.Default.ServerDoIP = _serverUseDoIP;
+                Properties.Settings.Default.ServerCertFile = _serverCertFile;
+                Properties.Settings.Default.ServerCertPwd = _serverCertPwd;
+                Properties.Settings.Default.ServerSslPort = _serverSslPort;
+                Properties.Settings.Default.ServerUseBcSsl = _serverUseBcSsl;
+                Properties.Settings.Default.EnableBLE = _enableBle;
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         private void GetDirectories()
