@@ -183,6 +183,9 @@
   <data name="labelLanguage.Text" xml:space="preserve">
     <value>Sprache:</value>
   </data>
+  <data name="checkBoxEnableBle.Text" xml:space="preserve">
+    <value>Bluetooth LE aktivieren (langsam)</value>
+  </data>
   <data name="$this.Text" xml:space="preserve">
     <value>EdiabasLib Konfigurations-Tool</value>
   </data>

@@ -183,6 +183,9 @@
   <data name="labelLanguage.Text" xml:space="preserve">
     <value>Langage :</value>
   </data>
+  <data name="checkBoxEnableBle.Text" xml:space="preserve">
+    <value>Activer Bluetooth LE (lent)</value>
+  </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Outils de configuration EdiabasLib</value>
   </data>

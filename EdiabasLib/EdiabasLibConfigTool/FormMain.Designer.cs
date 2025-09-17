@@ -56,6 +56,7 @@
             comboBoxLanguage = new System.Windows.Forms.ComboBox();
             labelLanguage = new System.Windows.Forms.Label();
             richTextBoxStatus = new System.Windows.Forms.RichTextBox();
+            checkBoxEnableBle = new System.Windows.Forms.CheckBox();
             groupBoxEdiabas.SuspendLayout();
             groupBoxVasPc.SuspendLayout();
             groupBoxIstad.SuspendLayout();
@@ -245,11 +246,19 @@
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.LinkClicked += richTextBoxStatus_LinkClicked;
             // 
+            // checkBoxEnableBle
+            // 
+            resources.ApplyResources(checkBoxEnableBle, "checkBoxEnableBle");
+            checkBoxEnableBle.Name = "checkBoxEnableBle";
+            checkBoxEnableBle.UseVisualStyleBackColor = true;
+            checkBoxEnableBle.CheckedChanged += checkBoxEnableBle_CheckedChanged;
+            // 
             // FormMain
             // 
             AcceptButton = buttonClose;
             resources.ApplyResources(this, "$this");
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            Controls.Add(checkBoxEnableBle);
             Controls.Add(richTextBoxStatus);
             Controls.Add(labelLanguage);
             Controls.Add(comboBoxLanguage);
@@ -311,6 +320,7 @@
         private System.Windows.Forms.Label labelLanguage;
         private System.Windows.Forms.TextBox textBoxIstaLocation;
         private System.Windows.Forms.RichTextBox richTextBoxStatus;
+        private System.Windows.Forms.CheckBox checkBoxEnableBle;
     }
 }
 
