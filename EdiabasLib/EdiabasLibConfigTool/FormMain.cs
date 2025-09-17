@@ -163,6 +163,7 @@ namespace EdiabasLibConfigTool
         private string _ediabasDirBmw;
         private string _ediabasDirVag;
         private string _ediabasDirIstad;
+        private bool _enableBle;
         private string _initMessage;
         private object _searchLock = new object();
         private volatile bool _launchingSettings;
@@ -201,6 +202,7 @@ namespace EdiabasLibConfigTool
 
             try
             {
+                _enableBle = Properties.Settings.Default.EnableBle;
                 string language = Properties.Settings.Default.Language;
                 if (!string.IsNullOrEmpty(language))
                 {
@@ -819,7 +821,7 @@ namespace EdiabasLibConfigTool
                     }
                 }
 
-                foreach (ListViewItem addItem in addItems.OrderBy(x => ((Patch.UsbInfo) x.Tag)?.ComPortNum ?? 0))
+                foreach (ListViewItem addItem in addItems.OrderBy(x => ((Patch.UsbInfo)x.Tag)?.ComPortNum ?? 0))
                 {
                     listView.Items.Add(addItem);
                 }
@@ -1218,6 +1220,7 @@ namespace EdiabasLibConfigTool
             comboBoxLanguage.Enabled = !processing && !_test.ThreadActive;
             buttonSearch.Enabled = !processing && !_test.ThreadActive;
             buttonClose.Enabled = !processing && !_test.ThreadActive;
+            checkBoxEnableBle.Enabled = !processing && !_test.ThreadActive;
 
             BluetoothItem devInfo = GetSelectedBtDevice();
             WlanInterface wlanIface = GetSelectedWifiDevice();
@@ -1394,6 +1397,11 @@ namespace EdiabasLibConfigTool
             PerformSearch();
         }
 
+        private void checkBoxEnableBle_CheckedChanged(object sender, EventArgs e)
+        {
+            _enableBle = checkBoxEnableBle.Checked;
+        }
+
         private void FormMain_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (_lastActiveProbing)
@@ -1409,6 +1417,7 @@ namespace EdiabasLibConfigTool
             {
                 Properties.Settings.Default.IstadDir = _ediabasDirIstad ?? string.Empty;
                 Properties.Settings.Default.Language = Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
+                Properties.Settings.Default.EnableBle = _enableBle;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
