@@ -203,60 +203,63 @@ namespace CarSimulator
                     _searchingLe = true;
                 }
 
-                try
+                if (_enableBle)
                 {
-                    // BLE
-                    RequestDeviceOptions options = new RequestDeviceOptions
+                    try
                     {
-                        AcceptAllDevices = true,
-                        Timeout = TimeSpan.FromSeconds(10)
-                    };
+                        // BLE
+                        RequestDeviceOptions options = new RequestDeviceOptions
+                        {
+                            AcceptAllDevices = true,
+                            Timeout = TimeSpan.FromSeconds(10)
+                        };
 
-                    Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(options, _ctsLe.Token);
-                    scanTask.ContinueWith(t =>
+                        Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(options, _ctsLe.Token);
+                        scanTask.ContinueWith(t =>
+                        {
+                            lock (_searchLock)
+                            {
+                                _searchingLe = false;
+                            }
+                            UpdateButtonStatus();
+
+                            if (_ctsLe.IsCancellationRequested)
+                            {
+                                UpdateStatusText("Cancelled", true);
+                                ShowSearchEndMessage(true);
+                                return;
+                            }
+
+                            if (t.IsCompletedSuccessfully)
+                            {
+                                BluetoothDevice[] devices = t.Result.ToArray();
+                                BeginInvoke((Action)(() =>
+                                {
+                                    BluetoothItem[] items = devices.Select(device => new BluetoothItem(device)).ToArray();
+                                    UpdateDeviceList(items, false);
+                                    ShowSearchEndMessage();
+                                }));
+                            }
+
+                            if (t.IsFaulted)
+                            {
+                                UpdateStatusText(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message), true);
+                            }
+
+                            ShowSearchEndMessage(true);
+                        });
+                    }
+                    catch (Exception ex)
                     {
                         lock (_searchLock)
                         {
                             _searchingLe = false;
                         }
+
                         UpdateButtonStatus();
-
-                        if (_ctsLe.IsCancellationRequested)
-                        {
-                            UpdateStatusText("Cancelled", true);
-                            ShowSearchEndMessage(true);
-                            return;
-                        }
-
-                        if (t.IsCompletedSuccessfully)
-                        {
-                            BluetoothDevice[] devices = t.Result.ToArray();
-                            BeginInvoke((Action)(() =>
-                            {
-                                BluetoothItem[] items = devices.Select(device => new BluetoothItem(device)).ToArray();
-                                UpdateDeviceList(items, false);
-                                ShowSearchEndMessage();
-                            }));
-                        }
-
-                        if (t.IsFaulted)
-                        {
-                            UpdateStatusText(string.Format("Searching failed: {0}", t.Exception?.GetBaseException().Message), true);
-                        }
-
+                        UpdateStatusText(string.Format("Searching failed: {0}", ex.Message), true);
                         ShowSearchEndMessage(true);
-                    });
-                }
-                catch (Exception ex)
-                {
-                    lock (_searchLock)
-                    {
-                        _searchingLe = false;
                     }
-
-                    UpdateButtonStatus();
-                    UpdateStatusText(string.Format("Searching failed: {0}", ex.Message), true);
-                    ShowSearchEndMessage(true);
                 }
 
                 // EDR
