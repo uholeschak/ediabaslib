@@ -36,7 +36,8 @@ namespace CarSimulator
             public string Name { get; set; }
             private int? hashCode;
 
-            public string DeviceType {
+            public string DeviceType
+            {
                 get
                 {
                     if (DeviceInfo != null)
@@ -114,7 +115,7 @@ namespace CarSimulator
                 // ReSharper restore NonReadonlyMemberInGetHashCode
             }
 
-            public static bool operator == (BluetoothItem lhs, BluetoothItem rhs)
+            public static bool operator ==(BluetoothItem lhs, BluetoothItem rhs)
             {
                 if ((object)lhs == null || (object)rhs == null)
                 {
@@ -124,7 +125,7 @@ namespace CarSimulator
                 return lhs.Equals(rhs);
             }
 
-            public static bool operator != (BluetoothItem lhs, BluetoothItem rhs)
+            public static bool operator !=(BluetoothItem lhs, BluetoothItem rhs)
             {
                 if ((object)lhs == null || (object)rhs == null)
                 {
@@ -200,7 +201,6 @@ namespace CarSimulator
                 lock (_searchLock)
                 {
                     _searchingBt = true;
-                    _searchingLe = true;
                 }
 
                 if (_enableBle)
@@ -215,6 +215,11 @@ namespace CarSimulator
                         };
 
                         Task<IReadOnlyCollection<BluetoothDevice>> scanTask = Bluetooth.ScanForDevicesAsync(options, _ctsLe.Token);
+                        lock (_searchLock)
+                        {
+                            _searchingLe = true;
+                        }
+
                         scanTask.ContinueWith(t =>
                         {
                             lock (_searchLock)
@@ -460,7 +465,7 @@ namespace CarSimulator
         {
             if (InvokeRequired)
             {
-                BeginInvoke((Action) UpdateButtonStatus);
+                BeginInvoke((Action)UpdateButtonStatus);
                 return;
             }
 
@@ -604,6 +609,8 @@ namespace CarSimulator
         private void BluetoothSearch_Shown(object sender, EventArgs e)
         {
             ResizeHeader();
+
+            checkBoxEnableBle.Checked = _enableBle;
             UpdateButtonStatus();
             PerformSearch();
         }
@@ -641,6 +648,11 @@ namespace CarSimulator
                     Close();
                 }
             }
+        }
+
+        private void checkBoxEnableBle_CheckedChanged(object sender, EventArgs e)
+        {
+            _enableBle = checkBoxEnableBle.Checked;
         }
     }
 }

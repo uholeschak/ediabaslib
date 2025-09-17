@@ -36,6 +36,7 @@
             buttonOk = new System.Windows.Forms.Button();
             textBoxStatus = new System.Windows.Forms.TextBox();
             buttonSearch = new System.Windows.Forms.Button();
+            checkBoxEnableBle = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // listViewDevices
@@ -79,7 +80,7 @@
             buttonCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(88, 27);
-            buttonCancel.TabIndex = 1;
+            buttonCancel.TabIndex = 3;
             buttonCancel.Text = "Cancel";
             buttonCancel.UseVisualStyleBackColor = true;
             buttonCancel.Click += buttonCancel_Click;
@@ -91,7 +92,7 @@
             buttonOk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new System.Drawing.Size(88, 27);
-            buttonOk.TabIndex = 2;
+            buttonOk.TabIndex = 4;
             buttonOk.Text = "OK";
             buttonOk.UseVisualStyleBackColor = true;
             // 
@@ -104,7 +105,7 @@
             textBoxStatus.ReadOnly = true;
             textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             textBoxStatus.Size = new System.Drawing.Size(594, 100);
-            textBoxStatus.TabIndex = 3;
+            textBoxStatus.TabIndex = 1;
             // 
             // buttonSearch
             // 
@@ -112,10 +113,21 @@
             buttonSearch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSearch.Name = "buttonSearch";
             buttonSearch.Size = new System.Drawing.Size(88, 27);
-            buttonSearch.TabIndex = 4;
+            buttonSearch.TabIndex = 5;
             buttonSearch.Text = "Search";
             buttonSearch.UseVisualStyleBackColor = true;
             buttonSearch.Click += buttonSearch_Click;
+            // 
+            // checkBoxEnableBle
+            // 
+            checkBoxEnableBle.AutoSize = true;
+            checkBoxEnableBle.Location = new System.Drawing.Point(13, 446);
+            checkBoxEnableBle.Name = "checkBoxEnableBle";
+            checkBoxEnableBle.Size = new System.Drawing.Size(83, 19);
+            checkBoxEnableBle.TabIndex = 2;
+            checkBoxEnableBle.Text = "Enable BLE";
+            checkBoxEnableBle.UseVisualStyleBackColor = true;
+            checkBoxEnableBle.CheckedChanged += checkBoxEnableBle_CheckedChanged;
             // 
             // BluetoothSearch
             // 
@@ -124,6 +136,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonCancel;
             ClientSize = new System.Drawing.Size(620, 480);
+            Controls.Add(checkBoxEnableBle);
             Controls.Add(buttonSearch);
             Controls.Add(textBoxStatus);
             Controls.Add(buttonOk);
@@ -153,5 +166,6 @@
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.ColumnHeader columnHeaderBtType;
+        private System.Windows.Forms.CheckBox checkBoxEnableBle;
     }
 }
