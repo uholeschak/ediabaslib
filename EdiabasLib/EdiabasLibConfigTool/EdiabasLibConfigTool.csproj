@@ -73,15 +73,6 @@
     <PlatformTarget>x86</PlatformTarget>
     <Nullable>disable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|x86'">
-    <NoWarn>1701;1702;NU1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <NoWarn>1701;1702;NU1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <NoWarn>1701;1702;NU1702</NoWarn>
-  </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;set &quot;ApiDir=$(TargetDir)Api32&quot;&#xD;&#xA;REM echo ApiDir &quot;!ApiDir!&quot;&#xD;&#xA;IF NOT EXIST &quot;!ApiDir!&quot; mkdir &quot;!ApiDir!&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)..\Api32\$(Configuration)\Api32.dll&quot; &quot;!ApiDir!&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)..\Api32\x64\$(Configuration)\Api64.dll&quot; &quot;!ApiDir!&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)..\EdiabasLib\EdiabasLib.config&quot; &quot;!ApiDir!&quot;" />
   </Target>
