@@ -58,6 +58,11 @@ namespace CarSimulator
         public EdiabasNet ediabas => _ediabas;
         public SgFunctions sgFunctions => _sgFunctions;
         public DeviceTest deviceTest => _deviceTest;
+        public bool EnableBle
+        {
+            get => _enableBle;
+            set => _enableBle = value;
+        }
 
         [SupportedOSPlatform("windows")]
         public MainForm()

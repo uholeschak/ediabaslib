@@ -145,11 +145,18 @@ namespace CarSimulator
         private ListViewItem _selectedItem;
         private bool _ignoreSelection;
         private bool _autoSelect;
+        private bool _enableBle;
         private readonly List<string> _autoSelectNames;
 
-        public BluetoothSearch(List<string> autoSelectNames = null)
+        public bool EnableBle
+        {
+            get => _enableBle;
+        }
+
+        public BluetoothSearch(bool enableBle, List<string> autoSelectNames = null)
         {
             InitializeComponent();
+            _enableBle = enableBle;
             _autoSelectNames = autoSelectNames;
             ActiveControl = buttonOk;
             try

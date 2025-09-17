@@ -1,4 +1,13 @@
-﻿using System;
+﻿using EdiabasLib;
+using InTheHand.Bluetooth;
+using InTheHand.Net;
+using InTheHand.Net.Bluetooth;
+using InTheHand.Net.Sockets;
+using Org.BouncyCastle.Asn1.X509;
+using SimpleWifi;
+using SimpleWifi.Win32;
+using SimpleWifi.Win32.Interop;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,14 +17,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using EdiabasLib;
-using InTheHand.Bluetooth;
-using InTheHand.Net;
-using InTheHand.Net.Bluetooth;
-using InTheHand.Net.Sockets;
-using SimpleWifi;
-using SimpleWifi.Win32;
-using SimpleWifi.Win32.Interop;
 
 namespace CarSimulator
 {
@@ -145,30 +146,16 @@ namespace CarSimulator
         {
             try
             {
-#if true
-                BluetoothSearch dlgSearch = new BluetoothSearch(new List<string> {"OBD"});
+                BluetoothSearch dlgSearch = new BluetoothSearch(_form.EnableBle, new List<string> {"OBD"});
                 DialogResult result = dlgSearch.ShowDialog();
+
                 if (result != DialogResult.OK)
                 {
                     return null;
                 }
+
+                _form.EnableBle = dlgSearch.EnableBle;
                 return dlgSearch.GetSelectedBtDevice();
-#else
-                SelectBluetoothDeviceDialog dlg = new SelectBluetoothDeviceDialog
-                {
-                    ShowAuthenticated = true,
-                    ShowRemembered = false,
-                    ShowUnknown = true
-                };
-                dlg.ClassOfDevices.Clear();
-                dlg.ClassOfDevices.Add(new ClassOfDevice(DeviceClass.Uncategorized, ServiceClass.None));
-                DialogResult result = dlg.ShowDialog(_form);
-                if (result != DialogResult.OK)
-                {
-                    return null;
-                }
-                return dlg.SelectedDevice;
-#endif
             }
             catch (Exception)
             {
