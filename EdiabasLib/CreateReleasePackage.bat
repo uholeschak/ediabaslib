@@ -89,6 +89,11 @@ mkdir "!CANADAPTERELMPATH!hc04" || EXIT /b 1
 xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\hc04\production\*.hex" "!CANADAPTERELMPATH!hc04" > nul || EXIT /b 1
 xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\hc04\production\*.hex" "!CANADAPTERELMPATH!hc04" > nul || EXIT /b 1
 
+echo Firmware hc06 BLE
+mkdir "!CANADAPTERELMPATH!hc06" || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\hc06\production\*.hex" "!CANADAPTERELMPATH!hc06" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\ELM327V23.X\dist\hc06\production\*.hex" "!CANADAPTERELMPATH!hc06" > nul || EXIT /b 1
+
 echo Firmware spp_uart
 mkdir "!CANADAPTERELMPATH!spp_uart" || EXIT /b 1
 xcopy /y /q "!BATPATH!CanAdapterElm\CanAdapterElm.X\dist\spp_uart\production\*.hex" "!CANADAPTERELMPATH!spp_uart" > nul || EXIT /b 1
