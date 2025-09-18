@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
-using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -866,7 +865,8 @@ namespace CarSimulator
             buttonConnect.Text = connected && !testing ? "Disconnect" : "Connect";
             buttonConnect.Enabled = !testing;
             buttonErrorDefault.Enabled = !testing;
-            buttonDeviceTestBt.Enabled = !active && testFilePresent && ecuFolderExits;
+            buttonDeviceTestBtEdr.Enabled = !active && testFilePresent && ecuFolderExits;
+            buttonDeviceTestBtBle.Enabled = !active && testFilePresent && ecuFolderExits;
             buttonDeviceTestWifi.Enabled = !active && testFilePresent && ecuFolderExits;
             buttonAbortTest.Enabled = testing && !testAborted;
             buttonEcuFolder.Enabled = !active;
@@ -1130,7 +1130,11 @@ namespace CarSimulator
 
             string btDeviceName = checkBoxBtNameStd.Checked ? DeviceTest.DefaultBtNameStd : DeviceTest.DefaultBtName;
             _deviceTest.MaxErrorVoltage = checkBoxHighTestVoltage.Checked ? 147 : 0;
-            _deviceTest.ExecuteTest(sender == buttonDeviceTestWifi, selectedPort, btDeviceName);
+            bool isWifiTest = sender == buttonDeviceTestWifi;
+            bool isBtBleTest = sender == buttonDeviceTestBtBle;
+
+            _enableBle = isBtBleTest;
+            _deviceTest.ExecuteTest(isWifiTest, selectedPort, btDeviceName);
         }
 
         private void buttonAbortTest_Click(object sender, EventArgs e)

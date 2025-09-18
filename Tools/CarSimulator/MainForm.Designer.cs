@@ -52,7 +52,7 @@
             treeViewDirectories = new System.Windows.Forms.TreeView();
             folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             buttonRootFolder = new System.Windows.Forms.Button();
-            buttonDeviceTestBt = new System.Windows.Forms.Button();
+            buttonDeviceTestBtEdr = new System.Windows.Forms.Button();
             buttonDeviceTestWifi = new System.Windows.Forms.Button();
             checkBoxBtNameStd = new System.Windows.Forms.CheckBox();
             buttonAbortTest = new System.Windows.Forms.Button();
@@ -69,6 +69,7 @@
             textBoxSslPort = new System.Windows.Forms.TextBox();
             richTextBoxTestResults = new System.Windows.Forms.RichTextBox();
             checkBoxBcSsl = new System.Windows.Forms.CheckBox();
+            buttonDeviceTestBtBle = new System.Windows.Forms.Button();
             groupBoxConcepts.SuspendLayout();
             SuspendLayout();
             // 
@@ -333,20 +334,20 @@
             buttonRootFolder.UseVisualStyleBackColor = true;
             buttonRootFolder.Click += buttonRootFolder_Click;
             // 
-            // buttonDeviceTestBt
+            // buttonDeviceTestBtEdr
             // 
-            buttonDeviceTestBt.Location = new System.Drawing.Point(392, 12);
-            buttonDeviceTestBt.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            buttonDeviceTestBt.Name = "buttonDeviceTestBt";
-            buttonDeviceTestBt.Size = new System.Drawing.Size(111, 27);
-            buttonDeviceTestBt.TabIndex = 2;
-            buttonDeviceTestBt.Text = "Device Test Bt";
-            buttonDeviceTestBt.UseVisualStyleBackColor = true;
-            buttonDeviceTestBt.Click += buttonDeviceTest_Click;
+            buttonDeviceTestBtEdr.Location = new System.Drawing.Point(392, 12);
+            buttonDeviceTestBtEdr.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonDeviceTestBtEdr.Name = "buttonDeviceTestBtEdr";
+            buttonDeviceTestBtEdr.Size = new System.Drawing.Size(111, 27);
+            buttonDeviceTestBtEdr.TabIndex = 2;
+            buttonDeviceTestBtEdr.Text = "Device Test EDR";
+            buttonDeviceTestBtEdr.UseVisualStyleBackColor = true;
+            buttonDeviceTestBtEdr.Click += buttonDeviceTest_Click;
             // 
             // buttonDeviceTestWifi
             // 
-            buttonDeviceTestWifi.Location = new System.Drawing.Point(392, 45);
+            buttonDeviceTestWifi.Location = new System.Drawing.Point(393, 78);
             buttonDeviceTestWifi.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonDeviceTestWifi.Name = "buttonDeviceTestWifi";
             buttonDeviceTestWifi.Size = new System.Drawing.Size(111, 27);
@@ -358,7 +359,7 @@
             // checkBoxBtNameStd
             // 
             checkBoxBtNameStd.AutoSize = true;
-            checkBoxBtNameStd.Location = new System.Drawing.Point(392, 113);
+            checkBoxBtNameStd.Location = new System.Drawing.Point(263, 38);
             checkBoxBtNameStd.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             checkBoxBtNameStd.Name = "checkBoxBtNameStd";
             checkBoxBtNameStd.Size = new System.Drawing.Size(95, 19);
@@ -368,7 +369,7 @@
             // 
             // buttonAbortTest
             // 
-            buttonAbortTest.Location = new System.Drawing.Point(392, 78);
+            buttonAbortTest.Location = new System.Drawing.Point(392, 111);
             buttonAbortTest.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonAbortTest.Name = "buttonAbortTest";
             buttonAbortTest.Size = new System.Drawing.Size(111, 27);
@@ -510,11 +511,23 @@
             checkBoxBcSsl.UseVisualStyleBackColor = true;
             checkBoxBcSsl.CheckedChanged += checkBoxBcSsl_CheckedChanged;
             // 
+            // buttonDeviceTestBtBle
+            // 
+            buttonDeviceTestBtBle.Location = new System.Drawing.Point(393, 45);
+            buttonDeviceTestBtBle.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            buttonDeviceTestBtBle.Name = "buttonDeviceTestBtBle";
+            buttonDeviceTestBtBle.Size = new System.Drawing.Size(111, 27);
+            buttonDeviceTestBtBle.TabIndex = 30;
+            buttonDeviceTestBtBle.Text = "Device Test BLE";
+            buttonDeviceTestBtBle.UseVisualStyleBackColor = true;
+            buttonDeviceTestBtBle.Click += buttonDeviceTest_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(764, 618);
+            Controls.Add(buttonDeviceTestBtBle);
             Controls.Add(checkBoxBcSsl);
             Controls.Add(richTextBoxTestResults);
             Controls.Add(textBoxSslPort);
@@ -530,7 +543,7 @@
             Controls.Add(buttonAbortTest);
             Controls.Add(checkBoxBtNameStd);
             Controls.Add(buttonDeviceTestWifi);
-            Controls.Add(buttonDeviceTestBt);
+            Controls.Add(buttonDeviceTestBtEdr);
             Controls.Add(buttonRootFolder);
             Controls.Add(treeViewDirectories);
             Controls.Add(buttonErrorDefault);
@@ -582,7 +595,7 @@
         private System.Windows.Forms.Button buttonRootFolder;
         private System.Windows.Forms.RadioButton radioButtonKwp2000;
         private System.Windows.Forms.RadioButton radioButtonTp20;
-        private System.Windows.Forms.Button buttonDeviceTestBt;
+        private System.Windows.Forms.Button buttonDeviceTestBtEdr;
         private System.Windows.Forms.Button buttonDeviceTestWifi;
         private System.Windows.Forms.CheckBox checkBoxBtNameStd;
         private System.Windows.Forms.Button buttonAbortTest;
@@ -599,6 +612,7 @@
         private System.Windows.Forms.TextBox textBoxSslPort;
         private System.Windows.Forms.RichTextBox richTextBoxTestResults;
         private System.Windows.Forms.CheckBox checkBoxBcSsl;
+        private System.Windows.Forms.Button buttonDeviceTestBtBle;
     }
 }
 
