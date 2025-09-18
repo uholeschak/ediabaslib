@@ -106,17 +106,5 @@ namespace CarSimulator.Properties {
                 this["ServerDoIP"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool EnableBLE {
-            get {
-                return ((bool)(this["EnableBLE"]));
-            }
-            set {
-                this["EnableBLE"] = value;
-            }
-        }
     }
 }

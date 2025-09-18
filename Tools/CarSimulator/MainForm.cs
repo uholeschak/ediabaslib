@@ -42,7 +42,6 @@ namespace CarSimulator
         private string _serverCertPwd;
         private int _serverSslPort = DefaultSslPort;
         private bool _serverUseBcSsl = true;
-        private bool _enableBle = false;
         private CommThread _commThread;
         private int _lastPortCount;
         private readonly CommThread.ConfigData _configData;
@@ -57,11 +56,6 @@ namespace CarSimulator
         public EdiabasNet ediabas => _ediabas;
         public SgFunctions sgFunctions => _sgFunctions;
         public DeviceTest deviceTest => _deviceTest;
-        public bool EnableBle
-        {
-            get => _enableBle;
-            set => _enableBle = value;
-        }
 
         public MainForm()
         {
@@ -85,7 +79,6 @@ namespace CarSimulator
                 _serverSslPort = DefaultSslPort;
             }
             _serverUseBcSsl = Properties.Settings.Default.ServerUseBcSsl;
-            _enableBle = Properties.Settings.Default.EnableBLE;
 
             _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             if (string.IsNullOrEmpty(_rootFolder) || !Directory.Exists(_rootFolder))
@@ -160,7 +153,6 @@ namespace CarSimulator
                 Properties.Settings.Default.ServerCertPwd = _serverCertPwd;
                 Properties.Settings.Default.ServerSslPort = _serverSslPort;
                 Properties.Settings.Default.ServerUseBcSsl = _serverUseBcSsl;
-                Properties.Settings.Default.EnableBLE = _enableBle;
                 Properties.Settings.Default.Save();
             }
             catch (Exception)
@@ -1131,10 +1123,9 @@ namespace CarSimulator
             string btDeviceName = checkBoxBtNameStd.Checked ? DeviceTest.DefaultBtNameStd : DeviceTest.DefaultBtName;
             _deviceTest.MaxErrorVoltage = checkBoxHighTestVoltage.Checked ? 147 : 0;
             bool isWifiTest = sender == buttonDeviceTestWifi;
-            bool isBtBleTest = sender == buttonDeviceTestBtBle;
+            bool enableBle = sender == buttonDeviceTestBtBle;
 
-            _enableBle = isBtBleTest;
-            _deviceTest.ExecuteTest(isWifiTest, selectedPort, btDeviceName);
+            _deviceTest.ExecuteTest(isWifiTest, enableBle, selectedPort, btDeviceName);
         }
 
         private void buttonAbortTest_Click(object sender, EventArgs e)

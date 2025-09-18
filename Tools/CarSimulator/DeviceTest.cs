@@ -142,11 +142,11 @@ namespace CarSimulator
             }
         }
 
-        private BluetoothSearch.BluetoothItem DiscoverBtDevice()
+        private BluetoothSearch.BluetoothItem DiscoverBtDevice(bool enableBle)
         {
             try
             {
-                BluetoothSearch dlgSearch = new BluetoothSearch(_form.EnableBle, new List<string> {"OBD"});
+                BluetoothSearch dlgSearch = new BluetoothSearch(enableBle, new List<string> {"OBD"});
                 DialogResult result = dlgSearch.ShowDialog();
 
                 if (result != DialogResult.OK)
@@ -154,7 +154,6 @@ namespace CarSimulator
                     return null;
                 }
 
-                _form.EnableBle = dlgSearch.EnableBle;
                 return dlgSearch.GetSelectedBtDevice();
             }
             catch (Exception)
@@ -489,7 +488,7 @@ namespace CarSimulator
             }
         }
 
-        public bool ExecuteTest(bool wifi, string comPort, string btDeviceName)
+        public bool ExecuteTest(bool wifi, bool enableBle, string comPort, string btDeviceName)
         {
             AbortTest = false;
 
@@ -497,7 +496,7 @@ namespace CarSimulator
             _executeInnerTest = false;
             _workerThread = new Thread(() =>
             {
-                ExecuteTestInner(wifi, comPort, btDeviceName);
+                ExecuteTestInner(wifi, enableBle, comPort, btDeviceName);
                 while (_connectActive)
                 {
                     Thread.Sleep(100);
@@ -507,7 +506,7 @@ namespace CarSimulator
                 {
                     _executeInnerTest = false;
                     Thread.Sleep(1000);
-                    ExecuteTestInner(wifi, comPort, btDeviceName);
+                    ExecuteTestInner(wifi, enableBle, comPort, btDeviceName);
                 }
 
                 _form.Invoke((Action) (() =>
@@ -524,7 +523,7 @@ namespace CarSimulator
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Local
-        private bool ExecuteTestInner(bool wifi, string comPort, string btDeviceName)
+        private bool ExecuteTestInner(bool wifi, bool enableBle, string comPort, string btDeviceName)
         {
             if (!comPort.StartsWith("COM"))
             {
@@ -600,7 +599,7 @@ namespace CarSimulator
                     BluetoothSearch.BluetoothItem devInfo = null;
                     _form.Invoke((Action) (() =>
                     {
-                        BluetoothSearch.BluetoothItem item = DiscoverBtDevice();
+                        BluetoothSearch.BluetoothItem item = DiscoverBtDevice(enableBle);
                         if (item != null)
                         {
                             devInfo = item;
