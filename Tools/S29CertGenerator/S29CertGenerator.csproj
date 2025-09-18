@@ -10,14 +10,6 @@
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>NU1702</NoWarn>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>NU1702</NoWarn>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Include="..\Psdz\PsdzClientLibrary\Utility\Encryption.cs" Link="Encryption.cs" />
     <Compile Include="..\Psdz\PsdzClientLibrary\Utility\MachineIdentifier.cs" Link="MachineIdentifier.cs" />
