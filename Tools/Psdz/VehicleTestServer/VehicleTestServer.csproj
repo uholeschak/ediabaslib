@@ -9,12 +9,6 @@
     <Nullable>disable</Nullable>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn>NU1702</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn>NU1702</NoWarn>
-  </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\..\EdiabasLib\EdiabasLib\EdWebServer.cs">
       <Link>EdWebServer.cs</Link>
