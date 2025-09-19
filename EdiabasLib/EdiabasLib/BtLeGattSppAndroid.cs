@@ -309,9 +309,10 @@ namespace EdiabasLib
                         {
                             bool validRead = (gattCharacteristicSppRead.Properties & GattProperty.Notify) == GattProperty.Notify;
                             bool validWrite = (gattCharacteristicSppWrite.Properties & GattProperty.Write) == GattProperty.Write;
-                            if (validWrite && gattCharacteristicSppRead != gattCharacteristicSppWrite)
+                            if (validWrite && gattCharacteristicSppRead == gattCharacteristicSppWrite)
                             {
-                                validWrite = (gattCharacteristicSppWrite.Properties & (GattProperty.Write | GattProperty.Notify)) == GattProperty.Write;
+                                validWrite = (gattCharacteristicSppWrite.Properties & (GattProperty.Read | GattProperty.Write | GattProperty.Notify)) ==
+                                             (GattProperty.Read | GattProperty.Write | GattProperty.Notify);
                             }
 
                             if (validRead && validWrite)
@@ -353,8 +354,7 @@ namespace EdiabasLib
                             }
 
                             LogString(string.Format("GATT properties: {0}", gattCharacteristic.Properties));
-                            bool validRead = (gattCharacteristic.Properties & (GattProperty.Read | GattProperty.Notify)) == (GattProperty.Read | GattProperty.Notify) ||
-                                             (gattCharacteristic.Properties & (GattProperty.Write | GattProperty.Notify)) == (GattProperty.Write | GattProperty.Notify);
+                            bool validRead = (gattCharacteristicSppRead.Properties & GattProperty.Notify) == GattProperty.Notify;
                             if (validRead)
                             {
                                 if (gattCharacteristicSppRead != null)
@@ -367,9 +367,10 @@ namespace EdiabasLib
                             }
 
                             bool validWrite = (gattCharacteristic.Properties & GattProperty.Write) == GattProperty.Write;
-                            if (validWrite && gattCharacteristicSppRead != null && gattCharacteristicSppRead != gattCharacteristic)
+                            if (validWrite && gattCharacteristicSppRead != null && gattCharacteristicSppRead == gattCharacteristic)
                             {
-                                validWrite = (gattCharacteristic.Properties & (GattProperty.Write | GattProperty.Notify)) == GattProperty.Write;
+                                validWrite = (gattCharacteristicSppWrite.Properties & (GattProperty.Read | GattProperty.Write | GattProperty.Notify)) ==
+                                             (GattProperty.Read | GattProperty.Write | GattProperty.Notify);
                             }
 
                             if (validWrite)
