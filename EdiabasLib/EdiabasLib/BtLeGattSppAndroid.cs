@@ -307,8 +307,7 @@ namespace EdiabasLib
                         BluetoothGattCharacteristic gattCharacteristicSppWrite = gattServiceSpp.GetCharacteristic(gattSppInfo.CharacteristicWriteUuid);
                         if (gattCharacteristicSppRead != null && gattCharacteristicSppWrite != null)
                         {
-                            bool validRead = (gattCharacteristicSppRead.Properties & (GattProperty.Read | GattProperty.Notify)) == (GattProperty.Read | GattProperty.Notify) ||
-                                             (gattCharacteristicSppRead.Properties & (GattProperty.Write | GattProperty.Notify)) == (GattProperty.Write | GattProperty.Notify);
+                            bool validRead = (gattCharacteristicSppRead.Properties & GattProperty.Notify) == GattProperty.Notify;
                             bool validWrite = (gattCharacteristicSppWrite.Properties & GattProperty.Write) == GattProperty.Write;
                             if (validWrite && gattCharacteristicSppRead != gattCharacteristicSppWrite)
                             {
