@@ -10,12 +10,6 @@
     <ApplicationIcon>AppIcon.ico</ApplicationIcon>
     <Nullable>disable</Nullable>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <NoWarn />
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <NoWarn />
-  </PropertyGroup>
   <ItemGroup>
     <Content Include="AppIcon.ico" />
   </ItemGroup>
