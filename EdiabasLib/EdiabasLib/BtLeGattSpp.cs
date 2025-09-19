@@ -296,7 +296,7 @@ namespace EdiabasLib
                                 bool validWrite = (gattCharacteristic.Properties & GattCharacteristicProperties.Write) == GattCharacteristicProperties.Write;
                                 if (validWrite && gattCharacteristicSppRead != null && gattCharacteristicSppRead == gattCharacteristic)
                                 {
-                                    validWrite = (gattCharacteristicSppWrite.Properties & (GattCharacteristicProperties.Read | GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify)) ==
+                                    validWrite = (gattCharacteristic.Properties & (GattCharacteristicProperties.Read | GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify)) ==
                                                  (GattCharacteristicProperties.Read | GattCharacteristicProperties.Write | GattCharacteristicProperties.Notify);
                                 }
 
