@@ -354,7 +354,7 @@ namespace EdiabasLib
                             }
 
                             LogString(string.Format("GATT properties: {0}", gattCharacteristic.Properties));
-                            bool validRead = (gattCharacteristicSppRead.Properties & GattProperty.Notify) == GattProperty.Notify;
+                            bool validRead = (gattCharacteristic.Properties & GattProperty.Notify) == GattProperty.Notify;
                             if (validRead)
                             {
                                 if (gattCharacteristicSppRead != null)
