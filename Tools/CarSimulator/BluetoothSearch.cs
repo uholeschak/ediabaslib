@@ -54,6 +54,24 @@ namespace CarSimulator
                 }
             }
 
+            public bool IsPaired
+            {
+                get
+                {
+                    if (DeviceInfo != null)
+                    {
+                        return DeviceInfo.Authenticated;
+                    }
+
+                    if (Device != null)
+                    {
+                        return Device.IsPaired;
+                    }
+
+                    return false;
+                }
+            }
+
             public override string ToString()
             {
                 return string.Format("{0} / {1}", Name, DeviceType);
@@ -361,8 +379,13 @@ namespace CarSimulator
 
                 foreach (BluetoothItem device in _deviceList.Order())
                 {
+                    string deviceType = device.DeviceType;
+                    if (device.IsPaired)
+                    {
+                        deviceType += " *";
+                    }
                     ListViewItem listViewItem =
-                        new ListViewItem(new[] { device.Address, device.Name, device.DeviceType })
+                        new ListViewItem(new[] { device.Address, device.Name, deviceType })
                         {
                             Tag = device
                         };
