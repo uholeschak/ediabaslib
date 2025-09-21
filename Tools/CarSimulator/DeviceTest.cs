@@ -210,8 +210,8 @@ namespace CarSimulator
                         messageShown = true;
                     }
 
-                    bluetoothDevice.PairAsync().Wait();
-                    bluetoothDevice.Gatt.ConnectAsync().Wait();
+                    bluetoothDevice.PairAsync().Wait(BtLeGattSpp.BtLePairTimeout);
+                    bluetoothDevice.Gatt.ConnectAsync().Wait(BtLeGattSpp.BtLeConnectTimeout);
 
                     if (AbortTest)
                     {

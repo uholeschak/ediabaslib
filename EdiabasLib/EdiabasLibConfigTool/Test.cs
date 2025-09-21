@@ -787,8 +787,8 @@ namespace EdiabasLibConfigTool
 
                 if (!bluetoothDevice.IsPaired)
                 {
-                    bluetoothDevice.PairAsync().Wait();
-                    bluetoothDevice.Gatt.ConnectAsync().Wait();
+                    bluetoothDevice.PairAsync().Wait(BtLeGattSpp.BtLePairTimeout);
+                    bluetoothDevice.Gatt.ConnectAsync().Wait(BtLeGattSpp.BtLeConnectTimeout);
                     failureReason = Resources.Strings.BtConfirmPairRequest;
                     DisconnectStream();
                     return false;
