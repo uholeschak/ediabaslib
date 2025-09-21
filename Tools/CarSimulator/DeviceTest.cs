@@ -188,30 +188,35 @@ namespace CarSimulator
         {
             try
             {
+                bool messageShown = false;
                 string deviceId = device.Id;
-                if (!device.IsPaired)
+                for (;;)
                 {
-                    _form.UpdateTestStatusText("Confirm pair request first", true);
-                    for (;;)
+                    BluetoothDevice bluetoothDevice = BluetoothDevice.FromIdAsync(deviceId).Result;
+                    if (bluetoothDevice == null)
                     {
-                        BluetoothDevice bluetoothDevice = BluetoothDevice.FromIdAsync(deviceId).Result;
-                        if (bluetoothDevice == null)
-                        {
-                            return false;
-                        }
+                        DisconnectStream();
+                        return false;
+                    }
 
-                        if (bluetoothDevice.IsPaired)
-                        {
-                            break;
-                        }
+                    if (bluetoothDevice.IsPaired)
+                    {
+                        break;
+                    }
 
-                        bluetoothDevice.PairAsync().Wait();
-                        bluetoothDevice.Gatt.ConnectAsync().Wait();
+                    if (!messageShown)
+                    {
+                        _form.UpdateTestStatusText("Confirm Bluetooth pair request first", true);
+                        messageShown = true;
+                    }
 
-                        if (AbortTest)
-                        {
-                            return false;
-                        }
+                    bluetoothDevice.PairAsync().Wait();
+                    bluetoothDevice.Gatt.ConnectAsync().Wait();
+
+                    if (AbortTest)
+                    {
+                        DisconnectStream();
+                        return false;
                     }
                 }
 

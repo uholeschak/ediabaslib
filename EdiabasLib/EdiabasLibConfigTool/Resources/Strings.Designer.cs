@@ -61,6 +61,15 @@ namespace EdiabasLibConfigTool.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Confirm the Bluetooth pair request first. ähnelt.
+        /// </summary>
+        internal static string BtComfirmPairRequest {
+            get {
+                return ResourceManager.GetString("BtComfirmPairRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Bluetooth init failed: {0} ähnelt.
         /// </summary>
         internal static string BtInitError {
