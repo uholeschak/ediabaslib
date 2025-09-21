@@ -364,7 +364,7 @@ first.</value>
   <data name="PatchIstadInfoHint" xml:space="preserve">
     <value>Hint: In ISTA-D Administration -&gt; VCI Config select as Interface type:</value>
   </data>
-  <data name="BtComfirmPairRequest" xml:space="preserve">
+  <data name="BtConfirmPairRequest" xml:space="preserve">
     <value>Confirm the Bluetooth pair request first.</value>
   </data>
 </root>

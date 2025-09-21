@@ -363,7 +363,7 @@ Installez d'abord le runtime VC++
   <data name="PatchIstadInfoHint" xml:space="preserve">
     <value>Astuce : Dans ISTA-D Administration -&gt; selectionner le type d'interface de véhicule comme suit :</value>
   </data>
-  <data name="BtComfirmPairRequest" xml:space="preserve">
+  <data name="BtConfirmPairRequest" xml:space="preserve">
     <value>Confirmez d’abord la demande d’appairage Bluetooth.</value>
   </data>
 </root>

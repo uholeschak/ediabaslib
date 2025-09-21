@@ -789,7 +789,7 @@ namespace EdiabasLibConfigTool
                 {
                     bluetoothDevice.PairAsync().Wait();
                     bluetoothDevice.Gatt.ConnectAsync().Wait();
-                    failureReason = Resources.Strings.BtComfirmPairRequest;
+                    failureReason = Resources.Strings.BtConfirmPairRequest;
                     DisconnectStream();
                     return false;
                 }
