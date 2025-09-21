@@ -81,7 +81,7 @@
             buttonCancel.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(88, 27);
-            buttonCancel.TabIndex = 3;
+            buttonCancel.TabIndex = 4;
             buttonCancel.Text = "Cancel";
             buttonCancel.UseVisualStyleBackColor = true;
             buttonCancel.Click += buttonCancel_Click;
@@ -93,7 +93,7 @@
             buttonOk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonOk.Name = "buttonOk";
             buttonOk.Size = new System.Drawing.Size(88, 27);
-            buttonOk.TabIndex = 4;
+            buttonOk.TabIndex = 5;
             buttonOk.Text = "OK";
             buttonOk.UseVisualStyleBackColor = true;
             // 
@@ -114,7 +114,7 @@
             buttonSearch.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             buttonSearch.Name = "buttonSearch";
             buttonSearch.Size = new System.Drawing.Size(88, 27);
-            buttonSearch.TabIndex = 5;
+            buttonSearch.TabIndex = 6;
             buttonSearch.Text = "Search";
             buttonSearch.UseVisualStyleBackColor = true;
             buttonSearch.Click += buttonSearch_Click;
@@ -133,10 +133,10 @@
             // checkBoxEnableAutoconnect
             // 
             checkBoxEnableAutoconnect.AutoSize = true;
-            checkBoxEnableAutoconnect.Location = new System.Drawing.Point(102, 446);
+            checkBoxEnableAutoconnect.Location = new System.Drawing.Point(225, 446);
             checkBoxEnableAutoconnect.Name = "checkBoxEnableAutoconnect";
             checkBoxEnableAutoconnect.Size = new System.Drawing.Size(95, 19);
-            checkBoxEnableAutoconnect.TabIndex = 6;
+            checkBoxEnableAutoconnect.TabIndex = 3;
             checkBoxEnableAutoconnect.Text = "Autoconnect";
             checkBoxEnableAutoconnect.UseVisualStyleBackColor = true;
             // 
