@@ -361,7 +361,7 @@
   <data name="PatchIstadInfoHint" xml:space="preserve">
     <value>Указание: В ISTA-D администрировании -&gt; VCI конфигурация выберите тип интерфейса:</value>
   </data>
-  <data name="BtComfirmPairRequest" xml:space="preserve">
+  <data name="BtConfirmPairRequest" xml:space="preserve">
     <value>Сначала подтвердите запрос на сопряжение по Bluetooth.</value>
   </data>
 </root>
