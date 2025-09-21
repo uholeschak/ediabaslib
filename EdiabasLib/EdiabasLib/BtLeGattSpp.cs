@@ -38,6 +38,9 @@ namespace EdiabasLib
             Connected
         }
 
+        public const int BtLePairTimeout = 5000;
+        public const int BtLeConnectTimeout = 5000;
+
         private static readonly List<GattSppInfo> _gattSppInfoList = new List<GattSppInfo>()
         {
             new GattSppInfo("Deep OBD", new Guid("0000ffe0-0000-1000-8000-00805f9b34fb"),
@@ -174,10 +177,10 @@ namespace EdiabasLib
 
                 if (!bluetoothDevice.IsPaired)
                 {
-                    bluetoothDevice.PairAsync().Wait(_cancellationTokenSource.Token);
+                    bluetoothDevice.PairAsync().Wait(BtLePairTimeout, _cancellationTokenSource.Token);
                 }
 
-                _bluetoothGatt.ConnectAsync().Wait(_cancellationTokenSource.Token);
+                _bluetoothGatt.ConnectAsync().Wait(BtLeConnectTimeout, _cancellationTokenSource.Token);
 
                 // Check connection status
                 if (_bluetoothGatt.IsConnected)
