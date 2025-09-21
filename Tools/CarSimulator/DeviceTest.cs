@@ -188,19 +188,35 @@ namespace CarSimulator
         {
             try
             {
+                string deviceId = device.Id;
                 if (!device.IsPaired)
                 {
                     _form.UpdateTestStatusText("Confirm pair request first", true);
-                    device.PairAsync().Wait();
-                    device.Gatt.ConnectAsync().Wait();
-                    if (!device.Gatt.IsConnected)
+                    for (;;)
                     {
-                        return true;
+                        BluetoothDevice bluetoothDevice = BluetoothDevice.FromIdAsync(deviceId).Result;
+                        if (bluetoothDevice == null)
+                        {
+                            return false;
+                        }
+
+                        if (bluetoothDevice.IsPaired)
+                        {
+                            break;
+                        }
+
+                        bluetoothDevice.PairAsync().Wait();
+                        bluetoothDevice.Gatt.ConnectAsync().Wait();
+
+                        if (AbortTest)
+                        {
+                            return false;
+                        }
                     }
                 }
 
                 _btLeGattSpp = new BtLeGattSpp();
-                if (!_btLeGattSpp.ConnectLeGattDevice(device.Id))
+                if (!_btLeGattSpp.ConnectLeGattDevice(deviceId))
                 {
                     DisconnectStream();
                     return false;
