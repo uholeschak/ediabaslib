@@ -172,6 +172,11 @@ namespace EdiabasLib
                     return false;
                 }
 
+                if (!bluetoothDevice.IsPaired)
+                {
+                    bluetoothDevice.PairAsync().Wait(_cancellationTokenSource.Token);
+                }
+
                 _bluetoothGatt.ConnectAsync().Wait(_cancellationTokenSource.Token);
 
                 // Check connection status
