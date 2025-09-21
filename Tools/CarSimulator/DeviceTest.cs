@@ -188,6 +188,17 @@ namespace CarSimulator
         {
             try
             {
+                if (!device.IsPaired)
+                {
+                    _form.UpdateTestStatusText("Confirm pair request first", true);
+                    device.PairAsync().Wait();
+                    device.Gatt.ConnectAsync().Wait();
+                    if (!device.Gatt.IsConnected)
+                    {
+                        return true;
+                    }
+                }
+
                 _btLeGattSpp = new BtLeGattSpp();
                 if (!_btLeGattSpp.ConnectLeGattDevice(device.Id))
                 {
