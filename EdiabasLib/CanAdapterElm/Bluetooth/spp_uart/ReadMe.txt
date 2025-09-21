@@ -24,6 +24,7 @@ Tested with chips: BC352, BC358, BC417
 Test connection and create backup:
 ----------------------------------
 - Open command prompt in C:\Program Files (x86)\CSR\BlueSuite X.X.X
+  Latest version: C:\Program Files (x86)\CSR\BlueSuite 2.6.8
 - If there are communication problems add: -trans SPIMAXCLOCK=100 
 - Test: e2cmd info
 - Test: BlueFlashCmd.exe identify
