@@ -364,4 +364,7 @@ Installieren Sie zuerst die VC++ Runtime
   <data name="PatchIstadInfoHint" xml:space="preserve">
     <value>Hinweis: In ISTA-D Administration -&gt; VCI Konfiguration als Interface Typ auswählen:</value>
   </data>
+  <data name="BtComfirmPairRequest" xml:space="preserve">
+    <value>Bestätigen Sie zuerst die Bluetooth Koppelanfrage.</value>
+  </data>
 </root>

@@ -267,9 +267,16 @@ namespace EdiabasLibConfigTool
                         Thread.CurrentThread.CurrentCulture = cultureInfo;
                         Thread.CurrentThread.CurrentUICulture = cultureInfo;
                         _form.UpdateStatusText(Resources.Strings.Connecting);
-                        if (!ConnectBtDevice(devInfo, pin))
+                        if (!ConnectBtDevice(devInfo, pin, out string failureReason))
                         {
-                            _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                            if (!string.IsNullOrEmpty(failureReason))
+                            {
+                                _form.UpdateStatusText(failureReason);
+                            }
+                            else
+                            {
+                                _form.UpdateStatusText(Resources.Strings.ConnectionFailed);
+                            }
                             return;
                         }
                         TestOk = RunBtTest(configure, out bool configRequired);
@@ -741,8 +748,10 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        private bool ConnectBtDevice(BluetoothItem devInfo, string pin)
+        private bool ConnectBtDevice(BluetoothItem devInfo, string pin, out string failureReason)
         {
+            failureReason = string.Empty;
+
             if (devInfo == null)
             {
                 return false;
@@ -757,18 +766,36 @@ namespace EdiabasLibConfigTool
             BluetoothDevice btDevice = devInfo.Device;
             if (btDevice != null)
             {
-                return ConnectBtLeDevice(btDevice);
+                return ConnectBtLeDevice(btDevice, out failureReason);
             }
 
             return false;
         }
 
-        private bool ConnectBtLeDevice(BluetoothDevice device)
+        private bool ConnectBtLeDevice(BluetoothDevice device, out string failureReason)
         {
+            failureReason = string.Empty;
             try
             {
+                string deviceId = device.Id;
+                BluetoothDevice bluetoothDevice = BluetoothDevice.FromIdAsync(deviceId).Result;
+                if (bluetoothDevice == null)
+                {
+                    DisconnectStream();
+                    return false;
+                }
+
+                if (!bluetoothDevice.IsPaired)
+                {
+                    bluetoothDevice.PairAsync().Wait();
+                    bluetoothDevice.Gatt.ConnectAsync().Wait();
+                    failureReason = Resources.Strings.BtComfirmPairRequest;
+                    DisconnectStream();
+                    return false;
+                }
+
                 _btLeGattSpp = new BtLeGattSpp();
-                if (!_btLeGattSpp.ConnectLeGattDevice(device.Id))
+                if (!_btLeGattSpp.ConnectLeGattDevice(deviceId))
                 {
                     DisconnectStream();
                     return false;
