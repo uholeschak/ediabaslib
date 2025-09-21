@@ -406,7 +406,7 @@ namespace CarSimulator
                         if (!string.IsNullOrEmpty(deviceName))
                         {
                             deviceName = deviceName.ToUpperInvariant();
-                            if (_autoSelectNames != null)
+                            if (checkBoxEnableAutoconnect.Checked && _autoSelectNames != null)
                             {
                                 foreach (string selectName in _autoSelectNames)
                                 {
@@ -611,6 +611,9 @@ namespace CarSimulator
             ResizeHeader();
 
             checkBoxEnableBle.Checked = _enableBle;
+            checkBoxEnableAutoconnect.Visible = _autoSelectNames != null && _autoSelectNames.Count > 0;
+            checkBoxEnableAutoconnect.Checked = true;
+
             UpdateButtonStatus();
             PerformSearch();
         }

@@ -5,7 +5,7 @@ Programming CSR BC03 and BC04 chips:
 - Copy and replace \lib-win32\usbspi.dll to C:\Program Files (x86)\CSR\BlueSuite X.X.X
 - Download Zadig from: http://zadig.akeo.ie/
 - Disconnect all other FTDI devices from the PC, otherwise the drivers will be modified!
-- Open Options -> List All Devices, select FTDI breakout board from the listbox and Replace Driver to libusbK
+- Open Options -> List All Devices, select FTDI device with name "Breakout Board" from the listbox and Replace Driver with libusbK
 
 Device connection:
 ------------------

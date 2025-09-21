@@ -37,6 +37,7 @@
             textBoxStatus = new System.Windows.Forms.TextBox();
             buttonSearch = new System.Windows.Forms.Button();
             checkBoxEnableBle = new System.Windows.Forms.CheckBox();
+            checkBoxEnableAutoconnect = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // listViewDevices
@@ -129,6 +130,16 @@
             checkBoxEnableBle.UseVisualStyleBackColor = true;
             checkBoxEnableBle.CheckedChanged += checkBoxEnableBle_CheckedChanged;
             // 
+            // checkBoxEnableAutoconnect
+            // 
+            checkBoxEnableAutoconnect.AutoSize = true;
+            checkBoxEnableAutoconnect.Location = new System.Drawing.Point(102, 446);
+            checkBoxEnableAutoconnect.Name = "checkBoxEnableAutoconnect";
+            checkBoxEnableAutoconnect.Size = new System.Drawing.Size(95, 19);
+            checkBoxEnableAutoconnect.TabIndex = 6;
+            checkBoxEnableAutoconnect.Text = "Autoconnect";
+            checkBoxEnableAutoconnect.UseVisualStyleBackColor = true;
+            // 
             // BluetoothSearch
             // 
             AcceptButton = buttonOk;
@@ -136,6 +147,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonCancel;
             ClientSize = new System.Drawing.Size(620, 480);
+            Controls.Add(checkBoxEnableAutoconnect);
             Controls.Add(checkBoxEnableBle);
             Controls.Add(buttonSearch);
             Controls.Add(textBoxStatus);
@@ -167,5 +179,6 @@
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.ColumnHeader columnHeaderBtType;
         private System.Windows.Forms.CheckBox checkBoxEnableBle;
+        private System.Windows.Forms.CheckBox checkBoxEnableAutoconnect;
     }
 }
