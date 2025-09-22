@@ -19,7 +19,7 @@ Pinout: http://www.instructables.com/id/AT-command-mode-of-HC-05-Bluetooth-modul
 | MISO   | 9           | DSR#          | D5            | SPI_MISO | 18        |
 | GND    | 7, 18, 21   | GND           | --            | GND      | 21        |
 
-Make sure the power supply GND is connected to USB ground to prevent signal noise!
+Make sure the power supply GND is connected to USB ground to prevent USB signal disturbance!
 Tested with chips: BC352, BC358, BC417
 
 Test connection and create backup:
