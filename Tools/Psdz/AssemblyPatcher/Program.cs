@@ -304,9 +304,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("{0}.ctor patched", patchCtorClass);
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** patchCtorClass:.ctor Exception: {0}", ex.Message);
                         }
 
                         try
@@ -326,9 +326,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("{0}.{1} patched", patchMethod1Class, patchMethod1Name);
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** patchMethod1Class:patchMethod1Name Exception: {0}", ex.Message);
                         }
 
                         if (!string.IsNullOrEmpty(patchMethod1Name2))
@@ -350,9 +350,9 @@ namespace AssemblyPatcher
                                     Console.WriteLine("{0}.{1} patched", patchMethod1Class, patchMethod1Name2);
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
-                                // ignored
+                                Console.WriteLine("*** patchMethod1Class:patchMethod1Name2 Exception: {0}", ex.Message);
                             }
 
                         }
@@ -374,9 +374,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("{0}.{1} patched", patchMethod2Class, patchMethod2Name);
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** patchMethod2Class:patchMethod2 Exception: {0}", ex.Message);
                         }
 
                         try
@@ -398,9 +398,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("IsConnectedViaENETAndBrandIsToyota patched");
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** TherapyPlanCalculated.IsConnectedViaENETAndBrandIsToyota Exception: {0}", ex.Message);
                         }
 
                         try
@@ -421,9 +421,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("EncryptSensitveContent patched");
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** EncryptSensitveContent.EncryptSensitveContent Exception: {0}", ex.Message);
                         }
 
                         try
@@ -583,9 +583,9 @@ namespace AssemblyPatcher
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** ConnectionManager.UseTheDoipPort Exception: {0}", ex.Message);
                         }
 
                         try
@@ -640,9 +640,9 @@ namespace AssemblyPatcher
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** VoltageUtils.CheckVoltageForEthernetConnection Exception: {0}", ex.Message);
                         }
 
                         try
@@ -664,9 +664,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("IsLoginEnabled patched");
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** LoginEnabledOptionProvider.IsLoginEnabled Exception: {0}", ex.Message);
                         }
 
                         try
@@ -687,9 +687,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("VerifyStrongName patched");
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** VerifyAssemblyHelper.VerifyStrongName Exception: {0}", ex.Message);
                         }
 
                         try
@@ -709,9 +709,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("ValidateHost patched");
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** IstaIcsServiceClient.ValidateHost Exception: {0}", ex.Message);
                         }
 
                         try
@@ -731,9 +731,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("VerifyLicense patched");
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** IstaIcsServiceClient.VerifyLicense Exception: {0}", ex.Message);
                         }
 
                         try
@@ -777,9 +777,9 @@ namespace AssemblyPatcher
                                 Console.WriteLine("CheckPackageValidity patched");
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** PackageValidityService.CheckPackageValidity Exception: {0}", ex.Message);
                         }
 
                         try
@@ -862,9 +862,9 @@ namespace AssemblyPatcher
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** ECUKom.InitVCI Exception: {0}", ex.Message);
                         }
 
                         bool initEnetDevicePatched = false;
@@ -970,9 +970,9 @@ namespace AssemblyPatcher
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** ECUKom.InitializeEnetDevice Exception: {0}", ex.Message);
                         }
 
                         if (!initEnetDevicePatched)
@@ -1083,9 +1083,9 @@ namespace AssemblyPatcher
                                     }
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
-                                // ignored
+                                Console.WriteLine("*** ECUKom.InitVCI Exception: {0}", ex.Message);
                             }
                         }
 
@@ -1141,9 +1141,9 @@ namespace AssemblyPatcher
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** StartServerInstance Exception: {0}", ex.Message);
                         }
 
                         try
@@ -1197,9 +1197,9 @@ namespace AssemblyPatcher
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** checkForPsdzInstancesLogFile Exception: {0}", ex.Message);
                         }
 
                         try
@@ -1376,9 +1376,9 @@ namespace AssemblyPatcher
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** doVehicleShortTest Exception: {0}", ex.Message);
                         }
 
                         try
@@ -1458,9 +1458,9 @@ namespace AssemblyPatcher
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** ClearAndReadErrorInfoMemory Exception: {0}", ex.Message);
                         }
 
                         if (noIcomVerCheck)
@@ -1483,9 +1483,9 @@ namespace AssemblyPatcher
                                     Console.WriteLine("IsIcomUnsupported patched");
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception ex)
                             {
-                                // ignored
+                                Console.WriteLine("*** IsIcomUnsupported Exception: {0}", ex.Message);
                             }
                         }
 
@@ -1550,9 +1550,9 @@ namespace AssemblyPatcher
                                 }
                             }
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            // ignored
+                            Console.WriteLine("*** IstaOperationStarter.Start Exception: {0}", ex.Message);
                         }
 
                         if (patched)
