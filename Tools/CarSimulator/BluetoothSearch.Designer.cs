@@ -36,7 +36,6 @@
             buttonOk = new System.Windows.Forms.Button();
             textBoxStatus = new System.Windows.Forms.TextBox();
             buttonSearch = new System.Windows.Forms.Button();
-            checkBoxEnableBle = new System.Windows.Forms.CheckBox();
             checkBoxEnableAutoconnect = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
@@ -119,21 +118,10 @@
             buttonSearch.UseVisualStyleBackColor = true;
             buttonSearch.Click += buttonSearch_Click;
             // 
-            // checkBoxEnableBle
-            // 
-            checkBoxEnableBle.AutoSize = true;
-            checkBoxEnableBle.Location = new System.Drawing.Point(13, 446);
-            checkBoxEnableBle.Name = "checkBoxEnableBle";
-            checkBoxEnableBle.Size = new System.Drawing.Size(83, 19);
-            checkBoxEnableBle.TabIndex = 2;
-            checkBoxEnableBle.Text = "Enable BLE";
-            checkBoxEnableBle.UseVisualStyleBackColor = true;
-            checkBoxEnableBle.CheckedChanged += checkBoxEnableBle_CheckedChanged;
-            // 
             // checkBoxEnableAutoconnect
             // 
             checkBoxEnableAutoconnect.AutoSize = true;
-            checkBoxEnableAutoconnect.Location = new System.Drawing.Point(225, 446);
+            checkBoxEnableAutoconnect.Location = new System.Drawing.Point(12, 446);
             checkBoxEnableAutoconnect.Name = "checkBoxEnableAutoconnect";
             checkBoxEnableAutoconnect.Size = new System.Drawing.Size(95, 19);
             checkBoxEnableAutoconnect.TabIndex = 3;
@@ -148,7 +136,6 @@
             CancelButton = buttonCancel;
             ClientSize = new System.Drawing.Size(620, 480);
             Controls.Add(checkBoxEnableAutoconnect);
-            Controls.Add(checkBoxEnableBle);
             Controls.Add(buttonSearch);
             Controls.Add(textBoxStatus);
             Controls.Add(buttonOk);
@@ -178,7 +165,6 @@
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.ColumnHeader columnHeaderBtType;
-        private System.Windows.Forms.CheckBox checkBoxEnableBle;
         private System.Windows.Forms.CheckBox checkBoxEnableAutoconnect;
     }
 }

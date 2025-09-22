@@ -610,7 +610,6 @@ namespace CarSimulator
         {
             ResizeHeader();
 
-            checkBoxEnableBle.Checked = _enableBle;
             checkBoxEnableAutoconnect.Visible = _autoSelectNames != null && _autoSelectNames.Count > 0;
             checkBoxEnableAutoconnect.Checked = true;
 
@@ -651,11 +650,6 @@ namespace CarSimulator
                     Close();
                 }
             }
-        }
-
-        private void checkBoxEnableBle_CheckedChanged(object sender, EventArgs e)
-        {
-            _enableBle = checkBoxEnableBle.Checked;
         }
     }
 }
