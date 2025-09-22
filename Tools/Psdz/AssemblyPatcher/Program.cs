@@ -430,6 +430,29 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.RheingoldSessionController",
+                                Class = "Logic",
+                                Method = "SendFastaDataToFBM",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("Logic.SendFastaDataToFBM found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ldarg_1));
+                                instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                                Console.WriteLine("SendFastaDataToFBM patched");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** Logic.SendFastaDataToFBM Exception: {0}", ex.Message);
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.Programming",
                                 Class = "ConnectionManager",
                                 Method = "UseTheDoipPort",
