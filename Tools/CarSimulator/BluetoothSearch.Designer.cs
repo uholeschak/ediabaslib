@@ -37,6 +37,7 @@
             textBoxStatus = new System.Windows.Forms.TextBox();
             buttonSearch = new System.Windows.Forms.Button();
             checkBoxEnableAutoconnect = new System.Windows.Forms.CheckBox();
+            labelSearchTypes = new System.Windows.Forms.Label();
             SuspendLayout();
             // 
             // listViewDevices
@@ -45,13 +46,13 @@
             listViewDevices.FullRowSelect = true;
             listViewDevices.GridLines = true;
             listViewDevices.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            listViewDevices.Location = new System.Drawing.Point(13, 12);
+            listViewDevices.Location = new System.Drawing.Point(13, 27);
             listViewDevices.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             listViewDevices.MultiSelect = false;
             listViewDevices.Name = "listViewDevices";
             listViewDevices.ShowGroups = false;
-            listViewDevices.Size = new System.Drawing.Size(594, 314);
-            listViewDevices.TabIndex = 0;
+            listViewDevices.Size = new System.Drawing.Size(594, 299);
+            listViewDevices.TabIndex = 1;
             listViewDevices.UseCompatibleStateImageBehavior = false;
             listViewDevices.View = System.Windows.Forms.View.Details;
             listViewDevices.ColumnWidthChanging += listViewDevices_ColumnWidthChanging;
@@ -105,7 +106,7 @@
             textBoxStatus.ReadOnly = true;
             textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             textBoxStatus.Size = new System.Drawing.Size(594, 100);
-            textBoxStatus.TabIndex = 1;
+            textBoxStatus.TabIndex = 2;
             // 
             // buttonSearch
             // 
@@ -128,6 +129,15 @@
             checkBoxEnableAutoconnect.Text = "Autoconnect";
             checkBoxEnableAutoconnect.UseVisualStyleBackColor = true;
             // 
+            // labelSearchTypes
+            // 
+            labelSearchTypes.AutoSize = true;
+            labelSearchTypes.Location = new System.Drawing.Point(13, 9);
+            labelSearchTypes.Name = "labelSearchTypes";
+            labelSearchTypes.Size = new System.Drawing.Size(28, 15);
+            labelSearchTypes.TabIndex = 0;
+            labelSearchTypes.Text = "EDR";
+            // 
             // BluetoothSearch
             // 
             AcceptButton = buttonOk;
@@ -135,6 +145,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonCancel;
             ClientSize = new System.Drawing.Size(620, 480);
+            Controls.Add(labelSearchTypes);
             Controls.Add(checkBoxEnableAutoconnect);
             Controls.Add(buttonSearch);
             Controls.Add(textBoxStatus);
@@ -166,5 +177,6 @@
         private System.Windows.Forms.Button buttonSearch;
         private System.Windows.Forms.ColumnHeader columnHeaderBtType;
         private System.Windows.Forms.CheckBox checkBoxEnableAutoconnect;
+        private System.Windows.Forms.Label labelSearchTypes;
     }
 }

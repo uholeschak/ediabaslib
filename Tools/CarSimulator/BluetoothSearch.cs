@@ -471,9 +471,24 @@ namespace CarSimulator
 
             bool searching = _searchingBt || _searchingLe;
             BluetoothItem devInfo = GetSelectedBtDevice();
+
             buttonSearch.Enabled = !searching && _cli != null;
             buttonCancel.Enabled = true;
             buttonOk.Enabled = buttonSearch.Enabled && devInfo != null;
+
+            StringBuilder sbSearchTypes = new StringBuilder();
+            sbSearchTypes.Append("EDR");
+            if (_enableBle)
+            {
+                if (sbSearchTypes.Length > 0)
+                {
+                    sbSearchTypes.Append(" / ");
+                }
+                sbSearchTypes.Append("BLE");
+            }
+            sbSearchTypes.Append(":");
+
+            labelSearchTypes.Text = sbSearchTypes.ToString();
         }
 
         public void ShowSearchEndMessage(bool error = false)
