@@ -486,7 +486,7 @@ namespace CarSimulator
                 }
                 sbSearchTypes.Append("BLE");
             }
-            sbSearchTypes.Append(":");
+            sbSearchTypes.Insert(0, "Bluetooth Types: ");
 
             labelSearchTypes.Text = sbSearchTypes.ToString();
         }
