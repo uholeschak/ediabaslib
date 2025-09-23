@@ -160,7 +160,7 @@
     <value>Bottom, Left</value>
   </data>
   <data name="buttonSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>18, 546</value>
+    <value>12, 546</value>
   </data>
   <data name="buttonSearch.Size" type="System.Drawing.Size, System.Drawing">
     <value>120, 23</value>
@@ -241,7 +241,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="buttonTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>354, 546</value>
+    <value>347, 546</value>
   </data>
   <data name="buttonTest.Size" type="System.Drawing.Size, System.Drawing">
     <value>258, 23</value>
@@ -382,7 +382,7 @@
     <value>Select ISTA-D EDIABAS\bin directory</value>
   </data>
   <data name="textBoxWifiPassword.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
+    <value>Bottom, Right</value>
   </data>
   <data name="textBoxWifiPassword.Location" type="System.Drawing.Point, System.Drawing">
     <value>348, 492</value>
@@ -409,7 +409,7 @@
     <value>8</value>
   </data>
   <data name="labelWiFiPassword.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
+    <value>Bottom, Right</value>
   </data>
   <data name="labelWiFiPassword.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
