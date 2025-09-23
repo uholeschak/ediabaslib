@@ -432,6 +432,29 @@ namespace AssemblyPatcher
                             {
                                 Namespace = "BMW.Rheingold.RheingoldSessionController",
                                 Class = "Logic",
+                                Method = "IsSendFastaDataForbidden",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("Logic.IsSendFastaDataForbidden found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_1));
+                                instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                                Console.WriteLine("IsSendFastaDataForbidden patched");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** Logic.IsSendFastaDataForbidden Exception: {0}", ex.Message);
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.RheingoldSessionController",
+                                Class = "Logic",
                                 Method = "SendFastaDataToFBM",
                             };
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
