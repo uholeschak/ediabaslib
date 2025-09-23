@@ -60,7 +60,6 @@ namespace CarSimulator
         public MainForm()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.AboveNormal;
             InitializeComponent();
 
