@@ -710,4 +710,14 @@ Header:
 Default: Init=00
 First Call: Init=02 CntBlock=01
 4E 4D 50 40 <CntRequest> 00 <Data Len L: 14> <Data Len H: 00> 00 02 <Init> 00 <CntBlock> 00 00 00 <CntRequest> 00 00 00
-54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> <Data> 10 02 00 00 0C 00 <Cnt> 00 00 01 00 00
+
+Commands:
+OPEN: 14
+SENDECUTEL: 14
+SETECUCOMM: 1B
+SETTELPARAMETER: 1C
+GETRESULT: 1D
+Request:
+54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> <Data> 10 02 00 00 <1=Init, 0=Other>C 00 <Cnt> 00 00 01 00 00 <Command> 00 00 00
+Response:
+54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> <Data> 10 02 00 00 <1=Init, 0=Other>A 00 <Cnt> 00 00 01 00 00 <Command> 00 00 00
