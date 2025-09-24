@@ -709,5 +709,5 @@ RPLUS:ICOM_P Telegram encoding:
 Header:
 Default: Init=00
 First Call: Init=02 CntBlock=01
-4E 4D 50 40 <CntRequest> 00 <Data Len L = 14> <Data Len H 00> 00 02 <Init> 00 <CntBlock> 00 00 00 <CntRequest> 00 00 00
+4E 4D 50 40 <CntRequest> 00 <Data Len L: 14> <Data Len H: 00> 00 02 <Init> 00 <CntBlock> 00 00 00 <CntRequest> 00 00 00
 54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> <Data>
