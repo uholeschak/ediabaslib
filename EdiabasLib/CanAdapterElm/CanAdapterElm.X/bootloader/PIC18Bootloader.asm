@@ -402,7 +402,7 @@ BootloadMode:
 	; end BOOTLOADER_ADDRESS == 0 ******************************************
 #endif
     lfsr    _FSR2_, 0           ; for compatibility with Extended Instructions mode.
-    bcf     _RI_, ACCESS	; [UH] clear hardware reset bit
+    bcf     _RI_, ACCESS        ; [UH] clear hardware reset bit
 
 #ifdef USE_MAX_INTOSC
     movlw   0x70 ;b'01110000'         ; set INTOSC to maximum speed (usually 8MHz)
@@ -521,9 +521,9 @@ RetryAutoBaud:
     clrf    TMR0L, ACCESS
     bcf     _TMR0IF_, ACCESS
     rcall   WaitForRise         ; wait for a start bit to pass by
-    bsf     _TMR0ON_, ACCESS  	; start timer counting for entire D7..D0 data bit period.
+    bsf     _TMR0ON_, ACCESS    ; start timer counting for entire D7..D0 data bit period.
     rcall   WaitForRise         ; wait for stop bit
-    bcf     _TMR0ON_, ACCESS	; stop the timer from counting further. 
+    bcf     _TMR0ON_, ACCESS    ; stop the timer from counting further. 
 
     btfsc   _TMR0IF_, ACCESS    ; if TMR0 overflowed, we did not get a good baud capture
     bra     RetryAutoBaud       ; try again
@@ -537,11 +537,11 @@ RetryAutoBaud:
     ; TMR0H:TMR0L holds (p / 16).
     rrcf    TMR0H, w, ACCESS    ; divide by 2
     rrcf    UxSPBRG, F, ACCESS
-    btfss   _CARRY_, ACCESS	; rounding
+    btfss   _CARRY_, ACCESS     ; rounding
     decf    UxSPBRG, F, ACCESS
     #endif
 
-    bsf     _UxCREN_, ACCESS	; start receiving
+    bsf     _UxCREN_, ACCESS    ; start receiving
 
 WaitForHostCommand:
     rcall   ReadHostByte        ; get start of transmission <STX>
@@ -701,7 +701,7 @@ WaitForRise:
     clrwdt
 
 WaitForRiseLoop:
-    btfsc   _TMR0IF_, ACCESS	    ; if TMR0 overflowed, we did not get a good baud capture
+    btfsc   _TMR0IF_, ACCESS        ; if TMR0 overflowed, we did not get a good baud capture
     return                  ; abort
 
     btfsc   RXPORT, RXPIN, ACCESS   ; Wait for a falling edge
@@ -924,7 +924,7 @@ NextEraseBlock:
 #endif
 
     decfsz  DATA_COUNTL, F, ACCESS
-    bra     EraseFlash    
+    bra     EraseFlash
     bra     SendAcknowledge     ; All done, send acknowledgement packet
 
 #ifdef SOFTWP
@@ -1081,9 +1081,9 @@ WriteEeprom:
 
 WriteEepromLoop:
     movff   PREINC0, EEDATA
-    rcall   StartWrite      
+    rcall   StartWrite
 
-    btfsc   _WR_, ACCESS	    ; wait for write to complete before moving to next address
+    btfsc   _WR_, ACCESS            ; wait for write to complete before moving to next address
     bra     $-2
 
     #ifdef EEADRH
@@ -1208,7 +1208,7 @@ WrNext:
 
 SendHostByte:
     clrwdt
-    btfss   _UxTXIF_, ACCESS	    ; Write only if TXREG is ready
+    btfss   _UxTXIF_, ACCESS        ; Write only if TXREG is ready
     bra     $-2
 
     movwf   UxTXREG, ACCESS         ; Start sending
@@ -1221,12 +1221,12 @@ SendHostByte:
 
 ; *****************************************************************************
 ReadHostByte:
-    btfsc   _UxOERR_, ACCESS	    ; Reset on overun
+    btfsc   _UxOERR_, ACCESS            ; Reset on overun
     reset
 
 WaitForHostByte:
     clrwdt
-    btfss   _UxRCIF_, ACCESS		; Wait for data from RS232
+    btfss   _UxRCIF_, ACCESS            ; Wait for data from RS232
     bra     WaitForHostByte
 
     movf    UxRCREG, W, ACCESS          ; Save the data
