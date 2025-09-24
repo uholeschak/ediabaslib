@@ -703,3 +703,9 @@ After update delete all content in:
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\FASTAOut
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Transactions
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Temp\[All files and folders except ncd]
+
+RPLUS:ICOM_P Telegram encoding:
+===============================
+Header:
+4E 4D 50 40 <CntTel> 00 14 00 00 02 00 00 <CntBlock> 00 00 00 <CntTel> 00 00 00
+
