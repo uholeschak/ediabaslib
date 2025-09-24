@@ -718,17 +718,54 @@ SETECUCOMM: 1B
 SETTELPARAMETER: 1C
 GETRESULT: 1D
 
-ReqType:
-Open: 00
-Data: 0C
-Init: 1C
+IfhCmd:
+    { 0, TEXT("ifhOpen")},
+    { 1, TEXT("ifhInit")},
+    { 2, TEXT("ifhGetVersion")},
+    { 3, TEXT("ifhGetIfhStatus") },
+    { 4, TEXT("ifhGetIfhError") },
+    { 5, TEXT("ifhGetResult") },
+    { 8, TEXT("ifhEnd") },
+    { 11, TEXT("ifhPassSetConfig") },
+    { 12, TEXT("ifhPassGetConfig") },
+    { 13, TEXT("ifhNotifyConfig") },
+    { 14, TEXT("ifhGetPowerState") },
+    { 20, TEXT("ifhConnect") },
+    { 21, TEXT("ifhDisconnect") },
+    { 22, TEXT("ifhInterfaceType") },
+    { 23, TEXT("ifhPowerSupply") },
+    { 24, TEXT("ifhIgnition") },
+    { 25, TEXT("ifhWarmStart") },
+    { 26, TEXT("ifhReset") },
+    { 27, TEXT("ifhSetParameter") },
+    { 28, TEXT("ifhSetTelPreface") },
+    { 29, TEXT("ifhSendTelegram") },
+    { 30, TEXT("ifhSendTelegramFreq") },
+    { 31, TEXT("ifhRequTelegramFreq") },
+    { 32, TEXT("ifhStopFreqTelegram") },
+    { 33, TEXT("ifhRequestKeyBytes") },
+    { 34, TEXT("ifhRepeatLastMsg") },
+    { 35, TEXT("ifhRequestState") },
+    { 36, TEXT("ifhSetPort") },
+    { 37, TEXT("ifhGetPort") },
+    { 38, TEXT("ifhSetProgVoltage") },
+    { 39, TEXT("ifhLoopTest") },
+    { 40, TEXT("ifhVersion") },
+    { 41, TEXT("ifhDownload") },
+    { 42, TEXT("ifhSwitchSiRelais") },
+    { 43, TEXT("ifhStopTransmission") },
+    { 44, TEXT("ifhRawMode") },
+    { 45, TEXT("ifhSend") },
+    { 46, TEXT("ifhReceive") },
+    { 47, TEXT("ifhSysInfo") },
+    { 48, TEXT("ifhOpenChannel") },
+    { 49, TEXT("ifhCloseChannel") },
+    { 50, TEXT("ifhSendDirect") },
+    { 51, TEXT("ifhReceiveDirect") },
+    { 54, TEXT("IfhSetParameterRaw") },
 
 Request:
-54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> <Data> 10 02 00 00 <ReqType> 00 <Cnt> 00 00 01 00 00 <Command> 00 00 00
+54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> <Data> 10 02 00 00 <IfhCmd> 00 <Cnt> 00 00 01 00 00 <Command> 00 00 00
 
-ResType:
-Open: 00
-Data: 0A
-Init: 1A
 Response:
-54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> <Data> 10 02 00 00 <ResType> 00 <Cnt> 00 00 01 00 00 <Command> 00 00 00
+54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> <Data> 10 02 00 00 <IfhCmd> 00 <Cnt> 00 00 01 00 00 <Command> 00 00 00
