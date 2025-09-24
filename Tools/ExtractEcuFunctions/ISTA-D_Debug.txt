@@ -706,6 +706,8 @@ C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Temp\[All files and folders except ncd]
 
 RPLUS:ICOM_P Telegram encoding:
 ===============================
-Header:
-4E 4D 50 40 <CntTel> 00 14 00 00 02 00 00 <CntBlock> 00 00 00 <CntTel> 00 00 00
+Request Header:
+Default: Init=00
+First Call: Init=02 CntBlock=01
+4E 4D 50 40 <CntTel> 00 14 00 00 02 <Init> 00 <CntBlock> 00 00 00 <CntTel> 00 00 00
 
