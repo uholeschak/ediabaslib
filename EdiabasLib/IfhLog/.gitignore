@@ -2,3 +2,4 @@
 /Release/
 *.vcxproj.user
 *.aps
+/x64/

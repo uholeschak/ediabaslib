@@ -85,6 +85,7 @@ static int iRawMode = 0;
 
 static const FUNCTION functions[] = 
 {
+    { 0, TEXT("ifhOpen")},
     { 1, TEXT("ifhInit")},
     { 2, TEXT("ifhGetVersion")},
     { 3, TEXT("ifhGetIfhStatus") },
