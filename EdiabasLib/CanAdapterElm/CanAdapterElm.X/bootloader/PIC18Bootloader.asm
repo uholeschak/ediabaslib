@@ -278,9 +278,9 @@ BootloaderBreakCheck:
 #endif
     movwf   WPUB, BANKED
     movlb   0x0F
-    bcf     _RBPU_
+    bcf     _RBPU_, ACCESS
     ; check for software reset
-    btfss   _RI_
+    btfss   _RI_, ACCESS
     bra     BootloadMode
 CheckApplication:
     ; check for adapter type
@@ -402,7 +402,7 @@ BootloadMode:
 	; end BOOTLOADER_ADDRESS == 0 ******************************************
 #endif
     lfsr    _FSR2_, 0           ; for compatibility with Extended Instructions mode.
-    bcf     _RI_		; [UH] clear hardware reset bit
+    bcf     _RI_, ACCESS	; [UH] clear hardware reset bit
 
 #ifdef USE_MAX_INTOSC
     movlw   0x70 ;b'01110000'         ; set INTOSC to maximum speed (usually 8MHz)
@@ -469,7 +469,7 @@ BootloadMode:
 #endif
 
 #ifdef BRG16
-    bsf     _UxBRG16_
+    bsf     _UxBRG16_, ACCESS
     movlw   0x02 ;b'00000010'         ; 1:8 prescaler - no division required later (but no rounding possible)
 #else
     movlw   0x03 ;b'00000011'         ; 1:16 prescaler - thus we only have to divide by 2 later on.
@@ -482,15 +482,15 @@ BootloadMode:
 #endif
     ; [UH] switch on both LED
 #if (ADAPTER_TYPE == 0x06) || (ADAPTER_TYPE == 0x07)
-    bcf     _LATB4_
-    bcf     _LATB6_
-    bcf     _TRISB4_
-    bcf     _TRISB6_
+    bcf     _LATB4_, ACCESS
+    bcf     _LATB6_, ACCESS
+    bcf     _TRISB4_, ACCESS
+    bcf     _TRISB6_, ACCESS
 #else
-    bcf     _LATB6_
-    bcf     _LATB7_
-    bcf     _TRISB6_
-    bcf     _TRISB7_
+    bcf     _LATB6_, ACCESS
+    bcf     _LATB7_, ACCESS
+    bcf     _TRISB6_, ACCESS
+    bcf     _TRISB7_, ACCESS
 #endif
 
 ; *****************************************************************************
@@ -512,20 +512,20 @@ DoAutoBaud:
 ;   SPBRG = (p / 32) - 1    BRGH = 1, BRG16 = 0
 ;   SPBRG = (p / 8) - 1     BRGH = 1, BRG16 = 1
 
-    bcf     _UxCREN_	    		; Stop receiving
+    bcf     _UxCREN_, ACCESS		; Stop receiving
     movf    UxRCREG, W, ACCESS          ; Empty the buffer
     movf    UxRCREG, W, ACCESS
 
 RetryAutoBaud:
     clrf    TMR0H, ACCESS               ; reset timer count value
     clrf    TMR0L, ACCESS
-    bcf     _TMR0IF_
+    bcf     _TMR0IF_, ACCESS
     rcall   WaitForRise         ; wait for a start bit to pass by
-    bsf     _TMR0ON_	    	; start timer counting for entire D7..D0 data bit period.
+    bsf     _TMR0ON_, ACCESS  	; start timer counting for entire D7..D0 data bit period.
     rcall   WaitForRise         ; wait for stop bit
-    bcf     _TMR0ON_	    	; stop the timer from counting further. 
+    bcf     _TMR0ON_, ACCESS	; stop the timer from counting further. 
 
-    btfsc   _TMR0IF_	        ; if TMR0 overflowed, we did not get a good baud capture
+    btfsc   _TMR0IF_, ACCESS    ; if TMR0 overflowed, we did not get a good baud capture
     bra     RetryAutoBaud       ; try again
 
     #ifdef BRG16
@@ -541,7 +541,7 @@ RetryAutoBaud:
     decf    UxSPBRG, F, ACCESS
     #endif
 
-    bsf     _UxCREN_	        ; start receiving
+    bsf     _UxCREN_, ACCESS	; start receiving
 
 WaitForHostCommand:
     rcall   ReadHostByte        ; get start of transmission <STX>
@@ -701,7 +701,7 @@ WaitForRise:
     clrwdt
 
 WaitForRiseLoop:
-    btfsc   _TMR0IF_		    ; if TMR0 overflowed, we did not get a good baud capture
+    btfsc   _TMR0IF_, ACCESS	    ; if TMR0 overflowed, we did not get a good baud capture
     return                  ; abort
 
     btfsc   RXPORT, RXPIN, ACCESS   ; Wait for a falling edge
@@ -1043,7 +1043,7 @@ LoadHoldingRegisters:
 ReadEeprom:
     clrf    EECON1, ACCESS
 ReadEepromLoop:
-    bsf     _RD_		; Read the data
+    bsf     _RD_, ACCESS	; Read the data
     movf    EEDATA, w, ACCESS
     #ifdef EEADRH
     infsnz  EEADR, F, ACCESS    ; Adjust EEDATA pointer
@@ -1083,7 +1083,7 @@ WriteEepromLoop:
     movff   PREINC0, EEDATA
     rcall   StartWrite      
 
-    btfsc   _WR_		    ; wait for write to complete before moving to next address
+    btfsc   _WR_, ACCESS	    ; wait for write to complete before moving to next address
     bra     $-2
 
     #ifdef EEADRH
@@ -1208,9 +1208,9 @@ WrNext:
 
 SendHostByte:
     clrwdt
-    btfss   _UxTXIF_	    	    ; Write only if TXREG is ready
+    btfss   _UxTXIF_, ACCESS	    ; Write only if TXREG is ready
     bra     $-2
-    
+
     movwf   UxTXREG, ACCESS         ; Start sending
 
     return
@@ -1221,12 +1221,12 @@ SendHostByte:
 
 ; *****************************************************************************
 ReadHostByte:
-    btfsc   _UxOERR_			; Reset on overun
+    btfsc   _UxOERR_, ACCESS	    ; Reset on overun
     reset
 
 WaitForHostByte:
     clrwdt
-    btfss   _UxRCIF_			; Wait for data from RS232
+    btfss   _UxRCIF_, ACCESS		; Wait for data from RS232
     bra     WaitForHostByte
 
     movf    UxRCREG, W, ACCESS          ; Save the data
@@ -1253,7 +1253,7 @@ StartWrite:
     movwf   EECON2, ACCESS
     movlw   0xAA
     movwf   EECON2, ACCESS
-    bsf     _WR_	    ; Start the write
+    bsf     _WR_, ACCESS    ; Start the write
     nop
 
     return
