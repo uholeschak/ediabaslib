@@ -593,6 +593,10 @@ extern "C"
         PdllLockIFH pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "_dllLockIFH@0");
         if (pdllLockIFH == NULL)
         {
+            pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "dllLockIFH");
+        }
+        if (pdllLockIFH == NULL)
+        {
             LogString(TEXT("dllLockIFH not found"));
             return FALSE;
         }
@@ -613,13 +617,17 @@ extern "C"
         {
             return;
         }
-        PdllUnlockIFH pdllLockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "_dllUnlockIFH@0");
-        if (pdllLockIFH == NULL)
+        PdllUnlockIFH pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "_dllUnlockIFH@0");
+        if (pdllUnlockIFH == NULL)
+        {
+            pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "dllUnlockIFH");
+        }
+        if (pdllUnlockIFH == NULL)
         {
             LogString(TEXT("dllUnlockIFH not found"));
             return;
         }
-        pdllLockIFH();
+        pdllUnlockIFH();
         LogFlush();
     }
 
@@ -638,6 +646,10 @@ extern "C"
             return -1;
         }
         PdllStartupIFH pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "_dllStartupIFH@8");
+        if (pdllStartupIFH == NULL)
+        {
+            pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "dllStartupIFH");
+        }
         if (pdllStartupIFH == NULL)
         {
             LogString(TEXT("dllStartupIFH not found"));
@@ -663,6 +675,10 @@ extern "C"
         PdllShutdownIFH pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "_dllShutdownIFH@0");
         if (pdllShutdownIFH == NULL)
         {
+            pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "dllShutdownIFH");
+        }
+        if (pdllShutdownIFH == NULL)
+        {
             LogString(TEXT("dllShutdownIFH not found"));
             return;
         }
@@ -686,6 +702,10 @@ extern "C"
         PdllCheckIFH pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "_dllCheckIFH@4");
         if (pdllCheckIFH == NULL)
         {
+            pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "dllCheckIFH");
+        }
+        if (pdllCheckIFH == NULL)
+        {
             LogString(TEXT("dllCheckIFH not found"));
             return -1;
         }
@@ -707,6 +727,10 @@ extern "C"
             return;
         }
         PdllExitIFH pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "_dllExitIFH@0");
+        if (pdllExitIFH == NULL)
+        {
+            pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "dllExitIFH");
+        }
         if (pdllExitIFH == NULL)
         {
             LogString(TEXT("dllExitIFH not found"));
@@ -754,6 +778,10 @@ extern "C"
         PdllCallIFH pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "_dllCallIFH@8");
         if (pdllCallIFH == NULL)
         {
+            pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "dllCallIFH");
+        }
+        if (pdllCallIFH == NULL)
+        {
             LogString(TEXT("dllCallIFH not found"));
             return -1;
         }
@@ -776,6 +804,10 @@ extern "C"
             return;
         }
         PXControlEnable pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "_XControlEnable@4");
+        if (pXControlEnable == NULL)
+        {
+            pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "XControlEnable");
+        }
         if (pXControlEnable == NULL)
         {
             LogString(TEXT("XControlEnable not found"));
