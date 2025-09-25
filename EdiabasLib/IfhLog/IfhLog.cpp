@@ -515,9 +515,11 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 CFGCONTEXT *pCfgContext = (CFGCONTEXT *)msgTmp->data;
 
-                LogFormat(TEXT("name = %s, type = %u, id = %u"),
+                LogFormat(TEXT("name = %s, type = %u (%02Xh), id = %u (%02Xh)"),
                     ConvertTextW(pCfgContext->name).c_str(),
                     (unsigned int)pCfgContext->type,
+                    (unsigned int)pCfgContext->type,
+                    (unsigned int)pCfgContext->id,
                     (unsigned int)pCfgContext->id);
 
                 switch (pCfgContext->type)
