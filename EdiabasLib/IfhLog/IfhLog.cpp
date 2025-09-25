@@ -1,9 +1,6 @@
-// Ifh.cpp : Definiert die exportierten Funktionen f�r die DLL-Anwendung.
-//
-
 #include <windows.h>
 #include <Shlwapi.h>
-#include <stdarg.h>
+#include <cstdarg>
 #include <locale>
 #include <codecvt>
 #include <string>
