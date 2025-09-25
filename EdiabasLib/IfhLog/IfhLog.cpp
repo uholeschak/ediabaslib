@@ -1,3 +1,9 @@
+// Usage:
+// Rename the original DLL XXX.dll to XXXOrg.dll
+// Place this DLL as XXX.dll in the same directory
+// Configure logging in XXXLog.ini
+// The logfile will be created as XXX.log
+
 #include <windows.h>
 #include <Shlwapi.h>
 #include <cstdarg>
