@@ -452,10 +452,12 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 case 1:
                     LogFormat(TEXT("unit = %s"), ConvertTextW((char*)msgTmp->data).c_str());
+                    printData = FALSE;
                     break;
 
                 case 2:
                     LogFormat(TEXT("application = %s"), ConvertTextW((char*)msgTmp->data).c_str());
+                    printData = FALSE;
                     break;
             }
             break;
@@ -470,6 +472,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                 break;
             }
             LogFormat(TEXT("version = %s"), ConvertTextW((char*)msgTmp->data).c_str());
+            printData = FALSE;
             break;
 
         case 3:
@@ -524,27 +527,24 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                     ConvertTextW(pCfgContext->name).c_str(),
                     (unsigned int)pCfgContext->type,
                     (unsigned int)pCfgContext->id);
+
                 switch (pCfgContext->type)
                 {
-                case CFGTYPE_PATH:
-                    LogFormat(TEXT("path = %s"),
-                        ConvertTextW(pCfgContext->value.p).c_str());
-                    break;
+                    case CFGTYPE_PATH:
+                        LogFormat(TEXT("path = %s"), ConvertTextW(pCfgContext->value.p).c_str());
+                        break;
 
-                case CFGTYPE_STRING:
-                    LogFormat(TEXT("string = %s"),
-                        ConvertTextW(pCfgContext->value.s).c_str());
-                    break;
+                    case CFGTYPE_STRING:
+                        LogFormat(TEXT("string = %s"), ConvertTextW(pCfgContext->value.s).c_str());
+                        break;
 
-                case CFGTYPE_INT:
-                    LogFormat(TEXT("int = %u"),
-                        (unsigned int)pCfgContext->value.i);
-                    break;
+                    case CFGTYPE_INT:
+                        LogFormat(TEXT("int = %u"), (unsigned int)pCfgContext->value.i);
+                        break;
 
-                case CFGTYPE_BOOL:
-                    LogFormat(TEXT("bool = %s"),
-                        pCfgContext->value.b ? TEXT("TRUE") : TEXT("FALSE"));
-                    break;
+                    case CFGTYPE_BOOL:
+                        LogFormat(TEXT("bool = %s"), pCfgContext->value.b ? TEXT("TRUE") : TEXT("FALSE"));
+                        break;
                 }
                 printData = FALSE;
             }
@@ -568,7 +568,12 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
+            if (msgTmp->data == NULL)
+            {
+                break;
+            }
             LogFormat(TEXT("sgbd = %s"), ConvertTextW((char *)msgTmp->data).c_str());
+            printData = FALSE;
             break;
 
     }
