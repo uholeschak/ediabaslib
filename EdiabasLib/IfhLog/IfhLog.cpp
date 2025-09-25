@@ -571,12 +571,17 @@ static BOOL LoadIfhDll()
     return TRUE;
 }
 
+#ifdef __cplusplus
 extern "C"
+#endif
 {
     typedef BOOL(FAR PASCAL* PdllLockIFH)(void);
 
     DLLEXPORT BOOL FAR PASCAL dllLockIFH(void)
     {
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:_dllLockIFH=_dllLockIFH@0")
+#endif
         LogFormat(TEXT("dllLockIFH()"));
         if (hIfhDll == NULL)
         {
@@ -597,6 +602,9 @@ extern "C"
 
     DLLEXPORT void FAR PASCAL dllUnlockIFH(void)
     {
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:_dllUnlockIFH=_dllUnlockIFH@0")
+#endif
         LogFormat(TEXT("dllUnlockIFH()"));
         if (hIfhDll == NULL)
         {
@@ -616,6 +624,9 @@ extern "C"
 
     DLLEXPORT short FAR PASCAL dllStartupIFH(char* ediabasIniPath, char* ifhName)
     {
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:_dllStartupIFH=_dllStartupIFH@8")
+#endif
         LogFormat(TEXT("dllStartupIFH('%s', '%s')"),
             ConvertTextW(ediabasIniPath).c_str(),
             ConvertTextW(ifhName).c_str());
@@ -638,6 +649,9 @@ extern "C"
 
     DLLEXPORT void FAR PASCAL dllShutdownIFH(void)
     {
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:_dllShutdownIFH=_dllShutdownIFH@0")
+#endif
         LogFormat(TEXT("dllShutdownIFH()"));
         if (hIfhDll == NULL)
         {
@@ -657,6 +671,9 @@ extern "C"
 
     DLLEXPORT short FAR PASCAL dllCheckIFH(short compatibilityNo)
     {
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:_dllCheckIFH=_dllCheckIFH@4")
+#endif
         LogFormat(TEXT("dllCheckIFH(%u)"), (unsigned int)compatibilityNo);
         compatNo = compatibilityNo;
         if (hIfhDll == NULL)
@@ -678,6 +695,9 @@ extern "C"
 
     DLLEXPORT void FAR PASCAL dllExitIFH(void)
     {
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:_dllExitIFH=_dllExitIFH@0")
+#endif
         LogFormat(TEXT("dllExitIFH()"));
         if (hIfhDll == NULL)
         {
@@ -697,6 +717,9 @@ extern "C"
 
     DLLEXPORT short FAR PASCAL dllCallIFH(MESSAGE* msgIn, MESSAGE* msgOut)
     {
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:_dllCallIFH=_dllCallIFH@8")
+#endif
         BOOL writeLog = TRUE;
 
         if (iDisableLog)
@@ -741,6 +764,9 @@ extern "C"
 
     DLLEXPORT void FAR PASCAL XControlEnable(BOOL enable)
     {
+#if defined(_M_IX86)
+#pragma comment(linker, "/EXPORT:_XControlEnable=_XControlEnable@4")
+#endif
         LogFormat(TEXT("XControlEnable(%u)"), enable);
         if (hIfhDll == NULL)
         {
