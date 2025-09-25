@@ -497,12 +497,14 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             }
             else
             {
+                unsigned int errorCode = msgTmp->wParam + 9;
+                unsigned int errorIndex = errorCode - 10;
                 const TCHAR *pDescription = TEXT("");
-                if (msgTmp->wParam < sizeof(ErrorDescription) / sizeof(ErrorDescription[0]))
+                if (errorIndex < sizeof(ErrorDescription) / sizeof(ErrorDescription[0]))
                 {
-                    pDescription = ErrorDescription[msgTmp->wParam];
+                    pDescription = ErrorDescription[errorIndex];
                 }
-                LogFormat(TEXT("EDIABAS_IFH_%04u: \"%s\""), (unsigned int)msgTmp->wParam, pDescription);
+                LogFormat(TEXT("Error code: %u (%02Xh) = \"%s\""), errorCode, errorCode, pDescription);
             }
             break;
 
