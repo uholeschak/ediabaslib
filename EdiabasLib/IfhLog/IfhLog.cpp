@@ -1,4 +1,4 @@
-// Ifh.cpp : Definiert die exportierten Funktionen für die DLL-Anwendung.
+// Ifh.cpp : Definiert die exportierten Funktionen fï¿½r die DLL-Anwendung.
 //
 
 #include <windows.h>
@@ -7,6 +7,8 @@
 #include <locale>
 #include <codecvt>
 #include <string>
+
+#define DLLEXPORT __declspec(dllexport)
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
@@ -57,7 +59,7 @@ typedef struct
 typedef struct
 {
     INT16 fktNo; /* Nummer der IFH-Schnittstellenfunktion */
-    INT16 wParam; /* Frei verfügbar */
+    INT16 wParam; /* Frei verfï¿½gbar */
     UINT32 reserved; /* reserviert */
     UINT16 channel; /* Kanal-ID */
     UINT16 len; /* Anzahl der Datenbytes */
@@ -67,7 +69,7 @@ typedef struct
 typedef struct
 {
     INT16 fktNo; /* Nummer der IFH-Schnittstellenfunktion */
-    INT16 wParam; /* Frei verfügbar */
+    INT16 wParam; /* Frei verfï¿½gbar */
     UINT16 len; /* Anzahl der Datenbytes */
     UCHAR *data; /* Datenbytes */
 } MESSAGE_V4;
@@ -569,184 +571,187 @@ static BOOL LoadIfhDll()
     return TRUE;
 }
 
-typedef BOOL(WINAPI *PdllLockIFH)(void);
-
-extern "C" BOOL WINAPI dllLockIFH(void)
+extern "C"
 {
-    LogFormat(TEXT("dllLockIFH()"));
-    if (hIfhDll == NULL)
+    typedef BOOL(FAR PASCAL* PdllLockIFH)(void);
+
+    DLLEXPORT BOOL FAR PASCAL dllLockIFH(void)
     {
-        return FALSE;
-    }
-    PdllLockIFH pdllLockIFH = (PdllLockIFH) GetProcAddress(hIfhDll, "_dllLockIFH@0");
-    if (pdllLockIFH == NULL)
-    {
-        LogString(TEXT("dllLockIFH not found"));
-        return FALSE;
-    }
-    BOOL result = pdllLockIFH();
-    LogFormat(TEXT("dllLockIFH()=%u"), (unsigned int)result);
-    return result;
-}
-
-typedef void(WINAPI *PdllUnlockIFH)(void);
-
-extern "C" void WINAPI dllUnlockIFH(void)
-{
-    LogFormat(TEXT("dllUnlockIFH()"));
-    if (hIfhDll == NULL)
-    {
-        return;
-    }
-    PdllUnlockIFH pdllLockIFH = (PdllUnlockIFH) GetProcAddress(hIfhDll, "_dllUnlockIFH@0");
-    if (pdllLockIFH == NULL)
-    {
-        LogString(TEXT("dllUnlockIFH not found"));
-        return;
-    }
-    pdllLockIFH();
-    LogFlush();
-}
-
-typedef short(WINAPI *PdllStartupIFH)(char *ediabasIniPath, char *ifhName);
-
-extern "C" short WINAPI dllStartupIFH(char *ediabasIniPath, char *ifhName)
-{
-    LogFormat(TEXT("dllStartupIFH('%s', '%s')"),
-        ConvertTextW(ediabasIniPath).c_str(),
-        ConvertTextW(ifhName).c_str());
-    if (hIfhDll == NULL)
-    {
-        return -1;
-    }
-    PdllStartupIFH pdllStartupIFH = (PdllStartupIFH) GetProcAddress(hIfhDll, "_dllStartupIFH@8");
-    if (pdllStartupIFH == NULL)
-    {
-        LogString(TEXT("dllStartupIFH not found"));
-        return -1;
-    }
-    short result = pdllStartupIFH(ediabasIniPath, ifhName);
-    LogFormat(TEXT("dllStartupIFH()=%u"), (unsigned int)result);
-    return result;
-}
-
-typedef void(WINAPI *PdllShutdownIFH)(void);
-
-extern "C" void WINAPI dllShutdownIFH(void)
-{
-    LogFormat(TEXT("dllShutdownIFH()"));
-    if (hIfhDll == NULL)
-    {
-        return;
-    }
-    PdllShutdownIFH pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "_dllShutdownIFH@0");
-    if (pdllShutdownIFH == NULL)
-    {
-        LogString(TEXT("dllShutdownIFH not found"));
-        return;
-    }
-    pdllShutdownIFH();
-    LogFlush();
-}
-
-typedef short(WINAPI *PdllCheckIFH)(short compatibilityNo);
-
-extern "C" short WINAPI dllCheckIFH(short compatibilityNo)
-{
-    LogFormat(TEXT("dllCheckIFH(%u)"), (unsigned int) compatibilityNo);
-    compatNo = compatibilityNo;
-    if (hIfhDll == NULL)
-    {
-        return -1;
-    }
-    PdllCheckIFH pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "_dllCheckIFH@4");
-    if (pdllCheckIFH == NULL)
-    {
-        LogString(TEXT("dllCheckIFH not found"));
-        return -1;
-    }
-    short result = pdllCheckIFH(compatibilityNo);
-    LogFormat(TEXT("dllCheckIFH()=%u"), (unsigned int)result);
-    return result;
-}
-
-typedef void(WINAPI *PdllExitIFH)(void);
-
-extern "C" void WINAPI dllExitIFH(void)
-{
-    LogFormat(TEXT("dllExitIFH()"));
-    if (hIfhDll == NULL)
-    {
-        return;
-    }
-    PdllExitIFH pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "_dllExitIFH@0");
-    if (pdllExitIFH == NULL)
-    {
-        LogString(TEXT("dllExitIFH not found"));
-        return;
-    }
-    pdllExitIFH();
-    LogFlush();
-}
-
-typedef short(WINAPI *PdllCallIFH)(MESSAGE *msgIn, MESSAGE *msgOut);
-
-extern "C" short WINAPI dllCallIFH(MESSAGE *msgIn, MESSAGE *msgOut)
-{
-    BOOL writeLog = TRUE;
-
-    if (iDisableLog)
-    {
-        writeLog = FALSE;
-    }
-
-    if (!iStatusLog && msgIn->fktNo == 3)
-    {   // hide status message
-        writeLog = FALSE;
-    }
-
-    if (writeLog) LogFormat(TEXT("dllCallIFH()"));
-
-    const TCHAR *fktName = TEXT("");
-    for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
-    {
-        if (functions[i].fktNo == msgIn->fktNo)
+        LogFormat(TEXT("dllLockIFH()"));
+        if (hIfhDll == NULL)
         {
-            fktName = functions[i].fktName;
-            break;
+            return FALSE;
         }
+        PdllLockIFH pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "_dllLockIFH@0");
+        if (pdllLockIFH == NULL)
+        {
+            LogString(TEXT("dllLockIFH not found"));
+            return FALSE;
+        }
+        BOOL result = pdllLockIFH();
+        LogFormat(TEXT("dllLockIFH()=%u"), (unsigned int)result);
+        return result;
     }
-    if (writeLog) LogMsg(msgIn, FALSE);
-    if (hIfhDll == NULL)
-    {
-        return -1;
-    }
-    PdllCallIFH pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "_dllCallIFH@8");
-    if (pdllCallIFH == NULL)
-    {
-        LogString(TEXT("dllCallIFH not found"));
-        return -1;
-    }
-    short result = pdllCallIFH(msgIn, msgOut);
-    if (writeLog) LogMsg(msgOut, TRUE);
-    if (writeLog) LogFormat(TEXT("dllCallIFH()=%u"), (unsigned int)result);
-    return result;
-}
 
-typedef void (WINAPI *PXControlEnable)(BOOL enable);
+    typedef void(FAR PASCAL* PdllUnlockIFH)(void);
 
-extern "C" void WINAPI XControlEnable(BOOL enable)
-{
-    LogFormat(TEXT("XControlEnable(%u)"), enable);
-    if (hIfhDll == NULL)
+    DLLEXPORT void FAR PASCAL dllUnlockIFH(void)
     {
-        return;
+        LogFormat(TEXT("dllUnlockIFH()"));
+        if (hIfhDll == NULL)
+        {
+            return;
+        }
+        PdllUnlockIFH pdllLockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "_dllUnlockIFH@0");
+        if (pdllLockIFH == NULL)
+        {
+            LogString(TEXT("dllUnlockIFH not found"));
+            return;
+        }
+        pdllLockIFH();
+        LogFlush();
     }
-    PXControlEnable pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "_XControlEnable@4");
-    if (pXControlEnable == NULL)
+
+    typedef short(FAR PASCAL* PdllStartupIFH)(char* ediabasIniPath, char* ifhName);
+
+    DLLEXPORT short FAR PASCAL dllStartupIFH(char* ediabasIniPath, char* ifhName)
     {
-        LogString(TEXT("XControlEnable not found"));
-        return;
+        LogFormat(TEXT("dllStartupIFH('%s', '%s')"),
+            ConvertTextW(ediabasIniPath).c_str(),
+            ConvertTextW(ifhName).c_str());
+        if (hIfhDll == NULL)
+        {
+            return -1;
+        }
+        PdllStartupIFH pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "_dllStartupIFH@8");
+        if (pdllStartupIFH == NULL)
+        {
+            LogString(TEXT("dllStartupIFH not found"));
+            return -1;
+        }
+        short result = pdllStartupIFH(ediabasIniPath, ifhName);
+        LogFormat(TEXT("dllStartupIFH()=%u"), (unsigned int)result);
+        return result;
     }
-    pXControlEnable(enable);
+
+    typedef void(FAR PASCAL* PdllShutdownIFH)(void);
+
+    DLLEXPORT void FAR PASCAL dllShutdownIFH(void)
+    {
+        LogFormat(TEXT("dllShutdownIFH()"));
+        if (hIfhDll == NULL)
+        {
+            return;
+        }
+        PdllShutdownIFH pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "_dllShutdownIFH@0");
+        if (pdllShutdownIFH == NULL)
+        {
+            LogString(TEXT("dllShutdownIFH not found"));
+            return;
+        }
+        pdllShutdownIFH();
+        LogFlush();
+    }
+
+    typedef short(FAR PASCAL* PdllCheckIFH)(short compatibilityNo);
+
+    DLLEXPORT short FAR PASCAL dllCheckIFH(short compatibilityNo)
+    {
+        LogFormat(TEXT("dllCheckIFH(%u)"), (unsigned int)compatibilityNo);
+        compatNo = compatibilityNo;
+        if (hIfhDll == NULL)
+        {
+            return -1;
+        }
+        PdllCheckIFH pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "_dllCheckIFH@4");
+        if (pdllCheckIFH == NULL)
+        {
+            LogString(TEXT("dllCheckIFH not found"));
+            return -1;
+        }
+        short result = pdllCheckIFH(compatibilityNo);
+        LogFormat(TEXT("dllCheckIFH()=%u"), (unsigned int)result);
+        return result;
+    }
+
+    typedef void(FAR PASCAL* PdllExitIFH)(void);
+
+    DLLEXPORT void FAR PASCAL dllExitIFH(void)
+    {
+        LogFormat(TEXT("dllExitIFH()"));
+        if (hIfhDll == NULL)
+        {
+            return;
+        }
+        PdllExitIFH pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "_dllExitIFH@0");
+        if (pdllExitIFH == NULL)
+        {
+            LogString(TEXT("dllExitIFH not found"));
+            return;
+        }
+        pdllExitIFH();
+        LogFlush();
+    }
+
+    typedef short(FAR PASCAL* PdllCallIFH)(MESSAGE* msgIn, MESSAGE* msgOut);
+
+    DLLEXPORT short FAR PASCAL dllCallIFH(MESSAGE* msgIn, MESSAGE* msgOut)
+    {
+        BOOL writeLog = TRUE;
+
+        if (iDisableLog)
+        {
+            writeLog = FALSE;
+        }
+
+        if (!iStatusLog && msgIn->fktNo == 3)
+        {   // hide status message
+            writeLog = FALSE;
+        }
+
+        if (writeLog) LogFormat(TEXT("dllCallIFH()"));
+
+        const TCHAR* fktName = TEXT("");
+        for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
+        {
+            if (functions[i].fktNo == msgIn->fktNo)
+            {
+                fktName = functions[i].fktName;
+                break;
+            }
+        }
+        if (writeLog) LogMsg(msgIn, FALSE);
+        if (hIfhDll == NULL)
+        {
+            return -1;
+        }
+        PdllCallIFH pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "_dllCallIFH@8");
+        if (pdllCallIFH == NULL)
+        {
+            LogString(TEXT("dllCallIFH not found"));
+            return -1;
+        }
+        short result = pdllCallIFH(msgIn, msgOut);
+        if (writeLog) LogMsg(msgOut, TRUE);
+        if (writeLog) LogFormat(TEXT("dllCallIFH()=%u"), (unsigned int)result);
+        return result;
+    }
+
+    typedef void (FAR PASCAL* PXControlEnable)(BOOL enable);
+
+    DLLEXPORT void FAR PASCAL XControlEnable(BOOL enable)
+    {
+        LogFormat(TEXT("XControlEnable(%u)"), enable);
+        if (hIfhDll == NULL)
+        {
+            return;
+        }
+        PXControlEnable pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "_XControlEnable@4");
+        if (pXControlEnable == NULL)
+        {
+            LogString(TEXT("XControlEnable not found"));
+            return;
+        }
+        pXControlEnable(enable);
+    }
 }
