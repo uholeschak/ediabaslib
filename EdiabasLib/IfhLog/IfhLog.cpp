@@ -444,10 +444,6 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                 break;
             }
 
-            if (msgTmp->data == NULL)
-            {
-                break;
-            }
             switch (msgTmp->wParam)
             {
                 case 1:
@@ -462,10 +458,6 @@ static void LogMsg(MESSAGE *msg, BOOL output)
 
         case 2:
             if (output)
-            {
-                break;
-            }
-            if (msgTmp->data == NULL)
             {
                 break;
             }
@@ -563,10 +555,6 @@ static void LogMsg(MESSAGE *msg, BOOL output)
 
         case 20:
             if (output)
-            {
-                break;
-            }
-            if (msgTmp->data == NULL)
             {
                 break;
             }
