@@ -590,10 +590,10 @@ extern "C"
         {
             return FALSE;
         }
-        PdllLockIFH pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "_dllLockIFH@0");
+        PdllLockIFH pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "dllLockIFH");
         if (pdllLockIFH == NULL)
         {
-            pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "dllLockIFH");
+            pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "_dllLockIFH@0");
         }
         if (pdllLockIFH == NULL)
         {
@@ -617,10 +617,10 @@ extern "C"
         {
             return;
         }
-        PdllUnlockIFH pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "_dllUnlockIFH@0");
+        PdllUnlockIFH pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "dllUnlockIFH");
         if (pdllUnlockIFH == NULL)
         {
-            pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "dllUnlockIFH");
+            pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "_dllUnlockIFH@0");
         }
         if (pdllUnlockIFH == NULL)
         {
@@ -645,10 +645,10 @@ extern "C"
         {
             return -1;
         }
-        PdllStartupIFH pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "_dllStartupIFH@8");
+        PdllStartupIFH pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "dllStartupIFH");
         if (pdllStartupIFH == NULL)
         {
-            pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "dllStartupIFH");
+            pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "_dllStartupIFH@8");
         }
         if (pdllStartupIFH == NULL)
         {
@@ -672,10 +672,10 @@ extern "C"
         {
             return;
         }
-        PdllShutdownIFH pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "_dllShutdownIFH@0");
+        PdllShutdownIFH pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "dllShutdownIFH");
         if (pdllShutdownIFH == NULL)
         {
-            pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "dllShutdownIFH");
+            pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "_dllShutdownIFH@0");
         }
         if (pdllShutdownIFH == NULL)
         {
@@ -699,10 +699,10 @@ extern "C"
         {
             return -1;
         }
-        PdllCheckIFH pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "_dllCheckIFH@4");
+        PdllCheckIFH pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "dllCheckIFH");
         if (pdllCheckIFH == NULL)
         {
-            pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "dllCheckIFH");
+            pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "_dllCheckIFH@4");
         }
         if (pdllCheckIFH == NULL)
         {
@@ -726,10 +726,10 @@ extern "C"
         {
             return;
         }
-        PdllExitIFH pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "_dllExitIFH@0");
+        PdllExitIFH pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "dllExitIFH");
         if (pdllExitIFH == NULL)
         {
-            pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "dllExitIFH");
+            pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "_dllExitIFH@0");
         }
         if (pdllExitIFH == NULL)
         {
@@ -775,10 +775,10 @@ extern "C"
         {
             return -1;
         }
-        PdllCallIFH pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "_dllCallIFH@8");
+        PdllCallIFH pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "dllCallIFH");
         if (pdllCallIFH == NULL)
         {
-            pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "dllCallIFH");
+            pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "_dllCallIFH@8");
         }
         if (pdllCallIFH == NULL)
         {
@@ -803,10 +803,10 @@ extern "C"
         {
             return;
         }
-        PXControlEnable pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "_XControlEnable@4");
+        PXControlEnable pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "XControlEnable");
         if (pXControlEnable == NULL)
         {
-            pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "XControlEnable");
+            pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "_XControlEnable@4");
         }
         if (pXControlEnable == NULL)
         {
