@@ -438,12 +438,38 @@ static void LogMsg(MESSAGE *msg, BOOL output)
     std::wstring dataPrefix = TEXT("(") + std::wstring(fktName) + TEXT("): ");
     switch (fktNo)
     {
-        case 2:
-            if (!output)
+        case 1:
+            if (output)
             {
                 break;
             }
-            LogFormat(TEXT("version = %s"), ConvertTextW((char *)msgTmp->data).c_str());
+
+            if (msgTmp->data == NULL)
+            {
+                break;
+            }
+            switch (msgTmp->wParam)
+            {
+                case 1:
+                    LogFormat(TEXT("unit = %s"), ConvertTextW((char*)msgTmp->data).c_str());
+                    break;
+
+                case 2:
+                    LogFormat(TEXT("application = %s"), ConvertTextW((char*)msgTmp->data).c_str());
+                    break;
+            }
+            break;
+
+        case 2:
+            if (output)
+            {
+                break;
+            }
+            if (msgTmp->data == NULL)
+            {
+                break;
+            }
+            LogFormat(TEXT("version = %s"), ConvertTextW((char*)msgTmp->data).c_str());
             break;
 
         case 3:
