@@ -452,12 +452,10 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 case 1:
                     LogFormat(TEXT("unit = %s"), ConvertTextW((char*)msgTmp->data).c_str());
-                    printData = FALSE;
                     break;
 
                 case 2:
                     LogFormat(TEXT("application = %s"), ConvertTextW((char*)msgTmp->data).c_str());
-                    printData = FALSE;
                     break;
             }
             break;
@@ -573,7 +571,6 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                 break;
             }
             LogFormat(TEXT("sgbd = %s"), ConvertTextW((char *)msgTmp->data).c_str());
-            printData = FALSE;
             break;
 
     }
