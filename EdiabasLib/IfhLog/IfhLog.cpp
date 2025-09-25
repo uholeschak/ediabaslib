@@ -413,18 +413,21 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         msgLocal.data = msgV4->data;
         msgTmp = &msgLocal;
     }
+
+    unsigned int fktNo = (unsigned int) msgTmp->fktNo;
     const TCHAR *fktName = TEXT("");
     for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
     {
-        if (functions[i].fktNo == msgTmp->fktNo)
+        if (functions[i].fktNo == fktNo)
         {
             fktName = functions[i].fktName;
             break;
         }
     }
-    LogFormat(TEXT("%s: fktNo = %u '%s', wParam = %u, channel = %u, len = %u"),
+    LogFormat(TEXT("%s: fktNo = %u (%02Xh) '%s', wParam = %u, channel = %u, len = %u"),
         output ? TEXT("msgOut") : TEXT("msgIn"),
-        (unsigned int)msgTmp->fktNo,
+        fktNo,
+        fktNo,
         fktName,
         (unsigned int)msgTmp->wParam,
         (unsigned int)msgTmp->channel,
@@ -433,7 +436,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
 
     BOOL printData = TRUE;
     std::wstring dataPrefix = TEXT("(") + std::wstring(fktName) + TEXT("): ");
-    switch (msgTmp->fktNo)
+    switch (fktNo)
     {
         case 2:
             if (!output)
