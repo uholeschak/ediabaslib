@@ -78,9 +78,9 @@ typedef struct
 } MESSAGE_V4;
 #pragma pack()
 
-static HANDLE hMutex = NULL;
-static HMODULE hIfhDll = NULL;
-static FILE *hLogFile = NULL;
+static HANDLE hMutex = nullptr;
+static HMODULE hIfhDll = nullptr;
+static FILE *hLogFile = nullptr;
 static int compatNo = IFH_COMPATIBILITY_NO;
 static int iDisableLog = 0;
 static int iStatusLog = 0;
@@ -218,36 +218,36 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
 
 static void Init()
 {
-    if (hMutex == NULL)
+    if (hMutex == nullptr)
     {
-        hMutex = CreateMutex(NULL, FALSE, NULL);
+        hMutex = CreateMutex(nullptr, FALSE, nullptr);
     }
     LoadIfhDll();
 }
 
 static void Exit()
 {
-    if (hIfhDll != NULL)
+    if (hIfhDll != nullptr)
     {
         FreeLibrary(hIfhDll);
-        hIfhDll = NULL;
+        hIfhDll = nullptr;
     }
-    if (hLogFile != NULL)
+    if (hLogFile != nullptr)
     {
         fflush(hLogFile);
         fclose(hLogFile);
-        hLogFile = NULL;
+        hLogFile = nullptr;
     }
-    if (hMutex != NULL)
+    if (hMutex != nullptr)
     {
         CloseHandle(hMutex);
-        hMutex = NULL;
+        hMutex = nullptr;
     }
 }
 
 static BOOL AquireMutex()
 {
-    if (hMutex == NULL)
+    if (hMutex == nullptr)
     {
         return FALSE;
     }
@@ -266,7 +266,7 @@ static BOOL ReleaseMutex()
 
 static BOOL OpenLogFile()
 {
-    if (hLogFile != NULL)
+    if (hLogFile != nullptr)
     {
         return true;
     }
@@ -294,7 +294,7 @@ static BOOL OpenLogFile()
     }
     hLogFile = _wfopen(logFileName.c_str(), iAppendLog ? TEXT("at") : TEXT("wt"));
     ReleaseMutex();
-    if (hLogFile == NULL)
+    if (hLogFile == nullptr)
     {
         return FALSE;
     }
@@ -304,13 +304,13 @@ static BOOL OpenLogFile()
 static std::wstring ConvertTextW(char *text)
 {
     std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    std::wstring textConv = converter.from_bytes((text == NULL) ? "(NULL)" : text);
+    std::wstring textConv = converter.from_bytes((text == nullptr) ? "(NULL)" : text);
     return textConv;
 }
 
 static BOOL LogFlush()
 {
-    if (hLogFile == NULL)
+    if (hLogFile == nullptr)
     {
         return FALSE;
     }
@@ -327,7 +327,7 @@ static BOOL LogFlush()
 static BOOL LogString(const TCHAR *text)
 {
     OpenLogFile();
-    if (hLogFile == NULL)
+    if (hLogFile == nullptr)
     {
         return FALSE;
     }
@@ -350,7 +350,7 @@ static BOOL LogFormat(const TCHAR *format, ...)
 {
     va_list args;
     OpenLogFile();
-    if (hLogFile == NULL)
+    if (hLogFile == nullptr)
     {
         return FALSE;
     }
@@ -373,7 +373,7 @@ static BOOL LogFormat(const TCHAR *format, ...)
 
 static BOOL LogData(std::wstring dataPrefix, UCHAR *data, unsigned int length)
 {
-    if (data == NULL)
+    if (data == nullptr)
     {
         return TRUE;
     }
@@ -392,7 +392,7 @@ static BOOL LogData(std::wstring dataPrefix, UCHAR *data, unsigned int length)
         swprintf(buffer, 100, TEXT("%02X "), (unsigned int)data[i]);
         dataString += buffer;
     }
-    if (dataString.length() > 0)
+    if (!dataString.empty())
     {
         return LogString(dataString.c_str());
     }
@@ -405,7 +405,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
     MESSAGE msgLocal;
     if (compatNo < IFH_COMPATIBILITY_NO)
     {
-        MESSAGE_V4 *msgV4 = (MESSAGE_V4 *)msg;
+        MESSAGE_V4 *msgV4 = reinterpret_cast<MESSAGE_V4*>(msg);
         memset(&msgLocal, 0x00, sizeof(msgLocal));
         msgLocal.fktNo = msgV4->fktNo;
         msgLocal.wParam = msgV4->wParam;
@@ -414,9 +414,9 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         msgTmp = &msgLocal;
     }
 
-    unsigned int fktNo = (unsigned int) msgTmp->fktNo;
+    unsigned int fktNo = static_cast<unsigned int>(msgTmp->fktNo);
     const TCHAR *fktName = TEXT("");
-    for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
+    for (int i = 0; i < std::size(functions); i++)
     {
         if (functions[i].fktNo == fktNo)
         {
@@ -429,9 +429,9 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         fktNo,
         fktNo,
         fktName,
-        (unsigned int)msgTmp->wParam,
-        (unsigned int)msgTmp->channel,
-        (unsigned int)msgTmp->len
+        static_cast<unsigned int>(msgTmp->wParam),
+        static_cast<unsigned int>(msgTmp->channel),
+        static_cast<unsigned int>(msgTmp->len)
     );
 
     BOOL printData = TRUE;
@@ -453,6 +453,9 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                 case 2:
                     LogFormat(TEXT("application = %s"), ConvertTextW((char*)msgTmp->data).c_str());
                     break;
+
+                default:
+                    break;
             }
             break;
 
@@ -461,6 +464,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
+
             LogFormat(TEXT("version = %s"), ConvertTextW((char*)msgTmp->data).c_str());
             printData = FALSE;
             break;
@@ -470,6 +474,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
+
             switch (msgTmp->wParam)
             {
                 case 0:
@@ -482,6 +487,9 @@ static void LogMsg(MESSAGE *msg, BOOL output)
 
                 case 2:
                     LogString(TEXT("IFHERROR"));
+                    break;
+
+                default:
                     break;
             }
             break;
@@ -498,9 +506,9 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             else
             {
                 unsigned int errorCode = msgTmp->wParam + 9;
-                unsigned int errorIndex = errorCode - 10;
+                int errorIndex = static_cast<int>(errorCode) - 10;
                 const TCHAR *pDescription = TEXT("");
-                if (errorIndex < sizeof(ErrorDescription) / sizeof(ErrorDescription[0]))
+                if (errorIndex >= 0 && errorIndex < std::size(ErrorDescription))
                 {
                     pDescription = ErrorDescription[errorIndex];
                 }
@@ -511,9 +519,9 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         case 11:
         case 12:
         case 13:
-            if (msgTmp->len == sizeof(CFGCONTEXT) && msgTmp->data != NULL)
+            if (msgTmp->len == sizeof(CFGCONTEXT) && msgTmp->data != nullptr)
             {
-                CFGCONTEXT* pCfgContext = (CFGCONTEXT*)msgTmp->data;
+                CFGCONTEXT* pCfgContext = reinterpret_cast<CFGCONTEXT*>(msgTmp->data);
 
                 printData = FALSE;
                 if (output && msgTmp->wParam == 0)
@@ -524,10 +532,10 @@ static void LogMsg(MESSAGE *msg, BOOL output)
 
                 LogFormat(TEXT("name = %s, type = %u (%02Xh), id = %u (%02Xh)"),
                     ConvertTextW(pCfgContext->name).c_str(),
-                    (unsigned int)pCfgContext->type,
-                    (unsigned int)pCfgContext->type,
-                    (unsigned int)pCfgContext->id,
-                    (unsigned int)pCfgContext->id);
+                    static_cast<unsigned int>(pCfgContext->type),
+                    static_cast<unsigned int>(pCfgContext->type),
+                    static_cast<unsigned int>(pCfgContext->id),
+                    static_cast<unsigned int>(pCfgContext->id));
 
                 switch (pCfgContext->type)
                 {
@@ -540,25 +548,28 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                         break;
 
                     case CFGTYPE_INT:
-                        LogFormat(TEXT("int = %u"), (unsigned int)pCfgContext->value.i);
+                        LogFormat(TEXT("int = %u"), static_cast<unsigned int>(pCfgContext->value.i));
                         break;
 
                     case CFGTYPE_BOOL:
                         LogFormat(TEXT("bool = %s"), pCfgContext->value.b ? TEXT("TRUE") : TEXT("FALSE"));
+                        break;
+
+                    default:
                         break;
                 }
             }
             break;
 
         case 14:
-            if (msgTmp->len == sizeof(PSCONTEXT) && msgTmp->data != NULL)
+            if (msgTmp->len == sizeof(PSCONTEXT) && msgTmp->data != nullptr)
             {
                 PSCONTEXT *pPsContext = (PSCONTEXT *)msgTmp->data;
                 LogFormat(TEXT("ubat_curr = %i, ubat_hist = %i, ignit_curr = %i, ignit_hist = %i"),
-                    (int)pPsContext->UbattCurrent,
-                    (int)pPsContext->UbattHistory,
-                    (int)pPsContext->IgnitionCurrent,
-                    (int)pPsContext->IgnitionHistory);
+                    static_cast<int>(pPsContext->UbattCurrent),
+                    static_cast<int>(pPsContext->UbattHistory),
+                    static_cast<int>(pPsContext->IgnitionCurrent),
+                    static_cast<int>(pPsContext->IgnitionHistory));
                 printData = FALSE;
             }
             break;
@@ -580,7 +591,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
 
 static BOOL LoadIfhDll()
 {
-    if (hIfhDll != NULL)
+    if (hIfhDll != nullptr)
     {
         return TRUE;
     }
@@ -594,7 +605,7 @@ static BOOL LoadIfhDll()
     std::wstring ifhFileName = fileName;
     ifhFileName += TEXT("Org.dll");
     hIfhDll = LoadLibrary(ifhFileName.c_str());
-    if (hIfhDll == NULL)
+    if (hIfhDll == nullptr)
     {
         LogFormat(TEXT("LoadLibrary failed: %s"), ifhFileName.c_str());
         return FALSE;
@@ -614,16 +625,16 @@ extern "C"
 #pragma comment(linker, "/EXPORT:_dllLockIFH=_dllLockIFH@0")
 #endif
         LogFormat(TEXT("dllLockIFH()"));
-        if (hIfhDll == NULL)
+        if (hIfhDll == nullptr)
         {
             return FALSE;
         }
         PdllLockIFH pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "dllLockIFH");
-        if (pdllLockIFH == NULL)
+        if (pdllLockIFH == nullptr)
         {
             pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "_dllLockIFH@0");
         }
-        if (pdllLockIFH == NULL)
+        if (pdllLockIFH == nullptr)
         {
             LogString(TEXT("dllLockIFH not found"));
             return FALSE;
@@ -641,16 +652,16 @@ extern "C"
 #pragma comment(linker, "/EXPORT:_dllUnlockIFH=_dllUnlockIFH@0")
 #endif
         LogFormat(TEXT("dllUnlockIFH()"));
-        if (hIfhDll == NULL)
+        if (hIfhDll == nullptr)
         {
             return;
         }
         PdllUnlockIFH pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "dllUnlockIFH");
-        if (pdllUnlockIFH == NULL)
+        if (pdllUnlockIFH == nullptr)
         {
             pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "_dllUnlockIFH@0");
         }
-        if (pdllUnlockIFH == NULL)
+        if (pdllUnlockIFH == nullptr)
         {
             LogString(TEXT("dllUnlockIFH not found"));
             return;
@@ -669,16 +680,16 @@ extern "C"
         LogFormat(TEXT("dllStartupIFH('%s', '%s')"),
             ConvertTextW(ediabasIniPath).c_str(),
             ConvertTextW(ifhName).c_str());
-        if (hIfhDll == NULL)
+        if (hIfhDll == nullptr)
         {
             return -1;
         }
         PdllStartupIFH pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "dllStartupIFH");
-        if (pdllStartupIFH == NULL)
+        if (pdllStartupIFH == nullptr)
         {
             pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "_dllStartupIFH@8");
         }
-        if (pdllStartupIFH == NULL)
+        if (pdllStartupIFH == nullptr)
         {
             LogString(TEXT("dllStartupIFH not found"));
             return -1;
@@ -696,16 +707,16 @@ extern "C"
 #pragma comment(linker, "/EXPORT:_dllShutdownIFH=_dllShutdownIFH@0")
 #endif
         LogFormat(TEXT("dllShutdownIFH()"));
-        if (hIfhDll == NULL)
+        if (hIfhDll == nullptr)
         {
             return;
         }
         PdllShutdownIFH pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "dllShutdownIFH");
-        if (pdllShutdownIFH == NULL)
+        if (pdllShutdownIFH == nullptr)
         {
             pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "_dllShutdownIFH@0");
         }
-        if (pdllShutdownIFH == NULL)
+        if (pdllShutdownIFH == nullptr)
         {
             LogString(TEXT("dllShutdownIFH not found"));
             return;
@@ -723,16 +734,16 @@ extern "C"
 #endif
         LogFormat(TEXT("dllCheckIFH(%u)"), (unsigned int)compatibilityNo);
         compatNo = compatibilityNo;
-        if (hIfhDll == NULL)
+        if (hIfhDll == nullptr)
         {
             return -1;
         }
         PdllCheckIFH pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "dllCheckIFH");
-        if (pdllCheckIFH == NULL)
+        if (pdllCheckIFH == nullptr)
         {
             pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "_dllCheckIFH@4");
         }
-        if (pdllCheckIFH == NULL)
+        if (pdllCheckIFH == nullptr)
         {
             LogString(TEXT("dllCheckIFH not found"));
             return -1;
@@ -750,16 +761,16 @@ extern "C"
 #pragma comment(linker, "/EXPORT:_dllExitIFH=_dllExitIFH@0")
 #endif
         LogFormat(TEXT("dllExitIFH()"));
-        if (hIfhDll == NULL)
+        if (hIfhDll == nullptr)
         {
             return;
         }
         PdllExitIFH pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "dllExitIFH");
-        if (pdllExitIFH == NULL)
+        if (pdllExitIFH == nullptr)
         {
             pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "_dllExitIFH@0");
         }
-        if (pdllExitIFH == NULL)
+        if (pdllExitIFH == nullptr)
         {
             LogString(TEXT("dllExitIFH not found"));
             return;
@@ -799,16 +810,16 @@ extern "C"
             }
         }
         if (writeLog) LogMsg(msgIn, FALSE);
-        if (hIfhDll == NULL)
+        if (hIfhDll == nullptr)
         {
             return -1;
         }
         PdllCallIFH pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "dllCallIFH");
-        if (pdllCallIFH == NULL)
+        if (pdllCallIFH == nullptr)
         {
             pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "_dllCallIFH@8");
         }
-        if (pdllCallIFH == NULL)
+        if (pdllCallIFH == nullptr)
         {
             LogString(TEXT("dllCallIFH not found"));
             return -1;
@@ -827,16 +838,16 @@ extern "C"
 #pragma comment(linker, "/EXPORT:_XControlEnable=_XControlEnable@4")
 #endif
         LogFormat(TEXT("XControlEnable(%u)"), enable);
-        if (hIfhDll == NULL)
+        if (hIfhDll == nullptr)
         {
             return;
         }
         PXControlEnable pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "XControlEnable");
-        if (pXControlEnable == NULL)
+        if (pXControlEnable == nullptr)
         {
             pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "_XControlEnable@4");
         }
-        if (pXControlEnable == NULL)
+        if (pXControlEnable == nullptr)
         {
             LogString(TEXT("XControlEnable not found"));
             return;
