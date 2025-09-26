@@ -414,7 +414,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         msgTmp = &msgLocal;
     }
 
-    unsigned int fktNo = (unsigned int) msgTmp->fktNo;
+    unsigned int fktNo = static_cast<unsigned int>(msgTmp->fktNo);
     const TCHAR *fktName = TEXT("");
     for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
     {
@@ -429,9 +429,9 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         fktNo,
         fktNo,
         fktName,
-        (unsigned int)msgTmp->wParam,
-        (unsigned int)msgTmp->channel,
-        (unsigned int)msgTmp->len
+        static_cast<unsigned int>(msgTmp->wParam),
+        static_cast<unsigned int>(msgTmp->channel),
+        static_cast<unsigned int>(msgTmp->len)
     );
 
     BOOL printData = TRUE;
@@ -524,10 +524,10 @@ static void LogMsg(MESSAGE *msg, BOOL output)
 
                 LogFormat(TEXT("name = %s, type = %u (%02Xh), id = %u (%02Xh)"),
                     ConvertTextW(pCfgContext->name).c_str(),
-                    (unsigned int)pCfgContext->type,
-                    (unsigned int)pCfgContext->type,
-                    (unsigned int)pCfgContext->id,
-                    (unsigned int)pCfgContext->id);
+                    static_cast<unsigned int>(pCfgContext->type),
+                    static_cast<unsigned int>(pCfgContext->type),
+                    static_cast<unsigned int>(pCfgContext->id),
+                    static_cast<unsigned int>(pCfgContext->id));
 
                 switch (pCfgContext->type)
                 {
@@ -540,7 +540,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                         break;
 
                     case CFGTYPE_INT:
-                        LogFormat(TEXT("int = %u"), (unsigned int)pCfgContext->value.i);
+                        LogFormat(TEXT("int = %u"), static_cast<unsigned int>(pCfgContext->value.i));
                         break;
 
                     case CFGTYPE_BOOL:
@@ -555,10 +555,10 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 PSCONTEXT *pPsContext = (PSCONTEXT *)msgTmp->data;
                 LogFormat(TEXT("ubat_curr = %i, ubat_hist = %i, ignit_curr = %i, ignit_hist = %i"),
-                    (int)pPsContext->UbattCurrent,
-                    (int)pPsContext->UbattHistory,
-                    (int)pPsContext->IgnitionCurrent,
-                    (int)pPsContext->IgnitionHistory);
+                    static_cast<int>(pPsContext->UbattCurrent),
+                    static_cast<int>(pPsContext->UbattHistory),
+                    static_cast<int>(pPsContext->IgnitionCurrent),
+                    static_cast<int>(pPsContext->IgnitionHistory));
                 printData = FALSE;
             }
             break;
