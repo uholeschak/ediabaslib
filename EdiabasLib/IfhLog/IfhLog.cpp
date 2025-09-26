@@ -582,7 +582,10 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             LogFormat(TEXT("sgbd = %s"), ConvertTextW((char *)msgTmp->data).c_str());
             break;
 
+        default:
+            break;
     }
+
     if (printData)
     {
         LogData(dataPrefix, msgTmp->data, msgTmp->len);
@@ -597,7 +600,7 @@ static BOOL LoadIfhDll()
     }
     TCHAR fileName[MAX_PATH];
 
-    if (!GetModuleFileName((HINSTANCE)&__ImageBase, fileName, MAX_PATH))
+    if (!GetModuleFileName(reinterpret_cast<HINSTANCE>(&__ImageBase), fileName, MAX_PATH))
     {
         return FALSE;
     }
@@ -629,10 +632,10 @@ extern "C"
         {
             return FALSE;
         }
-        PdllLockIFH pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "dllLockIFH");
+        PdllLockIFH pdllLockIFH = reinterpret_cast<PdllLockIFH>(GetProcAddress(hIfhDll, "dllLockIFH"));
         if (pdllLockIFH == nullptr)
         {
-            pdllLockIFH = (PdllLockIFH)GetProcAddress(hIfhDll, "_dllLockIFH@0");
+            pdllLockIFH = reinterpret_cast<PdllLockIFH>(GetProcAddress(hIfhDll, "_dllLockIFH@0"));
         }
         if (pdllLockIFH == nullptr)
         {
@@ -656,10 +659,10 @@ extern "C"
         {
             return;
         }
-        PdllUnlockIFH pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "dllUnlockIFH");
+        PdllUnlockIFH pdllUnlockIFH = reinterpret_cast<PdllUnlockIFH>(GetProcAddress(hIfhDll, "dllUnlockIFH"));
         if (pdllUnlockIFH == nullptr)
         {
-            pdllUnlockIFH = (PdllUnlockIFH)GetProcAddress(hIfhDll, "_dllUnlockIFH@0");
+            pdllUnlockIFH = reinterpret_cast<PdllUnlockIFH>(GetProcAddress(hIfhDll, "_dllUnlockIFH@0"));
         }
         if (pdllUnlockIFH == nullptr)
         {
@@ -684,10 +687,10 @@ extern "C"
         {
             return -1;
         }
-        PdllStartupIFH pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "dllStartupIFH");
+        PdllStartupIFH pdllStartupIFH = reinterpret_cast<PdllStartupIFH>(GetProcAddress(hIfhDll, "dllStartupIFH"));
         if (pdllStartupIFH == nullptr)
         {
-            pdllStartupIFH = (PdllStartupIFH)GetProcAddress(hIfhDll, "_dllStartupIFH@8");
+            pdllStartupIFH = reinterpret_cast<PdllStartupIFH>(GetProcAddress(hIfhDll, "_dllStartupIFH@8"));
         }
         if (pdllStartupIFH == nullptr)
         {
@@ -711,10 +714,10 @@ extern "C"
         {
             return;
         }
-        PdllShutdownIFH pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "dllShutdownIFH");
+        PdllShutdownIFH pdllShutdownIFH = reinterpret_cast<PdllShutdownIFH>(GetProcAddress(hIfhDll, "dllShutdownIFH"));
         if (pdllShutdownIFH == nullptr)
         {
-            pdllShutdownIFH = (PdllShutdownIFH)GetProcAddress(hIfhDll, "_dllShutdownIFH@0");
+            pdllShutdownIFH = reinterpret_cast<PdllShutdownIFH>(GetProcAddress(hIfhDll, "_dllShutdownIFH@0"));
         }
         if (pdllShutdownIFH == nullptr)
         {
@@ -738,10 +741,10 @@ extern "C"
         {
             return -1;
         }
-        PdllCheckIFH pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "dllCheckIFH");
+        PdllCheckIFH pdllCheckIFH = reinterpret_cast<PdllCheckIFH>(GetProcAddress(hIfhDll, "dllCheckIFH"));
         if (pdllCheckIFH == nullptr)
         {
-            pdllCheckIFH = (PdllCheckIFH)GetProcAddress(hIfhDll, "_dllCheckIFH@4");
+            pdllCheckIFH = reinterpret_cast<PdllCheckIFH>(GetProcAddress(hIfhDll, "_dllCheckIFH@4"));
         }
         if (pdllCheckIFH == nullptr)
         {
@@ -765,10 +768,10 @@ extern "C"
         {
             return;
         }
-        PdllExitIFH pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "dllExitIFH");
+        PdllExitIFH pdllExitIFH = reinterpret_cast<PdllExitIFH>(GetProcAddress(hIfhDll, "dllExitIFH"));
         if (pdllExitIFH == nullptr)
         {
-            pdllExitIFH = (PdllExitIFH)GetProcAddress(hIfhDll, "_dllExitIFH@0");
+            pdllExitIFH = reinterpret_cast<PdllExitIFH>(GetProcAddress(hIfhDll, "_dllExitIFH@0"));
         }
         if (pdllExitIFH == nullptr)
         {
@@ -801,7 +804,7 @@ extern "C"
         if (writeLog) LogFormat(TEXT("dllCallIFH()"));
 
         const TCHAR* fktName = TEXT("");
-        for (int i = 0; i < sizeof(functions) / sizeof(functions[0]); i++)
+        for (int i = 0; i < std::size(functions); i++)
         {
             if (functions[i].fktNo == msgIn->fktNo)
             {
@@ -814,10 +817,10 @@ extern "C"
         {
             return -1;
         }
-        PdllCallIFH pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "dllCallIFH");
+        PdllCallIFH pdllCallIFH = reinterpret_cast<PdllCallIFH>(GetProcAddress(hIfhDll, "dllCallIFH"));
         if (pdllCallIFH == nullptr)
         {
-            pdllCallIFH = (PdllCallIFH)GetProcAddress(hIfhDll, "_dllCallIFH@8");
+            pdllCallIFH = reinterpret_cast<PdllCallIFH>(GetProcAddress(hIfhDll, "_dllCallIFH@8"));
         }
         if (pdllCallIFH == nullptr)
         {
@@ -842,10 +845,10 @@ extern "C"
         {
             return;
         }
-        PXControlEnable pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "XControlEnable");
+        PXControlEnable pXControlEnable = reinterpret_cast<PXControlEnable>(GetProcAddress(hIfhDll, "XControlEnable"));
         if (pXControlEnable == nullptr)
         {
-            pXControlEnable = (PXControlEnable)GetProcAddress(hIfhDll, "_XControlEnable@4");
+            pXControlEnable = reinterpret_cast<PXControlEnable>(GetProcAddress(hIfhDll, "_XControlEnable@4"));
         }
         if (pXControlEnable == nullptr)
         {
