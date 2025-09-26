@@ -507,15 +507,12 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
-            if (msgTmp->wParam == 0)
-            {
-                LogString(TEXT("EDIABAS_ERR_NONE"));
-            }
-            else
+
+            if (msgTmp->len == 0)
             {
                 unsigned int errorCode = msgTmp->wParam + 9;
                 int errorIndex = static_cast<int>(errorCode) - 10;
-                const TCHAR *pDescription = TEXT("");
+                const TCHAR* pDescription = TEXT("");
                 if (errorIndex >= 0 && errorIndex < std::size(ErrorDescription))
                 {
                     pDescription = ErrorDescription[errorIndex];
@@ -570,9 +567,15 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             break;
 
         case 14:
+            if (!output)
+            {
+                break;
+            }
+
             if (msgTmp->len == sizeof(PSCONTEXT) && msgTmp->data != nullptr)
             {
                 PSCONTEXT *pPsContext = reinterpret_cast<PSCONTEXT*>(msgTmp->data);
+
                 LogFormat(TEXT("ubat_curr = %i, ubat_hist = %i, ignit_curr = %i, ignit_hist = %i"),
                     static_cast<int>(pPsContext->UbattCurrent),
                     static_cast<int>(pPsContext->UbattHistory),
