@@ -212,6 +212,9 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD  ul_reason_for_call, LPVOID lpReser
         case DLL_PROCESS_DETACH:
             Exit();
             break;
+
+        default:
+            break;
     }
     return TRUE;
 }
@@ -389,7 +392,7 @@ static BOOL LogData(std::wstring dataPrefix, UCHAR *data, unsigned int length)
             dataString += TEXT("\n");
         }
         TCHAR buffer[100];
-        swprintf(buffer, 100, TEXT("%02X "), (unsigned int)data[i]);
+        swprintf(buffer, 100, TEXT("%02X "), static_cast<unsigned int>(data[i]));
         dataString += buffer;
     }
     if (!dataString.empty())
@@ -424,14 +427,19 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             break;
         }
     }
-    LogFormat(TEXT("%s: fktNo = %u (%02Xh) '%s', wParam = %u, channel = %u, len = %u"),
-        output ? TEXT("msgOut") : TEXT("msgIn"),
-        fktNo,
-        fktNo,
+
+    const TCHAR* msgName = output ? TEXT("msgOut") : TEXT("msgIn");
+    unsigned int wParam = static_cast<unsigned int>(msgTmp->wParam);
+    unsigned int channel = static_cast<unsigned int>(msgTmp->channel);
+    unsigned int len = static_cast<unsigned int>(msgTmp->len);
+
+    LogFormat(TEXT("%s: fktNo = %u (%02Xh) '%s', wParam = %u (%04Xh), channel = %u (%04Xh), len = %u (%04Xh)"),
+        msgName,
+        fktNo, fktNo,
         fktName,
-        static_cast<unsigned int>(msgTmp->wParam),
-        static_cast<unsigned int>(msgTmp->channel),
-        static_cast<unsigned int>(msgTmp->len)
+        wParam, wParam,
+        channel, channel,
+        len, len
     );
 
     BOOL printData = TRUE;
@@ -447,11 +455,11 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             switch (msgTmp->wParam)
             {
                 case 1:
-                    LogFormat(TEXT("unit = %s"), ConvertTextW((char*)msgTmp->data).c_str());
+                    LogFormat(TEXT("unit = %s"), ConvertTextW(reinterpret_cast<char*>(msgTmp->data)).c_str());
                     break;
 
                 case 2:
-                    LogFormat(TEXT("application = %s"), ConvertTextW((char*)msgTmp->data).c_str());
+                    LogFormat(TEXT("application = %s"), ConvertTextW(reinterpret_cast<char*>(msgTmp->data)).c_str());
                     break;
 
                 default:
@@ -465,7 +473,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                 break;
             }
 
-            LogFormat(TEXT("version = %s"), ConvertTextW((char*)msgTmp->data).c_str());
+            LogFormat(TEXT("version = %s"), ConvertTextW(reinterpret_cast<char*>(msgTmp->data)).c_str());
             printData = FALSE;
             break;
 
@@ -564,7 +572,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         case 14:
             if (msgTmp->len == sizeof(PSCONTEXT) && msgTmp->data != nullptr)
             {
-                PSCONTEXT *pPsContext = (PSCONTEXT *)msgTmp->data;
+                PSCONTEXT *pPsContext = reinterpret_cast<PSCONTEXT*>(msgTmp->data);
                 LogFormat(TEXT("ubat_curr = %i, ubat_hist = %i, ignit_curr = %i, ignit_hist = %i"),
                     static_cast<int>(pPsContext->UbattCurrent),
                     static_cast<int>(pPsContext->UbattHistory),
@@ -579,7 +587,7 @@ static void LogMsg(MESSAGE *msg, BOOL output)
             {
                 break;
             }
-            LogFormat(TEXT("sgbd = %s"), ConvertTextW((char *)msgTmp->data).c_str());
+            LogFormat(TEXT("sgbd = %s"), ConvertTextW(reinterpret_cast<char*>(msgTmp->data)).c_str());
             break;
 
         default:
@@ -643,7 +651,7 @@ extern "C"
             return FALSE;
         }
         BOOL result = pdllLockIFH();
-        LogFormat(TEXT("dllLockIFH()=%u"), (unsigned int)result);
+        LogFormat(TEXT("dllLockIFH()=%u"), static_cast<unsigned int>(result));
         return result;
     }
 
@@ -698,7 +706,7 @@ extern "C"
             return -1;
         }
         short result = pdllStartupIFH(ediabasIniPath, ifhName);
-        LogFormat(TEXT("dllStartupIFH()=%u"), (unsigned int)result);
+        LogFormat(TEXT("dllStartupIFH()=%u"), static_cast<unsigned int>(result));
         return result;
     }
 
@@ -735,7 +743,7 @@ extern "C"
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:_dllCheckIFH=_dllCheckIFH@4")
 #endif
-        LogFormat(TEXT("dllCheckIFH(%u)"), (unsigned int)compatibilityNo);
+        LogFormat(TEXT("dllCheckIFH(%u)"), static_cast<unsigned int>(compatibilityNo));
         compatNo = compatibilityNo;
         if (hIfhDll == nullptr)
         {
@@ -752,7 +760,7 @@ extern "C"
             return -1;
         }
         short result = pdllCheckIFH(compatibilityNo);
-        LogFormat(TEXT("dllCheckIFH()=%u"), (unsigned int)result);
+        LogFormat(TEXT("dllCheckIFH()=%u"), static_cast<unsigned int>(result));
         return result;
     }
 
@@ -829,7 +837,7 @@ extern "C"
         }
         short result = pdllCallIFH(msgIn, msgOut);
         if (writeLog) LogMsg(msgOut, TRUE);
-        if (writeLog) LogFormat(TEXT("dllCallIFH()=%u"), (unsigned int)result);
+        if (writeLog) LogFormat(TEXT("dllCallIFH()=%u"), static_cast<unsigned int>(result));
         return result;
     }
 
