@@ -513,13 +513,14 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         case 13:
             if (msgTmp->len == sizeof(CFGCONTEXT) && msgTmp->data != NULL)
             {
+                CFGCONTEXT* pCfgContext = (CFGCONTEXT*)msgTmp->data;
+
                 printData = FALSE;
                 if (output && msgTmp->wParam == 0)
                 {
+                    LogFormat(TEXT("name = %s, no data"), ConvertTextW(pCfgContext->name).c_str());
                     break;
                 }
-
-                CFGCONTEXT *pCfgContext = (CFGCONTEXT *)msgTmp->data;
 
                 LogFormat(TEXT("name = %s, type = %u (%02Xh), id = %u (%02Xh)"),
                     ConvertTextW(pCfgContext->name).c_str(),
