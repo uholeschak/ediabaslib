@@ -717,8 +717,15 @@ DataType:
 08: binary
 09: param data
 
+DataSubtype:
+00: Normal
+01: Param header
+
 54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> 10 02 00 00 <Channel> 00 <Counter> 00 00 01 00 00 <IfhCmd> 00 00 00 <NumDataBlocks> 00
-<DataType> 00 <BlockIdx> 00 <Content Len LL> <Content Len L> <Content Len H> <Content Len HH> <Content>
+<DataType> 00 <DataSubtype> 00 <Content Len LL> <Content Len L> <Content Len H> <Content Len HH> <Content>
 
 Param content:
-<Param id> 00 <Param type> 00 <Param content>
+<Param id> 00 <Param type> 00 <Param value 1> <Param value 2>
+Param type string: Param value 1 / 2 : FF
+Block 3:
+<DataType = 07> 00 <DataSubtype = 00> 00 <Content Len LL> <Content Len L> <Content Len H> <Content Len HH> <Content>
