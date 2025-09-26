@@ -513,6 +513,12 @@ static void LogMsg(MESSAGE *msg, BOOL output)
         case 13:
             if (msgTmp->len == sizeof(CFGCONTEXT) && msgTmp->data != NULL)
             {
+                printData = FALSE;
+                if (output && msgTmp->wParam == 0)
+                {
+                    break;
+                }
+
                 CFGCONTEXT *pCfgContext = (CFGCONTEXT *)msgTmp->data;
 
                 LogFormat(TEXT("name = %s, type = %u (%02Xh), id = %u (%02Xh)"),
@@ -540,7 +546,6 @@ static void LogMsg(MESSAGE *msg, BOOL output)
                         LogFormat(TEXT("bool = %s"), pCfgContext->value.b ? TEXT("TRUE") : TEXT("FALSE"));
                         break;
                 }
-                printData = FALSE;
             }
             break;
 
