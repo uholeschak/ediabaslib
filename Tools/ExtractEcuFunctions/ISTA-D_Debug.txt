@@ -709,10 +709,11 @@ RPLUS:ICOM_P Telegram encoding:
 Header:
 Default: Init=00
 First Call: Init=02 CntBlock=01
-4E 4D 50 40 <Random> 00 <Data Len L: 14> <Data Len H: 00> 00 02 <Init> 00 <CntBlock> 00 00 00 <Random> 00 00 00 01 00
+4E 4D 50 40 <Random> 00 14 00 00 02 <Init> 00 <CntBlock> 00 00 00 <Random> 00 00 00 01 00
 
 Content:
 DataType:
+04: int
 07: string
 08: binary
 09: param data
@@ -729,3 +730,5 @@ Param content:
 Param type string: Param value 1 / 2 : FF
 Block 3:
 <DataType = 07> 00 <DataSubtype = 00> 00 <Content Len LL> <Content Len L> <Content Len H> <Content Len HH> <Content>
+
+ifhInit: 3 blocks (int (1) / string / string)
