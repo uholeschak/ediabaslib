@@ -708,7 +708,7 @@ RPLUS:ICOM_P Telegram encoding:
 ===============================
 Header:
 BlkType:
-14: first block
+14: First message
 07: CHECKCOMPATIBILITY
 A2: IDENTIFICATION (response)
 06: COMPATIBILITY (response)
