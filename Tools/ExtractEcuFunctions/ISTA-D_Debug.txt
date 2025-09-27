@@ -707,15 +707,15 @@ C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Temp\[All files and folders except ncd]
 RPLUS:ICOM_P Telegram encoding:
 ===============================
 Header:
-BlkType:
-14: First message
-07: CHECKCOMPATIBILITY
-A2: IDENTIFICATION (response)
-06: COMPATIBILITY (response)
 
-Default: Init=00
-First Call: Init=02 CntBlock=01
-4E 4D 50 40 <Random> 00 <BlkType> 00 00 02 <Init> 00 <CntBlock> 00 00 00 <Random> 00 00 00
+DataBlock: 02=Block contains data (always set)
+ActionBlock: 02=Block contains action, default=00
+
+Action blocks:
+07 00: (15 bytes) CHECKCOMPATIBILITY (request)
+2A 00: (48 bytes) IDENTIFICATION / COMPATIBILITY (response)
+
+4E 4D 50 40 <Random> 00 14 00 00 <DataBlock> <ActionBlock> 00 <CntBlock> 00 00 00 <Random> 00 00 00
 
 Content:
 DataType:
