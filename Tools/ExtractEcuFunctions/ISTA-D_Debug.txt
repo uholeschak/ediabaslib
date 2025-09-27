@@ -715,9 +715,10 @@ Action blocks:
 07 00: (15 bytes) CHECKCOMPATIBILITY (request)
 2A 00: (48 bytes) IDENTIFICATION / COMPATIBILITY (response)
 
+NMPLen: Complete length of all NMP telegram bytes
 NMPCnt: NMP tel counter, echoed in response (starts with 1)
 
-4E 4D 50 40 <Random> 00 14 00 00 <DataBlock> <ActionBlock> 00 <NMPCnt> 00 00 00 <Random> 00 00 00
+4E 4D 50 40 <NMPLen L> <NMPLen H> 14 00 00 <DataBlock> <ActionBlock> 00 <NMPCnt> 00 00 00 <NMPLen L> <NMPLen H> 00 00
 
 Content:
 DataType:
