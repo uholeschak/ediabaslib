@@ -709,7 +709,7 @@ RPLUS:ICOM_P Telegram encoding:
 Header:
 Default: Init=00
 First Call: Init=02 CntBlock=01
-4E 4D 50 40 <Random> 00 14 00 00 02 <Init> 00 <CntBlock> 00 00 00 <Random> 00 00 00 01 00
+4E 4D 50 40 <Random> 00 14 00 00 02 <Init> 00 <CntBlock> 00 00 00 <Random> 00 00 00
 
 Content:
 DataType:
