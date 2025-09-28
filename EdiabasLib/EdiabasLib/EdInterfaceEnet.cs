@@ -4250,6 +4250,29 @@ namespace EdiabasLib
                             SharedDataActive.ReconnectRequired = true;
                             return nextReadLength;
                         }
+
+                        int dataBlockOffset = 20;
+                        if (SharedDataActive.TcpDiagBuffer[10] == 0x02)
+                        {   // action block
+                            if (SharedDataActive.TcpDiagBuffer[dataBlockOffset] != 0x2A || SharedDataActive.TcpDiagBuffer[dataBlockOffset + 1] != 0x00)
+                            {
+                                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                    "*** RPLUS NMP invalid action block type");
+                                InterfaceDisconnect(true);
+                                SharedDataActive.ReconnectRequired = true;
+                                return nextReadLength;
+                            }
+                            dataBlockOffset += 0x30;
+                        }
+
+                        if (SharedDataActive.TcpDiagBuffer[dataBlockOffset] != 0x54 || SharedDataActive.TcpDiagBuffer[dataBlockOffset + 1] != 0x4D)
+                        {
+                            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                "*** RPLUS NMP invalid data block type");
+                            InterfaceDisconnect(true);
+                            SharedDataActive.ReconnectRequired = true;
+                            return nextReadLength;
+                        }
                     }
                 }
             }
