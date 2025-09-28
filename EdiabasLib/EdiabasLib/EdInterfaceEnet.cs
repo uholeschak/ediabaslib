@@ -4312,9 +4312,12 @@ namespace EdiabasLib
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                SharedDataActive.TcpDiagRecLen = 0;
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** RPLUS NMP Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                InterfaceDisconnect(true);
+                SharedDataActive.ReconnectRequired = true;
+                return nextReadLength;
             }
 
             return nextReadLength;
