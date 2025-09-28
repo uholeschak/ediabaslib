@@ -709,12 +709,16 @@ RPLUS:ICOM_P Telegram encoding:
 Header:
 
 Action blocks:
-<ActionLen L> <ActionLen H> <Data>
+<ActionLen L> <ActionLen H> <Action Type L> <Action Type H> <Data>
+Action types:
+01: IDENTIFICATION <Len H> <Len L> <string>
+02: CHECKCOMPATIBILITY (version 0x0100) 00 01 00 00
+03: COMPATIBILITY (ok) 01 00
 
 NMPLen: Complete length of all NMP telegram bytes
 NMPCnt: NMP tel counter, echoed in response (starts with 1)
 
-4E 4D 50 40 <NMPLen L> <NMPLen H> <NMP Head length L 14> <NMP Head length H 0> 00 02 <ActionBlocks> 00 <NMPCnt> 00 00 00 <NMPLen L> <NMPLen H> 00 00
+4E 4D 50 40 <NMPLen L> <NMPLen H> <NMP Head length L 14> <NMP Head length H 0> 00 02 <ActionBlocks> 00 <NMPCnt L> <NMPCnt H> 00 00 <NMPLen L> <NMPLen H> 00 00
 
 Content:
 DataType:
@@ -727,7 +731,7 @@ DataSubtype:
 00: Normal
 01: Param header
 
-54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> 10 02 00 00 <Channel> 00 <NMPCnt> 00 00 01 00 00 <IfhCmd> 00 00 00 <NumDataBlocks> 00
+54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> 10 02 00 00 <Channel L> <Channel H> <NMPCnt L> <NMPCnt H> 00 01 00 00 <IfhCmd> 00 00 00 <NumDataBlocks L> <NumDataBlocks H>
 Block: <DataType> 00 <DataSubtype> 00 <Content Len LL> <Content Len L> <Content Len H> <Content Len HH> <Content>
 
 Param content:
