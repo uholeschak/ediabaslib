@@ -4288,6 +4288,14 @@ namespace EdiabasLib
 
                         long dataLen = ((long)SharedDataActive.TcpDiagBuffer[dataOffset + 5] << 24) | ((long)SharedDataActive.TcpDiagBuffer[dataOffset + 4] << 16) | 
                                         ((long)SharedDataActive.TcpDiagBuffer[dataOffset + 3] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 2];
+                        if (dataLen + dataOffset + 6 > telLen)
+                        {
+                            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                "*** RPLUS NMP data length overflow");
+                            InterfaceDisconnect(true);
+                            SharedDataActive.ReconnectRequired = true;
+                            return nextReadLength;
+                        }
 
                         lock (SharedDataActive.TcpDiagStreamRecLock)
                         {
