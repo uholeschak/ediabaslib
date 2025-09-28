@@ -4285,6 +4285,22 @@ namespace EdiabasLib
                             SharedDataActive.ReconnectRequired = true;
                             return nextReadLength;
                         }
+
+                        long dataLen = ((long)SharedDataActive.TcpDiagBuffer[dataOffset + 5] << 24) | ((long)SharedDataActive.TcpDiagBuffer[dataOffset + 4] << 16) | 
+                                        ((long)SharedDataActive.TcpDiagBuffer[dataOffset + 3] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 2];
+
+                        lock (SharedDataActive.TcpDiagStreamRecLock)
+                        {
+                            if (SharedDataActive.TcpDiagRecQueue.Count > 256)
+                            {
+                                SharedDataActive.TcpDiagRecQueue.Dequeue();
+                            }
+
+                            byte[] recDataTel = new byte[dataLen];
+                            Array.Copy(SharedDataActive.TcpDiagBuffer, dataOffset + 6, recDataTel, 0, dataLen);
+                            SharedDataActive.TcpDiagRecQueue.Enqueue(recDataTel);
+                            SharedDataActive.TcpDiagStreamRecEvent.Set();
+                        }
                     }
                 }
             }
