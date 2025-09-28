@@ -4258,9 +4258,26 @@ namespace EdiabasLib
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP action blocks: {0}", actionBlocks);
                             for (int block = 0; block < actionBlocks; block++)
                             {
+                                if (dataOffset + 4 > telLen)
+                                {
+                                    EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                        "*** RPLUS NMP invalid data block header length");
+                                    InterfaceDisconnect(true);
+                                    SharedDataActive.ReconnectRequired = true;
+                                    return nextReadLength;
+                                }
+
                                 int blockLen = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 1] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset];
                                 int blockType = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 3] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 2];
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP action block[{0}]: Len={1}, Type={2}", block, blockLen, blockType);
+                                if (dataOffset + blockLen > telLen)
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** RPLUS NMP invalid block[{0}] size: {1}", block, blockLen);
+                                    InterfaceDisconnect(true);
+                                    SharedDataActive.ReconnectRequired = true;
+                                    return nextReadLength;
+                                }
+
                                 if (blockType == 3 && blockLen == 6)
                                 {
                                     int compatibility = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 5] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 4];
