@@ -741,3 +741,4 @@ Block 3:
 <DataType = 07> 00 <DataSubtype = 00> 00 <Content Len LL> <Content Len L> <Content Len H> <Content Len HH> <Content>
 
 ifhInit: request 3 blocks (int <1> / string <unit> / string <application>), response 1 block (int <0>)
+ifhNotifyConfig: request 2 / 3 blocks (string <name> / param <ifh param> / (string <path>)), response 1 block (int <0>)
