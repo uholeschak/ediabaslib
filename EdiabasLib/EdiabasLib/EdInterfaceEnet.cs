@@ -469,6 +469,7 @@ namespace EdiabasLib
             public TlsClientProtocol BcTlsClientProtocol;
             public bool DiagDoIp;
             public bool DiagDoIpSsl;
+            public bool DiagRplus;
             public AutoResetEvent TcpDiagStreamRecEvent;
             public ManualResetEvent TransmitCancelEvent;
             public TcpClient TcpControlClient;
@@ -494,7 +495,6 @@ namespace EdiabasLib
         }
 
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
-        protected delegate void ExecuteNetworkDelegate();
         public delegate void IcomAllocateDeviceDelegate(bool success, int statusCode = -1);
 
         private bool _disposed;
@@ -1505,6 +1505,7 @@ namespace EdiabasLib
                     SharedDataActive.DiagDoIp = communicationMode == CommunicationMode.DoIp;
 
                     bool diagDoIpSsl = false;
+                    bool diagRplus = false;
                     if (SharedDataActive.DiagDoIp)
                     {
                         string hostIp = SharedDataActive.EnetHostConn.IpAddress.ToString();
@@ -1581,6 +1582,7 @@ namespace EdiabasLib
                         }
                     }
                     SharedDataActive.DiagDoIpSsl = diagDoIpSsl;
+                    SharedDataActive.DiagRplus = diagRplus;
 
                     int doIpPort = SharedDataActive.DiagDoIpSsl ? DoIpSslPort : DoIpPort;
                     if (SharedDataActive.DiagDoIp)
@@ -3999,8 +4001,17 @@ namespace EdiabasLib
                     SharedDataActive.TcpDiagRecLen += recLen;
                 }
 
-                int nextReadLength = SharedDataActive.DiagDoIp ? TcpDiagDoIpReceiver(networkStream) : TcpDiagEnetReceiver(networkStream);
-                if (recLen > 0)
+                int nextReadLength = 0;
+                if (SharedDataActive.DiagRplus)
+                {
+                    nextReadLength = TcpDiagRplusReceiver(networkStream);
+                }
+                else
+                {
+                    nextReadLength = SharedDataActive.DiagDoIp ? TcpDiagDoIpReceiver(networkStream) : TcpDiagEnetReceiver(networkStream);
+                }
+
+                if (nextReadLength > 0)
                 {
                     StartReadTcpDiag(nextReadLength);
                 }
@@ -4199,6 +4210,36 @@ namespace EdiabasLib
                     else
                     {
                         nextReadLength = (int)telLen;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                SharedDataActive.TcpDiagRecLen = 0;
+            }
+
+            return nextReadLength;
+        }
+
+        protected int TcpDiagRplusReceiver(Stream networkStream)
+        {
+            int nextReadLength = 6;
+            try
+            {
+                if (SharedDataActive.TcpDiagRecLen >= 6)
+                {   // header received
+                    long telLen = ((long)SharedDataActive.TcpDiagBuffer[5] << 8) | SharedDataActive.TcpDiagBuffer[4];
+                    if (SharedDataActive.TcpDiagRecLen == telLen)
+                    {   // telegram received
+                        if (SharedDataActive.TcpDiagBuffer[0] != 0x4E || SharedDataActive.TcpDiagBuffer[1] != 0x4D ||
+                            SharedDataActive.TcpDiagBuffer[2] != 0x50 || SharedDataActive.TcpDiagBuffer[3] != 0x40)
+                        {
+                            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
+                                "*** Rplus NMP header invalid");
+                            InterfaceDisconnect(true);
+                            SharedDataActive.ReconnectRequired = true;
+                            return nextReadLength;
+                        }
                     }
                 }
             }
