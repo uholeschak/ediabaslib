@@ -4278,17 +4278,22 @@ namespace EdiabasLib
                                     return nextReadLength;
                                 }
 
-                                if (blockType == 3 && blockLen == 6)
+                                switch (blockType)
                                 {
-                                    int compatibility = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 5] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 4];
-                                    if (compatibility != 0)
+                                    case 3:
                                     {
-                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** RPLUS NMP compatibility invalid: {0}", compatibility);
-                                        InterfaceDisconnect(true);
-                                        SharedDataActive.ReconnectRequired = true;
-                                        return nextReadLength;
+                                        int compatibility = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 5] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 4];
+                                        if (blockLen != 6 || compatibility != 0)
+                                        {
+                                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** RPLUS NMP compatibility invalid: Len={0}, Compat={1}", blockLen, compatibility);
+                                            InterfaceDisconnect(true);
+                                            SharedDataActive.ReconnectRequired = true;
+                                            return nextReadLength;
+                                        }
+                                        break;
                                     }
                                 }
+
                                 dataOffset += blockLen;
                             }
                         }
