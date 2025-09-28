@@ -742,4 +742,4 @@ Block 3 (string): <DataType = 07> 00 <DataSubtype = 00> 00 <Content Len LL> <Con
 ifhInit: request 3 blocks (int <1> / string <unit> / string <application>), response 1 block (int <0>)
 ifhNotifyConfig: request 2 / 3 blocks (string <name> / param <ifh param> / (string <path>)), response 1 block (int <0>)
 ifhConnect: request 1 block (string <sgbd>), response 1 block (int <0>)
-ifhOpenChannel: request 0 blocks, response 1 block (int <0>), response 2 blocks (int <0>, int<channel>)
+ifhOpenChannel: request 0 blocks, response 2 blocks (int <0>, int<channel>)
