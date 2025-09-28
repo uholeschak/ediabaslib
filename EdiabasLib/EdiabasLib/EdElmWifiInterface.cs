@@ -20,8 +20,6 @@ namespace EdiabasLib
         }
 #endif
 
-        protected delegate void ExecuteNetworkDelegate();
-
         public const string PortId = "ELM327WIFI";
         public static string ElmIp = "192.168.0.10";
         public static int ElmPort = 35000;
