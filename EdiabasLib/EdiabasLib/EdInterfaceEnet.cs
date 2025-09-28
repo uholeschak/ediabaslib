@@ -4223,10 +4223,10 @@ namespace EdiabasLib
 
         protected int TcpDiagRplusReceiver(Stream networkStream)
         {
-            int nextReadLength = 6;
+            int nextReadLength = 20;
             try
             {
-                if (SharedDataActive.TcpDiagRecLen >= 6)
+                if (SharedDataActive.TcpDiagRecLen >= 20)
                 {   // header received
                     int telLen = ((int)SharedDataActive.TcpDiagBuffer[5] << 8) | SharedDataActive.TcpDiagBuffer[4];
                     if (SharedDataActive.TcpDiagRecLen == telLen)
@@ -4277,7 +4277,8 @@ namespace EdiabasLib
                         }
 
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP data offset: {0}", dataOffset);
-                        if (SharedDataActive.TcpDiagBuffer[dataOffset] != 0x54 || SharedDataActive.TcpDiagBuffer[dataOffset + 1] != 0x4D)
+                        if (dataOffset + 6 > telLen ||
+                            SharedDataActive.TcpDiagBuffer[dataOffset] != 0x54 || SharedDataActive.TcpDiagBuffer[dataOffset + 1] != 0x4D)
                         {
                             EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
                                 "*** RPLUS NMP invalid data block type");
