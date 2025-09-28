@@ -751,3 +751,4 @@ ifhGetPowerState: not transmitted
 ifhSendTelegram: request 1 block (binary <request data>), response 4 blocks (int <error_code>, int<0>, int<0>, binary<response data>)
 ifhGetResult: not transmitted
 ifhCloseChannel: request 0 blocks, response 1 block (int <error_code>)
+ifhEnd: request 0 blocks, response 1 block (int <error_code>)
