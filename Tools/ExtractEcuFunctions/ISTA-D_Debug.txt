@@ -708,17 +708,13 @@ RPLUS:ICOM_P Telegram encoding:
 ===============================
 Header:
 
-DataBlock: 02=Block contains data (always set)
-ActionBlock: 02=Block contains action, default=00
-
 Action blocks:
-07 00: (15 bytes) CHECKCOMPATIBILITY (request)
-2A 00: (48 bytes) IDENTIFICATION / COMPATIBILITY (response)
+<ActionLen L> <ActionLen H> <Data>
 
 NMPLen: Complete length of all NMP telegram bytes
 NMPCnt: NMP tel counter, echoed in response (starts with 1)
 
-4E 4D 50 40 <NMPLen L> <NMPLen H> <NMP Head length L 14> <NMP Head length H 0> 00 <DataBlock> <ActionBlock> 00 <NMPCnt> 00 00 00 <NMPLen L> <NMPLen H> 00 00
+4E 4D 50 40 <NMPLen L> <NMPLen H> <NMP Head length L 14> <NMP Head length H 0> 00 02 <ActionBlocks> 00 <NMPCnt> 00 00 00 <NMPLen L> <NMPLen H> 00 00
 
 Content:
 DataType:
