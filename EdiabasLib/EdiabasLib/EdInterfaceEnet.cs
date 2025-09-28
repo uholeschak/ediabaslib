@@ -4251,19 +4251,19 @@ namespace EdiabasLib
                             return nextReadLength;
                         }
 
-                        int dataBlockOffset = 20;
-                        int actionBlocks = SharedDataActive.TcpDiagBuffer[10];
+                        int dataOffset = 0x14;
+                        int actionBlocks = (SharedDataActive.TcpDiagBuffer[11] << 8) | SharedDataActive.TcpDiagBuffer[10];
                         if (actionBlocks > 0)
                         {   // action block
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP action blocks: {0}", actionBlocks);
                             for (int block = 0; block < actionBlocks; block++)
                             {
-                                int blockLen = ((int)SharedDataActive.TcpDiagBuffer[dataBlockOffset + 1] << 8) | SharedDataActive.TcpDiagBuffer[dataBlockOffset];
-                                int blockType = ((int)SharedDataActive.TcpDiagBuffer[dataBlockOffset + 3] << 8) | SharedDataActive.TcpDiagBuffer[dataBlockOffset + 2];
+                                int blockLen = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 1] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset];
+                                int blockType = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 3] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 2];
                                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP action block[{0}]: Len={1}, Type={2}", block, blockLen, blockType);
                                 if (blockType == 3 && blockLen == 6)
                                 {
-                                    int compatibility = ((int)SharedDataActive.TcpDiagBuffer[dataBlockOffset + 5] << 8) | SharedDataActive.TcpDiagBuffer[dataBlockOffset + 4];
+                                    int compatibility = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 5] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 4];
                                     if (compatibility != 0)
                                     {
                                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** RPLUS NMP compatibility invalid: {0}", compatibility);
@@ -4272,12 +4272,12 @@ namespace EdiabasLib
                                         return nextReadLength;
                                     }
                                 }
-                                dataBlockOffset += (int)blockLen;
+                                dataOffset += blockLen;
                             }
                         }
 
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP data offset: {0}", dataBlockOffset);
-                        if (SharedDataActive.TcpDiagBuffer[dataBlockOffset] != 0x54 || SharedDataActive.TcpDiagBuffer[dataBlockOffset + 1] != 0x4D)
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP data offset: {0}", dataOffset);
+                        if (SharedDataActive.TcpDiagBuffer[dataOffset] != 0x54 || SharedDataActive.TcpDiagBuffer[dataOffset + 1] != 0x4D)
                         {
                             EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
                                 "*** RPLUS NMP invalid data block type");

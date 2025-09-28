@@ -718,7 +718,7 @@ Action types:
 NMPLen: Complete length of all NMP telegram bytes
 NMPCnt: NMP tel counter, echoed in response (starts with 1)
 
-4E 4D 50 40 <NMPLen L> <NMPLen H> <NMP Head length L 14> <NMP Head length H 0> 00 02 <ActionBlocks> 00 <NMPCnt L> <NMPCnt H> 00 00 <NMPLen L> <NMPLen H> 00 00
+4E 4D 50 40 <NMPLen L> <NMPLen H> <NMP Head length L 14> <NMP Head length H 0> 00 02 <ActionBlocks L> <ActionBlocks H> <NMPCnt L> <NMPCnt H> 00 00 <NMPLen L> <NMPLen H> 00 00
 
 Content:
 DataType:
