@@ -355,6 +355,25 @@ namespace EdiabasLib
                 Array.Copy(dataArray, 8, DataArray, 0, dataLen);
             }
 
+            public NmpParameter(int value)
+            {
+                DataType = DataTypes.Integer;
+                SubType = DataSubTypes.None;
+                DataArray = new byte[] { (byte)value, (byte)(value >> 8) };
+            }
+
+            public NmpParameter(string text)
+            {
+                if (text == null)
+                {
+                    throw new ArgumentException("Invalid NMP parameter text");
+                }
+
+                DataType = DataTypes.String;
+                SubType = DataSubTypes.None;
+                DataArray = Encoding.ASCII.GetBytes(text + "\0");
+            }
+
             public DataTypes DataType { get; set; }
             public DataSubTypes SubType { get; set; }
             public byte[] DataArray { get; set; }
