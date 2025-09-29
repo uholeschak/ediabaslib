@@ -331,7 +331,7 @@ namespace EdiabasLib
             public enum DataSubTypes
             {
                 None = 0,
-                IfhParameter = 1,
+                ConfigParameter = 1,
             }
 
             public NmpParameter(List<byte> dataList)
@@ -385,6 +385,19 @@ namespace EdiabasLib
                 SubType = DataSubTypes.None;
                 DataArray = new byte[data.Length];
                 Array.Copy(data, DataArray, data.Length);
+            }
+
+            public NmpParameter(int parameterType, int parameterId, int value)
+            {
+                DataType = DataTypes.Structure;
+                SubType = DataSubTypes.ConfigParameter;
+                DataArray = new byte[6];
+                DataArray[0] = (byte)parameterType;
+                DataArray[1] = (byte)(parameterType >> 8);
+                DataArray[2] = (byte)parameterId;
+                DataArray[3] = (byte)(parameterId >> 8);
+                DataArray[4] = (byte)value;
+                DataArray[5] = (byte)(value >> 8);
             }
 
             public DataTypes DataType { get; set; }
