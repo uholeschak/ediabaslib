@@ -387,7 +387,7 @@ namespace EdiabasLib
                 Array.Copy(data, DataArray, data.Length);
             }
 
-            public NmpParameter(int parameterType, int parameterId, int value)
+            public NmpParameter(int parameterType, int parameterId, int value = 0xFFFF)
             {
                 DataType = DataTypes.Structure;
                 SubType = DataSubTypes.ConfigParameter;
@@ -398,6 +398,47 @@ namespace EdiabasLib
                 DataArray[3] = (byte)(parameterId >> 8);
                 DataArray[4] = (byte)value;
                 DataArray[5] = (byte)(value >> 8);
+            }
+
+            public int? GetInteger()
+            {
+                if (DataType != DataTypes.Integer)
+                {
+                    return null;
+                }
+                
+                if (DataArray.Length != 2)
+                {
+                    return null;
+                }
+
+                return (DataArray[1] << 8) | DataArray[0];
+            }
+
+            public string GetString()
+            {
+                if (DataType != DataTypes.String)
+                {
+                    return null;
+                }
+
+                int strLen = DataArray.Length;
+                if (strLen > 0 && DataArray[strLen - 1] == 0)
+                {
+                    strLen--;
+                }
+
+                return Encoding.ASCII.GetString(DataArray, 0, strLen);
+            }
+
+            public byte[] GetBinary()
+            {
+                if (DataType != DataTypes.Binary && DataType != DataTypes.Structure)
+                {
+                    return null;
+                }
+
+                return DataArray;
             }
 
             public DataTypes DataType { get; set; }
