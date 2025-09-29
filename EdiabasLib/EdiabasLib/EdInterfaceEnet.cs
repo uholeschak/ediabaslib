@@ -334,25 +334,25 @@ namespace EdiabasLib
                 ConfigParameter = 1,
             }
 
-            public NmpParameter(List<byte> telegram)
+            public NmpParameter(byte[] telegram, int bufferSize, int offset)
             {
-                if (telegram == null || telegram.Count < 8)
+                if (telegram == null || bufferSize - offset < 8)
                 {
                     throw new ArgumentException("Invalid NMP parameter data");
                 }
 
-                DataType = (DataTypes)((telegram[1] << 8) | telegram[0]);
+                DataType = (DataTypes)((telegram[1 + offset] << 8) | telegram[0 + offset]);
 
-                SubType = (DataSubTypes)((telegram[3] << 8) | telegram[2]);
+                SubType = (DataSubTypes)((telegram[3 + offset] << 8) | telegram[2 + offset]);
 
-                int dataLen = (telegram[7] << 24) | (telegram[6] << 16) | (telegram[5] << 8) | telegram[4];
-                if (dataLen < 0 || dataLen > telegram.Count - 8)
+                int dataLen = (telegram[7 + offset] << 24) | (telegram[6 + offset] << 16) | (telegram[5 + offset] << 8) | telegram[4 + offset];
+                if (dataLen < 0 || dataLen > bufferSize - offset - 8)
                 {
                     throw new ArgumentException("Invalid NMP parameter data length");
                 }
 
                 DataArray = new byte[dataLen];
-                Array.Copy(telegram.ToArray(), 8, DataArray, 0, dataLen);
+                Array.Copy(telegram, 8 + offset, DataArray, 0, dataLen);
             }
 
             public NmpParameter(int value)
@@ -455,6 +455,12 @@ namespace EdiabasLib
                 telegram.AddRange(DataArray);
                 return telegram;
             }
+
+            public int GetTelegramLength()
+            {
+                return 8 + DataArray.Length;
+            }
+
 
             public DataTypes DataType { get; set; }
             public DataSubTypes SubType { get; set; }
@@ -4964,6 +4970,49 @@ namespace EdiabasLib
             return true;
         }
 
+        protected List<NmpParameter> ReceiveNmpData(int timeout)
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return null;
+            }
+
+            try
+            {
+                int recLen = ReceiveTelegram(DataBuffer, timeout);
+                if (recLen < 18)
+                {
+                    return null;
+                }
+
+                if (DataBuffer[0] != 0x10 || DataBuffer[1] != 0x02 ||
+                    DataBuffer[8] != 0x00 || DataBuffer[9] != 0x01)
+                {
+                    return null;
+                }
+
+                int channel = (DataBuffer[5] << 8) | DataBuffer[4];
+                int nmpCounter = (DataBuffer[7] << 8) | DataBuffer[6];
+                int ifhCommand = (DataBuffer[13] << 8) | DataBuffer[12];
+                int blockCount = (DataBuffer[17] << 8) | DataBuffer[16];
+                int dataOffset = 18;
+                List<NmpParameter> paramList = new List<NmpParameter>();
+
+                for (int block = 0; block < blockCount; block++)
+                {
+                    NmpParameter nmpParameter = new NmpParameter(DataBuffer, recLen, dataOffset);
+                    paramList.Add(nmpParameter);
+                    dataOffset += nmpParameter.GetTelegramLength();
+                }
+
+                return paramList;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
         protected int ReceiveTelegram(byte[] receiveData, int timeout)
         {
             if (SharedDataActive.TcpDiagStream == null)
@@ -5379,9 +5428,8 @@ namespace EdiabasLib
             return parameters;
         }
 
-        public static List<byte> GetNmpFrameTelegram(int channel, int counter, int ifhCommand, List<NmpParameter> nmpParamList, List<byte[]> actionBlocks)
+        public static List<byte> GetNmpFrameTelegram(int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList, List<byte[]> actionBlocks)
         {
-            List<byte> nmpMessage = GetNmpMessageTelegram(channel, counter, ifhCommand, nmpParamList);
             List<byte> nmpFrame = new List<byte>();
             nmpFrame.Add(0x4E);
             nmpFrame.Add(0x4D);
@@ -5403,8 +5451,8 @@ namespace EdiabasLib
             nmpFrame.Add((byte)actionBlockCount);
             nmpFrame.Add((byte)(actionBlockCount >> 8));
 
-            nmpFrame.Add((byte)counter);
-            nmpFrame.Add((byte)(counter >> 8));
+            nmpFrame.Add((byte)nmpCounter);
+            nmpFrame.Add((byte)(nmpCounter >> 8));
 
             nmpFrame.Add(0x00);
             nmpFrame.Add(0x00);
@@ -5424,6 +5472,7 @@ namespace EdiabasLib
                 nmpFrame.AddRange(actionBlock);
             }
 
+            List<byte> nmpMessage = GetNmpMessageTelegram(channel, nmpCounter, ifhCommand, nmpParamList);
             nmpFrame.AddRange(nmpMessage);
 
             int nmpFrameSize = nmpFrame.Count;
@@ -5437,7 +5486,7 @@ namespace EdiabasLib
         }
 
 
-        public static List<byte> GetNmpMessageTelegram(int channel, int counter, int ifhCommand, List<NmpParameter> nmpParamList)
+        public static List<byte> GetNmpMessageTelegram(int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList)
         {
             List<byte> content = new List<byte>();
             content.Add(0x10);
@@ -5448,8 +5497,8 @@ namespace EdiabasLib
             content.Add((byte)channel);
             content.Add((byte)(channel >> 8));
 
-            content.Add((byte)counter);
-            content.Add((byte)(counter >> 8));
+            content.Add((byte)nmpCounter);
+            content.Add((byte)(nmpCounter >> 8));
 
             content.Add(0x00);
             content.Add(0x01);

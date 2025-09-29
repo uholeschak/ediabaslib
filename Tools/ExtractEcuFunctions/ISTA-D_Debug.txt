@@ -731,7 +731,7 @@ DataSubtype:
 00: Normal
 01: Config parameter
 
-54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> 10 02 00 00 <Channel L> <Channel H> <NMPCnt L> <NMPCnt H> 00 01 00 00 <IfhCmd> 00 00 00 <NumDataBlocks L> <NumDataBlocks H>
+54 4D <Data Len LL> <Data Len L> <Data Len H> <Data Len HH> 10 02 00 00 <Channel L> <Channel H> <NMPCnt L> <NMPCnt H> 00 01 00 00 <IfhCmd L> <IfhCmd H> 00 00 <NumDataBlocks L> <NumDataBlocks H>
 Block: <DataType> 00 <DataSubtype> 00 <Content Len LL> <Content Len L> <Content Len H> <Content Len HH> <Content>
 
 Param content:
