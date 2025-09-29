@@ -334,25 +334,25 @@ namespace EdiabasLib
                 ConfigParameter = 1,
             }
 
-            public NmpParameter(List<byte> dataList)
+            public NmpParameter(List<byte> telegram)
             {
-                if (dataList == null || dataList.Count < 8)
+                if (telegram == null || telegram.Count < 8)
                 {
                     throw new ArgumentException("Invalid NMP parameter data");
                 }
 
-                DataType = (DataTypes)((dataList[1] << 8) | dataList[0]);
+                DataType = (DataTypes)((telegram[1] << 8) | telegram[0]);
 
-                SubType = (DataSubTypes)((dataList[3] << 8) | dataList[2]);
+                SubType = (DataSubTypes)((telegram[3] << 8) | telegram[2]);
 
-                int dataLen = (dataList[7] << 24) | (dataList[6] << 16) | (dataList[5] << 8) | dataList[4];
-                if (dataLen < 0 || dataLen > dataList.Count - 8)
+                int dataLen = (telegram[7] << 24) | (telegram[6] << 16) | (telegram[5] << 8) | telegram[4];
+                if (dataLen < 0 || dataLen > telegram.Count - 8)
                 {
                     throw new ArgumentException("Invalid NMP parameter data length");
                 }
 
                 DataArray = new byte[dataLen];
-                Array.Copy(dataList.ToArray(), 8, DataArray, 0, dataLen);
+                Array.Copy(telegram.ToArray(), 8, DataArray, 0, dataLen);
             }
 
             public NmpParameter(int value)
@@ -439,6 +439,26 @@ namespace EdiabasLib
                 }
 
                 return DataArray;
+            }
+
+            public List<byte> GetTelegram()
+            {
+                List<byte> telegram = new List<byte>();
+
+                telegram.Add((byte)DataType);
+                telegram.Add((byte)((ushort)DataType >> 8));
+
+                telegram.Add((byte)SubType);
+                telegram.Add((byte)((ushort)SubType >> 8));
+
+                int dataLen = DataArray.Length;
+                telegram.Add((byte)(dataLen & 0xFF));
+                telegram.Add((byte)((dataLen >> 8) & 0xFF));
+                telegram.Add((byte)((dataLen >> 16) & 0xFF));
+                telegram.Add((byte)((dataLen >> 24) & 0xFF));
+
+                telegram.AddRange(DataArray);
+                return telegram;
             }
 
             public DataTypes DataType { get; set; }
