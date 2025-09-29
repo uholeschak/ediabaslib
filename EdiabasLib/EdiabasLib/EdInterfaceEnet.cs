@@ -317,7 +317,7 @@ namespace EdiabasLib
             }
         }
 
-        protected class NmpParameter
+        public class NmpParameter
         {
             public enum DataTypes
             {
@@ -5382,6 +5382,55 @@ namespace EdiabasLib
             }
 
             return parameters;
+        }
+
+        public static List<byte> GetNmpMessageTelegram(int channel, int counter, int ifhCommand, List<NmpParameter> nmpParamList)
+        {
+            List<byte> content = new List<byte>();
+            content.Add(0x10);
+            content.Add(0x02);
+            content.Add(0x00);
+            content.Add(0x00);
+
+            content.Add((byte)channel);
+            content.Add((byte)(channel >> 8));
+
+            content.Add((byte)counter);
+            content.Add((byte)(counter >> 8));
+
+            content.Add(0x00);
+            content.Add(0x01);
+            content.Add(0x00);
+            content.Add(0x00);
+
+            content.Add((byte)ifhCommand);
+            content.Add((byte)(ifhCommand >> 8));
+
+            content.Add(0x00);
+            content.Add(0x00);
+
+            int parameterCount = nmpParamList.Count;
+            content.Add((byte)parameterCount);
+            content.Add((byte)(parameterCount >> 8));
+
+            List<byte> paramBuffer = new List<byte>();
+            foreach (NmpParameter nmpParameter in nmpParamList)
+            {
+                content.AddRange(nmpParameter.GetTelegram());
+            }
+
+            List<byte> nmpMessage = new List<byte>();
+            nmpMessage.Add(0x54);
+            nmpMessage.Add(0x4D);
+
+            int dataLength = content.Count;
+            nmpMessage.Add((byte)(dataLength));
+            nmpMessage.Add((byte)(dataLength >> 8));
+            nmpMessage.Add((byte)(dataLength >> 16));
+            nmpMessage.Add((byte)(dataLength >> 24));
+
+            nmpMessage.AddRange(content);
+            return nmpMessage;
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
