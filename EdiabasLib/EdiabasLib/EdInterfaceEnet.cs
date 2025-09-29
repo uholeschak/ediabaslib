@@ -4970,8 +4970,12 @@ namespace EdiabasLib
             return true;
         }
 
-        protected List<NmpParameter> ReceiveNmpData(int timeout)
+        protected List<NmpParameter> ReceiveNmpParameters(int timeout, out int channel, out int nmpCounter, out int ifhCommand)
         {
+            channel = 0;
+            nmpCounter = 0;
+            ifhCommand = 0;
+
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return null;
@@ -4991,9 +4995,9 @@ namespace EdiabasLib
                     return null;
                 }
 
-                int channel = (DataBuffer[5] << 8) | DataBuffer[4];
-                int nmpCounter = (DataBuffer[7] << 8) | DataBuffer[6];
-                int ifhCommand = (DataBuffer[13] << 8) | DataBuffer[12];
+                channel = (DataBuffer[5] << 8) | DataBuffer[4];
+                nmpCounter = (DataBuffer[7] << 8) | DataBuffer[6];
+                ifhCommand = (DataBuffer[13] << 8) | DataBuffer[12];
                 int blockCount = (DataBuffer[17] << 8) | DataBuffer[16];
                 int dataOffset = 18;
                 List<NmpParameter> paramList = new List<NmpParameter>();
