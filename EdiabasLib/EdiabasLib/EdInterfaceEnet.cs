@@ -317,6 +317,81 @@ namespace EdiabasLib
             }
         }
 
+        protected class NmpParameter
+        {
+            public enum DataTypes
+            {
+                None = 0,
+                Integer = 4,
+                String = 7,
+                Binary = 8,
+                Structure = 9,
+            }
+
+            public enum DataSubTypes
+            {
+                None = 0,
+                IfhParameter = 1,
+            }
+
+            public NmpParameter(List<byte> dataList)
+            {
+                if (dataList == null || dataList.Count < 8)
+                {
+                    throw new ArgumentException("Invalid NMP parameter data");
+                }
+
+                DataType = (DataTypes)((dataList[1] << 8) | dataList[0]);
+
+                SubType = (DataSubTypes)((dataList[3] << 8) | dataList[2]);
+
+                int dataLen = (dataList[7] << 24) | (dataList[6] << 16) | (dataList[5] << 8) | dataList[4];
+                if (dataLen < 0 || dataLen > dataList.Count - 8)
+                {
+                    throw new ArgumentException("Invalid NMP parameter data length");
+                }
+
+                DataArray = new byte[dataLen];
+                Array.Copy(dataList.ToArray(), 8, DataArray, 0, dataLen);
+            }
+
+            public NmpParameter(int value)
+            {
+                DataType = DataTypes.Integer;
+                SubType = DataSubTypes.None;
+                DataArray = new byte[] { (byte)value, (byte)(value >> 8) };
+            }
+
+            public NmpParameter(string text)
+            {
+                if (text == null)
+                {
+                    throw new ArgumentException("Invalid NMP parameter text");
+                }
+
+                DataType = DataTypes.String;
+                SubType = DataSubTypes.None;
+                DataArray = Encoding.ASCII.GetBytes(text + "\0");
+            }
+
+            public NmpParameter(byte[] data)
+            {
+                if (data == null)
+                {
+                    throw new ArgumentException("Invalid NMP parameter data");
+                }
+
+                DataType = DataTypes.Binary;
+                SubType = DataSubTypes.None;
+                DataArray = new byte[data.Length];
+                Array.Copy(data, DataArray, data.Length);
+            }
+
+            public DataTypes DataType { get; set; }
+            public DataSubTypes SubType { get; set; }
+            public byte[] DataArray { get; set; }
+        }
+
         protected class SharedData : IDisposable
         {
             public SharedData()
