@@ -364,27 +364,22 @@ namespace EdiabasLib
 
             public NmpParameter(string text)
             {
-                if (text == null)
-                {
-                    throw new ArgumentException("Invalid NMP parameter text");
-                }
+                string contentString = text ?? string.Empty;
+                contentString += "\0";
 
                 DataType = DataTypes.String;
                 SubType = DataSubTypes.None;
-                DataArray = Encoding.ASCII.GetBytes(text + "\0");
+                DataArray = Encoding.ASCII.GetBytes(contentString);
             }
 
             public NmpParameter(byte[] data)
             {
-                if (data == null)
-                {
-                    throw new ArgumentException("Invalid NMP parameter data");
-                }
+                byte[] contentData = data ?? Array.Empty<byte>();
 
                 DataType = DataTypes.Binary;
                 SubType = DataSubTypes.None;
-                DataArray = new byte[data.Length];
-                Array.Copy(data, DataArray, data.Length);
+                DataArray = new byte[contentData.Length];
+                Array.Copy(contentData, DataArray, contentData.Length);
             }
 
             public NmpParameter(int parameterType, int parameterId, int value = 0xFFFF)
