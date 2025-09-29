@@ -317,6 +317,49 @@ namespace EdiabasLib
             }
         }
 
+        protected class NmpParameter
+        {
+            public enum DataTypes
+            {
+                None = 0,
+                Integer = 4,
+                String = 7,
+                Binary = 8,
+                Structure = 9,
+            }
+
+            public enum DataSubTypes
+            {
+                None = 0,
+                IfhParameter = 1,
+            }
+
+            public NmpParameter(byte[] dataArray)
+            {
+                if (dataArray == null || dataArray.Length < 8)
+                {
+                    throw new ArgumentException("Invalid NMP parameter data");
+                }
+
+                DataType = (DataTypes)((dataArray[1] << 8) | dataArray[0]);
+
+                SubType = (DataSubTypes)((dataArray[3] << 8) | dataArray[2]);
+
+                int dataLen = (dataArray[7] << 24) | (dataArray[6] << 16) | (dataArray[5] << 8) | dataArray[4];
+                if (dataLen < 0 || dataLen > dataArray.Length - 8)
+                {
+                    throw new ArgumentException("Invalid NMP parameter data length");
+                }
+
+                DataArray = new byte[dataLen];
+                Array.Copy(dataArray, 8, DataArray, 0, dataLen);
+            }
+
+            public DataTypes DataType { get; set; }
+            public DataSubTypes SubType { get; set; }
+            public byte[] DataArray { get; set; }
+        }
+
         protected class SharedData : IDisposable
         {
             public SharedData()
