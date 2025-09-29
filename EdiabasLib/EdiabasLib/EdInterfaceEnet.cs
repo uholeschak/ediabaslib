@@ -452,10 +452,10 @@ namespace EdiabasLib
                 telegram.Add((byte)((ushort)SubType >> 8));
 
                 int dataLen = DataArray.Length;
-                telegram.Add((byte)(dataLen & 0xFF));
-                telegram.Add((byte)((dataLen >> 8) & 0xFF));
-                telegram.Add((byte)((dataLen >> 16) & 0xFF));
-                telegram.Add((byte)((dataLen >> 24) & 0xFF));
+                telegram.Add((byte)dataLen);
+                telegram.Add((byte)(dataLen >> 8));
+                telegram.Add((byte)(dataLen >> 16));
+                telegram.Add((byte)(dataLen >> 24));
 
                 telegram.AddRange(DataArray);
                 return telegram;
