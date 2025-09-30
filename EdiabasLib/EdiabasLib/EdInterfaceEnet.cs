@@ -5450,7 +5450,7 @@ namespace EdiabasLib
             return parameters;
         }
 
-        public static List<byte> GetNmpFrameTelegram(int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList, List<byte[]> actionBlocks)
+        public static List<byte> GetNmpFrameTelegram(int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
         {
             List<byte> nmpFrame = new List<byte>();
             nmpFrame.Add(0x4E);
@@ -5469,7 +5469,7 @@ namespace EdiabasLib
             nmpFrame.Add(0x00);
             nmpFrame.Add(0x02);
 
-            int actionBlockCount = actionBlocks.Count;
+            int actionBlockCount = actionBlocks?.Count ?? 0;
             nmpFrame.Add((byte)actionBlockCount);
             nmpFrame.Add((byte)(actionBlockCount >> 8));
 
@@ -5486,12 +5486,15 @@ namespace EdiabasLib
             nmpFrame.Add(0x00);
             nmpFrame.Add(0x00);
 
-            foreach (byte[] actionBlock in actionBlocks)
+            if (actionBlocks != null)
             {
-                int actionBlockSize = actionBlock.Length + 2;
-                nmpFrame.Add((byte)actionBlockSize);
-                nmpFrame.Add((byte)(actionBlockSize >> 8));
-                nmpFrame.AddRange(actionBlock);
+                foreach (byte[] actionBlock in actionBlocks)
+                {
+                    int actionBlockSize = actionBlock.Length + 2;
+                    nmpFrame.Add((byte)actionBlockSize);
+                    nmpFrame.Add((byte)(actionBlockSize >> 8));
+                    nmpFrame.AddRange(actionBlock);
+                }
             }
 
             List<byte> nmpMessage = GetNmpMessageTelegram(channel, nmpCounter, ifhCommand, nmpParamList);
@@ -5507,8 +5510,7 @@ namespace EdiabasLib
             return nmpFrame;
         }
 
-
-        public static List<byte> GetNmpMessageTelegram(int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList)
+        public static List<byte> GetNmpMessageTelegram(int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList = null)
         {
             List<byte> content = new List<byte>();
             content.Add(0x10);
@@ -5533,13 +5535,16 @@ namespace EdiabasLib
             content.Add(0x00);
             content.Add(0x00);
 
-            int parameterCount = nmpParamList.Count;
+            int parameterCount = nmpParamList?.Count ?? 0;
             content.Add((byte)parameterCount);
             content.Add((byte)(parameterCount >> 8));
 
-            foreach (NmpParameter nmpParameter in nmpParamList)
+            if (nmpParamList != null)
             {
-                content.AddRange(nmpParameter.GetTelegram());
+                foreach (NmpParameter nmpParameter in nmpParamList)
+                {
+                    content.AddRange(nmpParameter.GetTelegram());
+                }
             }
 
             List<byte> nmpMessage = new List<byte>();
