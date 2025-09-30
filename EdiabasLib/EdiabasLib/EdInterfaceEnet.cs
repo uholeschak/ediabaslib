@@ -441,7 +441,8 @@ namespace EdiabasLib
                 parameterType = -1;
                 parameterId = -1;
 
-                if (SubType != DataSubTypes.ConfigParameter || DataArray.Length < 6)
+                if (DataType != DataTypes.Structure ||  SubType != DataSubTypes.ConfigParameter ||
+                    DataArray.Length < 6)
                 {
                     return null;
                 }
