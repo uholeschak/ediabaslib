@@ -140,6 +140,10 @@ namespace EdiabasTest
                         {
                             edInterface = new EdInterfaceEnet();
                         }
+                        else if (EdInterfaceRplus.IsValidInterfaceNameStatic(ifhName))
+                        {
+                            edInterface = new EdInterfaceRplus();
+                        }
                         else
                         {
                             _outputWriter.WriteLine("Interface not valid");

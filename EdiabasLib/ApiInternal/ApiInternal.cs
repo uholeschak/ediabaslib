@@ -427,6 +427,10 @@ namespace Ediabas
                 {
                     edInterface = new EdInterfaceEnet();
                 }
+                else if (EdInterfaceRplus.IsValidInterfaceNameStatic(ifh))
+                {
+                    edInterface = new EdInterfaceRplus();
+                }
                 else
                 {
                     setLocalError((int)EdiabasNet.ErrorCodes.EDIABAS_IFH_0027);
