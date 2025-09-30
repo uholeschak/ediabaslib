@@ -428,12 +428,28 @@ namespace EdiabasLib
 
             public byte[] GetBinary()
             {
-                if (DataType != DataTypes.Binary && DataType != DataTypes.Structure)
+                if (DataType != DataTypes.Binary)
                 {
                     return null;
                 }
 
                 return DataArray;
+            }
+
+            public int? GetIfhParameter(out int parameterType, out int parameterId)
+            {
+                parameterType = -1;
+                parameterId = -1;
+
+                if (SubType != DataSubTypes.ConfigParameter || DataArray.Length < 6)
+                {
+                    return null;
+                }
+
+                parameterType = (DataArray[0] << 8) | DataArray[1];
+                parameterId = (DataArray[2] << 8) | DataArray[3];
+                int value = (DataArray[5] << 8) | DataArray[4];
+                return value;
             }
 
             public List<byte> GetTelegram()
@@ -460,8 +476,6 @@ namespace EdiabasLib
             {
                 return 8 + DataArray.Length;
             }
-
-
             public DataTypes DataType { get; set; }
             public DataSubTypes SubType { get; set; }
             public byte[] DataArray { get; set; }
