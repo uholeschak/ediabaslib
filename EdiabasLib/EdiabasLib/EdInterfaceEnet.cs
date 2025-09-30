@@ -502,6 +502,7 @@ namespace EdiabasLib
                 TcpDiagRecLen = 0;
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
                 TcpDiagRecQueue = new Queue<byte[]>();
+                NmpCounter = 0;
             }
 
             public void DisposeCAs()
@@ -657,6 +658,7 @@ namespace EdiabasLib
             public bool ReconnectRequired;
             public bool IcomAllocateActive;
             public DoIpRoutingState DoIpRoutingState;
+            public int NmpCounter;
         }
 
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
@@ -1877,8 +1879,19 @@ namespace EdiabasLib
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
                         SharedDataActive.ReconnectRequired = false;
                         SharedDataActive.DoIpRoutingState = DoIpRoutingState.None;
+                        SharedDataActive.NmpCounter = 0;
 
-                        if (SharedDataActive.DiagDoIp)
+                        if (SharedDataActive.DiagRplus)
+                        {
+                            EdiabasNet.ErrorCodes initResult = NmtInit(null, "Application");
+                            if (initResult != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT init failed: {0}", initResult);
+                                EdiabasProtected?.SetError(initResult);
+                                break;
+                            }
+                        }
+                        else if (SharedDataActive.DiagDoIp)
                         {
                             if (!DoIpRoutingActivation(true))
                             {
@@ -5593,7 +5606,7 @@ namespace EdiabasLib
             return nmpMessage;
         }
 
-        private List<NmpParameter> TransNmpParameters(int timeout, int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
+        private List<NmpParameter> TransNmpParameters(int timeout, int channel, int ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -5602,6 +5615,8 @@ namespace EdiabasLib
 
             try
             {
+                SharedDataActive.NmpCounter++;
+                int nmpCounter = SharedDataActive.NmpCounter;
                 List<byte> nmpFrame = GetNmpFrameTelegram(channel, nmpCounter, ifhCommand, nmpParamList, actionBlocks);
                 lock (SharedDataActive.TcpDiagStreamSendLock)
                 {
@@ -5620,6 +5635,39 @@ namespace EdiabasLib
             {
                 return null;
             }
+        }
+
+        protected EdiabasNet.ErrorCodes NmtInit(string unit, string application)
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ParTimeoutStd;
+            List<NmpParameter> paramListSend = new List<NmpParameter>()
+            {
+                new NmpParameter(1),
+                new NmpParameter(unit),
+                new NmpParameter(application)
+            };
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, 0x01, paramListSend);
+            if (paramListRec == null || paramListRec.Count < 1)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT init failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int? error = paramListRec[0].GetInteger();
+            if (error == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT init no error code");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes errorCode = (EdiabasNet.ErrorCodes)error.Value;
+            return errorCode;
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
