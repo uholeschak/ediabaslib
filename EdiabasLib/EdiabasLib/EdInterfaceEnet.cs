@@ -676,7 +676,6 @@ namespace EdiabasLib
         public const int IcomControlPortDefault = 50161;
         public const int IcomDoIpPortDefault = 50162;
         public const int IcomSslPortDefault = 50163;
-        public const int IcomRplusPortDefault = 6801;
         public const string NetworkProtocolTcp = "TCP";
         public const string NetworkProtocolSsl = "SSL";
         public const string AutoIp = "auto";
@@ -750,7 +749,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = DoIpPortDefault;
         protected int DoIpSslPort = DoIpSslPortDefault;
-        protected int RplusPort = IcomRplusPortDefault;
+        protected int RplusPort = DiagPortDefault;
         protected bool DoIpBcSsl = true;
         protected string DoIpSslSecurityPathProtected = string.Empty;
         protected string DoIpS29PathProtected = string.Empty;

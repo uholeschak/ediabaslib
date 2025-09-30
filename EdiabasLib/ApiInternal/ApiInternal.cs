@@ -336,7 +336,7 @@ namespace Ediabas
                     if (ifhParts.Length >= 3 && string.Compare(ifhParts[1], "ICOM_P", StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         string remoteHost = null;
-                        string reportPort = null;
+                        string remotePort = null;
                         string arguments = ifhParts[2];
                         string[] argumentParts = arguments.Split(';');
                         if (argumentParts.Length >= 2)
@@ -354,16 +354,17 @@ namespace Ediabas
                                     }
                                     else if (string.Compare(argName, "Port", StringComparison.OrdinalIgnoreCase) == 0)
                                     {
-                                        reportPort = argValue;
+                                        remotePort = argValue;
                                     }
                                 }
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(remoteHost) && !string.IsNullOrEmpty(reportPort))
+                        if (!string.IsNullOrEmpty(remoteHost) && !string.IsNullOrEmpty(remotePort))
                         {
-                            logFormat(ApiLogLevel.Normal, "Host: {0}, Port={1}", remoteHost, reportPort);
+                            logFormat(ApiLogLevel.Normal, "Host: {0}, Port={1}", remoteHost, remotePort);
 
+#if true
                             bool validConfig = true;
                             if (!IPAddress.TryParse(remoteHost, out _))
                             {
@@ -371,7 +372,7 @@ namespace Ediabas
                                 validConfig = false;
                             }
 
-                            if (!Int64.TryParse(reportPort, out Int64 portValue))
+                            if (!Int64.TryParse(remotePort, out Int64 portValue))
                             {
                                 portValue = -1;
                             }
@@ -391,6 +392,12 @@ namespace Ediabas
                                 _ediabas.SetConfigProperty("EnetIcomAllocate", "0");
                                 logFormat(ApiLogLevel.Normal, "redirecting RPLUS:ICOM_P to ENET: {0}", enetRemoteHost);
                             }
+#else
+                            _ediabas.SetConfigProperty("RemoteHost", remoteHost);
+                            _ediabas.SetConfigProperty("Port", remotePort);
+                            _ediabas.SetConfigProperty("EnetIcomAllocate", "0");
+                            logFormat(ApiLogLevel.Normal, "RPLUS:ICOM_P: {0}:{1}", remoteHost, remotePort);
+#endif
                         }
                     }
 
