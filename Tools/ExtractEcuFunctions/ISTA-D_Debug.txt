@@ -744,7 +744,7 @@ ifhNotifyConfig: request 2 / 3 blocks (string <name> / param <ifh param> / (stri
 ifhConnect: request 1 block (string <sgbd>), response 1 block (int <error_code>)
 ifhOpenChannel: request 0 blocks, response 2 blocks (int <error_code>, int<channel>)
 ifhGetIfhStatus: not transmitted
-ifhPassGetConfig: request 1 block (string <name>), response 4 blocks (int <error_code>, int<0>, int<0>, binary<config>)
+ifhPassGetConfig: request 1 block (string <name>), response 1 block (int <error_code>)
 ifhStopFreqTelegram: request 0 blocks, response 4 blocks (int <error_code>, int<0>, int<0>, binary<empty>)
 ifhSetParameter: request 1 block (binary <data>), response 4 blocks (int <error_code>, int<0>, int<0>, binary<empty>)
 ifhSetTelPreface: request 1 block (binary <data>), response 4 blocks (int <error_code>, int<0>, int<0>, binary<empty>)
