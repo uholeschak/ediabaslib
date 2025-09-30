@@ -676,6 +676,7 @@ namespace EdiabasLib
         public const int IcomControlPortDefault = 50161;
         public const int IcomDoIpPortDefault = 50162;
         public const int IcomSslPortDefault = 50163;
+        public const int IcomRplusPortDefault = 6801;
         public const string NetworkProtocolTcp = "TCP";
         public const string NetworkProtocolSsl = "SSL";
         public const string AutoIp = "auto";
@@ -749,6 +750,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = DoIpPortDefault;
         protected int DoIpSslPort = DoIpSslPortDefault;
+        protected int RplusPort = IcomRplusPortDefault;
         protected bool DoIpBcSsl = true;
         protected string DoIpSslSecurityPathProtected = string.Empty;
         protected string DoIpS29PathProtected = string.Empty;
@@ -1678,8 +1680,9 @@ namespace EdiabasLib
                     SharedDataActive.DiagDoIp = communicationMode == CommunicationMode.DoIp;
 
                     bool diagDoIpSsl = false;
-                    bool diagRplus = false;
-                    if (SharedDataActive.DiagDoIp)
+                    bool diagRplus = RplusMode;
+
+                    if (!diagRplus && SharedDataActive.DiagDoIp)
                     {
                         string hostIp = SharedDataActive.EnetHostConn.IpAddress.ToString();
                         List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.DoIp }, ignoreIcomOwner);
@@ -1757,31 +1760,38 @@ namespace EdiabasLib
                     SharedDataActive.DiagDoIpSsl = diagDoIpSsl;
                     SharedDataActive.DiagRplus = diagRplus;
 
-                    int doIpPort = SharedDataActive.DiagDoIpSsl ? DoIpSslPort : DoIpPort;
-                    if (SharedDataActive.DiagDoIp)
+                    if (SharedDataActive.DiagRplus)
                     {
-                        diagPort = doIpPort;
-                        if (SharedDataActive.DiagDoIpSsl)
+                        diagPort = RplusPort;
+                    }
+                    else
+                    {
+                        int doIpPort = SharedDataActive.DiagDoIpSsl ? DoIpSslPort : DoIpPort;
+                        if (SharedDataActive.DiagDoIp)
                         {
-                            if (SharedDataActive.EnetHostConn.SslPort >= 0)
+                            diagPort = doIpPort;
+                            if (SharedDataActive.DiagDoIpSsl)
                             {
-                                diagPort = SharedDataActive.EnetHostConn.SslPort;
+                                if (SharedDataActive.EnetHostConn.SslPort >= 0)
+                                {
+                                    diagPort = SharedDataActive.EnetHostConn.SslPort;
+                                }
+                            }
+                            else
+                            {
+                                if (SharedDataActive.EnetHostConn.DoIpPort >= 0)
+                                {
+                                    diagPort = SharedDataActive.EnetHostConn.DoIpPort;
+                                }
                             }
                         }
                         else
                         {
-                            if (SharedDataActive.EnetHostConn.DoIpPort >= 0)
+                            diagPort = DiagnosticPort;
+                            if (SharedDataActive.EnetHostConn.DiagPort >= 0)
                             {
-                                diagPort = SharedDataActive.EnetHostConn.DoIpPort;
+                                diagPort = SharedDataActive.EnetHostConn.DiagPort;
                             }
-                        }
-                    }
-                    else
-                    {
-                        diagPort = DiagnosticPort;
-                        if (SharedDataActive.EnetHostConn.DiagPort >= 0)
-                        {
-                            diagPort = SharedDataActive.EnetHostConn.DiagPort;
                         }
                     }
 

@@ -14,6 +14,11 @@ namespace EdiabasLib
             set
             {
                 base.Ediabas = value;
+                string prop = EdiabasProtected.GetConfigProperty("Port");
+                if (prop != null)
+                {
+                    RplusPort = (int)EdiabasNet.StringToValue(prop);
+                }
             }
         }
 
