@@ -30,6 +30,7 @@
     <Compile Include="..\EdiabasLib\EdInterfaceEdic.cs" Link="EdInterfaceEdic.cs" />
     <Compile Include="..\EdiabasLib\EdInterfaceEnet.cs" Link="EdInterfaceEnet.cs" />
     <Compile Include="..\EdiabasLib\EdInterfaceObd.cs" Link="EdInterfaceObd.cs" />
+    <Compile Include="..\EdiabasLib\EdInterfaceRplus.cs" Link="EdInterfaceRplus.cs" />
     <Compile Include="..\EdiabasLib\EdOperations.cs" Link="EdOperations.cs" />
     <Compile Include="..\EdiabasLib\EdSec4Diag.cs" Link="EdSec4Diag.cs" />
     <Compile Include="..\EdiabasLib\EdSimFile.cs" Link="EdSimFile.cs" />
