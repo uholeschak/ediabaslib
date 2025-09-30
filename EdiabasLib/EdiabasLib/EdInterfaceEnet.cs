@@ -4154,7 +4154,7 @@ namespace EdiabasLib
                 int nextReadLength = 0;
                 if (SharedDataActive.DiagRplus)
                 {
-                    nextReadLength = TcpDiagRplusReceiver(networkStream);
+                    nextReadLength = TcpDiagNmpReceiver(networkStream);
                 }
                 else
                 {
@@ -4371,7 +4371,7 @@ namespace EdiabasLib
             return nextReadLength;
         }
 
-        protected int TcpDiagRplusReceiver(Stream networkStream)
+        protected int TcpDiagNmpReceiver(Stream networkStream)
         {
             int nextReadLength = 20;
             try
@@ -4386,7 +4386,7 @@ namespace EdiabasLib
                             SharedDataActive.TcpDiagBuffer[6] != 0x14 || SharedDataActive.TcpDiagBuffer[7] != 0x00)     // NMP header length
                         {
                             EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
-                                "*** RPLUS NMP header invalid");
+                                "*** NMP header invalid");
                             InterfaceDisconnect(true);
                             SharedDataActive.ReconnectRequired = true;
                             return nextReadLength;
@@ -4395,7 +4395,7 @@ namespace EdiabasLib
                         if (SharedDataActive.TcpDiagBuffer[6] != 0x14 || SharedDataActive.TcpDiagBuffer[7] != 0x00)
                         {
                             EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
-                                "*** RPLUS NMP length duplicate invalid");
+                                "*** NMP length duplicate invalid");
                             InterfaceDisconnect(true);
                             SharedDataActive.ReconnectRequired = true;
                             return nextReadLength;
@@ -4405,13 +4405,13 @@ namespace EdiabasLib
                         int actionBlocks = (SharedDataActive.TcpDiagBuffer[11] << 8) | SharedDataActive.TcpDiagBuffer[10];
                         if (actionBlocks > 0)
                         {   // action block
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP action blocks: {0}", actionBlocks);
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMP action blocks: {0}", actionBlocks);
                             for (int block = 0; block < actionBlocks; block++)
                             {
                                 if (dataOffset + 4 > telLen)
                                 {
                                     EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
-                                        "*** RPLUS NMP invalid data block header length");
+                                        "*** NMP invalid data block header length");
                                     InterfaceDisconnect(true);
                                     SharedDataActive.ReconnectRequired = true;
                                     return nextReadLength;
@@ -4419,10 +4419,10 @@ namespace EdiabasLib
 
                                 int blockLen = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 1] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset];
                                 int blockType = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 3] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 2];
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP action block[{0}]: Len={1}, Type={2}", block, blockLen, blockType);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMP action block[{0}]: Len={1}, Type={2}", block, blockLen, blockType);
                                 if (dataOffset + blockLen > telLen)
                                 {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** RPLUS NMP invalid block[{0}] size: {1}", block, blockLen);
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP invalid block[{0}] size: {1}", block, blockLen);
                                     InterfaceDisconnect(true);
                                     SharedDataActive.ReconnectRequired = true;
                                     return nextReadLength;
@@ -4435,7 +4435,7 @@ namespace EdiabasLib
                                         int compatibility = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 5] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 4];
                                         if (blockLen != 6 || compatibility != 0)
                                         {
-                                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** RPLUS NMP compatibility invalid: Len={0}, Compat={1}", blockLen, compatibility);
+                                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP compatibility invalid: Len={0}, Compat={1}", blockLen, compatibility);
                                             InterfaceDisconnect(true);
                                             SharedDataActive.ReconnectRequired = true;
                                             return nextReadLength;
@@ -4448,12 +4448,12 @@ namespace EdiabasLib
                             }
                         }
 
-                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "RPLUS NMP data offset: {0}", dataOffset);
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMP data offset: {0}", dataOffset);
                         if (dataOffset + 6 > telLen ||
                             SharedDataActive.TcpDiagBuffer[dataOffset] != 0x54 || SharedDataActive.TcpDiagBuffer[dataOffset + 1] != 0x4D)
                         {
                             EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
-                                "*** RPLUS NMP invalid data block type");
+                                "*** NMP invalid data block type");
                             InterfaceDisconnect(true);
                             SharedDataActive.ReconnectRequired = true;
                             return nextReadLength;
@@ -4464,7 +4464,7 @@ namespace EdiabasLib
                         if (dataLen + dataOffset + 6 > telLen)
                         {
                             EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
-                                "*** RPLUS NMP data length overflow");
+                                "*** NMP data length overflow");
                             InterfaceDisconnect(true);
                             SharedDataActive.ReconnectRequired = true;
                             return nextReadLength;
@@ -4487,7 +4487,7 @@ namespace EdiabasLib
             }
             catch (Exception ex)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** RPLUS NMP Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP Exception: {0}", EdiabasNet.GetExceptionText(ex));
                 InterfaceDisconnect(true);
                 SharedDataActive.ReconnectRequired = true;
                 return nextReadLength;
