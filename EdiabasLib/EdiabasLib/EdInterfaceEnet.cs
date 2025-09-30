@@ -4970,12 +4970,8 @@ namespace EdiabasLib
             return true;
         }
 
-        protected List<NmpParameter> ReceiveNmpParameters(int timeout, out int channel, out int nmpCounter, out int ifhCommand)
+        protected List<NmpParameter> ReceiveNmpParameters(int timeout, int? channelCompare,int? nmpCounterCompare, int? ifhCommandCompare)
         {
-            channel = 0;
-            nmpCounter = 0;
-            ifhCommand = 0;
-
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return null;
@@ -4997,9 +4993,28 @@ namespace EdiabasLib
                     return null;
                 }
 
-                channel = (DataBuffer[5] << 8) | DataBuffer[4];
-                nmpCounter = (DataBuffer[7] << 8) | DataBuffer[6];
-                ifhCommand = (DataBuffer[13] << 8) | DataBuffer[12];
+                int channel = (DataBuffer[5] << 8) | DataBuffer[4];
+                int nmpCounter = (DataBuffer[7] << 8) | DataBuffer[6];
+                int ifhCommand = (DataBuffer[13] << 8) | DataBuffer[12];
+
+                if (channelCompare != null && channel != channelCompare.Value)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP message channel mismatch: {0} != {1}", channel, channelCompare.Value);
+                    return null;
+                }
+
+                if (nmpCounterCompare != null && nmpCounter != nmpCounterCompare.Value)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP message counter mismatch: {0} != {1}", nmpCounter, nmpCounterCompare.Value);
+                    return null;
+                }
+                
+                if (ifhCommandCompare != null && ifhCommand != ifhCommandCompare.Value)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP message IFH command mismatch: {0} != {1}", ifhCommand, ifhCommandCompare.Value);
+                    return null;
+                }
+
                 int blockCount = (DataBuffer[17] << 8) | DataBuffer[16];
                 int dataOffset = 18;
                 List<NmpParameter> paramList = new List<NmpParameter>();
