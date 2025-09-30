@@ -5561,6 +5561,28 @@ namespace EdiabasLib
             return nmpMessage;
         }
 
+        private List<NmpParameter> TransNmpParameters(int timeout, int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return null;
+            }
+
+            List<byte> nmpFrame = GetNmpFrameTelegram(channel, nmpCounter, ifhCommand, nmpParamList, actionBlocks);
+            lock (SharedDataActive.TcpDiagStreamSendLock)
+            {
+                WriteNetworkStream(SharedDataActive.TcpDiagStream, nmpFrame.ToArray(), 0, nmpFrame.Count);
+            }
+
+            List<NmpParameter> paramListRec = ReceiveNmpParameters(timeout, channel, nmpCounter, ifhCommand);
+            if (paramListRec == null)
+            {
+                return null;
+            }
+
+            return paramListRec;
+        }
+
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
