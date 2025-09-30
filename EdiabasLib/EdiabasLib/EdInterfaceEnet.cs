@@ -4986,12 +4986,14 @@ namespace EdiabasLib
                 int recLen = ReceiveTelegram(DataBuffer, timeout);
                 if (recLen < 18)
                 {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid NMP message length: {0}", recLen);
                     return null;
                 }
 
                 if (DataBuffer[0] != 0x10 || DataBuffer[1] != 0x02 ||
                     DataBuffer[8] != 0x00 || DataBuffer[9] != 0x01)
                 {
+                    EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, DataBuffer, 0, recLen, "*** NMP message identifiers invalid");
                     return null;
                 }
 
@@ -5011,8 +5013,9 @@ namespace EdiabasLib
 
                 return paramList;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP message exception: {0}", EdiabasNet.GetExceptionText(ex));
                 return null;
             }
         }
