@@ -5884,6 +5884,40 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
+        protected EdiabasNet.ErrorCodes NmtSendTelegram(byte[] requestData, out byte[] responseData)
+        {
+            responseData = null;
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ConnectTimeout;
+            List<NmpParameter> paramListSend = new List<NmpParameter>()
+            {
+                new NmpParameter(requestData),
+            };
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSendTelegram, paramListSend);
+            SharedDataActive.NmpChannel = 0;
+
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            responseData = paramListRec[3].GetBinary();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            return errorCode.Value;
+        }
+
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
         {
             receiveLength = 0;
