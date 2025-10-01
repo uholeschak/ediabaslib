@@ -5879,11 +5879,40 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
-        protected EdiabasNet.ErrorCodes NmtNotifyConfig(string name, EdiabasNet.IfhParameterType parameterType, int parameterId, int parameterValue = 0xFFFF, string parameterString = null)
+        protected EdiabasNet.ErrorCodes NmtNotifyConfig(string name, EdiabasNet.IfhParameterType parameterType, int parameterId, string parameter)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int parameterValue = 0;
+            string parameterString = null;
+
+            switch (parameterType)
+            {
+                case EdiabasNet.IfhParameterType.CFGTYPE_PATH:
+                case EdiabasNet.IfhParameterType.CFGTYPE_STRING:
+                    parameterValue = 0xFFFF;
+                    parameterString = parameter ?? string.Empty;
+                    break;
+
+                case EdiabasNet.IfhParameterType.CFGTYPE_INT:
+                case EdiabasNet.IfhParameterType.CFGTYPE_BOOL:
+                {
+                    long stringValue = EdiabasNet.StringToValue(parameter ?? string.Empty, out bool valid);
+                    if (valid)
+                    {
+                        if (parameterType == EdiabasNet.IfhParameterType.CFGTYPE_BOOL)
+                        {
+                            parameterValue = stringValue != 0 ? 1 : 0;
+                            break;
+                        }
+
+                        parameterValue = (int) stringValue;
+                    }
+                    break;
+                }
             }
 
             int timeout = ConnectTimeout;
@@ -5893,12 +5922,9 @@ namespace EdiabasLib
                 new NmpParameter(parameterType, parameterId, parameterValue),
             };
 
-            switch (parameterType)
+            if (parameterString != null)
             {
-                case EdiabasNet.IfhParameterType.CFGTYPE_STRING:
-                case EdiabasNet.IfhParameterType.CFGTYPE_PATH:
-                    paramListSend.Add(new NmpParameter(parameterString));
-                    break;
+                paramListSend.Add(new NmpParameter(parameterString));
             }
 
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetParameter, paramListSend);
@@ -6042,6 +6068,34 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtInit failed");
                 return errorCode;
+            }
+
+            if (EdiabasProtected != null)
+            {
+                List<Tuple<string, EdiabasNet.IfhParameterType, int>> configProperties = new List<Tuple<string, EdiabasNet.IfhParameterType, int>>()
+                {
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("UBattHandling", EdiabasNet.IfhParameterType.CFGTYPE_STRING, 3),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("IgnitionHandling", EdiabasNet.IfhParameterType.CFGTYPE_STRING, 4),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("TracePath", EdiabasNet.IfhParameterType.CFGTYPE_PATH, 19),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("SystemTraceIfh", EdiabasNet.IfhParameterType.CFGTYPE_INT, 8),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("IfhTrace", EdiabasNet.IfhParameterType.CFGTYPE_INT, 10),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("SimulationPath", EdiabasNet.IfhParameterType.CFGTYPE_PATH, 11),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("Simulation", EdiabasNet.IfhParameterType.CFGTYPE_BOOL, 12),
+                };
+
+                foreach (Tuple<string, EdiabasNet.IfhParameterType, int> configProperty in configProperties)
+                {
+                    string configValue = EdiabasProtected.GetConfigProperty(configProperty.Item1);
+                    if (configValue != null)
+                    {
+                        errorCode = NmtNotifyConfig(configProperty.Item1, configProperty.Item2, configProperty.Item3, configValue);
+                        if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NmtNotifyConfig {0} failed", configProperty.Item1);
+                            return errorCode;
+                        }
+                    }
+                }
             }
 
             string sgbd = EdiabasProtected?.SgbdFileName ?? string.Empty;
