@@ -1940,11 +1940,11 @@ namespace EdiabasLib
 
                         if (SharedDataActive.DiagRplus)
                         {
-                            EdiabasNet.ErrorCodes initResult = NmtInit(null, "Application");
-                            if (initResult != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                            EdiabasNet.ErrorCodes openResult = NmtOpenConnection();
+                            if (openResult != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT init failed: {0}", initResult);
-                                EdiabasProtected?.SetError(initResult);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT open failed: {0}", openResult);
+                                EdiabasProtected?.SetError(openResult);
                                 break;
                             }
                         }
@@ -2031,6 +2031,11 @@ namespace EdiabasLib
             {
                 if (SharedDataActive.TcpDiagStream != null)
                 {
+                    if (SharedDataActive.DiagRplus)
+                    {
+                        NmtCloseConnection();
+                    }
+
                     SharedDataActive.TcpDiagStream.Dispose();
                     SharedDataActive.TcpDiagStream = null;
                 }
@@ -6028,6 +6033,57 @@ namespace EdiabasLib
             }
 
             return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtOpenConnection()
+        {
+            EdiabasNet.ErrorCodes errorCode = NmtInit(null, "Application");
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtInit failed");
+                return errorCode;
+            }
+
+            string sgbd = EdiabasProtected?.SgbdFileName ?? string.Empty;
+            if (!string.IsNullOrEmpty(sgbd))
+            {
+                sgbd = Path.GetFileNameWithoutExtension(sgbd);
+            }
+
+            errorCode = NmtConnect(sgbd);
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtConnect failed");
+                return errorCode;
+            }
+
+            errorCode = NmtOpenChannel();
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtOpenChannel failed");
+                return errorCode;
+            }
+
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtCloseConnection()
+        {
+            EdiabasNet.ErrorCodes errorCode = NmtCloseChannel();
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtCloseChannel failed");
+                return errorCode;
+            }
+
+            errorCode = NmtEnd();
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtEnd failed");
+                return errorCode;
+            }
+
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
