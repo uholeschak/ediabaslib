@@ -525,6 +525,7 @@ namespace EdiabasLib
                 LastTcpDiagRecTime = DateTime.MinValue.Ticks;
                 TcpDiagRecQueue = new Queue<byte[]>();
                 NmpCounter = 0;
+                NmpChannel = 0;
             }
 
             public void DisposeCAs()
@@ -681,6 +682,7 @@ namespace EdiabasLib
             public bool IcomAllocateActive;
             public DoIpRoutingState DoIpRoutingState;
             public int NmpCounter;
+            public int NmpChannel;
         }
 
         protected delegate EdiabasNet.ErrorCodes TransmitDelegate(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength);
@@ -1902,6 +1904,7 @@ namespace EdiabasLib
                         SharedDataActive.ReconnectRequired = false;
                         SharedDataActive.DoIpRoutingState = DoIpRoutingState.None;
                         SharedDataActive.NmpCounter = 0;
+                        SharedDataActive.NmpChannel = 0;
 
                         if (SharedDataActive.DiagRplus)
                         {
@@ -5681,7 +5684,13 @@ namespace EdiabasLib
                 new NmpParameter(application)
             };
 
-            List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, EdiabasNet.IfhCommands.IfhInit, paramListSend);
+            List<byte[]> actionBlocks = new List<byte[]>()
+            {
+                new byte[] {0x01, 0x00, 0x01, 0x00, 0x00},          // identification, len 1, empty
+                new byte[] {0x02, 0x00, 0x00, 0x01, 0x00, 0x00}     // version 0x100
+            };
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, EdiabasNet.IfhCommands.IfhInit, paramListSend, actionBlocks);
             if (paramListRec == null || paramListRec.Count < 1)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT init failed");
@@ -5691,7 +5700,95 @@ namespace EdiabasLib
             EdiabasNet.ErrorCodes? errorCode = paramListRec[0].GetErrorCode();
             if (errorCode == null)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT init no error code");
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT init invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtConnect(string sgbd)
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ConnectTimeout;
+            List<NmpParameter> paramListSend = new List<NmpParameter>()
+            {
+                new NmpParameter(sgbd),
+            };
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, EdiabasNet.IfhCommands.IfhConnect, paramListSend);
+            if (paramListRec == null || paramListRec.Count < 1)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT connect failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[0].GetErrorCode();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT connect invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtOpenChannel()
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ConnectTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, EdiabasNet.IfhCommands.IfhOpenChannel);
+            if (paramListRec == null || paramListRec.Count < 2)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT open channel failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[0].GetErrorCode();
+            int? channel = paramListRec[1].GetInteger();
+            if (errorCode == null || channel == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT open channel invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (errorCode == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                SharedDataActive.NmpChannel = channel.Value;
+            }
+
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtCloseChannel()
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ConnectTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhCloseChannel);
+            SharedDataActive.NmpChannel = 0;
+
+            if (paramListRec == null || paramListRec.Count < 1)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT close channel failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[0].GetErrorCode();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT close channel invalid parameters");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
