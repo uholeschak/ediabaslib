@@ -5845,8 +5845,6 @@ namespace EdiabasLib
             }
 
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetParameter, paramListSend);
-            SharedDataActive.NmpChannel = 0;
-
             if (paramListRec == null || paramListRec.Count < 1)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT notify config failed");
@@ -5877,8 +5875,6 @@ namespace EdiabasLib
             };
 
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetParameter, paramListSend);
-            SharedDataActive.NmpChannel = 0;
-
             if (paramListRec == null || paramListRec.Count < 4)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT set parameter failed");
@@ -5909,8 +5905,6 @@ namespace EdiabasLib
             };
 
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetTelPreface, paramListSend);
-            SharedDataActive.NmpChannel = 0;
-
             if (paramListRec == null || paramListRec.Count < 4)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT set preface failed");
@@ -5921,6 +5915,31 @@ namespace EdiabasLib
             if (errorCode == null)
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT set preface invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtStopFreqTelegram()
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ConnectTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhStopFreqTelegram);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram invalid parameters");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
@@ -5942,8 +5961,6 @@ namespace EdiabasLib
             };
 
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSendTelegram, paramListSend);
-            SharedDataActive.NmpChannel = 0;
-
             if (paramListRec == null || paramListRec.Count < 4)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram failed");
