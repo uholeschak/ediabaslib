@@ -6068,7 +6068,7 @@ namespace EdiabasLib
 
         protected EdiabasNet.ErrorCodes NmtOpenConnection()
         {
-            EdiabasNet.ErrorCodes errorCode = NmtInit(null, "Application");
+            EdiabasNet.ErrorCodes errorCode = NmtInit(null, "Applicat");
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtInit failed");
