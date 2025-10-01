@@ -4595,10 +4595,10 @@ namespace EdiabasLib
 
                         long dataLen = ((long)SharedDataActive.TcpDiagBuffer[dataOffset + 5] << 24) | ((long)SharedDataActive.TcpDiagBuffer[dataOffset + 4] << 16) | 
                                         ((long)SharedDataActive.TcpDiagBuffer[dataOffset + 3] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 2];
-                        if (dataLen + dataOffset + 6 > telLen)
+                        if (dataLen < 6 || dataLen + dataOffset > telLen)
                         {
                             EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, SharedDataActive.TcpDiagBuffer, 0, SharedDataActive.TcpDiagRecLen,
-                                "*** NMP data length overflow");
+                                "*** NMP data length invalid");
                             InterfaceDisconnect(true);
                             SharedDataActive.ReconnectRequired = true;
                             return nextReadLength;
@@ -4612,7 +4612,7 @@ namespace EdiabasLib
                             }
 
                             byte[] recDataTel = new byte[dataLen];
-                            Array.Copy(SharedDataActive.TcpDiagBuffer, dataOffset + 6, recDataTel, 0, dataLen);
+                            Array.Copy(SharedDataActive.TcpDiagBuffer, dataOffset + 6, recDataTel, 0, dataLen - 6);
                             SharedDataActive.TcpDiagRecQueue.Enqueue(recDataTel);
                             SharedDataActive.TcpDiagStreamRecEvent.Set();
                         }
@@ -5687,7 +5687,7 @@ namespace EdiabasLib
             nmpMessage.Add(0x54);
             nmpMessage.Add(0x4D);
 
-            int dataLength = content.Count;
+            int dataLength = content.Count + 6;
             nmpMessage.Add((byte)(dataLength));
             nmpMessage.Add((byte)(dataLength >> 8));
             nmpMessage.Add((byte)(dataLength >> 16));
