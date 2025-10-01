@@ -2150,6 +2150,17 @@ namespace EdiabasLib
         {
             receiveData = null;
 
+            if (SharedDataActive.DiagRplus)
+            {
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtSendTelegram(sendData, out receiveData);
+                if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCodeNmt);
+                    return false;
+                }
+                return true;
+            }
+
             if (CommParameterProtected == null)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Info, "TransmitData with default CommParameter");
