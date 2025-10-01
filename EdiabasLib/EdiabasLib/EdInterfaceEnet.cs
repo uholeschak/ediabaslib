@@ -5639,6 +5639,10 @@ namespace EdiabasLib
 
             try
             {
+                int paramCount = nmpParamList?.Count ?? 0;
+                int actionCount = actionBlocks?.Count ?? 0;
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TransNmpParameters Timeout={0}, Channel={1}, Command={2}, Params={3}, Actions={4}", timeout, channel, ifhCommand, paramCount, actionCount);
+
                 SharedDataActive.NmpCounter++;
                 int nmpCounter = SharedDataActive.NmpCounter;
                 List<byte> nmpFrame = GetNmpFrameTelegram(channel, nmpCounter, ifhCommand, nmpParamList, actionBlocks);
@@ -5655,8 +5659,9 @@ namespace EdiabasLib
 
                 return paramListRec;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "TransNmpParameters exception: " + EdiabasNet.GetExceptionText(ex));
                 return null;
             }
         }
