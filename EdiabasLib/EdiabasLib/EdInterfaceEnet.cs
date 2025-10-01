@@ -1940,11 +1940,11 @@ namespace EdiabasLib
 
                         if (SharedDataActive.DiagRplus)
                         {
-                            EdiabasNet.ErrorCodes initResult = NmtInit(null, "Application");
-                            if (initResult != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                            EdiabasNet.ErrorCodes openResult = NmtOpenConnection();
+                            if (openResult != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT init failed: {0}", initResult);
-                                EdiabasProtected?.SetError(initResult);
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT open failed: {0}", openResult);
+                                EdiabasProtected?.SetError(openResult);
                                 break;
                             }
                         }
@@ -2031,6 +2031,11 @@ namespace EdiabasLib
             {
                 if (SharedDataActive.TcpDiagStream != null)
                 {
+                    if (SharedDataActive.DiagRplus)
+                    {
+                        NmtCloseConnection();
+                    }
+
                     SharedDataActive.TcpDiagStream.Dispose();
                     SharedDataActive.TcpDiagStream = null;
                 }
@@ -2150,6 +2155,12 @@ namespace EdiabasLib
         {
             receiveData = null;
 
+            if (CommParameterProtected == null)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Info, "TransmitData with default CommParameter");
+                SetDefaultCommParameter();
+            }
+
             if (SharedDataActive.DiagRplus)
             {
                 EdiabasNet.ErrorCodes errorCodeNmt = NmtSendTelegram(sendData, out receiveData);
@@ -2159,12 +2170,6 @@ namespace EdiabasLib
                     return false;
                 }
                 return true;
-            }
-
-            if (CommParameterProtected == null)
-            {
-                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Info, "TransmitData with default CommParameter");
-                SetDefaultCommParameter();
             }
 
             if (IsSimulationMode())
@@ -2235,6 +2240,17 @@ namespace EdiabasLib
 
         public override bool StopFrequent()
         {
+            if (SharedDataActive.DiagRplus)
+            {
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtStopFreqTelegram();
+                if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCodeNmt);
+                    return false;
+                }
+                return true;
+            }
+
             return true;
         }
 
@@ -5863,11 +5879,40 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
-        protected EdiabasNet.ErrorCodes NmtNotifyConfig(string name, EdiabasNet.IfhParameterType parameterType, int parameterId, int parameterValue = 0xFFFF, string parameterString = null)
+        protected EdiabasNet.ErrorCodes NmtNotifyConfig(string name, EdiabasNet.IfhParameterType parameterType, int parameterId, string parameter)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int parameterValue = 0;
+            string parameterString = null;
+
+            switch (parameterType)
+            {
+                case EdiabasNet.IfhParameterType.CFGTYPE_PATH:
+                case EdiabasNet.IfhParameterType.CFGTYPE_STRING:
+                    parameterValue = 0xFFFF;
+                    parameterString = parameter ?? string.Empty;
+                    break;
+
+                case EdiabasNet.IfhParameterType.CFGTYPE_INT:
+                case EdiabasNet.IfhParameterType.CFGTYPE_BOOL:
+                {
+                    long stringValue = EdiabasNet.StringToValue(parameter ?? string.Empty, out bool valid);
+                    if (valid)
+                    {
+                        if (parameterType == EdiabasNet.IfhParameterType.CFGTYPE_BOOL)
+                        {
+                            parameterValue = stringValue != 0 ? 1 : 0;
+                            break;
+                        }
+
+                        parameterValue = (int) stringValue;
+                    }
+                    break;
+                }
             }
 
             int timeout = ConnectTimeout;
@@ -5877,12 +5922,9 @@ namespace EdiabasLib
                 new NmpParameter(parameterType, parameterId, parameterValue),
             };
 
-            switch (parameterType)
+            if (parameterString != null)
             {
-                case EdiabasNet.IfhParameterType.CFGTYPE_STRING:
-                case EdiabasNet.IfhParameterType.CFGTYPE_PATH:
-                    paramListSend.Add(new NmpParameter(parameterString));
-                    break;
+                paramListSend.Add(new NmpParameter(parameterString));
             }
 
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetParameter, paramListSend);
@@ -6017,6 +6059,85 @@ namespace EdiabasLib
             }
 
             return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtOpenConnection()
+        {
+            EdiabasNet.ErrorCodes errorCode = NmtInit(null, "Application");
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtInit failed");
+                return errorCode;
+            }
+
+            if (EdiabasProtected != null)
+            {
+                List<Tuple<string, EdiabasNet.IfhParameterType, int>> configProperties = new List<Tuple<string, EdiabasNet.IfhParameterType, int>>()
+                {
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("UBattHandling", EdiabasNet.IfhParameterType.CFGTYPE_STRING, 3),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("IgnitionHandling", EdiabasNet.IfhParameterType.CFGTYPE_STRING, 4),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("TracePath", EdiabasNet.IfhParameterType.CFGTYPE_PATH, 19),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("SystemTraceIfh", EdiabasNet.IfhParameterType.CFGTYPE_INT, 8),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("IfhTrace", EdiabasNet.IfhParameterType.CFGTYPE_INT, 10),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("SimulationPath", EdiabasNet.IfhParameterType.CFGTYPE_PATH, 11),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("Simulation", EdiabasNet.IfhParameterType.CFGTYPE_BOOL, 12),
+                };
+
+                foreach (Tuple<string, EdiabasNet.IfhParameterType, int> configProperty in configProperties)
+                {
+                    string configValue = EdiabasProtected.GetConfigProperty(configProperty.Item1);
+                    if (configValue != null)
+                    {
+                        errorCode = NmtNotifyConfig(configProperty.Item1, configProperty.Item2, configProperty.Item3, configValue);
+                        if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                        {
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NmtNotifyConfig {0} failed", configProperty.Item1);
+                            return errorCode;
+                        }
+                    }
+                }
+            }
+
+            string sgbd = EdiabasProtected?.SgbdFileName ?? string.Empty;
+            if (!string.IsNullOrEmpty(sgbd))
+            {
+                sgbd = Path.GetFileNameWithoutExtension(sgbd);
+            }
+
+            errorCode = NmtConnect(sgbd);
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtConnect failed");
+                return errorCode;
+            }
+
+            errorCode = NmtOpenChannel();
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtOpenChannel failed");
+                return errorCode;
+            }
+
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtCloseConnection()
+        {
+            EdiabasNet.ErrorCodes errorCode = NmtCloseChannel();
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtCloseChannel failed");
+                return errorCode;
+            }
+
+            errorCode = NmtEnd();
+            if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtEnd failed");
+                return errorCode;
+            }
+
+            return EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE;
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)
