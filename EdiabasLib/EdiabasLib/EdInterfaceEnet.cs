@@ -334,6 +334,13 @@ namespace EdiabasLib
                 ConfigParameter = 1,
             }
 
+            public enum StatusCodes
+            {
+                Ready = 0,
+                Busy = 1,
+                Error = 2,
+            }
+
             public NmpParameter(byte[] telegram, int bufferSize, int offset)
             {
                 if (telegram == null || bufferSize - offset < 8)
@@ -401,13 +408,35 @@ namespace EdiabasLib
                 {
                     return null;
                 }
-                
+
                 if (DataArray.Length != 2)
                 {
                     return null;
                 }
 
                 return (DataArray[1] << 8) | DataArray[0];
+            }
+
+            public EdiabasNet.ErrorCodes? GetErrorCode()
+            {
+                int? error = GetInteger();
+                if (error == null)
+                {
+                    return null;
+                }
+
+                return (EdiabasNet.ErrorCodes)error.Value;
+            }
+
+            public StatusCodes? GetStatusCode()
+            {
+                int? status = GetInteger();
+                if (status == null)
+                {
+                    return null;
+                }
+
+                return (StatusCodes)status.Value;
             }
 
             public string GetString()
@@ -5644,7 +5673,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int timeout = ParTimeoutStd;
+            int timeout = ConnectTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(1),
@@ -5659,15 +5688,14 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int? error = paramListRec[0].GetInteger();
-            if (error == null)
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[0].GetErrorCode();
+            if (errorCode == null)
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT init no error code");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            EdiabasNet.ErrorCodes errorCode = (EdiabasNet.ErrorCodes)error.Value;
-            return errorCode;
+            return errorCode.Value;
         }
 
         protected EdiabasNet.ErrorCodes ObdTrans(byte[] sendData, int sendDataLength, ref byte[] receiveData, out int receiveLength)

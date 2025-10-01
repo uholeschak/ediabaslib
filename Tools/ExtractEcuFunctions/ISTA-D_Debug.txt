@@ -720,6 +720,11 @@ NMPCnt: NMP tel counter, echoed in response (starts with 1)
 
 4E 4D 50 40 <NMPLen L> <NMPLen H> <NMP Head length L 14> <NMP Head length H 0> 00 02 <ActionBlocks L> <ActionBlocks H> <NMPCnt L> <NMPCnt H> 00 00 <NMPLen L> <NMPLen H> 00 00
 
+status_code:
+0: IFHREADY
+1: IFHBUSY
+2: IFHERROR
+
 Content:
 DataType:
 04: int
@@ -745,11 +750,11 @@ ifhConnect: request 1 block (string <sgbd>), response 1 block (int <error_code>)
 ifhOpenChannel: request 0 blocks, response 2 blocks (int <error_code>, int<channel>)
 ifhGetIfhStatus: not transmitted
 ifhPassGetConfig: request 1 block (string <name>), response 4 blocks (int <error_code>, int<valid=1>, string<name>, config param<ifh param>)
-ifhStopFreqTelegram: request 0 blocks, response 4 blocks (int <error_code>, int<0>, int<0>, binary<empty>)
-ifhSetParameter: request 1 block (binary <data>), response 4 blocks (int <error_code>, int<0>, int<0>, binary<empty>)
-ifhSetTelPreface: request 1 block (binary <data>), response 4 blocks (int <error_code>, int<0>, int<0>, binary<empty>)
+ifhStopFreqTelegram: request 0 blocks, response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
+ifhSetParameter: request 1 block (binary <data>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
+ifhSetTelPreface: request 1 block (binary <data>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
 ifhGetPowerState: not transmitted
-ifhSendTelegram: request 1 block (binary <request data>), response 4 blocks (int <error_code>, int<0>, int<0>, binary<response data>)
+ifhSendTelegram: request 1 block (binary <request data>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<response data>)
 ifhGetResult: not transmitted
 ifhCloseChannel: request 0 blocks, response 1 block (int <error_code>)
 ifhEnd: request 0 blocks, response 1 block (int <error_code>)
