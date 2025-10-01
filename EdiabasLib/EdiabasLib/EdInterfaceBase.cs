@@ -654,7 +654,7 @@ namespace EdiabasLib
 
         public virtual UInt32[] CommParameter { get; set; }
 
-        public Int16[] CommAnswerLen
+        public virtual Int16[] CommAnswerLen
         {
             get { return CommAnswerLenProtected; }
             set
@@ -901,6 +901,52 @@ namespace EdiabasLib
                 sum += data[i];
             }
             return sum;
+        }
+
+        public static byte[] Int16ByteArrayToLe(Int16[] intArray)
+        {
+            if (intArray == null)
+            {
+                return null;
+            }
+
+            byte[] byteArray = new byte[intArray.Length * 2];
+
+            int index = 0;
+            for (int i = 0; i < intArray.Length; i++)
+            {
+                Int16 value = intArray[i];
+                byteArray[index] = (byte)value;
+                byteArray[index + 1] = (byte)(value >> 8);
+
+                index += 2;
+            }
+
+            return byteArray;
+        }
+
+        public static byte[] UInt32ByteArrayToLe(UInt32[] uintArray)
+        {
+            if (uintArray == null)
+            {
+                return null;
+            }
+
+            byte[] byteArray = new byte[uintArray.Length * 4];
+
+            int index = 0;
+            for (int i = 0; i < uintArray.Length; i++)
+            {
+                UInt32 value = uintArray[i];
+                byteArray[index] = (byte)value;
+                byteArray[index + 1] = (byte)(value >> 8);
+                byteArray[index + 2] = (byte)(value >> 16);
+                byteArray[index + 3] = (byte)(value >> 24);
+
+                index += 4;
+            }
+
+            return byteArray;
         }
 
         public void Dispose()

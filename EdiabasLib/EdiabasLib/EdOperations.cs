@@ -2801,10 +2801,7 @@ namespace EdiabasLib
                 for (int i = 0; i < length; i++)
                 {
                     int offset = i << 1;
-                    Int16 value = (Int16)(
-                        dataArray[offset + 0] |
-                        (((Int16)dataArray[offset + 1]) << 8)
-                        );
+                    Int16 value = (Int16)(dataArray[offset + 0] | (((Int16)dataArray[offset + 1]) << 8));
                     answerArray[i] = value;
                 }
                 interfaceClass.CommAnswerLen = answerArray;

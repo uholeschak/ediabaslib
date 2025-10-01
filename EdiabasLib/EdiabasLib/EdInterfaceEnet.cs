@@ -1208,6 +1208,16 @@ namespace EdiabasLib
                     string.Format(Culture, "{0} CommParameter Host={1}, Tester=0x{2:X02}, DiagPort={3}, ControlPort={4}",
                             InterfaceName, RemoteHostProtected, TesterAddress, DiagnosticPort, ControlPort));
 
+                if (SharedDataActive.DiagRplus)
+                {
+                    EdiabasNet.ErrorCodes errorCode = NmtSetParameter(UInt32ByteArrayToLe(CommParameterProtected));
+                    if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        EdiabasProtected?.SetError(errorCode);
+                    }
+                    return;
+                }
+
                 uint concept = CommParameterProtected[0];
                 switch (concept)
                 {
@@ -1242,6 +1252,26 @@ namespace EdiabasLib
                     default:
                         EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
                         return;
+                }
+            }
+        }
+
+        public override Int16[] CommAnswerLen
+        {
+            get
+            {
+                return base.CommAnswerLen;
+            }
+            set
+            {
+                base.CommAnswerLen = value;
+                if (SharedDataActive.DiagRplus)
+                {
+                    EdiabasNet.ErrorCodes errorCode = NmtSetPreface(Int16ByteArrayToLe(base.CommAnswerLen));
+                    if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        EdiabasProtected?.SetError(errorCode);
+                    }
                 }
             }
         }
