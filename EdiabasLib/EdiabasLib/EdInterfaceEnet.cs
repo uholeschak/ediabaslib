@@ -2150,6 +2150,12 @@ namespace EdiabasLib
         {
             receiveData = null;
 
+            if (CommParameterProtected == null)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Info, "TransmitData with default CommParameter");
+                SetDefaultCommParameter();
+            }
+
             if (SharedDataActive.DiagRplus)
             {
                 EdiabasNet.ErrorCodes errorCodeNmt = NmtSendTelegram(sendData, out receiveData);
@@ -2159,12 +2165,6 @@ namespace EdiabasLib
                     return false;
                 }
                 return true;
-            }
-
-            if (CommParameterProtected == null)
-            {
-                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Info, "TransmitData with default CommParameter");
-                SetDefaultCommParameter();
             }
 
             if (IsSimulationMode())
@@ -2235,6 +2235,17 @@ namespace EdiabasLib
 
         public override bool StopFrequent()
         {
+            if (SharedDataActive.DiagRplus)
+            {
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtStopFreqTelegram();
+                if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCodeNmt);
+                    return false;
+                }
+                return true;
+            }
+
             return true;
         }
 
