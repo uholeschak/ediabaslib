@@ -5820,6 +5820,44 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
+        protected EdiabasNet.ErrorCodes NmtNotifyConfig(string name, int parameterType, int parameterId, int parameterValue = 0xFFFF, string parameterString = null)
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ConnectTimeout;
+            List<NmpParameter> paramListSend = new List<NmpParameter>()
+            {
+                new NmpParameter(name),
+                new NmpParameter(parameterType, parameterId, parameterValue),
+            };
+
+            if (parameterString != null)
+            {
+                paramListSend.Add(new NmpParameter(parameterString));
+            }
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetParameter, paramListSend);
+            SharedDataActive.NmpChannel = 0;
+
+            if (paramListRec == null || paramListRec.Count < 1)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT notify config failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[0].GetErrorCode();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT notify config invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            return errorCode.Value;
+        }
+
         protected EdiabasNet.ErrorCodes NmtSetParameter(byte[] parameter)
         {
             if (SharedDataActive.TcpDiagStream == null)
