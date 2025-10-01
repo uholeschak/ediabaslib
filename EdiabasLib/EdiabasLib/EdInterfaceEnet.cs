@@ -5037,7 +5037,7 @@ namespace EdiabasLib
             return true;
         }
 
-        protected List<NmpParameter> ReceiveNmpParameters(int timeout, int? channelCompare,int? nmpCounterCompare, int? ifhCommandCompare)
+        protected List<NmpParameter> ReceiveNmpParameters(int timeout, int? channelCompare,int? nmpCounterCompare, EdiabasNet.IfhCommands? ifhCommandCompare)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -5062,7 +5062,7 @@ namespace EdiabasLib
 
                 int channel = (DataBuffer[5] << 8) | DataBuffer[4];
                 int nmpCounter = (DataBuffer[7] << 8) | DataBuffer[6];
-                int ifhCommand = (DataBuffer[13] << 8) | DataBuffer[12];
+                int ifhCommandValue = (DataBuffer[13] << 8) | DataBuffer[12];
 
                 if (channelCompare != null && channel != channelCompare.Value)
                 {
@@ -5075,7 +5075,8 @@ namespace EdiabasLib
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP message counter mismatch: {0} != {1}", nmpCounter, nmpCounterCompare.Value);
                     return null;
                 }
-                
+
+                EdiabasNet.IfhCommands ifhCommand = (EdiabasNet.IfhCommands)ifhCommandValue;
                 if (ifhCommandCompare != null && ifhCommand != ifhCommandCompare.Value)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP message IFH command mismatch: {0} != {1}", ifhCommand, ifhCommandCompare.Value);
@@ -5517,7 +5518,7 @@ namespace EdiabasLib
             return parameters;
         }
 
-        public static List<byte> GetNmpFrameTelegram(int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
+        public static List<byte> GetNmpFrameTelegram(int channel, int nmpCounter, EdiabasNet.IfhCommands ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
         {
             List<byte> nmpFrame = new List<byte>();
             nmpFrame.Add(0x4E);
@@ -5577,7 +5578,7 @@ namespace EdiabasLib
             return nmpFrame;
         }
 
-        public static List<byte> GetNmpMessageTelegram(int channel, int nmpCounter, int ifhCommand, List<NmpParameter> nmpParamList = null)
+        public static List<byte> GetNmpMessageTelegram(int channel, int nmpCounter, EdiabasNet.IfhCommands ifhCommand, List<NmpParameter> nmpParamList = null)
         {
             List<byte> content = new List<byte>();
             content.Add(0x10);
@@ -5596,8 +5597,9 @@ namespace EdiabasLib
             content.Add(0x00);
             content.Add(0x00);
 
-            content.Add((byte)ifhCommand);
-            content.Add((byte)(ifhCommand >> 8));
+            int ifhCommandValue = (int)ifhCommand;
+            content.Add((byte)ifhCommandValue);
+            content.Add((byte)(ifhCommandValue >> 8));
 
             content.Add(0x00);
             content.Add(0x00);
@@ -5628,7 +5630,7 @@ namespace EdiabasLib
             return nmpMessage;
         }
 
-        private List<NmpParameter> TransNmpParameters(int timeout, int channel, int ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
+        private List<NmpParameter> TransNmpParameters(int timeout, int channel, EdiabasNet.IfhCommands ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -5674,7 +5676,7 @@ namespace EdiabasLib
                 new NmpParameter(application)
             };
 
-            List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, 0x01, paramListSend);
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, EdiabasNet.IfhCommands.IfhInit, paramListSend);
             if (paramListRec == null || paramListRec.Count < 1)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT init failed");
