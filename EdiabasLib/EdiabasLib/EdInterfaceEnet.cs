@@ -334,13 +334,6 @@ namespace EdiabasLib
                 ConfigParameter = 1,
             }
 
-            public enum StatusCodes
-            {
-                Ready = 0,
-                Busy = 1,
-                Error = 2,
-            }
-
             public NmpParameter(byte[] telegram, int bufferSize, int offset)
             {
                 if (telegram == null || bufferSize - offset < 8)
@@ -428,7 +421,7 @@ namespace EdiabasLib
                 return (EdiabasNet.ErrorCodes)error.Value;
             }
 
-            public StatusCodes? GetStatusCode()
+            public EdiabasNet.IfhStatusCodes? GetStatusCode()
             {
                 int? status = GetInteger();
                 if (status == null)
@@ -436,7 +429,7 @@ namespace EdiabasLib
                     return null;
                 }
 
-                return (StatusCodes)status.Value;
+                return (EdiabasNet.IfhStatusCodes)status.Value;
             }
 
             public string GetString()

@@ -1406,6 +1406,13 @@ namespace EdiabasLib
             "SEC-0049",
         };
 
+        public enum IfhStatusCodes
+        {
+            IFHREADY = 0,
+            IFHBUSY = 1,
+            IFHERROR = 2,
+        }
+
         public enum ResultType : byte
         {
             TypeB,  // 8 bit
