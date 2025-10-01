@@ -382,13 +382,15 @@ namespace EdiabasLib
                 Array.Copy(contentData, DataArray, contentData.Length);
             }
 
-            public NmpParameter(int parameterType, int parameterId, int value = 0xFFFF)
+            public NmpParameter(EdiabasNet.IfhParameterType parameterType, int parameterId, int value = 0xFFFF)
             {
                 DataType = DataTypes.Structure;
                 SubType = DataSubTypes.ConfigParameter;
                 DataArray = new byte[6];
-                DataArray[0] = (byte)parameterType;
-                DataArray[1] = (byte)(parameterType >> 8);
+
+                int parameterTypeInt = (int)parameterType;
+                DataArray[0] = (byte)parameterTypeInt;
+                DataArray[1] = (byte)(parameterTypeInt >> 8);
                 DataArray[2] = (byte)parameterId;
                 DataArray[3] = (byte)(parameterId >> 8);
                 DataArray[4] = (byte)value;
@@ -5820,7 +5822,7 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
-        protected EdiabasNet.ErrorCodes NmtNotifyConfig(string name, int parameterType, int parameterId, int parameterValue = 0xFFFF, string parameterString = null)
+        protected EdiabasNet.ErrorCodes NmtNotifyConfig(string name, EdiabasNet.IfhParameterType parameterType, int parameterId, int parameterValue = 0xFFFF, string parameterString = null)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -5834,9 +5836,12 @@ namespace EdiabasLib
                 new NmpParameter(parameterType, parameterId, parameterValue),
             };
 
-            if (parameterString != null)
+            switch (parameterType)
             {
-                paramListSend.Add(new NmpParameter(parameterString));
+                case EdiabasNet.IfhParameterType.CFGTYPE_STRING:
+                case EdiabasNet.IfhParameterType.CFGTYPE_PATH:
+                    paramListSend.Add(new NmpParameter(parameterString));
+                    break;
             }
 
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetParameter, paramListSend);

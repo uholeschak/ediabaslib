@@ -1461,6 +1461,14 @@ namespace EdiabasLib
             IfhSetParameterRaw = 54,
         }
 
+        public enum IfhParameterType
+        {
+            CFGTYPE_PATH = 0x13,
+            CFGTYPE_STRING = 0x23,
+            CFGTYPE_INT = 0x37,
+            CFGTYPE_BOOL = 0x47,
+        }
+
         public enum ResultType : byte
         {
             TypeB,  // 8 bit
