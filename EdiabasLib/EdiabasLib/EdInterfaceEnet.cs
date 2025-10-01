@@ -1930,7 +1930,12 @@ namespace EdiabasLib
                             SharedDataActive.TcpDiagRecQueue.Clear();
                         }
 
-                        int readLen = SharedDataActive.DiagDoIp ? 8 : 6;
+                        int readLen = 20;
+                        if (!SharedDataActive.DiagRplus)
+                        {
+                            readLen = SharedDataActive.DiagDoIp ? 8 : 6;
+                        }
+
                         StartReadTcpDiag(readLen);
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connected to: {0}:{1}", SharedDataActive.EnetHostConn.IpAddress, diagPort);
                         SharedDataActive.ReconnectRequired = false;
