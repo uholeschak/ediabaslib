@@ -5681,7 +5681,13 @@ namespace EdiabasLib
                 new NmpParameter(application)
             };
 
-            List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, EdiabasNet.IfhCommands.IfhInit, paramListSend);
+            List<byte[]> actionBlocks = new List<byte[]>()
+            {
+                new byte[] {0x01, 0x00, 0x01, 0x00, 0x00},          // identification, len 1, empty
+                new byte[] {0x02, 0x00, 0x00, 0x01, 0x00, 0x00}     // version 0x100
+            };
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, EdiabasNet.IfhCommands.IfhInit, paramListSend, actionBlocks);
             if (paramListRec == null || paramListRec.Count < 1)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT init failed");
