@@ -67,7 +67,7 @@ namespace EdiabasCall
             string outFile = null;
             string searchPath = null;
             string ifhName = string.Empty;
-            string deviceName = string.Empty;
+            string unitName = string.Empty;
             bool appendFile = false;
             bool storeResults = false;
             bool printAllTypes = false;
@@ -90,8 +90,8 @@ namespace EdiabasCall
                   v => appendFile = v != null },
                 { "ifh=", "interface handler.",
                   v => ifhName = v },
-                { "device=", "Device name.",
-                  v => deviceName = v },
+                { "unit=", "Unit name.",
+                  v => unitName = v },
                 { "store", "store results.",
                   v => storeResults = v != null },
                 { "alltypes", "print all value types.",
@@ -203,7 +203,7 @@ namespace EdiabasCall
                 }
                 else
                 {
-                    if (!API.apiInitExt(ifhName, deviceName, "EdiabasCall", configString))
+                    if (!API.apiInitExt(ifhName, unitName, "EdiabasCall", configString))
                     {
                         _outputWriter.WriteLine("Init api failed");
                         if (API.apiErrorCode() != API.EDIABAS_ERR_NONE)
