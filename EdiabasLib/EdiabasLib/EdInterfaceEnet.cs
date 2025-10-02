@@ -4270,7 +4270,7 @@ namespace EdiabasLib
                     return;
                 }
 
-                if (SharedDataActive.TcpDiagRecLen > 0)
+                if (SharedDataActive.TcpDiagRecLen > 0 && !SharedDataActive.DiagRplus)
                 {
                     if ((Stopwatch.GetTimestamp() - SharedDataActive.LastTcpDiagRecTime) > 300 * TickResolMs)
                     {   // pending telegram parts too late
@@ -4616,6 +4616,19 @@ namespace EdiabasLib
                             SharedDataActive.TcpDiagRecQueue.Enqueue(recDataTel);
                             SharedDataActive.TcpDiagStreamRecEvent.Set();
                         }
+                    }
+                    else if (SharedDataActive.TcpDiagRecLen > telLen)
+                    {
+                        SharedDataActive.TcpDiagRecLen = 0;
+                    }
+                    else if (telLen > SharedDataActive.TcpDiagBuffer.Length)
+                    {   // telegram too large -> remove all
+                        ClearNetworkStream(SharedDataActive.TcpDiagStream);
+                        SharedDataActive.TcpDiagRecLen = 0;
+                    }
+                    else
+                    {
+                        nextReadLength = (int)telLen;
                     }
                 }
             }
