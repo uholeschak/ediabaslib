@@ -5947,7 +5947,7 @@ namespace EdiabasLib
                 paramListSend.Add(new NmpParameter(parameterString));
             }
 
-            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetParameter, paramListSend);
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhNotifyConfig, paramListSend);
             if (paramListRec == null || paramListRec.Count < 1)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT notify config failed");
