@@ -1595,6 +1595,7 @@ namespace EdiabasLib
                     }
                 }
 
+                bool diagRplus = RplusMode;
                 bool ignoreIcomOwner = !IcomAllocate;
                 if (SharedDataActive.EnetHostConn == null)
                 {
@@ -1620,6 +1621,11 @@ namespace EdiabasLib
                         {
                             communicationModes.Clear();
                             communicationModes.Add(CommunicationMode.Hsfz);
+                        }
+                        else if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom &&
+                                 SharedDataActive.EnetHostConn.DiagPort == DiagPortDefault)
+                        {
+                            diagRplus = true;
                         }
                     }
                     else
@@ -1737,7 +1743,6 @@ namespace EdiabasLib
                     SharedDataActive.DiagDoIp = communicationMode == CommunicationMode.DoIp;
 
                     bool diagDoIpSsl = false;
-                    bool diagRplus = RplusMode;
 
                     if (!diagRplus && SharedDataActive.DiagDoIp)
                     {
@@ -2928,12 +2933,26 @@ namespace EdiabasLib
                                 }
                             }
 
+                            bool klineChannel = false;
+                            bool dcanChannel = false;
                             bool enetChannel = false;
+
                             if (attrDict.TryGetValue("VCICHANNELS", out string vciChannels))
                             {
                                 vciChannels = vciChannels.TrimStart('[');
                                 vciChannels = vciChannels.TrimEnd(']');
                                 string[] channelList = vciChannels.Split(';');
+
+                                if (channelList.Contains("0+") || channelList.Contains("0*"))
+                                {
+                                    klineChannel = true;
+                                }
+
+                                if (channelList.Contains("1+") || channelList.Contains("1*"))
+                                {
+                                    dcanChannel = true;
+                                }
+
                                 if (channelList.Contains("3+") || channelList.Contains("3*"))
                                 {
                                     enetChannel = true;
@@ -2966,15 +2985,22 @@ namespace EdiabasLib
                                 }
                             }
 
-                            if (gatewayAddr >= 0 && enetChannel && isFree)
+                            if (gatewayAddr >= 0 && isFree)
                             {
-                                if (isDoIp)
+                                if (enetChannel)
                                 {
-                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, -1, -1, IcomDoIpPortDefault, IcomSslPortDefault);
+                                    if (isDoIp)
+                                    {
+                                        addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, -1, -1, IcomDoIpPortDefault, IcomSslPortDefault);
+                                    }
+                                    else
+                                    {
+                                        addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, IcomDiagPortDefault, IcomControlPortDefault);
+                                    }
                                 }
-                                else
+                                else if (klineChannel || dcanChannel)
                                 {
-                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, IcomDiagPortDefault, IcomControlPortDefault);
+                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, DiagPortDefault);
                                 }
                             }
                         }
