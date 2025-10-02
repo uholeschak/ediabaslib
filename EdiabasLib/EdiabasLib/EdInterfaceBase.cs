@@ -55,6 +55,9 @@ namespace EdiabasLib
         protected byte[] SimFrequentResponse;
         protected int? SimEcuAddr;
         protected int? SimWakeAddr;
+        protected string IfhNameProtected;
+        protected string UnitNameProtected;
+        protected string ApplicationNameProtected;
         protected EdiabasNet EdiabasProtected;
         protected object ConnectParameterProtected;
         protected object MutexLock = new object();
@@ -634,9 +637,23 @@ namespace EdiabasLib
 
         public abstract bool TransmitCancel(bool cancel);
 
-        public string IfhName { get; set; }
-        public string UnitName { get; set; }
-        public string ApplicationName { get; set; } = "Ediabas";
+        public virtual string IfhName
+        {
+            get { return IfhNameProtected; }
+            set { IfhNameProtected = value; }
+        }
+
+        public virtual string UnitName
+        {
+            get { return UnitNameProtected; }
+            set { UnitNameProtected = value; }
+        }
+
+        public virtual string ApplicationName
+        {
+            get { return ApplicationNameProtected; }
+            set { ApplicationNameProtected = value; }
+        }
 
         public virtual EdiabasNet Ediabas
         {
