@@ -155,6 +155,9 @@ namespace EdiabasTest
                         edInterface = new EdInterfaceObd();
                     }
 
+                    edInterface.IfhName = ifhName;
+                    edInterface.ApplicationName = "EdiabasTest";
+
                     ediabas.EdInterfaceClass = edInterface;
                     ediabas.ProgressJobFunc = ProgressJobFunc;
                     ediabas.ErrorRaisedFunc = ErrorRaisedFunc;
