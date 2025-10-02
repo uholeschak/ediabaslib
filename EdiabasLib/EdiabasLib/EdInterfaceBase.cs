@@ -634,6 +634,10 @@ namespace EdiabasLib
 
         public abstract bool TransmitCancel(bool cancel);
 
+        public string IfhName { get; set; }
+        public string UnitName { get; set; }
+        public string ApplicationName { get; set; } = "Ediabas";
+
         public virtual EdiabasNet Ediabas
         {
             get { return EdiabasProtected; }

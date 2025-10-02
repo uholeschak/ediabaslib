@@ -462,6 +462,10 @@ namespace Ediabas
                 return false;
             }
 
+            edInterface.IfhName = ifh;
+            edInterface.UnitName = unit;
+            edInterface.ApplicationName = app;
+
             _ediabas.EdInterfaceClass = edInterface;
             _ediabas.AbortJobFunc = abortJobFunc;
             _lastIfh = ifh;

@@ -5755,18 +5755,24 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            string app = application;
-            if (app.Length > 8)
+            string unitPar = unit;
+            if (unitPar.Length > 1)
             {
-                app = app.Substring(0, 8);
+                unitPar = unitPar.Substring(0, 1);
+            }
+
+            string appPar = application;
+            if (appPar.Length > 8)
+            {
+                appPar = appPar.Substring(0, 8);
             }
 
             int timeout = ConnectTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(1),
-                new NmpParameter(unit),
-                new NmpParameter(app)
+                new NmpParameter(unitPar),
+                new NmpParameter(appPar)
             };
 
             List<byte[]> actionBlocks = new List<byte[]>()
@@ -6089,7 +6095,7 @@ namespace EdiabasLib
 
         protected EdiabasNet.ErrorCodes NmtOpenConnection()
         {
-            EdiabasNet.ErrorCodes errorCode = NmtInit(null, "Applicat");
+            EdiabasNet.ErrorCodes errorCode = NmtInit(UnitName, ApplicationName);
             if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NmtInit failed");
