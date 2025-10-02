@@ -32,6 +32,7 @@ namespace EdiabasTest
             string comPort = null;
             string outFile = null;
             string ifhName = string.Empty;
+            string deviceName = string.Empty;
             bool appendFile = false;
             bool storeResults = false;
             bool printAllTypes = false;
@@ -53,6 +54,8 @@ namespace EdiabasTest
                   v => appendFile = v != null },
                 { "ifh=", "interface handler.",
                   v => ifhName = v },
+                { "device=", "Device name.",
+                    v => deviceName = v },
                 { "store", "store results.",
                   v => storeResults = v != null },
                 { "c|compare", "compare output.",
@@ -156,6 +159,7 @@ namespace EdiabasTest
                     }
 
                     edInterface.IfhName = ifhName;
+                    edInterface.UnitName = deviceName;
                     edInterface.ApplicationName = "EdiabasTest";
 
                     ediabas.EdInterfaceClass = edInterface;
