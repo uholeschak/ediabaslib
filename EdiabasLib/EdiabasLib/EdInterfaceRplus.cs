@@ -5,19 +5,43 @@ namespace EdiabasLib
 {
     public class EdInterfaceRplus : EdInterfaceEnet
     {
-        public override EdiabasNet Ediabas
+        public override string IfhName
         {
             get
             {
-                return base.Ediabas;
+                return base.IfhName;
             }
             set
             {
-                base.Ediabas = value;
-                string prop = EdiabasProtected.GetConfigProperty("Port");
-                if (prop != null)
+                base.IfhName = value;
+                if (!string.IsNullOrEmpty(IfhNameProtected))
                 {
-                    RplusPort = (int)EdiabasNet.StringToValue(prop);
+                    string[] parts = IfhNameProtected.Split(':');
+                    if (parts.Length > 2)
+                    {
+                        string configParams = parts[2];
+                        string[] configParts = configParams.Split(';');
+                        foreach (string configPart in configParts)
+                        {
+                            string[] subParts = configPart.Split('=');
+                            if (subParts.Length == 2)
+                            {
+                                string key = subParts[0].Trim();
+                                string val = subParts[1].Trim();
+                                if (string.Compare(key, "RemoteHost", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    RemoteHostProtected = val;
+                                    continue;
+                                }
+
+                                if (string.Compare(key, "Port", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    RplusPort = (int)EdiabasNet.StringToValue(val);
+                                    continue;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
