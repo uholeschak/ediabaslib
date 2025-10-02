@@ -4616,6 +4616,8 @@ namespace EdiabasLib
                             SharedDataActive.TcpDiagRecQueue.Enqueue(recDataTel);
                             SharedDataActive.TcpDiagStreamRecEvent.Set();
                         }
+
+                        SharedDataActive.TcpDiagRecLen = 0;
                     }
                     else if (SharedDataActive.TcpDiagRecLen > telLen)
                     {
