@@ -2238,12 +2238,35 @@ namespace EdiabasLib
 
         public override bool TransmitFrequent(byte[] sendData)
         {
+            if (SharedDataActive.DiagRplus)
+            {
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtSendTelegramFreq(sendData);
+                if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCodeNmt);
+                    return false;
+                }
+                return true;
+            }
+
             EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
             return false;
         }
 
         public override bool ReceiveFrequent(out byte[] receiveData)
         {
+            if (SharedDataActive.DiagRplus)
+            {
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtReqTelegramFreq(out receiveData);
+                if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCodeNmt);
+                    receiveData = null;
+                    return false;
+                }
+                return true;
+            }
+
             receiveData = ByteArray0;
             return true;
         }
@@ -6062,31 +6085,6 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
-        protected EdiabasNet.ErrorCodes NmtStopFreqTelegram()
-        {
-            if (SharedDataActive.TcpDiagStream == null)
-            {
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
-            }
-
-            int timeout = ConnectTimeout;
-            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhStopFreqTelegram);
-            if (paramListRec == null || paramListRec.Count < 4)
-            {
-                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram failed");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
-            }
-
-            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
-            if (errorCode == null)
-            {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram invalid parameters");
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
-            }
-
-            return errorCode.Value;
-        }
-
         protected EdiabasNet.ErrorCodes NmtSendTelegram(byte[] requestData, out byte[] responseData)
         {
             responseData = null;
@@ -6118,6 +6116,89 @@ namespace EdiabasLib
 
             return errorCode.Value;
         }
+
+        protected EdiabasNet.ErrorCodes NmtSendTelegramFreq(byte[] requestData)
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ConnectTimeout;
+            List<NmpParameter> paramListSend = new List<NmpParameter>()
+            {
+                new NmpParameter(requestData),
+            };
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSendTelegramFreq, paramListSend);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram freq failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram freq invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtReqTelegramFreq(out byte[] responseData)
+        {
+            responseData = null;
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ConnectTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSendTelegram);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT req telegram freq failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            responseData = paramListRec[3].GetBinary();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT req telegram freq invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtStopFreqTelegram()
+        {
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = ConnectTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhStopFreqTelegram);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            return errorCode.Value;
+        }
+
 
         protected EdiabasNet.ErrorCodes NmtOpenConnection()
         {
