@@ -1463,6 +1463,7 @@ namespace EdiabasLib
 
         public enum IfhParameterType
         {
+            CFGTYPE_NONE = 0x00,
             CFGTYPE_PATH = 0x13,
             CFGTYPE_STRING = 0x23,
             CFGTYPE_INT = 0x37,

@@ -382,17 +382,17 @@ namespace EdiabasLib
                 Array.Copy(contentData, DataArray, contentData.Length);
             }
 
-            public NmpParameter(EdiabasNet.IfhParameterType parameterType, int parameterId, int value = 0xFFFF)
+            public NmpParameter(int parameterId, EdiabasNet.IfhParameterType parameterType, int value = 0xFFFF)
             {
                 DataType = DataTypes.Structure;
                 SubType = DataSubTypes.ConfigParameter;
                 DataArray = new byte[6];
 
                 int parameterTypeInt = (int)parameterType;
-                DataArray[0] = (byte)parameterTypeInt;
-                DataArray[1] = (byte)(parameterTypeInt >> 8);
-                DataArray[2] = (byte)parameterId;
-                DataArray[3] = (byte)(parameterId >> 8);
+                DataArray[0] = (byte)parameterId;
+                DataArray[1] = (byte)(parameterId >> 8);
+                DataArray[2] = (byte)parameterTypeInt;
+                DataArray[3] = (byte)(parameterTypeInt >> 8);
                 DataArray[4] = (byte)value;
                 DataArray[5] = (byte)(value >> 8);
             }
@@ -460,10 +460,10 @@ namespace EdiabasLib
                 return DataArray;
             }
 
-            public int? GetIfhParameter(out int parameterType, out int parameterId)
+            public int? GetIfhParameter(out int parameterId, out EdiabasNet.IfhParameterType parameterType)
             {
-                parameterType = -1;
                 parameterId = -1;
+                parameterType = EdiabasNet.IfhParameterType.CFGTYPE_NONE;
 
                 if (DataType != DataTypes.Structure ||  SubType != DataSubTypes.ConfigParameter ||
                     DataArray.Length < 6)
@@ -471,8 +471,8 @@ namespace EdiabasLib
                     return null;
                 }
 
-                parameterType = (DataArray[0] << 8) | DataArray[1];
-                parameterId = (DataArray[2] << 8) | DataArray[3];
+                parameterId = (DataArray[0] << 8) | DataArray[1];
+                parameterType = (EdiabasNet.IfhParameterType) ((DataArray[2] << 8) | DataArray[3]);
                 int value = (DataArray[5] << 8) | DataArray[4];
                 return value;
             }
@@ -5899,7 +5899,7 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
-        protected EdiabasNet.ErrorCodes NmtNotifyConfig(string name, EdiabasNet.IfhParameterType parameterType, int parameterId, string parameter)
+        protected EdiabasNet.ErrorCodes NmtNotifyConfig(string name, int parameterId, EdiabasNet.IfhParameterType parameterType, string parameter)
         {
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -5939,7 +5939,7 @@ namespace EdiabasLib
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(name),
-                new NmpParameter(parameterType, parameterId, parameterValue),
+                new NmpParameter(parameterId, parameterType, parameterValue),
             };
 
             if (parameterString != null)
@@ -6092,18 +6092,18 @@ namespace EdiabasLib
 
             if (EdiabasProtected != null)
             {
-                List<Tuple<string, EdiabasNet.IfhParameterType, int>> configProperties = new List<Tuple<string, EdiabasNet.IfhParameterType, int>>()
+                List<Tuple<string, int, EdiabasNet.IfhParameterType>> configProperties = new List<Tuple<string, int, EdiabasNet.IfhParameterType>>()
                 {
-                    new Tuple<string, EdiabasNet.IfhParameterType, int>("UBattHandling", EdiabasNet.IfhParameterType.CFGTYPE_BOOL, 3),
-                    new Tuple<string, EdiabasNet.IfhParameterType, int>("IgnitionHandling", EdiabasNet.IfhParameterType.CFGTYPE_BOOL, 4),
-                    new Tuple<string, EdiabasNet.IfhParameterType, int>("TracePath", EdiabasNet.IfhParameterType.CFGTYPE_PATH, 19),
-                    new Tuple<string, EdiabasNet.IfhParameterType, int>("SystemTraceIfh", EdiabasNet.IfhParameterType.CFGTYPE_INT, 8),
-                    new Tuple<string, EdiabasNet.IfhParameterType, int>("IfhTrace", EdiabasNet.IfhParameterType.CFGTYPE_INT, 10),
-                    new Tuple<string, EdiabasNet.IfhParameterType, int>("SimulationPath", EdiabasNet.IfhParameterType.CFGTYPE_PATH, 11),
-                    new Tuple<string, EdiabasNet.IfhParameterType, int>("Simulation", EdiabasNet.IfhParameterType.CFGTYPE_BOOL, 12),
+                    new Tuple<string, int, EdiabasNet.IfhParameterType>("UBattHandling", 3, EdiabasNet.IfhParameterType.CFGTYPE_BOOL),
+                    new Tuple<string, int, EdiabasNet.IfhParameterType>("IgnitionHandling", 4, EdiabasNet.IfhParameterType.CFGTYPE_BOOL),
+                    new Tuple<string, int, EdiabasNet.IfhParameterType>("TracePath", 19, EdiabasNet.IfhParameterType.CFGTYPE_PATH),
+                    new Tuple<string, int, EdiabasNet.IfhParameterType>("SystemTraceIfh", 8, EdiabasNet.IfhParameterType.CFGTYPE_INT),
+                    new Tuple<string, int, EdiabasNet.IfhParameterType>("IfhTrace", 10, EdiabasNet.IfhParameterType.CFGTYPE_INT),
+                    new Tuple<string, int, EdiabasNet.IfhParameterType>("SimulationPath", 11, EdiabasNet.IfhParameterType.CFGTYPE_PATH),
+                    new Tuple<string, int, EdiabasNet.IfhParameterType>("Simulation", 12, EdiabasNet.IfhParameterType.CFGTYPE_BOOL),
                 };
 
-                foreach (Tuple<string, EdiabasNet.IfhParameterType, int> configProperty in configProperties)
+                foreach (Tuple<string, int, EdiabasNet.IfhParameterType> configProperty in configProperties)
                 {
                     string configValue = EdiabasProtected.GetConfigProperty(configProperty.Item1);
                     if (configValue != null)
