@@ -5755,12 +5755,18 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            string app = application;
+            if (app.Length > 8)
+            {
+                app = app.Substring(0, 8);
+            }
+
             int timeout = ConnectTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(1),
                 new NmpParameter(unit),
-                new NmpParameter(application)
+                new NmpParameter(app)
             };
 
             List<byte[]> actionBlocks = new List<byte[]>()
