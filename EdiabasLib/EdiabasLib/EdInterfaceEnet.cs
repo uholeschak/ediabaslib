@@ -6092,8 +6092,8 @@ namespace EdiabasLib
             {
                 List<Tuple<string, EdiabasNet.IfhParameterType, int>> configProperties = new List<Tuple<string, EdiabasNet.IfhParameterType, int>>()
                 {
-                    new Tuple<string, EdiabasNet.IfhParameterType, int>("UBattHandling", EdiabasNet.IfhParameterType.CFGTYPE_STRING, 3),
-                    new Tuple<string, EdiabasNet.IfhParameterType, int>("IgnitionHandling", EdiabasNet.IfhParameterType.CFGTYPE_STRING, 4),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("UBattHandling", EdiabasNet.IfhParameterType.CFGTYPE_BOOL, 3),
+                    new Tuple<string, EdiabasNet.IfhParameterType, int>("IgnitionHandling", EdiabasNet.IfhParameterType.CFGTYPE_BOOL, 4),
                     new Tuple<string, EdiabasNet.IfhParameterType, int>("TracePath", EdiabasNet.IfhParameterType.CFGTYPE_PATH, 19),
                     new Tuple<string, EdiabasNet.IfhParameterType, int>("SystemTraceIfh", EdiabasNet.IfhParameterType.CFGTYPE_INT, 8),
                     new Tuple<string, EdiabasNet.IfhParameterType, int>("IfhTrace", EdiabasNet.IfhParameterType.CFGTYPE_INT, 10),
