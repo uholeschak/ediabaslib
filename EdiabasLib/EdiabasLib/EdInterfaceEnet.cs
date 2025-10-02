@@ -4567,7 +4567,7 @@ namespace EdiabasLib
                                     case 3:
                                     {
                                         int compatibility = ((int)SharedDataActive.TcpDiagBuffer[dataOffset + 5] << 8) | SharedDataActive.TcpDiagBuffer[dataOffset + 4];
-                                        if (blockLen != 6 || compatibility != 0)
+                                        if (blockLen != 6 || compatibility != 1)
                                         {
                                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP compatibility invalid: Len={0}, Compat={1}", blockLen, compatibility);
                                             InterfaceDisconnect(true);
