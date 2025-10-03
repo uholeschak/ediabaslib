@@ -3007,21 +3007,24 @@ namespace EdiabasLib
                                 }
                             }
 
-                            bool remoteProtocol = false;
-                            if (attrDict.TryGetValue("IFHPROTOCOL", out string ifhProtocolString))
-                            {
-                                if (ifhProtocolString.Equals("REMOTE", StringComparison.OrdinalIgnoreCase))
-                                {
-                                    remoteProtocol = true;
-                                }
-                            }
-
+                            bool klineChannel = false;
+                            bool dcanChannel = false;
                             bool enetChannel = false;
                             if (attrDict.TryGetValue("VCICHANNELS", out string vciChannels))
                             {
                                 vciChannels = vciChannels.TrimStart('[');
                                 vciChannels = vciChannels.TrimEnd(']');
                                 string[] channelList = vciChannels.Split(';');
+
+                                if (channelList.Contains("0+") || channelList.Contains("0*"))
+                                {
+                                    klineChannel = true;
+                                }
+
+                                if (channelList.Contains("1+") || channelList.Contains("1*"))
+                                {
+                                    dcanChannel = true;
+                                }
 
                                 if (channelList.Contains("3+") || channelList.Contains("3*"))
                                 {
@@ -3068,7 +3071,7 @@ namespace EdiabasLib
                                         addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, IcomDiagPortDefault, IcomControlPortDefault);
                                     }
                                 }
-                                else if (remoteProtocol)
+                                else if (klineChannel || dcanChannel)
                                 {
                                     addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, DiagPortRplusDefault);
                                 }
