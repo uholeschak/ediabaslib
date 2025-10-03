@@ -5852,13 +5852,13 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            string unitPar = unit;
+            string unitPar = unit ?? string.Empty;
             if (unitPar.Length > 1)
             {
                 unitPar = unitPar.Substring(0, 1);
             }
 
-            string appPar = application;
+            string appPar = application ?? string.Empty;
             if (appPar.Length > 8)
             {
                 appPar = appPar.Substring(0, 8);
