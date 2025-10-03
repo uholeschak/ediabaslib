@@ -41,7 +41,7 @@ index 4e8c8f6..8b28b76 100644
  
  	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
 -		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.22621.2428" />
-+		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.4948" />
++		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.6584" />
  		<Compile Include="Platforms\Windows\*.cs" />
  	</ItemGroup>
  	
