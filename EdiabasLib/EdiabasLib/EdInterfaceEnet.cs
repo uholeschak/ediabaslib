@@ -1895,7 +1895,8 @@ namespace EdiabasLib
                         }
                     }
 
-                    if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
+                    if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn != null &&
+                        (SharedDataActive.DiagRplus || SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom))
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Allocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
                         IcomEvent?.Reset();
@@ -2135,7 +2136,8 @@ namespace EdiabasLib
                 SharedDataActive.DisposeS29Certs();
             }
 
-            if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn != null && SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom)
+            if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn != null &&
+                (SharedDataActive.DiagRplus || SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom))
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
 
