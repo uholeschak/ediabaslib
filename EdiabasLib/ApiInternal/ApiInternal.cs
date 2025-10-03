@@ -329,6 +329,7 @@ namespace Ediabas
                     logFormat(ApiLogLevel.Normal, "Ignoring REMOTE");
                     ifh = null;
                 }
+#if true
                 if (ifhParts.Length > 0 && string.Compare(ifhParts[0], "RPLUS", StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     logFormat(ApiLogLevel.Normal, "RPLUS detected");
@@ -364,7 +365,6 @@ namespace Ediabas
                         {
                             logFormat(ApiLogLevel.Normal, "Host: {0}, Port={1}", remoteHost, remotePort);
 
-#if true
                             bool validConfig = true;
                             if (!IPAddress.TryParse(remoteHost, out _))
                             {
@@ -392,12 +392,6 @@ namespace Ediabas
                                 _ediabas.SetConfigProperty("EnetIcomAllocate", "0");
                                 logFormat(ApiLogLevel.Normal, "redirecting RPLUS:ICOM_P to ENET: {0}", enetRemoteHost);
                             }
-#else
-                            _ediabas.SetConfigProperty("RemoteHost", remoteHost);
-                            _ediabas.SetConfigProperty("Port", remotePort);
-                            _ediabas.SetConfigProperty("EnetIcomAllocate", "0");
-                            logFormat(ApiLogLevel.Normal, "RPLUS:ICOM_P: {0}:{1}", remoteHost, remotePort);
-#endif
                         }
                     }
 
@@ -406,6 +400,7 @@ namespace Ediabas
                         logFormat(ApiLogLevel.Normal, "RPLUS arguments invalid");
                     }
                 }
+#endif
             }
 
             if (string.IsNullOrEmpty(ifh))
