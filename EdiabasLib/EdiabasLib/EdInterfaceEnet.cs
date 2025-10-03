@@ -116,8 +116,23 @@ namespace EdiabasLib
                 StringBuilder sb = new StringBuilder();
                 sb.Append(IpAddress);
 
+                bool isRplus = ConnectionType == InterfaceType.Icom && DiagPort == DiagPortRplusDefault && ControlPort < 0;
                 bool isDoIp = ConnectionType == InterfaceType.DirectDoIp || DoIpPort >= 0 || SslPort >= 0;
-                if (isDoIp)
+                if (isRplus)
+                {
+                    sb.Append(":");
+                    sb.Append(ProtocolIcomP);
+                    int skipped = 0;
+                    if (DiagPort >= 0)
+                    {
+                        sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DiagPort));
+                    }
+                    else
+                    {
+                        skipped++;
+                    }
+                }
+                else if (isDoIp)
                 {
                     sb.Append(":");
                     sb.Append(ProtocolDoIp);
@@ -711,6 +726,7 @@ namespace EdiabasLib
         public const string AutoIpAll = ":all";
         public const string ProtocolHsfz = "HSFZ";
         public const string ProtocolDoIp = "DoIP";
+        public const string ProtocolIcomP = "ICOM_P";
         public const string DoIpSecurityDir = "Security";
         public const string DoIpS29Dir = "S29";
         public const string DoIpCertificatesDir = "Certificates";
