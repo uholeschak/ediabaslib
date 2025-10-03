@@ -1915,6 +1915,10 @@ namespace EdiabasLib
 
                         SharedDataActive.TcpDiagClient.SendBufferSize = TcpSendBufferSize;
                         SharedDataActive.TcpDiagClient.NoDelay = true;
+                        if (SharedDataActive.DiagRplus)
+                        {
+                            SharedDataActive.TcpDiagClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                        }
 
                         if (SharedDataActive.DiagDoIpSsl)
                         {
@@ -3416,7 +3420,7 @@ namespace EdiabasLib
                 }
                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                 {
-                    SharedDataActive.TcpControlClient = SharedDataActive.TcpDiagClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, controlPort, ConnectTimeout, true)
+                    SharedDataActive.TcpControlClient = new TcpClientWithTimeout(SharedDataActive.EnetHostConn.IpAddress, controlPort, ConnectTimeout, true)
                         .Connect(SharedDataActive.TransmitCancelEvent);
                 }, SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.NetworkData);
 
