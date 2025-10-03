@@ -122,15 +122,6 @@ namespace EdiabasLib
                 {
                     sb.Append(":");
                     sb.Append(ProtocolIcomP);
-                    int skipped = 0;
-                    if (DiagPort >= 0)
-                    {
-                        sb.Append(string.Format(CultureInfo.InvariantCulture, ":{0}", DiagPort));
-                    }
-                    else
-                    {
-                        skipped++;
-                    }
                 }
                 else if (isDoIp)
                 {
