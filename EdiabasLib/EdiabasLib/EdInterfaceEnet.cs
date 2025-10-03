@@ -1656,7 +1656,7 @@ namespace EdiabasLib
                             communicationModes.Add(CommunicationMode.Hsfz);
                         }
                         else if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom &&
-                                 SharedDataActive.EnetHostConn.DiagPort == DiagPortRplusDefault)
+                                 SharedDataActive.EnetHostConn.DiagPort == DiagPortRplusDefault && SharedDataActive.EnetHostConn.ControlPort < 0)
                         {
                             diagRplus = true;
                         }
@@ -1693,9 +1693,23 @@ namespace EdiabasLib
                                 hostPos++;
                                 connectionType = EnetConnection.InterfaceType.DirectDoIp;
                             }
+                            else if (string.Compare(hostParts[hostPos], ProtocolIcomP, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                protocolSpecified = true;
+                                hostPos++;
+                                connectionType = EnetConnection.InterfaceType.Icom;
+                                diagRplus = true;
+                            }
                         }
 
-                        if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
+                        if (diagRplus)
+                        {
+                            hostDiagPort = DiagPortRplusDefault;
+                            hostControlPort = -1;
+                            communicationModes.Clear();
+                            communicationModes.Add(CommunicationMode.Hsfz);
+                        }
+                        else if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
                         {
                             if (protocolSpecified && !reconnect)
                             {   // protocol explicit specified
