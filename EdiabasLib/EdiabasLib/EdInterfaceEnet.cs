@@ -4605,6 +4605,7 @@ namespace EdiabasLib
                             return nextReadLength;
                         }
 
+                        bool isCompatible = true;
                         int dataOffset = 0x14;
                         int actionBlocks = (SharedDataActive.TcpDiagBuffer[11] << 8) | SharedDataActive.TcpDiagBuffer[10];
                         if (actionBlocks > 0)
@@ -4640,9 +4641,7 @@ namespace EdiabasLib
                                         if (blockLen != 6 || compatibility != 1)
                                         {
                                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP compatibility invalid: Len={0}, Compat={1}", blockLen, compatibility);
-                                            InterfaceDisconnect(true);
-                                            SharedDataActive.ReconnectRequired = true;
-                                            return nextReadLength;
+                                            isCompatible = false;
                                         }
                                         break;
                                     }
@@ -4681,8 +4680,13 @@ namespace EdiabasLib
                                 SharedDataActive.TcpDiagRecQueue.Dequeue();
                             }
 
-                            byte[] recDataTel = new byte[dataLen];
-                            Array.Copy(SharedDataActive.TcpDiagBuffer, dataOffset + 6, recDataTel, 0, dataLen - 6);
+                            byte[] recDataTel = Array.Empty<byte>();
+                            if (isCompatible)
+                            {
+                                recDataTel = new byte[dataLen];
+                                Array.Copy(SharedDataActive.TcpDiagBuffer, dataOffset + 6, recDataTel, 0, dataLen - 6);
+                            }
+
                             SharedDataActive.TcpDiagRecQueue.Enqueue(recDataTel);
                             SharedDataActive.TcpDiagStreamRecEvent.Set();
                         }
