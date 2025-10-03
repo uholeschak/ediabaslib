@@ -1662,7 +1662,7 @@ namespace EdiabasLib
                         string[] hostParts = RemoteHostProtected.Split(':');
                         if (hostParts.Length < 1)
                         {
-                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Host name invalid: {0}", RemoteHostProtected);
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Host name invalid: {0}", RemoteHostProtected);
                             return false;
                         }
 
@@ -1704,6 +1704,21 @@ namespace EdiabasLib
                             hostControlPort = -1;
                             communicationModes.Clear();
                             communicationModes.Add(CommunicationMode.Hsfz);
+                            List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.Hsfz }, ignoreIcomOwner);
+                            if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No RPLUS UDP response for host: {0}", hostIp);
+                                return false;
+                            }
+
+                            if (detectedVehicles[0].ConnectionType == EnetConnection.InterfaceType.Icom &&
+                                detectedVehicles[0].DiagPort == IcomDiagPortDefault && detectedVehicles[0].ControlPort == IcomControlPortDefault)
+                            {
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Switching from RPLUS to HSFZ connection for host: {0}", hostIp);
+                                diagRplus = false;
+                                hostDiagPort = detectedVehicles[0].DiagPort;
+                                hostControlPort = detectedVehicles[0].ControlPort;
+                            }
                         }
                         else if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
                         {
@@ -3069,7 +3084,7 @@ namespace EdiabasLib
                                         addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, IcomDiagPortDefault, IcomControlPortDefault));
                                     }
                                 }
-                                else if (klineChannel || dcanChannel)
+                                if (klineChannel || dcanChannel)
                                 {
                                     addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, DiagPortRplusDefault));
                                 }
