@@ -839,16 +839,19 @@ namespace EdiabasLib
                     NetworkProtocolProtected = prop;
                 }
 
-                prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
-                if (!string.IsNullOrEmpty(prop))
+                if (!RplusMode)
                 {
-                    RemoteHostProtected = prop;
-                }
+                    prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
+                    if (!string.IsNullOrEmpty(prop))
+                    {
+                        RemoteHostProtected = prop;
+                    }
 
-                prop = EdiabasProtected?.GetConfigProperty("RemoteHost");
-                if (!string.IsNullOrEmpty(prop))
-                {
-                    RemoteHostProtected = prop;
+                    prop = EdiabasProtected?.GetConfigProperty("RemoteHost");
+                    if (!string.IsNullOrEmpty(prop))
+                    {
+                        RemoteHostProtected = prop;
+                    }
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetVehicleProtocol");
@@ -1094,7 +1097,7 @@ namespace EdiabasLib
                     IcomAllocate = EdiabasNet.StringToValue(prop) != 0;
                 }
 
-                if (!IsIpv4Address(RemoteHostProtected))
+                if (!RplusMode && !IsIpv4Address(RemoteHostProtected))
                 {
                     string iniFile = EdiabasProtected?.IniFileName;
                     if (!string.IsNullOrEmpty(iniFile))
