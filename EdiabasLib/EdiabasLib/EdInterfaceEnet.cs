@@ -789,6 +789,7 @@ namespace EdiabasLib
         protected int BatteryVoltageValue = 12000;
         protected int IgnitionVoltageValue = 12000;
         protected int DoIpTimeoutAcknowledge = 2000;
+        protected int RplusFunctionTimeout = 15000;
         protected int AddRecTimeoutProtected = 1000;
         protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
@@ -1074,6 +1075,18 @@ namespace EdiabasLib
                 if (!string.IsNullOrEmpty(prop))
                 {
                     DoIpTimeoutAcknowledge = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("RplusTimeoutFunction");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    RplusFunctionTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("TimeoutFunction");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    RplusFunctionTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
                 prop = EdiabasProtected?.GetConfigProperty("EnetAddRecTimeout");
@@ -5917,7 +5930,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int timeout = ConnectTimeout;
+            int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, 0, EdiabasNet.IfhCommands.IfhOpenChannel);
             if (paramListRec == null || paramListRec.Count < 2)
             {
@@ -5948,7 +5961,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int timeout = ConnectTimeout;
+            int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhCloseChannel);
             SharedDataActive.NmpChannel = 0;
 
@@ -6004,7 +6017,7 @@ namespace EdiabasLib
                 }
             }
 
-            int timeout = ConnectTimeout;
+            int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(name),
@@ -6040,7 +6053,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int timeout = ConnectTimeout;
+            int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(parameter),
@@ -6070,7 +6083,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int timeout = ConnectTimeout;
+            int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(preface),
@@ -6101,7 +6114,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int timeout = ConnectTimeout;
+            int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(requestData),
@@ -6132,7 +6145,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int timeout = ConnectTimeout;
+            int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(requestData),
@@ -6163,7 +6176,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int timeout = ConnectTimeout;
+            int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSendTelegram);
             if (paramListRec == null || paramListRec.Count < 4)
             {
@@ -6189,7 +6202,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            int timeout = ConnectTimeout;
+            int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhStopFreqTelegram);
             if (paramListRec == null || paramListRec.Count < 4)
             {
