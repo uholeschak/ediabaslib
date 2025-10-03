@@ -1589,11 +1589,17 @@ namespace EdiabasLib
                     return false;
                 }
 
+                bool diagRplus = RplusMode;
                 List<CommunicationMode> communicationModes = new List<CommunicationMode>();
                 if (reconnect)
                 {
                     // reuse last host connection
-                    if (SharedDataActive.DiagDoIp)
+                    if (SharedDataActive.DiagRplus)
+                    {
+                        diagRplus = true;
+                        communicationModes.Add(CommunicationMode.Hsfz);
+                    }
+                    else if (SharedDataActive.DiagDoIp)
                     {
                         communicationModes.Add(CommunicationMode.DoIp);
                     }
@@ -1619,7 +1625,6 @@ namespace EdiabasLib
                     }
                 }
 
-                bool diagRplus = RplusMode;
                 bool ignoreIcomOwner = !IcomAllocate;
                 if (SharedDataActive.EnetHostConn == null)
                 {
@@ -2880,7 +2885,7 @@ namespace EdiabasLib
                 int recPort = ((IPEndPoint) tempRemoteEp).Port;
                 IPAddress recIp = ((IPEndPoint)tempRemoteEp).Address;
                 bool continueRec = true;
-                EnetConnection addListConn = null;
+                List<EnetConnection> addListConnList = new List<EnetConnection>();
                 string vehicleVin = string.Empty;
                 string vehicleMac = string.Empty;
 
@@ -2897,7 +2902,7 @@ namespace EdiabasLib
                         (UdpBuffer[13] == '1') &&
                         (UdpBuffer[14] == '0'))
                     {
-                        addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectHsfz, recIp);
+                        addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.DirectHsfz, recIp));
                         try
                         {
                             vehicleMac = Encoding.ASCII.GetString(UdpBuffer, 15 + 6, 12);
@@ -2933,7 +2938,7 @@ namespace EdiabasLib
                         uint gwAddr = (uint)((UdpBuffer[8 + 17 + 0] << 8) | UdpBuffer[8 + 17 + 1]);
                         if (payloadLen >= minPayloadLength && (gwAddr == DoIpGatewayAddress || DoIpGatewayAddress == 0xFFFF))
                         {
-                            addListConn = new EnetConnection(EnetConnection.InterfaceType.DirectDoIp, recIp);
+                            addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.DirectDoIp, recIp));
                             try
                             {
                                 vehicleVin = Encoding.ASCII.GetString(UdpBuffer, 8, 17);
@@ -2986,7 +2991,7 @@ namespace EdiabasLib
 
                         if (isEnet)
                         {
-                            addListConn = new EnetConnection(EnetConnection.InterfaceType.Enet, ipAddressHost);
+                            addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.Enet, ipAddressHost));
                         }
                         else if (isIcom)
                         {
@@ -3057,81 +3062,85 @@ namespace EdiabasLib
                                 {
                                     if (isDoIp)
                                     {
-                                        addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, -1, -1, IcomDoIpPortDefault, IcomSslPortDefault);
+                                        addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, -1, -1, IcomDoIpPortDefault, IcomSslPortDefault));
                                     }
                                     else
                                     {
-                                        addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, IcomDiagPortDefault, IcomControlPortDefault);
+                                        addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, IcomDiagPortDefault, IcomControlPortDefault));
                                     }
                                 }
-
-                                if (klineChannel || dcanChannel)
+                                else if (klineChannel || dcanChannel)
                                 {
-                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, DiagPortRplusDefault);
+                                    addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, DiagPortRplusDefault));
                                 }
                             }
                         }
                     }
                 }
 
-                if (addListConn != null)
+                foreach (EnetConnection addListConn in addListConnList)
                 {
-                    if (UdpIpFilter != null && !UdpIpFilter.Equals(IPAddress.Any))
+                    EnetConnection addConn = addListConn;
+                    if (addConn != null)
                     {
-                        if (!UdpIpFilter.Equals(addListConn.IpAddress))
+                        if (UdpIpFilter != null && !UdpIpFilter.Equals(IPAddress.Any))
                         {
-                            addListConn = null;
-                        }
-                    }
-                }
-
-                if (addListConn != null)
-                {
-                    if (UdpDiagPortFilter != null && addListConn.DiagPort >= 0 && UdpDiagPortFilter != addListConn.DiagPort)
-                    {
-                        addListConn = null;
-                    }
-                }
-
-                if (addListConn != null)
-                {
-                    if (UdpDoIpPortFilter != null && addListConn.DoIpPort >= 0 && UdpDoIpPortFilter != addListConn.DoIpPort)
-                    {
-                        addListConn = null;
-                    }
-                }
-
-                if (addListConn != null)
-                {
-                    if (UdpDoIpSslFilter != null && addListConn.SslPort >= 0 && UdpDoIpSslFilter != addListConn.SslPort)
-                    {
-                        addListConn = null;
-                    }
-                }
-
-                if (addListConn != null)
-                {
-                    addListConn.Mac = vehicleMac;
-                    addListConn.Vin = vehicleVin;
-
-                    int listCount = 0;
-                    lock (UdpRecListLock)
-                    {
-                        if (UdpRecIpListList != null)
-                        {
-                            if (UdpRecIpListList.All(x => x != addListConn))
+                            if (!UdpIpFilter.Equals(addConn.IpAddress))
                             {
-                                UdpRecIpListList.Add(addListConn);
+                                addConn = null;
                             }
-
-                            listCount = UdpRecIpListList.Count;
                         }
                     }
 
-                    if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
+                    if (addConn != null)
                     {
-                        UdpEvent.Set();
-                        continueRec = false;
+                        if (UdpDiagPortFilter != null && addConn.DiagPort >= 0 && UdpDiagPortFilter != addConn.DiagPort)
+                        {
+                            addConn = null;
+                        }
+                    }
+
+                    if (addConn != null)
+                    {
+                        if (UdpDoIpPortFilter != null && addConn.DoIpPort >= 0 && UdpDoIpPortFilter != addConn.DoIpPort)
+                        {
+                            addConn = null;
+                        }
+                    }
+
+                    if (addConn != null)
+                    {
+                        if (UdpDoIpSslFilter != null && addConn.SslPort >= 0 && UdpDoIpSslFilter != addConn.SslPort)
+                        {
+                            addConn = null;
+                        }
+                    }
+
+                    if (addConn != null)
+                    {
+                        addConn.Mac = vehicleMac;
+                        addConn.Vin = vehicleVin;
+
+                        int listCount = 0;
+                        lock (UdpRecListLock)
+                        {
+                            if (UdpRecIpListList != null)
+                            {
+                                if (UdpRecIpListList.All(x => x != addConn))
+                                {
+                                    UdpRecIpListList.Add(addConn);
+                                }
+
+                                listCount = UdpRecIpListList.Count;
+                            }
+                        }
+
+                        if ((UdpMaxResponses >= 1) && (listCount >= UdpMaxResponses))
+                        {
+                            UdpEvent.Set();
+                            continueRec = false;
+                            break;
+                        }
                     }
                 }
 
