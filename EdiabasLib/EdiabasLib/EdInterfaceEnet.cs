@@ -697,6 +697,7 @@ namespace EdiabasLib
         public const int DoIpProtoVer = 0x03;
         public const int DoIpGwAddrDefault = 0x0010;
         public const int DiagPortDefault = 6801;
+        public const int DiagPortRplusDefault = 6801;
         public const int ControlPortDefault = 6811;
         public const int DoIpPortDefault = 13400;
         public const int DoIpSslPortDefault = 3496;
@@ -777,7 +778,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = DoIpPortDefault;
         protected int DoIpSslPort = DoIpSslPortDefault;
-        protected int RplusPort = DiagPortDefault;
+        protected int RplusPort = DiagPortRplusDefault;
         protected bool DoIpBcSsl = true;
         protected string DoIpSslSecurityPathProtected = string.Empty;
         protected string DoIpS29PathProtected = string.Empty;
@@ -1626,7 +1627,7 @@ namespace EdiabasLib
                             communicationModes.Add(CommunicationMode.Hsfz);
                         }
                         else if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom &&
-                                 SharedDataActive.EnetHostConn.DiagPort == DiagPortDefault)
+                                 SharedDataActive.EnetHostConn.DiagPort == DiagPortRplusDefault)
                         {
                             diagRplus = true;
                         }
@@ -3026,7 +3027,7 @@ namespace EdiabasLib
                                 }
                                 else if (klineChannel || dcanChannel)
                                 {
-                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, DiagPortDefault);
+                                    addListConn = new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, DiagPortRplusDefault);
                                 }
                             }
                         }
