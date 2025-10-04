@@ -800,6 +800,7 @@ namespace EdiabasLib
         protected int AddRecTimeoutProtected = 1000;
         protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
+        protected bool RplusIcomEnetRedirectProtected = true;
         protected HttpClient IcomAllocateDeviceHttpClient;
 
         protected byte[] RecBuffer = new byte[TransBufferSize];
@@ -1116,6 +1117,12 @@ namespace EdiabasLib
                 if (!string.IsNullOrEmpty(prop))
                 {
                     IcomAllocate = EdiabasNet.StringToValue(prop) != 0;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("RplusIcomEnetRedirect");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    RplusIcomEnetRedirect = EdiabasNet.StringToValue(prop) != 0;
                 }
 
                 if (!RplusMode && !IsIpv4Address(RemoteHostProtected))
@@ -1704,20 +1711,23 @@ namespace EdiabasLib
                             hostControlPort = -1;
                             communicationModes.Clear();
                             communicationModes.Add(CommunicationMode.Hsfz);
-                            List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.Hsfz }, ignoreIcomOwner);
-                            if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
+                            if (RplusIcomEnetRedirect)
                             {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No RPLUS UDP response for host: {0}", hostIp);
-                                return false;
-                            }
+                                List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.Hsfz }, ignoreIcomOwner);
+                                if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No RPLUS UDP response for host: {0}", hostIp);
+                                    return false;
+                                }
 
-                            if (detectedVehicles[0].ConnectionType == EnetConnection.InterfaceType.Icom &&
-                                detectedVehicles[0].DiagPort == IcomDiagPortDefault && detectedVehicles[0].ControlPort == IcomControlPortDefault)
-                            {
-                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Switching from RPLUS to HSFZ connection for host: {0}", hostIp);
-                                diagRplus = false;
-                                hostDiagPort = detectedVehicles[0].DiagPort;
-                                hostControlPort = detectedVehicles[0].ControlPort;
+                                if (detectedVehicles[0].ConnectionType == EnetConnection.InterfaceType.Icom &&
+                                    detectedVehicles[0].DiagPort == IcomDiagPortDefault && detectedVehicles[0].ControlPort == IcomControlPortDefault)
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Switching from RPLUS to HSFZ connection for host: {0}", hostIp);
+                                    diagRplus = false;
+                                    hostDiagPort = detectedVehicles[0].DiagPort;
+                                    hostControlPort = detectedVehicles[0].ControlPort;
+                                }
                             }
                         }
                         else if (connectionType == EnetConnection.InterfaceType.DirectHsfz)
@@ -2482,6 +2492,19 @@ namespace EdiabasLib
                 IcomAllocateProtected = value;
             }
         }
+
+        public bool RplusIcomEnetRedirect
+        {
+            get
+            {
+                return RplusIcomEnetRedirectProtected;
+            }
+            set
+            {
+                RplusIcomEnetRedirectProtected = value;
+            }
+        }
+
 
         public List<EnetConnection> DetectedVehicles(string remoteHostConfig, List<CommunicationMode> communicationModes = null)
         {
