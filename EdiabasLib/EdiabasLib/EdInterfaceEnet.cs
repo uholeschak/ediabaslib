@@ -116,9 +116,8 @@ namespace EdiabasLib
                 StringBuilder sb = new StringBuilder();
                 sb.Append(IpAddress);
 
-                bool isRplus = ConnectionType == InterfaceType.Icom && DiagPort == DiagPortRplusDefault && ControlPort < 0;
                 bool isDoIp = ConnectionType == InterfaceType.DirectDoIp || DoIpPort >= 0 || SslPort >= 0;
-                if (isRplus)
+                if (IsRplus)
                 {
                     sb.Append(":");
                     sb.Append(ProtocolIcomP);
@@ -176,6 +175,11 @@ namespace EdiabasLib
                 }
 
                 return sb.ToString();
+            }
+
+            public bool IsRplus
+            {
+                get => ConnectionType == InterfaceType.Icom && DiagPort == DiagPortRplusDefault && ControlPort < 0;
             }
 
             public int CompareTo(EnetConnection enetConnection)
@@ -1631,8 +1635,7 @@ namespace EdiabasLib
                         EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Received: IP={0}:{1}, Type={2}",
                             SharedDataActive.EnetHostConn.IpAddress, SharedDataActive.EnetHostConn.DiagPort, SharedDataActive.EnetHostConn.ConnectionType));
 
-                        if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom &&
-                                 SharedDataActive.EnetHostConn.DiagPort == DiagPortRplusDefault && SharedDataActive.EnetHostConn.ControlPort < 0)
+                        if (SharedDataActive.EnetHostConn.IsRplus)
                         {
                             diagRplus = true;
                         }
