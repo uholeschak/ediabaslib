@@ -882,6 +882,10 @@ namespace PsdzClient
                             switch (enetConnection.ConnectionType)
                             {
                                 case EdInterfaceEnet.EnetConnection.InterfaceType.Icom:
+                                    if (enetConnection.IsRplus)
+                                    {   // RPLUS
+                                        continue;
+                                    }
                                     if (connectionIcom == null)
                                     {
                                         connectionIcom = enetConnection;
