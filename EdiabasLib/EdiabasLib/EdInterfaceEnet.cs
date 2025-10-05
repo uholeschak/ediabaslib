@@ -45,6 +45,13 @@ namespace EdiabasLib
             Rejected
         }
 
+        protected enum RplusOpMode
+        {
+            None,
+            IcomP,
+            Lan
+        }
+
         public delegate List<X509CertificateStructure> GenS29CertDelegate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin);
 
         public delegate void VehicleConnectedDelegate(bool connected, bool reconnect, string vin, bool isDoIp);
@@ -785,6 +792,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = DoIpPortDefault;
         protected int DoIpSslPort = DoIpSslPortDefault;
+        protected RplusOpMode RplusModeProtected = RplusOpMode.None;
         protected int RplusPort = DiagPortRplusDefault;
         protected bool DoIpBcSsl = true;
         protected string DoIpSslSecurityPathProtected = string.Empty;
@@ -849,7 +857,7 @@ namespace EdiabasLib
                     NetworkProtocolProtected = prop;
                 }
 
-                if (!RplusMode)
+                if (RplusModeProtected != RplusOpMode.None)
                 {
                     prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
                     if (!string.IsNullOrEmpty(prop))
@@ -1125,7 +1133,7 @@ namespace EdiabasLib
                     RplusIcomEnetRedirect = EdiabasNet.StringToValue(prop) != 0;
                 }
 
-                if (!RplusMode && !IsIpv4Address(RemoteHostProtected))
+                if (RplusModeProtected == RplusOpMode.None && !IsIpv4Address(RemoteHostProtected))
                 {
                     string iniFile = EdiabasProtected?.IniFileName;
                     if (!string.IsNullOrEmpty(iniFile))
@@ -1502,11 +1510,11 @@ namespace EdiabasLib
             get { return MutexName; }
         }
 
-        protected virtual bool RplusMode
+        protected virtual RplusOpMode RplusMode
         {
             get
             {
-                return false;
+                return RplusModeProtected;
             }
         }
 
@@ -1596,7 +1604,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                bool diagRplus = RplusMode;
+                bool diagRplus = RplusModeProtected != RplusOpMode.None;
                 List<CommunicationMode> communicationModes = new List<CommunicationMode>();
                 if (reconnect)
                 {

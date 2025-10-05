@@ -14,9 +14,24 @@ namespace EdiabasLib
             set
             {
                 base.IfhName = value;
+
+                RplusModeProtected = RplusOpMode.None;
                 if (!string.IsNullOrEmpty(IfhNameProtected))
                 {
                     string[] parts = IfhNameProtected.Split(':');
+                    if (parts.Length > 1)
+                    {
+                        if (string.Compare(parts[1], "ICOM_P", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            RplusModeProtected = RplusOpMode.IcomP;
+                        }
+
+                        if (string.Compare(parts[1], "LAN", StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            RplusModeProtected = RplusOpMode.Lan;
+                        }
+                    }
+
                     if (parts.Length > 2)
                     {
                         string configParams = parts[2];
@@ -78,19 +93,21 @@ namespace EdiabasLib
         public new static bool IsValidInterfaceNameStatic(string name)
         {
             string[] nameParts = name.Split(':');
-            if (nameParts.Length > 0 && string.Compare(nameParts[0], "RPLUS", StringComparison.OrdinalIgnoreCase) == 0)
+            if (nameParts.Length > 1 && string.Compare(nameParts[0], "RPLUS", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                return true;
+                if (string.Compare(nameParts[1], "ICOM_P", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+
+                if (string.Compare(nameParts[1], "LAN", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    return true;
+                }
+
+                return false;
             }
             return false;
-        }
-
-        protected override bool RplusMode
-        {
-            get
-            {
-                return true;
-            }
         }
     }
 }
