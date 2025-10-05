@@ -40,7 +40,7 @@ namespace EdiabasLib
                     RplusFunctionTimeout = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected?.GetConfigProperty("IcomEnetRedirect" + RplusSectionProtected);
+                prop = EdiabasProtected?.GetConfigProperty("IcomEnetRedirect_" + RplusSectionProtected);
                 if (!string.IsNullOrEmpty(prop))
                 {
                     RplusIcomEnetRedirect = EdiabasNet.StringToValue(prop) != 0;
