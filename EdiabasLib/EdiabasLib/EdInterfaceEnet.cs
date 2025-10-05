@@ -3092,7 +3092,8 @@ namespace EdiabasLib
                                         addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, IcomDiagPortDefault, IcomControlPortDefault));
                                     }
                                 }
-                                if (klineChannel || dcanChannel)
+
+                                if (!isDoIp && (klineChannel || dcanChannel))
                                 {
                                     addListConnList.Add(new EnetConnection(EnetConnection.InterfaceType.Icom, ipAddressHost, DiagPortRplusDefault));
                                 }
