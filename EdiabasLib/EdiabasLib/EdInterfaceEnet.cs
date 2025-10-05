@@ -801,7 +801,7 @@ namespace EdiabasLib
         protected int AddRecTimeoutProtected = 1000;
         protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
-        protected bool RplusIcomEnetRedirectProtected = true;
+        protected bool RplusIcomEnetRedirectProtected = false;
         protected HttpClient IcomAllocateDeviceHttpClient;
 
         protected byte[] RecBuffer = new byte[TransBufferSize];
@@ -850,7 +850,7 @@ namespace EdiabasLib
                     NetworkProtocolProtected = prop;
                 }
 
-                if (!string.IsNullOrEmpty(RplusSectionProtected) && string.IsNullOrEmpty(RemoteHostProtected))
+                if (!string.IsNullOrEmpty(RplusSectionProtected))
                 {
                     prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
                     if (!string.IsNullOrEmpty(prop))
@@ -1086,18 +1086,6 @@ namespace EdiabasLib
                     DoIpTimeoutAcknowledge = (int)EdiabasNet.StringToValue(prop);
                 }
 
-                prop = EdiabasProtected?.GetConfigProperty("RplusTimeoutFunction");
-                if (!string.IsNullOrEmpty(prop))
-                {
-                    RplusFunctionTimeout = (int)EdiabasNet.StringToValue(prop);
-                }
-
-                prop = EdiabasProtected?.GetConfigProperty("TimeoutFunction");
-                if (!string.IsNullOrEmpty(prop))
-                {
-                    RplusFunctionTimeout = (int)EdiabasNet.StringToValue(prop);
-                }
-
                 prop = EdiabasProtected?.GetConfigProperty("EnetAddRecTimeout");
                 if (!string.IsNullOrEmpty(prop))
                 {
@@ -1111,19 +1099,15 @@ namespace EdiabasLib
                 }
 #if ANDROID
                 IcomAllocate = true;
+                RplusIcomEnetRedirect = true;
 #else
                 IcomAllocate = false;
+                RplusIcomEnetRedirect = false;
 #endif
                 prop = EdiabasProtected?.GetConfigProperty("EnetIcomAllocate");
                 if (!string.IsNullOrEmpty(prop))
                 {
                     IcomAllocate = EdiabasNet.StringToValue(prop) != 0;
-                }
-
-                prop = EdiabasProtected?.GetConfigProperty("RplusIcomEnetRedirect");
-                if (!string.IsNullOrEmpty(prop))
-                {
-                    RplusIcomEnetRedirect = EdiabasNet.StringToValue(prop) != 0;
                 }
 
                 if (string.IsNullOrEmpty(RplusSectionProtected) && !IsIpv4Address(RemoteHostProtected))

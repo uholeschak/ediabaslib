@@ -12,6 +12,42 @@ namespace EdiabasLib
             RplusSectionProtected = DefaultRplusSection;
         }
 
+        public override EdiabasNet Ediabas
+        {
+            get
+            {
+                return base.Ediabas;
+            }
+            set
+            {
+                base.Ediabas = value;
+
+                string prop = EdiabasProtected?.GetConfigProperty("RemoteHost_" + RplusSectionProtected);
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    RemoteHostProtected = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("Port_" + RplusSectionProtected);
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    RplusPort = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("TimeoutFunction_" + RplusSectionProtected);
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    RplusFunctionTimeout = (int)EdiabasNet.StringToValue(prop);
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("IcomEnetRedirect" + RplusSectionProtected);
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    RplusIcomEnetRedirect = EdiabasNet.StringToValue(prop) != 0;
+                }
+            }
+        }
+
         public override string IfhName
         {
             get
@@ -22,6 +58,7 @@ namespace EdiabasLib
             {
                 base.IfhName = value;
 
+                RplusSectionProtected = DefaultRplusSection;
                 if (!string.IsNullOrEmpty(IfhNameProtected))
                 {
                     string[] parts = IfhNameProtected.Split(':');
@@ -29,10 +66,6 @@ namespace EdiabasLib
                     if (parts.Length > 1)
                     {
                         RplusSectionProtected = parts[1].Trim();
-                    }
-                    else
-                    {
-                        RplusSectionProtected = DefaultRplusSection;
                     }
 
                     if (parts.Length > 2)
@@ -61,6 +94,8 @@ namespace EdiabasLib
                         }
                     }
                 }
+
+                RplusIcomEnetRedirect = string.Compare(RplusSectionProtected, DefaultRplusSection, StringComparison.OrdinalIgnoreCase) == 0;
             }
         }
 
