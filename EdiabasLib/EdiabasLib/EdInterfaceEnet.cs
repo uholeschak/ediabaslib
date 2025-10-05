@@ -1564,7 +1564,7 @@ namespace EdiabasLib
             }
             try
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}", RemoteHostProtected);
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connect to: {0}, Reconnect: {1}", RemoteHostProtected, reconnect);
                 SharedDataActive.NetworkData = null;
                 SharedDataActive.GenS29CertHandler = null;
                 SharedDataActive.VehicleConnectedHandler = null;
