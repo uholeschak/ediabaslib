@@ -1604,14 +1604,14 @@ namespace EdiabasLib
                     return false;
                 }
 
-                bool diagRplus = RplusModeProtected != RplusOpMode.None;
+                RplusOpMode diagRplusMode = RplusModeProtected;
                 List<CommunicationMode> communicationModes = new List<CommunicationMode>();
                 if (reconnect)
                 {
                     // reuse last host connection
                     if (SharedDataActive.DiagRplus)
                     {
-                        diagRplus = true;
+                        diagRplusMode = RplusOpMode.IcomP;
                         communicationModes.Add(CommunicationMode.Hsfz);
                     }
                     else if (SharedDataActive.DiagDoIp)
@@ -1657,7 +1657,7 @@ namespace EdiabasLib
                         if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom &&
                                  SharedDataActive.EnetHostConn.DiagPort == DiagPortRplusDefault && SharedDataActive.EnetHostConn.ControlPort < 0)
                         {
-                            diagRplus = true;
+                            diagRplusMode = RplusOpMode.IcomP;
                         }
                         else if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.DirectDoIp ||
                             SharedDataActive.EnetHostConn.DoIpPort >= 0 || SharedDataActive.EnetHostConn.SslPort >= 0)
@@ -1709,17 +1709,17 @@ namespace EdiabasLib
                                 protocolSpecified = true;
                                 hostPos++;
                                 connectionType = EnetConnection.InterfaceType.Icom;
-                                diagRplus = true;
+                                diagRplusMode = RplusOpMode.IcomP;
                             }
                         }
 
-                        if (diagRplus)
+                        if (diagRplusMode != RplusOpMode.None)
                         {
                             hostDiagPort = DiagPortRplusDefault;
                             hostControlPort = -1;
                             communicationModes.Clear();
                             communicationModes.Add(CommunicationMode.Hsfz);
-                            if (RplusIcomEnetRedirect)
+                            if (diagRplusMode == RplusOpMode.IcomP && RplusIcomEnetRedirect)
                             {
                                 List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.Hsfz }, ignoreIcomOwner);
                                 if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
@@ -1732,7 +1732,7 @@ namespace EdiabasLib
                                     detectedVehicles[0].DiagPort == IcomDiagPortDefault && detectedVehicles[0].ControlPort == IcomControlPortDefault)
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Switching from RPLUS to HSFZ connection for host: {0}", hostIp);
-                                    diagRplus = false;
+                                    diagRplusMode = RplusOpMode.None;
                                     hostDiagPort = detectedVehicles[0].DiagPort;
                                     hostControlPort = detectedVehicles[0].ControlPort;
                                 }
@@ -1820,7 +1820,7 @@ namespace EdiabasLib
 
                     bool diagDoIpSsl = false;
 
-                    if (!diagRplus && SharedDataActive.DiagDoIp)
+                    if (diagRplusMode == RplusOpMode.None && SharedDataActive.DiagDoIp)
                     {
                         string hostIp = SharedDataActive.EnetHostConn.IpAddress.ToString();
                         List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.DoIp }, ignoreIcomOwner);
@@ -1896,7 +1896,7 @@ namespace EdiabasLib
                         }
                     }
                     SharedDataActive.DiagDoIpSsl = diagDoIpSsl;
-                    SharedDataActive.DiagRplus = diagRplus;
+                    SharedDataActive.DiagRplus = diagRplusMode != RplusOpMode.None;
 
                     if (SharedDataActive.DiagRplus)
                     {
