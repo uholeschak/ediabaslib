@@ -45,13 +45,6 @@ namespace EdiabasLib
             Rejected
         }
 
-        protected enum RplusOpMode
-        {
-            None,
-            IcomP,
-            Lan
-        }
-
         public delegate List<X509CertificateStructure> GenS29CertDelegate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin);
 
         public delegate void VehicleConnectedDelegate(bool connected, bool reconnect, string vin, bool isDoIp);
@@ -792,7 +785,7 @@ namespace EdiabasLib
         protected int ControlPort = ControlPortDefault;
         protected int DoIpPort = DoIpPortDefault;
         protected int DoIpSslPort = DoIpSslPortDefault;
-        protected RplusOpMode RplusModeProtected = RplusOpMode.None;
+        protected string RplusSectionProtected = null;
         protected int RplusPort = DiagPortRplusDefault;
         protected bool DoIpBcSsl = true;
         protected string DoIpSslSecurityPathProtected = string.Empty;
@@ -857,7 +850,7 @@ namespace EdiabasLib
                     NetworkProtocolProtected = prop;
                 }
 
-                if (RplusModeProtected != RplusOpMode.None)
+                if (!string.IsNullOrEmpty(RplusSectionProtected) && string.IsNullOrEmpty(RemoteHostProtected))
                 {
                     prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
                     if (!string.IsNullOrEmpty(prop))
@@ -1133,7 +1126,7 @@ namespace EdiabasLib
                     RplusIcomEnetRedirect = EdiabasNet.StringToValue(prop) != 0;
                 }
 
-                if (RplusModeProtected == RplusOpMode.None && !IsIpv4Address(RemoteHostProtected))
+                if (string.IsNullOrEmpty(RplusSectionProtected) && !IsIpv4Address(RemoteHostProtected))
                 {
                     string iniFile = EdiabasProtected?.IniFileName;
                     if (!string.IsNullOrEmpty(iniFile))
@@ -1510,11 +1503,11 @@ namespace EdiabasLib
             get { return MutexName; }
         }
 
-        protected virtual RplusOpMode RplusMode
+        protected virtual string RplusSection
         {
             get
             {
-                return RplusModeProtected;
+                return RplusSectionProtected;
             }
         }
 
@@ -1604,14 +1597,14 @@ namespace EdiabasLib
                     return false;
                 }
 
-                RplusOpMode diagRplusMode = RplusModeProtected;
+                bool diagRplusMode = !string.IsNullOrEmpty(RplusSectionProtected);
                 List<CommunicationMode> communicationModes = new List<CommunicationMode>();
                 if (reconnect)
                 {
                     // reuse last host connection
                     if (SharedDataActive.DiagRplus)
                     {
-                        diagRplusMode = RplusOpMode.IcomP;
+                        diagRplusMode = true;
                         communicationModes.Add(CommunicationMode.Hsfz);
                     }
                     else if (SharedDataActive.DiagDoIp)
@@ -1657,7 +1650,7 @@ namespace EdiabasLib
                         if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom &&
                                  SharedDataActive.EnetHostConn.DiagPort == DiagPortRplusDefault && SharedDataActive.EnetHostConn.ControlPort < 0)
                         {
-                            diagRplusMode = RplusOpMode.IcomP;
+                            diagRplusMode = true;
                         }
                         else if (SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.DirectDoIp ||
                             SharedDataActive.EnetHostConn.DoIpPort >= 0 || SharedDataActive.EnetHostConn.SslPort >= 0)
@@ -1709,17 +1702,17 @@ namespace EdiabasLib
                                 protocolSpecified = true;
                                 hostPos++;
                                 connectionType = EnetConnection.InterfaceType.Icom;
-                                diagRplusMode = RplusOpMode.IcomP;
+                                diagRplusMode = true;
                             }
                         }
 
-                        if (diagRplusMode != RplusOpMode.None)
+                        if (diagRplusMode)
                         {
                             hostDiagPort = DiagPortRplusDefault;
                             hostControlPort = -1;
                             communicationModes.Clear();
                             communicationModes.Add(CommunicationMode.Hsfz);
-                            if (diagRplusMode == RplusOpMode.IcomP && RplusIcomEnetRedirect)
+                            if (RplusIcomEnetRedirect)
                             {
                                 List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.Hsfz }, ignoreIcomOwner);
                                 if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
@@ -1732,7 +1725,7 @@ namespace EdiabasLib
                                     detectedVehicles[0].DiagPort == IcomDiagPortDefault && detectedVehicles[0].ControlPort == IcomControlPortDefault)
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Switching from RPLUS to HSFZ connection for host: {0}", hostIp);
-                                    diagRplusMode = RplusOpMode.None;
+                                    diagRplusMode = false;
                                     hostDiagPort = detectedVehicles[0].DiagPort;
                                     hostControlPort = detectedVehicles[0].ControlPort;
                                 }
@@ -1820,7 +1813,7 @@ namespace EdiabasLib
 
                     bool diagDoIpSsl = false;
 
-                    if (diagRplusMode == RplusOpMode.None && SharedDataActive.DiagDoIp)
+                    if (!diagRplusMode && SharedDataActive.DiagDoIp)
                     {
                         string hostIp = SharedDataActive.EnetHostConn.IpAddress.ToString();
                         List<EnetConnection> detectedVehicles = DetectedVehicles(hostIp, 1, UdpDetectRetries, new List<CommunicationMode> { CommunicationMode.DoIp }, ignoreIcomOwner);
@@ -1896,7 +1889,7 @@ namespace EdiabasLib
                         }
                     }
                     SharedDataActive.DiagDoIpSsl = diagDoIpSsl;
-                    SharedDataActive.DiagRplus = diagRplusMode != RplusOpMode.None;
+                    SharedDataActive.DiagRplus = diagRplusMode;
 
                     if (SharedDataActive.DiagRplus)
                     {
