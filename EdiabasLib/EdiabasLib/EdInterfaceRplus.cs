@@ -5,9 +5,11 @@ namespace EdiabasLib
 {
     public class EdInterfaceRplus : EdInterfaceEnet
     {
+        public const string DefaultRplusSection = "ICOM_P";
+
         public EdInterfaceRplus()
         {
-            RplusModeProtected = RplusOpMode.IcomP;
+            RplusSectionProtected = DefaultRplusSection;
         }
 
         public override string IfhName
@@ -24,20 +26,14 @@ namespace EdiabasLib
                 {
                     string[] parts = IfhNameProtected.Split(':');
 
-                    RplusOpMode rplusOpMode = RplusOpMode.IcomP;
                     if (parts.Length > 1)
                     {
-                        if (string.Compare(parts[1], "ICOM_P", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            rplusOpMode = RplusOpMode.IcomP;
-                        }
-
-                        if (string.Compare(parts[1], "LAN", StringComparison.OrdinalIgnoreCase) == 0)
-                        {
-                            rplusOpMode = RplusOpMode.Lan;
-                        }
+                        RplusSectionProtected = parts[1].Trim();
                     }
-                    RplusModeProtected = rplusOpMode;
+                    else
+                    {
+                        RplusSectionProtected = DefaultRplusSection;
+                    }
 
                     if (parts.Length > 2)
                     {
@@ -88,7 +84,7 @@ namespace EdiabasLib
         {
             get
             {
-                return "RPLUS:ICOM_P";
+                return "RPLUS:" + RplusSectionProtected;
             }
         }
 
@@ -102,17 +98,7 @@ namespace EdiabasLib
             string[] nameParts = name.Split(':');
             if (nameParts.Length > 1 && string.Compare(nameParts[0], "RPLUS", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                if (string.Compare(nameParts[1], "ICOM_P", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    return true;
-                }
-
-                if (string.Compare(nameParts[1], "LAN", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    return true;
-                }
-
-                return false;
+                return true;
             }
             return false;
         }
