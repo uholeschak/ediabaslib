@@ -481,15 +481,16 @@ namespace EdiabasLibConfigTool
                     if (enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom &&
                         enetConnection.DiagPort > 0)
                     {
-                        UpdateConfigNode(settingsNode, @"EnetIcomAllocate", "1");
                         UpdateConfigNode(settingsNode, @"IcomEnetRedirect_ICOM_P", "1");
-                        icomConfigured = true;
 
                         if (!istadMode)
                         {
                             UpdateConfigNode(settingsNode, @"EnetDiagnosticPort", enetConnection.DiagPort.ToString(CultureInfo.InvariantCulture));
                             UpdateConfigNode(settingsNode, @"EnetControlPort", enetConnection.ControlPort.ToString(CultureInfo.InvariantCulture));
                             portsConfigured = true;
+
+                            UpdateConfigNode(settingsNode, @"EnetIcomAllocate", "1");
+                            icomConfigured = true;
                         }
                     }
                 }
