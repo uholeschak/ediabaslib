@@ -1591,9 +1591,14 @@ namespace EdiabasLib
                 if (reconnect)
                 {
                     // reuse last host connection
-                    if (SharedDataActive.DiagRplus)
+                    if (diagRplus)
                     {
-                        diagRplus = true;
+                        diagRplus = SharedDataActive.DiagRplus;
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Reconnect: Last RPLUS Mode={0}", diagRplus);
+                    }
+
+                    if (diagRplus)
+                    {
                         communicationModes.Add(CommunicationMode.Hsfz);
                     }
                     else if (SharedDataActive.DiagDoIp)
