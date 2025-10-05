@@ -385,6 +385,8 @@ namespace Ediabas
                 return false;
             }
 
+            logFormat(ApiLogLevel.Normal, "Interface: {0}, Ifh: {1}", edInterface.InterfaceType, ifh);
+
             edInterface.IfhName = ifh;
             edInterface.UnitName = unit;
             edInterface.ApplicationName = app;
