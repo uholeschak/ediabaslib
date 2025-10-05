@@ -266,7 +266,7 @@ namespace BMW.Rheingold.Psdz.Client
                 case 0:
                 {
                     // [UH] check for PID file support start
-                    if (pidFileSupport)
+                    if (pidFileSupport && istaProcessId != 0)
                     {
                         checkForPsdzInstancesLogFile();
                         try
