@@ -479,9 +479,10 @@ namespace EdiabasLibConfigTool
                     UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
 
                     if (enetConnection.ConnectionType == EdInterfaceEnet.EnetConnection.InterfaceType.Icom &&
-                        enetConnection.DiagPort > 0 && enetConnection.ControlPort > 0)
+                        enetConnection.DiagPort > 0)
                     {
                         UpdateConfigNode(settingsNode, @"EnetIcomAllocate", "1");
+                        UpdateConfigNode(settingsNode, @"IcomEnetRedirect_ICOM_P", "1");
                         icomConfigured = true;
 
                         if (!istadMode)
