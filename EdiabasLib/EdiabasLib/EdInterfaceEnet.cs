@@ -854,7 +854,7 @@ namespace EdiabasLib
                     NetworkProtocolProtected = prop;
                 }
 
-                if (!string.IsNullOrEmpty(RplusSectionProtected))
+                if (string.IsNullOrEmpty(RplusSectionProtected))
                 {
                     prop = EdiabasProtected?.GetConfigProperty("EnetRemoteHost");
                     if (!string.IsNullOrEmpty(prop))
