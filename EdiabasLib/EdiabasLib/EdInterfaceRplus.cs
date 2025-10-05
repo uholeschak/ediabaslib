@@ -5,6 +5,11 @@ namespace EdiabasLib
 {
     public class EdInterfaceRplus : EdInterfaceEnet
     {
+        public EdInterfaceRplus()
+        {
+            RplusModeProtected = RplusOpMode.IcomP;
+        }
+
         public override string IfhName
         {
             get
@@ -15,22 +20,24 @@ namespace EdiabasLib
             {
                 base.IfhName = value;
 
-                RplusModeProtected = RplusOpMode.None;
                 if (!string.IsNullOrEmpty(IfhNameProtected))
                 {
                     string[] parts = IfhNameProtected.Split(':');
+
+                    RplusOpMode rplusOpMode = RplusOpMode.IcomP;
                     if (parts.Length > 1)
                     {
                         if (string.Compare(parts[1], "ICOM_P", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            RplusModeProtected = RplusOpMode.IcomP;
+                            rplusOpMode = RplusOpMode.IcomP;
                         }
 
                         if (string.Compare(parts[1], "LAN", StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            RplusModeProtected = RplusOpMode.Lan;
+                            rplusOpMode = RplusOpMode.Lan;
                         }
                     }
+                    RplusModeProtected = rplusOpMode;
 
                     if (parts.Length > 2)
                     {
