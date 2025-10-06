@@ -95,7 +95,8 @@ namespace EdiabasLib
                     }
                 }
 
-                RplusIcomEnetRedirect = string.Compare(RplusSectionProtected, DefaultRplusSection, StringComparison.OrdinalIgnoreCase) == 0;
+                RplusIcomEnetRedirect = string.Compare(RplusSectionProtected, DefaultRplusSection, StringComparison.OrdinalIgnoreCase) == 0 &&
+                                        RplusPort == DiagPortRplusDefault;
             }
         }
 
