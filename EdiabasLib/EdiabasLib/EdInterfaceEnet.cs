@@ -5939,6 +5939,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT init result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -5964,6 +5965,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT end result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -5994,6 +5996,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT connect result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -6025,6 +6028,7 @@ namespace EdiabasLib
                 SharedDataActive.NmpChannel = channel.Value;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT open channel result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -6052,6 +6056,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT close channel result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -6117,6 +6122,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT notify config result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -6147,6 +6153,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT set parameter result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -6177,16 +6184,13 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT set preface result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
         protected EdiabasNet.ErrorCodes NmtSendTelegram(byte[] requestData, out byte[] responseData)
         {
             responseData = null;
-            if (SharedDataActive.TcpDiagStream == null)
-            {
-                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
-            }
 
             if (SharedDataActive.ReconnectRequired)
             {
@@ -6196,6 +6200,11 @@ namespace EdiabasLib
                     SharedDataActive.ReconnectRequired = true;
                     return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
                 }
+            }
+
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
             int timeout = RplusFunctionTimeout;
@@ -6219,6 +6228,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT send telegram result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -6249,6 +6259,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT send telegram freq result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -6276,6 +6287,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT req telegram freq result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
@@ -6290,17 +6302,18 @@ namespace EdiabasLib
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhStopFreqTelegram);
             if (paramListRec == null || paramListRec.Count < 4)
             {
-                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram failed");
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT stop freq failed");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
             EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
             if (errorCode == null)
             {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram invalid parameters");
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT stop freq invalid parameters");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT stop freq result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
