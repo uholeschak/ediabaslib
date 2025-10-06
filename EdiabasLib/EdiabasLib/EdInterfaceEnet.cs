@@ -5858,6 +5858,18 @@ namespace EdiabasLib
 
         private List<NmpParameter> TransNmpParameters(int timeout, int channel, EdiabasNet.IfhCommands ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
         {
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TransNmpParameters Reconnecting Channel={0}, Command={1}", channel, ifhCommand);
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TransNmpParameters Reconnect failed Channel={0}, Command={1}", channel, ifhCommand);
+                    SharedDataActive.ReconnectRequired = true;
+                    return null;
+                }
+            }
+
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return null;
@@ -6192,21 +6204,12 @@ namespace EdiabasLib
         {
             responseData = null;
 
-            if (SharedDataActive.ReconnectRequired)
-            {
-                InterfaceDisconnect(true);
-                if (!InterfaceConnect(true))
-                {
-                    SharedDataActive.ReconnectRequired = true;
-                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
-                }
-            }
-
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, requestData, 0, requestData.Length, "Send");
             int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
@@ -6226,6 +6229,11 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT send telegram invalid parameters");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (responseData != null)
+            {
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, responseData, 0, responseData.Length, "Resp");
             }
 
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT send telegram result: {0}", errorCode.Value);
