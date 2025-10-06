@@ -1013,6 +1013,7 @@ namespace CarSimulator
         private bool Connect()
         {
             Disconnect();
+            UpdateIcomStatus(true);
             if (_comPort.StartsWith("ENET", StringComparison.OrdinalIgnoreCase))
             {
                 int? exceptionPort = null;
@@ -1201,7 +1202,6 @@ namespace CarSimulator
                         }
                     }
 
-                    UpdateIcomStatus(true);
                     UdpConnect();
                     UdpDoIpConnect();
                     SrvLocConnect();
@@ -2584,11 +2584,6 @@ namespace CarSimulator
         {
             lock(_networkChangeLock)
             {
-                if (_bmwTcpChannels.Count == 0)
-                {
-                    return;
-                }
-
                 try
                 {
                     IPAddress ipIcomDhcp = IPAddress.Parse(IcomDhcpAddress);
