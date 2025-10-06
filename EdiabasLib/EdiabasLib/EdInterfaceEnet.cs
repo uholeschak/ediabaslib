@@ -5271,6 +5271,7 @@ namespace EdiabasLib
                 if (recLen < 18)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** Invalid NMP message length: {0}", recLen);
+                    SharedDataActive.ReconnectRequired = true;
                     return null;
                 }
 
@@ -5278,6 +5279,7 @@ namespace EdiabasLib
                     DataBuffer[8] != 0x00 || DataBuffer[9] != 0x01)
                 {
                     EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, DataBuffer, 0, recLen, "*** NMP message identifiers invalid");
+                    SharedDataActive.ReconnectRequired = true;
                     return null;
                 }
 
@@ -5288,12 +5290,14 @@ namespace EdiabasLib
                 if (channelCompare != null && channel != channelCompare.Value)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP message channel mismatch: {0} != {1}", channel, channelCompare.Value);
+                    SharedDataActive.ReconnectRequired = true;
                     return null;
                 }
 
                 if (nmpCounterCompare != null && nmpCounter != nmpCounterCompare.Value)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP message counter mismatch: {0} != {1}", nmpCounter, nmpCounterCompare.Value);
+                    SharedDataActive.ReconnectRequired = true;
                     return null;
                 }
 
@@ -5301,6 +5305,7 @@ namespace EdiabasLib
                 if (ifhCommandCompare != null && ifhCommand != ifhCommandCompare.Value)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMP message IFH command mismatch: {0} != {1}", ifhCommand, ifhCommandCompare.Value);
+                    SharedDataActive.ReconnectRequired = true;
                     return null;
                 }
 
@@ -6181,6 +6186,16 @@ namespace EdiabasLib
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (SharedDataActive.ReconnectRequired)
+            {
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
             }
 
             int timeout = RplusFunctionTimeout;
