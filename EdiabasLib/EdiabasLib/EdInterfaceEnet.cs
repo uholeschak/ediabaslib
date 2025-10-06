@@ -1710,16 +1710,17 @@ namespace EdiabasLib
                                 if ((detectedVehicles == null) || (detectedVehicles.Count < 1))
                                 {
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No RPLUS UDP response for host: {0}", hostIp);
-                                    return false;
                                 }
-
-                                if (detectedVehicles[0].ConnectionType == EnetConnection.InterfaceType.Icom &&
-                                    detectedVehicles[0].DiagPort == IcomDiagPortDefault && detectedVehicles[0].ControlPort == IcomControlPortDefault)
+                                else
                                 {
-                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Switching from RPLUS to HSFZ connection for host: {0}", hostIp);
-                                    diagRplus = false;
-                                    hostDiagPort = detectedVehicles[0].DiagPort;
-                                    hostControlPort = detectedVehicles[0].ControlPort;
+                                    if (detectedVehicles[0].ConnectionType == EnetConnection.InterfaceType.Icom &&
+                                        detectedVehicles[0].DiagPort == IcomDiagPortDefault && detectedVehicles[0].ControlPort == IcomControlPortDefault)
+                                    {
+                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Switching from RPLUS to HSFZ connection for host: {0}", hostIp);
+                                        diagRplus = false;
+                                        hostDiagPort = detectedVehicles[0].DiagPort;
+                                        hostControlPort = detectedVehicles[0].ControlPort;
+                                    }
                                 }
                             }
                         }
