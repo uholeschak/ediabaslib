@@ -5858,18 +5858,6 @@ namespace EdiabasLib
 
         private List<NmpParameter> TransNmpParameters(int timeout, int channel, EdiabasNet.IfhCommands ifhCommand, List<NmpParameter> nmpParamList = null, List<byte[]> actionBlocks = null)
         {
-            if (SharedDataActive.ReconnectRequired)
-            {
-                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TransNmpParameters Reconnecting Channel={0}, Command={1}", channel, ifhCommand);
-                InterfaceDisconnect(true);
-                if (!InterfaceConnect(true))
-                {
-                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TransNmpParameters Reconnect failed Channel={0}, Command={1}", channel, ifhCommand);
-                    SharedDataActive.ReconnectRequired = true;
-                    return null;
-                }
-            }
-
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return null;
@@ -6140,6 +6128,18 @@ namespace EdiabasLib
 
         protected EdiabasNet.ErrorCodes NmtSetParameter(byte[] parameter)
         {
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSetParameter Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSetParameter Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
@@ -6171,6 +6171,18 @@ namespace EdiabasLib
 
         protected EdiabasNet.ErrorCodes NmtSetPreface(byte[] preface)
         {
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSetPreface Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSetPreface Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
@@ -6203,6 +6215,18 @@ namespace EdiabasLib
         protected EdiabasNet.ErrorCodes NmtSendTelegram(byte[] requestData, out byte[] responseData)
         {
             responseData = null;
+
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSendTelegram Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSendTelegram Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
 
             if (SharedDataActive.TcpDiagStream == null)
             {
@@ -6242,6 +6266,18 @@ namespace EdiabasLib
 
         protected EdiabasNet.ErrorCodes NmtSendTelegramFreq(byte[] requestData)
         {
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSendTelegramFreq Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSendTelegramFreq Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
@@ -6274,6 +6310,18 @@ namespace EdiabasLib
         protected EdiabasNet.ErrorCodes NmtReqTelegramFreq(out byte[] responseData)
         {
             responseData = null;
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtReqTelegramFreq Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtReqTelegramFreq Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
@@ -6301,6 +6349,18 @@ namespace EdiabasLib
 
         protected EdiabasNet.ErrorCodes NmtStopFreqTelegram()
         {
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtStopFreqTelegram Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtStopFreqTelegram Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
             if (SharedDataActive.TcpDiagStream == null)
             {
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
