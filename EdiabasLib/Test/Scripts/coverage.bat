@@ -5,7 +5,7 @@ rem Start CarSimulator with e61.txt config first
 rem For EDIABAS set the COM port in obd.ini (max COM9)
 rem Compile solution EdiabasLib as Debug first.
 rem When using ICOM use LAN connection and allocate manually
-rem Arguments: <test type:lib|apilib|ediabas> <interface: ENET|STD:OBD|RPLUS:ICOM_P:Remotehost=192.168.201.2;Port=6801> <port: COM4>
+rem Arguments: <test type:lib|apilib|ediabas> <interface: ENET|STD:OBD|"RPLUS:ICOM_P:Remotehost=192.168.201.2;Port=6801"> <port: COM4>
 
 set "BATPATH=%~dp0"
 set "OPEN_COVER=%OPENCOVER_PATH%\OpenCover.Console.exe"
@@ -13,18 +13,19 @@ set "REPORT_GENERATOR=%REPORTGENERATOR_PATH%\ReportGenerator.exe"
 set "ECU_PATH=!BATPATH!\..\..\..\Ecu"
 set "ECU_TEST_PATH=!BATPATH!\..\Ecu"
 set "REPORTS_PATH=!BATPATH!\Reports"
-if "%2"=="" (
-set IFH=STD:OBD
+
+if "%~2"=="" (
+set "IFH=STD:OBD"
 ) else (
-set IFH=%2
+set "IFH=%~2"
 )
-if "%3"=="" (
-set COMPORT=COM4
+if "%~3"=="" (
+set "COMPORT=COM4"
 ) else (
-set COMPORT=%3
+set "COMPORT=%~3"
 )
 
-if "%1"=="lib" (
+if /i "%~1"=="lib" (
 set "EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\net48\EdiabasTest.exe"
 set "OUTFILE=output_lib.log"
 rem set ADD_ARGS=-p !COMPORT! -o "!OUTFILE!" -a -c
@@ -34,7 +35,7 @@ set FILTERS=+[EdiabasLib]EdiabasLib.EdiabasNet*
 set COVERAGE=1
 goto argsok
 )
-if "%1"=="apilib" (
+if /i "%~1"=="apilib" (
 set "EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\net48\EdiabasLibCall.exe"
 set OUTFILE=output_apilib.log
 set ADD_ARGS=-o !OUTFILE! --ifh="!IFH!" --device="_" -a -c
@@ -44,11 +45,13 @@ set FILTERS=+[EdiabasLib]EdiabasLib.EdiabasNet* +[apiNET32]*
 set COVERAGE=1
 goto argsok
 )
-if "%1"=="ediabas" (
+if /i "%~1"=="ediabas" (
 set "EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\net48\EdiabasCall.exe"
 set "OUTFILE=output_ediabas.log"
-set ADD_ARGS=-o "!OUTFILE!" --ifh="!IFH!" --device="_" -a -c
-set ADD_ARGS=!ADD_ARGS! --cfg="RemoteHost=127.0.0.1"
+set "ADD_ARGS=-o "!OUTFILE!" --ifh="!IFH!" --device="_" -a -c"
+if /i "%~2"=="ENET" (
+    set ADD_ARGS=!ADD_ARGS! --cfg="RemoteHost=127.0.0.1"
+)
 set FILTERS=-[*]*
 set COVERAGE=0
 goto argsok
@@ -59,9 +62,13 @@ echo examples:
 echo coverage lib ENET
 echo coverage apilib STD:OBD COM4
 echo coverage ediabas ENET
+echo coverage ediabas "RPLUS:ICOM_P:Remotehost=192.168.201.2;Port=6801"
 goto done
 
 :argsok
+echo Executable: !EDIABAS_TEST!
+echo Args: !ADD_ARGS!
+
 if exist "!OUTFILE!" del "!OUTFILE!"
 "%OPEN_COVER%" "-output:results1_1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\d_motor.grp\" -j \"_VERSIONINFO\" -j \"_JOBS\" -j \"_JOBCOMMENTS#FS_LESEN_DETAIL\" -j \"_ARGUMENTS#STATUS_MESSWERTBLOCK_LESEN\" -j \"_RESULTS#FS_LESEN_DETAIL\" -j \"_TABLES\" -j \"_TABLE#KONZEPT_TABELLE\" -j \"_TABLE#LIEFERANTEN\" -j \"_TABLE#MISSING\" -j \"_TABLE\" -j \"FS_LESEN\" -j \"FS_LESEN_DETAIL#0x4232#F_ART_ANZ;F_UW_ANZ\" -j \"FS_LESEN_DETAIL#0x4232#F_art_anz;F_uw_anz\" -j \"STATUS_RAILDRUCK_IST##STAT_RAILDRUCK_IST_WERT\" -j \"STATUS_MOTORTEMPERATUR##STAT_MOTORTEMPERATUR_WERT\" -j \"STATUS_LMM_MASSE##STAT_LMM_MASSE_WERT\" -j \"STATUS_MOTORDREHZAHL\" -j \"STATUS_SYSTEMCHECK_PM_INFO_1\" -j \"STATUS_SYSTEMCHECK_PM_INFO_2\" -j \"STATUS_MESSWERTBLOCK_LESEN#JA;IUBAT;ITKUM;CTSCD_tClntLin;ITKRS;ILMKG;ILMMG;SLMMG;ITUMG;IPLAD;SPLAD;ITLAL;IPUMG;IPRDR;SPRDR;ITAVO;ITAVP1;IPDIP;IDSLRE;IREAN;EGT_st;ISRBF;ISOED\""
 "%OPEN_COVER%" "-output:results1_2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\d_motor.grp\" -j \"IDENT\" -j \"STATUS_REGENERATION_CSF\""
