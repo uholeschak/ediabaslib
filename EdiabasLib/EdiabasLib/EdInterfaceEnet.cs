@@ -120,7 +120,7 @@ namespace EdiabasLib
                 if (IsRplus)
                 {
                     sb.Append(":");
-                    sb.Append(ProtocolIcomP);
+                    sb.Append(ProtocolRplus);
                 }
                 else if (isDoIp)
                 {
@@ -721,7 +721,7 @@ namespace EdiabasLib
         public const string AutoIpAll = ":all";
         public const string ProtocolHsfz = "HSFZ";
         public const string ProtocolDoIp = "DoIP";
-        public const string ProtocolIcomP = "ICOM_P";
+        public const string ProtocolRplus = "RPLUS";
         public const string DoIpSecurityDir = "Security";
         public const string DoIpS29Dir = "S29";
         public const string DoIpCertificatesDir = "Certificates";
@@ -1687,7 +1687,7 @@ namespace EdiabasLib
                                 hostPos++;
                                 connectionType = EnetConnection.InterfaceType.DirectDoIp;
                             }
-                            else if (string.Compare(hostParts[hostPos], ProtocolIcomP, StringComparison.OrdinalIgnoreCase) == 0)
+                            else if (string.Compare(hostParts[hostPos], ProtocolRplus, StringComparison.OrdinalIgnoreCase) == 0)
                             {
                                 protocolSpecified = true;
                                 hostPos++;
