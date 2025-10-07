@@ -1219,7 +1219,8 @@ namespace AssemblyPatcher
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 3].OpCode != OpCodes.Ret)
+                                        if ((instructions[index + 3].OpCode != OpCodes.Nop) &&
+                                            (instructions[index + 3].OpCode != OpCodes.Ret))
                                         {
                                             continue;
                                         }
