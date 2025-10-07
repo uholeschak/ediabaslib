@@ -1219,10 +1219,20 @@ namespace AssemblyPatcher
                                         {
                                             continue;
                                         }
-                                        if ((instructions[index + 3].OpCode != OpCodes.Nop) &&
-                                            (instructions[index + 3].OpCode != OpCodes.Ret))
+
+                                        if (instructions[index + 3].OpCode == OpCodes.Nop)
                                         {
-                                            continue;
+                                            if (instructions[index + 4].OpCode != OpCodes.Ret)
+                                            {
+                                                continue;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (instructions[index + 3].OpCode != OpCodes.Ret)
+                                            {
+                                                continue;
+                                            }
                                         }
 
                                         Console.WriteLine("File.Create found at index: {0}", index);
