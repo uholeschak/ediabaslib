@@ -4,7 +4,8 @@ SETLOCAL EnableDelayedExpansion
 rem Start CarSimulator with e61.txt config first
 rem For EDIABAS set the COM port in obd.ini (max COM9)
 rem Compile solution EdiabasLib as Debug first.
-rem Arguments: <test type:lib|apilib|ediabas> <interface: ENET|STD:OBD> <port: COM4>
+rem When using ICOM use LAN connection and allocate manually
+rem Arguments: <test type:lib|apilib|ediabas> <interface: ENET|STD:OBD|RPLUS:ICOM_P:Remotehost=192.168.201.2;Port=6801> <port: COM4>
 
 set "BATPATH=%~dp0"
 set "OPEN_COVER=%OPENCOVER_PATH%\OpenCover.Console.exe"
