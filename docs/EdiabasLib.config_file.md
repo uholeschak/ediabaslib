@@ -63,8 +63,9 @@ When using ELM327 adapters append `;ELM327` after the Bluetooth address to speci
 For adapters that simply send data without modification append `;RAW`.
 
 ## Bluetooth (PC)
-It's possible to use the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) also with a PC. When connecting the adapter with the PC two serial COM ports are created (incoming and outgoing).
-To use the adapter specify `STD:OBD` for the `interface` and `BLUETOOTH:<outgoing COM port>` or `BLUETOOTH:<device address>` for `ObdComPort`.  
+It's possible to use the [Replacement firmware for ELM327](Replacement_firmware_for_ELM327.md) also with a PC.  
+Set `ObdComPort` to `BLUETOOTH:<Bluetooth device address>#<Bluetooth PIN>` for EDR or `BLUETOOTH:<Bluetooth device address>#BLE` for BLE.  
+Using a Bluetooth COM port is not recommended any more, remove the COM ports before using the Bluetooth interface.  
 The recommended way for setting up the configuration is to use the [EdiabasLibConfigTool](Replacement_firmware_for_ELM327.md#use-the-adapter-with-inpa-tool32-or-ista-d).
 
 ## WiFi
