@@ -65,14 +65,14 @@ namespace PsdzClient.Programming
 
         string BnTnName { get; }
 
-        //[Obsolete("use BusCons instead")]
+        // [UH] [Obsolete("use BusCons instead")]
         IList<Bus> BusConnections { get; }
 
         IList<IBusObject> BusCons { get; }
 
         IList<string> BusConnectionsAsString { get; }
 
-        //[Obsolete("use DiagBus instead")]
+        // [UH] [Obsolete("use DiagBus instead")]
         Bus DiagnosticBus { get; }
 
         IBusObject DiagBus { get; }
