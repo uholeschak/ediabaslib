@@ -658,11 +658,11 @@ namespace PsdzClient.Core.Container
             }
             if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
             {
-                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
+                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);  // [UH] logging removed
             }
             if (!isDoIP)
             {
-                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
+                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);  // [UH] logging removed
             }
             return false;
         }
