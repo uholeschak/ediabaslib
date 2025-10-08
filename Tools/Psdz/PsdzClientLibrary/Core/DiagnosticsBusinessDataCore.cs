@@ -6,6 +6,7 @@ using System.Globalization;
 
 namespace PsdzClient.Core
 {
+    // ToDo: Check on update
     public class DiagnosticsBusinessDataCore
     {
         private static readonly HashSet<string> IBusPkw = new HashSet<string> { "R050", "E085", "E083" };
@@ -61,7 +62,6 @@ namespace PsdzClient.Core
 
         protected static DateTime DTimeF01Lci => DateTime.ParseExact("01.07.2013", "dd.MM.yyyy", new CultureInfo("de-DE"));
 
-        // ToDo: Check on update
         public BordnetType GetBordnetType(string baureihenverbund, string prodart, string ereihe, ILogger logger)
         {
             string text = baureihenverbund?.ToUpperInvariant();
@@ -117,7 +117,6 @@ namespace PsdzClient.Core
             return BordnetType.UNKNOWN;
         }
 
-        // ToDo: Check on update
         public string GetMainSeriesSgbd(IIdentVehicle vecInfo)
         {
             switch (vecInfo.BordnetType)
@@ -139,7 +138,6 @@ namespace PsdzClient.Core
             }
         }
 
-        // ToDo: Check on update
         private string GetMainSeriesSgbdMotorrad(IReactorVehicle reactorVehicle, IIdentVehicle vecInfo)
         {
             switch (vecInfo.BordnetType)
@@ -148,19 +146,18 @@ namespace PsdzClient.Core
                 case BordnetType.BNK01X_MOTORBIKE:
                     return "MRK24";
                 case BordnetType.BN2020_MOTORBIKE:
-                {
-                    if (MotorradBaureihenverbundMap.TryGetValue(reactorVehicle.Baureihenverbund, out var value))
                     {
-                        return value;
+                        if (MotorradBaureihenverbundMap.TryGetValue(reactorVehicle.Baureihenverbund, out var value))
+                        {
+                            return value;
+                        }
+                        return "X_X001";
                     }
-                    return "X_X001";
-                }
                 default:
                     return "-";
             }
         }
 
-        // ToDo: Check on update
         private string GetMainSeriesSgbdPkw(IReactorVehicle reactorVehicle, IIdentVehicle vecInfo)
         {
             string text = reactorVehicle.Produktlinie?.ToUpperInvariant();
@@ -187,7 +184,6 @@ namespace PsdzClient.Core
             return "F01";
         }
 
-        // ToDo: Check on update
         public string GetMainSeriesSgbdAdditional(IIdentVehicle vecInfo, ILogger logger)
         {
             logger.Info(logger.CurrentMethod(), "Entering GetMainSeriesSgbdAdditional");
