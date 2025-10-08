@@ -27,6 +27,7 @@ If not specified, the subdirectory `Trace` will be used. If the the subdirectory
 * `EnetDiagnosticPort`, `DiagnosticPort`: Diagnostic port for HSFZ protocol, standard port is `6801`.
 * `EnetDoIPPort`, `DoIPPort`: Port for DoIP protocol, standard port is `13400`
 * `EnetTimeoutConnect`, `TimeoutConnect`: Connect timeout for ENET protocol, default is `5000`
+* `IcomEnetRedirect_<name=ICOM_P>`: 1=Enable redirect RPLUS to HSFZ protocol if HSFZ has been detected by ICOM. Default is 1 if name is `ICOM_P` and port `6801`.
 
 When using BMW ICOM, change the values of `EnetControlPort` and `EnetDiagnosticPort` to the output from the BMW ICOM web interface line:  
 Example: `Diag Addr: 0x10 Diagnostic Port: 50160 Control Port: 50161`  
