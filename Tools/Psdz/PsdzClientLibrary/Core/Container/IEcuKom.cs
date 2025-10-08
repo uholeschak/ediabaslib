@@ -4,6 +4,7 @@ using PsdzClient.Contracts;
 
 namespace PsdzClient.Core.Container
 {
+    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuKom : IEcuKomApi
     {
