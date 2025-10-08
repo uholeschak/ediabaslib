@@ -4,7 +4,8 @@ The `EdiabasLib.config` file is a replacement for the standard `EDIABAS.INI` fil
 The following properties could be specified in this file:
 
 ## Standard properties
-* `Interface`: Interface to use: _STD:OBD_, _ADS_ (ADS operates also with FTDI USB converter) or _ENET_.
+* `Interface`: Interface to use: _STD:OBD_, _ADS_ (ADS operates also with FTDI USB converter) _ENET_ or _RPLUS_.  
+The _RPLUS_ IFH format is: `RPLUS:<name default=ICOM_P>:Remotehost=<ip address>;Port=<port default=6801>`
 * `ApiTrace`: API debug level (0..1)
 * `IfhTrace`: Interface debug level (0..3)
 * `TraceBuffering`: 1=Enable buffering of API trace files
