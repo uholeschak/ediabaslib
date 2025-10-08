@@ -882,7 +882,7 @@ namespace PsdzClient.Core.Container
                     if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection() && sec4DiagCertificateState == Sec4DiagCertificateState.NotYetExpired)
                     {
                         TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
-                        //interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
+                        // [UH] interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
                         ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_007", TYPES.Sec4Diag);
                         Log.Info(method, "Code: SEC4DIAG_007");
                         boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
@@ -911,7 +911,7 @@ namespace PsdzClient.Core.Container
                                 else
                                 {
                                     TimeSpan subCAZertifikateRemainingTime2 = GetSubCAZertifikateRemainingTime();
-                                    //interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.SubCaBackendErrorButTokenStillValid", subCAZertifikateRemainingTime2.Days).Localize());
+                                    // [UH] interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.SubCaBackendErrorButTokenStillValid", subCAZertifikateRemainingTime2.Days).Localize());
                                     Log.Info(method, "Code: SEC4DIAG_006");
                                     ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_006", TYPES.Sec4Diag);
                                     boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
