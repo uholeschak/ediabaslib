@@ -48,7 +48,7 @@ The standard ICOM configuration page could be found at: `http://XXXX:58000` (no 
 * `ObdKeepConnectionOpen`: 0=Close the OBD transport (Bluetooth SPP / custom Wi-Fi) after each job (default),  
   1=Keep the transport connection open across jobs.  
   Useful for repeated polling or batch jobs to reduce reconnect delays. May prevent other apps from using the adapter while open and can cause stability issues with some devices.
-* `IcomEnetRedirect_<name=ICOM_P>`: 1=Enable redirect RPLUS to HSFZ protocol if HSFZ has been detected by ICOM. Default is 1 if name is `ICOM_P` and port `6801`.
+* `IcomEnetRedirect_<name=ICOM_P>`: 1=Enable redirect `RPLUS` to `HSFZ` protocol if `HSFZ` has been detected by ICOM. Default is 1 if name is `ICOM_P` and port `6801`.
 
 ## FTDI D2XX driver properties
 Android supports access to FTDI USB D-CAN/K-Line adapters directly. For the PC platform use the COM port to access the adapter.  
