@@ -313,26 +313,21 @@ namespace BMW.Rheingold.Psdz.Client
         }
 
         // [UH] from App.ClearIstaPIDsFile
+        // ToDo: Check on update
         public static void ClearIstaPIDsFile()
         {
             try
             {
-                Process[] processesByName = Process.GetProcessesByName(PsdzServiceHostProcessName);
-                if (processesByName.Length > 0)
+                if (!Directory.Exists(Path.GetDirectoryName(istaPIDfilePath)))
                 {
-                    Logger.Info($"PsdzInstances file {istaPIDfilePath} not cleared, active processes: {processesByName.Length}");
-                    return;
+                    Directory.CreateDirectory(Path.GetDirectoryName(istaPIDfilePath));
                 }
-
-                if (File.Exists(istaPIDfilePath))
+                if (!File.Exists(istaPIDfilePath))
                 {
-                    File.Delete(istaPIDfilePath);
-                    Logger.Info($"PsdzInstances file {istaPIDfilePath} successfully cleared!");
+                    File.Create(istaPIDfilePath).Close();
                 }
-                else
-                {
-                    Logger.Info($"PsdzInstances file {istaPIDfilePath} not present");
-                }
+                File.WriteAllText(istaPIDfilePath, string.Empty);
+                Log.Info(Log.CurrentMethod(), "PsdzInstances file successfully cleared!");
             }
             catch (Exception e)
             {
