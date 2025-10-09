@@ -1,4 +1,4 @@
-﻿namespace PsdzClientLibrary
+﻿namespace PsdzClient.Core
 {
     public class DataHolderItem
     {

@@ -10,6 +10,7 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
+    // ToDo: Check on update
     public class PsdzConfig
     {
         public string PsdzServiceHostLogFilePath { get; }
@@ -24,6 +25,7 @@ namespace PsdzClient.Programming
 
         public PsdzServiceArgs PsdzServiceArgs { get; }
 
+        // [UH] modified
         public PsdzConfig(string istaFolder, string dealerId)
         {
             string psdzHostSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\hostx64" : @"PSdZ\host";
@@ -66,12 +68,13 @@ namespace PsdzClient.Programming
             psdzServiceArgs.PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
             psdzServiceArgs.EdiabasBinPath = Path.Combine(istaFolder, @"Ediabas\BIN");
             psdzServiceArgs.IsTestRun = (isTestRun.HasValue ? isTestRun.Value : false);
-            psdzServiceArgs.IdleTimeout = ConfigSettings.getConfigint("BMW.Rheingold.Programming.PsdzService.HostIdleTimeout", 10000);
+            psdzServiceArgs.IdleTimeout = ConfigSettings.getConfigint("BMW.Rheingold.Programming.PsdzService.HostIdleTimeout", 10000);  // [UH] timeout modified
             psdzServiceArgs.ClientConfigArgs = new ClientConfigArgs();
             psdzServiceArgs.ClientConfigArgs.DealerID = dealerId;
             return psdzServiceArgs;
         }
 
+        // [UH] modified
         private static string[] GetPsdzJvmOptions(string psdzBinaryPath, string psdzLogFilePath)
         {
             int num = 1024;
