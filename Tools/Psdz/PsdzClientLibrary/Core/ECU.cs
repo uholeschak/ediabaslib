@@ -157,6 +157,8 @@ namespace PsdzClient.Core
         private bool eCU_ASSEMBLY_CONFIRMEDField;
 
         private IEcuStatusInfo statusInfo;
+        public GenerationType Generation { get; set; }
+
 #if false
         [XmlIgnore]
         IXepEcuVariants IIdentEcu.XepEcuVariant
@@ -442,6 +444,9 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         public IEcuPdxInfo EcuPdxInfo { get; set; }
+
+        [XmlIgnore]
+        public string EcuFullName { get; set; }
 
         [XmlIgnore]
         public bool IsSmartActuator { get; set; }

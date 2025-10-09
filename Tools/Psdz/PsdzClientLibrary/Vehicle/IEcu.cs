@@ -55,6 +55,14 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
+    public enum GenerationType
+    {
+        Classic,
+        Next,
+        Unknown
+    }
+
+
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum typeDiagProtocoll
     {
@@ -67,6 +75,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcu : INotifyPropertyChanged, IIdentEcu
     {
+        GenerationType Generation { get; }
+
         IEnumerable<IAif> AIF { get; }
 
         bool AIF_SUCCESSFULLY { get; }
@@ -199,6 +209,12 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         //ILcSwitchList LCSwitchList { get; set; }
 
+        bool IsSmartActuator { get; }
+
+        IEcuPdxInfo EcuPdxInfo { get; }
+
+        string EcuFullName { get; set; }
+
         //IDtc GetDTCById(decimal id);
 
         string GetNewestZusbauNoFromAif();
@@ -213,7 +229,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool IsVirtualRootOrVirtualBusCheck();
 
-        //IDtc getDTCbyF_ORT(int F_ORT);
+        //IDtc getDTCbyF_ORT(int f_ORT);
 
         string LogEcu();
     }
