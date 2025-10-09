@@ -2,6 +2,7 @@
 
 namespace PsdzClient.Core
 {
+    // ToDo: Check on update
     public interface IIdentEcu
     {
         string ProgrammingVariantName { get; set; }

@@ -72,6 +72,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
+    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcu : INotifyPropertyChanged, IIdentEcu
     {
