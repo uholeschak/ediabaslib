@@ -814,6 +814,7 @@ namespace PsdzClient.Core
             }
         }
 
+        // [UH] modified
         private static PsdzDatabase.BordnetsData GetBordnetXmlFromDatabase(Vehicle vecInfo)
         {
             Log.Info(Log.CurrentMethod(), "Reading bordnet configuration from the database");
@@ -847,6 +848,7 @@ namespace PsdzClient.Core
             return null;
         }
 
+        // [UH] cleaned
         private static void ValidateIfDiagnosticsHasValidLicense()
         {
         }
