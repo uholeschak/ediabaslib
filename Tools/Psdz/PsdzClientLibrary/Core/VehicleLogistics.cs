@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BmwFileReader;
-using PsdzClient.Core;
-using PsdzClient.Core.Container;
 using PsdzClient.Utility;
-using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
+    // ToDo: Check on update
     public class VehicleLogistics
     {
         private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
