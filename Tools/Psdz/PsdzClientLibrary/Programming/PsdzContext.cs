@@ -2,17 +2,13 @@
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
-using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using BmwFileReader;
 using PsdzClient.Core;
-using PsdzClient.Core.Container;
-using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,7 +17,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace PsdzClient.Programming
 {
@@ -797,6 +792,7 @@ namespace PsdzClient.Programming
 
             VecInfo.BatteryType = PsdzDatabase.ResolveBatteryType(VecInfo);
             VecInfo.WithLfpBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP;
+            VecInfo.WithLfpNCarBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP_NCAR;
             VecInfo.MainSeriesSgbd = DetectVehicle.GroupSgbd;
 
             // DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway

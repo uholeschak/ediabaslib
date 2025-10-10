@@ -1,9 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient.Contracts;
 using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -11,16 +9,14 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using PsdzClient.Programming;
 
 namespace PsdzClient.Core
 {
-	public class Vehicle : typeVehicle, IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle
+    // ToDo: Check on update
+    public class Vehicle : typeVehicle, IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle
     {
         public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";
 
@@ -52,7 +48,9 @@ namespace PsdzClient.Core
 
         private bool withLfpBattery;
 
-        private PsdzDatabase.BatteryEnum batteryType;
+        private bool withLfpNCarBattery;
+
+        private PsdzDatabase.BatteryEnum batteryType;   // [UH] namespace changed
 
         private bool isClosingOperationActive;
 
@@ -110,9 +108,11 @@ namespace PsdzClient.Core
 
         private string sportausfuehrung;
 
-        private PsdzDatabase.BordnetsData bordnetsData;
+        private PsdzDatabase.BordnetsData bordnetsData;     // [UH] namespace changed
 
         private VehicleClassification classification;
+
+        private IVehicleProfileChecksum vpc;
 
         // [UH] local reactor
         public Reactor Reactor { get; private set; }
@@ -888,6 +888,22 @@ namespace PsdzClient.Core
             }
         }
 
+        public bool WithLfpNCarBattery
+        {
+            get
+            {
+                return withLfpNCarBattery;
+            }
+            set
+            {
+                if (withLfpNCarBattery != value)
+                {
+                    withLfpNCarBattery = value;
+                    OnPropertyChanged("WithLfpNCarBattery");
+                }
+            }
+        }
+
         [XmlIgnore]
         public TransmissionDataType TransmissionDataType { get; private set; } = new TransmissionDataType();
 
@@ -1048,6 +1064,19 @@ namespace PsdzClient.Core
             set
             {
                 Classification = (VehicleClassification)value;
+            }
+        }
+
+        [XmlIgnore]
+        public IVehicleProfileChecksum VPC
+        {
+            get
+            {
+                return vpc;
+            }
+            set
+            {
+                vpc = value;
             }
         }
 
