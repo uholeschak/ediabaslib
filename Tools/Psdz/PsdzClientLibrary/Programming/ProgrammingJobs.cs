@@ -3346,10 +3346,11 @@ namespace PsdzClient.Programming
 
                     bool lfpBattery = PsdzContext.VecInfo.WithLfpBattery;
                     bool lfpNCarBattery = PsdzContext.VecInfo.WithLfpNCarBattery;
-                    double minVoltageError = lfpBattery || lfpNCarBattery ? MinBatteryVoltageErrorLfp : MinBatteryVoltageErrorPb;
-                    double minVoltageWarn = lfpBattery || lfpNCarBattery ? MinBatteryVoltageWarnLfp : MinBatteryVoltageWarnPb;
-                    double maxVoltageWarn = lfpBattery || lfpNCarBattery ? MaxBatteryVoltageWarnLfp : MaxBatteryVoltageWarnPb;
-                    double maxVoltageError = lfpBattery || lfpNCarBattery ? MaxBatteryVoltageErrorLfp : MaxBatteryVoltageErrorPb;
+                    bool isLpf = lfpBattery || lfpNCarBattery;
+                    double minVoltageError = isLpf ? MinBatteryVoltageErrorLfp : MinBatteryVoltageErrorPb;
+                    double minVoltageWarn = isLpf ? MinBatteryVoltageWarnLfp : MinBatteryVoltageWarnPb;
+                    double maxVoltageWarn = isLpf ? MaxBatteryVoltageWarnLfp : MaxBatteryVoltageWarnPb;
+                    double maxVoltageError = isLpf ? MaxBatteryVoltageErrorLfp : MaxBatteryVoltageErrorPb;
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: LFP={0}, MinErr={1}, MinWarn={2}, MaxWarn={3}, MaxErr={4}",
                         lfpBattery, minVoltageError, minVoltageWarn, maxVoltageWarn, maxVoltageError);
 
