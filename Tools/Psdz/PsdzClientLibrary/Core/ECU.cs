@@ -157,6 +157,7 @@ namespace PsdzClient.Core
         private bool eCU_ASSEMBLY_CONFIRMEDField;
 
         private IEcuStatusInfo statusInfo;
+
         public GenerationType Generation { get; set; }
 
 #if false
