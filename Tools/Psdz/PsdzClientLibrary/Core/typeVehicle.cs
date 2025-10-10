@@ -1,17 +1,16 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
-	public abstract class typeVehicle : INotifyPropertyChanged
-	{
+    // ToDo: Check on update
+    public abstract class typeVehicle : INotifyPropertyChanged
+    {
         private string vIN17Field;
 
         private string serialBodyShellField;
@@ -19,8 +18,6 @@ namespace PsdzClient.Core
         private string serialGearBoxField;
 
         private string serialEngineField;
-
-        //private string batteryInfo;
 
         private BrandName? brandNameField;
 
@@ -86,15 +83,7 @@ namespace PsdzClient.Core
 
         private string antriebField;
 
-        private bool productionDateFieldSpecified;
-
         private DateTime? firstRegistrationField;
-
-        //private string modelljahrField;
-
-        //private string modellmonatField;
-
-        //private string modelltagField;
 
         private string baustandsJahrField;
 
@@ -124,6 +113,8 @@ namespace PsdzClient.Core
 
         //private TestPlanType testplanField;
 
+        //private TestPlanCache testPlanCache;
+
         private bool simulatedPartsField;
 
         private VCIDevice vCIField;
@@ -131,8 +122,6 @@ namespace PsdzClient.Core
         private VCIDevice mIBField;
 
         //private ObservableCollection<technicalCampaignType> technicalCampaignsField;
-
-        private string leistungField;
 
         private string leistungsklasseField;
 
@@ -173,8 +162,6 @@ namespace PsdzClient.Core
         private string aELeistungsklasseField;
 
         private string aEUeberarbeitungField;
-
-        //private string kraftstoffartEinbaulageField;
 
         //private ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX> perceivedSymptomsField;
 
@@ -277,63 +264,28 @@ namespace PsdzClient.Core
 
         public string SoftwareId { get; set; }
 
-        public typeVehicle(ClientContext clientContext)
+        public VCIDevice VCI
         {
-            this._clientContext = clientContext;
-            //perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
-            installedAdaptersField = new ObservableCollection<decimal>();
-            //combinedFaultsField = new ObservableCollection<DTC>();
-            //diagCodesField = new ObservableCollection<typeDiagCode>();
-            //serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
-            //technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
-            //mIBField = new VCIDevice();
-            vCIField = new VCIDevice(clientContext);
-            //testplanField = new TestPlanType();
-            //historyInfoObjectsField = new ObservableCollection<InfoObject>();
-            faField = new FA();
-            fFMField = new ObservableCollection<FFMResult>();
-            eMotorField = new EMotor();
-            heatMotorsField = new List<HeatMotor>();
-            genericMotorField = new GenericMotor();
-            //cBSField = new ObservableCollection<typeCBSInfo>();
-            selectedECUField = new ECU();
-            //zFSField = new ObservableCollection<ZFSResult>();
-            eCUField = new ObservableCollection<ECU>();
-            zFS_SUCCESSFULLYField = false;
-            prodartField = "P";
-            bNTypeField = BNType.UNKNOWN;
-            chassisTypeField = ChassisType.UNKNOWN;
-            gwszField = null;
-            gwszUnitField = GwszUnitType.km;
-            simulatedPartsField = false;
-            leistungsklasseField = "-";
-            connectImageField = "grafik/gif/icon_offl_ACTIV.gif";
-            connectIMIBImageField = "grafik/gif/icon_imib_INACTIV.gif";
-            connectIPStateField = VisibilityType.Visible;
-            connectIMIBIPStateField = VisibilityType.Visible;
-            connectStateField = VisibilityType.Visible;
-            connectIMIBStateField = VisibilityType.Visible;
-            status_FunctionStateField = StateType.idle;
-            pADVehicleField = false;
-            pwfStateField = -1;
-            applicationVersionField = "0.0.1";
-            fASTAAlreadyDoneField = false;
-            vehicleIdentLevelField = IdentificationLevel.None;
-            vehicleIdentAlreadyDoneField = false;
-            vehicleShortTestAsSessionEntryField = false;
-            pannenfallField = false;
-            selectedDiagBUSField = 0;
-            dOMRequestFailedField = false;
-            ssl2RequestFailedField = false;
-            tecCampaignsRequestFailedField = false;
-            repHistoryRequestFailedField = false;
-            kL15OverrideVoltageCheckField = false;
-            kL15FaultILevelAlreadyAlertedField = false;
-            gWSZReadoutSuccessField = false;
-            refSchemaField = "http://www.bmw.com/Rheingold/Vehicle.xsd";
-            versionField = "3.42.20.10700";
-            dealerSessionProperties = new List<DealerSessionProperty>();
-            //backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
+            get
+            {
+                return vCIField;
+            }
+            set
+            {
+                if (vCIField != null)
+                {
+                    if (!vCIField.Equals(value))
+                    {
+                        vCIField = value;
+                        OnPropertyChanged("VCI");
+                    }
+                }
+                else
+                {
+                    vCIField = value;
+                    OnPropertyChanged("VCI");
+                }
+            }
         }
 
         public string VIN17
@@ -424,15 +376,7 @@ namespace PsdzClient.Core
             }
             set
             {
-                if (serialBodyShellField != null)
-                {
-                    if (!serialBodyShellField.Equals(value))
-                    {
-                        serialBodyShellField = value;
-                        OnPropertyChanged("SerialBodyShell");
-                    }
-                }
-                else
+                if (serialBodyShellField != value)
                 {
                     serialBodyShellField = value;
                     OnPropertyChanged("SerialBodyShell");
@@ -465,15 +409,7 @@ namespace PsdzClient.Core
             }
             set
             {
-                if (serialEngineField != null)
-                {
-                    if (!serialEngineField.Equals(value))
-                    {
-                        serialEngineField = value;
-                        OnPropertyChanged("SerialEngine");
-                    }
-                }
-                else
+                if (serialEngineField != value)
                 {
                     serialEngineField = value;
                     OnPropertyChanged("SerialEngine");
@@ -772,32 +708,6 @@ namespace PsdzClient.Core
                 {
                     ereiheField = value;
                     OnPropertyChanged("Ereihe");
-                }
-            }
-        }
-
-        public string Gsgbd
-        {
-            get
-            {
-                return mainSeriesSgbdField;
-            }
-            set
-            {
-                if (mainSeriesSgbdField != null)
-                {
-                    if (!mainSeriesSgbdField.Equals(value))
-                    {
-                        mainSeriesSgbdField = value;
-                        OnPropertyChanged("Gsgbd");
-                        OnPropertyChanged("MainSeriesSgbd");
-                    }
-                }
-                else
-                {
-                    mainSeriesSgbdField = value;
-                    OnPropertyChanged("Gsgbd");
-                    OnPropertyChanged("MainSeriesSgbd");
                 }
             }
         }
@@ -1141,21 +1051,7 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
-        public bool ProductionDateSpecified
-        {
-            get
-            {
-                return productionDateFieldSpecified;
-            }
-            set
-            {
-                if (!productionDateFieldSpecified.Equals(value))
-                {
-                    productionDateFieldSpecified = value;
-                    OnPropertyChanged("ProductionDateSpecified");
-                }
-            }
-        }
+        public bool ProductionDateSpecified => productionDate != default(DateTime);
 
         public DateTime? FirstRegistration
         {
@@ -1165,15 +1061,7 @@ namespace PsdzClient.Core
             }
             set
             {
-                if (firstRegistrationField.HasValue)
-                {
-                    if (!firstRegistrationField.Equals(value))
-                    {
-                        firstRegistrationField = value;
-                        OnPropertyChanged("FirstRegistration");
-                    }
-                }
-                else
+                if (firstRegistrationField != value)
                 {
                     firstRegistrationField = value;
                     OnPropertyChanged("FirstRegistration");
@@ -1469,6 +1357,10 @@ namespace PsdzClient.Core
                 }
             }
         }
+
+        [IgnoreDataMember]
+        [XmlIgnore]
+        public TestPlanCache TestPlanCache => testPlanCache;
 #endif
         public bool SimulatedParts
         {
@@ -1482,30 +1374,6 @@ namespace PsdzClient.Core
                 {
                     simulatedPartsField = value;
                     OnPropertyChanged("SimulatedParts");
-                }
-            }
-        }
-
-        public VCIDevice VCI
-        {
-            get
-            {
-                return vCIField;
-            }
-            set
-            {
-                if (vCIField != null)
-                {
-                    if (!vCIField.Equals(value))
-                    {
-                        vCIField = value;
-                        OnPropertyChanged("VCI");
-                    }
-                }
-                else
-                {
-                    vCIField = value;
-                    OnPropertyChanged("VCI");
                 }
             }
         }
@@ -1558,30 +1426,6 @@ namespace PsdzClient.Core
             }
         }
 #endif
-        public string Leistung
-        {
-            get
-            {
-                return leistungField;
-            }
-            set
-            {
-                if (leistungField != null)
-                {
-                    if (!leistungField.Equals(value))
-                    {
-                        leistungField = value;
-                        OnPropertyChanged("Leistung");
-                    }
-                }
-                else
-                {
-                    leistungField = value;
-                    OnPropertyChanged("Leistung");
-                }
-            }
-        }
-
         public string Leistungsklasse
         {
             get
@@ -1622,15 +1466,7 @@ namespace PsdzClient.Core
             }
             set
             {
-                if (eCTypeApprovalField != null)
-                {
-                    if (!eCTypeApprovalField.Equals(value))
-                    {
-                        eCTypeApprovalField = value;
-                        OnPropertyChanged("ECTypeApproval");
-                    }
-                }
-                else
+                if (eCTypeApprovalField != value)
                 {
                     eCTypeApprovalField = value;
                     OnPropertyChanged("ECTypeApproval");
@@ -1991,15 +1827,7 @@ namespace PsdzClient.Core
             }
             set
             {
-                if (progmanVersionField != null)
-                {
-                    if (!progmanVersionField.Equals(value))
-                    {
-                        progmanVersionField = value;
-                        OnPropertyChanged("ProgmanVersion");
-                    }
-                }
-                else
+                if (progmanVersionField != value)
                 {
                     progmanVersionField = value;
                     OnPropertyChanged("ProgmanVersion");
@@ -2457,8 +2285,25 @@ namespace PsdzClient.Core
                 }
             }
         }
-
+#if false
+        public BackendsAvailabilityIndicator BackendsAvailabilityIndicator
+        {
+            get
+            {
+                return backendsAvailabilityIndicator;
+            }
+            set
+            {
+                if (backendsAvailabilityIndicator != value)
+                {
+                    backendsAvailabilityIndicator = value;
+                    OnPropertyChanged("BackendsAvailabilityIndicator");
+                }
+            }
+        }
+#endif
         [DefaultValue(false)]
+        [XmlIgnore]
         public bool DOMRequestFailed
         {
             get
@@ -2494,6 +2339,7 @@ namespace PsdzClient.Core
         }
 
         [DefaultValue(false)]
+        [XmlIgnore]
         public bool TecCampaignsRequestFailed
         {
             get
@@ -2511,6 +2357,7 @@ namespace PsdzClient.Core
         }
 
         [DefaultValue(false)]
+        [XmlIgnore]
         public bool RepHistoryRequestFailed
         {
             get
@@ -2578,7 +2425,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public string refSchema
+        public string RefSchema
         {
             get
             {
@@ -2602,7 +2449,7 @@ namespace PsdzClient.Core
             }
         }
 
-        public string version
+        public string Version
         {
             get
             {
@@ -2641,7 +2488,6 @@ namespace PsdzClient.Core
                 }
             }
         }
-
 
         public double VehicleSystemTime
         {
@@ -2693,6 +2539,67 @@ namespace PsdzClient.Core
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        // [UH] added clientContext
+        public typeVehicle(ClientContext clientContext)
+        {
+            _clientContext = clientContext;
+            //perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
+            installedAdaptersField = new ObservableCollection<decimal>();
+            //combinedFaultsField = new ObservableCollection<DTC>();
+            //diagCodesField = new ObservableCollection<typeDiagCode>();
+            //serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
+            //technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
+            mIBField = new VCIDevice(clientContext);
+            vCIField = new VCIDevice(clientContext);
+            //testplanField = new TestPlanType();
+            //testPlanCache = new TestPlanCache();
+            //historyInfoObjectsField = new ObservableCollection<InfoObject>();
+            faField = new FA();
+            fFMField = new ObservableCollection<FFMResult>();
+            eMotorField = new EMotor();
+            heatMotorsField = new List<HeatMotor>();
+            genericMotorField = new GenericMotor();
+            //cBSField = new ObservableCollection<typeCBSInfo>();
+            selectedECUField = new ECU();
+            //zFSField = new ObservableCollection<ZFSResult>();
+            eCUField = new ObservableCollection<ECU>();
+            zFS_SUCCESSFULLYField = false;
+            prodartField = "P";
+            bNTypeField = BNType.UNKNOWN;
+            chassisTypeField = ChassisType.UNKNOWN;
+            gwszField = null;
+            gwszUnitField = GwszUnitType.km;
+            simulatedPartsField = false;
+            leistungsklasseField = "-";
+            connectImageField = "grafik/gif/icon_offl_ACTIV.gif";
+            connectIMIBImageField = "grafik/gif/icon_imib_INACTIV.gif";
+            connectIPStateField = VisibilityType.Visible;
+            connectIMIBIPStateField = VisibilityType.Visible;
+            connectStateField = VisibilityType.Visible;
+            connectIMIBStateField = VisibilityType.Visible;
+            status_FunctionStateField = StateType.idle;
+            pADVehicleField = false;
+            pwfStateField = -1;
+            applicationVersionField = "0.0.1";
+            fASTAAlreadyDoneField = false;
+            vehicleIdentLevelField = IdentificationLevel.None;
+            vehicleIdentAlreadyDoneField = false;
+            vehicleShortTestAsSessionEntryField = false;
+            pannenfallField = false;
+            selectedDiagBUSField = 0;
+            dOMRequestFailedField = false;
+            ssl2RequestFailedField = false;
+            tecCampaignsRequestFailedField = false;
+            repHistoryRequestFailedField = false;
+            kL15OverrideVoltageCheckField = false;
+            kL15FaultILevelAlreadyAlertedField = false;
+            gWSZReadoutSuccessField = false;
+            refSchemaField = "http://www.bmw.com/Rheingold/Vehicle.xsd";
+            versionField = "3.42.20.10700";
+            dealerSessionProperties = new List<DealerSessionProperty>();
+            //backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
+        }
+
         public virtual void OnPropertyChanged(string propertyName)
         {
             if (this.PropertyChanged != null)
@@ -2701,6 +2608,7 @@ namespace PsdzClient.Core
             }
         }
 
+        // [UH] added
         public ClientContext ClientContext
         {
             get { return _clientContext; }

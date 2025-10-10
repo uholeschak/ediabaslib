@@ -298,9 +298,9 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool ZFS_SUCCESSFULLY { get; }
 
-        string refSchema { get; }
+        string RefSchema { get; }
 
-        string version { get; }
+        string Version { get; }
 
         bool IsPowerSafeModeActive { get; }
 

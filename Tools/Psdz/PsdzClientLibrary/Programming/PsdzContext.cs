@@ -722,7 +722,7 @@ namespace PsdzClient.Programming
             {
                 VecInfo.ProductionDate = DateTime.ParseExact(string.Format(CultureInfo.InvariantCulture, "{0}.{1}",
                     VecInfo.Modellmonat, VecInfo.Modelljahr), "MM.yyyy", new CultureInfo("de-DE"));
-                VecInfo.ProductionDateSpecified = true;
+                // VecInfo.ProductionDateSpecified is set automatically
             }
 
             VecInfo.Ereihe = DetectVehicle.Series;
