@@ -6171,7 +6171,7 @@ namespace EdiabasLib
             }
 
             int timeout = RplusFunctionTimeout;
-            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhGetPowerState);
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhPowerSupply);
             if (paramListRec == null || paramListRec.Count < 4)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT get power supply failed");
