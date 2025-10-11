@@ -750,6 +750,8 @@ ifhConnect: request 1 block (string <sgbd>), response 1 block (int <error_code>)
 ifhOpenChannel: request 0 blocks, response 2 blocks (int <error_code>, int<channel>)
 ifhGetIfhStatus: not transmitted
 ifhInterfaceType: request 0 blocks, , response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<name>)
+ifhIgnition: request 0 blocks, , response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<voltage ulong mV>)
+ifhPowerSupply: request 0 blocks, , response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<voltage ulong mV>)
 ifhPassGetConfig: request 1 block (string <name>), response 4 blocks (int <error_code>, int<valid=1>, string<name>, config param<ifh param>)
 ifhStopFreqTelegram: request 0 blocks, response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
 ifhSetParameter: request 1 block (binary <data>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
