@@ -1380,6 +1380,18 @@ namespace EdiabasLib
             get
             {
                 EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Read ignition voltage");
+                if (SharedDataActive.DiagRplus)
+                {
+                    EdiabasNet.ErrorCodes errorCodeNmt = NmtGetIgnition(out Int32 voltage);
+                    if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        EdiabasProtected?.SetError(errorCodeNmt);
+                        return Int64.MinValue;
+                    }
+
+                    return voltage;
+                }
+
                 if (IsSimulationMode())
                 {
                     return IgnitionVoltageSimulation;
@@ -6187,6 +6199,54 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
+        protected EdiabasNet.ErrorCodes NmtGetIgnition(out Int32 voltage)
+        {
+            voltage = 0;
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetIgnition Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetIgnition Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = RplusFunctionTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhIgnition);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT get ignition failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            byte[] voltageData = paramListRec[3].GetBinary();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT get ignition invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (voltageData == null || voltageData.Length != 4)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT get ignition invalid voltage data");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            voltage = (voltageData[3] << 24) + (voltageData[2] << 16) + (voltageData[1] << 8) + voltageData[0];
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get ignition voltage: {0}", voltage);
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get ignition result: {0}", errorCode.Value);
+            return errorCode.Value;
+        }
 
         protected EdiabasNet.ErrorCodes NmtSetParameter(byte[] parameter)
         {
