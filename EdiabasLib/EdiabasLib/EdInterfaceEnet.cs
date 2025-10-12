@@ -1356,6 +1356,18 @@ namespace EdiabasLib
         {
             get
             {
+                if (SharedDataActive.DiagRplus)
+                {
+                    EdiabasNet.ErrorCodes errorCodeNmt = NmtGetKeyBytes(out byte[] keyBytes);
+                    if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        EdiabasProtected?.SetError(errorCodeNmt);
+                        return ByteArray0;
+                    }
+
+                    return keyBytes;
+                }
+
                 return ByteArray0;
             }
         }
@@ -6457,6 +6469,54 @@ namespace EdiabasLib
             }
 
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT set preface result: {0}", errorCode.Value);
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtGetKeyBytes(out byte[] keyBytes)
+        {
+            keyBytes = null;
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetKeyBytes Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetKeyBytes Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = RplusFunctionTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhRequestKeyBytes);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT get key bytes failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            keyBytes = paramListRec[3].GetBinary();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT get key bytes invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (keyBytes == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT get key bytes invalid data");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "Resp");
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get key bytes result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
