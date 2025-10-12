@@ -88,7 +88,6 @@ namespace PsdzClient
             // 
             // folderBrowserDialogIsta
             // 
-            resources.ApplyResources(this.folderBrowserDialogIsta, "folderBrowserDialogIsta");
             this.folderBrowserDialogIsta.RootFolder = System.Environment.SpecialFolder.MyComputer;
             this.folderBrowserDialogIsta.ShowNewFolderButton = false;
             // 
@@ -112,12 +111,12 @@ namespace PsdzClient
             // 
             // ipAddressControlVehicleIp
             // 
-            resources.ApplyResources(this.ipAddressControlVehicleIp, "ipAddressControlVehicleIp");
             this.ipAddressControlVehicleIp.AllowInternalTab = false;
             this.ipAddressControlVehicleIp.AutoHeight = true;
             this.ipAddressControlVehicleIp.BackColor = System.Drawing.SystemColors.Window;
             this.ipAddressControlVehicleIp.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.ipAddressControlVehicleIp.Cursor = System.Windows.Forms.Cursors.IBeam;
+            resources.ApplyResources(this.ipAddressControlVehicleIp, "ipAddressControlVehicleIp");
             this.ipAddressControlVehicleIp.Name = "ipAddressControlVehicleIp";
             this.ipAddressControlVehicleIp.ReadOnly = false;
             // 
