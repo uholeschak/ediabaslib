@@ -1364,7 +1364,12 @@ namespace EdiabasLib
         {
             get
             {
-                return ByteArray0;
+                int interfaceState = (int)EdiabasNet.IfhStatusCodes.IFHREADY;
+                return new byte[]
+                {
+                    (byte)(interfaceState & 0xFF),
+                    (byte)((interfaceState >> 8) & 0xFF)
+                };
             }
         }
 
