@@ -30,6 +30,7 @@ for example `169.254.1.10 / 255.255.0.0`.
 This is required because the vehicle will not get a DHCP address and will fall back to Auto IP address mode.  
 When using Ethernet as vehicle connection Yantex translation is not available because Android always tries to use Ethernet as internet connection (which is not available in this case).  
 
+## WiFi router
 Another solution is to use an OpenWrt WiFi router (e.g. `MT7620A`), update the firmware from the manufacturer and connect the cable to one of the LAN ports (not WAN) of the router.  
 A buck-boost 12V DC-DC converter (e.g. `DD39AJPA` from eletechsup and adjust the output voltage to 12V) is required for power supply.  
 The router has to be configured with ESSID `Deep OBD BMW` and IP address `192.168.100.1`. For encryption use `WPA2-PSK` and specify a key (The default key is `deepobdbmw`).
