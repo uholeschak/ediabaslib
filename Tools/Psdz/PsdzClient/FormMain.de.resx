@@ -5275,6 +5275,9 @@
   <data name="buttonDisconnect.Text" xml:space="preserve">
     <value>Trennen</value>
   </data>
+  <data name="buttonModILevel.Text" xml:space="preserve">
+    <value>ILevel Mod.</value>
+  </data>
   <data name="labelIstaFolder.Size" type="System.Drawing.Size, System.Drawing">
     <value>62, 13</value>
   </data>
@@ -5290,11 +5293,20 @@
   <data name="buttonVehicleSearch.Text" xml:space="preserve">
     <value>Suchen</value>
   </data>
+  <data name="buttonCreateOptions.Text" xml:space="preserve">
+    <value>Opt. Gen.</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Vorgang:</value>
+  </data>
   <data name="labelLanguage.Size" type="System.Drawing.Size, System.Drawing">
     <value>50, 13</value>
   </data>
   <data name="labelLanguage.Text" xml:space="preserve">
     <value>Sprache:</value>
+  </data>
+  <data name="buttonInternalTest.Text" xml:space="preserve">
+    <value>Int. Test</value>
   </data>
   <data name="checkBoxGenServiceModules.Size" type="System.Drawing.Size, System.Drawing">
     <value>99, 17</value>
