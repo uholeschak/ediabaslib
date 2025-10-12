@@ -100,14 +100,6 @@ namespace EdiabasLib
             }
         }
 
-        public override UInt32 InterfaceVersion
-        {
-            get
-            {
-                return 1795;
-            }
-        }
-
         public override string InterfaceName
         {
             get
