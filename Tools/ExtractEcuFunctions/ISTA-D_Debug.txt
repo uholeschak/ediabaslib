@@ -757,6 +757,7 @@ ifhPowerSupply: request 0 blocks, response 4 blocks (int <0>, int<status_code>, 
 ifhPassGetConfig: request 1 block (string <name>), response 4 blocks (int <error_code>, int<valid=1>, string<name>, config param<ifh param>)
 ifhStopFreqTelegram: request 0 blocks, response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
 ifhSendTelegramFreq: request 1 block (binary <request data>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
+IfhRequTelegramFreq: request 0 blocks, response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<response data>)
 ifhSetParameter: request 1 block (binary <data>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
 ifhSetTelPreface: request 1 block (binary <data>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
 ifhGetPowerState: not transmitted
