@@ -6636,7 +6636,7 @@ namespace EdiabasLib
             }
 
             int timeout = RplusFunctionTimeout;
-            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSendTelegram);
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhRequTelegramFreq);
             if (paramListRec == null || paramListRec.Count < 4)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT req telegram freq failed");
@@ -6649,6 +6649,11 @@ namespace EdiabasLib
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT req telegram freq invalid parameters");
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (responseData != null)
+            {
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, responseData, 0, responseData.Length, "Resp");
             }
 
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT req telegram freq result: {0}", errorCode.Value);
