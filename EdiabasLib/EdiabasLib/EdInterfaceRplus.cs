@@ -100,14 +100,6 @@ namespace EdiabasLib
             }
         }
 
-        public override string InterfaceType
-        {
-            get
-            {
-                return "RPLUS";
-            }
-        }
-
         public override UInt32 InterfaceVersion
         {
             get

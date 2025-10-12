@@ -446,7 +446,7 @@ namespace EdiabasLib
 
             public string GetString()
             {
-                if (DataType != DataTypes.String)
+                if (DataType != DataTypes.String && DataType != DataTypes.Binary)
                 {
                     return null;
                 }
@@ -1308,6 +1308,18 @@ namespace EdiabasLib
         {
             get
             {
+                if (SharedDataActive.DiagRplus)
+                {
+                    EdiabasNet.ErrorCodes errorCodeNmt = NmtGetInterfaceType(out string interfaceType);
+                    if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        EdiabasProtected?.SetError(errorCodeNmt);
+                        return string.Empty;
+                    }
+
+                    return interfaceType;
+                }
+
                 return "ENET";
             }
         }
@@ -6147,6 +6159,54 @@ namespace EdiabasLib
             }
 
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT notify config result: {0}", errorCode.Value);
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtGetInterfaceType(out string interfaceType)
+        {
+            interfaceType = string.Empty;
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetInterfaceType Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetInterfaceType Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = RplusFunctionTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhInterfaceType);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT get interface type failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            interfaceType = paramListRec[3].GetString();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT get interface type invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (interfaceType == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT get interface type invalid data");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get interface type: {0}", interfaceType);
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get interface type result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
