@@ -331,11 +331,13 @@ namespace EdiabasCall
                     if (API.apiState() == API.APIERROR)
                     {
                         _outputWriter.WriteLine(string.Format(Culture, "Error occured: 0x{0:X08} {1}", API.apiErrorCode(), API.apiErrorText()));
-                        if (!continueOnError)
+                        if (continueOnError)
                         {
-                            API.apiEnd();
-                            return 1;
+                            continue;
                         }
+
+                        API.apiEnd();
+                        return 1;
                     }
                     PrintProgress();
 
