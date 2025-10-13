@@ -2870,7 +2870,8 @@ namespace EdiabasLib
             }
             else
             {
-                Int64 portValue = interfaceClass.GetPort(arg1.GetValueData());
+                UInt32 portIndex = arg1.GetValueData() & 0xFF;
+                Int64 portValue = interfaceClass.GetPort(portIndex);
                 arg0.SetRawData((EdValueType)portValue);
             }
         }
