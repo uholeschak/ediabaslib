@@ -1217,6 +1217,10 @@ namespace EdiabasLib
             return 0;
         }
 
+        public override void SetPort(byte[] portData)
+        {
+        }
+
         public override bool Connected
         {
             get
