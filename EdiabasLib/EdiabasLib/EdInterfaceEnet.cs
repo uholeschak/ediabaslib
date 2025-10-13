@@ -6339,9 +6339,11 @@ namespace EdiabasLib
             }
 
             int timeout = RplusFunctionTimeout;
+            byte[] portBytes = new byte[5];
+            Array.Copy(portData, portBytes, Math.Min(portData.Length, 3));
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
-                new NmpParameter(portData),
+                new NmpParameter(portBytes),
             };
 
             List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetPort, paramListSend);
