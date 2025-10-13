@@ -1521,6 +1521,18 @@ namespace EdiabasLib
 
         public override Int64 GetPort(UInt32 index)
         {
+            if (SharedDataActive.DiagRplus)
+            {
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtGetPort(index, out Int32 portValue);
+                if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCodeNmt);
+                    return 0;
+                }
+
+                return portValue;
+            }
+
             return 0;
         }
 
@@ -6237,6 +6249,69 @@ namespace EdiabasLib
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get interface version: {0}", version);
 
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get interface type result: {0}", errorCode.Value);
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtGetPort(UInt32 index, out Int32 portValue)
+        {
+            portValue = 0;
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetPort Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetPort Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = RplusFunctionTimeout;
+            byte[] portIndexBytes = new[] { (byte)(index & 0xFF), (byte)((index >> 8) & 0xFF), (byte)((index >> 16) & 0xFF), (byte)((index >> 24) & 0xFF) };
+            List<NmpParameter> paramListSend = new List<NmpParameter>()
+            {
+                new NmpParameter(portIndexBytes),
+            };
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhGetPort, paramListSend);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT get port failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            byte[] portData = paramListRec[3].GetBinary();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT get port invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (portData == null || portData.Length < 2)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT get interface type invalid data");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (portData.Length >= 4)
+            {
+                portValue = (portData[3] << 24) + (portData[2] << 16) + (portData[1] << 8) + portData[0];
+            }
+            else
+            {
+                portValue = (portData[1] << 8) + portData[0];
+            }
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get port: {0}", portValue);
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get port result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 

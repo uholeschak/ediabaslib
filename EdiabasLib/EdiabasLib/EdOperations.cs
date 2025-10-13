@@ -2870,11 +2870,8 @@ namespace EdiabasLib
             }
             else
             {
-                Int64 voltage = interfaceClass.GetPort(arg1.GetValueData());
-                if (voltage != Int64.MinValue)
-                {
-                    arg0.SetRawData((EdValueType)voltage);
-                }
+                Int64 portValue = interfaceClass.GetPort(arg1.GetValueData());
+                arg0.SetRawData((EdValueType)portValue);
             }
         }
 
