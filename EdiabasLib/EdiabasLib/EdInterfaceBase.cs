@@ -718,7 +718,7 @@ namespace EdiabasLib
 
         public abstract Int64 GetPort(UInt32 index);
 
-        public abstract void SetPort(byte[] portData);
+        public abstract void SetPort(UInt32 index, UInt32 value);
 
         public abstract bool Connected { get; }
 

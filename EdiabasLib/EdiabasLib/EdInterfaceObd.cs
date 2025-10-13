@@ -1217,7 +1217,7 @@ namespace EdiabasLib
             return 0;
         }
 
-        public override void SetPort(byte[] portData)
+        public override void SetPort(UInt32 index, UInt32 value)
         {
         }
 

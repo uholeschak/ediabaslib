@@ -1536,11 +1536,11 @@ namespace EdiabasLib
             return 0;
         }
 
-        public override void SetPort(byte[] portData)
+        public override void SetPort(UInt32 index, UInt32 value)
         {
             if (SharedDataActive.DiagRplus)
             {
-                EdiabasNet.ErrorCodes errorCodeNmt = NmtSetPort(portData);
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtSetPort(index, value);
                 if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     EdiabasProtected?.SetError(errorCodeNmt);
@@ -6319,7 +6319,7 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
-        protected EdiabasNet.ErrorCodes NmtSetPort(byte[] portData)
+        protected EdiabasNet.ErrorCodes NmtSetPort(UInt32 index, UInt32 portValue)
         {
             if (SharedDataActive.ReconnectRequired)
             {
@@ -6340,7 +6340,10 @@ namespace EdiabasLib
 
             int timeout = RplusFunctionTimeout;
             byte[] portBytes = new byte[5];
-            Array.Copy(portData, portBytes, Math.Min(portData.Length, 3));
+            portBytes[0] = (byte)(index & 0xFF);
+            portBytes[1] = (byte)(portValue & 0xFF);
+            portBytes[2] = (byte)((portValue >> 8) & 0xFF);
+
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
                 new NmpParameter(portBytes),

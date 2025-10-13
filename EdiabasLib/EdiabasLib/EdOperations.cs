@@ -2861,7 +2861,7 @@ namespace EdiabasLib
         {
             if (arg0.OpData1.GetType() != typeof(Register))
             {
-                throw new ArgumentOutOfRangeException("arg0", "OpXignit: Invalid type");
+                throw new ArgumentOutOfRangeException("arg0", "OpXgetport: Invalid type");
             }
             EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
             if (interfaceClass == null)
@@ -3128,7 +3128,15 @@ namespace EdiabasLib
             else
             {
                 byte[] portData = arg0.GetArrayData();
-                interfaceClass.SetPort(portData);
+
+                UInt32 portIndex = 0;
+                if (portData.Length >= 1)
+                {
+                    portIndex = portData[0];
+                }
+
+                EdValueType portValue = arg1.GetValueData();
+                interfaceClass.SetPort(portIndex, portValue);
             }
         }
 
