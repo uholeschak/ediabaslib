@@ -3128,9 +3128,7 @@ namespace EdiabasLib
             else
             {
                 byte[] portData = arg0.GetArrayData();
-                UInt32 portIndex = portData[0];
-                UInt32 portValue = (UInt32) (portData[2] << 8) | portData[1];
-                interfaceClass.SetPort(portIndex, portValue);
+                interfaceClass.SetPort(portData);
             }
         }
 
