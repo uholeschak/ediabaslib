@@ -36,6 +36,7 @@ namespace EdiabasTest
             bool appendFile = false;
             bool storeResults = false;
             bool printAllTypes = false;
+            bool continueOnError = false;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool showHelp = false;
@@ -62,6 +63,8 @@ namespace EdiabasTest
                   v => _compareOutput = v != null },
                 { "alltypes", "print all value types.",
                   v => printAllTypes = v != null },
+                { "continue", "continue on error",
+                    v => continueOnError = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
                   v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters prepend the hex string with| (e.g. |A3C2)",
@@ -268,6 +271,14 @@ namespace EdiabasTest
                         {
                             if (!_compareOutput || ediabas.ErrorCodeLast == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                             {
+                                if (ex is EdiabasNet.EdiabasNetException)
+                                {
+                                    if (continueOnError)
+                                    {
+                                        continue;
+                                    }
+                                }
+
                                 _outputWriter.WriteLine("Job execution failed: " + EdiabasNet.GetExceptionText(ex));
                             }
                             return 1;
