@@ -72,6 +72,7 @@ namespace EdiabasCall
             bool storeResults = false;
             bool printAllTypes = false;
             bool printArgs = false;
+            bool continueOnError = false;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool showHelp = false;
@@ -98,6 +99,8 @@ namespace EdiabasCall
                   v => printAllTypes = v != null },
                 { "args", "print args.",
                     v => printArgs = v != null },
+                { "continue", "continue on error",
+                    v => continueOnError = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
                   v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters prepend the hex string with| (e.g. |A3C2)",
@@ -328,8 +331,11 @@ namespace EdiabasCall
                     if (API.apiState() == API.APIERROR)
                     {
                         _outputWriter.WriteLine(string.Format(Culture, "Error occured: 0x{0:X08} {1}", API.apiErrorCode(), API.apiErrorText()));
-                        API.apiEnd();
-                        return 1;
+                        if (!continueOnError)
+                        {
+                            API.apiEnd();
+                            return 1;
+                        }
                     }
                     PrintProgress();
 
