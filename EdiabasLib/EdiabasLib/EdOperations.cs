@@ -3117,6 +3117,23 @@ namespace EdiabasLib
             }
         }
 
+        // BEST2: ifsetport
+        private static void OpXsetport(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if (interfaceClass == null)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                byte[] portData = arg0.GetArrayData();
+                UInt32 portIndex = portData[0];
+                UInt32 portValue = (UInt32) (portData[2] << 8) | portData[1];
+                interfaceClass.SetPort(portIndex, portValue);
+            }
+        }
+
         // BEST2: ifrequeststate
         private static void OpXstate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {

@@ -1217,6 +1217,10 @@ namespace EdiabasLib
             return 0;
         }
 
+        public override void SetPort(UInt32 index, Int64 value)
+        {
+        }
+
         public override bool Connected
         {
             get

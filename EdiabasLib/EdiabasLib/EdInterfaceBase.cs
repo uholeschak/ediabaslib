@@ -718,6 +718,8 @@ namespace EdiabasLib
 
         public abstract Int64 GetPort(UInt32 index);
 
+        public abstract void SetPort(UInt32 index, Int64 value);
+
         public abstract bool Connected { get; }
 
         public abstract bool IsEcuConnected { get; }
