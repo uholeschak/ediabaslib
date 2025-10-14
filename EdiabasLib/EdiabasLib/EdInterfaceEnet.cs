@@ -1397,18 +1397,25 @@ namespace EdiabasLib
         {
             get
             {
+                if (SharedDataActive.DiagRplus)
+                {
+                    EdiabasNet.ErrorCodes errorCodeNmt = NmtGetInterfaceState(out byte[] interfaceState);
+                    if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        EdiabasProtected?.SetError(errorCodeNmt);
+                        return null;
+                    }
+
+                    return interfaceState;
+                }
+
                 if (!Connected)
                 {
                     EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return null;
                 }
 
-                int interfaceState = (int)EdiabasNet.IfhStatusCodes.IFHREADY;
-                return new byte[]
-                {
-                    (byte)(interfaceState & 0xFF),
-                    (byte)((interfaceState >> 8) & 0xFF)
-                };
+                return new byte[] { 0x00, 0x00 };
             }
         }
 
@@ -6733,6 +6740,51 @@ namespace EdiabasLib
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get interface type: {0}", interfaceType);
 
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get interface type result: {0}", errorCode.Value);
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtGetInterfaceState(out byte[] interfaceState)
+        {
+            interfaceState = null;
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetInterfaceState Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtGetInterfaceState Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = RplusFunctionTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhRequestState);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT get interface state failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            interfaceState = paramListRec[3].GetBinary();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT get interface state invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (interfaceState != null)
+            {
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, interfaceState, 0, interfaceState.Length, "Resp");
+            }
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get interface state result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
