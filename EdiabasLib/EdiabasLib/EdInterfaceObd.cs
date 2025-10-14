@@ -1221,7 +1221,11 @@ namespace EdiabasLib
         {
         }
 
-        public override void SetProgramVoltage(UInt32 value)
+        public override void SetProgramVoltage(UInt32 voltage)
+        {
+        }
+
+        public override void SwitchSiRelais(UInt32 time)
         {
         }
 

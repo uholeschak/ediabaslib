@@ -2067,7 +2067,7 @@ namespace EdiabasLib
             new OpCode(0x74, "xprog", OpXprog),
             new OpCode(0x75, "xraw", OpXraw),
             new OpCode(0x76, "xsetport", OpXsetport),
-            new OpCode(0x77, "xsireset", null),
+            new OpCode(0x77, "xsireset", OpXsireset),
             new OpCode(0x78, "xstoptr", null),
             new OpCode(0x79, "fix2hex", OpFix2Hex),
             new OpCode(0x7A, "fix2dez", OpFix2Dez),
