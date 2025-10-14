@@ -720,6 +720,8 @@ namespace EdiabasLib
 
         public abstract void SetPort(UInt32 index, UInt32 value);
 
+        public abstract void SetProgramVoltage(UInt32 value);
+
         public abstract bool Connected { get; }
 
         public abstract bool IsEcuConnected { get; }

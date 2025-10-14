@@ -2945,6 +2945,21 @@ namespace EdiabasLib
             ediabas._flags.UpdateFlags(value, len);
         }
 
+        // BEST2: set_program_voltage
+        private static void OpXprog(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if (interfaceClass == null)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                EdValueType voltageValue = arg0.GetValueData();
+                interfaceClass.SetProgramVoltage(voltageValue);
+            }
+        }
+
         // BEST2: ifrawmode
         private static void OpXraw(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {

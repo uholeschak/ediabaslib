@@ -1221,6 +1221,10 @@ namespace EdiabasLib
         {
         }
 
+        public override void SetProgramVoltage(UInt32 value)
+        {
+        }
+
         public override bool Connected
         {
             get
