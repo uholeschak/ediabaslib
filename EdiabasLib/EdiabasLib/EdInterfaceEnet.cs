@@ -6524,6 +6524,55 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
+        protected EdiabasNet.ErrorCodes NmtLoopTest(out Int32 testResult)
+        {
+            testResult = 0;
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtLoopTest Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtLoopTest Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = RplusFunctionTimeout;
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhLoopTest);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT loop test failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            byte[] testData = paramListRec[3].GetBinary();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT loop test invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (testData == null || testData.Length < 2)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT loop test invalid data");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            testResult = (testData[1] << 8) + testData[0];
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT loop test value: {0}", testResult);
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT loop test result: {0}", errorCode.Value);
+            return errorCode.Value;
+        }
+
         protected EdiabasNet.ErrorCodes NmtWarmStart()
         {
             if (SharedDataActive.ReconnectRequired)
