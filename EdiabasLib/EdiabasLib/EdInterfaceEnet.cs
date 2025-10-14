@@ -6771,6 +6771,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, parameter, 0, parameter.Length, "Send");
             int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
@@ -6814,6 +6815,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, preface, 0, preface.Length, "Send");
             int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
@@ -6957,6 +6959,7 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
+            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, requestData, 0, requestData.Length, "Send");
             int timeout = RplusFunctionTimeout;
             List<NmpParameter> paramListSend = new List<NmpParameter>()
             {
