@@ -972,6 +972,28 @@ namespace EdiabasLib
             return byteArray;
         }
 
+        public static byte[] UInt32ByteArrayTo16Le(UInt32[] uintArray)
+        {
+            if (uintArray == null)
+            {
+                return null;
+            }
+
+            byte[] byteArray = new byte[uintArray.Length * 2];
+
+            int index = 0;
+            for (int i = 0; i < uintArray.Length; i++)
+            {
+                UInt32 value = uintArray[i];
+                byteArray[index] = (byte)value;
+                byteArray[index + 1] = (byte)(value >> 8);
+
+                index += 2;
+            }
+
+            return byteArray;
+        }
+
         public void Dispose()
         {
             Dispose(true);
