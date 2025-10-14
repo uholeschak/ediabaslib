@@ -1230,7 +1230,23 @@ namespace EdiabasLib
 
                 if (SharedDataActive.DiagRplus)
                 {
-                    EdiabasNet.ErrorCodes errorCode = NmtSetParameter(UInt32ByteArrayToLe(CommParameterProtected));
+                    byte[] paramData = null;
+                    switch ((CommParameterProtected[0] >> 8) & 0xFF)
+                    {
+                        case 0x00:
+                            paramData = UInt32ByteArrayTo16Le(CommParameterProtected);
+                            break;
+
+                        case 0x01:
+                            paramData = UInt32ByteArrayToLe(CommParameterProtected);
+                            break;
+
+                        default:
+                            EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
+                            return;
+                    }
+
+                    EdiabasNet.ErrorCodes errorCode = NmtSetParameter(paramData);
                     if (errorCode != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                     {
                         EdiabasProtected?.SetError(errorCode);
