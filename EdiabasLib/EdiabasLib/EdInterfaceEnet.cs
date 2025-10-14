@@ -15,6 +15,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -1561,6 +1562,18 @@ namespace EdiabasLib
             if (SharedDataActive.DiagRplus)
             {
                 EdiabasNet.ErrorCodes errorCodeNmt = NmtSetPort(index, value);
+                if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCodeNmt);
+                }
+            }
+        }
+
+        public override void SetProgramVoltage(UInt32 value)
+        {
+            if (SharedDataActive.DiagRplus)
+            {
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtSetProgVoltage(value);
                 if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     EdiabasProtected?.SetError(errorCodeNmt);

@@ -2064,7 +2064,7 @@ namespace EdiabasLib
             new OpCode(0x71, "xgetport", OpXgetport),
             new OpCode(0x72, "xignit", OpXignit),
             new OpCode(0x73, "xloopt", null),
-            new OpCode(0x74, "xprog", null),
+            new OpCode(0x74, "xprog", OpXprog),
             new OpCode(0x75, "xraw", OpXraw),
             new OpCode(0x76, "xsetport", OpXsetport),
             new OpCode(0x77, "xsireset", null),
