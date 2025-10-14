@@ -948,50 +948,59 @@ namespace EdiabasLib
             return byteArray;
         }
 
-        public static byte[] UInt32ByteArrayToLe(UInt32[] uintArray)
+        public static byte[] UInt32ByteArrayToLe(UInt32[] uintArray, int offset = 0)
         {
             if (uintArray == null)
             {
                 return null;
             }
 
-            byte[] byteArray = new byte[uintArray.Length * 4];
-
-            int index = 0;
-            for (int i = 0; i < uintArray.Length; i++)
+            List<byte> dataList = new List<byte>();
+            for (int i = offset; i < uintArray.Length; i++)
             {
                 UInt32 value = uintArray[i];
-                byteArray[index] = (byte)value;
-                byteArray[index + 1] = (byte)(value >> 8);
-                byteArray[index + 2] = (byte)(value >> 16);
-                byteArray[index + 3] = (byte)(value >> 24);
-
-                index += 4;
+                dataList.Add((byte)value);
+                dataList.Add((byte)(value >> 8));
+                dataList.Add((byte)(value >> 16));
+                dataList.Add((byte)(value >> 24));
             }
 
-            return byteArray;
+            return dataList.ToArray();
         }
 
-        public static byte[] UInt32ByteArrayTo16Le(UInt32[] uintArray)
+        public static byte[] UInt32ByteArrayTo16Le(UInt32[] uintArray, int offset = 0)
         {
             if (uintArray == null)
             {
                 return null;
             }
 
-            byte[] byteArray = new byte[uintArray.Length * 2];
-
-            int index = 0;
-            for (int i = 0; i < uintArray.Length; i++)
+            List<byte> dataList = new List<byte>();
+            for (int i = offset; i < uintArray.Length; i++)
             {
                 UInt32 value = uintArray[i];
-                byteArray[index] = (byte)value;
-                byteArray[index + 1] = (byte)(value >> 8);
-
-                index += 2;
+                dataList.Add((byte)value);
+                dataList.Add((byte)(value >> 8));
             }
 
-            return byteArray;
+            return dataList.ToArray();
+        }
+
+        public static byte[] UInt32ByteArrayTo8Le(UInt32[] uintArray, int offset = 0)
+        {
+            if (uintArray == null)
+            {
+                return null;
+            }
+
+            List<byte> dataList = new List<byte>();
+            for (int i = offset; i < uintArray.Length; i++)
+            {
+                UInt32 value = uintArray[i];
+                dataList.Add((byte)value);
+            }
+
+            return dataList.ToArray();
         }
 
         public void Dispose()
