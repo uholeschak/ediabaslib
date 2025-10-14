@@ -706,6 +706,8 @@ namespace EdiabasLib
 
         public abstract byte[] State { get; }
 
+        public abstract UInt32 LoopTest { get; }
+
         public abstract Int64 BatteryVoltage { get; }
 
         public abstract Int64 IgnitionVoltage { get; }

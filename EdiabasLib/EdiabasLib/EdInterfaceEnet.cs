@@ -1397,12 +1397,45 @@ namespace EdiabasLib
         {
             get
             {
+                if (!Connected)
+                {
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return null;
+                }
+
                 int interfaceState = (int)EdiabasNet.IfhStatusCodes.IFHREADY;
                 return new byte[]
                 {
                     (byte)(interfaceState & 0xFF),
                     (byte)((interfaceState >> 8) & 0xFF)
                 };
+            }
+        }
+
+        public override UInt32 LoopTest
+        {
+            get
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Loop test");
+                if (SharedDataActive.DiagRplus)
+                {
+                    EdiabasNet.ErrorCodes errorCodeNmt = NmtLoopTest(out UInt32 testResult);
+                    if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                    {
+                        EdiabasProtected?.SetError(errorCodeNmt);
+                        return 0;
+                    }
+
+                    return testResult;
+                }
+
+                if (!Connected)
+                {
+                    EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return 0;
+                }
+
+                return 1;
             }
         }
 
@@ -6524,7 +6557,7 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
-        protected EdiabasNet.ErrorCodes NmtLoopTest(out Int32 testResult)
+        protected EdiabasNet.ErrorCodes NmtLoopTest(out UInt32 testResult)
         {
             testResult = 0;
             if (SharedDataActive.ReconnectRequired)
@@ -6566,8 +6599,8 @@ namespace EdiabasLib
                 return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
             }
 
-            testResult = (testData[1] << 8) + testData[0];
-            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT loop test value: {0}", testResult);
+            testResult = (UInt32)(testData[1] << 8) + testData[0];
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT loop test status: {0}", testResult);
 
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT loop test result: {0}", errorCode.Value);
             return errorCode.Value;

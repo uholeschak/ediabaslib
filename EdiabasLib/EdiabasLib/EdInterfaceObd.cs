@@ -1054,9 +1054,25 @@ namespace EdiabasLib
                     EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
                     return null;
                 }
+
                 StateProtected[0] = 0x00;
                 StateProtected[1] = (byte)(GetDsrState() ? 0x00 : 0x30);
                 return StateProtected;
+            }
+        }
+
+        public override UInt32 LoopTest
+        {
+            get
+            {
+                EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Loop test");
+                if (!Connected)
+                {
+                    EdiabasProtected.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0056);
+                    return 0;
+                }
+
+                return 1;
             }
         }
 

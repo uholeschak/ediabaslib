@@ -2932,6 +2932,25 @@ namespace EdiabasLib
             }
         }
 
+        // BEST2: ifloopt
+        private static void OpXloopt(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            if (arg0.OpData1.GetType() != typeof(Register))
+            {
+                throw new ArgumentOutOfRangeException("arg0", "OpXloopt: Invalid type");
+            }
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if (interfaceClass == null)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                UInt32 testResult = interfaceClass.LoopTest;
+                arg0.SetRawData((EdValueType)testResult);
+            }
+        }
+
         private static void OpXor(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {
             if (arg0.OpData1.GetType() != typeof(Register))
