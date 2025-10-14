@@ -1242,7 +1242,7 @@ namespace EdiabasLib
                             break;
 
                         case 0xFF:
-                            paramData = UInt32ByteArrayTo8Le(CommParameterProtected, 1);
+                            paramData = UInt32ByteArrayTo8Le(CommParameterProtected);
                             break;
 
                         default:
