@@ -1241,6 +1241,10 @@ namespace EdiabasLib
                             paramData = UInt32ByteArrayToLe(CommParameterProtected);
                             break;
 
+                        case 0xFF:
+                            paramData = UInt32ByteArrayTo8Le(CommParameterProtected, 1);
+                            break;
+
                         default:
                             EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                             return;
