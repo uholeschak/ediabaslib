@@ -3156,6 +3156,21 @@ namespace EdiabasLib
             }
         }
 
+        // BEST2: ifsireset
+        private static void OpXsireset(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
+        {
+            EdInterfaceBase interfaceClass = ediabas.EdInterfaceClass;
+            if (interfaceClass == null)
+            {
+                ediabas.SetError(ErrorCodes.EDIABAS_IFH_0056);
+            }
+            else
+            {
+                EdValueType timeValue = arg0.GetValueData();
+                interfaceClass.SwitchSiRelais(timeValue);
+            }
+        }
+
         // BEST2: ifrequeststate
         private static void OpXstate(EdiabasNet ediabas, OpCode oc, Operand arg0, Operand arg1)
         {

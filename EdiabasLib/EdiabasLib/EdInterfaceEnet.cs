@@ -1569,11 +1569,23 @@ namespace EdiabasLib
             }
         }
 
-        public override void SetProgramVoltage(UInt32 value)
+        public override void SetProgramVoltage(UInt32 voltage)
         {
             if (SharedDataActive.DiagRplus)
             {
-                EdiabasNet.ErrorCodes errorCodeNmt = NmtSetProgVoltage(value);
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtSetProgVoltage(voltage);
+                if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCodeNmt);
+                }
+            }
+        }
+
+        public override void SwitchSiRelais(UInt32 time)
+        {
+            if (SharedDataActive.DiagRplus)
+            {
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtSwitchSiRelais(time);
                 if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                 {
                     EdiabasProtected?.SetError(errorCodeNmt);
