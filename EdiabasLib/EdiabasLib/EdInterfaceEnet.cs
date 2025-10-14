@@ -6405,6 +6405,53 @@ namespace EdiabasLib
             return errorCode.Value;
         }
 
+        protected EdiabasNet.ErrorCodes NmtSetProgVoltage(UInt32 voltage)
+        {
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSetProgVoltage Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtSetProgVoltage Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            int timeout = RplusFunctionTimeout;
+            byte[] voltageBytes = new byte[2];
+            voltageBytes[0] = (byte)(voltage & 0xFF);
+            voltageBytes[1] = (byte)((voltage >> 8) & 0xFF);
+
+            List<NmpParameter> paramListSend = new List<NmpParameter>()
+            {
+                new NmpParameter(voltageBytes),
+            };
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhSetProgVoltage, paramListSend);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT set prog voltage failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT prog voltage invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT prog voltage result: {0}", errorCode.Value);
+            return errorCode.Value;
+        }
+
         protected EdiabasNet.ErrorCodes NmtWarmStart()
         {
             if (SharedDataActive.ReconnectRequired)
