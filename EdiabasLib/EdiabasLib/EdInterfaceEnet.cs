@@ -2549,6 +2549,20 @@ namespace EdiabasLib
 
         public override bool RawData(byte[] sendData, out byte[] receiveData)
         {
+            EdiabasProtected.LogData(EdiabasNet.EdLogLevel.Ifh, sendData, 0, sendData.Length, "Send Raw");
+            receiveData = null;
+
+            if (SharedDataActive.DiagRplus)
+            {
+                EdiabasNet.ErrorCodes errorCodeNmt = NmtRawMode(sendData, out receiveData);
+                if (errorCodeNmt != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
+                {
+                    EdiabasProtected?.SetError(errorCodeNmt);
+                    return false;
+                }
+                return true;
+            }
+
             receiveData = ByteArray0;
             return true;
         }
@@ -7019,6 +7033,58 @@ namespace EdiabasLib
             EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, keyBytes, 0, keyBytes.Length, "Resp");
 
             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT get key bytes result: {0}", errorCode.Value);
+            return errorCode.Value;
+        }
+
+        protected EdiabasNet.ErrorCodes NmtRawMode(byte[] requestData, out byte[] responseData)
+        {
+            responseData = null;
+
+            if (SharedDataActive.ReconnectRequired)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtRawMode Reconnecting");
+                InterfaceDisconnect(true);
+                if (!InterfaceConnect(true))
+                {
+                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "NmtRawMode Reconnect failed");
+                    SharedDataActive.ReconnectRequired = true;
+                    return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+                }
+            }
+
+            if (SharedDataActive.TcpDiagStream == null)
+            {
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, requestData, 0, requestData.Length, "Send");
+            int timeout = RplusFunctionTimeout;
+            List<NmpParameter> paramListSend = new List<NmpParameter>()
+            {
+                new NmpParameter(requestData),
+            };
+
+            List<NmpParameter> paramListRec = TransNmpParameters(timeout, SharedDataActive.NmpChannel, EdiabasNet.IfhCommands.IfhRawMode, paramListSend);
+            if (paramListRec == null || paramListRec.Count < 4)
+            {
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "*** NMT raw mode failed");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            EdiabasNet.ErrorCodes? errorCode = paramListRec[2].GetErrorCode();
+            responseData = paramListRec[3].GetBinary();
+            if (errorCode == null)
+            {
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** NMT raw mode invalid parameters");
+                return EdiabasNet.ErrorCodes.EDIABAS_IFH_0019;
+            }
+
+            if (responseData != null)
+            {
+                EdiabasProtected?.LogData(EdiabasNet.EdLogLevel.Ifh, responseData, 0, responseData.Length, "Resp");
+            }
+
+            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "NMT raw mode result: {0}", errorCode.Value);
             return errorCode.Value;
         }
 
