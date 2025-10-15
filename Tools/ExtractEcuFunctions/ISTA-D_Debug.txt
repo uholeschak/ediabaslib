@@ -774,3 +774,9 @@ ifhSendTelegram: request 1 block (binary <request data>), response 4 blocks (int
 ifhGetResult: not transmitted
 ifhCloseChannel: request 0 blocks, response 1 block (int <error_code>)
 ifhEnd: request 0 blocks, response 1 block (int <error_code>)
+
+Fix for IIS after installing KB5066835:
+https://stackoverflow.com/questions/79790827/localhost-applications-failing-after-installing-2025-10-cumulative-update-for-w
+HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\HTTP\Parameters
+EnableHttp2Tls=0
+EnableHttp2Cleartext=0
