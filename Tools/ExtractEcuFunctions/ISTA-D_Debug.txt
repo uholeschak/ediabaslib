@@ -780,3 +780,10 @@ https://stackoverflow.com/questions/79790827/localhost-applications-failing-afte
 HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\HTTP\Parameters
 EnableHttp2Tls=0
 EnableHttp2Cleartext=0
+
+Powershell:
+-----------
+Install-Module -Name PSWindowsUpdate -Force -SkipPublisherCheck
+Import-Module PSWindowsUpdate
+Hide-WindowsUpdate -KBArticleID KB5066835 -Verbose
+Get-WindowsUpdate -IsHidden
