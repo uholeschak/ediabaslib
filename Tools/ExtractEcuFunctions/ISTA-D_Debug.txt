@@ -758,6 +758,7 @@ ifhSetPort: request 1 block (binary <1 byte port index, 2 byte data, 00 00>), re
 ifhSetProgVoltage: request 1 block (binary <2 byte voltage>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
 ifhSwitchSiRelais: request 1 block (binary <2 byte time>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
 ifhLoopTest: request 0 blocks, response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<status>)
+ifhRawMode: request 1 block (binary <request>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<response>)
 ifhReset: request 0 blocks, response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
 ifhWarmStart: request 1 block (binary <00 00 00 00>), response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<empty>)
 ifhRequestKeyBytes: request 0 blocks, response 4 blocks (int <0>, int<status_code>, int<error_code>, binary<data>)
