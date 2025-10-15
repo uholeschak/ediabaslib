@@ -783,6 +783,7 @@ EnableHttp2Cleartext=0
 
 Powershell:
 -----------
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 Install-Module -Name PSWindowsUpdate -Force -SkipPublisherCheck
 Import-Module PSWindowsUpdate
 Hide-WindowsUpdate -KBArticleID KB5066835 -Verbose
