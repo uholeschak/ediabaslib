@@ -705,7 +705,7 @@ C:\Program Files\BMW\ISPI\TRIC\ISTA\Logs
 C:\ProgramData\BMW\ISPI\logs\TRIC\[All Subfolders]
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\[All Subfolders except: Microsoft*]
 
-After update delete all content in:
+After update delete all content in (allow write access for folders in C:\ProgramData\BMW\ISPI\data\TRIC\ISTA):
 (Create folders if missing)
 ===================================
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\FASTAOut
