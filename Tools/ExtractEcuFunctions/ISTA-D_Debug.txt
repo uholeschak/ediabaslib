@@ -209,13 +209,13 @@ Copy directories:
 C:\Program Files\BMW
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
 
-Exclude directories:
+Exclude directories (allow write access for all users):
 C:\Program Files\BMW\ISPI\data\TRIC\ISTA\Logs\*
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Temp\*
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\Transactions\*
 C:\ProgramData\BMW\ISPI\data\TRIC\ISTA\FASTAOut\*
 
-Create directories:
+Create directories (and allow write access for all users):
 C:\ProgramData\BMW\ISPI\logs\TRIC\FscValidation\
 C:\ProgramData\BMW\ISPI\logs\TRIC\ISTA\
 C:\ProgramData\BMW\ISPI\logs\TRIC\ISTALauncher\
@@ -226,6 +226,7 @@ C:\Program Files\BMW\ISPI\data\TRIC\ISTA\Logs
 
 Copy Registry:
 [HKEY_LOCAL_MACHINE\SOFTWARE\BMWGroup]
+[HKEY_LOCAL_MACHINE\SOFTWARE\BMW]
 [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMWGroup]
 [HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\BMW]
 [HKEY_CURRENT_USER\Software\BMWGroup]
@@ -692,9 +693,10 @@ Sync the folders:
 \\Vm-win11\c\Program Files\BMW -> C:\Program Files\BMW
 \\Vm-win11\c\ProgramData\BMW\ISPI\data\TRIC\ISTA -> C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
 Sync Filter:
+\ISPI\TRIC\ISTA\Logs\*
+\Temp\*
 \Transactions\*
 \FASTAOut\*
-\Temp\*
 
 Allow all user to access folders after ISTA copy:
 =================================================
