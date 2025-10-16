@@ -90,7 +90,7 @@
   <ItemGroup>
     <PackageReference Include="IPAddressControl" Version="1.2.4446.28646" />
     <PackageReference Include="log4net" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.10" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" Version="2.1.11" />
     <PackageReference Include="System.Memory" Version="4.6.3" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
