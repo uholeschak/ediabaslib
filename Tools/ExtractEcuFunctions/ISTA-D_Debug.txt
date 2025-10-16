@@ -694,6 +694,10 @@ Sync the folders:
 =================
 \\Vm-win11\c\Program Files\BMW -> C:\Program Files\BMW
 \\Vm-win11\c\ProgramData\BMW\ISPI\data\TRIC\ISTA -> C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
+Sync Filter:
+\Transactions\*
+\FASTAOut\*
+\Temp\*
 
 Allow all user to access folders after ISTA copy:
 =================================================
