@@ -1486,7 +1486,7 @@ namespace PsdzClient.Programming
                     PsdzSecureCodingConfigCto secureCodingConfig = SecureCodingConfigWrapper.GetSecureCodingConfig(ProgrammingService);
                     secureCodingConfig.ConnectionTimeout = CodingConnectionTimeout;
 
-                    if (!EdiabasNet.IsDirectoryWritable(secureCodingConfig.NcdRootDirectory))
+                    if (!EdiabasNet.IsDirectoryWritable(secureCodingConfig.NcdRootDirectory, true))
                     {
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.DirectoryWriteProtected, secureCodingConfig.NcdRootDirectory));
                         UpdateStatus(sbResult.ToString());
