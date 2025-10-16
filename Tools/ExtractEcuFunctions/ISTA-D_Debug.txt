@@ -28,13 +28,10 @@ Copy files from "Testmodule" to "TestmoduleOrg"
 de4dot-x64 -r "TestmoduleOrg" -ru -ro "Testmodule" --dont-rename
 The files in "TestmoduleOrg" are not modified, "Testmodule" now contains the deobfuscated files.
 
-Compile dnSpy-x86:
-============================
-git clone --recursive https://github.com/0xd4d/dnSpy.git
-Install .NET Core 3.0 SDK and .NET Core 3.1 SDK
-Install .NET Framework 4.8 SDK and Package for target version .NET Framework 4.8 in VS2019
-Open dnSpy.sln in VS2019 and build solution as release
-The binary is in the subfolder: dnSpy\dnSpy\bin\Release\net48\dnSpy-x86.exe
+Download dnSpyEx NET Framework.
+==============================
+Uncheck Debug Option: System.Diagnostis.Debugger
+Check Debug Option: Show Hidden compiler generated ...
 
 Disable ISTAGUI.exe hash check:
 ===============================
