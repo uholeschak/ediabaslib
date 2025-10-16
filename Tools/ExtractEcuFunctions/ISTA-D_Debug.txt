@@ -690,6 +690,11 @@ Exclude port 3496:
 Reboot in safe mode (restart + shift)
 netsh int ipv4 add excludedportrange protocol=tcp startport=3496 numberofports=1
 
+Sync the folders:
+=================
+\\Vm-win11\c\Program Files\BMW -> C:\Program Files\BMW
+\\Vm-win11\c\ProgramData\BMW\ISPI\data\TRIC\ISTA -> C:\ProgramData\BMW\ISPI\data\TRIC\ISTA
+
 Allow all user to access folders after ISTA copy:
 =================================================
 C:\Program Files\BMW\ISPI\TRIC\ISTA\Ediabas\Security\S29
