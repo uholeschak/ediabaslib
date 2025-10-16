@@ -794,3 +794,12 @@ Install-Module -Name PSWindowsUpdate -Force -SkipPublisherCheck
 Import-Module PSWindowsUpdate
 Hide-WindowsUpdate -KBArticleID KB5066835 -Verbose
 Get-WindowsUpdate -IsHidden
+
+Server access ports:
+====================
+3306: (MySQL)
+8008: (http)
+8443: (https)
+
+IIS: Access rights:
+IIS_IUSRS requires read, view and execute on wwwroot
