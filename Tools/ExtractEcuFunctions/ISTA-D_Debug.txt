@@ -799,7 +799,7 @@ Get-WindowsUpdate -IsHidden
 
 Server access ports:
 ====================
-3306: (MySQL)
+3306, 33060: (MySQL, created by installer)
 8008: (http)
 8443: (https)
 
