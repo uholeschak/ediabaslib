@@ -26,11 +26,13 @@ namespace EdiabasLibConfigTool
         public const string AdapterSsidElm2 = @"WiFi-OBDII";
         public const string AdapterSsidEspLink = @"DeepOBD";
         public const string AdapterSsidEnetLink = @"ENET-LINK_";
-        public const string PassordWifiEnetLink = @"12345678";
+        public const string PasswordWifiEnetLink = @"12345678";
         public const string AdapterSsidModBmw = @"modBMW ENET";
-        public const string PassordWifiModBmw = @"12345678";
+        public const string PasswordWifiModBmw = @"12345678";
         public const string AdapterSsidUniCar = @"UniCarScan";
-        public const string PassordWifiUniCar = @"12345678";
+        public const string PasswordWifiUniCar = @"12345678";
+        public const string AdapterSsidMhd = @"MHD ENET";
+        public const string PasswordWifiMhd = @"123456789";
         public const string EdiabasDirName = @"Ediabas";
         public const string EdiabasBinDirName = @"Bin";
         public const string ApiDirName = @"Api32";
@@ -433,7 +435,8 @@ namespace EdiabasLibConfigTool
                     if (string.Compare(ssidString, AdapterSsidEnet, StringComparison.OrdinalIgnoreCase) == 0 ||
                         ssidString.StartsWith(AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase) ||
                         ssidString.StartsWith(AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase) ||
-                        ssidString.StartsWith(AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase))
+                        ssidString.StartsWith(AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase) ||
+                        ssidString.StartsWith(AdapterSsidMhd, StringComparison.OrdinalIgnoreCase))
                     {
                         UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", enetVehicleProtocol);
