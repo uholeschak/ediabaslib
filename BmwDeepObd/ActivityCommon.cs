@@ -820,10 +820,12 @@ namespace BmwDeepObd
         public const string AdapterSsidEnetLink = "ENET-LINK_";
         public const string AdapterSsidModBmw = "modBMW ENET";
         public const string AdapterSsidUniCar = "UniCarScan";
+        public const string AdapterSsidMhd = @"MHD ENET";
         public const string EmulatorEnetIp = ""; // = "169.254.0.1";
         public const string DeepObdAdapterIp = "192.168.100.1";
         public const string EnetLinkAdapterIp = "192.168.16.254";
         public const string ModBmwAdapterIp = "169.254.128.7";
+        public const string MhdAdapterIp = "169.254.255.1";
         public const string DefaultPwdDeepObd = "root";
         public const string DefaultPwdModBmw = "admin";
         public const string SettingsFile = "Settings.xml";
@@ -3910,6 +3912,11 @@ namespace BmwDeepObd
                         defaultPassword = DefaultPwdModBmw;
                         return adapterIp;
                     }
+                    if (ssid.Contains(AdapterSsidMhd))
+                    {
+                        defaultPassword = string.Empty;
+                        return adapterIp;
+                    }
                 }
 
                 if (string.Compare(adapterIp, DeepObdAdapterIp, StringComparison.Ordinal) == 0)
@@ -3925,6 +3932,11 @@ namespace BmwDeepObd
                 if (string.Compare(adapterIp, ModBmwAdapterIp, StringComparison.Ordinal) == 0)
                 {
                     defaultPassword = DefaultPwdModBmw;
+                    return adapterIp;
+                }
+                if (string.Compare(adapterIp, MhdAdapterIp, StringComparison.Ordinal) == 0)
+                {
+                    defaultPassword = string.Empty;
                     return adapterIp;
                 }
             }
@@ -4638,6 +4650,8 @@ namespace BmwDeepObd
                 bool validDeepObd = false;
                 bool validEnetLink = false;
                 bool validModBmw = false;
+                bool validMhd = false;
+
                 if (IsValidWifiConnection(out _, out _, out string dhcpServerAddress, out string ssid))
                 {
                     if (!string.IsNullOrEmpty(dhcpServerAddress))
@@ -4660,6 +4674,10 @@ namespace BmwDeepObd
                         {
                             validModBmw = true;
                         }
+                        if (string.Compare(adapterIp, MhdAdapterIp, StringComparison.Ordinal) == 0)
+                        {
+                            validMhd = true;
+                        }
                     }
                 }
 
@@ -4674,11 +4692,12 @@ namespace BmwDeepObd
                     }
                 }
 
-                bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidEnetLink) || enetSsid.Contains(AdapterSsidModBmw) || enetSsid.Contains(AdapterSsidUniCar);
+                bool validSsid = enetSsid.Contains(AdapterSsidDeepObd) || enetSsid.Contains(AdapterSsidEnetLink) || enetSsid.Contains(AdapterSsidModBmw)
+                                 || enetSsid.Contains(AdapterSsidUniCar) || enetSsid.Contains(AdapterSsidMhd);
                 bool validEthernet = IsValidEthernetConnection();
                 bool ipSelected = !string.IsNullOrEmpty(SelectedEnetIp);
 
-                if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw &&
+                if (!ipSelected && !validEthernet && !validDeepObd && !validEnetLink && !validModBmw && !validMhd &&
                     string.Compare(lastEnetSsid, enetSsid, StringComparison.Ordinal) != 0)
                 {
                     if (_baseActivity != null)
