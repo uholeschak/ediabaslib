@@ -53,7 +53,7 @@ public class UserTemplate
 
     async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger)
     {
-        string istaLocation = string.Empty;
+        string istaLocation = string.Empty; // auto detect
         string sqlUrl = "url";
         string sqlUser = "user";
         string sqlPassword = "password";
@@ -136,7 +136,7 @@ public class UserTemplate
             return false;
         }
 
-        bool xmlOk = /*!string.IsNullOrEmpty(istaLocation) && */ !string.IsNullOrEmpty(sqlUrl) &&
+        bool xmlOk = !string.IsNullOrEmpty(sqlUrl) &&
                      !string.IsNullOrEmpty(sqlUser) && !string.IsNullOrEmpty(sqlPassword) &&
                      !string.IsNullOrEmpty(accessPassword) && !string.IsNullOrEmpty(testLic);
 
