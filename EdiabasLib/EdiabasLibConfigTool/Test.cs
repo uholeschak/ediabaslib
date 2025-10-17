@@ -133,15 +133,19 @@ namespace EdiabasLibConfigTool
                 {
                     if (ap.Name.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase))
                     {
-                        authRequest.Password = Patch.PassordWifiEnetLink;
+                        authRequest.Password = Patch.PasswordWifiEnetLink;
                     }
                     else if (ap.Name.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase))
                     {
-                        authRequest.Password = Patch.PassordWifiModBmw;
+                        authRequest.Password = Patch.PasswordWifiModBmw;
                     }
                     else if (ap.Name.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase))
                     {
-                        authRequest.Password = Patch.PassordWifiUniCar;
+                        authRequest.Password = Patch.PasswordWifiUniCar;
+                    }
+                    else if (ap.Name.StartsWith(Patch.AdapterSsidMhd, StringComparison.OrdinalIgnoreCase))
+                    {
+                        authRequest.Password = Patch.PasswordWifiMhd;
                     }
                     else
                     {
@@ -177,6 +181,7 @@ namespace EdiabasLibConfigTool
                     bool isEnetLink = ssidString.StartsWith(Patch.AdapterSsidEnetLink, StringComparison.OrdinalIgnoreCase);
                     bool isModBmw = ssidString.StartsWith(Patch.AdapterSsidModBmw, StringComparison.OrdinalIgnoreCase);
                     bool isUniCar = ssidString.StartsWith(Patch.AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase);
+                    bool isMhd = ssidString.StartsWith(Patch.AdapterSsidMhd, StringComparison.OrdinalIgnoreCase);
 
                     IPInterfaceProperties ipProp = wlanIface.NetworkInterface.GetIPProperties();
                     if (ipProp == null)
@@ -191,7 +196,7 @@ namespace EdiabasLibConfigTool
                         return false;
                     }
 
-                    if (isEnet || isEnetLink || isModBmw || isUniCar)
+                    if (isEnet || isEnetLink || isModBmw || isUniCar || isMhd)
                     {
                         if (configure)
                         {
@@ -223,7 +228,7 @@ namespace EdiabasLibConfigTool
                         {
                             Thread.CurrentThread.CurrentCulture = cultureInfo;
                             Thread.CurrentThread.CurrentUICulture = cultureInfo;
-                            if (isEnet || isEnetLink || isModBmw || isUniCar)
+                            if (isEnet || isEnetLink || isModBmw || isUniCar || isMhd)
                             {
                                 TestOk = RunWifiTestEnetRetry(ipAddr, out bool configRequired);
                                 if (TestOk && configRequired)
