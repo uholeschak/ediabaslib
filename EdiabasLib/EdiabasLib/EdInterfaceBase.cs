@@ -48,6 +48,8 @@ namespace EdiabasLib
         private object _responseCounterLock = new object();
         public const string SimFileExtension = ".sim";
         public const string PortIdSimulation = "SIMULATION";
+        public static UInt32[] CommParameterBmwFast = new UInt32[] { 0x0000010F, 0x0001C200, 0x000004B0, 0x00000014, 0x0000000A, 0x00000002, 0x00001388 };
+        public static Int16[] CommAnswerLenBmwFast = new Int16[] { 0x0000, 0x0000 };
         protected EdSimFile EdSimFileInterface;
         protected EdSimFile EdSimFileSgbd;
         protected bool SimulationConnected;
