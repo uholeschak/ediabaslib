@@ -486,10 +486,9 @@ namespace BmwDeepObd
                     {
                         return false;
                     }
-                    _ediabas.EdInterfaceClass.CommParameter =
-                        new UInt32[] { 0x0000010F, 0x0001C200, 0x000004B0, 0x00000014, 0x0000000A, 0x00000002, 0x00001388 };
-                    _ediabas.EdInterfaceClass.CommAnswerLen =
-                        new Int16[] { 0x0000, 0x0000 };
+
+                    _ediabas.EdInterfaceClass.CommParameter = EdInterfaceBase.CommParameterBmwFast;
+                    _ediabas.EdInterfaceClass.CommAnswerLen = EdInterfaceBase.CommAnswerLenBmwFast;
                 }
 
                 _transmitCanceled = false;
