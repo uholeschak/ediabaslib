@@ -438,7 +438,7 @@ namespace EdiabasLibConfigTool
                         ssidString.StartsWith(AdapterSsidUniCar, StringComparison.OrdinalIgnoreCase) ||
                         ssidString.StartsWith(AdapterSsidMhd, StringComparison.OrdinalIgnoreCase))
                     {
-                        UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
+                        UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIpAllCombined);
                         UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", enetVehicleProtocol);
                         UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                         UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
@@ -476,7 +476,7 @@ namespace EdiabasLibConfigTool
                 }
                 else if (enetConnection != null)
                 {
-                    UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
+                    UpdateConfigNode(settingsNode, @"EnetRemoteHost", EdInterfaceEnet.AutoIpAllCombined);
                     UpdateConfigNode(settingsNode, @"EnetVehicleProtocol", enetVehicleProtocol);
                     UpdateConfigNode(settingsNode, KeyInterface, @"ENET");
                     UpdateIniFile(iniFile, SectionConfig, KeyInterface, @"ENET", true);
