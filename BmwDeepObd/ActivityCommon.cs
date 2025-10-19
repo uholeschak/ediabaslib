@@ -5680,7 +5680,7 @@ namespace BmwDeepObd
                 using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false) { ConnectParameter = new EdInterfaceEnet.ConnectParameterType(_networkData, GenS29Certificate, VehicleConnected)
                 })
                 {
-                    detectedVehicles = edInterface.DetectedVehicles("auto:all");
+                    detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined);
                 }
 
                 _activity?.RunOnUiThread(() =>
@@ -6354,7 +6354,7 @@ namespace BmwDeepObd
                         portName = EmulatorEnetIp;
                         break;
                     }
-                    portName = string.IsNullOrEmpty(SelectedEnetIp) ? "auto:all" : SelectedEnetIp;
+                    portName = string.IsNullOrEmpty(SelectedEnetIp) ? EdInterfaceEnet.AutoIpAllCombined : SelectedEnetIp;
                     break;
 
                 case InterfaceType.ElmWifi:
@@ -6487,7 +6487,7 @@ namespace BmwDeepObd
             }
             else if (ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
             {
-                string remoteHost = string.IsNullOrEmpty(SelectedEnetIp) ? "auto:all" : SelectedEnetIp;
+                string remoteHost = string.IsNullOrEmpty(SelectedEnetIp) ? EdInterfaceEnet.AutoIpAllCombined : SelectedEnetIp;
                 if (Emulator && !string.IsNullOrEmpty(EmulatorEnetIp))
                 {   // broadcast is not working with emulator
                     remoteHost = EmulatorEnetIp;

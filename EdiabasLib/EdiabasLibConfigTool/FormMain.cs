@@ -1154,7 +1154,7 @@ namespace EdiabasLibConfigTool
             List<EdInterfaceEnet.EnetConnection> detectedVehicles;
             using (EdInterfaceEnet edInterface = new EdInterfaceEnet(false))
             {
-                detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll);
+                detectedVehicles = edInterface.DetectedVehicles(EdInterfaceEnet.AutoIpAllCombined);
             }
 
             return detectedVehicles;

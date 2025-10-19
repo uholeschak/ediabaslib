@@ -720,6 +720,7 @@ namespace EdiabasLib
         public const string NetworkProtocolSsl = "SSL";
         public const string AutoIp = "auto";
         public const string AutoIpAll = ":all";
+        public const string AutoIpAllCombined = AutoIp + AutoIpAll;
         public const string ProtocolHsfz = "HSFZ";
         public const string ProtocolDoIp = "DoIP";
         public const string ProtocolRplus = "RPLUS";
