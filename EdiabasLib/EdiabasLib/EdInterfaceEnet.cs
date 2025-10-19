@@ -2731,6 +2731,8 @@ namespace EdiabasLib
                 return null;
             }
 
+            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DetectedVehicles: RemoteHostConfig={0}", remoteHostConfig));
+
             IPAddress hostIpAddress = null;
             if (!remoteHostConfig.StartsWith(AutoIp, StringComparison.OrdinalIgnoreCase))
             {
@@ -2744,6 +2746,8 @@ namespace EdiabasLib
                 {
                     return null;
                 }
+
+                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DetectedVehicles: RemoteHostIP={0}", hostIpAddress.ToString()));
             }
 
             bool protocolHsfz = true;
@@ -2754,9 +2758,7 @@ namespace EdiabasLib
                 protocolDoIp = communicationModes.Contains(CommunicationMode.DoIp);
             }
 
-            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DetectedVehicles: RemoteHost={0}, HSFZ={1}, DoIp={2}",
-                remoteHostConfig, protocolHsfz, protocolDoIp));
-
+            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DetectedVehicles: HSFZ={0}, DoIp={1}", protocolHsfz, protocolDoIp));
             if (!protocolHsfz && !protocolDoIp)
             {
                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: No protocol specified");
@@ -2857,6 +2859,7 @@ namespace EdiabasLib
 
                     if ((configData.Length > 0) && (configData[0] == ':'))
                     {
+                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DetectedVehicles: Config={0}", configData);
                         string adapterName = configData.StartsWith(AutoIpAll, StringComparison.OrdinalIgnoreCase) ? string.Empty : configData.Remove(0, 1);
 
 #if ANDROID
@@ -3011,9 +3014,10 @@ namespace EdiabasLib
                     {
                         try
                         {
+                            IPAddress remoteAddress = hostIpAddress ?? IPAddress.Parse(HostIdentServiceProtected);
                             if (protocolHsfz)
                             {
-                                IPEndPoint ipUdpIdent = new IPEndPoint(hostIpAddress ?? IPAddress.Parse(HostIdentServiceProtected), UdpIdentPort);
+                                IPEndPoint ipUdpIdent = new IPEndPoint(remoteAddress, UdpIdentPort);
                                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending Ident broadcast to: {0}:{1}", ipUdpIdent.Address, UdpIdentPort));
                                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                 {
@@ -3023,7 +3027,7 @@ namespace EdiabasLib
 
                             if (protocolDoIp)
                             {
-                                IPEndPoint ipUdpDoIpIdent = new IPEndPoint(hostIpAddress ?? IPAddress.Parse(HostIdentServiceProtected), DoIpPort);
+                                IPEndPoint ipUdpDoIpIdent = new IPEndPoint(remoteAddress, DoIpPort);
                                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending DoIp broadcast to: {0}:{1}", ipUdpDoIpIdent.Address, DoIpPort));
                                 TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                                 {
@@ -3031,7 +3035,7 @@ namespace EdiabasLib
                                 }, ipUdpDoIpIdent.Address, SharedDataActive.NetworkData);
                             }
 
-                            IPEndPoint ipUdpSvrLoc = new IPEndPoint(hostIpAddress ?? IPAddress.Parse(HostIdentServiceProtected), UdpSrvLocPort);
+                            IPEndPoint ipUdpSvrLoc = new IPEndPoint(remoteAddress, UdpSrvLocPort);
                             EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Sending SvrLoc broadcast to: {0}:{1}", ipUdpSvrLoc.Address, UdpSrvLocPort));
                             TcpClientWithTimeout.ExecuteNetworkCommand(() =>
                             {
