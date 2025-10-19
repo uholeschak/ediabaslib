@@ -2754,8 +2754,8 @@ namespace EdiabasLib
                 protocolDoIp = communicationModes.Contains(CommunicationMode.DoIp);
             }
 
-            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DetectedVehicles: HSFZ={0}, DoIp={1}",
-                protocolHsfz, protocolDoIp));
+            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DetectedVehicles: RemoteHost={0}, HSFZ={1}, DoIp={2}",
+                remoteHostConfig, protocolHsfz, protocolDoIp));
 
             if (!protocolHsfz && !protocolDoIp)
             {
