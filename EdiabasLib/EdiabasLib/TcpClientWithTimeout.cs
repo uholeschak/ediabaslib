@@ -189,7 +189,7 @@ namespace EdiabasLib
                                                         inet4Addr, interface4Addr, interfaceAddress.NetworkPrefixLength));
 #endif
                                                     linkValid = true;
-                                                    linkIpAddress = interfaceBroadcastAddress;
+                                                    linkIpAddress = interface4Addr.HostAddress;
                                                     linkBroadcastIp = interfaceBroadcastAddress;
                                                     break;
                                                 }
@@ -326,23 +326,7 @@ namespace EdiabasLib
 
                     if (ipAddrBytes.SequenceEqual(networkBytes))
                     {
-                        if (ipAddrBytes.Length == 4 && networkBytes.Length == 4)
-                        {
-                            byte[] ipBytes = new byte[ipAddrBytes.Length];
-                            ipAddrBytes.CopyTo(ipBytes, 0);
-                            for (int i = 0; i < ipAddrBytes.Length; i++)
-                            {
-                                ipBytes[i] &= networkBytes[i];
-                            }
-
-                            if (ipBytes.SequenceEqual(ipBytes))
-                            {
-                                ipBytes[^1]++;
-                            }
-
-                            broadcastAddress = new IPAddress(ipBytes).ToString();
-                        }
-
+                        broadcastAddress = new IPAddress(networkBytes).ToString();
                         return true;
                     }
                 }

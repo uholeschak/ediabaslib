@@ -2909,9 +2909,16 @@ namespace EdiabasLib
                                                         IPEndPoint ipUdpIdent = new IPEndPoint(broadcastAddress, UdpIdentPort);
                                                         TcpClientWithTimeout.ExecuteNetworkCommand((string bindIpAddress, string bindBroadcastIpAddress) =>
                                                         {
-                                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Ident bind IP={0}, Broadcast={1}",
-                                                                bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
-                                                            UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                                                            try
+                                                            {
+                                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Ident bind IP={0}, Broadcast={1}",
+                                                                    bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
+                                                                UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                                                            }
+                                                            catch (Exception ex)
+                                                            {
+                                                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ident ident broadcast failed, Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                                                            }
                                                         }, ipUdpIdent.Address, SharedDataActive.NetworkData);
                                                     }
 
@@ -2923,9 +2930,16 @@ namespace EdiabasLib
                                                         IPEndPoint ipUdpDoIpIdent = new IPEndPoint(broadcastAddress, DoIpPort);
                                                         TcpClientWithTimeout.ExecuteNetworkCommand((string bindIpAddress, string bindBroadcastIpAddress) =>
                                                         {
-                                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DoIp ident bind IP={0}, Broadcast={1}",
+                                                            try
+                                                            {
+                                                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DoIp ident bind IP={0}, Broadcast={1}",
                                                                 bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
-                                                            UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
+                                                                UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
+                                                            }
+                                                            catch (Exception ex)
+                                                            {
+                                                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DoIp ident broadcast failed, Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                                                            }
                                                         }, ipUdpDoIpIdent.Address, SharedDataActive.NetworkData);
                                                     }
 
@@ -2935,9 +2949,16 @@ namespace EdiabasLib
                                                     IPEndPoint ipUdpSvrLoc = new IPEndPoint(broadcastAddress, UdpSrvLocPort);
                                                     TcpClientWithTimeout.ExecuteNetworkCommand((string bindIpAddress, string bindBroadcastIpAddress) =>
                                                     {
-                                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("SrvLoc bind IP={0}, Broadcast={1}",
-                                                            bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
-                                                        UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                                        try
+                                                        {
+                                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("SrvLoc bind IP={0}, Broadcast={1}",
+                                                                bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
+                                                            UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+                                                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SrvLoc broadcast failed, Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                                                        }
                                                     }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
 
                                                     broadcastSend = true;
@@ -3026,9 +3047,22 @@ namespace EdiabasLib
                                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Ident broadcast={0} Port={1}", ipUdpIdent.Address, UdpIdentPort));
                                 TcpClientWithTimeout.ExecuteNetworkCommand((string bindIpAddress, string bindBroadcastIpAddress) =>
                                 {
-                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Ident bind IP={0}, Broadcast={1}",
-                                        bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
-                                    UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                                    try
+                                    {
+                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Ident bind IP={0}, Broadcast={1}",
+                                            bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
+                                        UdpSocket.SendTo(UdpIdentReq, ipUdpIdent);
+                                        if (!string.IsNullOrEmpty(bindBroadcastIpAddress))
+                                        {
+                                            IPEndPoint ipUdpDoIpIdentBroadcast = new IPEndPoint(IPAddress.Parse(bindBroadcastIpAddress), UdpIdentPort);
+                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("Ident sec broadcast={0} Port={1}", ipUdpDoIpIdentBroadcast.Address, UdpIdentPort));
+                                            UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdentBroadcast);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ident ident broadcast failed, Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                                    }
                                 }, ipUdpIdent.Address, SharedDataActive.NetworkData);
                             }
 
@@ -3038,9 +3072,22 @@ namespace EdiabasLib
                                 EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DoIp ident broadcast={0} Port={1}", ipUdpDoIpIdent.Address, DoIpPort));
                                 TcpClientWithTimeout.ExecuteNetworkCommand((string bindIpAddress, string bindBroadcastIpAddress) =>
                                 {
-                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DoIp ident bind IP={0}, Broadcast={1}",
-                                        bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
-                                    UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
+                                    try
+                                    {
+                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DoIp ident bind IP={0}, Broadcast={1}",
+                                            bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
+                                        UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdent);
+                                        if (!string.IsNullOrEmpty(bindBroadcastIpAddress))
+                                        {
+                                            IPEndPoint ipUdpDoIpIdentBroadcast = new IPEndPoint(IPAddress.Parse(bindBroadcastIpAddress), DoIpPort);
+                                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("DoIp sec ident broadcast={0} Port={1}", ipUdpDoIpIdentBroadcast.Address, DoIpPort));
+                                            UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdentBroadcast);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "DoIp ident broadcast failed, Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                                    }
                                 }, ipUdpDoIpIdent.Address, SharedDataActive.NetworkData);
                             }
 
@@ -3048,16 +3095,29 @@ namespace EdiabasLib
                             EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("SvrLoc broadcast={0} Port={1}", ipUdpSvrLoc.Address, UdpSrvLocPort));
                             TcpClientWithTimeout.ExecuteNetworkCommand((string bindIpAddress, string bindBroadcastIpAddress) =>
                             {
-                                EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("SvrLoc bind IP={0}, Broadcast={1}",
-                                    bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
-                                UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                try
+                                {
+                                    EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("SvrLoc bind IP={0}, Broadcast={1}",
+                                        bindIpAddress ?? string.Empty, bindBroadcastIpAddress ?? string.Empty));
+                                    UdpSocket.SendTo(UdpSvrLocReq, ipUdpSvrLoc);
+                                    if (!string.IsNullOrEmpty(bindBroadcastIpAddress))
+                                    {
+                                        IPEndPoint ipUdpDoIpIdentBroadcast = new IPEndPoint(IPAddress.Parse(bindBroadcastIpAddress), UdpSrvLocPort);
+                                        EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, string.Format("SvrLoc sec broadcast={0} Port={1}", ipUdpDoIpIdentBroadcast.Address, UdpSrvLocPort));
+                                        UdpSocket.SendTo(UdpDoIpIdentReq, ipUdpDoIpIdentBroadcast);
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "SvrLoc broadcast failed, Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                                }
                             }, ipUdpSvrLoc.Address, SharedDataActive.NetworkData);
 
                             broadcastSend = true;
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            EdiabasProtected?.LogString(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed");
+                            EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Broadcast failed, Exception: {0}", EdiabasNet.GetExceptionText(ex));
                         }
                     }
                     if (!broadcastSend)
