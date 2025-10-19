@@ -5350,16 +5350,33 @@ namespace PsdzClient
         {
             log.InfoFormat("GetSwiVersion");
             string swiVersion = string.Empty;
+            string subKeyValue = @"SWIData";
+            string subKeyPath = @"SOFTWARE\BMWGroup\ISPI\ISTA";
+
             try
             {
-                RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
-                RegistryKey istaKey = baseKey.OpenSubKey(@"SOFTWARE\BMWGroup\ISPI\ISTA");
+                RegistryKey localMachine32 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+                RegistryKey istaKey = localMachine32.OpenSubKey(subKeyPath);
                 if (istaKey != null)
                 {
-                    string swiData = istaKey.GetValue("SWIData") as string;
+                    string swiData = istaKey.GetValue(subKeyValue) as string;
                     if (!string.IsNullOrEmpty(swiData))
                     {
                         swiVersion = swiData;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(swiVersion))
+                {
+                    RegistryKey localMachine64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                    RegistryKey istaKey64 = localMachine64.OpenSubKey(subKeyPath);
+                    if (istaKey64 != null)
+                    {
+                        string swiData = istaKey64.GetValue(subKeyValue) as string;
+                        if (!string.IsNullOrEmpty(swiData))
+                        {
+                            swiVersion = swiData;
+                        }
                     }
                 }
             }
