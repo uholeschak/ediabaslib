@@ -25,6 +25,9 @@ namespace EdiabasLib
         public static readonly long TickResolMs = System.Diagnostics.Stopwatch.Frequency / 1000;
 
 #if ANDROID
+#if DEBUG
+        private static readonly string Tag = typeof(TcpClientWithTimeout).FullName;
+#endif
         public class NetworkData
         {
             public NetworkData(Android.Net.ConnectivityManager connectivityManager)
@@ -132,6 +135,7 @@ namespace EdiabasLib
                 command();
                 return;
             }
+
             Android.Net.Network bindNetwork = null;
             NetworkData networkData = networkDataObject as NetworkData;
             Android.Net.ConnectivityManager connectivityManager = networkData?.ConnectivityManager;
@@ -176,6 +180,10 @@ namespace EdiabasLib
                                             {
                                                 if (IsIpMatchingSubnet(inet4Addr, interface4Addr, interfaceAddress.NetworkPrefixLength))
                                                 {
+#if DEBUG
+                                                    Android.Util.Log.Info(Tag, string.Format("ExecuteNetworkCommand Matched: IP={0} with Interface={1}/{2}",
+                                                        inet4Addr, interface4Addr, interfaceAddress.NetworkPrefixLength));
+#endif
                                                     linkValid = true;
                                                     break;
                                                 }
@@ -191,6 +199,9 @@ namespace EdiabasLib
                             }
                         }
 
+#if DEBUG
+                        Android.Util.Log.Info(Tag, string.Format("ExecuteNetworkCommand Link valid: {0}", linkValid));
+#endif
                         if (linkValid)
                         {
                             bindNetwork = network;
