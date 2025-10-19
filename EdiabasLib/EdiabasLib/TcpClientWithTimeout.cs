@@ -13,7 +13,7 @@ namespace EdiabasLib
     /// </summary>
     public class TcpClientWithTimeout
     {
-        public delegate void ExecuteNetworkDelegate(string bindIpAddress = null);
+        public delegate void ExecuteNetworkDelegate(string bindIpAddress = null, string bindBroadcastIpAddress = null);
         public delegate bool ConnectAbortDelegate();
 
         private readonly IPAddress _host;
@@ -138,6 +138,7 @@ namespace EdiabasLib
 
             Android.Net.Network bindNetwork = null;
             string bindIpAddress = null;
+            string bindBroadcastIpAddress = null;
             NetworkData networkData = networkDataObject as NetworkData;
             Android.Net.ConnectivityManager connectivityManager = networkData?.ConnectivityManager;
             Java.Net.InetAddress inetAddr = Java.Net.InetAddress.GetByName(ipAddr.ToString());
@@ -159,6 +160,7 @@ namespace EdiabasLib
                     {
                         bool linkValid = false;
                         string linkIpAddress = null;
+                        string linkBroadcastIp = null;
                         Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
                         if (linkProperties != null)
                         {
@@ -180,14 +182,15 @@ namespace EdiabasLib
                                         {
                                             if (interfaceAddress.Address is Java.Net.Inet4Address interface4Addr)
                                             {
-                                                if (IsIpMatchingSubnet(inet4Addr, interface4Addr, interfaceAddress.NetworkPrefixLength))
+                                                if (IsIpMatchingSubnet(inet4Addr, interface4Addr, interfaceAddress.NetworkPrefixLength, out string interfaceBroadcastAddress))
                                                 {
 #if DEBUG
                                                     Android.Util.Log.Info(Tag, string.Format("ExecuteNetworkCommand Matched: IP={0} with Interface={1}/{2}",
                                                         inet4Addr, interface4Addr, interfaceAddress.NetworkPrefixLength));
 #endif
                                                     linkValid = true;
-                                                    linkIpAddress = interface4Addr.HostAddress;
+                                                    linkIpAddress = interfaceBroadcastAddress;
+                                                    linkBroadcastIp = interfaceBroadcastAddress;
                                                     break;
                                                 }
                                             }
@@ -209,6 +212,7 @@ namespace EdiabasLib
                         {
                             bindNetwork = network;
                             bindIpAddress = linkIpAddress;
+                            bindBroadcastIpAddress = linkBroadcastIp;
                             break;
                         }
                     }
@@ -223,7 +227,7 @@ namespace EdiabasLib
                 try
                 {
                     Android.Net.ConnectivityManager.SetProcessDefaultNetwork(bindNetwork);
-                    command(bindIpAddress);
+                    command(bindIpAddress, bindBroadcastIpAddress);
                 }
                 finally
                 {
@@ -237,7 +241,7 @@ namespace EdiabasLib
             try
             {
                 connectivityManager?.BindProcessToNetwork(bindNetwork);
-                command(bindIpAddress);
+                command(bindIpAddress, bindBroadcastIpAddress);
             }
             finally
             {
@@ -298,8 +302,10 @@ namespace EdiabasLib
             }
         }
 
-        public static bool IsIpMatchingSubnet(Java.Net.Inet4Address ipAddr, Java.Net.Inet4Address networkAddr, int prefixLen)
+        public static bool IsIpMatchingSubnet(Java.Net.Inet4Address ipAddr, Java.Net.Inet4Address networkAddr, int prefixLen, out string broadcastAddress)
         {
+            broadcastAddress = null;
+
             try
             {
                 byte[] ipAddrBytes = ipAddr.GetAddress();
@@ -320,6 +326,23 @@ namespace EdiabasLib
 
                     if (ipAddrBytes.SequenceEqual(networkBytes))
                     {
+                        if (ipAddrBytes.Length == 4 && networkBytes.Length == 4)
+                        {
+                            byte[] ipBytes = new byte[ipAddrBytes.Length];
+                            ipAddrBytes.CopyTo(ipBytes, 0);
+                            for (int i = 0; i < ipAddrBytes.Length; i++)
+                            {
+                                ipBytes[i] &= networkBytes[i];
+                            }
+
+                            if (ipBytes.SequenceEqual(ipBytes))
+                            {
+                                ipBytes[^1]++;
+                            }
+
+                            broadcastAddress = new IPAddress(ipBytes).ToString();
+                        }
+
                         return true;
                     }
                 }

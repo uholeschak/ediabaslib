@@ -95,7 +95,7 @@ namespace EdiabasLib
 #endif
                 Ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Connecting to: {0}:{1}", adapterIp, adapterPort);
                 IPAddress hostIpAddress = IPAddress.Parse(adapterIp);
-                TcpClientWithTimeout.ExecuteNetworkCommand((string bindIpAddress) =>
+                TcpClientWithTimeout.ExecuteNetworkCommand((string bindIpAddress, string bindBroadcastIpAddress) =>
                 {
                     TcpElmClient = new TcpClientWithTimeout(hostIpAddress, adapterPort, ConnectTimeout, true).Connect(TransmitCancelEvent);
                 }, hostIpAddress, NetworkData);
