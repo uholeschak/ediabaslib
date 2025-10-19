@@ -13,7 +13,7 @@ namespace EdiabasLib
     /// </summary>
     public class TcpClientWithTimeout
     {
-        public delegate void ExecuteNetworkDelegate();
+        public delegate void ExecuteNetworkDelegate(string bindIpAddress = null);
         public delegate bool ConnectAbortDelegate();
 
         private readonly IPAddress _host;
@@ -137,6 +137,7 @@ namespace EdiabasLib
             }
 
             Android.Net.Network bindNetwork = null;
+            string bindIpAddress = null;
             NetworkData networkData = networkDataObject as NetworkData;
             Android.Net.ConnectivityManager connectivityManager = networkData?.ConnectivityManager;
             Java.Net.InetAddress inetAddr = Java.Net.InetAddress.GetByName(ipAddr.ToString());
@@ -157,6 +158,7 @@ namespace EdiabasLib
                     if (networkCapabilities != null)
                     {
                         bool linkValid = false;
+                        string linkIpAddress = null;
                         Android.Net.LinkProperties linkProperties = connectivityManager.GetLinkProperties(network);
                         if (linkProperties != null)
                         {
@@ -185,6 +187,7 @@ namespace EdiabasLib
                                                         inet4Addr, interface4Addr, interfaceAddress.NetworkPrefixLength));
 #endif
                                                     linkValid = true;
+                                                    linkIpAddress = interface4Addr.HostAddress;
                                                     break;
                                                 }
                                             }
@@ -205,6 +208,7 @@ namespace EdiabasLib
                         if (linkValid)
                         {
                             bindNetwork = network;
+                            bindIpAddress = linkIpAddress;
                             break;
                         }
                     }
@@ -219,7 +223,7 @@ namespace EdiabasLib
                 try
                 {
                     Android.Net.ConnectivityManager.SetProcessDefaultNetwork(bindNetwork);
-                    command();
+                    command(bindIpAddress);
                 }
                 finally
                 {
@@ -233,7 +237,7 @@ namespace EdiabasLib
             try
             {
                 connectivityManager?.BindProcessToNetwork(bindNetwork);
-                command();
+                command(bindIpAddress);
             }
             finally
             {
