@@ -1294,9 +1294,7 @@ namespace BmwDeepObd
                 {
                     if (_ediabas.EdInterfaceClass.InterfaceConnect())
                     {
-                        _ediabas.EdInterfaceClass.CommParameter = EdInterfaceBase.CommParameterBmwFast;
-                        _ediabas.EdInterfaceClass.CommAnswerLen = EdInterfaceBase.CommAnswerLenBmwFast;
-
+                        ActivityCommon.SetConnectParamBmwFast(_ediabas);
                         _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Ediabas connected");
                         return true;
                     }

@@ -6519,6 +6519,18 @@ namespace BmwDeepObd
             return false;
         }
 
+        public static bool SetConnectParamBmwFast(EdiabasNet ediabasNet)
+        {
+            if (ediabasNet?.EdInterfaceClass == null)
+            {
+                return false;
+            }
+
+            ediabasNet.EdInterfaceClass.CommParameter = EdInterfaceBase.CommParameterBmwFast;
+            ediabasNet.EdInterfaceClass.CommAnswerLen = EdInterfaceBase.CommAnswerLenBmwFast;
+            return true;
+        }
+
         public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin)
         {
             try

@@ -487,8 +487,7 @@ namespace BmwDeepObd
                         return false;
                     }
 
-                    _ediabas.EdInterfaceClass.CommParameter = EdInterfaceBase.CommParameterBmwFast;
-                    _ediabas.EdInterfaceClass.CommAnswerLen = EdInterfaceBase.CommAnswerLenBmwFast;
+                    ActivityCommon.SetConnectParamBmwFast(_ediabas);
                 }
 
                 _transmitCanceled = false;
