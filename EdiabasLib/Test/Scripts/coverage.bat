@@ -31,7 +31,7 @@ set "EDIABAS_TEST=!BATPATH!\..\..\EdiabasTest\bin\Debug\net48\EdiabasTest.exe"
 set "OUTFILE=output_lib.log"
 rem set ADD_ARGS=-p !COMPORT! -o "!OUTFILE!" -a -c
 set ADD_ARGS=--ifh="!IFH!" -o "!OUTFILE!" -a -c
-set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=!COMPORT!;CompatMode=0"
+set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=!COMPORT!;RemoteHost=127.0.0.1;CompatMode=0"
 set FILTERS=+[EdiabasLib]EdiabasLib.EdiabasNet*
 set COVERAGE=1
 goto argsok
@@ -41,7 +41,7 @@ set "EDIABAS_TEST=!BATPATH!\..\EdiabasLibCall\bin\Debug\net48\EdiabasLibCall.exe
 set OUTFILE=output_apilib.log
 set ADD_ARGS=-o !OUTFILE! --ifh="!IFH!" --device="_" -a -c
 rem set ADD_ARGS=!ADD_ARGS! --cfg="@!BATPATH!\EdiabasLib.config"
-set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=!COMPORT!;CompatMode=0"
+set ADD_ARGS=!ADD_ARGS! --cfg="ObdComPort=!COMPORT!;RemoteHost=127.0.0.1;CompatMode=0"
 set FILTERS=+[EdiabasLib]EdiabasLib.EdiabasNet* +[apiNET32]*
 set COVERAGE=1
 goto argsok
@@ -81,10 +81,10 @@ if exist "!OUTFILE!" del "!OUTFILE!"
 "%OPEN_COVER%" "-output:results3.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\d_ehc.grp\" -j \"_VERSIONINFO\" -j \"IDENT\" -j \"FS_LESEN\" -j \"FS_LESEN_DETAIL#0x5FB4\" -j \"LESEN_ANALOGWERTE\" -j \"LESEN_FILTERWERTE\" -j \"LESEN_REGLERWERTE\" -j \"MODE_CTRL_LESEN\""
 "%OPEN_COVER%" "-output:results4.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\d_klima.grp\" --store -j \"_VERSIONINFO\" -j \"IDENT\" -j \"STATUS_ANALOGEINGAENGE\" -j \"STATUS_DIGITALEINGAENGE\" -j \"STATUS_REGLERGROESSEN\" -j \"STATUS_BEDIENTEIL\" -j \"STATUS_IO\" -j \"STATUS_MOTOR_KLAPPENPOSITION\""
 "%OPEN_COVER%" "-output:results5.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\e60.prg\" -j \"_VERSIONINFO\" -j \"IDENT_FUNKTIONAL\" -j \"FS_LESEN_FUNKTIONAL\""
-"%OPEN_COVER%" "-output:results6_1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\tmode.prg\" -j \"LESE_INTERFACE_VERSION\" -j \"LESE_INTERFACE_TYP\" -j \"HOLE_INTERFACE_STATUS\" -j \"HOLE_KEYBYTES\""
-"%OPEN_COVER%" "-output:results6_2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_PATH!\tmode.prg\" -j \"SETZE_PORT#^|010203040506\" -j \"LESE_PORT\" -j \"SETZE_SG_PARAMETER_ALLG#^|0F01000000C20100B0040000140000000A0000000200000088130000\" -j \"SETZE_ANTWORTLAENGE#^|00000000\" -j \"SENDE_TELEGRAMM#^|8212F11A80\" -j \"SETZE_PROGRAMMIERSPANNUNG#^|B004\" -j \"SETZE_SIA_RELAIS#^|E803\" -j \"SETZE_SG_PARAMETER_EIDBSS#^|01010101\" -j \"SETZE_SG_PARAM_ZURUECK\""
-"%OPEN_COVER%" "-output:results6_3.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --continue -s \"!ECU_PATH!\tmode.prg\" -j \"LESE_SPANNUNG_KL15\" -j \"LESE_SPANNUNG_KL30\""
-"%OPEN_COVER%" "-output:results6_4.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --continue -s \"!ECU_PATH!\tmode.prg\" -j \"SETZE_SG_PARAMETER_ALLG#^|0F01000000C20100B0040000140000000A0000000200000088130000\" -j \"SETZE_ANTWORTLAENGE#^|00000000\" -j \"SENDE_TELEGR_WIEDERHOLT#^|8212F11A80\" -j \"HOLE_ANTWORT_TELEGR\" -j \"STOPPE_WIEDERH_ANFORDERUNG\" -j \"REICHE_AN_INTERFACE_DURCH#^|00000000\" -j \"TESTE_DIAGNOSELEITUNG\" -j \"SETZE_INTERFACE_ZURUECK\""
+
+"%OPEN_COVER%" "-output:results6_1.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --continue -s \"!ECU_PATH!\tmode.prg\" -j \"LESE_INTERFACE_VERSION\" -j \"LESE_INTERFACE_TYP\" -j \"HOLE_INTERFACE_STATUS\" -j \"HOLE_KEYBYTES\""
+"%OPEN_COVER%" "-output:results6_2.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --continue -s \"!ECU_PATH!\tmode.prg\" -j \"SETZE_PORT#^|010203040506\" -j \"LESE_PORT\" -j \"SETZE_SG_PARAMETER_ALLG#^|0F01000000C20100B0040000140000000A0000000200000088130000\" -j \"SETZE_ANTWORTLAENGE#^|00000000\" -j \"SENDE_TELEGRAMM#^|8212F11A80\" -j \"LESE_SPANNUNG_KL15\" -j \"LESE_SPANNUNG_KL30\" -j \"SETZE_PROGRAMMIERSPANNUNG#^|B004\" -j \"SETZE_SIA_RELAIS#^|E803\" -j \"SETZE_SG_PARAMETER_EIDBSS#^|01010101\" -j \"SETZE_SG_PARAM_ZURUECK\""
+"%OPEN_COVER%" "-output:results6_3.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --continue -s \"!ECU_PATH!\tmode.prg\" -j \"SETZE_SG_PARAMETER_ALLG#^|0F01000000C20100B0040000140000000A0000000200000088130000\" -j \"SETZE_ANTWORTLAENGE#^|00000000\" -j \"SENDE_TELEGR_WIEDERHOLT#^|8212F11A80\" -j \"HOLE_ANTWORT_TELEGR\" -j \"STOPPE_WIEDERH_ANFORDERUNG\" -j \"REICHE_AN_INTERFACE_DURCH#^|00000000\" -j \"TESTE_DIAGNOSELEITUNG\" -j \"SETZE_INTERFACE_ZURUECK\""
 
 "%OPEN_COVER%" "-output:results10.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! -s \"!ECU_TEST_PATH!\cmd_test1.prg\" -j \"TEST_SHMID#ARGS##STDARGS\" -j \"_JOBS\" -j \"TEST_SREG\" -j \"TEST_MATH\" -j \"TEST_PARY#^|12131415A1A2A3A4A5\" -j \"TEST_PARY#^|\" -j \"TEST_PARL# -5\" -j \"TEST_PARL#0x10 \" -j \"TEST_PARL#0y011001 \" -j \"TEST_PARR# 123.45 \" -j \"TEST_FILES\" -j \"TEST_PROGRESS_INFO\""
 "%OPEN_COVER%" "-output:results11.xml" "-target:!EDIABAS_TEST!" "-filter:!FILTERS!" "-targetargs:!ADD_ARGS! --alltypes -s \"!ECU_TEST_PATH!\cmd_test2.prg\" -j \"TEST_SHMID###STDARG1\" -j \"_JOBS\" -j \"TEST_SUBB_FLAGS\" -j \"TEST_SHMID\" -j \"TEST_SUBC_FLAGS\" -j \"TEST_SHMID\" -j \"TEST_ADDS_FLAGS\" -j \"TEST_ADDC_FLAGS\" -j \"TEST_COMP_FLAGS\" !"^"=!^
