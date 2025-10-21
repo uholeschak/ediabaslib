@@ -1292,7 +1292,7 @@ namespace EdiabasLib
                         break;
 
                     default:
-                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
+                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                         return;
                 }
             }
@@ -1443,7 +1443,7 @@ namespace EdiabasLib
                     return 0;
                 }
 
-                return 1;
+                return 0;
             }
         }
 
