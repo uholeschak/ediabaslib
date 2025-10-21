@@ -14,7 +14,7 @@
     },
     "StatusICOM": {
       "commandName": "Project",
-      "commandLineArgs": "--ifh=\"RPLUS:ICOM_P:Remotehost=192.168.201.2;Port=6801\" --unit=\"ABC\" --hidetelresp -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\" -j \"FS_LESEN_DETAIL#0x4232#F_ART_ANZ;F_UW_ANZ\" -j \"STATUS_RAILDRUCK_IST\" -j \"STATUS_MOTORTEMPERATUR\" -j \"STATUS_LMM_MASSE\" -j \"STATUS_MOTORDREHZAHL\""
+      "commandLineArgs": "--ifh=\"RPLUS:ICOM_P:Remotehost=192.168.201.2;Port=6801\" --unit=\"ABC\" --hidelastrespbyte -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\" -j \"FS_LESEN_DETAIL#0x4232#F_ART_ANZ;F_UW_ANZ\" -j \"STATUS_RAILDRUCK_IST\" -j \"STATUS_MOTORTEMPERATUR\" -j \"STATUS_LMM_MASSE\" -j \"STATUS_MOTORDREHZAHL\""
     },
     "TmodeICOM": {
       "commandName": "Project",
