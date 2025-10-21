@@ -20,6 +20,16 @@
       "commandLineArgs": "--ifh=\"ENET\" --cfg=\"EnetRemoteHost=auto:all;IfhTrace=2;ApiTrace=1\" -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\"",
       "nativeDebugging": true
     },
+    "StatusICOM": {
+      "commandName": "Project",
+      "commandLineArgs": "--ifh=\"RPLUS:ICOM_P:Remotehost=192.168.201.2;Port=6801\" --unit=\"ABC\" --hidelastrespbyte -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\" -j \"FS_LESEN_DETAIL#0x4232#F_ART_ANZ;F_UW_ANZ\" -j \"STATUS_RAILDRUCK_IST\" -j \"STATUS_MOTORTEMPERATUR\" -j \"STATUS_LMM_MASSE\" -j \"STATUS_MOTORDREHZAHL\"",
+      "nativeDebugging": true
+    },
+    "TmodeICOM": {
+      "commandName": "Project",
+      "commandLineArgs": "--ifh=\"RPLUS:ICOM_P:Remotehost=192.168.201.2;Port=6801\" --unit=\"ABC\" --continue -s \"C:\\EDIABAS\\Ecu\\tmode.prg\" -j \"INFO\" -j \"LESE_INTERFACE_VERSION\" -j \"LESE_INTERFACE_TYP\" -j \"LESE_SPANNUNG_KL15\" -j \"LESE_SPANNUNG_KL30\" -j \"HOLE_INTERFACE_STATUS\" -j \"HOLE_KEYBYTES\" -j \"LESE_PORT\" -j \"SETZE_PORT#|0102030405\" -j \"SETZE_SG_PARAMETER_ALLG#|0F01000000C20100B0040000140000000A0000000200000088130000\" -j \"SETZE_ANTWORTLAENGE#|00000000\" -j \"SENDE_TELEGRAMM#|8212F11A80\" -j \"SENDE_TELEGR_WIEDERHOLT#|8212F11A80\" -j \"HOLE_ANTWORT_TELEGR\" -j \"STOPPE_WIEDERH_ANFORDERUNG\" -j \"SETZE_PROGRAMMIERSPANNUNG#|B004\" -j \"SETZE_SIA_RELAIS#|E803\" -j \"SETZE_SG_PARAMETER_EIDBSS#|01010101\" -j \"SETZE_SG_PARAM_ZURUECK\" -j \"REICHE_AN_INTERFACE_DURCH#|00000000\" -j \"TESTE_DIAGNOSELEITUNG\" -j \"SETZE_INTERFACE_ZURUECK\"",
+      "nativeDebugging": true
+    },
     "BLE": {
       "commandName": "Project",
       "commandLineArgs": "--ifh=\"STD:OBD\" --cfg=\"ObdComPort=BLUETOOTH:C90DDA24FBF5#BLE;EnetRemoteHost=auto:all;IfhTrace=2;ApiTrace=1\" -s \"C:\\EDIABAS\\Ecu\\d_motor.grp\" -j \"IDENT\" -j \"FS_LESEN\" -j \"STATUS_REGENERATION_CSF\"",
