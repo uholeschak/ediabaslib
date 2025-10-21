@@ -2910,6 +2910,9 @@ namespace CarSimulator
                     byte[] responseBuffer = GetControlResponse(dataBuffer, recLen);
                     if (responseBuffer != null)
                     {
+#if true
+                        DebugLogData("Ctrl Send: ", responseBuffer, responseBuffer.Length);
+#endif
                         WriteNetworkStream(bmwTcpClientData, responseBuffer, 0, responseBuffer.Length);
                     }
 
