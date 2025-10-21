@@ -274,16 +274,17 @@ namespace EdiabasTest
                         {
                             if (!_compareOutput || ediabas.ErrorCodeLast == EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                             {
-                                if (ex is EdiabasNet.EdiabasNetException)
-                                {
-                                    if (continueOnError)
-                                    {
-                                        continue;
-                                    }
-                                }
-
                                 _outputWriter.WriteLine("Job execution failed: " + EdiabasNet.GetExceptionText(ex));
                             }
+
+                            if (ex is EdiabasNet.EdiabasNetException)
+                            {
+                                if (continueOnError)
+                                {
+                                    continue;
+                                }
+                            }
+
                             return 1;
                         }
 
