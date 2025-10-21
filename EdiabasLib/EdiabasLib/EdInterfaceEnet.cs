@@ -2509,8 +2509,7 @@ namespace EdiabasLib
                 return true;
             }
 
-            EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0006);
-            return false;
+            return true;
         }
 
         public override bool ReceiveFrequent(out byte[] receiveData)
