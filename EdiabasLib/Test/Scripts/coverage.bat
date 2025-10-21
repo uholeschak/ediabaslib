@@ -15,14 +15,15 @@ set "ECU_TEST_PATH=!BATPATH!\..\Ecu"
 set "REPORTS_PATH=!BATPATH!\Reports"
 
 if "%~2"=="" (
-set "IFH=STD:OBD"
+    set "IFH=STD:OBD"
 ) else (
-set "IFH=%~2"
+    set "IFH=%~2"
 )
+
 if "%~3"=="" (
-set "COMPORT=COM4"
+    set "COMPORT=COM4"
 ) else (
-set "COMPORT=%~3"
+    set "COMPORT=%~3"
 )
 
 if /i "%~1"=="lib" (
@@ -49,8 +50,11 @@ if /i "%~1"=="ediabas" (
 set "EDIABAS_TEST=!BATPATH!\..\EdiabasCall\bin\Debug\net48\EdiabasCall.exe"
 set "OUTFILE=output_ediabas.log"
 set "ADD_ARGS=-o "!OUTFILE!" --ifh="!IFH!" --device="_" -a -c"
-if /i "%~2"=="ENET" (
+if /i "%IFH:~0,4%"=="ENET" (
     set ADD_ARGS=!ADD_ARGS! --cfg="RemoteHost=127.0.0.1"
+)
+if /i "%IFH:~0,5%"=="RPLUS" (
+    set ADD_ARGS=!ADD_ARGS! --hidelastrespbyte
 )
 set FILTERS=-[*]*
 set COVERAGE=0
