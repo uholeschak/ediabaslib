@@ -73,6 +73,7 @@ namespace EdiabasCall
             bool printAllTypes = false;
             bool printArgs = false;
             bool continueOnError = false;
+            bool hideTelRespLastByte = false;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool showHelp = false;
@@ -101,6 +102,8 @@ namespace EdiabasCall
                     v => printArgs = v != null },
                 { "continue", "continue on error",
                     v => continueOnError = v != null },
+                { "hidetelresp", "hide telegram response last byte",
+                    v => hideTelRespLastByte = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
                   v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters prepend the hex string with| (e.g. |A3C2)",
@@ -347,7 +350,7 @@ namespace EdiabasCall
                     }
                     else
                     {
-                        PrintResults(formatList, printAllTypes);
+                        PrintResults(formatList, printAllTypes, hideTelRespLastByte);
                     }
 
                     // for alive check
@@ -360,7 +363,7 @@ namespace EdiabasCall
                     foreach (API.APIRESULTFIELD resultField in _apiResultFields)
                     {
                         API.apiResultsScope(resultField);
-                        PrintResults(formatList, printAllTypes);
+                        PrintResults(formatList, printAllTypes, hideTelRespLastByte);
                         API.apiResultsDelete(resultField);
                     }
                 }
@@ -398,7 +401,7 @@ namespace EdiabasCall
             _lastJobInfo = jobInfo;
         }
 
-        static void PrintResults(List<string> formatList, bool printAllTypes)
+        static void PrintResults(List<string> formatList, bool printAllTypes, bool hideTelRespLastByte)
         {
             if (API.apiResultVar(out string variantString))
             {
@@ -589,12 +592,21 @@ namespace EdiabasCall
 
                                         case API.APIFORMAT_BINARY:
                                             {
+                                                int resultLengthOffset = 0;
+                                                if (hideTelRespLastByte)
+                                                {
+                                                    if (string.Compare(resultName, "_TEL_ANTWORT", StringComparison.OrdinalIgnoreCase) == 0)
+                                                    {
+                                                        resultLengthOffset = 1;
+                                                    }
+                                                }
+
                                                 byte[] resultByteArray;
                                                 if (_api6)
                                                 {
                                                     if (API.apiResultBinary(out resultByteArray, out ushort resultLengthShort, resultName, set))
                                                     {
-                                                        for (int i = 0; i < resultLengthShort; i++)
+                                                        for (int i = 0; i < resultLengthShort - resultLengthOffset; i++)
                                                         {
                                                             sbResult.Append(string.Format(Culture, "{0:X02} ", resultByteArray[i]));
                                                         }
@@ -603,7 +615,7 @@ namespace EdiabasCall
                                                 }
                                                 if (API.apiResultBinaryExt(out resultByteArray, out uint resultLength, API.APIMAXBINARYEXT, resultName, set))
                                                 {
-                                                    for (int i = 0; i < resultLength; i++)
+                                                    for (int i = 0; i < resultLength - resultLengthOffset; i++)
                                                     {
                                                         sbResult.Append(string.Format(Culture, "{0:X02} ", resultByteArray[i]));
                                                     }
