@@ -53,9 +53,6 @@ set "ADD_ARGS=-o "!OUTFILE!" --ifh="!IFH!" --device="_" -a -c"
 if /i "%IFH:~0,4%"=="ENET" (
     set ADD_ARGS=!ADD_ARGS! --cfg="RemoteHost=127.0.0.1"
 )
-if /i "%IFH:~0,5%"=="RPLUS" (
-    set ADD_ARGS=!ADD_ARGS! --hidelastrespbyte
-)
 set FILTERS=-[*]*
 set COVERAGE=0
 goto argsok
@@ -70,6 +67,10 @@ echo coverage ediabas "RPLUS:ICOM_P:Remotehost=192.168.201.2;Port=6801
 goto done
 
 :argsok
+if /i "%IFH:~0,5%"=="RPLUS" (
+    set ADD_ARGS=!ADD_ARGS! --hidelastrespbyte
+)
+
 echo Executable: !EDIABAS_TEST!
 echo Args: !ADD_ARGS!
 
