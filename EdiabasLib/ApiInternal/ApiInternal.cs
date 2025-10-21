@@ -309,18 +309,6 @@ namespace Ediabas
             logFormat(ApiLogLevel.Normal, "64 bit process: {0}", Environment.Is64BitProcess);
             logFormat(ApiLogLevel.Normal, "apiInitExt({0}, {1}, {2}, {3})", ifh, unit, app, config);
 
-            if (!string.IsNullOrEmpty(unit))
-            {
-                if (char.IsLetter(unit[0]))
-                {
-                    setLocalError((int)EdiabasNet.ErrorCodes.EDIABAS_IFH_0018);
-                    _ediabas.Dispose();
-                    logFormat(ApiLogLevel.Normal, "Unit invalid: {0}", unit);
-                    logFormat(ApiLogLevel.Normal, "={0} ()", false);
-                    return false;
-                }
-            }
-
             if (!string.IsNullOrEmpty(ifh))
             {
                 string[] ifhParts = ifh.Split(':');
