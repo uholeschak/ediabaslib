@@ -37,6 +37,7 @@ namespace EdiabasTest
             bool storeResults = false;
             bool printAllTypes = false;
             bool continueOnError = false;
+            bool hideTelRespLastByte = false;
             List<string> formatList = new List<string>();
             List<string> jobNames = new List<string>();
             bool showHelp = false;
@@ -65,6 +66,8 @@ namespace EdiabasTest
                   v => printAllTypes = v != null },
                 { "continue", "continue on error",
                     v => continueOnError = v != null },
+                { "hidelastrespbyte", "hide telegram response last byte",
+                    v => hideTelRespLastByte = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
                   v => formatList.Add(v) },
                 { "j|job=", "<job name>#<job parameters semicolon separated>#<request results semicolon separated>#<standard job parameters semicolon separated>.\nFor binary job parameters prepend the hex string with| (e.g. |A3C2)",
@@ -291,7 +294,7 @@ namespace EdiabasTest
                         }
                         else
                         {
-                            PrintResults(formatList, printAllTypes, resultSets);
+                            PrintResults(formatList, printAllTypes, hideTelRespLastByte, resultSets);
                         }
 
                         //Console.WriteLine("Press Key to continue");
@@ -302,7 +305,7 @@ namespace EdiabasTest
                     {
                         foreach (List<Dictionary<string, EdiabasNet.ResultData>> resultSets in _apiResultList)
                         {
-                            PrintResults(formatList, printAllTypes, resultSets);
+                            PrintResults(formatList, printAllTypes, hideTelRespLastByte, resultSets);
                         }
                     }
                 }
@@ -352,7 +355,7 @@ namespace EdiabasTest
             _errorPrinted = true;
         }
 
-        static void PrintResults(List<string> formatList, bool printAllTypes, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
+        static void PrintResults(List<string> formatList, bool printAllTypes, bool hideTelRespLastByte, List<Dictionary<string, EdiabasNet.ResultData>> resultSets)
         {
             int dataSet = 0;
             if (resultSets != null)
@@ -428,10 +431,19 @@ namespace EdiabasTest
                         }
                         else if (resultData.OpData.GetType() == typeof(byte[]))
                         {
-                            byte[] data = (byte[])resultData.OpData;
-                            foreach (byte value in data)
+                            int resultLengthOffset = 0;
+                            if (hideTelRespLastByte)
                             {
-                                sbResult.Append(string.Format(Culture, "{0:X02} ", value));
+                                if (string.Compare(resultData.Name, "_TEL_ANTWORT", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    resultLengthOffset = 1;
+                                }
+                            }
+
+                            byte[] data = (byte[])resultData.OpData;
+                            for (int i = 0; i < data.Length - resultLengthOffset; i++)
+                            {
+                                sbResult.Append(string.Format(Culture, "{0:X02} ", data[i]));
                             }
                         }
 

@@ -102,7 +102,7 @@ namespace EdiabasCall
                     v => printArgs = v != null },
                 { "continue", "continue on error",
                     v => continueOnError = v != null },
-                { "hidetelresp", "hide telegram response last byte",
+                { "hidelastrespbyte", "hide telegram response last byte",
                     v => hideTelRespLastByte = v != null },
                 { "f|format=", "format for specific result. <result name>=<format string>",
                   v => formatList.Add(v) },
