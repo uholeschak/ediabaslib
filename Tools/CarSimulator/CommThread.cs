@@ -2038,6 +2038,7 @@ namespace CarSimulator
                         {
                             return false;
                         }
+
                         // convert to BMW-FAST
                         int dataLength;
                         if (kwp2000S)
@@ -2060,7 +2061,9 @@ namespace CarSimulator
                             }
                             return true;
                         }
+
                         // DS2
+                        Debug.WriteLine("Detected DS2 request");
                         dataLength = receiveData[1] - 3;
                         if (dataLength > 0x3F)
                         {   // with length byte
