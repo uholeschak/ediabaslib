@@ -1292,7 +1292,7 @@ namespace EdiabasLib
                         break;
 
                     default:
-                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0014);
+                        EdiabasProtected?.SetError(EdiabasNet.ErrorCodes.EDIABAS_IFH_0041);
                         return;
                 }
             }
@@ -1362,7 +1362,7 @@ namespace EdiabasLib
                     return interfaceVersion;
                 }
 
-                return 1795;
+                return 0x0707;
             }
         }
 
@@ -1416,7 +1416,7 @@ namespace EdiabasLib
                     return null;
                 }
 
-                return new byte[] { 0x00, 0x00 };
+                return Array.Empty<byte>();
             }
         }
 
@@ -1443,7 +1443,7 @@ namespace EdiabasLib
                     return 0;
                 }
 
-                return 1;
+                return 0;
             }
         }
 
@@ -1595,7 +1595,7 @@ namespace EdiabasLib
                 return portValue;
             }
 
-            return 0;
+            return 0x0301;
         }
 
         public override void SetPort(UInt32 index, UInt32 value)
