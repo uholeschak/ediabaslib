@@ -13561,11 +13561,11 @@ using System.Threading;"
                     // ignored
                 }
             }
-            else
+            else if (File.Exists(backupFile2Name))
             {
                 try
                 {
-                    File.Delete(backupFile2Name);
+                    File.Copy(backupFile2Name, backupFileName, true);
                 }
                 catch (Exception)
                 {
