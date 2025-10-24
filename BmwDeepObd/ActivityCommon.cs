@@ -13206,6 +13206,11 @@ using System.Threading;"
                     }
 
                     string validFileName = settingsFile + ValidExt;
+                    if (string.Compare(fileName, validFileName, StringComparison.OrdinalIgnoreCase) == 0)
+                    {
+                        continue;
+                    }
+
                     try
                     {
                         File.Copy(fileName, validFileName, true);
