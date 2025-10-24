@@ -805,6 +805,7 @@ namespace BmwDeepObd
         public const string MacrodroidAppName = @"com.arlosoft.macrodroid";
         public const string DefaultLang = "en";
         public const string BackupExt = ".bak";
+        public const string ValidExt = ".valid";
         public const string ZipExt = ".zip";
         public const string TraceFileNameStd = "ifh.trc";
         public const string TraceFileNameZip = TraceFileNameStd + ZipExt;
@@ -13150,6 +13151,24 @@ using System.Threading;"
                     }
                 }
 
+                string validFileName = settingsFile + ValidExt;
+                if (File.Exists(validFileName))
+                {
+                    storageData = GetStorageDataFromFile(validFileName, settingsMode);
+                    if (storageData != null)
+                    {
+                        try
+                        {
+                            File.Copy(validFileName, settingsFile, true);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+
+                        return storageData;
+                    }
+                }
             }
             return new StorageData();
         }
