@@ -13536,36 +13536,17 @@ using System.Threading;"
 
             EdiabasNet.EncodeFileNameKey = AppId.ToLowerInvariant();
             string settingsFile2 = GetSettingsFileName(true);
-            if (File.Exists(settingsFile))
+            if (!string.IsNullOrEmpty(settingsFile2) && File.Exists(settingsFile))
             {
+                string backupFile2Name = settingsFile2 + BackupExt;
                 try
                 {
-                    File.Copy(settingsFile, settingsFile2, true);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
+                    if (File.Exists(settingsFile2))
+                    {
+                        File.Move(settingsFile2, backupFile2Name, true);
+                    }
 
-            string backupFileName = settingsFile + BackupExt;
-            string backupFile2Name = settingsFile2 + BackupExt;
-            if (File.Exists(backupFileName))
-            {
-                try
-                {
-                    File.Copy(backupFileName, backupFile2Name, true);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
-            else if (File.Exists(backupFile2Name))
-            {
-                try
-                {
-                    File.Copy(backupFile2Name, backupFileName, true);
+                    File.Copy(settingsFile, settingsFile2, true);
                 }
                 catch (Exception)
                 {
