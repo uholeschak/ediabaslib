@@ -13132,14 +13132,7 @@ using System.Threading;"
                 {
                     if (settingsMode == SettingsMode.All)
                     {
-                        try
-                        {
-                            File.Copy(settingsFile, validFileName, true);
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
+                        CreateValidFiles(settingsFile);
                     }
 
                     return storageData;
@@ -13156,12 +13149,13 @@ using System.Threading;"
                             try
                             {
                                 File.Copy(backupFileName, settingsFile, true);
-                                File.Copy(backupFileName, validFileName, true);
                             }
                             catch (Exception)
                             {
                                 // ignored
                             }
+
+                            CreateValidFiles(settingsFile);
                         }
 
                         return storageData;
@@ -13173,13 +13167,18 @@ using System.Threading;"
                     storageData = GetStorageDataFromFile(validFileName, settingsMode);
                     if (storageData != null)
                     {
-                        try
+                        if (settingsMode == SettingsMode.All)
                         {
-                            File.Copy(validFileName, settingsFile, true);
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
+                            try
+                            {
+                                File.Copy(validFileName, settingsFile, true);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
+
+                            CreateValidFiles(settingsFile);
                         }
 
                         return storageData;
@@ -13187,6 +13186,42 @@ using System.Threading;"
                 }
             }
             return new StorageData();
+        }
+
+        public static bool CreateValidFiles(string fileName)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
+                {
+                    return false;
+                }
+
+                for (int i = 0; i < 2; i++)
+                {
+                    string settingsFile = GetSettingsFileName(i > 0);
+                    if (string.IsNullOrEmpty(settingsFile))
+                    {
+                        continue;
+                    }
+
+                    string validFileName = settingsFile + ValidExt;
+                    try
+                    {
+                        File.Copy(fileName, validFileName, true);
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static StorageData GetStorageDataFromFile(string fileName, SettingsMode settingsMode = SettingsMode.All)
