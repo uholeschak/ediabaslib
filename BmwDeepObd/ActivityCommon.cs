@@ -13126,9 +13126,22 @@ using System.Threading;"
                     continue;
                 }
 
+                string validFileName = settingsFile + ValidExt;
                 StorageData storageData = GetStorageDataFromFile(settingsFile, settingsMode);
                 if (storageData != null)
                 {
+                    if (settingsMode == SettingsMode.All)
+                    {
+                        try
+                        {
+                            File.Copy(settingsFile, validFileName, true);
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+
                     return storageData;
                 }
 
@@ -13138,20 +13151,23 @@ using System.Threading;"
                     storageData = GetStorageDataFromFile(backupFileName, settingsMode);
                     if (storageData != null)
                     {
-                        try
+                        if (settingsMode == SettingsMode.All)
                         {
-                            File.Copy(backupFileName, settingsFile, true);
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
+                            try
+                            {
+                                File.Copy(backupFileName, settingsFile, true);
+                                File.Copy(backupFileName, validFileName, true);
+                            }
+                            catch (Exception)
+                            {
+                                // ignored
+                            }
                         }
 
                         return storageData;
                     }
                 }
 
-                string validFileName = settingsFile + ValidExt;
                 if (File.Exists(validFileName))
                 {
                     storageData = GetStorageDataFromFile(validFileName, settingsMode);
