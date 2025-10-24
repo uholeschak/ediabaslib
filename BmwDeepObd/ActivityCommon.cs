@@ -13132,7 +13132,7 @@ using System.Threading;"
                 {
                     if (settingsMode == SettingsMode.All)
                     {
-                        CreateValidFiles(settingsFile);
+                        CreateSettingsValidFiles(settingsFile);
                     }
 
                     return storageData;
@@ -13155,7 +13155,7 @@ using System.Threading;"
                                 // ignored
                             }
 
-                            CreateValidFiles(settingsFile);
+                            CreateSettingsValidFiles(settingsFile);
                         }
 
                         return storageData;
@@ -13178,7 +13178,7 @@ using System.Threading;"
                                 // ignored
                             }
 
-                            CreateValidFiles(settingsFile);
+                            CreateSettingsValidFiles(settingsFile);
                         }
 
                         return storageData;
@@ -13188,7 +13188,7 @@ using System.Threading;"
             return new StorageData();
         }
 
-        public static bool CreateValidFiles(string fileName)
+        public static bool CreateSettingsValidFiles(string fileName)
         {
             bool result = true;
 
