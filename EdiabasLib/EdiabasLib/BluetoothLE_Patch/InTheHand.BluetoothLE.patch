@@ -1,12 +1,14 @@
 diff --git a/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj b/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj
-index 4e8c8f6..8b28b76 100644
+index 4e8c8f6..f496447 100644
 --- a/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj
 +++ b/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj
-@@ -2,7 +2,7 @@
+@@ -1,8 +1,8 @@
+ ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
  	<Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="1.2.25" />
  	<PropertyGroup>
- 		<TargetFrameworks>netstandard2.0;net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
+-		<TargetFrameworks>netstandard2.0;net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
 -		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);monoandroid10.0;xamarinios10;xamarintvos10;xamarin.watchos10;net8.0-windows10.0.19041.0;uap10.0</TargetFrameworks>
++		<TargetFrameworks>netstandard2.0;net8.0;net8.0-android</TargetFrameworks>
 +		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0;net462;uap10.0</TargetFrameworks>
  		<Company>In The Hand Ltd</Company>
  		<Authors>Peter Foot</Authors>
@@ -41,7 +43,7 @@ index 4e8c8f6..8b28b76 100644
  
  	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
 -		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.22621.2428" />
-+		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.6584" />
++		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.6901" />
  		<Compile Include="Platforms\Windows\*.cs" />
  	</ItemGroup>
  	
