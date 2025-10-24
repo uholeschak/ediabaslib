@@ -13190,6 +13190,8 @@ using System.Threading;"
 
         public static bool CreateValidFiles(string fileName)
         {
+            bool result = true;
+
             try
             {
                 if (string.IsNullOrEmpty(fileName) || !File.Exists(fileName))
@@ -13217,7 +13219,7 @@ using System.Threading;"
                     }
                     catch (Exception)
                     {
-                        // ignored
+                        result = false;
                     }
                 }
             }
@@ -13226,7 +13228,7 @@ using System.Threading;"
                 return false;
             }
 
-            return true;
+            return result;
         }
 
         public static StorageData GetStorageDataFromFile(string fileName, SettingsMode settingsMode = SettingsMode.All)
