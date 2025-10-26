@@ -172,7 +172,13 @@ namespace PsdzClient.Programming
             psdzServiceGateway.CloseConnectionsToPsdz(force);
             Log.Info(Log.CurrentMethod(), "End.");
         }
-
+#if false
+        public PsdzProgramming CreatePsdzProg(IVehicle vehicle, IEcuKom ecuKom, IProtocolBasic protocoller, IICOMHandler icomHandler)
+        {
+            StartPsdzService(vehicle);
+            return programmingWorker.CreatePsdzProg(Psdz, vehicle, ecuKom, null, protocoller, icomHandler) as PsdzProgramming;
+        }
+#endif
         // [UH] added
         public string GetPsdzServiceHostLogDir()
         {
