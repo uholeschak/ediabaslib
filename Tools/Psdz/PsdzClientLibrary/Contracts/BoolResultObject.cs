@@ -4,7 +4,7 @@ namespace PsdzClient.Contracts
 {
     public class BoolResultObject : IBoolResultObject
     {
-        public static readonly BoolResultObject SuccessResult = new BoolResultObject
+        public static BoolResultObject SuccessResult => new BoolResultObject
         {
             Result = true,
             ErrorCode = "",
@@ -27,6 +27,15 @@ namespace PsdzClient.Contracts
 
         public int StatusCode { get; set; }
 
+        public static BoolResultObject FailResult(string message)
+        {
+            return new BoolResultObject
+            {
+                Result = false,
+                ErrorMessage = message
+            };
+        }
+
         public override string ToString()
         {
             if (Result)
@@ -48,6 +57,24 @@ namespace PsdzClient.Contracts
     {
         public T ResultObject { get; set; }
 
+        public static BoolResultObject<T> Success(T ResultObject)
+        {
+            return new BoolResultObject<T>
+            {
+                Result = true,
+                ResultObject = ResultObject
+            };
+        }
+
+        public static BoolResultObject<T> Fail(string ErrorMessage)
+        {
+            return new BoolResultObject<T>
+            {
+                Result = false,
+                ErrorMessage = ErrorMessage
+            };
+        }
+
         public BoolResultObject()
         {
         }
@@ -68,5 +95,4 @@ namespace PsdzClient.Contracts
             base.StatusCode = boolResultObject.StatusCode;
         }
     }
-
 }
