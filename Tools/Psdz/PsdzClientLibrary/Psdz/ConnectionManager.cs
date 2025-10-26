@@ -1,5 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using Org.BouncyCastle.Asn1.Pkcs;
@@ -38,6 +38,8 @@ namespace PsdzClientLibrary.Psdz
         //public readonly IPsdzCentralConnectionService psdzCentralConnectionService;
 
         private readonly ISecureDiagnosticsService secureDiagnosticsService;
+
+        private readonly IHttpConfigurationService httpConfigurationService;
 
         //private EdiabasConnectionManager EdiabasConnection { get; }
 
@@ -91,7 +93,7 @@ namespace PsdzClientLibrary.Psdz
 
         internal int ConnectionPort { get; set; }
 
-        // [UH] arguments removed
+        // [UH] IProtocolBasic protocoller, IICOMHandler icomHandler, removed
         internal ConnectionManager(IPsdz psdz, IVehicle vehicle, IProgMsgListener progMsgListener, bool shouldSetConnectionToDcan = false, int connectionPort = -1)
             : base(progMsgListener)
         {
@@ -106,6 +108,7 @@ namespace PsdzClientLibrary.Psdz
             //fastaService = protocoller;
             secureDiagnosticsService = psdz.SecureDiagnosticsService;
             AvoidTlsConnection = false;
+            httpConfigurationService = psdz.HttpConfigurationService;
         }
 
         private bool IsConnectedViaPtt()
@@ -168,11 +171,12 @@ namespace PsdzClientLibrary.Psdz
             }
             bool success = psdzConnection != null;
             LogPsdzCall("ConnectToProject()", psdzFctName, success);
-            if (isTlsAllowed)
+            if (isTlsAllowed && !VCI.IsSimulation)
             {
                 RegisterCallbackAndPassCertificatesToPsdz(psdzConnection);
                 secureDiagnosticsService.UnlockGateway(psdzConnection);
             }
+            psdzCentralConnectionService.FillLocalIpAddress(httpConfigurationService);
             return psdzConnection;
         }
 #endif
