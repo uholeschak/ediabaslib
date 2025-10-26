@@ -284,6 +284,7 @@ namespace PsdzClient
 
             string logFile = Path.Combine(programmingService.GetPsdzServiceHostLogDir(), logFileName);
             ProgrammingJobs.SetupLog4Net(logFile);
+            PsdzStarterGuard.Instance.ResetInitialization();
             PsdzServiceStarter.ClearIstaPIDsFile();
         }
 

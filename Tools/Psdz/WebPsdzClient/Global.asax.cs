@@ -49,6 +49,7 @@ namespace WebPsdzClient
             SetupLog4Net();
             log.InfoFormat("Application_Start");
             log.InfoFormat("Ista folder: {0}", IstaFolder);
+            PsdzStarterGuard.Instance.ResetInitialization();
             PsdzServiceStarter.ClearIstaPIDsFile();
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
