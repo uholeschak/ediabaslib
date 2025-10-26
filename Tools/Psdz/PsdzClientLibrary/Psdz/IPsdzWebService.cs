@@ -3,6 +3,13 @@ using BMW.Rheingold.Psdz.Client;
 
 namespace BMW.Rheingold.Psdz
 {
+    internal enum WebserviceSessionStatus
+    {
+        Created,
+        ProcessStarted,
+        Running
+    }
+
     public interface IPsdzWebService
     {
         ICertificateManagementService CertificateManagementService { get; }

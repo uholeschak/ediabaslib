@@ -1,6 +1,6 @@
-﻿using java.lang.reflect;
-using PsdzClient.Contracts;
+﻿using PsdzClient.Contracts;
 using System.Collections.Generic;
+using RestSharp;
 
 namespace BMW.Rheingold.Psdz
 {

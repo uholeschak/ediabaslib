@@ -1,8 +1,10 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Tal;
+using PsdzClient.Contracts;
 
 namespace BMW.Rheingold.Psdz.Client
 {
@@ -27,5 +29,20 @@ namespace BMW.Rheingold.Psdz.Client
         {
             return CallFunction((ITalExecutionService m) => m.ExecuteHDDUpdate(connection, tal, fa, vin, talExecutionSettings));
         }
+
+        // [UH] For backward compatibility
+        public string Name
+        {
+            get { return "TalExecutionServiceClient"; }
+        }
+
+        // [UH] For backward compatibility
+        public string Description
+        {
+            get { return "TalExecutionServiceClient"; }
+        }
+
+        // [UH] For backward compatibility
+        public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged = null;
     }
 }

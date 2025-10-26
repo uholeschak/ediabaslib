@@ -7,6 +7,9 @@
     <Copyright>Copyright ©  2021</Copyright>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Psdz\PsdzWebService.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0">
       <HintPath>.\jni4net.n-0.8.8.0.dll</HintPath>
     </Reference>
@@ -71,6 +74,7 @@
     <PackageReference Include="log4net" Version="3.2.0" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.10" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" Version="2.1.11" />
     <PackageReference Include="SQLitePCLRaw.core" Version="3.0.2" />

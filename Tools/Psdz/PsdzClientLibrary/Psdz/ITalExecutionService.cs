@@ -1,11 +1,12 @@
-﻿using System;
-using System.IO;
-using System.ServiceModel;
-using System.Threading;
-using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Tal;
+using PsdzClient.Contracts;
+using System;
+using System.IO;
+using System.ServiceModel;
+using System.Threading;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -17,7 +18,7 @@ namespace BMW.Rheingold.Psdz
     [ServiceKnownType(typeof(PsdzTal))]
     [ServiceKnownType(typeof(PsdzSecureCodingConfigCto))]
     [ServiceKnownType(typeof(PsdzProgrammingProtectionDataCto))]
-    public interface ITalExecutionService
+    public interface ITalExecutionService : ILifeCycleDependencyProvider
     {
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]

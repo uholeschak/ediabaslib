@@ -12,13 +12,6 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz
 {
-    internal enum WebserviceSessionStatus
-    {
-        Created,
-        ProcessStarted,
-        Running
-    }
-
     public class PsdzWebService : IPsdzWebService
     {
         private const string JavaInstalationErrorMessage = "{0} Valiation - {1}";
