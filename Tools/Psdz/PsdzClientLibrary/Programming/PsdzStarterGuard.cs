@@ -3,7 +3,7 @@ using System;
 
 namespace PsdzClient.Programming
 {
-    internal sealed class PsdzStarterGuard
+    public sealed class PsdzStarterGuard
     {
         private static readonly Lazy<PsdzStarterGuard> _instance = new Lazy<PsdzStarterGuard>(() => new PsdzStarterGuard());
 
@@ -31,6 +31,15 @@ namespace PsdzClient.Programming
         public bool CanCheckAvailability()
         {
             return !_isInitializationError;
+        }
+
+        public void ResetInitialization()
+        {
+            lock (_lock)
+            {
+                _isInitialized = false;
+                _isInitializationError = false;
+            }
         }
 
         public bool TryInitialize(Func<bool> initializationMethod)
