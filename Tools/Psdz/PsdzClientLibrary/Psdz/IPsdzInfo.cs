@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Psdz
 {
     public interface IPsdzInfo
     {

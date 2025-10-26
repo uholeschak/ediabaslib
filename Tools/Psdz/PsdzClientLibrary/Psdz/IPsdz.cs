@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.Psdz;
 
-namespace PsdzClient.Programming
+namespace BMW.Rheingold.Psdz
 {
     public interface IPsdz : IPsdzService, IPsdzInfo
     {
