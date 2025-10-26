@@ -15,6 +15,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.10" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" Version="2.1.11" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="3.0.2" />
   </ItemGroup>
 
 </Project>
