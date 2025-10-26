@@ -105,7 +105,7 @@ namespace PsdzClient.Programming
             psdzServiceGateway.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
         }
 #if false
-        public IProgrammingSessionExt Start(ProgrammingParam programmingParam)
+        public IProgrammingSessionExt Start(ProgrammingParam programmingParam, bool avoidTlsConnection)
         {
             StartPsdzService(programmingParam.Vehicle);
             ProgrammingSession programmingSession = new ProgrammingSession(Psdz, programmingParam, programmingWorker);
@@ -113,6 +113,10 @@ namespace PsdzClient.Programming
             programmingSession.FscValidationService = fscValidationService;
             if (programmingParam.IsPretest)
             {
+                if (avoidTlsConnection && programmingSession?.PsdzProg?.ConnectionManager != null)
+                {
+                    programmingSession.PsdzProg.ConnectionManager.AvoidTlsConnection = avoidTlsConnection;
+                }
                 FillAdditionalDataForPretestConfig(programmingSession, programmingParam.PretestConfig);
             }
             else
