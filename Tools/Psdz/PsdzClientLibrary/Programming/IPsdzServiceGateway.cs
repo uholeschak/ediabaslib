@@ -5,7 +5,7 @@ namespace PsdzClient.Programming
 {
     public interface IPsdzServiceGateway
     {
-        string PsdzServiceLogFilePath { get; }
+        string PsdzWebServiceLogFilePath { get; }
 
         string PsdzLogFilePath { get; }
 

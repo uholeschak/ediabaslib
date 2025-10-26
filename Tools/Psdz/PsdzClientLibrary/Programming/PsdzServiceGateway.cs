@@ -52,7 +52,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        public string PsdzServiceLogFilePath
+        public string PsdzWebServiceLogFilePath
         {
             get
             {

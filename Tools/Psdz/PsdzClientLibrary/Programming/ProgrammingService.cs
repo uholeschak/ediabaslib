@@ -177,7 +177,7 @@ namespace PsdzClient.Programming
 
         public string GetPsdzServiceLogFilePath()
         {
-            return psdzServiceGateway.PsdzServiceLogFilePath;
+            return psdzServiceGateway.PsdzWebServiceLogFilePath;
         }
 
         public string GetPsdzLogFilePath()
