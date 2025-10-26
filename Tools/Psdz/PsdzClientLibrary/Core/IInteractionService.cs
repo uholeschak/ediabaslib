@@ -1,4 +1,7 @@
-﻿namespace PsdzClient.Core
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+namespace PsdzClient.Core
 {
     // [UH] dummy file
     public interface IInteractionService

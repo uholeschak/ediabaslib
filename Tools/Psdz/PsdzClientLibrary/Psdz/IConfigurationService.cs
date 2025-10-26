@@ -11,6 +11,8 @@ namespace BMW.Rheingold.Psdz
     [ServiceContract(SessionMode = SessionMode.Required)]
     public interface IConfigurationService
     {
+        bool IsReady();
+
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         string GetExpectedPsdzVersion();
@@ -39,5 +41,7 @@ namespace BMW.Rheingold.Psdz
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void UnsetRootDirectory();
+
+        RootDirectorySetupResultModel GetRootDirectorySetupResult();
     }
 }

@@ -3,7 +3,7 @@ using BMW.Rheingold.Psdz.Model.Exceptions;
 
 namespace BMW.Rheingold.Psdz
 {
-    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzEventListener), Name = "EventManagerService")]
+    [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzEventListener), Name = "IEventManagerService")]
     public interface IEventManagerServiceOld
     {
         [OperationContract]

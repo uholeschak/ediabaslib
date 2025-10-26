@@ -15,6 +15,8 @@ namespace BMW.Rheingold.Psdz
     [ServiceContract(SessionMode = SessionMode.Required)]
     public interface ILogService
     {
+        void PrepareLoggingForCurrentThread();
+
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         string ClosePsdzLog();

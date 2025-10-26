@@ -55,5 +55,17 @@ namespace BMW.Rheingold.Psdz.Client
                 service.UnsetRootDirectory();
             });
         }
+
+        // [UH] for backward compatibility
+        public bool IsReady()
+        {
+            return CallFunction((IConfigurationService service) => service.IsReady());
+        }
+
+        // [UH] for backward compatibility
+        public RootDirectorySetupResultModel GetRootDirectorySetupResult()
+        {
+            return CallFunction((IConfigurationService service) => service.GetRootDirectorySetupResult());
+        }
     }
 }

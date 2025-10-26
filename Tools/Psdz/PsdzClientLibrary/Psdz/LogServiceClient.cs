@@ -1,4 +1,6 @@
-﻿using System.ServiceModel;
+﻿using PsdzClient.Core;
+using System;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 
 namespace BMW.Rheingold.Psdz.Client
@@ -21,6 +23,10 @@ namespace BMW.Rheingold.Psdz.Client
             {
                 service.SetLogLevel(psdzLoglevel);
             });
+        }
+
+        public void PrepareLoggingForCurrentThread()
+        {
         }
     }
 }
