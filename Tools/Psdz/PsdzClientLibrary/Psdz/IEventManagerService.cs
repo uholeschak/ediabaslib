@@ -1,17 +1,25 @@
-﻿using System.ServiceModel;
-using BMW.Rheingold.Psdz.Model.Exceptions;
+﻿using BMW.Rheingold.Psdz.Model.Events;
+using System.ServiceModel;
 
 namespace BMW.Rheingold.Psdz
 {
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzEventListener))]
     public interface IEventManagerService
     {
-        [OperationContract]
-        [FaultContract(typeof(PsdzRuntimeException))]
-        void StartListening();
+        bool Listening { get; }
 
-        [OperationContract]
-        [FaultContract(typeof(PsdzRuntimeException))]
-        void StopListening();
+        void PrepareListening();
+
+        IConnectionLossEventListener AddPsdzEventListenerForConnectionLoss();
+
+        void RemovePsdzEventListenerForConnectionLoss();
+
+        void SendInternalEvent(IPsdzEvent psdzEvent);
+
+        void AddEventListener(IPsdzEventListener psdzEventListener);
+
+        void RemoveEventListener(IPsdzEventListener psdzEventListener);
+
+        void RemoveAllEventListeners();
     }
 }
