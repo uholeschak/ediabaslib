@@ -15,6 +15,8 @@ namespace PsdzClient.Programming
 
         //IProgrammingSessionExt Start(ProgrammingParam programmingParam);
 
+        //IProgrammingSessionExt Start(ProgrammingParam programmingParam, bool avoidTlsConnection);
+
         void SetLogLevelToMax();
 
         void SetLogLevelToNormal();
@@ -23,11 +25,12 @@ namespace PsdzClient.Programming
 
         //FcFnActivationResult StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc, IEcuKom ecuKom, IProtocolBasic protocoller, IICOMHandler icomHandler);
 
+        // [UH] force added
         void CloseConnectionsToPsdz(bool force);
 
         //IProgrammingCallbackHandler CreateCallbackHandler(ILogic logic, IProgressMonitor progressMonitor);
 
-        string GetPsdzServiceLogFilePath();
+        string GetPsdzWebServiceLogFilePath();
 
         string GetPsdzLogFilePath();
 
@@ -35,6 +38,8 @@ namespace PsdzClient.Programming
         bool StartPsdzService(IVehicle vehicle);
 
         //IPsdzStandardSvt GetVehicleSvtUsingPsdz(ILogic logic);
+
+        //bool ExecuteEarlyEcuValidationUsingPsdz(ILogic logic, IDatabaseProvider database, string mainseries, bool avoidTlsConnection);
 
         //ISvt GetCurrentSvtFromPsdzSvt(IPsdzStandardSvt psdzStandardSvt, IDatabaseProvider database, Vehicle vehicle, IFFMDynamicResolver fFMDynamicResolver);
     }

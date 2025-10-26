@@ -185,7 +185,7 @@ namespace PsdzClient.Programming
             return psdzServiceGateway.PsdzServiceLogDir;
         }
 
-        public string GetPsdzServiceLogFilePath()
+        public string GetPsdzWebServiceLogFilePath()
         {
             return psdzServiceGateway.PsdzWebServiceLogFilePath;
         }
@@ -224,6 +224,10 @@ namespace PsdzClient.Programming
         private void PreparePsdzBackupDataPath(string istaFolder)
 		{
             string pathString = PsdzContext.GetBackupBasePath(istaFolder);
+            if (string.IsNullOrEmpty(pathString))
+            {
+                throw new InvalidOperationException("Key 'BMW.Rheingold.Programming.PsdzBackupDataPath' is not set properly but is required for programming!");
+            }
 			try
             {
 				if (!Directory.Exists(pathString))
@@ -237,6 +241,7 @@ namespace PsdzClient.Programming
             }
 			catch (Exception)
 			{
+                Log.Error("ProgrammingService.PreparePsdzBackupDataPath()", "No write access to the folder \"{0}\".", pathString);
 				throw;
 			}
 		}
