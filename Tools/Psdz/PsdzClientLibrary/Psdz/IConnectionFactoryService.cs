@@ -13,6 +13,8 @@ namespace BMW.Rheingold.Psdz
     [ServiceKnownType(typeof(PsdzTargetSelector))]
     public interface IConnectionFactoryService
     {
+        IEnumerable<VehicleId> RequestAvailableVehicles();
+
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzTargetSelector> GetTargetSelectors();

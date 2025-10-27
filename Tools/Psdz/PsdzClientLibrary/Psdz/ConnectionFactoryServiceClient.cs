@@ -12,6 +12,12 @@ namespace BMW.Rheingold.Psdz.Client
         {
         }
 
+        // [UH] For backward compatibility
+        public IEnumerable<VehicleId> RequestAvailableVehicles()
+        {
+            return CallFunction((IConnectionFactoryService m) => m.RequestAvailableVehicles());
+        }
+
         public IEnumerable<IPsdzTargetSelector> GetTargetSelectors()
         {
             return CallFunction((IConnectionFactoryService m) => m.GetTargetSelectors());
