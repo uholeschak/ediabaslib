@@ -1,0 +1,11 @@
+﻿using BMW.Rheingold.Psdz;
+using Newtonsoft.Json;
+
+namespace BMW.Rheingold.Psdz
+{
+    public class UpdatePiaPortierungsmasterRequestModel
+    {
+        [JsonProperty("svt", NullValueHandling = NullValueHandling.Ignore)]
+        public SvtModel Svt { get; set; }
+    }
+}
