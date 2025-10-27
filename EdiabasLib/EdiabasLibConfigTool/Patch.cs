@@ -125,11 +125,12 @@ namespace EdiabasLibConfigTool
 
         public class UsbInfo
         {
-            public UsbInfo(uint locationId, int comPortNum, string comPortName, int latencyTimer, int maxRegLatencyTimer)
+            public UsbInfo(uint locationId, int comPortNum, string comPortName, string serialString, int latencyTimer, int maxRegLatencyTimer)
             {
                 LocationId = locationId;
                 ComPortNum = comPortNum;
                 ComPortName = comPortName;
+                SerialString = serialString;
                 LatencyTimer = latencyTimer;
                 MaxRegLatencyTimer = maxRegLatencyTimer;
             }
@@ -137,6 +138,7 @@ namespace EdiabasLibConfigTool
             public uint LocationId { get; }
             public int ComPortNum { get; }
             public string ComPortName { get; }
+            public string SerialString { get; }
             public int LatencyTimer { get; }
             public int MaxRegLatencyTimer { get; }
         }
@@ -996,7 +998,7 @@ namespace EdiabasLibConfigTool
             }
         }
 
-        public static List<string> GetFtdiRegKeys(string comPort)
+        public static List<string> GetFtdiRegKeys(string comPort, string serialString)
         {
             if (string.IsNullOrEmpty(comPort))
             {
@@ -1012,6 +1014,14 @@ namespace EdiabasLibConfigTool
                     {
                         foreach (string subKeyName in ftdiBusKey.GetSubKeyNames())
                         {
+                            if (!string.IsNullOrEmpty(serialString))
+                            {
+                                if (!subKeyName.Contains(serialString))
+                                {
+                                    continue;
+                                }
+                            }
+
                             string paramKeyName = subKeyName + @"\0000\Device Parameters";
                             using (RegistryKey paramKey = ftdiBusKey.OpenSubKey(paramKeyName))
                             {
@@ -1036,9 +1046,9 @@ namespace EdiabasLibConfigTool
             return regKeys;
         }
 
-        public static List<int> GetFtdiLatencyTimer(string comPort)
+        public static List<int> GetFtdiLatencyTimer(string comPort, string serialString)
         {
-            List<string> regKeys = GetFtdiRegKeys(comPort);
+            List<string> regKeys = GetFtdiRegKeys(comPort, serialString);
             if (regKeys == null)
             {
                 return null;
@@ -1070,9 +1080,9 @@ namespace EdiabasLibConfigTool
             return latencyTimers;
         }
 
-        public static bool SetFtdiLatencyTimer(string comPort, int value)
+        public static bool SetFtdiLatencyTimer(string comPort, string serialString, int value)
         {
-            List<string> regKeys = GetFtdiRegKeys(comPort);
+            List<string> regKeys = GetFtdiRegKeys(comPort, serialString);
             if (regKeys == null)
             {
                 return false;
