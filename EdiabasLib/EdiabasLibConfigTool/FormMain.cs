@@ -799,7 +799,7 @@ namespace EdiabasLibConfigTool
                                     sbInfo.Append(")");
                                 }
 
-                                int maxLatencyTimer = Math.Max(usbInfo.LatencyTimer, usbInfo.MaxRegLatencyTimer);
+                                int maxLatencyTimer = usbInfo.MaxRegLatencyTimer;
                                 if (sbInfo.Length > 0)
                                 {
                                     sbInfo.Append(" / ");
