@@ -7,7 +7,7 @@
     <Copyright>Copyright ©  2021</Copyright>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Psdz\PsdzWebService.cs" />
+    <Compile Remove="Psdz\Service\PsdzWebService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0">
