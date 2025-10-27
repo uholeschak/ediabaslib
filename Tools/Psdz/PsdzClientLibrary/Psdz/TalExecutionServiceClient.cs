@@ -43,6 +43,8 @@ namespace BMW.Rheingold.Psdz.Client
         }
 
         // [UH] For backward compatibility
-        public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged = null;
+#pragma warning disable CS0067
+        public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged;
+#pragma warning restore CS0067
     }
 }
