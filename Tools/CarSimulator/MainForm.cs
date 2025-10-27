@@ -325,7 +325,7 @@ namespace CarSimulator
             return true;
         }
 
-        public static List<string> GetFtdiRegKeys(string comPort)
+        public static List<string> GetFtdiRegKeys(string comPort, string serialString)
         {
             if (string.IsNullOrEmpty(comPort))
             {
@@ -341,6 +341,14 @@ namespace CarSimulator
                     {
                         foreach (string subKeyName in ftdiBusKey.GetSubKeyNames())
                         {
+                            if (!string.IsNullOrEmpty(serialString))
+                            {
+                                if (!subKeyName.Contains(serialString))
+                                {
+                                    continue;
+                                }
+                            }
+
                             string paramKeyName = subKeyName + @"\0000\Device Parameters";
                             using (RegistryKey paramKey = ftdiBusKey.OpenSubKey(paramKeyName))
                             {
@@ -365,9 +373,9 @@ namespace CarSimulator
             return regKeys;
         }
 
-        public static List<int> GetFtdiLatencyTimer(string comPort)
+        public static List<int> GetFtdiLatencyTimer(string comPort, string serialString)
         {
-            List<string> regKeys = GetFtdiRegKeys(comPort);
+            List<string> regKeys = GetFtdiRegKeys(comPort, serialString);
             if (regKeys == null)
             {
                 return null;
@@ -874,9 +882,9 @@ namespace CarSimulator
             groupBoxConcepts.Enabled = !active;
         }
 
-        private bool CheckPortLatencyTime(string comPort)
+        private bool CheckPortLatencyTime(string comPort, string serialString = null)
         {
-            List<int> regLatencyTimers = GetFtdiLatencyTimer(comPort);
+            List<int> regLatencyTimers = GetFtdiLatencyTimer(comPort, serialString);
             if (regLatencyTimers != null && regLatencyTimers.Count > 0)
             {
                 int maxRegLatencyTimer = regLatencyTimers.Max();
