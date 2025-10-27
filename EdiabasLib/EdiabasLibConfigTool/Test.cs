@@ -560,7 +560,7 @@ namespace EdiabasLibConfigTool
                     {
                         sr.Append("\r\n");
                         sr.Append(string.Format(Resources.Strings.PatchingLatencyTime, maxLatencyTimer, FtdiLatencyTimer));
-                        if (!Patch.SetFtdiLatencyTimer(usbInfo.ComPortName, FtdiLatencyTimer))
+                        if (!Patch.SetFtdiLatencyTimer(usbInfo.ComPortName, usbInfo.SerialString, FtdiLatencyTimer))
                         {
                             sr.Append("\r\n");
                             sr.Append(Resources.Strings.PatchingLatencyTimeFailed);

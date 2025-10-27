@@ -740,7 +740,7 @@ namespace EdiabasLibConfigTool
                                     latencyTimer = latency;
                                 }
 
-                                List<int> regLatencyTimers = Patch.GetFtdiLatencyTimer(comPortName);
+                                List<int> regLatencyTimers = Patch.GetFtdiLatencyTimer(comPortName, serialString);
                                 if (!string.IsNullOrEmpty(comPortName) && latencyTimer != null && regLatencyTimers != null && regLatencyTimers.Count > 0)
                                 {
                                     int maxRegLatencyTimer = regLatencyTimers.Max();
