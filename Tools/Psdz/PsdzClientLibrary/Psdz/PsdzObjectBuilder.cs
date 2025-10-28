@@ -3,12 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -31,13 +27,13 @@ namespace BMW.Rheingold.Psdz
 
         private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
 
-        private readonly FscStateEnumMapper fscStateEnumMapper = new FscStateEnumMapper();
+        private readonly PsdzClient.Programming.FscStateEnumMapper fscStateEnumMapper = new PsdzClient.Programming.FscStateEnumMapper();
 
-        private readonly SwtTypeEnumMapper swtTypeEnumMapper = new SwtTypeEnumMapper();
+        private readonly PsdzClient.Programming.SwtTypeEnumMapper swtTypeEnumMapper = new PsdzClient.Programming.SwtTypeEnumMapper();
 
         private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
 
-        private readonly SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new SoftwareSigStateEnumMapper();
+        private readonly PsdzClient.Programming.SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new PsdzClient.Programming.SoftwareSigStateEnumMapper();
 
         private readonly TaCategoriesEnumMapper taCategoriesEnumMapper = new TaCategoriesEnumMapper();
 

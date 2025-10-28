@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
@@ -223,7 +222,7 @@ namespace BMW.Rheingold.Programming.API
             return systemVerbauTabelle;
         }
 
-        public IVehicleProfileChecksum Build(IPsdzReadVpcFromVcmCto vpcInput)
+        public IVehicleProfileChecksum Build(Psdz.IPsdzReadVpcFromVcmCto vpcInput)
         {
             if (vpcInput == null)
             {
