@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using BMW.Rheingold.Psdz.Model;
@@ -15,6 +16,43 @@ namespace BMW.Rheingold.Psdz.Client
         {
         }
 
+        // [UH] For backward compatibility
+        public string ExecuteAsync(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, object value, IPsdzVin vin, TalExecutionSettings talExecutionSettings)
+        {
+            throw new NotImplementedException();
+        }
+
+        // [UH] For backward compatibility
+        public string ExecuteHDDUpdate(IPsdzConnection connection, IPsdzTal tal, IPsdzFa fa, IPsdzVin vin, TalExecutionSettings configs)
+        {
+            throw new NotImplementedException();
+        }
+
+        // [UH] For backward compatibility
+        public IPsdzTal RequestExecutionStatus(string executionId)
+        {
+            throw new NotImplementedException();
+        }
+
+        // [UH] For backward compatibility
+        public IPsdzTal RequestHddUpdateStatus(string executionId)
+        {
+            throw new NotImplementedException();
+        }
+
+        // [UH] For backward compatibility
+        public void Release(string executionId)
+        {
+            throw new NotImplementedException();
+        }
+
+        // [UH] For backward compatibility
+        public IPsdzTal Cancel(string executionId)
+        {
+            throw new NotImplementedException();
+        }
+
+        [OperationContract]
         public IEnumerable<IPsdzEcuIdentifier> CheckProgrammingCounter(IPsdzConnection connection, IPsdzTal tal)
         {
             return CallFunction((IProgrammingService m) => m.CheckProgrammingCounter(connection, tal));

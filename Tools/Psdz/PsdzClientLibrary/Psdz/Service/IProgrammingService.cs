@@ -18,7 +18,18 @@ namespace BMW.Rheingold.Psdz
     [ServiceKnownType(typeof(PsdzAsamJobInputDictionary))]
     public interface IProgrammingService
     {
-        [OperationContract]
+        string ExecuteAsync(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzFa faTarget, object value, IPsdzVin vin, TalExecutionSettings talExecutionSettings);
+
+        string ExecuteHDDUpdate(IPsdzConnection connection, IPsdzTal tal, IPsdzFa fa, IPsdzVin vin, TalExecutionSettings configs);
+
+        IPsdzTal RequestExecutionStatus(string executionId);
+
+        IPsdzTal RequestHddUpdateStatus(string executionId);
+
+        void Release(string executionId);
+
+        IPsdzTal Cancel(string executionId); [OperationContract]
+
         [FaultContract(typeof(PsdzRuntimeException))]
         IEnumerable<IPsdzEcuIdentifier> CheckProgrammingCounter(IPsdzConnection connection, IPsdzTal tal);
 
