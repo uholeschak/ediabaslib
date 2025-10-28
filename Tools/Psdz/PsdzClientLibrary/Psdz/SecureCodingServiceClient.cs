@@ -21,9 +21,9 @@ namespace BMW.Rheingold.Psdz.Client
             return CallFunction((ISecureCodingService service) => service.CheckNcdAvailabilityForGivenTal(tal, ncdDirectory, vin));
         }
 
-        public IList<IPsdzSecurityBackendRequestFailureCto> RequestCalculationNcdAndSignatureOffline(IList<IPsdzRequestNcdEto> sgbmidsForNcdCalculation, string jsonRequestFilePath, IPsdzSecureCodingConfigCto secureCodingConfigCto, IPsdzVin vin, IPsdzFa fa)
+        public IList<IPsdzSecurityBackendRequestFailureCto> RequestCalculationNcdAndSignatureOffline(IList<IPsdzRequestNcdEto> sgbmidsForNcdCalculation, string jsonRequestFilePath, IPsdzSecureCodingConfigCto secureCodingConfigCto, IPsdzVin vin, IPsdzFa fa, byte[] vpc)
         {
-            return CallFunction((ISecureCodingService service) => service.RequestCalculationNcdAndSignatureOffline(sgbmidsForNcdCalculation, jsonRequestFilePath, secureCodingConfigCto, vin, fa));
+            return CallFunction((ISecureCodingService service) => service.RequestCalculationNcdAndSignatureOffline(sgbmidsForNcdCalculation, jsonRequestFilePath, secureCodingConfigCto, vin, fa, vpc));
         }
 
         public IPsdzRequestNcdSignatureResponseCto RequestSignatureOnline(IList<IPsdzRequestNcdEto> sgbmidsForNcdCalculation, IPsdzSecureCodingConfigCto secureCodingConfigCto, IPsdzVin vin)
