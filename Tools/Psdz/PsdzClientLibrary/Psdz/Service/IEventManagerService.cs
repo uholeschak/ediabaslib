@@ -1,4 +1,5 @@
 ﻿using BMW.Rheingold.Psdz.Model.Events;
+using BMW.Rheingold.Psdz.Model.Exceptions;
 using System.ServiceModel;
 
 namespace BMW.Rheingold.Psdz
@@ -9,6 +10,14 @@ namespace BMW.Rheingold.Psdz
         bool Listening { get; }
 
         void PrepareListening();
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        void StartListening();
+
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        void StopListening();
 
         IConnectionLossEventListener AddPsdzEventListenerForConnectionLoss();
 

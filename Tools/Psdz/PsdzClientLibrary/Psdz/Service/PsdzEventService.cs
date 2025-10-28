@@ -10,7 +10,7 @@ namespace BMW.Rheingold.Psdz.Client
 {
     internal class PsdzEventService
     {
-        private sealed class PsdzEventListenerClient : DuplexClientBase<IEventManagerServiceOld>
+        private sealed class PsdzEventListenerClient : DuplexClientBase<IEventManagerService>
         {
             public PsdzEventListenerClient(IPsdzEventListener eventListener, Binding binding, EndpointAddress endPointAddress)
                 : base((object)eventListener, binding, endPointAddress)
