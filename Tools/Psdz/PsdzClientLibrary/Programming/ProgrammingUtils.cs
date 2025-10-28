@@ -4,9 +4,7 @@ using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
-using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
@@ -427,7 +425,7 @@ namespace BMW.Rheingold.Programming.Common
             return requestNcdEtos;
         }
 
-        public static TalExecutionSettings GetTalExecutionSettings(ProgrammingService programmingService)
+        public static TalExecutionSettings GetTalExecutionSettings(PsdzClient.Programming.ProgrammingService programmingService)
         {
             TalExecutionSettings talExecutionSettings = new TalExecutionSettings
             {
