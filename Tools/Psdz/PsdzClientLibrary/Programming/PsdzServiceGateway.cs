@@ -34,6 +34,12 @@ namespace PsdzClient.Programming
         {
             get
             {
+#if false
+                if (PsdzServiceType != Type.PsdzServiceHost)
+                {
+                    return _psdzWebServiceWrapper.PsdzServiceLogDir;
+                }
+#endif
                 return _psdzServiceHostWrapper.PsdzServiceLogDir;
             }
         }
@@ -42,12 +48,10 @@ namespace PsdzClient.Programming
         {
             get
             {
-#if false
                 if (PsdzServiceType != Type.PsdzServiceHost)
                 {
                     return _psdzWebServiceWrapper;
                 }
-#endif
                 return _psdzServiceHostWrapper;
             }
         }
@@ -56,12 +60,10 @@ namespace PsdzClient.Programming
         {
             get
             {
-#if false
                 if (PsdzServiceType != Type.PsdzServiceHost)
                 {
                     return _psdzWebServiceWrapper.PsdzServiceLogFilePath;
                 }
-#endif
                 return _psdzServiceHostWrapper.PsdzServiceLogFilePath;
             }
         }
@@ -70,12 +72,10 @@ namespace PsdzClient.Programming
         {
             get
             {
-#if false
                 if (PsdzServiceType != Type.PsdzServiceHost)
                 {
                     return _psdzWebServiceWrapper.PsdzLogFilePath;
                 }
-#endif
                 return _psdzServiceHostWrapper.PsdzLogFilePath;
             }
         }
