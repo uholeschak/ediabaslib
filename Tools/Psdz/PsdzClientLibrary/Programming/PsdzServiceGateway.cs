@@ -138,12 +138,10 @@ namespace PsdzClient.Programming
         {
             try
             {
-#if false
-                if (new CommonServiceWrapper().GetFeatureEnabledStatus("PsdzWebservice").IsActive)
+                if (PsdzServiceType != Type.PsdzServiceHost)
                 {
                     _psdzWebServiceWrapper.Shutdown();
                 }
-#endif
                 if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
                 {
                     _psdzServiceHostWrapper.Shutdown();
