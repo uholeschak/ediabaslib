@@ -60,8 +60,16 @@ namespace BMW.Rheingold.Psdz.Model.Sfa
         E_FEATURE_SPECIFIC_FIELD_TAG_DUPLICATE,
         E_NO_RIGHTS_ASSIGNED,
         E_ECU_UID_PREFIX_NOT_ALLOWED,
-        UNDEFINED
+        UNDEFINED,
+        E_KDS_CLIENT_NOT_ALLOWED,
+        E_KDS_ZSG_NOT_ALLOWED,
+        E_UNAUTHORIZED_DOWNGRADE,
+        E_NO_ENTRIES_IN_FSF,
+        E_INVALID_ENTRY_IN_FSF,
+        E_DUPLICATE_TOKEN_REQUEST,
+        E_UPGRADE_INDEX_EXCEEDS_THRESHOLD
     }
+
     [KnownType(typeof(PsdzFeatureIdCto))]
     [DataContract]
     [KnownType(typeof(PsdzDiagAddress))]
