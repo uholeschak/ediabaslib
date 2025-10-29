@@ -78,12 +78,13 @@ namespace PsdzClient.Programming
             }
         }
 
-        public PsdzServiceGateway(PsdzConfig psdzConfig, Action psdzServiceHostStarter = null)
+        // [UH] istaFolder, dealerId added
+        public PsdzServiceGateway(PsdzConfig psdzConfig, string istaFolder, string dealerId, Action psdzServiceHostStarter = null)
         {
             _psdzServiceHostStarter = psdzServiceHostStarter;
             _psdzConfig = psdzConfig;
             _psdzServiceHostWrapper = new PsdzServiceWrapper(_psdzConfig);
-            //_psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(null, BMW.Rheingold.CoreFramework.LicenseHelper.DealerInstance.GetDistributionPartnerNumber(5)));
+            _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
             CommonServiceWrapper commonServiceWrapper = new CommonServiceWrapper();
             PsdzServiceType = (commonServiceWrapper.GetFeatureEnabledStatus("PsdzWebservice", commonServiceWrapper.IsAvailable()).IsActive ? Type.PsdzWebService : Type.PsdzServiceHost);
         }
@@ -141,7 +142,6 @@ namespace PsdzClient.Programming
                 if (PsdzServiceType != Type.PsdzServiceHost)
                 {
                     _psdzWebServiceWrapper.Shutdown();
-                    return;
                 }
                 if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
                 {
@@ -179,13 +179,13 @@ namespace PsdzClient.Programming
         public void SetLogLevel(PsdzLoglevel psdzLoglevel, ProdiasLoglevel prodiasLoglevel)
         {
             _psdzServiceHostWrapper.SetLogLevel(psdzLoglevel, prodiasLoglevel);
-            //_psdzWebServiceWrapper.SetLogLevel(psdzLoglevel, prodiasLoglevel);
+            _psdzWebServiceWrapper.SetLogLevel(psdzLoglevel, prodiasLoglevel);
         }
 
         public void Shutdown()
         {
             _psdzServiceHostWrapper.Shutdown();
-            //_psdzWebServiceWrapper.Shutdown();
+            _psdzWebServiceWrapper.Shutdown();
         }
 
         protected virtual void Dispose(bool disposing)

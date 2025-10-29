@@ -38,7 +38,7 @@ namespace PsdzClient.Programming
         public ProgrammingService(string istaFolder, string dealerId)
         {
             this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
-            psdzServiceGateway = new PsdzServiceGateway(psdzConfig);
+            psdzServiceGateway = new PsdzServiceGateway(psdzConfig, istaFolder, dealerId);
             SetLogLevelToNormal();
 
             this.EventManager = new ProgrammingEventManager();
