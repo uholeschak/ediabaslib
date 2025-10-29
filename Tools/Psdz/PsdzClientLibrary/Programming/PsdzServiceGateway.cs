@@ -21,7 +21,7 @@ namespace PsdzClient.Programming
 
         private readonly PsdzServiceWrapper _psdzServiceHostWrapper;
 
-        //private readonly PsdzWebServiceWrapper _psdzWebServiceWrapper;
+        private readonly PsdzWebServiceWrapper _psdzWebServiceWrapper;
 
         private readonly Action _psdzServiceHostStarter;
 
