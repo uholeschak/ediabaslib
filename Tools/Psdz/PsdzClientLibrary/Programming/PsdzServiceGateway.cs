@@ -96,34 +96,36 @@ namespace PsdzClient.Programming
                 return true;
             }
             Log.Info(Log.CurrentMethod(), "Start.");
-#if false
-            if (new CommonServiceWrapper().GetFeatureEnabledStatus("PsdzWebservice").IsActive)
+
+            bool started;
+            if (PsdzServiceType != Type.PsdzServiceHost)
             {
-                PsdzStarterGuard.Instance.TryInitialize(delegate
+                started = PsdzStarterGuard.Instance.TryInitialize(delegate
                 {
                     _psdzWebServiceWrapper.StartIfNotRunning();
                     return _psdzWebServiceWrapper.IsPsdzInitialized;
                 });
             }
-#endif
-            bool started;
-            if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
-            {
-                started = PsdzStarterGuard.Instance.TryInitialize(delegate
-                {
-                    _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
-                    WaitForPsdzServiceHostInitialization();
-                    return _psdzServiceHostWrapper.IsPsdzInitialized;
-                });
-            }
             else
             {
-                started = PsdzStarterGuard.Instance.TryInitialize(delegate
+                if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
                 {
-                    _psdzServiceHostStarter();
-                    WaitForPsdzServiceHostInitialization();
-                    return _psdzServiceHostWrapper.IsPsdzInitialized;
-                });
+                    started = PsdzStarterGuard.Instance.TryInitialize(delegate
+                    {
+                        _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
+                        WaitForPsdzServiceHostInitialization();
+                        return _psdzServiceHostWrapper.IsPsdzInitialized;
+                    });
+                }
+                else
+                {
+                    started = PsdzStarterGuard.Instance.TryInitialize(delegate
+                    {
+                        _psdzServiceHostStarter();
+                        WaitForPsdzServiceHostInitialization();
+                        return _psdzServiceHostWrapper.IsPsdzInitialized;
+                    });
+                }
             }
 
             Log.Info(Log.CurrentMethod(), "Started: {0}", started);
