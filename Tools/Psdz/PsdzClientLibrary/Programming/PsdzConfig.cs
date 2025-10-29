@@ -74,6 +74,8 @@ namespace PsdzClient.Programming
             return psdzServiceArgs;
         }
 
+        // [UH] GetEdiabasBinPath removed
+
         // [UH] modified
         private static string[] GetPsdzJvmOptions(string psdzBinaryPath, string psdzLogFilePath)
         {

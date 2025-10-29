@@ -177,19 +177,7 @@ namespace BMW.Rheingold.Programming
             return false;
         }
 
-        private static string GetEdiabasBinPath()
-        {
-            string environmentVariable = Environment.GetEnvironmentVariable("PATH");
-            string[] array = (string.IsNullOrEmpty(environmentVariable) ? new string[0] : environmentVariable.Split(';'));
-            foreach (string text in array)
-            {
-                if (File.Exists(Path.Combine(text, "api32.dll")))
-                {
-                    return text;
-                }
-            }
-            return null;
-        }
+        // [UH] GetEdiabasBinPath removed
 
         private string convertDealerIdToHex(string dealerId)
         {
