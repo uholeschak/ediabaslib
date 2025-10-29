@@ -16,15 +16,6 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 
 namespace BMW.Rheingold.Psdz
 {
-    public enum PsdzCalculationStrategyEtoEnum
-    {
-        AFTER_CERTIFICATES,
-        BEFORE_CERTIFICATES,
-        END_OF_LINE,
-        UPDATE,
-        UPDATE_WITHOUT_DELETE
-    }
-
     [ServiceContract(SessionMode = SessionMode.Required)]
     [ServiceKnownType(typeof(PsdzFa))]
     [ServiceKnownType(typeof(PsdzFp))]
