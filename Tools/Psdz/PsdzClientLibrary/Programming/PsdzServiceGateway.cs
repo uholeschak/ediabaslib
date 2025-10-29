@@ -141,6 +141,7 @@ namespace PsdzClient.Programming
                 if (PsdzServiceType != Type.PsdzServiceHost)
                 {
                     _psdzWebServiceWrapper.Shutdown();
+                    return;
                 }
                 if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
                 {
