@@ -116,7 +116,7 @@ namespace BMW.Rheingold.Programming
                 item,
                 "-XX:MaxGCPauseMillis=50",
                 "-Dcom.sun.management.jmxremote",
-                "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath() + "\""
+                "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath(Path.Combine(PsdzDataPath, "..\\WebService")) + "\""
             };
             string defaultValue = string.Join(" ", values);
             string[] source = Regex.Split(ConfigSettings.getConfigString("BMW.Rheingold.Programming.PsdzWebservice.JvmOptions", defaultValue), "\\s+(?=\\-)");
@@ -151,15 +151,15 @@ namespace BMW.Rheingold.Programming
             return 0;
         }
 
-        private static string GetLog4JConfigFilePath()
+        // [UH] webServiceDir added
+        private static string GetLog4JConfigFilePath(string webServiceDir)
         {
-            string fullPath = Path.GetFullPath(ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzWebservice.Directory", "..\\..\\..\\PSdZ\\WebService"));
-            if (!Directory.Exists(fullPath))
+            if (!Directory.Exists(webServiceDir))
             {
-                Log.Error(Log.CurrentMethod(), "Directory " + fullPath + " does not exists. You can check your BMW_RHEINGOLD_PROGRAMMING_PSDZWEBSERVICE_DIRECTORY registry key.");
+                Log.Error(Log.CurrentMethod(), "Directory " + webServiceDir + " does not exists.");
             }
-            string path = (ShouldDebugSpringboot(fullPath) ? "psdz-log4j2-spring-debug-config.xml" : "psdz-log4j2-config.xml");
-            string text = Path.Combine(fullPath, path);
+            string path = (ShouldDebugSpringboot(webServiceDir) ? "psdz-log4j2-spring-debug-config.xml" : "psdz-log4j2-config.xml");
+            string text = Path.Combine(webServiceDir, path);
             if (text == null || !File.Exists(text))
             {
                 Log.Error(Log.CurrentMethod(), text + " does not exist");
