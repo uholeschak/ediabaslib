@@ -67,6 +67,9 @@ namespace BMW.Rheingold.Programming
         public IProgrammingTokenService ProgrammingTokenService => _psdzWebService.ProgrammingTokenService;
 
         // [UH] added
+        public string PsdzServiceLogDir => _psdzConfig.PsdzWebApiLogDir;
+
+        // [UH] added
         public string ExpectedPsdzVersion { get; private set; }
 
         public bool IsValidPsdzVersion => true;

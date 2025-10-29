@@ -34,12 +34,10 @@ namespace PsdzClient.Programming
         {
             get
             {
-#if false
                 if (PsdzServiceType != Type.PsdzServiceHost)
                 {
                     return _psdzWebServiceWrapper.PsdzServiceLogDir;
                 }
-#endif
                 return _psdzServiceHostWrapper.PsdzServiceLogDir;
             }
         }
