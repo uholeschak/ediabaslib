@@ -1400,7 +1400,7 @@ namespace AssemblyPatcher
                                     Console.WriteLine("*** set_IDENT_SUCCESSFULLY not found");
                                 }
 
-                                if (removeIndex >= 0 && insertIndex >= 0)
+                                if (removeIndex >= 0 && getBnTypeIndex >= 0 && insertIndex >= 0)
                                 {
                                     //  copy Ldarg_0, Call, Callvirt, Ldc_I4_2
                                     List<Instruction> insertInstructions = new List<Instruction>();
