@@ -10,34 +10,26 @@ namespace PsdzClient.Programming
 {
     public class PsdzServiceGateway : IPsdzServiceGateway, IDisposable
     {
-        public enum Type
-        {
-            PsdzServiceHost,
-            PsdzWebService
-        }
-
         private readonly PsdzConfig _psdzConfig;
 
-        private readonly PsdzServiceWrapper _psdzServiceHostWrapper;
+        private PsdzServiceWrapper _psdzServiceHostWrapper;
 
-        private readonly PsdzWebServiceWrapper _psdzWebServiceWrapper;
+        private PsdzWebServiceWrapper _psdzWebServiceWrapper;
 
         private readonly Action _psdzServiceHostStarter;
 
         private bool disposedValue;
-
-        public static Type PsdzServiceType { get; set; }
 
         // [UH] added
         public string PsdzServiceLogDir
         {
             get
             {
-                if (PsdzServiceType != Type.PsdzServiceHost)
+                if (_psdzServiceHostWrapper != null)
                 {
-                    return _psdzWebServiceWrapper.PsdzServiceLogDir;
+                    return _psdzServiceHostWrapper.PsdzServiceLogDir;
                 }
-                return _psdzServiceHostWrapper.PsdzServiceLogDir;
+                return _psdzWebServiceWrapper.PsdzServiceLogDir;
             }
         }
 
@@ -45,11 +37,11 @@ namespace PsdzClient.Programming
         {
             get
             {
-                if (PsdzServiceType != Type.PsdzServiceHost)
+                if (_psdzServiceHostWrapper != null)
                 {
-                    return _psdzWebServiceWrapper;
+                    return _psdzServiceHostWrapper;
                 }
-                return _psdzServiceHostWrapper;
+                return _psdzWebServiceWrapper;
             }
         }
 
@@ -57,11 +49,11 @@ namespace PsdzClient.Programming
         {
             get
             {
-                if (PsdzServiceType != Type.PsdzServiceHost)
+                if (_psdzServiceHostWrapper != null)
                 {
-                    return _psdzWebServiceWrapper.PsdzServiceLogFilePath;
+                    return _psdzServiceHostWrapper.PsdzServiceLogFilePath;
                 }
-                return _psdzServiceHostWrapper.PsdzServiceLogFilePath;
+                return _psdzWebServiceWrapper.PsdzServiceLogFilePath;
             }
         }
 
@@ -69,11 +61,11 @@ namespace PsdzClient.Programming
         {
             get
             {
-                if (PsdzServiceType != Type.PsdzServiceHost)
+                if (_psdzServiceHostWrapper != null)
                 {
-                    return _psdzWebServiceWrapper.PsdzLogFilePath;
+                    return _psdzServiceHostWrapper.PsdzLogFilePath;
                 }
-                return _psdzServiceHostWrapper.PsdzLogFilePath;
+                return _psdzWebServiceWrapper.PsdzLogFilePath;
             }
         }
 
@@ -82,9 +74,14 @@ namespace PsdzClient.Programming
         {
             _psdzServiceHostStarter = psdzServiceHostStarter;
             _psdzConfig = psdzConfig;
-            _psdzServiceHostWrapper = new PsdzServiceWrapper(_psdzConfig);
-            _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
-            PsdzServiceType = ClientContext.EnablePsdzWebService() ? Type.PsdzWebService : Type.PsdzServiceHost;
+            if (ClientContext.EnablePsdzWebService())
+            {
+                _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
+            }
+            else
+            {
+                _psdzServiceHostWrapper = new PsdzServiceWrapper(_psdzConfig);
+            }
         }
 
         public bool StartIfNotRunning(IVehicle vehicle = null)
@@ -96,8 +93,8 @@ namespace PsdzClient.Programming
             }
             Log.Info(Log.CurrentMethod(), "Start.");
 
-            bool started;
-            if (PsdzServiceType != Type.PsdzServiceHost)
+            bool started = false;
+            if (_psdzWebServiceWrapper != null)
             {
                 started = PsdzStarterGuard.Instance.TryInitialize(delegate
                 {
@@ -105,7 +102,8 @@ namespace PsdzClient.Programming
                     return _psdzWebServiceWrapper.IsPsdzInitialized;
                 });
             }
-            else
+
+            if (_psdzServiceHostWrapper != null)
             {
                 if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
                 {
@@ -137,17 +135,21 @@ namespace PsdzClient.Programming
         {
             try
             {
-                if (PsdzServiceType != Type.PsdzServiceHost)
+                if (_psdzWebServiceWrapper != null)
                 {
                     _psdzWebServiceWrapper.Shutdown();
                 }
-                if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
+
+                if (_psdzServiceHostWrapper != null)
                 {
-                    _psdzServiceHostWrapper.Shutdown();
-                }
-                else
-                {
-                    _psdzServiceHostWrapper.CloseConnectionsToPsdzHost();
+                    if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
+                    {
+                        _psdzServiceHostWrapper.Shutdown();
+                    }
+                    else
+                    {
+                        _psdzServiceHostWrapper.CloseConnectionsToPsdzHost();
+                    }
                 }
             }
             catch (Exception exception)
@@ -158,6 +160,11 @@ namespace PsdzClient.Programming
 
         private bool WaitForPsdzServiceHostInitialization()
         {
+            if (_psdzServiceHostWrapper == null)
+            {
+                return false;
+            }
+
             int num = 40;
             DateTime dateTime = DateTime.Now.AddSeconds(num);
             while (!_psdzServiceHostWrapper.IsPsdzInitialized)
@@ -176,14 +183,14 @@ namespace PsdzClient.Programming
 
         public void SetLogLevel(PsdzLoglevel psdzLoglevel, ProdiasLoglevel prodiasLoglevel)
         {
-            _psdzServiceHostWrapper.SetLogLevel(psdzLoglevel, prodiasLoglevel);
-            _psdzWebServiceWrapper.SetLogLevel(psdzLoglevel, prodiasLoglevel);
+            _psdzServiceHostWrapper?.SetLogLevel(psdzLoglevel, prodiasLoglevel);
+            _psdzWebServiceWrapper?.SetLogLevel(psdzLoglevel, prodiasLoglevel);
         }
 
         public void Shutdown()
         {
-            _psdzServiceHostWrapper.Shutdown();
-            _psdzWebServiceWrapper.Shutdown();
+            _psdzServiceHostWrapper?.Shutdown();
+            _psdzWebServiceWrapper?.Shutdown();
         }
 
         protected virtual void Dispose(bool disposing)
@@ -192,7 +199,11 @@ namespace PsdzClient.Programming
             {
                 if (disposing)
                 {
-                    _psdzServiceHostWrapper.Dispose();
+                    if (_psdzServiceHostWrapper != null)
+                    {
+                        _psdzServiceHostWrapper.Dispose();
+                        _psdzServiceHostWrapper = null;
+                    }
                 }
                 disposedValue = true;
             }
