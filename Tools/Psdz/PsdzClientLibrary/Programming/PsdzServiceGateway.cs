@@ -85,8 +85,7 @@ namespace PsdzClient.Programming
             _psdzConfig = psdzConfig;
             _psdzServiceHostWrapper = new PsdzServiceWrapper(_psdzConfig);
             _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
-            CommonServiceWrapper commonServiceWrapper = new CommonServiceWrapper();
-            PsdzServiceType = (commonServiceWrapper.GetFeatureEnabledStatus("PsdzWebservice", commonServiceWrapper.IsAvailable()).IsActive ? Type.PsdzWebService : Type.PsdzServiceHost);
+            PsdzServiceType = PsdzClient.ClientContext.EnablePsdzWebService() ? Type.PsdzWebService : Type.PsdzServiceHost;
         }
 
         public bool StartIfNotRunning(IVehicle vehicle = null)

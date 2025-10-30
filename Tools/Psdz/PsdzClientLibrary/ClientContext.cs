@@ -13,6 +13,7 @@ namespace PsdzClient
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(ClientContext));
         private static bool _enablePsdzMultiSession;
+        private static bool _enablePsdzWebService;
         private bool _disposed;
 
         public PsdzDatabase Database { get; set; }
@@ -25,6 +26,7 @@ namespace PsdzClient
         static ClientContext()
         {
             _enablePsdzMultiSession = false;
+            _enablePsdzWebService = false;
             string swiVersion = PsdzDatabase.GetSwiVersion();
             if (!string.IsNullOrEmpty(swiVersion))
             {
@@ -38,6 +40,11 @@ namespace PsdzClient
                         if (version >= 40039)
                         {
                             _enablePsdzMultiSession = true;
+                        }
+
+                        if (version >= 40055)
+                        {
+                            _enablePsdzWebService = true;
                         }
                     }
                 }
@@ -162,6 +169,11 @@ namespace PsdzClient
         public static bool EnablePsdzMultiSession()
         {
             return _enablePsdzMultiSession;
+        }
+
+        public static bool EnablePsdzWebService()
+        {
+            return _enablePsdzWebService;
         }
 
         public void Dispose()
