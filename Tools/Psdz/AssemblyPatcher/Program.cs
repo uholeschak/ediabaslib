@@ -1623,7 +1623,7 @@ namespace AssemblyPatcher
                         {
                             try
                             {
-#if false
+#if true
                                 patcher.Save(true);
 #endif
                                 Console.WriteLine("Patched: {0} Version={1} '{2}'", relPath, versionString ?? string.Empty, companyName);
