@@ -35,6 +35,7 @@ namespace PsdzClient.Programming
         {
             get
             {
+                // [UH] modified
                 if (_psdzWebServiceWrapper != null)
                 {
                     return _psdzWebServiceWrapper;
@@ -47,6 +48,7 @@ namespace PsdzClient.Programming
         {
             get
             {
+                // [UH] modified
                 if (_psdzWebServiceWrapper != null)
                 {
                     return _psdzWebServiceWrapper.PsdzServiceLogFilePath;
@@ -59,6 +61,7 @@ namespace PsdzClient.Programming
         {
             get
             {
+                // [UH] modified
                 if (_psdzWebServiceWrapper != null)
                 {
                     return _psdzWebServiceWrapper.PsdzLogFilePath;
@@ -71,6 +74,7 @@ namespace PsdzClient.Programming
         public PsdzServiceGateway(PsdzConfig psdzConfig, string istaFolder, string dealerId, Action psdzServiceHostStarter = null)
         {
             _psdzServiceHostStarter = psdzServiceHostStarter;
+            // [UH] modified
             if (ClientContext.EnablePsdzWebService())
             {
                 _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
@@ -81,6 +85,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        // [UH] modified
         public bool StartIfNotRunning(IVehicle vehicle = null)
         {
             if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
@@ -128,6 +133,7 @@ namespace PsdzClient.Programming
             return started;
         }
 
+        // [UH] modified
         public void CloseConnectionsToPsdz(bool force = false)
         {
             try
@@ -158,7 +164,8 @@ namespace PsdzClient.Programming
         private bool WaitForPsdzServiceHostInitialization()
         {
             if (_psdzServiceHostWrapper == null)
-            {
+            {   // [UH] added
+                Log.Error(Log.CurrentMethod(), $"_psdzServiceHostWrapper is null");
                 return false;
             }
 
