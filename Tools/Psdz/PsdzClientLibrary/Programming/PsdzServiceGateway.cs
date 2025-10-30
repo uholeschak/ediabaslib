@@ -4,7 +4,6 @@ using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz;
 using System.Threading.Tasks;
 using System;
-using PsdzClient;
 using PsdzClient.Core;
 
 namespace PsdzClient.Programming
@@ -85,7 +84,7 @@ namespace PsdzClient.Programming
             _psdzConfig = psdzConfig;
             _psdzServiceHostWrapper = new PsdzServiceWrapper(_psdzConfig);
             _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
-            PsdzServiceType = PsdzClient.ClientContext.EnablePsdzWebService() ? Type.PsdzWebService : Type.PsdzServiceHost;
+            PsdzServiceType = ClientContext.EnablePsdzWebService() ? Type.PsdzWebService : Type.PsdzServiceHost;
         }
 
         public bool StartIfNotRunning(IVehicle vehicle = null)
