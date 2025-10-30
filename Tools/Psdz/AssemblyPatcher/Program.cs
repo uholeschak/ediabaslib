@@ -1279,6 +1279,8 @@ namespace AssemblyPatcher
                             {
                                 Console.WriteLine("VehicleIdent.DoVehicleShortTest found");
                                 int removeIndex = -1;
+                                int removeCount = 0;
+                                bool removeWithOffset = false;
                                 int getBnTypeIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
                                 {
@@ -1341,6 +1343,10 @@ namespace AssemblyPatcher
                                             {
                                                 continue;
                                             }
+
+                                            removeCount = 2;
+                                            removeWithOffset = false;
+                                            removeIndex = index + 10;
                                         }
                                         else
                                         {
@@ -1348,9 +1354,12 @@ namespace AssemblyPatcher
                                             {
                                                 continue;
                                             }
+
+                                            removeCount = 13;
+                                            removeWithOffset = true;
+                                            removeIndex = index;
                                         }
 
-                                        removeIndex = index;
                                         getBnTypeIndex = index + 5;
                                         break;
                                     }
@@ -1431,9 +1440,16 @@ namespace AssemblyPatcher
                                         offset++;
                                     }
 
-                                    for (int idx = 0; idx < 13; idx++)
+                                    for (int idx = 0; idx < removeCount; idx++)
                                     {
-                                        instructions.RemoveAt(removeIndex + offset);
+                                        if (removeWithOffset)
+                                        {
+                                            instructions.RemoveAt(removeIndex + offset);
+                                        }
+                                        else
+                                        {
+                                            instructions.RemoveAt(removeIndex);
+                                        }
                                     }
 
                                     patched = true;
