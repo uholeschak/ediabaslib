@@ -1268,9 +1268,21 @@ namespace AssemblyPatcher
                                 Method = "doVehicleShortTest",
                             };
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
+
+                            if (instructions == null)
+                            {
+                                Target target2 = new Target
+                                {
+                                    Namespace = "BMW.Rheingold.Diagnostics",
+                                    Class = "VehicleIdent",
+                                    Method = "DoVehicleShortTest",
+                                };
+                                instructions = patcher.GetInstructionList(target2);
+                            }
+
                             if (instructions != null)
                             {
-                                Console.WriteLine("VehicleIdent.doVehicleShortTest found");
+                                Console.WriteLine("VehicleIdent.DoVehicleShortTest found");
                                 int removeIndex = -1;
                                 int getBnTypeIndex = -1;
                                 for (int index = 0; index < instructions.Count; index++)
@@ -1616,7 +1628,7 @@ namespace AssemblyPatcher
                         {
                             try
                             {
-#if true
+#if false
                                 patcher.Save(true);
 #endif
                                 Console.WriteLine("Patched: {0} Version={1} '{2}'", relPath, versionString ?? string.Empty, companyName);
