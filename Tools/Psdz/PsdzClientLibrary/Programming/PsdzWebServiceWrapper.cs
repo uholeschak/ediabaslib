@@ -120,7 +120,7 @@ namespace BMW.Rheingold.Programming
         {
             try
             {
-                _psdzWebService.StartIfNotRunning(Psdz64BitPathResolver.GetJrePath(_istaFolder), _psdzConfig.GetJvmOptionsAsOneString(), _psdzConfig.GetJarArgumentsAsOneString());
+                _psdzWebService.StartIfNotRunning(Psdz64BitPathResolver.GetJrePath(_istaFolder, true), _psdzConfig.GetJvmOptionsAsOneString(), _psdzConfig.GetJarArgumentsAsOneString());
             }
             catch (JavaInstallationException exception)
             {

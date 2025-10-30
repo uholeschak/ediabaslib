@@ -30,11 +30,9 @@ namespace PsdzClient.Programming
             return psdzBinaryPath;
         }
 
-        // [UH] modified
-        public static string GetJrePath(string istaFolder)
+        // [UH] istaFolder, psdzWebService added
+        public static string GetJrePath(string istaFolder, bool psdzWebService = false)
         {
-            CommonServiceWrapper commonServiceWrapper = new CommonServiceWrapper();
-            bool psdzWebService = commonServiceWrapper.GetFeatureEnabledStatus("PsdzWebservice").IsActive;
             string text = (psdzWebService ? "WebService\\" : string.Empty);
             string tlsPath = Path.Combine(istaFolder, "Tls13");
             if (Directory.Exists(tlsPath))
