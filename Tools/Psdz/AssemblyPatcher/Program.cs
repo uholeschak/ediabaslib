@@ -1337,12 +1337,17 @@ namespace AssemblyPatcher
 
                                         if (instructions[index + 11].OpCode != OpCodes.Ldc_I4_0)     // false
                                         {
-                                            continue;
+                                            if (instructions[index + 11].OpCode != OpCodes.Call)     // HandleMissingEcus()
+                                            {
+                                                continue;
+                                            }
                                         }
-
-                                        if (instructions[index + 12].OpCode != OpCodes.Call)     // HandleMissingEcus
+                                        else
                                         {
-                                            continue;
+                                            if (instructions[index + 12].OpCode != OpCodes.Call)     // HandleMissingEcus(false)
+                                            {
+                                                continue;
+                                            }
                                         }
 
                                         removeIndex = index;
@@ -1432,11 +1437,11 @@ namespace AssemblyPatcher
                                     }
 
                                     patched = true;
-                                    Console.WriteLine("doVehicleShortTest patched");
+                                    Console.WriteLine("DoVehicleShortTest patched");
                                 }
                                 else
                                 {
-                                    Console.WriteLine("*** Patching doVehicleShortTest failed");
+                                    Console.WriteLine("*** Patching DoVehicleShortTest failed");
                                 }
                             }
                         }
