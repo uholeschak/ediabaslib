@@ -1271,13 +1271,8 @@ namespace AssemblyPatcher
 
                             if (instructions == null)
                             {
-                                Target target2 = new Target
-                                {
-                                    Namespace = "BMW.Rheingold.Diagnostics",
-                                    Class = "VehicleIdent",
-                                    Method = "DoVehicleShortTest",
-                                };
-                                instructions = patcher.GetInstructionList(target2);
+                                target.Method = "DoVehicleShortTest";
+                                instructions = patcher.GetInstructionList(target);
                             }
 
                             if (instructions != null)
