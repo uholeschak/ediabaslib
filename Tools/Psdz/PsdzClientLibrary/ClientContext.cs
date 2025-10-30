@@ -42,7 +42,7 @@ namespace PsdzClient
                             _enablePsdzMultiSession = true;
                         }
 
-                        if (version >= 40055)
+                        if (version >= 40056)
                         {
                             _enablePsdzWebService = true;
                         }
