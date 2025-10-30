@@ -10,8 +10,6 @@ namespace PsdzClient.Programming
 {
     public class PsdzServiceGateway : IPsdzServiceGateway, IDisposable
     {
-        private readonly PsdzConfig _psdzConfig;
-
         private PsdzServiceWrapper _psdzServiceHostWrapper;
 
         private PsdzWebServiceWrapper _psdzWebServiceWrapper;
@@ -25,11 +23,11 @@ namespace PsdzClient.Programming
         {
             get
             {
-                if (_psdzServiceHostWrapper != null)
+                if (_psdzWebServiceWrapper != null)
                 {
-                    return _psdzServiceHostWrapper.PsdzServiceLogDir;
+                    return _psdzWebServiceWrapper.PsdzServiceLogDir;
                 }
-                return _psdzWebServiceWrapper.PsdzServiceLogDir;
+                return _psdzServiceHostWrapper.PsdzServiceLogDir;
             }
         }
 
@@ -37,11 +35,11 @@ namespace PsdzClient.Programming
         {
             get
             {
-                if (_psdzServiceHostWrapper != null)
+                if (_psdzWebServiceWrapper != null)
                 {
-                    return _psdzServiceHostWrapper;
+                    return _psdzWebServiceWrapper;
                 }
-                return _psdzWebServiceWrapper;
+                return _psdzServiceHostWrapper;
             }
         }
 
@@ -49,11 +47,11 @@ namespace PsdzClient.Programming
         {
             get
             {
-                if (_psdzServiceHostWrapper != null)
+                if (_psdzWebServiceWrapper != null)
                 {
-                    return _psdzServiceHostWrapper.PsdzServiceLogFilePath;
+                    return _psdzWebServiceWrapper.PsdzServiceLogFilePath;
                 }
-                return _psdzWebServiceWrapper.PsdzServiceLogFilePath;
+                return _psdzServiceHostWrapper.PsdzServiceLogFilePath;
             }
         }
 
@@ -61,11 +59,11 @@ namespace PsdzClient.Programming
         {
             get
             {
-                if (_psdzServiceHostWrapper != null)
+                if (_psdzWebServiceWrapper != null)
                 {
-                    return _psdzServiceHostWrapper.PsdzLogFilePath;
+                    return _psdzWebServiceWrapper.PsdzLogFilePath;
                 }
-                return _psdzWebServiceWrapper.PsdzLogFilePath;
+                return _psdzServiceHostWrapper.PsdzLogFilePath;
             }
         }
 
@@ -73,14 +71,13 @@ namespace PsdzClient.Programming
         public PsdzServiceGateway(PsdzConfig psdzConfig, string istaFolder, string dealerId, Action psdzServiceHostStarter = null)
         {
             _psdzServiceHostStarter = psdzServiceHostStarter;
-            _psdzConfig = psdzConfig;
             if (ClientContext.EnablePsdzWebService())
             {
                 _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
             }
             else
             {
-                _psdzServiceHostWrapper = new PsdzServiceWrapper(_psdzConfig);
+                _psdzServiceHostWrapper = new PsdzServiceWrapper(psdzConfig);
             }
         }
 
