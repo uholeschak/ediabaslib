@@ -214,7 +214,7 @@ namespace PsdzClient.Core
             try
             {
                 string format = BuildEntry(TraceLevel.DEBUG, evtKind, method, msg);
-                if (args != null)
+                if (args != null && args.Any())
                 {
                     string.Format(format, args);
                 }
@@ -273,7 +273,7 @@ namespace PsdzClient.Core
         public static void RdpSessionHistory()
         {
             string query = "*[System/EventID=1149]";
-            int num2 = 0;
+            int num = 0;
             EventLogReader eventLogReader = new EventLogReader(new EventLogQuery("Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational", PathType.LogName, query)
             {
                 ReverseDirection = true
@@ -282,8 +282,8 @@ namespace PsdzClient.Core
             {
                 DateTime? timeCreated = eventRecord.TimeCreated;
                 Info(CurrentMethod(), "RDP session was activated at: {0}", timeCreated);
-                num2++;
-                if (num2 == 5)
+                num++;
+                if (num == 5)
                 {
                     break;
                 }
@@ -303,10 +303,10 @@ namespace PsdzClient.Core
             {
                 return Process.GetCurrentProcess().Id;
             }
-            int num2 = headers.FindHeader("PID", string.Empty);
-            if (num2 >= 0)
+            int num = headers.FindHeader("PID", string.Empty);
+            if (num >= 0)
             {
-                return headers.GetHeader<int>(num2);
+                return headers.GetHeader<int>(num);
             }
             return Process.GetCurrentProcess().Id;
         }
@@ -356,7 +356,7 @@ namespace PsdzClient.Core
         private static void WriteTraceEntry(string method, string msg, TraceLevel level, EventKind evtKind, params object[] args)
         {
             string text = BuildEntry(level, evtKind, method, msg);
-            Trace.WriteLine((args == null || !args.Any()) ? text : string.Format(text, args));
+            Trace.WriteLine((args != null && args.Any()) ? string.Format(text, args) : text);
         }
     }
 }
