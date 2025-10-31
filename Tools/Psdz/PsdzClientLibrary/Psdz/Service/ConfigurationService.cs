@@ -62,7 +62,7 @@ namespace BMW.Rheingold.Psdz
         // [UH] For backward compatibility
         public string GetExpectedPsdzVersion()
         {
-            throw new NotImplementedException();
+            return GetPsdzVersion();
         }
 
         public string GetPsdzVersion()
