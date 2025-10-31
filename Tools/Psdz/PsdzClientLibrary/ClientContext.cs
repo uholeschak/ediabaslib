@@ -14,6 +14,7 @@ namespace PsdzClient
         private static readonly ILog log = LogManager.GetLogger(typeof(ClientContext));
         private static bool _enablePsdzMultiSession;
         private static bool _enablePsdzWebService;
+        private static long _swiVersionNum;
         private bool _disposed;
 
         public PsdzDatabase Database { get; set; }
@@ -36,13 +37,13 @@ namespace PsdzClient
                     if (long.TryParse(swiParts[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value1) &&
                         long.TryParse(swiParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out long value2))
                     {
-                        long version = value1 * 10000 + value2;
-                        if (version >= 40039)
+                        _swiVersionNum = value1 * 10000 + value2;
+                        if (_swiVersionNum >= 40039)
                         {
                             _enablePsdzMultiSession = true;
                         }
 
-                        if (version >= 40056)
+                        if (_swiVersionNum >= 40056)
                         {
                             _enablePsdzWebService = true;
                         }
@@ -174,6 +175,11 @@ namespace PsdzClient
         public static bool EnablePsdzWebService()
         {
             return _enablePsdzWebService;
+        }
+
+        public static long GetSwiVersionNum()
+        {
+            return _swiVersionNum;
         }
 
         public void Dispose()

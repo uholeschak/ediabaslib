@@ -427,13 +427,17 @@ namespace WebPsdzClient
                 bool hostRunning = false;
                 bool vehicleConnected = false;
                 bool talPresent = false;
-                if (!active)
-                {
-                    hostRunning = PsdzServiceStarter.IsThisServerInstanceRunning();
-                }
 
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
                 PsdzClient.Programming.PsdzContext psdzContext = programmingJobs.PsdzContext;
+                if (!active)
+                {
+                    if (programmingJobs.ProgrammingService?.Psdz != null)
+                    {
+                        hostRunning = programmingJobs.ProgrammingService.Psdz.IsPsdzInitialized;
+                    }
+                }
+
                 if (psdzContext?.Connection != null)
                 {
                     vehicleConnected = true;

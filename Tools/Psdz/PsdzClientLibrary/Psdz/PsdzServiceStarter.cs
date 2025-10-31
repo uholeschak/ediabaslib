@@ -72,16 +72,6 @@ namespace BMW.Rheingold.Psdz.Client
             this.psdzServiceArgs = psdzServiceArgs;
         }
 
-        // [UH] added
-        public static bool IsThisServerInstanceRunning()
-        {
-            if (ConfigSettings.GetActivateSdpOnlinePatch())
-            {
-                return IsServerInstanceRunning(Process.GetCurrentProcess().Id);
-            }
-            return IsServerInstanceRunning();
-        }
-
         public static bool IsServerInstanceRunning(int istaProcessId = 0)
         {
             using (Mutex mutex = new Mutex(false, PsdzServiceStarterMutex))

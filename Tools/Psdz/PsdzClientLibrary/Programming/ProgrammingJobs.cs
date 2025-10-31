@@ -845,7 +845,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                if (!PsdzServiceStarter.IsThisServerInstanceRunning())
+                if (!ProgrammingService.Psdz.IsPsdzInitialized)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Starting host");
                     if (!ProgrammingService.StartPsdzService())
@@ -875,9 +875,9 @@ namespace PsdzClient.Programming
             }
             finally
             {
-                if (!PsdzServiceStarter.IsThisServerInstanceRunning())
+                if (ProgrammingService != null)
                 {
-                    if (ProgrammingService != null)
+                    if (!ProgrammingService.Psdz.IsPsdzInitialized)
                     {
                         ProgrammingService.Dispose();
                         ProgrammingService = null;
@@ -894,12 +894,7 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.HostStopping);
                 UpdateStatus(sbResult.ToString());
 
-                if (ProgrammingService == null && PsdzServiceStarter.IsThisServerInstanceRunning())
-                {
-                    ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
-                }
-
-                if (ProgrammingService != null)
+                if (ProgrammingService != null && ProgrammingService.Psdz.IsPsdzInitialized)
                 {
                     ProgrammingService.CloseConnectionsToPsdz(force);
                     ProgrammingService.Dispose();

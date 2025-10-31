@@ -113,7 +113,10 @@ namespace PsdzClient
             bool editMode = _decryptEditMode;
             if (!active)
             {
-                hostRunning = PsdzServiceStarter.IsThisServerInstanceRunning();
+                if (_programmingJobs.ProgrammingService?.Psdz != null)
+                {
+                    hostRunning = _programmingJobs.ProgrammingService.Psdz.IsPsdzInitialized;
+                }
             }
 
             if (_programmingJobs.PsdzContext?.Connection != null)
