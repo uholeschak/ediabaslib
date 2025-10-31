@@ -16,6 +16,7 @@ namespace AssemblyPatcher
     internal class Program
     {
         public const long FileVersion450 = (4 << 24) + (50 << 16) + 0;
+        public const long FileVersion456 = (4 << 24) + (50 << 16) + 6;
 
         public class Options
         {
@@ -1737,8 +1738,6 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.ISTAGUI.ShowHiddenDiagnosticObjects\"", "    <add key=\"BMW.Rheingold.ISTAGUI.ShowHiddenDiagnosticObjects\" value=\"true\" />"),
                     ("\"BMW.Rheingold.OnlineMode\"", "    <add key=\"BMW.Rheingold.OnlineMode\" value=\"false\" />"),
                     ("\"BMW.Rheingold.UseIdentNuget\"", "    <add key=\"BMW.Rheingold.UseIdentNuget\" value=\"false\" />"),
-                    ("\"BMW.Rheingold.Programming.PsdzWebservice.Enabled\"", "    <add key=\"BMW.Rheingold.Programming.PsdzWebservice.Enabled\" value=\"false\" />"),
-                    ("\"BMW.Rheingold.PsdzWebservice_Activate\"", "    <add key=\"BMW.Rheingold.PsdzWebservice_Activate\" value=\"false\" />"),
                     ("\"BMW.Rheingold.UseJreWithTLS13Support_Activate\"", "    <add key=\"BMW.Rheingold.UseJreWithTLS13Support_Activate\" value=\"true\" />"),
                     ("\"BMW.Rheingold.Programming.Sdp.Patch.Enabled\"", "    <add key=\"BMW.Rheingold.Programming.Sdp.Patch.Enabled\" value=\"false\" />"),
                     ("\"BMW.Rheingold.OnlinePatch.Serviceprogram.IsActive\"", "    <add key=\"BMW.Rheingold.OnlinePatch.Serviceprogram.IsActive\" value=\"false\" />"),
@@ -1758,6 +1757,12 @@ namespace AssemblyPatcher
                     patchList.Add(("\"BMW.Rheingold.ISTAGUI.enableENETprogramming\"", "    <add key=\"BMW.Rheingold.ISTAGUI.enableENETprogramming\" value=\"true\" />"));
                     // not existing anymore
                     patchList.Add(("\"TesterGUI.PreferEthernet\"", "    <add key=\"TesterGUI.PreferEthernet\" value=\"true\" />"));
+                }
+
+                if (fileVersion.Value < FileVersion456)
+                {
+                    // not existing anymore
+                    patchList.Add(("\"BMW.Rheingold.PsdzWebservice_Activate\"", "    <add key=\"BMW.Rheingold.PsdzWebservice_Activate\" value=\"false\" />"));
                 }
 
                 string[] fileLines = File.ReadAllLines(configFileName);
