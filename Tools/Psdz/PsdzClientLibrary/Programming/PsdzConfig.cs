@@ -95,7 +95,7 @@ namespace PsdzClient.Programming
             List<string> list = new List<string>(Regex.Split(text, "\\s+(?=\\-)"));
             list.Add("-DPsdzLogFilePath=" + psdzLogFilePath);
             list.Add("-Dlog4j.configurationFile=psdz-log4j2-config.xml");
-            string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Path", Path.Combine(psdzBinaryPath, "..\\Security\\cacerts"));
+            string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Path", Path.GetFullPath(Path.Combine(psdzBinaryPath, "..\\Security\\cacerts")));
             string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Type", "jks");
             list.Add("-Djavax.net.ssl.trustStore=" + configString);
             list.Add("-Djavax.net.ssl.trustStoreType=" + configString2);

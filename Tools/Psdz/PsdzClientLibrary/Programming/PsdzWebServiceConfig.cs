@@ -116,11 +116,11 @@ namespace BMW.Rheingold.Programming
                 item,
                 "-XX:MaxGCPauseMillis=50",
                 "-Dcom.sun.management.jmxremote",
-                "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath(Path.Combine(PsdzDataPath, "..\\WebService")) + "\""
+                "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath(Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\WebService"))) + "\""
             };
             string defaultValue = string.Join(" ", values);
             string[] source = Regex.Split(ConfigSettings.getConfigString("BMW.Rheingold.Programming.PsdzWebservice.JvmOptions", defaultValue), "\\s+(?=\\-)");
-            string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Path", Path.Combine(PsdzDataPath, "..\\Security\\cacerts")); //[UH] modified path
+            string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Path", Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\Security\\cacerts"))); //[UH] modified path
             if (!File.Exists(configString))
             {
                 Log.Error(Log.CurrentMethod(), "Truststore File '" + configString + "' does not exist. You can check BMW.Rheingold.Programming.Truststore.Path registry key.");
