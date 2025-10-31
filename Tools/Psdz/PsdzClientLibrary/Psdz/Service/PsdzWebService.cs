@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using PsdzClient;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -148,6 +149,13 @@ namespace BMW.Rheingold.Psdz
             {
                 return false;
             }
+
+            // [UH] added
+            if (ClientContext.GetSwiVersionNum() < 40056)
+            {
+                return true;
+            }
+
             RootDirectorySetupResultModel rootDirectorySetupResult = ConfigurationService.GetRootDirectorySetupResult();
             if (rootDirectorySetupResult != null && rootDirectorySetupResult.Success)
             {
