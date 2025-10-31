@@ -43,7 +43,7 @@ namespace PsdzClient
                             _enablePsdzMultiSession = true;
                         }
 
-                        if (_swiVersionNum >= 40056)
+                        if (_swiVersionNum >= 40055)
                         {
                             _enablePsdzWebService = true;
                         }
