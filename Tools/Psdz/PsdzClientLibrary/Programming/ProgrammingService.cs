@@ -246,7 +246,7 @@ namespace PsdzClient.Programming
 			}
 		}
 
-        public bool IsPsdzPsdzServiceHostInitialized()
+        public bool IsPsdzServiceHostInitialized()
         {
             return this.Psdz.IsPsdzInitialized;
         }

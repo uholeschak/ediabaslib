@@ -737,7 +737,7 @@ namespace PsdzClient
                 return;
             }
 
-            if (_programmingJobs.ProgrammingService != null && _programmingJobs.ProgrammingService.IsPsdzPsdzServiceHostInitialized())
+            if (_programmingJobs.ProgrammingService != null && _programmingJobs.ProgrammingService.IsPsdzServiceHostInitialized())
             {
                 buttonStopHost_Click(sender, null);
                 e.Cancel = true;
