@@ -113,7 +113,7 @@ namespace BMW.Rheingold.Programming
         {
             _psdzConfig = psdzConfig ?? throw new ArgumentNullException("psdzConfig");
             _istaFolder = istaFolder;   // [UH] added
-            _psdzWebService = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability());
+            _psdzWebService = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);
         }
 
         public void StartIfNotRunning()

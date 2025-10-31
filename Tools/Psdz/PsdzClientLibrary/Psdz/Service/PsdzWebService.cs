@@ -27,6 +27,9 @@ namespace BMW.Rheingold.Psdz
 
         private readonly Func<bool> _isPsdzInitialized;
 
+        // [UH] added
+        private readonly string _istaFolder;
+
         private IWebCallHandler webCallHandler;
 
         private PsdzWebApiLifeCycleController lifeCycleController;
@@ -77,10 +80,12 @@ namespace BMW.Rheingold.Psdz
 
         public IProgrammingTokenService ProgrammingTokenService { get; private set; }
 
-        public PsdzWebService(string psdzWebAPILogDir, Func<bool> isPsdzInitialized)
+        // [UH] istaFolder added
+        public PsdzWebService(string psdzWebAPILogDir, Func<bool> isPsdzInitialized, string istaFolder)
         {
             _psdzWebApiLogDir = psdzWebAPILogDir;
             _isPsdzInitialized = isPsdzInitialized;
+            _istaFolder = istaFolder;
         }
 
         public void StartIfNotRunning(string jrePath, string jvmOptions, string jarArguments)
@@ -402,7 +407,7 @@ namespace BMW.Rheingold.Psdz
 
         private string GetJarPath()
         {
-            string fullPath = Path.GetFullPath(ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzWebservice.Directory", "..\\..\\..\\PSdZ\\WebService"));
+            string fullPath = Path.Combine(_istaFolder, "PSdZ\\WebService");    // [UH] modified
             if (!Directory.Exists(fullPath))
             {
                 Log.Error(Log.CurrentMethod(), "Directory " + fullPath + " does not exists. You can check your BMW_RHEINGOLD_PROGRAMMING_PSDZWEBSERVICE_DIRECTORY registry key.");
