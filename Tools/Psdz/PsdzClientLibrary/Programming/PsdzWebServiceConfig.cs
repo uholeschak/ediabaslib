@@ -102,7 +102,7 @@ namespace BMW.Rheingold.Programming
 
         private string[] GetPsdzJvmOptions()
         {
-            int num = 1024;
+            int num = 1280;
             if (Environment.Is64BitOperatingSystem) // [UH] replaced
             {
                 int totalPhysicalMemoryInGb = GetTotalPhysicalMemoryInGb();
