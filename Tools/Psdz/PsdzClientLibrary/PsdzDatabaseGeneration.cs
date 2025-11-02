@@ -907,7 +907,7 @@ namespace PsdzClient
                 }
                 catch (Exception ex)
                 {
-                    log.ErrorFormat("CreateServiceDialogPrefix StackTrace Exception: {0}", ex.Message);
+                    log.ErrorFormat("CreateServiceDialogPrefix StackTrace Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(ex));
                 }
 
                 log.ErrorFormat("CreateServiceDialogPrefix Aborting Method: {0}", methodName);
@@ -1214,7 +1214,7 @@ namespace PsdzClient
                 }
                 catch (Exception ex)
                 {
-                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix StackTrace Exception: {0}", ex.Message);
+                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix StackTrace Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(ex));
                 }
 
                 log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix Aborting Method: {0}", method);
@@ -1311,7 +1311,7 @@ namespace PsdzClient
                 }
                 catch (Exception ex)
                 {
-                    log.ErrorFormat("CharacteristicsPrefix StackTrace Exception: {0}", ex.Message);
+                    log.ErrorFormat("CharacteristicsPrefix StackTrace Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(ex));
                 }
 
                 log.ErrorFormat("CharacteristicsPrefix Aborting ControlId: {0}", controlId);
@@ -1628,7 +1628,7 @@ namespace PsdzClient
             }
             catch (Exception ex)
             {
-                log.ErrorFormat("DetectRecursion Exception: {0}", ex.Message);
+                log.ErrorFormat("DetectRecursion Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(ex));
                 return false;
             }
         }
@@ -3063,7 +3063,7 @@ namespace PsdzClient
                     }
                     catch (Exception ex)
                     {
-                        log.ErrorFormat("ReadServiceModule Patching Module Method: {0}, Exception: '{1}'", privateMethod.Name, ex.Message);
+                        log.ErrorFormat("ReadServiceModule Patching Module Method: {0}, Exception: '{1}'", privateMethod.Name, EdiabasLib.EdiabasNet.GetExceptionText(ex));
                     }
                 }
 
@@ -4024,7 +4024,7 @@ namespace PsdzClient
             }
             catch (Exception ex)
             {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo Exception: {0}", ex.Message);
+                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveVehicleSeriesInfo Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(ex));
                 return false;
             }
 
@@ -4710,7 +4710,7 @@ namespace PsdzClient
             }
             catch (Exception ex)
             {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Exception: {0}", ex.Message);
+                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(ex));
                 return false;
             }
 
@@ -5090,7 +5090,7 @@ $@"
             }
             catch (Exception ex)
             {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Exception: {0}", ex.Message);
+                log.ErrorFormat(CultureInfo.InvariantCulture, "SaveFaultRulesInfo Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(ex));
                 return false;
             }
 
