@@ -6,13 +6,6 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Kds
 {
-    public enum PsdzQuickCheckResultEto
-    {
-        MASTER_INVALID_CLIENT_INVALID,
-        MASTER_INVALID_CLIENT_OK,
-        MASTER_OK_CLIENT_INVALID
-    }
-
     public interface IPsdzKdsQuickCheckResultCto
     {
         IPsdzKdsIdCto KdsId { get; }

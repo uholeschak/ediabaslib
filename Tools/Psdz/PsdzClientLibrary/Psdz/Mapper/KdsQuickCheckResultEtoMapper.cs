@@ -20,6 +20,23 @@ namespace BMW.Rheingold.Psdz
                 {
                     PsdzQuickCheckResultEto.MASTER_OK_CLIENT_INVALID,
                     KdsQuickCheckResultEto.MASTER_OK_CLIENT_INVALID
+                },
+                {
+                    PsdzQuickCheckResultEto.MASTER_UNKNOWN_CLIENT_NOT_PAIRED,
+                    KdsQuickCheckResultEto.MASTER_UNKNOWN_CLIENT_NOT_PAIRED
+                },
+                // [UH] added missing mappings
+                {
+                    PsdzQuickCheckResultEto.MASTER_NOT_PAIRED_CLIENT_UNKNOWN,
+                    KdsQuickCheckResultEto.MASTER_NOT_PAIRED_CLIENT_UNKNOWN
+                },
+                {
+                    PsdzQuickCheckResultEto.MASTER_UNKNOWN_CLIENT_TIMEOUT,
+                    KdsQuickCheckResultEto.MASTER_UNKNOWN_CLIENT_TIMEOUT
+                },
+                {
+                    PsdzQuickCheckResultEto.MASTER_ERROR_CLIENT_ERROR,
+                    KdsQuickCheckResultEto.MASTER_ERROR_CLIENT_ERROR
                 }
             };
         }
