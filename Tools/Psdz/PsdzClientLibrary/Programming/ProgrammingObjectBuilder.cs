@@ -3,23 +3,26 @@ using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Obd;
+using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
 using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using PsdzClient.Programming.BMW.Rheingold.Programming.API;
 using PsdzClient.Utility;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
-using BMW.Rheingold.Psdz.Model.Sfa;
 
 namespace BMW.Rheingold.Programming.API
 {
-	public class ProgrammingObjectBuilder : IProgrammingObjectBuilder
-	{
+    // ToDo: Check on update
+    // [UH] changed to public
+    public class ProgrammingObjectBuilder : IProgrammingObjectBuilder
+    {
         private readonly IFFMDynamicResolver ffmResolver;
 
         private readonly Vehicle vehicle;
@@ -200,6 +203,7 @@ namespace BMW.Rheingold.Programming.API
             return systemVerbauKennung;
         }
 
+        // [UH] namespace modified
         public ISvt Build(Psdz.IPsdzStandardSvt svtInput)
         {
             if (svtInput == null)
@@ -222,6 +226,7 @@ namespace BMW.Rheingold.Programming.API
             return systemVerbauTabelle;
         }
 
+        // [UH] namespace modified
         public IVehicleProfileChecksum Build(Psdz.IPsdzReadVpcFromVcmCto vpcInput)
         {
             if (vpcInput == null)
@@ -477,7 +482,7 @@ namespace BMW.Rheingold.Programming.API
 
         public ISwtApplicationId BuildSwtApplicationId(int appNo, int upgradeIdx)
         {
-            return new PsdzClient.Programming.BMW.Rheingold.Programming.API.SwtApplicationIdObj(appNo, upgradeIdx);
+            return new SwtApplicationIdObj(appNo, upgradeIdx);
         }
 
         public IFetchEcuCertCheckingResult Build(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
@@ -544,7 +549,7 @@ namespace BMW.Rheingold.Programming.API
                     });
                 }
             }
-            if (list != null && list.Count() > 0)
+            if (list != null && list.Count > 0)
             {
                 return list.ToArray();
             }
@@ -609,7 +614,7 @@ namespace BMW.Rheingold.Programming.API
                     });
                 }
             }
-            if (list != null && list.Count() > 0)
+            if (list != null && list.Count > 0)
             {
                 return list.ToArray();
             }
