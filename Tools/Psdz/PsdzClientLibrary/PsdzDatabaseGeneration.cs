@@ -3000,6 +3000,16 @@ namespace PsdzClient
 
                 List<MethodInfo> simpleMethods = new List<MethodInfo>();
                 MethodInfo[] privateMethods = moduleType.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
+                List<string> invalidMethods = new List<string>
+                {
+                    "Finalize",
+                    "MemberwiseClone",
+                    "Auswertung",
+                    "Auswahl",
+                    "Meldung_01_s",
+                    "Fehlerspeicher_Lesen_02_s"
+                };
+
                 foreach (MethodInfo privateMethod in privateMethods)
                 {
                     string methodName = privateMethod.Name;
@@ -3023,27 +3033,7 @@ namespace PsdzClient
                         continue;
                     }
 
-                    if (methodName == "Finalize")
-                    {
-                        continue;
-                    }
-
-                    if (methodName == "MemberwiseClone")
-                    {
-                        continue;
-                    }
-
-                    if (methodName == "Auswertung")
-                    {
-                        continue;
-                    }
-
-                    if (methodName == "Meldung_01_s")
-                    {
-                        continue;
-                    }
-
-                    if (methodName == "Fehlerspeicher_Lesen_02_s")
+                    if (invalidMethods.Contains(methodName))
                     {
                         continue;
                     }
