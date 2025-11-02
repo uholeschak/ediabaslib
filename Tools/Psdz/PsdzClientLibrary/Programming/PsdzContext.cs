@@ -102,7 +102,7 @@ namespace PsdzClient.Programming
 
         public bool IsValidBackupTal => IndividualDataBackupTal != null;
 
-        public byte[] VpcCrc { get; set; }
+        public IVehicleProfileChecksum VpcFromVcm { get; set; }
 
         public bool IsValidEcuListActual
         {

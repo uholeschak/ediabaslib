@@ -1513,8 +1513,26 @@ namespace PsdzClient.Programming
                     PsdzBackendNcdCalculationEtoEnum backendNcdCalculationEtoEnumOld = secureCodingConfig.BackendNcdCalculationEtoEnum;
                     try
                     {
+                        ProgrammingObjectBuilder programmingObjectBuilder = ProgrammingService.ProgrammingInfos?.ProgrammingObjectBuilder;
+                        if (programmingObjectBuilder != null)
+                        {
+                            IPsdzReadVpcFromVcmCto psdzReadVpcFromVcmCto = ProgrammingService.Psdz.VcmService.RequestVpcFromVcm(PsdzContext.Connection);
+                            if (psdzReadVpcFromVcmCto == null || !psdzReadVpcFromVcmCto.IsSuccessful)
+                            {
+                                log.ErrorFormat(CultureInfo.InvariantCulture, "RequestVpcFromVcm failed");
+                                this.PsdzContext.VpcFromVcm = null;
+                            }
+                            else
+                            {
+                                IVehicleProfileChecksum vehicleProfileChecksum = programmingObjectBuilder.Build(psdzReadVpcFromVcmCto);
+                                this.PsdzContext.VpcFromVcm = vehicleProfileChecksum;
+                            }
+                        }
+
                         secureCodingConfig.BackendNcdCalculationEtoEnum = PsdzBackendNcdCalculationEtoEnum.ALLOW;
-                        IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList = ProgrammingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, PsdzContext.FaTarget, null);
+                        byte[] vcpCrc = this.PsdzContext.VpcFromVcm?.VpcCrc;
+                        IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList =
+                            ProgrammingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, PsdzContext.FaTarget, vcpCrc);
 
                         int failureCount = psdzSecurityBackendRequestFailureList.Count;
                         log.InfoFormat(CultureInfo.InvariantCulture, "Ncd failures: {0}", failureCount);

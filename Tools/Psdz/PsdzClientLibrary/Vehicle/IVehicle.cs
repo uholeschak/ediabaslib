@@ -127,6 +127,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         VehicleTypeNotLicensed
     }
 
+    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IVehicle : INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle
     {

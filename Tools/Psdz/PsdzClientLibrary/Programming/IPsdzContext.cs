@@ -23,7 +23,7 @@ namespace PsdzClient.Programming
 
         string VehicleInfo { get; }
 
-        byte[] VpcCrc { get; }
+        IVehicleProfileChecksum VpcFromVcm { get; }
 
         IPsdzTal Tal { get; set; }
 
