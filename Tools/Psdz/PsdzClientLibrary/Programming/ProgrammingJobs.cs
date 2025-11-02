@@ -1513,24 +1513,32 @@ namespace PsdzClient.Programming
                     PsdzBackendNcdCalculationEtoEnum backendNcdCalculationEtoEnumOld = secureCodingConfig.BackendNcdCalculationEtoEnum;
                     try
                     {
-                        ProgrammingObjectBuilder programmingObjectBuilder = ProgrammingService.ProgrammingInfos?.ProgrammingObjectBuilder;
-                        if (programmingObjectBuilder != null)
+                        try
                         {
-                            IPsdzReadVpcFromVcmCto psdzReadVpcFromVcmCto = ProgrammingService.Psdz.VcmService.RequestVpcFromVcm(PsdzContext.Connection);
-                            if (psdzReadVpcFromVcmCto == null || !psdzReadVpcFromVcmCto.IsSuccessful)
+                            PsdzContext.VpcFromVcm = null;
+                            ProgrammingObjectBuilder programmingObjectBuilder = ProgrammingService.ProgrammingInfos?.ProgrammingObjectBuilder;
+                            if (programmingObjectBuilder != null)
                             {
-                                log.ErrorFormat(CultureInfo.InvariantCulture, "RequestVpcFromVcm failed");
-                                this.PsdzContext.VpcFromVcm = null;
+                                IPsdzReadVpcFromVcmCto psdzReadVpcFromVcmCto = ProgrammingService.Psdz.VcmService.RequestVpcFromVcm(PsdzContext.Connection);
+                                bool bVcpSuccess = psdzReadVpcFromVcmCto != null && psdzReadVpcFromVcmCto.IsSuccessful;
+                                if (!bVcpSuccess)
+                                {
+                                    log.ErrorFormat(CultureInfo.InvariantCulture, "RequestVpcFromVcm failure, Is null: {0}", psdzReadVpcFromVcmCto == null);
+                                }
+                                else
+                                {
+                                    IVehicleProfileChecksum vehicleProfileChecksum = programmingObjectBuilder.Build(psdzReadVpcFromVcmCto);
+                                    PsdzContext.VpcFromVcm = vehicleProfileChecksum;
+                                }
                             }
-                            else
-                            {
-                                IVehicleProfileChecksum vehicleProfileChecksum = programmingObjectBuilder.Build(psdzReadVpcFromVcmCto);
-                                this.PsdzContext.VpcFromVcm = vehicleProfileChecksum;
-                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "RequestVpcFromVcm failure: {0}", ex.Message);
                         }
 
                         secureCodingConfig.BackendNcdCalculationEtoEnum = PsdzBackendNcdCalculationEtoEnum.ALLOW;
-                        byte[] vcpCrc = this.PsdzContext.VpcFromVcm?.VpcCrc;
+                        byte[] vcpCrc = PsdzContext.VpcFromVcm?.VpcCrc;
                         IList<IPsdzSecurityBackendRequestFailureCto> psdzSecurityBackendRequestFailureList =
                             ProgrammingService.Psdz.SecureCodingService.RequestCalculationNcdAndSignatureOffline(requestNcdEtos, jsonRequestFilePath, secureCodingConfig, psdzVin, PsdzContext.FaTarget, vcpCrc);
 
