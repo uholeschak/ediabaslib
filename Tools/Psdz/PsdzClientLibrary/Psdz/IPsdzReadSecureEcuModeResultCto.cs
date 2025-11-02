@@ -7,13 +7,6 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Model.Sfa
 {
-    public enum PsdzSecureEcuModeEtoEnum
-    {
-        PLANT,
-        FIELD,
-        ENGINEERING
-    }
-    
     public interface IPsdzReadSecureEcuModeResultCto
     {
         IDictionary<IPsdzEcuIdentifier, PsdzSecureEcuModeEtoEnum> SecureEcuModes { get; }
