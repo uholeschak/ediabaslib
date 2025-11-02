@@ -13,8 +13,9 @@ using PsdzClient.Utility;
 
 namespace PsdzClient.Core
 {
-	public abstract class BaseEcuCharacteristics
-	{
+    // ToDo: Check on update
+    public abstract class BaseEcuCharacteristics
+    {
         internal string brSgbd;
 
         internal string compatibilityInfo;
@@ -51,11 +52,11 @@ namespace PsdzClient.Core
 
         public string BordnetName { get; set; }
 
-        public BaseEcuCharacteristics()
+        internal BaseEcuCharacteristics()
         {
         }
 
-        public BaseEcuCharacteristics(string xmlCharacteristic)
+        internal BaseEcuCharacteristics(string xmlCharacteristic)
         {
             IEcuTreeConfiguration ecuTreeConfiguration = null;
             ValidationEventHandler veh = delegate (object sender, ValidationEventArgs e)
@@ -187,6 +188,7 @@ namespace PsdzClient.Core
             CalculateECUConfiguration(vecInfo, ffmResolver, null, null);
         }
 
+        // [UH] modified
         public virtual ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
             ObservableCollectionEx<PsdzDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
@@ -199,22 +201,24 @@ namespace PsdzClient.Core
                     {
                         try
                         {
-                            if (!string.IsNullOrEmpty(text) && text.Length >= 10)
+                            if (string.IsNullOrEmpty(text) || text.Length < 10)
                             {
-                                string[] array2 = text.Split(';');
-                                if (array2[2].Contains(vecInfo.Typ))
+                                continue;
+                            }
+                            string[] array2 = text.Split(';');
+                            if (!array2[2].Contains(vecInfo.Typ))
+                            {
+                                continue;
+                            }
+                            string[] array3 = array2[3].Split('&');
+                            foreach (string text2 in array3)
+                            {
+                                if (!string.IsNullOrEmpty(text2))
                                 {
-                                    string[] array3 = array2[3].Split('&');
-                                    foreach (string text2 in array3)
+                                    PsdzDatabase.SaLaPa saLaPaByProductTypeAndSalesKey = ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
+                                    if (saLaPaByProductTypeAndSalesKey != null)
                                     {
-                                        if (!string.IsNullOrEmpty(text2))
-                                        {
-                                            PsdzDatabase.SaLaPa saLaPaByProductTypeAndSalesKey = ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
-                                            if (saLaPaByProductTypeAndSalesKey != null)
-                                            {
-                                                observableCollectionEx.AddIfNotContains(saLaPaByProductTypeAndSalesKey);
-                                            }
-                                        }
+                                        observableCollectionEx.AddIfNotContains(saLaPaByProductTypeAndSalesKey);
                                     }
                                 }
                             }
@@ -224,36 +228,34 @@ namespace PsdzClient.Core
                             Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception);
                         }
                     }
-                    return observableCollectionEx;
                 }
                 catch (Exception exception2)
                 {
                     Log.WarningException(GetType().Name + ".GetAvailableSALAPAs()", exception2);
-                    return observableCollectionEx;
                 }
             }
             return observableCollectionEx;
         }
 
         public ICollection<IBusLogisticsEntry> GetBusTable()
-		{
-			return busTable;
-		}
+        {
+            return busTable;
+        }
 
-		public ICollection<ICombinedEcuHousingEntry> GetCombinedEcuHousingTable()
-		{
-			return combinedEcuHousingTable;
-		}
+        public ICollection<ICombinedEcuHousingEntry> GetCombinedEcuHousingTable()
+        {
+            return combinedEcuHousingTable;
+        }
 
-		public ICollection<IEcuLogisticsEntry> GetEcuLogisticsTable()
-		{
-			return ecuTable;
-		}
+        public ICollection<IEcuLogisticsEntry> GetEcuLogisticsTable()
+        {
+            return ecuTable;
+        }
 
-		public ICollection<IBusInterConnectionEntry> GetInterConnectionTable()
-		{
-			return interConnectionTable;
-		}
+        public ICollection<IBusInterConnectionEntry> GetInterConnectionTable()
+        {
+            return interConnectionTable;
+        }
 
         public virtual void ShapeECUConfiguration(Vehicle vecInfo)
         {
@@ -277,12 +279,12 @@ namespace PsdzClient.Core
                     }
                     int validAdr = -1;
                     int[] array = item;
-                    foreach (int num2 in array)
+                    foreach (int num in array)
                     {
-                        ECU eCU = vecInfo.getECU(num2);
+                        ECU eCU = vecInfo.getECU(num);
                         if (eCU != null && eCU.IDENT_SUCCESSFULLY)
                         {
-                            validAdr = num2;
+                            validAdr = num;
                         }
                     }
                     if (validAdr <= -1)
@@ -313,7 +315,7 @@ namespace PsdzClient.Core
                 ECU eCU3 = vecInfo.getECU(item3);
                 if (eCU3 != null && !eCU3.IDENT_SUCCESSFULLY)
                 {
-                    vecInfo.ECU.Remove(eCU3);
+                    Log.Info(Log.CurrentMethod(), $"This ECU would be deleted by the 'UnsureConfiguration': Address: {item3}, Variant: {eCU3.VARIANTE}");
                 }
             }
         }
@@ -659,6 +661,7 @@ namespace PsdzClient.Core
             return bus.ToString();
         }
 
+        // [UH] modified
         protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);

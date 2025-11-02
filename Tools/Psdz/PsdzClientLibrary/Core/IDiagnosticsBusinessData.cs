@@ -14,6 +14,7 @@ namespace PsdzClient.Core
         RsuStart
     }
 
+    // ToDo: Check on update
     public interface IDiagnosticsBusinessData
     {
         List<string> ProductLinesEpmBlacklist { get; }
