@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz;
 
 namespace PsdzClient.Programming
 {

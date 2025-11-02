@@ -2,34 +2,6 @@
 
 namespace BMW.Rheingold.Psdz.Model.SecureCoding
 {
-    public enum PsdzBackendNcdCalculationEtoEnum
-    {
-        ALLOW,
-        FORCE,
-        MUST_NOT
-    }
-
-    public enum PsdzBackendSignatureEtoEnum
-    {
-        ALLOW,
-        FORCE,
-        MUST_NOT
-    }
-
-    public enum PsdzNcdRecalculationEtoEnum
-    {
-        ALLOW,
-        FORCE
-    }
-
-    public enum PsdzAuthenticationTypeEto
-    {
-        SSL,
-        BASIC,
-        BEARER,
-        UNKNOWN
-    }
-
     public interface IPsdzSecureCodingConfigCto
     {
         PsdzBackendNcdCalculationEtoEnum BackendNcdCalculationEtoEnum { get; }
