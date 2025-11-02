@@ -31,6 +31,8 @@ namespace PsdzClient.Core.Container
     // ToDo: Check on update
     public class ECUKom : IEcuKom, IEcuKomApi
     {
+        private const string ERROR_ECU_ZDF_REJECT = "ERROR_ECU_ZDF_REJECT";
+
         private const int STANDARD_EDIABAS_LOGLEVEL = 0;
 
         private const int DEFAULT_EDIABAS_TRACELEVEL = 6;
@@ -96,7 +98,9 @@ namespace PsdzClient.Core.Container
 
         public List<ECUJob> jobList = new List<ECUJob>();
 
-        //public uint EdiabasHandle { get; }
+        private IList<string> lang = new List<string>();
+
+        public uint EdiabasHandle { get; }
 
         public string APP
         {
