@@ -504,7 +504,7 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
-        public List<string> sxCodes { get; set; } = new List<string>();
+        public List<string> SxCodes { get; set; } = new List<string>();
 
         [XmlIgnore]
         public string TypeKey
@@ -996,7 +996,7 @@ namespace PsdzClient.Core
         IVciDeviceRuleEvaluation IVehicleRuleEvaluation.VCI => base.VCI;
 
         [XmlIgnore]
-        IList<IIdentEcu> IVehicleRuleEvaluation.ECU => base.ECU.Cast<IIdentEcu>().ToList();
+        IList<IIdentEcu> IVehicleRuleEvaluation.ECU => GetEcusAsIIdentEcu();
 
         [XmlIgnore]
         IFARuleEvaluation IVehicleRuleEvaluation.FA => base.FA;
@@ -2576,6 +2576,20 @@ namespace PsdzClient.Core
         bool IIdentVehicle.IsPreE65Vehicle()
         {
             return Classification.IsPreE65Vehicle();
+        }
+
+        IIdentEcu IIdentVehicle.getECU(long? sgAdr)
+        {
+            return getECU(sgAdr);
+        }
+
+        IIdentEcu IIdentVehicle.getECUbyECU_GRUPPE(string ECU_GRUPPE)
+        {
+            return getECUbyECU_GRUPPE(ECU_GRUPPE);
+        }
+        private List<IIdentEcu> GetEcusAsIIdentEcu()
+        {
+            return base.ECU.Cast<IIdentEcu>().ToList();
         }
 
     }

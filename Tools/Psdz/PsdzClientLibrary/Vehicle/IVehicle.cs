@@ -1,4 +1,7 @@
-﻿using System;
+﻿using PsdzClient.Contracts;
+using PsdzClient.Core;
+using PsdzClient.Programming;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,8 +10,6 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using PsdzClient.Contracts;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
@@ -131,6 +132,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     {
         bool IsEcuIdentSuccessfull { get; set; }
 
+        //SessionStart SessionStart { get; set; }
+
         new string AELeistungsklasse { get; }
 
         new string AEUeberarbeitung { get; }
@@ -139,7 +142,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string ApplicationVersion { get; }
 
-        List<string> sxCodes { get; set; }
+        List<string> SxCodes { get; set; }
 
         [Obsolete("Is not used anymore in Testmodules. Will be removed in 4.48!")]
         BNMixed BNMixed { get; set; }
@@ -178,6 +181,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool DOMRequestFailed { get; set; }
 
+        //[Obsolete("Please use Authoring -> Session.DiagCodes. Can be removed with 4.57.XX")]
         //IEnumerable<IDiagCode> DiagCodes { get; }
 
         ObservableCollection<string> DiagCodesProgramming { get; }
@@ -336,6 +340,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         IVehicleClassification Classification { get; set; }
 
+        IVehicleProfileChecksum VPC { get; set; }
+
         IEcu getECU(long? sgAdr);
 
         IEcu getECU(long? sgAdr, long? subAddress);
@@ -351,8 +357,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         bool RemoveEcu(IEcu ecu);
 
         bool IsProgrammingSupported(bool considerLogisticBase);
-
-        bool IsVehicleWithOnlyVin7();
 
         bool IsEreiheValid();
 

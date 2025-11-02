@@ -7,6 +7,7 @@ using System;
 
 namespace PsdzClient.Core
 {
+    // ToDo: Check on update
     public interface IIdentVehicle : IReactorVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation
     {
         new string MOTKraftstoffart { get; set; }
@@ -15,7 +16,7 @@ namespace PsdzClient.Core
 
         new List<HeatMotor> HeatMotors { get; set; }
 
-        List<string> sxCodes { get; set; }
+        List<string> SxCodes { get; set; }
 
         TransmissionDataType TransmissionDataType { get; }
 
@@ -35,6 +36,10 @@ namespace PsdzClient.Core
 
         string SoftwareId { get; set; }
 
+        string VIN7 { get; }
+
+        string VINType { get; }
+
         string VehicleModelRecognition { get; set; }
 
         string TempTypeKeyLeadFromDb { get; set; }
@@ -50,5 +55,9 @@ namespace PsdzClient.Core
         bool IsPreE65Vehicle();
 
         bool IsVehicleWithOnlyVin7();
+
+        IIdentEcu getECU(long? sgAdr);
+
+        IIdentEcu getECUbyECU_GRUPPE(string ECU_GRUPPE);
     }
 }
