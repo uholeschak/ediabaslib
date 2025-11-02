@@ -217,12 +217,12 @@ namespace PsdzClient.Core.Container
         }
 
         public ECUKom()
-            : this(null)
+            : this(null, new List<string>())
         {
         }
 
         // [UH] ediabas added
-        public ECUKom(string app, EdiabasNet ediabas = null)
+        public ECUKom(string app, IList<string> lang, EdiabasNet ediabas = null)
         {
             api = CreateApi(ediabas);
             communicationMode = CommMode.Normal;
@@ -230,6 +230,7 @@ namespace PsdzClient.Core.Container
             APP = app;
             FromFastaConfig = false;
             CacheHitCounter = 0;
+            this.lang = lang;
             ServiceLocator.Current.TryGetService<IInteractionService>(out interactionService);
             ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out backendCallsWatchDog);
             ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
@@ -409,7 +410,7 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUKom.DeSerialize()", exception);
-                eCUKom = new ECUKom("Rheingold", ediabas);  // [UH] ediabas added
+                eCUKom = new ECUKom("Rheingold", new List<string>(), ediabas);  // [UH] ediabas added
             }
             VCIDevice vCIDevice = new VCIDevice(VCIDeviceType.SIM, "SIM", filename);
             vCIDevice.Serial = filename;
@@ -1544,6 +1545,8 @@ namespace PsdzClient.Core.Container
                 }
                 eCUJob3.ExecutionEndTime = dateTimePrecise.Now;
                 AddJobInCache(eCUJob3, cacheAdding);
+                string stringResult = eCUJob3.getStringResult(1, "JOB_STATUS");
+                HandleEcuAuthorizationRejection(ecu, jobName, param, resultFilter, (stringResult == null) ? string.Empty : stringResult);
                 return eCUJob3;
             }
             finally
@@ -1552,6 +1555,27 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        private void HandleEcuAuthorizationRejection(string ecu, string jobName, string param, string resultFilter, string jobStatus)
+        {
+            string method = Log.CurrentMethod();
+            if (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase))
+            {
+                Log.Info(method, "ERROR_ECU_ZDF_REJECT where sent by the ZDF");
+                End();
+                bool flag = InitializeDevice(VCI, logging: true, isDoIP: true, slpDoIpFromIcom: true);
+                SetEcuPath(logging: true);
+                Log.Info(method, "Ediabas is reinitialized with status {0}", flag);
+                if (flag && CheckAuthentificationState(VCI))
+                {
+                    Log.Info(method, "Ediabas reinitialized and AuthenticationState are succesfull. DiagnoseJob will be resend.");
+                    return;
+                }
+                Log.Info(method, "Ediabas reinitialized or AuthenticationState is wrong. Popup with Infos will be shown.");
+                string details = $"ECU: {ecu}, Job: {jobName}, Argument: {param}, ResultFilter: {resultFilter}";
+                //string textItem = new TextContent(new FormatedData("#Sec4Diag.ZDFReject", false, "ERROR_ECU_ZDF_REJECT"), lang).GetTextForUI(lang)[0].TextItem;
+                //interactionService.RegisterMessage(FormatedData.Localize("#Note"), textItem, details);
+            }
+        }
         public void RemoveTraceLevel(string callerMember)
         {
             if (!UseConfigFileTraces())
