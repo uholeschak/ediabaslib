@@ -36,7 +36,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
-using VCIDeviceType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType;
 
 namespace PsdzClient.Programming
 {
@@ -1174,7 +1173,8 @@ namespace PsdzClient.Programming
                 bool isDoIp = PsdzContext.DetectVehicle.IsDoIp;
 
                 Vehicle vehicle = new Vehicle(ClientContext);
-                vehicle.VCI.VCIType = icomConnection ? VCIDeviceType.ICOM : VCIDeviceType.ENET;
+                vehicle.VCI.VCIType = icomConnection ?
+                    global::BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ICOM : global::BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ENET;
                 vehicle.VCI.IPAddress = ipAddress;
                 vehicle.VCI.Port = diagPort;
                 vehicle.VCI.NetworkType = "LAN";
