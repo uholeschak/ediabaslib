@@ -200,7 +200,7 @@ namespace BMW.Rheingold.Programming.API
             return systemVerbauKennung;
         }
 
-        public ISvt Build(IPsdzStandardSvt svtInput)
+        public ISvt Build(Psdz.IPsdzStandardSvt svtInput)
         {
             if (svtInput == null)
             {

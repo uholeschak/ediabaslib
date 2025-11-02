@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using BMW.Rheingold.Psdz.Model.Comparer;
 using BMW.Rheingold.Psdz.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz.Model
+namespace BMW.Rheingold.Psdz
 {
     [DataContract]
     [KnownType(typeof(PsdzEcu))]
