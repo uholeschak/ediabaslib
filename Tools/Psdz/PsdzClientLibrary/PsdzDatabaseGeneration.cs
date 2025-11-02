@@ -708,7 +708,7 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("CallModuleRefPrefix Exception: {0}", e.Message);
+                    log.ErrorFormat("CallModuleRefPrefix Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 }
             }
             return false;
@@ -751,7 +751,7 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("CreateServiceDialogPrefix ResolveDialogRef Exception: {0}", e.Message);
+                    log.ErrorFormat("CreateServiceDialogPrefix ResolveDialogRef Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 }
             }
 
@@ -785,7 +785,7 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("CreateServiceDialogPrefix ResolveDialogRef Exception: {0}", e.Message);
+                    log.ErrorFormat("CreateServiceDialogPrefix ResolveDialogRef Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 }
             }
 
@@ -836,7 +836,7 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("CreateServiceDialogPrefix DSCConfig Exception: {0}", e.Message);
+                    log.ErrorFormat("CreateServiceDialogPrefix DSCConfig Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 }
             }
 
@@ -853,7 +853,7 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("CreateServiceDialogPrefix Exception: '{0}'", e.Message);
+                    log.ErrorFormat("CreateServiceDialogPrefix Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 }
             }
             else
@@ -1009,13 +1009,13 @@ namespace PsdzClient
                         }
                         catch (Exception e)
                         {
-                            log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix txtParam Exception: '{0}'", e.Message);
+                            log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix txtParam Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix GetParameter txtParam Exception: '{0}'", e.Message);
+                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix GetParameter txtParam Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 }
             }
             else
@@ -1039,7 +1039,7 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix SetParameter ISTA_Systemvariable Exception: '{0}'", e.Message);
+                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix SetParameter ISTA_Systemvariable Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 }
             }
             else
@@ -1187,7 +1187,7 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix SetParameter Exception: '{0}'", e.Message);
+                    log.ErrorFormat("ServiceDialogCmdBaseInvokePrefix SetParameter Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 }
             }
             else
@@ -1250,7 +1250,7 @@ namespace PsdzClient
                 }
                 catch (Exception e)
                 {
-                    log.ErrorFormat("ConfigurationContainerDeserializePostfix AddParametrizationOverride Exception: {0}", e.Message);
+                    log.ErrorFormat("ConfigurationContainerDeserializePostfix AddParametrizationOverride Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 }
             }
         }
@@ -1268,7 +1268,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("IndirectDocumentPrefix3 new List<IDocumentLocator>() Exception: {0}", e.Message);
+                log.ErrorFormat("IndirectDocumentPrefix3 new List<IDocumentLocator>() Exception: {0}", EdiabasLib.EdiabasNet.GetExceptionText(e));
             }
 
             __result = documentList;
@@ -1815,7 +1815,7 @@ namespace PsdzClient
             catch (Exception e)
             {
                 failure = true;
-                log.ErrorFormat("ReadTestModule Exception: '{0}'", e.Message);
+                log.ErrorFormat("ReadTestModule Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -1892,7 +1892,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("PatchCommonMethods Exception: '{0}'", e.Message);
+                log.ErrorFormat("PatchCommonMethods Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return false;
             }
         }
@@ -2007,7 +2007,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("CreateModuleParamContainerInst Exception: '{0}'", e.Message);
+                log.ErrorFormat("CreateModuleParamContainerInst Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -2069,7 +2069,7 @@ namespace PsdzClient
                     }
                     catch (Exception e)
                     {
-                        log.ErrorFormat("GenerateVehicleServiceData Deserialize Exception: '{0}'", e.Message);
+                        log.ErrorFormat("GenerateVehicleServiceData Deserialize Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                     }
                 }
 
@@ -2136,7 +2136,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("GenerateVehicleServiceData Exception: '{0}'", e.Message);
+                log.ErrorFormat("GenerateVehicleServiceData Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return false;
             }
         }
@@ -2185,7 +2185,7 @@ namespace PsdzClient
                     }
                     catch (Exception e)
                     {
-                        log.ErrorFormat("GenerateServiceModuleData Deserialize Exception: '{0}'", e.Message);
+                        log.ErrorFormat("GenerateServiceModuleData Deserialize Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                     }
                 }
 
@@ -2310,7 +2310,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("GenerateServiceModuleData Exception: '{0}'", e.Message);
+                log.ErrorFormat("GenerateServiceModuleData Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return false;
             }
         }
@@ -2430,7 +2430,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ConvertAllServiceModules Exception: '{0}'", e.Message);
+                log.ErrorFormat("ConvertAllServiceModules Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -3240,7 +3240,7 @@ namespace PsdzClient
                                         }
                                         catch (Exception e)
                                         {
-                                            log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, e.Message);
+                                            log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, EdiabasLib.EdiabasNet.GetExceptionText(e));
                                         }
                                     }
                                 }
@@ -3299,7 +3299,7 @@ namespace PsdzClient
                             }
                             catch (Exception e)
                             {
-                                log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, e.Message);
+                                log.ErrorFormat("ReadServiceModule Text ID: {0}, Exception: '{1}'", textId, EdiabasLib.EdiabasNet.GetExceptionText(e));
                             }
                         }
 
@@ -3323,7 +3323,7 @@ namespace PsdzClient
             catch (Exception e)
             {
                 failure = true;
-                log.ErrorFormat("ReadServiceModule Exception: '{0}'", e.Message);
+                log.ErrorFormat("ReadServiceModule Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -3470,7 +3470,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ConvertServiceModulesToVehicleData Exception: '{0}'", e.Message);
+                log.ErrorFormat("ConvertServiceModulesToVehicleData Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -3535,7 +3535,7 @@ namespace PsdzClient
                     }
                     catch (Exception e)
                     {
-                        log.ErrorFormat("GenerateTestModuleData Deserialize Exception: '{0}'", e.Message);
+                        log.ErrorFormat("GenerateTestModuleData Deserialize Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                     }
                 }
 
@@ -3636,7 +3636,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("StoreTestModuleData Exception: '{0}'", e.Message);
+                log.ErrorFormat("StoreTestModuleData Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return false;
             }
         }
@@ -3714,7 +3714,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ConvertAllTestModules Exception: '{0}'", e.Message);
+                log.ErrorFormat("ConvertAllTestModules Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -3763,7 +3763,7 @@ namespace PsdzClient
                     }
                     catch (Exception e)
                     {
-                        log.ErrorFormat("GenerateEcuCharacteristicsData Deserialize Exception: '{0}'", e.Message);
+                        log.ErrorFormat("GenerateEcuCharacteristicsData Deserialize Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                     }
                 }
 
@@ -3837,7 +3837,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("GenerateEcuCharacteristicsData Exception: '{0}'", e.Message);
+                log.ErrorFormat("GenerateEcuCharacteristicsData Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return false;
             }
         }
@@ -3904,7 +3904,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ReadEcuCharacteristicsXml Exception: '{0}'", e.Message);
+                log.ErrorFormat("ReadEcuCharacteristicsXml Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -3953,7 +3953,7 @@ namespace PsdzClient
                     }
                     catch (Exception e)
                     {
-                        log.ErrorFormat("SaveVehicleSeriesInfo Deserialize Exception: '{0}'", e.Message);
+                        log.ErrorFormat("SaveVehicleSeriesInfo Deserialize Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                     }
                 }
 
@@ -4600,7 +4600,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Exception: '{0}'", e.Message);
+                log.ErrorFormat("ExtractEcuCharacteristicsVehicles Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -4787,7 +4787,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ExtractDiagObjRulesInfo Exception: '{0}'", e.Message);
+                log.ErrorFormat("ExtractDiagObjRulesInfo Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -5152,7 +5152,7 @@ $@"
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ExtractFaultRulesInfo Exception: '{0}'", e.Message);
+                log.ErrorFormat("ExtractFaultRulesInfo Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -5207,7 +5207,7 @@ $@"
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ExtractEcuFuncRulesInfo Exception: '{0}'", e.Message);
+                log.ErrorFormat("ExtractEcuFuncRulesInfo Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return null;
             }
         }
@@ -5234,7 +5234,7 @@ $@"
             }
             catch (Exception e)
             {
-                log.ErrorFormat("AddSubRules Exception: '{0}'", e.Message);
+                log.ErrorFormat("AddSubRules Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return false;
             }
 
@@ -5267,7 +5267,7 @@ $@"
             }
             catch (Exception e)
             {
-                log.ErrorFormat("ExtractRuleNames Exception: '{0}'", e.Message);
+                log.ErrorFormat("ExtractRuleNames Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return false;
             }
         }
