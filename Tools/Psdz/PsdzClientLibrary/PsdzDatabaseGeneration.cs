@@ -2747,6 +2747,21 @@ namespace PsdzClient
                     return null;
                 }
 
+                Type moduleParameterType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.ModuleParameter");
+                if (moduleParameterType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule ModuleParameter not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleParameterGetParameter1 = moduleParamContainerType.GetMethod("getParameter", BindingFlags.Instance | BindingFlags.Public,
+                    null, new Type[] { typeof(string), typeof(object) }, null);
+                if (methodModuleParameterGetParameter1 == null)
+                {
+                    log.ErrorFormat("ReadTestModule ModuleParameter getParameter not found");
+                    return null;
+                }
+
                 MethodInfo methodModuleParameterPrefix1 = typeof(PsdzDatabase).GetMethod("GetModuleParameterPrefix1", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleParameterPrefix1 == null)
                 {
