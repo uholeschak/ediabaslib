@@ -3009,13 +3009,12 @@ namespace PsdzClient
                     _harmony.Patch(methodParamContainerGetParameter2, new HarmonyMethod(methodModuleParameterPrefix2), new HarmonyMethod(methodModuleParameterPostfix2));
                 }
 
-#if true
                 if (!patchedModuleParameterGetParameter)
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodModuleParameterGetParameter.Name);
                     _harmony.Patch(methodModuleParameterGetParameter, new HarmonyMethod(methodModuleParameterGetParameterPrefix));
                 }
-#endif
+
                 if (!patchedModuleText)
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaModuleText2.Name);
