@@ -661,6 +661,7 @@ namespace PsdzClient
         private static HashSet<string> _serviceDialogTextHashes;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
+        private static ConstructorInfo _ecuKomStatementConstructor;
         private static ConstructorInfo _vehicleEcuResultConstructor;
         private static Type _istaServiceDialogFactoryType;
         private static Type _istaServiceDialogConfigurationType;
@@ -2657,6 +2658,25 @@ namespace PsdzClient
                     }
 
                     _istaEdiabasAdapterDeviceResultConstructor = istaEdiabasAdapterDeviceResultConstructor;
+                }
+
+                Type ecuKomStatementType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.ISTA.CoreFramework.Module.EcuKomStatement");
+                if (ecuKomStatementType == null)
+                {
+                    log.ErrorFormat("ReadServiceModule EcuKomStatement not found");
+                    return null;
+                }
+
+                if (_ecuKomStatementConstructor == null)
+                {
+                    ConstructorInfo[] ecuKomStatementConstructors = ecuKomStatementType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+                    if (ecuKomStatementConstructors.Length != 1)
+                    {
+                        log.ErrorFormat("ReadServiceModule EcuKomStatement constructor not found");
+                        return null;
+                    }
+
+                    _ecuKomStatementConstructor = ecuKomStatementConstructors[0];
                 }
 
                 Type istaModuleType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ISTAModule");
