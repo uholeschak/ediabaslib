@@ -2755,10 +2755,18 @@ namespace PsdzClient
                 }
 
                 MethodInfo methodModuleParameterGetParameter1 = moduleParamContainerType.GetMethod("getParameter", BindingFlags.Instance | BindingFlags.Public,
-                    null, new Type[] { typeof(string), typeof(object) }, null);
+                    null, new Type[] { typeof(string) }, null);
                 if (methodModuleParameterGetParameter1 == null)
                 {
-                    log.ErrorFormat("ReadTestModule ModuleParameter getParameter not found");
+                    log.ErrorFormat("ReadTestModule ModuleParameter getParameter1 not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleParameterGetParameter2 = moduleParamContainerType.GetMethod("getParameter", BindingFlags.Instance | BindingFlags.Public,
+                    null, new Type[] { typeof(string), typeof(object) }, null);
+                if (methodModuleParameterGetParameter2 == null)
+                {
+                    log.ErrorFormat("ReadTestModule ModuleParameter getParameter2 not found");
                     return null;
                 }
 
