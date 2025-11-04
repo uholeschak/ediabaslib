@@ -661,7 +661,6 @@ namespace PsdzClient
         private static HashSet<string> _serviceDialogTextHashes;
         private static ConstructorInfo _istaServiceDialogDlgCmdBaseConstructor;
         private static ConstructorInfo _istaEdiabasAdapterDeviceResultConstructor;
-        private static ConstructorInfo _ecuKomStatementConstructor;
         private static ConstructorInfo _vehicleEcuResultConstructor;
         private static Type _istaServiceDialogFactoryType;
         private static Type _istaServiceDialogConfigurationType;
@@ -2623,6 +2622,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                MethodInfo methodCtorEcuKomStatemenPrefix = typeof(PsdzDatabase).GetMethod("CtorEcuKomStatemenPrefix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodCtorEcuKomStatemenPrefix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule CtorEcuKomStatemenPrefix not found");
+                    return null;
+                }
+
                 if (_istaServiceDialogDlgCmdBaseConstructor == null)
                 {
                     ConstructorInfo[] istaServiceDialogDlgCmdBaseConstructors = istaServiceDialogDlgCmdBaseType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
@@ -2690,17 +2696,14 @@ namespace PsdzClient
                     return null;
                 }
 
-                if (_ecuKomStatementConstructor == null)
+                ConstructorInfo[] ecuKomStatementConstructors = ecuKomStatementType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
+                if (ecuKomStatementConstructors.Length != 1)
                 {
-                    ConstructorInfo[] ecuKomStatementConstructors = ecuKomStatementType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
-                    if (ecuKomStatementConstructors.Length != 1)
-                    {
-                        log.ErrorFormat("ReadServiceModule EcuKomStatement constructor not found");
-                        return null;
-                    }
-
-                    _ecuKomStatementConstructor = ecuKomStatementConstructors[0];
+                    log.ErrorFormat("ReadServiceModule EcuKomStatement constructor not found");
+                    return null;
                 }
+
+                ConstructorInfo ecuKomStatementConstructor = ecuKomStatementConstructors[0];
 
                 Type istaModuleType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ISTAModule");
                 if (istaModuleType == null)
@@ -2900,6 +2903,7 @@ namespace PsdzClient
                     return null;
                 }
 
+                bool patchedecuKomStatementConstructor = false;
                 bool patchedCreateServiceDialog = false;
                 bool patchedServiceDialogCmdBaseInvoke = false;
                 bool patchedConfigurationContainerDeserialize = false;
@@ -2915,6 +2919,11 @@ namespace PsdzClient
                 foreach (MethodBase methodBase in _harmony.GetPatchedMethods())
                 {
                     //log.InfoFormat("ReadServiceModule Patched: {0}", methodBase.Name);
+
+                    if (methodBase == ecuKomStatementConstructor)
+                    {
+                        patchedecuKomStatementConstructor = true;
+                    }
 
                     if (methodBase == methodCreateServiceDialog)
                     {
@@ -2977,6 +2986,12 @@ namespace PsdzClient
                     }
                 }
 
+                if (!patchedecuKomStatementConstructor)
+                {
+                    log.InfoFormat("ReadServiceModule Patching: {0}", ecuKomStatementConstructor.Name);
+                    _harmony.Patch(ecuKomStatementConstructor, new HarmonyMethod(methodCtorEcuKomStatemenPrefix));
+                }
+
                 if (!patchedCreateServiceDialog)
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodCreateServiceDialog.Name);
@@ -2985,13 +3000,13 @@ namespace PsdzClient
 
                 if (!patchedServiceDialogCmdBaseInvoke)
                 {
-                    log.InfoFormat("ServiceDialogCmdBase Patching: {0}", methodIstaServiceDialogDlgCmdBaseInvoke.Name);
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodIstaServiceDialogDlgCmdBaseInvoke.Name);
                     _harmony.Patch(methodIstaServiceDialogDlgCmdBaseInvoke, new HarmonyMethod(methodServiceDialogCmdBaseInvokePrefix));
                 }
 
                 if (!patchedConfigurationContainerDeserialize)
                 {
-                    log.InfoFormat("ConfigurationContainer Patching: {0}", methodConfigurationContainerDeserializePrefix.Name);
+                    log.InfoFormat("ReadServiceModule Patching: {0}", methodConfigurationContainerDeserializePrefix.Name);
                     _harmony.Patch(methodConfigurationContainerDeserialize,
                         new HarmonyMethod(methodConfigurationContainerDeserializePrefix), new HarmonyMethod(methodConfigurationContainerDeserializePostfix));
                 }
