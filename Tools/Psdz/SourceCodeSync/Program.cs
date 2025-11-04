@@ -84,13 +84,23 @@ namespace SourceCodeSync
                         var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
                         foreach (var cls in classes)
                         {
-                            Console.WriteLine($"Class: {cls.Identifier.ValueText}");
+                            string className = cls.Identifier.ValueText;
+                            string classSource = cls.ToFullString();
+                            Console.WriteLine($"Class: {className}");
+                            Console.WriteLine("Source:");
+                            Console.WriteLine(classSource);
+                            Console.WriteLine(new string('-', 80));
                         }
 
                         var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
                         foreach (var enumDecl in enums)
                         {
-                            Console.WriteLine($"Enum: {enumDecl.Identifier.ValueText}");
+                            string enumName = enumDecl.Identifier.ValueText;
+                            string enumSource = enumDecl.ToFullString();
+                            Console.WriteLine($"Enum: {enumName}");
+                            Console.WriteLine("Source:");
+                            Console.WriteLine(enumSource);
+                            Console.WriteLine(new string('-', 80));
                         }
                     }
                     catch (Exception e)
