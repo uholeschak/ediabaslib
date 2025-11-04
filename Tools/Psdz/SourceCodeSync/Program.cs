@@ -1,4 +1,7 @@
 ﻿using CommandLine;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.IO;
 using System.Linq;
@@ -67,6 +70,33 @@ namespace SourceCodeSync
                 {
                     Console.WriteLine("Destination directory not existing: {0}", destDir);
                     return 1;
+                }
+
+                string[] files = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        string fileContent = File.ReadAllText(file);
+                        SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
+                        SyntaxNode root = syntaxTree.GetCompilationUnitRoot();
+
+                        var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
+                        foreach (var cls in classes)
+                        {
+                            Console.WriteLine($"Class: {cls.Identifier.ValueText}");
+                        }
+
+                        var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
+                        foreach (var enumDecl in enums)
+                        {
+                            Console.WriteLine($"Enum: {enumDecl.Identifier.ValueText}");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine("*** Error parsing file: {0}, Exception {1}", file, e.Message);
+                    }
                 }
             }
             catch (Exception e)
