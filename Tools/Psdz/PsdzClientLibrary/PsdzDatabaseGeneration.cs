@@ -3420,8 +3420,13 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                failure = true;
                 log.ErrorFormat("ReadServiceModule Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
+
+                if (string.Compare(moduleName, "ABL_WAR_AS6127_HVS04ECURESET", StringComparison.OrdinalIgnoreCase) != 0)
+                {   // known error in constructor, overridden variable not initialized
+                    failure = true;
+                }
+
                 return null;
             }
         }
