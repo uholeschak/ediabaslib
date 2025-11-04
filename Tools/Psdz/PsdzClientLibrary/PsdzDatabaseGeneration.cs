@@ -1476,18 +1476,19 @@ namespace PsdzClient
 
         private static bool GetModuleParameterGetParameterPrefix(object __instance, ref object __result, object name, object defaultValue)
         {
-            string nameString = name?.ToString();
-            if (!string.IsNullOrEmpty(nameString))
-            {
-                log.InfoFormat("GetModuleParameterGetParameterPrefix: Name: '{0}'", nameString);
-                if (string.Compare(nameString, "ServiceProgramController", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    __result = null;
-                    return false;
-                }
-            }
+            string nameString = name?.ToString() ?? string.Empty;
+            log.InfoFormat("GetModuleParameterGetParameterPrefix Name: '{0}'", nameString);
 
             return true;
+        }
+
+        private static void GetModuleParameterGetParameterPostfix(object __instance, ref object __result, object name, object defaultValue)
+        {
+            if (__result == null)
+            {
+                string nameString = name?.ToString() ?? string.Empty;
+                log.InfoFormat("GetModuleParameterGetParameterPostfix No Result Name: '{0}' ", nameString);
+            }
         }
 
         private static bool ModuleSleepPrefix(object __instance, int millisecondsTimeout)
@@ -1516,6 +1517,12 @@ namespace PsdzClient
             }
 
             return true;
+        }
+
+        private static bool CtorEcuKomStatemenPrefix(object __instance, object callingModule)
+        {
+            log.InfoFormat("CtorEcuKomStatemenPrefix");
+            return false;
         }
 
         private static ServiceModuleDataItem GetServiceModuleItemForParameter(object parameterInst, out bool isInParam, out ServiceModuleInvokeItem serviceModuleInvokeItem)
@@ -2818,7 +2825,14 @@ namespace PsdzClient
                 MethodInfo methodModuleParameterGetParameterPrefix = typeof(PsdzDatabase).GetMethod("GetModuleParameterGetParameterPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodModuleParameterGetParameterPrefix == null)
                 {
-                    log.ErrorFormat("ReadServiceModule methodModuleParameterGetParameterPrefix not found");
+                    log.ErrorFormat("ReadServiceModule GetModuleParameterGetParameterPrefix not found");
+                    return null;
+                }
+
+                MethodInfo methodModuleParameterGetParameterPostfix = typeof(PsdzDatabase).GetMethod("GetModuleParameterGetParameterPostfix", BindingFlags.NonPublic | BindingFlags.Static);
+                if (methodModuleParameterGetParameterPostfix == null)
+                {
+                    log.ErrorFormat("ReadServiceModule GetModuleParameterGetParameterPostfix not found");
                     return null;
                 }
 
@@ -3012,7 +3026,7 @@ namespace PsdzClient
                 if (!patchedModuleParameterGetParameter)
                 {
                     log.InfoFormat("ReadServiceModule Patching: {0}", methodModuleParameterGetParameter.Name);
-                    _harmony.Patch(methodModuleParameterGetParameter, new HarmonyMethod(methodModuleParameterGetParameterPrefix));
+                    _harmony.Patch(methodModuleParameterGetParameter, new HarmonyMethod(methodModuleParameterGetParameterPrefix), new HarmonyMethod(methodModuleParameterGetParameterPostfix));
                 }
 
                 if (!patchedModuleText)
