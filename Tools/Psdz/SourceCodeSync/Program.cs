@@ -17,6 +17,7 @@ namespace SourceCodeSync
                 SourceDir = string.Empty;
                 DestDir = string.Empty;
                 Filter = string.Empty;
+                ShowSource = false;
             }
 
             [Option('s', "sourcedir", Required = true, HelpText = "Source directory.")]
@@ -25,8 +26,11 @@ namespace SourceCodeSync
             [Option('d', "destdir", Required = true, HelpText = "Destination directory.")]
             public string DestDir { get; set; }
 
-            [Option('f', "filter", Required = true, HelpText = "directory filter.")]
+            [Option('f', "filter", Required = false, HelpText = "Directory filter.")]
             public string Filter { get; set; }
+
+            [Option("source", Required = false, HelpText = "Show source.")]
+            public bool ShowSource { get; set; }
         }
 
         static int Main(string[] args)
@@ -36,6 +40,7 @@ namespace SourceCodeSync
                 string sourceDir = null;
                 string destDir = null;
                 string filter = null;
+                bool showSource = false;
                 bool hasErrors = false;
 
                 Parser parser = new Parser(with =>
@@ -52,6 +57,7 @@ namespace SourceCodeSync
                         sourceDir = o.SourceDir;
                         destDir = o.DestDir;
                         filter = o.Filter;
+                        showSource = o.ShowSource;
                     })
                     .WithNotParsed(errs =>
                     {
@@ -84,64 +90,36 @@ namespace SourceCodeSync
                     filterParts = filter.Split(';');
                 }
 
-                string[] files = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
+                string[] files = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
-                    try
+                    string relPath = GetRelativePath(destDir, file);
+                    if (string.IsNullOrEmpty(relPath))
                     {
-                        string relPath = GetRelativePath(sourceDir, file);
-                        if (string.IsNullOrEmpty(relPath))
+                        continue;
+                    }
+
+                    if (filterParts != null && filterParts.Length > 0)
+                    {
+                        bool matched = false;
+                        foreach (string filterPart in filterParts)
+                        {
+                            if (relPath.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
+                            {
+                                matched = true;
+                                break;
+                            }
+                        }
+
+                        if (!matched)
                         {
                             continue;
                         }
-
-                        if (filterParts != null && filterParts.Length > 0)
-                        {
-                            bool matched = false;
-                            foreach (string filterPart in filterParts)
-                            {
-                                if (relPath.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    matched = true;
-                                    break;
-                                }
-                            }
-
-                            if (!matched)
-                            {
-                                continue;
-                            }
-                        }
-
-                        string fileContent = File.ReadAllText(file);
-                        SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
-                        SyntaxNode root = syntaxTree.GetCompilationUnitRoot();
-
-                        var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
-                        foreach (var cls in classes)
-                        {
-                            string className = cls.Identifier.ValueText;
-                            string classSource = cls.ToFullString();
-                            Console.WriteLine($"Class: {className}");
-                            Console.WriteLine("Source:");
-                            Console.WriteLine(classSource);
-                            Console.WriteLine(new string('-', 80));
-                        }
-
-                        var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
-                        foreach (var enumDecl in enums)
-                        {
-                            string enumName = enumDecl.Identifier.ValueText;
-                            string enumSource = enumDecl.ToFullString();
-                            Console.WriteLine($"Enum: {enumName}");
-                            Console.WriteLine("Source:");
-                            Console.WriteLine(enumSource);
-                            Console.WriteLine(new string('-', 80));
-                        }
                     }
-                    catch (Exception e)
+
+                    if (!UpdateFile(file, showSource))
                     {
-                        Console.WriteLine("*** Error parsing file: {0}, Exception {1}", file, e.Message);
+                        Console.WriteLine("*** Update file failed: {0}", file);
                     }
                 }
             }
@@ -152,6 +130,50 @@ namespace SourceCodeSync
             }
 
             return 0;
+        }
+
+        public static bool UpdateFile(string fileName, bool showSource)
+        {
+            try
+            {
+                string fileContent = File.ReadAllText(fileName);
+                SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
+                SyntaxNode root = syntaxTree.GetCompilationUnitRoot();
+
+                var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
+                foreach (var cls in classes)
+                {
+                    string className = cls.Identifier.ValueText;
+                    string classSource = cls.ToFullString();
+                    Console.WriteLine($"Class: {className}");
+                    if (showSource)
+                    {
+                        Console.WriteLine("Source:");
+                        Console.WriteLine(classSource);
+                        Console.WriteLine(new string('-', 80));
+                    }
+                }
+
+                var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
+                foreach (var enumDecl in enums)
+                {
+                    string enumName = enumDecl.Identifier.ValueText;
+                    string enumSource = enumDecl.ToFullString();
+                    Console.WriteLine($"Enum: {enumName}");
+                    if (showSource)
+                    {
+                        Console.WriteLine("Source:");
+                        Console.WriteLine(enumSource);
+                        Console.WriteLine(new string('-', 80));
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("*** Error parsing file: {0}, Exception {1}", fileName, e.Message);
+                return false;
+            }
+            return true;
         }
 
         public static string GetRelativePath(string basePath, string fullPath)
