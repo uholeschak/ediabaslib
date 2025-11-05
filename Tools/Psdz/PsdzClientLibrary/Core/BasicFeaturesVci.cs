@@ -8,7 +8,8 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
-    public class BasicFeaturesVci : typeBasicFeatures, INotifyPropertyChanged, IBasicFeatures
+    // [UH] Code incorrectly decompiled
+    public class BasicFeaturesVci : typeBasicFeatures, IBasicFeatures, INotifyPropertyChanged
     {
         string IBasicFeatures.Baureihe => base.Baureihe;
 

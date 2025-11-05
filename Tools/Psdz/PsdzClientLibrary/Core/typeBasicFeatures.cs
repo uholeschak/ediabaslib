@@ -10,665 +10,614 @@ using System.Xml.Serialization;
 
 namespace PsdzClient.Core
 {
-	public class typeBasicFeatures : INotifyPropertyChanged
-	{
-		public typeBasicFeatures()
-		{
-			this.lenkungField = "LL";
-		}
+    public class typeBasicFeatures : INotifyPropertyChanged
+    {
+        private string baureiheField;
 
-		public string Baureihe
-		{
-			get
-			{
-				return this.baureiheField;
-			}
-			set
-			{
-				if (this.baureiheField != null)
-				{
-					if (!this.baureiheField.Equals(value))
-					{
-						this.baureiheField = value;
-						this.OnPropertyChanged("Baureihe");
-						return;
-					}
-				}
-				else
-				{
-					this.baureiheField = value;
-					this.OnPropertyChanged("Baureihe");
-				}
-			}
-		}
+        private string ereiheField;
 
-		public string Ereihe
-		{
-			get
-			{
-				return this.ereiheField;
-			}
-			set
-			{
-				if (this.ereiheField != null)
-				{
-					if (!this.ereiheField.Equals(value))
-					{
-						this.ereiheField = value;
-						this.OnPropertyChanged("Ereihe");
-						return;
-					}
-				}
-				else
-				{
-					this.ereiheField = value;
-					this.OnPropertyChanged("Ereihe");
-				}
-			}
-		}
+        private string karosserieField;
 
-		public string Karosserie
-		{
-			get
-			{
-				return this.karosserieField;
-			}
-			set
-			{
-				if (this.karosserieField != null)
-				{
-					if (!this.karosserieField.Equals(value))
-					{
-						this.karosserieField = value;
-						this.OnPropertyChanged("Karosserie");
-						return;
-					}
-				}
-				else
-				{
-					this.karosserieField = value;
-					this.OnPropertyChanged("Karosserie");
-				}
-			}
-		}
+        private string verkaufsBezeichnungField;
 
-		public string VerkaufsBezeichnung
-		{
-			get
-			{
-				return this.verkaufsBezeichnungField;
-			}
-			set
-			{
-				if (this.verkaufsBezeichnungField != null)
-				{
-					if (!this.verkaufsBezeichnungField.Equals(value))
-					{
-						this.verkaufsBezeichnungField = value;
-						this.OnPropertyChanged("VerkaufsBezeichnung");
-						return;
-					}
-				}
-				else
-				{
-					this.verkaufsBezeichnungField = value;
-					this.OnPropertyChanged("VerkaufsBezeichnung");
-				}
-			}
-		}
+        private string motorField;
 
-		public string Motor
-		{
-			get
-			{
-				return this.motorField;
-			}
-			set
-			{
-				if (this.motorField != null)
-				{
-					if (!this.motorField.Equals(value))
-					{
-						this.motorField = value;
-						this.OnPropertyChanged("Motor");
-						return;
-					}
-				}
-				else
-				{
-					this.motorField = value;
-					this.OnPropertyChanged("Motor");
-				}
-			}
-		}
+        private string getriebeField;
 
-		public string MotorLabel
-		{
-			get
-			{
-				if (!(this.motorField == string.Empty) && !(this.motorField == "-"))
-				{
-					return this.motorField;
-				}
-				return this.EMotBaureihe;
-			}
-		}
+        private string countryOfAssemblyField;
 
-		public string Getriebe
-		{
-			get
-			{
-				return this.getriebeField;
-			}
-			set
-			{
-				if (this.getriebeField != null)
-				{
-					if (!this.getriebeField.Equals(value))
-					{
-						this.getriebeField = value;
-						this.OnPropertyChanged("Getriebe");
-						return;
-					}
-				}
-				else
-				{
-					this.getriebeField = value;
-					this.OnPropertyChanged("Getriebe");
-				}
-			}
-		}
+        private string baseVersionField;
 
-		public string CountryOfAssembly
-		{
-			get
-			{
-				return this.countryOfAssemblyField;
-			}
-			set
-			{
-				if (this.countryOfAssemblyField != null)
-				{
-					if (!this.countryOfAssemblyField.Equals(value))
-					{
-						this.countryOfAssemblyField = value;
-						this.OnPropertyChanged("CountryOfAssembly");
-						return;
-					}
-				}
-				else
-				{
-					this.countryOfAssemblyField = value;
-					this.OnPropertyChanged("CountryOfAssembly");
-				}
-			}
-		}
+        private string landField;
 
-		public string BaseVersion
-		{
-			get
-			{
-				return this.baseVersionField;
-			}
-			set
-			{
-				if (this.baseVersionField != null)
-				{
-					if (!this.baseVersionField.Equals(value))
-					{
-						this.baseVersionField = value;
-						this.OnPropertyChanged("BaseVersion");
-						return;
-					}
-				}
-				else
-				{
-					this.baseVersionField = value;
-					this.OnPropertyChanged("BaseVersion");
-				}
-			}
-		}
+        private string lenkungField;
 
-		public string Land
-		{
-			get
-			{
-				return this.landField;
-			}
-			set
-			{
-				if (this.landField != null)
-				{
-					if (!this.landField.Equals(value))
-					{
-						this.landField = value;
-						this.OnPropertyChanged("Land");
-						return;
-					}
-				}
-				else
-				{
-					this.landField = value;
-					this.OnPropertyChanged("Land");
-				}
-			}
-		}
+        private string modelljahrField;
 
-		public string Lenkung
-		{
-			get
-			{
-				return this.lenkungField;
-			}
-			set
-			{
-				if (this.lenkungField != null)
-				{
-					if (!this.lenkungField.Equals(value))
-					{
-						this.lenkungField = value;
-						this.OnPropertyChanged("Lenkung");
-						return;
-					}
-				}
-				else
-				{
-					this.lenkungField = value;
-					this.OnPropertyChanged("Lenkung");
-				}
-			}
-		}
+        private string modellmonatField;
 
-		public string Modelljahr
-		{
-			get
-			{
-				return this.modelljahrField;
-			}
-			set
-			{
-				if (this.modelljahrField != null)
-				{
-					if (!this.modelljahrField.Equals(value))
-					{
-						this.modelljahrField = value;
-						this.OnPropertyChanged("Modelljahr");
-						return;
-					}
-				}
-				else
-				{
-					this.modelljahrField = value;
-					this.OnPropertyChanged("Modelljahr");
-				}
-			}
-		}
+        private string markeField;
 
-		public string Modellmonat
-		{
-			get
-			{
-				return this.modellmonatField;
-			}
-			set
-			{
-				if (this.modellmonatField != null)
-				{
-					if (!this.modellmonatField.Equals(value))
-					{
-						this.modellmonatField = value;
-						this.OnPropertyChanged("Modellmonat");
-						return;
-					}
-				}
-				else
-				{
-					this.modellmonatField = value;
-					this.OnPropertyChanged("Modellmonat");
-				}
-			}
-		}
+        private string typeCodeField;
 
-		public string Marke
-		{
-			get
-			{
-				return this.markeField;
-			}
-			set
-			{
-				if (this.markeField != null)
-				{
-					if (!this.markeField.Equals(value))
-					{
-						this.markeField = value;
-						this.OnPropertyChanged("Marke");
-						return;
-					}
-				}
-				else
-				{
-					this.markeField = value;
-					this.OnPropertyChanged("Marke");
-				}
-			}
-		}
+        private string prodartField;
 
-		public string TypeCode
-		{
-			get
-			{
-				return this.typeCodeField;
-			}
-			set
-			{
-				if (this.typeCodeField != null)
-				{
-					if (!this.typeCodeField.Equals(value))
-					{
-						this.typeCodeField = value;
-						this.OnPropertyChanged("TypeCode");
-						return;
-					}
-				}
-				else
-				{
-					this.typeCodeField = value;
-					this.OnPropertyChanged("TypeCode");
-				}
-			}
-		}
+        private string eMotBaureiheField;
 
-		public string Prodart
-		{
-			get
-			{
-				return this.prodartField;
-			}
-			set
-			{
-				if (this.prodartField != null)
-				{
-					if (!this.prodartField.Equals(value))
-					{
-						this.prodartField = value;
-						this.OnPropertyChanged("Prodart");
-						return;
-					}
-				}
-				else
-				{
-					this.prodartField = value;
-					this.OnPropertyChanged("Prodart");
-				}
-			}
-		}
+        private string aEKurzbezeichnungField;
 
-		public string EMotBaureihe
-		{
-			get
-			{
-				return this.eMotBaureiheField;
-			}
-			set
-			{
-				if (this.eMotBaureiheField != null)
-				{
-					if (!this.eMotBaureiheField.Equals(value))
-					{
-						this.eMotBaureiheField = value;
-						this.OnPropertyChanged("EMotBaureihe");
-						return;
-					}
-				}
-				else
-				{
-					this.eMotBaureiheField = value;
-					this.OnPropertyChanged("EMotBaureihe");
-				}
-			}
-		}
+        private static XmlSerializer serializer;
 
-		public string AEKurzbezeichnung
-		{
-			get
-			{
-				return this.aEKurzbezeichnungField;
-			}
-			set
-			{
-				if (this.aEKurzbezeichnungField != null)
-				{
-					if (!this.aEKurzbezeichnungField.Equals(value))
-					{
-						this.aEKurzbezeichnungField = value;
-						this.OnPropertyChanged("AEKurzbezeichnung");
-						return;
-					}
-				}
-				else
-				{
-					this.aEKurzbezeichnungField = value;
-					this.OnPropertyChanged("AEKurzbezeichnung");
-				}
-			}
-		}
+        public string Baureihe
+        {
+            get
+            {
+                return baureiheField;
+            }
+            set
+            {
+                if (baureiheField != null)
+                {
+                    if (!baureiheField.Equals(value))
+                    {
+                        baureiheField = value;
+                        OnPropertyChanged("Baureihe");
+                    }
+                }
+                else
+                {
+                    baureiheField = value;
+                    OnPropertyChanged("Baureihe");
+                }
+            }
+        }
 
-		private static XmlSerializer Serializer
-		{
-			get
-			{
-				if (typeBasicFeatures.serializer == null)
-				{
-					typeBasicFeatures.serializer = new XmlSerializer(typeof(typeBasicFeatures));
-				}
-				return typeBasicFeatures.serializer;
-			}
-		}
+        public string Ereihe
+        {
+            get
+            {
+                return ereiheField;
+            }
+            set
+            {
+                if (ereiheField != null)
+                {
+                    if (!ereiheField.Equals(value))
+                    {
+                        ereiheField = value;
+                        OnPropertyChanged("Ereihe");
+                    }
+                }
+                else
+                {
+                    ereiheField = value;
+                    OnPropertyChanged("Ereihe");
+                }
+            }
+        }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public string Karosserie
+        {
+            get
+            {
+                return karosserieField;
+            }
+            set
+            {
+                if (karosserieField != null)
+                {
+                    if (!karosserieField.Equals(value))
+                    {
+                        karosserieField = value;
+                        OnPropertyChanged("Karosserie");
+                    }
+                }
+                else
+                {
+                    karosserieField = value;
+                    OnPropertyChanged("Karosserie");
+                }
+            }
+        }
 
-		public virtual void OnPropertyChanged(string propertyName)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged != null)
-			{
-				propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+        public string VerkaufsBezeichnung
+        {
+            get
+            {
+                return verkaufsBezeichnungField;
+            }
+            set
+            {
+                if (verkaufsBezeichnungField != null)
+                {
+                    if (!verkaufsBezeichnungField.Equals(value))
+                    {
+                        verkaufsBezeichnungField = value;
+                        OnPropertyChanged("VerkaufsBezeichnung");
+                    }
+                }
+                else
+                {
+                    verkaufsBezeichnungField = value;
+                    OnPropertyChanged("VerkaufsBezeichnung");
+                }
+            }
+        }
 
-		public virtual string Serialize()
-		{
-			StreamReader streamReader = null;
-			MemoryStream memoryStream = null;
-			string result;
-			try
-			{
-				memoryStream = new MemoryStream();
-				typeBasicFeatures.Serializer.Serialize(memoryStream, this);
-				memoryStream.Seek(0L, SeekOrigin.Begin);
-				streamReader = new StreamReader(memoryStream);
-				result = streamReader.ReadToEnd();
-			}
-			finally
-			{
-				if (streamReader != null)
-				{
-					streamReader.Dispose();
-				}
-				if (memoryStream != null)
-				{
-					memoryStream.Dispose();
-				}
-			}
-			return result;
-		}
+        public string Motor
+        {
+            get
+            {
+                return motorField;
+            }
+            set
+            {
+                if (motorField != null)
+                {
+                    if (!motorField.Equals(value))
+                    {
+                        motorField = value;
+                        OnPropertyChanged("Motor");
+                    }
+                }
+                else
+                {
+                    motorField = value;
+                    OnPropertyChanged("Motor");
+                }
+            }
+        }
 
-		public static bool Deserialize(string xml, out typeBasicFeatures obj, out Exception exception)
-		{
-			exception = null;
-			obj = null;
-			bool result;
-			try
-			{
-				obj = typeBasicFeatures.Deserialize(xml);
-				result = true;
-			}
-			catch (Exception ex)
-			{
-				exception = ex;
-				result = false;
-			}
-			return result;
-		}
+        public string MotorLabel
+        {
+            get
+            {
+                if (!(motorField == string.Empty) && !(motorField == "-"))
+                {
+                    return motorField;
+                }
+                return EMotBaureihe;
+            }
+        }
 
-		public static bool Deserialize(string xml, out typeBasicFeatures obj)
-		{
-			Exception ex = null;
-			return typeBasicFeatures.Deserialize(xml, out obj, out ex);
-		}
+        public string Getriebe
+        {
+            get
+            {
+                return getriebeField;
+            }
+            set
+            {
+                if (getriebeField != null)
+                {
+                    if (!getriebeField.Equals(value))
+                    {
+                        getriebeField = value;
+                        OnPropertyChanged("Getriebe");
+                    }
+                }
+                else
+                {
+                    getriebeField = value;
+                    OnPropertyChanged("Getriebe");
+                }
+            }
+        }
 
-		public static typeBasicFeatures Deserialize(string xml)
-		{
-			StringReader stringReader = null;
-			typeBasicFeatures result;
-			try
-			{
-				stringReader = new StringReader(xml);
-				result = (typeBasicFeatures)typeBasicFeatures.Serializer.Deserialize(XmlReader.Create(stringReader));
-			}
-			finally
-			{
-				if (stringReader != null)
-				{
-					stringReader.Dispose();
-				}
-			}
-			return result;
-		}
+        public string CountryOfAssembly
+        {
+            get
+            {
+                return countryOfAssemblyField;
+            }
+            set
+            {
+                if (countryOfAssemblyField != null)
+                {
+                    if (!countryOfAssemblyField.Equals(value))
+                    {
+                        countryOfAssemblyField = value;
+                        OnPropertyChanged("CountryOfAssembly");
+                    }
+                }
+                else
+                {
+                    countryOfAssemblyField = value;
+                    OnPropertyChanged("CountryOfAssembly");
+                }
+            }
+        }
 
-		public virtual bool SaveToFile(string fileName, out Exception exception)
-		{
-			exception = null;
-			bool result;
-			try
-			{
-				this.SaveToFile(fileName);
-				result = true;
-			}
-			catch (Exception ex)
-			{
-				exception = ex;
-				result = false;
-			}
-			return result;
-		}
+        public string BaseVersion
+        {
+            get
+            {
+                return baseVersionField;
+            }
+            set
+            {
+                if (baseVersionField != null)
+                {
+                    if (!baseVersionField.Equals(value))
+                    {
+                        baseVersionField = value;
+                        OnPropertyChanged("BaseVersion");
+                    }
+                }
+                else
+                {
+                    baseVersionField = value;
+                    OnPropertyChanged("BaseVersion");
+                }
+            }
+        }
 
-		public virtual void SaveToFile(string fileName)
-		{
-			StreamWriter streamWriter = null;
-			try
-			{
-				string value = this.Serialize();
-				streamWriter = new FileInfo(fileName).CreateText();
-				streamWriter.WriteLine(value);
-				streamWriter.Close();
-			}
-			finally
-			{
-				if (streamWriter != null)
-				{
-					streamWriter.Dispose();
-				}
-			}
-		}
+        public string Land
+        {
+            get
+            {
+                return landField;
+            }
+            set
+            {
+                if (landField != null)
+                {
+                    if (!landField.Equals(value))
+                    {
+                        landField = value;
+                        OnPropertyChanged("Land");
+                    }
+                }
+                else
+                {
+                    landField = value;
+                    OnPropertyChanged("Land");
+                }
+            }
+        }
 
-		public static bool LoadFromFile(string fileName, out typeBasicFeatures obj, out Exception exception)
-		{
-			exception = null;
-			obj = null;
-			bool result;
-			try
-			{
-				obj = typeBasicFeatures.LoadFromFile(fileName);
-				result = true;
-			}
-			catch (Exception ex)
-			{
-				exception = ex;
-				result = false;
-			}
-			return result;
-		}
+        public string Lenkung
+        {
+            get
+            {
+                return lenkungField;
+            }
+            set
+            {
+                if (lenkungField != null)
+                {
+                    if (!lenkungField.Equals(value))
+                    {
+                        lenkungField = value;
+                        OnPropertyChanged("Lenkung");
+                    }
+                }
+                else
+                {
+                    lenkungField = value;
+                    OnPropertyChanged("Lenkung");
+                }
+            }
+        }
 
-		public static bool LoadFromFile(string fileName, out typeBasicFeatures obj)
-		{
-			Exception ex = null;
-			return typeBasicFeatures.LoadFromFile(fileName, out obj, out ex);
-		}
+        public string Modelljahr
+        {
+            get
+            {
+                return modelljahrField;
+            }
+            set
+            {
+                if (modelljahrField != null)
+                {
+                    if (!modelljahrField.Equals(value))
+                    {
+                        modelljahrField = value;
+                        OnPropertyChanged("Modelljahr");
+                    }
+                }
+                else
+                {
+                    modelljahrField = value;
+                    OnPropertyChanged("Modelljahr");
+                }
+            }
+        }
 
-		public static typeBasicFeatures LoadFromFile(string fileName)
-		{
-			FileStream fileStream = null;
-			StreamReader streamReader = null;
-			typeBasicFeatures result;
-			try
-			{
-				fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-				streamReader = new StreamReader(fileStream);
-				string xml = streamReader.ReadToEnd();
-				streamReader.Close();
-				fileStream.Close();
-				result = typeBasicFeatures.Deserialize(xml);
-			}
-			finally
-			{
-				if (fileStream != null)
-				{
-					fileStream.Dispose();
-				}
-				if (streamReader != null)
-				{
-					streamReader.Dispose();
-				}
-			}
-			return result;
-		}
+        public string Modellmonat
+        {
+            get
+            {
+                return modellmonatField;
+            }
+            set
+            {
+                if (modellmonatField != null)
+                {
+                    if (!modellmonatField.Equals(value))
+                    {
+                        modellmonatField = value;
+                        OnPropertyChanged("Modellmonat");
+                    }
+                }
+                else
+                {
+                    modellmonatField = value;
+                    OnPropertyChanged("Modellmonat");
+                }
+            }
+        }
 
-		private string baureiheField;
+        public string Marke
+        {
+            get
+            {
+                return markeField;
+            }
+            set
+            {
+                if (markeField != null)
+                {
+                    if (!markeField.Equals(value))
+                    {
+                        markeField = value;
+                        OnPropertyChanged("Marke");
+                    }
+                }
+                else
+                {
+                    markeField = value;
+                    OnPropertyChanged("Marke");
+                }
+            }
+        }
 
-		private string ereiheField;
+        public string TypeCode
+        {
+            get
+            {
+                return typeCodeField;
+            }
+            set
+            {
+                if (typeCodeField != null)
+                {
+                    if (!typeCodeField.Equals(value))
+                    {
+                        typeCodeField = value;
+                        OnPropertyChanged("TypeCode");
+                    }
+                }
+                else
+                {
+                    typeCodeField = value;
+                    OnPropertyChanged("TypeCode");
+                }
+            }
+        }
 
-		private string karosserieField;
+        public string Prodart
+        {
+            get
+            {
+                return prodartField;
+            }
+            set
+            {
+                if (prodartField != null)
+                {
+                    if (!prodartField.Equals(value))
+                    {
+                        prodartField = value;
+                        OnPropertyChanged("Prodart");
+                    }
+                }
+                else
+                {
+                    prodartField = value;
+                    OnPropertyChanged("Prodart");
+                }
+            }
+        }
 
-		private string verkaufsBezeichnungField;
+        public string EMotBaureihe
+        {
+            get
+            {
+                return eMotBaureiheField;
+            }
+            set
+            {
+                if (eMotBaureiheField != null)
+                {
+                    if (!eMotBaureiheField.Equals(value))
+                    {
+                        eMotBaureiheField = value;
+                        OnPropertyChanged("EMotBaureihe");
+                    }
+                }
+                else
+                {
+                    eMotBaureiheField = value;
+                    OnPropertyChanged("EMotBaureihe");
+                }
+            }
+        }
 
-		private string motorField;
+        public string AEKurzbezeichnung
+        {
+            get
+            {
+                return aEKurzbezeichnungField;
+            }
+            set
+            {
+                if (aEKurzbezeichnungField != null)
+                {
+                    if (!aEKurzbezeichnungField.Equals(value))
+                    {
+                        aEKurzbezeichnungField = value;
+                        OnPropertyChanged("AEKurzbezeichnung");
+                    }
+                }
+                else
+                {
+                    aEKurzbezeichnungField = value;
+                    OnPropertyChanged("AEKurzbezeichnung");
+                }
+            }
+        }
 
-		private string getriebeField;
+        private static XmlSerializer Serializer
+        {
+            get
+            {
+                if (serializer == null)
+                {
+                    serializer = new XmlSerializer(typeof(typeBasicFeatures));
+                }
+                return serializer;
+            }
+        }
 
-		private string countryOfAssemblyField;
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		private string baseVersionField;
+        public typeBasicFeatures()
+        {
+            lenkungField = "LL";
+        }
 
-		private string landField;
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-		private string lenkungField;
+        public virtual string Serialize()
+        {
+            StreamReader streamReader = null;
+            MemoryStream memoryStream = null;
+            try
+            {
+                memoryStream = new MemoryStream();
+                Serializer.Serialize(memoryStream, this);
+                memoryStream.Seek(0L, SeekOrigin.Begin);
+                streamReader = new StreamReader(memoryStream);
+                return streamReader.ReadToEnd();
+            }
+            finally
+            {
+                streamReader?.Dispose();
+                memoryStream?.Dispose();
+            }
+        }
 
-		private string modelljahrField;
+        public static bool Deserialize(string xml, out typeBasicFeatures obj, out Exception exception)
+        {
+            exception = null;
+            obj = null;
+            try
+            {
+                obj = Deserialize(xml);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+                return false;
+            }
+        }
 
-		private string modellmonatField;
+        public static bool Deserialize(string xml, out typeBasicFeatures obj)
+        {
+            Exception exception = null;
+            return Deserialize(xml, out obj, out exception);
+        }
 
-		private string markeField;
+        public static typeBasicFeatures Deserialize(string xml)
+        {
+            StringReader stringReader = null;
+            try
+            {
+                stringReader = new StringReader(xml);
+                return (typeBasicFeatures)Serializer.Deserialize(XmlReader.Create(stringReader));
+            }
+            finally
+            {
+                stringReader?.Dispose();
+            }
+        }
 
-		private string typeCodeField;
+        public virtual bool SaveToFile(string fileName, out Exception exception)
+        {
+            exception = null;
+            try
+            {
+                SaveToFile(fileName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+                return false;
+            }
+        }
 
-		private string prodartField;
+        public virtual void SaveToFile(string fileName)
+        {
+            StreamWriter streamWriter = null;
+            try
+            {
+                string value = Serialize();
+                streamWriter = new FileInfo(fileName).CreateText();
+                streamWriter.WriteLine(value);
+                streamWriter.Close();
+            }
+            finally
+            {
+                streamWriter?.Dispose();
+            }
+        }
 
-		private string eMotBaureiheField;
+        public static bool LoadFromFile(string fileName, out typeBasicFeatures obj, out Exception exception)
+        {
+            exception = null;
+            obj = null;
+            try
+            {
+                obj = LoadFromFile(fileName);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                exception = ex;
+                return false;
+            }
+        }
 
-		private string aEKurzbezeichnungField;
+        public static bool LoadFromFile(string fileName, out typeBasicFeatures obj)
+        {
+            Exception exception = null;
+            return LoadFromFile(fileName, out obj, out exception);
+        }
 
-		private static XmlSerializer serializer;
-	}
+        public static typeBasicFeatures LoadFromFile(string fileName)
+        {
+            FileStream fileStream = null;
+            StreamReader streamReader = null;
+            try
+            {
+                fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                streamReader = new StreamReader(fileStream);
+                string xml = streamReader.ReadToEnd();
+                streamReader.Close();
+                fileStream.Close();
+                return Deserialize(xml);
+            }
+            finally
+            {
+                fileStream?.Dispose();
+                streamReader?.Dispose();
+            }
+        }
+    }
 }
