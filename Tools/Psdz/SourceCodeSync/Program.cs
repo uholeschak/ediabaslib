@@ -114,7 +114,8 @@ namespace SourceCodeSync
                 foreach (string file in destFiles)
                 {
                     string relPath = GetRelativePath(destDir, file);
-                    if (string.IsNullOrEmpty(relPath))
+                    string relDir = Path.GetDirectoryName(relPath);
+                    if (string.IsNullOrEmpty(relDir))
                     {
                         continue;
                     }
@@ -124,7 +125,7 @@ namespace SourceCodeSync
                         bool matched = false;
                         foreach (string filterPart in filterParts)
                         {
-                            if (relPath.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
+                            if (relDir.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
                             {
                                 matched = true;
                                 break;
