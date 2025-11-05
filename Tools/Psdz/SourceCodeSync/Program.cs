@@ -287,7 +287,9 @@ namespace SourceCodeSync
                 // Write the modified file back if changes were made
                 if (fileModified)
                 {
-                    string modifiedContent = newRoot.ToFullString();
+                    // Normalize whitespace: use spaces instead of tabs
+                    string modifiedContent = newRoot.NormalizeWhitespace(indentation: "    ", eol: "\r\n").ToFullString();
+                    modifiedContent += Environment.NewLine; // Ensure file ends with a newline
                     File.WriteAllText(fileName, modifiedContent);
                     Console.WriteLine($"File updated: {fileName}");
                 }
