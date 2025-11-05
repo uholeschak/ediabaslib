@@ -1813,6 +1813,7 @@ namespace AssemblyPatcher
             }
             return true;
         }
+
         public static string GetRelativePath(string basePath, string fullPath)
         {
             // Require trailing backslash for path

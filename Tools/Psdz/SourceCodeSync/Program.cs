@@ -16,6 +16,7 @@ namespace SourceCodeSync
             {
                 SourceDir = string.Empty;
                 DestDir = string.Empty;
+                Filter = string.Empty;
             }
 
             [Option('s', "sourcedir", Required = true, HelpText = "Source directory.")]
@@ -23,6 +24,9 @@ namespace SourceCodeSync
 
             [Option('d', "destdir", Required = true, HelpText = "Destination directory.")]
             public string DestDir { get; set; }
+
+            [Option('f', "filter", Required = true, HelpText = "directory filter.")]
+            public string Filter { get; set; }
         }
 
         static int Main(string[] args)
@@ -31,6 +35,7 @@ namespace SourceCodeSync
             {
                 string sourceDir = null;
                 string destDir = null;
+                string filter = null;
                 bool hasErrors = false;
 
                 Parser parser = new Parser(with =>
@@ -46,6 +51,7 @@ namespace SourceCodeSync
                     {
                         sourceDir = o.SourceDir;
                         destDir = o.DestDir;
+                        filter = o.Filter;
                     })
                     .WithNotParsed(errs =>
                     {
@@ -72,11 +78,41 @@ namespace SourceCodeSync
                     return 1;
                 }
 
+                string[] filterParts = null;
+                if (!string.IsNullOrEmpty(filter))
+                {
+                    filterParts = filter.Split(';');
+                }
+
                 string[] files = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in files)
                 {
                     try
                     {
+                        string relPath = GetRelativePath(sourceDir, file);
+                        if (string.IsNullOrEmpty(relPath))
+                        {
+                            continue;
+                        }
+
+                        if (filterParts != null && filterParts.Length > 0)
+                        {
+                            bool matched = false;
+                            foreach (string filterPart in filterParts)
+                            {
+                                if (relPath.StartsWith(filterPart, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    matched = true;
+                                    break;
+                                }
+                            }
+
+                            if (!matched)
+                            {
+                                continue;
+                            }
+                        }
+
                         string fileContent = File.ReadAllText(file);
                         SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
                         SyntaxNode root = syntaxTree.GetCompilationUnitRoot();
@@ -117,5 +153,23 @@ namespace SourceCodeSync
 
             return 0;
         }
+
+        public static string GetRelativePath(string basePath, string fullPath)
+        {
+            // Require trailing backslash for path
+            if (!basePath.EndsWith("\\"))
+            {
+                basePath += "\\";
+            }
+
+            Uri baseUri = new Uri(basePath);
+            Uri fullUri = new Uri(fullPath);
+
+            Uri relativeUri = baseUri.MakeRelativeUri(fullUri);
+
+            // Uri's use forward slashes so convert back to backward slashes
+            return relativeUri.ToString().Replace("/", "\\");
+        }
+
     }
 }
