@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSollSfaCto
             {
                 SollFeatures = model.SollFeatures?.Select(EcuFeatureTokenRelationCtoMapper.Map)
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SollSfaCtoModel
             {
                 SollFeatures = psdzSollSfaCto.SollFeatures?.Select(EcuFeatureTokenRelationCtoMapper.Map).ToList()

@@ -13,6 +13,7 @@ namespace BMW.Rheingold.Psdz
                     AsXml = talFilterModel.AsXml
                 };
             }
+
             return null;
         }
 
@@ -25,6 +26,7 @@ namespace BMW.Rheingold.Psdz
                     AsXml = psdzTalFilter.AsXml
                 };
             }
+
             return null;
         }
     }

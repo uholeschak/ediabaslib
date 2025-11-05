@@ -5,13 +5,13 @@ namespace BMW.Rheingold.Psdz
     internal static class OtherBindingDetailStatusMapper
     {
         private static readonly EcuSecCheckingStatusEtoMapper ecuSecCheckingStatusEtoMapper = new EcuSecCheckingStatusEtoMapper();
-
         public static PsdzOtherBindingDetailsStatus Map(OtherBindingDetailStatusModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzOtherBindingDetailsStatus
             {
                 EcuName = model.EcuName,
@@ -26,6 +26,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new OtherBindingDetailStatusModel
             {
                 EcuName = status.EcuName,

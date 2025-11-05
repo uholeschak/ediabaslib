@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzFeatureSpecificFieldCto
             {
                 FieldType = model.FieldType,
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new FeatureSpecificFieldCtoModel
             {
                 FieldType = model.FieldType,

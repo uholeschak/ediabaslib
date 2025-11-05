@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzLocalizableMessageTo
             {
                 Description = model.Description,
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new LocalizableMessageToModel
             {
                 Description = localizableMessageTo.Description,

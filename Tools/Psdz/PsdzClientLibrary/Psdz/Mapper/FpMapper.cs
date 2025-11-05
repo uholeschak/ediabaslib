@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             IPsdzStandardFp psdzStandardFp = StandardFpMapper.Map(model);
             return new PsdzFp
             {
@@ -28,6 +29,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             StandardFpModel standardFpModel = StandardFpMapper.Map(psdzFp);
             return new FpModel
             {

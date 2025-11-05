@@ -5,13 +5,13 @@ namespace BMW.Rheingold.Psdz
     internal static class TalLineMapper
     {
         public static TaCategoryTypeMapper _taCategoryTypeMapper = new TaCategoryTypeMapper();
-
         public static IPsdzTalLine Map(TalLineModel talLineModel)
         {
             if (talLineModel == null)
             {
                 return null;
             }
+
             PsdzTalLine psdzTalLine = TalElementMapper.Map<PsdzTalLine>(talLineModel.TalElement);
             psdzTalLine.EcuIdentifier = EcuIdentifierMapper.Map(talLineModel.EcuIdentifier);
             psdzTalLine.FscBackup = TaCategoryMapper.Map<PsdzFscBackup>(talLineModel.FscBackup);
@@ -39,6 +39,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             TalElementModel talElement = TalElementMapper.Map(psdzTalLine);
             return new TalLineModel
             {

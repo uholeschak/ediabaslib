@@ -12,22 +12,20 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             PsdzEcu psdzEcu = new PsdzEcu
             {
                 BaseVariant = ecuModel.BaseVariant,
                 BnTnName = ecuModel.BnTnName,
-                BusConnections = ecuModel.BusConnections?.Select((BusNameModel bus) => new PsdzBus
-                {
-                    Id = bus.Id,
-                    Name = bus.Name,
-                    DirectAccess = bus.DirectAccess
-                }).ToList(),
+                BusConnections = ecuModel.BusConnections?.Select((BusNameModel bus) => new PsdzBus { Id = bus.Id, Name = bus.Name, DirectAccess = bus.DirectAccess }).ToList(),
                 DiagnosticBus = ((ecuModel.DiagnosticBus != null) ? new PsdzBus
                 {
                     Id = ecuModel.DiagnosticBus.Id,
                     Name = ecuModel.DiagnosticBus.Name,
                     DirectAccess = ecuModel.DiagnosticBus.DirectAccess
-                } : null),
+                }
+
+                : null),
                 EcuDetailInfo = EcuDetailInfoMapper.Map(ecuModel.EcuDetailInfo),
                 EcuStatusInfo = EcuStatusInfoMapper.Map(ecuModel.EcuStatusInfo),
                 EcuVariant = ecuModel.EcuVariant,
@@ -46,6 +44,7 @@ namespace BMW.Rheingold.Psdz
                     SmacMasterDiagAddress = DiagAddressMapper.Map(smartActuatorEcuModel.SmacMasterDiagAddress)
                 };
             }
+
             EcuPdxInfoModel ecuPdxInfo = ecuModel.EcuPdxInfo;
             if (ecuPdxInfo != null && ecuPdxInfo.SmartActuatorMaster && ecuModel is SmartActuatorMasterEcuModel smartActuatorMasterEcuModel)
             {
@@ -55,6 +54,7 @@ namespace BMW.Rheingold.Psdz
                     SmartActuatorEcus = smartActuatorMasterEcuModel.SmartActuatorEcus.Select((SmartActuatorEcuModel x) => Map(x))
                 };
             }
+
             return psdzEcu;
         }
 
@@ -64,6 +64,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             EcuModel ecuModel = new EcuModel();
             if (ecu.IsSmartActuator && ecu is PsdzSmartActuatorEcu psdzSmartActuatorEcu)
             {
@@ -73,16 +74,18 @@ namespace BMW.Rheingold.Psdz
                     SmacMasterDiagAddress = DiagAddressMapper.Map(psdzSmartActuatorEcu.SmacMasterDiagAddress)
                 };
             }
+
             IPsdzEcuPdxInfo psdzEcuPdxInfo = ecu.PsdzEcuPdxInfo;
             if (psdzEcuPdxInfo != null && psdzEcuPdxInfo.IsSmartActuatorMaster && ecu is PsdzSmartActuatorMasterEcu psdzSmartActuatorMasterEcu)
             {
                 ecuModel = new SmartActuatorMasterEcuModel
                 {
                     SmacMasterSVK = StandardSvkMapper.Map(psdzSmartActuatorMasterEcu.SmacMasterSVK),
-                    SmartActuatorEcus = (from x in psdzSmartActuatorMasterEcu.SmartActuatorEcus.Select((IPsdzEcu x) => Map(x)).OfType<SmartActuatorEcuModel>()
-                                         select (x)).ToList()
+                    SmartActuatorEcus = (
+                        from x in psdzSmartActuatorMasterEcu.SmartActuatorEcus.Select((IPsdzEcu x) => Map(x)).OfType<SmartActuatorEcuModel>()select (x)).ToList()
                 };
             }
+
             SetEcuValues(ecu, ecuModel);
             return ecuModel;
         }
@@ -91,18 +94,15 @@ namespace BMW.Rheingold.Psdz
         {
             ecuModel.BaseVariant = ecu.BaseVariant;
             ecuModel.BnTnName = ecu.BnTnName;
-            ecuModel.BusConnections = ecu.BusConnections?.Select((PsdzBus bus) => new BusNameModel
-            {
-                Id = bus.Id,
-                Name = bus.Name,
-                DirectAccess = bus.DirectAccess
-            }).ToList();
+            ecuModel.BusConnections = ecu.BusConnections?.Select((PsdzBus bus) => new BusNameModel { Id = bus.Id, Name = bus.Name, DirectAccess = bus.DirectAccess }).ToList();
             ecuModel.DiagnosticBus = ((ecu.DiagnosticBus != null) ? new BusNameModel
             {
                 Id = ecu.DiagnosticBus.Id,
                 Name = ecu.DiagnosticBus.Name,
                 DirectAccess = ecu.DiagnosticBus.DirectAccess
-            } : null);
+            }
+
+            : null);
             ecuModel.EcuDetailInfo = EcuDetailInfoMapper.Map(ecu.EcuDetailInfo);
             ecuModel.EcuStatusInfo = EcuStatusInfoMapper.Map(ecu.EcuStatusInfo);
             ecuModel.EcuVariant = ecu.EcuVariant;

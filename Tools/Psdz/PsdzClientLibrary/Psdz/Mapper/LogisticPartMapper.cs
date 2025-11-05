@@ -4,12 +4,14 @@ namespace BMW.Rheingold.Psdz
 {
     internal class LogisticPartMapper
     {
-        internal static TTarget Map<TTarget>(LogisticPartModel model) where TTarget : PsdzLogisticPart, new()
+        internal static TTarget Map<TTarget>(LogisticPartModel model)
+            where TTarget : PsdzLogisticPart, new()
         {
             if (model == null)
             {
                 return null;
             }
+
             return new TTarget
             {
                 NameTais = model.NameTais,
@@ -19,12 +21,14 @@ namespace BMW.Rheingold.Psdz
             };
         }
 
-        internal static TTarget Map<TTarget>(IPsdzLogisticPart psdzLogisticPart) where TTarget : LogisticPartModel, new()
+        internal static TTarget Map<TTarget>(IPsdzLogisticPart psdzLogisticPart)
+            where TTarget : LogisticPartModel, new()
         {
             if (psdzLogisticPart == null)
             {
                 return null;
             }
+
             return new TTarget
             {
                 NameTais = psdzLogisticPart.NameTais,

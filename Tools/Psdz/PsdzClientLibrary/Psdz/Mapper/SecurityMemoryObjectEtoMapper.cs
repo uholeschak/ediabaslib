@@ -5,15 +5,14 @@ namespace BMW.Rheingold.Psdz
     internal static class SecurityMemoryObjectEtoMapper
     {
         private static SecurityMemoryObjectSourceEtoMapper _securityMemoryObjectSourceEtoMapper = new SecurityMemoryObjectSourceEtoMapper();
-
         private static SecurityMemoryObjectTypeEtoMapper _securityMemoryObjectTypeEtoMapper = new SecurityMemoryObjectTypeEtoMapper();
-
         internal static PsdzCertMemoryObject Map(SecurityMemoryObjectEtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzCertMemoryObject
             {
                 CertMemoryObjectSource = _securityMemoryObjectSourceEtoMapper.GetValue(model.Source),
@@ -29,6 +28,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SecurityMemoryObjectEtoModel
             {
                 Source = _securityMemoryObjectSourceEtoMapper.GetValue(psdzCertMemoryObject.CertMemoryObjectSource),

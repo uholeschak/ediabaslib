@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             PsdzEcuVariantInstance psdzEcuVariantInstance = LogisticPartMapper.Map<PsdzEcuVariantInstance>(model);
             psdzEcuVariantInstance.CombinedWith = model.CombinedWith?.Select(Map).ToArray();
             psdzEcuVariantInstance.Ecu = EcuMapper.Map(model.Ecu);
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             EcuVariantInstanceModel ecuVariantInstanceModel = LogisticPartMapper.Map<EcuVariantInstanceModel>(model);
             ecuVariantInstanceModel.CombinedWith = model.CombinedWith?.Select(Map).ToList();
             ecuVariantInstanceModel.Ecu = EcuMapper.Map(model.Ecu);

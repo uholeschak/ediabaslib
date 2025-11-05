@@ -6,15 +6,14 @@ namespace BMW.Rheingold.Psdz
     internal static class FeatureLongStatusCtoMapper
     {
         private static FeatureStatusEtoEnumMapper featureStatusEtoEnumMapper = new FeatureStatusEtoEnumMapper();
-
         private static ValidationStatusEtoMapper validationStatusEtoMapper = new ValidationStatusEtoMapper();
-
         public static IPsdzFeatureLongStatusCto Map(FeatureLongStatusCtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzFeatureLongStatusCto
             {
                 EcuIdentifierCto = EcuIdentifierCtoMapper.Map(model.EcuIdentifier),
@@ -33,6 +32,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new FeatureLongStatusCtoModel
             {
                 EcuIdentifier = EcuIdentifierCtoMapper.Map(psdzFeatureLongStatusCto.EcuIdentifierCto),

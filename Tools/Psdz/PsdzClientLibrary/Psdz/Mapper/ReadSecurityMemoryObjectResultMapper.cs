@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzReadCertMemoryObjectResult
             {
                 FailedEcus = model.FailedEcus?.Select(EcuFailureResponseCtoMapper.Map).ToArray(),
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ReadSecurityMemoryObjectResultModel
             {
                 FailedEcus = psdzObject.FailedEcus?.Select(EcuFailureResponseCtoMapper.Map).ToList(),

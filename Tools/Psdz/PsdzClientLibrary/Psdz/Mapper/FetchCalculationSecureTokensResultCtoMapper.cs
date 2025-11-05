@@ -6,15 +6,14 @@ namespace BMW.Rheingold.Psdz
     internal static class FetchCalculationSecureTokensResultCtoMapper
     {
         private static SecurityBackendRequestProgressStatusToMapper _securityBackendRequestProgressStatusToMapper = new SecurityBackendRequestProgressStatusToMapper();
-
         private static TokenOverallStatusEtoMapper _tokenOverallStatusEtoMapper = new TokenOverallStatusEtoMapper();
-
         internal static IPsdzFetchCalculationSecureTokensResultCto Map(FetchCalculationSecureTokensResultCtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzFetchCalculationSecureTokensResultCto
             {
                 DetailedStatus = model.TokenDetailedStatusEtos?.Select(DetailedStatusCtoMapper.Map).ToList(),
@@ -36,6 +35,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new FetchCalculationSecureTokensResultCtoModel
             {
                 TokenDetailedStatusEtos = psdzObject.DetailedStatus?.Select(DetailedStatusCtoMapper.Map).ToList(),

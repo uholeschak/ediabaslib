@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSecurityBackendRequestIdEto
             {
                 Value = model.Value
@@ -22,6 +23,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SecurityBackendRequestIdEtoModel
             {
                 Value = psdzObject.Value

@@ -6,15 +6,14 @@ namespace BMW.Rheingold.Psdz
     internal static class EventMapper
     {
         private static TaCategoryTypeMapper _taCategoryTypeMapper = new TaCategoryTypeMapper();
-
         private static TransactionInfoMapper _transactionInfoMapper = new TransactionInfoMapper();
-
         public static IPsdzEvent Map(EventModel eventModel)
         {
             if (eventModel == null)
             {
                 return null;
             }
+
             Type type = eventModel.GetType();
             if (type == typeof(MCDDiagServiceEventModel))
             {
@@ -35,6 +34,7 @@ namespace BMW.Rheingold.Psdz
                     Timestamp = mCDDiagServiceEventModel.Timestamp
                 };
             }
+
             if (type == typeof(ProgressEventModel))
             {
                 ProgressEventModel progressEventModel = (ProgressEventModel)eventModel;
@@ -47,6 +47,7 @@ namespace BMW.Rheingold.Psdz
                     Timestamp = progressEventModel.Timestamp
                 };
             }
+
             if (type == typeof(TransactionEventModel))
             {
                 TransactionEventModel transactionEventModel = (TransactionEventModel)eventModel;
@@ -61,6 +62,7 @@ namespace BMW.Rheingold.Psdz
                     TransactionType = _taCategoryTypeMapper.GetValue(transactionEventModel.TransactionType)
                 };
             }
+
             if (type == typeof(TransactionProgressEventModel))
             {
                 TransactionProgressEventModel transactionProgressEventModel = (TransactionProgressEventModel)eventModel;
@@ -77,6 +79,7 @@ namespace BMW.Rheingold.Psdz
                     TaProgress = transactionProgressEventModel.TaProgress
                 };
             }
+
             return new PsdzEvent
             {
                 EcuId = EcuIdentifierMapper.Map(eventModel.EcuId),

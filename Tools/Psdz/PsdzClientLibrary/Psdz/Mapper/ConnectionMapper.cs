@@ -12,6 +12,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzConnection
             {
                 Id = connectionModel.Id,

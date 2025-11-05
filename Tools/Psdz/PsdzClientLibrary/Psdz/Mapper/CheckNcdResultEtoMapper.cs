@@ -15,6 +15,7 @@ namespace BMW.Rheingold.Psdz
                     isEachNcdSigned = model.EachNcdSigned
                 };
             }
+
             return null;
         }
 
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new CheckNcdResultEtoModel
             {
                 DetailedNcdStatus = psdzCheckNcdResultEto.DetailedNcdStatus?.Select(DetailedNcdInfoEtoMapper.Map).ToList(),

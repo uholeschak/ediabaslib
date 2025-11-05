@@ -6,13 +6,13 @@ namespace BMW.Rheingold.Psdz
     internal static class FeatureRequestCtoMapper
     {
         private static SfaLinkTypeEtoMapper _sfaLinkTypeEtoMapper = new SfaLinkTypeEtoMapper();
-
         internal static IPsdzFeatureRequestCto Map(FeatureRequestCtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzFeatureRequestCto
             {
                 EcuUid = EcuUidCtoMapper.Map(model.EcuUid),
@@ -30,6 +30,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new FeatureRequestCtoModel
             {
                 EcuUid = EcuUidCtoMapper.Map(psdzObject.EcuUid),

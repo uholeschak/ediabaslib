@@ -5,13 +5,13 @@ namespace BMW.Rheingold.Psdz
     internal static class ValidityConditionCtoMapper
     {
         private static ConditionTypeEtoMapper _conditionTypeEtoMapper = new ConditionTypeEtoMapper();
-
         public static IPsdzValidityConditionCto Map(ValidityConditionCtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzValidityConditionCto
             {
                 ValidityValue = model.ValidityValue,
@@ -25,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ValidityConditionCtoModel
             {
                 ValidityValue = psdzValidityConditionCto.ValidityValue,

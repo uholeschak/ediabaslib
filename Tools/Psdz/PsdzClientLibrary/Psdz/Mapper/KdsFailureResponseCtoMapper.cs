@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzKdsFailureResponseCto
             {
                 Cause = LocalizableMessageToMapper.Map(model.Cause),
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new KdsFailureResponseCtoModel
             {
                 Cause = LocalizableMessageToMapper.Map(psdzObject.Cause),

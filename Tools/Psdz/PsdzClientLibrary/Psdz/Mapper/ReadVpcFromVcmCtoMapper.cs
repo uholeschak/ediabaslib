@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzReadVpcFromVcmCto
             {
                 IsSuccessful = model.IsSuccessful,
@@ -25,6 +26,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ReadVpcFromVcmCtoModel
             {
                 IsSuccessful = psdzReadVpcFromVcmCto.IsSuccessful,

@@ -7,15 +7,14 @@ namespace BMW.Rheingold.Psdz
     internal static class SecurityCalculatedObjectCtoMapper
     {
         private static SecurityCalculationOverallStatusEtoMapper _securityCalculationOverallStatusEtoMapper = new SecurityCalculationOverallStatusEtoMapper();
-
         private static SecurityCalculationDetailedStatusEtoMapper _securityCalculationDetailedStatusEtoMapper = new SecurityCalculationDetailedStatusEtoMapper();
-
         internal static PsdzSecurityCalculatedObjectCto Map(SecurityCalculatedObjectCto model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzSecurityCalculatedObjectCto
             {
                 ServicePack = model.ServicePack,
@@ -32,6 +31,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SecurityCalculatedObjectCto
             {
                 ServicePack = psdzObject.ServicePack,

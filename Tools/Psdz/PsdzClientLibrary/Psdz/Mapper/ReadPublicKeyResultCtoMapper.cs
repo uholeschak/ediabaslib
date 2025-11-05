@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzReadPublicKeyResultCto
             {
                 KdsPublicKeys = model.PublicKeys?.Select(KdsPublicKeyResultCtoMapper.Map).ToList(),
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ReadPublicKeyResultCtoModel
             {
                 PublicKeys = psdzReadPublicKeyResultCto.KdsPublicKeys?.Select(KdsPublicKeyResultCtoMapper.Map).ToList(),

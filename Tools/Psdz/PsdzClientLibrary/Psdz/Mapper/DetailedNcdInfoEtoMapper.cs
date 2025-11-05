@@ -6,13 +6,13 @@ namespace BMW.Rheingold.Psdz
     internal static class DetailedNcdInfoEtoMapper
     {
         private static readonly NcdStatusEtoEnumMapper ncdStatusEtoEnumMapper = new NcdStatusEtoEnumMapper();
-
         public static IPsdzDetailedNcdInfoEto Map(DetailedNcdInfoEtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzDetailedNcdInfoEto
             {
                 Btld = SgbmIdMapper.Map(model.Btld),
@@ -29,6 +29,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new DetailedNcdInfoEtoModel
             {
                 Btld = SgbmIdMapper.Map(psdzDetailedNcdInfoEto.Btld),

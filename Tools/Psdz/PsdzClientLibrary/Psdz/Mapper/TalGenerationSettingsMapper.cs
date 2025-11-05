@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return default(TalGenerationSettings);
             }
+
             return new TalGenerationSettings
             {
                 ECUsToSuppress = talGenerationSettingsModel.EcuToSuppress?.Select(DiagAddressMapper.Map).ToList(),

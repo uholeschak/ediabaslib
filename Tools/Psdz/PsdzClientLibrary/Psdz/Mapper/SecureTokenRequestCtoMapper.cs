@@ -13,6 +13,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSecureTokenRequestCto
             {
                 VIN = VinMapper.Map(model.Vin),
@@ -26,14 +27,11 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SecureTokenRequestCtoModel
             {
                 Vin = VinMapper.Map(psdzObject.VIN),
-                EcuFeatureRequests = psdzObject.EcuFeatureRequests?.Select((KeyValuePair<IPsdzEcuIdentifier, IEnumerable<IPsdzFeatureRequestCto>> kvPair) => new EcuFeatureRequests
-                {
-                    Ecu = EcuIdentifierCtoMapper.Map(kvPair.Key),
-                    FeatureRequests = kvPair.Value?.Select(FeatureRequestCtoMapper.Map).ToList()
-                }).ToList()
+                EcuFeatureRequests = psdzObject.EcuFeatureRequests?.Select((KeyValuePair<IPsdzEcuIdentifier, IEnumerable<IPsdzFeatureRequestCto>> kvPair) => new EcuFeatureRequests { Ecu = EcuIdentifierCtoMapper.Map(kvPair.Key), FeatureRequests = kvPair.Value?.Select(FeatureRequestCtoMapper.Map).ToList() }).ToList()
             };
         }
     }

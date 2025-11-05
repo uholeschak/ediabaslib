@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzEcuLcsValueCto
             {
                 LcsNumber = model.LcsNumber,
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new EcuLcsValueCtoModel
             {
                 LcsNumber = psdzEcuLcsValueCto.LcsNumber,

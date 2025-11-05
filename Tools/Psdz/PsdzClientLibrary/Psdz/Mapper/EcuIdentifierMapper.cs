@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzEcuIdentifier
             {
                 BaseVariant = ecuIdentifierModel.BaseVariant,
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new EcuIdentifierModel
             {
                 BaseVariant = ecuIdentifier.BaseVariant,

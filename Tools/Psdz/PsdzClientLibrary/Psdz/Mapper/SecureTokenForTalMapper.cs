@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSecureTokenForTal
             {
                 EcuIdentifier = EcuIdentifierMapper.Map(model.EcuIdentifier),
@@ -25,6 +26,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SecureTokenForTalModel
             {
                 EcuIdentifier = EcuIdentifierMapper.Map(psdzSecureTokenForTal.EcuIdentifier),

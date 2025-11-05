@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzStandardFa
             {
                 AsString = model.AsString,
@@ -34,6 +35,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new StandardFaModel
             {
                 AsString = psdzStandardFa.AsString,

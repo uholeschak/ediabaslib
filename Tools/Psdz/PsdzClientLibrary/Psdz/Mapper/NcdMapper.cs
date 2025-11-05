@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzNcd
             {
                 CafId = model.CafId,
@@ -36,6 +37,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new NcdModel
             {
                 UserDataCoding2 = ncd.UserDataCoding2,

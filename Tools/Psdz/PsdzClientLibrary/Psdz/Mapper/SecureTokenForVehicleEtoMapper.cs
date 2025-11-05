@@ -8,6 +8,7 @@
             {
                 return null;
             }
+
             return new PsdzSecureTokenForVehicleEto
             {
                 FeatureIdCto = FeatureIdCtoMapper.Map(model.FeatureId),
@@ -22,6 +23,7 @@
             {
                 return null;
             }
+
             return new SecureTokenForVehicleEtoModel
             {
                 FeatureId = FeatureIdCtoMapper.Map(psdzSecureTokenForVehicleEto.FeatureIdCto),

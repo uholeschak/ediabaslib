@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSecurityBackendRequestFailureCto
             {
                 Cause = LocalizableMessageToMapper.Map(model.Cause),
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SecurityBackendRequestFailureCtoModel
             {
                 Cause = LocalizableMessageToMapper.Map(psdzObject.Cause),

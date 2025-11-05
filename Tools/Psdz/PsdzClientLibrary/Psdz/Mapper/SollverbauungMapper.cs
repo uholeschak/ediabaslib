@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSollverbauung
             {
                 AsXml = model.AsXml,
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SollverbauungModel
             {
                 AsXml = psdzSollverbauung.AsXml,

@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzResponse
             {
                 Cause = model.Cause,
@@ -25,6 +26,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ResponseCtoModel
             {
                 Cause = psdzResponse.Cause,

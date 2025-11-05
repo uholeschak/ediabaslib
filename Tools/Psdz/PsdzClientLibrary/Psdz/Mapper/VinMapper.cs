@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzVin
             {
                 Value = vinModel.Value
@@ -22,6 +23,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new VinModel
             {
                 Value = psdzVin.Value

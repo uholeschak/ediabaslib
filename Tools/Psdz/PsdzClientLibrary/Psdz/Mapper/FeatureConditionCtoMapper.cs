@@ -5,13 +5,13 @@ namespace BMW.Rheingold.Psdz
     internal class FeatureConditionCtoMapper
     {
         private static ConditionTypeEtoMapper conditionTypeEtoMapper = new ConditionTypeEtoMapper();
-
         public static IPsdzFeatureConditionCto Map(FeatureConditionCtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzFeatureConditionCto
             {
                 ConditionType = conditionTypeEtoMapper.GetValue(model.ConditionType),
@@ -27,6 +27,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new FeatureConditionCtoModel
             {
                 ConditionType = conditionTypeEtoMapper.GetValue(psdzFeatureConditionCto.ConditionType),

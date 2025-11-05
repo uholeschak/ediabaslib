@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzBindingCalculationFailure
             {
                 Retry = model.Retry,

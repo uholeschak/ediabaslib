@@ -6,13 +6,13 @@ namespace BMW.Rheingold.Psdz
     internal static class PerformQuickKdsCheckSP25ResultCtoMapper
     {
         private static KdsActionStatusEtoMapper _kdsActionStatusEtoMapper = new KdsActionStatusEtoMapper();
-
         internal static IPsdzPerformQuickKdsCheckResultCto Map(PerformQuickKdsCheckSP25ResultCtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzPerformQuickKdsCheckResultCto
             {
                 KdsActionStatus = _kdsActionStatusEtoMapper.GetValue(model.KdsActionStatus),
@@ -28,6 +28,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PerformQuickKdsCheckSP25ResultCtoModel
             {
                 KdsActionStatus = _kdsActionStatusEtoMapper.GetValue(psdzObject.KdsActionStatus),

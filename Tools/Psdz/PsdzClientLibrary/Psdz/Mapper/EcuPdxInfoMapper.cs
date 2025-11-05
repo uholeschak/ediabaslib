@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzEcuPdxInfo
             {
                 CertVersion = ecuPdxInfoModel.CertVersion,
@@ -43,6 +44,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new EcuPdxInfoModel
             {
                 CertVersion = ecuPdxInfo.CertVersion,

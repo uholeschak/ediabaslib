@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzRequestEcuSecCheckingResult
             {
                 EcuSecCheckingMaxWaitingTimes = model.EcuSecCheckingMaxWaitingTimes?.ToDictionary((EcuCheckingMaxWaitingTimeResultModel kvPair) => EcuIdentifierMapper.Map(kvPair.EcuIdentifierModel), (EcuCheckingMaxWaitingTimeResultModel kvPair) => kvPair.MaxWaitingTime),

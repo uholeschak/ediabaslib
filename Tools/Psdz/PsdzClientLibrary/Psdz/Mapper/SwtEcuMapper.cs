@@ -7,15 +7,14 @@ namespace BMW.Rheingold.Psdz
     internal static class SwtEcuMapper
     {
         private static RootCertStateMapper _rootCertStateMapper = new RootCertStateMapper();
-
         private static SoftwareSigStateEnumMapper _softwareSigStateEnumMapper = new SoftwareSigStateEnumMapper();
-
         internal static IPsdzSwtEcu Map(SwtEcuModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzSwtEcu
             {
                 EcuIdentifier = EcuIdentifierMapper.Map(model.EcuIdentifier),
@@ -32,6 +31,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SwtEcuModel
             {
                 EcuIdentifier = EcuIdentifierMapper.Map(psdzSwtEcu.EcuIdentifier),

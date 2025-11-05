@@ -12,6 +12,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzStandardSvt
             {
                 AsString = standardSvtModel.AsString,
@@ -28,6 +29,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new StandardSvtModel
             {
                 AsString = standardSvt.AsString,

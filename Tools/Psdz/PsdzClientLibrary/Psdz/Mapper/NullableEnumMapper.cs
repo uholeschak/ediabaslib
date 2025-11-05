@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return base.GetValue(key);
             }
+
             return null;
         }
 
@@ -19,6 +20,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return base.GetValue(key);
             }
+
             return null;
         }
     }

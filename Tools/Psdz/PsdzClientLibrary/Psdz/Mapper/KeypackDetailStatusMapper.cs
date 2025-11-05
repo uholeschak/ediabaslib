@@ -5,13 +5,13 @@ namespace BMW.Rheingold.Psdz
     internal static class KeypackDetailStatusMapper
     {
         private static readonly EcuSecCheckingStatusEtoMapper ecuSecCheckingStatusEtoMapper = new EcuSecCheckingStatusEtoMapper();
-
         public static KeypackDetailStatusModel Map(PsdzKeypackDetailStatus status)
         {
             if (status == null)
             {
                 return null;
             }
+
             return new KeypackDetailStatusModel
             {
                 KeyId = status.KeyId,
@@ -25,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzKeypackDetailStatus
             {
                 KeyId = model.KeyId,

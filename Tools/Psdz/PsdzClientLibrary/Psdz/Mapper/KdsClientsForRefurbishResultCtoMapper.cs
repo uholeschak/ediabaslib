@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzKdsClientsForRefurbishResultCto
             {
                 KdsFailureResponse = KdsFailureResponseCtoMapper.Map(model.KdsFailureResponseCto),
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new KdsClientsForRefurbishResultCtoModel
             {
                 KdsFailureResponseCto = KdsFailureResponseCtoMapper.Map(psdzObject.KdsFailureResponse),

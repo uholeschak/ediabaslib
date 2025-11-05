@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzRequestNcdEto
             {
                 Btld = SgbmIdMapper.Map(model.Btld),
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new RequestNcdEtoModel
             {
                 Btld = SgbmIdMapper.Map(psdzRequestNcdEto.Btld),

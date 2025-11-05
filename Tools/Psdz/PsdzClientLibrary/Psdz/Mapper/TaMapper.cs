@@ -11,24 +11,22 @@ namespace BMW.Rheingold.Psdz
     internal static class TaMapper
     {
         private static readonly SwtActionTypeMapper _swtActionTypeMapper = new SwtActionTypeMapper();
-
         private static readonly ProtocolMapper protocolMapper = new ProtocolMapper();
-
         private static readonly IDictionary<string, Func<TaModel, IPsdzTa>> _funcMapTaModelToPsdzTa = CreateFuncMapTaModelToPsdzTa();
-
         private static readonly IDictionary<string, Func<IPsdzTa, TaModel>> _funcMapPsdzTaToTaModel = CreateFuncMapPsdzTaToTaModel();
-
         public static IPsdzTa Map(TaModel taModel)
         {
             if (taModel == null)
             {
                 return null;
             }
+
             string name = taModel.GetType().Name;
             if (_funcMapTaModelToPsdzTa.ContainsKey(name))
             {
                 return _funcMapTaModelToPsdzTa[name](taModel);
             }
+
             Log.Warning(Log.CurrentMethod(), string.Format(CultureInfo.InvariantCulture, "No serializable class found for class type '{0}'! Base class 'PsdzTa' will be used instead.", name));
             return BuildPsdzTa<PsdzTa>(taModel);
         }
@@ -39,23 +37,27 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             string name = taModel.GetType().Name;
             if (_funcMapPsdzTaToTaModel.ContainsKey(name))
             {
                 return _funcMapPsdzTaToTaModel[name](taModel);
             }
+
             Log.Warning(Log.CurrentMethod(), string.Format(CultureInfo.InvariantCulture, "No serializable class found for class type '{0}'! Base class 'TaModel' will be used instead.", name));
             return BuildTaModel<TaModel>(taModel);
         }
 
-        private static TTarget BuildPsdzTa<TTarget>(TaModel ta) where TTarget : PsdzTa, new()
+        private static TTarget BuildPsdzTa<TTarget>(TaModel ta)
+            where TTarget : PsdzTa, new()
         {
             TTarget val = TalElementMapper.Map<TTarget>(ta.TalElement);
             val.SgbmId = SgbmIdMapper.Map(ta.SgbmId);
             return val;
         }
 
-        private static TTarget BuildTaModel<TTarget>(IPsdzTa psdzTa) where TTarget : TaModel, new()
+        private static TTarget BuildTaModel<TTarget>(IPsdzTa psdzTa)
+            where TTarget : TaModel, new()
         {
             TalElementModel talElement = TalElementMapper.Map(psdzTa);
             return new TTarget
@@ -68,52 +70,163 @@ namespace BMW.Rheingold.Psdz
         private static IDictionary<string, Func<TaModel, IPsdzTa>> CreateFuncMapTaModelToPsdzTa()
         {
             return new Dictionary<string, Func<TaModel, IPsdzTa>>
-        {
-            { "IdRestoreTaModel", BuildPsdzIdRestoreTa },
-            { "IdLightTaModel", BuildPsdzldBasisLightTa },
-            { "FscDeployTaModel", BuildPsdzFscDeployTa },
-            { "SFADeleteTAModel", BuildPsdzSFADeleteTa },
-            { "SFAVerifyTAModel", BuildPsdzSFAVerifyTa },
-            { "SFAWriteTAModel", BuildPsdzSFAWriteTa },
-            { "HddUpdateTaModel", BuildPsdzHddUpdateTa },
-            { "BlFlashTaModel", BuildPsdzBlFlashTa },
-            { "SwDeployTaModel", BuildPsdzSwDeployTa },
-            { "IbaDeployTaModel", BuildIbaDeployTa },
-            { "SmacSwDeployOnMasterTaModel", BuildSmacMasterTaModel },
-            { "SmacTransferStartTaModel", BuildSmacTransferStartTaModel },
-            { "SmacTransferStatusTaModel", BuildSmacTransferStatusTaModel },
-            { "EcuMirrorDeployTaModel", BuildPsdzEcuMirrorDeployTa },
-            { "SmacEcuMirrorDeployOnMasterTaModel", BuildPsdzSmacEcuMirrorDeployOnMasterTa },
-            { "EcuActivateTaModel", BuildPsdzEcuActivateTa },
-            { "EcuPollTaModel", BuildPsdzEcuPollTa },
-            { "TaModel", BuildPsdzTa<PsdzTa> }
-        };
+            {
+                {
+                    "IdRestoreTaModel",
+                    BuildPsdzIdRestoreTa
+                },
+                {
+                    "IdLightTaModel",
+                    BuildPsdzldBasisLightTa
+                },
+                {
+                    "FscDeployTaModel",
+                    BuildPsdzFscDeployTa
+                },
+                {
+                    "SFADeleteTAModel",
+                    BuildPsdzSFADeleteTa
+                },
+                {
+                    "SFAVerifyTAModel",
+                    BuildPsdzSFAVerifyTa
+                },
+                {
+                    "SFAWriteTAModel",
+                    BuildPsdzSFAWriteTa
+                },
+                {
+                    "HddUpdateTaModel",
+                    BuildPsdzHddUpdateTa
+                },
+                {
+                    "BlFlashTaModel",
+                    BuildPsdzBlFlashTa
+                },
+                {
+                    "SwDeployTaModel",
+                    BuildPsdzSwDeployTa
+                },
+                {
+                    "IbaDeployTaModel",
+                    BuildIbaDeployTa
+                },
+                {
+                    "SmacSwDeployOnMasterTaModel",
+                    BuildSmacMasterTaModel
+                },
+                {
+                    "SmacTransferStartTaModel",
+                    BuildSmacTransferStartTaModel
+                },
+                {
+                    "SmacTransferStatusTaModel",
+                    BuildSmacTransferStatusTaModel
+                },
+                {
+                    "EcuMirrorDeployTaModel",
+                    BuildPsdzEcuMirrorDeployTa
+                },
+                {
+                    "SmacEcuMirrorDeployOnMasterTaModel",
+                    BuildPsdzSmacEcuMirrorDeployOnMasterTa
+                },
+                {
+                    "EcuActivateTaModel",
+                    BuildPsdzEcuActivateTa
+                },
+                {
+                    "EcuPollTaModel",
+                    BuildPsdzEcuPollTa
+                },
+                {
+                    "TaModel",
+                    BuildPsdzTa<PsdzTa>
+                }
+            };
         }
 
         private static IDictionary<string, Func<IPsdzTa, TaModel>> CreateFuncMapPsdzTaToTaModel()
         {
             return new Dictionary<string, Func<IPsdzTa, TaModel>>
-        {
-            { "PsdzIdRestoreTa", BuildIdRestoreTaModel },
-            { "PsdzIdRestoreLightTa", BuildIdBasisLightTaModel },
-            { "PsdzIdBackupLightTa", BuildIdBasisLightTaModel },
-            { "PsdzFscDeployTa", BuildFscDeployTaModel },
-            { "PsdzSFADeleteTA", BuildSFADeleteTaModel },
-            { "PsdzSFAVerifyTA", BuildSFAVerifyTaModel },
-            { "PsdzSFAWriteTA", BuildSFAWriteTaModel },
-            { "PsdzHddUpdateTA", BuildHddUpdateTaModel },
-            { "PsdzBlFlashTa", BuildBlFlashTaModel },
-            { "PsdzSwDeployTa", BuildSwDeployTaModel },
-            { "PsdzIbaDeployTa", BuildIbaDeployTaModel },
-            { "PsdzSmacSwDeployOnMasterTA", BuildSmacMasterTaModel },
-            { "PsdzSmacTransferStartTA", BuildSmacTransferStartTaModel },
-            { "PsdzSmacTransferStatusTA", BuildSmacTransferStatusTaModel },
-            { "PsdzEcuMirrorDeployTa", BuildEcuMirrorDeployTaModel },
-            { "PsdzSmacEcuMirrorDeployOnMasterTA", BuildSmacEcuMirrorDeployTaModel },
-            { "PsdzEcuActivateTa", BuildEcuActivateTaModel },
-            { "PsdzEcuPollTa", BuildEcuPollTaModel },
-            { "PsdzTa", BuildTaModel<TaModel> }
-        };
+            {
+                {
+                    "PsdzIdRestoreTa",
+                    BuildIdRestoreTaModel
+                },
+                {
+                    "PsdzIdRestoreLightTa",
+                    BuildIdBasisLightTaModel
+                },
+                {
+                    "PsdzIdBackupLightTa",
+                    BuildIdBasisLightTaModel
+                },
+                {
+                    "PsdzFscDeployTa",
+                    BuildFscDeployTaModel
+                },
+                {
+                    "PsdzSFADeleteTA",
+                    BuildSFADeleteTaModel
+                },
+                {
+                    "PsdzSFAVerifyTA",
+                    BuildSFAVerifyTaModel
+                },
+                {
+                    "PsdzSFAWriteTA",
+                    BuildSFAWriteTaModel
+                },
+                {
+                    "PsdzHddUpdateTA",
+                    BuildHddUpdateTaModel
+                },
+                {
+                    "PsdzBlFlashTa",
+                    BuildBlFlashTaModel
+                },
+                {
+                    "PsdzSwDeployTa",
+                    BuildSwDeployTaModel
+                },
+                {
+                    "PsdzIbaDeployTa",
+                    BuildIbaDeployTaModel
+                },
+                {
+                    "PsdzSmacSwDeployOnMasterTA",
+                    BuildSmacMasterTaModel
+                },
+                {
+                    "PsdzSmacTransferStartTA",
+                    BuildSmacTransferStartTaModel
+                },
+                {
+                    "PsdzSmacTransferStatusTA",
+                    BuildSmacTransferStatusTaModel
+                },
+                {
+                    "PsdzEcuMirrorDeployTa",
+                    BuildEcuMirrorDeployTaModel
+                },
+                {
+                    "PsdzSmacEcuMirrorDeployOnMasterTA",
+                    BuildSmacEcuMirrorDeployTaModel
+                },
+                {
+                    "PsdzEcuActivateTa",
+                    BuildEcuActivateTaModel
+                },
+                {
+                    "PsdzEcuPollTa",
+                    BuildEcuPollTaModel
+                },
+                {
+                    "PsdzTa",
+                    BuildTaModel<TaModel>
+                }
+            };
         }
 
         private static PsdzIbaDeployTa BuildIbaDeployTa(TaModel model)
@@ -159,6 +272,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             PsdzIdLightBasisTa psdzIdLightBasisTa = null;
             IdLightTaModel idLightTaModel = (IdLightTaModel)taModel;
             switch (idLightTaModel.IdLightTaType)
@@ -170,10 +284,12 @@ namespace BMW.Rheingold.Psdz
                     psdzIdLightBasisTa = BuildPsdzTa<PsdzIdRestoreLightTa>(taModel);
                     break;
             }
+
             if (psdzIdLightBasisTa != null)
             {
                 psdzIdLightBasisTa.Ids = idLightTaModel.Ids;
             }
+
             return psdzIdLightBasisTa;
         }
 
@@ -329,6 +445,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             PsdzIdLightBasisTa psdzIdLightBasisTa = (PsdzIdLightBasisTa)psdzTa;
             IdLightTaModel idLightTaModel = BuildTaModel<IdLightTaModel>(psdzTa);
             if (psdzIdLightBasisTa is PsdzIdBackupLightTa)
@@ -339,6 +456,7 @@ namespace BMW.Rheingold.Psdz
             {
                 idLightTaModel.IdLightTaType = IdLightTaTypeModel.IdRestore;
             }
+
             idLightTaModel.Ids = psdzIdLightBasisTa.Ids.ToList();
             return idLightTaModel;
         }

@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzFailureCause
             {
                 Id = model.Id,
@@ -28,6 +29,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new FailureCauseModel
             {
                 Id = psdzFailureCause.Id,

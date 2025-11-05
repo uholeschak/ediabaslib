@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzFetchEcuCertCheckingResult
             {
                 FailedEcus = model.FailedEcus?.Select(EcuFailureResponseCtoMapper.Map),

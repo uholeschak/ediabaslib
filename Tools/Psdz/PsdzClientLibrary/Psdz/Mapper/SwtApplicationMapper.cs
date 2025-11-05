@@ -6,21 +6,17 @@ namespace BMW.Rheingold.Psdz
     internal class SwtApplicationMapper
     {
         private static FscStateEnumMapper _fscStateEnumMapper = new FscStateEnumMapper();
-
         private static SoftwareSigStateEnumMapper _softwareSigStateEnumMapper = new SoftwareSigStateEnumMapper();
-
         private static SwtActionTypeMapper _swtActionTypeEnumMapper = new SwtActionTypeMapper();
-
         private static SwtTypeEnumMapper _swtTypeEnumMapper = new SwtTypeEnumMapper();
-
         private static FscCertStateEnumMapper _fscCertStateEnumMapper = new FscCertStateEnumMapper();
-
         public static SwtApplicationModel Map(IPsdzSwtApplication swtApplication)
         {
             if (swtApplication == null)
             {
                 return null;
             }
+
             return new SwtApplicationModel
             {
                 BackupPossible = swtApplication.IsBackupPossible,
@@ -42,6 +38,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSwtApplication
             {
                 IsBackupPossible = model.BackupPossible,

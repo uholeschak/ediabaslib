@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSgbmId
             {
                 Id = sgbmIdModel.Id,
@@ -29,6 +30,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SgbmIdModel
             {
                 Id = sgbmId.Id,

@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzReadLcsResultCto
             {
                 EcuLcsValues = model.EcuLcsValues?.Select(EcuLcsValueCtoMapper.Map),

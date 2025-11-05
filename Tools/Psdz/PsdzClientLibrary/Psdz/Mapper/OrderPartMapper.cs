@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             PsdzOrderPart psdzOrderPart = LogisticPartMapper.Map<PsdzOrderPart>(model);
             IPsdzLogisticPart[] deliverables = model.Deliverables?.Select(LogisticPartMapper.Map<PsdzLogisticPart>).ToArray();
             psdzOrderPart.Deliverables = deliverables;
@@ -25,6 +26,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             OrderPartModel orderPartModel = LogisticPartMapper.Map<OrderPartModel>(psdzOrderPart);
             orderPartModel.Deliverables = psdzOrderPart.Deliverables?.Select(LogisticPartMapper.Map<LogisticPartModel>).ToArray();
             orderPartModel.Pattern = psdzOrderPart.Pattern?.Select(LogisticPartMapper.Map<LogisticPartModel>).ToArray();

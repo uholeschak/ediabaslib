@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzIstufenTriple
             {
                 Current = model.Current,
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ILevelTripleModel
             {
                 Current = psdzILevelTriple.Current,

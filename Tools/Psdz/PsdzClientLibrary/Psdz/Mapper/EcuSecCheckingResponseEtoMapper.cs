@@ -6,13 +6,13 @@ namespace BMW.Rheingold.Psdz
     internal static class EcuSecCheckingResponseEtoMapper
     {
         private static readonly EcuSecCheckingStatusEtoMapper _ecuSecCheckingStatusEtoMapper = new EcuSecCheckingStatusEtoMapper();
-
         public static PsdzEcuCertCheckingResponse Map(EcuSecCheckingResponseEtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzEcuCertCheckingResponse
             {
                 Ecu = EcuIdentifierMapper.Map(model.Ecu),

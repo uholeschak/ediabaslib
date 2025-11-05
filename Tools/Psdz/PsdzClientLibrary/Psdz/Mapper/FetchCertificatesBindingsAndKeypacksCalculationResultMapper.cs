@@ -6,13 +6,13 @@ namespace BMW.Rheingold.Psdz
     internal static class FetchCertificatesBindingsAndKeypacksCalculationResultMapper
     {
         private static BindingCalculationProgessStatusToMapper _bindingCalculationProgessStatusMapper = new BindingCalculationProgessStatusToMapper();
-
         internal static PsdzFetchBindingCalculationResult Map(FetchCertificatesBindingsAndKeypacksCalculationResultModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzFetchBindingCalculationResult
             {
                 DurationOfLastRequest = model.DurationOfLastRequest,

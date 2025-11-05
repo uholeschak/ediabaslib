@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzEcuUidCto
             {
                 EcuUid = model.EcuUid
@@ -22,6 +23,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new EcuUidCtoModel
             {
                 EcuUid = psdzObject.EcuUid

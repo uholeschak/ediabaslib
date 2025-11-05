@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzOrderList
             {
                 NumberOfUnits = model.NumberOfUnits,
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new OrderListModel
             {
                 NumberOfUnits = psdzOrderList.NumberOfUnits,

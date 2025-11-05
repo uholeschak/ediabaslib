@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzProgrammingProtectionDataCto
             {
                 SWEList = model.SweList?.Select(SgbmIdMapper.Map).ToList(),
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ProgrammingProtectionDataCtoModel
             {
                 SweList = psdzProgrammingProtectionDataCto.SWEList?.Select(SgbmIdMapper.Map).ToList(),

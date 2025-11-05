@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzIstufe
             {
                 IsValid = model.Valid,
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ILevelModel
             {
                 Valid = psdzILevel.IsValid,

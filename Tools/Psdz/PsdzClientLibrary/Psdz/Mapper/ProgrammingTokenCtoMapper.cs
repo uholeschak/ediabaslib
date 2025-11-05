@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ProgrammingTokenCtoModel
             {
                 TokenVersion = psdzObj.TokenVersion,
@@ -32,6 +33,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzProgrammingTokenCto
             {
                 TokenVersion = model.TokenVersion,

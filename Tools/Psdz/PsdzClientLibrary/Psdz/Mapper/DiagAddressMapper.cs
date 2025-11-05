@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzDiagAddress
             {
                 Offset = diagAddressModel.Offset
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzDiagAddress
             {
                 Offset = diagAddressModel.OffsetAsInt
@@ -35,6 +37,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new DiagAddressModel
             {
                 Offset = diagAddress.Offset
@@ -47,6 +50,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new DiagAddressCtoModel
             {
                 OffsetAsInt = diagAddress.Offset

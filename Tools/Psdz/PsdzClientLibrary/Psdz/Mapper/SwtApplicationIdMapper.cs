@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSwtApplicationId
             {
                 ApplicationNumber = model.ApplicationNumber,
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SwtApplicationIdModel
             {
                 ApplicationNumber = psdzSwtApplciationId.ApplicationNumber,

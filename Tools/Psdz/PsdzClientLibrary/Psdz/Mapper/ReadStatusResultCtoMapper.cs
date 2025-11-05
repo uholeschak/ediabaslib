@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzReadStatusResultCto
             {
                 Failures = model.Failures?.Select(EcuFailureResponseCtoMapper.MapCto).ToList(),
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ReadStatusResultCtoModel
             {
                 Failures = psdzReadStatusResultCto.Failures?.Select(EcuFailureResponseCtoMapper.MapCto).ToList(),

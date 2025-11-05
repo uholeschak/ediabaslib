@@ -6,9 +6,7 @@ namespace BMW.Rheingold.Psdz
     internal abstract class MapperBase<TKey, TValue>
     {
         private readonly IDictionary<TKey, TValue> map;
-
         private readonly IDictionary<TValue, TKey> revertedMap;
-
         protected MapperBase()
         {
             map = CreateMap();
@@ -26,7 +24,6 @@ namespace BMW.Rheingold.Psdz
         }
 
         protected abstract IDictionary<TKey, TValue> CreateMap();
-
         private static IDictionary<TValue, TKey> ReverseMap(IEnumerable<KeyValuePair<TKey, TValue>> sourceMap)
         {
             return sourceMap.ToDictionary((KeyValuePair<TKey, TValue> x) => x.Value, (KeyValuePair<TKey, TValue> x) => x.Key);

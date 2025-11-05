@@ -5,13 +5,13 @@ namespace BMW.Rheingold.Psdz
     internal static class DetailedStatusCtoMapper
     {
         private static readonly TokenDetailedStatusEtoMapper tokenDetailedStatusEtoMapper = new TokenDetailedStatusEtoMapper();
-
         public static DetailedStatusCtoModel Map(IPsdzDetailedStatusCto psdzDetailedStatusCto)
         {
             if (psdzDetailedStatusCto == null)
             {
                 return null;
             }
+
             return new DetailedStatusCtoModel
             {
                 TokenDetailedStatusEto = tokenDetailedStatusEtoMapper.GetValue(psdzDetailedStatusCto.TokenDetailedStatusEto),
@@ -26,6 +26,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzDetailedStatusCto
             {
                 TokenDetailedStatusEto = tokenDetailedStatusEtoMapper.GetValue(model.TokenDetailedStatusEto),

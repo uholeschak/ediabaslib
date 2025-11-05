@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzCoding1NcdEntry
             {
                 BlockAdress = model.BlockAddress,
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new Coding1NcdEntryModel
             {
                 BlockAddress = ncdEntry.BlockAdress,

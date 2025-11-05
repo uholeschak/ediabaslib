@@ -5,19 +5,16 @@ namespace BMW.Rheingold.Psdz
     internal static class SecureCodingConfigCtoMapper
     {
         private static AuthenticationTypeEtoMapper _authenticationTypeEtoMapper = new AuthenticationTypeEtoMapper();
-
         private static BackendNcdCalculationEtoMapper _backendNcdCalculationEtoMapper = new BackendNcdCalculationEtoMapper();
-
         private static BackendSignatureEtoMapper _backendSignatureEtoMapper = new BackendSignatureEtoMapper();
-
         private static NcdRecalculationEtoMapper _ncdRecalculationEtoMapper = new NcdRecalculationEtoMapper();
-
         public static SecureCodingConfigCtoModel Map(IPsdzSecureCodingConfigCto psdzSecureCodingConfigCto)
         {
             if (psdzSecureCodingConfigCto == null)
             {
                 return null;
             }
+
             return new SecureCodingConfigCtoModel
             {
                 AuthenticationTypeEto = _authenticationTypeEtoMapper.GetValue(psdzSecureCodingConfigCto.PsdzAuthenticationTypeEto),

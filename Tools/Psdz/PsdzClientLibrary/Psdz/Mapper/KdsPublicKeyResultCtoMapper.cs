@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzKdsPublicKeyResultCto
             {
                 KdsId = KdsIdCtoMapper.Map(model.KdsIdCto),
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new KdsPublicKeyResultCtoModel
             {
                 KdsIdCto = KdsIdCtoMapper.Map(psdzObject.KdsId),

@@ -13,6 +13,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzStandardSvk
             {
                 ProgDepChecked = standardSvkModel.ProgDepChecked,
@@ -27,6 +28,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new StandardSvkModel
             {
                 ProgDepChecked = standardSvk.ProgDepChecked,

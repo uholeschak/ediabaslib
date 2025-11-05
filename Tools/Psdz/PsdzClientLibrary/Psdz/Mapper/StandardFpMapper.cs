@@ -12,6 +12,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             Dictionary<int, IList<IPsdzStandardFpCriterion>> dictionary = new Dictionary<int, IList<IPsdzStandardFpCriterion>>();
             if (model.Category2Criteria != null)
             {
@@ -20,6 +21,7 @@ namespace BMW.Rheingold.Psdz
                     dictionary.Add(int.Parse(category2Criterion.Key), category2Criterion.Value?.Select(StandardFpCriterionMapper.Map)?.ToList());
                 }
             }
+
             Dictionary<int, string> dictionary2 = new Dictionary<int, string>();
             if (model.CategoryId2CategoryName != null)
             {
@@ -28,6 +30,7 @@ namespace BMW.Rheingold.Psdz
                     dictionary2.Add(int.Parse(item.Key), item.Value);
                 }
             }
+
             return new PsdzStandardFp
             {
                 AsString = model.AsString,
@@ -43,6 +46,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             Dictionary<string, ICollection<StandardFpCriterionModel>> dictionary = new Dictionary<string, ICollection<StandardFpCriterionModel>>();
             if (model.Category2Criteria != null)
             {
@@ -51,6 +55,7 @@ namespace BMW.Rheingold.Psdz
                     dictionary.Add(category2Criterion.Key.ToString(), category2Criterion.Value?.Select(StandardFpCriterionMapper.Map)?.ToList());
                 }
             }
+
             Dictionary<string, string> dictionary2 = new Dictionary<string, string>();
             if (model.CategoryId2CategoryName != null)
             {
@@ -59,6 +64,7 @@ namespace BMW.Rheingold.Psdz
                     dictionary2.Add(item.Key.ToString(), item.Value);
                 }
             }
+
             return new StandardFpModel
             {
                 AsString = model.AsString,

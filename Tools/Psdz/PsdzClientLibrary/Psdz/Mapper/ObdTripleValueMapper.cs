@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzObdTripleValue
             {
                 CalId = model.CalId,
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ObdTripleValueModel
             {
                 CalId = psdzObdTripleValue.CalId,

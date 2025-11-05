@@ -6,13 +6,13 @@ namespace BMW.Rheingold.Psdz
     internal static class TalMapper
     {
         private static TalExecutionStateMapper _talExecutionStateMapper = new TalExecutionStateMapper();
-
         public static IPsdzTal Map(TalModel talModel)
         {
             if (talModel == null)
             {
                 return null;
             }
+
             PsdzTal psdzTal = TalElementMapper.Map<PsdzTal>(talModel.TalElement);
             psdzTal.AsXml = talModel.AsXml;
             psdzTal.AffectedEcus = talModel.AffectedEcus?.Select(EcuIdentifierMapper.Map);
@@ -30,6 +30,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             TalElementModel talElement = TalElementMapper.Map(psdzTal);
             return new TalModel
             {

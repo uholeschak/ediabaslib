@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzDiagAddressCto
             {
                 INVALID_OFFSET = diagAddressModel.InvalidOffset,
@@ -28,6 +29,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new DiagAddressCtoModel
             {
                 InvalidOffset = diagAddress.INVALID_OFFSET,

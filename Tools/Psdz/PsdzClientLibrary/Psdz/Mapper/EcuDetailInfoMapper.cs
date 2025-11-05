@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzEcuDetailInfo
             {
                 ByteValue = ecuDetailInfoModel.ByteValue
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new EcuDetailInfoModel
             {
                 ByteValue = ecuDetailInfo.ByteValue

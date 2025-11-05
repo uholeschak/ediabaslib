@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new MirrorProtocolVersionCtoModel
             {
                 MajorVersion = psdzObject.MajorVersion,
@@ -26,6 +27,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzMirrorProtocolVersionCto
             {
                 MajorVersion = model.MajorVersion,

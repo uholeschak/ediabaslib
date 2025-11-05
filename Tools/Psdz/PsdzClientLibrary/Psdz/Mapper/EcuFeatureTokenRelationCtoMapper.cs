@@ -5,13 +5,13 @@ namespace BMW.Rheingold.Psdz
     internal static class EcuFeatureTokenRelationCtoMapper
     {
         private static FeatureGroupEtoMapper featureGroupEtoMapper = new FeatureGroupEtoMapper();
-
         public static IPsdzEcuFeatureTokenRelationCto Map(EcuFeatureTokenRelationCtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzEcuFeatureTokenRelationCto
             {
                 ECUIdentifier = EcuIdentifierCtoMapper.Map(model.EcuIdentifier),
@@ -27,6 +27,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new EcuFeatureTokenRelationCtoModel
             {
                 EcuIdentifier = EcuIdentifierCtoMapper.Map(psdzEcuFeatureTokenRelationCto.ECUIdentifier),

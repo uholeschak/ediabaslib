@@ -7,13 +7,14 @@ namespace BMW.Rheingold.Psdz
     internal class TalElementMapper
     {
         private static TaExecutionStateMapper _taExecutionStateMapper = new TaExecutionStateMapper();
-
-        internal static TTarget Map<TTarget>(TalElementModel model) where TTarget : PsdzTalElement, new()
+        internal static TTarget Map<TTarget>(TalElementModel model)
+            where TTarget : PsdzTalElement, new()
         {
             if (model == null)
             {
                 return null;
             }
+
             return new TTarget
             {
                 Id = new Guid(model.Id),
@@ -31,6 +32,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new TalElementModel
             {
                 Id = psdzTalElement.Id.ToString(),

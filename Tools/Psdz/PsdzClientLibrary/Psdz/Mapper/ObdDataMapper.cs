@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzObdData
             {
                 ObdTripleValues = model.ObdTripleValues?.Select(ObdTripleValueMapper.Map)
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new ObdDataModel
             {
                 ObdTripleValues = psdzObdData.ObdTripleValues?.Select(ObdTripleValueMapper.Map).ToList()

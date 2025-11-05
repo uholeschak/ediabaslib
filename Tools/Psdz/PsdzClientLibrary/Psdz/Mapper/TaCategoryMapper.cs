@@ -7,13 +7,14 @@ namespace BMW.Rheingold.Psdz
     internal static class TaCategoryMapper
     {
         private static TaExecutionStateMapper _taExecutionStateMapper = new TaExecutionStateMapper();
-
-        public static TTarget Map<TTarget>(TaCategoryModel taCategory) where TTarget : PsdzTaCategory, new()
+        public static TTarget Map<TTarget>(TaCategoryModel taCategory)
+            where TTarget : PsdzTaCategory, new()
         {
             if (taCategory == null)
             {
                 return null;
             }
+
             return new TTarget
             {
                 IsEmpty = taCategory.IsEmpty,
@@ -22,12 +23,14 @@ namespace BMW.Rheingold.Psdz
             };
         }
 
-        public static TTarget Map<TTarget>(IPsdzTaCategory psdzTaCategory) where TTarget : TaCategoryModel, new()
+        public static TTarget Map<TTarget>(IPsdzTaCategory psdzTaCategory)
+            where TTarget : TaCategoryModel, new()
         {
             if (psdzTaCategory == null)
             {
                 return null;
             }
+
             return new TTarget
             {
                 IsEmpty = psdzTaCategory.IsEmpty,

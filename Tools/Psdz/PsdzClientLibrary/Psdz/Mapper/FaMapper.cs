@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzFa
             {
                 Vin = faModel.Vin,
@@ -35,6 +36,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new FaModel
             {
                 Vin = psdzFa.Vin,

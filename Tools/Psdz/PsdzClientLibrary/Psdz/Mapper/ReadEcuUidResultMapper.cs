@@ -14,6 +14,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             PsdzReadEcuUidResultCto psdzReadEcuUidResultCto = new PsdzReadEcuUidResultCto
             {
                 EcuUids = model.EcuUids?.ToDictionary((KeyValuePairModel<EcuIdentifierModel, EcuUidCtoModel> a) => EcuIdentifierMapper.Map(a.Key), (KeyValuePairModel<EcuIdentifierModel, EcuUidCtoModel> b) => EcuUidCtoMapper.Map(b.Value)),
@@ -23,10 +24,12 @@ namespace BMW.Rheingold.Psdz
             {
                 psdzReadEcuUidResultCto.EcuUids = new Dictionary<IPsdzEcuIdentifier, IPsdzEcuUidCto>();
             }
+
             if (psdzReadEcuUidResultCto.FailureResponse == null)
             {
                 psdzReadEcuUidResultCto.FailureResponse = new List<IPsdzEcuFailureResponseCto>();
             }
+
             return psdzReadEcuUidResultCto;
         }
     }

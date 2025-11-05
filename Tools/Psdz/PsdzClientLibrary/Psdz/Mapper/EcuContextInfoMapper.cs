@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzEcuContextInfo
             {
                 EcuId = EcuIdentifierMapper.Map(ecuContextInfoModel.EcuId),

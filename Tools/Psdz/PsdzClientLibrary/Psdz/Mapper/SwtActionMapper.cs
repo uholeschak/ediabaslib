@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzSwtAction
             {
                 SwtEcus = model.SwtEcus?.Select(SwtEcuMapper.Map)
@@ -23,6 +24,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new SwtActionModel
             {
                 SwtEcus = model.SwtEcus?.Select(SwtEcuMapper.Map).ToList()

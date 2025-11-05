@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzProgrammingTokensResultCto
             {
                 Failures = model.Failures?.Select(EcuFailureResponseCtoMapper.MapCto).ToList(),

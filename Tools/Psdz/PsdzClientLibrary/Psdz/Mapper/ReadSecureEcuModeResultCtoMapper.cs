@@ -6,13 +6,13 @@ namespace BMW.Rheingold.Psdz
     internal static class ReadSecureEcuModeResultCtoMapper
     {
         private static SecureEcuModeEtoMapper _secureEcuModeEtoMapper = new SecureEcuModeEtoMapper();
-
         internal static IPsdzReadSecureEcuModeResultCto Map(ReadSecureEcuModeResultCtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzReadSecureEcuModeResultCto
             {
                 FailureResponse = model.Failures?.Select(EcuFailureResponseCtoMapper.MapCto),

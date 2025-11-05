@@ -5,13 +5,13 @@ namespace BMW.Rheingold.Psdz
     internal static class KdsQuickCheckResultCtoMapper
     {
         private static KdsQuickCheckResultEtoMapper _kdsQuickCheckResultEtoMapper = new KdsQuickCheckResultEtoMapper();
-
         internal static IPsdzKdsQuickCheckResultCto Map(KdsQuickCheckResultCtoModel model)
         {
             if (model == null)
             {
                 return null;
             }
+
             return new PsdzKdsQuickCheckResultCto
             {
                 KdsId = KdsIdCtoMapper.Map(model.KdsId),
@@ -25,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new KdsQuickCheckResultCtoModel
             {
                 KdsId = KdsIdCtoMapper.Map(psdzObject.KdsId),

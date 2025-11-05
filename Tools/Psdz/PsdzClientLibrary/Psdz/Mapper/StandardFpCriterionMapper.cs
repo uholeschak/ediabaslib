@@ -10,6 +10,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzStandardFpCriterion
             {
                 Name = model.Name,
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new StandardFpCriterionModel
             {
                 Name = psdzStandardFpCriterion.Name,

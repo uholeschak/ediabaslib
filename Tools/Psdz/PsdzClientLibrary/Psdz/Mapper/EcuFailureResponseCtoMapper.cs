@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzEcuFailureResponseCto
             {
                 EcuIdentifierCto = EcuIdentifierMapper.Map(model.EcuIdentifierCto),
@@ -24,6 +25,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new PsdzEcuFailureResponse
             {
                 Ecu = EcuIdentifierMapper.Map(model.EcuIdentifierCto),
@@ -37,6 +39,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new EcuFailureResponseCtoModel
             {
                 EcuIdentifierCto = EcuIdentifierMapper.Map(psdzEcuFailureResponseCto.EcuIdentifierCto),
@@ -50,6 +53,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return null;
             }
+
             return new EcuFailureResponseCtoModel
             {
                 EcuIdentifierCto = EcuIdentifierMapper.Map(psdzEcuFailureResponse.Ecu),
