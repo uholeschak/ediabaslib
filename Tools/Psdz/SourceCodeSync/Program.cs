@@ -253,7 +253,7 @@ namespace SourceCodeSync
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
                     string className = GetClassName(cls);
-                    string classSource = cls.ToFullString();
+                    string classSource = cls.NormalizeWhitespace().ToFullString();
                     if (showSource)
                     {
                         Console.WriteLine($"Class: {className}");
