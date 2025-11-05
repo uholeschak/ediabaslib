@@ -15,6 +15,19 @@ namespace SourceCodeSync
         private static Dictionary<string, ClassDeclarationSyntax> _classDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
         private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.Ordinal);
 
+        private static string[] _ignoreClassNames = new string[]
+        {
+            "public_ParameterContainer",
+            "public_Address",
+            "public_Contract",
+            "public_Outlet",
+            "public_Phone",
+            "public_static_LicenseHelper",
+            "internal_sealed_LicenseManager",
+            "public_LicenseStatusChecker",
+            "public_LicenseWizardHelper"
+        };
+
         public class Options
         {
             public Options()
@@ -173,6 +186,11 @@ namespace SourceCodeSync
                         Console.WriteLine("Source:");
                         Console.WriteLine(classSource);
                         Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (_ignoreClassNames.Contains(className))
+                    {
+                        continue;
                     }
 
                     if (_classDict.TryGetValue(className, out ClassDeclarationSyntax oldClassSyntax))
