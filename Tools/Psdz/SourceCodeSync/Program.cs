@@ -227,6 +227,11 @@ namespace SourceCodeSync
                         Console.WriteLine(classSource);
                         Console.WriteLine(new string('-', 80));
                     }
+
+                    if (!_classDict.TryGetValue(className, out ClassDeclarationSyntax sourceClass))
+                    {
+                        Console.WriteLine("*** Warning: Class not found in source files: {0}", className);
+                    }
                 }
 
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
@@ -240,6 +245,11 @@ namespace SourceCodeSync
                         Console.WriteLine("Source:");
                         Console.WriteLine(enumSource);
                         Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (!_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum))
+                    {
+                        Console.WriteLine("*** Warning: Enum not found in source files: {0}", enumName);
                     }
                 }
             }
