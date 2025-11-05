@@ -181,6 +181,7 @@ namespace SourceCodeSync
                         if (oldClassSource != classSource)
                         {
                             Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", className);
+                            _classDict[className] = null;
                         }
                     }
                     else
@@ -212,6 +213,7 @@ namespace SourceCodeSync
                         if (oldEnumSource != enumSource)
                         {
                             Console.WriteLine("*** Warning: Duplicate enum name with different source: {0}", enumName);
+                            _enumDict[enumName] = null;
                         }
                     }
                     else
@@ -264,7 +266,7 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (_classDict.TryGetValue(className, out ClassDeclarationSyntax sourceClass))
+                    if (_classDict.TryGetValue(className, out ClassDeclarationSyntax sourceClass) && sourceClass != null)
                     {
                         // Compare if they're different
                         string classSourceStr = sourceClass.NormalizeWhitespace().ToFullString();
@@ -301,7 +303,7 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum))
+                    if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum) && sourceEnum != null)
                     {
                         // Compare if they're different
                         string sourceEnumStr = sourceEnum.NormalizeWhitespace().ToFullString();
