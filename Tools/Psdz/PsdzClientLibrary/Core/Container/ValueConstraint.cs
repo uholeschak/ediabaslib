@@ -10,20 +10,20 @@ namespace PsdzClient.Core.Container
 {
     [Serializable]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
-    [DataContract(Name = "ValueConstraint")]
     [DesignerCategory("code")]
+    [DataContract(Name = "ValueConstraint")]
     public class ValueConstraint : AConstraint, INotifyPropertyChanged
     {
         private ObservableCollection<ValueLiteral> valuesField;
-
-        [DataMember]
         [XmlArrayItem("Value", IsNullable = false)]
+        [DataMember]
         public ObservableCollection<ValueLiteral> Values
         {
             get
             {
                 return valuesField;
             }
+
             set
             {
                 if (valuesField != null)
@@ -43,7 +43,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

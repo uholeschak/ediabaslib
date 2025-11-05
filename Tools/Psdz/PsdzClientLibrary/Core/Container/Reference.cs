@@ -8,21 +8,21 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [DataContract(Name = "Reference")]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
+    [DataContract(Name = "Reference")]
     public class Reference : ANode, INotifyPropertyChanged
     {
         private string referencedField;
-
-        [DataMember]
         [XmlElement(DataType = "IDREF")]
+        [DataMember]
         public string Referenced
         {
             get
             {
                 return referencedField;
             }
+
             set
             {
                 if (referencedField != null)
@@ -42,7 +42,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

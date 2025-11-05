@@ -8,16 +8,15 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
+    [XmlInclude(typeof(QuantityChoice))]
     [XmlInclude(typeof(MultipleChoice))]
     [XmlInclude(typeof(SingleChoice))]
-    [XmlInclude(typeof(QuantityChoice))]
-    [DataContract(Name = "AChoice")]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
+    [DataContract(Name = "AChoice")]
     public class AChoice : ABranch, INotifyPropertyChanged
     {
         private string defaultChildField;
-
         [XmlAttribute]
         [DataMember]
         public string DefaultChild
@@ -26,6 +25,7 @@ namespace PsdzClient.Core.Container
             {
                 return defaultChildField;
             }
+
             set
             {
                 if (defaultChildField != null)
@@ -45,7 +45,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

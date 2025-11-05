@@ -15,15 +15,15 @@ namespace PsdzClient.Core.Container
     public class RangeConstraint : AConstraint, INotifyPropertyChanged
     {
         private ObservableCollection<Range> rangesField;
-
-        [DataMember]
         [XmlArrayItem(IsNullable = false)]
+        [DataMember]
         public ObservableCollection<Range> Ranges
         {
             get
             {
                 return rangesField;
             }
+
             set
             {
                 if (rangesField != null)
@@ -43,7 +43,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

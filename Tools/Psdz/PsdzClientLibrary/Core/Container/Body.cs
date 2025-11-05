@@ -8,19 +8,15 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [DataContract(Name = "Body")]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
+    [DataContract(Name = "Body")]
     public class Body : INotifyPropertyChanged
     {
         private Database databaseField;
-
         private Configuration configurationField;
-
         private string textDictionaryConatinerFileNameField;
-
         private string textDictionaryNameField;
-
         [DataMember]
         public Database Database
         {
@@ -28,6 +24,7 @@ namespace PsdzClient.Core.Container
             {
                 return databaseField;
             }
+
             set
             {
                 if (databaseField != null)
@@ -53,6 +50,7 @@ namespace PsdzClient.Core.Container
             {
                 return configurationField;
             }
+
             set
             {
                 if (configurationField != null)
@@ -71,14 +69,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
+        [DataMember]
         public string TextDictionaryConatinerFileName
         {
             get
             {
                 return textDictionaryConatinerFileNameField;
             }
+
             set
             {
                 if (textDictionaryConatinerFileNameField != null)
@@ -105,6 +104,7 @@ namespace PsdzClient.Core.Container
             {
                 return textDictionaryNameField;
             }
+
             set
             {
                 if (textDictionaryNameField != null)
@@ -124,7 +124,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

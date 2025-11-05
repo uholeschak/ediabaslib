@@ -9,21 +9,21 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [DataContract(Name = "StepConstraint")]
-    [DesignerCategory("code")]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
+    [DesignerCategory("code")]
+    [DataContract(Name = "StepConstraint")]
     public class StepConstraint : AConstraint, INotifyPropertyChanged
     {
         private ObservableCollection<StepRange> stepRangesField;
-
-        [DataMember]
         [XmlArrayItem(IsNullable = false)]
+        [DataMember]
         public ObservableCollection<StepRange> StepRanges
         {
             get
             {
                 return stepRangesField;
             }
+
             set
             {
                 if (stepRangesField != null)
@@ -43,7 +43,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -13,11 +13,8 @@ namespace PsdzClient.Core.Container
     public class SubDevice : INotifyPropertyChanged
     {
         private string nameField;
-
         private string fullClassNameField;
-
         private NoDeviceBehaviorForHeader noDeviceBehaviorField;
-
         [XmlAttribute]
         [DataMember]
         public string Name
@@ -26,6 +23,7 @@ namespace PsdzClient.Core.Container
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -44,14 +42,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
+        [DataMember]
         public string FullClassName
         {
             get
             {
                 return fullClassNameField;
             }
+
             set
             {
                 if (fullClassNameField != null)
@@ -70,15 +69,16 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
         [DefaultValue(NoDeviceBehaviorForHeader.SystemDefault)]
+        [DataMember]
         public NoDeviceBehaviorForHeader NoDeviceBehavior
         {
             get
             {
                 return noDeviceBehaviorField;
             }
+
             set
             {
                 if (!noDeviceBehaviorField.Equals(value))
@@ -90,7 +90,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public SubDevice()
         {
             noDeviceBehaviorField = NoDeviceBehaviorForHeader.SystemDefault;

@@ -18,26 +18,24 @@ namespace PsdzClient.Core.Container
     }
 
     [Serializable]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
     [DataContract(Name = "Text")]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     public class Text : INotifyPropertyChanged
     {
         private TranslationMode translationModeField;
-
         private string textIdField;
-
         private string valueField;
-
-        [DataMember]
-        [DefaultValue(TranslationMode.None)]
         [XmlAttribute]
+        [DefaultValue(TranslationMode.None)]
+        [DataMember]
         public TranslationMode TranslationMode
         {
             get
             {
                 return translationModeField;
             }
+
             set
             {
                 if (!translationModeField.Equals(value))
@@ -48,14 +46,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
+        [DataMember]
         public string TextId
         {
             get
             {
                 return textIdField;
             }
+
             set
             {
                 if (textIdField != null)
@@ -74,14 +73,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlText]
+        [DataMember]
         public string Value
         {
             get
             {
                 return valueField;
             }
+
             set
             {
                 if (valueField != null)
@@ -101,7 +101,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public Text()
         {
             translationModeField = TranslationMode.None;

@@ -8,22 +8,23 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [DataContract(Name = "Header")]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
+    [DataContract(Name = "Header")]
     public class Header : INotifyPropertyChanged
     {
         private byte[] tagField;
-
         private HeaderVersion versionField;
-
         private HeaderAdapter adapterField;
-
-        [DataMember]
         [XmlElement(DataType = "base64Binary")]
+        [DataMember]
         public byte[] Tag
         {
-            get { return tagField; }
+            get
+            {
+                return tagField;
+            }
+
             set
             {
                 if (tagField != null)
@@ -45,7 +46,11 @@ namespace PsdzClient.Core.Container
         [DataMember]
         public HeaderVersion Version
         {
-            get { return versionField; }
+            get
+            {
+                return versionField;
+            }
+
             set
             {
                 if (versionField != null)
@@ -67,7 +72,11 @@ namespace PsdzClient.Core.Container
         [DataMember]
         public HeaderAdapter Adapter
         {
-            get { return adapterField; }
+            get
+            {
+                return adapterField;
+            }
+
             set
             {
                 if (adapterField != null)
@@ -87,7 +96,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

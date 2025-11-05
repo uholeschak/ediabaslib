@@ -14,14 +14,11 @@ namespace PsdzClient.Core.Container
     public class ValueLiteral : INotifyPropertyChanged
     {
         private object itemField;
-
-        [XmlElement("Double", typeof(double))]
-        [DataMember]
         [XmlElement("Binary", typeof(byte[]), DataType = "base64Binary")]
         [XmlElement("Bool", typeof(bool))]
         [XmlElement("DateTime", typeof(DateTime))]
         [XmlElement("Decimal", typeof(decimal))]
-        [XmlElement("UShort", typeof(ushort))]
+        [XmlElement("Double", typeof(double))]
         [XmlElement("Float", typeof(float))]
         [XmlElement("Int", typeof(int))]
         [XmlElement("Long", typeof(long))]
@@ -31,12 +28,15 @@ namespace PsdzClient.Core.Container
         [XmlElement("UByte", typeof(byte))]
         [XmlElement("UInt", typeof(uint))]
         [XmlElement("ULong", typeof(ulong))]
+        [XmlElement("UShort", typeof(ushort))]
+        [DataMember]
         public object Item
         {
             get
             {
                 return itemField;
             }
+
             set
             {
                 if (itemField != null)
@@ -63,68 +63,82 @@ namespace PsdzClient.Core.Container
                 {
                     return "Binary";
                 }
+
                 if (Item is bool)
                 {
                     return "Bool";
                 }
+
                 if (Item is DateTime)
                 {
                     return "DateTime";
                 }
+
                 if (Item is decimal)
                 {
                     return "Decimal";
                 }
+
                 if (Item is double)
                 {
                     return "Double";
                 }
+
                 if (Item is float)
                 {
                     return "Float";
                 }
+
                 if (Item is int)
                 {
                     return "Int";
                 }
+
                 if (Item is long)
                 {
                     return "Long";
                 }
+
                 if (Item is sbyte)
                 {
                     return "SByte";
                 }
+
                 if (Item is short)
                 {
                     return "Short";
                 }
+
                 if (Item is Text)
                 {
                     return "Text";
                 }
+
                 if (Item is byte)
                 {
                     return "UByte";
                 }
+
                 if (Item is uint)
                 {
                     return "UInt";
                 }
+
                 if (Item is ulong)
                 {
                     return "ULong";
                 }
+
                 if (Item is ushort)
                 {
                     return "UShort";
                 }
+
                 return "unknown";
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -136,6 +150,7 @@ namespace PsdzClient.Core.Container
             {
                 return (T)Item;
             }
+
             return default(T);
         }
     }

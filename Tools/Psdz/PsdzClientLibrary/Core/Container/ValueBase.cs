@@ -10,19 +10,16 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
-    [DataContract(Name = "ValueBase")]
-    [XmlInclude(typeof(MultipleValue))]
     [XmlInclude(typeof(Value))]
+    [XmlInclude(typeof(MultipleValue))]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
+    [DataContract(Name = "ValueBase")]
     public abstract class ValueBase : ANode, INotifyPropertyChanged
     {
         private AConstraint constraintField;
-
         private Unit unitField;
-
         private bool substitutionValueField;
-
         [DataMember]
         public AConstraint Constraint
         {
@@ -30,6 +27,7 @@ namespace PsdzClient.Core.Container
             {
                 return constraintField;
             }
+
             set
             {
                 if (constraintField != null)
@@ -55,6 +53,7 @@ namespace PsdzClient.Core.Container
             {
                 return unitField;
             }
+
             set
             {
                 if (unitField != null)
@@ -73,15 +72,16 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
         [DefaultValue(false)]
+        [DataMember]
         public bool SubstitutionValue
         {
             get
             {
                 return substitutionValueField;
             }
+
             set
             {
                 if (!substitutionValueField.Equals(value))
@@ -93,7 +93,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public ValueBase()
         {
             substitutionValueField = false;

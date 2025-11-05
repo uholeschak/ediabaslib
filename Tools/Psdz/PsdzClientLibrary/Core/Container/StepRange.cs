@@ -7,13 +7,12 @@ using System.Runtime.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [DataContract(Name = "StepRange")]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
+    [DataContract(Name = "StepRange")]
     public class StepRange : Range, INotifyPropertyChanged
     {
         private ValueLiteral stepField;
-
         [DataMember]
         public ValueLiteral Step
         {
@@ -21,6 +20,7 @@ namespace PsdzClient.Core.Container
             {
                 return stepField;
             }
+
             set
             {
                 if (stepField != null)
@@ -40,7 +40,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

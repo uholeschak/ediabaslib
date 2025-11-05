@@ -7,15 +7,13 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
     [DataContract(Name = "ClassReference")]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     public class ClassReference : INotifyPropertyChanged
     {
         private string fullClassNameField;
-
         private string locationField;
-
         [XmlAttribute]
         [DataMember]
         public string FullClassName
@@ -24,6 +22,7 @@ namespace PsdzClient.Core.Container
             {
                 return fullClassNameField;
             }
+
             set
             {
                 if (fullClassNameField != null)
@@ -50,6 +49,7 @@ namespace PsdzClient.Core.Container
             {
                 return locationField;
             }
+
             set
             {
                 if (locationField != null)
@@ -69,7 +69,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

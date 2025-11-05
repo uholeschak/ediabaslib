@@ -10,25 +10,18 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
     [DataContract(Name = "Configuration")]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     public class Configuration : INotifyPropertyChanged
     {
         private ABranch parametrizationField;
-
         private ABranch runField;
-
         private string nameField;
-
         private string originField;
-
         private string relatedConfigurationField;
-
         private long internalNodeIdGeneratorField;
-
         private bool internalNodeIdGeneratorFieldSpecified;
-
         [DataMember]
         public ABranch Parametrization
         {
@@ -36,6 +29,7 @@ namespace PsdzClient.Core.Container
             {
                 return parametrizationField;
             }
+
             set
             {
                 if (parametrizationField != null)
@@ -61,6 +55,7 @@ namespace PsdzClient.Core.Container
             {
                 return runField;
             }
+
             set
             {
                 if (runField != null)
@@ -87,6 +82,7 @@ namespace PsdzClient.Core.Container
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -105,14 +101,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
+        [DataMember]
         public string Origin
         {
             get
             {
                 return originField;
             }
+
             set
             {
                 if (originField != null)
@@ -139,6 +136,7 @@ namespace PsdzClient.Core.Container
             {
                 return relatedConfigurationField;
             }
+
             set
             {
                 if (relatedConfigurationField != null)
@@ -165,6 +163,7 @@ namespace PsdzClient.Core.Container
             {
                 return internalNodeIdGeneratorField;
             }
+
             set
             {
                 if (!internalNodeIdGeneratorField.Equals(value))
@@ -175,14 +174,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlIgnore]
+        [DataMember]
         public bool InternalNodeIdGeneratorSpecified
         {
             get
             {
                 return internalNodeIdGeneratorFieldSpecified;
             }
+
             set
             {
                 if (!internalNodeIdGeneratorFieldSpecified.Equals(value))
@@ -194,7 +194,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
@@ -211,6 +210,7 @@ namespace PsdzClient.Core.Container
             {
                 Log.WarningException("Configuration.Deserialize()", exception);
             }
+
             return null;
         }
     }

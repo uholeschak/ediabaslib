@@ -2,7 +2,7 @@
   "profiles": {
     "SourceCodeSync": {
       "commandName": "Project",
-      "commandLineArgs": "-s \"E:\\ISTA-D-4.56.10\\Source\" -d \"D:\\Projects\\EdiabasLib\\Tools\\Psdz\\PsdzClientLibrary\" -f \"Contracts;\\Mapper;\\Model;\\Service\""
+      "commandLineArgs": "-s \"E:\\ISTA-D-4.56.10\\Source\" -d \"D:\\Projects\\EdiabasLib\\Tools\\Psdz\\PsdzClientLibrary\" -f \"Contracts;\\Mapper;\\Model;\\Service;\\Container\""
     }
   }
 }

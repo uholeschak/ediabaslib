@@ -8,16 +8,14 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
+    [XmlInclude(typeof(StepRange))]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
     [DataContract(Name = "Range")]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
-    [XmlInclude(typeof(StepRange))]
     public class Range : INotifyPropertyChanged
     {
         private ValueLiteral lowerBoundField;
-
         private ValueLiteral upperBoundField;
-
         [DataMember]
         public ValueLiteral LowerBound
         {
@@ -25,6 +23,7 @@ namespace PsdzClient.Core.Container
             {
                 return lowerBoundField;
             }
+
             set
             {
                 if (lowerBoundField != null)
@@ -50,6 +49,7 @@ namespace PsdzClient.Core.Container
             {
                 return upperBoundField;
             }
+
             set
             {
                 if (upperBoundField != null)
@@ -69,11 +69,9 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
-
 }

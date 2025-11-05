@@ -23,9 +23,7 @@ namespace PsdzClient.Core.Container
     public class Executable : All, INotifyPropertyChanged
     {
         private ABranch resultField;
-
         private NoDeviceBehaviorForBody noDeviceBehaviorField;
-
         [DataMember]
         public ABranch Result
         {
@@ -33,6 +31,7 @@ namespace PsdzClient.Core.Container
             {
                 return resultField;
             }
+
             set
             {
                 if (resultField != null)
@@ -51,15 +50,16 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
         [DefaultValue(NoDeviceBehaviorForBody.SystemDefault)]
+        [DataMember]
         public NoDeviceBehaviorForBody NoDeviceBehavior
         {
             get
             {
                 return noDeviceBehaviorField;
             }
+
             set
             {
                 if (!noDeviceBehaviorField.Equals(value))
@@ -71,7 +71,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public Executable()
         {
             noDeviceBehaviorField = NoDeviceBehaviorForBody.SystemDefault;

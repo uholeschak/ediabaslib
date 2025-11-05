@@ -21,32 +21,28 @@ namespace PsdzClient.Core.Container
     }
 
     [Serializable]
-    [DesignerCategory("code")]
-    [DataContract(Name = "ConfigurationContainer")]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
+    [DesignerCategory("code")]
     [XmlRoot(Namespace = "", IsNullable = false)]
+    [DataContract(Name = "ConfigurationContainer")]
     public class ConfigurationContainer : INotifyPropertyChanged
     {
         private Header headerField;
-
         private Body bodyField;
-
         private string nameField;
-
         private CompressionMethod compressionField;
-
         private long majorVersionField;
-
         private long minorVersionField;
-
         private ParameterContainer parametrizationOverrides = new ParameterContainer();
-
         private ParameterContainer runOverrides = new ParameterContainer();
-
         [DataMember]
         public Header Header
         {
-            get { return headerField; }
+            get
+            {
+                return headerField;
+            }
+
             set
             {
                 if (headerField != null)
@@ -68,7 +64,11 @@ namespace PsdzClient.Core.Container
         [DataMember]
         public Body Body
         {
-            get { return bodyField; }
+            get
+            {
+                return bodyField;
+            }
+
             set
             {
                 if (bodyField != null)
@@ -87,11 +87,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
+        [DataMember]
         public string Name
         {
-            get { return nameField; }
+            get
+            {
+                return nameField;
+            }
+
             set
             {
                 if (nameField != null)
@@ -110,12 +114,16 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
         [DefaultValue(CompressionMethod.Undefined)]
+        [DataMember]
         public CompressionMethod Compression
         {
-            get { return compressionField; }
+            get
+            {
+                return compressionField;
+            }
+
             set
             {
                 if (!compressionField.Equals(value))
@@ -130,7 +138,11 @@ namespace PsdzClient.Core.Container
         [DataMember]
         public long MajorVersion
         {
-            get { return majorVersionField; }
+            get
+            {
+                return majorVersionField;
+            }
+
             set
             {
                 if (!majorVersionField.Equals(value))
@@ -141,11 +153,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
+        [DataMember]
         public long MinorVersion
         {
-            get { return minorVersionField; }
+            get
+            {
+                return minorVersionField;
+            }
+
             set
             {
                 if (!minorVersionField.Equals(value))
@@ -157,11 +173,9 @@ namespace PsdzClient.Core.Container
         }
 
         public ParameterContainer ParametrizationOverrides => parametrizationOverrides;
-
         public ParameterContainer RunOverrides => runOverrides;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public ConfigurationContainer()
         {
             compressionField = CompressionMethod.Undefined;
@@ -179,8 +193,7 @@ namespace PsdzClient.Core.Container
             try
             {
                 StringReader input = new StringReader(configurationContainer);
-                return (ConfigurationContainer)new XmlSerializer(typeof(ConfigurationContainer)).Deserialize(
-                    XmlReader.Create(input));
+                return (ConfigurationContainer)new XmlSerializer(typeof(ConfigurationContainer)).Deserialize(XmlReader.Create(input));
             }
             catch (Exception exception)
             {

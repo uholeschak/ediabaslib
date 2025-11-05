@@ -15,15 +15,15 @@ namespace PsdzClient.Core.Container
     public class MultipleValue : ValueBase, INotifyPropertyChanged
     {
         private ObservableCollection<ValueLiteral> literalsField;
-
-        [DataMember]
         [XmlArrayItem("Value", IsNullable = false)]
+        [DataMember]
         public ObservableCollection<ValueLiteral> Literals
         {
             get
             {
                 return literalsField;
             }
+
             set
             {
                 if (literalsField != null)
@@ -43,7 +43,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

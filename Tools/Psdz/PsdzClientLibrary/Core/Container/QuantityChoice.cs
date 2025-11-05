@@ -8,26 +8,26 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [DataContract(Name = "QuantityChoice")]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
+    [DataContract(Name = "QuantityChoice")]
     public class QuantityChoice : AChoice, INotifyPropertyChanged
     {
         private uint minimumField;
-
         private uint maximumField;
-
-        [DataMember]
         [XmlAttribute]
         [DefaultValue(typeof(uint), "1")]
+        [DataMember]
         public uint Minimum
         {
             get
             {
                 return minimumField;
             }
+
             set
             {
+                _ = minimumField;
                 if (!minimumField.Equals(value))
                 {
                     minimumField = value;
@@ -36,16 +36,18 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
+        [DataMember]
         public uint Maximum
         {
             get
             {
                 return maximumField;
             }
+
             set
             {
+                _ = maximumField;
                 if (!maximumField.Equals(value))
                 {
                     maximumField = value;
@@ -55,7 +57,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public QuantityChoice()
         {
             minimumField = 1u;

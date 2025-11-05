@@ -7,13 +7,12 @@ using System.Runtime.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
     [DataContract(Name = "Value")]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     public class Value : ValueBase, INotifyPropertyChanged
     {
         private ValueLiteral literalField;
-
         [DataMember]
         public ValueLiteral Literal
         {
@@ -21,6 +20,7 @@ namespace PsdzClient.Core.Container
             {
                 return literalField;
             }
+
             set
             {
                 if (literalField != null)
@@ -40,7 +40,6 @@ namespace PsdzClient.Core.Container
         }
 
         public new event PropertyChangedEventHandler PropertyChanged;
-
         public new virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

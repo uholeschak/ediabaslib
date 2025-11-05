@@ -9,15 +9,13 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
     [DataContract(Name = "Database")]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     public class Database : INotifyPropertyChanged
     {
         private ObservableCollection<ANode> referencedNodesField;
-
         private string nameField;
-
         [XmlArrayItem("Node", IsNullable = false)]
         [DataMember]
         public ObservableCollection<ANode> ReferencedNodes
@@ -26,6 +24,7 @@ namespace PsdzClient.Core.Container
             {
                 return referencedNodesField;
             }
+
             set
             {
                 if (referencedNodesField != null)
@@ -44,15 +43,16 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
-        [DefaultValue("Database")]
         [XmlAttribute]
+        [DefaultValue("Database")]
+        [DataMember]
         public string Name
         {
             get
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -72,7 +72,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public Database()
         {
             nameField = "Database";

@@ -22,13 +22,9 @@ namespace PsdzClient.Core.Container
     public class Adapter : INotifyPropertyChanged
     {
         private ClassReference classReferenceField;
-
         private ObservableCollection<SubDeviceCollectionSubDevice> subDeviceCollectionField;
-
         private string nameField;
-
         private NoDeviceBehaviorForHeader noDeviceBehaviorField;
-
         [DataMember]
         public ClassReference ClassReference
         {
@@ -36,6 +32,7 @@ namespace PsdzClient.Core.Container
             {
                 return classReferenceField;
             }
+
             set
             {
                 if (classReferenceField != null)
@@ -54,14 +51,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlArrayItem("SubDevice", IsNullable = false)]
+        [DataMember]
         public ObservableCollection<SubDeviceCollectionSubDevice> SubDeviceCollection
         {
             get
             {
                 return subDeviceCollectionField;
             }
+
             set
             {
                 if (subDeviceCollectionField != null)
@@ -80,14 +78,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
+        [DataMember]
         public string Name
         {
             get
             {
                 return nameField;
             }
+
             set
             {
                 if (nameField != null)
@@ -106,15 +105,16 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [DataMember]
         [XmlAttribute]
         [DefaultValue(NoDeviceBehaviorForHeader.SystemDefault)]
+        [DataMember]
         public NoDeviceBehaviorForHeader NoDeviceBehavior
         {
             get
             {
                 return noDeviceBehaviorField;
             }
+
             set
             {
                 if (!noDeviceBehaviorField.Equals(value))
@@ -126,7 +126,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public Adapter()
         {
             noDeviceBehaviorField = NoDeviceBehaviorForHeader.SystemDefault;

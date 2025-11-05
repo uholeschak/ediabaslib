@@ -7,15 +7,13 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
+    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
     [DataContract(Name = "HeaderVersion")]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     public class HeaderVersion : INotifyPropertyChanged
     {
         private long majorField;
-
         private long minorField;
-
         [XmlAttribute]
         [DataMember]
         public long Major
@@ -24,6 +22,7 @@ namespace PsdzClient.Core.Container
             {
                 return majorField;
             }
+
             set
             {
                 if (!majorField.Equals(value))
@@ -42,6 +41,7 @@ namespace PsdzClient.Core.Container
             {
                 return minorField;
             }
+
             set
             {
                 if (!minorField.Equals(value))
@@ -53,7 +53,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public virtual void OnPropertyChanged(string propertyName)
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
