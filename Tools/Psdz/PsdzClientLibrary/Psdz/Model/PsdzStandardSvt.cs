@@ -6,6 +6,7 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz
 {
+    // [UH] keep attributes for compatibility with existing serialized data
     [DataContract]
     [KnownType(typeof(PsdzEcu))]
     [KnownType(typeof(PsdzSmartActuatorMasterEcu))]
