@@ -213,9 +213,16 @@ namespace SourceCodeSync
             try
             {
                 string fileContent = File.ReadAllText(fileName);
+                if (fileContent.Contains("//", StringComparison.Ordinal) ||
+                    fileContent.Contains("[UH]", StringComparison.Ordinal))
+                {
+                    Console.WriteLine("Skipping manually modified file: {0}", fileName);
+                    return true;
+                }
+
                 SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
                 CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot();
-    
+
                 bool fileModified = false;
                 CompilationUnitSyntax newRoot = root;
 
