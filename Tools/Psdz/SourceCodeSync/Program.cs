@@ -174,9 +174,20 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (!_classDict.TryAdd(className, cls))
+                    if (_classDict.TryGetValue(className, out ClassDeclarationSyntax oldClassSyntax))
                     {
-                        Console.WriteLine("*** Warning: Duplicate class name found: {0}", className);
+                        string oldClassSource = oldClassSyntax.ToFullString();
+                        if (oldClassSource != classSource)
+                        {
+                            Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", className);
+                        }
+                    }
+                    else
+                    {
+                        if (!_classDict.TryAdd(className, cls))
+                        {
+                            Console.WriteLine("*** Warning: Add class failed: {0}", className);
+                        }
                     }
                 }
 
