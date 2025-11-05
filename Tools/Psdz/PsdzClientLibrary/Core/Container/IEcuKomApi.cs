@@ -2,7 +2,6 @@
 
 namespace PsdzClient.Core.Container
 {
-    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuKomApi
     {

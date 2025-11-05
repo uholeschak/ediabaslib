@@ -236,8 +236,9 @@ namespace SourceCodeSync
             try
             {
                 string fileContent = File.ReadAllText(fileName);
-                if ((fileContent.Contains("//", StringComparison.Ordinal) && !fileContent.StartsWith("//", StringComparison.Ordinal)) ||
-                    fileContent.Contains("[UH]", StringComparison.Ordinal))
+                string fileContentTrimmed = fileContent.TrimStart('/');
+                if (fileContentTrimmed.Contains("// ", StringComparison.Ordinal) ||
+                    fileContentTrimmed.Contains("[UH]", StringComparison.Ordinal))
                 {
                     Console.WriteLine("Skipping manually modified file: {0}", fileName);
                     return true;
