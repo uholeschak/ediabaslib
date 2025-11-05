@@ -22,6 +22,8 @@ namespace SourceCodeSync
             "public_Contract",
             "public_Outlet",
             "public_Phone",
+            "public_Contact",
+            "public_Property",
             "public_static_LicenseHelper",
             "internal_sealed_LicenseManager",
             "public_LicenseStatusChecker",
