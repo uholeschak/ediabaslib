@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -10,6 +11,9 @@ namespace SourceCodeSync
 {
     internal class Program
     {
+        private static Dictionary<string, ClassDeclarationSyntax> _classDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.OrdinalIgnoreCase);
+        private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.OrdinalIgnoreCase);
+
         public class Options
         {
             public Options()
@@ -90,8 +94,23 @@ namespace SourceCodeSync
                     filterParts = filter.Split(';');
                 }
 
-                string[] files = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
-                foreach (string file in files)
+                Console.WriteLine("Source dir: {0}", sourceDir);
+                Console.WriteLine();
+
+                string[] sourceFiles = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
+                foreach (string file in sourceFiles)
+                {
+                    if (!GetFileSource(file, showSource))
+                    {
+                        Console.WriteLine("*** Get file source failed: {0}", file);
+                    }
+                }
+
+                Console.WriteLine("Dest dir: {0}", destDir);
+                Console.WriteLine();
+
+                string[] destFiles = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
+                foreach (string file in destFiles)
                 {
                     string relPath = GetRelativePath(destDir, file);
                     if (string.IsNullOrEmpty(relPath))
@@ -132,6 +151,62 @@ namespace SourceCodeSync
             return 0;
         }
 
+        public static bool GetFileSource(string fileName, bool showSource)
+        {
+            try
+            {
+                string fileContent = File.ReadAllText(fileName);
+                SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
+                SyntaxNode root = syntaxTree.GetCompilationUnitRoot();
+
+                var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
+                foreach (ClassDeclarationSyntax cls in classes)
+                {
+                    string className = cls.Identifier.ValueText;
+                    string classSource = cls.ToFullString();
+
+                    Console.WriteLine($"Class: {className}");
+                    if (showSource)
+                    {
+                        Console.WriteLine("Source:");
+                        Console.WriteLine(classSource);
+                        Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (!_classDict.TryAdd(className, cls))
+                    {
+                        Console.WriteLine("*** Warning: Duplicate class name found: {0}", className);
+                    }
+                }
+
+                var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
+                foreach (EnumDeclarationSyntax enumDecl in enums)
+                {
+                    string enumName = enumDecl.Identifier.ValueText;
+                    string enumSource = enumDecl.ToFullString();
+
+                    Console.WriteLine($"Enum: {enumName}");
+                    if (showSource)
+                    {
+                        Console.WriteLine("Source:");
+                        Console.WriteLine(enumSource);
+                        Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (!_enumDict.TryAdd(enumName, enumDecl))
+                    {
+                        Console.WriteLine("*** Warning: Duplicate enum name found: {0}", enumName);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("*** Error parsing file: {0}, Exception {1}", fileName, e.Message);
+                return false;
+            }
+            return true;
+        }
+
         public static bool UpdateFile(string fileName, bool showSource)
         {
             try
@@ -141,7 +216,7 @@ namespace SourceCodeSync
                 SyntaxNode root = syntaxTree.GetCompilationUnitRoot();
 
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
-                foreach (var cls in classes)
+                foreach (ClassDeclarationSyntax cls in classes)
                 {
                     string className = cls.Identifier.ValueText;
                     string classSource = cls.ToFullString();
@@ -155,7 +230,7 @@ namespace SourceCodeSync
                 }
 
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
-                foreach (var enumDecl in enums)
+                foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
                     string enumName = enumDecl.Identifier.ValueText;
                     string enumSource = enumDecl.ToFullString();
