@@ -15,8 +15,8 @@ namespace SourceCodeSync
         private static Dictionary<string, ClassDeclarationSyntax> _classDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
         private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.Ordinal);
 
-        private static string[] _ignoreClassNames = new string[]
-        {
+        private static readonly string[] _ignoreClassNames =
+        [
             "public_ParameterContainer",
             "public_Address",
             "public_Contract",
@@ -26,7 +26,14 @@ namespace SourceCodeSync
             "internal_sealed_LicenseManager",
             "public_LicenseStatusChecker",
             "public_LicenseWizardHelper"
-        };
+        ];
+
+        private static readonly string[] _ignoreEnumNames =
+        [
+            "public_Brand",
+            "public_BusinessLine",
+            "public_Product"
+        ];
 
         public class Options
         {
@@ -223,6 +230,11 @@ namespace SourceCodeSync
                         Console.WriteLine("Source:");
                         Console.WriteLine(enumSource);
                         Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (_ignoreEnumNames.Contains(enumName))
+                    {
+                        continue;
                     }
 
                     if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax oldEnumSyntax))
