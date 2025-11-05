@@ -7,171 +7,190 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	public class SALAPALocalizedEntry : INotifyPropertyChanged, ISalapaLocalizedEntry
-	{
-		public SALAPALocalizedEntry()
-		{
-			this.fAHRZEUGARTField = "0";
-			this.indexField = 0U;
-			this.vERTRIEBSSCHLUESSELField = "0000";
-			this.iSO_SPRACHEField = "0";
-			this.bENENNUNGField = "0";
-		}
+    public class SALAPALocalizedEntry : INotifyPropertyChanged, ISalapaLocalizedEntry
+    {
+        private string fAHRZEUGARTField;
+        private uint indexField;
+        private string vERTRIEBSSCHLUESSELField;
+        private string iSO_SPRACHEField;
+        private string bENENNUNGField;
+        public string FAHRZEUGART
+        {
+            get
+            {
+                return fAHRZEUGARTField;
+            }
 
-		public string FAHRZEUGART
-		{
-			get
-			{
-				return this.fAHRZEUGARTField;
-			}
-			set
-			{
-				if (this.fAHRZEUGARTField != null)
-				{
-					if (!this.fAHRZEUGARTField.Equals(value))
-					{
-						this.fAHRZEUGARTField = value;
-						this.OnPropertyChanged("FAHRZEUGART");
-						return;
-					}
-				}
-				else
-				{
-					this.fAHRZEUGARTField = value;
-					this.OnPropertyChanged("FAHRZEUGART");
-				}
-			}
-		}
+            set
+            {
+                if (fAHRZEUGARTField != null)
+                {
+                    if (!fAHRZEUGARTField.Equals(value))
+                    {
+                        fAHRZEUGARTField = value;
+                        OnPropertyChanged("FAHRZEUGART");
+                    }
+                }
+                else
+                {
+                    fAHRZEUGARTField = value;
+                    OnPropertyChanged("FAHRZEUGART");
+                }
+            }
+        }
 
-		public uint Index
-		{
-			get
-			{
-				return this.indexField;
-			}
-			set
-			{
-				if (!this.indexField.Equals(value))
-				{
-					this.indexField = value;
-					this.OnPropertyChanged("Index");
-				}
-			}
-		}
+        public uint Index
+        {
+            get
+            {
+                return indexField;
+            }
 
-		public string VERTRIEBSSCHLUESSEL
-		{
-			get
-			{
-				return this.vERTRIEBSSCHLUESSELField;
-			}
-			set
-			{
-				if (this.vERTRIEBSSCHLUESSELField != null)
-				{
-					if (!this.vERTRIEBSSCHLUESSELField.Equals(value))
-					{
-						this.vERTRIEBSSCHLUESSELField = value;
-						this.OnPropertyChanged("VERTRIEBSSCHLUESSEL");
-						return;
-					}
-				}
-				else
-				{
-					this.vERTRIEBSSCHLUESSELField = value;
-					this.OnPropertyChanged("VERTRIEBSSCHLUESSEL");
-				}
-			}
-		}
+            set
+            {
+                _ = indexField;
+                if (!indexField.Equals(value))
+                {
+                    indexField = value;
+                    OnPropertyChanged("Index");
+                }
+            }
+        }
 
-		public string ISO_SPRACHE
-		{
-			get
-			{
-				return this.iSO_SPRACHEField;
-			}
-			set
-			{
-				if (this.iSO_SPRACHEField != null)
-				{
-					if (!this.iSO_SPRACHEField.Equals(value))
-					{
-						this.iSO_SPRACHEField = value;
-						this.OnPropertyChanged("ISO_SPRACHE");
-						return;
-					}
-				}
-				else
-				{
-					this.iSO_SPRACHEField = value;
-					this.OnPropertyChanged("ISO_SPRACHE");
-				}
-			}
-		}
+        public string VERTRIEBSSCHLUESSEL
+        {
+            get
+            {
+                return vERTRIEBSSCHLUESSELField;
+            }
 
-		public string BENENNUNG
-		{
-			get
-			{
-				return this.bENENNUNGField;
-			}
-			set
-			{
-				if (this.bENENNUNGField != null)
-				{
-					if (!this.bENENNUNGField.Equals(value))
-					{
-						this.bENENNUNGField = value;
-						this.OnPropertyChanged("BENENNUNG");
-						return;
-					}
-				}
-				else
-				{
-					this.bENENNUNGField = value;
-					this.OnPropertyChanged("BENENNUNG");
-				}
-			}
-		}
+            set
+            {
+                if (vERTRIEBSSCHLUESSELField != null)
+                {
+                    if (!vERTRIEBSSCHLUESSELField.Equals(value))
+                    {
+                        vERTRIEBSSCHLUESSELField = value;
+                        OnPropertyChanged("VERTRIEBSSCHLUESSEL");
+                    }
+                }
+                else
+                {
+                    vERTRIEBSSCHLUESSELField = value;
+                    OnPropertyChanged("VERTRIEBSSCHLUESSEL");
+                }
+            }
+        }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public string ISO_SPRACHE
+        {
+            get
+            {
+                return iSO_SPRACHEField;
+            }
 
-		public virtual void OnPropertyChanged(string propertyName)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged != null)
-			{
-				propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+            set
+            {
+                if (iSO_SPRACHEField != null)
+                {
+                    if (!iSO_SPRACHEField.Equals(value))
+                    {
+                        iSO_SPRACHEField = value;
+                        OnPropertyChanged("ISO_SPRACHE");
+                    }
+                }
+                else
+                {
+                    iSO_SPRACHEField = value;
+                    OnPropertyChanged("ISO_SPRACHE");
+                }
+            }
+        }
 
-		public override bool Equals(object obj)
-		{
-			if (obj == null)
-			{
-				return false;
-			}
-			if (!(obj is SALAPALocalizedEntry))
-			{
-				return false;
-			}
-			SALAPALocalizedEntry salapalocalizedEntry = (SALAPALocalizedEntry)obj;
-			return this.Index == salapalocalizedEntry.Index && string.Compare(this.BENENNUNG, salapalocalizedEntry.BENENNUNG, StringComparison.OrdinalIgnoreCase) == 0 && string.Compare(this.FAHRZEUGART, salapalocalizedEntry.FAHRZEUGART, StringComparison.OrdinalIgnoreCase) == 0 && string.Compare(this.ISO_SPRACHE, salapalocalizedEntry.ISO_SPRACHE, StringComparison.OrdinalIgnoreCase) == 0 && string.Compare(this.VERTRIEBSSCHLUESSEL, salapalocalizedEntry.VERTRIEBSSCHLUESSEL, StringComparison.OrdinalIgnoreCase) == 0;
-		}
+        public string BENENNUNG
+        {
+            get
+            {
+                return bENENNUNGField;
+            }
 
-		public override int GetHashCode()
-		{
-			return this.Index.GetHashCode();
-		}
+            set
+            {
+                if (bENENNUNGField != null)
+                {
+                    if (!bENENNUNGField.Equals(value))
+                    {
+                        bENENNUNGField = value;
+                        OnPropertyChanged("BENENNUNG");
+                    }
+                }
+                else
+                {
+                    bENENNUNGField = value;
+                    OnPropertyChanged("BENENNUNG");
+                }
+            }
+        }
 
-		private string fAHRZEUGARTField;
+        public event PropertyChangedEventHandler PropertyChanged;
+        public SALAPALocalizedEntry()
+        {
+            fAHRZEUGARTField = "0";
+            indexField = 0u;
+            vERTRIEBSSCHLUESSELField = "0000";
+            iSO_SPRACHEField = "0";
+            bENENNUNGField = "0";
+        }
 
-		private uint indexField;
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
-		private string vERTRIEBSSCHLUESSELField;
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
 
-		private string iSO_SPRACHEField;
+            if (!(obj is SALAPALocalizedEntry))
+            {
+                return false;
+            }
 
-		private string bENENNUNGField;
-	}
+            SALAPALocalizedEntry sALAPALocalizedEntry = (SALAPALocalizedEntry)obj;
+            if (Index != sALAPALocalizedEntry.Index)
+            {
+                return false;
+            }
+
+            if (string.Compare(BENENNUNG, sALAPALocalizedEntry.BENENNUNG, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                return false;
+            }
+
+            if (string.Compare(FAHRZEUGART, sALAPALocalizedEntry.FAHRZEUGART, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                return false;
+            }
+
+            if (string.Compare(ISO_SPRACHE, sALAPALocalizedEntry.ISO_SPRACHE, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                return false;
+            }
+
+            if (string.Compare(VERTRIEBSSCHLUESSEL, sALAPALocalizedEntry.VERTRIEBSSCHLUESSEL, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return Index.GetHashCode();
+        }
+    }
 }

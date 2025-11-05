@@ -26,6 +26,7 @@ namespace PsdzClient.Core
     public class Reactor : ReactorEngine
     {
         //private static Reactor singleton;
+        // [UH] removed
 #if false
         public static Reactor Instance
         {
@@ -43,6 +44,7 @@ namespace PsdzClient.Core
             : base(reactorVehicle, logger, dataHolder)
         {
         }
+        // [UH] removed
 #if false
         public static void Initialize(IReactorVehicle reactorVehicle, ILogger logger, DataHolder dataHolder = null)
         {

@@ -13,10 +13,11 @@ namespace PsdzClient.Core
 		public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant)
 		{
 			this.ecuVariant = ecuVariant;
-			//this.children = new ISPELocator[0];
-		}
+            // [UH] removed
+            //this.children = new ISPELocator[0];
+        }
 
-		public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
 		{
 			PsdzDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
 			if (ecuVariantByName != null)
@@ -40,6 +41,7 @@ namespace PsdzClient.Core
 			//this.children = new ISPELocator[0];
 			this.ffmResolver = ffmResolver;
 		}
+        // [UH] removed
 #if false
 		public ISPELocator[] Children
 		{
@@ -62,7 +64,7 @@ namespace PsdzClient.Core
 			}
 		}
 #endif
-		public string Id
+        public string Id
 		{
 			get
 			{
@@ -257,6 +259,8 @@ namespace PsdzClient.Core
 		{
 			return this.parents;
 		}
+
+        // [UH] removed
 #if false
 		public ISPELocator[] GetOutgoingLinks()
 		{
@@ -383,9 +387,10 @@ namespace PsdzClient.Core
 
         private readonly PsdzDatabase.EcuVar ecuVariant;
 
-		//private readonly ISPELocator[] children;
+        // [UH] removed
+        //private readonly ISPELocator[] children;
 
-		private ISPELocator[] parents;
+        private ISPELocator[] parents;
 
 		private readonly Vehicle vecInfo;
 

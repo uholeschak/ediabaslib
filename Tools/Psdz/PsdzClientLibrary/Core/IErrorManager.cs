@@ -82,6 +82,7 @@ namespace PsdzClient.Core
         SEM00010,
         SEM00011,
         SEM00012,
+        SEM00013,
         USR00000,
         SCB00000,
         SCB00001,
@@ -102,27 +103,24 @@ namespace PsdzClient.Core
         SWI00002,
         SWI00003,
         SWI20001,
-        KDS00001
+        KDS00001,
+        SDP00000,
+        SDP00001,
+        SDP00002,
+        SDP00003,
+        SDP00004
     }
 
     public interface IErrorManager
     {
         BoolResultObject GetBoolResultObject(ErrorCode code, ContextError contextError, params string[] descriptionParams);
-
         BoolResultObject GetBoolResultObjectAndLogError(string methodName, ErrorCode code, ContextError contextError, params string[] descriptionParams);
-
         BoolResultObject GetBoolResultObjectAndLogException(string methodName, ErrorCode code, ContextError contextError, Exception ex);
-
         BoolResultObject GetBoolResultObjectAndLogException(string methodName, ErrorCode code, ContextError contextError, Exception ex, params string[] descriptionParams);
-
         BoolResultObject GetBoolResultObjectAndLogWarning(string methodName, ErrorCode code, ContextError contextError, params string[] descriptionParams);
-
         IError GetError(ErrorCode code, ContextError context, params string[] descriptionParams);
-
         IBoolResultObject GetErrorValidationBoolResultWithLoopingMessage(bool result, ErrorCode code, string messageSeparator, ContextError contextError, params string[][] descriptionParams);
-
         IError GetErrorWithLoopingMessage(ErrorCode code, ContextError context, string messageSeparator, params string[][] descriptionParams);
-
         Dictionary<ContextError, IBoolResultObject> getLastErrorContext();
     }
 }

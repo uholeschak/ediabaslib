@@ -16,6 +16,7 @@ namespace PsdzClient.Core
         {
             try
             {
+                // [UH] removed
 #if false
                 if (!PingBMWConnectionCheck() && !PingBMWConnectionCheck(isFallback: true))
                 {
@@ -59,6 +60,7 @@ namespace PsdzClient.Core
             return PingGoogleDNSToCheckForInternetConnection();
         }
 
+        // [UH] removed
 #if false
         private static bool CheckTricResult()
         {
@@ -126,6 +128,7 @@ namespace PsdzClient.Core
             return flag;
         }
 
+        // [UH] removed
 #if false
         private static bool PingBMWConnectionCheck(bool isFallback = false)
         {

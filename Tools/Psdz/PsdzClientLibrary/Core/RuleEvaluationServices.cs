@@ -11,6 +11,7 @@ namespace PsdzClient.Core
 
         public RuleEvaluationServices(Vehicle vec)
         {
+            // [UH] Using ClientContext
             this.Vec = vec;
             ConfigSettings = new ConfigSettingsRuleEvaluation(ClientContext.GetBrand(vec));
         }

@@ -11,6 +11,7 @@ namespace PsdzClient.Core
 {
     public class ObservableCollectionEx<T> : ObservableCollection<T>
     {
+        public override event NotifyCollectionChangedEventHandler CollectionChanged;
         public ObservableCollectionEx()
         {
         }
@@ -23,40 +24,37 @@ namespace PsdzClient.Core
         {
         }
 
-        public override event NotifyCollectionChangedEventHandler CollectionChanged;
-
         public void AddAsSingleObject(T item)
         {
-            if (base.Contains(item))
+            if (!Contains(item))
             {
-                return;
+                Add(item);
             }
-            base.Add(item);
         }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
             try
             {
-                using (base.BlockReentrancy())
+                using (BlockReentrancy())
                 {
-                    NotifyCollectionChangedEventHandler collectionChanged = this.CollectionChanged;
-                    if (collectionChanged != null)
+                    NotifyCollectionChangedEventHandler notifyCollectionChangedEventHandler = CollectionChanged;
+                    if (notifyCollectionChangedEventHandler == null)
                     {
-                        foreach (NotifyCollectionChangedEventHandler notifyCollectionChangedEventHandler in collectionChanged.GetInvocationList())
+                        return;
+                    }
+
+                    Delegate[] invocationList = notifyCollectionChangedEventHandler.GetInvocationList();
+                    for (int i = 0; i < invocationList.Length; i++)
+                    {
+                        NotifyCollectionChangedEventHandler notifyCollectionChangedEventHandler2 = (NotifyCollectionChangedEventHandler)invocationList[i];
+                        if (notifyCollectionChangedEventHandler2.Target is DispatcherObject dispatcherObject && !dispatcherObject.CheckAccess())
                         {
-                            DispatcherObject dispatcherObject = notifyCollectionChangedEventHandler.Target as DispatcherObject;
-                            if (dispatcherObject != null && !dispatcherObject.CheckAccess())
-                            {
-                                dispatcherObject.Dispatcher.Invoke(DispatcherPriority.DataBind, notifyCollectionChangedEventHandler, this, new object[]
-                                {
-                                    e
-                                });
-                            }
-                            else
-                            {
-                                notifyCollectionChangedEventHandler(this, e);
-                            }
+                            dispatcherObject.Dispatcher.Invoke(DispatcherPriority.DataBind, notifyCollectionChangedEventHandler2, this, e);
+                        }
+                        else
+                        {
+                            notifyCollectionChangedEventHandler2(this, e);
                         }
                     }
                 }

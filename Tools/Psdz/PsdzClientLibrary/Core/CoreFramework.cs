@@ -6,11 +6,8 @@ namespace PsdzClient.Core
     public sealed class CoreFramework
     {
         private static bool ValidLicense;
-
         private static readonly DateTime? lastCompileTime;
-
         private static int debuglevel;
-
         public static string AssemblyVersion
         {
             get
@@ -27,7 +24,27 @@ namespace PsdzClient.Core
                 {
                     Log.WarningException("CoreFramework.get_AssemblyVersion()", exception);
                 }
+
                 return null;
+            }
+        }
+
+        public static string AssemblyVersionWithoutRevision
+        {
+            get
+            {
+                string assemblyVersion = AssemblyVersion;
+                if (string.IsNullOrWhiteSpace(assemblyVersion))
+                {
+                    return assemblyVersion;
+                }
+
+                if (assemblyVersion.Split('.').Length > 3)
+                {
+                    return assemblyVersion.Substring(0, assemblyVersion.LastIndexOf('.'));
+                }
+
+                return assemblyVersion;
             }
         }
 
@@ -39,6 +56,7 @@ namespace PsdzClient.Core
                 {
                     return DateTime.MinValue;
                 }
+
                 return lastCompileTime.Value;
             }
         }
@@ -49,6 +67,7 @@ namespace PsdzClient.Core
             {
                 return debuglevel;
             }
+
             set
             {
                 debuglevel = value;
@@ -61,6 +80,7 @@ namespace PsdzClient.Core
             {
                 return ValidLicense;
             }
+
             set
             {
                 ValidLicense = value;
@@ -68,12 +88,12 @@ namespace PsdzClient.Core
         }
 
         public static bool OSSModeActive => ConfigSettings.IsOssModeActive;
-
         public static bool IsLightModeActive => ConfigSettings.IsLightModeActive;
 
         static CoreFramework()
         {
             Log.Info("CoreFramework.CoreFramework()", "ctor called.");
+            // [UH] modified
             validLicense = true;
             lastCompileTime = null;
             debuglevel = ConfigSettings.getConfigint("DebugLevel", 0);

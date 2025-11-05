@@ -10,15 +10,10 @@ namespace PsdzClient.Core
     public class FormatedData : BaseFormatedData
     {
         private static Translator translator;
-
         private bool useTranslatedValuesAsOnePlaceHolder;
-
         private string seperatorForValuesAsOnPlacholder;
-
         private object[] values;
-
         private string fmtStrIdModuleName = "ISTAGui";
-
         [XmlIgnore]
         public object[] Values
         {
@@ -26,6 +21,7 @@ namespace PsdzClient.Core
             {
                 return values;
             }
+
             set
             {
                 if (value != values)
@@ -43,6 +39,7 @@ namespace PsdzClient.Core
             {
                 return base.translateValues;
             }
+
             set
             {
                 base.translateValues = value;
@@ -56,6 +53,7 @@ namespace PsdzClient.Core
             {
                 return fmtStrIdModuleName;
             }
+
             set
             {
                 fmtStrIdModuleName = value;
@@ -67,8 +65,7 @@ namespace PsdzClient.Core
             values = new object[0];
         }
 
-        public FormatedData(string fmtStrId, params object[] values)
-            : this(fmtStrId, translateValues: false, values)
+        public FormatedData(string fmtStrId, params object[] values) : this(fmtStrId, translateValues: false, values)
         {
         }
 
@@ -79,8 +76,7 @@ namespace PsdzClient.Core
             base.fmtStrId = fmtStrId;
         }
 
-        public FormatedData(string fmtStrId, bool translateValues, bool useTranslatedValuesAsOnePlaceHolder, string seperatorForValuesAsOnPlacholder, params object[] values)
-            : this(fmtStrId, translateValues, values)
+        public FormatedData(string fmtStrId, bool translateValues, bool useTranslatedValuesAsOnePlaceHolder, string seperatorForValuesAsOnPlacholder, params object[] values) : this(fmtStrId, translateValues, values)
         {
             this.useTranslatedValuesAsOnePlaceHolder = useTranslatedValuesAsOnePlaceHolder;
             this.seperatorForValuesAsOnPlacholder = seperatorForValuesAsOnPlacholder;
@@ -104,12 +100,13 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("FormatedData.Localize(string fmtStrId, string moduleName, bool translateValues, params object[] values)", exception);
             }
+
             return null;
         }
 
         public string Localize()
         {
-            return BuildLocalizedMessage(CultureInfo.CurrentUICulture);
+            return BuildLocalizedMessage(new CultureInfo(ConfigSettings.CurrentUICulture));
         }
 
         public string Localize(CultureInfo culture)
@@ -118,6 +115,7 @@ namespace PsdzClient.Core
             {
                 throw new ArgumentNullException("Parameter culture must not be null.");
             }
+
             return BuildLocalizedMessage(culture);
         }
 
@@ -137,6 +135,7 @@ namespace PsdzClient.Core
                     translator = new Translator();
                     translator.ResourceName = "BMW.Rheingold.CoreFramework.Localization.Localization.xml";
                 }
+
                 return Translate(translator, this, culture);
             }
             catch (Exception ex)
@@ -161,10 +160,12 @@ namespace PsdzClient.Core
                     list.Add(translator.GetName(obj.ToString(), ModuleName, culture.Name));
                 }
             }
+
             if (useTranslatedValuesAsOnePlaceHolder)
             {
                 return string.Format(name, string.Join(seperatorForValuesAsOnPlacholder, list.ToArray()));
             }
+
             array = list.ToArray();
             return string.Format(name, array);
         }

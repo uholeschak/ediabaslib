@@ -17,6 +17,8 @@
         Operations_Finished_OperationList,
         Operations_Active,
         Operations_Active_OperationList,
+        Operations_IRAP,
+        Operations_IRAP_WorkshopClient,
         VehicleInformation,
         VehicleInformation_VehicleDetails,
         VehicleInformation_VehicleEquipment,
@@ -29,6 +31,7 @@
         VehicleInformation_ActionList,
         VehicleInformation_ProcessControlUnits,
         VehicleInformation_InformationByServiceCase,
+        VehicleInformation_WiringDiagramBrowser,
         VehicleManagement,
         VehicleManagement_ProgrammingEncoding,
         VehicleManagement_ProgrammingEncoding_Measures,
@@ -67,8 +70,6 @@
         ServicePlan_ProgrammingPlan,
         ServicePlan_ProgrammingPlan_TherapyPlan,
         ServicePlan_ProgrammingPlan_TherapyPlanReport,
-        Favorites,
-        Favorites_Test,
         WorkshopOperatinFluids,
         WorkshopOperatinFluids_WorkshopEquipment,
         WorkshopOperatinFluids_OperationFluids,
@@ -92,13 +93,9 @@
         TabName CurrentTab { get; }
 
         void NavigateTo(TabName target);
-
         void NavigateToLastPage();
-
         void SetTabToOriginCache(IstaNavigationOriginCacheKey origin);
-
         void SetTabToOriginCache(IstaNavigationOriginCacheKey origin, TabName tab);
-
         TabName GetTabFromOriginCache(IstaNavigationOriginCacheKey origin);
     }
 }

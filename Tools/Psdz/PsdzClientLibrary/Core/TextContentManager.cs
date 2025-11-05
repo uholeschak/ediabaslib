@@ -127,12 +127,12 @@ namespace PsdzClient.Core
             old = true;
         }
 
-        public ITextLocator __StandardText(string value, __TextParameter[] paramArray)
+        public ITextLocator __StandardText(decimal value, __TextParameter[] paramArray)
         {
             IList<LocalizedText> list = new List<LocalizedText>();
             try
             {
-                PsdzDatabase.EcuTranslation o = db.GetSpTextItemsByControlId(value);
+                PsdzDatabase.EcuTranslation o = db.GetSpTextItemsByControlId(value.ToString(CultureInfo.InvariantCulture));
                 if (o != null)
                 {
                     list.AddRange(lang.Select((string x) => new LocalizedText(o.GetTitle(x), x)));

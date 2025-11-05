@@ -4,7 +4,7 @@ namespace PsdzClient.Core
 {
     internal class TextContentManagerDummy : ITextContentManager
     {
-        public ITextLocator __StandardText(string value, __TextParameter[] paramArray)
+        public ITextLocator __StandardText(decimal value, __TextParameter[] paramArray)
         {
             throw new NotImplementedException();
         }

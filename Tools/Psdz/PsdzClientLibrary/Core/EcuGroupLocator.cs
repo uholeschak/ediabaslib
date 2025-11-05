@@ -33,6 +33,7 @@ namespace PsdzClient.Core
 			this.vecInfo = vecInfo;
 			this.ffmResolver = ffmResolver;
 		}
+        // [UH] removed
 #if false
         public ISPELocator[] Children
         {
@@ -216,6 +217,8 @@ namespace PsdzClient.Core
 		{
 			return this.parents;
 		}
+
+        // [UH] removed
 #if false
 		public ISPELocator[] GetOutgoingLinks()
 		{
@@ -238,8 +241,9 @@ namespace PsdzClient.Core
 
 		private readonly IFFMDynamicResolver ffmResolver;
 
-		//private ISPELocator[] children;
+        // [UH] removed
+        //private ISPELocator[] children;
 
-		private ISPELocator[] parents;
+        private ISPELocator[] parents;
 	}
 }

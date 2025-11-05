@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Threading;
+using PsdzClient.Utility;
 
 namespace PsdzClient.Core
 {
@@ -10,7 +11,7 @@ namespace PsdzClient.Core
             if (milliseconds != 0)
             {
                 Thread.Sleep(milliseconds);
-                //TimeMetricsUtility.Instance.Sleep(milliseconds, reason);
+                TimeMetricsUtility.Instance.Sleep(milliseconds, reason);
             }
         }
 
@@ -19,7 +20,7 @@ namespace PsdzClient.Core
             if (milliseconds != 0)
             {
                 await Task.Delay(milliseconds);
-                //TimeMetricsUtility.Instance.Sleep(milliseconds, reason);
+                TimeMetricsUtility.Instance.Sleep(milliseconds, reason);
             }
         }
     }

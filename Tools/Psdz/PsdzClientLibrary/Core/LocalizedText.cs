@@ -8,9 +8,7 @@ namespace PsdzClient.Core
     public class LocalizedText : ICloneable
     {
         private string textItem;
-
         private string language;
-
         [DataMember]
         public string TextItem
         {
@@ -18,6 +16,7 @@ namespace PsdzClient.Core
             {
                 return textItem;
             }
+
             set
             {
                 textItem = value;
@@ -31,6 +30,7 @@ namespace PsdzClient.Core
             {
                 return language;
             }
+
             set
             {
                 language = value;
@@ -45,15 +45,17 @@ namespace PsdzClient.Core
 
         public override bool Equals(object obj)
         {
-            if (obj != null && obj is LocalizedText)
+            if (obj == null || !(obj is LocalizedText))
             {
-                LocalizedText localizedText = (LocalizedText)obj;
-                if (Language == localizedText.Language)
-                {
-                    return TextItem == localizedText.TextItem;
-                }
                 return false;
             }
+
+            LocalizedText localizedText = (LocalizedText)obj;
+            if (Language == localizedText.Language)
+            {
+                return TextItem == localizedText.TextItem;
+            }
+
             return false;
         }
 

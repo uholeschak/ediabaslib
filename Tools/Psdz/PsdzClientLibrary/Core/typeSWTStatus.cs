@@ -8,271 +8,260 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
-	public class typeSWTStatus : INotifyPropertyChanged, ISwtStatus
-	{
-		public string STAT_SW_ID
-		{
-			get
-			{
-				return this.sTAT_SW_IDField;
-			}
-			set
-			{
-				if (this.sTAT_SW_IDField != null)
-				{
-					if (!this.sTAT_SW_IDField.Equals(value))
-					{
-						this.sTAT_SW_IDField = value;
-						this.OnPropertyChanged("STAT_SW_ID");
-						return;
-					}
-				}
-				else
-				{
-					this.sTAT_SW_IDField = value;
-					this.OnPropertyChanged("STAT_SW_ID");
-				}
-			}
-		}
+    public class typeSWTStatus : INotifyPropertyChanged, ISwtStatus
+    {
+        private string sTAT_SW_IDField;
+        private string titleField;
+        private string sTAT_ROOT_CERT_STATUS_CODEField;
+        private string sTAT_SIGS_CERT_STATUS_CODEField;
+        private string sTAT_SW_SIG_STATUS_CODEField;
+        private string sTAT_FSCS_CERT_STATUS_CODEField;
+        private string sTAT_FSC_STATUS_CODEField;
+        private string orderingStatusField;
+        public string STAT_SW_ID
+        {
+            get
+            {
+                return sTAT_SW_IDField;
+            }
 
-		public string Title
-		{
-			get
-			{
-				return this.titleField;
-			}
-			set
-			{
-				if (this.titleField != null)
-				{
-					if (!this.titleField.Equals(value))
-					{
-						this.titleField = value;
-						this.OnPropertyChanged("Title");
-						return;
-					}
-				}
-				else
-				{
-					this.titleField = value;
-					this.OnPropertyChanged("Title");
-				}
-			}
-		}
+            set
+            {
+                if (sTAT_SW_IDField != null)
+                {
+                    if (!sTAT_SW_IDField.Equals(value))
+                    {
+                        sTAT_SW_IDField = value;
+                        OnPropertyChanged("STAT_SW_ID");
+                    }
+                }
+                else
+                {
+                    sTAT_SW_IDField = value;
+                    OnPropertyChanged("STAT_SW_ID");
+                }
+            }
+        }
 
-		public string STAT_ROOT_CERT_STATUS_CODE
-		{
-			get
-			{
-				return this.sTAT_ROOT_CERT_STATUS_CODEField;
-			}
-			set
-			{
-				if (this.sTAT_ROOT_CERT_STATUS_CODEField != null)
-				{
-					if (!this.sTAT_ROOT_CERT_STATUS_CODEField.Equals(value))
-					{
-						this.sTAT_ROOT_CERT_STATUS_CODEField = value;
-						this.OnPropertyChanged("STAT_ROOT_CERT_STATUS_CODE");
-						return;
-					}
-				}
-				else
-				{
-					this.sTAT_ROOT_CERT_STATUS_CODEField = value;
-					this.OnPropertyChanged("STAT_ROOT_CERT_STATUS_CODE");
-				}
-			}
-		}
+        public string Title
+        {
+            get
+            {
+                return titleField;
+            }
 
-		public string STAT_SIGS_CERT_STATUS_CODE
-		{
-			get
-			{
-				return this.sTAT_SIGS_CERT_STATUS_CODEField;
-			}
-			set
-			{
-				if (this.sTAT_SIGS_CERT_STATUS_CODEField != null)
-				{
-					if (!this.sTAT_SIGS_CERT_STATUS_CODEField.Equals(value))
-					{
-						this.sTAT_SIGS_CERT_STATUS_CODEField = value;
-						this.OnPropertyChanged("STAT_SIGS_CERT_STATUS_CODE");
-						return;
-					}
-				}
-				else
-				{
-					this.sTAT_SIGS_CERT_STATUS_CODEField = value;
-					this.OnPropertyChanged("STAT_SIGS_CERT_STATUS_CODE");
-				}
-			}
-		}
+            set
+            {
+                if (titleField != null)
+                {
+                    if (!titleField.Equals(value))
+                    {
+                        titleField = value;
+                        OnPropertyChanged("Title");
+                    }
+                }
+                else
+                {
+                    titleField = value;
+                    OnPropertyChanged("Title");
+                }
+            }
+        }
 
-		public string STAT_SW_SIG_STATUS_CODE
-		{
-			get
-			{
-				return this.sTAT_SW_SIG_STATUS_CODEField;
-			}
-			set
-			{
-				if (this.sTAT_SW_SIG_STATUS_CODEField != null)
-				{
-					if (!this.sTAT_SW_SIG_STATUS_CODEField.Equals(value))
-					{
-						this.sTAT_SW_SIG_STATUS_CODEField = value;
-						this.OnPropertyChanged("STAT_SW_SIG_STATUS_CODE");
-						return;
-					}
-				}
-				else
-				{
-					this.sTAT_SW_SIG_STATUS_CODEField = value;
-					this.OnPropertyChanged("STAT_SW_SIG_STATUS_CODE");
-				}
-			}
-		}
+        public string STAT_ROOT_CERT_STATUS_CODE
+        {
+            get
+            {
+                return sTAT_ROOT_CERT_STATUS_CODEField;
+            }
 
-		public string STAT_FSCS_CERT_STATUS_CODE
-		{
-			get
-			{
-				return this.sTAT_FSCS_CERT_STATUS_CODEField;
-			}
-			set
-			{
-				if (this.sTAT_FSCS_CERT_STATUS_CODEField != null)
-				{
-					if (!this.sTAT_FSCS_CERT_STATUS_CODEField.Equals(value))
-					{
-						this.sTAT_FSCS_CERT_STATUS_CODEField = value;
-						this.OnPropertyChanged("STAT_FSCS_CERT_STATUS_CODE");
-						return;
-					}
-				}
-				else
-				{
-					this.sTAT_FSCS_CERT_STATUS_CODEField = value;
-					this.OnPropertyChanged("STAT_FSCS_CERT_STATUS_CODE");
-				}
-			}
-		}
+            set
+            {
+                if (sTAT_ROOT_CERT_STATUS_CODEField != null)
+                {
+                    if (!sTAT_ROOT_CERT_STATUS_CODEField.Equals(value))
+                    {
+                        sTAT_ROOT_CERT_STATUS_CODEField = value;
+                        OnPropertyChanged("STAT_ROOT_CERT_STATUS_CODE");
+                    }
+                }
+                else
+                {
+                    sTAT_ROOT_CERT_STATUS_CODEField = value;
+                    OnPropertyChanged("STAT_ROOT_CERT_STATUS_CODE");
+                }
+            }
+        }
 
-		public string STAT_FSC_STATUS_CODE
-		{
-			get
-			{
-				return this.sTAT_FSC_STATUS_CODEField;
-			}
-			set
-			{
-				if (this.sTAT_FSC_STATUS_CODEField != null)
-				{
-					if (!this.sTAT_FSC_STATUS_CODEField.Equals(value))
-					{
-						this.sTAT_FSC_STATUS_CODEField = value;
-						this.OnPropertyChanged("STAT_FSC_STATUS_CODE");
-						return;
-					}
-				}
-				else
-				{
-					this.sTAT_FSC_STATUS_CODEField = value;
-					this.OnPropertyChanged("STAT_FSC_STATUS_CODE");
-				}
-			}
-		}
+        public string STAT_SIGS_CERT_STATUS_CODE
+        {
+            get
+            {
+                return sTAT_SIGS_CERT_STATUS_CODEField;
+            }
 
-		public string OrderingStatus
-		{
-			get
-			{
-				return this.orderingStatusField;
-			}
-			set
-			{
-				if (this.orderingStatusField != null)
-				{
-					if (!this.orderingStatusField.Equals(value))
-					{
-						this.orderingStatusField = value;
-						this.OnPropertyChanged("OrderingStatus");
-						return;
-					}
-				}
-				else
-				{
-					this.orderingStatusField = value;
-					this.OnPropertyChanged("OrderingStatus");
-				}
-			}
-		}
+            set
+            {
+                if (sTAT_SIGS_CERT_STATUS_CODEField != null)
+                {
+                    if (!sTAT_SIGS_CERT_STATUS_CODEField.Equals(value))
+                    {
+                        sTAT_SIGS_CERT_STATUS_CODEField = value;
+                        OnPropertyChanged("STAT_SIGS_CERT_STATUS_CODE");
+                    }
+                }
+                else
+                {
+                    sTAT_SIGS_CERT_STATUS_CODEField = value;
+                    OnPropertyChanged("STAT_SIGS_CERT_STATUS_CODE");
+                }
+            }
+        }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public string STAT_SW_SIG_STATUS_CODE
+        {
+            get
+            {
+                return sTAT_SW_SIG_STATUS_CODEField;
+            }
 
-		public virtual void OnPropertyChanged(string propertyName)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged != null)
-			{
-				propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+            set
+            {
+                if (sTAT_SW_SIG_STATUS_CODEField != null)
+                {
+                    if (!sTAT_SW_SIG_STATUS_CODEField.Equals(value))
+                    {
+                        sTAT_SW_SIG_STATUS_CODEField = value;
+                        OnPropertyChanged("STAT_SW_SIG_STATUS_CODE");
+                    }
+                }
+                else
+                {
+                    sTAT_SW_SIG_STATUS_CODEField = value;
+                    OnPropertyChanged("STAT_SW_SIG_STATUS_CODE");
+                }
+            }
+        }
 
-		public uint applicationNoUI
-		{
-			get
-			{
-				try
-				{
-					if (!string.IsNullOrEmpty(this.STAT_SW_ID) && this.STAT_SW_ID.Length >= 8)
-					{
-						return Convert.ToUInt32(this.STAT_SW_ID.Substring(0, 4), 16);
-					}
-				}
-				catch (Exception exception)
-				{
-					Log.WarningException("swIdType.get_applicationNoUI()", exception);
-				}
-				return 0U;
-			}
-		}
+        public string STAT_FSCS_CERT_STATUS_CODE
+        {
+            get
+            {
+                return sTAT_FSCS_CERT_STATUS_CODEField;
+            }
 
-		public uint upgradeIndexUI
-		{
-			get
-			{
-				try
-				{
-					if (!string.IsNullOrEmpty(this.STAT_SW_ID) && this.STAT_SW_ID.Length >= 8)
-					{
-						return Convert.ToUInt32(this.STAT_SW_ID.Substring(4, 4), 16);
-					}
-				}
-				catch (Exception exception)
-				{
-					Log.WarningException("swIdType.get_upgradeIndexUI()", exception);
-				}
-				return 0U;
-			}
-		}
+            set
+            {
+                if (sTAT_FSCS_CERT_STATUS_CODEField != null)
+                {
+                    if (!sTAT_FSCS_CERT_STATUS_CODEField.Equals(value))
+                    {
+                        sTAT_FSCS_CERT_STATUS_CODEField = value;
+                        OnPropertyChanged("STAT_FSCS_CERT_STATUS_CODE");
+                    }
+                }
+                else
+                {
+                    sTAT_FSCS_CERT_STATUS_CODEField = value;
+                    OnPropertyChanged("STAT_FSCS_CERT_STATUS_CODE");
+                }
+            }
+        }
 
-		private string sTAT_SW_IDField;
+        public string STAT_FSC_STATUS_CODE
+        {
+            get
+            {
+                return sTAT_FSC_STATUS_CODEField;
+            }
 
-		private string titleField;
+            set
+            {
+                if (sTAT_FSC_STATUS_CODEField != null)
+                {
+                    if (!sTAT_FSC_STATUS_CODEField.Equals(value))
+                    {
+                        sTAT_FSC_STATUS_CODEField = value;
+                        OnPropertyChanged("STAT_FSC_STATUS_CODE");
+                    }
+                }
+                else
+                {
+                    sTAT_FSC_STATUS_CODEField = value;
+                    OnPropertyChanged("STAT_FSC_STATUS_CODE");
+                }
+            }
+        }
 
-		private string sTAT_ROOT_CERT_STATUS_CODEField;
+        public string OrderingStatus
+        {
+            get
+            {
+                return orderingStatusField;
+            }
 
-		private string sTAT_SIGS_CERT_STATUS_CODEField;
+            set
+            {
+                if (orderingStatusField != null)
+                {
+                    if (!orderingStatusField.Equals(value))
+                    {
+                        orderingStatusField = value;
+                        OnPropertyChanged("OrderingStatus");
+                    }
+                }
+                else
+                {
+                    orderingStatusField = value;
+                    OnPropertyChanged("OrderingStatus");
+                }
+            }
+        }
 
-		private string sTAT_SW_SIG_STATUS_CODEField;
+        public uint applicationNoUI
+        {
+            get
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(STAT_SW_ID) && STAT_SW_ID.Length >= 8)
+                    {
+                        return Convert.ToUInt32(STAT_SW_ID.Substring(0, 4), 16);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Log.WarningException("swIdType.get_applicationNoUI()", exception);
+                }
 
-		private string sTAT_FSCS_CERT_STATUS_CODEField;
+                return 0u;
+            }
+        }
 
-		private string sTAT_FSC_STATUS_CODEField;
+        public uint upgradeIndexUI
+        {
+            get
+            {
+                try
+                {
+                    if (!string.IsNullOrEmpty(STAT_SW_ID) && STAT_SW_ID.Length >= 8)
+                    {
+                        return Convert.ToUInt32(STAT_SW_ID.Substring(4, 4), 16);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    Log.WarningException("swIdType.get_upgradeIndexUI()", exception);
+                }
 
-		private string orderingStatusField;
-	}
+                return 0u;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }

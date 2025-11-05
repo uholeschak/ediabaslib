@@ -9,18 +9,18 @@ namespace PsdzClient.Core
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface, AllowMultiple = false, Inherited = true)]
     public class AuthorAPIAttribute : Attribute
     {
+        private bool selectableTypeDeclaration;
         public bool SelectableTypeDeclaration
         {
             get
             {
-                return this.selectableTypeDeclaration;
+                return selectableTypeDeclaration;
             }
+
             set
             {
-                this.selectableTypeDeclaration = value;
+                selectableTypeDeclaration = value;
             }
         }
-
-        private bool selectableTypeDeclaration = false;
     }
 }

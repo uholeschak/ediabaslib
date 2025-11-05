@@ -8,194 +8,184 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
-	public class typeECU_Transaction : INotifyPropertyChanged, IEcuTransaction
-	{
-		public typeECU_Transaction()
-		{
-			this.transactionFinishStatusField = false;
-			this.transactionStatusField = StateType.unknown;
-		}
+    public class typeECU_Transaction : IEcuTransaction, INotifyPropertyChanged
+    {
+        private string transactionIdField;
+        private string transactionNameField;
+        private string transactionResultField;
+        private bool transactionFinishStatusField;
+        private StateType transactionStatusField;
+        private DateTime? transactionStartField;
+        private DateTime? transactionEndField;
+        public string transactionId
+        {
+            get
+            {
+                return transactionIdField;
+            }
 
-		public string transactionId
-		{
-			get
-			{
-				return this.transactionIdField;
-			}
-			set
-			{
-				if (this.transactionIdField != null)
-				{
-					if (!this.transactionIdField.Equals(value))
-					{
-						this.transactionIdField = value;
-						this.OnPropertyChanged("transactionId");
-						return;
-					}
-				}
-				else
-				{
-					this.transactionIdField = value;
-					this.OnPropertyChanged("transactionId");
-				}
-			}
-		}
+            set
+            {
+                if (transactionIdField != null)
+                {
+                    if (!transactionIdField.Equals(value))
+                    {
+                        transactionIdField = value;
+                        OnPropertyChanged("transactionId");
+                    }
+                }
+                else
+                {
+                    transactionIdField = value;
+                    OnPropertyChanged("transactionId");
+                }
+            }
+        }
 
-		public string transactionName
-		{
-			get
-			{
-				return this.transactionNameField;
-			}
-			set
-			{
-				if (this.transactionNameField != null)
-				{
-					if (!this.transactionNameField.Equals(value))
-					{
-						this.transactionNameField = value;
-						this.OnPropertyChanged("transactionName");
-						return;
-					}
-				}
-				else
-				{
-					this.transactionNameField = value;
-					this.OnPropertyChanged("transactionName");
-				}
-			}
-		}
+        public string transactionName
+        {
+            get
+            {
+                return transactionNameField;
+            }
 
-		public string transactionResult
-		{
-			get
-			{
-				return this.transactionResultField;
-			}
-			set
-			{
-				if (this.transactionResultField != null)
-				{
-					if (!this.transactionResultField.Equals(value))
-					{
-						this.transactionResultField = value;
-						this.OnPropertyChanged("transactionResult");
-						return;
-					}
-				}
-				else
-				{
-					this.transactionResultField = value;
-					this.OnPropertyChanged("transactionResult");
-				}
-			}
-		}
+            set
+            {
+                if (transactionNameField != null)
+                {
+                    if (!transactionNameField.Equals(value))
+                    {
+                        transactionNameField = value;
+                        OnPropertyChanged("transactionName");
+                    }
+                }
+                else
+                {
+                    transactionNameField = value;
+                    OnPropertyChanged("transactionName");
+                }
+            }
+        }
 
-		public bool transactionFinishStatus
-		{
-			get
-			{
-				return this.transactionFinishStatusField;
-			}
-			set
-			{
-				if (!this.transactionFinishStatusField.Equals(value))
-				{
-					this.transactionFinishStatusField = value;
-					this.OnPropertyChanged("transactionFinishStatus");
-				}
-			}
-		}
+        public string transactionResult
+        {
+            get
+            {
+                return transactionResultField;
+            }
 
-		public StateType transactionStatus
-		{
-			get
-			{
-				return this.transactionStatusField;
-			}
-			set
-			{
-				if (!this.transactionStatusField.Equals(value))
-				{
-					this.transactionStatusField = value;
-					this.OnPropertyChanged("transactionStatus");
-				}
-			}
-		}
+            set
+            {
+                if (transactionResultField != null)
+                {
+                    if (!transactionResultField.Equals(value))
+                    {
+                        transactionResultField = value;
+                        OnPropertyChanged("transactionResult");
+                    }
+                }
+                else
+                {
+                    transactionResultField = value;
+                    OnPropertyChanged("transactionResult");
+                }
+            }
+        }
 
-		public DateTime? transactionStart
-		{
-			get
-			{
-				return this.transactionStartField;
-			}
-			set
-			{
-				if (this.transactionStartField != null)
-				{
-					if (!this.transactionStartField.Equals(value))
-					{
-						this.transactionStartField = value;
-						this.OnPropertyChanged("transactionStart");
-						return;
-					}
-				}
-				else
-				{
-					this.transactionStartField = value;
-					this.OnPropertyChanged("transactionStart");
-				}
-			}
-		}
+        public bool transactionFinishStatus
+        {
+            get
+            {
+                return transactionFinishStatusField;
+            }
 
-		public DateTime? transactionEnd
-		{
-			get
-			{
-				return this.transactionEndField;
-			}
-			set
-			{
-				if (this.transactionEndField != null)
-				{
-					if (!this.transactionEndField.Equals(value))
-					{
-						this.transactionEndField = value;
-						this.OnPropertyChanged("transactionEnd");
-						return;
-					}
-				}
-				else
-				{
-					this.transactionEndField = value;
-					this.OnPropertyChanged("transactionEnd");
-				}
-			}
-		}
+            set
+            {
+                if (!transactionFinishStatusField.Equals(value))
+                {
+                    transactionFinishStatusField = value;
+                    OnPropertyChanged("transactionFinishStatus");
+                }
+            }
+        }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+        public StateType transactionStatus
+        {
+            get
+            {
+                return transactionStatusField;
+            }
 
-		public virtual void OnPropertyChanged(string propertyName)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged != null)
-			{
-				propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+            set
+            {
+                if (!transactionStatusField.Equals(value))
+                {
+                    transactionStatusField = value;
+                    OnPropertyChanged("transactionStatus");
+                }
+            }
+        }
 
-		private string transactionIdField;
+        public DateTime? transactionStart
+        {
+            get
+            {
+                return transactionStartField;
+            }
 
-		private string transactionNameField;
+            set
+            {
+                if (transactionStartField.HasValue)
+                {
+                    if (!transactionStartField.Equals(value))
+                    {
+                        transactionStartField = value;
+                        OnPropertyChanged("transactionStart");
+                    }
+                }
+                else
+                {
+                    transactionStartField = value;
+                    OnPropertyChanged("transactionStart");
+                }
+            }
+        }
 
-		private string transactionResultField;
+        public DateTime? transactionEnd
+        {
+            get
+            {
+                return transactionEndField;
+            }
 
-		private bool transactionFinishStatusField;
+            set
+            {
+                if (transactionEndField.HasValue)
+                {
+                    if (!transactionEndField.Equals(value))
+                    {
+                        transactionEndField = value;
+                        OnPropertyChanged("transactionEnd");
+                    }
+                }
+                else
+                {
+                    transactionEndField = value;
+                    OnPropertyChanged("transactionEnd");
+                }
+            }
+        }
 
-		private StateType transactionStatusField;
+        public event PropertyChangedEventHandler PropertyChanged;
+        public typeECU_Transaction()
+        {
+            transactionFinishStatusField = false;
+            transactionStatusField = StateType.unknown;
+        }
 
-		private DateTime? transactionStartField;
-
-		private DateTime? transactionEndField;
-	}
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }

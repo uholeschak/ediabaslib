@@ -94,10 +94,12 @@ namespace PsdzClient.Core
 
         private int f_ANZField;
 
+        // [UH] removed
         //private ObservableCollection<DTC> fEHLERField;
 
         private int i_ANZField;
 
+        // [UH] removed
         //private ObservableCollection<DTC> iNFOField;
 
         private SVK sVKField;
@@ -106,6 +108,7 @@ namespace PsdzClient.Core
 
         private ObservableCollection<typeECU_Transaction> tALField;
 
+        // [UH] removed
         //private DTC selectedDTCField;
 
         //private DTC selectedINFOField;
@@ -160,6 +163,7 @@ namespace PsdzClient.Core
 
         public GenerationType Generation { get; set; }
 
+        // [UH] removed
 #if false
         [XmlIgnore]
         IXepEcuVariants IIdentEcu.XepEcuVariant
@@ -190,6 +194,7 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         public string EcuUid { get; set; }
+        // [UH] removed
 #if false
         [XmlIgnore]
         IEnumerable<IDtc> IEcu.FEHLER => FEHLER;
@@ -255,6 +260,7 @@ namespace PsdzClient.Core
         [XmlIgnore]
         IEnumerable<IEcuTransaction> IEcu.TAL => TAL;
 
+        // [UH] removed
 #if false
         [XmlIgnore]
         public XEP_ECUCLIQUES XepEcuClique
@@ -290,6 +296,7 @@ namespace PsdzClient.Core
             }
         }
 
+        // [UH] removed
 #if false
         [XmlIgnore]
         public XEP_ECUVARIANTS XepEcuVariant { get; set; }

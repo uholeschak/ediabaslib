@@ -6,21 +6,19 @@ using System;
 namespace PsdzClient.Core
 {
     [DataContract]
-    public abstract class InteractionModel : INotifyPropertyChanged, IInteractionModel
+    public abstract class InteractionModel : IInteractionModel, INotifyPropertyChanged, IDisposable
     {
         private string title;
-
         private bool isCloseButtonEnabled;
-
         private InteractionResponse responseCloseButton;
-
         private bool isPrintButtonVisible;
-
         private int dialogSize;
-
+        private bool isCustomDialogSize;
+        private int dialogWidth;
+        private int dialogHeight;
+        private int dialogOffset;
         [DataMember]
         public Guid Guid { get; private set; }
-
         public bool IsDisposing { get; set; }
 
         [DataMember]
@@ -30,10 +28,71 @@ namespace PsdzClient.Core
             {
                 return dialogSize;
             }
+
             set
             {
                 dialogSize = value;
                 OnPropertyChanged("DialogSize");
+            }
+        }
+
+        [DataMember]
+        public int DialogWidth
+        {
+            get
+            {
+                return dialogWidth;
+            }
+
+            set
+            {
+                dialogWidth = value;
+                OnPropertyChanged("DialogWidth");
+            }
+        }
+
+        [DataMember]
+        public int DialogHeight
+        {
+            get
+            {
+                return dialogHeight;
+            }
+
+            set
+            {
+                dialogHeight = value;
+                OnPropertyChanged("DialogHeight");
+            }
+        }
+
+        [DataMember]
+        public int DialogOffset
+        {
+            get
+            {
+                return dialogOffset;
+            }
+
+            set
+            {
+                dialogOffset = value;
+                OnPropertyChanged("DialogOffset");
+            }
+        }
+
+        [DataMember]
+        public bool IsCustomDialogSize
+        {
+            get
+            {
+                return isCustomDialogSize;
+            }
+
+            set
+            {
+                isCustomDialogSize = value;
+                OnPropertyChanged("IsCustomDialogSize");
             }
         }
 
@@ -44,6 +103,7 @@ namespace PsdzClient.Core
             {
                 return title;
             }
+
             set
             {
                 title = value;
@@ -58,6 +118,7 @@ namespace PsdzClient.Core
             {
                 return isCloseButtonEnabled;
             }
+
             set
             {
                 isCloseButtonEnabled = value;
@@ -72,6 +133,7 @@ namespace PsdzClient.Core
             {
                 return responseCloseButton;
             }
+
             set
             {
                 responseCloseButton = value;
@@ -86,6 +148,7 @@ namespace PsdzClient.Core
             {
                 return isPrintButtonVisible;
             }
+
             set
             {
                 isPrintButtonVisible = value;
@@ -94,11 +157,8 @@ namespace PsdzClient.Core
         }
 
         public event EventHandler Disposed;
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         public event EventHandler ModelClosedByUser;
-
         protected InteractionModel()
         {
             Guid = Guid.NewGuid();
@@ -115,6 +175,7 @@ namespace PsdzClient.Core
             {
                 return true;
             }
+
             return false;
         }
 

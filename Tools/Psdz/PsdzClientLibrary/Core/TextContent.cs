@@ -16,20 +16,19 @@ namespace PsdzClient.Core
 {
     public class TextContent : SPELocator, ITextContent, ISPELocator
     {
-        private readonly string[] elementWithAttributeXmlSpace = new string[4] { "PARAGRAPH", "HINT", "CAUTION", "WARNING" };
-
+        private readonly string[] elementWithAttributeXmlSpace = new string[4]
+        {
+            "PARAGRAPH",
+            "HINT",
+            "CAUTION",
+            "WARNING"
+        };
         private string myText = string.Empty;
-
         private bool toStringAsPlainText;
-
         private string localPlainText = string.Empty;
-
         private IList<LocalizedText> locText;
-
         private static XslCompiledTransform transformer;
-
         public IList<LocalizedText> TextLocalized => locText;
-
         private bool IsLocalized => locText != null;
 
         public string FormattedText
@@ -40,12 +39,12 @@ namespace PsdzClient.Core
                 {
                     return locText[0].TextItem;
                 }
+
                 return myText;
             }
         }
 
         public string PlainText => BuildPlainText(FormattedText);
-
         public string Text => FormattedText;
 
         private static XslCompiledTransform CompiledTransformer
@@ -56,6 +55,7 @@ namespace PsdzClient.Core
                 {
                     transformer = CreateTransformer();
                 }
+
                 return transformer;
             }
         }
@@ -85,6 +85,7 @@ namespace PsdzClient.Core
             {
                 return TextLocator.Empty.TextContent.FormattedText;
             }
+
             try
             {
                 XElement xElement = null;
@@ -93,6 +94,7 @@ namespace PsdzClient.Core
                     xElement = ParseXml(text);
                     return xElement.Print(removeWhiteSpace: false);
                 }
+
                 string plainText = EscapeXmlElementContent(text);
                 xElement = ParseXml(Create(plainText));
                 return xElement.Print();
@@ -111,6 +113,7 @@ namespace PsdzClient.Core
             {
                 return content.Replace("&", "&amp;").Replace("<", "&lt;");
             }
+
             return content;
         }
 
@@ -121,6 +124,7 @@ namespace PsdzClient.Core
             {
                 xElement2.Add(new XText(text));
             }
+
             return new TextContent(xElement.Print());
         }
 
@@ -135,8 +139,10 @@ namespace PsdzClient.Core
                         return item.TextItem;
                     }
                 }
+
                 throw new ArgumentException("Unsupported language \"" + language + "\".");
             }
+
             return myText;
         }
 
@@ -158,6 +164,7 @@ namespace PsdzClient.Core
                 string text = (IsLocalized ? locText[i].TextItem : myText);
                 list.Add(new LocalizedText(BuildPlainText(text), lang[i]));
             }
+
             return list;
         }
 
@@ -182,6 +189,7 @@ namespace PsdzClient.Core
                 {
                     flag = false;
                 }
+
                 foreach (XNode item in root.Nodes())
                 {
                     if (item.NodeType == XmlNodeType.Text)
@@ -205,61 +213,71 @@ namespace PsdzClient.Core
                         }
                     }
                 }
+
                 if (flag)
                 {
                     return stringBuilder.ToString().Trim();
                 }
             }
+
             return stringBuilder.ToString();
         }
 
         private bool HandleValueUnitSymbol(XElement element, StringBuilder result)
         {
-            if (element != null && !(element.Name == null))
+            if (element == null || element.Name == null)
             {
-                string localName = element.Name.LocalName;
-                string attibuteValue;
-                if (!"UNIT".Equals(localName) && !"SYMBOL".Equals(localName))
-                {
-                    if ("VALUEUNIT".Equals(localName))
-                    {
-                        attibuteValue = GetAttibuteValue("VALUE", element);
-                        if (attibuteValue != null)
-                        {
-                            result.Append(attibuteValue);
-                        }
-                        attibuteValue = GetAttibuteValue("UNIT", element);
-                        if (attibuteValue != null)
-                        {
-                            result.Append(" ");
-                            result.Append(attibuteValue);
-                        }
-                        return true;
-                    }
-                    if ("PARAMETER".Equals(localName) && !element.HasElements)
-                    {
-                        attibuteValue = GetAttibuteValue("ID", element);
-                        if (attibuteValue != null)
-                        {
-                            result.Append(attibuteValue);
-                        }
-                        attibuteValue = GetAttibuteValue("UNIT", element, logMissing: false);
-                        if (attibuteValue != null)
-                        {
-                            result.Append(" ");
-                            result.Append(attibuteValue);
-                        }
-                        return true;
-                    }
-                    return false;
-                }
-                attibuteValue = GetAttibuteValue("REF", element);
+                return false;
+            }
+
+            string localName = element.Name.LocalName;
+            if ("UNIT".Equals(localName) || "SYMBOL".Equals(localName))
+            {
+                string attibuteValue = GetAttibuteValue("REF", element);
                 if (attibuteValue != null)
                 {
                     result.Append(attibuteValue);
                 }
+
                 return true;
             }
+
+            if ("VALUEUNIT".Equals(localName))
+            {
+                string attibuteValue = GetAttibuteValue("VALUE", element);
+                if (attibuteValue != null)
+                {
+                    result.Append(attibuteValue);
+                }
+
+                attibuteValue = GetAttibuteValue("UNIT", element);
+                if (attibuteValue != null)
+                {
+                    result.Append(" ");
+                    result.Append(attibuteValue);
+                }
+
+                return true;
+            }
+
+            if ("PARAMETER".Equals(localName) && !element.HasElements)
+            {
+                string attibuteValue = GetAttibuteValue("ID", element);
+                if (attibuteValue != null)
+                {
+                    result.Append(attibuteValue);
+                }
+
+                attibuteValue = GetAttibuteValue("UNIT", element, logMissing: false);
+                if (attibuteValue != null)
+                {
+                    result.Append(" ");
+                    result.Append(attibuteValue);
+                }
+
+                return true;
+            }
+
             return false;
         }
 
@@ -272,32 +290,17 @@ namespace PsdzClient.Core
                 {
                     Log.Warning("TextContentManager.GetAttibuteValue()", "Element \"{0}\" has no attribute \"{1}\", retuning null.", element?.Name?.LocalName, name);
                 }
+
                 return null;
             }
+
             return xAttribute.Value;
         }
 
         internal static XslCompiledTransform CreateTransformer()
         {
             XslCompiledTransform xslCompiledTransform = new XslCompiledTransform();
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string[] resourceNames = assembly.GetManifestResourceNames();
-            string speResource = null;
-            foreach (string ressourceName in resourceNames)
-            {
-                if (ressourceName.EndsWith("Spe_Text_2.0.xsl"))
-                {
-                    speResource = ressourceName;
-                    break;
-                }
-            }
-
-            if (string.IsNullOrEmpty(speResource))
-            {
-                return xslCompiledTransform;
-            }
-
-            using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream(speResource))
+            using (Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("BMW.Rheingold.CoreFramework.DatabaseProvider.Text.Spe_Text_2.0.xsl"))
             {
                 using (XmlReader stylesheet = XmlReader.Create(input))
                 {
@@ -314,6 +317,7 @@ namespace PsdzClient.Core
             {
                 xsltArgumentList.AddParam("fullHtml", string.Empty, true);
             }
+
             xsltArgumentList.AddParam("lang", string.Empty, language);
             using (StringReader input = new StringReader(textItem))
             {
@@ -335,96 +339,108 @@ namespace PsdzClient.Core
                             CompiledTransformer.Transform(input2, xsltArgumentList, results);
                         }
                     }
+
                     return stringWriter.ToString().Replace(" xmlns:spe=\"http://bmw.com/2014/Spe_Text_2.0\"", "");
                 }
             }
         }
 
+        // [UH] database replaced
         public static string ReplaceTextReferences(string xmlText, PsdzDatabase database, string language)
         {
             string result = xmlText;
             XDocument xDocument = null;
             if (string.IsNullOrEmpty(xmlText))
             {
-                return "<TextItem/>";
+                result = "<TextItem/>";
             }
-            try
+            else
             {
-                if (Regex.IsMatch(xmlText.Trim(), "^<.+"))
+                try
                 {
-                    if (xmlText.StartsWith("<TextItem", StringComparison.Ordinal))
+                    if (Regex.IsMatch(xmlText.Trim(), "^<.+"))
                     {
-                        try
+                        if (xmlText.StartsWith("<TextItem", StringComparison.Ordinal))
                         {
-                            xDocument = XDocument.Parse(xmlText);
+                            try
+                            {
+                                xDocument = XDocument.Parse(xmlText);
+                            }
+                            catch (Exception)
+                            {
+                                xDocument = null;
+                            }
                         }
-                        catch (Exception)
+
+                        if (xDocument == null)
                         {
-                            xDocument = null;
+                            xDocument = XDocument.Parse(string.Format(CultureInfo.InvariantCulture, "<TextItem>{0}</TextItem>", xmlText));
                         }
                     }
-                    if (xDocument == null)
+                    else
                     {
-                        xDocument = XDocument.Parse(string.Format(CultureInfo.InvariantCulture, "<TextItem>{0}</TextItem>", xmlText));
+                        if (!Regex.IsMatch(xmlText.Trim(), "^\\d+$"))
+                        {
+                            Log.Info("TextContentOld.ReplaceTextReferences()", "found native text!? no replacement required for: {0}", xmlText);
+                            return string.Format(CultureInfo.InvariantCulture, "<TextItem SchemaVersion=\"1.0.0\">{0}</TextItem>", xmlText);
+                        }
+
+                        // [UH] database replaced
+                        string textItem = database.GetTextById(xmlText, new string[1] { language })[0].TextItem;
+                        if (!string.IsNullOrEmpty(textItem))
+                        {
+                            result = ReplaceTextReferences(textItem, database, language);
+                        }
+                    }
+
+                    if (xDocument != null)
+                    {
+                        while (xDocument.Descendants("TextReference").FirstOrDefault() != null)
+                        {
+                            XElement xElement = xDocument.Descendants("TextReference").FirstOrDefault();
+                            if (xElement == null)
+                            {
+                                continue;
+                            }
+
+                            XAttribute xAttribute = xElement.Attribute("Path");
+                            if (xAttribute != null && !string.IsNullOrEmpty(xAttribute.Value))
+                            {
+                                string value = xAttribute.Value;
+                                Log.Info("TextContentOld.ReplaceTextReferences()", "Found referenced text: {0} Path: {1}", xElement, xAttribute.Value);
+                                // [UH] database replaced
+                                PsdzDatabase.EcuTranslation ecuTranslation = database.GetSpTextItemsByControlId(value);
+                                string localizedXmlValue = null;
+                                if (ecuTranslation != null)
+                                {
+                                    localizedXmlValue = ecuTranslation.GetTitle(language);
+                                }
+                                XElement content;
+                                if (string.IsNullOrEmpty(localizedXmlValue))
+                                {
+                                    Log.Error("TextContentOld.ReplaceTextReferences()", "Failed to get the localized text for ID {0}.", value);
+                                    content = XElement.Parse("<TextItem>###" + value + "###</TextItem>");
+                                }
+                                else
+                                {
+                                    localizedXmlValue = ReplaceTextReferences(localizedXmlValue, database, language);
+                                    content = XElement.Parse(localizedXmlValue);
+                                }
+
+                                xElement.ReplaceWith(content);
+                            }
+                        }
+
+                        result = xDocument.ToString(SaveOptions.DisableFormatting);
                     }
                 }
-                else
+                catch (Exception ex2)
                 {
-                    if (!Regex.IsMatch(xmlText.Trim(), "^\\d+$"))
-                    {
-                        Log.Info("TextContentOld.ReplaceTextReferences()", "found native text!? no replacement required for: {0}", xmlText);
-                        return string.Format(CultureInfo.InvariantCulture, "<TextItem SchemaVersion=\"1.0.0\">{0}</TextItem>", xmlText);
-                    }
-                    string textItem = database.GetTextById(xmlText, new string[1] { language })[0].TextItem;
-                    if (!string.IsNullOrEmpty(textItem))
-                    {
-                        result = ReplaceTextReferences(textItem, database, language);
-                    }
+                    Log.Warning("TextContentOld.ReplaceTextReferences()", "error parsing xmlText {0} : {1}", xmlText, ex2.ToString());
                 }
-                if (xDocument != null)
-                {
-                    while (xDocument.Descendants("TextReference").FirstOrDefault() != null)
-                    {
-                        XElement xElement = xDocument.Descendants("TextReference").FirstOrDefault();
-                        if (xElement == null)
-                        {
-                            continue;
-                        }
-                        XAttribute xAttribute = xElement.Attribute("Path");
-                        if (xAttribute != null && !string.IsNullOrEmpty(xAttribute.Value))
-                        {
-                            string value = xAttribute.Value;
-                            Log.Info("TextContentOld.ReplaceTextReferences()", "Found referenced text: {0} Path: {1}", xElement, xAttribute.Value);
-                            PsdzDatabase.EcuTranslation ecuTranslation = database.GetSpTextItemsByControlId(value);
-                            string localizedXmlValue = null;
-                            if (ecuTranslation != null)
-                            {
-                                localizedXmlValue = ecuTranslation.GetTitle(language);
-                            }
-                            XElement content;
-                            if (string.IsNullOrEmpty(localizedXmlValue))
-                            {
-                                Log.Error("TextContentOld.ReplaceTextReferences()", "Failed to get the localized text for ID {0}.", value);
-                                content = XElement.Parse("<TextItem>###" + value + "###</TextItem>");
-                            }
-                            else
-                            {
-                                localizedXmlValue = ReplaceTextReferences(localizedXmlValue, database, language);
-                                content = XElement.Parse(localizedXmlValue);
-                            }
-                            xElement.ReplaceWith(content);
-                        }
-                    }
-                    result = xDocument.ToString(SaveOptions.DisableFormatting);
-                    return result;
-                }
-                return result;
             }
-            catch (Exception ex2)
-            {
-                Log.Warning("TextContentOld.ReplaceTextReferences()", "error parsing xmlText {0} : {1}", xmlText, ex2.ToString());
-                return result;
-            }
+
+            return result;
         }
 
         public ITextContent Concat(ITextContent theTextContent)
@@ -433,6 +449,7 @@ namespace PsdzClient.Core
             {
                 throw new ArgumentNullException("textContent");
             }
+
             if (IsLocalized)
             {
                 if (textContent.IsLocalized && locText.Count == textContent.TextLocalized.Count())
@@ -442,10 +459,13 @@ namespace PsdzClient.Core
                         LocalizedText localizedText = locText[i];
                         localizedText.TextItem = ConcatFormattedText(localizedText.TextItem, textContent.TextLocalized[i].TextItem);
                     }
+
                     return new TextContent(new List<LocalizedText>(locText));
                 }
+
                 return Concat(textContent.FormattedText);
             }
+
             if (textContent.IsLocalized)
             {
                 IList<LocalizedText> list = new List<LocalizedText>();
@@ -455,10 +475,12 @@ namespace PsdzClient.Core
                     LocalizedText localizedText2 = textContent.TextLocalized[j];
                     list.Add(new LocalizedText(ConcatFormattedText(formattedText, localizedText2.TextItem), localizedText2.Language));
                 }
+
                 myText = string.Empty;
                 locText = list;
                 return new TextContent(new List<LocalizedText>(locText));
             }
+
             return Concat(textContent.FormattedText);
         }
 
@@ -472,6 +494,7 @@ namespace PsdzClient.Core
                 });
                 return new TextContent(locText);
             }
+
             myText = ConcatFormattedText(myText, add);
             return new TextContent(myText.Clone() as string);
         }
@@ -494,6 +517,7 @@ namespace PsdzClient.Core
                     list.Add(new LocalizedText(textItem, plainText[j].Language));
                 }
             }
+
             return new TextContent(list);
         }
 
@@ -534,6 +558,7 @@ namespace PsdzClient.Core
                 xElement5.Add(new XText(appendPlain));
                 xElement.Add(xElement5);
             }
+
             return xElement.Print();
         }
 
@@ -547,8 +572,10 @@ namespace PsdzClient.Core
                 {
                     break;
                 }
+
                 xElement2 = firstNode as XElement;
             }
+
             return xElement2;
         }
 
@@ -586,6 +613,7 @@ namespace PsdzClient.Core
                     xElement.Add(xElement4);
                 }
             }
+
             return xElement.Print();
         }
 
@@ -601,6 +629,7 @@ namespace PsdzClient.Core
             {
                 text += theMetaInformation;
             }
+
             return Concat(text);
         }
 
@@ -610,20 +639,24 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             if (!(obj is TextContent textContent))
             {
                 return false;
             }
+
             if (textContent.myText != myText)
             {
                 return false;
             }
+
             if (textContent.locText != null)
             {
                 if (locText == null || locText.Count != textContent.locText.Count)
                 {
                     return false;
                 }
+
                 for (int i = 0; i < locText.Count; i++)
                 {
                     if (!locText.Equals(textContent.locText))
@@ -636,60 +669,73 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             if (textContent.Children != base.Children)
             {
                 return false;
             }
+
             if (textContent.DataClassName != base.DataClassName)
             {
                 return false;
             }
+
             if (textContent.Exception != base.Exception)
             {
                 return false;
             }
+
             if (textContent.FormattedText != FormattedText)
             {
                 return false;
             }
+
             if (textContent.HasException != base.HasException)
             {
                 return false;
             }
+
             if (textContent.Id != base.Id)
             {
                 return false;
             }
+
             if (textContent.IncomingLinkNames != base.IncomingLinkNames)
             {
                 return false;
             }
+
             if (textContent.OutgoingLinkNames != base.OutgoingLinkNames)
             {
                 return false;
             }
+
             if (textContent.Parents != base.Parents)
             {
                 return false;
             }
+
             if (textContent.PlainText != PlainText)
             {
                 return false;
             }
+
             if (textContent.SignedId != base.SignedId)
             {
                 return false;
             }
+
             if (textContent.Text != Text)
             {
                 return false;
             }
+
             return true;
         }
 
         public override int GetHashCode()
         {
-            return string.Concat(FormattedText, base.Children, base.DataClassName, base.Exception, FormattedText, base.HasException.ToString(), base.Id, base.IncomingLinkNames, base.OutgoingLinkNames, base.Parents, PlainText, base.SignedId, Text).GetHashCode();
+            return (FormattedText + base.Children?.ToString() + base.DataClassName + base.Exception?.ToString() + FormattedText + base.HasException + base.Id + base.IncomingLinkNames?.ToString() + base.OutgoingLinkNames?.ToString() + base.Parents?.ToString() + PlainText + base.SignedId + Text).GetHashCode();
         }
 
         public override string ToString()
@@ -698,6 +744,7 @@ namespace PsdzClient.Core
             {
                 return PlainText;
             }
+
             return FormattedText;
         }
     }

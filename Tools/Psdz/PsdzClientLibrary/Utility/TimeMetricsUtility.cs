@@ -52,14 +52,22 @@ namespace PsdzClient.Utility
             return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Diagnostics.VehicleTestMetricsEnabled", defaultValue);
         }
 
+        // [UH] modified
         public void ApiJobEnd(string ecu, string job, string args, int argsLength)
         {
             //currentMetrics?.ApiJobEnd(ecu, job, args, argsLength);
         }
 
+        // [UH] modified
         public void ApiJobStart(string ecu, string job, string args, int argsLength)
         {
             //currentMetrics?.ApiJobStart(ecu, job, args, argsLength);
+        }
+
+        // [UH] modified
+        public void Sleep(int milliseconds, string reason)
+        {
+            //currentMetrics?.Sleep(milliseconds, reason);
         }
     }
 }

@@ -3,11 +3,11 @@
 namespace PsdzClient.Core
 {
     [DataContract]
-    public class InteractionMotorcycleMRMA24Model : InteractionModel, IInteractionMotorcycleMRMA24Model
+    public class InteractionMotorcycleMRMA24Model : InteractionRequestModel<InteractionButtonResponse>, IInteractionMotorcycleMRMA24Model
     {
-        public InteractionMotorcycleMRMA24Model()
+        public override void OnResponseReceived(InteractionButtonResponse response)
         {
-            base.DialogSize = 1;
+            Dispose();
         }
     }
 }

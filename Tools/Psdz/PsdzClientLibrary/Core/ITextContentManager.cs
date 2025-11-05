@@ -32,6 +32,6 @@ namespace PsdzClient.Core
 
         ITextLocator __Text(string value, __TextParameter[] paramArray);
 
-        ITextLocator __StandardText(string value, __TextParameter[] paramArray);
+        ITextLocator __StandardText(decimal value, __TextParameter[] paramArray);
     }
 }
