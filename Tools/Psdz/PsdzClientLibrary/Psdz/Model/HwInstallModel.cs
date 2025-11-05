@@ -1,5 +1,4 @@
-﻿
-namespace BMW.Rheingold.Psdz
+﻿namespace BMW.Rheingold.Psdz
 {
     public class HwInstallModel : TaCategoryModel
     {
