@@ -100,7 +100,7 @@ namespace SourceCodeSync
                             bool matched = false;
                             foreach (string filterPart in filterParts)
                             {
-                                if (relPath.StartsWith(filterPart, StringComparison.OrdinalIgnoreCase))
+                                if (relPath.Contains(filterPart, StringComparison.OrdinalIgnoreCase))
                                 {
                                     matched = true;
                                     break;
