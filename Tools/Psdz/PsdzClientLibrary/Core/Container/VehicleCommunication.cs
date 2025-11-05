@@ -28,6 +28,7 @@ namespace PsdzClient.Core.Container
             Log.Info("VehicleCommunication.VehicleCommunication()", "ctor called.");
             debuglevel = ConfigSettings.getConfigint("DebugLevel", 0);
             debuglevel = ConfigSettings.getConfigint("BMW.Rheingold.VehicleCommunication.DebugLevel", debuglevel);
+            // [UH] removed
 #if false
             try
             {

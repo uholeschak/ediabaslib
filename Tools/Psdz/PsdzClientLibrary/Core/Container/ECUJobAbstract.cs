@@ -9,34 +9,24 @@ using System.Xml.Serialization;
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    [DebuggerStepThrough]
     [GeneratedCode("System.Xml", "2.0.50727.3082")]
+    [DebuggerStepThrough]
     [DesignerCategory("code")]
     [XmlType(Namespace = "http://tempuri.org/ECUJob.xsd", TypeName = "ECUJobAbstract")]
     [XmlRoot(Namespace = "http://tempuri.org/ECUJob.xsd", IsNullable = true, ElementName = "ECUJobAbstract")]
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public abstract class ECUJobAbstract : INotifyPropertyChanged
     {
         private List<ECUResult> jobResult;
-
         private string ecuName;
-
         private DateTime executionStartTime;
-
         private DateTime executionEndTime;
-
         private string jobName;
-
         private string jobParam;
-
         private string jobResultFilter;
-
         private int jobErrorCode;
-
         private string jobErrorText;
-
         private int jobResultSets;
-
         [XmlElement("jobResult", IsNullable = true)]
         public List<ECUResult> JobResult
         {
@@ -44,6 +34,7 @@ namespace PsdzClient.Core.Container
             {
                 return jobResult;
             }
+
             set
             {
                 if (jobResult != value)
@@ -61,6 +52,7 @@ namespace PsdzClient.Core.Container
             {
                 return ecuName;
             }
+
             set
             {
                 if (ecuName != value)
@@ -78,6 +70,7 @@ namespace PsdzClient.Core.Container
             {
                 return executionStartTime;
             }
+
             set
             {
                 if (executionStartTime != value)
@@ -95,6 +88,7 @@ namespace PsdzClient.Core.Container
             {
                 return executionEndTime;
             }
+
             set
             {
                 if (executionEndTime != value)
@@ -112,6 +106,7 @@ namespace PsdzClient.Core.Container
             {
                 return jobName;
             }
+
             set
             {
                 if (jobName != value)
@@ -129,6 +124,7 @@ namespace PsdzClient.Core.Container
             {
                 return jobParam;
             }
+
             set
             {
                 if (jobParam != value)
@@ -146,6 +142,7 @@ namespace PsdzClient.Core.Container
             {
                 return jobResultFilter;
             }
+
             set
             {
                 if (jobResultFilter != value)
@@ -163,6 +160,7 @@ namespace PsdzClient.Core.Container
             {
                 return jobErrorCode;
             }
+
             set
             {
                 if (jobErrorCode != value)
@@ -180,6 +178,7 @@ namespace PsdzClient.Core.Container
             {
                 return jobErrorText;
             }
+
             set
             {
                 if (jobErrorText != value)
@@ -197,6 +196,7 @@ namespace PsdzClient.Core.Container
             {
                 return jobResultSets;
             }
+
             set
             {
                 if (jobResultSets != value)
@@ -208,7 +208,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         protected ECUJobAbstract()
         {
         }

@@ -17,6 +17,7 @@ namespace PsdzClient.Core.Container
 
         private readonly decimal hashValue;
 
+        // [UH] removed
         //private readonly IProtocolBasic fastaservice;
 
         public bool FASTARelevant

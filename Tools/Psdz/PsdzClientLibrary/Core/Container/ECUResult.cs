@@ -4,33 +4,26 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Xml.Serialization;
+
 namespace PsdzClient.Core.Container
 {
     [Serializable]
-    [DesignerCategory("code")]
     [GeneratedCode("System.Xml", "2.0.50727.3082")]
+    [DebuggerStepThrough]
+    [DesignerCategory("code")]
     [XmlType(Namespace = "http://tempuri.org/ECUJob.xsd", TypeName = "ECUResult")]
     [XmlRoot(Namespace = "http://tempuri.org/ECUJob.xsd", IsNullable = true, ElementName = "ECUResult")]
     [TypeConverter(typeof(ExpandableObjectConverter))]
-    [DebuggerStepThrough]
     public class ECUResult : INotifyPropertyChanged, IEcuResult
     {
         private object value;
-
         private string name;
-
         private int format;
-
         private ushort set;
-
         private bool setSpecified;
-
         private uint length;
-
         private bool lengthSpecified;
-
-        private bool fastaRelevant = false;
-
+        private bool fastaRelevant;
         [XmlIgnore]
         public bool FASTARelevant
         {
@@ -38,6 +31,7 @@ namespace PsdzClient.Core.Container
             {
                 return fastaRelevant;
             }
+
             set
             {
                 if (value != fastaRelevant)
@@ -55,6 +49,7 @@ namespace PsdzClient.Core.Container
             {
                 return value;
             }
+
             set
             {
                 if (this.value != value)
@@ -72,6 +67,7 @@ namespace PsdzClient.Core.Container
             {
                 return name;
             }
+
             set
             {
                 if (name != value)
@@ -89,6 +85,7 @@ namespace PsdzClient.Core.Container
             {
                 return format;
             }
+
             set
             {
                 if (format != value)
@@ -106,6 +103,7 @@ namespace PsdzClient.Core.Container
             {
                 return set;
             }
+
             set
             {
                 if (set != value)
@@ -124,6 +122,7 @@ namespace PsdzClient.Core.Container
             {
                 return setSpecified;
             }
+
             set
             {
                 if (setSpecified != value)
@@ -141,6 +140,7 @@ namespace PsdzClient.Core.Container
             {
                 return length;
             }
+
             set
             {
                 if (length != value)
@@ -159,6 +159,7 @@ namespace PsdzClient.Core.Container
             {
                 return lengthSpecified;
             }
+
             set
             {
                 if (lengthSpecified != value)
@@ -170,7 +171,6 @@ namespace PsdzClient.Core.Container
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         public ECUResult()
         {
         }
