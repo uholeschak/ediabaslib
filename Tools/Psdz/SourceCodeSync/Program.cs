@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace SourceCodeSync
 {
@@ -214,7 +215,7 @@ namespace SourceCodeSync
                 string fileContent = File.ReadAllText(fileName);
                 SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
                 CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot();
-      
+    
                 bool fileModified = false;
                 CompilationUnitSyntax newRoot = root;
 
@@ -289,8 +290,10 @@ namespace SourceCodeSync
                 {
                     // Normalize whitespace: use spaces instead of tabs
                     string modifiedContent = newRoot.NormalizeWhitespace(indentation: "    ", eol: "\r\n").ToFullString();
-                    modifiedContent += Environment.NewLine; // Ensure file ends with a newline
-                    File.WriteAllText(fileName, modifiedContent);
+                    //modifiedContent += Environment.NewLine; // Ensure file ends with a newline
+
+                    // Write with UTF-8 BOM encoding
+                    File.WriteAllText(fileName, modifiedContent, new UTF8Encoding(true));
                     Console.WriteLine($"File updated: {fileName}");
                 }
             }
@@ -318,6 +321,5 @@ namespace SourceCodeSync
             // Uri's use forward slashes so convert back to backward slashes
             return relativeUri.ToString().Replace("/", "\\");
         }
-
     }
 }
