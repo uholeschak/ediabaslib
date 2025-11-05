@@ -163,12 +163,12 @@ namespace SourceCodeSync
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
-                    string className = cls.Identifier.ValueText;
+                    string className = GetClassName(cls);
                     string classSource = cls.ToFullString();
 
-                    Console.WriteLine($"Class: {className}");
                     if (showSource)
                     {
+                        Console.WriteLine($"Class: {className}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(classSource);
                         Console.WriteLine(new string('-', 80));
@@ -183,12 +183,12 @@ namespace SourceCodeSync
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
-                    string enumName = enumDecl.Identifier.ValueText;
+                    string enumName = GetEnumName(enumDecl);
                     string enumSource = enumDecl.ToFullString();
 
-                    Console.WriteLine($"Enum: {enumName}");
                     if (showSource)
                     {
+                        Console.WriteLine($"Enum: {enumName}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(enumSource);
                         Console.WriteLine(new string('-', 80));
@@ -230,11 +230,11 @@ namespace SourceCodeSync
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
-                    string className = cls.Identifier.ValueText;
+                    string className = GetClassName(cls);
                     string classSource = cls.ToFullString();
-                    Console.WriteLine($"Class: {className}");
                     if (showSource)
                     {
+                        Console.WriteLine($"Class: {className}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(classSource);
                         Console.WriteLine(new string('-', 80));
@@ -266,11 +266,11 @@ namespace SourceCodeSync
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>().ToList();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
-                    string enumName = enumDecl.Identifier.ValueText;
+                    string enumName = GetEnumName(enumDecl);
                     string enumSource = enumDecl.ToFullString();
-                    Console.WriteLine($"Enum: {enumName}");
                     if (showSource)
                     {
+                        Console.WriteLine($"Enum: {enumName}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(enumSource);
                         Console.WriteLine(new string('-', 80));
@@ -310,6 +310,23 @@ namespace SourceCodeSync
                 return false;
             }
             return true;
+        }
+
+        public static string GetClassName(ClassDeclarationSyntax classDeclaration)
+        {
+            string className = classDeclaration.Identifier.ValueText;
+            int typeParamCount = classDeclaration.TypeParameterList?.Parameters.Count ?? 0;
+            if (typeParamCount > 0)
+            {
+                className += $"_<{typeParamCount}>";
+            }
+            return className;
+        }
+
+        public static string GetEnumName(EnumDeclarationSyntax enumDeclaration)
+        {
+            string enumName = enumDeclaration.Identifier.ValueText;
+            return enumName;
         }
 
         public static string GetRelativePath(string basePath, string fullPath)
