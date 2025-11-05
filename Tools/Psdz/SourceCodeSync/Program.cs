@@ -337,6 +337,13 @@ namespace SourceCodeSync
         public static string GetClassName(ClassDeclarationSyntax classDeclaration)
         {
             string className = classDeclaration.Identifier.ValueText;
+            string modifiers = classDeclaration.Modifiers.ToFullString().Trim();
+            if (modifiers.Length > 0)
+            {
+                modifiers = modifiers.Replace(" ", "_").Replace("\t", "");
+                className = $"{modifiers}_{className}";
+            }
+
             int typeParamCount = classDeclaration.TypeParameterList?.Parameters.Count ?? 0;
             if (typeParamCount > 0)
             {
@@ -348,6 +355,12 @@ namespace SourceCodeSync
         public static string GetEnumName(EnumDeclarationSyntax enumDeclaration)
         {
             string enumName = enumDeclaration.Identifier.ValueText;
+            string modifiers = enumDeclaration.Modifiers.ToFullString().Trim();
+            if (modifiers.Length > 0)
+            {
+                modifiers = modifiers.Replace(" ", "_").Replace("\t", "");
+                enumName = $"{modifiers}_{enumName}";
+            }
             return enumName;
         }
 
