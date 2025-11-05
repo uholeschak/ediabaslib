@@ -205,9 +205,20 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (!_enumDict.TryAdd(enumName, enumDecl))
+                    if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax oldEnumSyntax))
                     {
-                        Console.WriteLine("*** Warning: Duplicate enum name found: {0}", enumName);
+                        string oldEnumSource = oldEnumSyntax.ToFullString();
+                        if (oldEnumSource != enumSource)
+                        {
+                            Console.WriteLine("*** Warning: Duplicate enum name with different source: {0}", enumName);
+                        }
+                    }
+                    else
+                    {
+                        if (!_enumDict.TryAdd(enumName, enumDecl))
+                        {
+                            Console.WriteLine("*** Warning: Add enum failed: {0}", enumName);
+                        }
                     }
                 }
             }
