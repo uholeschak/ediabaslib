@@ -213,9 +213,13 @@ namespace SourceCodeSync
             {
                 string fileContent = File.ReadAllText(fileName);
                 SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
-                SyntaxNode root = syntaxTree.GetCompilationUnitRoot();
+                CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot();
+      
+                bool fileModified = false;
+                CompilationUnitSyntax newRoot = root;
 
-                var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
+                // Update classes
+                var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
                     string className = cls.Identifier.ValueText;
@@ -228,13 +232,30 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (!_classDict.TryGetValue(className, out ClassDeclarationSyntax sourceClass))
+                    if (_classDict.TryGetValue(className, out ClassDeclarationSyntax sourceClass))
+                    {
+                        // Compare if they're different
+                        if (cls.ToFullString() != sourceClass.ToFullString())
+                        {
+                            Console.WriteLine($"Updating class: {className}");
+                            newRoot = newRoot.ReplaceNode(cls, sourceClass);
+                            fileModified = true;
+                        }
+                    }
+                    else
                     {
                         Console.WriteLine("*** Warning: Class not found in source files: {0}", className);
                     }
                 }
 
-                var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
+                // Need to refresh the tree after class replacements
+                if (fileModified)
+                {
+                    root = newRoot;
+                }
+
+                // Update enums
+                var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>().ToList();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
                     string enumName = enumDecl.Identifier.ValueText;
@@ -247,10 +268,28 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (!_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum))
+                    if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum))
+                    {
+                        // Compare if they're different
+                        if (enumDecl.ToFullString() != sourceEnum.ToFullString())
+                        {
+                            Console.WriteLine($"Updating enum: {enumName}");
+                            newRoot = newRoot.ReplaceNode(enumDecl, sourceEnum);
+                            fileModified = true;
+                        }
+                    }
+                    else
                     {
                         Console.WriteLine("*** Warning: Enum not found in source files: {0}", enumName);
                     }
+                }
+
+                // Write the modified file back if changes were made
+                if (fileModified)
+                {
+                    string modifiedContent = newRoot.ToFullString();
+                    File.WriteAllText(fileName, modifiedContent);
+                    Console.WriteLine($"File updated: {fileName}");
                 }
             }
             catch (Exception e)
