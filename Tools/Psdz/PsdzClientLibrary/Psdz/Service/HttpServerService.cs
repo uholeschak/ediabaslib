@@ -10,22 +10,10 @@ namespace BMW.Rheingold.Psdz
 {
     internal class HttpServerService : IHttpServerService
     {
-        public enum ServerStatus
-        {
-            [EnumMember(Value = "STOPPED")]
-            STOPPED,
-            [EnumMember(Value = "RUNNING")]
-            RUNNING
-        }
-
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly string _endpointService = "httpserver";
-
         private CancellationTokenSource _statusTokenSource;
-
         private Task _checkStatusTask;
-
         public HttpServerService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
@@ -102,6 +90,7 @@ namespace BMW.Rheingold.Psdz
             {
                 status = ServerStatus.STOPPED;
             }
+
             while (!_statusTokenSource.Token.IsCancellationRequested)
             {
                 await Task.Delay(TimeSpan.FromSeconds(60.0));
@@ -112,6 +101,7 @@ namespace BMW.Rheingold.Psdz
                     {
                         Log.Info(Log.CurrentMethod(), $"Detected http server status change. Old status: {status}. Server status: {status2}.");
                     }
+
                     if (status2 != ServerStatus.RUNNING)
                     {
                         Log.Info(Log.CurrentMethod(), $"Current status is {status2}. Restarting http server.");
@@ -122,6 +112,7 @@ namespace BMW.Rheingold.Psdz
                             Log.Info(Log.CurrentMethod(), $"After restart server is not in RUNNING status. Server status {status}");
                         }
                     }
+
                     status = status2;
                 }
                 catch (Exception exception)
