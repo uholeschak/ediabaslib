@@ -265,7 +265,8 @@ namespace SourceCodeSync
                     if (_classDict.TryGetValue(className, out ClassDeclarationSyntax sourceClass))
                     {
                         // Compare if they're different
-                        if (cls.ToFullString() != sourceClass.ToFullString())
+                        string classSourceStr = sourceClass.NormalizeWhitespace().ToFullString();
+                        if (classSource != classSourceStr)
                         {
                             Console.WriteLine($"Updating class: {className}");
                             newRoot = newRoot.ReplaceNode(cls, sourceClass);
@@ -289,7 +290,7 @@ namespace SourceCodeSync
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
                     string enumName = GetEnumName(enumDecl);
-                    string enumSource = enumDecl.ToFullString();
+                    string enumSource = enumDecl.NormalizeWhitespace().ToFullString();
                     if (showSource)
                     {
                         Console.WriteLine($"Enum: {enumName}");
@@ -301,7 +302,8 @@ namespace SourceCodeSync
                     if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum))
                     {
                         // Compare if they're different
-                        if (enumDecl.ToFullString() != sourceEnum.ToFullString())
+                        string sourceEnumStr = sourceEnum.NormalizeWhitespace().ToFullString();
+                        if (enumSource != sourceEnumStr)
                         {
                             Console.WriteLine($"Updating enum: {enumName}");
                             newRoot = newRoot.ReplaceNode(enumDecl, sourceEnum);
@@ -318,7 +320,7 @@ namespace SourceCodeSync
                 if (fileModified)
                 {
                     // Normalize whitespace: use spaces instead of tabs
-                    string modifiedContent = newRoot.NormalizeWhitespace(indentation: "    ", eol: "\r\n").ToFullString();
+                    string modifiedContent = newRoot.NormalizeWhitespace().ToFullString();
                     //modifiedContent += Environment.NewLine; // Ensure file ends with a newline
 
                     // Write with UTF-8 BOM encoding
