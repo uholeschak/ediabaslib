@@ -8,6 +8,6 @@ namespace PsdzClient.Core
 {
     public class ValidationRuleInternalResults : List<ValidationRuleInternalResult>
     {
-        public RuleExpression RuleExpression { get; set; }
+        public IRuleExpression RuleExpression { get; set; }
     }
 }

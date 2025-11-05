@@ -7,260 +7,246 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	public class HeatMotor : INotifyPropertyChanged
-	{
-		public string DriveId
-		{
-			get
-			{
-				return this.driveId;
-			}
-			set
-			{
-				if (this.driveId != null)
-				{
-					if (!this.driveId.Equals(value))
-					{
-						this.driveId = value;
-						this.OnPropertyChanged("DriveId");
-						return;
-					}
-				}
-				else
-				{
-					this.driveId = value;
-					this.OnPropertyChanged("DriveId");
-				}
-			}
-		}
+    public class HeatMotor : INotifyPropertyChanged
+    {
+        private string driveId;
+        private string heatMOTBezeichnungField;
+        private string heatMOTBaureiheField;
+        private string heatMOTPlatzhalter1Field;
+        private string heatMOTPlatzhalter2Field;
+        private string heatMOTFortlaufendeNumField;
+        private string heatMOTLeistungsklasseField;
+        private string heatMOTLebenszyklusField;
+        private string heatMOTKraftstoffartField;
+        public string DriveId
+        {
+            get
+            {
+                return driveId;
+            }
 
-		public string HeatMOTBezeichnung
-		{
-			get
-			{
-				return this.heatMOTBezeichnungField;
-			}
-			set
-			{
-				if (this.heatMOTBezeichnungField != null)
-				{
-					if (!this.heatMOTBezeichnungField.Equals(value))
-					{
-						this.heatMOTBezeichnungField = value;
-						this.OnPropertyChanged("HeatMOTBezeichnung");
-						return;
-					}
-				}
-				else
-				{
-					this.heatMOTBezeichnungField = value;
-					this.OnPropertyChanged("HeatMOTBezeichnung");
-				}
-			}
-		}
+            set
+            {
+                if (driveId != null)
+                {
+                    if (!driveId.Equals(value))
+                    {
+                        driveId = value;
+                        OnPropertyChanged("DriveId");
+                    }
+                }
+                else
+                {
+                    driveId = value;
+                    OnPropertyChanged("DriveId");
+                }
+            }
+        }
 
-		public string HeatMOTBaureihe
-		{
-			get
-			{
-				return this.heatMOTBaureiheField;
-			}
-			set
-			{
-				if (this.heatMOTBaureiheField != null)
-				{
-					if (!this.heatMOTBaureiheField.Equals(value))
-					{
-						this.heatMOTBaureiheField = value;
-						this.OnPropertyChanged("HeatMOTBaureihe");
-						return;
-					}
-				}
-				else
-				{
-					this.heatMOTBaureiheField = value;
-					this.OnPropertyChanged("HeatMOTBaureihe");
-				}
-			}
-		}
+        public string HeatMOTBezeichnung
+        {
+            get
+            {
+                return heatMOTBezeichnungField;
+            }
 
-		public string HeatMOTPlatzhalter1
-		{
-			get
-			{
-				return this.heatMOTPlatzhalter1Field;
-			}
-			set
-			{
-				if (this.heatMOTPlatzhalter1Field != null)
-				{
-					if (!this.heatMOTPlatzhalter1Field.Equals(value))
-					{
-						this.heatMOTPlatzhalter1Field = value;
-						this.OnPropertyChanged("HeatMOTPlatzhalter1");
-						return;
-					}
-				}
-				else
-				{
-					this.heatMOTPlatzhalter1Field = value;
-					this.OnPropertyChanged("HeatMOTPlatzhalter1");
-				}
-			}
-		}
+            set
+            {
+                if (heatMOTBezeichnungField != null)
+                {
+                    if (!heatMOTBezeichnungField.Equals(value))
+                    {
+                        heatMOTBezeichnungField = value;
+                        OnPropertyChanged("HeatMOTBezeichnung");
+                    }
+                }
+                else
+                {
+                    heatMOTBezeichnungField = value;
+                    OnPropertyChanged("HeatMOTBezeichnung");
+                }
+            }
+        }
 
-		public string HeatMOTPlatzhalter2
-		{
-			get
-			{
-				return this.heatMOTPlatzhalter2Field;
-			}
-			set
-			{
-				if (this.heatMOTPlatzhalter2Field != null)
-				{
-					if (!this.heatMOTPlatzhalter2Field.Equals(value))
-					{
-						this.heatMOTPlatzhalter2Field = value;
-						this.OnPropertyChanged("HeatMOTPlatzhalter2");
-						return;
-					}
-				}
-				else
-				{
-					this.heatMOTPlatzhalter2Field = value;
-					this.OnPropertyChanged("HeatMOTPlatzhalter2");
-				}
-			}
-		}
+        public string HeatMOTBaureihe
+        {
+            get
+            {
+                return heatMOTBaureiheField;
+            }
 
-		public string HeatMOTFortlaufendeNum
-		{
-			get
-			{
-				return this.heatMOTFortlaufendeNumField;
-			}
-			set
-			{
-				if (this.heatMOTFortlaufendeNumField != null)
-				{
-					if (!this.heatMOTFortlaufendeNumField.Equals(value))
-					{
-						this.heatMOTFortlaufendeNumField = value;
-						this.OnPropertyChanged("HeatMOTFortlaufendeNum");
-						return;
-					}
-				}
-				else
-				{
-					this.heatMOTFortlaufendeNumField = value;
-					this.OnPropertyChanged("HeatMOTFortlaufendeNum");
-				}
-			}
-		}
+            set
+            {
+                if (heatMOTBaureiheField != null)
+                {
+                    if (!heatMOTBaureiheField.Equals(value))
+                    {
+                        heatMOTBaureiheField = value;
+                        OnPropertyChanged("HeatMOTBaureihe");
+                    }
+                }
+                else
+                {
+                    heatMOTBaureiheField = value;
+                    OnPropertyChanged("HeatMOTBaureihe");
+                }
+            }
+        }
 
-		public string HeatMOTLeistungsklasse
-		{
-			get
-			{
-				return this.heatMOTLeistungsklasseField;
-			}
-			set
-			{
-				if (this.heatMOTLeistungsklasseField != null)
-				{
-					if (!this.heatMOTLeistungsklasseField.Equals(value))
-					{
-						this.heatMOTLeistungsklasseField = value;
-						this.OnPropertyChanged("HeatMOTLeistungsklasse");
-						return;
-					}
-				}
-				else
-				{
-					this.heatMOTLeistungsklasseField = value;
-					this.OnPropertyChanged("HeatMOTLeistungsklasse");
-				}
-			}
-		}
+        public string HeatMOTPlatzhalter1
+        {
+            get
+            {
+                return heatMOTPlatzhalter1Field;
+            }
 
-		public string HeatMOTLebenszyklus
-		{
-			get
-			{
-				return this.heatMOTLebenszyklusField;
-			}
-			set
-			{
-				if (this.heatMOTLebenszyklusField != null)
-				{
-					if (!this.heatMOTLebenszyklusField.Equals(value))
-					{
-						this.heatMOTLebenszyklusField = value;
-						this.OnPropertyChanged("HeatMOTLebenszyklus");
-						return;
-					}
-				}
-				else
-				{
-					this.heatMOTLebenszyklusField = value;
-					this.OnPropertyChanged("HeatMOTLebenszyklus");
-				}
-			}
-		}
+            set
+            {
+                if (heatMOTPlatzhalter1Field != null)
+                {
+                    if (!heatMOTPlatzhalter1Field.Equals(value))
+                    {
+                        heatMOTPlatzhalter1Field = value;
+                        OnPropertyChanged("HeatMOTPlatzhalter1");
+                    }
+                }
+                else
+                {
+                    heatMOTPlatzhalter1Field = value;
+                    OnPropertyChanged("HeatMOTPlatzhalter1");
+                }
+            }
+        }
 
-		public string HeatMOTKraftstoffart
-		{
-			get
-			{
-				return this.heatMOTKraftstoffartField;
-			}
-			set
-			{
-				if (this.heatMOTKraftstoffartField != null)
-				{
-					if (!this.heatMOTKraftstoffartField.Equals(value))
-					{
-						this.heatMOTKraftstoffartField = value;
-						this.OnPropertyChanged("HeatMOTKraftstoffart");
-						return;
-					}
-				}
-				else
-				{
-					this.heatMOTKraftstoffartField = value;
-					this.OnPropertyChanged("HeatMOTKraftstoffart");
-				}
-			}
-		}
+        public string HeatMOTPlatzhalter2
+        {
+            get
+            {
+                return heatMOTPlatzhalter2Field;
+            }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+            set
+            {
+                if (heatMOTPlatzhalter2Field != null)
+                {
+                    if (!heatMOTPlatzhalter2Field.Equals(value))
+                    {
+                        heatMOTPlatzhalter2Field = value;
+                        OnPropertyChanged("HeatMOTPlatzhalter2");
+                    }
+                }
+                else
+                {
+                    heatMOTPlatzhalter2Field = value;
+                    OnPropertyChanged("HeatMOTPlatzhalter2");
+                }
+            }
+        }
 
-		public virtual void OnPropertyChanged(string propertyName)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged != null)
-			{
-				propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+        public string HeatMOTFortlaufendeNum
+        {
+            get
+            {
+                return heatMOTFortlaufendeNumField;
+            }
 
-		private string driveId;
+            set
+            {
+                if (heatMOTFortlaufendeNumField != null)
+                {
+                    if (!heatMOTFortlaufendeNumField.Equals(value))
+                    {
+                        heatMOTFortlaufendeNumField = value;
+                        OnPropertyChanged("HeatMOTFortlaufendeNum");
+                    }
+                }
+                else
+                {
+                    heatMOTFortlaufendeNumField = value;
+                    OnPropertyChanged("HeatMOTFortlaufendeNum");
+                }
+            }
+        }
 
-		private string heatMOTBezeichnungField;
+        public string HeatMOTLeistungsklasse
+        {
+            get
+            {
+                return heatMOTLeistungsklasseField;
+            }
 
-		private string heatMOTBaureiheField;
+            set
+            {
+                if (heatMOTLeistungsklasseField != null)
+                {
+                    if (!heatMOTLeistungsklasseField.Equals(value))
+                    {
+                        heatMOTLeistungsklasseField = value;
+                        OnPropertyChanged("HeatMOTLeistungsklasse");
+                    }
+                }
+                else
+                {
+                    heatMOTLeistungsklasseField = value;
+                    OnPropertyChanged("HeatMOTLeistungsklasse");
+                }
+            }
+        }
 
-		private string heatMOTPlatzhalter1Field;
+        public string HeatMOTLebenszyklus
+        {
+            get
+            {
+                return heatMOTLebenszyklusField;
+            }
 
-		private string heatMOTPlatzhalter2Field;
+            set
+            {
+                if (heatMOTLebenszyklusField != null)
+                {
+                    if (!heatMOTLebenszyklusField.Equals(value))
+                    {
+                        heatMOTLebenszyklusField = value;
+                        OnPropertyChanged("HeatMOTLebenszyklus");
+                    }
+                }
+                else
+                {
+                    heatMOTLebenszyklusField = value;
+                    OnPropertyChanged("HeatMOTLebenszyklus");
+                }
+            }
+        }
 
-		private string heatMOTFortlaufendeNumField;
+        public string HeatMOTKraftstoffart
+        {
+            get
+            {
+                return heatMOTKraftstoffartField;
+            }
 
-		private string heatMOTLeistungsklasseField;
+            set
+            {
+                if (heatMOTKraftstoffartField != null)
+                {
+                    if (!heatMOTKraftstoffartField.Equals(value))
+                    {
+                        heatMOTKraftstoffartField = value;
+                        OnPropertyChanged("HeatMOTKraftstoffart");
+                    }
+                }
+                else
+                {
+                    heatMOTKraftstoffartField = value;
+                    OnPropertyChanged("HeatMOTKraftstoffart");
+                }
+            }
+        }
 
-		private string heatMOTLebenszyklusField;
-
-		private string heatMOTKraftstoffartField;
-	}
+        public event PropertyChangedEventHandler PropertyChanged;
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }

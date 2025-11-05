@@ -23,7 +23,7 @@ namespace PsdzClient.Core
             {
                 return (IsActive: result, Message: GetAndLogOutputMessage(feature, result, "REGISTRY KEY"));
             }
-            bool flag = LBPFeatureSwitches.Features.DefaultValue(feature);
+            bool flag = LBPFeatureSwitches.Features.DefaultValue(feature, IstaMode.HO);
             return (IsActive: flag, Message: GetAndLogOutputMessage(feature, flag, "DEFAULT VALUE"));
         }
 
