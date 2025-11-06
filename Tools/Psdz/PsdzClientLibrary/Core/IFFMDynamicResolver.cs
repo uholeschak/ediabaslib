@@ -11,5 +11,6 @@ namespace PsdzClient.Core
 {
     public interface IFFMDynamicResolver : IFFMDynamicResolverRuleEvaluation
     {
+        // [UH] cleaned
     }
 }

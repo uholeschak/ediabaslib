@@ -13,6 +13,7 @@ namespace SourceCodeSync
     internal class Program
     {
         private static Dictionary<string, ClassDeclarationSyntax> _classDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
+        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDict = new Dictionary<string, InterfaceDeclarationSyntax>(StringComparer.Ordinal);
         private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.Ordinal);
 
         private static readonly string[] _ignoreNamespaces =
@@ -228,6 +229,48 @@ namespace SourceCodeSync
                     }
                 }
 
+
+                var interfaces = root.DescendantNodes().OfType<InterfaceDeclarationSyntax>();
+                foreach (InterfaceDeclarationSyntax interfaceDecl in interfaces)
+                {
+                    string interfaceName = GetInterfaceName(interfaceDecl);
+                    string interfaceSource = interfaceDecl.ToFullString();
+                    string namespaceName = GetNamespace(interfaceDecl);
+                    if (showSource)
+                    {
+                        Console.WriteLine($"Interface: {interfaceName}");
+                        Console.WriteLine($"Namespace: {namespaceName}");
+                        Console.WriteLine("Source:");
+                        Console.WriteLine(interfaceSource);
+                        Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (_ignoreNamespaces.Contains(namespaceName))
+                    {
+                        continue;
+                    }
+
+                    if (_interfaceDict.TryGetValue(interfaceName, out InterfaceDeclarationSyntax oldInterfaceSyntax))
+                    {
+                        if (oldInterfaceSyntax != null)
+                        {
+                            string oldInterfaceSource = oldInterfaceSyntax.ToFullString();
+                            if (oldInterfaceSource != interfaceSource)
+                            {
+                                Console.WriteLine("*** Warning: Duplicate interface name with different source: {0}", interfaceName);
+                                _interfaceDict[interfaceName] = null;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!_interfaceDict.TryAdd(interfaceName, interfaceDecl))
+                        {
+                            Console.WriteLine("*** Warning: Add interface failed: {0}", interfaceName);
+                        }
+                    }
+                }
+
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
@@ -337,6 +380,43 @@ namespace SourceCodeSync
                     root = newRoot;
                 }
 
+                // Update interfaces
+                var interfaces = root.DescendantNodes().OfType<InterfaceDeclarationSyntax>().ToList();
+                foreach (InterfaceDeclarationSyntax interfaceDecl in interfaces)
+                {
+                    string interfaceName = GetInterfaceName(interfaceDecl);
+                    string interfaceSource = interfaceDecl.NormalizeWhitespace().ToFullString();
+                    if (showSource)
+                    {
+                        Console.WriteLine($"Interface: {interfaceName}");
+                        Console.WriteLine("Source:");
+                        Console.WriteLine(interfaceSource);
+                        Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (HasComments(interfaceDecl))
+                    {
+                        Console.WriteLine("Skipping interface {0} with comments: {1}", interfaceName, fileName);
+                        continue;
+                    }
+
+                    if (_interfaceDict.TryGetValue(interfaceName, out InterfaceDeclarationSyntax sourceInterface) && sourceInterface != null)
+                    {
+                        // Compare if they're different
+                        string sourceInterfaceStr = sourceInterface.NormalizeWhitespace().ToFullString();
+                        if (interfaceSource != sourceInterfaceStr)
+                        {
+                            Console.WriteLine($"Updating interface: {interfaceName}");
+                            newRoot = newRoot.ReplaceNode(interfaceDecl, sourceInterface);
+                            fileModified = true;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("*** Warning: Interface not found in source files: {0}", interfaceName);
+                    }
+                }
+
                 // Update enums
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>().ToList();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
@@ -429,6 +509,23 @@ namespace SourceCodeSync
             return className;
         }
 
+        public static string GetInterfaceName(InterfaceDeclarationSyntax interfaceDeclaration)
+        {
+            string interfaceName = interfaceDeclaration.Identifier.ValueText;
+            string modifiers = GetModifiersText(interfaceDeclaration.Modifiers);
+            if (modifiers.Length > 0)
+            {
+                interfaceName = $"{modifiers}_{interfaceName}";
+            }
+
+            int typeParamCount = interfaceDeclaration.TypeParameterList?.Parameters.Count ?? 0;
+            if (typeParamCount > 0)
+            {
+                interfaceName += $"_<{typeParamCount}>";
+            }
+            return interfaceName;
+        }
+
         public static string GetEnumName(EnumDeclarationSyntax enumDeclaration)
         {
             string enumName = enumDeclaration.Identifier.ValueText;
@@ -505,21 +602,39 @@ namespace SourceCodeSync
             return false;
         }
 
-        /// <summary>
-        /// Checks if a trivia list contains any comment trivia
-        /// </summary>
-        public static bool HasCommentTrivia(SyntaxTriviaList triviaList)
+        public static bool HasComments(InterfaceDeclarationSyntax interfaceDeclaration)
         {
-            foreach (SyntaxTrivia trivia in triviaList)
+            // Check leading trivia (comments before the interface)
+            if (interfaceDeclaration.HasLeadingTrivia)
             {
-                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||           // //
-                    trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||   // /* */
-                    trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || // ///
-                    trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))    // /** */
+                if (HasCommentTrivia(interfaceDeclaration.GetLeadingTrivia()))
                 {
                     return true;
                 }
             }
+
+            // Check trailing trivia (comments after the interface declaration line)
+            if (interfaceDeclaration.HasTrailingTrivia)
+            {
+                if (HasCommentTrivia(interfaceDeclaration.GetTrailingTrivia()))
+                {
+                    return true;
+                }
+            }
+
+            // Check all descendant tokens (comments inside the interface)
+            foreach (var token in interfaceDeclaration.DescendantTokens(descendIntoTrivia: true))
+            {
+                if (token.HasLeadingTrivia && HasCommentTrivia(token.LeadingTrivia))
+                {
+                    return true;
+                }
+                if (token.HasTrailingTrivia && HasCommentTrivia(token.TrailingTrivia))
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
 
@@ -550,6 +665,24 @@ namespace SourceCodeSync
                 }
             }
 
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a trivia list contains any comment trivia
+        /// </summary>
+        public static bool HasCommentTrivia(SyntaxTriviaList triviaList)
+        {
+            foreach (SyntaxTrivia trivia in triviaList)
+            {
+                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||           // //
+                    trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||   // /* */
+                    trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || // ///
+                    trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))    // /** */
+                {
+                    return true;
+                }
+            }
             return false;
         }
     }

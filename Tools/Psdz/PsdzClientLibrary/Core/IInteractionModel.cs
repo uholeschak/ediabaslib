@@ -15,6 +15,14 @@ namespace PsdzClient.Core
 
         int DialogSize { get; }
 
+        bool IsCustomDialogSize { get; }
+
+        int DialogWidth { get; }
+
+        int DialogHeight { get; }
+
+        int DialogOffset { get; }
+
         event EventHandler ModelClosedByUser;
     }
 }

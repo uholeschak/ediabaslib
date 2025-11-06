@@ -70,6 +70,8 @@ namespace PsdzClient.Core
     {
         Dictionary<BackendServiceType, HttpStatusCode> LatestBackendResponse { get; }
 
+        List<BackendServiceType> NotAvailableBackends { get; }
+
         int GetTotalCallCounter(BackendServiceType serviceType);
         int GetSpecificStatusCallCounter(BackendServiceType serviceType, HttpStatusCode statusCode);
         void AddBackendCall(BackendServiceType serviceType, HttpStatusCode? status, string refVersion = "", Exception ex = null);

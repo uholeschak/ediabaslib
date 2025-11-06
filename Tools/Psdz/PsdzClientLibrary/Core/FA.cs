@@ -668,15 +668,6 @@ namespace PsdzClient.Core
         [XmlIgnore]
         ICollection<LocalizedSAItem> IFa.SaLocalizedItems => SaLocalizedItems;
 
-        [XmlIgnore]
-        IEnumerable<string> IFARuleEvaluation.SA => SA;
-
-        [XmlIgnore]
-        IEnumerable<string> IFARuleEvaluation.E_WORT => E_WORT;
-
-        [XmlIgnore]
-        IEnumerable<string> IFARuleEvaluation.HO_WORT => HO_WORT;
-
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}{5}{6}{7}", FormatConverter.ConvertToBn2020ConformModelSeries(BR), C_DATE, TYPE, LACK, POLSTER, ConcatStrElems(SA, "$"), ConcatStrElems(E_WORT, "-"), ConcatStrElems(HO_WORT, "+"));

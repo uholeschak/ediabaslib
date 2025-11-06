@@ -14,6 +14,8 @@ namespace BMW.Rheingold.Psdz
         [FaultContract(typeof(PsdzRuntimeException))]
         string GetNetworkEndpointSet();
 
+        void SetHttpServerAddress(string address);
+
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void SetHttpServerPort(int port);

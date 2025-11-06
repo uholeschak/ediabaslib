@@ -329,15 +329,11 @@ namespace PsdzClient.Core
             return Sec4DiagCertificateState.Expired;
         }
 
-        public void CreateS29CertificateInstallCertificatesAndWriteToFile(IVciDevice device, string subCa, string ca, bool testRun)
+        public void CreateS29CertificateInstallCertificatesAndWriteToFile(IVciDevice device, string subCa, string ca)
         {
             Org.BouncyCastle.X509.X509Certificate x509Certificate = CreateCertificateFromBase64(subCa);
             Org.BouncyCastle.X509.X509Certificate x509Certificate2 = CreateCertificateFromBase64(ca);
-            X509Certificate2 s29Cert = new X509Certificate2();
-            if (!testRun)
-            {
-                s29Cert = GenerateCertificate(x509Certificate, EdiabasPublicKey, device.VIN);
-            }
+            X509Certificate2 s29Cert = GenerateCertificate(x509Certificate, EdiabasPublicKey, device.VIN);
             Sec4DiagCertificates = new Sec4DiagCertificates
             {
                 SubCaCert = new X509Certificate2(x509Certificate.GetEncoded()),
@@ -345,10 +341,7 @@ namespace PsdzClient.Core
                 S29Cert = s29Cert
             };
             InstallCertificates(Sec4DiagCertificates);
-            if (!testRun)
-            {
-                WriteCertificateToFile(Sec4DiagCertificates);
-            }
+            WriteCertificateToFile(Sec4DiagCertificates);
             Log.Info(Log.CurrentMethod(), "Certificates installed and written to file. Thumbprint added to Registry.");
         }
 

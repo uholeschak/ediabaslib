@@ -1,4 +1,5 @@
-﻿using BMW.Rheingold.Psdz.Client;
+﻿using System;
+using BMW.Rheingold.Psdz.Client;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
@@ -14,6 +15,12 @@ namespace BMW.Rheingold.Psdz
         public int GetHttpServerPort()
         {
             return CallFunction((IHttpConfigurationService service) => service.GetHttpServerPort());
+        }
+
+        // [UH] For backward compatibility
+        public void SetHttpServerAddress(string address)
+        {
+            throw new NotImplementedException();
         }
 
         public void SetHttpServerPort(int port)

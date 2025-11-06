@@ -8,6 +8,7 @@ namespace PsdzClient.Core
 {
     public interface IRuleExpression
     {
+        // [UH] arguments modified
         bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult);
     }
 }

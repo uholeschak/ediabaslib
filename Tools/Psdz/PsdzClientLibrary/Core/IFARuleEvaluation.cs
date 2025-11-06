@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace PsdzClient.Core
 {
     public interface IFARuleEvaluation
     {
-        IEnumerable<string> SA { get; }
+        ObservableCollection<string> SA { get; set; }
 
-        IEnumerable<string> E_WORT { get; }
+        ObservableCollection<string> E_WORT { get; set; }
 
-        IEnumerable<string> HO_WORT { get; }
+        ObservableCollection<string> HO_WORT { get; set; }
     }
 }

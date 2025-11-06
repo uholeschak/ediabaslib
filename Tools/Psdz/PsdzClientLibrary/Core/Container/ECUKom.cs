@@ -861,7 +861,7 @@ namespace PsdzClient.Core.Container
                         }
                         ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_001", TYPES.Sec4Diag);
                         Log.Info(method, "Code: SEC4DIAG_001");
-                        WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
+                        WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2);
                         if (webCallResponse2.IsSuccessful)
                         {
                             ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
@@ -906,7 +906,7 @@ namespace PsdzClient.Core.Container
                             {
                                 ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_004", TYPES.Sec4Diag);
                                 Log.Info(method, "Code: SEC4DIAG_004");
-                                WebCallResponse<Sec4DiagResponseData> webCallResponse4 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse4 = RequestCaAndSubCACertificates(device, service, service2);
                                 if (webCallResponse4.IsSuccessful)
                                 {
                                     ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_005", TYPES.Sec4Diag);
@@ -928,7 +928,7 @@ namespace PsdzClient.Core.Container
                             {
                                 ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_002", TYPES.Sec4Diag);
                                 Log.Error(method, "ErrorCode: SEC4DIAG_Error_002");
-                                WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2, testRun: false);
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2);
                                 if (webCallResponse3.IsSuccessful)
                                 {
                                     ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
@@ -1016,7 +1016,7 @@ namespace PsdzClient.Core.Container
                     {
                         ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_001", TYPES.Sec4Diag);
                         Log.Info(method, "Code: SEC4DIAG_001");
-                        WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2, testRun: true);
+                        WebCallResponse<Sec4DiagResponseData> webCallResponse2 = RequestCaAndSubCACertificates(device, service, service2);
                         if (webCallResponse2.IsSuccessful)
                         {
                             ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
@@ -1059,7 +1059,7 @@ namespace PsdzClient.Core.Container
                             {
                                 ImportantLoggingItem.AddItemToList("ErrorCode: SEC4DIAG_Error_002", TYPES.Sec4Diag);
                                 Log.Error(method, "ErrorCode: SEC4DIAG_Error_002");
-                                WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2, testRun: true);
+                                WebCallResponse<Sec4DiagResponseData> webCallResponse3 = RequestCaAndSubCACertificates(device, service, service2);
                                 if (webCallResponse3.IsSuccessful)
                                 {
                                     ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_003", TYPES.Sec4Diag);
@@ -1107,7 +1107,7 @@ namespace PsdzClient.Core.Container
             return dateTime - now;
         }
 
-        private WebCallResponse<Sec4DiagResponseData> RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog, bool testRun)
+        private WebCallResponse<Sec4DiagResponseData> RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
             WebCallResponse<Sec4DiagResponseData> webCallResponse = new WebCallResponse<Sec4DiagResponseData>();
 #if false
@@ -1116,7 +1116,7 @@ namespace PsdzClient.Core.Container
                 webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.Sec4Diag, service.GetUserTokenByOperationId()?.UserToken);
                 if (webCallResponse.IsSuccessful)
                 {
-                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0], testRun);
+                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0]);
                 }
                 if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service2))
                 {
@@ -1156,7 +1156,7 @@ namespace PsdzClient.Core.Container
                 webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.AosSec4Diag, service.GetUserTokenByOperationId()?.UserToken);
                 if (webCallResponse.IsSuccessful)
                 {
-                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0], testRun);
+                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0]);
                 }
                 return webCallResponse;
             }

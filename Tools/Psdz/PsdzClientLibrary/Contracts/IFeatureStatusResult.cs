@@ -14,6 +14,10 @@ namespace PsdzClient.Contracts
 
         string FeatureStatus { get; }
 
+        string DiagAddress { get; set; }
+
+        string ValidationStatus { get; set; }
+
         IBoolResultObject ErrorResult { get; }
     }
 }

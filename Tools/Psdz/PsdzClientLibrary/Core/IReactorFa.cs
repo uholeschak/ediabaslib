@@ -7,12 +7,6 @@ namespace PsdzClient.Core
 {
     public interface IReactorFa : INotifyPropertyChanged, IFARuleEvaluation
     {
-        new ObservableCollection<string> SA { get; set; }
-
-        new ObservableCollection<string> E_WORT { get; set; }
-
-        new ObservableCollection<string> HO_WORT { get; set; }
-
         string C_DATE { get; set; }
 
         DateTime? C_DATETIME { get; set; }
