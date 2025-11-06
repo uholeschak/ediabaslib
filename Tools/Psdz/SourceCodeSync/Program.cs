@@ -15,6 +15,11 @@ namespace SourceCodeSync
         private static Dictionary<string, ClassDeclarationSyntax> _classDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
         private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.Ordinal);
 
+        private static readonly string[] _ignoreNamespaces =
+        [
+            "BMW.ISPI.TRIC.ISTA.Contracts.Enums.UserLogin"
+        ];
+
         private static readonly string[] _ignoreClassNames =
         [
             "public_ParameterContainer",
@@ -188,13 +193,20 @@ namespace SourceCodeSync
                 {
                     string className = GetClassName(cls);
                     string classSource = cls.ToFullString();
+                    string namespaceName = GetNamespace(cls);
 
                     if (showSource)
                     {
                         Console.WriteLine($"Class: {className}");
+                        Console.WriteLine($"Namespace: {namespaceName}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(classSource);
                         Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (_ignoreNamespaces.Contains(namespaceName))
+                    {
+                        continue;
                     }
 
                     if (_ignoreClassNames.Contains(className))
@@ -225,13 +237,20 @@ namespace SourceCodeSync
                 {
                     string enumName = GetEnumName(enumDecl);
                     string enumSource = enumDecl.ToFullString();
+                    string namespaceName = GetNamespace(enumDecl);
 
                     if (showSource)
                     {
                         Console.WriteLine($"Enum: {enumName}");
+                        Console.WriteLine($"Namespace: {namespaceName}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(enumSource);
                         Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (_ignoreNamespaces.Contains(namespaceName))
+                    {
+                        continue;
                     }
 
                     if (_ignoreEnumNames.Contains(enumName))
@@ -420,6 +439,15 @@ namespace SourceCodeSync
                 enumName = $"{modifiers}_{enumName}";
             }
             return enumName;
+        }
+
+        public static string GetNamespace(SyntaxNode node)
+        {
+            var namespaceDeclaration = node.Ancestors()
+                .OfType<BaseNamespaceDeclarationSyntax>()
+                .FirstOrDefault();
+
+            return namespaceDeclaration?.Name.ToString() ?? string.Empty;
         }
 
         public static string GetRelativePath(string basePath, string fullPath)
