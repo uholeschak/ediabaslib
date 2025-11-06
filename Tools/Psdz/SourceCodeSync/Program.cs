@@ -209,11 +209,14 @@ namespace SourceCodeSync
 
                     if (_classDict.TryGetValue(className, out ClassDeclarationSyntax oldClassSyntax))
                     {
-                        string oldClassSource = oldClassSyntax.ToFullString();
-                        if (oldClassSource != classSource)
+                        if (oldClassSyntax != null)
                         {
-                            Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", className);
-                            _classDict[className] = null;
+                            string oldClassSource = oldClassSyntax.ToFullString();
+                            if (oldClassSource != classSource)
+                            {
+                                Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", className);
+                                _classDict[className] = null;
+                            }
                         }
                     }
                     else
@@ -253,11 +256,14 @@ namespace SourceCodeSync
 
                     if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax oldEnumSyntax))
                     {
-                        string oldEnumSource = oldEnumSyntax.ToFullString();
-                        if (oldEnumSource != enumSource)
+                        if (oldEnumSyntax != null)
                         {
-                            Console.WriteLine("*** Warning: Duplicate enum name with different source: {0}", enumName);
-                            _enumDict[enumName] = null;
+                            string oldEnumSource = oldEnumSyntax.ToFullString();
+                            if (oldEnumSource != enumSource)
+                            {
+                                Console.WriteLine("*** Warning: Duplicate enum name with different source: {0}", enumName);
+                                _enumDict[enumName] = null;
+                            }
                         }
                     }
                     else
