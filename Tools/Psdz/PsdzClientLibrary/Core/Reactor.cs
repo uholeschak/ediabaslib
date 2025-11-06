@@ -9,20 +9,6 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-    public enum DataSource
-    {
-        Legacy,
-        FBM,
-        DOM,
-        Vehicle,
-        Database,
-        Fallback,
-        Hardcoded,
-        UserInput,
-        Unknown,
-        ServicePrograms
-    }
-
     public class Reactor : ReactorEngine
     {
         //private static Reactor singleton;

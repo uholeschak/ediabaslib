@@ -12,16 +12,17 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             if (!(value is string value2))
             {
-                if (value is DateTime value3)
+                if (!(value is DateTime value3))
                 {
-                    if (!ValidateDateTime(value3))
+                    if (value is IEnumerable<string> value4 && !ValidateStringCollection(value4))
                     {
                         return false;
                     }
                 }
-                else if (value is IEnumerable<string> value4 && !ValidateStringCollection(value4))
+                else if (!ValidateDateTime(value3))
                 {
                     return false;
                 }
@@ -30,6 +31,7 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             return true;
         }
 
@@ -44,6 +46,7 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             return true;
         }
 
@@ -53,6 +56,7 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             return true;
         }
     }

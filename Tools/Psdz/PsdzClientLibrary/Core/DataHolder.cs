@@ -12,7 +12,7 @@ namespace PsdzClient.Core
 
         public IList<PropertyData<T>> GetPropertyCollection<T>(string propertyName)
         {
-            List<PropertyData<T>> list = Data.Where((DataHolderItem i) => i.PropertyName == propertyName).FirstOrDefault()?.Values as List<PropertyData<T>>;
+            List<PropertyData<T>> list = Data.FirstOrDefault((DataHolderItem i) => i.PropertyName == propertyName)?.Values as List<PropertyData<T>>;
             if (list == null)
             {
                 DataHolderItem dataHolderItem = new DataHolderItem
@@ -23,6 +23,7 @@ namespace PsdzClient.Core
                 Data.Add(dataHolderItem);
                 list = dataHolderItem.Values as List<PropertyData<T>>;
             }
+
             return list;
         }
 

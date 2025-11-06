@@ -7,16 +7,14 @@
     public class DataSourcePriority
     {
         private static List<DataSource> defaultPriorities = new List<DataSource>
-    {
-        DataSource.Database,
-        DataSource.FBM,
-        DataSource.DOM,
-        DataSource.Legacy,
-        DataSource.Fallback
-    };
-
+        {
+            DataSource.Database,
+            DataSource.FBM,
+            DataSource.SVMD,
+            DataSource.Legacy,
+            DataSource.Fallback
+        };
         private static Dictionary<string, List<DataSource>> priorities;
-
         private DataSourcePriority()
         {
         }
@@ -24,378 +22,417 @@
         public static void Init(IMultisourceProperties multisourceProperties)
         {
             priorities = new Dictionary<string, List<DataSource>>
-        {
             {
-                multisourceProperties.ProductionDatePropName,
-                new List<DataSource>
                 {
-                    DataSource.FBM,
-                    DataSource.DOM,
-                    DataSource.Database
-                }
-            },
-            {
-                multisourceProperties.VIN17PropName,
-                new List<DataSource>
+                    multisourceProperties.ProductionDatePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.FBM,
+                        DataSource.SVMD,
+                        DataSource.Database
+                    }
+                },
                 {
-                    DataSource.Vehicle,
-                    DataSource.UserInput,
-                    DataSource.DOM,
-                    DataSource.FBM
-                }
-            },
-            {
-                multisourceProperties.VINRangeTypePropName,
-                new List<DataSource>
+                    multisourceProperties.VIN17PropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.UserInput,
+                        DataSource.SVMD,
+                        DataSource.FBM
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.UserInput
-                }
-            },
-            {
-                multisourceProperties.ILevelWerkPropName,
-                new List<DataSource>
+                    multisourceProperties.VINRangeTypePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.UserInput
+                    }
+                },
                 {
-                    DataSource.Vehicle,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.ILevelPropName,
-                new List<DataSource>
+                    multisourceProperties.ILevelWerkPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.SVMD,
+                        DataSource.Hardcoded
+                    }
+                },
                 {
-                    DataSource.Vehicle,
-                    DataSource.FBM
-                }
-            },
-            {
-                multisourceProperties.BaustandsJahrPropName,
-                new List<DataSource>
+                    multisourceProperties.ILevelPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.Hardcoded
+                    }
+                },
                 {
-                    DataSource.Vehicle,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.BaustandsMonatPropName,
-                new List<DataSource>
+                    multisourceProperties.BaustandsJahrPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Vehicle,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.BaustandPropName,
-                new List<DataSource>
+                    multisourceProperties.BaustandsMonatPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Vehicle,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.AntriebPropName,
-                new List<DataSource>
+                    multisourceProperties.BaustandPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.BasicTypePropName,
-                new List<DataSource>
+                    multisourceProperties.ModelljahrPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Vehicle,
-                    DataSource.FBM,
-                    DataSource.DOM,
-                    DataSource.Database
-                }
-            },
-            {
-                multisourceProperties.BaureihenverbundPropName,
-                new List<DataSource>
+                    multisourceProperties.ModellmonatPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.EreihePropName,
-                new List<DataSource>
+                    multisourceProperties.ModelltagPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.ElektrischeReichweitePropName,
-                new List<DataSource>
+                    multisourceProperties.AntriebPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.HybridkennzeichenPropName,
-                new List<DataSource>
+                    multisourceProperties.BasicTypePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.SVMD,
+                        DataSource.Database
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.KarosseriePropName,
-                new List<DataSource>
+                    multisourceProperties.BaureihenverbundPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.LandPropName,
-                new List<DataSource>
+                    multisourceProperties.EreihePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.LenkungPropName,
-                new List<DataSource>
+                    multisourceProperties.ElektrischeReichweitePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.ProdartPropName,
-                new List<DataSource>
+                    multisourceProperties.HybridkennzeichenPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.ProduktliniePropName,
-                new List<DataSource>
+                    multisourceProperties.KarosseriePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.SicherheitsrelevantPropName,
-                new List<DataSource>
+                    multisourceProperties.LandPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.TuerenPropName,
-                new List<DataSource>
+                    multisourceProperties.LenkungPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.TypPropName,
-                new List<DataSource>
+                    multisourceProperties.ProdartPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.VerkaufsBezeichnungPropName,
-                new List<DataSource>
+                    multisourceProperties.ProduktliniePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.FBM,
-                    DataSource.Database
-                }
-            },
-            {
-                multisourceProperties.AEBezeichnungPropName,
-                new List<DataSource>
+                    multisourceProperties.SicherheitsrelevantPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.AEKurzbezeichnungPropName,
-                new List<DataSource>
+                    multisourceProperties.TuerenPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.AELeistungsklassePropName,
-                new List<DataSource>
+                    multisourceProperties.TypPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.AEUeberarbeitungPropName,
-                new List<DataSource>
+                    multisourceProperties.VerkaufsBezeichnungPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.FBM,
+                        DataSource.Database
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.MotorPropName,
-                new List<DataSource>
+                    multisourceProperties.AEBezeichnungPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.MOTEinbaulagePropName,
-                new List<DataSource>
+                    multisourceProperties.AEKurzbezeichnungPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.HubraumPropName,
-                new List<DataSource>
+                    multisourceProperties.AELeistungsklassePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.KraftstoffartPropName,
-                new List<DataSource>
+                    multisourceProperties.AEUeberarbeitungPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.LeistungsklassePropName,
-                new List<DataSource>
+                    multisourceProperties.MotorPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.UeberarbeitungPropName,
-                new List<DataSource>
+                    multisourceProperties.MOTEinbaulagePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.EMOTDrehmomentPropName,
-                new List<DataSource>
+                    multisourceProperties.HubraumPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.EMOTKraftstoffartPropName,
-                new List<DataSource>
+                    multisourceProperties.KraftstoffartPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.EMOTLeistungsklassePropName,
-                new List<DataSource>
+                    multisourceProperties.LeistungsklassePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.EMOTUeberarbeitungPropName,
-                new List<DataSource>
+                    multisourceProperties.UeberarbeitungPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.EMOTEinbaulagePropName,
-                new List<DataSource>
+                    multisourceProperties.EMOTDrehmomentPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Database,
-                    DataSource.FBM,
-                    DataSource.DOM
-                }
-            },
-            {
-                multisourceProperties.SerialBodyShell,
-                new List<DataSource> { DataSource.DOM }
-            },
-            {
-                multisourceProperties.SerialEngine,
-                new List<DataSource> { DataSource.DOM }
-            },
-            {
-                multisourceProperties.SerialGearBox,
-                new List<DataSource> { DataSource.DOM }
-            },
-            {
-                multisourceProperties.FirstRegistration,
-                new List<DataSource>
+                    multisourceProperties.EMOTKraftstoffartPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Vehicle,
-                    DataSource.FBM
-                }
-            },
-            {
-                multisourceProperties.FAPropName,
-                new List<DataSource>
+                    multisourceProperties.EMOTLeistungsklassePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
                 {
-                    DataSource.Vehicle,
-                    DataSource.FBM
+                    multisourceProperties.EMOTUeberarbeitungPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
+                {
+                    multisourceProperties.EMOTEinbaulagePropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Database,
+                        DataSource.FBM,
+                        DataSource.SVMD
+                    }
+                },
+                {
+                    multisourceProperties.SerialBodyShell,
+                    new List<DataSource>
+                    {
+                        DataSource.SVMD
+                    }
+                },
+                {
+                    multisourceProperties.SerialEngine,
+                    new List<DataSource>
+                    {
+                        DataSource.SVMD
+                    }
+                },
+                {
+                    multisourceProperties.SerialGearBox,
+                    new List<DataSource>
+                    {
+                        DataSource.SVMD
+                    }
+                },
+                {
+                    multisourceProperties.FirstRegistration,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM
+                    }
+                },
+                {
+                    multisourceProperties.FAPropName,
+                    new List<DataSource>
+                    {
+                        DataSource.Vehicle,
+                        DataSource.FBM,
+                        DataSource.Hardcoded
+                    }
                 }
-            }
-        };
+            };
             foreach (KeyValuePair<string, List<DataSource>> priority in priorities)
             {
                 priority.Value.Add(DataSource.Legacy);
@@ -414,6 +451,7 @@
             {
                 log.Info(log.CurrentMethod(), "Default set of priorities was used for property: '" + propertyName + "'.");
             }
+
             return result;
         }
     }

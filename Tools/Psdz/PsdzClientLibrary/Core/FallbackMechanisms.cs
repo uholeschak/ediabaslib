@@ -9,7 +9,6 @@ namespace PsdzClient.Core
     public class FallbackMechanisms
     {
         private readonly DataHolder dataHolder;
-
         public FallbackMechanisms(DataHolder dataHolder)
         {
             this.dataHolder = dataHolder;
@@ -22,16 +21,17 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             IList<PropertyData<string>> propertyCollection2 = dataHolder.GetPropertyCollection<string>(modelljahrPropName);
             IList<PropertyData<string>> propertyCollection3 = dataHolder.GetPropertyCollection<string>(modellmonatPropName);
             if (int.TryParse(propertyCollection2.FirstOrDefault()?.Value, out var result) && int.TryParse(propertyCollection3.FirstOrDefault()?.Value, out var result2))
             {
-                IList<PropertyData<string>> propertyCollection4 = dataHolder.GetPropertyCollection<string>(modelltagPropName);
-                int.TryParse(propertyCollection4.FirstOrDefault()?.Value, out var result3);
+                int.TryParse(dataHolder.GetPropertyCollection<string>(modelltagPropName).FirstOrDefault()?.Value, out var result3);
                 if (result3 == 0)
                 {
                     result3 = 1;
                 }
+
                 setFallback(new DateTime(result, result2, result3));
             }
         }
@@ -43,6 +43,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             string text = propertyData.Value.Substring(3, 4);
             if (!string.IsNullOrEmpty(text))
             {
@@ -73,19 +74,21 @@ namespace PsdzClient.Core
                     case 'H':
                         text2 += "8";
                         break;
-                    default:
-                        text2 = text;
-                        break;
                     case 'J':
                         text2 += "9";
                         break;
+                    default:
+                        text2 = text;
+                        break;
                 }
+
                 IList<PropertyData<string>> propertyCollection = dataHolder.GetPropertyCollection<string>(basicTypePropName);
                 IList<PropertyData<string>> propertyCollection2 = dataHolder.GetPropertyCollection<string>(vinRangeTypePropName);
                 if (propertyCollection.Count == 0 || propertyCollection.First().Source == DataSource.Fallback || propertyCollection.All((PropertyData<string> t) => !t.IsValidValue))
                 {
                     setBasicType(text2);
                 }
+
                 if (propertyCollection2.Count == 0 || propertyCollection2.First().Source == DataSource.Fallback || propertyCollection2.All((PropertyData<string> t) => !t.IsValidValue))
                 {
                     setVinRangeType(text2);
@@ -100,10 +103,11 @@ namespace PsdzClient.Core
             {
                 return;
             }
-            int num2 = propertyData.Value.IndexOf("-");
-            if (num2 >= 0)
+
+            int num = propertyData.Value.IndexOf("-");
+            if (num >= 0)
             {
-                string text = propertyData.Value.Substring(num2 + 1, 5);
+                string text = propertyData.Value.Substring(num + 1, 5);
                 string value = text.Substring(0, 2);
                 string obj = text.Substring(3, 2);
                 IList<PropertyData<string>> propertyCollection = dataHolder.GetPropertyCollection<string>(modellmonatPropName);
@@ -112,10 +116,11 @@ namespace PsdzClient.Core
                 {
                     setModelMonat(obj);
                 }
+
                 if (propertyCollection2.Count == 0 || propertyCollection2.First().Source == DataSource.Fallback || propertyCollection2.All((PropertyData<string> j) => !j.IsValidValue))
                 {
-                    int num3 = Convert.ToInt32(value, CultureInfo.InvariantCulture);
-                    setModelJahr(((num3 <= 50) ? (num3 + 2000) : (num3 + 1900)).ToString());
+                    int num2 = Convert.ToInt32(value, CultureInfo.InvariantCulture);
+                    setModelJahr(((num2 <= 50) ? (num2 + 2000) : (num2 + 1900)).ToString());
                 }
             }
         }

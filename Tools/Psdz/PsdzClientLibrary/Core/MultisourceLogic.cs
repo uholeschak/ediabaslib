@@ -6,13 +6,9 @@ namespace PsdzClient.Core
     public class MultisourceLogic
     {
         private Dictionary<string, object> locks = new Dictionary<string, object>();
-
         private readonly DataHolder dataHolder;
-
         private readonly ILogger log;
-
         private readonly IValueValidator valueValidator;
-
         public bool Enabled { get; set; }
 
         public MultisourceLogic(DataHolder dataHolder, ILogger log, IMultisourceProperties multisourceProperties, IValueValidator valueValidator)
@@ -35,76 +31,75 @@ namespace PsdzClient.Core
                 if (!valueValidator.IsValid<T>(propertyName, value))
                 {
                     IList<PropertyData<T>> propertyCollection = dataHolder.GetPropertyCollection<T>(propertyName);
-                    propertyCollection.Add(new PropertyData<T>(value, source)
-                    {
-                        IsValidValue = false
-                    });
+                    propertyCollection.Add(new PropertyData<T>(value, source) { IsValidValue = false });
                     return propertyCollection.First().Value;
                 }
+
                 List<DataSource> priorities = DataSourcePriority.GetPriorities(propertyName, log);
                 IList<PropertyData<T>> propertyCollection2 = dataHolder.GetPropertyCollection<T>(propertyName);
                 if (!Enabled)
                 {
                     propertyCollection2.Insert(0, new PropertyData<T>(value, source));
-                    log.Info(log.CurrentMethod(), $"Fusion reactor disabled. Property: '{propertyName}' update with value = '{value}' from source = {source}");
+                    log.Info("MultisourceLogic.SetProperty", $"Fusion reactor disabled. Property: '{propertyName}' update with value = '{value}' from source = {source}");
                     return propertyCollection2.First().Value;
                 }
+
                 if (propertyCollection2.Count == 0)
                 {
                     propertyCollection2.Add(new PropertyData<T>(value, source));
-                    log.Info(log.CurrentMethod(), $"Property '{propertyName}': Added first item from '{source}' with value = '{value}'");
+                    log.Info("MultisourceLogic.SetProperty", $"Property '{propertyName}': Added first item from '{source}' with value = '{value}'");
                     return propertyCollection2.First().Value;
                 }
-                int num2 = priorities.IndexOf(source);
-                if (num2 == -1)
+
+                int num = priorities.IndexOf(source);
+                if (num == -1)
                 {
                     PropertyData<T> propertyData = propertyCollection2.FirstOrDefault((PropertyData<T> e) => priorities.All((DataSource p) => p != e.Source) || !e.IsValidValue);
-                    int num3 = -1;
+                    int num2 = -1;
                     if (propertyData != null)
                     {
-                        num3 = propertyCollection2.IndexOf(propertyData);
+                        num2 = propertyCollection2.IndexOf(propertyData);
                     }
-                    if (num3 > -1)
+
+                    if (num2 > -1)
                     {
-                        propertyCollection2.Insert(num3, new PropertyData<T>(value, source));
+                        propertyCollection2.Insert(num2, new PropertyData<T>(value, source));
                     }
                     else
                     {
                         propertyCollection2.Add(new PropertyData<T>(value, source));
                     }
-                    log.Warning(log.CurrentMethod(), $"Property '{propertyName}': Datasource with undifined priority used! Added as element with lowest priority. Source: '{source}', Value = '{value}'");
+
+                    log.Warning("MultisourceLogic.SetProperty", $"Property '{propertyName}': Datasource with undifined priority used! Added as element with lowest priority. Source: '{source}', Value = '{value}'");
                     return propertyCollection2.First().Value;
                 }
+
                 int count = propertyCollection2.Count;
-                int num4 = 0;
-                while (true)
+                for (int num3 = 0; num3 < count; num3++)
                 {
-                    if (num4 < count)
+                    PropertyData<T> propertyData2 = propertyCollection2[num3];
+                    int num4 = priorities.IndexOf(propertyData2.Source);
+                    if (num4 == -1 || !propertyData2.IsValidValue)
                     {
-                        PropertyData<T> propertyData2 = propertyCollection2[num4];
-                        int num5 = priorities.IndexOf(propertyData2.Source);
-                        if (num5 != -1 && propertyData2.IsValidValue)
-                        {
-                            if (num2 <= num5)
-                            {
-                                break;
-                            }
-                            if (num4 == propertyCollection2.Count - 1)
-                            {
-                                propertyCollection2.Add(new PropertyData<T>(value, source));
-                                log.Info(log.CurrentMethod(), $"Property '{propertyName}': Added new item from '{source}' with value = '{value}'");
-                            }
-                            num4++;
-                            continue;
-                        }
-                        propertyCollection2.Insert(0, new PropertyData<T>(value, source));
-                        log.Info(log.CurrentMethod(), $"Property '{propertyName}': Inserted new item from '{source}' with value = '{value}'");
+                        propertyCollection2.Insert(num3, new PropertyData<T>(value, source));
+                        log.Info("MultisourceLogic.SetProperty", $"Property '{propertyName}': Inserted new item from '{source}' with value = '{value}'");
                         return propertyCollection2.First().Value;
                     }
-                    return propertyCollection2.First().Value;
+
+                    if (num <= num4)
+                    {
+                        propertyCollection2.Insert(num3, new PropertyData<T>(value, source));
+                        log.Info("MultisourceLogic.SetProperty", $"Property '{propertyName}': Inserted new item from '{source}' with value = '{value}'");
+                        return propertyCollection2.First().Value;
+                    }
+
+                    if (num3 == propertyCollection2.Count - 1)
+                    {
+                        propertyCollection2.Add(new PropertyData<T>(value, source));
+                        log.Info("MultisourceLogic.SetProperty", $"Property '{propertyName}': Added new item from '{source}' with value = '{value}'");
+                    }
                 }
-                propertyCollection2.Insert(num4, new PropertyData<T>(value, source));
-                log.Info(log.CurrentMethod(), $"Property '{propertyName}': Inserted new item from '{source}' with value = '{value}'");
+
                 return propertyCollection2.First().Value;
             }
         }
@@ -115,7 +110,8 @@ namespace PsdzClient.Core
             {
                 return locks[propertyName];
             }
-            object obj = new object();
+
+            object obj = new object ();
             locks[propertyName] = obj;
             return obj;
         }
