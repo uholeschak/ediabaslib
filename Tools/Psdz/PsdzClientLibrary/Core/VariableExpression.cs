@@ -91,6 +91,7 @@ namespace PsdzClient.Core
             throw new Exception("The method or operation is not implemented.");
         }
 
+        // [UH] added
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
