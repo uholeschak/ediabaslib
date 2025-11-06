@@ -483,7 +483,7 @@ namespace SourceCodeSync
         /// </summary>
         public static bool HasCommentTrivia(SyntaxTriviaList triviaList)
         {
-            foreach (var trivia in triviaList)
+            foreach (SyntaxTrivia trivia in triviaList)
             {
                 if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||           // //
                     trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||   // /* */
