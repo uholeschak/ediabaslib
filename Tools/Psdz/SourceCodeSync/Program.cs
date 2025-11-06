@@ -202,12 +202,6 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (HasComments(cls))
-                    {
-                        Console.WriteLine("Skipping code with comments: {0}", fileName);
-                        continue;
-                    }
-
                     if (_classDict.TryGetValue(className, out ClassDeclarationSyntax oldClassSyntax))
                     {
                         string oldClassSource = oldClassSyntax.ToFullString();
@@ -276,14 +270,6 @@ namespace SourceCodeSync
             try
             {
                 string fileContent = File.ReadAllText(fileName);
-                string fileContentTrimmed = fileContent.TrimStart('/');
-                if (fileContentTrimmed.Contains("// ", StringComparison.Ordinal) ||
-                    fileContentTrimmed.Contains("[UH]", StringComparison.Ordinal))
-                {
-                    Console.WriteLine("Skipping manually modified file: {0}", fileName);
-                    return true;
-                }
-
                 SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileContent);
                 CompilationUnitSyntax root = syntaxTree.GetCompilationUnitRoot();
 
@@ -302,6 +288,12 @@ namespace SourceCodeSync
                         Console.WriteLine("Source:");
                         Console.WriteLine(classSource);
                         Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (HasComments(cls))
+                    {
+                        Console.WriteLine("Skipping class {0} with comments: {1}", className, fileName);
+                        continue;
                     }
 
                     if (_classDict.TryGetValue(className, out ClassDeclarationSyntax sourceClass) && sourceClass != null)
@@ -339,6 +331,12 @@ namespace SourceCodeSync
                         Console.WriteLine("Source:");
                         Console.WriteLine(enumSource);
                         Console.WriteLine(new string('-', 80));
+                    }
+
+                    if (HasComments(enumDecl))
+                    {
+                        Console.WriteLine("Skipping enum {0} with comments: {1}", enumName, fileName);
+                        continue;
                     }
 
                     if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum) && sourceEnum != null)
@@ -493,81 +491,6 @@ namespace SourceCodeSync
                     trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))    // /** */
                 {
                     return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Gets all comments from a class declaration
-        /// </summary>
-        public static List<string> GetComments(ClassDeclarationSyntax classDeclaration)
-        {
-            var comments = new List<string>();
-
-            // Get leading trivia comments
-            if (classDeclaration.HasLeadingTrivia)
-            {
-                comments.AddRange(ExtractComments(classDeclaration.GetLeadingTrivia()));
-            }
-
-            // Get trailing trivia comments
-            if (classDeclaration.HasTrailingTrivia)
-            {
-                comments.AddRange(ExtractComments(classDeclaration.GetTrailingTrivia()));
-            }
-
-            // Get comments from all descendant tokens
-            foreach (var token in classDeclaration.DescendantTokens(descendIntoTrivia: true))
-            {
-                if (token.HasLeadingTrivia)
-                {
-                    comments.AddRange(ExtractComments(token.LeadingTrivia));
-                }
-                if (token.HasTrailingTrivia)
-                {
-                    comments.AddRange(ExtractComments(token.TrailingTrivia));
-                }
-            }
-
-            return comments;
-        }
-
-        /// <summary>
-        /// Extracts comment text from trivia list
-        /// </summary>
-        public static List<string> ExtractComments(SyntaxTriviaList triviaList)
-        {
-            var comments = new List<string>();
-
-            foreach (var trivia in triviaList)
-            {
-                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
-                    trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
-                    trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
-                    trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
-                {
-                    comments.Add(trivia.ToString());
-                }
-            }
-
-            return comments;
-        }
-
-        /// <summary>
-        /// Checks if a class has XML documentation comments (///)
-        /// </summary>
-        public static bool HasXmlDocumentation(ClassDeclarationSyntax classDeclaration)
-        {
-            if (classDeclaration.HasLeadingTrivia)
-            {
-                foreach (var trivia in classDeclaration.GetLeadingTrivia())
-                {
-                    if (trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
-                        trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
-                    {
-                        return true;
-                    }
                 }
             }
             return false;
