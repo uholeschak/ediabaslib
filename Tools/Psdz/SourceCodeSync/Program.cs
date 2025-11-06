@@ -402,6 +402,14 @@ namespace SourceCodeSync
 
                     if (_interfaceDict.TryGetValue(interfaceName, out InterfaceDeclarationSyntax sourceInterface) && sourceInterface != null)
                     {
+                        bool hasServiceContract = HasServiceContractAttribute(interfaceDecl);
+                        bool sourceHasServiceContract = HasServiceContractAttribute(sourceInterface);
+                        if (hasServiceContract && !sourceHasServiceContract)
+                        {
+                            Console.WriteLine("Skipping interface {0} with removed ServiceContract", interfaceName);
+                            continue;
+                        }
+
                         // Compare if they're different
                         string sourceInterfaceStr = sourceInterface.NormalizeWhitespace().ToFullString();
                         if (interfaceSource != sourceInterfaceStr)
@@ -684,6 +692,17 @@ namespace SourceCodeSync
                 }
             }
             return false;
+        }
+
+        public static bool HasServiceContractAttribute(InterfaceDeclarationSyntax interfaceDecl)
+        {
+            return interfaceDecl.AttributeLists
+                .SelectMany(al => al.Attributes)
+                .Any(attr =>
+                {
+                    string attrName = attr.Name.ToString();
+                    return attrName == "ServiceContract";
+                });
         }
     }
 }
