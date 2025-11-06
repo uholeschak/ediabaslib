@@ -1,8 +1,9 @@
 ﻿using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model;
 using System.ServiceModel;
+using BMW.Rheingold.Psdz.Client;
 
-namespace BMW.Rheingold.Psdz.Client
+namespace BMW.Rheingold.Psdz
 {
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
     [ServiceKnownType(typeof(SecureDiagnosticsCallback))]
