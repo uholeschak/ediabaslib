@@ -112,6 +112,7 @@ namespace PsdzClient.Core
             base.Serialize(ms);
 		}
 
+        // [UH] added
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.EcuClique ecuClique = ClientContext.GetDatabase(this.vecInfo)?.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture));

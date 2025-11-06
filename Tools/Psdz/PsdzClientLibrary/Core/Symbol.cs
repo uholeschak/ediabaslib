@@ -9,15 +9,14 @@ namespace PsdzClient.Core
     internal class Symbol
     {
         private RuleExpression.ESymbolType type;
-
         private object value;
-
         public RuleExpression.ESymbolType Type
         {
             get
             {
                 return type;
             }
+
             set
             {
                 type = value;
@@ -30,6 +29,7 @@ namespace PsdzClient.Core
             {
                 return value;
             }
+
             set
             {
                 this.value = value;

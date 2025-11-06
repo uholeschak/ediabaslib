@@ -128,6 +128,7 @@ namespace PsdzClient.Core
 			ms.Write(BitConverter.GetBytes(this.iLevelId), 0, 8);
 		}
 
+        // [UH] added
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             string istufeById = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));

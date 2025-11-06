@@ -62,6 +62,7 @@ namespace PsdzClient.Core
             ms.Write(BitConverter.GetBytes(this.value), 0, 8);
         }
 
+        // [UH] added
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();

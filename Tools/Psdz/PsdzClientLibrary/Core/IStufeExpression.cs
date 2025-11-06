@@ -69,6 +69,7 @@ namespace PsdzClient.Core
             base.Serialize(ms);
         }
 
+        // [UH] added
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();

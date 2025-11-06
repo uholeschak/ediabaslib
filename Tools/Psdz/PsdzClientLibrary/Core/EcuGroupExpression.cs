@@ -77,6 +77,7 @@ namespace PsdzClient.Core
             base.Serialize(ms);
         }
 
+        // [UH] added
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.value.ToString(CultureInfo.InvariantCulture));

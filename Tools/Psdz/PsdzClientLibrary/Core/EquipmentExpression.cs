@@ -112,6 +112,7 @@ namespace PsdzClient.Core
 			base.Serialize(ms);
 		}
 
+        // [UH] added
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.Equipment equipmentById = ClientContext.GetDatabase(this.vecInfo)?.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));

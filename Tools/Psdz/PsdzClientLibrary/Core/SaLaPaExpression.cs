@@ -27,6 +27,7 @@ namespace PsdzClient.Core
             base.Serialize(ms);
         }
 
+        // [UH] added
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(this.vecInfo)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));

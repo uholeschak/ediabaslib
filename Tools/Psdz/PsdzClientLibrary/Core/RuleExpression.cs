@@ -234,6 +234,7 @@ namespace PsdzClient.Core
 		{
 		}
 
+        // [UH] added
         public virtual string ToFormula(FormulaConfig formulaConfig)
         {
             throw new Exception("ToFormula() missing for class: \"" + this.GetType().Name + "\"");

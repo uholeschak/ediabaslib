@@ -73,6 +73,7 @@ namespace PsdzClient.Core
 			base.Serialize(ms);
 		}
 
+        // [UH] added
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.EcuReps ecuRepsById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuRepsById(this.value.ToString(CultureInfo.InvariantCulture));
