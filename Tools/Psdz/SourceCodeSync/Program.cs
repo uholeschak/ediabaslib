@@ -19,17 +19,12 @@ namespace SourceCodeSync
         [
             "BMW.ISPI.TRIC.ISTA.Contracts.Enums.UserLogin",
             "BMW.Rheingold.CoreFramework.OSS",
+            "BMW.ISPI.TRIC.ISTA.Contracts.Models.PortalIntegration",
         ];
 
         private static readonly string[] _ignoreClassNames =
         [
             "public_ParameterContainer",
-            "public_Address",
-            "public_Contract",
-            "public_Outlet",
-            "public_Phone",
-            "public_Contact",
-            "public_Property",
             "public_static_LicenseHelper",
             "internal_sealed_LicenseManager",
             "public_LicenseStatusChecker",
