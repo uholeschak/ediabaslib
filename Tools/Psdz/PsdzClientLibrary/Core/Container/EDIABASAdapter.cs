@@ -6,7 +6,7 @@ using PsdzClient.Utility;
 
 namespace PsdzClient.Core.Container
 {
-    public class EDIABASAdapter : BaseAdapter
+    internal class EDIABASAdapter : BaseAdapter
     {
         private bool binModeReq;
 
@@ -24,14 +24,19 @@ namespace PsdzClient.Core.Container
 
         private bool parameterizationDone;
 
+        // [UH] added
         public bool BinModeReq => binModeReq;
 
+        // [UH] added
         public byte[] EcuData => ecuData;
 
+        // [UH] added
         public string EcuGroup => ecuGroup;
 
+        // [UH] added
         public string EcuJob => ecuJob;
 
+        // [UH] added
         public string EcuParam => ecuParam;
 
         public string EcuResultFilter => ecuResultFilter;
