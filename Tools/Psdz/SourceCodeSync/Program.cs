@@ -202,6 +202,12 @@ namespace SourceCodeSync
                         continue;
                     }
 
+                    if (HasComments(cls))
+                    {
+                        Console.WriteLine("Skipping code with comments: {0}", fileName);
+                        continue;
+                    }
+
                     if (_classDict.TryGetValue(className, out ClassDeclarationSyntax oldClassSyntax))
                     {
                         string oldClassSource = oldClassSyntax.ToFullString();
@@ -417,6 +423,168 @@ namespace SourceCodeSync
 
             // Uri's use forward slashes so convert back to backward slashes
             return relativeUri.ToString().Replace("/", "\\");
+        }
+
+        /// <summary>
+        /// Checks if a class declaration has any comments (single-line, multi-line, or XML documentation)
+        /// </summary>
+        public static bool HasComments(ClassDeclarationSyntax classDeclaration)
+        {
+            // Check leading trivia (comments before the class)
+            if (classDeclaration.HasLeadingTrivia)
+            {
+                if (HasCommentTrivia(classDeclaration.GetLeadingTrivia()))
+                {
+                    return true;
+                }
+            }
+
+            // Check trailing trivia (comments after the class declaration line)
+            if (classDeclaration.HasTrailingTrivia)
+            {
+                if (HasCommentTrivia(classDeclaration.GetTrailingTrivia()))
+                {
+                    return true;
+                }
+            }
+
+            // Check all descendant tokens (comments inside the class)
+            foreach (var token in classDeclaration.DescendantTokens(descendIntoTrivia: true))
+            {
+                if (token.HasLeadingTrivia && HasCommentTrivia(token.LeadingTrivia))
+                {
+                    return true;
+                }
+                if (token.HasTrailingTrivia && HasCommentTrivia(token.TrailingTrivia))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a trivia list contains any comment trivia
+        /// </summary>
+        public static bool HasCommentTrivia(SyntaxTriviaList triviaList)
+        {
+            foreach (var trivia in triviaList)
+            {
+                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||           // //
+                    trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||   // /* */
+                    trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || // ///
+                    trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))    // /** */
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Gets all comments from a class declaration
+        /// </summary>
+        public static List<string> GetComments(ClassDeclarationSyntax classDeclaration)
+        {
+            var comments = new List<string>();
+
+            // Get leading trivia comments
+            if (classDeclaration.HasLeadingTrivia)
+            {
+                comments.AddRange(ExtractComments(classDeclaration.GetLeadingTrivia()));
+            }
+
+            // Get trailing trivia comments
+            if (classDeclaration.HasTrailingTrivia)
+            {
+                comments.AddRange(ExtractComments(classDeclaration.GetTrailingTrivia()));
+            }
+
+            // Get comments from all descendant tokens
+            foreach (var token in classDeclaration.DescendantTokens(descendIntoTrivia: true))
+            {
+                if (token.HasLeadingTrivia)
+                {
+                    comments.AddRange(ExtractComments(token.LeadingTrivia));
+                }
+                if (token.HasTrailingTrivia)
+                {
+                    comments.AddRange(ExtractComments(token.TrailingTrivia));
+                }
+            }
+
+            return comments;
+        }
+
+        /// <summary>
+        /// Extracts comment text from trivia list
+        /// </summary>
+        public static List<string> ExtractComments(SyntaxTriviaList triviaList)
+        {
+            var comments = new List<string>();
+
+            foreach (var trivia in triviaList)
+            {
+                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
+                    trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
+                    trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
+                    trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
+                {
+                    comments.Add(trivia.ToString());
+                }
+            }
+
+            return comments;
+        }
+
+        /// <summary>
+        /// Checks if a class has XML documentation comments (///)
+        /// </summary>
+        public static bool HasXmlDocumentation(ClassDeclarationSyntax classDeclaration)
+        {
+            if (classDeclaration.HasLeadingTrivia)
+            {
+                foreach (var trivia in classDeclaration.GetLeadingTrivia())
+                {
+                    if (trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
+                        trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Same comment detection methods for enums
+        /// </summary>
+        public static bool HasComments(EnumDeclarationSyntax enumDeclaration)
+        {
+            if (enumDeclaration.HasLeadingTrivia && HasCommentTrivia(enumDeclaration.GetLeadingTrivia()))
+            {
+                return true;
+            }
+
+            if (enumDeclaration.HasTrailingTrivia && HasCommentTrivia(enumDeclaration.GetTrailingTrivia()))
+            {
+                return true;
+            }
+
+            foreach (var token in enumDeclaration.DescendantTokens(descendIntoTrivia: true))
+            {
+                if (token.HasLeadingTrivia && HasCommentTrivia(token.LeadingTrivia))
+                {
+                    return true;
+                }
+                if (token.HasTrailingTrivia && HasCommentTrivia(token.TrailingTrivia))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
