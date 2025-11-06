@@ -3,7 +3,7 @@ using System;
 
 namespace PsdzClient.Core.Container
 {
-    public class BaseAdapter
+    internal class BaseAdapter
     {
         protected bool StandardErrorHandling;
 
