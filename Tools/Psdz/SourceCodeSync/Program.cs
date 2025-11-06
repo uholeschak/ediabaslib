@@ -17,7 +17,8 @@ namespace SourceCodeSync
 
         private static readonly string[] _ignoreNamespaces =
         [
-            "BMW.ISPI.TRIC.ISTA.Contracts.Enums.UserLogin"
+            "BMW.ISPI.TRIC.ISTA.Contracts.Enums.UserLogin",
+            "BMW.Rheingold.CoreFramework.OSS",
         ];
 
         private static readonly string[] _ignoreClassNames =
@@ -37,9 +38,6 @@ namespace SourceCodeSync
 
         private static readonly string[] _ignoreEnumNames =
         [
-            "public_Brand",
-            "public_BusinessLine",
-            "public_Product"
         ];
 
         public class Options
