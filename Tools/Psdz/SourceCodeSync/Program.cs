@@ -378,13 +378,30 @@ namespace SourceCodeSync
             return true;
         }
 
+        public static string GetModifiersText(SyntaxTokenList syntaxTokenList)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (SyntaxToken modifier in syntaxTokenList)
+            {
+                if (modifier.IsKeyword())
+                {
+                    if (sb.Length > 0)
+                    {
+                        sb.Append("_");
+                    }
+                    sb.Append(modifier.ValueText);
+                }
+            }
+
+            return sb.ToString();
+        }
+
         public static string GetClassName(ClassDeclarationSyntax classDeclaration)
         {
             string className = classDeclaration.Identifier.ValueText;
-            string modifiers = classDeclaration.Modifiers.ToFullString().Trim();
+            string modifiers = GetModifiersText(classDeclaration.Modifiers);
             if (modifiers.Length > 0)
             {
-                modifiers = modifiers.Replace(" ", "_").Replace("\t", "");
                 className = $"{modifiers}_{className}";
             }
 
@@ -399,10 +416,9 @@ namespace SourceCodeSync
         public static string GetEnumName(EnumDeclarationSyntax enumDeclaration)
         {
             string enumName = enumDeclaration.Identifier.ValueText;
-            string modifiers = enumDeclaration.Modifiers.ToFullString().Trim();
+            string modifiers = GetModifiersText(enumDeclaration.Modifiers);
             if (modifiers.Length > 0)
             {
-                modifiers = modifiers.Replace(" ", "_").Replace("\t", "");
                 enumName = $"{modifiers}_{enumName}";
             }
             return enumName;
