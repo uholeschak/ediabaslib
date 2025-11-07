@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	[Serializable]
-	public abstract class RuleExpression : IRuleExpression
-	{
+    [Serializable]
+    public abstract class RuleExpression : IRuleExpression
+    {
+        // [UH] added
         public class FormulaConfig
         {
             public FormulaConfig(string getStringFunc, string getLongFunc, string checkStringFunc, string checkLongFunc, string ruleValidFunc, bool isRuleValidNumFunc = false, List<string> subRuleIds = null, string operatorSeparator = null)
