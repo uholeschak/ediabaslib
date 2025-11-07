@@ -42,6 +42,7 @@ namespace SourceCodeSync
         private static readonly string[] _ignoreInterfaceNames =
         [
             "public_ILogger",
+            "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService"
         ];
 
         private static readonly string[] _ignoreEnumNames =
@@ -263,6 +264,12 @@ namespace SourceCodeSync
                     }
 
                     if (_ignoreInterfaceNames.Contains(interfaceName))
+                    {
+                        continue;
+                    }
+
+                    string interfaceNameWithNamespace = GetInterfaceName(interfaceDecl, includeNamespace: true);
+                    if (_ignoreInterfaceNames.Contains(interfaceNameWithNamespace))
                     {
                         continue;
                     }
@@ -534,20 +541,32 @@ namespace SourceCodeSync
             return className;
         }
 
-        public static string GetInterfaceName(InterfaceDeclarationSyntax interfaceDeclaration)
+        public static string GetInterfaceName(InterfaceDeclarationSyntax interfaceDeclaration, bool includeNamespace = false)
         {
             string interfaceName = interfaceDeclaration.Identifier.ValueText;
-            string modifiers = GetModifiersText(interfaceDeclaration.Modifiers);
-            if (modifiers.Length > 0)
+            if (includeNamespace)
             {
-                interfaceName = $"{modifiers}_{interfaceName}";
+                string namespaceName = GetNamespace(interfaceDeclaration);
+                if (!string.IsNullOrEmpty(namespaceName))
+                {
+                    interfaceName = $"{namespaceName}.{interfaceName}";
+                }
+            }
+            else
+            {
+                string modifiers = GetModifiersText(interfaceDeclaration.Modifiers);
+                if (modifiers.Length > 0)
+                {
+                    interfaceName = $"{modifiers}_{interfaceName}";
+                }
+
+                int typeParamCount = interfaceDeclaration.TypeParameterList?.Parameters.Count ?? 0;
+                if (typeParamCount > 0)
+                {
+                    interfaceName += $"_<{typeParamCount}>";
+                }
             }
 
-            int typeParamCount = interfaceDeclaration.TypeParameterList?.Parameters.Count ?? 0;
-            if (typeParamCount > 0)
-            {
-                interfaceName += $"_<{typeParamCount}>";
-            }
             return interfaceName;
         }
 
