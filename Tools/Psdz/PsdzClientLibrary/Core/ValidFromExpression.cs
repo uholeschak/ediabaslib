@@ -17,6 +17,7 @@ namespace PsdzClient.Core
             this.value = date.ToBinary();
         }
 
+        // [UH] arguments modified
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             bool flag = true;
