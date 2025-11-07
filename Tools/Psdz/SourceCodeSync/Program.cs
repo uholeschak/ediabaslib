@@ -22,6 +22,7 @@ namespace SourceCodeSync
             "BMW.Rheingold.CoreFramework.OSS",
             "BMW.Rheingold.CoreFramework.IndustrialCustomer.Common",
             "BMW.ISPI.TRIC.ISTA.Contracts.Models.PortalIntegration",
+            "BMW.Rheingold.InfoProvider.igDom",
         ];
 
         private static readonly string[] _ignoreClassNames =
