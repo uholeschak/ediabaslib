@@ -22,7 +22,6 @@ namespace SourceCodeSync
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Enums\.UserLogin$",
             @"^BMW\.Rheingold\.CoreFramework\.OSS$",
             @"^BMW\.Rheingold\.CoreFramework\.Contracts\.FASTA$",
-            @"^BMW\.Rheingold\.CoreFramework\.Contracts\.Programming$",
             @"^BMW\.Rheingold\.CoreFramework\.IndustrialCustomer\..*",
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Models\..*",
             @"^BMW\.Rheingold\.InfoProvider\..*",
@@ -38,6 +37,11 @@ namespace SourceCodeSync
             "internal_sealed_LicenseManager",
             "public_LicenseStatusChecker",
             "public_LicenseWizardHelper"
+        ];
+
+        private static readonly string[] _ignoreInterfaceNames =
+        [
+            "public_ILogger",
         ];
 
         private static readonly string[] _ignoreEnumNames =
@@ -254,6 +258,11 @@ namespace SourceCodeSync
                     }
 
                     if (_compiledIgnoreNamespaces.Any(regex => regex.IsMatch(namespaceName)))
+                    {
+                        continue;
+                    }
+
+                    if (_ignoreInterfaceNames.Contains(interfaceName))
                     {
                         continue;
                     }

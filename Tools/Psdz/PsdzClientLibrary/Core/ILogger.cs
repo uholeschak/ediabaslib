@@ -17,6 +17,7 @@ namespace PsdzClient.Core
 
         void WarningException(string method, Exception exception);
 
+        // [UH] modified
         string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null);
     }
 }
