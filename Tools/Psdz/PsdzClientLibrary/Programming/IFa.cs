@@ -30,7 +30,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         IFa Clone();
 
-        //[AuthorAPIHidden]
+        [AuthorAPIHidden]
         bool AreEqual(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa vehicleOrder);
     }
 }
