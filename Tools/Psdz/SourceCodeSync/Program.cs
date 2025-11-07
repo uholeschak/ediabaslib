@@ -395,6 +395,14 @@ namespace SourceCodeSync
 
                     if (_classDict.TryGetValue(className, out ClassDeclarationSyntax sourceClass) && sourceClass != null)
                     {
+                        bool hasContract = HasContractAttribute(cls.AttributeLists);
+                        bool sourceHasContract = HasContractAttribute(sourceClass.AttributeLists);
+                        if (hasContract && !sourceHasContract)
+                        {
+                            Console.WriteLine("Skipping class {0} with removed Contract", className);
+                            continue;
+                        }
+
                         // Compare if they're different
                         string classSourceStr = sourceClass.NormalizeWhitespace().ToFullString();
                         if (classSource != classSourceStr)
@@ -438,11 +446,11 @@ namespace SourceCodeSync
 
                     if (_interfaceDict.TryGetValue(interfaceName, out InterfaceDeclarationSyntax sourceInterface) && sourceInterface != null)
                     {
-                        bool hasServiceContract = HasServiceContractAttribute(interfaceDecl);
-                        bool sourceHasServiceContract = HasServiceContractAttribute(sourceInterface);
-                        if (hasServiceContract && !sourceHasServiceContract)
+                        bool hasContract = HasContractAttribute(interfaceDecl.AttributeLists);
+                        bool sourceHasContract = HasContractAttribute(sourceInterface.AttributeLists);
+                        if (hasContract && !sourceHasContract)
                         {
-                            Console.WriteLine("Skipping interface {0} with removed ServiceContract", interfaceName);
+                            Console.WriteLine("Skipping interface {0} with removed Contract", interfaceName);
                             continue;
                         }
 
@@ -790,14 +798,21 @@ namespace SourceCodeSync
             return false;
         }
 
-        public static bool HasServiceContractAttribute(InterfaceDeclarationSyntax interfaceDecl)
+        public static bool HasContractAttribute(SyntaxList<AttributeListSyntax> attributeLists)
         {
-            return interfaceDecl.AttributeLists
+            return attributeLists
                 .SelectMany(al => al.Attributes)
                 .Any(attr =>
                 {
                     string attrName = attr.Name.ToString();
-                    return attrName == "ServiceContract";
+                    switch (attrName)
+                    {
+                        case "ServiceContract":
+                        case "DataContract":
+                        case "OperationContract":
+                            return true;
+                    }
+                    return false;
                 });
         }
     }
