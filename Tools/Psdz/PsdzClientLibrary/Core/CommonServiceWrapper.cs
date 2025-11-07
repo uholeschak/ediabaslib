@@ -2,6 +2,7 @@
 
 namespace PsdzClient.Core
 {
+    // [UH] Simplified version
     public class CommonServiceWrapper
     {
         private static readonly object featureSwitchLockObj = new object();
