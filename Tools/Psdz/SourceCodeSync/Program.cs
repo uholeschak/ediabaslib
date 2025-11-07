@@ -19,17 +19,16 @@ namespace SourceCodeSync
 
         private static readonly string[] _ignoreNamespaces =
         [
-            "^BMW.ISPI.TRIC.ISTA.Contracts.Enums.UserLogin",
-            "^BMW.Rheingold.CoreFramework.OSS",
-            "^BMW.Rheingold.CoreFramework.IndustrialCustomer.*",
-            "^BMW.ISPI.TRIC.ISTA.Contracts.Models.*",
-            "^BMW.Rheingold.InfoProvider.*",
+            @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Enums\.UserLogin",
+            @"^BMW\.Rheingold\.CoreFramework\.OSS",
+            @"^BMW\.Rheingold\.CoreFramework\.IndustrialCustomer.*",
+            @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Models.*",
+            @"^BMW\.Rheingold\.InfoProvider.*",
         ];
 
         private static readonly Regex[] _compiledIgnoreNamespaces = _ignoreNamespaces
                 .Select(pattern => new Regex(pattern, RegexOptions.Compiled))
                 .ToArray();
-
 
         private static readonly string[] _ignoreClassNames =
         [
