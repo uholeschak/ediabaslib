@@ -536,6 +536,21 @@ namespace SourceCodeSync
             return sb.ToString();
         }
 
+        public static string GetBaseTypesText(SeparatedSyntaxList<BaseTypeSyntax> baseTypeList)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (BaseTypeSyntax baseType in baseTypeList)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append("_");
+                }
+                sb.Append(baseType.Type);
+            }
+
+            return sb.ToString();
+        }
+
         public static string GetClassName(ClassDeclarationSyntax classDeclaration, bool includeNamespace = false)
         {
             string className = classDeclaration.Identifier.ValueText;
@@ -559,6 +574,11 @@ namespace SourceCodeSync
                 if (typeParamCount > 0)
                 {
                     className += $"_<{typeParamCount}>";
+                }
+
+                if (classDeclaration.BaseList != null)
+                {
+                    className += ":" + GetBaseTypesText(classDeclaration.BaseList.Types);
                 }
             }
             return className;
@@ -587,6 +607,11 @@ namespace SourceCodeSync
                 if (typeParamCount > 0)
                 {
                     interfaceName += $"_<{typeParamCount}>";
+                }
+
+                if (interfaceDeclaration.BaseList != null)
+                {
+                    interfaceName += ":" + GetBaseTypesText(interfaceDeclaration.BaseList.Types);
                 }
             }
 
