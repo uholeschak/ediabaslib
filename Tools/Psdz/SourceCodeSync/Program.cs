@@ -25,7 +25,7 @@ namespace SourceCodeSync
             @"^BMW\.Rheingold\.CoreFramework\.Contracts\.Programming$",
             @"^BMW\.Rheingold\.CoreFramework\.IndustrialCustomer\..*",
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Models\..*",
-            @"^BMW\.Rheingold\.InfoProvider",
+            @"^BMW\.Rheingold\.InfoProvider\..*",
         ];
 
         private static readonly Regex[] _compiledIgnoreNamespaces = _ignoreNamespaces
