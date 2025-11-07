@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    // [UH] Only for compatibility with older version
     internal class PsdzEventService
     {
+        // [UH] Only for compatibility with older version
         private sealed class PsdzEventListenerClient : DuplexClientBase<IEventManagerService>
         {
             public PsdzEventListenerClient(IPsdzEventListener eventListener, Binding binding, EndpointAddress endPointAddress)
