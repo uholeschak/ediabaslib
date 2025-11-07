@@ -387,7 +387,7 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (HasComments(cls))
+                    if (HasSpecialTrivia(cls))
                     {
                         Console.WriteLine("Skipping class {0} with comments: {1}", className, fileName);
                         continue;
@@ -438,7 +438,7 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (HasComments(interfaceDecl))
+                    if (HasSpecialTrivia(interfaceDecl))
                     {
                         Console.WriteLine("Skipping interface {0} with comments: {1}", interfaceName, fileName);
                         continue;
@@ -483,7 +483,7 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (HasComments(enumDecl))
+                    if (HasSpecialTrivia(enumDecl))
                     {
                         Console.WriteLine("Skipping enum {0} with comments: {1}", enumName, fileName);
                         continue;
@@ -676,14 +676,14 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Checks if a class declaration has any comments (single-line, multi-line, or XML documentation)
+        /// Checks if a class declaration has any special trivia
         /// </summary>
-        public static bool HasComments(ClassDeclarationSyntax classDeclaration)
+        public static bool HasSpecialTrivia(ClassDeclarationSyntax classDeclaration)
         {
             // Check leading trivia (comments before the class)
             if (classDeclaration.HasLeadingTrivia)
             {
-                if (HasCommentTrivia(classDeclaration.GetLeadingTrivia()))
+                if (HasSpecialTrivia(classDeclaration.GetLeadingTrivia()))
                 {
                     return true;
                 }
@@ -692,7 +692,7 @@ namespace SourceCodeSync
             // Check trailing trivia (comments after the class declaration line)
             if (classDeclaration.HasTrailingTrivia)
             {
-                if (HasCommentTrivia(classDeclaration.GetTrailingTrivia()))
+                if (HasSpecialTrivia(classDeclaration.GetTrailingTrivia()))
                 {
                     return true;
                 }
@@ -701,11 +701,11 @@ namespace SourceCodeSync
             // Check all descendant tokens (comments inside the class)
             foreach (var token in classDeclaration.DescendantTokens(descendIntoTrivia: true))
             {
-                if (token.HasLeadingTrivia && HasCommentTrivia(token.LeadingTrivia))
+                if (token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia))
                 {
                     return true;
                 }
-                if (token.HasTrailingTrivia && HasCommentTrivia(token.TrailingTrivia))
+                if (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia))
                 {
                     return true;
                 }
@@ -714,12 +714,12 @@ namespace SourceCodeSync
             return false;
         }
 
-        public static bool HasComments(InterfaceDeclarationSyntax interfaceDeclaration)
+        public static bool HasSpecialTrivia(InterfaceDeclarationSyntax interfaceDeclaration)
         {
             // Check leading trivia (comments before the interface)
             if (interfaceDeclaration.HasLeadingTrivia)
             {
-                if (HasCommentTrivia(interfaceDeclaration.GetLeadingTrivia()))
+                if (HasSpecialTrivia(interfaceDeclaration.GetLeadingTrivia()))
                 {
                     return true;
                 }
@@ -728,7 +728,7 @@ namespace SourceCodeSync
             // Check trailing trivia (comments after the interface declaration line)
             if (interfaceDeclaration.HasTrailingTrivia)
             {
-                if (HasCommentTrivia(interfaceDeclaration.GetTrailingTrivia()))
+                if (HasSpecialTrivia(interfaceDeclaration.GetTrailingTrivia()))
                 {
                     return true;
                 }
@@ -737,11 +737,11 @@ namespace SourceCodeSync
             // Check all descendant tokens (comments inside the interface)
             foreach (var token in interfaceDeclaration.DescendantTokens(descendIntoTrivia: true))
             {
-                if (token.HasLeadingTrivia && HasCommentTrivia(token.LeadingTrivia))
+                if (token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia))
                 {
                     return true;
                 }
-                if (token.HasTrailingTrivia && HasCommentTrivia(token.TrailingTrivia))
+                if (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia))
                 {
                     return true;
                 }
@@ -753,25 +753,25 @@ namespace SourceCodeSync
         /// <summary>
         /// Same comment detection methods for enums
         /// </summary>
-        public static bool HasComments(EnumDeclarationSyntax enumDeclaration)
+        public static bool HasSpecialTrivia(EnumDeclarationSyntax enumDeclaration)
         {
-            if (enumDeclaration.HasLeadingTrivia && HasCommentTrivia(enumDeclaration.GetLeadingTrivia()))
+            if (enumDeclaration.HasLeadingTrivia && HasSpecialTrivia(enumDeclaration.GetLeadingTrivia()))
             {
                 return true;
             }
 
-            if (enumDeclaration.HasTrailingTrivia && HasCommentTrivia(enumDeclaration.GetTrailingTrivia()))
+            if (enumDeclaration.HasTrailingTrivia && HasSpecialTrivia(enumDeclaration.GetTrailingTrivia()))
             {
                 return true;
             }
 
             foreach (var token in enumDeclaration.DescendantTokens(descendIntoTrivia: true))
             {
-                if (token.HasLeadingTrivia && HasCommentTrivia(token.LeadingTrivia))
+                if (token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia))
                 {
                     return true;
                 }
-                if (token.HasTrailingTrivia && HasCommentTrivia(token.TrailingTrivia))
+                if (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia))
                 {
                     return true;
                 }
@@ -781,18 +781,45 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Checks if a trivia list contains any comment trivia
+        /// Checks if a trivia list contains special trivia
         /// </summary>
-        public static bool HasCommentTrivia(SyntaxTriviaList triviaList)
+        public static bool HasSpecialTrivia(SyntaxTriviaList triviaList, bool includeComments = true, bool includePreprocessor = true)
         {
-            foreach (SyntaxTrivia trivia in triviaList)
+            if (includeComments)
             {
-                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||           // //
-                    trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||   // /* */
-                    trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || // ///
-                    trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))    // /** */
+                foreach (SyntaxTrivia trivia in triviaList)
                 {
-                    return true;
+                    if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia) ||           // //
+                        trivia.IsKind(SyntaxKind.MultiLineCommentTrivia) ||   // /* */
+                        trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || // ///
+                        trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))    // /** */
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if (includePreprocessor)
+            {
+                foreach (SyntaxTrivia trivia in triviaList)
+                {
+                    if (trivia.IsKind(SyntaxKind.IfDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.ElifDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.ElseDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.EndIfDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.DefineDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.UndefDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.RegionDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.EndRegionDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.PragmaWarningDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.PragmaChecksumDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.ReferenceDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.LoadDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.NullableDirectiveTrivia) ||
+                        trivia.IsKind(SyntaxKind.BadDirectiveTrivia))
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
