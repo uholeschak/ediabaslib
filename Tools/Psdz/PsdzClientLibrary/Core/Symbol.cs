@@ -8,9 +8,9 @@ namespace PsdzClient.Core
 {
     internal class Symbol
     {
-        private RuleExpression.ESymbolType type;
+        private ESymbolType type;
         private object value;
-        public RuleExpression.ESymbolType Type
+        public ESymbolType Type
         {
             get
             {
@@ -38,10 +38,10 @@ namespace PsdzClient.Core
 
         public Symbol()
         {
-            type = RuleExpression.ESymbolType.Unknown;
+            type = ESymbolType.Unknown;
         }
 
-        public Symbol(RuleExpression.ESymbolType type)
+        public Symbol(ESymbolType type)
         {
             this.type = type;
         }

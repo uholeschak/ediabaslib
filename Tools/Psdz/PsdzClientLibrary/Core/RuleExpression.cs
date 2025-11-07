@@ -69,27 +69,6 @@ namespace PsdzClient.Core
             MISSING_VARIANT
         }
 
-        // ToDo: Check on update
-        internal enum ESymbolType
-        {
-            Unknown,
-            Value,
-            Operator,
-            TerminalAnd,
-            TerminalOr,
-            TerminalNot,
-            TerminalLPar,
-            TerminalRPar,
-            TerminalProduktionsdatum,
-            DateExpression,
-            CompareExpression,
-            NotExpression,
-            OrExpression,
-            AndExpression,
-            Expression,
-            VariableExpression
-        }
-
         public static IList<string> RuleEvaluationProtocol;
 
         public const long MISSING_DATE_EXPRESSION = -1L;

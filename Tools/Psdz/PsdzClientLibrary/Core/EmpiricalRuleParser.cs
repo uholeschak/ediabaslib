@@ -28,7 +28,7 @@ namespace PsdzClient.Core
                     {
                     }
                     symbol = new Symbol();
-                    symbol.Type = RuleExpression.ESymbolType.CompareExpression;
+                    symbol.Type = ESymbolType.CompareExpression;
                     symbol.Value = Convert.ToInt64(rule.Substring(num, i - num), CultureInfo.InvariantCulture);
                 }
                 else if (char.IsLetter(c))
@@ -41,13 +41,13 @@ namespace PsdzClient.Core
                     switch (text)
                     {
                         case "AND":
-                            symbol = new Symbol(RuleExpression.ESymbolType.TerminalAnd);
+                            symbol = new Symbol(ESymbolType.TerminalAnd);
                             break;
                         case "OR":
-                            symbol = new Symbol(RuleExpression.ESymbolType.TerminalOr);
+                            symbol = new Symbol(ESymbolType.TerminalOr);
                             break;
                         case "NOT":
-                            symbol = new Symbol(RuleExpression.ESymbolType.TerminalNot);
+                            symbol = new Symbol(ESymbolType.TerminalNot);
                             break;
                         default:
                             throw new Exception("Unknown terminal symbol '" + text + "' at position " + i);
@@ -58,14 +58,14 @@ namespace PsdzClient.Core
                     switch (c)
                     {
                         case '(':
-                            symbol = new Symbol(RuleExpression.ESymbolType.TerminalLPar);
+                            symbol = new Symbol(ESymbolType.TerminalLPar);
                             break;
                         case ')':
-                            symbol = new Symbol(RuleExpression.ESymbolType.TerminalRPar);
+                            symbol = new Symbol(ESymbolType.TerminalRPar);
                             break;
                         case '=':
                             symbol = new Symbol();
-                            symbol.Type = RuleExpression.ESymbolType.Operator;
+                            symbol.Type = ESymbolType.Operator;
                             symbol.Value = CompareExpression.ECompareOperator.EQUAL;
                             break;
                         default:
@@ -86,33 +86,33 @@ namespace PsdzClient.Core
                 while (flag)
                 {
                     Symbol symbol2 = stack.Pop();
-                    Symbol symbol3 = ((stack.Count <= 0) ? new Symbol(RuleExpression.ESymbolType.Unknown) : stack.Pop());
-                    Symbol symbol4 = ((stack.Count <= 0) ? new Symbol(RuleExpression.ESymbolType.Unknown) : stack.Pop());
+                    Symbol symbol3 = ((stack.Count <= 0) ? new Symbol(ESymbolType.Unknown) : stack.Pop());
+                    Symbol symbol4 = ((stack.Count <= 0) ? new Symbol(ESymbolType.Unknown) : stack.Pop());
                     bool flag2 = false;
-                    if (symbol4.Type == RuleExpression.ESymbolType.CompareExpression && symbol3.Type == RuleExpression.ESymbolType.Operator && symbol2.Type == RuleExpression.ESymbolType.CompareExpression)
+                    if (symbol4.Type == ESymbolType.CompareExpression && symbol3.Type == ESymbolType.Operator && symbol2.Type == ESymbolType.CompareExpression)
                     {
-                        Symbol symbol5 = new Symbol(RuleExpression.ESymbolType.Value);
+                        Symbol symbol5 = new Symbol(ESymbolType.Value);
                         symbol5.Value = new ValueExpression((long)symbol2.Value);
                         stack.Push(symbol5);
                         flag2 = true;
                     }
-                    else if (IsExpression(symbol4) && symbol3.Type == RuleExpression.ESymbolType.TerminalAnd && IsExpression(symbol2))
+                    else if (IsExpression(symbol4) && symbol3.Type == ESymbolType.TerminalAnd && IsExpression(symbol2))
                     {
-                        Symbol symbol6 = new Symbol(RuleExpression.ESymbolType.AndExpression);
+                        Symbol symbol6 = new Symbol(ESymbolType.AndExpression);
                         symbol6.Value = new AndExpression((RuleExpression)symbol4.Value, (RuleExpression)symbol2.Value);
                         stack.Push(symbol6);
                         flag2 = true;
                     }
-                    else if (IsExpression(symbol4) && symbol3.Type == RuleExpression.ESymbolType.TerminalOr && IsExpression(symbol2))
+                    else if (IsExpression(symbol4) && symbol3.Type == ESymbolType.TerminalOr && IsExpression(symbol2))
                     {
-                        Symbol symbol7 = new Symbol(RuleExpression.ESymbolType.OrExpression);
+                        Symbol symbol7 = new Symbol(ESymbolType.OrExpression);
                         symbol7.Value = new OrExpression((RuleExpression)symbol4.Value, (RuleExpression)symbol2.Value);
                         stack.Push(symbol7);
                         flag2 = true;
                     }
-                    else if (symbol3.Type == RuleExpression.ESymbolType.TerminalNot && IsExpression(symbol2))
+                    else if (symbol3.Type == ESymbolType.TerminalNot && IsExpression(symbol2))
                     {
-                        Symbol symbol8 = new Symbol(RuleExpression.ESymbolType.NotExpression);
+                        Symbol symbol8 = new Symbol(ESymbolType.NotExpression);
                         symbol8.Value = new NotExpression((RuleExpression)symbol2.Value);
                         if (symbol4.Type != 0)
                         {
@@ -121,7 +121,7 @@ namespace PsdzClient.Core
                         stack.Push(symbol8);
                         flag2 = true;
                     }
-                    else if (symbol4.Type == RuleExpression.ESymbolType.TerminalLPar && IsExpression(symbol3) && symbol2.Type == RuleExpression.ESymbolType.TerminalRPar)
+                    else if (symbol4.Type == ESymbolType.TerminalLPar && IsExpression(symbol3) && symbol2.Type == ESymbolType.TerminalRPar)
                     {
                         stack.Push(symbol3);
                         flag2 = true;
@@ -163,7 +163,7 @@ namespace PsdzClient.Core
 
         private static bool IsExpression(Symbol op)
         {
-            return op.Type == RuleExpression.ESymbolType.Value || op.Type == RuleExpression.ESymbolType.AndExpression || op.Type == RuleExpression.ESymbolType.OrExpression || op.Type == RuleExpression.ESymbolType.NotExpression;
+            return op.Type == ESymbolType.Value || op.Type == ESymbolType.AndExpression || op.Type == ESymbolType.OrExpression || op.Type == ESymbolType.NotExpression;
         }
     }
 }
