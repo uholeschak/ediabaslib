@@ -6,194 +6,193 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	[Serializable]
-	public class EcuConfiguration : ICloneable
-	{
-		public IList<long> EcuCliques
-		{
-			get
-			{
-				return this.ecuCliques;
-			}
-			set
-			{
-				this.ecuCliques = value;
-			}
-		}
+    [Serializable]
+    public class EcuConfiguration : ICloneable
+    {
+        private IList<long> ecuCliques = new List<long>();
+        private IList<long> ecuGroups = new List<long>();
+        private IList<long> ecuRepresentatives = new List<long>();
+        private IList<long> ecuVariants = new List<long>();
+        private IList<long> equipments = new List<long>();
+        private long iStufe;
+        private IList<long> saLaPas = new List<long>();
+        private IList<long> unknownEcuCliques = new List<long>();
+        private IList<long> unknownEcuGroups = new List<long>();
+        private IList<long> unknownEcuRepresentatives = new List<long>();
+        private IList<long> unknownEcuVariants = new List<long>();
+        private IList<long> unknownEquipments = new List<long>();
+        public IList<long> EcuCliques
+        {
+            get
+            {
+                return ecuCliques;
+            }
 
-		public IList<long> EcuGroups
-		{
-			get
-			{
-				return this.ecuGroups;
-			}
-			set
-			{
-				this.ecuGroups = value;
-			}
-		}
+            set
+            {
+                ecuCliques = value;
+            }
+        }
 
-		public IList<long> EcuRepresentatives
-		{
-			get
-			{
-				return this.ecuRepresentatives;
-			}
-			set
-			{
-				this.ecuRepresentatives = value;
-			}
-		}
+        public IList<long> EcuGroups
+        {
+            get
+            {
+                return ecuGroups;
+            }
 
-		public IList<long> EcuVariants
-		{
-			get
-			{
-				return this.ecuVariants;
-			}
-			set
-			{
-				this.ecuVariants = value;
-			}
-		}
+            set
+            {
+                ecuGroups = value;
+            }
+        }
 
-		public IList<long> Equipments
-		{
-			get
-			{
-				return this.equipments;
-			}
-			set
-			{
-				this.equipments = value;
-			}
-		}
+        public IList<long> EcuRepresentatives
+        {
+            get
+            {
+                return ecuRepresentatives;
+            }
 
-		public long IStufe
-		{
-			get
-			{
-				return this.iStufe;
-			}
-			set
-			{
-				this.iStufe = value;
-			}
-		}
+            set
+            {
+                ecuRepresentatives = value;
+            }
+        }
 
-		public IList<long> SaLaPas
-		{
-			get
-			{
-				return this.saLaPas;
-			}
-			set
-			{
-				this.saLaPas = value;
-			}
-		}
+        public IList<long> EcuVariants
+        {
+            get
+            {
+                return ecuVariants;
+            }
 
-		public IList<long> UnknownEcuCliques
-		{
-			get
-			{
-				return this.unknownEcuCliques;
-			}
-			set
-			{
-				this.unknownEcuCliques = value;
-			}
-		}
+            set
+            {
+                ecuVariants = value;
+            }
+        }
 
-		public IList<long> UnknownEcuGroups
-		{
-			get
-			{
-				return this.unknownEcuGroups;
-			}
-			set
-			{
-				this.unknownEcuGroups = value;
-			}
-		}
+        public IList<long> Equipments
+        {
+            get
+            {
+                return equipments;
+            }
 
-		public IList<long> UnknownEcuRepresentatives
-		{
-			get
-			{
-				return this.unknownEcuRepresentatives;
-			}
-			set
-			{
-				this.unknownEcuRepresentatives = value;
-			}
-		}
+            set
+            {
+                equipments = value;
+            }
+        }
 
-		public IList<long> UnknownEcuVariants
-		{
-			get
-			{
-				return this.unknownEcuVariants;
-			}
-			set
-			{
-				this.unknownEcuVariants = value;
-			}
-		}
+        public long IStufe
+        {
+            get
+            {
+                return iStufe;
+            }
 
-		public IList<long> UnknownEquipments
-		{
-			get
-			{
-				return this.unknownEquipments;
-			}
-			set
-			{
-				this.unknownEquipments = value;
-			}
-		}
+            set
+            {
+                iStufe = value;
+            }
+        }
 
-		public object Clone()
-		{
-			return new EcuConfiguration
-			{
-				EcuGroups = new List<long>(this.EcuGroups),
-				EcuVariants = new List<long>(this.EcuVariants),
-				EcuCliques = new List<long>(this.EcuCliques),
-				EcuRepresentatives = new List<long>(this.EcuRepresentatives),
-				Equipments = new List<long>(this.Equipments),
-				SaLaPas = new List<long>(this.SaLaPas),
-				IStufe = this.IStufe,
-				UnknownEcuGroups = new List<long>(this.UnknownEcuGroups),
-				UnknownEcuVariants = new List<long>(this.UnknownEcuVariants),
-				UnknownEcuCliques = new List<long>(this.UnknownEcuCliques),
-				UnknownEcuRepresentatives = new List<long>(this.UnknownEcuRepresentatives),
-				UnknownEquipments = new List<long>(this.UnknownEquipments)
-			};
-		}
+        public IList<long> SaLaPas
+        {
+            get
+            {
+                return saLaPas;
+            }
 
-		private IList<long> ecuCliques = new List<long>();
+            set
+            {
+                saLaPas = value;
+            }
+        }
 
-		private IList<long> ecuGroups = new List<long>();
+        public IList<long> UnknownEcuCliques
+        {
+            get
+            {
+                return unknownEcuCliques;
+            }
 
-		private IList<long> ecuRepresentatives = new List<long>();
+            set
+            {
+                unknownEcuCliques = value;
+            }
+        }
 
-		private IList<long> ecuVariants = new List<long>();
+        public IList<long> UnknownEcuGroups
+        {
+            get
+            {
+                return unknownEcuGroups;
+            }
 
-		private IList<long> equipments = new List<long>();
+            set
+            {
+                unknownEcuGroups = value;
+            }
+        }
 
-		private long iStufe;
+        public IList<long> UnknownEcuRepresentatives
+        {
+            get
+            {
+                return unknownEcuRepresentatives;
+            }
 
-		private IList<long> saLaPas = new List<long>();
+            set
+            {
+                unknownEcuRepresentatives = value;
+            }
+        }
 
-		private IList<long> unknownEcuCliques = new List<long>();
+        public IList<long> UnknownEcuVariants
+        {
+            get
+            {
+                return unknownEcuVariants;
+            }
 
-		private IList<long> unknownEcuGroups = new List<long>();
+            set
+            {
+                unknownEcuVariants = value;
+            }
+        }
 
-		private IList<long> unknownEcuRepresentatives = new List<long>();
+        public IList<long> UnknownEquipments
+        {
+            get
+            {
+                return unknownEquipments;
+            }
 
-		private IList<long> unknownEcuVariants = new List<long>();
+            set
+            {
+                unknownEquipments = value;
+            }
+        }
 
-		private IList<long> unknownEquipments = new List<long>();
-	}
+        public object Clone()
+        {
+            EcuConfiguration ecuConfiguration = new EcuConfiguration();
+            ecuConfiguration.EcuGroups = new List<long>(EcuGroups);
+            ecuConfiguration.EcuVariants = new List<long>(EcuVariants);
+            ecuConfiguration.EcuCliques = new List<long>(EcuCliques);
+            ecuConfiguration.EcuRepresentatives = new List<long>(EcuRepresentatives);
+            ecuConfiguration.Equipments = new List<long>(Equipments);
+            ecuConfiguration.SaLaPas = new List<long>(SaLaPas);
+            ecuConfiguration.IStufe = IStufe;
+            ecuConfiguration.UnknownEcuGroups = new List<long>(UnknownEcuGroups);
+            ecuConfiguration.UnknownEcuVariants = new List<long>(UnknownEcuVariants);
+            ecuConfiguration.UnknownEcuCliques = new List<long>(UnknownEcuCliques);
+            ecuConfiguration.UnknownEcuRepresentatives = new List<long>(UnknownEcuRepresentatives);
+            ecuConfiguration.UnknownEquipments = new List<long>(UnknownEquipments);
+            return ecuConfiguration;
+        }
+    }
 }

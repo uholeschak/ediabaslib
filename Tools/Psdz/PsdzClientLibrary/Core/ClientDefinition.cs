@@ -6,130 +6,134 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	[Serializable]
-	public class ClientDefinition : ICloneable
-	{
-		public bool AccessSiFa
-		{
-			get
-			{
-				return this.accessSiFa;
-			}
-			set
-			{
-				this.accessSiFa = value;
-			}
-		}
+    [Serializable]
+    public class ClientDefinition : ICloneable
+    {
+        private bool accessSiFa;
+        private string brandAuthorization;
+        private long[] brandIds;
+        private DateTime clientDate;
+        private string country;
+        private long countryId;
+        private string productType;
+        public bool AccessSiFa
+        {
+            get
+            {
+                return accessSiFa;
+            }
 
-		public string BrandAuthorization
-		{
-			get
-			{
-				return this.brandAuthorization;
-			}
-			set
-			{
-				this.brandAuthorization = value;
-			}
-		}
+            set
+            {
+                accessSiFa = value;
+            }
+        }
 
-		public long[] BrandIds
-		{
-			get
-			{
-				return this.brandIds;
-			}
-			set
-			{
-				this.brandIds = value;
-			}
-		}
+        public string BrandAuthorization
+        {
+            get
+            {
+                return brandAuthorization;
+            }
 
-		public DateTime ClientDate
-		{
-			get
-			{
-				return this.clientDate;
-			}
-			set
-			{
-				this.clientDate = value;
-			}
-		}
+            set
+            {
+                brandAuthorization = value;
+            }
+        }
 
-		public string Country
-		{
-			get
-			{
-				return this.country;
-			}
-			set
-			{
-				this.country = value;
-			}
-		}
+        public long[] BrandIds
+        {
+            get
+            {
+                return brandIds;
+            }
 
-		public long CountryId
-		{
-			get
-			{
-				return this.countryId;
-			}
-			set
-			{
-				this.countryId = value;
-			}
-		}
+            set
+            {
+                brandIds = value;
+            }
+        }
 
-		public string ProductType
-		{
-			get
-			{
-				return this.productType;
-			}
-			set
-			{
-				this.productType = value;
-			}
-		}
+        public DateTime ClientDate
+        {
+            get
+            {
+                return clientDate;
+            }
 
-		public object Clone()
-		{
-			ClientDefinition clientDefinition = new ClientDefinition();
-			if (this.country != null)
-			{
-				clientDefinition.country = string.Copy(this.country);
-			}
-			clientDefinition.countryId = this.countryId;
-			clientDefinition.clientDate = this.clientDate;
-			clientDefinition.accessSiFa = this.accessSiFa;
-			if (this.brandAuthorization != null)
-			{
-				clientDefinition.brandAuthorization = string.Copy(this.brandAuthorization);
-			}
-			if (this.brandIds != null)
-			{
-				clientDefinition.brandIds = (long[])this.brandIds.Clone();
-			}
-			if (this.productType != null)
-			{
-				clientDefinition.productType = string.Copy(this.productType);
-			}
-			return clientDefinition;
-		}
+            set
+            {
+                clientDate = value;
+            }
+        }
 
-		private bool accessSiFa;
+        public string Country
+        {
+            get
+            {
+                return country;
+            }
 
-		private string brandAuthorization;
+            set
+            {
+                country = value;
+            }
+        }
 
-		private long[] brandIds;
+        public long CountryId
+        {
+            get
+            {
+                return countryId;
+            }
 
-		private DateTime clientDate;
+            set
+            {
+                countryId = value;
+            }
+        }
 
-		private string country;
+        public string ProductType
+        {
+            get
+            {
+                return productType;
+            }
 
-		private long countryId;
+            set
+            {
+                productType = value;
+            }
+        }
 
-		private string productType;
-	}
+        public object Clone()
+        {
+            ClientDefinition clientDefinition = new ClientDefinition();
+            if (country != null)
+            {
+                clientDefinition.country = string.Copy(country);
+            }
+
+            clientDefinition.countryId = countryId;
+            clientDefinition.clientDate = clientDate;
+            clientDefinition.accessSiFa = accessSiFa;
+            if (brandAuthorization != null)
+            {
+                clientDefinition.brandAuthorization = string.Copy(brandAuthorization);
+            }
+
+            if (brandIds != null)
+            {
+                clientDefinition.brandIds = (long[])brandIds.Clone();
+            }
+
+            if (productType != null)
+            {
+                clientDefinition.productType = string.Copy(productType);
+            }
+
+            return clientDefinition;
+        }
+    }
 }

@@ -9,15 +9,18 @@ namespace PsdzClient.Core
     [Serializable]
     public class CharacteristicSet : ICloneable
     {
+        private Dictionary<long, long> characteristics = new Dictionary<long, long>();
+        private List<long> prodDates = new List<long>();
         public Dictionary<long, long> Characteristics
         {
             get
             {
-                return this.characteristics;
+                return characteristics;
             }
+
             set
             {
-                this.characteristics = value;
+                characteristics = value;
             }
         }
 
@@ -25,25 +28,21 @@ namespace PsdzClient.Core
         {
             get
             {
-                return this.prodDates;
+                return prodDates;
             }
+
             set
             {
-                this.prodDates = value;
+                prodDates = value;
             }
         }
 
         public object Clone()
         {
-            return new CharacteristicSet
-            {
-                characteristics = new Dictionary<long, long>(this.characteristics),
-                prodDates = new List<long>(this.prodDates)
-            };
+            CharacteristicSet characteristicSet = new CharacteristicSet();
+            characteristicSet.characteristics = new Dictionary<long, long>(characteristics);
+            characteristicSet.prodDates = new List<long>(prodDates);
+            return characteristicSet;
         }
-
-        private Dictionary<long, long> characteristics = new Dictionary<long, long>();
-
-        private List<long> prodDates = new List<long>();
     }
 }

@@ -7,14 +7,15 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	internal sealed class EmpiricalRuleParser
-	{
-		private EmpiricalRuleParser()
-		{
-		}
+    internal sealed class EmpiricalRuleParser
+    {
+        private EmpiricalRuleParser()
+        {
+        }
 
-		public static RuleExpression Parse(string rule)
-		{
+        // [UH] dataProvider removed
+        public static RuleExpression Parse(string rule)
+        {
             Stack<Symbol> stack = new Stack<Symbol>();
             int i = 0;
             while (i < rule.Length)
@@ -27,6 +28,7 @@ namespace PsdzClient.Core
                     for (; i < rule.Length && char.IsDigit(rule[i]); i++)
                     {
                     }
+
                     symbol = new Symbol();
                     symbol.Type = ESymbolType.CompareExpression;
                     symbol.Value = Convert.ToInt64(rule.Substring(num, i - num), CultureInfo.InvariantCulture);
@@ -38,6 +40,7 @@ namespace PsdzClient.Core
                     {
                         text += rule[i++];
                     }
+
                     switch (text)
                     {
                         case "AND":
@@ -74,13 +77,16 @@ namespace PsdzClient.Core
                                 symbol = null;
                                 break;
                             }
+
                             throw new Exception("Unknown character at position " + i);
                     }
                 }
+
                 if (symbol == null)
                 {
                     continue;
                 }
+
                 stack.Push(symbol);
                 bool flag = true;
                 while (flag)
@@ -114,10 +120,11 @@ namespace PsdzClient.Core
                     {
                         Symbol symbol8 = new Symbol(ESymbolType.NotExpression);
                         symbol8.Value = new NotExpression((RuleExpression)symbol2.Value);
-                        if (symbol4.Type != 0)
+                        if (symbol4.Type != ESymbolType.Unknown)
                         {
                             stack.Push(symbol4);
                         }
+
                         stack.Push(symbol8);
                         flag2 = true;
                     }
@@ -126,16 +133,19 @@ namespace PsdzClient.Core
                         stack.Push(symbol3);
                         flag2 = true;
                     }
+
                     if (!flag2)
                     {
-                        if (symbol4.Type != 0)
+                        if (symbol4.Type != ESymbolType.Unknown)
                         {
                             stack.Push(symbol4);
                         }
-                        if (symbol3.Type != 0)
+
+                        if (symbol3.Type != ESymbolType.Unknown)
                         {
                             stack.Push(symbol3);
                         }
+
                         stack.Push(symbol2);
                         flag = false;
                     }
@@ -145,10 +155,12 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             if (stack.Count == 0)
             {
                 return null;
             }
+
             if (stack.Count == 1)
             {
                 Symbol symbol9 = stack.Pop();
@@ -156,8 +168,10 @@ namespace PsdzClient.Core
                 {
                     return (RuleExpression)symbol9.Value;
                 }
+
                 throw new Exception("Illegal last token");
             }
+
             throw new Exception("Could not completely reduce tokens");
         }
 
