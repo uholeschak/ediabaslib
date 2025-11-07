@@ -221,6 +221,12 @@ namespace SourceCodeSync
                         continue;
                     }
 
+                    string classNameWithNamespace = GetClassName(cls, includeNamespace: true);
+                    if (_ignoreClassNames.Contains(classNameWithNamespace))
+                    {
+                        continue;
+                    }
+
                     if (_classDict.TryGetValue(className, out ClassDeclarationSyntax oldClassSyntax))
                     {
                         if (oldClassSyntax != null)
@@ -317,6 +323,12 @@ namespace SourceCodeSync
                     }
 
                     if (_ignoreEnumNames.Contains(enumName))
+                    {
+                        continue;
+                    }
+
+                    string enumNameWithNamespace = GetEnumName(enumDecl, includeNamespace: true);
+                    if (_ignoreEnumNames.Contains(enumNameWithNamespace))
                     {
                         continue;
                     }
@@ -524,19 +536,30 @@ namespace SourceCodeSync
             return sb.ToString();
         }
 
-        public static string GetClassName(ClassDeclarationSyntax classDeclaration)
+        public static string GetClassName(ClassDeclarationSyntax classDeclaration, bool includeNamespace = false)
         {
             string className = classDeclaration.Identifier.ValueText;
-            string modifiers = GetModifiersText(classDeclaration.Modifiers);
-            if (modifiers.Length > 0)
+            if (includeNamespace)
             {
-                className = $"{modifiers}_{className}";
+                string namespaceName = GetNamespace(classDeclaration);
+                if (!string.IsNullOrEmpty(namespaceName))
+                {
+                    className = $"{namespaceName}.{className}";
+                }
             }
-
-            int typeParamCount = classDeclaration.TypeParameterList?.Parameters.Count ?? 0;
-            if (typeParamCount > 0)
+            else
             {
-                className += $"_<{typeParamCount}>";
+                string modifiers = GetModifiersText(classDeclaration.Modifiers);
+                if (modifiers.Length > 0)
+                {
+                    className = $"{modifiers}_{className}";
+                }
+
+                int typeParamCount = classDeclaration.TypeParameterList?.Parameters.Count ?? 0;
+                if (typeParamCount > 0)
+                {
+                    className += $"_<{typeParamCount}>";
+                }
             }
             return className;
         }
@@ -570,14 +593,26 @@ namespace SourceCodeSync
             return interfaceName;
         }
 
-        public static string GetEnumName(EnumDeclarationSyntax enumDeclaration)
+        public static string GetEnumName(EnumDeclarationSyntax enumDeclaration, bool includeNamespace = false)
         {
             string enumName = enumDeclaration.Identifier.ValueText;
-            string modifiers = GetModifiersText(enumDeclaration.Modifiers);
-            if (modifiers.Length > 0)
+            if (includeNamespace)
             {
-                enumName = $"{modifiers}_{enumName}";
+                string namespaceName = GetNamespace(enumDeclaration);
+                if (!string.IsNullOrEmpty(namespaceName))
+                {
+                    enumName = $"{namespaceName}.{enumName}";
+                }
             }
+            else
+            {
+                string modifiers = GetModifiersText(enumDeclaration.Modifiers);
+                if (modifiers.Length > 0)
+                {
+                    enumName = $"{modifiers}_{enumName}";
+                }
+            }
+
             return enumName;
         }
 
