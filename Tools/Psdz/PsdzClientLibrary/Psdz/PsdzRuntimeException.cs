@@ -7,13 +7,15 @@ namespace BMW.Rheingold.Psdz.Model.Exceptions
     [Serializable]
     public class PsdzRuntimeException : Exception
     {
+        public int MessageId { get; private set; }
+
         public PsdzRuntimeException()
         {
         }
 
         public PsdzRuntimeException(int messageId, string message) : base(message)
         {
-            this.MessageId = messageId;
+            MessageId = messageId;
         }
 
         public PsdzRuntimeException(string message, Exception innerException) : base(message, innerException)
@@ -22,10 +24,8 @@ namespace BMW.Rheingold.Psdz.Model.Exceptions
 
         protected PsdzRuntimeException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
-            this.MessageId = info.GetInt32("MessageId");
+            MessageId = info.GetInt32("MessageId");
         }
-
-        public int MessageId { get; private set; }
 
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -33,13 +33,14 @@ namespace BMW.Rheingold.Psdz.Model.Exceptions
             {
                 throw new ArgumentNullException("info");
             }
-            info.AddValue("MessageId", this.MessageId);
+
+            info.AddValue("MessageId", MessageId);
             base.GetObjectData(info, context);
         }
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0} (MessageId: {1})", base.ToString(), this.MessageId);
+            return string.Format(CultureInfo.InvariantCulture, "{0} (MessageId: {1})", base.ToString(), MessageId);
         }
     }
 }

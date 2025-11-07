@@ -109,6 +109,9 @@ namespace BMW.Rheingold.Programming
 
         public IPsdzObjectBuilder ObjectBuilder { get; private set; }
 
+        // [UH] For backward compatibility
+        public IProgrammingTokenService ProgrammingTokenService { get; }
+
         public IObjectBuilderService ObjectBuilderService => psdzServiceClient.ObjectBuilderService;
 
         public BMW.Rheingold.Psdz.IProgrammingService ProgrammingService => psdzServiceClient.ProgrammingService;

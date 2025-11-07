@@ -9,9 +9,9 @@ using BMW.Rheingold.Psdz.Model.Sfa.LocalizableMessageTo;
 
 namespace BMW.Rheingold.Psdz.Model.Sfa
 {
-    [KnownType(typeof(PsdzLocalizableMessageTo))]
-    [KnownType(typeof(PsdzEcuIdentifier))]
     [DataContract]
+    [KnownType(typeof(PsdzEcuIdentifier))]
+    [KnownType(typeof(PsdzLocalizableMessageTo))]
     public class PsdzEcuFailureResponseCto : IPsdzEcuFailureResponseCto
     {
         [DataMember]

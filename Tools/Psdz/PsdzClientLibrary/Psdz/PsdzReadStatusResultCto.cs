@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Sfa
 {
+    [DataContract]
     [KnownType(typeof(PsdzEcuFailureResponseCto))]
     [KnownType(typeof(PsdzFeatureLongStatusCto))]
-    [DataContract]
     public class PsdzReadStatusResultCto : IPsdzReadStatusResultCto
     {
         [DataMember]

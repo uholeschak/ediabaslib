@@ -17,66 +17,82 @@ namespace BMW.Rheingold.Psdz.Model.Comparer
             {
                 return true;
             }
+
             if (x == null)
             {
                 return false;
             }
+
             if (y == null)
             {
                 return false;
             }
+
             if (x.GetType() != y.GetType())
             {
                 return false;
             }
+
             if (!string.Equals(x.BaseVariant, y.BaseVariant, StringComparison.Ordinal))
             {
                 return false;
             }
+
             if (!string.Equals(x.EcuVariant, y.EcuVariant, StringComparison.Ordinal))
             {
                 return false;
             }
+
             if (!string.Equals(x.BnTnName, y.BnTnName, StringComparison.Ordinal))
             {
                 return false;
             }
+
             if (!string.Equals(x.SerialNumber, y.SerialNumber, StringComparison.Ordinal))
             {
                 return false;
             }
-            if (x.DiagnosticBus != y.DiagnosticBus)
+
+            if (!x.DiagnosticBus.Equals(y.DiagnosticBus))
             {
                 return false;
             }
+
             if (!EqualsBusConnections(x.BusConnections, y.BusConnections))
             {
                 return false;
             }
+
             if (!EqualsMember(x.PrimaryKey, y.PrimaryKey))
             {
                 return false;
             }
+
             if (!EqualsMember(x.GatewayDiagAddr, y.GatewayDiagAddr))
             {
                 return false;
             }
+
             if (!EqualsMember(x.StandardSvk, y.StandardSvk))
             {
                 return false;
             }
+
             if (!EqualsMember(x.EcuStatusInfo, y.EcuStatusInfo))
             {
                 return false;
             }
+
             if (!EqualsMember(x.EcuDetailInfo, y.EcuDetailInfo))
             {
                 return false;
             }
+
             if (!EqualsMember(x.PsdzEcuPdxInfo, y.PsdzEcuPdxInfo))
             {
                 return false;
             }
+
             return true;
         }
 
@@ -91,18 +107,22 @@ namespace BMW.Rheingold.Psdz.Model.Comparer
             {
                 return true;
             }
+
             if (x == null)
             {
                 return false;
             }
+
             if (y == null)
             {
                 return false;
             }
+
             if (x.GetType() != y.GetType())
             {
                 return false;
             }
+
             return x.OrderBy((PsdzBus bus) => bus).SequenceEqual(y.OrderBy((PsdzBus bus) => bus));
         }
 
@@ -112,19 +132,24 @@ namespace BMW.Rheingold.Psdz.Model.Comparer
             {
                 return true;
             }
+
             if (x == null)
             {
                 return false;
             }
+
             if (y == null)
             {
                 return false;
             }
+
             if (x.GetType() != y.GetType())
             {
                 return false;
             }
-            return x.Equals(y);
+
+            object obj = y;
+            return x.Equals(obj);
         }
     }
 }

@@ -70,9 +70,9 @@ namespace BMW.Rheingold.Psdz.Model.Sfa
         E_UPGRADE_INDEX_EXCEEDS_THRESHOLD
     }
 
-    [KnownType(typeof(PsdzFeatureIdCto))]
     [DataContract]
     [KnownType(typeof(PsdzDiagAddress))]
+    [KnownType(typeof(PsdzFeatureIdCto))]
     public class PsdzDetailedStatusCto : IPsdzDetailedStatusCto
     {
         [DataMember]
@@ -85,4 +85,3 @@ namespace BMW.Rheingold.Psdz.Model.Sfa
         public PsdzTokenDetailedStatusEtoEnum TokenDetailedStatusEto { get; set; }
     }
 }
-

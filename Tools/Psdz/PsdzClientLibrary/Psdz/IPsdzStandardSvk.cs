@@ -10,7 +10,7 @@ namespace BMW.Rheingold.Psdz.Model
     {
         byte ProgDepChecked { get; }
 
-        IEnumerable<IPsdzSgbmId> SgbmIds { get; }
+        IEnumerable<IPsdzSgbmId> SgbmIds { get; set; }
 
         byte SvkVersion { get; }
     }

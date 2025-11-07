@@ -8,9 +8,11 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Model.Svb
 {
-    [KnownType(typeof(PsdzOrderPart))]
     [DataContract]
+    [KnownType(typeof(PsdzOrderPart))]
     [KnownType(typeof(PsdzEcu))]
+    [KnownType(typeof(PsdzSmartActuatorMasterEcu))]
+    [KnownType(typeof(PsdzSmartActuatorEcu))]
     [KnownType(typeof(PsdzEcuVariantInstance))]
     public class PsdzEcuVariantInstance : PsdzLogisticPart, IPsdzEcuVariantInstance, IPsdzLogisticPart
     {

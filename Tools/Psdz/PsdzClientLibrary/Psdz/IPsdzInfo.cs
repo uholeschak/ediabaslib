@@ -8,6 +8,7 @@ namespace BMW.Rheingold.Psdz
 {
     public interface IPsdzInfo
     {
+        // [UH] For backward compatibility
         string ExpectedPsdzVersion { get; }
 
         bool IsPsdzInitialized { get; }
