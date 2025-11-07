@@ -11,13 +11,13 @@ namespace PsdzClient.Core
 	[Serializable]
     public class VariableExpression : RuleExpression
     {
-        private readonly CompareExpression.ECompareOperator compareOperator;
+        private readonly ECompareOperator compareOperator;
 
         private readonly string variableName;
 
         private readonly double variableValue;
 
-        public VariableExpression(string variableName, CompareExpression.ECompareOperator compareOperator, double variableValue)
+        public VariableExpression(string variableName, ECompareOperator compareOperator, double variableValue)
         {
             this.variableName = variableName;
             this.variableValue = variableValue;
@@ -32,37 +32,37 @@ namespace PsdzClient.Core
                 {
                     switch (compareOperator)
                     {
-                        case CompareExpression.ECompareOperator.EQUAL:
+                        case ECompareOperator.EQUAL:
                             if (item == variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
                             break;
-                        case CompareExpression.ECompareOperator.GREATER:
+                        case ECompareOperator.GREATER:
                             if (item > variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
                             break;
-                        case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                        case ECompareOperator.GREATER_EQUAL:
                             if (item >= variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
                             break;
-                        case CompareExpression.ECompareOperator.LESS:
+                        case ECompareOperator.LESS:
                             if (item < variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
                             break;
-                        case CompareExpression.ECompareOperator.LESS_EQUAL:
+                        case ECompareOperator.LESS_EQUAL:
                             if (item <= variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
                             break;
-                        case CompareExpression.ECompareOperator.NOT_EQUAL:
+                        case ECompareOperator.NOT_EQUAL:
                             if (item != variableValue)
                             {
                                 return EEvaluationResult.VALID;
@@ -125,17 +125,17 @@ namespace PsdzClient.Core
         {
             switch (compareOperator)
             {
-                case CompareExpression.ECompareOperator.EQUAL:
+                case ECompareOperator.EQUAL:
                     return "=";
-                case CompareExpression.ECompareOperator.GREATER:
+                case ECompareOperator.GREATER:
                     return ">";
-                case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                case ECompareOperator.GREATER_EQUAL:
                     return ">=";
-                case CompareExpression.ECompareOperator.LESS:
+                case ECompareOperator.LESS:
                     return "<";
-                case CompareExpression.ECompareOperator.LESS_EQUAL:
+                case ECompareOperator.LESS_EQUAL:
                     return "<=";
-                case CompareExpression.ECompareOperator.NOT_EQUAL:
+                case ECompareOperator.NOT_EQUAL:
                     return "!=";
                 default:
                     throw new Exception("Unknown operator");

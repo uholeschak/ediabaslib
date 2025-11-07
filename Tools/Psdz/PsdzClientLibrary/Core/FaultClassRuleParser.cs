@@ -70,7 +70,7 @@ namespace PsdzClient.Core
                         case '=':
                             symbol = new Symbol();
                             symbol.Type = ESymbolType.Operator;
-                            symbol.Value = CompareExpression.ECompareOperator.EQUAL;
+                            symbol.Value = ECompareOperator.EQUAL;
                             break;
                         case '<':
                             symbol = new Symbol();
@@ -78,11 +78,11 @@ namespace PsdzClient.Core
                             if (i < rule.Length && rule[i] == '=')
                             {
                                 i++;
-                                symbol.Value = CompareExpression.ECompareOperator.LESS_EQUAL;
+                                symbol.Value = ECompareOperator.LESS_EQUAL;
                             }
                             else
                             {
-                                symbol.Value = CompareExpression.ECompareOperator.LESS;
+                                symbol.Value = ECompareOperator.LESS;
                             }
                             break;
                         case '>':
@@ -91,11 +91,11 @@ namespace PsdzClient.Core
                             if (i < rule.Length && rule[i] == '=')
                             {
                                 i++;
-                                symbol.Value = CompareExpression.ECompareOperator.GREATER_EQUAL;
+                                symbol.Value = ECompareOperator.GREATER_EQUAL;
                             }
                             else
                             {
-                                symbol.Value = CompareExpression.ECompareOperator.GREATER;
+                                symbol.Value = ECompareOperator.GREATER;
                             }
                             break;
                         default:
@@ -122,7 +122,7 @@ namespace PsdzClient.Core
                     if (symbol4.Type == ESymbolType.Value && symbol3.Type == ESymbolType.Operator && symbol2.Type == ESymbolType.Value)
                     {
                         Symbol symbol5 = new Symbol(ESymbolType.VariableExpression);
-                        symbol5.Value = new VariableExpression((string)symbol4.Value, (CompareExpression.ECompareOperator)symbol3.Value, (long)symbol2.Value);
+                        symbol5.Value = new VariableExpression((string)symbol4.Value, (ECompareOperator)symbol3.Value, (long)symbol2.Value);
                         stack.Push(symbol5);
                         flag2 = true;
                     }

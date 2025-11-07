@@ -12,7 +12,7 @@ namespace PsdzClient.Core
 	[Serializable]
 	public class IStufeXExpression : RuleExpression
 	{
-		public IStufeXExpression(CompareExpression.ECompareOperator compareOperator, long ilevelid, IStufeXExpression.ILevelyType iLevelType, Vehicle vec)
+		public IStufeXExpression(ECompareOperator compareOperator, long ilevelid, IStufeXExpression.ILevelyType iLevelType, Vehicle vec)
         {
 			this.iLevelId = ilevelid;
 			this.iLevelType = iLevelType;
@@ -22,7 +22,7 @@ namespace PsdzClient.Core
 
 		public static IStufeXExpression Deserialize(Stream ms, Vehicle vec)
 		{
-			CompareExpression.ECompareOperator ecompareOperator = (CompareExpression.ECompareOperator)((byte)ms.ReadByte());
+			ECompareOperator ecompareOperator = (ECompareOperator)((byte)ms.ReadByte());
 			IStufeXExpression.ILevelyType levelyType = (IStufeXExpression.ILevelyType)ms.ReadByte();
 			byte[] array = new byte[8];
 			ms.Read(array, 0, 8);
@@ -56,42 +56,42 @@ namespace PsdzClient.Core
 			bool flag;
 			switch (this.compareOperator)
 			{
-				case CompareExpression.ECompareOperator.EQUAL:
+				case ECompareOperator.EQUAL:
 					{
 						int? num = FormatConverter.ExtractNumericalILevel(ilevelOperand);
 						int? num2 = FormatConverter.ExtractNumericalILevel(istufeById);
 						flag = (num.GetValueOrDefault() == num2.GetValueOrDefault() & num != null == (num2 != null));
 						break;
 					}
-				case CompareExpression.ECompareOperator.NOT_EQUAL:
+				case ECompareOperator.NOT_EQUAL:
 					{
 						int? num2 = FormatConverter.ExtractNumericalILevel(ilevelOperand);
 						int? num = FormatConverter.ExtractNumericalILevel(istufeById);
 						flag = !(num2.GetValueOrDefault() == num.GetValueOrDefault() & num2 != null == (num != null));
 						break;
 					}
-				case CompareExpression.ECompareOperator.GREATER:
+				case ECompareOperator.GREATER:
 					{
 						int? num = FormatConverter.ExtractNumericalILevel(ilevelOperand);
 						int? num2 = FormatConverter.ExtractNumericalILevel(istufeById);
 						flag = (num.GetValueOrDefault() > num2.GetValueOrDefault() & (num != null & num2 != null));
 						break;
 					}
-				case CompareExpression.ECompareOperator.GREATER_EQUAL:
+				case ECompareOperator.GREATER_EQUAL:
 					{
 						int? num2 = FormatConverter.ExtractNumericalILevel(ilevelOperand);
 						int? num = FormatConverter.ExtractNumericalILevel(istufeById);
 						flag = (num2.GetValueOrDefault() >= num.GetValueOrDefault() & (num2 != null & num != null));
 						break;
 					}
-				case CompareExpression.ECompareOperator.LESS:
+				case ECompareOperator.LESS:
 					{
 						int? num = FormatConverter.ExtractNumericalILevel(ilevelOperand);
 						int? num2 = FormatConverter.ExtractNumericalILevel(istufeById);
 						flag = (num.GetValueOrDefault() < num2.GetValueOrDefault() & (num != null & num2 != null));
 						break;
 					}
-				case CompareExpression.ECompareOperator.LESS_EQUAL:
+				case ECompareOperator.LESS_EQUAL:
 					{
 						int? num2 = FormatConverter.ExtractNumericalILevel(ilevelOperand);
 						int? num = FormatConverter.ExtractNumericalILevel(istufeById);
@@ -219,7 +219,7 @@ namespace PsdzClient.Core
 			}
 		}
 
-		private readonly CompareExpression.ECompareOperator compareOperator;
+		private readonly ECompareOperator compareOperator;
 
 		private readonly long iLevelId;
 

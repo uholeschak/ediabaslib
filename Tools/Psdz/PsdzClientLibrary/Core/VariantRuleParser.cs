@@ -71,7 +71,7 @@ namespace PsdzClient.Core
                         case '=':
                             symbol = new Symbol();
                             symbol.Type = ESymbolType.Operator;
-                            symbol.Value = CompareExpression.ECompareOperator.EQUAL;
+                            symbol.Value = ECompareOperator.EQUAL;
                             break;
                         case '<':
                             symbol = new Symbol();
@@ -79,11 +79,11 @@ namespace PsdzClient.Core
                             if (i < rule.Length && rule[i] == '=')
                             {
                                 i++;
-                                symbol.Value = CompareExpression.ECompareOperator.LESS_EQUAL;
+                                symbol.Value = ECompareOperator.LESS_EQUAL;
                             }
                             else
                             {
-                                symbol.Value = CompareExpression.ECompareOperator.LESS;
+                                symbol.Value = ECompareOperator.LESS;
                             }
                             break;
                         case '>':
@@ -92,11 +92,11 @@ namespace PsdzClient.Core
                             if (i < rule.Length && rule[i] == '=')
                             {
                                 i++;
-                                symbol.Value = CompareExpression.ECompareOperator.GREATER_EQUAL;
+                                symbol.Value = ECompareOperator.GREATER_EQUAL;
                             }
                             else
                             {
-                                symbol.Value = CompareExpression.ECompareOperator.GREATER;
+                                symbol.Value = ECompareOperator.GREATER;
                             }
                             break;
                         default:
@@ -123,7 +123,7 @@ namespace PsdzClient.Core
                     if (symbol4.Type == ESymbolType.Value && symbol3.Type == ESymbolType.Operator && symbol2.Type == ESymbolType.Value)
                     {
                         Symbol symbol5 = new Symbol(ESymbolType.CompareExpression);
-                        symbol5.Value = new CompareExpression((long)symbol4.Value, (CompareExpression.ECompareOperator)symbol3.Value, (long)symbol2.Value);
+                        symbol5.Value = new CompareExpression((long)symbol4.Value, (ECompareOperator)symbol3.Value, (long)symbol2.Value);
                         stack.Push(symbol5);
                         flag2 = true;
                     }
@@ -144,7 +144,7 @@ namespace PsdzClient.Core
                     else if (symbol4.Type == ESymbolType.TerminalProduktionsdatum && symbol3.Type == ESymbolType.Operator && symbol2.Type == ESymbolType.Value)
                     {
                         Symbol symbol8 = new Symbol(ESymbolType.DateExpression);
-                        symbol8.Value = new DateExpression((CompareExpression.ECompareOperator)symbol3.Value, (long)symbol2.Value);
+                        symbol8.Value = new DateExpression((ECompareOperator)symbol3.Value, (long)symbol2.Value);
                         stack.Push(symbol8);
                         flag2 = true;
                     }

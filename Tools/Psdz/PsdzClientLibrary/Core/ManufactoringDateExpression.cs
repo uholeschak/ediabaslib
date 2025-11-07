@@ -11,13 +11,13 @@ namespace PsdzClient.Core
 	[Serializable]
 	public class ManufactoringDateExpression : RuleExpression
 	{
-        private readonly CompareExpression.ECompareOperator compareOperator;
+        private readonly ECompareOperator compareOperator;
 
         private readonly DateTime dateArgument;
 
         private readonly long datevalue;
 
-        public ManufactoringDateExpression(CompareExpression.ECompareOperator compareOperator, long datevalue)
+        public ManufactoringDateExpression(ECompareOperator compareOperator, long datevalue)
         {
             this.compareOperator = compareOperator;
             DateTime dateTime = new DateTime(datevalue);
@@ -28,7 +28,7 @@ namespace PsdzClient.Core
         public new static ManufactoringDateExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();
-            CompareExpression.ECompareOperator eCompareOperator = (CompareExpression.ECompareOperator)b;
+            ECompareOperator eCompareOperator = (ECompareOperator)b;
             byte[] array = new byte[8];
             ms.Read(array, 0, 8);
             long ticks = BitConverter.ToInt64(array, 0);
@@ -69,27 +69,27 @@ namespace PsdzClient.Core
             }
             switch (compareOperator)
             {
-                case CompareExpression.ECompareOperator.EQUAL:
+                case ECompareOperator.EQUAL:
                     flag = ticks == datevalue;
                     empty = "==";
                     break;
-                case CompareExpression.ECompareOperator.NOT_EQUAL:
+                case ECompareOperator.NOT_EQUAL:
                     flag = ticks != datevalue;
                     empty = "!=";
                     break;
-                case CompareExpression.ECompareOperator.GREATER:
+                case ECompareOperator.GREATER:
                     flag = ticks > datevalue;
                     empty = ">";
                     break;
-                case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                case ECompareOperator.GREATER_EQUAL:
                     flag = ticks >= datevalue;
                     empty = ">=";
                     break;
-                case CompareExpression.ECompareOperator.LESS:
+                case ECompareOperator.LESS:
                     flag = ticks < datevalue;
                     empty = "<";
                     break;
-                case CompareExpression.ECompareOperator.LESS_EQUAL:
+                case ECompareOperator.LESS_EQUAL:
                     flag = ticks <= datevalue;
                     empty = "<=";
                     break;
@@ -111,11 +111,11 @@ namespace PsdzClient.Core
             int num = baseConfiguration.ProdDates.BinarySearch(datevalue);
             switch (compareOperator)
             {
-                case CompareExpression.ECompareOperator.EQUAL:
+                case ECompareOperator.EQUAL:
                     return (num < 0) ? EEvaluationResult.INVALID : EEvaluationResult.VALID;
-                case CompareExpression.ECompareOperator.NOT_EQUAL:
+                case ECompareOperator.NOT_EQUAL:
                     return (num >= 0) ? EEvaluationResult.INVALID : EEvaluationResult.VALID;
-                case CompareExpression.ECompareOperator.GREATER:
+                case ECompareOperator.GREATER:
                     if (num >= 0 && num < baseConfiguration.ProdDates.Count - 1)
                     {
                         return EEvaluationResult.VALID;
@@ -125,7 +125,7 @@ namespace PsdzClient.Core
                         return EEvaluationResult.VALID;
                     }
                     return EEvaluationResult.INVALID;
-                case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                case ECompareOperator.GREATER_EQUAL:
                     if (num >= 0)
                     {
                         return EEvaluationResult.VALID;
@@ -135,7 +135,7 @@ namespace PsdzClient.Core
                         return EEvaluationResult.VALID;
                     }
                     return EEvaluationResult.INVALID;
-                case CompareExpression.ECompareOperator.LESS:
+                case ECompareOperator.LESS:
                     if (num > 0)
                     {
                         return EEvaluationResult.VALID;
@@ -145,7 +145,7 @@ namespace PsdzClient.Core
                         return EEvaluationResult.VALID;
                     }
                     return EEvaluationResult.INVALID;
-                case CompareExpression.ECompareOperator.LESS_EQUAL:
+                case ECompareOperator.LESS_EQUAL:
                     if (num >= 0)
                     {
                         return EEvaluationResult.VALID;
@@ -220,17 +220,17 @@ namespace PsdzClient.Core
         {
             switch (this.compareOperator)
             {
-                case CompareExpression.ECompareOperator.EQUAL:
+                case ECompareOperator.EQUAL:
                     return "==";
-                case CompareExpression.ECompareOperator.NOT_EQUAL:
+                case ECompareOperator.NOT_EQUAL:
                     return "!=";
-                case CompareExpression.ECompareOperator.GREATER:
+                case ECompareOperator.GREATER:
                     return ">";
-                case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                case ECompareOperator.GREATER_EQUAL:
                     return ">=";
-                case CompareExpression.ECompareOperator.LESS:
+                case ECompareOperator.LESS:
                     return "<";
-                case CompareExpression.ECompareOperator.LESS_EQUAL:
+                case ECompareOperator.LESS_EQUAL:
                     return "<=";
                 default:
                     throw new Exception("Unknown operator");
@@ -241,17 +241,17 @@ namespace PsdzClient.Core
         {
             switch (compareOperator)
             {
-                case CompareExpression.ECompareOperator.EQUAL:
+                case ECompareOperator.EQUAL:
                     return "=";
-                case CompareExpression.ECompareOperator.GREATER:
+                case ECompareOperator.GREATER:
                     return ">";
-                case CompareExpression.ECompareOperator.GREATER_EQUAL:
+                case ECompareOperator.GREATER_EQUAL:
                     return ">=";
-                case CompareExpression.ECompareOperator.LESS:
+                case ECompareOperator.LESS:
                     return "<";
-                case CompareExpression.ECompareOperator.LESS_EQUAL:
+                case ECompareOperator.LESS_EQUAL:
                     return "<=";
-                case CompareExpression.ECompareOperator.NOT_EQUAL:
+                case ECompareOperator.NOT_EQUAL:
                     return "!=";
                 default:
                     throw new Exception("Unknown operator");

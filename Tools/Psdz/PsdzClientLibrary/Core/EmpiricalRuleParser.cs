@@ -66,7 +66,7 @@ namespace PsdzClient.Core
                         case '=':
                             symbol = new Symbol();
                             symbol.Type = ESymbolType.Operator;
-                            symbol.Value = CompareExpression.ECompareOperator.EQUAL;
+                            symbol.Value = ECompareOperator.EQUAL;
                             break;
                         default:
                             if (char.IsWhiteSpace(c))

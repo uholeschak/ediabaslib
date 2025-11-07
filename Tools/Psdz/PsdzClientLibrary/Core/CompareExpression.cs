@@ -11,16 +11,6 @@ namespace PsdzClient.Core
     [Serializable]
     public class CompareExpression : RuleExpression
     {
-        public enum ECompareOperator
-        {
-            EQUAL,
-            NOT_EQUAL,
-            GREATER,
-            GREATER_EQUAL,
-            LESS,
-            LESS_EQUAL
-        }
-
         public CompareExpression(long dataclassId, ECompareOperator compareOperator, long datavalueId)
         {
             this.dataclassId = dataclassId;
