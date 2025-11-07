@@ -17,51 +17,52 @@ namespace PsdzClient.Core
                 {
                     throw new ArgumentNullException("y");
                 }
+
                 return 1;
             }
-            else
+
+            if (y == null)
             {
-                if (y == null)
+                throw new ArgumentNullException("x");
+            }
+
+            if (x.Length != 7 || y.Length != 7)
+            {
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Vin must be of length 7: {0}, {1}", x, y));
+            }
+
+            int num = 0;
+            for (int i = 0; i < 7; i++)
+            {
+                if (char.IsDigit(x[i]))
                 {
-                    throw new ArgumentNullException("x");
-                }
-                if (x.Length == 7)
-                {
-                    if (y.Length == 7)
+                    if (!char.IsDigit(y[i]))
                     {
-                        int num = 0;
-                        for (int i = 0; i < 7; i++)
-                        {
-                            if (char.IsDigit(x[i]))
-                            {
-                                if (!char.IsDigit(y[i]))
-                                {
-                                    return 1;
-                                }
-                                num = x[i].CompareTo(y[i]);
-                                if (num != 0)
-                                {
-                                    return num;
-                                }
-                            }
-                            else
-                            {
-                                if (char.IsDigit(y[i]))
-                                {
-                                    return -1;
-                                }
-                                num = x[i].CompareTo(y[i]);
-                                if (num != 0)
-                                {
-                                    return num;
-                                }
-                            }
-                        }
+                        return 1;
+                    }
+
+                    num = x[i].CompareTo(y[i]);
+                    if (num != 0)
+                    {
                         return num;
                     }
                 }
-                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Vin must be of length 7: {0}, {1}", x, y));
+                else
+                {
+                    if (char.IsDigit(y[i]))
+                    {
+                        return -1;
+                    }
+
+                    num = x[i].CompareTo(y[i]);
+                    if (num != 0)
+                    {
+                        return num;
+                    }
+                }
             }
+
+            return num;
         }
     }
 }
