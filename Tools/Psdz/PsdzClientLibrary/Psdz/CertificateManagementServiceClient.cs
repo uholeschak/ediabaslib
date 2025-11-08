@@ -9,6 +9,7 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    // [UH] Only for compatibility with older version
     internal class CertificateManagementServiceClient : PsdzClientBase<ICertificateManagementService>, ICertificateManagementService
     {
         public CertificateManagementServiceClient(Binding binding, EndpointAddress remoteAddress)

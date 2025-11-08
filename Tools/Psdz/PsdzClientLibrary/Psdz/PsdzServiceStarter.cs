@@ -10,6 +10,7 @@ using PsdzClient.Core;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    // [UH] Only for compatibility with older version
     public enum PsdzServiceStartResult
     {
         PsdzStillRunning,
@@ -18,6 +19,7 @@ namespace BMW.Rheingold.Psdz.Client
         PsdzStartOk
     }
 
+    // [UH] Only for compatibility with older version
     public class PsdzServiceStarter
     {
         private const string PsdzServiceStarterMutex = "Global\\PsdzServiceStarterMutex";

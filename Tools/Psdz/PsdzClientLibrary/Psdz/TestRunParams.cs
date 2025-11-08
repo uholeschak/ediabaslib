@@ -8,6 +8,7 @@ using BMW.Rheingold.Psdz.Model;
 
 namespace BMW.Rheingold.Psdz
 {
+    // [UH] Only for compatibility with older version
     [KnownType(typeof(PsdzIstufe))]
     [DataContract]
     [KnownType(typeof(PsdzStandardFa))]
