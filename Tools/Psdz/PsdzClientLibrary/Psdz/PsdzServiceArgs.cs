@@ -9,6 +9,7 @@ using System.Xml;
 
 namespace BMW.Rheingold.Psdz
 {
+    // [UH] Keep data members for backward compatibility
     [DataContract]
     public class PsdzServiceArgs
     {
