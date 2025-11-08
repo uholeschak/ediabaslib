@@ -546,14 +546,19 @@ namespace SourceCodeSync
 
         public static string GetBaseTypesText(SeparatedSyntaxList<BaseTypeSyntax> baseTypeList)
         {
+            List<string> baseTypeNames = baseTypeList
+                .Select(bt => bt.Type.ToString())
+                .OrderBy(name => name, StringComparer.Ordinal)
+                .ToList();
+
             StringBuilder sb = new StringBuilder();
-            foreach (BaseTypeSyntax baseType in baseTypeList)
+            foreach (string typeName in baseTypeNames)
             {
                 if (sb.Length > 0)
                 {
                     sb.Append("_");
                 }
-                sb.Append(baseType.Type);
+                sb.Append(typeName);
             }
 
             return sb.ToString();
