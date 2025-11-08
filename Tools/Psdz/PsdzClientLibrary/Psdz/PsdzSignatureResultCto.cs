@@ -9,8 +9,9 @@ namespace BMW.Rheingold.Psdz.Model.SecureCoding.SignatureResultCto
 {
     [DataContract]
     [KnownType(typeof(PsdzSgbmId))]
-    internal class PsdzSignatureResultCto : IPsdzSignatureResultCto
+    public class PsdzSignatureResultCto : IPsdzSignatureResultCto
     {
+        // [UH] Keep data members for backward compatibility
         [DataMember]
         public IPsdzSgbmId Cafd { get; set; }
 
