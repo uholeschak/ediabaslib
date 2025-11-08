@@ -5,6 +5,7 @@ namespace BMW.Rheingold.Psdz
 {
     public interface IPsdzEventListener
     {
+        // [UH] Keep operation contract for backward compatibility
         [OperationContract(IsOneWay = true)]
         [ServiceKnownType(typeof(PsdzEvent))]
         [ServiceKnownType(typeof(PsdzProgressEvent))]

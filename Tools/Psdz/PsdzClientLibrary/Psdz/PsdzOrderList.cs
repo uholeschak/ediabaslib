@@ -11,6 +11,7 @@ namespace BMW.Rheingold.Psdz.Model.Svb
     [DataContract]
     public class PsdzOrderList : IPsdzOrderList
     {
+        // [UH] Keep data members for backward compatibility
         [DataMember]
         public int NumberOfUnits { get; set; }
 

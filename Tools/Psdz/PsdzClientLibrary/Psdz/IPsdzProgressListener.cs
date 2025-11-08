@@ -9,6 +9,7 @@ namespace BMW.Rheingold.Psdz
 {
     public interface IPsdzProgressListener
     {
+        // [UH] Keep operation contract for backward compatibility
         [OperationContract(IsOneWay = true)]
         void BeginTask(string task);
 

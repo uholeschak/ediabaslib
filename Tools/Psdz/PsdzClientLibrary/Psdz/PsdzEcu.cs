@@ -21,6 +21,7 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
     {
         private static readonly IEqualityComparer<PsdzEcu> PsdzEcuComparerInstance = new PsdzEcuComparer();
 
+        // [UH] Keep data members for backward compatibility
         [DataMember]
         public string BaseVariant { get; set; }
 
