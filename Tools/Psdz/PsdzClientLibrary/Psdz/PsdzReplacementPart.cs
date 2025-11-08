@@ -12,8 +12,9 @@ namespace BMW.Rheingold.Psdz.Model.Svb
     [KnownType(typeof(PsdzOrderPart))]
     [KnownType(typeof(PsdzEcuVariantInstance))]
     [KnownType(typeof(PsdzReplacementPart))]
-    public class PsdzReplacementPart : PsdzLogisticPart, IPsdzLogisticPart, IPsdzReplacementPart
+    public class PsdzReplacementPart : PsdzLogisticPart, IPsdzReplacementPart, IPsdzLogisticPart
     {
+        // [UH] Keep data members for backward compatibility
         [DataMember]
         public IPsdzLogisticPart[] Deliverables { get; set; }
     }

@@ -9,6 +9,7 @@ using BMW.Rheingold.Psdz.Model.Tal;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    // [UH] Only for compatibility with older version
     internal sealed class SecureCodingServiceClient : PsdzDuplexClientBase<ISecureCodingService, IPsdzProgressListener>, ISecureCodingService
     {
         internal SecureCodingServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)

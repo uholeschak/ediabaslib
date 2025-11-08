@@ -8,6 +8,7 @@ using BMW.Rheingold.Psdz.Model.Sfa;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    // [UH] Only for compatibility with older version
     internal sealed class SecurityManagementServiceClient : PsdzDuplexClientBase<ISecurityManagementService, IPsdzProgressListener>, ISecurityManagementService
     {
         internal SecurityManagementServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)

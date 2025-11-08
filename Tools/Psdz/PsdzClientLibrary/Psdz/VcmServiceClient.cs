@@ -9,6 +9,7 @@ using BMW.Rheingold.Psdz.Model;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    // [UH] Only for compatibility with older version
     internal sealed class VcmServiceClient : PsdzClientBase<IVcmService>, IVcmService
     {
         internal VcmServiceClient(Binding binding, EndpointAddress remoteAddress)
