@@ -355,7 +355,6 @@ namespace AssemblyPatcher
                             {
                                 Console.WriteLine("*** patchMethod1Class:patchMethod1Name2 Exception: {0}", ex.Message);
                             }
-
                         }
 
                         try
