@@ -254,6 +254,10 @@ namespace PsdzClient.Core
 
     internal class RREcuCharacteristics : BaseEcuCharacteristics
     {
+        public RREcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -280,6 +284,10 @@ namespace PsdzClient.Core
 
     internal class BNT_G11_G12_G3X_SP2015 : BaseEcuCharacteristics
     {
+        public BNT_G11_G12_G3X_SP2015(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -355,6 +363,10 @@ namespace PsdzClient.Core
 
     internal class MREcuCharacteristics : BaseEcuCharacteristics
     {
+        public MREcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -376,6 +388,10 @@ namespace PsdzClient.Core
 
     internal class E70EcuCharacteristicsAMPT : BaseEcuCharacteristics
     {
+        public E70EcuCharacteristicsAMPT(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -396,6 +412,10 @@ namespace PsdzClient.Core
 
     internal class E70EcuCharacteristicsAMPH : BaseEcuCharacteristics
     {
+        public E70EcuCharacteristicsAMPH(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -416,6 +436,10 @@ namespace PsdzClient.Core
 
     internal class E70EcuCharacteristics : BaseEcuCharacteristics
     {
+        public E70EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -436,6 +460,10 @@ namespace PsdzClient.Core
 
     internal class E60EcuCharacteristics : BaseEcuCharacteristics
     {
+        public E60EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -486,6 +514,10 @@ namespace PsdzClient.Core
 
     internal class F01_1307EcuCharacteristics : BaseEcuCharacteristics
     {
+        public F01_1307EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -507,6 +539,10 @@ namespace PsdzClient.Core
 
     internal class BNT_G01_G02_G08_F97_F98_SP2015 : BaseEcuCharacteristics
     {
+        public BNT_G01_G02_G08_F97_F98_SP2015(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -547,6 +583,10 @@ namespace PsdzClient.Core
 
     internal class E89EcuCharacteristics : BaseEcuCharacteristics
     {
+        public E89EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -567,10 +607,41 @@ namespace PsdzClient.Core
 
     internal class F56EcuCharacteristics : BaseEcuCharacteristics
     {
+        public F56EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
+        public override bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        {
+            if (ecu != null && ecu.SVK != null && ecu.SVK.XWE_SGBMID != null && xgbdTable != null && ecu.ID_SG_ADR == 96 && busType == BusType.MOST)
+            {
+                foreach (string item in ecu.SVK.XWE_SGBMID)
+                {
+                    foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
+                    {
+                        if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (item2.Bus.Contains(busType))
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return base.HasBus(busType, vecInfo, ecu);
+        }
     }
 
     internal class F20EcuCharacteristics : BaseEcuCharacteristics
     {
+        public F20EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -588,6 +659,30 @@ namespace PsdzClient.Core
             }
 
             CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, removeList);
+        }
+
+        public override bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        {
+            if (ecu != null && ecu.SVK != null && ecu.SVK.XWE_SGBMID != null && xgbdTable != null && ecu.ID_SG_ADR == 96 && busType == BusType.MOST)
+            {
+                foreach (string item in ecu.SVK.XWE_SGBMID)
+                {
+                    foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
+                    {
+                        if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (item2.Bus.Contains(busType))
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return base.HasBus(busType, vecInfo, ecu);
         }
     }
 }
