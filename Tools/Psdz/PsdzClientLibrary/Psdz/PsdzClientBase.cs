@@ -10,6 +10,7 @@ using BMW.Rheingold.Psdz.Model.Exceptions;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    // [UH] Only for compatibility with older version
 	abstract class PsdzClientBase<TChannel> where TChannel : class
 	{
 		protected PsdzClientBase(Binding binding, EndpointAddress remoteAddress) : this(new ChannelFactory<TChannel>(binding, remoteAddress))
