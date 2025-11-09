@@ -1,5 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Core.Container;
+using PsdzClientLibrary;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -598,9 +599,9 @@ namespace PsdzClient.Core
             return null;
         }
 
+        [PreserveSource(Hint = "Using rector from vehicle")]
         public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
-            // [UH] get reactor from vehicle
             Reactor instance = (vecInfo as Vehicle)?.Reactor;
             if (instance == null)
             {
