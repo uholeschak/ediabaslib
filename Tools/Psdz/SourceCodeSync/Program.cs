@@ -21,7 +21,6 @@ namespace SourceCodeSync
         [
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Enums\.UserLogin$",
             @"^BMW\.Rheingold\.CoreFramework\.OSS$",
-            @"^BMW\.Rheingold\.CoreFramework\.Contracts\.FASTA$",
             @"^BMW\.Rheingold\.CoreFramework\.IndustrialCustomer\..*",
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Models\..*",
             @"^BMW\.Rheingold\.InfoProvider\.(SWT|Tric|Broker|igDom|service|Current|SCC|NOP|EDGE|Properties).*",
@@ -36,7 +35,7 @@ namespace SourceCodeSync
             "public_static_LicenseHelper",
             "internal_sealed_LicenseManager",
             "public_LicenseStatusChecker",
-            "public_LicenseWizardHelper"
+            "public_LicenseWizardHelper",
         ];
 
         private static readonly string[] _ignoreInterfaceNames =
