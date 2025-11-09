@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using BMW.Rheingold.CoreFramework.Contracts.Programming;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Programming;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Certificate;
@@ -16,10 +11,12 @@ using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
-using SQLitePCL;
-using FscStateEnumMapperP = PsdzClient.Programming.FscStateEnumMapper;
-using SwtTypeEnumMapperP = PsdzClient.Programming.SwtTypeEnumMapper;
-using SoftwareSigStateEnumMapperP = PsdzClient.Programming.SoftwareSigStateEnumMapper;
+using PsdzClientLibrary;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -28,13 +25,13 @@ namespace BMW.Rheingold.Psdz
         private readonly IObjectBuilderService objectBuilderService;
         private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
         private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
-        [Preserve]
-        private readonly FscStateEnumMapperP fscStateEnumMapper = new FscStateEnumMapperP();
-        [Preserve]
-        private readonly SwtTypeEnumMapperP swtTypeEnumMapper = new SwtTypeEnumMapperP();
+        [PreserveSource(Hint = "Namespace modified")]
+        private readonly PsdzClient.Programming.FscStateEnumMapper fscStateEnumMapper = new PsdzClient.Programming.FscStateEnumMapper();
+        [PreserveSource(Hint = "Namespace modified")]
+        private readonly PsdzClient.Programming.SwtTypeEnumMapper swtTypeEnumMapper = new PsdzClient.Programming.SwtTypeEnumMapper();
         private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
-        [Preserve]
-        private readonly SoftwareSigStateEnumMapperP softwareSigStateEnumMapper = new SoftwareSigStateEnumMapperP();
+        [PreserveSource(Hint = "Namespace modified")]
+        private readonly PsdzClient.Programming.SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new PsdzClient.Programming.SoftwareSigStateEnumMapper();
         private readonly TaCategoriesEnumMapper taCategoriesEnumMapper = new TaCategoriesEnumMapper();
         public PsdzObjectBuilder(IObjectBuilderService objectBuilderService)
         {
