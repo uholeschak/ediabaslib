@@ -36,7 +36,8 @@ namespace SourceCodeSync
             "internal_sealed_LicenseManager",
             "public_LicenseStatusChecker",
             "public_LicenseWizardHelper",
-            "BMW.Rheingold.Programming.Common.SecureCodingService"
+            "BMW.Rheingold.Programming.Common.SecureCodingService",
+            "BMW.Rheingold.Programming.ProgrammingService",
         ];
 
         private static readonly string[] _ignoreInterfaceNames =
