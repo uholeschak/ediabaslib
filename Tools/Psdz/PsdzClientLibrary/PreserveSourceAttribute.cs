@@ -2,9 +2,11 @@
 
 namespace PsdzClientLibrary
 {
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class PreserveSourceAttribute : Attribute
     {
         public string Hint;
+
+        public bool Removed;
     }
 }
