@@ -61,6 +61,7 @@ namespace SourceCodeSync
 
             public enum VerbosityOption
             {
+                None,
                 Error,
                 Warning,
                 Info,
@@ -127,13 +128,19 @@ namespace SourceCodeSync
 
                 if (string.IsNullOrEmpty(sourceDir) || !Directory.Exists(sourceDir))
                 {
-                    Console.WriteLine("Source directory not existing: {0}", sourceDir);
+                    if (_verbosity >= Options.VerbosityOption.Error)
+                    {
+                        Console.WriteLine("Source directory not existing: {0}", sourceDir);
+                    }
                     return 1;
                 }
 
                 if (string.IsNullOrEmpty(destDir) || !Directory.Exists(destDir))
                 {
-                    Console.WriteLine("Destination directory not existing: {0}", destDir);
+                    if (_verbosity >= Options.VerbosityOption.Error)
+                    {
+                        Console.WriteLine("Destination directory not existing: {0}", destDir);
+                    }
                     return 1;
                 }
 
@@ -151,7 +158,10 @@ namespace SourceCodeSync
                 {
                     if (!GetFileSource(file))
                     {
-                        Console.WriteLine("*** Get file source failed: {0}", file);
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("*** Get file source failed: {0}", file);
+                        }
                     }
                 }
 
@@ -188,13 +198,19 @@ namespace SourceCodeSync
 
                     if (!UpdateFile(file))
                     {
-                        Console.WriteLine("*** Update file failed: {0}", file);
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("*** Update file failed: {0}", file);
+                        }
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine("*** Exception: {0}", e.Message);
+                if (_verbosity >= Options.VerbosityOption.Error)
+                {
+                    Console.WriteLine("*** Exception: {0}", e.Message);
+                }
                 return 1;
             }
 
@@ -248,7 +264,10 @@ namespace SourceCodeSync
                             string oldClassSource = oldClassSyntax.ToFullString();
                             if (oldClassSource != classSource)
                             {
-                                Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", className);
+                                if (_verbosity >= Options.VerbosityOption.Error)
+                                {
+                                    Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", className);
+                                }
                                 _classDict[className] = null;
                             }
                         }
@@ -257,7 +276,10 @@ namespace SourceCodeSync
                     {
                         if (!_classDict.TryAdd(className, cls))
                         {
-                            Console.WriteLine("*** Warning: Add class failed: {0}", className);
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("*** Warning: Add class failed: {0}", className);
+                            }
                         }
                     }
                 }
@@ -302,7 +324,10 @@ namespace SourceCodeSync
                             string oldInterfaceSource = oldInterfaceSyntax.ToFullString();
                             if (oldInterfaceSource != interfaceSource)
                             {
-                                Console.WriteLine("*** Warning: Duplicate interface name with different source: {0}", interfaceName);
+                                if (_verbosity >= Options.VerbosityOption.Error)
+                                {
+                                    Console.WriteLine("*** Warning: Duplicate interface name with different source: {0}", interfaceName);
+                                }
                                 _interfaceDict[interfaceName] = null;
                             }
                         }
@@ -311,7 +336,10 @@ namespace SourceCodeSync
                     {
                         if (!_interfaceDict.TryAdd(interfaceName, interfaceDecl))
                         {
-                            Console.WriteLine("*** Warning: Add interface failed: {0}", interfaceName);
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("*** Warning: Add interface failed: {0}", interfaceName);
+                            }
                         }
                     }
                 }
@@ -355,7 +383,10 @@ namespace SourceCodeSync
                             string oldEnumSource = oldEnumSyntax.ToFullString();
                             if (oldEnumSource != enumSource)
                             {
-                                Console.WriteLine("*** Warning: Duplicate enum name with different source: {0}", enumName);
+                                if (_verbosity >= Options.VerbosityOption.Error)
+                                {
+                                    Console.WriteLine("*** Warning: Duplicate enum name with different source: {0}", enumName);
+                                }
                                 _enumDict[enumName] = null;
                             }
                         }
@@ -371,7 +402,10 @@ namespace SourceCodeSync
             }
             catch (Exception e)
             {
-                Console.WriteLine("*** Error parsing file: {0}, Exception {1}", fileName, e.Message);
+                if (_verbosity >= Options.VerbosityOption.Error)
+                {
+                    Console.WriteLine("*** Error parsing file: {0}, Exception {1}", fileName, e.Message);
+                }
                 return false;
             }
             return true;
@@ -405,7 +439,10 @@ namespace SourceCodeSync
 
                     if (HasSpecialTrivia(cls))
                     {
-                        Console.WriteLine("Skipping class {0} with comments: {1}", className, fileName);
+                        if (_verbosity >= Options.VerbosityOption.Warning)
+                        {
+                            Console.WriteLine("Skipping class {0} with comments: {1}", className, fileName);
+                        }
                         continue;
                     }
 
@@ -415,7 +452,10 @@ namespace SourceCodeSync
                         bool sourceHasContract = HasContractAttribute(sourceClass.AttributeLists);
                         if (hasContract && !sourceHasContract)
                         {
-                            Console.WriteLine("Skipping class {0} with removed Contract", className);
+                            if (_verbosity >= Options.VerbosityOption.Warning)
+                            {
+                                Console.WriteLine("Skipping class {0} with removed Contract", className);
+                            }
                             continue;
                         }
 
@@ -423,14 +463,20 @@ namespace SourceCodeSync
                         string classSourceStr = sourceClass.NormalizeWhitespace().ToFullString();
                         if (classSource != classSourceStr)
                         {
-                            Console.WriteLine($"Updating class: {className}");
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                Console.WriteLine($"Updating class: {className}");
+                            }
                             newRoot = newRoot.ReplaceNode(cls, sourceClass);
                             fileModified = true;
                         }
                     }
                     else
                     {
-                        Console.WriteLine("*** Warning: Class not found in source files: {0}", className);
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("*** Warning: Class not found in source files: {0}", className);
+                        }
                     }
                 }
 
@@ -457,7 +503,10 @@ namespace SourceCodeSync
 
                     if (HasSpecialTrivia(interfaceDecl))
                     {
-                        Console.WriteLine("Skipping interface {0} with comments: {1}", interfaceName, fileName);
+                        if (_verbosity >= Options.VerbosityOption.Warning)
+                        {
+                            Console.WriteLine("Skipping interface {0} with comments: {1}", interfaceName, fileName);
+                        }
                         continue;
                     }
 
@@ -467,7 +516,10 @@ namespace SourceCodeSync
                         bool sourceHasContract = HasContractAttribute(sourceInterface.AttributeLists);
                         if (hasContract && !sourceHasContract)
                         {
-                            Console.WriteLine("Skipping interface {0} with removed Contract", interfaceName);
+                            if (_verbosity >= Options.VerbosityOption.Warning)
+                            {
+                                Console.WriteLine("Skipping interface {0} with removed Contract", interfaceName);
+                            }
                             continue;
                         }
 
@@ -475,14 +527,20 @@ namespace SourceCodeSync
                         string sourceInterfaceStr = sourceInterface.NormalizeWhitespace().ToFullString();
                         if (interfaceSource != sourceInterfaceStr)
                         {
-                            Console.WriteLine($"Updating interface: {interfaceName}");
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                Console.WriteLine($"Updating interface: {interfaceName}");
+                            }
                             newRoot = newRoot.ReplaceNode(interfaceDecl, sourceInterface);
                             fileModified = true;
                         }
                     }
                     else
                     {
-                        Console.WriteLine("*** Warning: Interface not found in source files: {0}", interfaceName);
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("*** Warning: Interface not found in source files: {0}", interfaceName);
+                        }
                     }
                 }
 
@@ -503,7 +561,10 @@ namespace SourceCodeSync
 
                     if (HasSpecialTrivia(enumDecl))
                     {
-                        Console.WriteLine("Skipping enum {0} with comments: {1}", enumName, fileName);
+                        if (_verbosity >= Options.VerbosityOption.Warning)
+                        {
+                            Console.WriteLine("Skipping enum {0} with comments: {1}", enumName, fileName);
+                        }
                         continue;
                     }
 
@@ -513,14 +574,20 @@ namespace SourceCodeSync
                         string sourceEnumStr = sourceEnum.NormalizeWhitespace().ToFullString();
                         if (enumSource != sourceEnumStr)
                         {
-                            Console.WriteLine($"Updating enum: {enumName}");
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                Console.WriteLine($"Updating enum: {enumName}");
+                            }
                             newRoot = newRoot.ReplaceNode(enumDecl, sourceEnum);
                             fileModified = true;
                         }
                     }
                     else
                     {
-                        Console.WriteLine("*** Warning: Enum not found in source files: {0}", enumName);
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("*** Warning: Enum not found in source files: {0}", enumName);
+                        }
                     }
                 }
 
@@ -533,7 +600,10 @@ namespace SourceCodeSync
 
                     // Write with UTF-8 BOM encoding
                     File.WriteAllText(fileName, modifiedContent, new UTF8Encoding(true));
-                    Console.WriteLine($"File updated: {fileName}");
+                    if (_verbosity >= Options.VerbosityOption.Info)
+                    {
+                        Console.WriteLine($"File updated: {fileName}");
+                    }
                 }
             }
             catch (Exception e)
