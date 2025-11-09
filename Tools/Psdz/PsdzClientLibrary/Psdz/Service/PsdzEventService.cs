@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -8,10 +9,9 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    // [UH] Only for compatibility with older version
+    [PreserveSource(Removed = true)]
     internal class PsdzEventService
     {
-        // [UH] Only for compatibility with older version
         private sealed class PsdzEventListenerClient : DuplexClientBase<IEventManagerService>
         {
             public PsdzEventListenerClient(IPsdzEventListener eventListener, Binding binding, EndpointAddress endPointAddress)

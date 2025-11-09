@@ -1,16 +1,17 @@
-﻿using System;
+﻿using log4net;
+using PsdzClient.Core;
+using PsdzClientLibrary;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management;
 using System.Threading;
-using log4net;
-using PsdzClient.Core;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    // [UH] Only for compatibility with older version
+    [PreserveSource(Removed = true)]
     public enum PsdzServiceStartResult
     {
         PsdzStillRunning,
@@ -19,7 +20,7 @@ namespace BMW.Rheingold.Psdz.Client
         PsdzStartOk
     }
 
-    // [UH] Only for compatibility with older version
+    [PreserveSource(Removed = true)]
     public class PsdzServiceStarter
     {
         private const string PsdzServiceStarterMutex = "Global\\PsdzServiceStarterMutex";

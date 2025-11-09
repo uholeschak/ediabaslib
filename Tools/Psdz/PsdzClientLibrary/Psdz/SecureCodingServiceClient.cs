@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Sfa.RequestNcdSignatureResponseCto;
 using BMW.Rheingold.Psdz.Model.Tal;
+using PsdzClientLibrary;
+using System.Collections.Generic;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    // [UH] Only for compatibility with older version
+    [PreserveSource(Removed = true)]
     internal sealed class SecureCodingServiceClient : PsdzDuplexClientBase<ISecureCodingService, IPsdzProgressListener>, ISecureCodingService
     {
         internal SecureCodingServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)

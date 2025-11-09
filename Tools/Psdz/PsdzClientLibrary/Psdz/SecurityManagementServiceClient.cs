@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.SecurityManagement;
 using BMW.Rheingold.Psdz.Model.Sfa;
+using PsdzClientLibrary;
+using System.Collections.Generic;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    // [UH] Only for compatibility with older version
+    [PreserveSource(Removed = true)]
     internal sealed class SecurityManagementServiceClient : PsdzDuplexClientBase<ISecurityManagementService, IPsdzProgressListener>, ISecurityManagementService
     {
         internal SecurityManagementServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)

@@ -1,14 +1,15 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Model;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model;
 
 namespace BMW.Rheingold.Psdz
 {
-    // [UH] Only for compatibility with older version
+    [PreserveSource(Removed = true)]
     [KnownType(typeof(PsdzIstufe))]
     [DataContract]
     [KnownType(typeof(PsdzStandardFa))]

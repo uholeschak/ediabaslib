@@ -1,15 +1,16 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Certificate;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Certificate;
-using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    // [UH] Only for compatibility with older version
+    [PreserveSource(Removed = true)]
     internal class CertificateManagementServiceClient : PsdzClientBase<ICertificateManagementService>, ICertificateManagementService
     {
         public CertificateManagementServiceClient(Binding binding, EndpointAddress remoteAddress)
