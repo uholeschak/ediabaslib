@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using BMW.Rheingold.Psdz.Model;
+using PsdzClientLibrary;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using BMW.Rheingold.Psdz.Model;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     internal sealed class ConnectionFactoryServiceClient : PsdzClientBase<IConnectionFactoryService>, IConnectionFactoryService
     {
         internal ConnectionFactoryServiceClient(Binding binding, EndpointAddress remoteAddress)
@@ -12,7 +14,6 @@ namespace BMW.Rheingold.Psdz.Client
         {
         }
 
-        // [UH] For backward compatibility
         public IEnumerable<VehicleId> RequestAvailableVehicles()
         {
             return CallFunction((IConnectionFactoryService m) => m.RequestAvailableVehicles());
