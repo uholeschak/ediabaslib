@@ -12,27 +12,6 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    public enum InterfaceType
-    {
-        Vector,
-        Omitec
-    }
-
-    public enum IcomConnectionType
-    {
-        Ip,
-        DCan
-    }
-
-    public enum ProdiasLoglevel
-    {
-        OFF,
-        INFO,
-        DEBUG,
-        TRACE,
-        ERROR
-    }
-
     [PreserveSource(Removed = true)]
     internal sealed class ConnectionManagerServiceClient : PsdzClientBase<IConnectionManagerService>, IConnectionManagerService
     {
