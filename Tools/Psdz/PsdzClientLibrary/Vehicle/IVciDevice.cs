@@ -8,54 +8,6 @@ using PsdzClient.Core;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
-    public enum VCIReservationType
-    {
-        NONE,
-        IVM,
-        WEB,
-        UNKNOWN
-    }
-
-    public enum VCIDeviceType
-    {
-        ENET = 0,
-        ICOM = 1,
-        IMIB = 2,
-        EDIABAS = 3,
-        SIM = 4,
-        INFOSESSION = 5,
-        PTT = 7,
-        UNKNOWN = 8
-    }
-
-    public enum DeviceState
-    {
-        Init,
-        Booted,
-        Lost,
-        Sleep,
-        Free,
-        Reserved,
-        Selftest,
-        Fail,
-        Found,
-        Transit,
-        Updated,
-        Unregistered,
-        Blocked,
-        FreeNvm,
-        FirmwareOutdated,
-        Unsupported
-    }
-
-    public enum NetworkType
-    {
-        Unknown = -1,
-        LAN,
-        WLAN,
-        directLAN
-    }
-
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IVciDevice : INotifyPropertyChanged, IVciDeviceRuleEvaluation
     {
@@ -174,17 +126,13 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         bool IsMarkedToDefault { get; set; }
 
         bool IsSimulation { get; set; }
+        new VCIDeviceType VCIType { get; set; }
 
         bool CheckChannel(string channelId);
-
         double? GetClamp15();
-
         double? GetClamp30();
-
         string ToAttrList();
-
         string ToAttrList(bool addLineFeed);
-
         string getVCIDescription(VCIDeviceType devType);
     }
 }
