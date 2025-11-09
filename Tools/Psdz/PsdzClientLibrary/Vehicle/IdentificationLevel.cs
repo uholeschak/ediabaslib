@@ -2,7 +2,6 @@
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
-    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum IdentificationLevel
     {
         None,
