@@ -30,6 +30,10 @@ namespace PsdzClient.Core
 
     internal class F25_1404EcuCharacteristics : BaseEcuCharacteristics
     {
+        public F25_1404EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -47,10 +51,38 @@ namespace PsdzClient.Core
 
             CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
         }
+
+        public override bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        {
+            if (ecu != null && ecu.SVK != null && ecu.SVK.XWE_SGBMID != null && xgbdTable != null && ecu.ID_SG_ADR == 96 && busType == BusType.MOST)
+            {
+                foreach (string item in ecu.SVK.XWE_SGBMID)
+                {
+                    foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
+                    {
+                        if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (item2.Bus.Contains(busType))
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return base.HasBus(busType, vecInfo, ecu);
+        }
     }
 
     internal class F25EcuCharacteristics : BaseEcuCharacteristics
     {
+        public F25EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -67,6 +99,30 @@ namespace PsdzClient.Core
             }
 
             CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+        }
+
+        public override bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        {
+            if (ecu != null && ecu.SVK != null && ecu.SVK.XWE_SGBMID != null && xgbdTable != null && ecu.ID_SG_ADR == 96 && busType == BusType.MOST)
+            {
+                foreach (string item in ecu.SVK.XWE_SGBMID)
+                {
+                    foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
+                    {
+                        if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
+                        {
+                            if (item2.Bus.Contains(busType))
+                            {
+                                return true;
+                            }
+
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return base.HasBus(busType, vecInfo, ecu);
         }
     }
 
