@@ -1161,6 +1161,7 @@ namespace SourceCodeSync
         /// </summary>
         public static bool HasPreserveNamingConvention(SyntaxNode member)
         {
+#if false
             string memberName = member switch
             {
                 MethodDeclarationSyntax method => method.Identifier.Text,
@@ -1173,7 +1174,12 @@ namespace SourceCodeSync
                 return false;
 
             // Check for naming conventions
-            return memberName.StartsWith("Custom_", StringComparison.Ordinal);
+            if (memberName.StartsWith("Custom_", StringComparison.Ordinal))
+            {
+                return true;
+            }
+#endif
+            return false;
         }
     }
 }
