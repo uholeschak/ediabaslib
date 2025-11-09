@@ -6,11 +6,13 @@ using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
 using System.Diagnostics;
+using PsdzClientLibrary;
 
 namespace BMW.Rheingold.Programming
 {
-	public class PsdzServiceWrapper : IPsdz, IPsdzService, IPsdzInfo, IDisposable
-	{
+    [PreserveSource(Removed = true)]
+    public class PsdzServiceWrapper : IPsdz, IPsdzService, IPsdzInfo, IDisposable
+   {
         private readonly PsdzServiceArgs psdzServiceArgs;
 
         private readonly PsdzServiceClient psdzServiceClient;
@@ -109,7 +111,7 @@ namespace BMW.Rheingold.Programming
 
         public IPsdzObjectBuilder ObjectBuilder { get; private set; }
 
-        // [UH] For backward compatibility
+        [PreserveSource(Hint = "For backward compatibility")]
         public IProgrammingTokenService ProgrammingTokenService { get; }
 
         public IObjectBuilderService ObjectBuilderService => psdzServiceClient.ObjectBuilderService;
