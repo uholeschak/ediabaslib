@@ -16,6 +16,7 @@ using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
+using SQLitePCL;
 using FscStateEnumMapperP = PsdzClient.Programming.FscStateEnumMapper;
 using SwtTypeEnumMapperP = PsdzClient.Programming.SwtTypeEnumMapper;
 using SoftwareSigStateEnumMapperP = PsdzClient.Programming.SoftwareSigStateEnumMapper;
@@ -27,9 +28,12 @@ namespace BMW.Rheingold.Psdz
         private readonly IObjectBuilderService objectBuilderService;
         private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
         private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
+        [Preserve]
         private readonly FscStateEnumMapperP fscStateEnumMapper = new FscStateEnumMapperP();
+        [Preserve]
         private readonly SwtTypeEnumMapperP swtTypeEnumMapper = new SwtTypeEnumMapperP();
         private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
+        [Preserve]
         private readonly SoftwareSigStateEnumMapperP softwareSigStateEnumMapper = new SoftwareSigStateEnumMapperP();
         private readonly TaCategoriesEnumMapper taCategoriesEnumMapper = new TaCategoriesEnumMapper();
         public PsdzObjectBuilder(IObjectBuilderService objectBuilderService)
