@@ -1,14 +1,15 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
-    // [UH] Code incorrectly decompiled
+    [PreserveSource(Hint = "Incorrectly decompiled")]
     public class BasicFeaturesVci : typeBasicFeatures, IBasicFeatures, INotifyPropertyChanged
     {
         string IBasicFeatures.Baureihe => base.Baureihe;
