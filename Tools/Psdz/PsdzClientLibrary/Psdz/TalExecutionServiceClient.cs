@@ -1,13 +1,15 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Tal;
+using PsdzClient.Contracts;
+using PsdzClientLibrary;
+using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Threading;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Tal;
-using PsdzClient.Contracts;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     internal sealed class TalExecutionServiceClient : PsdzDuplexClientBase<ITalExecutionService, IPsdzProgressListener>, ITalExecutionService
     {
         internal TalExecutionServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)
@@ -30,19 +32,19 @@ namespace BMW.Rheingold.Psdz.Client
             return CallFunction((ITalExecutionService m) => m.ExecuteHDDUpdate(connection, tal, fa, vin, talExecutionSettings));
         }
 
-        // [UH] For backward compatibility
+        [PreserveSource(Hint = "For backward compatibility")]
         public string Name
         {
             get { return "TalExecutionServiceClient"; }
         }
 
-        // [UH] For backward compatibility
+        [PreserveSource(Hint = "For backward compatibility")]
         public string Description
         {
             get { return "TalExecutionServiceClient"; }
         }
 
-        // [UH] For backward compatibility
+        [PreserveSource(Hint = "For backward compatibility")]
 #pragma warning disable CS0067
         public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged;
 #pragma warning restore CS0067
