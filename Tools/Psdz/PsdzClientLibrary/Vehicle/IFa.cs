@@ -17,6 +17,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         DateTime? C_DATETIME { get; }
 
+        [Obsolete("No longer used in diagnoses")]
         IEnumerable<string> DealerInstalledSA { get; }
 
         IEnumerable<string> E_WORT { get; }
@@ -31,6 +32,10 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string POLSTER_TEXT { get; }
 
+        string FAHRZEUG_KATEGORIE { get; }
+
+        string KONTROLL_KLASSE { get; }
+
         IEnumerable<string> SA { get; }
 
         string STANDARD_FA { get; }
@@ -44,7 +49,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         ICollection<LocalizedSAItem> SaLocalizedItems { get; }
 
         string ExtractEreihe();
-
         string ExtractType();
     }
 }
