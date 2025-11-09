@@ -11,13 +11,9 @@ namespace BMW.Rheingold.Psdz
     internal class ConfigurationService : IConfigurationService
     {
         private const string DefaultDealerId = "1234";
-
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly IHttpServerService _httpServerService;
-
         private readonly string _endpointService = "configuration";
-
         public ConfigurationService(IWebCallHandler webCallHandler, IHttpServerService httpServerService)
         {
             _webCallHandler = webCallHandler;
@@ -60,12 +56,6 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [PreserveSource(Hint = "For backward compatibility")]
-        public string GetExpectedPsdzVersion()
-        {
-            return GetPsdzVersion();
-        }
-
         public string GetPsdzVersion()
         {
             try
@@ -98,7 +88,10 @@ namespace BMW.Rheingold.Psdz
             {
                 PsdzHelper.CheckString("pathToPdxContainer", pathToPdxContainer);
                 PsdzHelper.CheckString("projectName", projectName);
-                List<string> pathToPdxContainer2 = new List<string> { Path.GetFullPath(pathToPdxContainer) };
+                List<string> pathToPdxContainer2 = new List<string>
+                {
+                    Path.GetFullPath(pathToPdxContainer)
+                };
                 string rootDirectory = GetRootDirectory();
                 ImportPdxRequestModel requestBodyObject = new ImportPdxRequestModel
                 {
@@ -195,7 +188,14 @@ namespace BMW.Rheingold.Psdz
                 text = "1234";
                 Log.Info(Log.CurrentMethod(), "dealerId " + dealerId + " cannot be converted to a Hex value. The default Hex value (1234) is used.");
             }
+
             return text;
+        }
+
+        [PreserveSource(Hint = "For backward compatibility")]
+        public string GetExpectedPsdzVersion()
+        {
+            return GetPsdzVersion();
         }
     }
 }
