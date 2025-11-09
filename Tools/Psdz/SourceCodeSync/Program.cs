@@ -68,7 +68,6 @@ namespace SourceCodeSync
                 Debug
             }
 
-
             [Option('s', "sourcedir", Required = true, HelpText = "Source directory.")]
             public string SourceDir { get; set; }
 
@@ -487,7 +486,7 @@ namespace SourceCodeSync
                             {
                                 Console.WriteLine($"Updating class: {className}");
                             }
-                            newRoot = newRoot.ReplaceNode(cls, sourceClass);
+                            newRoot = newRoot.ReplaceNode(cls, mergedClass);
                             fileModified = true;
                         }
                     }
@@ -1077,7 +1076,7 @@ namespace SourceCodeSync
                     .Any(attr =>
                     {
                         string attrName = attr.Name.ToString();
-                        return attrName == "Preserve";
+                        return attrName == "PreserveSource";
                     });
 
                 if (hasPreserveAttribute)
