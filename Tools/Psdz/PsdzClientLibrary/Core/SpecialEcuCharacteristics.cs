@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
