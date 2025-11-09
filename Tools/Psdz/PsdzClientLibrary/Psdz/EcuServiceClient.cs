@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClientLibrary;
+using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     internal sealed class EcuServiceClient : PsdzClientBase<IEcuService>, IEcuService
     {
         internal EcuServiceClient(Binding binding, EndpointAddress remoteAddress)

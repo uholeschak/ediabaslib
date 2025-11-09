@@ -1,13 +1,14 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient.Programming;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Psdz.Client
 {
@@ -32,6 +33,7 @@ namespace BMW.Rheingold.Psdz.Client
         ERROR
     }
 
+    [PreserveSource(Removed = true)]
     internal sealed class ConnectionManagerServiceClient : PsdzClientBase<IConnectionManagerService>, IConnectionManagerService
     {
         public ConnectionManagerServiceClient(Binding binding, EndpointAddress remoteAddress)

@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+using PsdzClientLibrary;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     internal class IndividualDataRestoreServiceClient : PsdzDuplexClientBase<IIndividualDataRestoreService, IPsdzProgressListener>, IIndividualDataRestoreService
     {
         public IndividualDataRestoreServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)
