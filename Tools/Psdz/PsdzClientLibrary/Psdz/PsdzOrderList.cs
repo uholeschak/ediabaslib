@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Svb
 {
-    [KnownType(typeof(PsdzEcuVariantInstance))]
     [DataContract]
+    [KnownType(typeof(PsdzEcuVariantInstance))]
     public class PsdzOrderList : IPsdzOrderList
     {
         [PreserveSource(Hint = "Keep attribute")]
