@@ -13,446 +13,397 @@ using PsdzClient.Utility;
 
 namespace PsdzClient.Core
 {
-	public class FA : INotifyPropertyChanged, IFa, IFARuleEvaluation, IReactorFa
+    public class FA : INotifyPropertyChanged, IFa, IFARuleEvaluation, IReactorFa
     {
         private short? sA_ANZField;
-
         private ObservableCollection<string> saField;
-
         private ObservableCollection<LocalizedSAItem> saLocalizedItemsField;
-
         private ObservableCollection<SALAPALocalizedEntry> sALAPAField;
-
         private short? e_WORT_ANZField;
-
         private ObservableCollection<string> e_WORTField;
-
         private short? hO_WORT_ANZField;
-
         private ObservableCollection<string> hO_WORTField;
-
         private short? zUSBAU_ANZField;
-
         private ObservableCollection<string> zUSBAU_WORTField;
-
         private string pOLSTERField;
-
         private string pOLSTER_TEXTField;
-
         private string lACKField;
-
         private string lACK_TEXTField;
-
         private string fAHRZEUG_KATEGORIEField;
-
         private string kONTROLL_KLASSEField;
-
         private string c_DATEField;
-
         private DateTime? c_DATETIMEField;
-
         private string vERSIONField;
-
         private string brField;
-
         private string sTANDARD_FAField;
-
         private string tYPEField;
-
         private bool alreadyDoneField;
-
-        public FA()
-		{
-            zUSBAU_WORTField = new ObservableCollection<string>();
-            hO_WORTField = new ObservableCollection<string>();
-            e_WORTField = new ObservableCollection<string>();
-            sALAPAField = new ObservableCollection<SALAPALocalizedEntry>();
-            saField = new ObservableCollection<string>();
-            saLocalizedItemsField = new ObservableCollection<LocalizedSAItem>();
-            sA_ANZField = 0;
-            e_WORT_ANZField = 0;
-            hO_WORT_ANZField = 0;
-            zUSBAU_ANZField = 0;
-            alreadyDoneField = false;
-            sTANDARD_FAField = string.Empty;
-            lACKField = string.Empty;
-            pOLSTERField = string.Empty;
-		}
-
         public short? SA_ANZ
-		{
-			get
-			{
-				return this.sA_ANZField;
-			}
-			set
-			{
-				if (this.sA_ANZField != null)
-				{
-					if (!this.sA_ANZField.Equals(value))
-					{
-						this.sA_ANZField = value;
-						this.OnPropertyChanged("SA_ANZ");
-						return;
-					}
-				}
-				else
-				{
-					this.sA_ANZField = value;
-					this.OnPropertyChanged("SA_ANZ");
-				}
-			}
-		}
+        {
+            get
+            {
+                return sA_ANZField;
+            }
 
-		public ObservableCollection<string> SA
-		{
-			get
-			{
-				return this.saField;
-			}
-			set
-			{
-				if (this.saField != null)
-				{
-					if (!this.saField.Equals(value))
-					{
-						this.saField = value;
-						this.OnPropertyChanged("SA");
-						return;
-					}
-				}
-				else
-				{
-					this.saField = value;
-					this.OnPropertyChanged("SA");
-				}
-			}
-		}
+            set
+            {
+                if (sA_ANZField.HasValue)
+                {
+                    if (!sA_ANZField.Equals(value))
+                    {
+                        sA_ANZField = value;
+                        OnPropertyChanged("SA_ANZ");
+                    }
+                }
+                else
+                {
+                    sA_ANZField = value;
+                    OnPropertyChanged("SA_ANZ");
+                }
+            }
+        }
 
-		public ObservableCollection<SALAPALocalizedEntry> SALAPA
-		{
-			get
-			{
-				return this.sALAPAField;
-			}
-			set
-			{
-				if (this.sALAPAField != null)
-				{
-					if (!this.sALAPAField.Equals(value))
-					{
-						this.sALAPAField = value;
-						this.OnPropertyChanged("SALAPA");
-						return;
-					}
-				}
-				else
-				{
-					this.sALAPAField = value;
-					this.OnPropertyChanged("SALAPA");
-				}
-			}
-		}
+        public ObservableCollection<string> SA
+        {
+            get
+            {
+                return saField;
+            }
 
-		public short? E_WORT_ANZ
-		{
-			get
-			{
-				return this.e_WORT_ANZField;
-			}
-			set
-			{
-				if (this.e_WORT_ANZField != null)
-				{
-					if (!this.e_WORT_ANZField.Equals(value))
-					{
-						this.e_WORT_ANZField = value;
-						this.OnPropertyChanged("E_WORT_ANZ");
-						return;
-					}
-				}
-				else
-				{
-					this.e_WORT_ANZField = value;
-					this.OnPropertyChanged("E_WORT_ANZ");
-				}
-			}
-		}
+            set
+            {
+                if (saField != value)
+                {
+                    saField = value;
+                    OnPropertyChanged("SA");
+                }
+            }
+        }
 
-		public ObservableCollection<string> E_WORT
-		{
-			get
-			{
-				return this.e_WORTField;
-			}
-			set
-			{
-				if (this.e_WORTField != null)
-				{
-					if (!this.e_WORTField.Equals(value))
-					{
-						this.e_WORTField = value;
-						this.OnPropertyChanged("E_WORT");
-						return;
-					}
-				}
-				else
-				{
-					this.e_WORTField = value;
-					this.OnPropertyChanged("E_WORT");
-				}
-			}
-		}
+        public ObservableCollection<SALAPALocalizedEntry> SALAPA
+        {
+            get
+            {
+                return sALAPAField;
+            }
 
-		public short? HO_WORT_ANZ
-		{
-			get
-			{
-				return this.hO_WORT_ANZField;
-			}
-			set
-			{
-				if (this.hO_WORT_ANZField != null)
-				{
-					if (!this.hO_WORT_ANZField.Equals(value))
-					{
-						this.hO_WORT_ANZField = value;
-						this.OnPropertyChanged("HO_WORT_ANZ");
-						return;
-					}
-				}
-				else
-				{
-					this.hO_WORT_ANZField = value;
-					this.OnPropertyChanged("HO_WORT_ANZ");
-				}
-			}
-		}
+            set
+            {
+                if (sALAPAField != null)
+                {
+                    if (!sALAPAField.Equals(value))
+                    {
+                        sALAPAField = value;
+                        OnPropertyChanged("SALAPA");
+                    }
+                }
+                else
+                {
+                    sALAPAField = value;
+                    OnPropertyChanged("SALAPA");
+                }
+            }
+        }
 
-		public ObservableCollection<string> HO_WORT
-		{
-			get
-			{
-				return this.hO_WORTField;
-			}
-			set
-			{
-				if (this.hO_WORTField != null)
-				{
-					if (!this.hO_WORTField.Equals(value))
-					{
-						this.hO_WORTField = value;
-						this.OnPropertyChanged("HO_WORT");
-						return;
-					}
-				}
-				else
-				{
-					this.hO_WORTField = value;
-					this.OnPropertyChanged("HO_WORT");
-				}
-			}
-		}
+        public short? E_WORT_ANZ
+        {
+            get
+            {
+                return e_WORT_ANZField;
+            }
 
-		public short? ZUSBAU_ANZ
-		{
-			get
-			{
-				return this.zUSBAU_ANZField;
-			}
-			set
-			{
-				if (this.zUSBAU_ANZField != null)
-				{
-					if (!this.zUSBAU_ANZField.Equals(value))
-					{
-						this.zUSBAU_ANZField = value;
-						this.OnPropertyChanged("ZUSBAU_ANZ");
-						return;
-					}
-				}
-				else
-				{
-					this.zUSBAU_ANZField = value;
-					this.OnPropertyChanged("ZUSBAU_ANZ");
-				}
-			}
-		}
+            set
+            {
+                if (e_WORT_ANZField.HasValue)
+                {
+                    if (!e_WORT_ANZField.Equals(value))
+                    {
+                        e_WORT_ANZField = value;
+                        OnPropertyChanged("E_WORT_ANZ");
+                    }
+                }
+                else
+                {
+                    e_WORT_ANZField = value;
+                    OnPropertyChanged("E_WORT_ANZ");
+                }
+            }
+        }
 
-		public ObservableCollection<string> ZUSBAU_WORT
-		{
-			get
-			{
-				return this.zUSBAU_WORTField;
-			}
-			set
-			{
-				if (this.zUSBAU_WORTField != null)
-				{
-					if (!this.zUSBAU_WORTField.Equals(value))
-					{
-						this.zUSBAU_WORTField = value;
-						this.OnPropertyChanged("ZUSBAU_WORT");
-						return;
-					}
-				}
-				else
-				{
-					this.zUSBAU_WORTField = value;
-					this.OnPropertyChanged("ZUSBAU_WORT");
-				}
-			}
-		}
+        public ObservableCollection<string> E_WORT
+        {
+            get
+            {
+                return e_WORTField;
+            }
 
-		public string POLSTER
-		{
-			get
-			{
-				return this.pOLSTERField;
-			}
-			set
-			{
-				if (this.pOLSTERField != null)
-				{
-					if (!this.pOLSTERField.Equals(value))
-					{
-						this.pOLSTERField = value;
-						this.OnPropertyChanged("POLSTER");
-						return;
-					}
-				}
-				else
-				{
-					this.pOLSTERField = value;
-					this.OnPropertyChanged("POLSTER");
-				}
-			}
-		}
+            set
+            {
+                if (e_WORTField != null)
+                {
+                    if (!e_WORTField.Equals(value))
+                    {
+                        e_WORTField = value;
+                        OnPropertyChanged("E_WORT");
+                    }
+                }
+                else
+                {
+                    e_WORTField = value;
+                    OnPropertyChanged("E_WORT");
+                }
+            }
+        }
 
-		public string POLSTER_TEXT
-		{
-			get
-			{
-				return this.pOLSTER_TEXTField;
-			}
-			set
-			{
-				if (this.pOLSTER_TEXTField != null)
-				{
-					if (!this.pOLSTER_TEXTField.Equals(value))
-					{
-						this.pOLSTER_TEXTField = value;
-						this.OnPropertyChanged("POLSTER_TEXT");
-						return;
-					}
-				}
-				else
-				{
-					this.pOLSTER_TEXTField = value;
-					this.OnPropertyChanged("POLSTER_TEXT");
-				}
-			}
-		}
+        public short? HO_WORT_ANZ
+        {
+            get
+            {
+                return hO_WORT_ANZField;
+            }
 
-		public string LACK
-		{
-			get
-			{
-				return this.lACKField;
-			}
-			set
-			{
-				if (this.lACKField != null)
-				{
-					if (!this.lACKField.Equals(value))
-					{
-						this.lACKField = value;
-						this.OnPropertyChanged("LACK");
-						return;
-					}
-				}
-				else
-				{
-					this.lACKField = value;
-					this.OnPropertyChanged("LACK");
-				}
-			}
-		}
+            set
+            {
+                if (hO_WORT_ANZField.HasValue)
+                {
+                    if (!hO_WORT_ANZField.Equals(value))
+                    {
+                        hO_WORT_ANZField = value;
+                        OnPropertyChanged("HO_WORT_ANZ");
+                    }
+                }
+                else
+                {
+                    hO_WORT_ANZField = value;
+                    OnPropertyChanged("HO_WORT_ANZ");
+                }
+            }
+        }
 
-		public string LACK_TEXT
-		{
-			get
-			{
-				return this.lACK_TEXTField;
-			}
-			set
-			{
-				if (this.lACK_TEXTField != null)
-				{
-					if (!this.lACK_TEXTField.Equals(value))
-					{
-						this.lACK_TEXTField = value;
-						this.OnPropertyChanged("LACK_TEXT");
-						return;
-					}
-				}
-				else
-				{
-					this.lACK_TEXTField = value;
-					this.OnPropertyChanged("LACK_TEXT");
-				}
-			}
-		}
+        public ObservableCollection<string> HO_WORT
+        {
+            get
+            {
+                return hO_WORTField;
+            }
 
-		public string C_DATE
-		{
-			get
-			{
-				return this.c_DATEField;
-			}
-			set
-			{
-				if (this.c_DATEField != null)
-				{
-					if (!this.c_DATEField.Equals(value))
-					{
-						this.c_DATEField = value;
-						this.OnPropertyChanged("C_DATE");
-						return;
-					}
-				}
-				else
-				{
-					this.c_DATEField = value;
-					this.OnPropertyChanged("C_DATE");
-				}
-			}
-		}
+            set
+            {
+                if (hO_WORTField != null)
+                {
+                    if (!hO_WORTField.Equals(value))
+                    {
+                        hO_WORTField = value;
+                        OnPropertyChanged("HO_WORT");
+                    }
+                }
+                else
+                {
+                    hO_WORTField = value;
+                    OnPropertyChanged("HO_WORT");
+                }
+            }
+        }
 
-		public DateTime? C_DATETIME
-		{
-			get
-			{
-				return this.c_DATETIMEField;
-			}
-			set
-			{
-				if (this.c_DATETIMEField != null)
-				{
-					if (!this.c_DATETIMEField.Equals(value))
-					{
-						this.c_DATETIMEField = value;
-						this.OnPropertyChanged("C_DATETIME");
-						return;
-					}
-				}
-				else
-				{
-					this.c_DATETIMEField = value;
-					this.OnPropertyChanged("C_DATETIME");
-				}
-			}
-		}
+        public short? ZUSBAU_ANZ
+        {
+            get
+            {
+                return zUSBAU_ANZField;
+            }
+
+            set
+            {
+                if (zUSBAU_ANZField.HasValue)
+                {
+                    if (!zUSBAU_ANZField.Equals(value))
+                    {
+                        zUSBAU_ANZField = value;
+                        OnPropertyChanged("ZUSBAU_ANZ");
+                    }
+                }
+                else
+                {
+                    zUSBAU_ANZField = value;
+                    OnPropertyChanged("ZUSBAU_ANZ");
+                }
+            }
+        }
+
+        public ObservableCollection<string> ZUSBAU_WORT
+        {
+            get
+            {
+                return zUSBAU_WORTField;
+            }
+
+            set
+            {
+                if (zUSBAU_WORTField != null)
+                {
+                    if (!zUSBAU_WORTField.Equals(value))
+                    {
+                        zUSBAU_WORTField = value;
+                        OnPropertyChanged("ZUSBAU_WORT");
+                    }
+                }
+                else
+                {
+                    zUSBAU_WORTField = value;
+                    OnPropertyChanged("ZUSBAU_WORT");
+                }
+            }
+        }
+
+        public string POLSTER
+        {
+            get
+            {
+                return pOLSTERField;
+            }
+
+            set
+            {
+                if (pOLSTERField != null)
+                {
+                    if (!pOLSTERField.Equals(value))
+                    {
+                        pOLSTERField = value;
+                        OnPropertyChanged("POLSTER");
+                    }
+                }
+                else
+                {
+                    pOLSTERField = value;
+                    OnPropertyChanged("POLSTER");
+                }
+            }
+        }
+
+        public string POLSTER_TEXT
+        {
+            get
+            {
+                return pOLSTER_TEXTField;
+            }
+
+            set
+            {
+                if (pOLSTER_TEXTField != null)
+                {
+                    if (!pOLSTER_TEXTField.Equals(value))
+                    {
+                        pOLSTER_TEXTField = value;
+                        OnPropertyChanged("POLSTER_TEXT");
+                    }
+                }
+                else
+                {
+                    pOLSTER_TEXTField = value;
+                    OnPropertyChanged("POLSTER_TEXT");
+                }
+            }
+        }
+
+        public string LACK
+        {
+            get
+            {
+                return lACKField;
+            }
+
+            set
+            {
+                if (lACKField != null)
+                {
+                    if (!lACKField.Equals(value))
+                    {
+                        lACKField = value;
+                        OnPropertyChanged("LACK");
+                    }
+                }
+                else
+                {
+                    lACKField = value;
+                    OnPropertyChanged("LACK");
+                }
+            }
+        }
+
+        public string LACK_TEXT
+        {
+            get
+            {
+                return lACK_TEXTField;
+            }
+
+            set
+            {
+                if (lACK_TEXTField != null)
+                {
+                    if (!lACK_TEXTField.Equals(value))
+                    {
+                        lACK_TEXTField = value;
+                        OnPropertyChanged("LACK_TEXT");
+                    }
+                }
+                else
+                {
+                    lACK_TEXTField = value;
+                    OnPropertyChanged("LACK_TEXT");
+                }
+            }
+        }
+
+        public string C_DATE
+        {
+            get
+            {
+                return c_DATEField;
+            }
+
+            set
+            {
+                if (c_DATEField != null)
+                {
+                    if (!c_DATEField.Equals(value))
+                    {
+                        c_DATEField = value;
+                        OnPropertyChanged("C_DATE");
+                    }
+                }
+                else
+                {
+                    c_DATEField = value;
+                    OnPropertyChanged("C_DATE");
+                }
+            }
+        }
+
+        public DateTime? C_DATETIME
+        {
+            get
+            {
+                return c_DATETIMEField;
+            }
+
+            set
+            {
+                if (c_DATETIMEField.HasValue)
+                {
+                    if (!c_DATETIMEField.Equals(value))
+                    {
+                        c_DATETIMEField = value;
+                        OnPropertyChanged("C_DATETIME");
+                    }
+                }
+                else
+                {
+                    c_DATETIMEField = value;
+                    OnPropertyChanged("C_DATETIME");
+                }
+            }
+        }
 
         public string FAHRZEUG_KATEGORIE
         {
@@ -460,6 +411,7 @@ namespace PsdzClient.Core
             {
                 return fAHRZEUG_KATEGORIEField;
             }
+
             set
             {
                 if (fAHRZEUG_KATEGORIEField != null)
@@ -484,6 +436,7 @@ namespace PsdzClient.Core
             {
                 return kONTROLL_KLASSEField;
             }
+
             set
             {
                 if (kONTROLL_KLASSEField != null)
@@ -501,153 +454,148 @@ namespace PsdzClient.Core
                 }
             }
         }
+
         public string VERSION
-		{
-			get
-			{
-				return this.vERSIONField;
-			}
-			set
-			{
-				if (this.vERSIONField != null)
-				{
-					if (!this.vERSIONField.Equals(value))
-					{
-						this.vERSIONField = value;
-						this.OnPropertyChanged("VERSION");
-						return;
-					}
-				}
-				else
-				{
-					this.vERSIONField = value;
-					this.OnPropertyChanged("VERSION");
-				}
-			}
-		}
-
-		public string BR
-		{
-			get
-			{
-				return this.brField;
-			}
-			set
-			{
-				if (this.brField != null)
-				{
-					if (!this.brField.Equals(value))
-					{
-						this.brField = value;
-						this.OnPropertyChanged("BR");
-						return;
-					}
-				}
-				else
-				{
-					this.brField = value;
-					this.OnPropertyChanged("BR");
-				}
-			}
-		}
-
-		public string STANDARD_FA
-		{
-			get
-			{
-				return this.sTANDARD_FAField;
-			}
-			set
-			{
-				if (this.sTANDARD_FAField != null)
-				{
-					if (!this.sTANDARD_FAField.Equals(value))
-					{
-						this.sTANDARD_FAField = value;
-						this.OnPropertyChanged("STANDARD_FA");
-						return;
-					}
-				}
-				else
-				{
-					this.sTANDARD_FAField = value;
-					this.OnPropertyChanged("STANDARD_FA");
-				}
-			}
-		}
-
-		public string TYPE
-		{
-			get
-			{
-				return this.tYPEField;
-			}
-			set
-			{
-				if (this.tYPEField != null)
-				{
-					if (!this.tYPEField.Equals(value))
-					{
-						this.tYPEField = value;
-						this.OnPropertyChanged("TYPE");
-						return;
-					}
-				}
-				else
-				{
-					this.tYPEField = value;
-					this.OnPropertyChanged("TYPE");
-				}
-			}
-		}
-
-		[DefaultValue(false)]
-		public bool AlreadyDone
-		{
-			get
-			{
-				return this.alreadyDoneField;
-			}
-			set
-			{
-				if (!this.alreadyDoneField.Equals(value))
-				{
-					this.alreadyDoneField = value;
-					this.OnPropertyChanged("AlreadyDone");
-				}
-			}
-		}
-
-		public ObservableCollection<LocalizedSAItem> SaLocalizedItems
-		{
-			get
-			{
-				return this.saLocalizedItemsField;
-			}
-			set
-			{
-				if (this.saLocalizedItemsField != null)
-				{
-					if (!this.saLocalizedItemsField.Equals(value))
-					{
-						this.saLocalizedItemsField = value;
-						this.OnPropertyChanged("SaLocalizedItems");
-						return;
-					}
-				}
-				else
-				{
-					this.saLocalizedItemsField = value;
-					this.OnPropertyChanged("SaLocalizedItems");
-				}
-			}
-		}
-
-		public event PropertyChangedEventHandler PropertyChanged;
-
-        public virtual void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get
+            {
+                return vERSIONField;
+            }
+
+            set
+            {
+                if (vERSIONField != null)
+                {
+                    if (!vERSIONField.Equals(value))
+                    {
+                        vERSIONField = value;
+                        OnPropertyChanged("VERSION");
+                    }
+                }
+                else
+                {
+                    vERSIONField = value;
+                    OnPropertyChanged("VERSION");
+                }
+            }
+        }
+
+        public string BR
+        {
+            get
+            {
+                return brField;
+            }
+
+            set
+            {
+                if (brField != null)
+                {
+                    if (!brField.Equals(value))
+                    {
+                        brField = value;
+                        OnPropertyChanged("BR");
+                    }
+                }
+                else
+                {
+                    brField = value;
+                    OnPropertyChanged("BR");
+                }
+            }
+        }
+
+        public string STANDARD_FA
+        {
+            get
+            {
+                return sTANDARD_FAField;
+            }
+
+            set
+            {
+                if (sTANDARD_FAField != null)
+                {
+                    if (!sTANDARD_FAField.Equals(value))
+                    {
+                        sTANDARD_FAField = value;
+                        OnPropertyChanged("STANDARD_FA");
+                    }
+                }
+                else
+                {
+                    sTANDARD_FAField = value;
+                    OnPropertyChanged("STANDARD_FA");
+                }
+            }
+        }
+
+        public string TYPE
+        {
+            get
+            {
+                return tYPEField;
+            }
+
+            set
+            {
+                if (tYPEField != null)
+                {
+                    if (!tYPEField.Equals(value))
+                    {
+                        tYPEField = value;
+                        OnPropertyChanged("TYPE");
+                    }
+                }
+                else
+                {
+                    tYPEField = value;
+                    OnPropertyChanged("TYPE");
+                }
+            }
+        }
+
+        [DefaultValue(false)]
+        public bool AlreadyDone
+        {
+            get
+            {
+                return alreadyDoneField;
+            }
+
+            set
+            {
+                if (!alreadyDoneField.Equals(value))
+                {
+                    alreadyDoneField = value;
+                    OnPropertyChanged("AlreadyDone");
+                }
+            }
+        }
+
+        public ObservableCollection<LocalizedSAItem> SaLocalizedItems
+        {
+            get
+            {
+                return saLocalizedItemsField;
+            }
+
+            set
+            {
+                if (saLocalizedItemsField != null)
+                {
+                    if (!saLocalizedItemsField.Equals(value))
+                    {
+                        saLocalizedItemsField = value;
+                        OnPropertyChanged("SaLocalizedItems");
+                    }
+                }
+                else
+                {
+                    saLocalizedItemsField = value;
+                    OnPropertyChanged("SaLocalizedItems");
+                }
+            }
         }
 
         [XmlIgnore]
@@ -668,12 +616,35 @@ namespace PsdzClient.Core
         [XmlIgnore]
         ICollection<LocalizedSAItem> IFa.SaLocalizedItems => SaLocalizedItems;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        public FA()
+        {
+            zUSBAU_WORTField = new ObservableCollection<string>();
+            hO_WORTField = new ObservableCollection<string>();
+            e_WORTField = new ObservableCollection<string>();
+            sALAPAField = new ObservableCollection<SALAPALocalizedEntry>();
+            saField = new ObservableCollection<string>();
+            saLocalizedItemsField = new ObservableCollection<LocalizedSAItem>();
+            sA_ANZField = 0;
+            e_WORT_ANZField = 0;
+            hO_WORT_ANZField = 0;
+            zUSBAU_ANZField = 0;
+            alreadyDoneField = false;
+            sTANDARD_FAField = string.Empty;
+            lACKField = string.Empty;
+            pOLSTERField = string.Empty;
+        }
+
+        public virtual void OnPropertyChanged(string propertyName)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         public override string ToString()
         {
             return string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}{5}{6}{7}", FormatConverter.ConvertToBn2020ConformModelSeries(BR), C_DATE, TYPE, LACK, POLSTER, ConcatStrElems(SA, "$"), ConcatStrElems(E_WORT, "-"), ConcatStrElems(HO_WORT, "+"));
         }
 
-        // ToDo: Check on update
         public string ExtractEreihe()
         {
             try
@@ -688,6 +659,7 @@ namespace PsdzClient.Core
                             return text;
                         }
                     }
+
                     if (BR.StartsWith("RR", StringComparison.OrdinalIgnoreCase))
                     {
                         string text2 = BR.TrimEnd('_');
@@ -695,15 +667,18 @@ namespace PsdzClient.Core
                         {
                             return text2;
                         }
+
                         if (Regex.Match(text2, "^RR0\\d$").Success)
                         {
                             return "RR" + BR.Substring(3, 1);
                         }
+
                         if (Regex.Match(text2, "^RR1\\d$").Success)
                         {
                             return text2;
                         }
                     }
+
                     string text3 = BR.Substring(0, 1);
                     string text4 = BR.Substring(2, 2);
                     return text3 + text4;
@@ -713,10 +688,10 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("FA.ExtractEreihe()", exception);
             }
+
             return null;
         }
 
-        // ToDo: Check on update
         public string ExtractType()
         {
             if (!string.IsNullOrEmpty(STANDARD_FA))
@@ -727,21 +702,24 @@ namespace PsdzClient.Core
                     return match.Groups["TYPE"].Value;
                 }
             }
+
             return null;
         }
 
         public static string ConcatStrElems(IEnumerable<string> elems, string sep)
         {
-            if (elems != null && elems.Any())
+            if (elems == null || !elems.Any())
             {
-                string text = new List<string>(elems).Aggregate((string intermediate, string elem) => intermediate + sep + elem);
-                if (!string.IsNullOrEmpty(text))
-                {
-                    text = sep + text;
-                }
-                return text;
+                return string.Empty;
             }
-            return string.Empty;
+
+            string text = new List<string>(elems).Aggregate((string intermediate, string elem) => intermediate + sep + elem);
+            if (!string.IsNullOrEmpty(text))
+            {
+                text = sep + text;
+            }
+
+            return text;
         }
-	}
+    }
 }

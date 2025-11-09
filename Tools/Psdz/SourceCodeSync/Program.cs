@@ -935,6 +935,12 @@ namespace SourceCodeSync
                         trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || // ///
                         trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))    // /** */
                     {
+                        string comment = trivia.ToString().ToUpperInvariant();
+                        if (comment.Contains("TODO:"))
+                        {
+                            continue;
+                        }
+
                         return true;
                     }
                 }
@@ -1142,7 +1148,8 @@ namespace SourceCodeSync
                 {
                     if (t.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
                         t.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
-                        t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia))
+                        t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
+                        t.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
                     {
                         string comment = t.ToString().ToUpperInvariant();
                         if (comment.Contains("[PRESERVE]"))

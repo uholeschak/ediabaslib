@@ -2,7 +2,6 @@
 
 namespace BMW.Rheingold.Psdz.Model
 {
-    // ToDo: Check on update
     public interface IPsdzSgbmId : IComparable<IPsdzSgbmId>
     {
         string HexString { get; }

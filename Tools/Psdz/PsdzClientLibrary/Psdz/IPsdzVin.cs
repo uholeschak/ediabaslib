@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model
 {
-    // ToDo: Check on update
     public interface IPsdzVin
     {
         string Value { get; }
