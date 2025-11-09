@@ -11,9 +11,7 @@ namespace BMW.Rheingold.Psdz
     internal class ConnectionFactoryService : IConnectionFactoryService
     {
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly string _endpointService = "connectionfactory";
-
         public ConnectionFactoryService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
