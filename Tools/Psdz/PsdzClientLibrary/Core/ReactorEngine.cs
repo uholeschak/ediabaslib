@@ -1,30 +1,25 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using log4net.Core;
 using PsdzClient.Core;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System;
 using System.Linq;
 
 namespace PsdzClient.Core
 {
-    // ToDo: Check on update
     public class ReactorEngine
     {
+        [PreserveSource(Hint = "Namespace modified")]
         private MultisourceLogic multisourceLogic;
-
         private readonly FallbackMechanisms fallback;
-
         private readonly IReactorVehicle vehicle;
-
         private static ILogger log;
-
         public DataHolder dataHolder;
-
         private bool observerEnabled;
-
-        private static object obj = new object();
-
+        private static object obj = new object ();
+        [PreserveSource(Hint = "Namespace modified")]
         public ReactorEngine(IReactorVehicle reactorVehicle, ILogger logger, DataHolder dataHolder)
         {
             log = logger;
@@ -669,6 +664,7 @@ namespace PsdzClient.Core
                 {
                     fallback?.Invoke();
                 }
+
                 if (observerEnabled)
                 {
                     AttachPropertyChanged();
@@ -721,6 +717,7 @@ namespace PsdzClient.Core
                 {
                     log.Error("Reactor.Vehicle_PropertyChanged", "PropertyChanged is observed in UI thread?");
                 }
+
                 if (Environment.StackTrace.IndexOf("ReadVehicleFromXml", StringComparison.InvariantCultureIgnoreCase) > -1)
                 {
                     log.Error("Reactor.Vehicle_PropertyChanged", "PropertyChanged is observed when deserializing?");
@@ -730,6 +727,7 @@ namespace PsdzClient.Core
             {
                 log.Error("Reactor.Vehicle_PropertyChanged", "Exception thrown while reaching stack trace: {0}", ex);
             }
+
             bool flag = true;
             switch (e.PropertyName)
             {
@@ -1103,6 +1101,7 @@ namespace PsdzClient.Core
                     flag = false;
                     break;
             }
+
             if (flag)
             {
                 log.Info("Reactor.Vehicle_PropertyChanged()", Environment.StackTrace);
@@ -1125,6 +1124,7 @@ namespace PsdzClient.Core
             {
                 vehicle.FA.PropertyChanged -= Vehicle_PropertyChanged;
             }
+
             if (vehicle.EMotor != null)
             {
                 vehicle.EMotor.PropertyChanged -= Vehicle_PropertyChanged;
@@ -1138,6 +1138,7 @@ namespace PsdzClient.Core
             {
                 vehicle.FA.PropertyChanged += Vehicle_PropertyChanged;
             }
+
             if (vehicle.EMotor != null)
             {
                 vehicle.EMotor.PropertyChanged += Vehicle_PropertyChanged;
