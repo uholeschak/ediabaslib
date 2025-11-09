@@ -131,6 +131,10 @@ namespace PsdzClient.Core
 
     internal class RR6EcuCharacteristics : BaseEcuCharacteristics
     {
+        public RR6EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -171,6 +175,10 @@ namespace PsdzClient.Core
 
     internal class R55EcuCharacteristics : BaseEcuCharacteristics
     {
+        public R55EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)
@@ -191,6 +199,26 @@ namespace PsdzClient.Core
             }
 
             CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+        }
+
+        public override void ShapeECUConfiguration(Vehicle vecInfo)
+        {
+            if (vecInfo == null)
+            {
+                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
+                return;
+            }
+
+            base.ShapeECUConfiguration(vecInfo);
+            ECU eCU = vecInfo.getECU(99L);
+            if (eCU != null && "CHAMP2R".Equals(eCU.VARIANTE))
+            {
+                ECU eCU2 = vecInfo.getECU(84L);
+                if (eCU2 != null && !eCU2.IDENT_SUCCESSFULLY)
+                {
+                    vecInfo.ECU.Remove(eCU2);
+                }
+            }
         }
     }
 
