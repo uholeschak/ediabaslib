@@ -48,6 +48,7 @@ namespace SourceCodeSync
 
         private static readonly string[] _ignoreEnumNames =
         [
+            "BMW.iLean.CommonServices.Logging.EventKind",
         ];
 
         public class Options
