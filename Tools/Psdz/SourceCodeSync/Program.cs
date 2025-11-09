@@ -838,6 +838,11 @@ namespace SourceCodeSync
                 }
             }
 
+            if (ShouldPreserveMember(classDeclaration))
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -874,6 +879,11 @@ namespace SourceCodeSync
                 }
             }
 
+            if (ShouldPreserveMember(interfaceDeclaration))
+            {
+                return true;
+            }
+
             return false;
         }
 
@@ -902,6 +912,11 @@ namespace SourceCodeSync
                 {
                     return true;
                 }
+            }
+
+            if (ShouldPreserveMember(enumDeclaration))
+            {
+                return true;
             }
 
             return false;
