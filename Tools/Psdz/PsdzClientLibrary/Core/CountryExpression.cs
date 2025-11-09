@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -8,13 +9,17 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
+    [PreserveSource(Hint = "Database replaced")]
     [Serializable]
     public class CountryExpression : SingleAssignmentExpression
     {
+        private string countryCode;
+
         public CountryExpression()
         {
         }
 
+        [PreserveSource(Hint = "dataProvider removed")]
         public CountryExpression(long countryId)
         {
             this.value = countryId;
@@ -29,10 +34,12 @@ namespace PsdzClient.Core
                     this.countryCode = ClientContext.GetDatabase(this.vecInfo)?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
                     return this.countryCode;
                 }
+
                 return this.countryCode;
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             this.vecInfo = vec;
@@ -47,6 +54,7 @@ namespace PsdzClient.Core
             {
                 ruleEvaluationServices.Logger.WarningException("CountryExpression.Evaluate()", exception);
             }
+
             return flag;
         }
 
@@ -56,6 +64,7 @@ namespace PsdzClient.Core
             {
                 return EEvaluationResult.VALID;
             }
+
             return EEvaluationResult.INVALID;
         }
 
@@ -65,7 +74,12 @@ namespace PsdzClient.Core
             base.Serialize(ms);
         }
 
-        // [UH] added
+        public override string ToString()
+        {
+            return "Country=" + CountryCode + " [" + value.ToString(CultureInfo.InvariantCulture) + "]";
+        }
+
+        [PreserveSource(Hint = "Added")]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -74,15 +88,7 @@ namespace PsdzClient.Core
             stringBuilder.Append("\"");
             stringBuilder.Append(this.CountryCode);
             stringBuilder.Append("\")");
-
             return stringBuilder.ToString();
         }
-
-        public override string ToString()
-        {
-            return "Country=" + CountryCode + " [" + value.ToString(CultureInfo.InvariantCulture) + "]";
-        }
-
-        private string countryCode;
     }
 }
