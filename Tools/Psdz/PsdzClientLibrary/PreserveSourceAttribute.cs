@@ -8,5 +8,7 @@ namespace PsdzClientLibrary
         public string Hint;
 
         public bool Removed;
+
+        public bool KeepAttribute;
     }
 }

@@ -224,6 +224,10 @@ namespace PsdzClient.Core
 
     internal class RR2EcuCharacteristics : BaseEcuCharacteristics
     {
+        public RR2EcuCharacteristics(string xmlCharacteristicFileName) : base(xmlCharacteristicFileName)
+        {
+        }
+
         public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             if (vecInfo == null)

@@ -1,12 +1,13 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Model.Comparer;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Comparer;
-using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz
 {
-    // [UH] keep attributes for compatibility with existing serialized data
+    [PreserveSource(KeepAttribute = true)]
     [DataContract]
     [KnownType(typeof(PsdzEcu))]
     [KnownType(typeof(PsdzSmartActuatorMasterEcu))]
@@ -15,18 +16,23 @@ namespace BMW.Rheingold.Psdz
     {
         private static readonly IEqualityComparer<PsdzStandardSvt> PsdzStandardSvtComparerInstance = new PsdzStandardSvtComparer();
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string AsString { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IEnumerable<IPsdzEcu> Ecus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public byte[] HoSignature { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public DateTime HoSignatureDate { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public int Version { get; set; }
 

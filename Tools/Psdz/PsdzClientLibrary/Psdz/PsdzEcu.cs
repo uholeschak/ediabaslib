@@ -22,55 +22,55 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
     {
         private static readonly IEqualityComparer<PsdzEcu> PsdzEcuComparerInstance = new PsdzEcuComparer();
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string BaseVariant { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string BnTnName { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IEnumerable<PsdzBus> BusConnections { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzBus DiagnosticBus { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzEcuDetailInfo EcuDetailInfo { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzEcuStatusInfo EcuStatusInfo { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string EcuVariant { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzDiagAddress GatewayDiagAddr { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzEcuIdentifier PrimaryKey { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string SerialNumber { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzStandardSvk StandardSvk { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzEcuPdxInfo PsdzEcuPdxInfo { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public bool IsSmartActuator { get; set; }
 

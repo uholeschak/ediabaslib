@@ -1,11 +1,12 @@
-﻿using System.ServiceModel;
-using BMW.Rheingold.Psdz.Model.Events;
+﻿using BMW.Rheingold.Psdz.Model.Events;
+using PsdzClientLibrary;
+using System.ServiceModel;
 
 namespace BMW.Rheingold.Psdz
 {
     public interface IPsdzEventListener
     {
-        // [UH] Keep operation contract for backward compatibility
+        [PreserveSource(KeepAttribute = true)]
         [OperationContract(IsOneWay = true)]
         [ServiceKnownType(typeof(PsdzEvent))]
         [ServiceKnownType(typeof(PsdzProgressEvent))]

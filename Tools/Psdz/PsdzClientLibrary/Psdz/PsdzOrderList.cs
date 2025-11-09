@@ -12,11 +12,11 @@ namespace BMW.Rheingold.Psdz.Model.Svb
     [KnownType(typeof(PsdzEcuVariantInstance))]
     public class PsdzOrderList : IPsdzOrderList
     {
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public int NumberOfUnits { get; set; }
 
-        [PreserveSource(Hint = "Keep attribute")]
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzEcuVariantInstance[] BntnVariantInstances { get; set; }
     }
