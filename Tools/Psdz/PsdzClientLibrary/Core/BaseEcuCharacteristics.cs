@@ -1,4 +1,8 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BmwFileReader;
+using PsdzClient.Utility;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -7,9 +11,6 @@ using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BmwFileReader;
-using PsdzClient.Utility;
 
 namespace PsdzClient.Core
 {
@@ -188,7 +189,7 @@ namespace PsdzClient.Core
             CalculateECUConfiguration(vecInfo, ffmResolver, null, null);
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         public virtual ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
             ObservableCollectionEx<PsdzDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
@@ -589,6 +590,7 @@ namespace PsdzClient.Core
             return false;
         }
 
+        [PreserveSource(Hint = "Modified")]
         public void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             ValidateIfDiagnosticsHasValidLicense();
@@ -661,7 +663,7 @@ namespace PsdzClient.Core
             return bus.ToString();
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
@@ -892,7 +894,7 @@ namespace PsdzClient.Core
             }
         }
 
-        // [UH] cleaned
+        [PreserveSource(Hint = "Modified")]
         private void ValidateIfDiagnosticsHasValidLicense()
         {
         }
