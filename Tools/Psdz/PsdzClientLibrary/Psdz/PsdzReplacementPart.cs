@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -14,7 +15,7 @@ namespace BMW.Rheingold.Psdz.Model.Svb
     [KnownType(typeof(PsdzReplacementPart))]
     public class PsdzReplacementPart : PsdzLogisticPart, IPsdzReplacementPart, IPsdzLogisticPart
     {
-        // [UH] Keep data members for backward compatibility
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzLogisticPart[] Deliverables { get; set; }
     }

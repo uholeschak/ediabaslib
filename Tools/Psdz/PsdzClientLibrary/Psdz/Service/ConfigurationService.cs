@@ -1,9 +1,10 @@
-﻿using System;
-using BMW.Rheingold.Psdz;
+﻿using BMW.Rheingold.Psdz;
 using PsdzClient.Core;
+using PsdzClientLibrary;
+using RestSharp;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using RestSharp;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -59,7 +60,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        // [UH] For backward compatibility
+        [PreserveSource(Hint = "For backward compatibility")]
         public string GetExpectedPsdzVersion()
         {
             return GetPsdzVersion();
