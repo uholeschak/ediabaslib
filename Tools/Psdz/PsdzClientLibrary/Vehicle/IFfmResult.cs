@@ -9,16 +9,16 @@ using PsdzClient.Core;
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
     [AuthorAPI(SelectableTypeDeclaration = false)]
-    public interface IFfmResult : INotifyPropertyChanged
+    public interface IFfmResult : INotifyPropertyChanged, IFfmResultRuleEvaluation
     {
-        string Evaluation { get; }
+        new string Evaluation { get; }
 
-        decimal ID { get; }
+        new decimal ID { get; }
 
-        string Name { get; }
+        new string Name { get; }
 
-        bool ReEvaluationNeeded { get; }
+        new bool ReEvaluationNeeded { get; }
 
-        bool? Result { get; }
+        new bool? Result { get; }
     }
 }
