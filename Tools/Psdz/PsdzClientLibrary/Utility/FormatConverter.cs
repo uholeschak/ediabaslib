@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PsdzClient.Core;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -6,12 +8,29 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using PsdzClient.Core;
 
 namespace PsdzClient.Utility
 {
     public class FormatConverter
     {
+        [PreserveSource(Hint = "Code removed")]
+        public static string GetLocalizedREPS(string ecuVariant, string ecuGroup, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Code removed")]
+        public static string GetLocalizedClique(string ecuVariant, string ecuGroup)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Code removed")]
+        public static string GetLocalizedLongName(string ecuVariant, string ecuGroup, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
+        {
+            throw new NotImplementedException();
+        }
+
         public static byte[] Ascii2ByteArray(string asciiText, out int len)
         {
             try
@@ -21,6 +40,7 @@ namespace PsdzClient.Utility
                     len = 0;
                     return new byte[0];
                 }
+
                 asciiText = asciiText.ToString(CultureInfo.InvariantCulture);
                 char[] array = asciiText.ToCharArray();
                 byte[] array2 = new byte[array.Length];
@@ -28,6 +48,7 @@ namespace PsdzClient.Utility
                 {
                     array2[i] = (byte)array[i];
                 }
+
                 len = array.Length;
                 return array2;
             }
@@ -47,6 +68,7 @@ namespace PsdzClient.Utility
                 int num = Convert.ToInt16(hexInBuf.Substring(i, 2), 16);
                 list.Add((byte)num);
             }
+
             return list.ToArray();
         }
 
@@ -58,11 +80,13 @@ namespace PsdzClient.Utility
                 {
                     return null;
                 }
+
                 string text = ((!(textObj is string)) ? textObj.ToString() : ((string)textObj));
                 if (string.IsNullOrEmpty(text))
                 {
                     return string.Empty;
                 }
+
                 text = text.ToString(CultureInfo.InvariantCulture);
                 char[] array = text.ToCharArray();
                 for (int i = 0; i < array.Length; i++)
@@ -108,6 +132,7 @@ namespace PsdzClient.Utility
                                 array[i] = 'í';
                                 continue;
                         }
+
                         if (array[i] >= '\uff00')
                         {
                             byte[] bytes = new UnicodeEncoding().GetBytes(array, i, 1);
@@ -115,6 +140,7 @@ namespace PsdzClient.Utility
                             {
                                 Log.Warning("FormatConverter.Ascii2UTF8()", "for char(hex): {0} in text: {1}", ByteArray2String(bytes, 1u), text);
                             }
+
                             byte b = (byte)array[i];
                             array[i] = (char)b;
                         }
@@ -124,7 +150,8 @@ namespace PsdzClient.Utility
                         array[i] = '*';
                     }
                 }
-                return new string(array);
+
+                return new string (array);
             }
             catch (Exception ex)
             {
@@ -138,17 +165,18 @@ namespace PsdzClient.Utility
             try
             {
                 StringBuilder stringBuilder = new StringBuilder();
-                int num = 0;
-                while ((long)num < (long)((ulong)paramlen))
+                for (int i = 0; i < paramlen; i++)
                 {
-                    stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X2}", param[num]));
-                    num++;
+                    stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X2}", param[i]));
                 }
+
                 return stringBuilder.ToString();
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                Log.WarningException("FormatConverter.ByteArray2String()", exception);
             }
+
             return string.Empty;
         }
 
@@ -161,12 +189,14 @@ namespace PsdzClient.Utility
                 {
                     stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "{0:X2} ", param[num]));
                 }
+
                 return stringBuilder.ToString().Trim();
             }
             catch (Exception ex)
             {
                 Log.Warning("FormatConverter.ByteArray2StringFASTA()", "failed with exception: {0}", ex.ToString());
             }
+
             return string.Empty;
         }
 
@@ -179,12 +209,14 @@ namespace PsdzClient.Utility
                 {
                     stringBuilder.Append(string.Format(CultureInfo.InvariantCulture, "\\{0}", param[num]));
                 }
+
                 return stringBuilder.ToString().Trim();
             }
             catch (Exception exception)
             {
                 Log.WarningException("FormatConverter.ByteArray2StringJavascript()", exception);
             }
+
             return null;
         }
 
@@ -194,6 +226,7 @@ namespace PsdzClient.Utility
             {
                 return 0L;
             }
+
             return long.Parse(hexValue, NumberStyles.HexNumber);
         }
 
@@ -212,11 +245,13 @@ namespace PsdzClient.Utility
                     {
                         flag = true;
                     }
+
                     if (flag)
                     {
                         array[newSize++] = b;
                     }
                 }
+
                 Array.Resize(ref array, newSize);
                 return Encoding.UTF8.GetString(array);
             }
@@ -224,6 +259,7 @@ namespace PsdzClient.Utility
             {
                 Log.WarningException("FormatConverter.ISTAXmlShaper()", exception);
             }
+
             return null;
         }
 
@@ -233,14 +269,17 @@ namespace PsdzClient.Utility
             {
                 return num.ToString(CultureInfo.InvariantCulture);
             }
+
             if (resultValue is double num2)
             {
                 return num2.ToString("0.00", new CultureInfo(ConfigSettings.CurrentUICulture));
             }
+
             if (resultValue is float num3)
             {
                 return num3.ToString("0.00", new CultureInfo(ConfigSettings.CurrentUICulture));
             }
+
             return resultValue.ToString();
         }
 
@@ -250,19 +289,23 @@ namespace PsdzClient.Utility
             {
                 return num.ToString(CultureInfo.InvariantCulture);
             }
+
             if (resultValue is double num2)
             {
                 return num2.ToString(CultureInfo.InvariantCulture);
             }
+
             if (resultValue is float num3)
             {
                 return num3.ToString(CultureInfo.InvariantCulture);
             }
+
             if (resultValue is byte[])
             {
                 byte[] obj = (byte[])resultValue;
                 return ByteArray2String(obj, (uint)obj.Length);
             }
+
             return resultValue.ToString();
         }
 
@@ -284,6 +327,7 @@ namespace PsdzClient.Utility
             {
                 Log.Error("FormatConverter.CompareChar()", "Couln't convert {0} to Int16! The value is greater than Int16.MaxValue.", stateValue);
             }
+
             return null;
         }
 
@@ -293,7 +337,33 @@ namespace PsdzClient.Utility
             {
                 return stateValue;
             }
+
             return null;
+        }
+
+        public static int CompareILevels(string ilevel1, string ilevel2)
+        {
+            int? num = ExtractNumericalILevel(ilevel1);
+            int? num2 = ExtractNumericalILevel(ilevel2);
+            if (num.HasValue && num2.HasValue)
+            {
+                if (num == num2)
+                {
+                    return 0;
+                }
+
+                if (num > num2)
+                {
+                    return 1;
+                }
+
+                if (num2 > num)
+                {
+                    return 2;
+                }
+            }
+
+            return -1;
         }
 
         public static string CompareDouble(double readValue, string stateValue)
@@ -312,6 +382,7 @@ namespace PsdzClient.Utility
             catch (OverflowException)
             {
             }
+
             return null;
         }
 
@@ -321,6 +392,7 @@ namespace PsdzClient.Utility
             {
                 return inText.Replace("\r", "_").Replace("\n", "_");
             }
+
             return inText;
         }
 
@@ -331,6 +403,7 @@ namespace PsdzClient.Utility
                 Log.Warning("FormatConverter.ExtractNumericalILevel()", "iLevel format was not correct: '{0}'", iLevel);
                 return null;
             }
+
             try
             {
                 return Convert.ToInt32(iLevel.Replace("-", string.Empty).Substring(4), CultureInfo.InvariantCulture);
@@ -339,6 +412,7 @@ namespace PsdzClient.Utility
             {
                 Log.WarningException("FormatConverter.ExtractNumericalILevel()", exception);
             }
+
             return null;
         }
 
@@ -362,6 +436,7 @@ namespace PsdzClient.Utility
                     Log.Warning("FormatConverter.DecodeFAChar()", "unknown encoding found for character: 0x{0:X} '{1}'", (int)inChar, inChar);
                     break;
             }
+
             return (char)((b & 0xF) | b2);
         }
 
@@ -369,6 +444,11 @@ namespace PsdzClient.Utility
         {
             if (!string.IsNullOrWhiteSpace(modelSeries))
             {
+                if (modelSeries.StartsWith("NA"))
+                {
+                    return modelSeries;
+                }
+
                 Match match = Regex.Match(modelSeries.Trim(), "^(?<letterpart>[A-Z]+)(?<numberpart>[0-9]+)");
                 if (match.Success)
                 {
@@ -379,11 +459,14 @@ namespace PsdzClient.Utility
                         Log.Warning("FormatConverter.ConvertToBn2020ConformModelSeries()", "Model series '{0}' exceeds expected length of 4!", modelSeries);
                         return modelSeries;
                     }
+
                     return value + text.PadLeft(4 - value.Length, '0');
                 }
+
                 Log.Warning("FormatConverter.ConvertToBn2020ConformModelSeries()", "Model series '{0}' could not be converted (Invalid pattern)!", modelSeries);
                 return modelSeries;
             }
+
             return null;
         }
 
