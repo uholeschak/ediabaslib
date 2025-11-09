@@ -38,6 +38,7 @@ namespace SourceCodeSync
             "public_LicenseWizardHelper",
             "BMW.Rheingold.Programming.Common.SecureCodingService",
             "BMW.Rheingold.Programming.ProgrammingService",
+            "BMW.iLean.CommonServices.Logging.Extensions"
         ];
 
         private static readonly string[] _ignoreInterfaceNames =
