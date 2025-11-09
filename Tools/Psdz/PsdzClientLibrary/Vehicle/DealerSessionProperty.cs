@@ -22,8 +22,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         public DealerSessionProperty(string name, string value)
         {
-            this.SessionPropertyName = name;
-            this.SessionPropertyValue = value;
+            SessionPropertyName = name;
+            SessionPropertyValue = value;
         }
     }
 }

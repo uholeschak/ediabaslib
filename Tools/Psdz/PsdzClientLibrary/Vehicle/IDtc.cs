@@ -100,5 +100,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         bool IsVirtual { get; }
 
         bool? Relevance { get; }
+
+        bool IsFSLesenExpert { get; set; }
     }
 }
