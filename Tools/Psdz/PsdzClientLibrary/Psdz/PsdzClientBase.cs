@@ -7,10 +7,11 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Exceptions;
+using PsdzClientLibrary;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    // [UH] Only for compatibility with older version
+    [PreserveSource(Removed = true)]
 	abstract class PsdzClientBase<TChannel> where TChannel : class
 	{
 		protected PsdzClientBase(Binding binding, EndpointAddress remoteAddress) : this(new ChannelFactory<TChannel>(binding, remoteAddress))

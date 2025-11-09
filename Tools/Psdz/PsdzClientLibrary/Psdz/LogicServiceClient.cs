@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Obd;
 using BMW.Rheingold.Psdz.Model.Sfa;
@@ -9,9 +6,14 @@ using BMW.Rheingold.Psdz.Model.Svb;
 using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+using PsdzClientLibrary;
+using System.Collections.Generic;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     internal sealed class LogicServiceClient : PsdzClientBase<ILogicService>, ILogicService
     {
         internal LogicServiceClient(Binding binding, EndpointAddress remoteAddress)

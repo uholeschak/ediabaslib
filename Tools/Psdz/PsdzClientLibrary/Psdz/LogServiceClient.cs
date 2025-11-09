@@ -1,10 +1,12 @@
 ﻿using PsdzClient.Core;
+using PsdzClientLibrary;
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     internal class LogServiceClient : PsdzClientBase<ILogService>, ILogService
     {
         public LogServiceClient(Binding binding, EndpointAddress remoteAddress)

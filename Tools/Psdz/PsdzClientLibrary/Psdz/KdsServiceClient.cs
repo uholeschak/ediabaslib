@@ -1,25 +1,13 @@
-﻿using System.ServiceModel;
-using System.ServiceModel.Channels;
-using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Kds;
 using BMW.Rheingold.Psdz.Model.Sfa;
+using PsdzClientLibrary;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    public enum PsdzKdsActionIdEto
-    {
-        CHECK_PARING_CONSISTENCY,
-        CUT_COMMUNICATION,
-        LOCK_ECU,
-        REPAIR_OR_CLEAR_DATA,
-        SET_OPERATION_MODE,
-        SHOW_REACTION,
-        TEST_SIGNATURE,
-        TRIGGER_FREE_PAIRING,
-        TRIGGER_INDIVIDUALIZATION,
-        TRIGGER_VERIFICATION
-    }
-
+    [PreserveSource(Removed = true)]
     internal sealed class KdsServiceClient : PsdzDuplexClientBase<IKdsService, IPsdzProgressListener>, IKdsService
     {
         internal KdsServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)
