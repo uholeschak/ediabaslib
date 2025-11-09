@@ -9,9 +9,7 @@ namespace PsdzClient.Utility
         private class ArrayTraverse
         {
             public int[] Position;
-
             private int[] maxLengths;
-
             public ArrayTraverse(Array array)
             {
                 maxLengths = new int[array.Rank];
@@ -19,6 +17,7 @@ namespace PsdzClient.Utility
                 {
                     maxLengths[i] = array.GetLength(i) - 1;
                 }
+
                 Position = new int[array.Rank];
             }
 
@@ -33,15 +32,16 @@ namespace PsdzClient.Utility
                         {
                             Position[j] = 0;
                         }
+
                         return true;
                     }
                 }
+
                 return false;
             }
         }
 
         private static readonly MethodInfo MemberwiseCloneMethod = typeof(object).GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
-
         public static T DeepClone<T>(T original)
         {
             return (T)DeepCloneInternal(original, new Dictionary<object, object>());
@@ -53,24 +53,29 @@ namespace PsdzClient.Utility
             {
                 return null;
             }
+
             Type type = source.GetType();
             if (type.IsTypePrimitive())
             {
                 return source;
             }
+
             if (alreadyCloned.ContainsKey(source))
             {
                 return alreadyCloned[source];
             }
+
             if (typeof(Delegate).IsAssignableFrom(type))
             {
                 return null;
             }
+
             object obj = MemberwiseCloneMethod.Invoke(source, null);
             if (type.IsArray && !type.GetElementType().IsTypePrimitive())
             {
                 HandleArray((Array)obj, alreadyCloned);
             }
+
             alreadyCloned.Add(source, obj);
             BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
             CopyFields(source, alreadyCloned, obj, type, bindingFlags, null);
@@ -106,8 +111,14 @@ namespace PsdzClient.Utility
         {
             if (!(type == typeof(string)))
             {
-                return type.IsValueType & type.IsPrimitive;
+                if (type.IsValueType)
+                {
+                    return type.IsPrimitive;
+                }
+
+                return false;
             }
+
             return true;
         }
 
