@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -9,34 +10,43 @@ using System.Xml;
 
 namespace BMW.Rheingold.Psdz
 {
-    // [UH] Keep data members for backward compatibility
+    [PreserveSource(Removed = true)]
     [DataContract]
     public class PsdzServiceArgs
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public ClientConfigArgs ClientConfigArgs { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = false)]
         public string EdiabasBinPath { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public int IdleTimeout { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public bool IsTestRun { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = true)]
         public string JrePath { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = false)]
         public string[] JvmOptions { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = true)]
         public string PsdzBinaryPath { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = true)]
         public string PsdzDataPath { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = false)]
         public TestRunParams TestRunParams { get; set; }
 
