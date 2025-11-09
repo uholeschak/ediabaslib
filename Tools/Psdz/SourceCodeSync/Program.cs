@@ -56,8 +56,17 @@ namespace SourceCodeSync
                 SourceDir = string.Empty;
                 DestDir = string.Empty;
                 Filter = string.Empty;
-                ShowSource = false;
+                Verbosity = VerbosityOption.Error;
             }
+
+            public enum VerbosityOption
+            {
+                Error,
+                Warning,
+                Info,
+                Debug
+            }
+
 
             [Option('s', "sourcedir", Required = true, HelpText = "Source directory.")]
             public string SourceDir { get; set; }
@@ -68,9 +77,11 @@ namespace SourceCodeSync
             [Option('f', "filter", Required = false, HelpText = "Directory filter.")]
             public string Filter { get; set; }
 
-            [Option("source", Required = false, HelpText = "Show source.")]
-            public bool ShowSource { get; set; }
+            [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
+            public VerbosityOption Verbosity { get; set; }
         }
+
+        static Options.VerbosityOption _verbosity = Options.VerbosityOption.Error;
 
         static int Main(string[] args)
         {
@@ -79,7 +90,6 @@ namespace SourceCodeSync
                 string sourceDir = null;
                 string destDir = null;
                 string filter = null;
-                bool showSource = false;
                 bool hasErrors = false;
 
                 Parser parser = new Parser(with =>
@@ -96,12 +106,16 @@ namespace SourceCodeSync
                         sourceDir = o.SourceDir;
                         destDir = o.DestDir;
                         filter = o.Filter;
-                        showSource = o.ShowSource;
+                        _verbosity = o.Verbosity;
                     })
                     .WithNotParsed(errs =>
                     {
                         string errors = string.Join("\n", errs);
                         Console.WriteLine("Option parsing errors:\n{0}", string.Join("\n", errors));
+                        if (errors.IndexOf("BadFormatConversion", StringComparison.OrdinalIgnoreCase) >= 0)
+                        {
+                            Console.WriteLine("Valid verbosity options are: {0}", string.Join(", ", Enum.GetNames(typeof(Options.VerbosityOption)).ToList()));
+                        }
 
                         hasErrors = true;
                     });
@@ -135,7 +149,7 @@ namespace SourceCodeSync
                 string[] sourceFiles = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in sourceFiles)
                 {
-                    if (!GetFileSource(file, showSource))
+                    if (!GetFileSource(file))
                     {
                         Console.WriteLine("*** Get file source failed: {0}", file);
                     }
@@ -172,7 +186,7 @@ namespace SourceCodeSync
                         }
                     }
 
-                    if (!UpdateFile(file, showSource))
+                    if (!UpdateFile(file))
                     {
                         Console.WriteLine("*** Update file failed: {0}", file);
                     }
@@ -187,7 +201,7 @@ namespace SourceCodeSync
             return 0;
         }
 
-        public static bool GetFileSource(string fileName, bool showSource)
+        public static bool GetFileSource(string fileName)
         {
             try
             {
@@ -202,7 +216,7 @@ namespace SourceCodeSync
                     string classSource = cls.ToFullString();
                     string namespaceName = GetNamespace(cls);
 
-                    if (showSource)
+                    if (_verbosity >= Options.VerbosityOption.Debug)
                     {
                         Console.WriteLine($"Class: {className}");
                         Console.WriteLine($"Namespace: {namespaceName}");
@@ -255,7 +269,8 @@ namespace SourceCodeSync
                     string interfaceName = GetInterfaceName(interfaceDecl);
                     string interfaceSource = interfaceDecl.ToFullString();
                     string namespaceName = GetNamespace(interfaceDecl);
-                    if (showSource)
+
+                    if (_verbosity >= Options.VerbosityOption.Debug)
                     {
                         Console.WriteLine($"Interface: {interfaceName}");
                         Console.WriteLine($"Namespace: {namespaceName}");
@@ -308,7 +323,7 @@ namespace SourceCodeSync
                     string enumSource = enumDecl.ToFullString();
                     string namespaceName = GetNamespace(enumDecl);
 
-                    if (showSource)
+                    if (_verbosity >= Options.VerbosityOption.Debug)
                     {
                         Console.WriteLine($"Enum: {enumName}");
                         Console.WriteLine($"Namespace: {namespaceName}");
@@ -362,7 +377,7 @@ namespace SourceCodeSync
             return true;
         }
 
-        public static bool UpdateFile(string fileName, bool showSource)
+        public static bool UpdateFile(string fileName)
         {
             try
             {
@@ -379,7 +394,8 @@ namespace SourceCodeSync
                 {
                     string className = GetClassName(cls);
                     string classSource = cls.NormalizeWhitespace().ToFullString();
-                    if (showSource)
+
+                    if (_verbosity >= Options.VerbosityOption.Debug)
                     {
                         Console.WriteLine($"Class: {className}");
                         Console.WriteLine("Source:");
@@ -430,7 +446,8 @@ namespace SourceCodeSync
                 {
                     string interfaceName = GetInterfaceName(interfaceDecl);
                     string interfaceSource = interfaceDecl.NormalizeWhitespace().ToFullString();
-                    if (showSource)
+
+                    if (_verbosity >= Options.VerbosityOption.Debug)
                     {
                         Console.WriteLine($"Interface: {interfaceName}");
                         Console.WriteLine("Source:");
@@ -475,7 +492,8 @@ namespace SourceCodeSync
                 {
                     string enumName = GetEnumName(enumDecl);
                     string enumSource = enumDecl.NormalizeWhitespace().ToFullString();
-                    if (showSource)
+
+                    if (_verbosity >= Options.VerbosityOption.Debug)
                     {
                         Console.WriteLine($"Enum: {enumName}");
                         Console.WriteLine("Source:");
