@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     internal sealed class ConfigurationServiceClient : PsdzClientBase<IConfigurationService>, IConfigurationService
     {
         public ConfigurationServiceClient(Binding binding, EndpointAddress remoteAddress)
@@ -56,13 +58,13 @@ namespace BMW.Rheingold.Psdz.Client
             });
         }
 
-        // [UH] for backward compatibility
+        [PreserveSource(Hint = "For backward compatibility")]
         public bool IsReady()
         {
             return CallFunction((IConfigurationService service) => service.IsReady());
         }
 
-        // [UH] for backward compatibility
+        [PreserveSource(Hint = "For backward compatibility")]
         public RootDirectorySetupResultModel GetRootDirectorySetupResult()
         {
             return CallFunction((IConfigurationService service) => service.GetRootDirectorySetupResult());
