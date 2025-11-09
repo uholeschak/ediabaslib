@@ -459,9 +459,29 @@ namespace SourceCodeSync
                             continue;
                         }
 
+                        // Check if destination class has any preserved members
+                        bool hasPreservedMembers = cls.Members.Any(m => ShouldPreserveMember(m));
+                        ClassDeclarationSyntax mergedClass;
+
+                        if (hasPreservedMembers)
+                        {
+                            // Merge with preserved members
+                            mergedClass = MergeClassPreservingMarked(cls, sourceClass);
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                int preservedCount = cls.Members.Count(m => ShouldPreserveMember(m));
+                                Console.WriteLine($"Merging class {className} while preserving {preservedCount} marked member(s)");
+                            }
+                        }
+                        else
+                        {
+                            // No preserved members, use source as-is
+                            mergedClass = sourceClass;
+                        }
+
                         // Compare if they're different
-                        string classSourceStr = sourceClass.NormalizeWhitespace().ToFullString();
-                        if (classSource != classSourceStr)
+                        string mergedClassStr = mergedClass.NormalizeWhitespace().ToFullString();
+                        if (classSource != mergedClassStr)
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
@@ -523,15 +543,33 @@ namespace SourceCodeSync
                             continue;
                         }
 
+                        // Check for preserved members
+                        bool hasPreservedMembers = interfaceDecl.Members.Any(m => ShouldPreserveMember(m));
+                        InterfaceDeclarationSyntax mergedInterface;
+
+                        if (hasPreservedMembers)
+                        {
+                            mergedInterface = MergeInterfacePreservingMarked(interfaceDecl, sourceInterface);
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                int preservedCount = interfaceDecl.Members.Count(m => ShouldPreserveMember(m));
+                                Console.WriteLine($"Merging interface {interfaceName} while preserving {preservedCount} marked member(s)");
+                            }
+                        }
+                        else
+                        {
+                            mergedInterface = sourceInterface;
+                        }
+
                         // Compare if they're different
-                        string sourceInterfaceStr = sourceInterface.NormalizeWhitespace().ToFullString();
-                        if (interfaceSource != sourceInterfaceStr)
+                        string mergedInterfaceStr = mergedInterface.NormalizeWhitespace().ToFullString();
+                        if (interfaceSource != mergedInterfaceStr)
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
                                 Console.WriteLine($"Updating interface: {interfaceName}");
                             }
-                            newRoot = newRoot.ReplaceNode(interfaceDecl, sourceInterface);
+                            newRoot = newRoot.ReplaceNode(interfaceDecl, mergedInterface);
                             fileModified = true;
                         }
                     }
@@ -544,7 +582,7 @@ namespace SourceCodeSync
                     }
                 }
 
-                // Update enums
+                // Update enums (not merge required)
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>().ToList();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
@@ -594,11 +632,8 @@ namespace SourceCodeSync
                 // Write the modified file back if changes were made
                 if (fileModified)
                 {
-                    // Normalize whitespace: use spaces instead of tabs
                     string modifiedContent = newRoot.NormalizeWhitespace().ToFullString();
-                    //modifiedContent += Environment.NewLine; // Ensure file ends with a newline
 
-                    // Write with UTF-8 BOM encoding
                     File.WriteAllText(fileName, modifiedContent, new UTF8Encoding(true));
                     if (_verbosity >= Options.VerbosityOption.Info)
                     {
@@ -934,6 +969,198 @@ namespace SourceCodeSync
                     }
                     return false;
                 });
+        }
+
+        /// <summary>
+        /// Merges source class into destination, preserving marked members
+        /// </summary>
+        public static ClassDeclarationSyntax MergeClassPreservingMarked(
+            ClassDeclarationSyntax destClass,
+            ClassDeclarationSyntax sourceClass)
+        {
+                // Get all members from destination that should be preserved
+            var preservedMembers = destClass.Members
+                .Where(m => ShouldPreserveMember(m))
+                .ToDictionary(m => GetMemberName(m), m => m);
+
+            if (!preservedMembers.Any())
+            {
+                return sourceClass;
+            }
+
+            // Build a new member list
+            List<MemberDeclarationSyntax> newMembers = new List<MemberDeclarationSyntax>();
+            HashSet<string> preservedMemberNames = new HashSet<string>(preservedMembers.Keys);
+
+            // First, add all source members that are NOT being replaced by preserved ones
+            foreach (var sourceMember in sourceClass.Members)
+            {
+                string memberName = GetMemberName(sourceMember);
+
+                if (preservedMemberNames.Contains(memberName))
+                {
+                    // Use preserved version instead
+                    newMembers.Add(preservedMembers[memberName]);
+                    preservedMemberNames.Remove(memberName); // Mark as added
+                }
+                else
+                {
+                    // Use source version
+                    newMembers.Add(sourceMember);
+                }
+            }
+
+            // Add any preserved members that didn't exist in source
+            foreach (string remainingName in preservedMemberNames)
+            {
+                newMembers.Add(preservedMembers[remainingName]);
+            }
+
+            // Replace all members at once
+            return sourceClass.WithMembers(SyntaxFactory.List(newMembers));
+        }
+
+        /// <summary>
+        /// Similar merge for interfaces (batch version)
+        /// </summary>
+        public static InterfaceDeclarationSyntax MergeInterfacePreservingMarked(
+            InterfaceDeclarationSyntax destInterface,
+            InterfaceDeclarationSyntax sourceInterface)
+        {
+            var preservedMembers = destInterface.Members
+                .Where(m => ShouldPreserveMember(m))
+                .ToDictionary(m => GetMemberName(m), m => m);
+
+            if (!preservedMembers.Any())
+            {
+                return sourceInterface;
+            }
+
+            var newMembers = new List<MemberDeclarationSyntax>();
+            var preservedMemberNames = new HashSet<string>(preservedMembers.Keys);
+
+            // Add all source members, replacing with preserved ones where applicable
+            foreach (var sourceMember in sourceInterface.Members)
+            {
+                string memberName = GetMemberName(sourceMember);
+
+                if (preservedMemberNames.Contains(memberName))
+                {
+                    newMembers.Add(preservedMembers[memberName]);
+                    preservedMemberNames.Remove(memberName);
+                }
+                else
+                {
+                    newMembers.Add(sourceMember);
+                }
+            }
+
+            // Add preserved members that don't exist in source
+            foreach (var remainingName in preservedMemberNames)
+            {
+                newMembers.Add(preservedMembers[remainingName]);
+            }
+
+            return sourceInterface.WithMembers(SyntaxFactory.List(newMembers));
+        }
+
+        /// <summary>
+        /// Checks if a member has a preserve marker
+        /// </summary>
+        public static bool ShouldPreserveMember(SyntaxNode member)
+        {
+            // Check for attributes like [Preserve] or [DoNotSync]
+            if (member is MemberDeclarationSyntax memberDecl)
+            {
+                var hasPreserveAttribute = memberDecl.AttributeLists
+                    .SelectMany(al => al.Attributes)
+                    .Any(attr =>
+                    {
+                        string attrName = attr.Name.ToString();
+                        return attrName == "Preserve";
+                    });
+
+                if (hasPreserveAttribute)
+                {
+                    return true;
+                }
+            }
+
+            // Check for special comments
+            if (HasPreserveComment(member))
+            {
+                return true;
+            }
+
+            // Check for naming convention
+            if (HasPreserveNamingConvention(member))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets the name of a member for comparison purposes
+        /// </summary>
+        private static string GetMemberName(SyntaxNode member)
+        {
+            return member switch
+            {
+                MethodDeclarationSyntax method => method.Identifier.Text,
+                PropertyDeclarationSyntax property => property.Identifier.Text,
+                FieldDeclarationSyntax field => field.Declaration.Variables.FirstOrDefault()?.Identifier.Text,
+                EventDeclarationSyntax eventDecl => eventDecl.Identifier.Text,
+                ConstructorDeclarationSyntax ctor => ctor.Identifier.Text,
+                _ => null
+            };
+        }
+
+        /// <summary>
+        /// Checks if member has preserve comment markers
+        /// </summary>
+        public static bool HasPreserveComment(SyntaxNode member)
+        {
+            if (member.HasLeadingTrivia)
+            {
+                var trivia = member.GetLeadingTrivia();
+                foreach (var t in trivia)
+                {
+                    if (t.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
+                        t.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
+                        t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia))
+                    {
+                        string comment = t.ToString().ToUpperInvariant();
+                        if (comment.Contains("[PRESERVE]"))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if member name follows preserve naming convention
+        /// </summary>
+        public static bool HasPreserveNamingConvention(SyntaxNode member)
+        {
+            string memberName = member switch
+            {
+                MethodDeclarationSyntax method => method.Identifier.Text,
+                PropertyDeclarationSyntax property => property.Identifier.Text,
+                FieldDeclarationSyntax field => field.Declaration.Variables.FirstOrDefault()?.Identifier.Text,
+                _ => null
+            };
+
+            if (string.IsNullOrEmpty(memberName))
+                return false;
+
+            // Check for naming conventions
+            return memberName.StartsWith("Custom_", StringComparison.Ordinal);
         }
     }
 }
