@@ -7,11 +7,10 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Programming
 {
-    public class ProgrammingEventManager : IProgrammingEventManager
+    internal class ProgrammingEventManager : IProgrammingEventManager
     {
         public event EventHandler<ProgrammingEventArgs> ProgrammingEventRaised;
-
-        public void OnCurrentEcuChanged(IEcuProgrammingInfo ecu)
+        internal void OnCurrentEcuChanged(IEcuProgrammingInfo ecu)
         {
             if (this.ProgrammingEventRaised != null)
             {
@@ -19,7 +18,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        public void OnProgrammingActionStateChanged(IEcu ecu, ProgrammingActionType programmingActionType, ProgrammingActionState programmingActionState)
+        internal void OnProgrammingActionStateChanged(IEcu ecu, ProgrammingActionType programmingActionType, ProgrammingActionState programmingActionState)
         {
             if (this.ProgrammingEventRaised != null)
             {
@@ -27,7 +26,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        public void OnProgressChanged(string taskName, double progress, double timeLeftSec, bool isTaskFinished)
+        internal void OnProgressChanged(string taskName, double progress, double timeLeftSec, bool isTaskFinished)
         {
             if (this.ProgrammingEventRaised != null)
             {

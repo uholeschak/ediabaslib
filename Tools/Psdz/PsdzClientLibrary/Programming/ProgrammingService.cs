@@ -25,7 +25,7 @@ namespace PsdzClient.Programming
 
         public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
 
-        public ProgrammingEventManager EventManager { get; private set; }
+        internal ProgrammingEventManager EventManager { get; private set; }
 
         public EcuProgrammingInfos ProgrammingInfos { get; private set; }
 

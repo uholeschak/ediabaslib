@@ -7,8 +7,11 @@ using BMW.Rheingold.Psdz;
 
 namespace PsdzClient.Programming
 {
-    public class PsdzProgressListener : IPsdzProgressListener
+    internal class PsdzProgressListener : IPsdzProgressListener
     {
+        private readonly ProgrammingEventManager eventManager;
+        private long durationInMilliseconds;
+        private string task;
         public PsdzProgressListener(ProgrammingEventManager eventManager)
         {
             this.eventManager = eventManager;
@@ -21,25 +24,19 @@ namespace PsdzClient.Programming
 
         public void SetDuration(long milliseconds)
         {
-            this.durationInMilliseconds = milliseconds;
+            durationInMilliseconds = milliseconds;
         }
 
         public void SetElapsedTime(long milliseconds)
         {
-            double num = (this.durationInMilliseconds > 0L) ? ((double)milliseconds / (double)this.durationInMilliseconds) : 0.0;
-            double num2 = (double)(this.durationInMilliseconds - milliseconds) / 1000.0;
-            this.eventManager.OnProgressChanged(this.task, (num > 1.0) ? 1.0 : num, (num2 < 0.0) ? 0.0 : num2, false);
+            double num = ((durationInMilliseconds > 0) ? ((double)milliseconds / (double)durationInMilliseconds) : 0.0);
+            double num2 = (double)(durationInMilliseconds - milliseconds) / 1000.0;
+            eventManager.OnProgressChanged(task, (num > 1.0) ? 1.0 : num, (num2 < 0.0) ? 0.0 : num2, isTaskFinished: false);
         }
 
         public void SetFinished()
         {
-            this.eventManager.OnProgressChanged(this.task, 1.0, 0.0, true);
+            eventManager.OnProgressChanged(task, 1.0, 0.0, isTaskFinished: true);
         }
-
-        private readonly ProgrammingEventManager eventManager;
-
-        private long durationInMilliseconds;
-
-        private string task;
     }
 }
