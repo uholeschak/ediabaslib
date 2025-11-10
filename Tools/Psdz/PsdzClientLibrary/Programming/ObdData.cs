@@ -9,11 +9,11 @@ namespace PsdzClient.Programming
 {
     public class ObdData : IObdData
     {
+        public ICollection<IObdTripleValue> ObdTripleValues { get; set; }
+
         public ObdData()
         {
-            this.ObdTripleValues = new Collection<IObdTripleValue>();
+            ObdTripleValues = new Collection<IObdTripleValue>();
         }
-
-        public ICollection<IObdTripleValue> ObdTripleValues { get; set; }
     }
 }

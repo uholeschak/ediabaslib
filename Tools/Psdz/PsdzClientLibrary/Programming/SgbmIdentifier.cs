@@ -26,21 +26,7 @@ namespace BMW.Rheingold.Programming.API
 
         [DataMember]
         public int SubVersion { get; set; }
-
-        public string HexString
-        {
-            get
-            {
-                return string.Format(CultureInfo.InvariantCulture, "{0}-{1:X8}-{2:X2}.{3:X2}.{4:X2}", new object[]
-                {
-                    this.ProcessClass,
-                    this.Id,
-                    this.MainVersion,
-                    this.SubVersion,
-                    this.PatchVersion
-                });
-            }
-        }
+        public string HexString => string.Format(CultureInfo.InvariantCulture, "{0}-{1:X8}-{2:X2}.{3:X2}.{4:X2}", ProcessClass, Id, MainVersion, SubVersion, PatchVersion);
 
         public int CompareTo(ISgbmId other)
         {
@@ -48,44 +34,42 @@ namespace BMW.Rheingold.Programming.API
             {
                 return -1;
             }
-            int num = string.Compare(this.ProcessClass, other.ProcessClass, StringComparison.OrdinalIgnoreCase);
+
+            int num = string.Compare(ProcessClass, other.ProcessClass, StringComparison.OrdinalIgnoreCase);
             if (num != 0)
             {
                 return num;
             }
-            int num2 = this.Id.CompareTo(other.Id);
+
+            int num2 = Id.CompareTo(other.Id);
             if (num2 != 0)
             {
                 return num2;
             }
-            int num3 = this.MainVersion.CompareTo(other.MainVersion);
+
+            int num3 = MainVersion.CompareTo(other.MainVersion);
             if (num3 != 0)
             {
                 return num3;
             }
-            int num4 = this.SubVersion.CompareTo(other.SubVersion);
+
+            int num4 = SubVersion.CompareTo(other.SubVersion);
             if (num4 != 0)
             {
                 return num4;
             }
-            return this.PatchVersion.CompareTo(other.PatchVersion);
+
+            return PatchVersion.CompareTo(other.PatchVersion);
         }
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}-{1:X8}-{2:000}.{3:000}.{4:000}", new object[]
-            {
-                this.ProcessClass,
-                this.Id,
-                this.MainVersion,
-                this.SubVersion,
-                this.PatchVersion
-            });
+            return string.Format(CultureInfo.InvariantCulture, "{0}-{1:X8}-{2:000}.{3:000}.{4:000}", ProcessClass, Id, MainVersion, SubVersion, PatchVersion);
         }
 
         public bool Equals(ISgbmId other)
         {
-            return string.Equals(this.ProcessClass, other.ProcessClass, StringComparison.OrdinalIgnoreCase) & this.Id.Equals(other.Id) & this.MainVersion.Equals(other.MainVersion) & this.SubVersion.Equals(other.SubVersion) & this.PatchVersion.Equals(other.PatchVersion);
+            return string.Equals(ProcessClass, other.ProcessClass, StringComparison.OrdinalIgnoreCase) & Id.Equals(other.Id) & MainVersion.Equals(other.MainVersion) & SubVersion.Equals(other.SubVersion) & PatchVersion.Equals(other.PatchVersion);
         }
     }
 }

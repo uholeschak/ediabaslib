@@ -15,22 +15,21 @@ namespace PsdzClient.Programming
         [DataContract]
         internal class SwtApplicationIdObj : ISwtApplicationId, INotifyPropertyChanged
         {
-            internal SwtApplicationIdObj(int appNo, int upgradeIdx)
-            {
-                this.AppNo = appNo;
-                this.UpgradeIdx = upgradeIdx;
-            }
-
+            [DataMember]
+            private int appNo;
+            [DataMember]
+            private int upgradeIdx;
             public int AppNo
             {
                 get
                 {
-                    return this.appNo;
+                    return appNo;
                 }
+
                 private set
                 {
-                    this.appNo = value;
-                    this.OnPropertyChanged("AppNo");
+                    appNo = value;
+                    OnPropertyChanged("AppNo");
                 }
             }
 
@@ -38,48 +37,52 @@ namespace PsdzClient.Programming
             {
                 get
                 {
-                    return this.upgradeIdx;
+                    return upgradeIdx;
                 }
+
                 private set
                 {
-                    this.upgradeIdx = value;
-                    this.OnPropertyChanged("UpgradeIdx");
+                    upgradeIdx = value;
+                    OnPropertyChanged("UpgradeIdx");
                 }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            internal SwtApplicationIdObj(int appNo, int upgradeIdx)
+            {
+                AppNo = appNo;
+                UpgradeIdx = upgradeIdx;
             }
 
             public override bool Equals(object obj)
             {
-                ISwtApplicationId swtApplicationId = obj as ISwtApplicationId;
-                return swtApplicationId != null && this.AppNo == swtApplicationId.AppNo && this.UpgradeIdx == swtApplicationId.UpgradeIdx;
+                if (obj is ISwtApplicationId swtApplicationId)
+                {
+                    if (AppNo == swtApplicationId.AppNo)
+                    {
+                        return UpgradeIdx == swtApplicationId.UpgradeIdx;
+                    }
+
+                    return false;
+                }
+
+                return false;
             }
 
             public override int GetHashCode()
             {
-                return this.AppNo.GetHashCode() + this.UpgradeIdx.GetHashCode();
+                return AppNo.GetHashCode() + UpgradeIdx.GetHashCode();
             }
 
             public override string ToString()
             {
-                return string.Format(CultureInfo.InvariantCulture, "SWT-Application-ID[appNo: {0}; upgradeIdx: {1}]", this.AppNo, this.UpgradeIdx);
+                return string.Format(CultureInfo.InvariantCulture, "SWT-Application-ID[appNo: {0}; upgradeIdx: {1}]", AppNo, UpgradeIdx);
             }
-
-            public event PropertyChangedEventHandler PropertyChanged;
 
             protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
             {
-                PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-                if (propertyChanged == null)
-                {
-                    return;
-                }
-                propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
-
-            [DataMember]
-            private int appNo;
-
-            [DataMember]
-            private int upgradeIdx;
         }
     }
 }

@@ -11,86 +11,81 @@ using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Programming
 {
-	[DataContract]
-	internal class EcuProgrammingInfosData : INotifyPropertyChanged, IEcuProgrammingInfosData
-	{
-		internal EcuProgrammingInfosData()
-		{
-			this.ecuProgrammingInfosList = new ObservableCollection<IEcuProgrammingInfoData>();
-			this.selectedActionData = new ObservableCollection<IProgrammingActionData>();
-			this.ecusWithIndividualData = new ObservableCollection<IEcuProgrammingInfoData>();
-		}
+    [DataContract]
+    internal class EcuProgrammingInfosData : IEcuProgrammingInfosData, INotifyPropertyChanged
+    {
+        private ObservableCollection<IEcuProgrammingInfoData> ecuProgrammingInfosList;
+        private ObservableCollection<IProgrammingActionData> selectedActionData;
+        private ObservableCollection<IEcuProgrammingInfoData> ecusWithIndividualData;
+        [DataMember]
+        public ObservableCollection<IEcuProgrammingInfoData> ECUsWithIndividualData
+        {
+            get
+            {
+                return ecusWithIndividualData;
+            }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+            set
+            {
+                ecusWithIndividualData = value;
+                OnPropertyChanged("ECUsWithIndividualData");
+            }
+        }
 
-		[DataMember]
-		public ObservableCollection<IEcuProgrammingInfoData> ECUsWithIndividualData
-		{
-			get
-			{
-				return this.ecusWithIndividualData;
-			}
-			set
-			{
-				this.ecusWithIndividualData = value;
-				this.OnPropertyChanged("ECUsWithIndividualData");
-			}
-		}
+        [DataMember]
+        public ObservableCollection<IEcuProgrammingInfoData> List
+        {
+            get
+            {
+                return ecuProgrammingInfosList;
+            }
 
-		[DataMember]
-		public ObservableCollection<IEcuProgrammingInfoData> List
-		{
-			get
-			{
-				return this.ecuProgrammingInfosList;
-			}
-			set
-			{
-				this.ecuProgrammingInfosList = value;
-				this.OnPropertyChanged("List");
-			}
-		}
+            set
+            {
+                ecuProgrammingInfosList = value;
+                OnPropertyChanged("List");
+            }
+        }
 
-		[DataMember]
-		public ObservableCollection<IProgrammingActionData> SelectedActionData
-		{
-			get
-			{
-				return this.selectedActionData;
-			}
-			set
-			{
-				this.selectedActionData = value;
-				this.OnPropertyChanged("SelectedActionData");
-			}
-		}
+        [DataMember]
+        public ObservableCollection<IProgrammingActionData> SelectedActionData
+        {
+            get
+            {
+                return selectedActionData;
+            }
 
-		[DataMember]
-		public virtual bool SelectionEstablished
-		{
-			get
-			{
-				return false;
-			}
-			set
-			{
-			}
-		}
+            set
+            {
+                selectedActionData = value;
+                OnPropertyChanged("SelectedActionData");
+            }
+        }
 
-		internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged == null)
-			{
-				return;
-			}
-			propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
+        [DataMember]
+        public virtual bool SelectionEstablished
+        {
+            get
+            {
+                return false;
+            }
 
-		private ObservableCollection<IEcuProgrammingInfoData> ecuProgrammingInfosList;
+            set
+            {
+            }
+        }
 
-		private ObservableCollection<IProgrammingActionData> selectedActionData;
+        public event PropertyChangedEventHandler PropertyChanged;
+        internal EcuProgrammingInfosData()
+        {
+            ecuProgrammingInfosList = new ObservableCollection<IEcuProgrammingInfoData>();
+            selectedActionData = new ObservableCollection<IProgrammingActionData>();
+            ecusWithIndividualData = new ObservableCollection<IEcuProgrammingInfoData>();
+        }
 
-		private ObservableCollection<IEcuProgrammingInfoData> ecusWithIndividualData;
-	}
+        internal void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }

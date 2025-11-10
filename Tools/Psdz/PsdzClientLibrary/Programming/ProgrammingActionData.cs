@@ -11,177 +11,15 @@ using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Programming
 {
-	[DataContract]
-	public class ProgrammingActionData : INotifyPropertyChanged, IProgrammingActionData
-	{
-		public event PropertyChangedEventHandler PropertyChanged;
-
-		[DataMember]
-		public ProgrammingActionState StateProgramming
-		{
-			get
-			{
-				return this.stateProgramming;
-			}
-			set
-			{
-				if (this.stateProgramming != value)
-				{
-					this.stateProgramming = value;
-					this.OnPropertyChanged("StateProgramming");
-				}
-			}
-		}
-
-		[DataMember]
-		public IEcu ParentEcu
-		{
-			get
-			{
-				return this.parentEcu;
-			}
-			set
-			{
-				if (this.parentEcu != value)
-				{
-					this.parentEcu = value;
-					this.OnPropertyChanged("ParentEcu");
-				}
-			}
-		}
-
-		[DataMember]
-		public ProgrammingActionType Type
-		{
-			get
-			{
-				return this.type;
-			}
-			set
-			{
-				if (this.type != value)
-				{
-					this.type = value;
-					this.OnPropertyChanged("Type");
-				}
-			}
-		}
-
-		[DataMember]
-		public string Channel
-		{
-			get
-			{
-				return this.channel;
-			}
-			set
-			{
-				if (this.channel != value)
-				{
-					this.channel = value;
-					this.OnPropertyChanged("Channel");
-				}
-			}
-		}
-
-		[DataMember]
-		public string Note
-		{
-			get
-			{
-				return this.note;
-			}
-			set
-			{
-				if (this.note != value)
-				{
-					this.note = value;
-					this.OnPropertyChanged("Note");
-				}
-			}
-		}
-
-		[DataMember]
-		public bool IsEditable
-		{
-			get
-			{
-				return this.isEditable;
-			}
-			set
-			{
-				if (this.isEditable != value)
-				{
-					this.isEditable = value;
-					this.OnPropertyChanged("IsEditable");
-				}
-			}
-		}
-
-		[DataMember]
-		public bool IsSelected
-		{
-			get
-			{
-				return this.isSelected;
-			}
-			set
-			{
-				if (this.isSelected != value)
-				{
-					this.isSelected = value;
-					this.OnPropertyChanged("IsSelected");
-				}
-			}
-		}
-
-		[DataMember]
-		public int Order
-		{
-			get
-			{
-				return this.order;
-			}
-			internal set
-			{
-				this.order = value;
-				this.OnPropertyChanged("Order");
-			}
-		}
-
-		public bool IsFlashAction
-		{
-			get
-			{
-				return ProgrammingActionData.FlashActions.Contains(this.Type);
-			}
-		}
-
-		public bool IsEscalationActionType
-		{
-			get
-			{
-				return ProgrammingActionData.EscalationActions.Contains(this.Type);
-			}
-		}
-
-		private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged == null)
-			{
-				return;
-			}
-			propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
-
+    [DataContract]
+    public class ProgrammingActionData : IProgrammingActionData, INotifyPropertyChanged
+    {
         private static readonly ProgrammingActionType[] FlashActions = new ProgrammingActionType[3]
         {
             ProgrammingActionType.BootloaderProgramming,
             ProgrammingActionType.Programming,
             ProgrammingActionType.DataProgramming
         };
-
         private static readonly ProgrammingActionType[] EscalationActions = new ProgrammingActionType[5]
         {
             ProgrammingActionType.BootloaderProgramming,
@@ -190,21 +28,162 @@ namespace BMW.Rheingold.Programming
             ProgrammingActionType.Coding,
             ProgrammingActionType.IbaDeploy
         };
-
         private ProgrammingActionState stateProgramming;
+        private IEcu parentEcu;
+        private ProgrammingActionType type;
+        private string channel = string.Empty;
+        private string note = string.Empty;
+        private bool isEditable;
+        private bool isSelected;
+        private int order;
+        [DataMember]
+        public ProgrammingActionState StateProgramming
+        {
+            get
+            {
+                return stateProgramming;
+            }
 
-		private IEcu parentEcu;
+            set
+            {
+                if (stateProgramming != value)
+                {
+                    stateProgramming = value;
+                    OnPropertyChanged("StateProgramming");
+                }
+            }
+        }
 
-		private ProgrammingActionType type;
+        [DataMember]
+        public IEcu ParentEcu
+        {
+            get
+            {
+                return parentEcu;
+            }
 
-		private string channel = string.Empty;
+            set
+            {
+                if (parentEcu != value)
+                {
+                    parentEcu = value;
+                    OnPropertyChanged("ParentEcu");
+                }
+            }
+        }
 
-		private string note = string.Empty;
+        [DataMember]
+        public ProgrammingActionType Type
+        {
+            get
+            {
+                return type;
+            }
 
-		private bool isEditable;
+            set
+            {
+                if (type != value)
+                {
+                    type = value;
+                    OnPropertyChanged("Type");
+                }
+            }
+        }
 
-		private bool isSelected;
+        [DataMember]
+        public string Channel
+        {
+            get
+            {
+                return channel;
+            }
 
-		private int order;
-	}
+            set
+            {
+                if (channel != value)
+                {
+                    channel = value;
+                    OnPropertyChanged("Channel");
+                }
+            }
+        }
+
+        [DataMember]
+        public string Note
+        {
+            get
+            {
+                return note;
+            }
+
+            set
+            {
+                if (note != value)
+                {
+                    note = value;
+                    OnPropertyChanged("Note");
+                }
+            }
+        }
+
+        [DataMember]
+        public bool IsEditable
+        {
+            get
+            {
+                return isEditable;
+            }
+
+            set
+            {
+                if (isEditable != value)
+                {
+                    isEditable = value;
+                    OnPropertyChanged("IsEditable");
+                }
+            }
+        }
+
+        [DataMember]
+        public bool IsSelected
+        {
+            get
+            {
+                return isSelected;
+            }
+
+            set
+            {
+                if (isSelected != value)
+                {
+                    isSelected = value;
+                    OnPropertyChanged("IsSelected");
+                }
+            }
+        }
+
+        [DataMember]
+        public int Order
+        {
+            get
+            {
+                return order;
+            }
+
+            internal set
+            {
+                order = value;
+                OnPropertyChanged("Order");
+            }
+        }
+
+        public bool IsFlashAction => FlashActions.Contains(Type);
+        public bool IsEscalationActionType => EscalationActions.Contains(Type);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public interface IEcuProgrammingInfoData : INotifyPropertyChanged, IEcuProgrammingInfo
+    public interface IEcuProgrammingInfoData : IEcuProgrammingInfo, INotifyPropertyChanged
     {
         ObservableCollection<IProgrammingActionData> ProgrammingActionData { get; }
 
@@ -18,6 +18,8 @@ namespace PsdzClient.Programming
 
         string EcuDescription { get; }
 
-        bool IsExchangeDoneDisabled { get; set; }
+        bool IsExchangeScheduledDisabled { get; }
+
+        bool IsExchangeDoneDisabled { get; }
     }
 }

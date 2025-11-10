@@ -14,12 +14,11 @@ namespace PsdzClient.Programming
 
         IEnumerable<int> CategoryIds { get; }
 
-        string GetCategoryNameById(int categoryId);
-
-        IEnumerable<IVehicleProfileCriterion> GetCriteriaByCategoryId(int categoryId);
-
         string Entwicklungsbaureihe { get; }
 
         string Baureihenverbund { get; }
+
+        string GetCategoryNameById(int categoryId);
+        IEnumerable<IVehicleProfileCriterion> GetCriteriaByCategoryId(int categoryId);
     }
 }

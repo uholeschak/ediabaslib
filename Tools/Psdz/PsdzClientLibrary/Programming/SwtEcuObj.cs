@@ -8,30 +8,20 @@ namespace PsdzClient.Programming
 {
     internal class SwtEcuObj : ISwtEcu
     {
+        private readonly IList<ISwtApplication> swtApplications;
+        public IEcuIdentifier EcuIdentifier { get; internal set; }
+        public RootCertificateState RootCertificateState { get; internal set; }
+        public SoftwareSigState SoftwareSigState { get; internal set; }
+        public IEnumerable<ISwtApplication> SwtApplications => swtApplications;
+
         public SwtEcuObj()
         {
-            this.swtApplications = new List<ISwtApplication>();
-        }
-
-        public IEcuIdentifier EcuIdentifier { get; internal set; }
-
-        public RootCertificateState RootCertificateState { get; internal set; }
-
-        public SoftwareSigState SoftwareSigState { get; internal set; }
-
-        public IEnumerable<ISwtApplication> SwtApplications
-        {
-            get
-            {
-                return this.swtApplications;
-            }
+            swtApplications = new List<ISwtApplication>();
         }
 
         internal void AddApplication(ISwtApplication swtApplication)
         {
-            this.swtApplications.Add(swtApplication);
+            swtApplications.Add(swtApplication);
         }
-
-        private readonly IList<ISwtApplication> swtApplications;
     }
 }

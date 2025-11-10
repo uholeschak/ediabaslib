@@ -28,8 +28,11 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
 
         string Zeitkriterium { get; set; }
 
-        IFa Clone();
+        string FahrzeugKategorie { get; set; }
 
+        string ControlClass { get; set; }
+
+        IFa Clone();
         [AuthorAPIHidden]
         bool AreEqual(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa vehicleOrder);
     }

@@ -13,393 +13,381 @@ using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Programming
 {
-	[DataContract]
-	public class EcuProgrammingInfoData : INotifyPropertyChanged, IEcuProgrammingInfo, IEcuProgrammingInfoData
-	{
-		[XmlIgnore]
-		public IEcu Ecu
-		{
-			get
-			{
-				return this.ecu;
-			}
-			set
-			{
-				this.ecu = value;
-				this.OnPropertyChanged("Ecu");
-			}
-		}
+    [DataContract]
+    public class EcuProgrammingInfoData : IEcuProgrammingInfoData, IEcuProgrammingInfo, INotifyPropertyChanged
+    {
+        [DataMember]
+        private bool codingScheduled;
+        [DataMember]
+        private bool programmingScheduled;
+        [DataMember]
+        private bool codingDisabled;
+        [DataMember]
+        private bool programmingDisabled;
+        [DataMember]
+        private double progressValue;
+        [DataMember]
+        private IStandardSvk svkCurrent;
+        [DataMember]
+        private IStandardSvk svkTarget;
+        [DataMember]
+        private bool isExchangeScheduled;
+        [DataMember]
+        private bool isExchangeDone;
+        [DataMember]
+        private bool exchangeDoneDisabled;
+        [DataMember]
+        private bool exchangeScheduledDisabled;
+        [DataMember]
+        private bool programmingSelectionDisabled;
+        [DataMember]
+        private bool codingSelectionDisabled;
+        [DataMember]
+        private IEcu ecu;
+        [DataMember]
+        private int flashOrder = int.MaxValue;
+        private string category = string.Empty;
+        private string ecuTitle = string.Empty;
+        private string ecuDescription = string.Empty;
+        private ObservableCollection<IProgrammingActionData> programmingActions = new ObservableCollection<IProgrammingActionData>();
+        [XmlIgnore]
+        public IEcu Ecu
+        {
+            get
+            {
+                return ecu;
+            }
 
-		[XmlIgnore]
-		public IEnumerable<IProgrammingAction> ProgrammingActions
-		{
-			get
-			{
-				return new List<IProgrammingAction>();
-			}
-		}
+            set
+            {
+                ecu = value;
+                OnPropertyChanged("Ecu");
+            }
+        }
 
-		[DataMember]
-		public string Category
-		{
-			get
-			{
-				return this.category;
-			}
-			set
-			{
-				this.category = value;
-				this.OnPropertyChanged("Category");
-			}
-		}
+        [XmlIgnore]
+        public IEnumerable<IProgrammingAction> ProgrammingActions => new List<IProgrammingAction>();
 
-		[DataMember]
-		public string EcuTitle
-		{
-			get
-			{
-				return this.ecuTitle;
-			}
-			set
-			{
-				this.ecuTitle = value;
-				this.OnPropertyChanged("EcuTitle");
-			}
-		}
+        [DataMember]
+        public string Category
+        {
+            get
+            {
+                return category;
+            }
 
-		[DataMember]
-		public string EcuDescription
-		{
-			get
-			{
-				return this.ecuDescription;
-			}
-			set
-			{
-				this.ecuDescription = value;
-				this.OnPropertyChanged("EcuDescription");
-			}
-		}
+            set
+            {
+                category = value;
+                OnPropertyChanged("Category");
+            }
+        }
 
-		[DataMember]
-		[XmlIgnore]
-		public ObservableCollection<IProgrammingActionData> ProgrammingActionData
-		{
-			get
-			{
-				return this.programmingActions;
-			}
-			set
-			{
-				this.programmingActions = value;
-				this.OnPropertyChanged("ProgrammingActionData");
-			}
-		}
+        [DataMember]
+        public string EcuTitle
+        {
+            get
+            {
+                return ecuTitle;
+            }
 
-		public bool IsCodingDisabled
-		{
-			get
-			{
-				return this.codingDisabled;
-			}
-			set
-			{
-				if (this.codingDisabled != value)
-				{
-					this.codingDisabled = value;
-					this.OnPropertyChanged("IsCodingDisabled");
-				}
-			}
-		}
+            set
+            {
+                ecuTitle = value;
+                OnPropertyChanged("EcuTitle");
+            }
+        }
 
-		public bool IsCodingScheduled
-		{
-			get
-			{
-				return this.codingScheduled;
-			}
-			set
-			{
-				if (this.codingScheduled != value)
-				{
-					this.codingScheduled = value;
-					this.OnPropertyChanged("IsCodingScheduled");
-				}
-			}
-		}
+        [DataMember]
+        public string EcuDescription
+        {
+            get
+            {
+                return ecuDescription;
+            }
 
-		public bool IsProgrammingDisabled
-		{
-			get
-			{
-				return this.programmingDisabled;
-			}
-			set
-			{
-				if (this.programmingDisabled != value)
-				{
-					this.programmingDisabled = value;
-					this.OnPropertyChanged("IsProgrammingDisabled");
-				}
-			}
-		}
+            set
+            {
+                ecuDescription = value;
+                OnPropertyChanged("EcuDescription");
+            }
+        }
 
-		public bool IsProgrammingSelectionDisabled
-		{
-			get
-			{
-				return this.programmingSelectionDisabled;
-			}
-			set
-			{
-				if (this.programmingSelectionDisabled != value)
-				{
-					this.programmingSelectionDisabled = value;
-					this.OnPropertyChanged("IsProgrammingSelectionDisabled");
-				}
-			}
-		}
+        [DataMember]
+        [XmlIgnore]
+        public ObservableCollection<IProgrammingActionData> ProgrammingActionData
+        {
+            get
+            {
+                return programmingActions;
+            }
 
-		public bool IsCodingSelectionDisabled
-		{
-			get
-			{
-				return this.codingSelectionDisabled;
-			}
-			set
-			{
-				if (this.codingSelectionDisabled != value)
-				{
-					this.codingSelectionDisabled = value;
-					this.OnPropertyChanged("IsCodingSelectionDisabled");
-				}
-			}
-		}
+            set
+            {
+                programmingActions = value;
+                OnPropertyChanged("ProgrammingActionData");
+            }
+        }
 
-		public bool IsExchangeDoneDisabled
-		{
-			get
-			{
-				return this.exchangeDoneDisabled;
-			}
-			set
-			{
-				if (this.exchangeDoneDisabled != value)
-				{
-					this.exchangeDoneDisabled = value;
-					this.OnPropertyChanged("IsExchangeDoneDisabled");
-				}
-			}
-		}
+        public bool IsCodingDisabled
+        {
+            get
+            {
+                return codingDisabled;
+            }
 
-		public bool IsExchangeScheduledDisabled
-		{
-			get
-			{
-				return this.exchangeScheduledDisabled;
-			}
-			set
-			{
-				if (this.exchangeScheduledDisabled != value)
-				{
-					this.exchangeScheduledDisabled = value;
-					this.OnPropertyChanged("IsExchangeScheduledDisabled");
-				}
-			}
-		}
+            set
+            {
+                if (codingDisabled != value)
+                {
+                    codingDisabled = value;
+                    OnPropertyChanged("IsCodingDisabled");
+                }
+            }
+        }
 
-		public bool IsExchangeDone
-		{
-			get
-			{
-				return this.isExchangeDone;
-			}
-			set
-			{
-				if (this.isExchangeDone != value)
-				{
-					this.isExchangeDone = value;
-					this.OnPropertyChanged("IsExchangeDone");
-				}
-			}
-		}
+        public bool IsCodingScheduled
+        {
+            get
+            {
+                return codingScheduled;
+            }
 
-		public bool IsExchangeScheduled
-		{
-			get
-			{
-				return this.isExchangeScheduled;
-			}
-			set
-			{
-				if (this.isExchangeScheduled != value)
-				{
-					this.isExchangeScheduled = value;
-					this.OnPropertyChanged("IsExchangeScheduled");
-				}
-			}
-		}
+            set
+            {
+                if (codingScheduled != value)
+                {
+                    codingScheduled = value;
+                    OnPropertyChanged("IsCodingScheduled");
+                }
+            }
+        }
 
-		public double ProgressValue
-		{
-			get
-			{
-				return this.progressValue;
-			}
-			set
-			{
-				if (this.progressValue != value)
-				{
-					this.progressValue = value;
-					this.OnPropertyChanged("ProgressValue");
-				}
-			}
-		}
+        public bool IsProgrammingDisabled
+        {
+            get
+            {
+                return programmingDisabled;
+            }
 
-		public bool IsProgrammingScheduled
-		{
-			get
-			{
-				return this.programmingScheduled;
-			}
-			set
-			{
-				if (this.programmingScheduled != value)
-				{
-					this.programmingScheduled = value;
-					this.OnPropertyChanged("IsProgrammingScheduled");
-				}
-			}
-		}
+            set
+            {
+                if (programmingDisabled != value)
+                {
+                    programmingDisabled = value;
+                    OnPropertyChanged("IsProgrammingDisabled");
+                }
+            }
+        }
 
-		[DataMember]
-		public ProgrammingActionState? State { get; set; }
+        public bool IsProgrammingSelectionDisabled
+        {
+            get
+            {
+                return programmingSelectionDisabled;
+            }
 
-		[XmlIgnore]
-		public IStandardSvk SvkCurrent
-		{
-			get
-			{
-				return this.svkCurrent;
-			}
-			set
-			{
-				if (this.svkCurrent != value)
-				{
-					this.svkCurrent = value;
-					this.OnPropertyChanged("SvkCurrent");
-				}
-			}
-		}
+            set
+            {
+                if (programmingSelectionDisabled != value)
+                {
+                    programmingSelectionDisabled = value;
+                    OnPropertyChanged("IsProgrammingSelectionDisabled");
+                }
+            }
+        }
 
-		[XmlIgnore]
-		public IStandardSvk SvkTarget
-		{
-			get
-			{
-				return this.svkTarget;
-			}
-			set
-			{
-				if (this.svkTarget != value)
-				{
-					this.svkTarget = value;
-					this.OnPropertyChanged("SvkTarget");
-				}
-			}
-		}
+        public bool IsCodingSelectionDisabled
+        {
+            get
+            {
+                return codingSelectionDisabled;
+            }
 
-		public string EcuIdentifier { get; set; }
+            set
+            {
+                if (codingSelectionDisabled != value)
+                {
+                    codingSelectionDisabled = value;
+                    OnPropertyChanged("IsCodingSelectionDisabled");
+                }
+            }
+        }
 
-		public int FlashOrder
-		{
-			get
-			{
-				return this.flashOrder;
-			}
-			set
-			{
-				if (this.flashOrder != value)
-				{
-					this.flashOrder = value;
-					this.OnPropertyChanged("FlashOrder");
-				}
-			}
-		}
+        public bool IsExchangeDoneDisabled
+        {
+            get
+            {
+                return exchangeDoneDisabled;
+            }
 
-		public IProgrammingAction GetProgrammingAction(ProgrammingActionType type)
-		{
-			throw new NotSupportedException();
-		}
+            set
+            {
+                if (exchangeDoneDisabled != value)
+                {
+                    exchangeDoneDisabled = value;
+                    OnPropertyChanged("IsExchangeDoneDisabled");
+                }
+            }
+        }
 
-		public IEnumerable<IProgrammingAction> GetProgrammingActions(ProgrammingActionType[] programmingActionTypeFilter)
-		{
-			throw new NotSupportedException();
-		}
+        public bool IsExchangeScheduledDisabled
+        {
+            get
+            {
+                return exchangeScheduledDisabled;
+            }
 
-		public event PropertyChangedEventHandler PropertyChanged;
+            set
+            {
+                if (exchangeScheduledDisabled != value)
+                {
+                    exchangeScheduledDisabled = value;
+                    OnPropertyChanged("IsExchangeScheduledDisabled");
+                }
+            }
+        }
 
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-			if (propertyChanged == null)
-			{
-				return;
-			}
-			propertyChanged(this, new PropertyChangedEventArgs(propertyName));
-		}
+        public bool IsExchangeDone
+        {
+            get
+            {
+                return isExchangeDone;
+            }
 
-		[DataMember]
-		private bool codingScheduled;
+            set
+            {
+                if (isExchangeDone != value)
+                {
+                    isExchangeDone = value;
+                    OnPropertyChanged("IsExchangeDone");
+                }
+            }
+        }
 
-		[DataMember]
-		private bool programmingScheduled;
+        public bool IsExchangeScheduled
+        {
+            get
+            {
+                return isExchangeScheduled;
+            }
 
-		[DataMember]
-		private bool codingDisabled;
+            set
+            {
+                if (isExchangeScheduled != value)
+                {
+                    isExchangeScheduled = value;
+                    OnPropertyChanged("IsExchangeScheduled");
+                }
+            }
+        }
 
-		[DataMember]
-		private bool programmingDisabled;
+        public double ProgressValue
+        {
+            get
+            {
+                return progressValue;
+            }
 
-		[DataMember]
-		private double progressValue;
+            set
+            {
+                if (progressValue != value)
+                {
+                    progressValue = value;
+                    OnPropertyChanged("ProgressValue");
+                }
+            }
+        }
 
-		[DataMember]
-		private IStandardSvk svkCurrent;
+        public bool IsProgrammingScheduled
+        {
+            get
+            {
+                return programmingScheduled;
+            }
 
-		[DataMember]
-		private IStandardSvk svkTarget;
+            set
+            {
+                if (programmingScheduled != value)
+                {
+                    programmingScheduled = value;
+                    OnPropertyChanged("IsProgrammingScheduled");
+                }
+            }
+        }
 
-		[DataMember]
-		private bool isExchangeScheduled;
+        [DataMember]
+        public ProgrammingActionState? State { get; set; }
 
-		[DataMember]
-		private bool isExchangeDone;
+        [XmlIgnore]
+        public IStandardSvk SvkCurrent
+        {
+            get
+            {
+                return svkCurrent;
+            }
 
-		[DataMember]
-		private bool exchangeDoneDisabled;
+            set
+            {
+                if (svkCurrent != value)
+                {
+                    svkCurrent = value;
+                    OnPropertyChanged("SvkCurrent");
+                }
+            }
+        }
 
-		[DataMember]
-		private bool exchangeScheduledDisabled;
+        [XmlIgnore]
+        public IStandardSvk SvkTarget
+        {
+            get
+            {
+                return svkTarget;
+            }
 
-		[DataMember]
-		private bool programmingSelectionDisabled;
+            set
+            {
+                if (svkTarget != value)
+                {
+                    svkTarget = value;
+                    OnPropertyChanged("SvkTarget");
+                }
+            }
+        }
 
-		[DataMember]
-		private bool codingSelectionDisabled;
+        public string EcuIdentifier { get; set; }
 
-		[DataMember]
-		private IEcu ecu;
+        public int FlashOrder
+        {
+            get
+            {
+                return flashOrder;
+            }
 
-		[DataMember]
-		private int flashOrder = int.MaxValue;
+            set
+            {
+                if (flashOrder != value)
+                {
+                    flashOrder = value;
+                    OnPropertyChanged("FlashOrder");
+                }
+            }
+        }
 
-		private string category = string.Empty;
+        public event PropertyChangedEventHandler PropertyChanged;
+        public IProgrammingAction GetProgrammingAction(ProgrammingActionType type)
+        {
+            throw new NotSupportedException();
+        }
 
-		private string ecuTitle = string.Empty;
+        public IEnumerable<IProgrammingAction> GetProgrammingActions(ProgrammingActionType[] programmingActionTypeFilter)
+        {
+            throw new NotSupportedException();
+        }
 
-		private string ecuDescription = string.Empty;
-
-		private ObservableCollection<IProgrammingActionData> programmingActions = new ObservableCollection<IProgrammingActionData>();
-	}
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
 }

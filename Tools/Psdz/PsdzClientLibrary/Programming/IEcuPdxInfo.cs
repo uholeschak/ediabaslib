@@ -16,6 +16,8 @@ namespace PsdzClient.Programming
 
         bool IsCert2021 { get; }
 
+        bool IsCert2025 { get; }
+
         bool IsCertEnabled { get; }
 
         bool IsSecOcEnabled { get; }
@@ -28,6 +30,12 @@ namespace PsdzClient.Programming
 
         bool IsLcsSystemTimeSwitchSupported { get; }
 
+        bool IsLcsIntegrityProtectionOCSupported { get; }
+
+        bool IsLcsIukCluster { get; }
+
+        bool IsMACsecEnabled { get; }
+
         bool IsMirrorProtocolSupported { get; }
 
         bool IsEcuAuthEnabled { get; }
@@ -37,5 +45,9 @@ namespace PsdzClient.Programming
         int ProgrammingProtectionLevel { get; }
 
         bool IsSmartActuatorMaster { get; }
+
+        int ServicePack { get; }
+
+        bool IsAclEnabled { get; }
     }
 }

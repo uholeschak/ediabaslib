@@ -9,28 +9,23 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public class SgbmIdChange : INotifyPropertyChanged, ISgbmIdChange
+    public class SgbmIdChange : ISgbmIdChange, INotifyPropertyChanged
     {
-        public SgbmIdChange()
-        {
-        }
-
-        public SgbmIdChange(string actual, string target)
-        {
-            this.Actual = actual;
-            this.Target = target;
-        }
-
+        [DataMember]
+        private string actual;
+        [DataMember]
+        private string target;
         public string Actual
         {
             get
             {
-                return this.actual;
+                return actual;
             }
+
             set
             {
-                this.actual = value;
-                this.OnPropertyChanged("Actual");
+                actual = value;
+                OnPropertyChanged("Actual");
             }
         }
 
@@ -38,31 +33,30 @@ namespace PsdzClient.Programming
         {
             get
             {
-                return this.target;
+                return target;
             }
+
             set
             {
-                this.target = value;
-                this.OnPropertyChanged("Target");
+                target = value;
+                OnPropertyChanged("Target");
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public SgbmIdChange()
+        {
+        }
+
+        public SgbmIdChange(string actual, string target)
+        {
+            Actual = actual;
+            Target = target;
+        }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChangedEventHandler propertyChanged = this.PropertyChanged;
-            if (propertyChanged == null)
-            {
-                return;
-            }
-            propertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        [DataMember]
-        private string actual;
-
-        [DataMember]
-        private string target;
     }
 }

@@ -23,8 +23,8 @@ namespace BMW.Rheingold.Programming.API
 
         internal EcuObjStatusInfo(byte value, bool hasIndividualData)
         {
-            this.Value = value;
-            this.HasIndividualData = hasIndividualData;
+            Value = value;
+            HasIndividualData = hasIndividualData;
         }
     }
 }
