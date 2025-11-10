@@ -7,19 +7,17 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Programming
 {
-    public class ProgrammingActionStateChangedEventArgs : ProgrammingEventArgs
+    internal class ProgrammingActionStateChangedEventArgs : ProgrammingEventArgs
     {
+        public IEcu Ecu { get; private set; }
+        public ProgrammingActionState ProgrammingActionState { get; private set; }
+        public ProgrammingActionType ProgrammingActionType { get; private set; }
+
         public ProgrammingActionStateChangedEventArgs(DateTime timestamp, IEcu ecu, ProgrammingActionType programmingActionType, ProgrammingActionState programmingActionState) : base(timestamp)
         {
-            this.Ecu = ecu;
-            this.ProgrammingActionType = programmingActionType;
-            this.ProgrammingActionState = programmingActionState;
+            Ecu = ecu;
+            ProgrammingActionType = programmingActionType;
+            ProgrammingActionState = programmingActionState;
         }
-
-        public IEcu Ecu { get; private set; }
-
-        public ProgrammingActionState ProgrammingActionState { get; private set; }
-
-        public ProgrammingActionType ProgrammingActionType { get; private set; }
     }
 }
