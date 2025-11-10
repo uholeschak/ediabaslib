@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
+#pragma warning disable CS0649
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
     [DataContract]

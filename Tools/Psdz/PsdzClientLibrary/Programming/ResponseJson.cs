@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Core;
 
+#pragma warning disable CS0649
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
     [DataContract]
