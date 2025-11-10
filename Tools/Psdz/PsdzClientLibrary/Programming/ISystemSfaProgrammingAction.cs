@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace PsdzClient.Programming
 {
-    public interface ISystemSfaProgrammingAction : IProgrammingAction, INotifyPropertyChanged, IComparable<IProgrammingAction>
+    public interface ISystemSfaProgrammingAction : IProgrammingAction, INotifyPropertyChanged, IComparable<IProgrammingAction>, ITherapyPlanAction2, ITherapyPlanAction
     {
     }
 }
