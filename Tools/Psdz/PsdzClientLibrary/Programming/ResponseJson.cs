@@ -10,7 +10,7 @@ using PsdzClient.Core;
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
     [DataContract]
-    public class ResponseJson
+    internal class ResponseJson
     {
         internal enum CalculationStatus
         {
