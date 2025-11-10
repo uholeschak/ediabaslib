@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public class FetchEcuCertCheckingResult : IFetchEcuCertCheckingResult
+    internal class FetchEcuCertCheckingResult : IFetchEcuCertCheckingResult
     {
         public IEnumerable<IEcuFailureResponse> FailedEcus { get; internal set; }
 
