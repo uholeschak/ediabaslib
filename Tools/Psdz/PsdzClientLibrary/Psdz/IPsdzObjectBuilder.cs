@@ -13,44 +13,8 @@ using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 
-namespace BMW.Rheingold.CoreFramework.Contracts.Programming
+namespace BMW.Rheingold.Psdz
 {
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum TaCategories
-    {
-        BlFlash,
-        CdDeploy,
-        FscBackup,
-        FscDeploy,
-        FscDeployPrehwd,
-        SFADeploy,
-        GatewayTableDeploy,
-        HddUpdate,
-        HwDeinstall,
-        HwInstall,
-        IbaDeploy,
-        IdBackup,
-        IdRestore,
-        SwDeploy,
-        Unknown,
-        IdDelete,
-        EcuActivate,
-        EcuPoll,
-        EcuMirrorDeploy,
-        SmacTransferStart,
-        SmacTransferStatus
-    }
-
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum TalFilterOptions
-    {
-        Allowed,
-        Empty,
-        Must,
-        MustNot,
-        Only
-    }
-
     public interface IPsdzObjectBuilder
     {
         IPsdzDiagAddress BuildDiagAddress(int diagAddress);
@@ -59,7 +23,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
         IPsdzEcuIdentifier BuildEcuIdentifier(IEcuIdentifier ecuIdentifier);
         IPsdzEcuIdentifier BuildEcuIdentifier(int diagAddrAsInt, string baseVariant);
         IPsdzFa BuildEmptyFa();
-        IPsdzFa BuildFa(IFa fa, string vin17);
+        IPsdzFa BuildFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa, string vin17);
         IPsdzFa BuildFa(IPsdzStandardFa fa, string vin17);
         IPsdzFa BuildFaFromXml(string xml);
         IPsdzStandardFa BuildFaActualFromVehicleContext(IVehicle vehicleContext);
