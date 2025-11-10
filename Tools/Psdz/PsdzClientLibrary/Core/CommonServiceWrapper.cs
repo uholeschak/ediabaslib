@@ -19,6 +19,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Modified")]
         public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature, bool checkLbps = true)
         {
             string configString = ConfigSettings.getConfigString(LBPFeatureSwitches.FeatureRegistryKey(feature));
