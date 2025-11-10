@@ -30,7 +30,11 @@ namespace BmwDeepObd
             }
 
             listView.LayoutParameters.Height = totalHeight + (listView.DividerHeight * (listView.Count - 1));
-            listView.RequestLayout();
+
+            if (!listView.IsInLayout)
+            {
+                listView.RequestLayout();
+            }
         }
     }
 }

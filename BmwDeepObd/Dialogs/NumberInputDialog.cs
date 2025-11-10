@@ -168,6 +168,11 @@ namespace BmwDeepObd.Dialogs
                 {
                     _textViewInfo.Visibility = visibility;
                 }
+
+                if (!_view.IsInLayout)
+                {
+                    _view.RequestLayout();
+                }
             }
         }
 
@@ -188,6 +193,11 @@ namespace BmwDeepObd.Dialogs
                 if (_editTextNumber1 != null)
                 {
                     _editTextNumber1.Visibility = visibility;
+                }
+
+                if (!_view.IsInLayout)
+                {
+                    _view.RequestLayout();
                 }
             }
         }
@@ -210,6 +220,7 @@ namespace BmwDeepObd.Dialogs
                 {
                     _editTextNumber2.Visibility = visibility;
                 }
+                _view.RequestLayout();
             }
         }
 

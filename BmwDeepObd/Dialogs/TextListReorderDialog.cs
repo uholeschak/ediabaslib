@@ -40,6 +40,11 @@ namespace BmwDeepObd.Dialogs
                 {
                     _textViewMessage.Text = value;
                     _textViewMessage.Visibility = string.IsNullOrWhiteSpace(value) ? ViewStates.Gone : ViewStates.Visible;
+
+                    if (!_view.IsInLayout)
+                    {
+                        _view.RequestLayout();
+                    }
                 }
             }
         }
@@ -60,6 +65,11 @@ namespace BmwDeepObd.Dialogs
                 {
                     _textViewMessageDetail.Text = value;
                     _textViewMessageDetail.Visibility = string.IsNullOrWhiteSpace(value) ? ViewStates.Gone : ViewStates.Visible;
+
+                    if (!_view.IsInLayout)
+                    {
+                        _view.RequestLayout();
+                    }
                 }
             }
         }
