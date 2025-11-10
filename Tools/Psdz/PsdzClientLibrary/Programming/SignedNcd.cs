@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
     [DataContract]
-    public class SignedNcd
+    internal class SignedNcd
     {
         [DataMember(Name = "ncd")]
         public readonly string ncd;
