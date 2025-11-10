@@ -1,18 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public class EcuObjDetailInfo : IEcuDetailInfo
+    [DataContract]
+    internal class EcuObjDetailInfo : IEcuDetailInfo
     {
+        [DataMember]
+        public byte Value { get; private set; }
+
         internal EcuObjDetailInfo(byte value)
         {
-            this.Value = value;
+            Value = value;
         }
-
-        public byte Value { get; private set; }
     }
 }
