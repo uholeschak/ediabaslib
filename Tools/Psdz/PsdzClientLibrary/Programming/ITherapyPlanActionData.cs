@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace PsdzClient.Programming
 {
-    public interface ITherapyPlanActionData : INotifyPropertyChanged
+    public interface ITherapyPlanActionData : ITherapyPlanAction2, ITherapyPlanAction, INotifyPropertyChanged
     {
         void SetState(typeDiagObjectState value);
 
