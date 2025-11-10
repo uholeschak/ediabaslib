@@ -5,7 +5,7 @@ using System.ComponentModel;
 
 namespace PsdzClient.Programming
 {
-    internal class SystemSfaProgrammingAction : ProgrammingAction, ISystemSfaProgrammingAction, IProgrammingAction, INotifyPropertyChanged, IComparable<IProgrammingAction>
+    internal class SystemSfaProgrammingAction : ProgrammingAction, ISystemSfaProgrammingAction, IProgrammingAction, INotifyPropertyChanged, IComparable<IProgrammingAction>, ITherapyPlanAction2, ITherapyPlanAction
     {
         internal SystemSfaProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order)
             : base(parentEcu, type, isEditable, order)
