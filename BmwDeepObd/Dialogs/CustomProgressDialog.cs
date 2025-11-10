@@ -146,9 +146,11 @@ namespace BmwDeepObd.Dialogs
             {
                 return;
             }
+
             _layoutProgressText.Visibility = _progressBar.Indeterminate ? ViewStates.Invisible : ViewStates.Visible;
             _textViewProgressLeft.Text = string.Format("{0}%", _progressBar.Progress);
             _textViewProgressRight.Text = string.Format("{0}/{1}", _progressBar.Progress, _progressBar.Max);
+            _view.RequestLayout();
         }
 
         public new void Show()
