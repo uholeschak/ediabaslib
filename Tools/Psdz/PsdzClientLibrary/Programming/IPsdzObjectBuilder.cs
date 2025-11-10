@@ -45,6 +45,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Programming
     public enum TalFilterOptions
     {
         Allowed,
+        Empty,
         Must,
         MustNot,
         Only
