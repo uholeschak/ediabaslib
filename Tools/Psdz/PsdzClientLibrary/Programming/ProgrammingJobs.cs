@@ -1687,17 +1687,17 @@ namespace PsdzClient.Programming
 
                         bool backupFailed = false;
                         bool executeBackupTal = true;
-                        PsdzContext.BackupTalResult backupTalState = PsdzContext.CheckBackupTal();
+                        BackupTalResult backupTalState = PsdzContext.CheckBackupTal();
                         log.InfoFormat(CultureInfo.InvariantCulture, "Backup TAL: State={0}", backupTalState);
                         switch (backupTalState)
                         {
-                            case PsdzContext.BackupTalResult.Success:
+                            case BackupTalResult.Success:
                                 executeBackupTal = false;
                                 sbResult.AppendLine(Strings.TalExecuteOk);
                                 UpdateStatus(sbResult.ToString());
                                 break;
 
-                            case PsdzContext.BackupTalResult.Error:
+                            case BackupTalResult.Error:
                                 executeBackupTal = false;
                                 backupFailed = true;
                                 sbResult.AppendLine(Strings.TalExecuteError);

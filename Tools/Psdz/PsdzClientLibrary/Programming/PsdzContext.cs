@@ -24,15 +24,6 @@ namespace PsdzClient.Programming
 	{
         private const string IdrBackupFileName = "_IDR_Files.backup";
 
-        public enum BackupTalResult
-        {
-            Success,
-            Failed,
-            Error,
-            Undefined,
-            SuccessEmpty
-        }
-
         public bool IsEmptyBackupTal
         {
             get
@@ -81,7 +72,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        public BackupTalResult CheckBackupTal()
+        internal BackupTalResult CheckBackupTal()
         {
             if (!IsValidBackupTal)
             {
