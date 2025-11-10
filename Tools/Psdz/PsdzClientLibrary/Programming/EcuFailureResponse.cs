@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public class EcuFailureResponse : IEcuFailureResponse
+    internal class EcuFailureResponse : IEcuFailureResponse
     {
         public IEcuIdentifier Ecu { get; internal set; }
 
