@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public interface IProgrammingEventManager
+    internal interface IProgrammingEventManager
     {
         event EventHandler<ProgrammingEventArgs> ProgrammingEventRaised;
     }

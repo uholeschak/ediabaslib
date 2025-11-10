@@ -7,8 +7,17 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public class ProgrammingTaskEventArgs : ProgrammingEventArgs
+    internal class ProgrammingTaskEventArgs : ProgrammingEventArgs
     {
+        private readonly bool isTaskFinished;
+        private readonly double progress;
+        private readonly string taskName;
+        private readonly double timeLeftSec;
+        public bool IsTaskFinished => isTaskFinished;
+        public double Progress => progress;
+        public string TaskName => taskName;
+        public double TimeLeftSec => timeLeftSec;
+
         public ProgrammingTaskEventArgs(DateTime timestamp, string taskName, double progress, double timeLeftSec, bool isTaskFinished) : base(timestamp)
         {
             this.taskName = taskName;
@@ -17,55 +26,9 @@ namespace PsdzClient.Programming
             this.isTaskFinished = isTaskFinished;
         }
 
-        public bool IsTaskFinished
-        {
-            get
-            {
-                return this.isTaskFinished;
-            }
-        }
-
-        public double Progress
-        {
-            get
-            {
-                return this.progress;
-            }
-        }
-
-        public string TaskName
-        {
-            get
-            {
-                return this.taskName;
-            }
-        }
-
-        public double TimeLeftSec
-        {
-            get
-            {
-                return this.timeLeftSec;
-            }
-        }
-
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "Task: {0} - Progress: {1} - Time left [s]: {2} - Task finished: {3}", new object[]
-            {
-                this.taskName ?? "<null>",
-                this.progress,
-                this.timeLeftSec,
-                this.isTaskFinished
-            });
+            return string.Format(CultureInfo.InvariantCulture, "Task: {0} - Progress: {1} - Time left [s]: {2} - Task finished: {3}", taskName ?? "<null>", progress, timeLeftSec, isTaskFinished);
         }
-
-        private readonly bool isTaskFinished;
-
-        private readonly double progress;
-
-        private readonly string taskName;
-
-        private readonly double timeLeftSec;
     }
 }
