@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public class OtherBindingDetailsStatus : IOtherBindingDetailsStatus
+    internal class OtherBindingDetailsStatus : IOtherBindingDetailsStatus
     {
         public EcuCertCheckingStatus? OtherBindingStatus { get; internal set; }
 
