@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
+#pragma warning disable CS0618
 namespace PsdzClient.Core
 {
     // ToDo: Check on update
