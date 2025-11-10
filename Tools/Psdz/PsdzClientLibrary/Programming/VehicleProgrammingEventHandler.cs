@@ -11,189 +11,212 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-	public class VehicleProgrammingEventHandler : IPsdzEventListener
-	{
-		public VehicleProgrammingEventHandler(EcuProgrammingInfos ecuProgrammingInfos, PsdzContext psdzContext, bool ecusSeveralTimesPossible = false)
-		{
-			this.psdzContext = psdzContext;
-			this.diagAddrToEcuMap = new Dictionary<long, EcuProgrammingInfo>();
+    internal class VehicleProgrammingEventHandler : IPsdzEventListener
+    {
+        private readonly Dictionary<long, EcuProgrammingInfo> diagAddrToEcuMap;
+        private readonly PsdzContext psdzContext;
+        public VehicleProgrammingEventHandler(EcuProgrammingInfos ecuProgrammingInfos, PsdzContext psdzContext, bool ecusSeveralTimesPossible = false)
+        {
+            if (ecuProgrammingInfos == null)
+            {
+                throw new ArgumentNullException("ecuProgrammingInfos");
+            }
+
+            this.psdzContext = psdzContext;
+            diagAddrToEcuMap = new Dictionary<long, EcuProgrammingInfo>();
             if (!ecusSeveralTimesPossible)
             {
-                using (IEnumerator<IEcuProgrammingInfo> enumerator = ecuProgrammingInfos.GetEnumerator())
+                foreach (EcuProgrammingInfo ecuProgrammingInfo in ecuProgrammingInfos)
                 {
-                    while (enumerator.MoveNext())
+                    if (!diagAddrToEcuMap.ContainsKey(ecuProgrammingInfo.Ecu.ID_SG_ADR))
                     {
-                        IEcuProgrammingInfo ecuProgrammingInfo = enumerator.Current;
-                        EcuProgrammingInfo ecuProgrammingInfo2 = (EcuProgrammingInfo)ecuProgrammingInfo;
-                        if (!this.diagAddrToEcuMap.ContainsKey(ecuProgrammingInfo2.Ecu.ID_SG_ADR))
-                        {
-                            this.diagAddrToEcuMap.Add(ecuProgrammingInfo2.Ecu.ID_SG_ADR, ecuProgrammingInfo2);
-                        }
+                        diagAddrToEcuMap.Add(ecuProgrammingInfo.Ecu.ID_SG_ADR, ecuProgrammingInfo);
                     }
-                    return;
                 }
-            }
-            this.FillEcusIfSeveralTimesPossible(ecuProgrammingInfos);
-		}
 
-		public void SetPsdzEvent(IPsdzEvent psdzEvent)
-		{
-			if (psdzEvent is IPsdzTransactionProgressEvent)
-			{
-				this.UpdateProgrammingProgress((IPsdzTransactionProgressEvent)psdzEvent);
-				return;
-			}
-			if (psdzEvent is IPsdzTransactionEvent)
-			{
-				this.UpdateProgrammingAction((IPsdzTransactionEvent)psdzEvent);
-			}
-		}
-
-		private ProgrammingActionType? Map(PsdzTaCategories cat)
-		{
-			switch (cat)
-			{
-				case PsdzTaCategories.BlFlash:
-					return new ProgrammingActionType?(ProgrammingActionType.BootloaderProgramming);
-				case PsdzTaCategories.CdDeploy:
-					return new ProgrammingActionType?(ProgrammingActionType.Coding);
-				case PsdzTaCategories.FscBackup:
-					return new ProgrammingActionType?(ProgrammingActionType.FscBakup);
-				case PsdzTaCategories.FscDeploy:
-					return new ProgrammingActionType?(ProgrammingActionType.FscActivate);
-				case PsdzTaCategories.GatewayTableDeploy:
-				case PsdzTaCategories.SwDeploy:
-					return new ProgrammingActionType?(ProgrammingActionType.Programming);
-				case PsdzTaCategories.HddUpdate:
-					return new ProgrammingActionType?(ProgrammingActionType.HddUpdate);
-				case PsdzTaCategories.HwDeinstall:
-					return new ProgrammingActionType?(ProgrammingActionType.Unmounting);
-				case PsdzTaCategories.HwInstall:
-					return new ProgrammingActionType?(ProgrammingActionType.Mounting);
-				case PsdzTaCategories.IbaDeploy:
-					return new ProgrammingActionType?(ProgrammingActionType.IbaDeploy);
-				case PsdzTaCategories.IdBackup:
-					return new ProgrammingActionType?(ProgrammingActionType.IdSave);
-				case PsdzTaCategories.IdRestore:
-					return new ProgrammingActionType?(ProgrammingActionType.IdRestore);
-				case PsdzTaCategories.SFADeploy:
-					return new ProgrammingActionType?(ProgrammingActionType.SFAWrite);
-				case PsdzTaCategories.EcuActivate:
-				case PsdzTaCategories.EcuPoll:
-				case PsdzTaCategories.EcuMirrorDeploy:
-					Log.Warning(Log.CurrentMethod(), string.Format("Unimplemented TA category type {0}.", cat), Array.Empty<object>());
-					return null;
-			}
-			return null;
-		}
-
-		private EcuProgrammingInfo GetCorrespondingEcu(IPsdzEvent psdzEvent)
-		{
-			IPsdzEcuIdentifier ecuId = psdzEvent.EcuId;
-			int num = (ecuId != null) ? ecuId.DiagAddrAsInt : 255;
-			if (!this.diagAddrToEcuMap.ContainsKey((long)num))
-			{
-				return null;
-			}
-			return this.diagAddrToEcuMap[(long)num];
-		}
-
-		private void UpdateProgrammingAction(IPsdzTransactionEvent psdzEvent)
-		{
-			try
-			{
-				EcuProgrammingInfo correspondingEcu = this.GetCorrespondingEcu(psdzEvent);
-				if (correspondingEcu != null)
-				{
-					PsdzTransactionInfo transactionInfo = psdzEvent.TransactionInfo;
-					PsdzTaCategories transactionType = psdzEvent.TransactionType;
-					if (transactionType != PsdzTaCategories.FscDeploy)
-					{
-						if (transactionType != PsdzTaCategories.SFADeploy)
-						{
-							ProgrammingActionType? programmingActionType = this.Map(transactionType);
-							ProgrammingActionState? programmingActionState = this.Map(transactionInfo);
-							if (programmingActionType != null && programmingActionState != null)
-							{
-								correspondingEcu.UpdateSingleProgrammingAction(programmingActionType.Value, programmingActionState.Value, false);
-								return;
-							}
-                            return;
-						}
-					}
-					IEnumerable<IPsdzTalLine> talLines = from talLine in this.psdzContext.Tal.TalLines
-														 where talLine.EcuIdentifier.Equals(psdzEvent.EcuId)
-														 select talLine;
-					correspondingEcu.UpdateProgrammingActions(talLines, false, 0);
-				}
                 return;
-			}
-			catch (Exception)
-			{
-			}
-		}
+            }
 
-		private void UpdateProgrammingProgress(IPsdzTransactionProgressEvent psdzEvent)
-		{
-			EcuProgrammingInfo correspondingEcu = this.GetCorrespondingEcu(psdzEvent);
-			if (correspondingEcu != null)
-			{
-				correspondingEcu.ProgressValue = (double)psdzEvent.Progress * 0.01;
-			}
-		}
+            FillEcusIfSeveralTimesPossible(ecuProgrammingInfos);
+        }
 
-		private ProgrammingActionState? Map(PsdzTransactionInfo transactionInfo)
-		{
-			ProgrammingActionState? result = null;
-			switch (transactionInfo)
-			{
-				case PsdzTransactionInfo.Started:
-				case PsdzTransactionInfo.Repeating:
-				case PsdzTransactionInfo.ProgressInfo:
-					result = new ProgrammingActionState?(ProgrammingActionState.ActionInProcess);
-					break;
-				case PsdzTransactionInfo.Finished:
-					result = new ProgrammingActionState?(ProgrammingActionState.ActionSuccessful);
-					break;
-				case PsdzTransactionInfo.FinishedWithError:
-					result = new ProgrammingActionState?(ProgrammingActionState.ActionFailed);
-					break;
-				default:
-					break;
-			}
-			return result;
-		}
-
-        private void FillEcusIfSeveralTimesPossible(EcuProgrammingInfos ecuProgrammingInfos)
+        public void SetPsdzEvent(IPsdzEvent psdzEvent)
         {
-            using (IEnumerator<IEcuProgrammingInfo> enumerator = ecuProgrammingInfos.GetEnumerator())
+            if (psdzEvent is IPsdzTransactionProgressEvent)
             {
-                while (enumerator.MoveNext())
-                {
-                    EcuProgrammingInfo ecuProgrammingInfo = (EcuProgrammingInfo)enumerator.Current;
-                    bool flag = false;
-                    using (IEnumerator<IProgrammingAction> enumerator2 = ecuProgrammingInfo.GetProgrammingActions(null).GetEnumerator())
-                    {
-                        while (enumerator2.MoveNext())
-                        {
-                            if (enumerator2.Current.IsSelected)
-                            {
-                                flag = true;
-                                break;
-                            }
-                        }
-
-                        if (flag)
-                        {
-                            this.diagAddrToEcuMap.Add(ecuProgrammingInfo.Ecu.ID_SG_ADR, ecuProgrammingInfo);
-                        }
-                    }
-                }
+                UpdateProgrammingProgress((IPsdzTransactionProgressEvent)psdzEvent);
+            }
+            else if (psdzEvent is IPsdzTransactionEvent)
+            {
+                UpdateProgrammingAction((IPsdzTransactionEvent)psdzEvent);
             }
         }
 
-		private readonly Dictionary<long, EcuProgrammingInfo> diagAddrToEcuMap;
+        private ProgrammingActionType? Map(PsdzTaCategories cat)
+        {
+            switch (cat)
+            {
+                case PsdzTaCategories.GatewayTableDeploy:
+                case PsdzTaCategories.SwDeploy:
+                case PsdzTaCategories.EcuActivate:
+                case PsdzTaCategories.EcuPoll:
+                case PsdzTaCategories.EcuMirrorDeploy:
+                case PsdzTaCategories.SmacTransferStart:
+                case PsdzTaCategories.SmacTransferStatus:
+                    return ProgrammingActionType.Programming;
+                case PsdzTaCategories.BlFlash:
+                    return ProgrammingActionType.BootloaderProgramming;
+                case PsdzTaCategories.CdDeploy:
+                    return ProgrammingActionType.Coding;
+                case PsdzTaCategories.FscBackup:
+                    return ProgrammingActionType.FscBakup;
+                case PsdzTaCategories.FscDeploy:
+                    return ProgrammingActionType.FscActivate;
+                case PsdzTaCategories.HddUpdate:
+                    return ProgrammingActionType.HddUpdate;
+                case PsdzTaCategories.HwDeinstall:
+                    return ProgrammingActionType.Unmounting;
+                case PsdzTaCategories.HwInstall:
+                    return ProgrammingActionType.Mounting;
+                case PsdzTaCategories.IbaDeploy:
+                    return ProgrammingActionType.IbaDeploy;
+                case PsdzTaCategories.IdBackup:
+                    return ProgrammingActionType.IdSave;
+                case PsdzTaCategories.IdRestore:
+                    return ProgrammingActionType.IdRestore;
+                case PsdzTaCategories.SFADeploy:
+                    return ProgrammingActionType.SFAWrite;
+                default:
+                    Log.Warning("VehicleProgrammingEventHandler.SetPsdzException()", "TA category '{0}' not yet supported!", cat);
+                    return null;
+            }
+        }
 
-		private readonly PsdzContext psdzContext;
-	}
+        private EcuProgrammingInfo GetCorrespondingEcu(IPsdzEvent psdzEvent)
+        {
+            int num = psdzEvent.EcuId?.DiagAddrAsInt ?? 255;
+            if (!diagAddrToEcuMap.ContainsKey(num))
+            {
+                return null;
+            }
+
+            return diagAddrToEcuMap[num];
+        }
+
+        private void UpdateProgrammingAction(IPsdzTransactionEvent psdzEvent)
+        {
+            try
+            {
+                EcuProgrammingInfo correspondingEcu = GetCorrespondingEcu(psdzEvent);
+                if (correspondingEcu == null)
+                {
+                    return;
+                }
+
+                PsdzTransactionInfo transactionInfo = psdzEvent.TransactionInfo;
+                PsdzTaCategories transactionType = psdzEvent.TransactionType;
+                Log.Debug("VehicleProgrammingEventHandler.UpdateProgrammingAction", "ECU: 0x{0:X2} - transaction info: {1} - action type: {2}", correspondingEcu.Ecu.ID_SG_ADR, transactionInfo, transactionType);
+                if (transactionType == PsdzTaCategories.FscDeploy || transactionType == PsdzTaCategories.SFADeploy)
+                {
+                    IEnumerable<IPsdzTalLine> talLines = psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(psdzEvent.EcuId));
+                    correspondingEcu.UpdateProgrammingActions(talLines, isTalExecuted: false);
+                    return;
+                }
+
+                ProgrammingActionType? programmingActionType = Map(transactionType);
+                ProgrammingActionState? programmingActionState = Map(transactionInfo);
+                if (programmingActionType.HasValue && programmingActionState.HasValue)
+                {
+                    if (IsBootloaderFlashAndSwDeployCase(transactionType, psdzEvent.EcuId))
+                    {
+                        programmingActionType = ProgrammingActionType.Programming;
+                    }
+
+                    correspondingEcu.UpdateSingleProgrammingAction(programmingActionType.Value, programmingActionState.Value, executed: false);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException("VehicleProgrammingEventHandler.UpdateProgrammingAction", exception);
+            }
+        }
+
+        private bool IsBootloaderFlashAndSwDeployCase(PsdzTaCategories transactionType, IPsdzEcuIdentifier ecuId)
+        {
+            bool flag = false;
+            if (transactionType == PsdzTaCategories.BlFlash || transactionType == PsdzTaCategories.SwDeploy || transactionType == PsdzTaCategories.EcuMirrorDeploy)
+            {
+                IEnumerable<IPsdzTalLine> source = psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(ecuId));
+                bool flag2 = source.Any((IPsdzTalLine a) => a.BlFlash != null);
+                bool flag3 = source.Any((IPsdzTalLine a) => a.SwDeploy != null);
+                flag = flag2 && flag3;
+            }
+
+            bool flag4 = false;
+            if (transactionType == PsdzTaCategories.BlFlash || transactionType == PsdzTaCategories.EcuMirrorDeploy)
+            {
+                IEnumerable<IPsdzTalLine> source2 = psdzContext.Tal.TalLines.Where((IPsdzTalLine talLine) => talLine.EcuIdentifier.Equals(ecuId));
+                bool flag5 = source2.Any((IPsdzTalLine a) => a.BlFlash != null);
+                bool flag6 = source2.Any((IPsdzTalLine a) => a.EcuMirrorDeploy != null);
+                flag4 = flag5 && flag6;
+            }
+
+            return flag || flag4;
+        }
+
+        private void UpdateProgrammingProgress(IPsdzTransactionProgressEvent psdzEvent)
+        {
+            EcuProgrammingInfo correspondingEcu = GetCorrespondingEcu(psdzEvent);
+            if (correspondingEcu != null)
+            {
+                Log.Info("VehicleProgrammingEventHandler.UpdateProgrammingProgress()", "ECU: 0x{0:X2} - Progress: {1}", correspondingEcu.Ecu.ID_SG_ADR, psdzEvent.Progress);
+                correspondingEcu.ProgressValue = (double)psdzEvent.Progress * 0.01;
+            }
+        }
+
+        private ProgrammingActionState? Map(PsdzTransactionInfo transactionInfo)
+        {
+            ProgrammingActionState? result = null;
+            switch (transactionInfo)
+            {
+                case PsdzTransactionInfo.Started:
+                case PsdzTransactionInfo.Repeating:
+                case PsdzTransactionInfo.ProgressInfo:
+                    result = ProgrammingActionState.ActionInProcess;
+                    break;
+                case PsdzTransactionInfo.FinishedWithError:
+                    result = ProgrammingActionState.ActionFailed;
+                    break;
+                case PsdzTransactionInfo.Finished:
+                    result = ProgrammingActionState.ActionSuccessful;
+                    break;
+                default:
+                    Log.Warning("VehicleProgrammingEventHandler.UpdateProgrammingAction()", "Transaction info '{0}' not yet supported!", transactionInfo);
+                    break;
+            }
+
+            return result;
+        }
+
+        private void FillEcusIfSeveralTimesPossible(EcuProgrammingInfos ecuProgrammingInfos)
+        {
+            foreach (EcuProgrammingInfo ecuProgrammingInfo in ecuProgrammingInfos)
+            {
+                bool flag = false;
+                foreach (IProgrammingAction programmingAction in ecuProgrammingInfo.GetProgrammingActions(null))
+                {
+                    if (programmingAction.IsSelected)
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+
+                if (flag)
+                {
+                    diagAddrToEcuMap.Add(ecuProgrammingInfo.Ecu.ID_SG_ADR, ecuProgrammingInfo);
+                }
+            }
+        }
+    }
 }
