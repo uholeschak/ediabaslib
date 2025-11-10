@@ -1,9 +1,11 @@
 ﻿using BMW.Rheingold.Psdz.Model;
-using System.ServiceModel.Channels;
+using PsdzClientLibrary;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     internal class SecureDiagnosticsServiceClient : PsdzDuplexClientBase<ISecureDiagnosticsService, IPsdzProgressListener>, ISecureDiagnosticsService
     {
         public SecureDiagnosticsServiceClient(IPsdzProgressListener callbackInstance, Binding binding, EndpointAddress remoteAddress)
