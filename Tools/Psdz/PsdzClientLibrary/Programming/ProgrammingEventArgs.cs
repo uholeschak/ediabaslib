@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public abstract class ProgrammingEventArgs : EventArgs
+    internal abstract class ProgrammingEventArgs : EventArgs
     {
+        public DateTime Timestamp { get; private set; }
+
         internal ProgrammingEventArgs(DateTime timestamp)
         {
-            this.Timestamp = timestamp;
+            Timestamp = timestamp;
         }
-
-        public DateTime Timestamp { get; private set; }
     }
 }
