@@ -1,10 +1,12 @@
-﻿using System.Linq;
+﻿using PsdzClientLibrary;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
+    [PreserveSource(Hint = "Changed to public")]
     [DataContract]
-    internal class EcuDataGroup
+    public class EcuDataGroup
     {
         [DataMember(Name = "ecuData")]
         public readonly EcuData[] ecuData;

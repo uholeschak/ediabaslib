@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BMW.Rheingold.Programming.Common;
+using PsdzClient.Programming;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -6,11 +9,10 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using BMW.Rheingold.Programming.Common;
-using PsdzClient.Programming;
 
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
+    [PreserveSource(Hint = "Modified")]
     [DataContract]
     public class RequestJson
     {
