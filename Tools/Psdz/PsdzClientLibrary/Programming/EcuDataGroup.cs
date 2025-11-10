@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
     [DataContract]
-    public class EcuDataGroup
+    internal class EcuDataGroup
     {
         [DataMember(Name = "ecuData")]
         public readonly EcuData[] ecuData;
