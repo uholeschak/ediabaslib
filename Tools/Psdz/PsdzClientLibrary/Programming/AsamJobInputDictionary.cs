@@ -6,65 +6,59 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public class AsamJobInputDictionary : IAsamJobInputDictionary
+    internal class AsamJobInputDictionary : IAsamJobInputDictionary
     {
+        private readonly IDictionary<string, object> jobParams;
+        public ICollection<object> Values => jobParams.Values;
+
         internal AsamJobInputDictionary()
         {
-            this.jobParams = new Dictionary<string, object>();
-        }
-
-        public ICollection<object> Values
-        {
-            get
-            {
-                return this.jobParams.Values;
-            }
+            jobParams = new Dictionary<string, object>();
         }
 
         public void Add(string key, int value)
         {
-            this.jobParams.Add(key, value);
+            jobParams.Add(key, value);
         }
 
         public void Add(string key, string value)
         {
-            this.jobParams.Add(key, value);
+            jobParams.Add(key, value);
         }
 
         public void Add(string key, long value)
         {
-            this.jobParams.Add(key, value);
+            jobParams.Add(key, value);
         }
 
         public void Add(string key, byte[] value)
         {
-            this.jobParams.Add(key, value);
+            jobParams.Add(key, value);
         }
 
         public void Add(string key, float value)
         {
-            this.jobParams.Add(key, value);
+            jobParams.Add(key, value);
         }
 
         public void Add(string key, double value)
         {
-            this.jobParams.Add(key, value);
+            jobParams.Add(key, value);
         }
 
         public IDictionary<string, object> GetCopy()
         {
-            return new Dictionary<string, object>(this.jobParams);
+            return new Dictionary<string, object>(jobParams);
         }
 
         public object GetValue(string key)
         {
-            if (!this.jobParams.ContainsKey(key))
+            if (!jobParams.ContainsKey(key))
             {
                 return null;
             }
-            return this.jobParams[key];
-        }
 
-        private readonly IDictionary<string, object> jobParams;
+            return jobParams[key];
+        }
     }
 }
