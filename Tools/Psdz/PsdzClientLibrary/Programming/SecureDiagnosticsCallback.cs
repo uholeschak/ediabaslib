@@ -2,9 +2,11 @@
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
+using PsdzClientLibrary;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     [DataContract]
     [ServiceKnownType(typeof(PsdzVin))]
     [ServiceKnownType(typeof(X509Certificate2))]

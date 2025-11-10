@@ -1,16 +1,18 @@
-﻿using System;
-using System.Runtime.Serialization;
-using System.Security.Cryptography;
-using System.ServiceModel;
-using System.Text;
-using Org.BouncyCastle.Crypto.Digests;
+﻿using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
+using PsdzClientLibrary;
+using System;
+using System.Runtime.Serialization;
+using System.Security.Cryptography;
+using System.ServiceModel;
+using System.Text;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     [ServiceKnownType(typeof(ECPrivateKeyParameters))]
     [DataContract]
     public class Sec4DiagPoowHandler
