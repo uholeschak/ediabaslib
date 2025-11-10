@@ -1,4 +1,5 @@
 ﻿using PsdzClient.Core;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -284,19 +285,12 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         public static bool IsILeanActive
         {
             get
             {
-#if false
-                if (IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
-                {
-                    return false;
-                }
-#endif
-                bool configStringAsBoolean = getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.ILeanActive", defaultValue: false);
-                Log.Info("ConfigSettings.IsILeanActive()", "Property IsILeanActive is set to {0}", configStringAsBoolean);
-                return configStringAsBoolean;
+                return true;
             }
         }
 

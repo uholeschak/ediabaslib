@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using PsdzClientLibrary;
+using System.Collections.Generic;
 
 namespace PsdzClient.Core
 {
@@ -12,9 +13,10 @@ namespace PsdzClient.Core
         {
         }
 
+        [PreserveSource(Hint = "Modified")]
         public bool IsAvailable()
         {
-            return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.CoreFramework.ILeanActive", defaultValue: false);
+            return true;
         }
 
         public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature, bool checkLbps = true)
