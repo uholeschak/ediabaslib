@@ -469,7 +469,30 @@ namespace AssemblyPatcher
                         }
                         catch (Exception ex)
                         {
-                            Console.WriteLine("*** Logic.get_IsSendFastaDataForbidden Exception: {0}", ex.Message);
+                            Console.WriteLine("*** CommonServiceWrapper.IsAvailable Exception: {0}", ex.Message);
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.CoreFramework",
+                                Class = "ConfigSettings",
+                                Method = "get_IsILeanActive",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("ConfigSettings.get_IsILeanActive found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ldc_I4_1));
+                                instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                                Console.WriteLine("get_IsILeanActive patched");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** ConfigSettings.get_IsILeanActive Exception: {0}", ex.Message);
                         }
 
                         try
