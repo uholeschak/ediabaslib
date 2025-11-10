@@ -12,6 +12,7 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
+using IFa = BMW.Rheingold.CoreFramework.Contracts.Programming.IFa;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -23,7 +24,7 @@ namespace BMW.Rheingold.Psdz
         IPsdzEcuIdentifier BuildEcuIdentifier(IEcuIdentifier ecuIdentifier);
         IPsdzEcuIdentifier BuildEcuIdentifier(int diagAddrAsInt, string baseVariant);
         IPsdzFa BuildEmptyFa();
-        IPsdzFa BuildFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa, string vin17);
+        IPsdzFa BuildFa(IFa fa, string vin17);
         IPsdzFa BuildFa(IPsdzStandardFa fa, string vin17);
         IPsdzFa BuildFaFromXml(string xml);
         IPsdzStandardFa BuildFaActualFromVehicleContext(IVehicle vehicleContext);
