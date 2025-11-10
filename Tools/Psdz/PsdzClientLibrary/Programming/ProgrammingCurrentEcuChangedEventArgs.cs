@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public class ProgrammingCurrentEcuChangedEventArgs : ProgrammingEventArgs
+    internal class ProgrammingCurrentEcuChangedEventArgs : ProgrammingEventArgs
     {
+        public IEcuProgrammingInfo EcuProgrammingInfo { get; private set; }
+
         public ProgrammingCurrentEcuChangedEventArgs(DateTime timestamp, IEcuProgrammingInfo ecuProgrammingInfo) : base(timestamp)
         {
-            this.EcuProgrammingInfo = ecuProgrammingInfo;
+            EcuProgrammingInfo = ecuProgrammingInfo;
         }
-
-        public IEcuProgrammingInfo EcuProgrammingInfo { get; private set; }
     }
 }
