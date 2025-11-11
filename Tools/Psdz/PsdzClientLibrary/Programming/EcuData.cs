@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
     [DataContract]
-    internal class EcuData
+    public class EcuData
     {
         [DataMember(Name = "BTLD-SGBM-NO")]
         public readonly string btld;
