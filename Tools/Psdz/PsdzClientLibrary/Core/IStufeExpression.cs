@@ -11,10 +11,15 @@ namespace PsdzClient.Core
 {
     public class IStufeExpression : SingleAssignmentExpression
     {
+        private string iStufe;
+        // [UH] database removed
+
+        [PreserveSource(Hint = "Modified")]
         public IStufeExpression()
         {
         }
 
+        [PreserveSource(Hint = "Modified")]
         public IStufeExpression(long iStufeId)
         {
             this.value = iStufeId;
@@ -90,7 +95,5 @@ namespace PsdzClient.Core
         {
             return "I-Stufe=" + IStufe + " [" + value + "]";
         }
-
-        private string iStufe;
     }
 }
