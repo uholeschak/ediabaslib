@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -8,15 +9,12 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	[Serializable]
-	public class ManufactoringDateExpression : RuleExpression
-	{
+    [Serializable]
+    public class ManufactoringDateExpression : RuleExpression
+    {
         private readonly ECompareOperator compareOperator;
-
         private readonly DateTime dateArgument;
-
         private readonly long datevalue;
-
         public ManufactoringDateExpression(ECompareOperator compareOperator, long datevalue)
         {
             this.compareOperator = compareOperator;
@@ -25,6 +23,7 @@ namespace PsdzClient.Core
             this.datevalue = dateArgument.Ticks;
         }
 
+        [PreserveSource(Hint = "Modified")]
         public new static ManufactoringDateExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();
@@ -36,6 +35,7 @@ namespace PsdzClient.Core
             return new ManufactoringDateExpression(eCompareOperator, ticks);
         }
 
+        [PreserveSource(Hint = "Modified")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             ILogger logger = ruleEvaluationServices.Logger;
@@ -43,6 +43,7 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             bool flag = false;
             string empty = string.Empty;
             long ticks;
@@ -59,6 +60,7 @@ namespace PsdzClient.Core
                     {
                         return false;
                     }
+
                     ticks = new DateTime(Convert.ToInt32(vec.Modelljahr, CultureInfo.InvariantCulture), Convert.ToInt32(vec.Modellmonat, CultureInfo.InvariantCulture), 1).Ticks;
                 }
             }
@@ -67,6 +69,7 @@ namespace PsdzClient.Core
                 logger.WarningException("ManufactoringDateExpression.Evaluate()", exception);
                 return false;
             }
+
             switch (compareOperator)
             {
                 case ECompareOperator.EQUAL:
@@ -98,6 +101,7 @@ namespace PsdzClient.Core
                     flag = false;
                     break;
             }
+
             logger.Debug("ManufactoringDateExpression.Evaluate()", "rule: ProdDate {0} {1} result: {2}", compareOperator, datevalue, flag);
             return flag;
         }
@@ -108,6 +112,7 @@ namespace PsdzClient.Core
             {
                 return EEvaluationResult.MISSING_CHARACTERISTIC;
             }
+
             int num = baseConfiguration.ProdDates.BinarySearch(datevalue);
             switch (compareOperator)
             {
@@ -120,40 +125,48 @@ namespace PsdzClient.Core
                     {
                         return EEvaluationResult.VALID;
                     }
+
                     if (baseConfiguration.ProdDates.Count > 0 && baseConfiguration.ProdDates[0] > datevalue)
                     {
                         return EEvaluationResult.VALID;
                     }
+
                     return EEvaluationResult.INVALID;
                 case ECompareOperator.GREATER_EQUAL:
                     if (num >= 0)
                     {
                         return EEvaluationResult.VALID;
                     }
+
                     if (baseConfiguration.ProdDates.Count > 0 && baseConfiguration.ProdDates[0] > datevalue)
                     {
                         return EEvaluationResult.VALID;
                     }
+
                     return EEvaluationResult.INVALID;
                 case ECompareOperator.LESS:
                     if (num > 0)
                     {
                         return EEvaluationResult.VALID;
                     }
+
                     if (baseConfiguration.ProdDates.Count > 0 && baseConfiguration.ProdDates[baseConfiguration.ProdDates.Count - 1] < datevalue)
                     {
                         return EEvaluationResult.VALID;
                     }
+
                     return EEvaluationResult.INVALID;
                 case ECompareOperator.LESS_EQUAL:
                     if (num >= 0)
                     {
                         return EEvaluationResult.VALID;
                     }
+
                     if (baseConfiguration.ProdDates.Count > 0 && baseConfiguration.ProdDates[baseConfiguration.ProdDates.Count - 1] < datevalue)
                     {
                         return EEvaluationResult.VALID;
                     }
+
                     return EEvaluationResult.INVALID;
                 default:
                     throw new Exception("Unknown logical operator");
@@ -177,6 +190,7 @@ namespace PsdzClient.Core
             {
                 list.Add(-1L);
             }
+
             return list;
         }
 
@@ -187,54 +201,11 @@ namespace PsdzClient.Core
             ms.Write(BitConverter.GetBytes(datevalue), 0, 8);
         }
 
-        // [UH] added
-        public override string ToFormula(FormulaConfig formulaConfig)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(FormulaSeparator(formulaConfig));
-            stringBuilder.Append("(");
-            stringBuilder.Append(formulaConfig.GetLongFunc);
-            stringBuilder.Append("(\"Produktionsdatum\")");
-
-            stringBuilder.Append(" ");
-            stringBuilder.Append(this.GetFormulaOperator());
-            stringBuilder.Append(" ");
-
-            DateTime date = new DateTime(datevalue);
-            stringBuilder.Append(date.ToString("yyyyMM", CultureInfo.InvariantCulture));
-            stringBuilder.Append(")");
-            stringBuilder.Append(FormulaSeparator(formulaConfig));
-
-            return stringBuilder.ToString();
-        }
-
-
         public override string ToString()
         {
-            string @operator = GetOperator();
+            string text = GetOperator();
             long num = datevalue;
-            return "Produktionsdatum " + @operator + " " + num.ToString(CultureInfo.InvariantCulture);
-        }
-
-        private string GetFormulaOperator()
-        {
-            switch (this.compareOperator)
-            {
-                case ECompareOperator.EQUAL:
-                    return "==";
-                case ECompareOperator.NOT_EQUAL:
-                    return "!=";
-                case ECompareOperator.GREATER:
-                    return ">";
-                case ECompareOperator.GREATER_EQUAL:
-                    return ">=";
-                case ECompareOperator.LESS:
-                    return "<";
-                case ECompareOperator.LESS_EQUAL:
-                    return "<=";
-                default:
-                    throw new Exception("Unknown operator");
-            }
+            return "Produktionsdatum " + text + " " + num.ToString(CultureInfo.InvariantCulture);
         }
 
         private string GetOperator()
@@ -253,6 +224,46 @@ namespace PsdzClient.Core
                     return "<=";
                 case ECompareOperator.NOT_EQUAL:
                     return "!=";
+                default:
+                    throw new Exception("Unknown operator");
+            }
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
+            stringBuilder.Append("(");
+            stringBuilder.Append(formulaConfig.GetLongFunc);
+            stringBuilder.Append("(\"Produktionsdatum\")");
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.GetFormulaOperator());
+            stringBuilder.Append(" ");
+            DateTime date = new DateTime(datevalue);
+            stringBuilder.Append(date.ToString("yyyyMM", CultureInfo.InvariantCulture));
+            stringBuilder.Append(")");
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
+            return stringBuilder.ToString();
+        }
+
+        [PreserveSource(Hint = "Added")]
+        private string GetFormulaOperator()
+        {
+            switch (this.compareOperator)
+            {
+                case ECompareOperator.EQUAL:
+                    return "==";
+                case ECompareOperator.NOT_EQUAL:
+                    return "!=";
+                case ECompareOperator.GREATER:
+                    return ">";
+                case ECompareOperator.GREATER_EQUAL:
+                    return ">=";
+                case ECompareOperator.LESS:
+                    return "<";
+                case ECompareOperator.LESS_EQUAL:
+                    return "<=";
                 default:
                     throw new Exception("Unknown operator");
             }
