@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,8 +19,7 @@ namespace PsdzClient.Core
 			}
 		}
 
-        // ToDo: Check on update
-        // [UH] dataProvider replaced by vec
+        [PreserveSource(Hint = "Modified")]
         public static RuleExpression Deserialize(Stream ms, EExpressionType type, ILogger logger, Vehicle vec)
         {
             byte[] buffer = new byte[8];
@@ -73,6 +73,7 @@ namespace PsdzClient.Core
             return singleAssignmentExpression;
         }
 
+        [PreserveSource(Hint = "Modified")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
 		{
 			return false;

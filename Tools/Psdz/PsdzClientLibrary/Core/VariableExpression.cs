@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -8,15 +9,12 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	[Serializable]
+    [Serializable]
     public class VariableExpression : RuleExpression
     {
         private readonly ECompareOperator compareOperator;
-
         private readonly string variableName;
-
         private readonly double variableValue;
-
         public VariableExpression(string variableName, ECompareOperator compareOperator, double variableValue)
         {
             this.variableName = variableName;
@@ -37,42 +35,49 @@ namespace PsdzClient.Core
                             {
                                 return EEvaluationResult.VALID;
                             }
+
                             break;
                         case ECompareOperator.GREATER:
                             if (item > variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
+
                             break;
                         case ECompareOperator.GREATER_EQUAL:
                             if (item >= variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
+
                             break;
                         case ECompareOperator.LESS:
                             if (item < variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
+
                             break;
                         case ECompareOperator.LESS_EQUAL:
                             if (item <= variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
+
                             break;
                         case ECompareOperator.NOT_EQUAL:
                             if (item != variableValue)
                             {
                                 return EEvaluationResult.VALID;
                             }
+
                             break;
                         default:
                             throw new Exception("Unknown compare operator");
                     }
                 }
             }
+
             return EEvaluationResult.INVALID;
         }
 
@@ -89,21 +94,6 @@ namespace PsdzClient.Core
         public override void Serialize(MemoryStream ms)
         {
             throw new Exception("The method or operation is not implemented.");
-        }
-
-        // [UH] added
-        public override string ToFormula(FormulaConfig formulaConfig)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(FormulaSeparator(formulaConfig));
-            stringBuilder.Append(this.variableName.ToString(CultureInfo.InvariantCulture));
-            stringBuilder.Append(" ");
-            stringBuilder.Append(this.GetOperator());
-            stringBuilder.Append(" ");
-            stringBuilder.Append(this.variableValue.ToString(CultureInfo.InvariantCulture));
-            stringBuilder.Append(FormulaSeparator(formulaConfig));
-
-            return stringBuilder.ToString();
         }
 
         public override string ToString()
@@ -140,6 +130,20 @@ namespace PsdzClient.Core
                 default:
                     throw new Exception("Unknown operator");
             }
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
+            stringBuilder.Append(this.variableName.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.GetOperator());
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.variableValue.ToString(CultureInfo.InvariantCulture));
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
+            return stringBuilder.ToString();
         }
     }
 }
