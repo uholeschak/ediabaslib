@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -21,6 +22,7 @@ namespace PsdzClient.Core
             value = accessSiFa;
         }
 
+        [PreserveSource(Hint = "Added")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -41,12 +43,15 @@ namespace PsdzClient.Core
                 {
                     return EEvaluationResult.INVALID;
                 }
+
                 return EEvaluationResult.VALID;
             }
+
             if (value == 0)
             {
                 return EEvaluationResult.VALID;
             }
+
             return EEvaluationResult.INVALID;
         }
 
@@ -56,7 +61,12 @@ namespace PsdzClient.Core
             base.Serialize(ms);
         }
 
-        // [UH] added
+        public override string ToString()
+        {
+            return "SiFa=" + ((value != 0L) ? true : false);
+        }
+
+        [PreserveSource(Hint = "Added")]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -65,13 +75,7 @@ namespace PsdzClient.Core
             stringBuilder.Append(formulaConfig.CheckLongFunc);
             stringBuilder.Append("(\"ProtectionVehicleService\", 0)");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-
             return stringBuilder.ToString();
-        }
-
-        public override string ToString()
-        {
-            return "SiFa=" + ((value != 0L) ? true : false);
         }
     }
 }
