@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -11,22 +12,19 @@ namespace PsdzClient.Core
     [Serializable]
     public class CompareExpression : RuleExpression
     {
-        public CompareExpression(long dataclassId, ECompareOperator compareOperator, long datavalueId)
-        {
-            this.dataclassId = dataclassId;
-            this.datavalueId = datavalueId;
-            this.compareOperator = compareOperator;
-        }
-
+        private ECompareOperator compareOperator;
+        private long dataclassId;
+        private long datavalueId;
         public long DataclassId
         {
             get
             {
-                return this.dataclassId;
+                return dataclassId;
             }
+
             set
             {
-                this.dataclassId = value;
+                dataclassId = value;
             }
         }
 
@@ -34,14 +32,23 @@ namespace PsdzClient.Core
         {
             get
             {
-                return this.datavalueId;
+                return datavalueId;
             }
+
             set
             {
-                this.datavalueId = value;
+                datavalueId = value;
             }
         }
 
+        public CompareExpression(long dataclassId, ECompareOperator compareOperator, long datavalueId)
+        {
+            this.dataclassId = dataclassId;
+            this.datavalueId = datavalueId;
+            this.compareOperator = compareOperator;
+        }
+
+        [PreserveSource(Hint = "Modified")]
         public static CompareExpression Deserialize(Stream ms, Vehicle vec)
         {
             throw new Exception("Class CompExpression is only an intermediate class. Use special classes instead before serializing the rule!");
@@ -62,29 +69,33 @@ namespace PsdzClient.Core
             throw new Exception("Class CompExpression is only an intermediate class. Use special classes instead before serializing the rule!");
         }
 
-        // [UH] added
-        public override string ToFormula(FormulaConfig formulaConfig)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(" ");
-            stringBuilder.Append(this.GetFormulaOperator());
-            stringBuilder.Append(" ");
-
-            return stringBuilder.ToString();
-        }
-
         public override string ToString()
         {
-            return string.Concat(new string[]
-            {
-                this.dataclassId.ToString(CultureInfo.InvariantCulture),
-                " ",
-                this.getOperator(),
-                " ",
-                this.datavalueId.ToString(CultureInfo.InvariantCulture)
-            });
+            return dataclassId.ToString(CultureInfo.InvariantCulture) + " " + getOperator() + " " + datavalueId.ToString(CultureInfo.InvariantCulture);
         }
 
+        private string getOperator()
+        {
+            switch (compareOperator)
+            {
+                case ECompareOperator.EQUAL:
+                    return "=";
+                case ECompareOperator.GREATER:
+                    return ">";
+                case ECompareOperator.GREATER_EQUAL:
+                    return ">=";
+                case ECompareOperator.LESS:
+                    return "<";
+                case ECompareOperator.LESS_EQUAL:
+                    return "<=";
+                case ECompareOperator.NOT_EQUAL:
+                    return "!=";
+                default:
+                    throw new Exception("Unknown operator");
+            }
+        }
+
+        [PreserveSource(Hint = "Added")]
         public string GetFormulaOperator()
         {
             switch (this.compareOperator)
@@ -106,31 +117,14 @@ namespace PsdzClient.Core
             }
         }
 
-        private string getOperator()
+        [PreserveSource(Hint = "Added")]
+        public override string ToFormula(FormulaConfig formulaConfig)
         {
-            switch (this.compareOperator)
-            {
-                case ECompareOperator.EQUAL:
-                    return "=";
-                case ECompareOperator.NOT_EQUAL:
-                    return "!=";
-                case ECompareOperator.GREATER:
-                    return ">";
-                case ECompareOperator.GREATER_EQUAL:
-                    return ">=";
-                case ECompareOperator.LESS:
-                    return "<";
-                case ECompareOperator.LESS_EQUAL:
-                    return "<=";
-                default:
-                    throw new Exception("Unknown operator");
-            }
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(" ");
+            stringBuilder.Append(this.GetFormulaOperator());
+            stringBuilder.Append(" ");
+            return stringBuilder.ToString();
         }
-
-        private ECompareOperator compareOperator;
-
-        private long dataclassId;
-
-        private long datavalueId;
     }
 }
