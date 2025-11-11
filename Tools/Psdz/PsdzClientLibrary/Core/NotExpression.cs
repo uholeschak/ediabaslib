@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,128 +8,131 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	[Serializable]
-	public class NotExpression : RuleExpression
-	{
-		public NotExpression(RuleExpression operand)
-		{
-			this.operand = operand;
-		}
+    [Serializable]
+    public class NotExpression : RuleExpression
+    {
+        private RuleExpression operand;
+        public RuleExpression Operand
+        {
+            get
+            {
+                return operand;
+            }
 
-		public RuleExpression Operand
-		{
-			get
-			{
-				return this.operand;
-			}
-			set
-			{
-				this.operand = value;
-			}
-		}
+            set
+            {
+                operand = value;
+            }
+        }
 
-		public new static NotExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
-		{
-			return new NotExpression(RuleExpression.Deserialize(ms, logger, vec));
-		}
+        public NotExpression(RuleExpression operand)
+        {
+            this.operand = operand;
+        }
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
-		{
-			if (vec == null)
-			{
-				return false;
-			}
-			internalResult.RuleExpression = this;
-			return !RuleExpression.Evaluate(vec, this.operand, ffmResolver, ruleEvaluationUtils, internalResult);
-		}
+        [PreserveSource(Hint = "Modified")]
+        public new static NotExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
+        {
+            return new NotExpression(RuleExpression.Deserialize(ms, logger, vec));
+        }
 
-		public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)
-		{
-			EEvaluationResult eevaluationResult = this.operand.EvaluateEmpiricalRule(premises);
-			if (eevaluationResult == EEvaluationResult.VALID)
-			{
-				return EEvaluationResult.INVALID;
-			}
-			if (eevaluationResult == EEvaluationResult.INVALID)
-			{
-				return EEvaluationResult.VALID;
-			}
-			return eevaluationResult;
-		}
+        [PreserveSource(Hint = "Modified")]
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
+        {
+            if (vec == null)
+            {
+                return false;
+            }
 
-		public override EEvaluationResult EvaluateFaultClassRule(Dictionary<string, List<double>> variables)
-		{
-			EEvaluationResult eevaluationResult = this.operand.EvaluateFaultClassRule(variables);
-			if (eevaluationResult == EEvaluationResult.VALID)
-			{
-				return EEvaluationResult.INVALID;
-			}
-			if (eevaluationResult == EEvaluationResult.INVALID)
-			{
-				return EEvaluationResult.VALID;
-			}
-			return eevaluationResult;
-		}
+            internalResult.RuleExpression = this;
+            return !RuleExpression.Evaluate(vec, this.operand, ffmResolver, ruleEvaluationUtils, internalResult);
+        }
 
-		public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
-		{
-			EEvaluationResult eevaluationResult = this.operand.EvaluateVariantRule(client, baseConfiguration, ecus);
-			if (eevaluationResult == EEvaluationResult.VALID)
-			{
-				return EEvaluationResult.INVALID;
-			}
-			if (eevaluationResult == EEvaluationResult.INVALID)
-			{
-				return EEvaluationResult.VALID;
-			}
-			return eevaluationResult;
-		}
+        public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)
+        {
+            EEvaluationResult eEvaluationResult = operand.EvaluateEmpiricalRule(premises);
+            switch (eEvaluationResult)
+            {
+                case EEvaluationResult.INVALID:
+                    return EEvaluationResult.VALID;
+                case EEvaluationResult.VALID:
+                    return EEvaluationResult.INVALID;
+                default:
+                    return eEvaluationResult;
+            }
+        }
 
-		public override long GetExpressionCount()
-		{
-			return 1L + this.operand.GetExpressionCount();
-		}
+        public override EEvaluationResult EvaluateFaultClassRule(Dictionary<string, List<double>> variables)
+        {
+            EEvaluationResult eEvaluationResult = operand.EvaluateFaultClassRule(variables);
+            switch (eEvaluationResult)
+            {
+                case EEvaluationResult.INVALID:
+                    return EEvaluationResult.VALID;
+                case EEvaluationResult.VALID:
+                    return EEvaluationResult.INVALID;
+                default:
+                    return eEvaluationResult;
+            }
+        }
 
-		public override long GetMemorySize()
-		{
-			return 16L + this.operand.GetMemorySize();
-		}
+        public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
+        {
+            EEvaluationResult eEvaluationResult = operand.EvaluateVariantRule(client, baseConfiguration, ecus);
+            switch (eEvaluationResult)
+            {
+                case EEvaluationResult.INVALID:
+                    return EEvaluationResult.VALID;
+                case EEvaluationResult.VALID:
+                    return EEvaluationResult.INVALID;
+                default:
+                    return eEvaluationResult;
+            }
+        }
 
-		public override IList<long> GetUnknownCharacteristics(CharacteristicSet baseConfiguration)
-		{
-			return this.operand.GetUnknownCharacteristics(baseConfiguration);
-		}
+        public override long GetExpressionCount()
+        {
+            return 1 + operand.GetExpressionCount();
+        }
 
-		public override IList<long> GetUnknownVariantIds(EcuConfiguration ecus)
-		{
-			return this.operand.GetUnknownVariantIds(ecus);
-		}
+        public override long GetMemorySize()
+        {
+            return 16 + operand.GetMemorySize();
+        }
 
-		public override void Optimize()
-		{
-			if (this.operand != null)
-			{
-				this.operand.Optimize();
-			}
-		}
+        public override IList<long> GetUnknownCharacteristics(CharacteristicSet baseConfiguration)
+        {
+            return operand.GetUnknownCharacteristics(baseConfiguration);
+        }
 
-		public override void Serialize(MemoryStream ms)
-		{
-			ms.WriteByte(3);
-			this.operand.Serialize(ms);
-		}
+        public override IList<long> GetUnknownVariantIds(EcuConfiguration ecus)
+        {
+            return operand.GetUnknownVariantIds(ecus);
+        }
 
-        // [UH] added
+        public override void Optimize()
+        {
+            if (operand != null)
+            {
+                operand.Optimize();
+            }
+        }
+
+        public override void Serialize(MemoryStream ms)
+        {
+            ms.WriteByte(3);
+            operand.Serialize(ms);
+        }
+
+        public override string ToString()
+        {
+            return "NOT " + operand;
+        }
+
+        [PreserveSource(Hint = "Added")]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             return "!(" + this.operand.ToFormula(formulaConfig) + ")";
         }
-
-		public override string ToString()
-		{
-			return "NOT " + this.operand;
-		}
-
-        private RuleExpression operand;
-	}
+    }
 }
