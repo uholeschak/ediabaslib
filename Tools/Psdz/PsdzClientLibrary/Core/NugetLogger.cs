@@ -1,4 +1,5 @@
 ﻿using log4net;
+using PsdzClientLibrary;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,9 +12,7 @@ namespace PsdzClient.Core
 {
     public class NugetLogger : ILogger
     {
-        private static readonly ILog log = LogManager.GetLogger(typeof(NugetLogger));
-
-        // [UH] replaced
+        [PreserveSource(Hint = "Replaced")]
         public string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null)
         {
             StringBuilder sb = new StringBuilder();
@@ -37,43 +36,42 @@ namespace PsdzClient.Core
 
         public void Info(string method, string msg, params object[] args)
         {
-            log.Info(FormatLogMsg(method, msg, args));
+            Log.Info(method, msg, args);
         }
 
         public void Debug(string method, string msg, params object[] args)
         {
-            log.Debug(FormatLogMsg(method, msg, args));
+            Log.Debug(method, msg, args);
         }
 
         public void Warning(string method, string msg, params object[] args)
         {
-            log.Warn(FormatLogMsg(method, msg, args));
-        }
-
-        public void WarningException(string method, Exception exception)
-        {
-            Warning(method, "failed with exception: {0}", exception.ToString());
+            Log.Warning(method, msg, args);
         }
 
         public void Error(string method, string msg, params object[] args)
         {
-            log.Error(FormatLogMsg(method, msg, args));
+            Log.Error(method, msg, args);
         }
 
         public void ErrorException(string method, Exception exception)
         {
-            Error(method, "failed with exception: {0}", exception.ToString());
+            Log.ErrorException(method, exception);
         }
 
-        private string FormatLogMsg(string method, string msg, params object[] args)
+        public void ErrorException(string method, string msg, Exception exception)
         {
-            string logText = string.Format(msg, args);
-            if (!string.IsNullOrEmpty(method))
-            {
-                logText = method + ": " + logText;
-            }
+            Log.ErrorException(method, msg, exception);
+        }
 
-            return logText;
+        public void WarningException(string method, Exception exception)
+        {
+            Log.WarningException(method, exception);
+        }
+
+        public void WarningException(string method, string msg, Exception exception)
+        {
+            Log.WarningException(method, msg, exception);
         }
     }
 }
