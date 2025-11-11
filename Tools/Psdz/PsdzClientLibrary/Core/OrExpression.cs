@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,15 +8,12 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	[Serializable]
-	public class OrExpression : RuleExpression
-	{
+    [Serializable]
+    public class OrExpression : RuleExpression
+    {
         private readonly List<long> missingCharacteristics = new List<long>();
-
         private readonly List<long> missingVariants = new List<long>();
-
         private RuleExpression[] operands;
-
         public int Length => operands.Length;
 
         public RuleExpression this[int index]
@@ -24,6 +22,7 @@ namespace PsdzClient.Core
             {
                 return operands[index];
             }
+
             set
             {
                 operands[index] = value;
@@ -42,6 +41,7 @@ namespace PsdzClient.Core
             operands[1] = secondOperand;
         }
 
+        [PreserveSource(Hint = "Modified")]
         public new static OrExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             int value = 0;
@@ -64,6 +64,7 @@ namespace PsdzClient.Core
             operands = array;
         }
 
+        [PreserveSource(Hint = "Modified")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             bool flag = false;
@@ -75,6 +76,7 @@ namespace PsdzClient.Core
                 logger.Debug("OrExpression.Evaluate()", "operand: {0}", ruleExpression);
                 flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationServices, internalResult);
             }
+
             logger.Debug("OrExpression.Evaluate()", "validity: {0}", flag);
             return flag;
         }
@@ -90,6 +92,7 @@ namespace PsdzClient.Core
                     return eEvaluationResult;
                 }
             }
+
             return EEvaluationResult.INVALID;
         }
 
@@ -104,6 +107,7 @@ namespace PsdzClient.Core
                     return eEvaluationResult;
                 }
             }
+
             return EEvaluationResult.INVALID;
         }
 
@@ -130,6 +134,7 @@ namespace PsdzClient.Core
                             flag = true;
                             result = eEvaluationResult;
                         }
+
                         break;
                     case EEvaluationResult.MISSING_VARIANT:
                         missingVariants.AddRange(ruleExpression.GetUnknownVariantIds(ecus));
@@ -138,6 +143,7 @@ namespace PsdzClient.Core
                             flag = true;
                             result = eEvaluationResult;
                         }
+
                         break;
                     default:
                         throw new Exception("Unknown result");
@@ -145,6 +151,7 @@ namespace PsdzClient.Core
                         break;
                 }
             }
+
             return result;
         }
 
@@ -156,6 +163,7 @@ namespace PsdzClient.Core
             {
                 num += ruleExpression.GetExpressionCount();
             }
+
             return num;
         }
 
@@ -167,6 +175,7 @@ namespace PsdzClient.Core
             {
                 num += ruleExpression.GetMemorySize();
             }
+
             return num;
         }
 
@@ -212,6 +221,7 @@ namespace PsdzClient.Core
                     list.Add(ruleExpression);
                 }
             }
+
             operands = list.ToArray();
         }
 
@@ -227,23 +237,6 @@ namespace PsdzClient.Core
             }
         }
 
-        // [UH] added
-        public override string ToFormula(FormulaConfig formulaConfig)
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("(");
-            for (int i = 0; i < this.operands.Length; i++)
-            {
-                if (i > 0)
-                {
-                    stringBuilder.Append(" || ");
-                }
-                stringBuilder.Append(this.operands[i].ToFormula(formulaConfig));
-            }
-            stringBuilder.Append(")");
-            return stringBuilder.ToString();
-        }
-
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -254,8 +247,29 @@ namespace PsdzClient.Core
                 {
                     stringBuilder.Append(" OR ");
                 }
+
                 stringBuilder.Append(operands[i]);
             }
+
+            stringBuilder.Append(")");
+            return stringBuilder.ToString();
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("(");
+            for (int i = 0; i < this.operands.Length; i++)
+            {
+                if (i > 0)
+                {
+                    stringBuilder.Append(" || ");
+                }
+
+                stringBuilder.Append(this.operands[i].ToFormula(formulaConfig));
+            }
+
             stringBuilder.Append(")");
             return stringBuilder.ToString();
         }
