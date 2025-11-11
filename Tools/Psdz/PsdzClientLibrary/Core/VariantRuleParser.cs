@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -13,7 +14,7 @@ namespace PsdzClient.Core
         {
         }
 
-        // [UH] Removed dataProvider
+        [PreserveSource(Hint = "Modified")]
         public static RuleExpression Parse(string rule)
         {
             Stack<Symbol> stack = new Stack<Symbol>();
