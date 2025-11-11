@@ -1,28 +1,30 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
-	public class EcuVariantExpression : SingleAssignmentExpression
-	{
+    public class EcuVariantExpression : SingleAssignmentExpression
+    {
         public string VariantName { get; private set; }
-        
+
         public EcuVariantExpression()
-		{
-		}
+        {
+        }
 
-		public EcuVariantExpression(long ecuVariantId)
-		{
-			this.value = ecuVariantId;
-		}
+        public EcuVariantExpression(long ecuVariantId)
+        {
+            value = ecuVariantId;
+        }
 
-		public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+        [PreserveSource(Hint = "Modified")]
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
             {
@@ -74,39 +76,46 @@ namespace PsdzClient.Core
         }
 
         public override EEvaluationResult EvaluateVariantRule(ClientDefinition client, CharacteristicSet baseConfiguration, EcuConfiguration ecus)
-		{
-			if (ecus.EcuVariants.ToList<long>().BinarySearch(this.value) >= 0)
-			{
-				return EEvaluationResult.VALID;
-			}
-			if (ecus.UnknownEcuVariants.ToList<long>().BinarySearch(this.value) >= 0)
-			{
-				return EEvaluationResult.MISSING_VARIANT;
-			}
-			return EEvaluationResult.INVALID;
-		}
+        {
+            if (ecus.EcuVariants.ToList().BinarySearch(value) >= 0)
+            {
+                return EEvaluationResult.VALID;
+            }
 
-		public override IList<long> GetUnknownVariantIds(EcuConfiguration ecus)
-		{
-			List<long> list = new List<long>();
-			if (ecus.UnknownEcuVariants.ToList<long>().BinarySearch(this.value) >= 0)
-			{
-				list.Add(this.value);
-			}
-			return list;
-		}
+            if (ecus.UnknownEcuVariants.ToList().BinarySearch(value) >= 0)
+            {
+                return EEvaluationResult.MISSING_VARIANT;
+            }
 
-		public override void Serialize(MemoryStream ms)
-		{
-			ms.WriteByte(11);
-			base.Serialize(ms);
-		}
+            return EEvaluationResult.INVALID;
+        }
 
-        // [UH] added
+        public override IList<long> GetUnknownVariantIds(EcuConfiguration ecus)
+        {
+            List<long> list = new List<long>();
+            if (ecus.UnknownEcuVariants.ToList().BinarySearch(value) >= 0)
+            {
+                list.Add(value);
+            }
+
+            return list;
+        }
+
+        public override void Serialize(MemoryStream ms)
+        {
+            ms.WriteByte(11);
+            base.Serialize(ms);
+        }
+
+        public override string ToString()
+        {
+            return "EcuVariant=" + value.ToString(CultureInfo.InvariantCulture) + " (" + VariantName + ")";
+        }
+
+        [PreserveSource(Hint = "Added")]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.EcuVar ecuVariantById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
-            
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(FormulaSeparator(formulaConfig));
             stringBuilder.Append(formulaConfig.CheckStringFunc);
@@ -116,22 +125,10 @@ namespace PsdzClient.Core
             {
                 stringBuilder.Append(ecuVariantById.Name);
             }
+
             stringBuilder.Append("\")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-
             return stringBuilder.ToString();
         }
-
-		public override string ToString()
-		{
-			return string.Concat(new string[]
-			{
-				"EcuVariant=",
-				this.value.ToString(CultureInfo.InvariantCulture),
-				" (",
-				this.VariantName,
-				")"
-			});
-		}
     }
 }
