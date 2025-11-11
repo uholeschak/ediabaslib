@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using PsdzClient.Utility;
 using PsdzClientLibrary;
 
-#pragma warning disable CS0649
+#pragma warning disable CS0169
 namespace PsdzClient.Core
 {
     [Serializable]
