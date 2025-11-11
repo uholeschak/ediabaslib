@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Runtime.CompilerServices;
 
 namespace PsdzClient.Core
@@ -17,7 +18,7 @@ namespace PsdzClient.Core
 
         void WarningException(string method, Exception exception);
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null);
     }
 }
