@@ -43,8 +43,8 @@ namespace SourceCodeSync
 
         private static readonly string[] _ignoreInterfaceNames =
         [
-            "public_ILogger",
-            "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService"
+            "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService",
+            "BMW.Rheingold.ISTA.CoreFramework.ILogger"
         ];
 
         private static readonly string[] _ignoreEnumNames =
