@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -15,9 +16,10 @@ namespace PsdzClient.Core
 
         public ValidToExpression(DateTime date)
         {
-            this.value = date.ToBinary();
+            value = date.ToBinary();
         }
 
+        [PreserveSource(Hint = "Modified")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             bool flag = ((DateTime.Now <= DateTime.FromBinary(value)) ? true : false);
@@ -31,6 +33,7 @@ namespace PsdzClient.Core
             {
                 return EEvaluationResult.VALID;
             }
+
             return EEvaluationResult.INVALID;
         }
 
@@ -40,7 +43,12 @@ namespace PsdzClient.Core
             base.Serialize(ms);
         }
 
-        // [UH] added
+        public override string ToString()
+        {
+            return "ValidTo=" + DateTime.FromBinary(value).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
+        }
+
+        [PreserveSource(Hint = "Added")]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -51,13 +59,7 @@ namespace PsdzClient.Core
             stringBuilder.Append(this.value);
             stringBuilder.Append("\")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-
             return stringBuilder.ToString();
-        }
-
-        public override string ToString()
-        {
-            return "ValidTo=" + DateTime.FromBinary(value).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
         }
     }
 }

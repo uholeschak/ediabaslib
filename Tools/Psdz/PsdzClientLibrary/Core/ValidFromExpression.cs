@@ -1,7 +1,9 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace PsdzClient.Core
 {
@@ -14,10 +16,10 @@ namespace PsdzClient.Core
 
         public ValidFromExpression(DateTime date)
         {
-            this.value = date.ToBinary();
+            value = date.ToBinary();
         }
 
-        // [UH] arguments modified
+        [PreserveSource(Hint = "Modified")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             bool flag = true;
@@ -32,6 +34,7 @@ namespace PsdzClient.Core
             {
                 return EEvaluationResult.VALID;
             }
+
             return EEvaluationResult.INVALID;
         }
 
@@ -43,7 +46,21 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            return "ValidFrom=" + DateTime.FromBinary(this.value).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
+            return "ValidFrom=" + DateTime.FromBinary(value).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public override string ToFormula(FormulaConfig formulaConfig)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
+            stringBuilder.Append(formulaConfig.CheckLongFunc);
+            stringBuilder.Append("(\"ValidFrom\", ");
+            stringBuilder.Append("\"");
+            stringBuilder.Append(this.value);
+            stringBuilder.Append("\")");
+            stringBuilder.Append(FormulaSeparator(formulaConfig));
+            return stringBuilder.ToString();
         }
     }
 }
