@@ -1135,7 +1135,7 @@ namespace SourceCodeSync
                 PropertyDeclarationSyntax property => property.Identifier.Text,
                 FieldDeclarationSyntax field => field.Declaration.Variables.FirstOrDefault()?.Identifier.Text,
                 EventDeclarationSyntax eventDecl => eventDecl.Identifier.Text,
-                ConstructorDeclarationSyntax ctor => ctor.Identifier.Text,
+                ConstructorDeclarationSyntax ctor => ctor.Identifier.Text + "_" + ctor.ParameterList.Parameters.Count,
                 _ => null
             };
         }
