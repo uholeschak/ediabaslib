@@ -2,7 +2,7 @@
   "profiles": {
     "SourceCodeSync": {
       "commandName": "Project",
-      "commandLineArgs": "-v Error -s \"E:\\ISTA-D-4.56.10\\Source\" -d \"D:\\Projects\\EdiabasLib\\Tools\\Psdz\\PsdzClientLibrary\" -f \"Contracts;Core;Psdz;Programming;Utility;Vehicle\""
+      "commandLineArgs": "-v Error -s \"E:\\ISTA-D-4.56.10\\Source\" -d \"D:\\Projects\\EdiabasLib\\Tools\\Psdz\\PsdzClientLibrary\""
     }
   }
 }
