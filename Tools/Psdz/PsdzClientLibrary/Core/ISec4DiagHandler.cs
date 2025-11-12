@@ -43,6 +43,7 @@ namespace PsdzClient.Core
         AsymmetricKeyParameter GetPublicKeyFromEdiabas();
         Sec4DiagCertificateState SearchForCertificatesInWindowsStore(string caThumbPrint, string subCaThumbPrint, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate);
         void CreateS29CertificateInstallCertificatesAndWriteToFile(IVciDevice device, string subCa, string ca);
+        void CreateS29CertificateInstallCertificatesAndWriteToFileForAos(IVciDevice device, string subCa, string ca, string s29);
         BoolResultObject CertificatesAreFoundAndValid(IVciDevice device, X509Certificate2Collection subCaCertificate, X509Certificate2Collection caCertificate);
         bool CheckIfEdiabasPublicKeyExists();
         string ReadoutExpirationTime();

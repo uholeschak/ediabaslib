@@ -108,10 +108,10 @@ namespace BMW.Rheingold.Psdz
             IPsdzEcuPdxInfo psdzEcuPdxInfo = psdzEcu.PsdzEcuPdxInfo;
             if (psdzEcuPdxInfo != null && psdzEcuPdxInfo.IsSmartActuatorMaster)
             {
-                SmartActuatorMasterECU smartActuatorMasterECU = ecuInput as SmartActuatorMasterECU;
-                if (smartActuatorMasterECU == null)
+                if (!(ecuInput is SmartActuatorMasterECU smartActuatorMasterECU))
                 {
                     Log.Error(Log.CurrentMethod(), $"{ecuInput} is not a SmartActuatorMasterECU");
+                    return psdzEcu;
                 }
 
                 return new PsdzSmartActuatorMasterEcu(psdzEcu)
@@ -126,27 +126,34 @@ namespace BMW.Rheingold.Psdz
 
         private IPsdzEcuPdxInfo BuildPdxInfo(IEcuPdxInfo ecuPdxInfo)
         {
-            if (ecuPdxInfo != null)
+            if (ecuPdxInfo == null)
             {
-                return new PsdzEcuPdxInfo
-                {
-                    CertVersion = ecuPdxInfo.CertVersion,
-                    IsCert2018 = ecuPdxInfo.IsCert2018,
-                    IsCert2021 = ecuPdxInfo.IsCert2021,
-                    IsCertEnabled = ecuPdxInfo.IsCertEnabled,
-                    IsSecOcEnabled = ecuPdxInfo.IsSecOcEnabled,
-                    IsSfaEnabled = ecuPdxInfo.IsSfaEnabled,
-                    IsIPSecEnabled = ecuPdxInfo.IsIPSecEnabled,
-                    IsLcsServicePackSupported = ecuPdxInfo.IsLcsServicePackSupported,
-                    IsLcsSystemTimeSwitchSupported = ecuPdxInfo.IsLcsSystemTimeSwitchSupported,
-                    IsMirrorProtocolSupported = ecuPdxInfo.IsMirrorProtocolSupported,
-                    IsEcuAuthEnabled = ecuPdxInfo.IsEcuAuthEnabled,
-                    IsIPsecBitmaskSupported = ecuPdxInfo.IsIPsecBitmaskSupported,
-                    ProgrammingProtectionLevel = ecuPdxInfo.ProgrammingProtectionLevel
-                };
+                return null;
             }
 
-            return null;
+            return new PsdzEcuPdxInfo
+            {
+                CertVersion = ecuPdxInfo.CertVersion,
+                IsCert2018 = ecuPdxInfo.IsCert2018,
+                IsCert2021 = ecuPdxInfo.IsCert2021,
+                IsCert2025 = ecuPdxInfo.IsCert2025,
+                IsCertEnabled = ecuPdxInfo.IsCertEnabled,
+                IsSecOcEnabled = ecuPdxInfo.IsSecOcEnabled,
+                IsSfaEnabled = ecuPdxInfo.IsSfaEnabled,
+                IsIPSecEnabled = ecuPdxInfo.IsIPSecEnabled,
+                IsLcsServicePackSupported = ecuPdxInfo.IsLcsServicePackSupported,
+                IsLcsSystemTimeSwitchSupported = ecuPdxInfo.IsLcsSystemTimeSwitchSupported,
+                LcsIntegrityProtectionOCSupported = ecuPdxInfo.IsLcsIntegrityProtectionOCSupported,
+                LcsIukCluster = ecuPdxInfo.IsLcsIukCluster,
+                IsMACsecEnabled = ecuPdxInfo.IsMACsecEnabled,
+                IsMirrorProtocolSupported = ecuPdxInfo.IsMirrorProtocolSupported,
+                IsEcuAuthEnabled = ecuPdxInfo.IsEcuAuthEnabled,
+                IsIPsecBitmaskSupported = ecuPdxInfo.IsIPsecBitmaskSupported,
+                ProgrammingProtectionLevel = ecuPdxInfo.ProgrammingProtectionLevel,
+                IsSmartActuatorMaster = ecuPdxInfo.IsSmartActuatorMaster,
+                ServicePack = ecuPdxInfo.ServicePack,
+                AclEnabled = ecuPdxInfo.IsAclEnabled
+            };
         }
 
         public IPsdzEcuIdentifier BuildEcuIdentifier(IEcuIdentifier ecuIdentifier)

@@ -10,7 +10,7 @@ namespace PsdzClient.Core
             [EnumMember]
             crp_subCA_4ISTA,
             [EnumMember]
-            crp_M2M_3rdParty_4_CUST_ReadWriteControl
+            crp_PERS_Workshop_4_CUST_Programming
         }
     }
 }

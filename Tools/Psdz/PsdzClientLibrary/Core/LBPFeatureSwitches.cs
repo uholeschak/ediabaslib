@@ -15,8 +15,8 @@ namespace PsdzClient.Core
             public const string DumpStackOverflowException = "DumpStackOverflowException";
             public const string EarlyStartPsdzWebService = "EarlyStartPsdzWebService";
             public const string ExecuteServiceCallCertreqprofiles = "ExecuteServiceCallCertreqprofiles";
-            public const string ExpectedSgbmIdValidation = "ExpectedSgbmIdValidation";
-            public const string ExpectedSgbmIdValidationForSmacTransferStart = "ExpectedSgbmIdValidationForSmacTransferStart";
+            public const string ExpSgbmIdVal = "ExpSgbmIdVal";
+            public const string ExpSgbmIdValSmacTrnStrt = "ExpSgbmIdValSmacTrnStrt";
             public const string FastaSlowApiJobsSerivceCode = "FastaSlowApiJobsSerivceCode";
             public const string FdlGateOverTricCloud = "FdlGateOverTricCloud";
             public const string FillFunctionalJobsInFstdatIsActive = "FillFunctionalJobsInFstdatIsActive";
@@ -62,11 +62,10 @@ namespace PsdzClient.Core
                 switch (featureName)
                 {
                     case "CheckRemoteUserDbStatusJob":
+                    case "ConwoyStorage":
                     case "ExecuteServiceCallCertreqprofiles":
                     case "FastaSlowApiJobsSerivceCode":
                     case "EarlyStartPsdzWebService":
-                    case "ExpectedSgbmIdValidation":
-                    case "ExpectedSgbmIdValidationForSmacTransferStart":
                     case "FixedWebView2Runtime":
                     case "KaiServiceHistory":
                     case "Login":
@@ -88,9 +87,8 @@ namespace PsdzClient.Core
             {
                 switch (featureName)
                 {
+                    case "ConwoyStorage":
                     case "ExecuteServiceCallCertreqprofiles":
-                    case "ExpectedSgbmIdValidation":
-                    case "ExpectedSgbmIdValidationForSmacTransferStart":
                     case "FastaSlowApiJobsSerivceCode":
                     case "FixedWebView2Runtime":
                     case "KaiServiceHistory":
@@ -110,9 +108,8 @@ namespace PsdzClient.Core
             {
                 switch (featureName)
                 {
+                    case "ConwoyStorage":
                     case "ExecuteServiceCallCertreqprofiles":
-                    case "ExpectedSgbmIdValidation":
-                    case "ExpectedSgbmIdValidationForSmacTransferStart":
                     case "FastaSlowApiJobsSerivceCode":
                     case "FixedWebView2Runtime":
                     case "RenewConnectionAfterEcuReset":

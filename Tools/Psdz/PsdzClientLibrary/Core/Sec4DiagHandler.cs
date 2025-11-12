@@ -20,7 +20,9 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Text;
 using System;
+using PsdzClientLibrary;
 
+#pragma warning disable CS0618
 namespace PsdzClient.Core
 {
     public sealed class Sec4DiagHandler : ISec4DiagHandler
@@ -45,7 +47,7 @@ namespace PsdzClient.Core
 
         private string _certificateFileNameWithoutEnding { get; } = $"certificates_{Process.GetCurrentProcess().Id}";
 
-        // [UH] istaFolder added
+        [PreserveSource(Hint = "istaFolder added")]
         public Sec4DiagHandler(string istaFolder = null)
         {
             if (!string.IsNullOrEmpty(istaFolder))
@@ -81,7 +83,7 @@ namespace PsdzClient.Core
             string empty = string.Empty;
             if (ConfigSettings.IsOssModeActive)
             {
-                empty = CertReqProfile.EnumType.crp_M2M_3rdParty_4_CUST_ReadWriteControl.ToString();
+                empty = CertReqProfile.EnumType.crp_PERS_Workshop_4_CUST_Programming.ToString();
                 return new Sec4DiagRequestData
                 {
                     CertReqProfile = empty,
@@ -90,13 +92,15 @@ namespace PsdzClient.Core
                 };
             }
             empty = CertReqProfile.EnumType.crp_subCA_4ISTA.ToString();
-            Sec4DiagRequestData sec4DiagRequestData = new Sec4DiagRequestData();
-            sec4DiagRequestData.CertReqProfile = empty;
-            sec4DiagRequestData.Vin17 = vin17;
-            sec4DiagRequestData.PublicKey = "";
-            sec4DiagRequestData.ProofOfPossession = new ProofOfPossession
+            Sec4DiagRequestData sec4DiagRequestData = new Sec4DiagRequestData
             {
-                SignatureType = "SHA512withECDSA"
+                CertReqProfile = empty,
+                Vin17 = vin17,
+                PublicKey = "",
+                ProofOfPossession = new ProofOfPossession
+                {
+                    SignatureType = "SHA512withECDSA"
+                }
             };
             string publicKey = ConvertToPEM(IstaKeyPair.Public);
             string message = vin17 + empty;
@@ -130,7 +134,6 @@ namespace PsdzClient.Core
             }
         }
 
-#pragma warning disable CS0618 // Typ oder Element ist veraltet
         public X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, string vin)
         {
             X509Name subject = GetSubject(vin);
@@ -159,7 +162,6 @@ namespace PsdzClient.Core
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", IstaKeyPair.Private);
             return new X509Certificate2(x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded());
         }
-#pragma warning restore CS0618 // Typ oder Element ist veraltet
 
         public AsymmetricCipherKeyPair GenerateKeyPair()
         {
@@ -345,13 +347,42 @@ namespace PsdzClient.Core
             Log.Info(Log.CurrentMethod(), "Certificates installed and written to file. Thumbprint added to Registry.");
         }
 
-        // [UH] using arg certificate parameter instead of Sec4DiagCertificates property
+        public void CreateS29CertificateInstallCertificatesAndWriteToFileForAos(IVciDevice device, string subCa, string ca, string s29)
+        {
+            Org.BouncyCastle.X509.X509Certificate x509Certificate = CreateCertificateFromBase64(subCa);
+            Org.BouncyCastle.X509.X509Certificate x509Certificate2 = CreateCertificateFromBase64(ca);
+            Org.BouncyCastle.X509.X509Certificate x509Certificate3 = CreateCertificateFromBase64(s29);
+            Sec4DiagCertificates = new Sec4DiagCertificates
+            {
+                SubCaCert = new X509Certificate2(x509Certificate.GetEncoded()),
+                CaCert = new X509Certificate2(x509Certificate2.GetEncoded()),
+                S29Cert = new X509Certificate2(x509Certificate3.GetEncoded())
+            };
+            WriteCertificateToFile(Sec4DiagCertificates);
+            Log.Info(Log.CurrentMethod(), "Certificates are written to file.");
+        }
+
+        public void CreateS29CertificateInstallCertificatesAndWriteToFileForAOS(IVciDevice device, string subCa, string ca, string s29)
+        {
+            Org.BouncyCastle.X509.X509Certificate x509Certificate = CreateCertificateFromBase64(subCa);
+            Org.BouncyCastle.X509.X509Certificate x509Certificate2 = CreateCertificateFromBase64(ca);
+            Org.BouncyCastle.X509.X509Certificate x509Certificate3 = CreateCertificateFromBase64(s29);
+            Sec4DiagCertificates = new Sec4DiagCertificates
+            {
+                SubCaCert = new X509Certificate2(x509Certificate.GetEncoded()),
+                CaCert = new X509Certificate2(x509Certificate2.GetEncoded()),
+                S29Cert = new X509Certificate2(x509Certificate3.GetEncoded())
+            };
+            WriteCertificateToFile(Sec4DiagCertificates);
+            Log.Info(Log.CurrentMethod(), "Certificates are written to file.");
+        }
+
         private void InstallCertificates(ISec4DiagCertificates sec4DiagCertificates)
         {
-            ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", sec4DiagCertificates.CaCert.Thumbprint, overrideIsMaster: true);
-            ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", sec4DiagCertificates.SubCaCert.Thumbprint, overrideIsMaster: true);
-            InstallCertificate(sec4DiagCertificates.SubCaCert);
-            InstallCertificate(sec4DiagCertificates.CaCert);
+            ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", Sec4DiagCertificates.CaCert.Thumbprint, overrideIsMaster: true);
+            ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", Sec4DiagCertificates.SubCaCert.Thumbprint, overrideIsMaster: true);
+            InstallCertificate(Sec4DiagCertificates.SubCaCert);
+            InstallCertificate(Sec4DiagCertificates.CaCert);
         }
 
         public BoolResultObject CertificatesAreFoundAndValid(IVciDevice device, X509Certificate2Collection subCaCertificate, X509Certificate2Collection caCertificate)
