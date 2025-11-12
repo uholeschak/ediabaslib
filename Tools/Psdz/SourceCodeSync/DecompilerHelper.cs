@@ -55,8 +55,21 @@ public class DecompilerHelper
         MetadataModule module = decompiler.TypeSystem.MainModule;
         foreach (var type in module.TopLevelTypeDefinitions)
         {
-            if (type.Kind == TypeKind.Delegate || type.IsCompilerGenerated())
+            if (type.Name == "<Module>")
+            {
                 continue;
+            }
+
+
+            if (type.IsCompilerGenerated())
+            {
+                continue;
+            }
+
+            if (type.Kind == TypeKind.Delegate)
+            {
+                continue;
+            }
 
             // Erstelle Namespace-Verzeichnis
             string namespacePath = type.Namespace.Replace('.', Path.DirectorySeparatorChar);
@@ -64,7 +77,13 @@ public class DecompilerHelper
             Directory.CreateDirectory(typeDirectory);
 
             // Dateiname basierend auf Typnamen
-            string fileName = SanitizeFileName(type.Name) + ".cs";
+            string typeName = type.Name;
+            if (type.TypeArguments.Count > 0)
+            {
+                typeName += "_" + type.TypeArguments.Count;
+            }
+
+            string fileName = SanitizeFileName(typeName) + ".cs";
             string filePath = Path.Combine(typeDirectory, fileName);
 
             // Dekompiliere den Typ
