@@ -36,6 +36,7 @@ namespace SourceCodeSync
             "internal_sealed_LicenseManager",
             "public_LicenseStatusChecker",
             "public_LicenseWizardHelper",
+            "internal_CharacteristicsGenerator",
             "BMW.Rheingold.Programming.Common.SecureCodingService",
             "BMW.Rheingold.Programming.ProgrammingService",
             "BMW.iLean.CommonServices.Logging.Extensions"
