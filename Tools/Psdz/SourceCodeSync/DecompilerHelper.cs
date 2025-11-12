@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
-using ICSharpCode.Decompiler.CSharp.OutputVisitor;
-using ICSharpCode.Decompiler.TypeSystem;
 using System.IO;
 using ICSharpCode.Decompiler.Metadata;
+using ICSharpCode.Decompiler.CSharp.OutputVisitor;
 
 namespace SourceCodeSync;
 
@@ -24,10 +23,15 @@ public class DecompilerHelper
                 resolver.AddSearchDirectory(path);
             }
         }
+
+        CSharpFormattingOptions formattingOptions = FormattingOptionsFactory.CreateAllman();
+        formattingOptions.IndentationString = "    "; // 4 Leerzeichen statt Tabs
+
         DecompilerSettings settings = new DecompilerSettings
         {
             ThrowOnAssemblyResolveErrors = false,
             UseDebugSymbols = true,
+            CSharpFormattingOptions = formattingOptions
         };
         settings.SetLanguageVersion(LanguageVersion.CSharp7_3);
 
