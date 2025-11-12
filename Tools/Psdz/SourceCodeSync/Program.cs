@@ -238,12 +238,12 @@ namespace SourceCodeSync
                     string assemblyPath = Path.Combine(assemblyDir, assemblyName + ".dll");
                     if (File.Exists(assemblyPath))
                     {
-                        string sourceFile = Path.Combine(sourceDir, assemblyName + ".cs");
-                        if (File.Exists(sourceFile))
+                        string outputPath = Path.Combine(sourceDir, assemblyName);
+                        if (Directory.Exists(outputPath))
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine("Source file already exists, skipping decompilation: {0}", sourceFile);
+                                Console.WriteLine("Source directory already exists, skipping decompilation: {0}", outputPath);
                             }
                             continue;
                         }
@@ -255,7 +255,13 @@ namespace SourceCodeSync
 
                         try
                         {
-                            DecompilerHelper.DecompileToFile(assemblyPath, sourceFile, searchList);
+                            if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList))
+                            {
+                                if (_verbosity >= Options.VerbosityOption.Error)
+                                {
+                                    Console.WriteLine("*** Decompilation failed for assembly: {0}", assemblyPath);
+                                }
+                            }
                         }
                         catch (Exception ex)
                         {

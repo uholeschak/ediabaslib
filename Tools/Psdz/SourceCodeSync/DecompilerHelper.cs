@@ -1,16 +1,23 @@
-﻿using System.Collections.Generic;
-using ICSharpCode.Decompiler;
+﻿using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.CSharp;
-using System.IO;
-using ICSharpCode.Decompiler.Metadata;
 using ICSharpCode.Decompiler.CSharp.OutputVisitor;
+using ICSharpCode.Decompiler.Metadata;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using ICSharpCode.Decompiler.TypeSystem;
 
 namespace SourceCodeSync;
 
 public class DecompilerHelper
 {
-    public static string DecompileAssembly(string dllPath, List<string> searchList = null)
+    public static bool DecompileAssembly(string dllPath, string outputPath, List<string> searchList = null)
     {
+        if (string.IsNullOrEmpty(outputPath))
+        {
+            return false;
+        }
+
         UniversalAssemblyResolver resolver = new UniversalAssemblyResolver(
             dllPath,
             throwOnError: false,
@@ -40,14 +47,44 @@ public class DecompilerHelper
         // Erstellen Sie einen Decompiler mit Einstellungen
         CSharpDecompiler decompiler = new CSharpDecompiler(dllPath, resolver, settings);
 
-        // Dekompilieren Sie die gesamte Assembly
-        string decompiledCode = decompiler.DecompileWholeModuleAsString();
-        return decompiledCode;
+        if (!Directory.Exists(outputPath))
+        {
+            Directory.CreateDirectory(outputPath);
+        }
+
+        MetadataModule module = decompiler.TypeSystem.MainModule;
+        foreach (var type in module.TopLevelTypeDefinitions)
+        {
+            if (type.Kind == TypeKind.Delegate || type.IsCompilerGenerated())
+                continue;
+
+            // Erstelle Namespace-Verzeichnis
+            string namespacePath = type.Namespace.Replace('.', Path.DirectorySeparatorChar);
+            string typeDirectory = Path.Combine(outputPath, namespacePath);
+            Directory.CreateDirectory(typeDirectory);
+
+            // Dateiname basierend auf Typnamen
+            string fileName = SanitizeFileName(type.Name) + ".cs";
+            string filePath = Path.Combine(typeDirectory, fileName);
+
+            // Dekompiliere den Typ
+            string typeCode = decompiler.DecompileTypeAsString(type.FullTypeName);
+            File.WriteAllText(filePath, typeCode);
+        }
+
+        return true;
     }
 
-    public static void DecompileToFile(string dllPath, string outputPath, List<string> searchList = null)
+    private static string SanitizeFileName(string fileName)
     {
-        string decompiledCode = DecompileAssembly(dllPath, searchList);
-        File.WriteAllText(outputPath, decompiledCode);
+        // Entferne ungültige Zeichen aus Dateinamen
+        char[] invalidChars = Path.GetInvalidFileNameChars();
+        foreach (char c in invalidChars)
+        {
+            fileName = fileName.Replace(c, '_');
+        }
+        // Entferne generische Parameter-Marker
+        fileName = fileName.Replace('<', '_').Replace('>', '_').Replace('`', '_');
+        return fileName;
     }
 }
