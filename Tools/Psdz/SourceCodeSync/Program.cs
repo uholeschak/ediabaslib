@@ -157,13 +157,50 @@ namespace SourceCodeSync
                     return 1;
                 }
 
-                if (string.IsNullOrEmpty(sourceDir) || !Directory.Exists(sourceDir))
+                if (string.IsNullOrEmpty(sourceDir))
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
                     {
-                        Console.WriteLine("Source directory not existing: {0}", sourceDir);
+                        Console.WriteLine("Source directory missing");
                     }
                     return 1;
+                }
+
+                if (!Path.IsPathRooted(sourceDir))
+                {
+                    // sourceDir is relative, combine it with assemblyDir
+                    sourceDir = Path.Combine(assemblyDir, sourceDir);
+                    if (_verbosity >= Options.VerbosityOption.Info)
+                    {
+                        Console.WriteLine("Source directory is relative, combined with assembly directory: {0}", sourceDir);
+                    }
+
+                    if (!Directory.Exists(sourceDir))
+                    {
+                        try
+                        {
+                            Directory.CreateDirectory(sourceDir);
+                        }
+                        catch (Exception e)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Create source directory failed: {0}, Exception: {1}", sourceDir, e.Message);
+                            }
+                            return 1;
+                        }
+                    }
+                }
+                else
+                {
+                    if (!Directory.Exists(sourceDir))
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("Source directory not existing: {0}", sourceDir);
+                        }
+                        return 1;
+                    }
                 }
 
                 if (string.IsNullOrEmpty(assemblyDir) || !Directory.Exists(assemblyDir))
