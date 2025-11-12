@@ -228,6 +228,7 @@ namespace SourceCodeSync
                 }
 
                 Console.WriteLine("Assembly dir: {0}", assemblyDir);
+                Console.WriteLine("Source dir: {0}", sourceDir);
                 Console.WriteLine();
 
                 List<string> searchList = new List<string>() { assemblyDir };
@@ -236,6 +237,16 @@ namespace SourceCodeSync
                     string assemblyPath = Path.Combine(assemblyDir, assemblyName + ".dll");
                     if (File.Exists(assemblyPath))
                     {
+                        string sourceFile = Path.Combine(sourceDir, assemblyName + ".cs");
+                        if (File.Exists(sourceFile))
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                Console.WriteLine("Source file already exists, skipping decompilation: {0}", sourceFile);
+                            }
+                            continue;
+                        }
+
                         if (_verbosity >= Options.VerbosityOption.Info)
                         {
                             Console.WriteLine("Decompiling assembly: {0}", assemblyPath);
@@ -243,7 +254,7 @@ namespace SourceCodeSync
 
                         try
                         {
-                            DecompilerHelper.DecompileToFile(assemblyPath, Path.Combine(sourceDir, assemblyName + ".cs"), searchList);
+                            DecompilerHelper.DecompileToFile(assemblyPath, sourceFile, searchList);
                         }
                         catch (Exception ex)
                         {
@@ -261,9 +272,6 @@ namespace SourceCodeSync
                         }
                     }
                 }
-
-                Console.WriteLine("Source dir: {0}", sourceDir);
-                Console.WriteLine();
 
                 string[] sourceFiles = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in sourceFiles)
