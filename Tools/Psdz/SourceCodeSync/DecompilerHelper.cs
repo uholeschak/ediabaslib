@@ -24,19 +24,15 @@ public class DecompilerHelper
                 resolver.AddSearchDirectory(path);
             }
         }
-
-        // Erstellen Sie einen Decompiler mit Einstellungen
-        CSharpDecompiler decompiler = new CSharpDecompiler(dllPath, resolver, new DecompilerSettings
+        DecompilerSettings settings = new DecompilerSettings
         {
             ThrowOnAssemblyResolveErrors = false,
-            CSharpFormattingOptions = FormattingOptionsFactory.CreateAllman(),
             UseDebugSymbols = true,
-            RemoveDeadCode = false,
-            ArrayInitializers = true,
-            AutomaticEvents = true,
-            AutomaticProperties = true,
-            UsingDeclarations = true
-        });
+        };
+        settings.SetLanguageVersion(LanguageVersion.CSharp7_3);
+
+        // Erstellen Sie einen Decompiler mit Einstellungen
+        CSharpDecompiler decompiler = new CSharpDecompiler(dllPath, resolver, settings);
 
         // Dekompilieren Sie die gesamte Assembly
         string decompiledCode = decompiler.DecompileWholeModuleAsString();
