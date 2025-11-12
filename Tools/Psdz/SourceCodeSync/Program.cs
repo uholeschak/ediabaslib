@@ -219,7 +219,7 @@ namespace SourceCodeSync
                     }
                     else
                     {
-                        if (_verbosity >= Options.VerbosityOption.Warning)
+                        if (_verbosity >= Options.VerbosityOption.Error)
                         {
                             Console.WriteLine("*** Assembly not found for decompilation: {0}", assemblyPath);
                         }
