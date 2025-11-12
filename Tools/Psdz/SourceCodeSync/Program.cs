@@ -176,7 +176,7 @@ namespace SourceCodeSync
                 if (!Path.IsPathRooted(sourceDir))
                 {
                     // sourceDir is relative, combine it with assemblyDir
-                    sourceDir = Path.Combine(assemblyDir, sourceDir);
+                    sourceDir = Path.GetFullPath(Path.Combine(assemblyDir, sourceDir));
                     if (_verbosity >= Options.VerbosityOption.Info)
                     {
                         Console.WriteLine("Source directory is relative, combined with assembly directory: {0}", sourceDir);
