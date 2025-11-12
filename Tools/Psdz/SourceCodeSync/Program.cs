@@ -60,7 +60,6 @@ namespace SourceCodeSync
             "BMW.ISPI.TRIC.ISTA.FusionReactor",
             "BMW.ISPI.TRIC.ISTA.MultisourceLogic",
             "BMW.ISPI.TRIC.ISTA.RuleEvaluation",
-            "BMW.Rheingold.CoreFramework.IndustrialCustomer.Common",
             "CommonServices",
             "DiagnosticsBusinessData",
             "IstaServicesContract",
