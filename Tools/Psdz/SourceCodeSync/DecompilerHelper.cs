@@ -31,6 +31,8 @@ public class DecompilerHelper
         {
             ThrowOnAssemblyResolveErrors = false,
             UseDebugSymbols = true,
+            UsingDeclarations = true,
+            UsingStatement = true,
             CSharpFormattingOptions = formattingOptions
         };
         settings.SetLanguageVersion(LanguageVersion.CSharp7_3);
