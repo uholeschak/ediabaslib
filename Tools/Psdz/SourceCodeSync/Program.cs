@@ -81,6 +81,7 @@ namespace SourceCodeSync
             public Options()
             {
                 SourceDir = string.Empty;
+                AssemblyDir = string.Empty;
                 DestDir = string.Empty;
                 Filter = string.Empty;
                 Verbosity = VerbosityOption.Error;
@@ -97,6 +98,9 @@ namespace SourceCodeSync
 
             [Option('s', "sourcedir", Required = true, HelpText = "Source directory.")]
             public string SourceDir { get; set; }
+
+            [Option('a', "assemblydir", Required = true, HelpText = "Assembly directory.")]
+            public string AssemblyDir { get; set; }
 
             [Option('d', "destdir", Required = true, HelpText = "Destination directory.")]
             public string DestDir { get; set; }
@@ -115,6 +119,7 @@ namespace SourceCodeSync
             try
             {
                 string sourceDir = null;
+                string assemblyDir = null;
                 string destDir = null;
                 string filter = null;
                 bool hasErrors = false;
@@ -131,6 +136,7 @@ namespace SourceCodeSync
                     .WithParsed<Options>(o =>
                     {
                         sourceDir = o.SourceDir;
+                        assemblyDir = o.AssemblyDir;
                         destDir = o.DestDir;
                         filter = o.Filter;
                         _verbosity = o.Verbosity;
@@ -161,6 +167,15 @@ namespace SourceCodeSync
                     return 1;
                 }
 
+                if (string.IsNullOrEmpty(assemblyDir) || !Directory.Exists(assemblyDir))
+                {
+                    if (_verbosity >= Options.VerbosityOption.Error)
+                    {
+                        Console.WriteLine("Assembly directory not existing: {0}", assemblyDir);
+                    }
+                    return 1;
+                }
+
                 if (string.IsNullOrEmpty(destDir) || !Directory.Exists(destDir))
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
@@ -174,6 +189,41 @@ namespace SourceCodeSync
                 if (!string.IsNullOrEmpty(filter))
                 {
                     filterParts = filter.Split(';');
+                }
+
+                Console.WriteLine("Assembly dir: {0}", assemblyDir);
+                Console.WriteLine();
+
+                List<string> searchList = new List<string>() { assemblyDir };
+                foreach (string assemblyName in _decompileAssemblies)
+                {
+                    string assemblyPath = Path.Combine(assemblyDir, assemblyName + ".dll");
+                    if (File.Exists(assemblyPath))
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Info)
+                        {
+                            Console.WriteLine("Decompiling assembly: {0}", assemblyPath);
+                        }
+
+                        try
+                        {
+                            DecompilerHelper.DecompileToFile(assemblyPath, Path.Combine(sourceDir, assemblyName + ".cs"), searchList);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("*** Decompilation failed for assembly: {0}, Exception: {1}", assemblyPath, ex.Message);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Warning)
+                        {
+                            Console.WriteLine("*** Assembly not found for decompilation: {0}", assemblyPath);
+                        }
+                    }
                 }
 
                 Console.WriteLine("Source dir: {0}", sourceDir);

@@ -40,13 +40,12 @@ public class DecompilerHelper
 
         // Dekompilieren Sie die gesamte Assembly
         string decompiledCode = decompiler.DecompileWholeModuleAsString();
-
         return decompiledCode;
     }
 
-    public static void DecompileToFile(string dllPath, string outputPath)
+    public static void DecompileToFile(string dllPath, string outputPath, List<string> searchList = null)
     {
-        var decompiledCode = DecompileAssembly(dllPath);
+        string decompiledCode = DecompileAssembly(dllPath, searchList);
         File.WriteAllText(outputPath, decompiledCode);
     }
 }
