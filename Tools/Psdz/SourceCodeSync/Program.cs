@@ -84,6 +84,7 @@ namespace SourceCodeSync
                 AssemblyDir = string.Empty;
                 DestDir = string.Empty;
                 Filter = string.Empty;
+                Overwrite = false;
                 Verbosity = VerbosityOption.Error;
             }
 
@@ -108,6 +109,9 @@ namespace SourceCodeSync
             [Option('f', "filter", Required = false, HelpText = "Directory filter.")]
             public string Filter { get; set; }
 
+            [Option('o', "overwrite", Required = false, HelpText = "Option to overwrite existing files.")]
+            public bool Overwrite { get; set; }
+
             [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
             public VerbosityOption Verbosity { get; set; }
         }
@@ -122,6 +126,7 @@ namespace SourceCodeSync
                 string assemblyDir = null;
                 string destDir = null;
                 string filter = null;
+                bool overwrite = false;
                 bool hasErrors = false;
 
                 Parser parser = new Parser(with =>
@@ -139,6 +144,7 @@ namespace SourceCodeSync
                         assemblyDir = o.AssemblyDir;
                         destDir = o.DestDir;
                         filter = o.Filter;
+                        overwrite = o.Overwrite;
                         _verbosity = o.Verbosity;
                     })
                     .WithNotParsed(errs =>
@@ -241,11 +247,18 @@ namespace SourceCodeSync
                         string outputPath = Path.Combine(sourceDir, assemblyName);
                         if (Directory.Exists(outputPath))
                         {
-                            if (_verbosity >= Options.VerbosityOption.Info)
+                            if (overwrite)
                             {
-                                Console.WriteLine("Source directory already exists, skipping decompilation: {0}", outputPath);
+                                Directory.Delete(outputPath, true);
                             }
-                            continue;
+                            else
+                            {
+                                if (_verbosity >= Options.VerbosityOption.Info)
+                                {
+                                    Console.WriteLine("Source directory already exists, skipping decompilation: {0}", outputPath);
+                                }
+                                continue;
+                            }
                         }
 
                         if (_verbosity >= Options.VerbosityOption.Info)
