@@ -52,6 +52,30 @@ namespace SourceCodeSync
             "BMW.iLean.CommonServices.Logging.EventKind",
         ];
 
+        private static readonly string[] _decompileAssemblies =
+        [
+            "BMW.ISPI.TRIC.ISTA.Common",
+            "BMW.ISPI.TRIC.ISTA.Contracts",
+            "BMW.ISPI.TRIC.ISTA.DiagnosticsBusinessDataCore",
+            "BMW.ISPI.TRIC.ISTA.FusionReactor",
+            "BMW.ISPI.TRIC.ISTA.MultisourceLogic",
+            "BMW.ISPI.TRIC.ISTA.RuleEvaluation",
+            "BMW.Rheingold.CoreFramework.IndustrialCustomer.Common",
+            "CommonServices",
+            "DiagnosticsBusinessData",
+            "IstaServicesContract",
+            "RheingoldCoreContracts",
+            "RheingoldCoreFramework",
+            "RheingoldDiagnostics",
+            "RheingoldInfoProvider",
+            "RheingoldISPINext",
+            "RheingoldISTACoreFramework",
+            "RheingoldProgramming",
+            "RheingoldPsdzWebApi.Adapter",
+            "RheingoldPsdzWebApi.Adapter.Contracts",
+            "RheingoldVehicleCommunication"
+        ];
+
         public class Options
         {
             public Options()
