@@ -16,10 +16,8 @@ namespace PsdzClient.Core
         private readonly long datavalueId;
         private string characteristicRoot;
         private string characteristicValue;
-
         [PreserveSource(Hint = "Modified")]
         private readonly PsdzDatabase dataProvider;
-
         private ILogger logger;
         public long DataClassId => dataclassId;
         public long DataValueId => datavalueId;
@@ -158,24 +156,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            string[] obj = new string[8]
-            {
-                CharacteristicRoot,
-                "=",
-                CharacteristicValue,
-                " [",
-                null,
-                null,
-                null,
-                null
-            };
-            long num = dataclassId;
-            obj[4] = num.ToString(CultureInfo.InvariantCulture);
-            obj[5] = "=";
-            num = datavalueId;
-            obj[6] = num.ToString(CultureInfo.InvariantCulture);
-            obj[7] = "]";
-            return string.Concat(obj);
+            return CharacteristicRoot + "=" + CharacteristicValue + " [" + dataclassId.ToString(CultureInfo.InvariantCulture) + "=" + datavalueId.ToString(CultureInfo.InvariantCulture) + "]";
         }
 
         [PreserveSource(Hint = "Modified")]
@@ -187,6 +168,7 @@ namespace PsdzClient.Core
             {
                 result = characteristicRootsById.EcuTranslation.TextDe;
             }
+
             return result;
         }
 

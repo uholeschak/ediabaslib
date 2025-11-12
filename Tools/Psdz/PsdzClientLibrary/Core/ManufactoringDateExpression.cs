@@ -203,9 +203,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            string text = GetOperator();
-            long num = datevalue;
-            return "Produktionsdatum " + text + " " + num.ToString(CultureInfo.InvariantCulture);
+            return "Produktionsdatum " + GetOperator() + " " + datevalue.ToString(CultureInfo.InvariantCulture);
         }
 
         private string GetOperator()

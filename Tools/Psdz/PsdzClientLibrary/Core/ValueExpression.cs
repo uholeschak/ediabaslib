@@ -62,8 +62,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            long num = value;
-            return num.ToString(CultureInfo.InvariantCulture);
+            return value.ToString(CultureInfo.InvariantCulture);
         }
 
         [PreserveSource(Hint = "Added")]

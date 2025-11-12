@@ -205,10 +205,10 @@ namespace PsdzClient.Core
             string text = iLevel;
             if (iLevel.Contains("|"))
             {
-                text = iLevel.Split(new char[1] { '|' })[1];
+                text = iLevel.Split('|')[1];
             }
 
-            return text.Split(new char[1] { '-' });
+            return text.Split('-');
         }
 
         private string GetILevelTypeDescription()

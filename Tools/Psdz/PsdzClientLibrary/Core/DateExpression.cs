@@ -178,9 +178,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            string text = GetOperator();
-            long num = datevalue;
-            return "Baustand " + text + " " + num.ToString(CultureInfo.InvariantCulture);
+            return "Baustand " + GetOperator() + " " + datevalue.ToString(CultureInfo.InvariantCulture);
         }
 
         private string GetOperator()

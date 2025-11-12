@@ -98,17 +98,7 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            string[] obj = new string[5]
-            {
-                variableName.ToString(CultureInfo.InvariantCulture),
-                " ",
-                GetOperator(),
-                " ",
-                null
-            };
-            double num = variableValue;
-            obj[4] = num.ToString(CultureInfo.InvariantCulture);
-            return string.Concat(obj);
+            return variableName.ToString(CultureInfo.InvariantCulture) + " " + GetOperator() + " " + variableValue.ToString(CultureInfo.InvariantCulture);
         }
 
         private string GetOperator()
