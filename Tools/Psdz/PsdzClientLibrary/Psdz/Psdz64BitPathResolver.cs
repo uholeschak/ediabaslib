@@ -7,21 +7,7 @@ namespace PsdzClient.Programming
 {
     public static class Psdz64BitPathResolver
     {
-        private static readonly Lazy<bool> force64Bit = new Lazy<bool>(delegate
-        {
-#if false
-            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
-            {
-                if (istaIcsServiceClient.IsAvailable() || IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
-                {
-                    return istaIcsServiceClient.GetFeatureEnabledStatus("ForceUsingJava64Bit", istaIcsServiceClient.IsAvailable()).IsActive;
-                }
-            }
-#endif
-            return false;
-        });
-
-        public static bool Force64Bit => force64Bit.Value;
+        // Force64Bit removed
 
         // [UH] modified
         public static string GetPsdzPath(string istaFolder)
