@@ -2486,7 +2486,7 @@ namespace CarSimulator
             System.Net.NetworkInformation.NetworkInterface[] adapters = System.Net.NetworkInformation.NetworkInterface.GetAllNetworkInterfaces();
             foreach (System.Net.NetworkInformation.NetworkInterface adapter in adapters)
             {
-                if (adapter.OperationalStatus == System.Net.NetworkInformation.OperationalStatus.Up)
+                if (adapter.OperationalStatus != System.Net.NetworkInformation.OperationalStatus.Down)
                 {
                     System.Net.NetworkInformation.IPInterfaceProperties properties = adapter.GetIPProperties();
                     if (properties?.UnicastAddresses != null)
