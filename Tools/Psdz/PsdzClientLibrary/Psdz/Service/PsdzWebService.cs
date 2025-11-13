@@ -9,14 +9,15 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using PsdzClient;
+using PsdzClientLibrary;
 
 namespace BMW.Rheingold.Psdz
 {
     public class PsdzWebService : IPsdzWebService
     {
-        private const string JavaInstalationErrorMessage = "{0} Valiation - {1}";
+        private const string JavaInstalationErrorMessage = "{0} Validation - {1}";
 
-        private const string JavaVersion = "17.0.10";
+        private readonly Version _expectedJREVersion = new Version(17, 0, 10);
 
         private readonly string _psdzWebApiLogDir;
 
@@ -27,9 +28,6 @@ namespace BMW.Rheingold.Psdz
         private readonly ManualResetEvent _terminationSignal = new ManualResetEvent(initialState: false);
 
         private readonly Func<bool> _isPsdzInitialized;
-
-        // [UH] added
-        private readonly string _istaFolder;
 
         private IWebCallHandler webCallHandler;
 
@@ -81,7 +79,11 @@ namespace BMW.Rheingold.Psdz
 
         public IProgrammingTokenService ProgrammingTokenService { get; private set; }
 
-        // [UH] istaFolder added
+
+        [PreserveSource(Hint = "Added")]
+        private readonly string _istaFolder;
+
+        [PreserveSource(Hint = "istaFolder added")]
         public PsdzWebService(string psdzWebAPILogDir, Func<bool> isPsdzInitialized, string istaFolder)
         {
             _psdzWebApiLogDir = psdzWebAPILogDir;
@@ -311,7 +313,7 @@ namespace BMW.Rheingold.Psdz
         {
             if (jarPath == null || !File.Exists(jarPath))
             {
-                error = string.Format("{0} Valiation - {1}", "Jar Path", "Path " + jarPath + " for the .jar file not found!");
+                error = string.Format("{0} Validation - {1}", "Jar Path", "Path " + jarPath + " for the .jar file not found!");
                 Log.Error(Log.CurrentMethod(), error);
                 return false;
             }
@@ -344,22 +346,32 @@ namespace BMW.Rheingold.Psdz
         private bool TryValidateJavaVersion(string checkVersionProcessOutput, out string error)
         {
             Match match = Regex.Match(checkVersionProcessOutput, "\\d+\\.\\d+\\.\\d+");
-            if (match.Success && match.Value != "17.0.10")
+            try
             {
-                error = string.Format("{0} Valiation - {1}", "Java Version", "Wrong Java version installed: " + match.Value + " - Expected 17.0.10.");
-                Log.Error(Log.CurrentMethod(), error);
+                if (match.Success && Version.Parse(match.Value) < _expectedJREVersion)
+                {
+                    error = string.Format("{0} Validation - {1}", "Java Version", $"Installed Java version is too low: {match.Value} - Expected {_expectedJREVersion}.");
+                    Log.Error(Log.CurrentMethod(), error);
+                    return false;
+                }
+                error = null;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                error = string.Format("{0} Validation - {1}", "Java Version", "Could not parse Java version from string '" + match.Value + "'. Exception: " + ex.Message);
+                Log.ErrorException(Log.CurrentMethod(), error, ex);
                 return false;
             }
-            error = null;
-            return true;
         }
+
 
         private bool TryValidateJavaExecutable(string javaExePath, out string error)
         {
-            Log.Info(Log.CurrentMethod(), "JDK 17.0.10 Java.exe path: " + javaExePath);
+            Log.Info(Log.CurrentMethod(), $"JDK {_expectedJREVersion} Java.exe path: {javaExePath}");
             if (!File.Exists(javaExePath))
             {
-                error = string.Format("{0} Valiation - {1}", "Java Executable", "java.exe not found at " + javaExePath + ". JDK 17.0.10 is required for the PSdZ Webservice.");
+                error = string.Format("{0} Validation - {1}", "Java Executable", $"java.exe not found at {javaExePath}. JDK {_expectedJREVersion} is required for the PSdZ Webservice.");
                 Log.Error(Log.CurrentMethod(), error);
                 return false;
             }

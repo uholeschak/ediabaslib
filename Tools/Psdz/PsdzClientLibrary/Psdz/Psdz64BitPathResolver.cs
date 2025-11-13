@@ -1,4 +1,5 @@
-﻿using PsdzClient.Core;
+﻿using Org.BouncyCastle.Tls.Crypto;
+using PsdzClient.Core;
 using System;
 using System.IO;
 
@@ -33,8 +34,17 @@ namespace PsdzClient.Programming
         // [UH] istaFolder, psdzWebService added
         public static string GetJrePath(string istaFolder, bool psdzWebService = false)
         {
-            string text = (psdzWebService ? "WebService\\" : string.Empty);
-            if (!psdzWebService)
+            string text = string.Empty;
+            if (psdzWebService)
+            {
+                text = "WebService\\";
+                string jrePath = Path.Combine(istaFolder, text);
+                if (!Directory.Exists(jrePath))
+                {
+                    text = "PSdZ\\WebService\\";
+                }
+            }
+            else
             {
                 string tlsPath = Path.Combine(istaFolder, "Tls13");
                 if (Directory.Exists(tlsPath))
