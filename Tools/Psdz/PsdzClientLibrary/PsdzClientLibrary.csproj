@@ -67,7 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
-    <PackageReference Include="Lib.Harmony" Version="2.4.1" />
+    <PackageReference Include="Lib.Harmony" Version="2.4.2" />
     <PackageReference Include="log4net" Version="3.2.0" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
