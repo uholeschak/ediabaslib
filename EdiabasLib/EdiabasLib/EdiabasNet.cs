@@ -1400,8 +1400,8 @@ namespace EdiabasLib
             "SEC-0043: SIGN ERROR",
             "SEC-0044: SIGN VERIFICATION ERROR",
             "SEC-0045: BIG NUM ERROR",
-            "SEC-0046",
-            "SEC-0047",
+            "SEC-0046: CONTAINER ERROR",
+            "SEC-0047: BACKEND ERROR",
             "SEC-0048",
             "SEC-0049",
         };
