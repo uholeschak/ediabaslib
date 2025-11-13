@@ -592,7 +592,7 @@ namespace EdiabasLib
             public Object OpData3;
         }
 
-        public const int EdiabasVersion = 0x771;
+        public const int EdiabasVersion = 0x772;
         public const int TraceAppendDiffHours = 1;
         public const string UserDirName = "EdiabasLib";
         public const string TraceDirName = "Trace";
