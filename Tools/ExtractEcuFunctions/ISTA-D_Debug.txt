@@ -552,6 +552,11 @@ C:\ProgramData\BMW\ISPI\data\TRIC\ICOM\ICOM-Image-XXXX
 At startup ICOM requires an ident broadcast to port 7811 from the ZGW.
 Afterwarts it requests the ECU port configuration with: C3 DF F1 22 17 2A F6
 
+For testing two network adapters are required
+Disable: seletive supend, enery efficient ethernet, all protocols that are not required
+1. LAN: Fix IP 192.168.201.1 / 255.255.255.0
+2. OBD: DHCP
+
 Soap Reserve (Port 5302):
 =========================
 POST /ivm/services/ConnectorService HTTP/1.1
