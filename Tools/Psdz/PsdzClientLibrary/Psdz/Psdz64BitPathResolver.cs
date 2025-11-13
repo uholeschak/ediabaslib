@@ -38,8 +38,8 @@ namespace PsdzClient.Programming
             if (psdzWebService)
             {
                 text = "WebService\\";
-                string jrePath = Path.Combine(istaFolder, text);
-                if (!Directory.Exists(jrePath))
+                string javaPath = Path.Combine(istaFolder, "WebService", "OpenJREx64", "bin", "java.exe");
+                if (!File.Exists(javaPath))
                 {
                     text = "PSdZ\\WebService\\";
                 }
