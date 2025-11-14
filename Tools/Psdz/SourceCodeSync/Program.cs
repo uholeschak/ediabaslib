@@ -1233,16 +1233,24 @@ namespace SourceCodeSync
             // Check for attributes like [Preserve] or [DoNotSync]
             if (member is MemberDeclarationSyntax memberDecl)
             {
-                var hasPreserveAttribute = memberDecl.AttributeLists
+                var preserveAttribute = memberDecl.AttributeLists
                     .SelectMany(al => al.Attributes)
-                    .Any(attr =>
+                    .FirstOrDefault(attr =>
                     {
                         string attrName = attr.Name.ToString();
                         return attrName == "PreserveSource";
                     });
 
-                if (hasPreserveAttribute)
+                if (preserveAttribute != null)
                 {
+                    // Check if AccessChanged property is set to true
+                    bool accessChanged = GetAttributeProperty(preserveAttribute, "AccessChanged");
+                    if (accessChanged)
+                    {
+                        return false;
+                    }
+
+                    // If KeepAttribute is true, or if the attribute exists without explicit false
                     return true;
                 }
             }
@@ -1329,6 +1337,59 @@ namespace SourceCodeSync
             }
 #endif
             return false;
+        }
+
+        /// <summary>
+        /// Gets a boolean property value from an attribute
+        /// </summary>
+        private static bool GetAttributeProperty(AttributeSyntax attribute, string propertyName)
+        {
+            if (attribute.ArgumentList == null)
+            {
+                return false;
+            }
+
+            foreach (var argument in attribute.ArgumentList.Arguments)
+            {
+                // Check for named arguments like "KeepAttribute = true"
+                if (argument.NameEquals != null &&
+                    argument.NameEquals.Name.Identifier.Text == propertyName)
+                {
+                    // Check if the expression is a literal (true/false)
+                    if (argument.Expression is LiteralExpressionSyntax literal)
+                    {
+                        return literal.Kind() == SyntaxKind.TrueLiteralExpression;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Gets the string value of a property from an attribute (for Hint)
+        /// </summary>
+        private static string GetAttributeStringProperty(AttributeSyntax attribute, string propertyName)
+        {
+            if (attribute.ArgumentList == null)
+            {
+                return null;
+            }
+
+            foreach (var argument in attribute.ArgumentList.Arguments)
+            {
+                if (argument.NameEquals != null &&
+                    argument.NameEquals.Name.Identifier.Text == propertyName)
+                {
+                    if (argument.Expression is LiteralExpressionSyntax literal)
+                    {
+                        // Remove quotes from string literal
+                        return literal.Token.ValueText;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

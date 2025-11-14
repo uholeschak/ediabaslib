@@ -10,5 +10,7 @@ namespace PsdzClientLibrary
         public bool Removed;
 
         public bool KeepAttribute;
+
+        public bool AccessChanged;
     }
 }
