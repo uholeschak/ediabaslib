@@ -662,36 +662,12 @@ namespace PsdzClient.Core
             return CurrentCultureInfo.TwoLetterISOLanguageName;
         }
 
+        [PreserveSource(Hint = "Simplified")]
         public static string InitCulture()
         {
             string configString = getConfigString("TesterGUI.Language", "en-GB");
             try
             {
-#if false
-                if (IsOssModeActive)
-                {
-                    SetCurrentUICultureFromPortalConfig();
-                }
-                else if (!string.IsNullOrEmpty(configString))
-                {
-                    LogInfo("ConfigSettings.InitCulture()", "found already configured language: {0}", configString);
-                    CurrentUICulture = configString;
-                }
-                else
-                {
-                    Log.Warning("ConfigSettings.InitCulture()", "no preconfigured language found. Checking available languages");
-                    IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-                    if (instance.DatabaseAccessType == DatabaseType.SQLite)
-                    {
-                        SetCurrentUICultureFromDB(instance);
-                    }
-                    else
-                    {
-                        SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "no sqlite database properly configured");
-                    }
-                }
-#else
-                // [UH] simplified
                 if (!string.IsNullOrEmpty(configString))
                 {
                     LogInfo("ConfigSettings.InitCulture()", "found already configured language: {0}", configString);
@@ -701,7 +677,6 @@ namespace PsdzClient.Core
                 {
                     SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "no sqlite database properly configured");
                 }
-#endif
             }
             catch (Exception exception)
             {
@@ -711,55 +686,15 @@ namespace PsdzClient.Core
             return currentUiCulture;
         }
 
-#if false
+        [PreserveSource(Hint = "Cleaned")]
         private static void SetCurrentUICultureFromPortalConfig()
         {
-            IIstaPortalParameters portalParameters = OSSPortal.PortalParameters;
-            if (portalParameters != null && !string.IsNullOrEmpty(portalParameters.Language))
-            {
-                LogInfo("ConfigSettings.InitCulture()", "set UI culture based on portal settings to {0}", portalParameters.Language);
-                CurrentUICulture = portalParameters.Language;
-            }
-            else
-            {
-                SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "Failed to retrieve UI culture based on portal settings; switch to default: en-GB");
-            }
         }
 
-        private static void SetCurrentUICultureFromDB(IDatabaseProvider databaseConnector)
+        [PreserveSource(Hint = "Cleaned")]
+        private static void SetCurrentUICultureFromDB()
         {
-            IDatabaseInformationObject diaDoc = databaseConnector.DatabaseMetaData.FirstOrDefault((IDatabaseInformationObject item) => item.DatabaseType == DatabaseTypes.DiagDocDb);
-            if (diaDoc == null)
-            {
-                SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "no sqlite database properly configured; diadoc not found");
-                return;
-            }
-            IEnumerable<IDatabaseInformationObject> enumerable = databaseConnector.DatabaseMetaData.Where((IDatabaseInformationObject item) => (item.DatabaseType == DatabaseTypes.StreamDataPrimitive || item.DatabaseType == DatabaseTypes.XmlValuePrimitive) && item.IsAccessible && item.MajorVersion == diaDoc.MajorVersion && item.MinorVersion == diaDoc.MinorVersion);
-            if (enumerable != null && enumerable.Count() > 0)
-            {
-                LogInfo("ConfigSettings.InitCulture()", "Checking for engb,dede,...");
-                if (enumerable.Count((IDatabaseInformationObject item) => "ENGB".Equals(item.Language, StringComparison.OrdinalIgnoreCase)) == 2)
-                {
-                    LogInfo("ConfigSettings.InitCulture()", "engb found; set for first startup");
-                    CurrentUICulture = getConfigString("TesterGUI.Language", "en-GB");
-                }
-                else if (enumerable.Count((IDatabaseInformationObject item) => "DEDE".Equals(item.Language, StringComparison.OrdinalIgnoreCase)) == 2)
-                {
-                    LogInfo("ConfigSettings.InitCulture()", "dede found; set for first startup");
-                    CurrentUICulture = getConfigString("TesterGUI.Language", "de-DE");
-                }
-                else
-                {
-                    SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "neither engb nor dede found; set engb for first startup");
-                }
-            }
-            else
-            {
-                Log.Warning("ConfigSettings.InitCulture()", "no sqlite database properly configured; not even a valid xml/streamdata database found");
-                CurrentUICulture = getConfigString("TesterGUI.Language", "en-GB");
-            }
         }
-#endif
 
         private static void SetCurrentUICultureToDefault(string callingMethod, string logMessage)
         {
@@ -1404,19 +1339,10 @@ namespace PsdzClient.Core
             return GetFeatureEnabledStatus("ConwoyStorage").IsActive;
         }
 
-        // replaced by EnablePsdzMultiSession
+        [PreserveSource(Hint = "replaced by EnablePsdzMultiSession")]
         public static bool GetActivateSdpOnlinePatch()
         {
-#if true
             return ClientContext.EnablePsdzMultiSession();
-#else
-            if (IsOssModeActive)
-            {
-                Log.Info(Log.CurrentMethod(), "SDP patch not enabled in AOS mode.");
-                return false;
-            }
-            return GetFeatureEnabledStatus("SdpOnlinePatchAndMultisession").IsActive;
-#endif
         }
 
         public static string GetWebEAMNextStage()
