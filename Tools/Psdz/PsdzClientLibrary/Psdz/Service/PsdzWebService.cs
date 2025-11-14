@@ -16,72 +16,37 @@ namespace BMW.Rheingold.Psdz
     public class PsdzWebService : IPsdzWebService
     {
         private const string JavaInstalationErrorMessage = "{0} Validation - {1}";
-
         private readonly Version _expectedJREVersion = new Version(17, 0, 10);
-
         private readonly string _psdzWebApiLogDir;
-
         private readonly int _waitTimeOutSeconds = 180;
-
         private readonly PsdzProgressListenerDispatcher progressListenerDispatcher = new PsdzProgressListenerDispatcher();
-
         private readonly ManualResetEvent _terminationSignal = new ManualResetEvent(initialState: false);
-
         private readonly Func<bool> _isPsdzInitialized;
-
         private IWebCallHandler webCallHandler;
-
         private PsdzWebApiLifeCycleController lifeCycleController;
-
         private Process psdzWebserviceProcess;
-
         public ICertificateManagementService CertificateManagementService { get; private set; }
-
         public IConfigurationService ConfigurationService { get; private set; }
-
         public IConnectionFactoryService ConnectionFactoryService { get; private set; }
-
         public IConnectionManagerService ConnectionManagerService { get; private set; }
-
         public IEcuService EcuService { get; private set; }
-
         public IEventManagerService EventManagerService { get; private set; }
-
         public IHttpConfigurationService HttpConfigurationService { get; private set; }
-
         public IHttpServerService HttpServerService { get; private set; }
-
         public IIndividualDataRestoreService IndividualDataRestoreService { get; private set; }
-
         public IKdsService KdsService { get; private set; }
-
         public ILogicService LogicService { get; private set; }
-
         public ILogService LogService { get; private set; }
-
         public IMacrosService MacrosService { get; private set; }
-
         public IObjectBuilderService ObjectBuilderService { get; private set; }
-
         public IProgrammingService ProgrammingService { get; private set; }
-
         public ISecureCodingService SecureCodingService { get; private set; }
-
         public ISecureDiagnosticsService SecureDiagnosticsService { get; private set; }
-
         public ISecureFeatureActivationService SecureFeatureActivationService { get; private set; }
-
         public ISecurityManagementService SecurityManagementService { get; private set; }
-
         public ITalExecutionService TalExecutionService { get; private set; }
-
         public IVcmService VcmService { get; private set; }
-
         public IProgrammingTokenService ProgrammingTokenService { get; private set; }
-
-
-        [PreserveSource(Hint = "Added")]
-        private readonly string _istaFolder;
 
         [PreserveSource(Hint = "istaFolder added")]
         public PsdzWebService(string psdzWebAPILogDir, Func<bool> isPsdzInitialized, string istaFolder)
@@ -100,6 +65,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Info(Log.CurrentMethod(), "Psdz Webservice is already running.");
                     return;
                 }
+
                 Log.Debug(Log.CurrentMethod(), "Psdz Webservice will be started.");
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
@@ -122,6 +88,7 @@ namespace BMW.Rheingold.Psdz
                     default:
                         throw new NotImplementedException("It looks like an extra value was added to WebserviceSessionStatus but not correctly handled in " + Log.CurrentMethod() + ".");
                 }
+
                 Log.Info(Log.CurrentMethod(), "PSdZ Webservice is now ready and configured.");
                 stopwatch.Stop();
                 AddServiceCodeToFastaProtocol("PWS01_DurationWebserviceStart_nu_LF", $"Duration={stopwatch.Elapsed.TotalSeconds} seconds");
@@ -163,6 +130,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return true;
             }
+
             Log.Error(Log.CurrentMethod(), "PSDZ WebService could not set root directory " + rootDirectorySetupResult?.Message);
             TryKillTree(psdzWebserviceProcess);
             return false;
@@ -174,6 +142,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return true;
             }
+
             try
             {
                 proc.Refresh();
@@ -181,23 +150,18 @@ namespace BMW.Rheingold.Psdz
                 {
                     return true;
                 }
-                using (Process process = Process.Start(new ProcessStartInfo
-                {
-                    FileName = "taskkill",
-                    Arguments = $"/PID {proc.Id} /T /F",
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                }))
+
+                using (Process process = Process.Start(new ProcessStartInfo { FileName = "taskkill", Arguments = $"/PID {proc.Id} /T /F", UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true }))
                 {
                     process?.WaitForExit(timeoutMs);
                 }
+
                 proc.Refresh();
                 if (proc.HasExited)
                 {
                     return true;
                 }
+
                 proc.Kill();
                 return proc.WaitForExit(Math.Max(3000, timeoutMs / 3));
             }
@@ -256,11 +220,13 @@ namespace BMW.Rheingold.Psdz
                 {
                     throw new JavaInstallationException(boolResultObject.ErrorMessage);
                 }
+
                 BoolResultObject<Process> boolResultObject2 = ConfigureWebserviceProcess(jvmOptions, jarArguments, sessionWebservicePort, javaExePath);
                 if (!boolResultObject2.Result)
                 {
                     throw new InvalidOperationException(boolResultObject2.ErrorMessage);
                 }
+
                 psdzWebserviceProcess = boolResultObject2.ResultObject;
             }
             catch (Exception ex)
@@ -277,19 +243,23 @@ namespace BMW.Rheingold.Psdz
             {
                 return Fail("PWS02_JavaInstalationValidationError_nu_LF", error);
             }
+
             BoolResultObject<string> boolResultObject = TryValidateJavaInitialization(javaExePath, out error);
             if (!boolResultObject.Result)
             {
                 return Fail("PWS03_JavaInitializationValidationError_nu_LF", error);
             }
+
             if (!TryValidateJavaVersion(boolResultObject.ResultObject, out error))
             {
                 return Fail("PWS02_JavaInstalationValidationError_nu_LF", error);
             }
+
             if (!TryValidateJar(GetJarPath(), out error))
             {
                 return Fail("PWS02_JavaInstalationValidationError_nu_LF", error);
             }
+
             return BoolResultObject.SuccessResult;
         }
 
@@ -301,6 +271,7 @@ namespace BMW.Rheingold.Psdz
                 Log.Error(Log.CurrentMethod(), error);
                 return false;
             }
+
             error = null;
             return true;
         }
@@ -323,6 +294,7 @@ namespace BMW.Rheingold.Psdz
                 Log.ErrorException(Log.CurrentMethod(), error, ex);
                 return BoolResultObject<string>.Fail(error);
             }
+
             error = null;
             return BoolResultObject<string>.Success(text);
         }
@@ -338,6 +310,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Error(Log.CurrentMethod(), error);
                     return false;
                 }
+
                 error = null;
                 return true;
             }
@@ -349,7 +322,6 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-
         private bool TryValidateJavaExecutable(string javaExePath, out string error)
         {
             Log.Info(Log.CurrentMethod(), $"JDK {_expectedJREVersion} Java.exe path: {javaExePath}");
@@ -359,6 +331,7 @@ namespace BMW.Rheingold.Psdz
                 Log.Error(Log.CurrentMethod(), error);
                 return false;
             }
+
             error = null;
             return true;
         }
@@ -391,6 +364,7 @@ namespace BMW.Rheingold.Psdz
                 Log.ErrorException(Log.CurrentMethod(), ex);
                 return BoolResultObject<Process>.Fail(ex.Message);
             }
+
             return BoolResultObject<Process>.Success(process);
         }
 
@@ -417,6 +391,7 @@ namespace BMW.Rheingold.Psdz
             {
                 Log.Error(Log.CurrentMethod(), "Directory " + fullPath + " does not exists. You can check your BMW_RHEINGOLD_PROGRAMMING_PSDZWEBSERVICE_DIRECTORY registry key.");
             }
+
             string text = Directory.GetFiles(fullPath, "*.jar").FirstOrDefault((string s) => s.IndexOf("Psdz-Webservice", StringComparison.OrdinalIgnoreCase) >= 0);
             Log.Info(Log.CurrentMethod(), "returning " + text);
             return text;
@@ -494,6 +469,7 @@ namespace BMW.Rheingold.Psdz
                 Log.Warning(Log.CurrentMethod(), "Attempted to initialize life cycle controller more than once! This is unintended behavior, and likely indicates a problem.");
                 return;
             }
+
             lifeCycleController = new PsdzWebApiLifeCycleController(new ILifeCycleDependencyProvider[2] { webCallHandler, TalExecutionService });
             lifeCycleController.Shutdown += OnPsdzWebServiceShutdown;
         }
@@ -543,9 +519,11 @@ namespace BMW.Rheingold.Psdz
                     Log.Error(Log.CurrentMethod(), $"Failed to start in {lBPTimeoutForStartPsdzWebservice} seconds. -> Throwing a Timeout Exception.");
                     throw new TimeoutException($"PSdZ Webservice failed to start in {lBPTimeoutForStartPsdzWebservice} seconds.");
                 }
+
                 Log.Debug(Log.CurrentMethod(), "Still waiting...");
                 Task.Delay(500).Wait();
             }
+
             Log.Info(Log.CurrentMethod(), "PSdZ Webservice is now ready.");
         }
 
@@ -567,6 +545,7 @@ namespace BMW.Rheingold.Psdz
             {
                 ((IDisposable)istaIcsServiceClient)?.Dispose();
             }
+
             return _waitTimeOutSeconds;
         }
 
@@ -606,6 +585,7 @@ namespace BMW.Rheingold.Psdz
             {
                 psdzLoglevel = (PsdzLoglevel)configint;
             }
+
             if (psdzLoglevel.HasValue)
             {
                 Log.Info(Log.CurrentMethod(), $"Setting PSdZ Log Level to: {psdzLoglevel}");
@@ -620,11 +600,15 @@ namespace BMW.Rheingold.Psdz
             {
                 prodiasLoglevel = result;
             }
+
             if (prodiasLoglevel.HasValue)
             {
                 Log.Info(Log.CurrentMethod(), $"Setting Prodias Log Level to: {prodiasLoglevel}");
                 ConnectionManagerService.SetProdiasLogLevel(prodiasLoglevel.Value);
             }
         }
+
+        [PreserveSource(Hint = "Added")]
+        private readonly string _istaFolder;
     }
 }
