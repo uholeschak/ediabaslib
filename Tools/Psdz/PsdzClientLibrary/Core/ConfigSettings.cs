@@ -20,67 +20,6 @@ namespace PsdzClient.Core
     using Microsoft.Win32;
 
 #pragma warning disable CS0618
-    [Obsolete("It has been moved to Authroing API.")]
-    public enum OperationalMode
-    {
-        ISTA,
-        ISTA_PLUS,
-        ISTA_LIGHT,
-        ISTA_POWERTRAIN,
-        RITA,
-        ISTAHV,
-        [Obsolete("This OperationalMode is only used by Testmodules. ISTA does not have anymore TELESERVICE")]
-        TELESERVICE,
-        [Obsolete("This OperationalMode is only used by Testmodules. ISTA does not have anymore TeleServiceConsole")]
-        TeleServiceConsole
-    }
-
-    public enum PropertyEnum
-    {
-        PersistentProperty,
-        AcrossSessionProperty
-    }
-
-    public enum EnumOrderTypePreselection
-    {
-        Workshop,
-        Breakdown
-    }
-
-    public enum PrintFormat
-    {
-        XPS,
-        PDF,
-        ALL
-    }
-
-    [DataContract]
-    public enum UiBrand
-    {
-        [DataMember]
-        BMWBMWiMINI,
-        [DataMember]
-        BMWBMWi,
-        [DataMember]
-        BMWiMINI,
-        [DataMember]
-        BMWMINI,
-        [DataMember]
-        BMWPKW,
-        [DataMember]
-        Mini,
-        [DataMember]
-        RollsRoyce,
-        [DataMember]
-        BMWMotorrad,
-        [DataMember]
-        BMWi,
-        [DataMember]
-        TOYOTA,
-        [DataMember]
-        Unknown
-    }
-
     public class ConfigSettings
     {
         public const string BMW_RHEINGOLD_CONFIG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
