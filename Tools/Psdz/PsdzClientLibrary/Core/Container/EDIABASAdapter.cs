@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using PsdzClient.Utility;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core.Container
 {
@@ -24,19 +25,19 @@ namespace PsdzClient.Core.Container
 
         private bool parameterizationDone;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public bool BinModeReq => binModeReq;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public byte[] EcuData => ecuData;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public string EcuGroup => ecuGroup;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public string EcuJob => ecuJob;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public string EcuParam => ecuParam;
 
         public string EcuResultFilter => ecuResultFilter;
