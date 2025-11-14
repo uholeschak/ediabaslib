@@ -40,10 +40,13 @@ namespace PsdzClient.Core.Container
         [PreserveSource(Hint = "Added")]
         public string EcuParam => ecuParam;
 
+        [PreserveSource(Hint = "Added")]
         public string EcuResultFilter => ecuResultFilter;
 
+        [PreserveSource(Hint = "Added")]
         public bool ParameterizationDone => parameterizationDone;
 
+        [PreserveSource(Hint = "Added")]
         public bool IsBinModeRequired => CheckForBinModeRequired();
 
         public EDIABASAdapter(bool StandardErrorHandling, ECUKom ecuKom, ConfigurationContainer configContainer)
