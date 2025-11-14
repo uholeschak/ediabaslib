@@ -19,6 +19,7 @@ namespace PsdzClient.Core
     using System.Xml.Serialization;
     using Microsoft.Win32;
 
+#pragma warning disable CS0618
     [Obsolete("It has been moved to Authroing API.")]
     public enum OperationalMode
     {
@@ -204,7 +205,6 @@ namespace PsdzClient.Core
 
         public static string IstaGuiLogFullName { get; set; }
 
-#pragma warning disable CS0618 // Type or member is obsolete
         public static OperationalMode OperationalMode
         {
             get
@@ -241,7 +241,6 @@ namespace PsdzClient.Core
                 return true;
             }
         }
-#pragma warning restore CS0618 // Type or member is obsolete
 
         public static UiBrand SelectedBrand
         {
@@ -1382,11 +1381,12 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "TOYOTA removed")]
         public static (bool IsActive, string Message) GetFeatureEnabledStatus(string feature)
         {
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
             {
-                if (istaIcsServiceClient.IsAvailable() /*|| IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA")*/)
+                if (istaIcsServiceClient.IsAvailable())
                 {
                     return istaIcsServiceClient.GetFeatureEnabledStatus(feature, istaIcsServiceClient.IsAvailable());
                 }
