@@ -1,4 +1,5 @@
-﻿
+﻿using PsdzClientLibrary;
+
 namespace PsdzClient.Core.Container
 {
     public sealed class VehicleCommunication
@@ -21,6 +22,7 @@ namespace PsdzClient.Core.Container
 
         public static bool validLicense => _validLicense;
 
+        [PreserveSource(Hint = "EnableEDIABASMultiThreading removed")]
         static VehicleCommunication()
         {
             debuglevel = 0;
@@ -28,20 +30,6 @@ namespace PsdzClient.Core.Container
             Log.Info("VehicleCommunication.VehicleCommunication()", "ctor called.");
             debuglevel = ConfigSettings.getConfigint("DebugLevel", 0);
             debuglevel = ConfigSettings.getConfigint("BMW.Rheingold.VehicleCommunication.DebugLevel", debuglevel);
-            // [UH] removed
-#if false
-            try
-            {
-                bool configStringAsBoolean = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.VehicleCommunication.EnableEDIABASMultiThreading", defaultValue: false);
-                Log.Info("VehicleCommunication.VehicleCommunication()", "Setting up EDIABAS threading mode: {0}", configStringAsBoolean);
-                bool flag = API.enableMultiThreading(configStringAsBoolean);
-                Log.Info("VehicleCommunication.VehicleCommunication()", "Switching to EDIABAS threading mode result: {0}", flag);
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("VehicleCommunication.VehicleCommunication()", exception);
-            }
-#endif
         }
     }
 }
