@@ -17,8 +17,7 @@ namespace PsdzClient.Core.Container
 
         private readonly decimal hashValue;
 
-        // [UH] removed
-        //private readonly IProtocolBasic fastaservice;
+        private readonly IProtocolBasic fastaservice;
 
         public bool FASTARelevant
         {
@@ -43,13 +42,13 @@ namespace PsdzClient.Core.Container
         {
             hashValue = Environment.TickCount;
         }
-#if false
+
         public ECUJob(IProtocolBasic fastaprotocoller)
         {
             hashValue = Environment.TickCount;
             fastaservice = fastaprotocoller;
         }
-#endif
+
         public bool IsDone()
         {
             if (base.JobErrorCode != 0)
