@@ -10,47 +10,14 @@ namespace PsdzClient.Core.Container
     internal class EDIABASAdapter : BaseAdapter
     {
         private bool binModeReq;
-
         private byte[] ecuData;
-
         private string ecuGroup = string.Empty;
-
         private string ecuJob = string.Empty;
-
         private ECUKom ecuKom;
-
         private string ecuParam = string.Empty;
-
         private string ecuResultFilter = string.Empty;
-
         private bool parameterizationDone;
-
-        [PreserveSource(Hint = "Added")]
-        public bool BinModeReq => binModeReq;
-
-        [PreserveSource(Hint = "Added")]
-        public byte[] EcuData => ecuData;
-
-        [PreserveSource(Hint = "Added")]
-        public string EcuGroup => ecuGroup;
-
-        [PreserveSource(Hint = "Added")]
-        public string EcuJob => ecuJob;
-
-        [PreserveSource(Hint = "Added")]
-        public string EcuParam => ecuParam;
-
-        [PreserveSource(Hint = "Added")]
-        public string EcuResultFilter => ecuResultFilter;
-
-        [PreserveSource(Hint = "Added")]
-        public bool ParameterizationDone => parameterizationDone;
-
-        [PreserveSource(Hint = "Added")]
-        public bool IsBinModeRequired => CheckForBinModeRequired();
-
-        public EDIABASAdapter(bool StandardErrorHandling, ECUKom ecuKom, ConfigurationContainer configContainer)
-            : base(StandardErrorHandling, configContainer)
+        public EDIABASAdapter(bool StandardErrorHandling, ECUKom ecuKom, ConfigurationContainer configContainer) : base(StandardErrorHandling, configContainer)
         {
             this.ecuKom = ecuKom;
         }
@@ -68,6 +35,7 @@ namespace PsdzClient.Core.Container
                     num = configContainer.Header.Version.Major;
                     num2 = configContainer.Header.Version.Minor;
                 }
+
                 if (run.Children != null)
                 {
                     foreach (ANode child in run.Children)
@@ -75,10 +43,36 @@ namespace PsdzClient.Core.Container
                         diveConfigNodes(parameterContainer, child, "/Run", binModeReq);
                     }
                 }
+
+                if (ISTACoreFramwork.DebugLevel > 0 && configContainer.ParametrizationOverrides != null && configContainer.ParametrizationOverrides.Parameter != null)
+                {
+                    foreach (KeyValuePair<string, object> item in configContainer.ParametrizationOverrides.Parameter)
+                    {
+                        Log.Info("EDIABASAdapter.Execute()", "found parameterization key: {0}", item.Key);
+                    }
+                }
+
+                if (ISTACoreFramwork.DebugLevel > 0 && configContainer.RunOverrides != null && configContainer.RunOverrides.Parameter != null)
+                {
+                    foreach (KeyValuePair<string, object> item2 in configContainer.RunOverrides.Parameter)
+                    {
+                        Log.Debug(ISTACoreFramwork.DebugLevel, "EDIABASAdapter.Execute()", "found run override key: {0}", item2.Key);
+                    }
+                }
+
+                if (ISTACoreFramwork.DebugLevel > 0)
+                {
+                    foreach (KeyValuePair<string, object> item3 in parameterContainer.Parameter)
+                    {
+                        Log.Debug(ISTACoreFramwork.DebugLevel, "EDIABASAdapter.Execute()", "found var Path entry key: {0}", item3.Key);
+                    }
+                }
+
                 if (parameterContainer.Count <= 0)
                 {
                     return;
                 }
+
                 string text = null;
                 KeyValuePair<string, object>? keyValuePairEndsWith = parameterContainer.getKeyValuePairEndsWith("ECUGroupOrVariant");
                 if (keyValuePairEndsWith.HasValue && keyValuePairEndsWith.HasValue && !string.IsNullOrEmpty(keyValuePairEndsWith.Value.Key))
@@ -89,16 +83,19 @@ namespace PsdzClient.Core.Container
                         ecuGroup = keyValuePairEndsWith.Value.Value.ToString();
                     }
                 }
+
                 keyValuePairEndsWith = configContainer.ParametrizationOverrides.getKeyValuePairEndsWith("ECUGroupOrVariant");
                 if (keyValuePairEndsWith.HasValue && keyValuePairEndsWith.HasValue && !string.IsNullOrEmpty(keyValuePairEndsWith.Value.Key) && keyValuePairEndsWith.Value.Value != null)
                 {
                     ecuGroup = keyValuePairEndsWith.Value.Value.ToString();
                 }
+
                 keyValuePairEndsWith = configContainer.RunOverrides.getKeyValuePairEndsWith("ECUGroupOrVariant");
                 if (keyValuePairEndsWith.HasValue && keyValuePairEndsWith.HasValue && !string.IsNullOrEmpty(keyValuePairEndsWith.Value.Key) && keyValuePairEndsWith.Value.Value != null)
                 {
                     ecuGroup = keyValuePairEndsWith.Value.Value.ToString();
                 }
+
                 if (string.IsNullOrEmpty(text))
                 {
                     keyValuePairEndsWith = parameterContainer.getKeyValuePairContains("UnknownGroup");
@@ -113,6 +110,7 @@ namespace PsdzClient.Core.Container
                             ecuParam = keyValuePairEndsWith.Value.Value?.ToString() + ";";
                         }
                     }
+
                     if (string.IsNullOrEmpty(text))
                     {
                         if (configContainer.Header == null || configContainer.Header.Version == null || configContainer.Header.Version.Major != 2 || configContainer.Header.Version.Minor != 0L)
@@ -120,6 +118,7 @@ namespace PsdzClient.Core.Container
                             Log.Warning("EDIABASAdapter.DoParamterization()", "unable to identify sgbd from default values od config overrides");
                             return;
                         }
+
                         keyValuePairEndsWith = parameterContainer.getKeyValuePairContains("/Variant/");
                         if (keyValuePairEndsWith.HasValue && keyValuePairEndsWith.HasValue && !string.IsNullOrEmpty(keyValuePairEndsWith.Value.Key) && keyValuePairEndsWith.Value.Value != null)
                         {
@@ -136,6 +135,7 @@ namespace PsdzClient.Core.Container
                                 Log.Warning("EDIABASAdapter.DoParamterization()", "unable to identify sgbd from default values od config overrides");
                                 return;
                             }
+
                             text = keyValuePairEndsWith.Value.Key;
                             string[] array3 = text.Split('/');
                             ecuGroup = array3[3];
@@ -152,12 +152,14 @@ namespace PsdzClient.Core.Container
                         ecuGroup = array4[3];
                     }
                 }
+
                 foreach (KeyValuePair<string, object> item4 in parameterContainer.Parameter)
                 {
                     if (!(item4.Key != text) && (num != 2 || num2 != 0L))
                     {
                         continue;
                     }
+
                     keyValuePairEndsWith = configContainer.RunOverrides.getKeyValuePair(item4.Key);
                     if (keyValuePairEndsWith.HasValue && keyValuePairEndsWith.HasValue && !string.IsNullOrEmpty(keyValuePairEndsWith.Value.Key) && keyValuePairEndsWith.Value.Value != null)
                     {
@@ -171,8 +173,10 @@ namespace PsdzClient.Core.Container
                         {
                             ecuParam = ecuParam + FormatConverter.ConvertECUParamToString(keyValuePairEndsWith.Value.Value) + ";";
                         }
+
                         continue;
                     }
+
                     keyValuePairEndsWith = configContainer.ParametrizationOverrides.getKeyValuePair(item4.Key);
                     if (keyValuePairEndsWith.HasValue && keyValuePairEndsWith.HasValue && !string.IsNullOrEmpty(keyValuePairEndsWith.Value.Key) && keyValuePairEndsWith.Value.Value != null)
                     {
@@ -206,10 +210,12 @@ namespace PsdzClient.Core.Container
                         ecuParam += ";";
                     }
                 }
+
                 if (!string.IsNullOrEmpty(ecuParam))
                 {
                     ecuParam = ecuParam.TrimEnd(';');
                 }
+
                 parameterizationDone = true;
             }
             catch (Exception exception)
@@ -224,6 +230,7 @@ namespace PsdzClient.Core.Container
             {
                 return true;
             }
+
             return false;
         }
 
@@ -268,6 +275,7 @@ namespace PsdzClient.Core.Container
                     Log.Warning("EDIABASAdapter.Execute()", "ecuKom was null; no communication possible");
                     return new EDIABASAdapterDeviceResult(new ECUJob(), inParameters);
                 }
+
                 if (parameterizationDone && !string.IsNullOrEmpty(ecuGroup) && !string.IsNullOrEmpty(ecuJob))
                 {
                     if (!binModeReq || !CheckForBinModeRequired())
@@ -279,6 +287,7 @@ namespace PsdzClient.Core.Container
                         Log.Info("EDIABASAdapter.Execute()", "apiJob('{0}', '{1}', '{2}') - JobStatus: {3}:{4}", ecuGroup, ecuJob, ecuParam, eCUJob?.JobErrorCode ?? (-1), (eCUJob != null) ? eCUJob.JobErrorText : "null");
                         return new EDIABASAdapterDeviceResult(eCUJob, inParameters);
                     }
+
                     if (ecuData != null)
                     {
                         ECUJob eCUJob2 = ecuKom.apiJobData(ecuGroup, ecuJob, ecuData, ecuData.Length, ecuResultFilter, string.Empty);
@@ -287,6 +296,7 @@ namespace PsdzClient.Core.Container
                         Log.Info("EDIABASAdapter.Execute()", "apiJobData('{0}', '{1}', Data Len: {2}) - JobStatus: {3}:{4}", ecuGroup, ecuJob, (ecuData != null) ? ecuData.Length.ToString(CultureInfo.InvariantCulture) : "null", eCUJob2?.JobErrorCode ?? (-1), (eCUJob2 != null) ? eCUJob2.JobErrorText : "null");
                         return new EDIABASAdapterDeviceResult(eCUJob2, inParameters);
                     }
+
                     Log.Warning("EDIABASAdapter.Execute()", "binModeReq was true but no valid ecuData");
                 }
             }
@@ -294,7 +304,32 @@ namespace PsdzClient.Core.Container
             {
                 Log.WarningException("EDIABASAdapter.Execute()", exception);
             }
+
             return new EDIABASAdapterDeviceResult(new ECUJob(), inParameters);
         }
+
+        [PreserveSource(Hint = "Added")]
+        public bool BinModeReq => binModeReq;
+
+        [PreserveSource(Hint = "Added")]
+        public byte[] EcuData => ecuData;
+
+        [PreserveSource(Hint = "Added")]
+        public string EcuGroup => ecuGroup;
+
+        [PreserveSource(Hint = "Added")]
+        public string EcuJob => ecuJob;
+
+        [PreserveSource(Hint = "Added")]
+        public string EcuParam => ecuParam;
+
+        [PreserveSource(Hint = "Added")]
+        public string EcuResultFilter => ecuResultFilter;
+
+        [PreserveSource(Hint = "Added")]
+        public bool ParameterizationDone => parameterizationDone;
+
+        [PreserveSource(Hint = "Added")]
+        public bool IsBinModeRequired => CheckForBinModeRequired();
     }
 }
