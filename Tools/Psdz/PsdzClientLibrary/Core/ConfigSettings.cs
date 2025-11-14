@@ -242,16 +242,11 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "TOYOTA removed")]
         public static UiBrand SelectedBrand
         {
             get
             {
-#if false
-                if (IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
-                {
-                    return CharacteristicExpression.EnumBrand.TOYOTA;
-                }
-#endif
                 string configString = getConfigString("TesterGUI.SelectedBrand", "");
                 if (Enum.TryParse<UiBrand>(configString, ignoreCase: true, out var result))
                 {
@@ -1192,16 +1187,11 @@ namespace PsdzClient.Core
             return getConfigStringAsBoolean("BMW.Rheingold.Programming.Enabled");
         }
 
-#if false
+        [PreserveSource(Hint = "Cleaned")]
         public static bool IsInRdpSession()
         {
-            if (SystemInformation.TerminalServerSession)
-            {
-                return true;
-            }
             return false;
         }
-#endif
 
         public static bool IsLogisticBaseEnabled()
         {
