@@ -1077,8 +1077,13 @@ namespace SourceCodeSync
                         trivia.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) || // ///
                         trivia.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))    // /** */
                     {
-                        string comment = trivia.ToString().ToUpperInvariant();
-                        if (comment.Contains("TODO:"))
+                        string comment = trivia.ToString();
+                        if (comment.Contains("TODO:", StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        if (comment.Contains("[IGNORE]", StringComparison.Ordinal))
                         {
                             continue;
                         }

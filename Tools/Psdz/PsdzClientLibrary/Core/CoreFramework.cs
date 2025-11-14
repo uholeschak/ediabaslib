@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -90,10 +91,11 @@ namespace PsdzClient.Core
         public static bool OSSModeActive => ConfigSettings.IsOssModeActive;
         public static bool IsLightModeActive => ConfigSettings.IsLightModeActive;
 
+        [PreserveSource(Hint = "Modified")]
         static CoreFramework()
         {
             Log.Info("CoreFramework.CoreFramework()", "ctor called.");
-            // [UH] modified
+            // [UH] [IGNORE] modified
             validLicense = true;
             lastCompileTime = null;
             debuglevel = ConfigSettings.getConfigint("DebugLevel", 0);
