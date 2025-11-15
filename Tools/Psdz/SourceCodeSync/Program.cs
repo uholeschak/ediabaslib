@@ -368,7 +368,7 @@ namespace SourceCodeSync
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
-                    string className = GetClassName(cls);
+                    string className = GetClassName(cls, includeModifiers: true);
                     string classSource = cls.ToFullString();
                     string namespaceName = GetNamespace(cls);
 
@@ -391,7 +391,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    string classNameWithNamespace = GetClassName(cls, includeNamespace: true);
+                    string classNameWithNamespace = GetClassName(cls, includeModifiers: true, includeNamespace: true);
                     if (_ignoreClassNames.Contains(classNameWithNamespace))
                     {
                         continue;
@@ -566,7 +566,7 @@ namespace SourceCodeSync
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
-                    string className = GetClassName(cls);
+                    string className = GetClassName(cls, includeModifiers: true);
                     string classSource = cls.NormalizeWhitespace().ToFullString();
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
@@ -827,7 +827,7 @@ namespace SourceCodeSync
             return sb.ToString();
         }
 
-        public static string GetClassName(ClassDeclarationSyntax classDeclaration, bool includeNamespace = false)
+        public static string GetClassName(ClassDeclarationSyntax classDeclaration, bool includeModifiers = false, bool includeNamespace = false)
         {
             string className = classDeclaration.Identifier.ValueText;
             if (includeNamespace)
@@ -840,10 +840,13 @@ namespace SourceCodeSync
             }
             else
             {
-                string modifiers = GetModifiersText(classDeclaration.Modifiers);
-                if (modifiers.Length > 0)
+                if (includeModifiers)
                 {
-                    className = $"{modifiers}_{className}";
+                    string modifiers = GetModifiersText(classDeclaration.Modifiers);
+                    if (modifiers.Length > 0)
+                    {
+                        className = $"{modifiers}_{className}";
+                    }
                 }
 
                 int typeParamCount = classDeclaration.TypeParameterList?.Parameters.Count ?? 0;
