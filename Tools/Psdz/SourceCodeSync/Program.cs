@@ -647,12 +647,13 @@ namespace SourceCodeSync
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
-                    string className = GetClassName(cls, includeModifiers: true);
+                    string classNameFull = GetClassName(cls, includeModifiers: true);
+                    string classNameBare = GetClassName(cls);
                     string classSource = cls.NormalizeWhitespace().ToFullString();
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        Console.WriteLine($"Class: {className}");
+                        Console.WriteLine($"Class: {classNameFull}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(classSource);
                         Console.WriteLine(new string('-', 80));
@@ -662,12 +663,21 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Warning)
                         {
-                            Console.WriteLine("Skipping class {0} with comments: {1}", className, fileName);
+                            Console.WriteLine("Skipping class {0} with comments: {1}", classNameFull, fileName);
                         }
                         continue;
                     }
 
-                    if (_classDict.TryGetValue(className, out ClassDeclarationSyntax sourceClass) && sourceClass != null)
+                    ClassDeclarationSyntax sourceClass = null;
+                    if (!_classDict.TryGetValue(classNameFull, out sourceClass))
+                    {
+                        if (!_classBareDict.TryGetValue(classNameBare, out sourceClass))
+                        {
+                            sourceClass = null;
+                        }
+                    }
+
+                    if (sourceClass != null)
                     {
                         bool hasContract = HasContractAttribute(cls.AttributeLists);
                         bool sourceHasContract = HasContractAttribute(sourceClass.AttributeLists);
@@ -675,7 +685,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Warning)
                             {
-                                Console.WriteLine("Skipping class {0} with removed Contract", className);
+                                Console.WriteLine("Skipping class {0} with removed Contract", classNameFull);
                             }
                             continue;
                         }
@@ -691,7 +701,7 @@ namespace SourceCodeSync
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
                                 int preservedCount = cls.Members.Count(m => ShouldPreserveMember(m));
-                                Console.WriteLine($"Merging class {className} while preserving {preservedCount} marked member(s)");
+                                Console.WriteLine($"Merging class {classNameFull} while preserving {preservedCount} marked member(s)");
                             }
                         }
                         else
@@ -706,7 +716,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine($"Updating class: {className}");
+                                Console.WriteLine($"Updating class: {classNameFull}");
                             }
                             newRoot = newRoot.ReplaceNode(cls, mergedClass);
                             fileModified = true;
@@ -716,7 +726,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine("*** Warning: Class not found in source files: {0}", className);
+                            Console.WriteLine("*** Warning: Class not found in source files: {0}", classNameFull);
                         }
                     }
                 }
