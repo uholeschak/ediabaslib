@@ -491,6 +491,7 @@ namespace SourceCodeSync
                             new (_interfaceDict, interfaceNameFull, true),
                             new (_interfaceBareDict, interfaceBareName, false)
                         };
+
                     foreach (var tuple in dictList)
                     {
                         Dictionary<string, InterfaceDeclarationSyntax> dict = tuple.Item1;
@@ -539,14 +540,14 @@ namespace SourceCodeSync
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
-                    string enumName = GetEnumName(enumDecl, includeModifiers: true);
+                    string enumNameFull = GetEnumName(enumDecl, includeModifiers: true);
                     string enumBareName = GetEnumName(enumDecl);
                     string enumSource = enumDecl.ToFullString();
                     string namespaceName = GetNamespace(enumDecl);
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        Console.WriteLine($"Enum: {enumName}");
+                        Console.WriteLine($"Enum: {enumNameFull}");
                         Console.WriteLine($"Namespace: {namespaceName}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(enumSource);
@@ -558,7 +559,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_ignoreEnumNames.Contains(enumName))
+                    if (_ignoreEnumNames.Contains(enumNameFull))
                     {
                         continue;
                     }
@@ -569,36 +570,54 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax oldEnumSyntax))
-                    {
-                        if (oldEnumSyntax != null)
+                    List<Tuple<Dictionary<string, EnumDeclarationSyntax>, string, bool>> dictList =
+                        new List<Tuple<Dictionary<string, EnumDeclarationSyntax>, string, bool>>
                         {
-                            string oldEnumSource = oldEnumSyntax.ToFullString();
-                            if (oldEnumSource != enumSource)
+                            new (_enumDict, enumNameFull, true),
+                            new (_enumBareDict, enumBareName, false)
+                        };
+
+                    foreach (var tuple in dictList)
+                    {
+                        Dictionary<string, EnumDeclarationSyntax> dict = tuple.Item1;
+                        string name = tuple.Item2;
+                        bool isFullName = tuple.Item3;
+
+                        if (dict.TryGetValue(name, out EnumDeclarationSyntax oldEnumSyntax))
+                        {
+                            if (oldEnumSyntax != null)
+                            {
+                                string oldEnumSource = oldEnumSyntax.ToFullString();
+                                if (oldEnumSource != enumSource)
+                                {
+                                    if (isFullName)
+                                    {
+                                        if (_verbosity >= Options.VerbosityOption.Error)
+                                        {
+                                            Console.WriteLine("*** Warning: Duplicate enum name with different source: {0}", name);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (_verbosity >= Options.VerbosityOption.Warning)
+                                        {
+                                            Console.WriteLine("Warning: Duplicate bare enum name with different source: {0}", name);
+                                        }
+                                    }
+                                    dict[name] = null;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!dict.TryAdd(name, enumDecl))
                             {
                                 if (_verbosity >= Options.VerbosityOption.Error)
                                 {
-                                    Console.WriteLine("*** Warning: Duplicate enum name with different source: {0}", enumName);
+                                    Console.WriteLine("*** Warning: Add enum failed: {0}", name);
                                 }
-                                _enumDict[enumName] = null;
                             }
                         }
-                    }
-                    else
-                    {
-                        if (!_enumDict.TryAdd(enumName, enumDecl))
-                        {
-                            Console.WriteLine("*** Warning: Add enum failed: {0}", enumName);
-                        }
-                    }
-
-                    if (!_enumBareDict.TryAdd(enumBareName, enumDecl))
-                    {
-                        if (_verbosity >= Options.VerbosityOption.Warning)
-                        {
-                            Console.WriteLine("Add bare enum failed: {0}", enumBareName);
-                        }
-                        _enumBareDict[enumBareName] = null;
                     }
                 }
             }
