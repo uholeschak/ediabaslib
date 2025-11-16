@@ -429,9 +429,9 @@ namespace SourceCodeSync
 
                     if (!_classBareDict.TryAdd(classNameBare, cls))
                     {
-                        if (_verbosity >= Options.VerbosityOption.Info)
+                        if (_verbosity >= Options.VerbosityOption.Warning)
                         {
-                            Console.WriteLine("*** Warning: Add bare class failed: {0}", classNameBare);
+                            Console.WriteLine("Add bare class failed: {0}", classNameBare);
                         }
                         _classBareDict[classNameBare] = null;
                     }
@@ -470,39 +470,52 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_interfaceDict.TryGetValue(interfaceName, out InterfaceDeclarationSyntax oldInterfaceSyntax))
-                    {
-                        if (oldInterfaceSyntax != null)
+                    List<Tuple<Dictionary<string, InterfaceDeclarationSyntax>, string, bool>> distList =
+                        new List<Tuple<Dictionary<string, InterfaceDeclarationSyntax>, string, bool>>
                         {
-                            string oldInterfaceSource = oldInterfaceSyntax.ToFullString();
-                            if (oldInterfaceSource != interfaceSource)
+                            new (_interfaceDict, interfaceName, true),
+                            new (_interfaceBareDict, interfaceBareName, false)
+                        };
+                    foreach (var VARIABLE in distList)
+                    {
+                        var dict = VARIABLE.Item1;
+                        var name = VARIABLE.Item2;
+                        var isFullName = VARIABLE.Item3;
+                        if (dict.TryGetValue(name, out InterfaceDeclarationSyntax oldInterfaceSyntax))
+                        {
+                            if (oldInterfaceSyntax != null)
+                            {
+                                string oldInterfaceSource = oldInterfaceSyntax.ToFullString();
+                                if (oldInterfaceSource != interfaceSource)
+                                {
+                                    if (isFullName)
+                                    {
+                                        if (_verbosity >= Options.VerbosityOption.Error)
+                                        {
+                                            Console.WriteLine("*** Warning: Duplicate interface name with different source: {0}", name);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (_verbosity >= Options.VerbosityOption.Warning)
+                                        {
+                                            Console.WriteLine("Warning: Duplicate bare interface name with different source: {0}", name);
+                                        }
+                                    }
+                                }
+                                dict[name] = null;
+                            }
+                        }
+                        else
+                        {
+                            if (!dict.TryAdd(name, interfaceDecl))
                             {
                                 if (_verbosity >= Options.VerbosityOption.Error)
                                 {
-                                    Console.WriteLine("*** Warning: Duplicate interface name with different source: {0}", interfaceName);
+                                    Console.WriteLine("*** Warning: Add interface failed: {0}", name);
                                 }
-                                _interfaceDict[interfaceName] = null;
                             }
                         }
-                    }
-                    else
-                    {
-                        if (!_interfaceDict.TryAdd(interfaceName, interfaceDecl))
-                        {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                Console.WriteLine("*** Warning: Add interface failed: {0}", interfaceName);
-                            }
-                        }
-                    }
-
-                    if (!_interfaceBareDict.TryAdd(interfaceBareName, interfaceDecl))
-                    {
-                        if (_verbosity >= Options.VerbosityOption.Info)
-                        {
-                            Console.WriteLine("*** Warning: Add bare interface failed: {0}", interfaceBareName);
-                        }
-                        _interfaceBareDict[interfaceBareName] = null;
                     }
                 }
 
@@ -564,9 +577,9 @@ namespace SourceCodeSync
 
                     if (!_enumBareDict.TryAdd(enumBareName, enumDecl))
                     {
-                        if (_verbosity >= Options.VerbosityOption.Info)
+                        if (_verbosity >= Options.VerbosityOption.Warning)
                         {
-                            Console.WriteLine("*** Warning: Add bare enum failed: {0}", enumBareName);
+                            Console.WriteLine("Add bare enum failed: {0}", enumBareName);
                         }
                         _enumBareDict[enumBareName] = null;
                     }
