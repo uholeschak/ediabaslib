@@ -14,6 +14,7 @@ namespace SourceCodeSync
     internal class Program
     {
         private static Dictionary<string, ClassDeclarationSyntax> _classDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
+        private static Dictionary<string, ClassDeclarationSyntax> _classBareDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
         private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDict = new Dictionary<string, InterfaceDeclarationSyntax>(StringComparer.Ordinal);
         private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.Ordinal);
 
@@ -369,6 +370,7 @@ namespace SourceCodeSync
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
                     string className = GetClassName(cls, includeModifiers: true);
+                    string classNameBare = GetClassName(cls);
                     string classSource = cls.ToFullString();
                     string namespaceName = GetNamespace(cls);
 
@@ -391,7 +393,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    string classNameWithNamespace = GetClassName(cls, includeModifiers: true, includeNamespace: true);
+                    string classNameWithNamespace = GetClassName(cls, includeNamespace: true);
                     if (_ignoreClassNames.Contains(classNameWithNamespace))
                     {
                         continue;
@@ -422,8 +424,15 @@ namespace SourceCodeSync
                             }
                         }
                     }
-                }
 
+                    if (!_classBareDict.TryAdd(classNameBare, cls))
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Info)
+                        {
+                            Console.WriteLine("*** Warning: Add bare class failed: {0}", classNameBare);
+                        }
+                    }
+                }
 
                 var interfaces = root.DescendantNodes().OfType<InterfaceDeclarationSyntax>();
                 foreach (InterfaceDeclarationSyntax interfaceDecl in interfaces)
