@@ -401,39 +401,54 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_classDict.TryGetValue(classNameFull, out ClassDeclarationSyntax oldClassSyntax))
+                    List<Tuple<Dictionary<string, ClassDeclarationSyntax>, string, bool>> dictList = new()
                     {
-                        if (oldClassSyntax != null)
+                        new(_classDict, classNameFull, true),
+                        new(_classBareDict, classNameBare, false)
+                    };
+
+                    foreach (var tuple in dictList)
+                    {
+                        Dictionary<string, ClassDeclarationSyntax> dict = tuple.Item1;
+                        string name = tuple.Item2;
+                        bool isFullName = tuple.Item3;
+
+                        if (dict.TryGetValue(name, out ClassDeclarationSyntax oldClassSyntax))
                         {
-                            string oldClassSource = oldClassSyntax.ToFullString();
-                            if (oldClassSource != classSource)
+                            if (oldClassSyntax != null)
+                            {
+                                string oldClassSource = oldClassSyntax.ToFullString();
+                                if (oldClassSource != classSource)
+                                {
+                                    if (isFullName)
+                                    {
+                                        if (_verbosity >= Options.VerbosityOption.Error)
+                                        {
+                                            Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", name);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (_verbosity >= Options.VerbosityOption.Warning)
+                                        {
+                                            Console.WriteLine("Warning: Duplicate bare class name with different source: {0}", name);
+                                        }
+                                    }
+
+                                    dict[name] = null;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (!dict.TryAdd(name, cls))
                             {
                                 if (_verbosity >= Options.VerbosityOption.Error)
                                 {
-                                    Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", classNameFull);
+                                    Console.WriteLine("*** Warning: Add class failed: {0}", name);
                                 }
-                                _classDict[classNameFull] = null;
                             }
                         }
-                    }
-                    else
-                    {
-                        if (!_classDict.TryAdd(classNameFull, cls))
-                        {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                Console.WriteLine("*** Warning: Add class failed: {0}", classNameFull);
-                            }
-                        }
-                    }
-
-                    if (!_classBareDict.TryAdd(classNameBare, cls))
-                    {
-                        if (_verbosity >= Options.VerbosityOption.Warning)
-                        {
-                            Console.WriteLine("Add bare class failed: {0}", classNameBare);
-                        }
-                        _classBareDict[classNameBare] = null;
                     }
                 }
 
@@ -503,8 +518,9 @@ namespace SourceCodeSync
                                             Console.WriteLine("Warning: Duplicate bare interface name with different source: {0}", name);
                                         }
                                     }
+
+                                    dict[name] = null;
                                 }
-                                dict[name] = null;
                             }
                         }
                         else
