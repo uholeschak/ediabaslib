@@ -371,14 +371,14 @@ namespace SourceCodeSync
                 var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
-                    string className = GetClassName(cls, includeModifiers: true);
+                    string classNameFull = GetClassName(cls, includeModifiers: true);
                     string classNameBare = GetClassName(cls);
                     string classSource = cls.ToFullString();
                     string namespaceName = GetNamespace(cls);
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        Console.WriteLine($"Class: {className}");
+                        Console.WriteLine($"Class: {classNameFull}");
                         Console.WriteLine($"Namespace: {namespaceName}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(classSource);
@@ -390,7 +390,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_ignoreClassNames.Contains(className))
+                    if (_ignoreClassNames.Contains(classNameFull))
                     {
                         continue;
                     }
@@ -401,7 +401,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_classDict.TryGetValue(className, out ClassDeclarationSyntax oldClassSyntax))
+                    if (_classDict.TryGetValue(classNameFull, out ClassDeclarationSyntax oldClassSyntax))
                     {
                         if (oldClassSyntax != null)
                         {
@@ -410,19 +410,19 @@ namespace SourceCodeSync
                             {
                                 if (_verbosity >= Options.VerbosityOption.Error)
                                 {
-                                    Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", className);
+                                    Console.WriteLine("*** Warning: Duplicate class name with different source: {0}", classNameFull);
                                 }
-                                _classDict[className] = null;
+                                _classDict[classNameFull] = null;
                             }
                         }
                     }
                     else
                     {
-                        if (!_classDict.TryAdd(className, cls))
+                        if (!_classDict.TryAdd(classNameFull, cls))
                         {
                             if (_verbosity >= Options.VerbosityOption.Error)
                             {
-                                Console.WriteLine("*** Warning: Add class failed: {0}", className);
+                                Console.WriteLine("*** Warning: Add class failed: {0}", classNameFull);
                             }
                         }
                     }
@@ -440,14 +440,14 @@ namespace SourceCodeSync
                 var interfaces = root.DescendantNodes().OfType<InterfaceDeclarationSyntax>();
                 foreach (InterfaceDeclarationSyntax interfaceDecl in interfaces)
                 {
-                    string interfaceName = GetInterfaceName(interfaceDecl, includeModifiers: true);
+                    string interfaceNameFull = GetInterfaceName(interfaceDecl, includeModifiers: true);
                     string interfaceBareName = GetInterfaceName(interfaceDecl);
                     string interfaceSource = interfaceDecl.ToFullString();
                     string namespaceName = GetNamespace(interfaceDecl);
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        Console.WriteLine($"Interface: {interfaceName}");
+                        Console.WriteLine($"Interface: {interfaceNameFull}");
                         Console.WriteLine($"Namespace: {namespaceName}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(interfaceSource);
@@ -459,7 +459,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_ignoreInterfaceNames.Contains(interfaceName))
+                    if (_ignoreInterfaceNames.Contains(interfaceNameFull))
                     {
                         continue;
                     }
@@ -470,17 +470,18 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    List<Tuple<Dictionary<string, InterfaceDeclarationSyntax>, string, bool>> distList =
+                    List<Tuple<Dictionary<string, InterfaceDeclarationSyntax>, string, bool>> dictList =
                         new List<Tuple<Dictionary<string, InterfaceDeclarationSyntax>, string, bool>>
                         {
-                            new (_interfaceDict, interfaceName, true),
+                            new (_interfaceDict, interfaceNameFull, true),
                             new (_interfaceBareDict, interfaceBareName, false)
                         };
-                    foreach (var VARIABLE in distList)
+                    foreach (var tuple in dictList)
                     {
-                        var dict = VARIABLE.Item1;
-                        var name = VARIABLE.Item2;
-                        var isFullName = VARIABLE.Item3;
+                        Dictionary<string, InterfaceDeclarationSyntax> dict = tuple.Item1;
+                        string name = tuple.Item2;
+                        bool isFullName = tuple.Item3;
+
                         if (dict.TryGetValue(name, out InterfaceDeclarationSyntax oldInterfaceSyntax))
                         {
                             if (oldInterfaceSyntax != null)
