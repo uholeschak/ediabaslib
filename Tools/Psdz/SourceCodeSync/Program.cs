@@ -845,7 +845,15 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum) && sourceEnum != null)
+                    if (!_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum))
+                    {
+                        if (!_enumBareDict.TryGetValue(GetEnumName(enumDecl), out sourceEnum))
+                        {
+                            sourceEnum = null;
+                        }
+                    }
+
+                    if (sourceEnum != null)
                     {
                         // Compare if they're different
                         string sourceEnumStr = sourceEnum.NormalizeWhitespace().ToFullString();
