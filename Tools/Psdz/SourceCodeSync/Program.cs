@@ -697,19 +697,26 @@ namespace SourceCodeSync
                             continue;
                         }
 
-                        if (bareNameUsed)
+                        bool hasAccessChanged = HasAccessChangedSourceAttribute(cls.AttributeLists);
+                        if (hasAccessChanged)
                         {
-                            bool hasAccessChanged = HasAccessChangedSourceAttribute(cls.AttributeLists);
-                            if (hasAccessChanged)
+                            if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                //sourceClass.Modifiers = cls.Modifiers;
+                                Console.WriteLine("Class {0} access changed detected", classNameFull);
                             }
                         }
 
                         // Check if destination class has any preserved members
                         bool hasPreservedMembers = cls.Members.Any(m => ShouldPreserveMember(m));
-                        ClassDeclarationSyntax mergedClass;
+                        if (hasAccessChanged)
+                        {
+                            // Update modifiers and attributes from destination class
+                            sourceClass = sourceClass
+                                .WithModifiers(cls.Modifiers)
+                                .WithAttributeLists(cls.AttributeLists);
+                        }
 
+                        ClassDeclarationSyntax mergedClass;
                         if (hasPreservedMembers)
                         {
                             // Merge with preserved members
@@ -804,18 +811,26 @@ namespace SourceCodeSync
                             continue;
                         }
 
-                        if (bareNameUsed)
+                        bool hasAccessChanged = HasAccessChangedSourceAttribute(interfaceDecl.AttributeLists);
+                        if (hasAccessChanged)
                         {
-                            bool hasAccessChanged = HasAccessChangedSourceAttribute(sourceInterface.AttributeLists);
-                            if (hasAccessChanged)
+                            if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                //sourceInterface.Modifiers = interfaceDecl.Modifiers;
+                                Console.WriteLine("Interface {0} access changed detected", interfaceNameFull);
                             }
                         }
 
                         // Check for preserved members
                         bool hasPreservedMembers = interfaceDecl.Members.Any(m => ShouldPreserveMember(m));
                         InterfaceDeclarationSyntax mergedInterface;
+
+                        if (hasAccessChanged)
+                        {
+                            // Update modifiers and attributes from destination interface
+                            sourceInterface = sourceInterface
+                                .WithModifiers(interfaceDecl.Modifiers)
+                                .WithAttributeLists(interfaceDecl.AttributeLists);
+                        }
 
                         if (hasPreservedMembers)
                         {
