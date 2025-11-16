@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
-    [PreserveSource(Hint = "Changed to public")]
+    [PreserveSource(Hint = "Changed to public", AccessChanged = true)]
     [DataContract]
     public class EcuDataGroup
     {
