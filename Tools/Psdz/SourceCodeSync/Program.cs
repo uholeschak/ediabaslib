@@ -668,11 +668,16 @@ namespace SourceCodeSync
                         continue;
                     }
 
+                    bool bareNameUsed = false;
                     if (!_classDict.TryGetValue(classNameFull, out ClassDeclarationSyntax sourceClass))
                     {
                         if (!_classBareDict.TryGetValue(classNameBare, out sourceClass))
                         {
                             sourceClass = null;
+                        }
+                        else
+                        {
+                            bareNameUsed = true;
                         }
                     }
 
@@ -761,11 +766,16 @@ namespace SourceCodeSync
                         continue;
                     }
 
+                    bool bareNameUsed = false;
                     if (!_interfaceDict.TryGetValue(interfaceNameFull, out InterfaceDeclarationSyntax sourceInterface))
                     {
                         if (!_interfaceBareDict.TryGetValue(interfaceNameBare, out sourceInterface))
                         {
                             sourceInterface = null;
+                        }
+                        else
+                        {
+                            bareNameUsed = true;
                         }
                     }
 
@@ -845,11 +855,16 @@ namespace SourceCodeSync
                         continue;
                     }
 
+                    bool bareNameUsed = false;
                     if (!_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum))
                     {
                         if (!_enumBareDict.TryGetValue(GetEnumName(enumDecl), out sourceEnum))
                         {
                             sourceEnum = null;
+                        }
+                        else
+                        {
+                            bareNameUsed = true;
                         }
                     }
 
