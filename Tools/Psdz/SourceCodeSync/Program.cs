@@ -79,6 +79,8 @@ namespace SourceCodeSync
             "RheingoldVehicleCommunication"
         ];
 
+        private const string _accessChangedProperty = "AccessChanged";
+
         public class Options
         {
             public Options()
@@ -685,6 +687,7 @@ namespace SourceCodeSync
                     {
                         bool hasContract = HasContractAttribute(cls.AttributeLists);
                         bool sourceHasContract = HasContractAttribute(sourceClass.AttributeLists);
+
                         if (hasContract && !sourceHasContract)
                         {
                             if (_verbosity >= Options.VerbosityOption.Warning)
@@ -692,6 +695,15 @@ namespace SourceCodeSync
                                 Console.WriteLine("Skipping class {0} with removed Contract", classNameFull);
                             }
                             continue;
+                        }
+
+                        if (bareNameUsed)
+                        {
+                            bool hasAccessChanged = HasAccessChangedSourceAttribute(cls.AttributeLists);
+                            if (hasAccessChanged)
+                            {
+                                //sourceClass.Modifiers = cls.Modifiers;
+                            }
                         }
 
                         // Check if destination class has any preserved members
@@ -790,6 +802,15 @@ namespace SourceCodeSync
                                 Console.WriteLine("Skipping interface {0} with removed Contract", interfaceNameFull);
                             }
                             continue;
+                        }
+
+                        if (bareNameUsed)
+                        {
+                            bool hasAccessChanged = HasAccessChangedSourceAttribute(sourceInterface.AttributeLists);
+                            if (hasAccessChanged)
+                            {
+                                //sourceInterface.Modifiers = interfaceDecl.Modifiers;
+                            }
                         }
 
                         // Check for preserved members
@@ -1268,6 +1289,26 @@ namespace SourceCodeSync
                 });
         }
 
+        public static bool HasAccessChangedSourceAttribute(SyntaxList<AttributeListSyntax> attributeLists)
+        {
+            return attributeLists
+                .SelectMany(al => al.Attributes)
+                .Any(attr =>
+                {
+                    string attrName = attr.Name.ToString();
+                    switch (attrName)
+                    {
+                        case "PreserveSource":
+                            if (GetAttributeProperty(attr, _accessChangedProperty))
+                            {
+                                return true;
+                            }
+                            break;
+                    }
+                    return false;
+                });
+        }
+
         /// <summary>
         /// Merges source class into destination, preserving marked members
         /// </summary>
@@ -1380,7 +1421,7 @@ namespace SourceCodeSync
                 if (preserveAttribute != null)
                 {
                     // Check if AccessChanged property is set to true
-                    bool accessChanged = GetAttributeProperty(preserveAttribute, "AccessChanged");
+                    bool accessChanged = GetAttributeProperty(preserveAttribute, _accessChangedProperty);
                     if (accessChanged)
                     {
                         return false;
