@@ -433,6 +433,7 @@ namespace SourceCodeSync
                         {
                             Console.WriteLine("*** Warning: Add bare class failed: {0}", classNameBare);
                         }
+                        _classBareDict[classNameBare] = null;
                     }
                 }
 
@@ -501,6 +502,7 @@ namespace SourceCodeSync
                         {
                             Console.WriteLine("*** Warning: Add bare interface failed: {0}", interfaceBareName);
                         }
+                        _interfaceBareDict[interfaceBareName] = null;
                     }
                 }
 
@@ -566,6 +568,7 @@ namespace SourceCodeSync
                         {
                             Console.WriteLine("*** Warning: Add bare enum failed: {0}", enumBareName);
                         }
+                        _enumBareDict[enumBareName] = null;
                     }
                 }
             }
