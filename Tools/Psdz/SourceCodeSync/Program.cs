@@ -16,7 +16,9 @@ namespace SourceCodeSync
         private static Dictionary<string, ClassDeclarationSyntax> _classDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
         private static Dictionary<string, ClassDeclarationSyntax> _classBareDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
         private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDict = new Dictionary<string, InterfaceDeclarationSyntax>(StringComparer.Ordinal);
+        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceBareDict = new Dictionary<string, InterfaceDeclarationSyntax>(StringComparer.Ordinal);
         private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.Ordinal);
+        private static Dictionary<string, EnumDeclarationSyntax> _enumBareDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.Ordinal);
 
         private static readonly string[] _ignoreNamespaces =
         [
@@ -437,7 +439,8 @@ namespace SourceCodeSync
                 var interfaces = root.DescendantNodes().OfType<InterfaceDeclarationSyntax>();
                 foreach (InterfaceDeclarationSyntax interfaceDecl in interfaces)
                 {
-                    string interfaceName = GetInterfaceName(interfaceDecl);
+                    string interfaceName = GetInterfaceName(interfaceDecl, includeModifiers: true);
+                    string interfaceBareName = GetInterfaceName(interfaceDecl);
                     string interfaceSource = interfaceDecl.ToFullString();
                     string namespaceName = GetNamespace(interfaceDecl);
 
@@ -491,12 +494,21 @@ namespace SourceCodeSync
                             }
                         }
                     }
+
+                    if (!_interfaceBareDict.TryAdd(interfaceBareName, interfaceDecl))
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Info)
+                        {
+                            Console.WriteLine("*** Warning: Add bare interface failed: {0}", interfaceBareName);
+                        }
+                    }
                 }
 
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
-                    string enumName = GetEnumName(enumDecl);
+                    string enumName = GetEnumName(enumDecl, includeModifiers: true);
+                    string enumBareName = GetEnumName(enumDecl);
                     string enumSource = enumDecl.ToFullString();
                     string namespaceName = GetNamespace(enumDecl);
 
@@ -545,6 +557,14 @@ namespace SourceCodeSync
                         if (!_enumDict.TryAdd(enumName, enumDecl))
                         {
                             Console.WriteLine("*** Warning: Add enum failed: {0}", enumName);
+                        }
+                    }
+
+                    if (!_enumBareDict.TryAdd(enumBareName, enumDecl))
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Info)
+                        {
+                            Console.WriteLine("*** Warning: Add bare enum failed: {0}", enumBareName);
                         }
                     }
                 }
@@ -659,7 +679,7 @@ namespace SourceCodeSync
                 var interfaces = root.DescendantNodes().OfType<InterfaceDeclarationSyntax>().ToList();
                 foreach (InterfaceDeclarationSyntax interfaceDecl in interfaces)
                 {
-                    string interfaceName = GetInterfaceName(interfaceDecl);
+                    string interfaceName = GetInterfaceName(interfaceDecl, includeModifiers: true);
                     string interfaceSource = interfaceDecl.NormalizeWhitespace().ToFullString();
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
@@ -735,7 +755,7 @@ namespace SourceCodeSync
                 var enums = root.DescendantNodes().OfType<EnumDeclarationSyntax>().ToList();
                 foreach (EnumDeclarationSyntax enumDecl in enums)
                 {
-                    string enumName = GetEnumName(enumDecl);
+                    string enumName = GetEnumName(enumDecl, includeModifiers: true);
                     string enumSource = enumDecl.NormalizeWhitespace().ToFullString();
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
@@ -872,7 +892,7 @@ namespace SourceCodeSync
             return className;
         }
 
-        public static string GetInterfaceName(InterfaceDeclarationSyntax interfaceDeclaration, bool includeNamespace = false)
+        public static string GetInterfaceName(InterfaceDeclarationSyntax interfaceDeclaration, bool includeModifiers = false, bool includeNamespace = false)
         {
             string interfaceName = interfaceDeclaration.Identifier.ValueText;
             if (includeNamespace)
@@ -885,10 +905,13 @@ namespace SourceCodeSync
             }
             else
             {
-                string modifiers = GetModifiersText(interfaceDeclaration.Modifiers);
-                if (modifiers.Length > 0)
+                if (includeModifiers)
                 {
-                    interfaceName = $"{modifiers}_{interfaceName}";
+                    string modifiers = GetModifiersText(interfaceDeclaration.Modifiers);
+                    if (modifiers.Length > 0)
+                    {
+                        interfaceName = $"{modifiers}_{interfaceName}";
+                    }
                 }
 
                 int typeParamCount = interfaceDeclaration.TypeParameterList?.Parameters.Count ?? 0;
@@ -906,7 +929,7 @@ namespace SourceCodeSync
             return interfaceName;
         }
 
-        public static string GetEnumName(EnumDeclarationSyntax enumDeclaration, bool includeNamespace = false)
+        public static string GetEnumName(EnumDeclarationSyntax enumDeclaration, bool includeModifiers = false, bool includeNamespace = false)
         {
             string enumName = enumDeclaration.Identifier.ValueText;
             if (includeNamespace)
@@ -919,10 +942,13 @@ namespace SourceCodeSync
             }
             else
             {
-                string modifiers = GetModifiersText(enumDeclaration.Modifiers);
-                if (modifiers.Length > 0)
+                if (includeModifiers)
                 {
-                    enumName = $"{modifiers}_{enumName}";
+                    string modifiers = GetModifiersText(enumDeclaration.Modifiers);
+                    if (modifiers.Length > 0)
+                    {
+                        enumName = $"{modifiers}_{enumName}";
+                    }
                 }
             }
 
