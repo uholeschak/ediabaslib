@@ -668,8 +668,7 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    ClassDeclarationSyntax sourceClass = null;
-                    if (!_classDict.TryGetValue(classNameFull, out sourceClass))
+                    if (!_classDict.TryGetValue(classNameFull, out ClassDeclarationSyntax sourceClass))
                     {
                         if (!_classBareDict.TryGetValue(classNameBare, out sourceClass))
                         {
@@ -741,12 +740,13 @@ namespace SourceCodeSync
                 var interfaces = root.DescendantNodes().OfType<InterfaceDeclarationSyntax>().ToList();
                 foreach (InterfaceDeclarationSyntax interfaceDecl in interfaces)
                 {
-                    string interfaceName = GetInterfaceName(interfaceDecl, includeModifiers: true);
+                    string interfaceNameFull = GetInterfaceName(interfaceDecl, includeModifiers: true);
+                    string interfaceNameBare = GetInterfaceName(interfaceDecl);
                     string interfaceSource = interfaceDecl.NormalizeWhitespace().ToFullString();
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
-                        Console.WriteLine($"Interface: {interfaceName}");
+                        Console.WriteLine($"Interface: {interfaceNameFull}");
                         Console.WriteLine("Source:");
                         Console.WriteLine(interfaceSource);
                         Console.WriteLine(new string('-', 80));
@@ -756,12 +756,20 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Warning)
                         {
-                            Console.WriteLine("Skipping interface {0} with comments: {1}", interfaceName, fileName);
+                            Console.WriteLine("Skipping interface {0} with comments: {1}", interfaceNameFull, fileName);
                         }
                         continue;
                     }
 
-                    if (_interfaceDict.TryGetValue(interfaceName, out InterfaceDeclarationSyntax sourceInterface) && sourceInterface != null)
+                    if (!_interfaceDict.TryGetValue(interfaceNameFull, out InterfaceDeclarationSyntax sourceInterface))
+                    {
+                        if (!_interfaceBareDict.TryGetValue(interfaceNameBare, out sourceInterface))
+                        {
+                            sourceInterface = null;
+                        }
+                    }
+
+                    if (sourceInterface != null)
                     {
                         bool hasContract = HasContractAttribute(interfaceDecl.AttributeLists);
                         bool sourceHasContract = HasContractAttribute(sourceInterface.AttributeLists);
@@ -769,7 +777,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Warning)
                             {
-                                Console.WriteLine("Skipping interface {0} with removed Contract", interfaceName);
+                                Console.WriteLine("Skipping interface {0} with removed Contract", interfaceNameFull);
                             }
                             continue;
                         }
@@ -784,7 +792,7 @@ namespace SourceCodeSync
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
                                 int preservedCount = interfaceDecl.Members.Count(m => ShouldPreserveMember(m));
-                                Console.WriteLine($"Merging interface {interfaceName} while preserving {preservedCount} marked member(s)");
+                                Console.WriteLine($"Merging interface {interfaceNameFull} while preserving {preservedCount} marked member(s)");
                             }
                         }
                         else
@@ -798,7 +806,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine($"Updating interface: {interfaceName}");
+                                Console.WriteLine($"Updating interface: {interfaceNameFull}");
                             }
                             newRoot = newRoot.ReplaceNode(interfaceDecl, mergedInterface);
                             fileModified = true;
@@ -808,7 +816,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine("*** Warning: Interface not found in source files: {0}", interfaceName);
+                            Console.WriteLine("*** Warning: Interface not found in source files: {0}", interfaceNameFull);
                         }
                     }
                 }
