@@ -9,7 +9,7 @@ using PsdzClientLibrary;
 
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "Obsolete removed", AccessModified = true)]
+    [PreserveSource(Hint = "Obsolete removed", AttributesModified = true)]
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum Bus
     {

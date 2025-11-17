@@ -14,6 +14,8 @@ namespace PsdzClientLibrary
         public bool KeepAttribute;
 
         public bool AccessModified;
+
+        public bool AttributesModified;
     }
 
     public struct PlaceholderType

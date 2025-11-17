@@ -81,6 +81,8 @@ namespace SourceCodeSync
 
         private const string _accessModifiedProperty = "AccessModified";
 
+        private const string _attributesModifiedProperty = "AttributesModified";
+
         public class Options
         {
             public Options()
@@ -693,12 +695,12 @@ namespace SourceCodeSync
                             continue;
                         }
 
-                        bool hasAccessModified = HasAccessModifiedSourceAttribute(cls.AttributeLists);
-                        if (hasAccessModified)
+                        bool specialAttribute = HasSpecialSourceAttribute(cls.AttributeLists);
+                        if (specialAttribute)
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine("Class {0} access modified detected", classNameFull);
+                                Console.WriteLine("Class {0} special attribute detected", classNameFull);
                             }
 
                             // Update modifiers and attributes from destination class
@@ -801,12 +803,12 @@ namespace SourceCodeSync
                             continue;
                         }
 
-                        bool hasAccessModified = HasAccessModifiedSourceAttribute(interfaceDecl.AttributeLists);
-                        if (hasAccessModified)
+                        bool specialAttribute = HasSpecialSourceAttribute(interfaceDecl.AttributeLists);
+                        if (specialAttribute)
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine("Interface {0} access modified detected", interfaceNameFull);
+                                Console.WriteLine("Interface {0} special attribute detected", interfaceNameFull);
                             }
 
                             // Update modifiers and attributes from destination interface
@@ -889,12 +891,12 @@ namespace SourceCodeSync
                     if (sourceEnum != null)
                     {
                         EnumDeclarationSyntax sourceEnumCopy = sourceEnum;
-                        bool hasAccessModified = HasAccessModifiedSourceAttribute(enumDecl.AttributeLists);
-                        if (hasAccessModified)
+                        bool specialAttribute = HasSpecialSourceAttribute(enumDecl.AttributeLists);
+                        if (specialAttribute)
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine("Enum {0} access modified detected", enumName);
+                                Console.WriteLine("Enum {0} special attribute detected", enumName);
                             }
                             // Update modifiers and attributes from destination enum
                             sourceEnumCopy = sourceEnumCopy
@@ -1300,7 +1302,7 @@ namespace SourceCodeSync
                 });
         }
 
-        public static bool HasAccessModifiedSourceAttribute(SyntaxList<AttributeListSyntax> attributeLists)
+        public static bool HasSpecialSourceAttribute(SyntaxList<AttributeListSyntax> attributeLists)
         {
             return attributeLists
                 .SelectMany(al => al.Attributes)
@@ -1310,7 +1312,8 @@ namespace SourceCodeSync
                     switch (attrName)
                     {
                         case "PreserveSource":
-                            if (GetAttributeProperty(attr, _accessModifiedProperty))
+                            if (GetAttributeProperty(attr, _accessModifiedProperty) ||
+                                GetAttributeProperty(attr, _attributesModifiedProperty))
                             {
                                 return true;
                             }
@@ -1432,8 +1435,8 @@ namespace SourceCodeSync
                 if (preserveAttribute != null)
                 {
                     // Check if AccessModified property is set to true
-                    bool accessModified = GetAttributeProperty(preserveAttribute, _accessModifiedProperty);
-                    if (accessModified)
+                    if (GetAttributeProperty(preserveAttribute, _accessModifiedProperty) ||
+                        GetAttributeProperty(preserveAttribute, _attributesModifiedProperty))
                     {
                         return false;
                     }
