@@ -18,7 +18,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using PsdzClientLibrary;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Core.Container
 {
     public enum CommMode
@@ -82,11 +84,13 @@ namespace PsdzClient.Core.Container
 
         private bool m_FromFastaConfig;
 
-        //private ServiceController sc;
+        [PreserveSource(Hint = "ServiceController sc", Removed = true)]
+        private object sc;
 
-        //private ServiceControllerPermission scp;
+        [PreserveSource(Hint = "ServiceControllerPermission scp", Removed = true)]
+        private object scp;
 
-        //private bool serviceIsRunning;
+        private bool serviceIsRunning;
 
         private bool isTestCertReqCallExecuted;
 
