@@ -621,14 +621,9 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private bool IsActiveLBPFeatureSwitchForCallCertreqProfiles(IstaIcsServiceClient ics)
         {
-#if false
-            if (ics.IsAvailable() || IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
-            {
-                return ics.GetFeatureEnabledStatus("ExecuteServiceCallCertreqprofiles", ics.IsAvailable()).IsActive;
-            }
-#endif
             return false;
         }
 
@@ -1116,63 +1111,23 @@ namespace PsdzClient.Core.Container
             return dateTime - now;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private WebCallResponse<Sec4DiagResponseData> RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
-            WebCallResponse<Sec4DiagResponseData> webCallResponse = new WebCallResponse<Sec4DiagResponseData>();
-#if false
-            if (ServiceLocator.Current.TryGetService<IstaLoginServiceClient>(out var service))
-            {
-                webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.Sec4Diag, service.GetUserTokenByOperationId()?.UserToken);
-                if (webCallResponse.IsSuccessful)
-                {
-                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0]);
-                }
-                if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service2))
-                {
-                    string value = $"Successfull: {webCallResponse.IsSuccessful}, HTTPStatusCode: {(webCallResponse.HttpStatus.HasValue ? webCallResponse.HttpStatus : new HttpStatusCode?(HttpStatusCode.ServiceUnavailable))}, Certificates exist: {!string.IsNullOrEmpty(webCallResponse.Response?.Certificate)}";
-                    service2.AddServiceCode(ServiceCodes.S4D01_CallSec4DiagInBackground_nu_LF, value, LayoutGroup.D, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
-                }
-                return webCallResponse;
-            }
-#endif
             throw new InvalidOperationException("IDataContext service not found.");
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private WebCallResponse<bool> RequestCertReqProfil(ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
-            WebCallResponse<bool> webCallResponse = new WebCallResponse<bool>();
-#if false
-            if (ServiceLocator.Current.TryGetService<IstaLoginServiceClient>(out var service))
-            {
-                webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).GetCertReqProfil(BackendServiceType.Sec4DiagCertReqProfil, service.GetUserTokenByOperationId()?.UserToken);
-                if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service2))
-                {
-                    string value = $"Successfull: {webCallResponse.IsSuccessful}, HTTPStatusCode: {(webCallResponse.HttpStatus.HasValue ? webCallResponse.HttpStatus : new HttpStatusCode?(HttpStatusCode.ServiceUnavailable))}/{(webCallResponse.HttpStatus.HasValue ? webCallResponse.HttpStatus.ToString() : HttpStatusCode.ServiceUnavailable.ToString())}";
-                    service2.AddServiceCode(ServiceCodes.S4D01_CallSec4DiagInBackground_nu_LF, value, LayoutGroup.D);
-                }
-                return webCallResponse;
-            }
-#endif
             throw new InvalidOperationException("IDataContext service not found.");
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private WebCallResponse<Sec4DiagResponseData> RequestCertificate(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog, bool testRun)
         {
-#if false
-            WebCallResponse<Sec4DiagResponseData> webCallResponse = new WebCallResponse<Sec4DiagResponseData>();
-            if (ServiceLocator.Current.TryGetService<IstaLoginServiceClient>(out var service))
-            {
-                webCallResponse = Sec4DiagProcessorFactory.Create(backendCallsWatchDog).SendDataToBackend(sec4DiagHandler.BuildRequestModel(device.VIN), BackendServiceType.AosSec4Diag, service.GetUserTokenByOperationId()?.UserToken);
-                if (webCallResponse.IsSuccessful)
-                {
-                    sec4DiagHandler.CreateS29CertificateInstallCertificatesAndWriteToFile(device, webCallResponse.Response.Certificate, webCallResponse.Response.CertificateChain[0]);
-                }
-                return webCallResponse;
-            }
-#endif
             throw new InvalidOperationException("IDataContext service not found.");
         }
-
 
         private bool InitEdiabasForDoIP(IVciDevice device)
         {
@@ -1307,7 +1262,7 @@ namespace PsdzClient.Core.Container
             return eCUJob2;
         }
 
-        [PreserveSource(Hint = "fastaprotcoller removed")]
+        [PreserveSource(Hint = "fastaprotcoller removed, serviceIsRunning removed")]
         public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, string callerMember = "")
         {
             TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
@@ -1378,7 +1333,7 @@ namespace PsdzClient.Core.Container
                 try
                 {
                     SetTraceLevelToMax(callerMember);
-#if false
+/* [IGNORE]
                     if (serviceIsRunning)
                     {
                         try
@@ -1390,13 +1345,13 @@ namespace PsdzClient.Core.Container
                             Log.Error("ECUKom.apiJob()", $"Ediabas monitor executeCommand failed for Command {EdiabasMonitorTrigger.apijob}");
                         }
                     }
-#endif
+*/
                     api.apiJob(ecu, jobName, param, resultFilter);
                     while (api.apiStateExt(1000) == 0)
                     {
                         SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
                     }
-#if false
+/* [IGNORE]
                     if (serviceIsRunning)
                     {
                         try
@@ -1407,12 +1362,12 @@ namespace PsdzClient.Core.Container
                         {
                         }
                     }
-#endif
+*/
                     RemoveTraceLevel(callerMember);
                     num = (eCUJob3.JobErrorCode = api.apiErrorCode());
                     eCUJob3.JobErrorText = api.apiErrorText();
                     api.apiResultSets(out var rsets);
-#if false
+/* [IGNORE]
                     if (serviceIsRunning)
                     {
                         try
@@ -1423,7 +1378,7 @@ namespace PsdzClient.Core.Container
                         {
                         }
                     }
-#endif
+*/
                     eCUJob3.JobResultSets = rsets;
                     if (rsets > 0)
                     {
@@ -1564,6 +1519,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        [PreserveSource(Hint = "interactionService removed")]
         private void HandleEcuAuthorizationRejection(string ecu, string jobName, string param, string resultFilter, string jobStatus)
         {
             string method = Log.CurrentMethod();
@@ -1580,9 +1536,7 @@ namespace PsdzClient.Core.Container
                     return;
                 }
                 Log.Info(method, "Ediabas reinitialized or AuthenticationState is wrong. Popup with Infos will be shown.");
-                string details = $"ECU: {ecu}, Job: {jobName}, Argument: {param}, ResultFilter: {resultFilter}";
-                //string textItem = new TextContent(new FormatedData("#Sec4Diag.ZDFReject", false, "ERROR_ECU_ZDF_REJECT"), lang).GetTextForUI(lang)[0].TextItem;
-                //interactionService.RegisterMessage(FormatedData.Localize("#Note"), textItem, details);
+                // [UH] [IGNORE] interactionService removed
             }
         }
         public void RemoveTraceLevel(string callerMember)
