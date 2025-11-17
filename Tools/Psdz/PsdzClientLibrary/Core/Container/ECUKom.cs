@@ -925,7 +925,7 @@ namespace PsdzClient.Core.Container
                                 else
                                 {
                                     TimeSpan subCAZertifikateRemainingTime2 = GetSubCAZertifikateRemainingTime();
-                                    // [UH] interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.SubCaBackendErrorButTokenStillValid", subCAZertifikateRemainingTime2.Days).Localize());
+                                    // [UH] [IGNORE] interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.SubCaBackendErrorButTokenStillValid", subCAZertifikateRemainingTime2.Days).Localize());
                                     Log.Info(method, "Code: SEC4DIAG_006");
                                     ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_006", TYPES.Sec4Diag);
                                     boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
@@ -1190,7 +1190,7 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, resultFilter, cacheAdding);
         }
 
-        // [UH] fastaprotcoller removed
+        [PreserveSource(Hint = "fastaprotcoller removed")]
         public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter = "", int retries = 0, bool fastaActive = true)
         {
             if (retries != 0)
@@ -1209,7 +1209,7 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, string.Empty);
         }
 
-        // [UH] fastaprotcoller removed
+        [PreserveSource(Hint = "fastaprotcoller removed")]
         public ECUJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "", [CallerMemberName] string callerMember = "")
         {
             if (FromFastaConfig && !string.IsNullOrEmpty(sgbd) && apiJobNamesToBeCached.Contains(job))
@@ -1223,7 +1223,7 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, 0);
         }
 
-        // [UH] fastaprotcoller removed
+        [PreserveSource(Hint = "fastaprotcoller removed")]
         public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, string callerMember = "")
         {
             if (retries > 5)
@@ -1265,7 +1265,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        // [UH] fastaprotcoller removed
+        [PreserveSource(Hint = "fastaprotcoller removed")]
         public ECUJob apiJob(string ecu, string job, string param, string resultFilter, string callerMember = "")
         {
             try
@@ -1307,7 +1307,7 @@ namespace PsdzClient.Core.Container
             return eCUJob2;
         }
 
-        // [UH] fastaprotcoller removed
+        [PreserveSource(Hint = "fastaprotcoller removed")]
         public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, string callerMember = "")
         {
             TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
@@ -1615,7 +1615,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        // [UH] converted
+        [PreserveSource(Hint = "Converted")]
         private bool UseConfigFileTraces()
         {
             api.apiGetConfig("ApiTrace", out string text);
