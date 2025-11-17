@@ -79,7 +79,7 @@ namespace SourceCodeSync
             "RheingoldVehicleCommunication"
         ];
 
-        private const string _accessChangedProperty = "AccessChanged";
+        private const string _accessModifiedProperty = "AccessModified";
 
         public class Options
         {
@@ -697,18 +697,18 @@ namespace SourceCodeSync
                             continue;
                         }
 
-                        bool hasAccessChanged = HasAccessChangedSourceAttribute(cls.AttributeLists);
-                        if (hasAccessChanged)
+                        bool hasAccessModified = HasAccessModifiedSourceAttribute(cls.AttributeLists);
+                        if (hasAccessModified)
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine("Class {0} access changed detected", classNameFull);
+                                Console.WriteLine("Class {0} access modified detected", classNameFull);
                             }
                         }
 
                         // Check if destination class has any preserved members
                         bool hasPreservedMembers = cls.Members.Any(m => ShouldPreserveMember(m));
-                        if (hasAccessChanged)
+                        if (hasAccessModified)
                         {
                             // Update modifiers and attributes from destination class
                             sourceClass = sourceClass
@@ -811,12 +811,12 @@ namespace SourceCodeSync
                             continue;
                         }
 
-                        bool hasAccessChanged = HasAccessChangedSourceAttribute(interfaceDecl.AttributeLists);
-                        if (hasAccessChanged)
+                        bool hasAccessModified = HasAccessModifiedSourceAttribute(interfaceDecl.AttributeLists);
+                        if (hasAccessModified)
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine("Interface {0} access changed detected", interfaceNameFull);
+                                Console.WriteLine("Interface {0} access modified detected", interfaceNameFull);
                             }
                         }
 
@@ -824,7 +824,7 @@ namespace SourceCodeSync
                         bool hasPreservedMembers = interfaceDecl.Members.Any(m => ShouldPreserveMember(m));
                         InterfaceDeclarationSyntax mergedInterface;
 
-                        if (hasAccessChanged)
+                        if (hasAccessModified)
                         {
                             // Update modifiers and attributes from destination interface
                             sourceInterface = sourceInterface
@@ -1304,7 +1304,7 @@ namespace SourceCodeSync
                 });
         }
 
-        public static bool HasAccessChangedSourceAttribute(SyntaxList<AttributeListSyntax> attributeLists)
+        public static bool HasAccessModifiedSourceAttribute(SyntaxList<AttributeListSyntax> attributeLists)
         {
             return attributeLists
                 .SelectMany(al => al.Attributes)
@@ -1314,7 +1314,7 @@ namespace SourceCodeSync
                     switch (attrName)
                     {
                         case "PreserveSource":
-                            if (GetAttributeProperty(attr, _accessChangedProperty))
+                            if (GetAttributeProperty(attr, _accessModifiedProperty))
                             {
                                 return true;
                             }
@@ -1435,9 +1435,9 @@ namespace SourceCodeSync
 
                 if (preserveAttribute != null)
                 {
-                    // Check if AccessChanged property is set to true
-                    bool accessChanged = GetAttributeProperty(preserveAttribute, _accessChangedProperty);
-                    if (accessChanged)
+                    // Check if AccessModified property is set to true
+                    bool accessModified = GetAttributeProperty(preserveAttribute, _accessModifiedProperty);
+                    if (accessModified)
                     {
                         return false;
                     }
