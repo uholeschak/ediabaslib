@@ -670,16 +670,11 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    bool bareNameUsed = false;
                     if (!_classDict.TryGetValue(classNameFull, out ClassDeclarationSyntax sourceClass))
                     {
                         if (!_classBareDict.TryGetValue(classNameBare, out sourceClass))
                         {
                             sourceClass = null;
-                        }
-                        else
-                        {
-                            bareNameUsed = true;
                         }
                     }
 
