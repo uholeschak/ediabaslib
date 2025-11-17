@@ -789,8 +789,9 @@ namespace SourceCodeSync
 
                     if (sourceInterface != null)
                     {
+                        InterfaceDeclarationSyntax sourceInterfaceCopy = sourceInterface;
                         bool hasContract = HasContractAttribute(interfaceDecl.AttributeLists);
-                        bool sourceHasContract = HasContractAttribute(sourceInterface.AttributeLists);
+                        bool sourceHasContract = HasContractAttribute(sourceInterfaceCopy.AttributeLists);
                         if (hasContract && !sourceHasContract)
                         {
                             if (_verbosity >= Options.VerbosityOption.Warning)
@@ -809,7 +810,7 @@ namespace SourceCodeSync
                             }
 
                             // Update modifiers and attributes from destination interface
-                            sourceInterface = sourceInterface
+                            sourceInterfaceCopy = sourceInterfaceCopy
                                 .WithModifiers(interfaceDecl.Modifiers)
                                 .WithAttributeLists(interfaceDecl.AttributeLists);
                         }
@@ -820,7 +821,7 @@ namespace SourceCodeSync
 
                         if (hasPreservedMembers)
                         {
-                            mergedInterface = MergeInterfacePreservingMarked(interfaceDecl, sourceInterface);
+                            mergedInterface = MergeInterfacePreservingMarked(interfaceDecl, sourceInterfaceCopy);
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
                                 int preservedCount = interfaceDecl.Members.Count(m => ShouldPreserveMember(m));
@@ -829,7 +830,7 @@ namespace SourceCodeSync
                         }
                         else
                         {
-                            mergedInterface = sourceInterface;
+                            mergedInterface = sourceInterfaceCopy;
                         }
 
                         // Compare if they're different
