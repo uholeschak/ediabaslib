@@ -4,14 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Programming
 {
     internal class EcuObj : IEcuObj
     {
-        //public XEP_ECUCLIQUES XepEcuClique { get; internal set; }
+        [PreserveSource(Hint = "public XEP_ECUCLIQUES", Removed = true)]
+        public PlaceholderType XepEcuClique { get; internal set; }
 
-        //public XEP_ECUVARIANTS XepEcuVariant { get; internal set; }
+        [PreserveSource(Hint = "public XEP_ECUVARIANTS", Removed = true)]
+        public PlaceholderType XepEcuVariant { get; internal set; }
 
         public string EcuGroup { get; internal set; }
 
