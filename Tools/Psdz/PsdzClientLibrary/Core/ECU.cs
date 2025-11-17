@@ -1,4 +1,8 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
+using PsdzClient.Programming;
+using PsdzClientLibrary;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,9 +14,6 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
-using PsdzClient.Programming;
 
 namespace PsdzClient.Core
 {
@@ -22,13 +23,15 @@ namespace PsdzClient.Core
 
         private int stillProgrammable;
 
-        //private XEP_ECUCLIQUES xepEcuClique;
+        [PreserveSource(Hint = "private XEP_ECUCLIQUES", Removed = true)]
+        private PlaceholderType xepEcuClique;
 
         private string eCUTitle;
 
         private string vARIANTEField;
 
-        //private ObservableCollection<JOB> jOBSField;
+        [PreserveSource(Hint = "private ObservableCollection<JOB>", Removed = true)]
+        private PlaceholderType jOBSField;
 
         private BusType bUSField;
 
@@ -94,13 +97,13 @@ namespace PsdzClient.Core
 
         private int f_ANZField;
 
-        // [UH] removed
-        //private ObservableCollection<DTC> fEHLERField;
+        [PreserveSource(Hint = "private ObservableCollection<DTC>", Removed = true)]
+        private PlaceholderType fEHLERField;
 
         private int i_ANZField;
 
-        // [UH] removed
-        //private ObservableCollection<DTC> iNFOField;
+        [PreserveSource(Hint = "private ObservableCollection<DTC>", Removed = true)]
+        private PlaceholderType iNFOField;
 
         private SVK sVKField;
 
@@ -108,10 +111,11 @@ namespace PsdzClient.Core
 
         private ObservableCollection<typeECU_Transaction> tALField;
 
-        // [UH] removed
-        //private DTC selectedDTCField;
+        [PreserveSource(Hint = "private DTC", Removed = true)]
+        private PlaceholderType selectedDTCField;
 
-        //private DTC selectedINFOField;
+        [PreserveSource(Hint = "private DTC", Removed = true)]
+        private PlaceholderType selectedINFOField;
 
         private string hARDWARE_REFERENZField;
 
@@ -162,7 +166,6 @@ namespace PsdzClient.Core
         private IEcuStatusInfo statusInfo;
 
         public GenerationType Generation { get; set; }
-
         // [UH] removed
 #if false
         [XmlIgnore]
