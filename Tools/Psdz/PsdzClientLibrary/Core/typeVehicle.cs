@@ -2552,29 +2552,29 @@ namespace PsdzClient.Core
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        // [UH] added clientContext
+        [PreserveSource(Hint = "added clientContext")]
         public typeVehicle(ClientContext clientContext)
         {
             _clientContext = clientContext;
-            //perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
+            // [IGNORE] perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
             installedAdaptersField = new ObservableCollection<decimal>();
-            //combinedFaultsField = new ObservableCollection<DTC>();
-            //diagCodesField = new ObservableCollection<typeDiagCode>();
-            //serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
-            //technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
+            // [IGNORE] combinedFaultsField = new ObservableCollection<DTC>();
+            // [IGNORE] diagCodesField = new ObservableCollection<typeDiagCode>();
+            // [IGNORE] serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
+            // [IGNORE] technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
             mIBField = new VCIDevice(clientContext);
             vCIField = new VCIDevice(clientContext);
-            //testplanField = new TestPlanType();
-            //testPlanCache = new TestPlanCache();
-            //historyInfoObjectsField = new ObservableCollection<InfoObject>();
+            // [IGNORE] testplanField = new TestPlanType();
+            // [IGNORE] testPlanCache = new TestPlanCache();
+            // [IGNORE] historyInfoObjectsField = new ObservableCollection<InfoObject>();
             faField = new FA();
             fFMField = new ObservableCollection<FFMResult>();
             eMotorField = new EMotor();
             heatMotorsField = new List<HeatMotor>();
             genericMotorField = new GenericMotor();
-            //cBSField = new ObservableCollection<typeCBSInfo>();
+            // [IGNORE] cBSField = new ObservableCollection<typeCBSInfo>();
             selectedECUField = new ECU();
-            //zFSField = new ObservableCollection<ZFSResult>();
+            // [IGNORE] zFSField = new ObservableCollection<ZFSResult>();
             eCUField = new ObservableCollection<ECU>();
             zFS_SUCCESSFULLYField = false;
             prodartField = "P";
@@ -2610,7 +2610,7 @@ namespace PsdzClient.Core
             refSchemaField = "http://www.bmw.com/Rheingold/Vehicle.xsd";
             versionField = "3.42.20.10700";
             dealerSessionProperties = new List<DealerSessionProperty>();
-            //backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
+            // [IGNORE] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
         }
 
         public virtual void OnPropertyChanged(string propertyName)
@@ -2621,7 +2621,7 @@ namespace PsdzClient.Core
             }
         }
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public ClientContext ClientContext
         {
             get { return _clientContext; }
