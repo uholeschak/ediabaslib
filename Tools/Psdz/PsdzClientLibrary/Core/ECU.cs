@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Core
 {
     public class ECU : ICloneable, IEcu, INotifyPropertyChanged, IIdentEcu, IEcuObj

@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-#pragma warning disable CS0618
+#pragma warning disable CS0618,CS0169,CS0649
 namespace PsdzClient.Core
 {
     // ToDo: Check on update
@@ -491,31 +491,10 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
-        public ObservableCollection<ZFSResult> ZFS
-        {
-            get
-            {
-                return zFSField;
-            }
-            set
-            {
-                if (zFSField != null)
-                {
-                    if (!zFSField.Equals(value))
-                    {
-                        zFSField = value;
-                        OnPropertyChanged("ZFS");
-                    }
-                }
-                else
-                {
-                    zFSField = value;
-                    OnPropertyChanged("ZFS");
-                }
-            }
-        }
-#endif
+
+        [PreserveSource(Hint = "public ObservableCollection<ZFSResult>", Placeholder = true)]
+        public PlaceholderType ZFS;
+
         public bool ZFS_SUCCESSFULLY
         {
             get
@@ -555,31 +534,10 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
-        public ObservableCollection<typeCBSInfo> CBS
-        {
-            get
-            {
-                return cBSField;
-            }
-            set
-            {
-                if (cBSField != null)
-                {
-                    if (!cBSField.Equals(value))
-                    {
-                        cBSField = value;
-                        OnPropertyChanged("CBS");
-                    }
-                }
-                else
-                {
-                    cBSField = value;
-                    OnPropertyChanged("CBS");
-                }
-            }
-        }
-#endif
+
+        [PreserveSource(Hint = "public ObservableCollection<typeCBSInfo>", Placeholder = true)]
+        public PlaceholderType CBS;
+
         public string Typ
         {
             get
@@ -1322,59 +1280,18 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
-        public ObservableCollection<InfoObject> HistoryInfoObjects
-        {
-            get
-            {
-                return historyInfoObjectsField;
-            }
-            set
-            {
-                if (historyInfoObjectsField != null)
-                {
-                    if (!historyInfoObjectsField.Equals(value))
-                    {
-                        historyInfoObjectsField = value;
-                        OnPropertyChanged("HistoryInfoObjects");
-                    }
-                }
-                else
-                {
-                    historyInfoObjectsField = value;
-                    OnPropertyChanged("HistoryInfoObjects");
-                }
-            }
-        }
 
-        public TestPlanType Testplan
-        {
-            get
-            {
-                return testplanField;
-            }
-            set
-            {
-                if (testplanField != null)
-                {
-                    if (!testplanField.Equals(value))
-                    {
-                        testplanField = value;
-                        OnPropertyChanged("Testplan");
-                    }
-                }
-                else
-                {
-                    testplanField = value;
-                    OnPropertyChanged("Testplan");
-                }
-            }
-        }
+        [PreserveSource(Hint = "public ObservableCollection<InfoObject>", Placeholder = true)]
+        public PlaceholderType HistoryInfoObjects;
 
+        [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
+        public PlaceholderType Testplan;
+
+        [PreserveSource(Hint = "public TestPlanCache TestPlanCache", Placeholder = true)]
         [IgnoreDataMember]
         [XmlIgnore]
-        public TestPlanCache TestPlanCache => testPlanCache;
-#endif
+        public PlaceholderType TestPlanCache => testPlanCache;
+
         public bool SimulatedParts
         {
             get
