@@ -704,19 +704,17 @@ namespace SourceCodeSync
                             {
                                 Console.WriteLine("Class {0} access modified detected", classNameFull);
                             }
-                        }
 
-                        // Check if destination class has any preserved members
-                        bool hasPreservedMembers = cls.Members.Any(m => ShouldPreserveMember(m));
-                        if (hasAccessModified)
-                        {
                             // Update modifiers and attributes from destination class
                             sourceClass = sourceClass
                                 .WithModifiers(cls.Modifiers)
                                 .WithAttributeLists(cls.AttributeLists);
                         }
 
+                        // Check if destination class has any preserved members
+                        bool hasPreservedMembers = cls.Members.Any(m => ShouldPreserveMember(m));
                         ClassDeclarationSyntax mergedClass;
+
                         if (hasPreservedMembers)
                         {
                             // Merge with preserved members
@@ -785,16 +783,11 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    bool bareNameUsed = false;
                     if (!_interfaceDict.TryGetValue(interfaceNameFull, out InterfaceDeclarationSyntax sourceInterface))
                     {
                         if (!_interfaceBareDict.TryGetValue(interfaceNameBare, out sourceInterface))
                         {
                             sourceInterface = null;
-                        }
-                        else
-                        {
-                            bareNameUsed = true;
                         }
                     }
 
@@ -818,19 +811,16 @@ namespace SourceCodeSync
                             {
                                 Console.WriteLine("Interface {0} access modified detected", interfaceNameFull);
                             }
-                        }
 
-                        // Check for preserved members
-                        bool hasPreservedMembers = interfaceDecl.Members.Any(m => ShouldPreserveMember(m));
-                        InterfaceDeclarationSyntax mergedInterface;
-
-                        if (hasAccessModified)
-                        {
                             // Update modifiers and attributes from destination interface
                             sourceInterface = sourceInterface
                                 .WithModifiers(interfaceDecl.Modifiers)
                                 .WithAttributeLists(interfaceDecl.AttributeLists);
                         }
+
+                        // Check for preserved members
+                        bool hasPreservedMembers = interfaceDecl.Members.Any(m => ShouldPreserveMember(m));
+                        InterfaceDeclarationSyntax mergedInterface;
 
                         if (hasPreservedMembers)
                         {
@@ -891,21 +881,29 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    bool bareNameUsed = false;
                     if (!_enumDict.TryGetValue(enumName, out EnumDeclarationSyntax sourceEnum))
                     {
                         if (!_enumBareDict.TryGetValue(GetEnumName(enumDecl), out sourceEnum))
                         {
                             sourceEnum = null;
                         }
-                        else
-                        {
-                            bareNameUsed = true;
-                        }
                     }
 
                     if (sourceEnum != null)
                     {
+                        bool hasAccessModified = HasAccessModifiedSourceAttribute(enumDecl.AttributeLists);
+                        if (hasAccessModified)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                Console.WriteLine("Enum {0} access modified detected", enumName);
+                            }
+                            // Update modifiers and attributes from destination enum
+                            sourceEnum = sourceEnum
+                                .WithModifiers(enumDecl.Modifiers)
+                                .WithAttributeLists(enumDecl.AttributeLists);
+                        }
+
                         // Compare if they're different
                         string sourceEnumStr = sourceEnum.NormalizeWhitespace().ToFullString();
                         if (enumSource != sourceEnumStr)
