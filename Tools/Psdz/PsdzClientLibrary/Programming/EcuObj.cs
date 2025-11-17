@@ -10,10 +10,10 @@ namespace PsdzClient.Programming
 {
     internal class EcuObj : IEcuObj
     {
-        [PreserveSource(Hint = "public XEP_ECUCLIQUES", Removed = true)]
+        [PreserveSource(Hint = "public XEP_ECUCLIQUES", Placeholder = true)]
         public PlaceholderType XepEcuClique { get; internal set; }
 
-        [PreserveSource(Hint = "public XEP_ECUVARIANTS", Removed = true)]
+        [PreserveSource(Hint = "public XEP_ECUVARIANTS", Placeholder = true)]
         public PlaceholderType XepEcuVariant { get; internal set; }
         public string EcuGroup { get; internal set; }
         public string EcuRep { get; internal set; }

@@ -23,14 +23,14 @@ namespace PsdzClient.Core
 
         private int stillProgrammable;
 
-        [PreserveSource(Hint = "private XEP_ECUCLIQUES", Removed = true)]
+        [PreserveSource(Hint = "private XEP_ECUCLIQUES", Placeholder = true)]
         private PlaceholderType xepEcuClique;
 
         private string eCUTitle;
 
         private string vARIANTEField;
 
-        [PreserveSource(Hint = "private ObservableCollection<JOB>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<JOB>", Placeholder = true)]
         private PlaceholderType jOBSField;
 
         private BusType bUSField;
@@ -97,12 +97,12 @@ namespace PsdzClient.Core
 
         private int f_ANZField;
 
-        [PreserveSource(Hint = "private ObservableCollection<DTC>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<DTC>", Placeholder = true)]
         private PlaceholderType fEHLERField;
 
         private int i_ANZField;
 
-        [PreserveSource(Hint = "private ObservableCollection<DTC>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<DTC>", Placeholder = true)]
         private PlaceholderType iNFOField;
 
         private SVK sVKField;
@@ -111,10 +111,10 @@ namespace PsdzClient.Core
 
         private ObservableCollection<typeECU_Transaction> tALField;
 
-        [PreserveSource(Hint = "private DTC", Removed = true)]
+        [PreserveSource(Hint = "private DTC", Placeholder = true)]
         private PlaceholderType selectedDTCField;
 
-        [PreserveSource(Hint = "private DTC", Removed = true)]
+        [PreserveSource(Hint = "private DTC", Placeholder = true)]
         private PlaceholderType selectedINFOField;
 
         private string hARDWARE_REFERENZField;

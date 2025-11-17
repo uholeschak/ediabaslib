@@ -25,14 +25,14 @@ namespace PsdzClient.Core
 
         private ObservableCollection<ECU> eCUField;
 
-        [PreserveSource(Hint = "ObservableCollection<ZFSResult>", Removed = true)]
+        [PreserveSource(Hint = "ObservableCollection<ZFSResult>", Placeholder = true)]
         private PlaceholderType zFSField;
 
         private bool zFS_SUCCESSFULLYField;
 
         private ECU selectedECUField;
 
-        [PreserveSource(Hint = "private ObservableCollection<typeCBSInfo>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<typeCBSInfo>", Placeholder = true)]
         private PlaceholderType cBSField;
 
         private string typField;
@@ -113,13 +113,13 @@ namespace PsdzClient.Core
 
         private string zCSField;
 
-        [PreserveSource(Hint = "private ObservableCollection<InfoObject>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<InfoObject>", Placeholder = true)]
         private PlaceholderType historyInfoObjectsField;
 
-        [PreserveSource(Hint = "private TestPlanType", Removed = true)]
+        [PreserveSource(Hint = "private TestPlanType", Placeholder = true)]
         private PlaceholderType testplanField;
 
-        [PreserveSource(Hint = "private TestPlanCache", Removed = true)]
+        [PreserveSource(Hint = "private TestPlanCache", Placeholder = true)]
         private PlaceholderType testPlanCache;
 
         private bool simulatedPartsField;
@@ -128,7 +128,7 @@ namespace PsdzClient.Core
 
         private VCIDevice mIBField;
 
-        [PreserveSource(Hint = "private ObservableCollection<technicalCampaignType>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<technicalCampaignType>", Placeholder = true)]
         private PlaceholderType technicalCampaignsField;
 
         private string leistungsklasseField;
@@ -141,10 +141,10 @@ namespace PsdzClient.Core
 
         private DateTime lastChangeDateField;
 
-        [PreserveSource(Hint = "private ObservableCollection<typeServiceHistoryEntry>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
         private PlaceholderType serviceHistoryField;
 
-        [PreserveSource(Hint = "private ObservableCollection<typeDiagCode>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<typeDiagCode>", Placeholder = true)]
         private PlaceholderType diagCodesField;
 
         private string motorarbeitsverfahrenField;
@@ -153,7 +153,7 @@ namespace PsdzClient.Core
 
         private string hybridkennzeichenField;
 
-        [PreserveSource(Hint = "private ObservableCollection<DTC>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<DTC>", Placeholder = true)]
         private PlaceholderType combinedFaultsField;
 
         private ObservableCollection<decimal> installedAdaptersField;
@@ -174,7 +174,7 @@ namespace PsdzClient.Core
 
         private string aEUeberarbeitungField;
 
-        [PreserveSource(Hint = "private ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Removed = true)]
+        [PreserveSource(Hint = "private ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Placeholder = true)]
         private PlaceholderType perceivedSymptomsField;
 
         private string progmanVersionField;
@@ -263,13 +263,14 @@ namespace PsdzClient.Core
 
         private bool orderDataRequestFailed;
 
-        //private BackendsAvailabilityIndicator backendsAvailabilityIndicator;
+        [PreserveSource(Hint = "private BackendsAvailabilityIndicator", Placeholder = true)]
+        private PlaceholderType backendsAvailabilityIndicator;
 
         private bool isSendFastaDataForbiddenField;
 
         private bool isSendOBFCMDataForbidden;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         private ClientContext _clientContext;
 
         public string F2Date { get; set; }
