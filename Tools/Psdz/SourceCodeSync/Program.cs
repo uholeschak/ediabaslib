@@ -888,6 +888,7 @@ namespace SourceCodeSync
 
                     if (sourceEnum != null)
                     {
+                        EnumDeclarationSyntax sourceEnumCopy = sourceEnum;
                         bool hasAccessModified = HasAccessModifiedSourceAttribute(enumDecl.AttributeLists);
                         if (hasAccessModified)
                         {
@@ -896,20 +897,20 @@ namespace SourceCodeSync
                                 Console.WriteLine("Enum {0} access modified detected", enumName);
                             }
                             // Update modifiers and attributes from destination enum
-                            sourceEnum = sourceEnum
+                            sourceEnumCopy = sourceEnumCopy
                                 .WithModifiers(enumDecl.Modifiers)
                                 .WithAttributeLists(enumDecl.AttributeLists);
                         }
 
                         // Compare if they're different
-                        string sourceEnumStr = sourceEnum.NormalizeWhitespace().ToFullString();
+                        string sourceEnumStr = sourceEnumCopy.NormalizeWhitespace().ToFullString();
                         if (enumSource != sourceEnumStr)
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
                                 Console.WriteLine($"Updating enum: {enumName}");
                             }
-                            newRoot = newRoot.ReplaceNode(enumDecl, sourceEnum);
+                            newRoot = newRoot.ReplaceNode(enumDecl, sourceEnumCopy);
                             fileModified = true;
                         }
                     }
