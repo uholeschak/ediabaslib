@@ -8,11 +8,8 @@ namespace PsdzClient.Core
     public static class WebCallUtility
     {
         private const string GoogleDNSIp = "8.8.8.8";
-
         private const string BaiduDNSIp = "180.76.76.76";
-
         private const int PingRetryCount = 4;
-
         [PreserveSource(Hint = "Simplified")]
         public static bool CheckForInternetConnection()
         {
@@ -47,6 +44,7 @@ namespace PsdzClient.Core
             {
                 return PingBaiduDNSToCheckForInternetConnection();
             }
+
             return PingGoogleDNSToCheckForInternetConnection();
         }
 
@@ -69,6 +67,7 @@ namespace PsdzClient.Core
             {
                 return flag;
             }
+
             ServiceLocator.Current.TryGetService<IFasta2Service>(out var service);
             if (flag)
             {
@@ -76,11 +75,11 @@ namespace PsdzClient.Core
                 {
                     if (isToyota)
                     {
-                        service?.AddServiceCode("SUC02_ProblemWithBackendCommunication_nu_LF", "The connection to a common internet server was successful.", LayoutGroup.D, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
+                        service?.AddServiceCode("SUC02_ProblemWithBackendCommunication_nu_LF", "The connection to a common internet server was successful.", LayoutGroup.D);
                     }
                     else
                     {
-                        service?.AddServiceCode("SUC02_ProblemWithBackendCommunication_nu_LF", "The connection to a both (common internet server and TricCentral) was successful.", LayoutGroup.D, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
+                        service?.AddServiceCode("SUC02_ProblemWithBackendCommunication_nu_LF", "The connection to a both (common internet server and TricCentral) was successful.", LayoutGroup.D);
                     }
                 }
                 else
@@ -89,18 +88,19 @@ namespace PsdzClient.Core
                     string text2 = (dnsConnectionStatus ? "TricCentral" : "a common internet server");
                     if (isToyota)
                     {
-                        service?.AddServiceCode("SUC02_ProblemWithBackendCommunication_nu_LF", "The connection to " + text + " was not successful.", LayoutGroup.D, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
+                        service?.AddServiceCode("SUC02_ProblemWithBackendCommunication_nu_LF", "The connection to " + text + " was not successful.", LayoutGroup.D);
                     }
                     else
                     {
-                        service?.AddServiceCode("SUC02_ProblemWithBackendCommunication_nu_LF", "The connection to " + text + " but the connection to " + text2 + " was not successful.", LayoutGroup.D, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
+                        service?.AddServiceCode("SUC02_ProblemWithBackendCommunication_nu_LF", "The connection to " + text + " but the connection to " + text2 + " was not successful.", LayoutGroup.D);
                     }
                 }
             }
             else
             {
-                service?.AddServiceCode("SUC01_NoInternetConnection_nu_LF", "The client probably has no internet connection.", LayoutGroup.D, allowMultipleEntries: false, bufferIfSessionNotStarted: false, null, null);
+                service?.AddServiceCode("SUC01_NoInternetConnection_nu_LF", "The client probably has no internet connection.", LayoutGroup.D);
             }
+
             return flag;
         }
 
@@ -132,6 +132,7 @@ namespace PsdzClient.Core
                     return true;
                 }
             }
+
             Log.Warning(Log.CurrentMethod(), "[" + methodName + "] The client probably has no connection to the internet.");
             return false;
         }
@@ -149,6 +150,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException(Log.CurrentMethod(), exception);
             }
+
             return null;
         }
     }
