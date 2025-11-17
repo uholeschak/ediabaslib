@@ -7,274 +7,146 @@ using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-#pragma warning disable CS0618,CS0169,CS0649
+#pragma warning disable CS0618, CS0169, CS0649
 namespace PsdzClient.Core
 {
-    // ToDo: Check on update
     public abstract class typeVehicle : INotifyPropertyChanged
     {
         private string vIN17Field;
-
         private string serialBodyShellField;
-
         private string serialGearBoxField;
-
         private string serialEngineField;
-
         private BrandName? brandNameField;
-
         private ObservableCollection<ECU> eCUField;
-
         [PreserveSource(Hint = "ObservableCollection<ZFSResult>", Placeholder = true)]
         private PlaceholderType zFSField;
-
         private bool zFS_SUCCESSFULLYField;
-
         private ECU selectedECUField;
-
         [PreserveSource(Hint = "private ObservableCollection<typeCBSInfo>", Placeholder = true)]
         private PlaceholderType cBSField;
-
         private string typField;
-
         private string basicTypeField;
-
         private string driveTypeField;
-
         private string warrentyTypeField;
-
         private string markeField;
-
         private string ueberarbeitungField;
-
         private string prodartField;
-
         private string ereiheField;
-
         private string mainSeriesSgbdField;
-
         private string mainSeriesSgbdAdditionalField;
-
         private BNType bNTypeField;
-
         private string baureiheField;
-
         private string roadMapField;
-
         private ChassisType chassisTypeField;
-
         private string karosserieField;
-
         private EMotor eMotorField;
-
         private List<HeatMotor> heatMotorsField;
-
         private GenericMotor genericMotorField;
-
         private string motorField;
-
         private string hubraumField;
-
         private string landField;
-
         private string lenkungField;
-
         private string getriebeField;
-
         private string countryOfAssemblyField;
-
         private string baseVersionField;
-
         private string antriebField;
-
         private DateTime? firstRegistrationField;
-
         private string baustandsJahrField;
-
         private string baustandsMonatField;
-
         private string elektrischeReichweiteField;
-
         private string aeBezeichnungField;
-
         private string iLevelField;
-
         private decimal? gwszField;
-
         private GwszUnitType? gwszUnitField;
-
         private ObservableCollection<FFMResult> fFMField;
-
         private string iLevelWerkField;
-
         private string iLevelBackupField;
-
         private FA faField;
-
         private string zCSField;
-
         [PreserveSource(Hint = "private ObservableCollection<InfoObject>", Placeholder = true)]
         private PlaceholderType historyInfoObjectsField;
-
         [PreserveSource(Hint = "private TestPlanType", Placeholder = true)]
         private PlaceholderType testplanField;
-
         [PreserveSource(Hint = "private TestPlanCache", Placeholder = true)]
         private PlaceholderType testPlanCache;
-
         private bool simulatedPartsField;
-
         private VCIDevice vCIField;
-
         private VCIDevice mIBField;
-
         [PreserveSource(Hint = "private ObservableCollection<technicalCampaignType>", Placeholder = true)]
         private PlaceholderType technicalCampaignsField;
-
         private string leistungsklasseField;
-
         private string kraftstoffartField;
-
         private string eCTypeApprovalField;
-
         private DateTime lastSaveDateField;
-
         private DateTime lastChangeDateField;
-
         [PreserveSource(Hint = "private ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
         private PlaceholderType serviceHistoryField;
-
         [PreserveSource(Hint = "private ObservableCollection<typeDiagCode>", Placeholder = true)]
         private PlaceholderType diagCodesField;
-
         private string motorarbeitsverfahrenField;
-
         private string drehmomentField;
-
         private string hybridkennzeichenField;
-
         [PreserveSource(Hint = "private ObservableCollection<DTC>", Placeholder = true)]
         private PlaceholderType combinedFaultsField;
-
         private ObservableCollection<decimal> installedAdaptersField;
-
         private string vIN17_OEMField;
-
         private string mOTKraftstoffartField;
-
         private string mOTEinbaulageField;
-
         private string mOTBezeichnungField;
-
         private string baureihenverbundField;
-
         private string aEKurzbezeichnungField;
-
         private string aELeistungsklasseField;
-
         private string aEUeberarbeitungField;
-
         [PreserveSource(Hint = "private ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Placeholder = true)]
         private PlaceholderType perceivedSymptomsField;
-
         private string progmanVersionField;
-
         private string connectImageField;
-
         private string connectIMIBImageField;
-
         private VisibilityType connectIPStateField;
-
         private VisibilityType connectIMIBIPStateField;
-
         private VisibilityType connectStateField;
-
         private VisibilityType connectIMIBStateField;
-
         private string status_FunctionNameField;
-
         private StateType status_FunctionStateField;
-
         private DateTime status_FunctionStateLastChangeTimeField;
-
         private bool status_FunctionStateLastChangeTimeFieldSpecified;
-
         private double status_FunctionProgressField;
-
         private string kl15VoltageField;
-
         private string kl30VoltageField;
-
         private bool pADVehicleField;
-
         private int pwfStateField;
-
         private DateTime klVoltageLastMessageTimeField;
-
         private bool klVoltageLastMessageTimeFieldSpecified;
-
         private string applicationVersionField;
-
         private bool fASTAAlreadyDoneField;
-
         private IdentificationLevel vehicleIdentLevelField;
-
         private bool vehicleIdentAlreadyDoneField;
-
         private bool vehicleShortTestAsSessionEntryField;
-
         private bool pannenfallField;
-
         private int selectedDiagBUSField;
-
         private bool dOMRequestFailedField;
-
         private bool ssl2RequestFailedField;
-
         private bool tecCampaignsRequestFailedField;
-
         private bool repHistoryRequestFailedField;
-
         private bool kL15OverrideVoltageCheckField;
-
         private bool kL15FaultILevelAlreadyAlertedField;
-
         private bool gWSZReadoutSuccessField;
-
         private string refSchemaField;
-
         private string versionField;
-
         private DateTime vehicleLifeStartDate;
-
         private double vehicleSystemTime;
-
         private List<DealerSessionProperty> dealerSessionProperties;
-
         private DateTime productionDate;
-
         private string modelljahr;
-
         private string modellmonat;
-
         private string modelltag;
-
         private string chassisCode;
-
         private bool orderDataRequestFailed;
-
         [PreserveSource(Hint = "private BackendsAvailabilityIndicator", Placeholder = true)]
         private PlaceholderType backendsAvailabilityIndicator;
-
         private bool isSendFastaDataForbiddenField;
-
         private bool isSendOBFCMDataForbidden;
-
-        [PreserveSource(Hint = "Added")]
-        private ClientContext _clientContext;
-
         public string F2Date { get; set; }
-
         public string SoftwareId { get; set; }
 
         public VCIDevice VCI
@@ -283,6 +155,7 @@ namespace PsdzClient.Core
             {
                 return vCIField;
             }
+
             set
             {
                 if (vCIField != null)
@@ -307,6 +180,7 @@ namespace PsdzClient.Core
             {
                 return vIN17Field;
             }
+
             set
             {
                 if (vIN17Field != value)
@@ -323,6 +197,7 @@ namespace PsdzClient.Core
             {
                 return isSendFastaDataForbiddenField;
             }
+
             set
             {
                 if (!isSendFastaDataForbiddenField.Equals(value))
@@ -339,6 +214,7 @@ namespace PsdzClient.Core
             {
                 return isSendOBFCMDataForbidden;
             }
+
             set
             {
                 if (!isSendOBFCMDataForbidden.Equals(value))
@@ -355,6 +231,7 @@ namespace PsdzClient.Core
             {
                 return chassisCode;
             }
+
             set
             {
                 if (chassisCode != value)
@@ -371,6 +248,7 @@ namespace PsdzClient.Core
             {
                 return orderDataRequestFailed;
             }
+
             set
             {
                 if (orderDataRequestFailed != value)
@@ -387,6 +265,7 @@ namespace PsdzClient.Core
             {
                 return serialBodyShellField;
             }
+
             set
             {
                 if (serialBodyShellField != value)
@@ -403,6 +282,7 @@ namespace PsdzClient.Core
             {
                 return serialGearBoxField;
             }
+
             set
             {
                 if (serialGearBoxField != value)
@@ -420,6 +300,7 @@ namespace PsdzClient.Core
             {
                 return serialEngineField;
             }
+
             set
             {
                 if (serialEngineField != value)
@@ -436,6 +317,7 @@ namespace PsdzClient.Core
             {
                 return dealerSessionProperties;
             }
+
             set
             {
                 if (dealerSessionProperties != null)
@@ -458,6 +340,7 @@ namespace PsdzClient.Core
             {
                 return brandNameField;
             }
+
             set
             {
                 if (brandNameField != value)
@@ -474,6 +357,7 @@ namespace PsdzClient.Core
             {
                 return eCUField;
             }
+
             set
             {
                 if (eCUField != null)
@@ -494,13 +378,13 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public ObservableCollection<ZFSResult>", Placeholder = true)]
         public PlaceholderType ZFS;
-
         public bool ZFS_SUCCESSFULLY
         {
             get
             {
                 return zFS_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!zFS_SUCCESSFULLYField.Equals(value))
@@ -517,6 +401,7 @@ namespace PsdzClient.Core
             {
                 return selectedECUField;
             }
+
             set
             {
                 if (selectedECUField != null)
@@ -537,13 +422,13 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public ObservableCollection<typeCBSInfo>", Placeholder = true)]
         public PlaceholderType CBS;
-
         public string Typ
         {
             get
             {
                 return typField;
             }
+
             set
             {
                 if (typField != value)
@@ -560,6 +445,7 @@ namespace PsdzClient.Core
             {
                 return basicTypeField;
             }
+
             set
             {
                 if (basicTypeField != value)
@@ -576,6 +462,7 @@ namespace PsdzClient.Core
             {
                 return driveTypeField;
             }
+
             set
             {
                 if (driveTypeField != null)
@@ -600,6 +487,7 @@ namespace PsdzClient.Core
             {
                 return warrentyTypeField;
             }
+
             set
             {
                 if (warrentyTypeField != null)
@@ -624,6 +512,7 @@ namespace PsdzClient.Core
             {
                 return markeField;
             }
+
             set
             {
                 if (markeField != value)
@@ -640,6 +529,7 @@ namespace PsdzClient.Core
             {
                 return ueberarbeitungField;
             }
+
             set
             {
                 if (ueberarbeitungField != value)
@@ -657,6 +547,7 @@ namespace PsdzClient.Core
             {
                 return prodartField;
             }
+
             set
             {
                 if (prodartField != value)
@@ -673,6 +564,7 @@ namespace PsdzClient.Core
             {
                 return ereiheField;
             }
+
             set
             {
                 if (ereiheField != value)
@@ -689,6 +581,7 @@ namespace PsdzClient.Core
             {
                 return mainSeriesSgbdField;
             }
+
             set
             {
                 if (mainSeriesSgbdField != null)
@@ -713,6 +606,7 @@ namespace PsdzClient.Core
             {
                 return mainSeriesSgbdAdditionalField;
             }
+
             set
             {
                 if (mainSeriesSgbdAdditionalField != null)
@@ -738,6 +632,7 @@ namespace PsdzClient.Core
             {
                 return bNTypeField;
             }
+
             set
             {
                 if (!bNTypeField.Equals(value))
@@ -754,6 +649,7 @@ namespace PsdzClient.Core
             {
                 return baureiheField;
             }
+
             set
             {
                 if (baureiheField != value)
@@ -770,6 +666,7 @@ namespace PsdzClient.Core
             {
                 return roadMapField;
             }
+
             set
             {
                 if (roadMapField != null)
@@ -794,6 +691,7 @@ namespace PsdzClient.Core
             {
                 return chassisTypeField;
             }
+
             set
             {
                 if (!chassisTypeField.Equals(value))
@@ -810,6 +708,7 @@ namespace PsdzClient.Core
             {
                 return karosserieField;
             }
+
             set
             {
                 if (karosserieField != value)
@@ -826,6 +725,7 @@ namespace PsdzClient.Core
             {
                 return eMotorField;
             }
+
             set
             {
                 if (eMotorField != value)
@@ -842,6 +742,7 @@ namespace PsdzClient.Core
             {
                 return heatMotorsField;
             }
+
             set
             {
                 if (heatMotorsField != value)
@@ -858,6 +759,7 @@ namespace PsdzClient.Core
             {
                 return genericMotorField;
             }
+
             set
             {
                 if (genericMotorField != null)
@@ -882,6 +784,7 @@ namespace PsdzClient.Core
             {
                 return motorField;
             }
+
             set
             {
                 if (motorField != value)
@@ -899,6 +802,7 @@ namespace PsdzClient.Core
             {
                 return hubraumField;
             }
+
             set
             {
                 if (hubraumField != value)
@@ -915,6 +819,7 @@ namespace PsdzClient.Core
             {
                 return landField;
             }
+
             set
             {
                 if (landField != value)
@@ -931,6 +836,7 @@ namespace PsdzClient.Core
             {
                 return lenkungField;
             }
+
             set
             {
                 if (lenkungField != value)
@@ -947,6 +853,7 @@ namespace PsdzClient.Core
             {
                 return getriebeField;
             }
+
             set
             {
                 if (getriebeField != value)
@@ -963,6 +870,7 @@ namespace PsdzClient.Core
             {
                 return countryOfAssemblyField;
             }
+
             set
             {
                 if (countryOfAssemblyField != value)
@@ -979,6 +887,7 @@ namespace PsdzClient.Core
             {
                 return baseVersionField;
             }
+
             set
             {
                 if (baseVersionField != value)
@@ -995,6 +904,7 @@ namespace PsdzClient.Core
             {
                 return antriebField;
             }
+
             set
             {
                 if (antriebField != value)
@@ -1011,6 +921,7 @@ namespace PsdzClient.Core
             {
                 return productionDate;
             }
+
             set
             {
                 if (productionDate != value)
@@ -1030,6 +941,7 @@ namespace PsdzClient.Core
             {
                 return firstRegistrationField;
             }
+
             set
             {
                 if (firstRegistrationField != value)
@@ -1046,6 +958,7 @@ namespace PsdzClient.Core
             {
                 return modelljahr;
             }
+
             set
             {
                 if (modelljahr != value)
@@ -1062,6 +975,7 @@ namespace PsdzClient.Core
             {
                 return modellmonat;
             }
+
             set
             {
                 if (modellmonat != value)
@@ -1078,6 +992,7 @@ namespace PsdzClient.Core
             {
                 return modelltag;
             }
+
             set
             {
                 if (modelltag != value)
@@ -1094,6 +1009,7 @@ namespace PsdzClient.Core
             {
                 return baustandsJahrField;
             }
+
             set
             {
                 if (baustandsJahrField != value)
@@ -1110,6 +1026,7 @@ namespace PsdzClient.Core
             {
                 return baustandsMonatField;
             }
+
             set
             {
                 if (baustandsMonatField != value)
@@ -1126,6 +1043,7 @@ namespace PsdzClient.Core
             {
                 return iLevelField;
             }
+
             set
             {
                 if (iLevelField != value)
@@ -1142,6 +1060,7 @@ namespace PsdzClient.Core
             {
                 return gwszField;
             }
+
             set
             {
                 if (!(gwszField == value))
@@ -1159,6 +1078,7 @@ namespace PsdzClient.Core
             {
                 return gwszUnitField;
             }
+
             set
             {
                 if (gwszUnitField.HasValue)
@@ -1183,6 +1103,7 @@ namespace PsdzClient.Core
             {
                 return fFMField;
             }
+
             set
             {
                 if (fFMField != null)
@@ -1207,6 +1128,7 @@ namespace PsdzClient.Core
             {
                 return iLevelWerkField;
             }
+
             set
             {
                 if (iLevelWerkField != value)
@@ -1223,6 +1145,7 @@ namespace PsdzClient.Core
             {
                 return iLevelBackupField;
             }
+
             set
             {
                 if (iLevelBackupField != null)
@@ -1247,6 +1170,7 @@ namespace PsdzClient.Core
             {
                 return faField;
             }
+
             set
             {
                 if (faField != value)
@@ -1263,6 +1187,7 @@ namespace PsdzClient.Core
             {
                 return zCSField;
             }
+
             set
             {
                 if (zCSField != null)
@@ -1283,10 +1208,8 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public ObservableCollection<InfoObject>", Placeholder = true)]
         public PlaceholderType HistoryInfoObjects;
-
         [PreserveSource(Hint = "public TestPlanType", Placeholder = true)]
         public PlaceholderType Testplan;
-
         [PreserveSource(Hint = "public TestPlanCache TestPlanCache", Placeholder = true)]
         [IgnoreDataMember]
         [XmlIgnore]
@@ -1298,6 +1221,7 @@ namespace PsdzClient.Core
             {
                 return simulatedPartsField;
             }
+
             set
             {
                 if (!simulatedPartsField.Equals(value))
@@ -1314,6 +1238,7 @@ namespace PsdzClient.Core
             {
                 return mIBField;
             }
+
             set
             {
                 if (mIBField != null)
@@ -1334,13 +1259,13 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public ObservableCollection<technicalCampaignType>", Placeholder = true)]
         public PlaceholderType TechnicalCampaigns;
-
         public string Leistungsklasse
         {
             get
             {
                 return leistungsklasseField;
             }
+
             set
             {
                 if (leistungsklasseField != value)
@@ -1357,6 +1282,7 @@ namespace PsdzClient.Core
             {
                 return kraftstoffartField;
             }
+
             set
             {
                 if (kraftstoffartField != value)
@@ -1373,6 +1299,7 @@ namespace PsdzClient.Core
             {
                 return eCTypeApprovalField;
             }
+
             set
             {
                 if (eCTypeApprovalField != value)
@@ -1389,6 +1316,7 @@ namespace PsdzClient.Core
             {
                 return lastSaveDateField;
             }
+
             set
             {
                 if (!lastSaveDateField.Equals(value))
@@ -1405,6 +1333,7 @@ namespace PsdzClient.Core
             {
                 return lastChangeDateField;
             }
+
             set
             {
                 if (!lastChangeDateField.Equals(value))
@@ -1417,16 +1346,15 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
         public PlaceholderType ServiceHistory;
-
         [PreserveSource(Hint = "public ObservableCollection<typeDiagCode>", Placeholder = true)]
         public PlaceholderType DiagCodes;
-
         public string Motorarbeitsverfahren
         {
             get
             {
                 return motorarbeitsverfahrenField;
             }
+
             set
             {
                 if (motorarbeitsverfahrenField != value)
@@ -1443,6 +1371,7 @@ namespace PsdzClient.Core
             {
                 return drehmomentField;
             }
+
             set
             {
                 if (drehmomentField != value)
@@ -1459,6 +1388,7 @@ namespace PsdzClient.Core
             {
                 return hybridkennzeichenField ?? string.Empty;
             }
+
             set
             {
                 if (hybridkennzeichenField != value)
@@ -1471,13 +1401,13 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public ObservableCollection<DTC>", Placeholder = true)]
         public PlaceholderType CombinedFaults;
-
         public ObservableCollection<decimal> InstalledAdapters
         {
             get
             {
                 return installedAdaptersField;
             }
+
             set
             {
                 if (installedAdaptersField != null)
@@ -1502,6 +1432,7 @@ namespace PsdzClient.Core
             {
                 return vIN17_OEMField;
             }
+
             set
             {
                 if (vIN17_OEMField != null)
@@ -1526,6 +1457,7 @@ namespace PsdzClient.Core
             {
                 return mOTKraftstoffartField;
             }
+
             set
             {
                 if (mOTKraftstoffartField != null)
@@ -1550,6 +1482,7 @@ namespace PsdzClient.Core
             {
                 return mOTEinbaulageField;
             }
+
             set
             {
                 if (mOTEinbaulageField != value)
@@ -1566,6 +1499,7 @@ namespace PsdzClient.Core
             {
                 return mOTBezeichnungField;
             }
+
             set
             {
                 if (mOTBezeichnungField != value)
@@ -1583,6 +1517,7 @@ namespace PsdzClient.Core
             {
                 return baureihenverbundField;
             }
+
             set
             {
                 if (baureihenverbundField != value)
@@ -1599,6 +1534,7 @@ namespace PsdzClient.Core
             {
                 return aEKurzbezeichnungField;
             }
+
             set
             {
                 if (aEKurzbezeichnungField != value)
@@ -1615,6 +1551,7 @@ namespace PsdzClient.Core
             {
                 return aELeistungsklasseField;
             }
+
             set
             {
                 if (aELeistungsklasseField != value)
@@ -1631,6 +1568,7 @@ namespace PsdzClient.Core
             {
                 return aEUeberarbeitungField;
             }
+
             set
             {
                 if (aEUeberarbeitungField != value)
@@ -1643,13 +1581,13 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Placeholder = true)]
         public PlaceholderType PerceivedSymptoms;
-
         public string ProgmanVersion
         {
             get
             {
                 return progmanVersionField;
             }
+
             set
             {
                 if (progmanVersionField != value)
@@ -1667,6 +1605,7 @@ namespace PsdzClient.Core
             {
                 return connectImageField;
             }
+
             set
             {
                 if (connectImageField != null)
@@ -1692,6 +1631,7 @@ namespace PsdzClient.Core
             {
                 return connectIMIBImageField;
             }
+
             set
             {
                 if (connectIMIBImageField != null)
@@ -1717,6 +1657,7 @@ namespace PsdzClient.Core
             {
                 return connectIPStateField;
             }
+
             set
             {
                 if (!connectIPStateField.Equals(value))
@@ -1734,6 +1675,7 @@ namespace PsdzClient.Core
             {
                 return connectIMIBIPStateField;
             }
+
             set
             {
                 if (!connectIMIBIPStateField.Equals(value))
@@ -1751,6 +1693,7 @@ namespace PsdzClient.Core
             {
                 return connectStateField;
             }
+
             set
             {
                 if (!connectStateField.Equals(value))
@@ -1768,6 +1711,7 @@ namespace PsdzClient.Core
             {
                 return connectIMIBStateField;
             }
+
             set
             {
                 if (!connectIMIBStateField.Equals(value))
@@ -1784,6 +1728,7 @@ namespace PsdzClient.Core
             {
                 return status_FunctionNameField;
             }
+
             set
             {
                 if (status_FunctionNameField != null)
@@ -1809,6 +1754,7 @@ namespace PsdzClient.Core
             {
                 return status_FunctionStateField;
             }
+
             set
             {
                 if (!status_FunctionStateField.Equals(value))
@@ -1825,6 +1771,7 @@ namespace PsdzClient.Core
             {
                 return status_FunctionStateLastChangeTimeField;
             }
+
             set
             {
                 if (!status_FunctionStateLastChangeTimeField.Equals(value))
@@ -1842,6 +1789,7 @@ namespace PsdzClient.Core
             {
                 return status_FunctionStateLastChangeTimeFieldSpecified;
             }
+
             set
             {
                 if (!status_FunctionStateLastChangeTimeFieldSpecified.Equals(value))
@@ -1858,6 +1806,7 @@ namespace PsdzClient.Core
             {
                 return status_FunctionProgressField;
             }
+
             set
             {
                 if (!status_FunctionProgressField.Equals(value))
@@ -1874,6 +1823,7 @@ namespace PsdzClient.Core
             {
                 return kl15VoltageField;
             }
+
             set
             {
                 if (kl15VoltageField != null)
@@ -1898,6 +1848,7 @@ namespace PsdzClient.Core
             {
                 return kl30VoltageField;
             }
+
             set
             {
                 if (kl30VoltageField != null)
@@ -1923,6 +1874,7 @@ namespace PsdzClient.Core
             {
                 return pADVehicleField;
             }
+
             set
             {
                 if (!pADVehicleField.Equals(value))
@@ -1940,6 +1892,7 @@ namespace PsdzClient.Core
             {
                 return pwfStateField;
             }
+
             set
             {
                 if (!pwfStateField.Equals(value))
@@ -1956,6 +1909,7 @@ namespace PsdzClient.Core
             {
                 return klVoltageLastMessageTimeField;
             }
+
             set
             {
                 if (!klVoltageLastMessageTimeField.Equals(value))
@@ -1973,6 +1927,7 @@ namespace PsdzClient.Core
             {
                 return klVoltageLastMessageTimeFieldSpecified;
             }
+
             set
             {
                 if (!klVoltageLastMessageTimeFieldSpecified.Equals(value))
@@ -1990,6 +1945,7 @@ namespace PsdzClient.Core
             {
                 return applicationVersionField;
             }
+
             set
             {
                 if (applicationVersionField != null)
@@ -2015,6 +1971,7 @@ namespace PsdzClient.Core
             {
                 return fASTAAlreadyDoneField;
             }
+
             set
             {
                 if (!fASTAAlreadyDoneField.Equals(value))
@@ -2032,6 +1989,7 @@ namespace PsdzClient.Core
             {
                 return vehicleIdentLevelField;
             }
+
             set
             {
                 if (!vehicleIdentLevelField.Equals(value))
@@ -2049,6 +2007,7 @@ namespace PsdzClient.Core
             {
                 return vehicleIdentAlreadyDoneField;
             }
+
             set
             {
                 if (vehicleIdentAlreadyDoneField != value)
@@ -2067,6 +2026,7 @@ namespace PsdzClient.Core
             {
                 return vehicleShortTestAsSessionEntryField;
             }
+
             set
             {
                 if (!vehicleShortTestAsSessionEntryField.Equals(value))
@@ -2084,6 +2044,7 @@ namespace PsdzClient.Core
             {
                 return pannenfallField;
             }
+
             set
             {
                 if (!pannenfallField.Equals(value))
@@ -2101,6 +2062,7 @@ namespace PsdzClient.Core
             {
                 return selectedDiagBUSField;
             }
+
             set
             {
                 if (!selectedDiagBUSField.Equals(value))
@@ -2113,7 +2075,6 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "public BackendsAvailabilityIndicator", Placeholder = true)]
         public PlaceholderType BackendsAvailabilityIndicator;
-
         [DefaultValue(false)]
         [XmlIgnore]
         public bool DOMRequestFailed
@@ -2122,6 +2083,7 @@ namespace PsdzClient.Core
             {
                 return dOMRequestFailedField;
             }
+
             set
             {
                 if (!dOMRequestFailedField.Equals(value))
@@ -2140,6 +2102,7 @@ namespace PsdzClient.Core
             {
                 return ssl2RequestFailedField;
             }
+
             set
             {
                 if (!ssl2RequestFailedField.Equals(value))
@@ -2158,6 +2121,7 @@ namespace PsdzClient.Core
             {
                 return tecCampaignsRequestFailedField;
             }
+
             set
             {
                 if (!tecCampaignsRequestFailedField.Equals(value))
@@ -2176,6 +2140,7 @@ namespace PsdzClient.Core
             {
                 return repHistoryRequestFailedField;
             }
+
             set
             {
                 if (!repHistoryRequestFailedField.Equals(value))
@@ -2193,6 +2158,7 @@ namespace PsdzClient.Core
             {
                 return kL15OverrideVoltageCheckField;
             }
+
             set
             {
                 if (!kL15OverrideVoltageCheckField.Equals(value))
@@ -2210,6 +2176,7 @@ namespace PsdzClient.Core
             {
                 return kL15FaultILevelAlreadyAlertedField;
             }
+
             set
             {
                 if (!kL15FaultILevelAlreadyAlertedField.Equals(value))
@@ -2227,6 +2194,7 @@ namespace PsdzClient.Core
             {
                 return gWSZReadoutSuccessField;
             }
+
             set
             {
                 if (!gWSZReadoutSuccessField.Equals(value))
@@ -2243,6 +2211,7 @@ namespace PsdzClient.Core
             {
                 return refSchemaField;
             }
+
             set
             {
                 if (refSchemaField != null)
@@ -2267,6 +2236,7 @@ namespace PsdzClient.Core
             {
                 return versionField;
             }
+
             set
             {
                 if (versionField != null)
@@ -2291,6 +2261,7 @@ namespace PsdzClient.Core
             {
                 return vehicleLifeStartDate;
             }
+
             set
             {
                 if (!vehicleLifeStartDate.Equals(value))
@@ -2307,6 +2278,7 @@ namespace PsdzClient.Core
             {
                 return vehicleSystemTime;
             }
+
             set
             {
                 if (!vehicleSystemTime.Equals(value))
@@ -2323,6 +2295,7 @@ namespace PsdzClient.Core
             {
                 return elektrischeReichweiteField;
             }
+
             set
             {
                 if (elektrischeReichweiteField != value)
@@ -2339,6 +2312,7 @@ namespace PsdzClient.Core
             {
                 return aeBezeichnungField;
             }
+
             set
             {
                 if (aeBezeichnungField != value)
@@ -2350,7 +2324,6 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         [PreserveSource(Hint = "added clientContext")]
         public typeVehicle(ClientContext clientContext)
         {
@@ -2409,7 +2382,7 @@ namespace PsdzClient.Core
             refSchemaField = "http://www.bmw.com/Rheingold/Vehicle.xsd";
             versionField = "3.42.20.10700";
             dealerSessionProperties = new List<DealerSessionProperty>();
-            // [IGNORE] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
+        // [IGNORE] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
         }
 
         public virtual void OnPropertyChanged(string propertyName)
@@ -2421,9 +2394,14 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Hint = "Added")]
+        private ClientContext _clientContext;
+        [PreserveSource(Hint = "Added")]
         public ClientContext ClientContext
         {
-            get { return _clientContext; }
+            get
+            {
+                return _clientContext;
+            }
         }
     }
 }
