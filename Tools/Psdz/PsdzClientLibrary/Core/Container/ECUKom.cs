@@ -214,9 +214,9 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, resultFilter);
         }
 
+        [PreserveSource(Hint = "fastaprotcoller removed")]
         public IEcuJob ApiJobWithRetries(string variant, string job, string param, string resultFilter, int retries)
         {
-            // [UH] fastaprotcoller removed
             return apiJob(variant, job, param, resultFilter, retries, null, "ApiJobWithRetries");
         }
 
@@ -225,7 +225,7 @@ namespace PsdzClient.Core.Container
         {
         }
 
-        // [UH] ediabas added
+        [PreserveSource(Hint = "ediabas added, EDIABAS_MONITOR removed")]
         public ECUKom(string app, IList<string> lang, EdiabasNet ediabas = null)
         {
             api = CreateApi(ediabas);
@@ -238,10 +238,9 @@ namespace PsdzClient.Core.Container
             ServiceLocator.Current.TryGetService<IInteractionService>(out interactionService);
             ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out backendCallsWatchDog);
             ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
-            // [UH] EDIABAS_MONITOR removed
         }
 
-        // [UH] ediabas added
+        [PreserveSource(Hint = "ediabas added")]
         private ApiInternal CreateApi(EdiabasNet ediabas)
         {
             return new ApiInternal(ediabas);
@@ -400,7 +399,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        // [UH] ediabas added
+        [PreserveSource(Hint = "ediabas added")]
         public static ECUKom DeSerialize(string filename, EdiabasNet ediabas = null)
         {
             Log.Info("ECUKom.DeSerialize()", "called");
@@ -414,7 +413,8 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUKom.DeSerialize()", exception);
-                eCUKom = new ECUKom("Rheingold", new List<string>(), ediabas);  // [UH] ediabas added
+                // [UH] [IGNORE] ediabas added
+                eCUKom = new ECUKom("Rheingold", new List<string>(), ediabas);
             }
             VCIDevice vCIDevice = new VCIDevice(VCIDeviceType.SIM, "SIM", filename);
             vCIDevice.Serial = filename;
@@ -502,12 +502,13 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
+        [PreserveSource(Hint = "Modified")]
         public string GetLogPath()
         {
             string result = null;
             try
             {
-                // [UH] adapted for EdiabasNet
+                // [UH] [IGNORE] adapted for EdiabasNet
                 if (api.apiGetConfig("TracePath", out string value))
                 {
                     result = value;
@@ -648,6 +649,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         private bool InitializePttDevice(IVciDevice device, bool logging, bool isDoIP)
         {
             if (isDoIP)
@@ -656,7 +658,7 @@ namespace PsdzClient.Core.Container
                 return api.apiInitExt("ENET", "_", "Rheingold", reserved);
             }
 
-            return false;   // [UH]
+            return false;
         }
 
         private bool InitializeIcomDevice(IVciDevice device, bool logging, bool isDoIP, bool slpDoIpFromIcom)
@@ -667,11 +669,13 @@ namespace PsdzClient.Core.Container
             }
             if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
             {
-                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);  // [UH] logging removed
+                // [UH] [IGNORE] logging removed
+                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
             }
             if (!isDoIP)
             {
-                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);  // [UH] logging removed
+                // [UH] [IGNORE] logging removed
+                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
             }
             return false;
         }
@@ -827,6 +831,7 @@ namespace PsdzClient.Core.Container
             return IpbWithoutCertificates;
         }
 
+        [PreserveSource(Hint = "Modified")]
         private BoolResultObject HandleS29Authentication(IVciDevice device)
         {
             BoolResultObject boolResultObject = new BoolResultObject();
@@ -891,7 +896,7 @@ namespace PsdzClient.Core.Container
                     if (!WebCallUtility.CheckForInternetConnection() && !WebCallUtility.CheckForIntranetConnection() && sec4DiagCertificateState == Sec4DiagCertificateState.NotYetExpired)
                     {
                         TimeSpan subCAZertifikateRemainingTime = GetSubCAZertifikateRemainingTime();
-                        // [UH] interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
+                        // [UH] [IGNORE] interactionService.RegisterMessage(new FormatedData("Info").Localize(), new FormatedData("#Sec4Diag.OfflineButTokenStillValid", subCAZertifikateRemainingTime.Days).Localize());
                         ImportantLoggingItem.AddItemToList("Code: SEC4DIAG_007", TYPES.Sec4Diag);
                         Log.Info(method, "Code: SEC4DIAG_007");
                         boolResultObject = service.CertificatesAreFoundAndValid(device, subCaCertificate, caCertificate);
