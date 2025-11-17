@@ -15,53 +15,44 @@ namespace PsdzClient.Programming
 
         [PreserveSource(Hint = "public XEP_ECUVARIANTS", Removed = true)]
         public PlaceholderType XepEcuVariant { get; internal set; }
-
         public string EcuGroup { get; internal set; }
-
         public string EcuRep { get; internal set; }
-
         public string BaseVariant { get; internal set; }
-
         public string BnTnName { get; internal set; }
-
-        public IList<Bus> BusConnections => BusCons?.Select((IBusObject x) => x.ConvertToBus()).ToList();
-
+        public IList<Bus> BusConnections => GetBusConnections();
         public IList<IBusObject> BusCons { get; internal set; }
+        public IList<string> BusConnectionsAsString => GetBusConnectionsAsString();
+        public Bus DiagnosticBus => GetDiagnosticBus();
+        public IBusObject DiagBus { get; internal set; }
+        public IEcuDetailInfo EcuDetailInfo { get; internal set; }
+        public IEcuIdentifier EcuIdentifier { get; internal set; }
+        public IEcuStatusInfo EcuStatusInfo { get; internal set; }
+        public string EcuVariant { get; internal set; }
+        public int? GatewayDiagAddrAsInt { get; internal set; }
+        public string SerialNumber { get; internal set; }
+        public IStandardSvk StandardSvk { get; internal set; }
+        public string OrderNumber { get; set; }
+        public IEcuPdxInfo EcuPdxInfo { get; internal set; }
+        public bool IsSmartActuator { get; internal set; }
 
-        public IList<string> BusConnectionsAsString => BusCons?.Select((IBusObject x) => x.ToString()).ToList();
-
-        public Bus DiagnosticBus
+        private IList<Bus> GetBusConnections()
         {
-            get
-            {
-                if (DiagBus != null)
-                {
-                    return DiagBus.ConvertToBus();
-                }
-                return Bus.Unknown;
-            }
+            return BusCons?.Select((IBusObject x) => x.ConvertToBus()).ToList();
         }
 
-        public IBusObject DiagBus { get; internal set; }
+        private IList<string> GetBusConnectionsAsString()
+        {
+            return BusCons?.Select((IBusObject x) => x.ToString()).ToList();
+        }
 
-        public IEcuDetailInfo EcuDetailInfo { get; internal set; }
+        private Bus GetDiagnosticBus()
+        {
+            if (DiagBus != null)
+            {
+                return DiagBus.ConvertToBus();
+            }
 
-        public IEcuIdentifier EcuIdentifier { get; internal set; }
-
-        public IEcuStatusInfo EcuStatusInfo { get; internal set; }
-
-        public string EcuVariant { get; internal set; }
-
-        public int? GatewayDiagAddrAsInt { get; internal set; }
-
-        public string SerialNumber { get; internal set; }
-
-        public IStandardSvk StandardSvk { get; internal set; }
-
-        public string OrderNumber { get; set; }
-
-        public IEcuPdxInfo EcuPdxInfo { get; internal set; }
-
-        public bool IsSmartActuator { get; internal set; }
+            return Bus.Unknown;
+        }
     }
 }
