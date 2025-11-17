@@ -680,8 +680,9 @@ namespace SourceCodeSync
 
                     if (sourceClass != null)
                     {
+                        ClassDeclarationSyntax sourceClassCopy = sourceClass;
                         bool hasContract = HasContractAttribute(cls.AttributeLists);
-                        bool sourceHasContract = HasContractAttribute(sourceClass.AttributeLists);
+                        bool sourceHasContract = HasContractAttribute(sourceClassCopy.AttributeLists);
 
                         if (hasContract && !sourceHasContract)
                         {
@@ -701,7 +702,7 @@ namespace SourceCodeSync
                             }
 
                             // Update modifiers and attributes from destination class
-                            sourceClass = sourceClass
+                            sourceClassCopy = sourceClassCopy
                                 .WithModifiers(cls.Modifiers)
                                 .WithAttributeLists(cls.AttributeLists);
                         }
@@ -713,7 +714,7 @@ namespace SourceCodeSync
                         if (hasPreservedMembers)
                         {
                             // Merge with preserved members
-                            mergedClass = MergeClassPreservingMarked(cls, sourceClass);
+                            mergedClass = MergeClassPreservingMarked(cls, sourceClassCopy);
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
                                 int preservedCount = cls.Members.Count(m => ShouldPreserveMember(m));
@@ -723,7 +724,7 @@ namespace SourceCodeSync
                         else
                         {
                             // No preserved members, use source as-is
-                            mergedClass = sourceClass;
+                            mergedClass = sourceClassCopy;
                         }
 
                         // Compare if they're different
