@@ -65,7 +65,7 @@ namespace PsdzClient.Core.Container
 
         private readonly string[] _sgbmIdsToCheck = new string[2] { "SWFK-0000CED0", "SWFK-0000CFBC" };
 
-        // [UH] adapted for EdiabasNet
+        [PreserveSource(Hint = "Modified")]
         private ApiInternal api;
 
         private string _APP;
