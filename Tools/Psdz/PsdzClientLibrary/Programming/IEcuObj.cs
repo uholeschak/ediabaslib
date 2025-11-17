@@ -5,12 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using PsdzClient.Core;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Programming
 {
-    // ToDo: Check on update
-    // BMW.Rheingold.CoreFramework.Contracts.Programming.Bus
-    //[Obsolete("use IBusObject instead")]
+    [PreserveSource(Hint = "Obsolete removed", AccessModified = true)]
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum Bus
     {
