@@ -1,6 +1,7 @@
-﻿using System.Net.NetworkInformation;
-using System.Text.RegularExpressions;
+﻿using PsdzClientLibrary;
 using System;
+using System.Net.NetworkInformation;
+using System.Text.RegularExpressions;
 
 namespace PsdzClient.Core
 {
@@ -12,22 +13,11 @@ namespace PsdzClient.Core
 
         private const int PingRetryCount = 4;
 
+        [PreserveSource(Hint = "Simplified")]
         public static bool CheckForInternetConnection()
         {
             try
             {
-                // [UH] removed
-#if false
-                if (!PingBMWConnectionCheck() && !PingBMWConnectionCheck(isFallback: true))
-                {
-                    string dealerCountry = LicenseHelper.DealerInstance.DealerData?.OutletCountry;
-                    bool flag = IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA");
-                    bool isOssModeActive = ConfigSettings.IsOssModeActive;
-                    bool dnsConnectionStatus = CheckDNSConnection(dealerCountry);
-                    bool tricConnectionStatus = !(flag || isOssModeActive) && CheckTricResult();
-                    return LogToFastaAndReturnConnectionStatus(connectionCheckSucceeded: true, dnsConnectionStatus, tricConnectionStatus, flag);
-                }
-#endif
                 return LogToFastaAndReturnConnectionStatus();
             }
             catch (Exception exception)
@@ -37,11 +27,11 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Simplified")]
         public static bool CheckForIntranetConnection()
         {
             try
             {
-                //return CallTricEndpoint(TRICZentralUtility.ServerAddressServices + "/health");
                 return false;
             }
             catch (Exception exception)
@@ -60,31 +50,17 @@ namespace PsdzClient.Core
             return PingGoogleDNSToCheckForInternetConnection();
         }
 
-        // [UH] removed
-#if false
+        [PreserveSource(Hint = "Cleaned")]
         private static bool CheckTricResult()
         {
-            string serverAddressServices = TRICZentralUtility.ServerAddressServices;
-            return CallTricEndpoint(serverAddressServices.Contains(".com") ? (serverAddressServices + "/health") : (serverAddressServices.Replace(".net", ".com") + "/health"));
+            return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private static bool CallTricEndpoint(string url)
         {
-            if (!ServiceLocator.Current.TryGetService<INetworkTypeVerificationService>(out var service))
-            {
-                service = UnityContainerWrapper.Current.Resolve<INetworkTypeVerificationService>(Array.Empty<ResolverOverride>());
-            }
-            try
-            {
-                return service.IsNetworkTypeAvailable(url).Result;
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException(Log.CurrentMethod(), exception);
-                return false;
-            }
+            return false;
         }
-#endif
 
         private static bool LogToFastaAndReturnConnectionStatus(bool connectionCheckSucceeded = false, bool dnsConnectionStatus = false, bool tricConnectionStatus = false, bool isToyota = false)
         {
@@ -128,35 +104,11 @@ namespace PsdzClient.Core
             return flag;
         }
 
-        // [UH] removed
-#if false
+        [PreserveSource(Hint = "Cleaned")]
         private static bool PingBMWConnectionCheck(bool isFallback = false)
         {
-            if (ConfigSettings.IsOssModeActive && !OSSPortal.PortalParameters.IsIcsConfig)
-            {
-                Log.Info(Log.CurrentMethod(), "AOS without ics4bdr can\u00b4t retrieve location based parameters");
-                return false;
-            }
-            string text = "";
-            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
-            {
-                if (!istaIcsServiceClient.IsAvailable())
-                {
-                    Log.Warning(Log.CurrentMethod(), "ICS was not available");
-                    return false;
-                }
-                text = ((!isFallback) ? istaIcsServiceClient.GetBMWConnectionCheckUrl() : istaIcsServiceClient.GetBMWConnectionCheckFallbackUrl());
-                if (string.IsNullOrEmpty(text))
-                {
-                    Log.Warning(Log.CurrentMethod(), "URL returned was null or empty");
-                    return false;
-                }
-            }
-            Log.Info(Log.CurrentMethod(), "Ping LBP BMWConnectionCheck URL: " + text + " to check for connectivity.");
-            text = Regex.Replace(text, "http[s]{0,1}\\:\\/\\/", "");
-            return PingIpWithRetries(text, "PingBMWConnectionCheck");
+            return false;
         }
-#endif
 
         private static bool PingGoogleDNSToCheckForInternetConnection()
         {
