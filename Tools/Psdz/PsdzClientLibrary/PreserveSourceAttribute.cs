@@ -9,8 +9,15 @@ namespace PsdzClientLibrary
 
         public bool Removed;
 
+        public bool Placeholder;
+
         public bool KeepAttribute;
 
         public bool AccessModified;
+    }
+
+    public struct PlaceholderType
+    {
+        public static readonly PlaceholderType Value = default;
     }
 }

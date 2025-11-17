@@ -84,11 +84,11 @@ namespace PsdzClient.Core.Container
 
         private bool m_FromFastaConfig;
 
-        [PreserveSource(Hint = "ServiceController sc", Removed = true)]
-        private object sc;
+        [PreserveSource(Hint = "ServiceController sc", Placeholder = true)]
+        private PlaceholderType sc;
 
-        [PreserveSource(Hint = "ServiceControllerPermission scp", Removed = true)]
-        private object scp;
+        [PreserveSource(Hint = "ServiceControllerPermission scp", Placeholder = true)]
+        private PlaceholderType scp;
 
         private bool serviceIsRunning;
 
