@@ -1331,31 +1331,10 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
-        public ObservableCollection<technicalCampaignType> TechnicalCampaigns
-        {
-            get
-            {
-                return technicalCampaignsField;
-            }
-            set
-            {
-                if (technicalCampaignsField != null)
-                {
-                    if (!technicalCampaignsField.Equals(value))
-                    {
-                        technicalCampaignsField = value;
-                        OnPropertyChanged("TechnicalCampaigns");
-                    }
-                }
-                else
-                {
-                    technicalCampaignsField = value;
-                    OnPropertyChanged("TechnicalCampaigns");
-                }
-            }
-        }
-#endif
+
+        [PreserveSource(Hint = "public ObservableCollection<technicalCampaignType>", Placeholder = true)]
+        public PlaceholderType TechnicalCampaigns;
+
         public string Leistungsklasse
         {
             get
@@ -1435,55 +1414,13 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
-        public ObservableCollection<typeServiceHistoryEntry> ServiceHistory
-        {
-            get
-            {
-                return serviceHistoryField;
-            }
-            set
-            {
-                if (serviceHistoryField != null)
-                {
-                    if (!serviceHistoryField.Equals(value))
-                    {
-                        serviceHistoryField = value;
-                        OnPropertyChanged("ServiceHistory");
-                    }
-                }
-                else
-                {
-                    serviceHistoryField = value;
-                    OnPropertyChanged("ServiceHistory");
-                }
-            }
-        }
 
-        public ObservableCollection<typeDiagCode> DiagCodes
-        {
-            get
-            {
-                return diagCodesField;
-            }
-            set
-            {
-                if (diagCodesField != null)
-                {
-                    if (!diagCodesField.Equals(value))
-                    {
-                        diagCodesField = value;
-                        OnPropertyChanged("DiagCodes");
-                    }
-                }
-                else
-                {
-                    diagCodesField = value;
-                    OnPropertyChanged("DiagCodes");
-                }
-            }
-        }
-#endif
+        [PreserveSource(Hint = "ObservableCollection<typeServiceHistoryEntry>", Placeholder = true)]
+        public PlaceholderType ServiceHistory;
+
+        [PreserveSource(Hint = "public ObservableCollection<typeDiagCode>", Placeholder = true)]
+        public PlaceholderType DiagCodes;
+
         public string Motorarbeitsverfahren
         {
             get
@@ -1531,31 +1468,10 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
-        public ObservableCollection<DTC> CombinedFaults
-        {
-            get
-            {
-                return combinedFaultsField;
-            }
-            set
-            {
-                if (combinedFaultsField != null)
-                {
-                    if (!combinedFaultsField.Equals(value))
-                    {
-                        combinedFaultsField = value;
-                        OnPropertyChanged("CombinedFaults");
-                    }
-                }
-                else
-                {
-                    combinedFaultsField = value;
-                    OnPropertyChanged("CombinedFaults");
-                }
-            }
-        }
-#endif
+
+        [PreserveSource(Hint = "public ObservableCollection<DTC>", Placeholder = true)]
+        public PlaceholderType CombinedFaults;
+
         public ObservableCollection<decimal> InstalledAdapters
         {
             get
@@ -1724,31 +1640,10 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
-        public ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX> PerceivedSymptoms
-        {
-            get
-            {
-                return perceivedSymptomsField;
-            }
-            set
-            {
-                if (perceivedSymptomsField != null)
-                {
-                    if (!perceivedSymptomsField.Equals(value))
-                    {
-                        perceivedSymptomsField = value;
-                        OnPropertyChanged("PerceivedSymptoms");
-                    }
-                }
-                else
-                {
-                    perceivedSymptomsField = value;
-                    OnPropertyChanged("PerceivedSymptoms");
-                }
-            }
-        }
-#endif
+
+        [PreserveSource(Hint = "ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>", Placeholder = true)]
+        public PlaceholderType PerceivedSymptoms;
+
         public string ProgmanVersion
         {
             get
@@ -2215,23 +2110,10 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
-        public BackendsAvailabilityIndicator BackendsAvailabilityIndicator
-        {
-            get
-            {
-                return backendsAvailabilityIndicator;
-            }
-            set
-            {
-                if (backendsAvailabilityIndicator != value)
-                {
-                    backendsAvailabilityIndicator = value;
-                    OnPropertyChanged("BackendsAvailabilityIndicator");
-                }
-            }
-        }
-#endif
+
+        [PreserveSource(Hint = "public BackendsAvailabilityIndicator", Placeholder = true)]
+        public PlaceholderType BackendsAvailabilityIndicator;
+
         [DefaultValue(false)]
         [XmlIgnore]
         public bool DOMRequestFailed
