@@ -21,151 +21,81 @@ namespace PsdzClient.Core
     public class ECU : ICloneable, IEcu, INotifyPropertyChanged, IIdentEcu, IEcuObj
     {
         private string bntn;
-
         private int stillProgrammable;
-
         [PreserveSource(Hint = "private XEP_ECUCLIQUES", Placeholder = true)]
         private PlaceholderType xepEcuClique;
-
         private string eCUTitle;
-
         private string vARIANTEField;
-
         [PreserveSource(Hint = "private ObservableCollection<JOB>", Placeholder = true)]
         private PlaceholderType jOBSField;
-
         private BusType bUSField;
-
         private short? iD_BUS_INDEXField;
-
         private typeDiagProtocoll diagProtocollField;
-
         private int eCUTreeColumnField;
-
         private int eCUTreeRowField;
-
         private string tITLE_ECUTREEField;
-
         private string eCUTreeColorField;
-
         private string eCU_ADRField;
-
         private ObservableCollection<AIF> aIFField;
-
         private short? iD_LIEF_NRField;
-
         private string iD_LIEF_TEXTField;
-
         private short? iD_SW_NRField;
-
         private string iD_SW_NR_MCVField;
-
         private string iD_SW_NR_FSVField;
-
         private string iD_SW_NR_OSVField;
-
         private string iD_SW_NR_RESField;
-
         private short? iD_EWS_SSField;
-
         private string sERIENNUMMERField;
-
         private string iD_BMW_NRField;
-
         private string iD_HW_NRField;
-
         private short? iD_COD_INDEXField;
-
         private int? iD_DIAG_INDEXField;
-
         private int? iD_VAR_INDEXField;
-
         private int? iD_DATUM_JAHRField;
-
         private int? iD_DATUM_MONATField;
-
         private int? iD_DATUM_TAGField;
-
         private string iD_DATUMField;
-
         private short? iD_DATUM_KWField;
-
         private long? iD_SGBD_INDEXField;
-
         private long iD_SG_ADRField;
-
         private long? iD_LIN_SLAVE_ADRField;
-
         private int f_ANZField;
-
         [PreserveSource(Hint = "private ObservableCollection<DTC>", Placeholder = true)]
         private PlaceholderType fEHLERField;
-
         private int i_ANZField;
-
         [PreserveSource(Hint = "private ObservableCollection<DTC>", Placeholder = true)]
         private PlaceholderType iNFOField;
-
         private SVK sVKField;
-
         private string pHYSIKALISCHE_HW_NRField;
-
         private ObservableCollection<typeECU_Transaction> tALField;
-
         [PreserveSource(Hint = "private DTC", Placeholder = true)]
         private PlaceholderType selectedDTCField;
-
         [PreserveSource(Hint = "private DTC", Placeholder = true)]
         private PlaceholderType selectedINFOField;
-
         private string hARDWARE_REFERENZField;
-
         private int? hW_REF_STATUSField;
-
         private ObservableCollection<typeSWTStatus> sWTStatusField;
-
         private string dATEN_REFERENZField;
-
         private ObservableCollection<BusType> subBUSField;
-
         private string eCU_GROBNAMEField;
-
         private string eCU_NAMEField;
-
         private string eCU_SGBDField;
-
         private string eCU_GRUPPEField;
-
         private bool cOMMUNICATION_SUCCESSFULLYField;
-
         private bool iDENT_SUCCESSFULLYField;
-
         private bool aIF_SUCCESSFULLYField;
-
         private bool fS_SUCCESSFULLYField;
-
         private bool iS_SUCCESSFULLYField;
-
         private bool sERIAL_SUCCESSFULLYField;
-
         private bool sVK_SUCCESSFULLYField;
-
         private bool pHYSHW_SUCCESSFULLYField;
-
         private bool hWREF_SUCCESSFULLYField;
-
         private bool eCU_HAS_CONFIG_OVERRIDEField;
-
         private uint bUSIDField;
-
         private bool dATEN_REFERENZ_SUCCESSFULLYField;
-
         private int fLASH_STATEField;
-
         private bool eCU_ASSEMBLY_CONFIRMEDField;
-
         private IEcuStatusInfo statusInfo;
-
         public GenerationType Generation { get; set; }
 
         [PreserveSource(Hint = "IXepEcuVariants", Placeholder = true)]
@@ -176,6 +106,7 @@ namespace PsdzClient.Core
             {
                 return XepEcuVariant;
             }
+
             set
             {
             }
@@ -189,6 +120,7 @@ namespace PsdzClient.Core
             {
                 return XepEcuClique;
             }
+
             set
             {
             }
@@ -219,6 +151,7 @@ namespace PsdzClient.Core
             {
                 return bntn;
             }
+
             set
             {
                 if ((value == null && bntn != null) || (value != null && !value.Equals(bntn)))
@@ -236,6 +169,7 @@ namespace PsdzClient.Core
             {
                 return StatusInfo;
             }
+
             set
             {
                 StatusInfo = value;
@@ -249,6 +183,7 @@ namespace PsdzClient.Core
             {
                 return stillProgrammable;
             }
+
             set
             {
                 this.PropertyChanged.NotifyPropertyChanged(this, () => StillProgrammable, ref stillProgrammable, value);
@@ -277,6 +212,7 @@ namespace PsdzClient.Core
             {
                 return eCUTitle;
             }
+
             set
             {
                 if (eCUTitle != value)
@@ -302,6 +238,7 @@ namespace PsdzClient.Core
             {
                 return TITLE_ECUTREE;
             }
+
             set
             {
                 TITLE_ECUTREE = value;
@@ -315,6 +252,7 @@ namespace PsdzClient.Core
             {
                 return ECU_GRUPPE;
             }
+
             set
             {
                 ECU_GRUPPE = value;
@@ -331,6 +269,7 @@ namespace PsdzClient.Core
             {
                 return ProgrammingVariantName;
             }
+
             set
             {
                 ProgrammingVariantName = value;
@@ -342,8 +281,9 @@ namespace PsdzClient.Core
         {
             get
             {
-                return BusCons?.Select((IBusObject x) => x.ConvertToBus()).ToList();
+                return GetBusConnections();
             }
+
             private set
             {
                 throw new NotImplementedException();
@@ -358,8 +298,9 @@ namespace PsdzClient.Core
         {
             get
             {
-                return BusCons?.Select((IBusObject x) => x.ToString()).ToList();
+                return GetBusConnectionsAsString();
             }
+
             private set
             {
                 throw new NotImplementedException();
@@ -375,8 +316,10 @@ namespace PsdzClient.Core
                 {
                     return DiagBus.ConvertToBus();
                 }
+
                 return Bus.Unknown;
             }
+
             private set
             {
                 throw new NotImplementedException();
@@ -399,6 +342,7 @@ namespace PsdzClient.Core
             {
                 return StatusInfo;
             }
+
             set
             {
                 StatusInfo = value;
@@ -412,6 +356,7 @@ namespace PsdzClient.Core
             {
                 return VARIANTE;
             }
+
             set
             {
                 VARIANTE = value;
@@ -428,6 +373,7 @@ namespace PsdzClient.Core
             {
                 return SERIENNUMMER;
             }
+
             set
             {
                 SERIENNUMMER = value;
@@ -456,6 +402,7 @@ namespace PsdzClient.Core
             {
                 return statusInfo;
             }
+
             set
             {
                 if (statusInfo != value)
@@ -472,6 +419,7 @@ namespace PsdzClient.Core
             {
                 return vARIANTEField;
             }
+
             set
             {
                 if (vARIANTEField != null)
@@ -492,13 +440,13 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<JOB>", Placeholder = true)]
         public PlaceholderType JOBS;
-
         public BusType BUS
         {
             get
             {
                 return bUSField;
             }
+
             set
             {
                 if (!bUSField.Equals(value))
@@ -515,6 +463,7 @@ namespace PsdzClient.Core
             {
                 return iD_BUS_INDEXField;
             }
+
             set
             {
                 if (iD_BUS_INDEXField.HasValue)
@@ -539,6 +488,7 @@ namespace PsdzClient.Core
             {
                 return diagProtocollField;
             }
+
             set
             {
                 if (!diagProtocollField.Equals(value))
@@ -555,6 +505,7 @@ namespace PsdzClient.Core
             {
                 return eCUTreeColumnField;
             }
+
             set
             {
                 if (!eCUTreeColumnField.Equals(value))
@@ -571,6 +522,7 @@ namespace PsdzClient.Core
             {
                 return eCUTreeRowField;
             }
+
             set
             {
                 if (!eCUTreeRowField.Equals(value))
@@ -587,6 +539,7 @@ namespace PsdzClient.Core
             {
                 return tITLE_ECUTREEField;
             }
+
             set
             {
                 if (tITLE_ECUTREEField != null)
@@ -611,6 +564,7 @@ namespace PsdzClient.Core
             {
                 return eCUTreeColorField;
             }
+
             set
             {
                 if (eCUTreeColorField != null)
@@ -635,6 +589,7 @@ namespace PsdzClient.Core
             {
                 return eCU_ADRField;
             }
+
             set
             {
                 if (eCU_ADRField != null)
@@ -659,6 +614,7 @@ namespace PsdzClient.Core
             {
                 return aIFField;
             }
+
             set
             {
                 if (aIFField != null)
@@ -683,6 +639,7 @@ namespace PsdzClient.Core
             {
                 return iD_LIEF_NRField;
             }
+
             set
             {
                 if (iD_LIEF_NRField.HasValue)
@@ -707,6 +664,7 @@ namespace PsdzClient.Core
             {
                 return iD_LIEF_TEXTField;
             }
+
             set
             {
                 if (iD_LIEF_TEXTField != null)
@@ -731,6 +689,7 @@ namespace PsdzClient.Core
             {
                 return iD_SW_NRField;
             }
+
             set
             {
                 if (iD_SW_NRField.HasValue)
@@ -755,6 +714,7 @@ namespace PsdzClient.Core
             {
                 return iD_SW_NR_MCVField;
             }
+
             set
             {
                 if (iD_SW_NR_MCVField != null)
@@ -779,6 +739,7 @@ namespace PsdzClient.Core
             {
                 return iD_SW_NR_FSVField;
             }
+
             set
             {
                 if (iD_SW_NR_FSVField != null)
@@ -803,6 +764,7 @@ namespace PsdzClient.Core
             {
                 return iD_SW_NR_OSVField;
             }
+
             set
             {
                 if (iD_SW_NR_OSVField != null)
@@ -827,6 +789,7 @@ namespace PsdzClient.Core
             {
                 return iD_SW_NR_RESField;
             }
+
             set
             {
                 if (iD_SW_NR_RESField != null)
@@ -851,6 +814,7 @@ namespace PsdzClient.Core
             {
                 return iD_EWS_SSField;
             }
+
             set
             {
                 if (iD_EWS_SSField.HasValue)
@@ -875,6 +839,7 @@ namespace PsdzClient.Core
             {
                 return sERIENNUMMERField;
             }
+
             set
             {
                 if (sERIENNUMMERField != null)
@@ -899,6 +864,7 @@ namespace PsdzClient.Core
             {
                 return iD_BMW_NRField;
             }
+
             set
             {
                 if (iD_BMW_NRField != null)
@@ -923,6 +889,7 @@ namespace PsdzClient.Core
             {
                 return iD_HW_NRField;
             }
+
             set
             {
                 if (iD_HW_NRField != null)
@@ -947,6 +914,7 @@ namespace PsdzClient.Core
             {
                 return iD_COD_INDEXField;
             }
+
             set
             {
                 if (iD_COD_INDEXField.HasValue)
@@ -971,6 +939,7 @@ namespace PsdzClient.Core
             {
                 return iD_DIAG_INDEXField;
             }
+
             set
             {
                 if (iD_DIAG_INDEXField.HasValue)
@@ -995,6 +964,7 @@ namespace PsdzClient.Core
             {
                 return iD_VAR_INDEXField;
             }
+
             set
             {
                 if (iD_VAR_INDEXField.HasValue)
@@ -1019,6 +989,7 @@ namespace PsdzClient.Core
             {
                 return iD_DATUM_JAHRField;
             }
+
             set
             {
                 if (iD_DATUM_JAHRField.HasValue)
@@ -1043,6 +1014,7 @@ namespace PsdzClient.Core
             {
                 return iD_DATUM_MONATField;
             }
+
             set
             {
                 if (iD_DATUM_MONATField.HasValue)
@@ -1067,6 +1039,7 @@ namespace PsdzClient.Core
             {
                 return iD_DATUM_TAGField;
             }
+
             set
             {
                 if (iD_DATUM_TAGField.HasValue)
@@ -1091,6 +1064,7 @@ namespace PsdzClient.Core
             {
                 return iD_DATUMField;
             }
+
             set
             {
                 if (iD_DATUMField != null)
@@ -1115,6 +1089,7 @@ namespace PsdzClient.Core
             {
                 return iD_DATUM_KWField;
             }
+
             set
             {
                 if (iD_DATUM_KWField.HasValue)
@@ -1139,6 +1114,7 @@ namespace PsdzClient.Core
             {
                 return iD_SGBD_INDEXField;
             }
+
             set
             {
                 if (iD_SGBD_INDEXField.HasValue)
@@ -1163,6 +1139,7 @@ namespace PsdzClient.Core
             {
                 return iD_SG_ADRField;
             }
+
             set
             {
                 if (!iD_SG_ADRField.Equals(value))
@@ -1179,6 +1156,7 @@ namespace PsdzClient.Core
             {
                 return iD_LIN_SLAVE_ADRField;
             }
+
             set
             {
                 if (iD_LIN_SLAVE_ADRField.HasValue)
@@ -1203,6 +1181,7 @@ namespace PsdzClient.Core
             {
                 return f_ANZField;
             }
+
             set
             {
                 if (!f_ANZField.Equals(value))
@@ -1215,13 +1194,13 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
         public PlaceholderType FEHLER;
-
         public int I_ANZ
         {
             get
             {
                 return i_ANZField;
             }
+
             set
             {
                 if (!i_ANZField.Equals(value))
@@ -1232,16 +1211,15 @@ namespace PsdzClient.Core
             }
         }
 
-
         [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
         public PlaceholderType INFO;
-
         public SVK SVK
         {
             get
             {
                 return sVKField;
             }
+
             set
             {
                 if (sVKField != null)
@@ -1266,6 +1244,7 @@ namespace PsdzClient.Core
             {
                 return pHYSIKALISCHE_HW_NRField;
             }
+
             set
             {
                 if (pHYSIKALISCHE_HW_NRField != null)
@@ -1290,6 +1269,7 @@ namespace PsdzClient.Core
             {
                 return tALField;
             }
+
             set
             {
                 if (tALField != null)
@@ -1314,6 +1294,7 @@ namespace PsdzClient.Core
             {
                 return hARDWARE_REFERENZField;
             }
+
             set
             {
                 if (hARDWARE_REFERENZField != null)
@@ -1338,6 +1319,7 @@ namespace PsdzClient.Core
             {
                 return hW_REF_STATUSField;
             }
+
             set
             {
                 if (hW_REF_STATUSField.HasValue)
@@ -1362,6 +1344,7 @@ namespace PsdzClient.Core
             {
                 return sWTStatusField;
             }
+
             set
             {
                 if (sWTStatusField != null)
@@ -1386,6 +1369,7 @@ namespace PsdzClient.Core
             {
                 return dATEN_REFERENZField;
             }
+
             set
             {
                 if (dATEN_REFERENZField != null)
@@ -1410,6 +1394,7 @@ namespace PsdzClient.Core
             {
                 return subBUSField;
             }
+
             set
             {
                 if (subBUSField != null)
@@ -1434,6 +1419,7 @@ namespace PsdzClient.Core
             {
                 return eCU_GROBNAMEField;
             }
+
             set
             {
                 if (eCU_GROBNAMEField != null)
@@ -1458,6 +1444,7 @@ namespace PsdzClient.Core
             {
                 return eCU_NAMEField;
             }
+
             set
             {
                 if (eCU_NAMEField != null)
@@ -1482,6 +1469,7 @@ namespace PsdzClient.Core
             {
                 return eCU_SGBDField;
             }
+
             set
             {
                 if (eCU_SGBDField != null)
@@ -1506,6 +1494,7 @@ namespace PsdzClient.Core
             {
                 return eCU_GRUPPEField;
             }
+
             set
             {
                 if (eCU_GRUPPEField != null)
@@ -1531,6 +1520,7 @@ namespace PsdzClient.Core
             {
                 return cOMMUNICATION_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!cOMMUNICATION_SUCCESSFULLYField.Equals(value))
@@ -1548,6 +1538,7 @@ namespace PsdzClient.Core
             {
                 return iDENT_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!iDENT_SUCCESSFULLYField.Equals(value))
@@ -1565,6 +1556,7 @@ namespace PsdzClient.Core
             {
                 return aIF_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!aIF_SUCCESSFULLYField.Equals(value))
@@ -1582,6 +1574,7 @@ namespace PsdzClient.Core
             {
                 return fS_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!fS_SUCCESSFULLYField.Equals(value))
@@ -1599,6 +1592,7 @@ namespace PsdzClient.Core
             {
                 return iS_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!iS_SUCCESSFULLYField.Equals(value))
@@ -1616,6 +1610,7 @@ namespace PsdzClient.Core
             {
                 return sERIAL_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!sERIAL_SUCCESSFULLYField.Equals(value))
@@ -1633,6 +1628,7 @@ namespace PsdzClient.Core
             {
                 return sVK_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!sVK_SUCCESSFULLYField.Equals(value))
@@ -1650,6 +1646,7 @@ namespace PsdzClient.Core
             {
                 return pHYSHW_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!pHYSHW_SUCCESSFULLYField.Equals(value))
@@ -1667,6 +1664,7 @@ namespace PsdzClient.Core
             {
                 return hWREF_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!hWREF_SUCCESSFULLYField.Equals(value))
@@ -1684,6 +1682,7 @@ namespace PsdzClient.Core
             {
                 return eCU_HAS_CONFIG_OVERRIDEField;
             }
+
             set
             {
                 if (!eCU_HAS_CONFIG_OVERRIDEField.Equals(value))
@@ -1701,6 +1700,7 @@ namespace PsdzClient.Core
             {
                 return bUSIDField;
             }
+
             set
             {
                 _ = bUSIDField;
@@ -1719,6 +1719,7 @@ namespace PsdzClient.Core
             {
                 return dATEN_REFERENZ_SUCCESSFULLYField;
             }
+
             set
             {
                 if (!dATEN_REFERENZ_SUCCESSFULLYField.Equals(value))
@@ -1736,6 +1737,7 @@ namespace PsdzClient.Core
             {
                 return fLASH_STATEField;
             }
+
             set
             {
                 if (!fLASH_STATEField.Equals(value))
@@ -1753,6 +1755,7 @@ namespace PsdzClient.Core
             {
                 return eCU_ASSEMBLY_CONFIRMEDField;
             }
+
             set
             {
                 if (!eCU_ASSEMBLY_CONFIRMEDField.Equals(value))
@@ -1764,10 +1767,8 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         [PreserveSource(Hint = "Modified")]
-        protected ECU(ECU ecu)
-            : this()
+        protected ECU(ECU ecu) : this()
         {
             BaseVariant = ecu.BaseVariant;
             EcuVariant = ecu.EcuVariant;
@@ -1790,6 +1791,16 @@ namespace PsdzClient.Core
             IsSmartActuator = ecu.IsSmartActuator;
         }
 
+        private IList<Bus> GetBusConnections()
+        {
+            return BusCons?.Select((IBusObject x) => x.ConvertToBus()).ToList();
+        }
+
+        private IList<string> GetBusConnectionsAsString()
+        {
+            return BusCons?.Select((IBusObject x) => x.ToString()).ToList();
+        }
+
         public object Clone()
         {
             return MemberwiseClone();
@@ -1801,10 +1812,12 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             if (ID_SG_ADR == eCU.ID_SG_ADR && ID_LIN_SLAVE_ADR == eCU.ID_LIN_SLAVE_ADR)
             {
                 return true;
             }
+
             return false;
         }
 
@@ -1852,6 +1865,7 @@ namespace PsdzClient.Core
             {
                 return (ID_SG_ADR + ID_LIN_SLAVE_ADR.Value).GetHashCode();
             }
+
             return ID_SG_ADR.GetHashCode();
         }
 
@@ -1870,6 +1884,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             return result;
         }
 
@@ -1880,9 +1895,9 @@ namespace PsdzClient.Core
             {
                 return true;
             }
+
             return false;
         }
-
 
         [PreserveSource(Hint = "Modified")]
         public bool IsSet(long fOrt)
@@ -1896,6 +1911,7 @@ namespace PsdzClient.Core
             {
                 return !TITLE_ECUTREE.EndsWith($"0x{ID_SG_ADR:X2}", StringComparison.Ordinal);
             }
+
             return false;
         }
 
@@ -1906,6 +1922,7 @@ namespace PsdzClient.Core
             {
                 return true;
             }
+
             return false;
         }
 
@@ -1916,6 +1933,7 @@ namespace PsdzClient.Core
             {
                 return true;
             }
+
             return false;
         }
 
@@ -1926,6 +1944,7 @@ namespace PsdzClient.Core
             {
                 return true;
             }
+
             return false;
         }
 
@@ -1976,6 +1995,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("ECU.ToString()", exception);
             }
+
             return stringBuilder.ToString();
         }
 
