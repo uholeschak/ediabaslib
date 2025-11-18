@@ -1469,14 +1469,14 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Gets the name of a member for comparison purposes
+        /// Gets the name of a member for comparison purposes, including interface name for explicit implementations
         /// </summary>
         private static string GetMemberName(SyntaxNode member)
         {
             return member switch
             {
-                MethodDeclarationSyntax method => method.Identifier.Text,
-                PropertyDeclarationSyntax property => property.Identifier.Text,
+                MethodDeclarationSyntax method => GetMethodName(method),
+                PropertyDeclarationSyntax property => GetPropertyName(property),
                 FieldDeclarationSyntax field => field.Declaration.Variables.FirstOrDefault()?.Identifier.Text,
                 EventDeclarationSyntax eventDecl => eventDecl.Identifier.Text,
                 ConstructorDeclarationSyntax ctor => ctor.Identifier.Text,
@@ -1484,6 +1484,35 @@ namespace SourceCodeSync
             };
         }
 
+        /// <summary>
+        /// Gets the property name, including interface prefix for explicit implementations
+        /// </summary>
+        private static string GetPropertyName(PropertyDeclarationSyntax property)
+        {
+            // Check for explicit interface implementation
+            if (property.ExplicitInterfaceSpecifier != null)
+            {
+                // Format: IInterfaceName.PropertyName
+                return $"{property.ExplicitInterfaceSpecifier.Name}.{property.Identifier.Text}";
+            }
+
+            return property.Identifier.Text;
+        }
+
+        /// <summary>
+        /// Gets the method name, including interface prefix for explicit implementations
+        /// </summary>
+        private static string GetMethodName(MethodDeclarationSyntax method)
+        {
+            // Check for explicit interface implementation
+            if (method.ExplicitInterfaceSpecifier != null)
+            {
+                // Format: IInterfaceName.MethodName
+                return $"{method.ExplicitInterfaceSpecifier.Name}.{method.Identifier.Text}";
+            }
+
+            return method.Identifier.Text;
+        }
         /// <summary>
         /// Checks if member has preserve comment markers
         /// </summary>
