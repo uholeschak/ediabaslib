@@ -2014,23 +2014,10 @@ namespace PsdzClient.Core
             eCU_ASSEMBLY_CONFIRMEDField = true;
         }
 
-#if false
+        [PreserveSource(Hint = "Cleaned")]
         private void FEHLER_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action != 0)
-            {
-                return;
-            }
-            foreach (DTC newItem in e.NewItems)
-            {
-                DTC dTC = FEHLER.LastOrDefault((DTC cf) => cf.UniqueId == newItem.UniqueId && cf != newItem);
-                if (dTC != null)
-                {
-                    FEHLER.Remove(dTC);
-                }
-            }
         }
-#endif
 
         public virtual void OnPropertyChanged(string propertyName)
         {
