@@ -213,6 +213,7 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, null, "ApiJobWithRetries");
         }
 
+        [PreserveSource(Hint = "Unmodified")]
         public ECUKom()
             : this(null, new List<string>())
         {
