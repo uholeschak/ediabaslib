@@ -1781,9 +1781,9 @@ namespace PsdzClient.Core
             EcuStatusInfo = ecu.EcuStatusInfo;
             EcuPdxInfo = ecu.EcuPdxInfo;
             ID_SG_ADR = ecu.ID_SG_ADR;
-            //XepEcuVariant = ecu.XepEcuVariant;
+            // [IGNORE] XepEcuVariant = ecu.XepEcuVariant;
             EcuVariant = ecu.EcuVariant;
-            //XepEcuClique = ecu.XepEcuClique;
+            // [IGNORE] XepEcuClique = ecu.XepEcuClique;
             EcuGroup = ecu.EcuGroup;
             EcuRep = ecu.EcuRep;
             IsSmartActuator = ecu.IsSmartActuator;
@@ -1982,14 +1982,14 @@ namespace PsdzClient.Core
         {
             subBUSField = new ObservableCollection<BusType>();
             sWTStatusField = new ObservableCollection<typeSWTStatus>();
-            //selectedINFOField = new DTC();
-            //selectedDTCField = new DTC();
+            // [IGNORE] selectedINFOField = new DTC();
+            // [IGNORE] selectedDTCField = new DTC();
             tALField = new ObservableCollection<typeECU_Transaction>();
             sVKField = new SVK();
-            //iNFOField = new ObservableCollection<DTC>();
-            //FEHLER = new ObservableCollection<DTC>();
+            // [IGNORE] iNFOField = new ObservableCollection<DTC>();
+            // [IGNORE] FEHLER = new ObservableCollection<DTC>();
             aIFField = new ObservableCollection<AIF>();
-            //jOBSField = new ObservableCollection<JOB>();
+            // [IGNORE] jOBSField = new ObservableCollection<JOB>();
             bUSField = BusType.UNKNOWN;
             diagProtocollField = typeDiagProtocoll.UNKNOWN;
             eCUTreeColumnField = -1;
