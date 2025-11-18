@@ -63,7 +63,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         Unknown
     }
 
-
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum typeDiagProtocoll
     {
@@ -73,7 +72,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         UNKNOWN
     }
 
-    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcu : INotifyPropertyChanged, IIdentEcu
     {
@@ -94,25 +92,21 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         bool DATEN_REFERENZ_SUCCESSFULLY { get; }
 
         typeDiagProtocoll DiagProtocoll { get; }
-
         new string ECUTreeColor { get; set; }
 
         int ECUTreeColumn { get; }
 
         int ECUTreeRow { get; }
-
         new string ECU_ADR { get; }
 
         bool ECU_ASSEMBLY_CONFIRMED { get; }
 
         string ECU_GROBNAME { get; set; }
-
         new string ECU_GRUPPE { get; set; }
 
         bool ECU_HAS_CONFIG_OVERRIDE { get; }
 
         string ECU_NAME { get; }
-
         new string ECU_SGBD { get; }
 
         [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
@@ -161,7 +155,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         long? ID_LIN_SLAVE_ADR { get; set; }
 
         long? ID_SGBD_INDEX { get; }
-
         new long ID_SG_ADR { get; set; }
 
         short? ID_SW_NR { get; }
@@ -191,7 +184,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         string PHYSIKALISCHE_HW_NR { get; }
 
         bool SERIAL_SUCCESSFULLY { get; }
-
         new string SERIENNUMMER { get; }
 
         ISvk SVK { get; }
@@ -205,7 +197,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         IEnumerable<BusType> SubBUS { get; }
 
         IEnumerable<IEcuTransaction> TAL { get; }
-
         new string TITLE_ECUTREE { get; set; }
 
         IEcuStatusInfo StatusInfo { get; set; }
@@ -223,21 +214,13 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         [PreserveSource(Hint = "IDtc", Placeholder = true)]
         PlaceholderType GetDTCById(decimal id);
-
         string GetNewestZusbauNoFromAif();
-
         bool IsRoot();
-
         bool IsSet(long fOrt);
-
         bool IsVirtual();
-
         bool IsVirtualOrVirtualBusCheck();
-
         bool IsVirtualRootOrVirtualBusCheck();
-
         IDtc getDTCbyF_ORT(int f_ORT);
-
         string LogEcu();
     }
 }
