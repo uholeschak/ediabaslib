@@ -1765,6 +1765,7 @@ namespace PsdzClient.Core
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        [PreserveSource(Hint = "Modified")]
         protected ECU(ECU ecu)
             : this()
         {
