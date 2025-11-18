@@ -1978,6 +1978,7 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
+        [PreserveSource(Hint = "Modified")]
         public ECU()
         {
             subBUSField = new ObservableCollection<BusType>();
