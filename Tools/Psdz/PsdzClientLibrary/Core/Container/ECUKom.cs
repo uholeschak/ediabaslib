@@ -261,11 +261,13 @@ namespace PsdzClient.Core.Container
             return EdiabasIniFilePath(iniFilename);
         }
 
+        [PreserveSource(Hint = "Unmodified")]
         public BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP)
         {
             return InitVCI(vciDevice, isDoIP, firstInitialisation: false);
         }
 
+        [PreserveSource(Hint = "Unmodified")]
         public BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP, bool firstInitialisation)
         {
             BoolResultObject result = InitVCI(vciDevice, logging: true, isDoIP, firstInitialisation);
