@@ -264,25 +264,9 @@ namespace PsdzClient.Core
         [XmlIgnore]
         IEnumerable<IEcuTransaction> IEcu.TAL => TAL;
 
-        // [UH] removed
-#if false
+        [PreserveSource(Hint = "XEP_ECUCLIQUES", Placeholder = true)]
         [XmlIgnore]
-        public XEP_ECUCLIQUES XepEcuClique
-        {
-            get
-            {
-                return xepEcuClique;
-            }
-            set
-            {
-                if (xepEcuClique != value)
-                {
-                    xepEcuClique = value;
-                    OnPropertyChanged("XepEcuClique");
-                }
-            }
-        }
-#endif
+        public PlaceholderType XepEcuClique { get; set; }
 
         public string ECUTitle
         {
@@ -301,10 +285,11 @@ namespace PsdzClient.Core
         }
 
         // [UH] removed
-#if false
+        [PreserveSource(Hint = "XEP_ECUVARIANTS", Placeholder = true)]
         [XmlIgnore]
-        public XEP_ECUVARIANTS XepEcuVariant { get; set; }
+        public PlaceholderType XepEcuVariant { get; set; }
 
+#if false
         [XmlIgnore]
         public ILcSwitchList LCSwitchList { get; set; } = new LcSwitchList();
 #endif

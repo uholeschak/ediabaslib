@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using PsdzClientLibrary;
+using System.Collections.Generic;
 
 namespace PsdzClient.Core
 {
-    // ToDo: Check on update
     public interface IIdentEcu
     {
         string ProgrammingVariantName { get; set; }
@@ -25,9 +25,11 @@ namespace PsdzClient.Core
 
         string ECUTitle { get; set; }
 
-        //IXepEcuVariants XepEcuVariant { get; set; }
+        [PreserveSource(Hint = "IXepEcuVariants", Placeholder = true)]
+        PlaceholderType XepEcuVariant { get; set; }
 
-        //IXepEcuCliques XepEcuClique { get; set; }
+        [PreserveSource(Hint = "IXepEcuCliques", Placeholder = true)]
+        PlaceholderType XepEcuClique { get; set; }
 
         void FillEcuTitleTree(ISet<string> ecuShortName);
     }
