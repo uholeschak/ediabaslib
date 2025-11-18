@@ -1324,13 +1324,13 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Merges source class into destination, preserving marked members
+        /// Merges source class into destination, preserving marked members at their original positions
         /// </summary>
         public static ClassDeclarationSyntax MergeClassPreservingMarked(
             ClassDeclarationSyntax destClass,
             ClassDeclarationSyntax sourceClass)
         {
-                // Get all members from destination that should be preserved
+            // Get all members from destination that should be preserved
             var preservedMembers = destClass.Members
                 .Where(m => ShouldPreserveMember(m))
                 .ToDictionary(m => GetMemberName(m), m => m);
@@ -1340,20 +1340,20 @@ namespace SourceCodeSync
                 return sourceClass;
             }
 
-            // Build a new member list
+            // Build a new member list, maintaining source order
             List<MemberDeclarationSyntax> newMembers = new List<MemberDeclarationSyntax>();
-            HashSet<string> preservedMemberNames = new HashSet<string>(preservedMembers.Keys);
+            HashSet<string> processedPreservedMembers = new HashSet<string>();
 
-            // First, add all source members that are NOT being replaced by preserved ones
+            // Iterate through source members and replace with preserved versions where needed
             foreach (var sourceMember in sourceClass.Members)
             {
                 string memberName = GetMemberName(sourceMember);
 
-                if (preservedMemberNames.Contains(memberName))
+                if (!string.IsNullOrEmpty(memberName) && preservedMembers.TryGetValue(memberName, out var preservedMember))
                 {
-                    // Use preserved version instead
-                    newMembers.Add(preservedMembers[memberName]);
-                    preservedMemberNames.Remove(memberName); // Mark as added
+                    // Use preserved version at the same position as source
+                    newMembers.Add(preservedMember);
+                    processedPreservedMembers.Add(memberName);
                 }
                 else
                 {
@@ -1362,10 +1362,13 @@ namespace SourceCodeSync
                 }
             }
 
-            // Add any preserved members that didn't exist in source
-            foreach (string remainingName in preservedMemberNames)
+            // Add any preserved members that didn't exist in source at the end
+            foreach (var kvp in preservedMembers)
             {
-                newMembers.Add(preservedMembers[remainingName]);
+                if (!processedPreservedMembers.Contains(kvp.Key))
+                {
+                    newMembers.Add(kvp.Value);
+                }
             }
 
             // Replace all members at once
@@ -1373,7 +1376,7 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Similar merge for interfaces (batch version)
+        /// Merges source interface into destination, preserving marked members at their original positions
         /// </summary>
         public static InterfaceDeclarationSyntax MergeInterfacePreservingMarked(
             InterfaceDeclarationSyntax destInterface,
@@ -1389,33 +1392,37 @@ namespace SourceCodeSync
             }
 
             var newMembers = new List<MemberDeclarationSyntax>();
-            var preservedMemberNames = new HashSet<string>(preservedMembers.Keys);
+            var processedPreservedMembers = new HashSet<string>();
 
-            // Add all source members, replacing with preserved ones where applicable
+            // Iterate through source members and replace with preserved versions where needed
             foreach (var sourceMember in sourceInterface.Members)
             {
                 string memberName = GetMemberName(sourceMember);
 
-                if (preservedMemberNames.Contains(memberName))
+                if (!string.IsNullOrEmpty(memberName) && preservedMembers.TryGetValue(memberName, out var preservedMember))
                 {
-                    newMembers.Add(preservedMembers[memberName]);
-                    preservedMemberNames.Remove(memberName);
+                    // Use preserved version at the same position as source
+                    newMembers.Add(preservedMember);
+                    processedPreservedMembers.Add(memberName);
                 }
                 else
                 {
+                    // Use source version
                     newMembers.Add(sourceMember);
                 }
             }
 
-            // Add preserved members that don't exist in source
-            foreach (var remainingName in preservedMemberNames)
+            // Add any preserved members that didn't exist in source at the end
+            foreach (var kvp in preservedMembers)
             {
-                newMembers.Add(preservedMembers[remainingName]);
+                if (!processedPreservedMembers.Contains(kvp.Key))
+                {
+                    newMembers.Add(kvp.Value);
+                }
             }
 
             return sourceInterface.WithMembers(SyntaxFactory.List(newMembers));
         }
-
         /// <summary>
         /// Checks if a member has a preserve marker
         /// </summary>
