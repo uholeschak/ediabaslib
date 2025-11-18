@@ -207,10 +207,9 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, resultFilter);
         }
 
-        [PreserveSource(Hint = "fastaprotcoller removed")]
         public IEcuJob ApiJobWithRetries(string variant, string job, string param, string resultFilter, int retries)
         {
-            return apiJob(variant, job, param, resultFilter, retries, null, "ApiJobWithRetries");
+            return apiJob(variant, job, param, resultFilter, retries, null, null, "ApiJobWithRetries");
         }
 
         [PreserveSource(Hint = "Unmodified")]
@@ -1143,14 +1142,18 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, resultFilter, cacheAdding);
         }
 
-        [PreserveSource(Hint = "fastaprotcoller removed")]
-        public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter = "", int retries = 0, bool fastaActive = true)
+        public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter, int retries, bool fastaActive)
+        {
+            return ApiJob(ecu, job, param, resultFilter, retries, null, fastaActive);
+        }
+
+        public IEcuJob ApiJob(string ecu, string job, string param, string resultFilter = "", int retries = 0, IProtocolBasic fastaprotocoller = null, bool fastaActive = true)
         {
             if (retries != 0)
             {
-                return apiJob(ecu, job, param, resultFilter, retries, 0);
+                return apiJob(ecu, job, param, resultFilter, retries, 0, fastaprotocoller);
             }
-            return apiJob(ecu, job, param, resultFilter);
+            return apiJob(ecu, job, param, resultFilter, fastaprotocoller);
         }
 
         public IEcuJob ApiJob(string ecu, string job, string param, int retries, int millisecondsTimeout)
@@ -1162,8 +1165,7 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, string.Empty);
         }
 
-        [PreserveSource(Hint = "fastaprotcoller removed")]
-        public ECUJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "", [CallerMemberName] string callerMember = "")
+        public ECUJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "", IProtocolBasic fastaprotocoller = null, [CallerMemberName] string callerMember = "")
         {
             if (FromFastaConfig && !string.IsNullOrEmpty(sgbd) && apiJobNamesToBeCached.Contains(job))
             {
@@ -1173,19 +1175,22 @@ namespace PsdzClient.Core.Container
                     return jobFromCache;
                 }
             }
-            return apiJob(variant, job, param, resultFilter, retries, 0);
+            return apiJob(variant, job, param, resultFilter, retries, 0, fastaprotocoller, callerMember);
         }
 
-        [PreserveSource(Hint = "fastaprotcoller removed")]
-        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, string callerMember = "")
+        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
+            if (!VehicleCommunication.validLicense)
+            {
+                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
+            }
             if (retries > 5)
             {
                 Log.Warning("ECUKom.apiJob()", "Number of retries is set to {0}.", retries);
             }
             try
             {
-                ECUJob eCUJob = apiJob(ecu, jobName, param, resultFilter, callerMember);
+                ECUJob eCUJob = apiJob(ecu, jobName, param, resultFilter, fastaprotocoller, callerMember);
                 if (eCUJob.JobErrorCode == 98)
                 {
                     return eCUJob;
@@ -1195,7 +1200,7 @@ namespace PsdzClient.Core.Container
                 {
                     SleepUtility.ThreadSleep(millisecondsTimeout, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
                     Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(Sgbd: {0}, {1}) - is retrying {2} times", ecu, jobName, num);
-                    eCUJob = apiJob(ecu, jobName, param, resultFilter, callerMember);
+                    eCUJob = apiJob(ecu, jobName, param, resultFilter, fastaprotocoller, callerMember);
                     num++;
                 }
                 return eCUJob;
@@ -1203,7 +1208,7 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUKom.apiJob()", exception);
-                ECUJob eCUJob = new ECUJob();
+                ECUJob eCUJob = new ECUJob(fastaprotocoller);
                 eCUJob.EcuName = ecu;
                 eCUJob.ExecutionStartTime = DateTime.Now;
                 eCUJob.ExecutionEndTime = eCUJob.ExecutionStartTime;
@@ -1218,8 +1223,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "fastaprotcoller removed")]
-        public ECUJob apiJob(string ecu, string job, string param, string resultFilter, string callerMember = "")
+        public ECUJob apiJob(string ecu, string job, string param, string resultFilter, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             try
             {
@@ -1232,7 +1236,7 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    eCUJob = apiJob(ecu, job, param, resultFilter, cacheAdding: true, callerMember);
+                    eCUJob = apiJob(ecu, job, param, resultFilter, cacheAdding: true, fastaprotocoller, callerMember);
                 }
                 if (eCUJob != null && VehicleCommunication.DebugLevel > 2)
                 {
@@ -1244,7 +1248,7 @@ namespace PsdzClient.Core.Container
             {
                 Log.WarningException("ECUKom.apiJob()", exception);
             }
-            ECUJob eCUJob2 = new ECUJob();
+            ECUJob eCUJob2 = new ECUJob(fastaprotocoller);
             eCUJob2.EcuName = ecu;
             eCUJob2.JobName = job;
             eCUJob2.JobParam = param;
@@ -1260,15 +1264,19 @@ namespace PsdzClient.Core.Container
             return eCUJob2;
         }
 
-        [PreserveSource(Hint = "fastaprotcoller removed, serviceIsRunning removed")]
-        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, string callerMember = "")
+        [PreserveSource(Hint = "serviceIsRunning removed")]
+        public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
             try
             {
+                if (!VehicleCommunication.validLicense)
+                {
+                    throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
+                }
                 if (string.IsNullOrEmpty(ecu))
                 {
-                    ECUJob obj = new ECUJob()
+                    ECUJob obj = new ECUJob(fastaprotocoller)
                     {
                         EcuName = string.Empty,
                         JobName = jobName,
@@ -1296,7 +1304,7 @@ namespace PsdzClient.Core.Container
                     {
                         return eCUJob;
                     }
-                    ECUJob obj2 = new ECUJob()
+                    ECUJob obj2 = new ECUJob(fastaprotocoller)
                     {
                         EcuName = ecu,
                         JobName = jobName,
@@ -1321,7 +1329,8 @@ namespace PsdzClient.Core.Container
                 }
                 DateTimePrecise dateTimePrecise = new DateTimePrecise(10L);
                 int num = 0;
-                ECUJob eCUJob3 = new ECUJob();
+                string empty = string.Empty;
+                ECUJob eCUJob3 = new ECUJob(fastaprotocoller);
                 eCUJob3.EcuName = ecu;
                 eCUJob3.ExecutionStartTime = dateTimePrecise.Now;
                 eCUJob3.JobName = jobName;
@@ -1362,8 +1371,13 @@ namespace PsdzClient.Core.Container
                     }
 */
                     RemoveTraceLevel(callerMember);
-                    num = (eCUJob3.JobErrorCode = api.apiErrorCode());
-                    eCUJob3.JobErrorText = api.apiErrorText();
+                    if (api.apiStateExt(1000) == 3)
+                    {
+                        num = api.apiErrorCode();
+                        empty = api.apiErrorText();
+                        eCUJob3.JobErrorCode = num;
+                        eCUJob3.JobErrorText = empty;
+                    }
                     api.apiResultSets(out var rsets);
 /* [IGNORE]
                     if (serviceIsRunning)
@@ -1381,75 +1395,75 @@ namespace PsdzClient.Core.Container
                     if (rsets > 0)
                     {
                         Log.Debug(VehicleCommunication.DebugLevel, "ECUKom.apiJob()", "(ecu: {0}, job: {1}, param: {2}, resultFilter {3}) - successfully called: {4}:{5} RSets: {6}", ecu, jobName, param, resultFilter, eCUJob3.JobErrorCode, eCUJob3.JobErrorText, rsets);
-                        for (ushort num3 = 0; num3 <= rsets; num3++)
+                        for (ushort num2 = 0; num2 <= rsets; num2++)
                         {
-                            if (api.apiResultNumber(out var buffer, num3))
+                            if (api.apiResultNumber(out var buffer, num2))
                             {
-                                for (ushort num4 = 1; num4 <= buffer; num4++)
+                                for (ushort num3 = 1; num3 <= buffer; num3++)
                                 {
                                     ECUResult eCUResult = new ECUResult();
                                     string buffer2 = string.Empty;
-                                    eCUResult.Set = num3;
-                                    if (api.apiResultName(out buffer2, num4, num3))
+                                    eCUResult.Set = num2;
+                                    if (api.apiResultName(out buffer2, num3, num2))
                                     {
                                         eCUResult.Name = buffer2;
-                                        if (api.apiResultFormat(out var buffer3, buffer2, num3))
+                                        if (api.apiResultFormat(out var buffer3, buffer2, num2))
                                         {
                                             eCUResult.Format = buffer3;
                                             switch (buffer3)
                                             {
                                                 case 1:
                                                     {
-                                                        api.apiResultByte(out var buffer10, buffer2, num3);
+                                                        api.apiResultByte(out var buffer10, buffer2, num2);
                                                         eCUResult.Value = buffer10;
                                                         break;
                                                     }
                                                 case 0:
                                                     {
-                                                        api.apiResultChar(out var buffer11, buffer2, num3);
+                                                        api.apiResultChar(out var buffer11, buffer2, num2);
                                                         eCUResult.Value = buffer11;
                                                         break;
                                                     }
                                                 case 5:
                                                     {
-                                                        api.apiResultDWord(out var buffer12, buffer2, num3);
+                                                        api.apiResultDWord(out var buffer12, buffer2, num2);
                                                         eCUResult.Value = buffer12;
                                                         break;
                                                     }
                                                 case 2:
                                                     {
-                                                        api.apiResultInt(out var buffer9, buffer2, num3);
+                                                        api.apiResultInt(out var buffer9, buffer2, num2);
                                                         eCUResult.Value = buffer9;
                                                         break;
                                                     }
                                                 case 4:
                                                     {
-                                                        api.apiResultLong(out var buffer6, buffer2, num3);
+                                                        api.apiResultLong(out var buffer6, buffer2, num2);
                                                         eCUResult.Value = buffer6;
                                                         break;
                                                     }
                                                 case 8:
                                                     {
-                                                        api.apiResultReal(out var buffer7, buffer2, num3);
+                                                        api.apiResultReal(out var buffer7, buffer2, num2);
                                                         eCUResult.Value = buffer7;
                                                         break;
                                                     }
                                                 case 6:
                                                     {
-                                                        api.apiResultText(out string buffer8, buffer2, num3, string.Empty);
+                                                        api.apiResultText(out string buffer8, buffer2, num2, string.Empty);
                                                         eCUResult.Value = buffer8;
                                                         break;
                                                     }
                                                 case 3:
                                                     {
-                                                        api.apiResultWord(out var buffer5, buffer2, num3);
+                                                        api.apiResultWord(out var buffer5, buffer2, num2);
                                                         eCUResult.Value = buffer5;
                                                         break;
                                                     }
                                                 case 7:
                                                     {
                                                         uint bufferLen2;
-                                                        if (api.apiResultBinary(out var buffer4, out var bufferLen, buffer2, num3))
+                                                        if (api.apiResultBinary(out var buffer4, out var bufferLen, buffer2, num2))
                                                         {
                                                             if (buffer4 != null)
                                                             {
@@ -1458,7 +1472,7 @@ namespace PsdzClient.Core.Container
                                                             eCUResult.Value = buffer4;
                                                             eCUResult.Length = bufferLen;
                                                         }
-                                                        else if (api.apiResultBinaryExt(out buffer4, out bufferLen2, 65536u, buffer2, num3))
+                                                        else if (api.apiResultBinaryExt(out buffer4, out bufferLen2, 65536u, buffer2, num2))
                                                         {
                                                             if (buffer4 != null)
                                                             {
@@ -1486,7 +1500,7 @@ namespace PsdzClient.Core.Container
                                     }
                                     else
                                     {
-                                        buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", jobName, num4, num3);
+                                        buffer2 = string.Format(CultureInfo.InvariantCulture, "ResName unknown! Job was: {0} result index: {1} set index{2}", jobName, num3, num2);
                                     }
                                 }
                             }
