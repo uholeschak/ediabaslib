@@ -1842,12 +1842,14 @@ namespace PsdzClient.Core
             }
             return null;
         }
+#endif
 
+        [PreserveSource(Hint = "Modified")]
         IDtc IEcu.getDTCbyF_ORT(int F_ORT)
         {
-            return getDTCbyF_ORT(F_ORT);
+            return null;
         }
-#endif
+
         [PreserveSource(Hint = "public DTC", Placeholder = true)]
         public PlaceholderType GetDTCById(decimal id)
         {
@@ -1897,30 +1899,12 @@ namespace PsdzClient.Core
             return false;
         }
 
-#if false
 
+        [PreserveSource(Hint = "Modified")]
         public bool IsSet(long fOrt)
         {
-            try
-            {
-                if (FEHLER != null)
-                {
-                    foreach (DTC item in FEHLER)
-                    {
-                        if (item.F_ORT == fOrt)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ECU.IsSet(long fOrt)", exception);
-            }
             return false;
         }
-#endif
 
         public bool IsTitleEcuTreeFilled()
         {

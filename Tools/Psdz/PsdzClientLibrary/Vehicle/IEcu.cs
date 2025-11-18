@@ -228,7 +228,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool IsRoot();
 
-        //bool IsSet(long fOrt);
+        bool IsSet(long fOrt);
 
         bool IsVirtual();
 
@@ -236,7 +236,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool IsVirtualRootOrVirtualBusCheck();
 
-        //IDtc getDTCbyF_ORT(int f_ORT);
+        IDtc getDTCbyF_ORT(int f_ORT);
 
         string LogEcu();
     }
