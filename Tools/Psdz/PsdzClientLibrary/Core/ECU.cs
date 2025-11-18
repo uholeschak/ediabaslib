@@ -286,15 +286,13 @@ namespace PsdzClient.Core
             }
         }
 
-        // [UH] removed
         [PreserveSource(Hint = "XEP_ECUVARIANTS", Placeholder = true)]
         [XmlIgnore]
         public PlaceholderType XepEcuVariant { get; set; }
 
-#if false
+        [PreserveSource(Hint = "ILcSwitchList", Placeholder = true)]
         [XmlIgnore]
-        public ILcSwitchList LCSwitchList { get; set; } = new LcSwitchList();
-#endif
+        public PlaceholderType LCSwitchList { get; set; }
 
         [XmlIgnore]
         public string EcuRep
@@ -1849,37 +1847,19 @@ namespace PsdzClient.Core
         {
             return getDTCbyF_ORT(F_ORT);
         }
-
-        public DTC GetDTCById(decimal id)
+#endif
+        [PreserveSource(Hint = "public DTC", Placeholder = true)]
+        public PlaceholderType GetDTCById(decimal id)
         {
-            if (FEHLER != null)
-            {
-                foreach (DTC item in FEHLER)
-                {
-                    if (id.Equals(item.Id))
-                    {
-                        return item;
-                    }
-                }
-            }
-            if (INFO != null)
-            {
-                foreach (DTC item2 in INFO)
-                {
-                    if (id.Equals(item2.Id))
-                    {
-                        return item2;
-                    }
-                }
-            }
-            return null;
+            return PlaceholderType.Value;
         }
 
-        IDtc IEcu.GetDTCById(decimal id)
+        [PreserveSource(Hint = "IDtc", Placeholder = true)]
+        PlaceholderType IEcu.GetDTCById(decimal id)
         {
             return GetDTCById(id);
         }
-#endif
+
         public override int GetHashCode()
         {
             if (ID_LIN_SLAVE_ADR.HasValue)

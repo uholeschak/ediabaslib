@@ -212,7 +212,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string EcuUid { get; set; }
 
-        //ILcSwitchList LCSwitchList { get; set; }
+        [PreserveSource(Hint = "ILcSwitchList", Placeholder = true)]
+        PlaceholderType LCSwitchList { get; set; }
 
         bool IsSmartActuator { get; }
 
@@ -220,7 +221,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string EcuFullName { get; set; }
 
-        //IDtc GetDTCById(decimal id);
+        [PreserveSource(Hint = "IDtc", Placeholder = true)]
+        PlaceholderType GetDTCById(decimal id);
 
         string GetNewestZusbauNoFromAif();
 
