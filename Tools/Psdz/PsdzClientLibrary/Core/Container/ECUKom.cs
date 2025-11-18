@@ -514,6 +514,7 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
+        [PreserveSource(Hint = "Modified")]
         public BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP, bool firstInitialisation)
         {
             BoolResultObject boolResultObject = new BoolResultObject();
