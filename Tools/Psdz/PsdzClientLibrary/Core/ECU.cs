@@ -1821,29 +1821,11 @@ namespace PsdzClient.Core
             TITLE_ECUTREE = ((ecuShortName.Count == 0) ? ECU_GROBNAME : ecuShortName.First());
         }
 
-#if false
-        public DTC getDTCbyF_ORT(int F_ORT)
+        [PreserveSource(Hint = "public DTC", Placeholder = true)]
+        public PlaceholderType getDTCbyF_ORT(int F_ORT)
         {
-            try
-            {
-                if (FEHLER != null)
-                {
-                    foreach (DTC item in FEHLER)
-                    {
-                        if (item.F_ORT == F_ORT)
-                        {
-                            return item;
-                        }
-                    }
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("ECU.getDTCbyF_ORT()", exception);
-            }
-            return null;
+            return PlaceholderType.Value;
         }
-#endif
 
         [PreserveSource(Hint = "Modified")]
         IDtc IEcu.getDTCbyF_ORT(int F_ORT)
