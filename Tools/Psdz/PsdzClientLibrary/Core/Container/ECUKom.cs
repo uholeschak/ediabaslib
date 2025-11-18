@@ -1165,6 +1165,7 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, string.Empty);
         }
 
+        [PreserveSource(Hint = "Unmodified")]
         public ECUJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "", IProtocolBasic fastaprotocoller = null, [CallerMemberName] string callerMember = "")
         {
             if (FromFastaConfig && !string.IsNullOrEmpty(sgbd) && apiJobNamesToBeCached.Contains(job))
@@ -1178,6 +1179,7 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, 0, fastaprotocoller, callerMember);
         }
 
+        [PreserveSource(Hint = "Unmodified")]
         public ECUJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             if (!VehicleCommunication.validLicense)
@@ -1223,6 +1225,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
+        [PreserveSource(Hint = "Unmodified")]
         public ECUJob apiJob(string ecu, string job, string param, string resultFilter, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             try
