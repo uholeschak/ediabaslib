@@ -167,10 +167,10 @@ namespace PsdzClient.Core
         private IEcuStatusInfo statusInfo;
 
         public GenerationType Generation { get; set; }
-        // [UH] removed
-#if false
+
+        [PreserveSource(Hint = "IXepEcuVariants", Placeholder = true)]
         [XmlIgnore]
-        IXepEcuVariants IIdentEcu.XepEcuVariant
+        PlaceholderType IIdentEcu.XepEcuVariant
         {
             get
             {
@@ -181,8 +181,9 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "IXepEcuCliques", Placeholder = true)]
         [XmlIgnore]
-        IXepEcuCliques IIdentEcu.XepEcuClique
+        PlaceholderType IIdentEcu.XepEcuClique
         {
             get
             {
@@ -192,7 +193,7 @@ namespace PsdzClient.Core
             {
             }
         }
-#endif
+
         [XmlIgnore]
         IEnumerable<IAif> IEcu.AIF => AIF;
 
