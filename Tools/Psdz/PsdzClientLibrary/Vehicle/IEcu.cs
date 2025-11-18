@@ -1,11 +1,12 @@
-﻿using System;
+﻿using PsdzClient.Core;
+using PsdzClient.Programming;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PsdzClient.Core;
-using PsdzClient.Programming;
 
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
@@ -114,7 +115,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         new string ECU_SGBD { get; }
 
-        //IEnumerable<IDtc> FEHLER { get; }
+        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
+        PlaceholderType FEHLER { get; }
 
         int FLASH_STATE { get; }
 
@@ -174,13 +176,15 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         int? ID_VAR_INDEX { get; }
 
-        //IEnumerable<IDtc> INFO { get; }
+        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
+        PlaceholderType INFO { get; }
 
         bool IS_SUCCESSFULLY { get; }
 
         int I_ANZ { get; }
 
-        //IEnumerable<IJob> JOBS { get; }
+        [PreserveSource(Hint = "IEnumerable<IJob>", Placeholder = true)]
+        PlaceholderType JOBS { get; }
 
         bool PHYSHW_SUCCESSFULLY { get; }
 

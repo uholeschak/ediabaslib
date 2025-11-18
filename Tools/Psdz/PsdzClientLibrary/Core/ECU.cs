@@ -198,17 +198,19 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         public string EcuUid { get; set; }
-        // [UH] removed
-#if false
-        [XmlIgnore]
-        IEnumerable<IDtc> IEcu.FEHLER => FEHLER;
 
+        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
         [XmlIgnore]
-        IEnumerable<IDtc> IEcu.INFO => INFO;
+        PlaceholderType IEcu.FEHLER => FEHLER;
 
+        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
         [XmlIgnore]
-        IEnumerable<IJob> IEcu.JOBS => JOBS;
-#endif
+        PlaceholderType IEcu.INFO => INFO;
+
+        [PreserveSource(Hint = "IEnumerable<IJob>", Placeholder = true)]
+        [XmlIgnore]
+        PlaceholderType IEcu.JOBS => JOBS;
+
         [XmlIgnore]
         public string ProgrammingVariantName
         {
@@ -489,31 +491,8 @@ namespace PsdzClient.Core
             }
         }
 
-#if false
-        public ObservableCollection<JOB> JOBS
-        {
-            get
-            {
-                return jOBSField;
-            }
-            set
-            {
-                if (jOBSField != null)
-                {
-                    if (!jOBSField.Equals(value))
-                    {
-                        jOBSField = value;
-                        OnPropertyChanged("JOBS");
-                    }
-                }
-                else
-                {
-                    jOBSField = value;
-                    OnPropertyChanged("JOBS");
-                }
-            }
-        }
-#endif
+        [PreserveSource(Hint = "ObservableCollection<JOB>", Placeholder = true)]
+        public PlaceholderType JOBS;
 
         public BusType BUS
         {
@@ -1235,33 +1214,8 @@ namespace PsdzClient.Core
             }
         }
 
-#if false
-        public ObservableCollection<DTC> FEHLER
-        {
-            get
-            {
-                return fEHLERField;
-            }
-            set
-            {
-                if (fEHLERField != null)
-                {
-                    if (!fEHLERField.Equals(value))
-                    {
-                        fEHLERField = value;
-                        OnPropertyChanged("FEHLER");
-                        FEHLER.CollectionChanged += FEHLER_CollectionChanged;
-                    }
-                }
-                else
-                {
-                    fEHLERField = value;
-                    OnPropertyChanged("FEHLER");
-                    FEHLER.CollectionChanged += FEHLER_CollectionChanged;
-                }
-            }
-        }
-#endif
+        [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
+        public PlaceholderType FEHLER;
 
         public int I_ANZ
         {
@@ -1279,31 +1233,9 @@ namespace PsdzClient.Core
             }
         }
 
-#if false
-        public ObservableCollection<DTC> INFO
-        {
-            get
-            {
-                return iNFOField;
-            }
-            set
-            {
-                if (iNFOField != null)
-                {
-                    if (!iNFOField.Equals(value))
-                    {
-                        iNFOField = value;
-                        OnPropertyChanged("INFO");
-                    }
-                }
-                else
-                {
-                    iNFOField = value;
-                    OnPropertyChanged("INFO");
-                }
-            }
-        }
-#endif
+
+        [PreserveSource(Hint = "ObservableCollection<DTC>", Placeholder = true)]
+        public PlaceholderType INFO;
 
         public SVK SVK
         {
