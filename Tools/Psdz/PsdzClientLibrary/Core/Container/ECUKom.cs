@@ -23,13 +23,6 @@ using PsdzClientLibrary;
 #pragma warning disable CS0169
 namespace PsdzClient.Core.Container
 {
-    public enum CommMode
-    {
-        Normal,
-        Simulation,
-        CacheFirst
-    }
-
     // ToDo: Check on update
     public class ECUKom : IEcuKom, IEcuKomApi
     {
@@ -656,6 +649,7 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
+        [PreserveSource(Hint = "Modified")]
         private bool InitializeIcomDevice(IVciDevice device, bool logging, bool isDoIP, bool slpDoIpFromIcom)
         {
             if (slpDoIpFromIcom || isDoIP)
