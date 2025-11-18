@@ -167,48 +167,33 @@ namespace PsdzClient.Core
         private IEcuStatusInfo statusInfo;
 
         public GenerationType Generation { get; set; }
-        // [UH] removed
-#if false
-        [XmlIgnore]
-        IXepEcuVariants IIdentEcu.XepEcuVariant
-        {
-            get
-            {
-                return XepEcuVariant;
-            }
-            set
-            {
-            }
-        }
 
+        [PreserveSource(Hint = "IXepEcuVariants", Placeholder = true)]
         [XmlIgnore]
-        IXepEcuCliques IIdentEcu.XepEcuClique
-        {
-            get
-            {
-                return XepEcuClique;
-            }
-            set
-            {
-            }
-        }
-#endif
+        PlaceholderType XepEcuVariant;
+
+        [PreserveSource(Hint = "IXepEcuCliques", Placeholder = true)]
+        [XmlIgnore]
+        PlaceholderType XepEcuClique;
+
         [XmlIgnore]
         IEnumerable<IAif> IEcu.AIF => AIF;
 
         [XmlIgnore]
         public string EcuUid { get; set; }
-        // [UH] removed
-#if false
-        [XmlIgnore]
-        IEnumerable<IDtc> IEcu.FEHLER => FEHLER;
 
+        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
         [XmlIgnore]
-        IEnumerable<IDtc> IEcu.INFO => INFO;
+        PlaceholderType FEHLER;
 
+        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
         [XmlIgnore]
-        IEnumerable<IJob> IEcu.JOBS => JOBS;
-#endif
+        PlaceholderType INFO;
+
+        [PreserveSource(Hint = "IEnumerable<IJob>", Placeholder = true)]
+        [XmlIgnore]
+        PlaceholderType JOBS;
+
         [XmlIgnore]
         public string ProgrammingVariantName
         {
