@@ -1885,7 +1885,7 @@ namespace PsdzClient.Core.Container
 
                                                     case 6:
                                                     {
-                                                        api.apiResultText(out string buffer8, buffer2, num3, string.Empty);
+                                                        api.apiResultText(out var buffer8, buffer2, num3, string.Empty);
                                                         eCUResult.Value = buffer8;
                                                         break;
                                                     }
