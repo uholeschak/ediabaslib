@@ -19,6 +19,7 @@ namespace PsdzClient.Core
             this.children = new ISPELocator[0];
         }
 
+        [PreserveSource(Hint = "Modified")]
         public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
 		{
 			PsdzDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
