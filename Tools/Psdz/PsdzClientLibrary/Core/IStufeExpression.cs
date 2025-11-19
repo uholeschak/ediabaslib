@@ -12,7 +12,8 @@ namespace PsdzClient.Core
     public class IStufeExpression : SingleAssignmentExpression
     {
         private string iStufe;
-        // [UH] database removed
+        [PreserveSource(Hint = "IDataProviderRuleEvaluation", Placeholder = true)]
+        private readonly PlaceholderType dataProvider;
 
         [PreserveSource(Hint = "Modified")]
         public IStufeExpression()
@@ -25,6 +26,7 @@ namespace PsdzClient.Core
             this.value = iStufeId;
         }
 
+        [PreserveSource(Hint = "Modified")]
         private string IStufe
         {
             get
@@ -46,7 +48,7 @@ namespace PsdzClient.Core
                 return false;
             }
 
-            this.vecInfo = vec; // [UH] added
+            this.vecInfo = vec; // [UH] [IGNORE] added
             bool flag;
             if (string.IsNullOrEmpty(vec.ILevel) || vec.ILevel == "0")
             {

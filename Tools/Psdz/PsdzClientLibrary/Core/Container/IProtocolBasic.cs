@@ -1,6 +1,8 @@
-﻿namespace PsdzClient.Core.Container
+﻿using PsdzClientLibrary;
+
+namespace PsdzClient.Core.Container
 {
-    // [UH] dummy interface
+    [PreserveSource(Hint = "Dummy")]
     public interface IProtocolBasic
     {
     }
