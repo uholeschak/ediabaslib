@@ -191,6 +191,7 @@ namespace PsdzClient.Core
             throw new Exception("ToFormula() missing for class: \"" + this.GetType().Name + "\"");
         }
 
+        [PreserveSource(Hint = "Added")]
         public virtual string FormulaSeparator(FormulaConfig formulaConfig)
         {
             if (!string.IsNullOrEmpty(formulaConfig.OperatorSeparator))
