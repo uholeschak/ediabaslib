@@ -14,18 +14,6 @@ namespace PsdzClient.Core
         private string iStufe;
         [PreserveSource(Hint = "IDataProviderRuleEvaluation", Placeholder = true)]
         private readonly PlaceholderType dataProvider;
-
-        [PreserveSource(Hint = "Modified")]
-        public IStufeExpression()
-        {
-        }
-
-        [PreserveSource(Hint = "Modified")]
-        public IStufeExpression(long iStufeId)
-        {
-            this.value = iStufeId;
-        }
-
         [PreserveSource(Hint = "Modified")]
         private string IStufe
         {
@@ -36,8 +24,20 @@ namespace PsdzClient.Core
                     this.iStufe = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
                     return this.iStufe;
                 }
+
                 return this.iStufe;
             }
+        }
+
+        [PreserveSource(Hint = "Modified")]
+        public IStufeExpression()
+        {
+        }
+
+        [PreserveSource(Hint = "Modified")]
+        public IStufeExpression(long iStufeId)
+        {
+            this.value = iStufeId;
         }
 
         [PreserveSource(Hint = "Modified")]
@@ -60,6 +60,7 @@ namespace PsdzClient.Core
                 flag = vec.ILevel == IStufe;
                 ruleEvaluationServices.Logger.Debug("IStufeExpression.Evaluate()", "IStufe: {0} result: {1} [original rule: {2}]", IStufe, flag, value);
             }
+
             return flag;
         }
 
@@ -69,6 +70,7 @@ namespace PsdzClient.Core
             {
                 return EEvaluationResult.VALID;
             }
+
             return EEvaluationResult.INVALID;
         }
 
@@ -76,6 +78,11 @@ namespace PsdzClient.Core
         {
             ms.WriteByte(6);
             base.Serialize(ms);
+        }
+
+        public override string ToString()
+        {
+            return "I-Stufe=" + IStufe + " [" + value + "]";
         }
 
         [PreserveSource(Hint = "Added")]
@@ -89,13 +96,7 @@ namespace PsdzClient.Core
             stringBuilder.Append(this.IStufe);
             stringBuilder.Append("\")");
             stringBuilder.Append(FormulaSeparator(formulaConfig));
-
             return stringBuilder.ToString();
-        }
-
-        public override string ToString()
-        {
-            return "I-Stufe=" + IStufe + " [" + value + "]";
         }
     }
 }
