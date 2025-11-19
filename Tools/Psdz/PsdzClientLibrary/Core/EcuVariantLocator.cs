@@ -15,8 +15,7 @@ namespace PsdzClient.Core
 		public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant)
 		{
 			this.ecuVariant = ecuVariant;
-            // [UH] removed
-            //this.children = new ISPELocator[0];
+            this.children = new ISPELocator[0];
         }
 
         public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
@@ -40,7 +39,7 @@ namespace PsdzClient.Core
 		{
             this.vecInfo = vec;
 			this.ecuVariant = ecuVariant;
-			//this.children = new ISPELocator[0];
+			this.children = new ISPELocator[0];
 			this.ffmResolver = ffmResolver;
 		}
 

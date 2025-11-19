@@ -14,14 +14,14 @@ namespace PsdzClient.Core
 		public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup)
 		{
 			this.ecuGroup = ecuGroup;
-			//this.children = new ISPELocator[0];
+			this.children = new ISPELocator[0];
             this.parents = null;
         }
 
 		public EcuGroupLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
 		{
 			this.ecuGroup = ClientContext.GetDatabase(vec)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));
-			//this.children = new ISPELocator[0];
+			this.children = new ISPELocator[0];
             this.parents = null;
 			this.vecInfo = vec;
 			this.ffmResolver = ffmResolver;
@@ -30,7 +30,7 @@ namespace PsdzClient.Core
 		public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
 		{
 			this.ecuGroup = ecuGroup;
-			//this.children = new ISPELocator[0];
+			this.children = new ISPELocator[0];
             this.parents = null;
 			this.vecInfo = vecInfo;
 			this.ffmResolver = ffmResolver;
