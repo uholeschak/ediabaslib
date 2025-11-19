@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using PsdzClientLibrary;
 using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace PsdzClient.Core
@@ -25,20 +26,23 @@ namespace PsdzClient.Core
             return false;
         }
 
-#if false
-        public IcsUsageRightsContainer LoadUsageRightsTyped()
+        [PreserveSource(Hint = "IcsUsageRightsContainer", Placeholder = true)]
+        public PlaceholderType LoadUsageRightsTyped()
         {
-            return null;
+            return PlaceholderType.Value;
         }
 
-        public IcsClientConfiguration GetClientConfiguration()
+        [PreserveSource(Hint = "IcsClientConfiguration", Placeholder = true)]
+        public PlaceholderType GetClientConfiguration()
         {
+            return PlaceholderType.Value;
         }
 
-        public IcsDataPackageList FindPackageListTyped()
+        [PreserveSource(Hint = "IcsDataPackageList", Placeholder = true)]
+        public PlaceholderType FindPackageListTyped()
         {
+            return PlaceholderType.Value;
         }
-#endif
 
         public DateTime GetLastTimeOnline()
         {
@@ -79,12 +83,11 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-#if false
-        public IcsNetworkCredential GetNetworkCredentials()
+        [PreserveSource(Hint = "IcsNetworkCredential", Placeholder = true)]
+        public PlaceholderType GetNetworkCredentials()
         {
-            return null;
+            return PlaceholderType.Value;
         }
-#endif
 
         public string GetSecureWebRequestHeader(string url)
         {
@@ -230,7 +233,7 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-        // [UH] get from registry or default value
+        [PreserveSource(Hint = "get from registry or default value")]
         public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature, bool checkLbps = true)
         {
             string configString = ConfigSettings.getConfigString(LBPFeatureSwitches.FeatureRegistryKey(feature));
