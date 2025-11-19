@@ -22,7 +22,7 @@
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
      <Reference Include="System.Net.Http" />
-     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.6901" GeneratePathProperty="true" />
+     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.7175" GeneratePathProperty="true" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0-windows10.0.26100.0' ">
       <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.43" GeneratePathProperty="true" />
