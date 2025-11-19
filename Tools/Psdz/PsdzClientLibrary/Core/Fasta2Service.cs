@@ -1,9 +1,10 @@
 ﻿using PsdzClient.Core;
 using System;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
-    // [UH] dummy class
+    [PreserveSource(Hint = "Cleaned")]
     public class Fasta2Service : IFasta2Service
     {
         public Fasta2Service()
