@@ -60,6 +60,7 @@ namespace PsdzClient.Core
 			}
 		}
 
+        [PreserveSource(Hint = "Modified")]
 		public ISPELocator[] Parents
 		{
 			get
@@ -373,6 +374,7 @@ namespace PsdzClient.Core
             return default(T);
         }
 
+        [PreserveSource(Hint = "Modified")]
         private readonly PsdzDatabase.EcuVar ecuVariant;
 
         private readonly ISPELocator[] children;

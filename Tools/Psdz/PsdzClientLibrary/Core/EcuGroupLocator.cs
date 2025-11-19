@@ -45,6 +45,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         public string Id
 		{
 			get
@@ -195,6 +196,7 @@ namespace PsdzClient.Core
 			throw new NotImplementedException();
 		}
 
+        [PreserveSource(Hint = "Modified")]
 		private readonly PsdzDatabase.EcuGroup ecuGroup;
 
 		private readonly Vehicle vecInfo;
