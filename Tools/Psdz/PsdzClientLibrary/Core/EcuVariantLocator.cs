@@ -12,6 +12,7 @@ namespace PsdzClient.Core
 {
 	public class EcuVariantLocator : ISPELocator, IEcuVariantLocator
 	{
+        [PreserveSource(Hint = "ecuVariant modified")]
 		public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant)
 		{
 			this.ecuVariant = ecuVariant;
@@ -28,6 +29,7 @@ namespace PsdzClient.Core
 			return null;
 		}
 
+        [PreserveSource(Hint = "Unchanged")]
 		public EcuVariantLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
 		{
             this.vecInfo = vec;
@@ -35,6 +37,7 @@ namespace PsdzClient.Core
 			this.ffmResolver = ffmResolver;
 		}
 
+        [PreserveSource(Hint = "ecuVariant modified")]
 		public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant, Vehicle vec, IFFMDynamicResolver ffmResolver)
 		{
             this.vecInfo = vec;
