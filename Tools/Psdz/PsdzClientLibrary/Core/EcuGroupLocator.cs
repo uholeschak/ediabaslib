@@ -30,7 +30,7 @@ namespace PsdzClient.Core
 		}
 
         [PreserveSource(Hint = "ecuGroup modified")]
-		public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+		public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup, Vehicle vecInfo, IFFMDynamicResolverRuleEvaluation ffmResolver)
 		{
 			this.ecuGroup = ecuGroup;
 			this.children = new ISPELocator[0];
@@ -205,7 +205,7 @@ namespace PsdzClient.Core
 
 		private readonly Vehicle vecInfo;
 
-		private readonly IFFMDynamicResolver ffmResolver;
+        private readonly IFFMDynamicResolverRuleEvaluation ffmResolver;
 
         private ISPELocator[] children;
 

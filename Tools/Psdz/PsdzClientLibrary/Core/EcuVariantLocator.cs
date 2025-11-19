@@ -39,7 +39,7 @@ namespace PsdzClient.Core
 		}
 
         [PreserveSource(Hint = "ecuVariant modified")]
-		public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant, Vehicle vec, IFFMDynamicResolver ffmResolver)
+		public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant, Vehicle vec, IFFMDynamicResolverRuleEvaluation ffmResolver)
 		{
             this.vecInfo = vec;
 			this.ecuVariant = ecuVariant;
@@ -389,6 +389,6 @@ namespace PsdzClient.Core
 
 		private readonly Vehicle vecInfo;
 
-		private readonly IFFMDynamicResolver ffmResolver;
-	}
+        private readonly IFFMDynamicResolverRuleEvaluation ffmResolver;
+    }
 }
