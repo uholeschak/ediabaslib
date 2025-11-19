@@ -10,112 +10,84 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	public class EcuVariantLocator : ISPELocator, IEcuVariantLocator
-	{
-        [PreserveSource(Hint = "ecuVariant modified")]
-		public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant)
-		{
-			this.ecuVariant = ecuVariant;
-            this.children = new ISPELocator[0];
-        }
-
+    public class EcuVariantLocator : IEcuVariantLocator, ISPELocator
+    {
         [PreserveSource(Hint = "Modified")]
-        public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
-		{
-			PsdzDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
-			if (ecuVariantByName != null)
-			{
-				return new EcuVariantLocator(ecuVariantByName, vecInfo, ffmResolver);
-			}
-			return null;
-		}
-
-        [PreserveSource(Hint = "Unchanged")]
-		public EcuVariantLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
-		{
-            this.vecInfo = vec;
-			this.ecuVariant = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
-			this.ffmResolver = ffmResolver;
-		}
-
-        [PreserveSource(Hint = "ecuVariant modified")]
-		public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant, Vehicle vec, IFFMDynamicResolverRuleEvaluation ffmResolver)
-		{
-            this.vecInfo = vec;
-			this.ecuVariant = ecuVariant;
-			this.children = new ISPELocator[0];
-			this.ffmResolver = ffmResolver;
-		}
-
+        private readonly PsdzDatabase.EcuVar ecuVariant;
+        private readonly ISPELocator[] children;
+        private ISPELocator[] parents;
+        private readonly Vehicle vecInfo;
+        private readonly IFFMDynamicResolverRuleEvaluation ffmResolver;
         [PreserveSource(Hint = "Cleaned")]
         public ISPELocator[] Children
-		{
-			get
+        {
+            get
             {
                 return children;
             }
-		}
+        }
 
-        public string Id
-		{
-			get
-			{
-				return this.ecuVariant.Id.ToString(CultureInfo.InvariantCulture);
-			}
-		}
+        public string Id => ecuVariant.Id.ToString(CultureInfo.InvariantCulture);
 
         [PreserveSource(Hint = "Modified")]
-		public ISPELocator[] Parents
-		{
-			get
-			{
-				if (this.parents != null && this.parents.Length != 0)
-				{
-					return this.parents;
-				}
-				List<ISPELocator> list = new List<ISPELocator>();
-				if (string.IsNullOrEmpty(this.ecuVariant.EcuGroupId))
-				{
-					PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId);
-					if (ecuGroupById != null)
-					{
-						list.Add(new EcuGroupLocator(ecuGroupById, this.vecInfo, this.ffmResolver));
-						this.parents = list.ToArray();
-					}
-				}
-				return this.parents;
-			}
-		}
-
-		public string DataClassName
-		{
-			get
-			{
-				return "ECUVariant";
-			}
-		}
-
-		public string[] OutgoingLinkNames
-		{
-			get
-			{
-				return new string[0];
-			}
-		}
-
-		public string[] IncomingLinkNames
-		{
-			get
-			{
-				return new string[0];
-			}
-		}
-
-        public string[] DataValueNames => new string[]
+        public ISPELocator[] Parents
         {
-            "ID", "FAULTMEMORYDELETEWAITINGTIME", "NAME", "TITLEID", "TITLE_DEDE", "TITLE_ENGB", "TITLE_ENUS", "TITLE_FR", "TITLE_TH", "TITLE_SV",
-            "TITLE_IT", "TITLE_ES", "TITLE_ID", "TITLE_KO", "TITLE_EL", "TITLE_TR", "TITLE_ZHCN", "TITLE_RU", "TITLE_NL", "TITLE_PT",
-            "TITLE_ZHTW", "TITLE_JA", "TITLE_CSCZ", "TITLE_PLPL", "VALIDFROM", "VALIDTO", "SICHERHEITSRELEVANT", "ECUGROUPID", "SORT"
+            get
+            {
+                if (this.parents != null && this.parents.Length != 0)
+                {
+                    return this.parents;
+                }
+
+                List<ISPELocator> list = new List<ISPELocator>();
+                if (string.IsNullOrEmpty(this.ecuVariant.EcuGroupId))
+                {
+                    PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId);
+                    if (ecuGroupById != null)
+                    {
+                        list.Add(new EcuGroupLocator(ecuGroupById, this.vecInfo, this.ffmResolver));
+                        this.parents = list.ToArray();
+                    }
+                }
+
+                return this.parents;
+            }
+        }
+
+        public string DataClassName => "ECUVariant";
+        public string[] OutgoingLinkNames => new string[0];
+        public string[] IncomingLinkNames => new string[0];
+        public string[] DataValueNames => new string[29]
+        {
+            "ID",
+            "FAULTMEMORYDELETEWAITINGTIME",
+            "NAME",
+            "TITLEID",
+            "TITLE_DEDE",
+            "TITLE_ENGB",
+            "TITLE_ENUS",
+            "TITLE_FR",
+            "TITLE_TH",
+            "TITLE_SV",
+            "TITLE_IT",
+            "TITLE_ES",
+            "TITLE_ID",
+            "TITLE_KO",
+            "TITLE_EL",
+            "TITLE_TR",
+            "TITLE_ZHCN",
+            "TITLE_RU",
+            "TITLE_NL",
+            "TITLE_PT",
+            "TITLE_ZHTW",
+            "TITLE_JA",
+            "TITLE_CSCZ",
+            "TITLE_PLPL",
+            "VALIDFROM",
+            "VALIDTO",
+            "SICHERHEITSRELEVANT",
+            "ECUGROUPID",
+            "SORT"
         };
 
         [PreserveSource(Hint = "Modified")]
@@ -132,21 +104,44 @@ namespace PsdzClient.Core
             }
         }
 
-        public Exception Exception
-		{
-			get
-			{
-				return null;
-			}
-		}
+        public Exception Exception => null;
+        public bool HasException => false;
 
-		public bool HasException
-		{
-			get
-			{
-				return false;
-			}
-		}
+        [PreserveSource(Hint = "ecuVariant modified")]
+        public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant)
+        {
+            this.ecuVariant = ecuVariant;
+            this.children = new ISPELocator[0];
+        }
+
+        [PreserveSource(Hint = "Modified")]
+        public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        {
+            PsdzDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
+            if (ecuVariantByName != null)
+            {
+                return new EcuVariantLocator(ecuVariantByName, vecInfo, ffmResolver);
+            }
+
+            return null;
+        }
+
+        [PreserveSource(Hint = "Unchanged")]
+        public EcuVariantLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
+        {
+            this.vecInfo = vec;
+            this.ecuVariant = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
+            this.ffmResolver = ffmResolver;
+        }
+
+        [PreserveSource(Hint = "ecuVariant modified")]
+        public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant, Vehicle vec, IFFMDynamicResolverRuleEvaluation ffmResolver)
+        {
+            this.vecInfo = vec;
+            this.ecuVariant = ecuVariant;
+            this.children = new ISPELocator[0];
+            this.ffmResolver = ffmResolver;
+        }
 
         [PreserveSource(Hint = "Modified")]
         public string GetDataValue(string name)
@@ -162,6 +157,7 @@ namespace PsdzClient.Core
                         {
                             return "0";
                         }
+
                         return ecuVariant.Sort;
                     case "TITLE_ENUS":
                         return ecuVariant.EcuTranslation.TextEn;
@@ -198,6 +194,7 @@ namespace PsdzClient.Core
                         {
                             return string.Empty;
                         }
+
                         return ecuVariant.FaultMemDelWaitTime;
                     case "TITLE_PLPL":
                         return ecuVariant.EcuTranslation.TextPl;
@@ -206,18 +203,21 @@ namespace PsdzClient.Core
                         {
                             return string.Empty;
                         }
+
                         return ecuVariant.ValidFrom;
                     case "SICHERHEITSRELEVANT":
                         if (string.IsNullOrEmpty(ecuVariant.SafetyRelevant))
                         {
                             return "0";
                         }
+
                         return ecuVariant.SafetyRelevant;
                     case "VALIDTO":
                         if (string.IsNullOrEmpty(ecuVariant.ValidTo))
                         {
                             return string.Empty;
                         }
+
                         return ecuVariant.ValidTo;
                     case "TITLE_EL":
                         return ecuVariant.EcuTranslation.TextEl;
@@ -226,6 +226,7 @@ namespace PsdzClient.Core
                         {
                             return "0";
                         }
+
                         return ecuVariant.EcuGroupId;
                     case "TITLE_SV":
                         return ecuVariant.EcuTranslation.TextSv;
@@ -243,28 +244,29 @@ namespace PsdzClient.Core
                         return string.Empty;
                 }
             }
+
             return null;
         }
 
         public ISPELocator[] GetIncomingLinks()
-		{
-			return new ISPELocator[0];
-		}
+        {
+            return new ISPELocator[0];
+        }
 
-		public ISPELocator[] GetIncomingLinks(string incomingLinkName)
-		{
-			return this.parents;
-		}
+        public ISPELocator[] GetIncomingLinks(string incomingLinkName)
+        {
+            return parents;
+        }
 
-		public ISPELocator[] GetOutgoingLinks()
-		{
-			return this.children;
-		}
+        public ISPELocator[] GetOutgoingLinks()
+        {
+            return children;
+        }
 
-		public ISPELocator[] GetOutgoingLinks(string outgoingLinkName)
-		{
-			return this.children;
-		}
+        public ISPELocator[] GetOutgoingLinks(string outgoingLinkName)
+        {
+            return children;
+        }
 
         [PreserveSource(Hint = "Modified")]
         public T GetDataValue<T>(string name)
@@ -367,6 +369,7 @@ namespace PsdzClient.Core
                             obj = ecuVariant.EcuTranslation.TextId;
                             break;
                     }
+
                     if (obj != null)
                     {
                         return (T)Convert.ChangeType(obj, typeof(T));
@@ -377,18 +380,8 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("EcuVariantLocator.GetDataValue<T>()", exception);
             }
+
             return default(T);
         }
-
-        [PreserveSource(Hint = "Modified")]
-        private readonly PsdzDatabase.EcuVar ecuVariant;
-
-        private readonly ISPELocator[] children;
-
-        private ISPELocator[] parents;
-
-		private readonly Vehicle vecInfo;
-
-        private readonly IFFMDynamicResolverRuleEvaluation ffmResolver;
     }
 }
