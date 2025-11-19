@@ -4,13 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
     [Serializable]
     public abstract class RuleExpression : IRuleExpression
     {
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public class FormulaConfig
         {
             public FormulaConfig(string getStringFunc, string getLongFunc, string checkStringFunc, string checkLongFunc, string ruleValidFunc, bool isRuleValidNumFunc = false, List<string> subRuleIds = null, string operatorSeparator = null)
@@ -43,8 +44,7 @@ namespace PsdzClient.Core
 
         protected const long MEMORYSIZE_REFERENCE = 8L;
 
-        // ToDo: Check on update
-        // [UH] dataProvider replaced by vec
+        [PreserveSource(Hint = "dataProvider replaced by vec")]
         public static RuleExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();
@@ -86,10 +86,11 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         public static bool Evaluate(Vehicle vec, IRuleExpression exp, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils = null, ValidationRuleInternalResults internalResult = null)
         {
             if (ruleEvaluationUtils == null)
-            {   // [UH] added
+            {   // [UH] [IGNORE] added
                 ruleEvaluationUtils = new RuleEvaluationServices(vec);
             }
             if (internalResult == null)
@@ -98,7 +99,7 @@ namespace PsdzClient.Core
             }
             if (exp is AndExpression || exp is OrExpression || exp is CharacteristicExpression || exp is DateExpression || exp is EcuCliqueExpression || exp is NotExpression || exp is SaLaPaExpression || exp is CountryExpression || exp is IStufeExpression || exp is IStufeXExpression || exp is EquipmentExpression || exp is ValidFromExpression || exp is ValidToExpression || exp is SiFaExpression || exp is EcuRepresentativeExpression || exp is ManufactoringDateExpression || exp is EcuVariantExpression || exp is EcuProgrammingVariantExpression)
             {
-                // [UH] removed dealer and dataProvider
+                // [UH] [IGNORE] removed dealer and dataProvider
                 return exp.Evaluate(vec, ffmResolver, ruleEvaluationUtils, internalResult);
             }
             ruleEvaluationUtils.Logger.Error("RuleExpression.Evaluate(Vehicle vec, RuleExpression exp)", "RuleExpression {0} not implemented.", exp.ToString());
@@ -179,7 +180,7 @@ namespace PsdzClient.Core
 		{
 		}
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public virtual string ToFormula(FormulaConfig formulaConfig)
         {
             throw new Exception("ToFormula() missing for class: \"" + this.GetType().Name + "\"");
