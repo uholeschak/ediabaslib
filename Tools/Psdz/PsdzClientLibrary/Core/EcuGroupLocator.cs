@@ -22,7 +22,7 @@ namespace PsdzClient.Core
         {
             get
             {
-                return children;
+                throw new NotImplementedException();
             }
         }
 
