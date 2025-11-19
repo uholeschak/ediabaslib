@@ -106,22 +106,26 @@ namespace PsdzClient.Core
             return false;
         }
 
+        [PreserveSource(Hint = "dataProvider removed")]
         public static string ParseAndSerializeVariantRule(string rule)
 		{
             RuleExpression expression = VariantRuleParser.Parse(rule);
             return SerializeToString(expression);
 		}
 
+        [PreserveSource(Hint = "dataProvider removed")]
 		public static RuleExpression ParseEmpiricalRule(string rule)
 		{
 			return EmpiricalRuleParser.Parse(rule);
 		}
 
+        [PreserveSource(Hint = "dataProvider removed")]
 		public static RuleExpression ParseFaultClassRule(string rule)
 		{
 			return FaultClassRuleParser.Parse(rule);
 		}
 
+        [PreserveSource(Hint = "dataProvider removed")]
 		public static RuleExpression ParseVariantRule(string rule)
 		{
 			return VariantRuleParser.Parse(rule);
