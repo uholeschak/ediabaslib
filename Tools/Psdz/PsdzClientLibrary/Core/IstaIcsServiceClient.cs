@@ -5,6 +5,7 @@ using System.ServiceModel;
 
 namespace PsdzClient.Core
 {
+    [PreserveSource(Hint = "Dummy")]
     public class IstaIcsServiceClient : IDisposable
     {
         public void Dispose()
