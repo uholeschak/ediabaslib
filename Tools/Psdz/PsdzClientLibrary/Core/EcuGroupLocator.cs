@@ -141,6 +141,7 @@ namespace PsdzClient.Core
 			}
 		}
 
+        [PreserveSource(Hint = "Modified")]
         public string GetDataValue(string name)
         {
             if (ecuGroup != null && !string.IsNullOrEmpty(name))

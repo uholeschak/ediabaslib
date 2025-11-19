@@ -148,6 +148,7 @@ namespace PsdzClient.Core
 			}
 		}
 
+        [PreserveSource(Hint = "Modified")]
         public string GetDataValue(string name)
         {
             if (ecuVariant != null && !string.IsNullOrEmpty(name))
@@ -265,6 +266,7 @@ namespace PsdzClient.Core
 			return this.children;
 		}
 
+        [PreserveSource(Hint = "Modified")]
         public T GetDataValue<T>(string name)
         {
             try
