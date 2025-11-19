@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,8 +10,7 @@ namespace PsdzClient.Core
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ISPELocator
     {
-        //[UH] Removed
-        //ISPELocator[] Children { get; }
+        ISPELocator[] Children { get; }
 
         string DataClassName { get; }
 
@@ -28,8 +28,7 @@ namespace PsdzClient.Core
 
         ISPELocator[] Parents { get; }
 
-        //[UH] Removed
-        //decimal SignedId { get; }
+        decimal SignedId { get; }
 
         string GetDataValue(string name);
 
@@ -39,10 +38,8 @@ namespace PsdzClient.Core
 
         ISPELocator[] GetIncomingLinks(string incomingLinkName);
 
-        //[UH] Removed
-        //ISPELocator[] GetOutgoingLinks();
+        ISPELocator[] GetOutgoingLinks();
 
-        //[UH] Removed
-        //ISPELocator[] GetOutgoingLinks(string outgoingLinkName);
+        ISPELocator[] GetOutgoingLinks(string outgoingLinkName);
     }
 }

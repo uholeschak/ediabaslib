@@ -1,4 +1,6 @@
-﻿using System;
+﻿using BmwFileReader;
+using PsdzClientLibrary;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -41,29 +43,16 @@ namespace PsdzClient.Core
 			//this.children = new ISPELocator[0];
 			this.ffmResolver = ffmResolver;
 		}
-        // [UH] removed
-#if false
-		public ISPELocator[] Children
+
+        [PreserveSource(Hint = "Cleaned")]
+        public ISPELocator[] Children
 		{
 			get
-			{
-				if (this.children != null && this.children.Length != 0)
-				{
-					return this.children;
-				}
-				new List<ISPELocator>();
-				ICollection<XEP_FAULTCODE> xepFaultCodeByEcuVariantId = ClientContext.Database?.GetXepFaultCodeByEcuVariantId(this.ecuVariant.Id, this.vecInfo, this.ffmResolver);
-				if (xepFaultCodeByEcuVariantId != null)
-				{
-					foreach (XEP_FAULTCODE xep_FAULTCODE in xepFaultCodeByEcuVariantId)
-					{
-						new FaultCode();
-					}
-				}
-				return this.children;
-			}
+            {
+                return children;
+            }
 		}
-#endif
+
         public string Id
 		{
 			get
@@ -125,19 +114,21 @@ namespace PsdzClient.Core
             "TITLE_ZHTW", "TITLE_JA", "TITLE_CSCZ", "TITLE_PLPL", "VALIDFROM", "VALIDTO", "SICHERHEITSRELEVANT", "ECUGROUPID", "SORT"
         };
 
-        public string SignedId
-		{
-			get
-			{
-				if (this.ecuVariant == null)
-				{
-					return string.Empty;
-				}
-				return this.ecuVariant.Id;
-			}
-		}
+        [PreserveSource(Hint = "Modified")]
+        public decimal SignedId
+        {
+            get
+            {
+                if (ecuVariant == null)
+                {
+                    return -1m;
+                }
 
-		public Exception Exception
+                return ecuVariant.Id.ConvertToInt();
+            }
+        }
+
+        public Exception Exception
 		{
 			get
 			{
@@ -260,8 +251,6 @@ namespace PsdzClient.Core
 			return this.parents;
 		}
 
-        // [UH] removed
-#if false
 		public ISPELocator[] GetOutgoingLinks()
 		{
 			return this.children;
@@ -271,7 +260,7 @@ namespace PsdzClient.Core
 		{
 			return this.children;
 		}
-#endif
+
         public T GetDataValue<T>(string name)
         {
             try
@@ -387,8 +376,7 @@ namespace PsdzClient.Core
 
         private readonly PsdzDatabase.EcuVar ecuVariant;
 
-        // [UH] removed
-        //private readonly ISPELocator[] children;
+        private readonly ISPELocator[] children;
 
         private ISPELocator[] parents;
 
