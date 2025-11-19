@@ -1,8 +1,10 @@
-﻿namespace PsdzClient.Core
+﻿using PsdzClientLibrary;
+
+namespace PsdzClient.Core
 {
     public interface IFFMDynamicResolverRuleEvaluation
     {
-        // [UH] iObj type modified
+        [PreserveSource(Hint = "iObj type modified")]
         bool? Resolve(decimal id, PsdzDatabase.SwiInfoObj iObj);
     }
 }

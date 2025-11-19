@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using PsdzClientLibrary;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-    // [UH] dummy file
+    [PreserveSource(Hint = "Dummy")]
     public interface IInteractionService
     {
         void Deregister(InteractionModel model);
