@@ -522,7 +522,7 @@ namespace Ediabas
 
         public static bool apiResultText(out char[] buffer, string result, ushort rset, string format)
         {
-            return _apiInternal.apiResultText(out buffer, result, rset, format);
+            return _apiInternal.apiResultTextChar(out buffer, result, rset, format);
         }
 
         public static bool apiResultBinary(out byte[] buffer, out ushort bufferLen, string result, ushort rset)

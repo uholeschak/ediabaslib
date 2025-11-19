@@ -755,9 +755,9 @@ namespace Ediabas
             return true;
         }
 
-        public bool apiResultText(out char[] buffer, string result, ushort rset, string format)
+        public bool apiResultTextChar(out char[] buffer, string result, ushort rset, string format)
         {
-            logFormat(ApiLogLevel.Normal, "apiResultText[]({0}, {1}, {2})", result, rset, format);
+            logFormat(ApiLogLevel.Normal, "apiResultTextChar[]({0}, {1}, {2})", result, rset, format);
 
             buffer = null;
             if (!waitJobFinish())
