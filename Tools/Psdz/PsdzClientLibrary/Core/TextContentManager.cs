@@ -16,26 +16,15 @@ namespace PsdzClient.Core
     {
         [PreserveSource(Hint = "readonly removed")]
         private IList<string> lang;
-
         [PreserveSource(Hint = "Database modified")]
         private readonly PsdzDatabase db;
-
         private readonly bool old;
-
         private XmlNamespaceManager namespaceManager;
-
         private readonly ITextLocator serviceProgramCollection;
-
         private IList<XElement> serviceProgramCollectionRoot;
-
         [PreserveSource(Hint = "Database modified")]
         private readonly PsdzDatabase.SwiInfoObj xepInfoObj;
-
         private const string DefaultParameterValue = "";
-
-        [PreserveSource(Hint = "Added")]
-        public IList<string> Langs => lang;
-
         private ITextLocator ServiceProgramCollection
         {
             get
@@ -44,6 +33,7 @@ namespace PsdzClient.Core
                 {
                     throw new ArgumentException($"No text collection available.");
                 }
+
                 return serviceProgramCollection;
             }
         }
@@ -55,14 +45,17 @@ namespace PsdzClient.Core
             {
                 throw new ArgumentNullException("databaseProvider");
             }
+
             if (lang == null)
             {
                 throw new ArgumentNullException("lang");
             }
+
             if (xepInfoObj != null && !(xepInfoObj.Id.ConvertToInt(-1) == -1))
             {
                 return new TextContentManager(databaseProvider, lang, xepInfoObj, serviceDialogName);
             }
+
             Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identification + "(" + xepInfoObj.ControlId + ")"));
             return new TextContentManagerDummy();
         }
@@ -74,10 +67,12 @@ namespace PsdzClient.Core
             {
                 throw new ArgumentNullException("databaseProvider");
             }
+
             if (lang == null)
             {
                 throw new ArgumentNullException("lang");
             }
+
             string num2 = xepInfoObj.Id;
             if (num2.ConvertToInt(-1) == 0m)
             {
@@ -86,8 +81,10 @@ namespace PsdzClient.Core
                 {
                     text = new Regex(Regex.Escape("_")).Replace(text, "-", 2);
                 }
+
                 num2 = databaseProvider.GetInfoObjectIdByIdentifier(text);
             }
+
             db = databaseProvider;
             this.lang = lang;
             old = false;
@@ -104,14 +101,17 @@ namespace PsdzClient.Core
             {
                 throw new ArgumentNullException("databaseProvider");
             }
+
             if (lang == null)
             {
                 throw new ArgumentNullException("lang");
             }
+
             if (textCollection == null)
             {
                 throw new ArgumentNullException("textCollection");
             }
+
             db = databaseProvider;
             this.lang = lang;
             old = false;
@@ -127,10 +127,12 @@ namespace PsdzClient.Core
             {
                 throw new ArgumentNullException("databaseProvider");
             }
+
             if (lang == null)
             {
                 throw new ArgumentNullException("lang");
             }
+
             db = databaseProvider;
             this.lang = lang;
             old = true;
@@ -153,6 +155,7 @@ namespace PsdzClient.Core
                 list.AddRange(lang.Select((string x) => new LocalizedText(string.Format(CultureInfo.InvariantCulture, "<<<{0}>>>", value), x)));
                 Log.Error("TextContentManager.__StandardText()", "No valid standard text found for control id \"{0}\", returning \"{1}\". {2}", value, list[0].TextItem, ex);
             }
+
             return ReplaceTextReferencesAndHandleParameter(list, paramArray);
         }
 
@@ -178,17 +181,7 @@ namespace PsdzClient.Core
             {
                 list.Add(item.Attribute(XName.Get("ID")).Value + " -- " + item.Attribute(XName.Get("NAME")).Value);
             }
-            return list;
-        }
 
-        [PreserveSource(Hint = "Added")]
-        public IList<string> CreateTextItemIdList()
-        {
-            List<string> list = new List<string>();
-            foreach (XElement item in ParseTextCollection(ServiceProgramCollection.Text).XPathSelectElements("spe:TEXTITEMS/spe:TEXTITEM", namespaceManager))
-            {
-                list.Add(item.Attribute(XName.Get("ID")).Value);
-            }
             return list;
         }
 
@@ -200,6 +193,7 @@ namespace PsdzClient.Core
             {
                 serviceProgramCollectionRoot.Add(ParseTextCollection(((TextContent)ServiceProgramCollection.TextContent).TextLocalized[i].TextItem));
             }
+
             IList<LocalizedText> list = new List<LocalizedText>();
             for (int j = 0; j < lang.Count; j++)
             {
@@ -218,12 +212,15 @@ namespace PsdzClient.Core
                     {
                         Log.Error("", "Found \"{1}\" text items with ID \"{0}\". Using first one.", textItemId, num);
                     }
+
                     XElement xElement = source.First();
                     ReplaceParameter(xElement, paramArray, lang[j]);
                     item = new LocalizedText(xElement.Print(), lang[j]);
                 }
+
                 list.Add(item);
             }
+
             return list;
         }
 
@@ -242,6 +239,7 @@ namespace PsdzClient.Core
                 {
                     xmlNameTable = new NameTable();
                 }
+
                 namespaceManager = new XmlNamespaceManager(xmlNameTable);
                 namespaceManager.AddNamespace("spe", "http://bmw.com/2014/Spe_Text_2.0");
                 return XElement.Load(xmlReader);
@@ -270,6 +268,7 @@ namespace PsdzClient.Core
             {
                 return null;
             }
+
             IList<string> langList = new List<string>();
             IList<LocalizedText> list = new List<LocalizedText>();
             foreach (LocalizedText item in textCollectionById)
@@ -299,10 +298,12 @@ namespace PsdzClient.Core
                             Log.Error("TextContentManager.GetParameter()", "Parameter with name \"{0}\" has a value==null. Returning \"{1}\" instead.", id, text);
                             return text;
                         }
+
                         return _TextParameter.Value;
                     }
                 }
             }
+
             Log.Error("TextContentManager.GetParameter()", "Parameter with name \"{0}\" missing. Returning \"{1}\" instead.", id, text);
             return text;
         }
@@ -334,6 +335,7 @@ namespace PsdzClient.Core
                         text = null;
                     }
                 }
+
                 if (text != null)
                 {
                     ReplaceParameterXml(text, item, xAttribute, language, textItem);
@@ -343,6 +345,7 @@ namespace PsdzClient.Core
                     ReplaceParameterSimpleType(parameter, item, xAttribute, language);
                 }
             }
+
             if (!flag)
             {
                 ReplaceParameter(textItem, paramArray, language);
@@ -359,6 +362,7 @@ namespace PsdzClient.Core
                 parameterElement.Add(new XAttribute(XName.Get("done"), true));
                 return;
             }
+
             Log.Error("TextContentManager.ReplaceParameterSimpleType()", "The value \"{0}\" of the TEXTPARAMETER with ID \"{1}\" is a simple type. It will be wrapped into a TEXTITEM.", text, attParameterId.Value);
             XElement xElement = ParseSpeXml("<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>" + text + "</spe:PARAGRAPH></spe:TEXTITEM>", language, db);
             parameterElement.ReplaceWith(xElement.Element(XName.Get("PARAGRAPH", "http://bmw.com/2014/Spe_Text_2.0")));
@@ -367,13 +371,13 @@ namespace PsdzClient.Core
         private void ReplaceParameterXml(string parameterFormattedText, XElement parameterElement, XAttribute attParameterId, string language, XElement textItem)
         {
             XElement xElement = ParseSpeXml(parameterFormattedText, language, db);
-            int num2 = xElement.Elements().Count();
+            int num = xElement.Elements().Count();
             if (parameterElement.Name.LocalName.Equals("TEXTPARAMETER"))
             {
                 parameterElement.AddAfterSelf(xElement.Elements());
                 parameterElement.Remove();
             }
-            else if (textItem.XPathSelectElements(".//spe:PARAGRAPH/spe:PARAMETER[@ID]", namespaceManager).Contains(parameterElement) && (num2 > 1 || xElement.Element(XName.Get("PARAGRAPH", "http://bmw.com/2014/Spe_Text_2.0")) == null))
+            else if (textItem.XPathSelectElements(".//spe:PARAGRAPH/spe:PARAMETER[@ID]", namespaceManager).Contains(parameterElement) && (num > 1 || xElement.Element(XName.Get("PARAGRAPH", "http://bmw.com/2014/Spe_Text_2.0")) == null))
             {
                 IEnumerable<XNode> enumerable = parameterElement.NodesAfterSelf();
                 XElement xElement2 = new XElement(XName.Get("PARAGRAPH", "http://bmw.com/2014/Spe_Text_2.0"));
@@ -391,7 +395,7 @@ namespace PsdzClient.Core
                 string value = new TextContent(string.Empty).BuildPlainText(xElement);
                 attParameterId.SetValue(value);
                 parameterElement.Add(new XAttribute(XName.Get("done"), true));
-                if (num2 > 1)
+                if (num > 1)
                 {
                     parameterElement.SetAttributeValue(XName.Get("STATIC"), true);
                 }
@@ -403,43 +407,53 @@ namespace PsdzClient.Core
             string text = format ?? "#0.0";
             try
             {
-                if (!(paramValue is double num2))
+                if (paramValue is double num)
                 {
-                    if (!(paramValue is float num3))
-                    {
-                        if (!(paramValue is short num4))
-                        {
-                            if (!(paramValue is ushort num5))
-                            {
-                                if (!(paramValue is int num6))
-                                {
-                                    if (!(paramValue is uint num7))
-                                    {
-                                        if (!(paramValue is byte b))
-                                        {
-                                            if (!(paramValue is sbyte b2))
-                                            {
-                                                if (!(paramValue is char c))
-                                                {
-                                                    return paramValue.ToString();
-                                                }
-                                                return c.ToString(CultureInfo.InvariantCulture);
-                                            }
-                                            return b2.ToString(format, CultureInfo.InvariantCulture);
-                                        }
-                                        return b.ToString(format, CultureInfo.InvariantCulture);
-                                    }
-                                    return num7.ToString(format, CultureInfo.InvariantCulture);
-                                }
-                                return num6.ToString(format, CultureInfo.InvariantCulture);
-                            }
-                            return num5.ToString(format, CultureInfo.InvariantCulture);
-                        }
-                        return num4.ToString(format, CultureInfo.InvariantCulture);
-                    }
-                    return num3.ToString(text);
+                    return num.ToString(text);
                 }
-                return num2.ToString(text);
+
+                if (paramValue is float num2)
+                {
+                    return num2.ToString(text);
+                }
+
+                if (paramValue is short num3)
+                {
+                    return num3.ToString(format, CultureInfo.InvariantCulture);
+                }
+
+                if (paramValue is ushort num4)
+                {
+                    return num4.ToString(format, CultureInfo.InvariantCulture);
+                }
+
+                if (paramValue is int num5)
+                {
+                    return num5.ToString(format, CultureInfo.InvariantCulture);
+                }
+
+                if (paramValue is uint num6)
+                {
+                    return num6.ToString(format, CultureInfo.InvariantCulture);
+                }
+
+                if (paramValue is byte b)
+                {
+                    return b.ToString(format, CultureInfo.InvariantCulture);
+                }
+
+                if (paramValue is sbyte b2)
+                {
+                    return b2.ToString(format, CultureInfo.InvariantCulture);
+                }
+
+                if (paramValue is char c)
+                {
+                    return c.ToString(CultureInfo.InvariantCulture);
+                }
+
+                _ = paramValue is string;
+                return paramValue.ToString();
             }
             catch (Exception exception)
             {
@@ -457,6 +471,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             foreach (XElement item in enumerable)
             {
                 string value = item.Attribute(XName.Get("ID")).Value;
@@ -540,18 +555,22 @@ namespace PsdzClient.Core
                     Extensions.AddRange(list, lang.Select((string x) => new LocalizedText(tmp, x)));
                     return new TextLocator(list);
                 }
+
                 IList<LocalizedText> textById = db.GetTextById(xmlText, lang);
                 return ReplaceTextReferencesAndHandleParameter(textById, paramArray);
             }
+
             if (Regex.IsMatch(xmlText.Trim(), "^\\d+$"))
             {
                 return new TextLocator(GetTextItem(xmlText, paramArray));
             }
+
             string xml = xmlText;
             if (!xmlText.StartsWith("<?xml", StringComparison.Ordinal) && !xmlText.StartsWith("<spe:", StringComparison.Ordinal))
             {
                 xml = $"<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>{xmlText}</spe:PARAGRAPH></spe:TEXTITEM>";
             }
+
             try
             {
                 string text = ParseSpeXml(xml, lang[0], db).Print();
@@ -580,15 +599,17 @@ namespace PsdzClient.Core
                     Log.Warning("TextContentManager.HandleParameter()", "Failed to parse \"{0}\". Try to parse \"{1}\" instead: {2}", item, text, ex);
                     xElement = XElement.Parse(text);
                 }
+
                 if (paramArray != null)
                 {
                     for (int i = 0; i < paramArray.Length; i++)
                     {
                         __TextParameter _TextParameter = paramArray[i];
                         __TextParameter p = _TextParameter;
-                        List<XElement> list2 = new List<XElement>(from el in xElement.DescendantsAndSelf("Parameter")
-                                                                  where (string)el.Attribute("ID") == p.Name
-                                                                  select el);
+                        List<XElement> list2 = new List<XElement>(
+                            from el in xElement.DescendantsAndSelf("Parameter")
+                            where (string)el.Attribute("ID") == p.Name
+                            select el);
                         if (_TextParameter.Value is TextLocator)
                         {
                             TextLocator textLocator = (TextLocator)_TextParameter.Value;
@@ -613,12 +634,15 @@ namespace PsdzClient.Core
                                 obj = new TextContent(textLocator.Text).PlainText;
                                 Log.Error("TextContentManager.HandleParameter()", "Failed to parse \"{0}\", use \"{1}\" instead: {2}", text3, obj, ex3);
                             }
+
                             foreach (XElement item2 in list2)
                             {
                                 item2.ReplaceWith(obj);
                             }
+
                             continue;
                         }
+
                         foreach (XElement item3 in list2)
                         {
                             XAttribute xAttribute = item3.Attribute("Format");
@@ -687,50 +711,8 @@ namespace PsdzClient.Core
                                 {
                                     continue;
                                 }
-                                if (!_TextParameter.Value.ToString().Contains("/>") && !_TextParameter.Value.ToString().Contains("</"))
-                                {
-                                    if (_TextParameter.Value is double)
-                                    {
-                                        item3.ReplaceWith(((double)_TextParameter.Value).ToString("#0.0"));
-                                    }
-                                    else if (_TextParameter.Value is float)
-                                    {
-                                        item3.ReplaceWith(((float)_TextParameter.Value).ToString("#0.0"));
-                                    }
-                                    else if (_TextParameter.Value is short)
-                                    {
-                                        item3.ReplaceWith(((short)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
-                                    }
-                                    else if (_TextParameter.Value is ushort)
-                                    {
-                                        item3.ReplaceWith(((ushort)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
-                                    }
-                                    else if (_TextParameter.Value is int)
-                                    {
-                                        item3.ReplaceWith(XElement.Parse($"<TextItem>{((int)_TextParameter.Value).ToString(CultureInfo.InvariantCulture)} </TextItem>"));
-                                    }
-                                    else if (_TextParameter.Value is uint)
-                                    {
-                                        item3.ReplaceWith(((uint)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
-                                    }
-                                    else if (_TextParameter.Value is byte)
-                                    {
-                                        item3.ReplaceWith(((byte)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
-                                    }
-                                    else if (_TextParameter.Value is sbyte)
-                                    {
-                                        item3.ReplaceWith(((sbyte)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
-                                    }
-                                    else if (_TextParameter.Value is char)
-                                    {
-                                        item3.ReplaceWith(((char)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
-                                    }
-                                    else
-                                    {
-                                        item3.ReplaceWith(_TextParameter.Value.ToString());
-                                    }
-                                }
-                                else
+
+                                if (_TextParameter.Value.ToString().Contains("/>") || _TextParameter.Value.ToString().Contains("</"))
                                 {
                                     try
                                     {
@@ -745,13 +727,70 @@ namespace PsdzClient.Core
                                         item3.ReplaceWith(_TextParameter.Value.ToString());
                                     }
                                 }
+                                else if (_TextParameter.Value is double)
+                                {
+                                    item3.ReplaceWith(((double)_TextParameter.Value).ToString("#0.0"));
+                                }
+                                else if (_TextParameter.Value is float)
+                                {
+                                    item3.ReplaceWith(((float)_TextParameter.Value).ToString("#0.0"));
+                                }
+                                else if (_TextParameter.Value is short)
+                                {
+                                    item3.ReplaceWith(((short)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
+                                }
+                                else if (_TextParameter.Value is ushort)
+                                {
+                                    item3.ReplaceWith(((ushort)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
+                                }
+                                else if (_TextParameter.Value is int)
+                                {
+                                    item3.ReplaceWith(XElement.Parse($"<TextItem>{((int)_TextParameter.Value).ToString(CultureInfo.InvariantCulture)} </TextItem>"));
+                                }
+                                else if (_TextParameter.Value is uint)
+                                {
+                                    item3.ReplaceWith(((uint)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
+                                }
+                                else if (_TextParameter.Value is byte)
+                                {
+                                    item3.ReplaceWith(((byte)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
+                                }
+                                else if (_TextParameter.Value is sbyte)
+                                {
+                                    item3.ReplaceWith(((sbyte)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
+                                }
+                                else if (_TextParameter.Value is char)
+                                {
+                                    item3.ReplaceWith(((char)_TextParameter.Value).ToString(CultureInfo.InvariantCulture));
+                                }
+                                else
+                                {
+                                    item3.ReplaceWith(_TextParameter.Value.ToString());
+                                }
                             }
                         }
                     }
                 }
+
                 list.Add(new LocalizedText(xElement.ToString(), item.Language));
             }
+
             return new TextLocator(list);
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public IList<string> Langs => lang;
+
+        [PreserveSource(Hint = "Added")]
+        public IList<string> CreateTextItemIdList()
+        {
+            List<string> list = new List<string>();
+            foreach (XElement item in ParseTextCollection(ServiceProgramCollection.Text).XPathSelectElements("spe:TEXTITEMS/spe:TEXTITEM", namespaceManager))
+            {
+                list.Add(item.Attribute(XName.Get("ID")).Value);
+            }
+
+            return list;
         }
     }
 }
