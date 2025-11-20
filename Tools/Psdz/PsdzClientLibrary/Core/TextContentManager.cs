@@ -451,6 +451,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         private void AppendStandardText(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PsdzDatabase db, string language, int repeat)
         {
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:STANDARDTEXT[not(spe:CONTENT)]", namespaceManager);
@@ -478,7 +479,7 @@ namespace PsdzClient.Core
                     items++;
                 }
 
-                // enumerable.Any is not working after enumeration!
+                // [IGNORE] enumerable.Any is not working after enumeration!
                 if (items > 0)
                 {
                     if (repeat == 10)
