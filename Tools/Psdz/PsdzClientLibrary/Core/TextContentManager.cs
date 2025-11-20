@@ -170,22 +170,23 @@ namespace PsdzClient.Core
             return CreateText(value, paramArray);
         }
 
-        public IList<string> CreateTextItemIdList()
-        {
-            List<string> list = new List<string>();
-            foreach (XElement item in ParseTextCollection(ServiceProgramCollection.Text).XPathSelectElements("spe:TEXTITEMS/spe:TEXTITEM", namespaceManager))
-            {
-                list.Add(item.Attribute(XName.Get("ID")).Value);
-            }
-            return list;
-        }
-
         public IList<string> CreateTextIdList()
         {
             List<string> list = new List<string>();
             foreach (XElement item in ParseTextCollection(ServiceProgramCollection.Text).XPathSelectElements("spe:TEXTITEMS/spe:TEXTITEM", namespaceManager))
             {
                 list.Add(item.Attribute(XName.Get("ID")).Value + " -- " + item.Attribute(XName.Get("NAME")).Value);
+            }
+            return list;
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public IList<string> CreateTextItemIdList()
+        {
+            List<string> list = new List<string>();
+            foreach (XElement item in ParseTextCollection(ServiceProgramCollection.Text).XPathSelectElements("spe:TEXTITEMS/spe:TEXTITEM", namespaceManager))
+            {
+                list.Add(item.Attribute(XName.Get("ID")).Value);
             }
             return list;
         }
