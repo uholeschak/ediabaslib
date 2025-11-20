@@ -14,18 +14,10 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
-using PsdzClient;
-using PsdzClient.Core;
 using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
-    public enum EventKind
-    {
-        T,
-        F
-    }
-
     public class Log
     {
         private enum TraceLevel
