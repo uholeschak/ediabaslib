@@ -29,7 +29,8 @@ namespace PsdzClient.Core
             switch (type)
             {
                 case EExpressionType.COUNTRY:
-                    singleAssignmentExpression = new CountryExpression();   // [UH] dataProvider removed
+                    // [UH] [IGNORE] dataProvider removed
+                    singleAssignmentExpression = new CountryExpression();
                     break;
                 case EExpressionType.ECUCLIQUE:
                     singleAssignmentExpression = new EcuCliqueExpression();
@@ -50,7 +51,8 @@ namespace PsdzClient.Core
                     singleAssignmentExpression = new EquipmentExpression();
                     break;
                 case EExpressionType.ISTUFE:
-                    singleAssignmentExpression = new IStufeExpression();   // [UH] dataProvider removed
+                    // [UH] [IGNORE] dataProvider removed
+                    singleAssignmentExpression = new IStufeExpression();
                     break;
                 case EExpressionType.SALAPA:
                     singleAssignmentExpression = new SaLaPaExpression();
@@ -69,7 +71,8 @@ namespace PsdzClient.Core
                     throw new Exception("Unknown expression type");
             }
             singleAssignmentExpression.value = num;
-            singleAssignmentExpression.vecInfo = vec;   // [UH] added
+            // [UH] [IGNORE] added
+            singleAssignmentExpression.vecInfo = vec;
             return singleAssignmentExpression;
         }
 
