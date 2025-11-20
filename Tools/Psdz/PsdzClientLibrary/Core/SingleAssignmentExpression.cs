@@ -99,6 +99,7 @@ namespace PsdzClient.Core
 
 		protected long value;
 
+        [PreserveSource(Hint = "Added")]
         protected Vehicle vecInfo;
     }
 }
