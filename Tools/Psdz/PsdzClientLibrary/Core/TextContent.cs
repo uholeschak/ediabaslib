@@ -416,6 +416,7 @@ namespace PsdzClient.Core
                                 {
                                     localizedXmlValue = ecuTranslation.GetTitle(language);
                                 }
+
                                 XElement content;
                                 if (string.IsNullOrEmpty(localizedXmlValue))
                                 {
