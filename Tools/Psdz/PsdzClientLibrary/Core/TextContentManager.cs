@@ -33,6 +33,7 @@ namespace PsdzClient.Core
 
         private const string DefaultParameterValue = "";
 
+        [PreserveSource(Hint = "Added")]
         public IList<string> Langs => lang;
 
         private ITextLocator ServiceProgramCollection
