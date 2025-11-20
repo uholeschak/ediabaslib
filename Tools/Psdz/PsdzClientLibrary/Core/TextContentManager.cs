@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using BmwFileReader;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -243,6 +244,7 @@ namespace PsdzClient.Core
             return xElement;
         }
 
+        [PreserveSource(Hint = "Modified")]
         private ITextLocator ReadTextCollection(string idInfoObject)
         {
             IList<LocalizedText> textCollectionById = db.GetTextCollectionById(idInfoObject, lang);
@@ -259,7 +261,7 @@ namespace PsdzClient.Core
                 langList.Add(item.Language);
             }
 
-            // [UH] update lang list
+            // [UH] [IGNORE] update lang list
             lang = langList;
             return new TextLocator(list);
         }
