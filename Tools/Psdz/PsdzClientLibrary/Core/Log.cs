@@ -30,7 +30,6 @@ namespace PsdzClient.Core
         }
 
         private static readonly CultureInfo LogCulture = CultureInfo.CreateSpecificCulture("de-DE");
-
         public static bool LogCallerPid { get; set; }
 
         public static void Error(string method, string msg, params object[] args)
@@ -204,6 +203,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             try
             {
                 string format = BuildEntry(TraceLevel.DEBUG, evtKind, method, msg);
@@ -267,10 +267,7 @@ namespace PsdzClient.Core
         {
             string query = "*[System/EventID=1149]";
             int num = 0;
-            EventLogReader eventLogReader = new EventLogReader(new EventLogQuery("Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational", PathType.LogName, query)
-            {
-                ReverseDirection = true
-            });
+            EventLogReader eventLogReader = new EventLogReader(new EventLogQuery("Microsoft-Windows-TerminalServices-RemoteConnectionManager/Operational", PathType.LogName, query) { ReverseDirection = true });
             for (EventRecord eventRecord = eventLogReader.ReadEvent(); eventRecord != null; eventRecord = eventLogReader.ReadEvent())
             {
                 DateTime? timeCreated = eventRecord.TimeCreated;
@@ -296,11 +293,13 @@ namespace PsdzClient.Core
             {
                 return Process.GetCurrentProcess().Id;
             }
+
             int num = headers.FindHeader("PID", string.Empty);
             if (num >= 0)
             {
                 return headers.GetHeader<int>(num);
             }
+
             return Process.GetCurrentProcess().Id;
         }
 
@@ -315,12 +314,14 @@ namespace PsdzClient.Core
                     int callerPid = GetCallerPid(OperationContext.Current?.IncomingMessageHeaders);
                     return string.Format(LogCulture, "{0} {1} [{2}] Thread-ID: [{3}] Caller-PID: [{4}] {5} - {6}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), level, kind, Thread.CurrentThread.ManagedThreadId, callerPid, text, text2);
                 }
+
                 return string.Format(LogCulture, "{0} {1} [{2}] ISTA: [{3}] {4} - {5}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), level, kind, Thread.CurrentThread.ManagedThreadId, text, text2);
             }
             catch (Exception ex)
             {
                 TraceTraceError("{0} Log.BuildEntry() - failed with exception: {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", LogCulture), ex.ToString());
             }
+
             return "Log.BuildEntry() - failed";
         }
 
