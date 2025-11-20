@@ -11,7 +11,7 @@ namespace SourceCodeSync;
 
 public class DecompilerHelper
 {
-    public static bool DecompileAssembly(string dllPath, string outputPath, List<string> searchList = null)
+    public static bool DecompileAssembly(string dllPath, string outputPath, List<string> searchList = null, Dictionary<string, string> textReplacements = null)
     {
         if (string.IsNullOrEmpty(outputPath))
         {
@@ -88,6 +88,14 @@ public class DecompilerHelper
 
             // Dekompiliere den Typ
             string typeCode = decompiler.DecompileTypeAsString(type.FullTypeName);
+            if (textReplacements != null)
+            {
+                foreach (var kvp in textReplacements)
+                {
+                    typeCode = typeCode.Replace(kvp.Key, kvp.Value);
+                }
+            }
+
             File.WriteAllText(filePath, typeCode);
         }
 

@@ -79,6 +79,11 @@ namespace SourceCodeSync
             "RheingoldVehicleCommunication"
         ];
 
+        private static readonly Dictionary<string, string> _textReplacements = new Dictionary<string, string>
+        {
+            { "BMW.Rheingold.CoreFramework.Extensions.AddRange", "Extensions.AddRange" },
+        };
+
         private const string _accessModifiedProperty = "AccessModified";
 
         private const string _attributesModifiedProperty = "AttributesModified";
@@ -275,7 +280,7 @@ namespace SourceCodeSync
 
                         try
                         {
-                            if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList))
+                            if (!DecompilerHelper.DecompileAssembly(assemblyPath, outputPath, searchList, _textReplacements))
                             {
                                 if (_verbosity >= Options.VerbosityOption.Error)
                                 {
