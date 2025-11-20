@@ -526,6 +526,7 @@ namespace PsdzClient.Core
             return XElement.Load(XmlReader.Create(new StringReader(xml)));
         }
 
+        [PreserveSource(Hint = "Database modified")]
         private ITextLocator CreateText(string xmlText, __TextParameter[] paramArray)
         {
             if (old)
