@@ -8,16 +8,11 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-	[Serializable]
-	public abstract class SingleAssignmentExpression : RuleExpression
-	{
-		public long Value
-		{
-			get
-			{
-				return this.value;
-			}
-		}
+    [Serializable]
+    public abstract class SingleAssignmentExpression : RuleExpression
+    {
+        protected long value;
+        public long Value => value;
 
         [PreserveSource(Hint = "Modified")]
         public static RuleExpression Deserialize(Stream ms, EExpressionType type, ILogger logger, Vehicle vec)
@@ -70,6 +65,7 @@ namespace PsdzClient.Core
                     logger.Warning("SingleAssignmentExpression.Deserialize()", "unhandled SingleAssignmentExpression found: {0}", type.ToString());
                     throw new Exception("Unknown expression type");
             }
+
             singleAssignmentExpression.value = num;
             // [UH] [IGNORE] added
             singleAssignmentExpression.vecInfo = vec;
@@ -78,26 +74,24 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "Modified")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
-		{
-			return false;
-		}
+        {
+            return false;
+        }
 
-		public override long GetExpressionCount()
-		{
-			return 1L;
-		}
+        public override long GetExpressionCount()
+        {
+            return 1L;
+        }
 
-		public override long GetMemorySize()
-		{
-			return 16L;
-		}
+        public override long GetMemorySize()
+        {
+            return 16L;
+        }
 
-		public override void Serialize(MemoryStream ms)
-		{
-			ms.Write(BitConverter.GetBytes(this.value), 0, 8);
-		}
-
-		protected long value;
+        public override void Serialize(MemoryStream ms)
+        {
+            ms.Write(BitConverter.GetBytes(value), 0, 8);
+        }
 
         [PreserveSource(Hint = "Added")]
         protected Vehicle vecInfo;
