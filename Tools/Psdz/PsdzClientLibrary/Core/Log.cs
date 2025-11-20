@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using PsdzClient;
 using PsdzClient.Core;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -251,11 +252,11 @@ namespace PsdzClient.Core
             Info("Log.SystemRessources()", "Total Processor Time: " + currentProcess.TotalProcessorTime.ToString());
         }
 
+        [PreserveSource(Hint = "Log removed")]
         public static void SystemInformation()
         {
             try
             {
-                //Info("Log.SystemInformation()", "Process is associated with a Terminal Services client session (RDP) : {0}", System.Windows.Forms.SystemInformation.TerminalServerSession);
                 string name = "System\\CurrentControlSet\\Control\\Windows";
                 RegistryKey registryKey = Registry.LocalMachine.OpenSubKey(name);
                 string name2 = "ShutdownTime";
@@ -331,7 +332,7 @@ namespace PsdzClient.Core
             return "Log.BuildEntry() - failed";
         }
 
-        // [UH] replaced
+        [PreserveSource(Hint = "Replaced")]
         public static string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null)
         {
             StringBuilder sb = new StringBuilder();
