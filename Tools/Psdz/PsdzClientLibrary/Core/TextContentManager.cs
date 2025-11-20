@@ -16,6 +16,7 @@ namespace PsdzClient.Core
     {
         private IList<string> lang;
 
+        [PreserveSource(Hint = "Database modified")]
         private readonly PsdzDatabase db;
 
         private readonly bool old;
@@ -26,6 +27,7 @@ namespace PsdzClient.Core
 
         private IList<XElement> serviceProgramCollectionRoot;
 
+        [PreserveSource(Hint = "Database modified")]
         private readonly PsdzDatabase.SwiInfoObj xepInfoObj;
 
         private const string DefaultParameterValue = "";
@@ -44,6 +46,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Database modified")]
         public static ITextContentManager Create(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
@@ -62,6 +65,7 @@ namespace PsdzClient.Core
             return new TextContentManagerDummy();
         }
 
+        [PreserveSource(Hint = "Database modified")]
         private TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
@@ -91,6 +95,7 @@ namespace PsdzClient.Core
             Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identification, xepInfoObj.ControlId);
         }
 
+        [PreserveSource(Hint = "Database modified")]
         internal TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, string textCollection)
         {
             if (databaseProvider == null)
@@ -113,6 +118,7 @@ namespace PsdzClient.Core
             serviceProgramCollection = new TextLocator(list);
         }
 
+        [PreserveSource(Hint = "Database modified")]
         internal TextContentManager(PsdzDatabase databaseProvider, IList<string> lang)
         {
             if (databaseProvider == null)
@@ -128,6 +134,7 @@ namespace PsdzClient.Core
             old = true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         public ITextLocator __StandardText(decimal value, __TextParameter[] paramArray)
         {
             IList<LocalizedText> list = new List<LocalizedText>();
@@ -236,6 +243,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Database modified")]
         private XElement ParseSpeXml(string xml, string language, PsdzDatabase database)
         {
             XElement xElement = ParseXml(xml);
@@ -431,6 +439,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Database modified")]
         private void AppendDiagcode(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PsdzDatabase db)
         {
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:DIAGCODE[not(spe:CONTENT)]", namespaceManager);
@@ -451,7 +460,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database modified")]
         private void AppendStandardText(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PsdzDatabase db, string language, int repeat)
         {
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:STANDARDTEXT[not(spe:CONTENT)]", namespaceManager);
