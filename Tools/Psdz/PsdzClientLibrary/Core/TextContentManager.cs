@@ -189,6 +189,7 @@ namespace PsdzClient.Core
             return list;
         }
 
+        [PreserveSource(Hint = "Log modified")]
         public IList<LocalizedText> GetTextItem(string textItemId, __TextParameter[] paramArray)
         {
             serviceProgramCollectionRoot = new List<XElement>();
@@ -200,14 +201,20 @@ namespace PsdzClient.Core
             for (int j = 0; j < lang.Count; j++)
             {
                 IEnumerable<XElement> source = serviceProgramCollectionRoot[j].XPathSelectElements("spe:TEXTITEMS/spe:TEXTITEM[@ID='" + textItemId + "']", namespaceManager);
-                int num2 = source.Count();
+                int num = source.Count();
                 LocalizedText item;
-                if (num2 == 0)
+                if (num == 0)
                 {
+                    // [UH] [IGNORE] Identification adapted
+                    Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identification : "null");
                     item = new LocalizedText("<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>### " + textItemId + " ###</spe:PARAGRAPH></spe:TEXTITEM>", lang[j]);
                 }
                 else
                 {
+                    if (num > 1)
+                    {
+                        Log.Error("", "Found \"{1}\" text items with ID \"{0}\". Using first one.", textItemId, num);
+                    }
                     XElement xElement = source.First();
                     ReplaceParameter(xElement, paramArray, lang[j]);
                     item = new LocalizedText(xElement.Print(), lang[j]);
