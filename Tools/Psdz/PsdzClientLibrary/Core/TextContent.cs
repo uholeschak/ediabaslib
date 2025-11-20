@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using System.Xml.Xsl;
 using System.Xml;
 using System;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -345,7 +346,7 @@ namespace PsdzClient.Core
             }
         }
 
-        // [UH] database replaced
+        [PreserveSource(Hint = "database replaced")]
         public static string ReplaceTextReferences(string xmlText, PsdzDatabase database, string language)
         {
             string result = xmlText;
@@ -385,7 +386,7 @@ namespace PsdzClient.Core
                             return string.Format(CultureInfo.InvariantCulture, "<TextItem SchemaVersion=\"1.0.0\">{0}</TextItem>", xmlText);
                         }
 
-                        // [UH] database replaced
+                        // [UH] [IGNORE] database replaced
                         string textItem = database.GetTextById(xmlText, new string[1] { language })[0].TextItem;
                         if (!string.IsNullOrEmpty(textItem))
                         {
@@ -408,7 +409,7 @@ namespace PsdzClient.Core
                             {
                                 string value = xAttribute.Value;
                                 Log.Info("TextContentOld.ReplaceTextReferences()", "Found referenced text: {0} Path: {1}", xElement, xAttribute.Value);
-                                // [UH] database replaced
+                                // [UH] [IGNORE] database replaced
                                 PsdzDatabase.EcuTranslation ecuTranslation = database.GetSpTextItemsByControlId(value);
                                 string localizedXmlValue = null;
                                 if (ecuTranslation != null)
