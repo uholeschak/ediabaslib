@@ -1741,8 +1741,10 @@ namespace PsdzClient.Core
             return "VCIDevice: " + ToAttrList(addLineFeed: true);
         }
 
+        [PreserveSource(Hint = "Added clientContext")]
         public object Clone()
         {
+            // [UH] [IGNORE] Added clientContext to constructor
             VCIDevice vCIDevice = new VCIDevice(_clientContext);
             vCIDevice.CommunicationDisturbanceRecognized = CommunicationDisturbanceRecognized;
             vCIDevice.ConnectionLossRecognized = ConnectionLossRecognized;
