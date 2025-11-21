@@ -20,7 +20,8 @@ namespace PsdzClient.Core
     {
         public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";
 
-        //private readonly ObservableCollectionEx<Fault> pKodeList;
+        [PreserveSource(Hint = "ObservableCollectionEx<Fault>", Placeholder = true)]
+        private readonly PlaceholderType pKodeList;
 
         private readonly ParameterContainer sessionDataStore;
 
@@ -108,13 +109,14 @@ namespace PsdzClient.Core
 
         private string sportausfuehrung;
 
-        private PsdzDatabase.BordnetsData bordnetsData;     // [UH] namespace changed
+        [PreserveSource(Hint = "Database modified")]
+        private PsdzDatabase.BordnetsData bordnetsData;
 
         private VehicleClassification classification;
 
         private IVehicleProfileChecksum vpc;
 
-        // [UH] local reactor
+        [PreserveSource(Hint = "Local reactor")]
         public Reactor Reactor { get; private set; }
 
         [XmlIgnore]
