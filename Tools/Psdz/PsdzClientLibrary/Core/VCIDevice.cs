@@ -294,6 +294,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         [XmlIgnore]
         public string NetworkTypeLabel
         {
@@ -313,7 +314,8 @@ namespace PsdzClient.Core
                 }
                 if ("2".Equals(NetworkType))
                 {
-                    //LocalAdapterNetworkType = BMW.Rheingold.CoreFramework.DatabaseProvider.NetworkType.directLAN;
+                    // [UH] [IGNORE] namespaced changed
+                    LocalAdapterNetworkType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.directLAN;
                     return "directLAN";
                 }
                 return "UNKNOWN";
