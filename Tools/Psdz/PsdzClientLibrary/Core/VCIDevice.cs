@@ -330,12 +330,14 @@ namespace PsdzClient.Core
 
         public NetworkType LocalAdapterNetworkType { get; set; }
 
+        [PreserveSource(Hint = "Modified")]
         public bool IsVehicleProgrammingPossible
         {
             get
             {
                 if (NetworkType == "0" || NetworkType == "2")
                 {
+                    // [UH] [IGNORE] namespaced changed
                     if (LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.LAN && LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.directLAN)
                     {
                         return false;
