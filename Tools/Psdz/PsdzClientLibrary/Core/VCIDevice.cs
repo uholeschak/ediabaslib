@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
@@ -140,7 +141,7 @@ namespace PsdzClient.Core
 
         private bool communicationDisturbanceRecognizedField;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         private ClientContext _clientContext;
 
         [XmlIgnore]
@@ -1440,6 +1441,7 @@ namespace PsdzClient.Core
             VCIType = vciType;
         }
 
+        [PreserveSource(Hint = "Database replaced")]
         private void LoadCharacteristicsFromDatabase()
         {
             if (basicFeaturesVci != null)
@@ -1485,7 +1487,7 @@ namespace PsdzClient.Core
                     text += VIN[6];
                     break;
             }
-            // [UH] replaced
+            // [UH] [IGNORE] replaced
             List<PsdzDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
             if (vehicleIdentByTypeKey == null)
             {
@@ -1810,7 +1812,7 @@ namespace PsdzClient.Core
             return vCIDevice;
         }
 
-        // [UH] clientContext added
+        [PreserveSource(Hint = "clientContext added")]
         public VCIDevice(ClientContext clientContext)
         {
             this._clientContext = clientContext;
