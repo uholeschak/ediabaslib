@@ -9,7 +9,7 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
-    public class VehicleCharacteristicIdent : VehicleCharacteristicAbstract
+    public sealed class VehicleCharacteristicIdent : VehicleCharacteristicAbstract
     {
         public const string DefaultEmptyCharacteristicValue = "-";
 
