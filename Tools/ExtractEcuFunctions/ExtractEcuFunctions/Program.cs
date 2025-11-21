@@ -352,7 +352,7 @@ namespace ExtractEcuFunctions
                 {
                     mDbConnection.Open();
 
-                    long[] rootClassValues = (long[])Enum.GetValues(typeof(VehicleCharacteristicAbstract.VehicleCharacteristic));
+                    long[] rootClassValues = (long[])Enum.GetValues(typeof(VehicleCharacteristic));
                     RootClassDict = new Dictionary<long, string>();
                     foreach (long rootClassValue in rootClassValues)
                     {
