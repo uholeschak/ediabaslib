@@ -15,6 +15,7 @@ namespace PsdzClient.Core
 
         private IIdentVehicle vecInfo;
 
+        [PreserveSource(Hint = "Database modified")]
         private PsdzDatabase.Characteristics characteristic;
 
         private ReactorEngine reactor;
