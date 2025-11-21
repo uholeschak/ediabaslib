@@ -13,7 +13,7 @@ using PsdzClientLibrary;
 
 namespace PsdzClient.Core
 {
-	public class VCIDevice : IComparable, IVciDevice, INotifyPropertyChanged, IVciDeviceRuleEvaluation, ICloneable
+    public class VCIDevice : IComparable, IVciDevice, INotifyPropertyChanged, IVciDeviceRuleEvaluation, ICloneable
     {
         private readonly HashSet<DeviceState> connectableStates = new HashSet<DeviceState>
         {
@@ -25,118 +25,60 @@ namespace PsdzClient.Core
             DeviceState.Unregistered,
             DeviceState.Unsupported
         };
-
         private string receivingIP;
-
         private bool isMarkedToDefault;
-
         private BasicFeaturesVci basicFeaturesVci;
-
         private string accuCapacityField;
-
         private string kl15VoltageField;
-
         private string kl30VoltageField;
-
         private string ownerField;
-
         private string descriptionField;
-
         private string stateField;
-
         private long leastSigBitsField;
-
         private bool leastSigBitsSpecified1Field;
-
         private long mostSigBitsField;
-
         private bool mostSigBitsSpecified1Field;
-
         private long reserveHandleField;
-
         private DateTime scanDateField;
-
         private string serviceField;
-
         private string kl15TriggerField;
-
         private string kl30TriggerField;
-
         private string uUIDField;
-
         private string imageVersionBootField;
-
         private string imageVersionApplicationField;
-
         private string imageVersionPackageField;
-
         private string counterField;
-
         private VCIDeviceType vCITypeField;
-
         private VCIReservationType vCIReservationField;
-
         private string signalStrengthField;
-
         private string gatewayField;
-
         private string vciChannelsField;
-
         private string netmaskField;
-
         private string networkTypeField;
-
         private string iPAddressField;
-
         private int? portField;
-
         private int? controlPortField;
-
         private string devIdField;
-
         private string devTypeField;
-
         private string devTypeExtField;
-
         private string macAddressField;
-
         private string wlanMacAddressField;
-
         private string description1Field;
-
         private string serialField;
-
         private string vINField;
-
         private string imagenameField;
-
         private string colorField;
-
         private string iFHParameterField;
-
         private string iFHReservedField;
-
         private bool forceReInitField;
-
         private bool usePdmResultField;
-
         private string pwfStateField;
-
         private bool connectionLossRecognizedField;
-
         private bool reconnectFailedField;
-
         private bool underVoltageRecognizedField;
-
         private DateTime underVoltageRecognizedLastTimeField;
-
         private bool underVoltageRecognizedLastTimeFieldSpecified;
-
         private bool communicationDisturbanceRecognizedField;
-
-        [PreserveSource(Hint = "Added")]
-        private ClientContext _clientContext;
-
         [XmlIgnore]
         public DeviceTypeDetails DeviceTypeDetail { get; set; }
 
@@ -163,8 +105,10 @@ namespace PsdzClient.Core
                     {
                         return !string.IsNullOrEmpty(DevId);
                     }
+
                     return true;
                 }
+
                 return false;
             }
         }
@@ -179,8 +123,10 @@ namespace PsdzClient.Core
                 {
                     result = (DeviceState)result2;
                 }
+
                 return result;
             }
+
             set
             {
                 int num = (int)value;
@@ -199,6 +145,7 @@ namespace PsdzClient.Core
                     LoadCharacteristicsFromDatabase();
                     return basicFeaturesVci;
                 }
+
                 return null;
             }
         }
@@ -209,6 +156,7 @@ namespace PsdzClient.Core
             {
                 return isMarkedToDefault;
             }
+
             set
             {
                 isMarkedToDefault = value;
@@ -225,6 +173,7 @@ namespace PsdzClient.Core
                 {
                     flag = VCIType == VCIDeviceType.IMIB && (result >= 20000 || result == 400);
                 }
+
                 return flag;
             }
         }
@@ -237,6 +186,7 @@ namespace PsdzClient.Core
                 {
                     return "IMIB_NX".Equals(Description1);
                 }
+
                 return false;
             }
         }
@@ -260,6 +210,7 @@ namespace PsdzClient.Core
                         Log.Error("IsConnectable", "State '{0}' is not to int parsable.", State);
                         result2 = false;
                     }
+
                     return result2;
                 }
                 catch (Exception)
@@ -277,6 +228,7 @@ namespace PsdzClient.Core
             {
                 return receivingIP;
             }
+
             set
             {
                 if (value != receivingIP)
@@ -297,20 +249,24 @@ namespace PsdzClient.Core
                 {
                     return "-";
                 }
+
                 if ("1".Equals(NetworkType))
                 {
                     return "WLAN";
                 }
+
                 if ("0".Equals(NetworkType))
                 {
                     return "LAN";
                 }
+
                 if ("2".Equals(NetworkType))
                 {
                     // [UH] [IGNORE] namespaced changed
                     LocalAdapterNetworkType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.directLAN;
                     return "directLAN";
                 }
+
                 return "UNKNOWN";
             }
         }
@@ -320,7 +276,6 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         public ushort PowerSupply { get; set; }
-
         public NetworkType LocalAdapterNetworkType { get; set; }
 
         [PreserveSource(Hint = "Modified")]
@@ -335,8 +290,10 @@ namespace PsdzClient.Core
                     {
                         return false;
                     }
+
                     return true;
                 }
+
                 return false;
             }
         }
@@ -347,6 +304,7 @@ namespace PsdzClient.Core
             {
                 return accuCapacityField;
             }
+
             set
             {
                 if (accuCapacityField != null)
@@ -371,6 +329,7 @@ namespace PsdzClient.Core
             {
                 return kl15VoltageField;
             }
+
             set
             {
                 if (kl15VoltageField != null)
@@ -395,6 +354,7 @@ namespace PsdzClient.Core
             {
                 return kl30VoltageField;
             }
+
             set
             {
                 if (kl30VoltageField != null)
@@ -419,6 +379,7 @@ namespace PsdzClient.Core
             {
                 return ownerField;
             }
+
             set
             {
                 if (ownerField != null)
@@ -443,6 +404,7 @@ namespace PsdzClient.Core
             {
                 return descriptionField;
             }
+
             set
             {
                 if (descriptionField != null)
@@ -467,6 +429,7 @@ namespace PsdzClient.Core
             {
                 return stateField;
             }
+
             set
             {
                 if (stateField != null)
@@ -491,6 +454,7 @@ namespace PsdzClient.Core
             {
                 return leastSigBitsField;
             }
+
             set
             {
                 if (!leastSigBitsField.Equals(value))
@@ -507,6 +471,7 @@ namespace PsdzClient.Core
             {
                 return leastSigBitsSpecified1Field;
             }
+
             set
             {
                 if (!leastSigBitsSpecified1Field.Equals(value))
@@ -523,6 +488,7 @@ namespace PsdzClient.Core
             {
                 return mostSigBitsField;
             }
+
             set
             {
                 if (!mostSigBitsField.Equals(value))
@@ -539,6 +505,7 @@ namespace PsdzClient.Core
             {
                 return mostSigBitsSpecified1Field;
             }
+
             set
             {
                 if (!mostSigBitsSpecified1Field.Equals(value))
@@ -555,6 +522,7 @@ namespace PsdzClient.Core
             {
                 return reserveHandleField;
             }
+
             set
             {
                 if (!reserveHandleField.Equals(value))
@@ -571,6 +539,7 @@ namespace PsdzClient.Core
             {
                 return scanDateField;
             }
+
             set
             {
                 if (!scanDateField.Equals(value))
@@ -587,6 +556,7 @@ namespace PsdzClient.Core
             {
                 return serviceField;
             }
+
             set
             {
                 if (serviceField != null)
@@ -611,6 +581,7 @@ namespace PsdzClient.Core
             {
                 return kl15TriggerField;
             }
+
             set
             {
                 if (kl15TriggerField != null)
@@ -635,6 +606,7 @@ namespace PsdzClient.Core
             {
                 return kl30TriggerField;
             }
+
             set
             {
                 if (kl30TriggerField != null)
@@ -659,6 +631,7 @@ namespace PsdzClient.Core
             {
                 return uUIDField;
             }
+
             set
             {
                 if (uUIDField != null)
@@ -683,6 +656,7 @@ namespace PsdzClient.Core
             {
                 return imageVersionBootField;
             }
+
             set
             {
                 if (imageVersionBootField != null)
@@ -707,6 +681,7 @@ namespace PsdzClient.Core
             {
                 return imageVersionApplicationField;
             }
+
             set
             {
                 if (imageVersionApplicationField != null)
@@ -731,6 +706,7 @@ namespace PsdzClient.Core
             {
                 return imageVersionPackageField;
             }
+
             set
             {
                 if (imageVersionPackageField != null)
@@ -755,6 +731,7 @@ namespace PsdzClient.Core
             {
                 return counterField;
             }
+
             set
             {
                 if (counterField != null)
@@ -779,6 +756,7 @@ namespace PsdzClient.Core
             {
                 return vCITypeField;
             }
+
             set
             {
                 if (!vCITypeField.Equals(value))
@@ -795,6 +773,7 @@ namespace PsdzClient.Core
             {
                 return vCIReservationField;
             }
+
             set
             {
                 if (!vCIReservationField.Equals(value))
@@ -811,6 +790,7 @@ namespace PsdzClient.Core
             {
                 return signalStrengthField;
             }
+
             set
             {
                 if (signalStrengthField != null)
@@ -835,6 +815,7 @@ namespace PsdzClient.Core
             {
                 return gatewayField;
             }
+
             set
             {
                 if (gatewayField != null)
@@ -859,6 +840,7 @@ namespace PsdzClient.Core
             {
                 return vciChannelsField;
             }
+
             set
             {
                 if (vciChannelsField != null)
@@ -883,6 +865,7 @@ namespace PsdzClient.Core
             {
                 return netmaskField;
             }
+
             set
             {
                 if (netmaskField != null)
@@ -907,6 +890,7 @@ namespace PsdzClient.Core
             {
                 return networkTypeField;
             }
+
             set
             {
                 if (networkTypeField != null)
@@ -931,6 +915,7 @@ namespace PsdzClient.Core
             {
                 return iPAddressField;
             }
+
             set
             {
                 if (iPAddressField != null)
@@ -955,6 +940,7 @@ namespace PsdzClient.Core
             {
                 return portField;
             }
+
             set
             {
                 if (portField.HasValue)
@@ -979,6 +965,7 @@ namespace PsdzClient.Core
             {
                 return controlPortField;
             }
+
             set
             {
                 if (controlPortField.HasValue)
@@ -1003,6 +990,7 @@ namespace PsdzClient.Core
             {
                 return devIdField;
             }
+
             set
             {
                 if (devIdField != null)
@@ -1027,6 +1015,7 @@ namespace PsdzClient.Core
             {
                 return devTypeField;
             }
+
             set
             {
                 if (devTypeField != null)
@@ -1051,6 +1040,7 @@ namespace PsdzClient.Core
             {
                 return devTypeExtField;
             }
+
             set
             {
                 if (devTypeExtField != value)
@@ -1067,6 +1057,7 @@ namespace PsdzClient.Core
             {
                 return macAddressField;
             }
+
             set
             {
                 if (macAddressField != null)
@@ -1091,6 +1082,7 @@ namespace PsdzClient.Core
             {
                 return wlanMacAddressField;
             }
+
             set
             {
                 if (wlanMacAddressField != value)
@@ -1107,6 +1099,7 @@ namespace PsdzClient.Core
             {
                 return description1Field;
             }
+
             set
             {
                 if (description1Field != null)
@@ -1131,6 +1124,7 @@ namespace PsdzClient.Core
             {
                 return serialField;
             }
+
             set
             {
                 if (serialField != null)
@@ -1155,6 +1149,7 @@ namespace PsdzClient.Core
             {
                 return vINField;
             }
+
             set
             {
                 if (vINField != null)
@@ -1179,6 +1174,7 @@ namespace PsdzClient.Core
             {
                 return imagenameField;
             }
+
             set
             {
                 if (imagenameField != null)
@@ -1203,6 +1199,7 @@ namespace PsdzClient.Core
             {
                 return colorField;
             }
+
             set
             {
                 if (colorField != null)
@@ -1227,6 +1224,7 @@ namespace PsdzClient.Core
             {
                 return iFHParameterField;
             }
+
             set
             {
                 if (iFHParameterField != null)
@@ -1251,6 +1249,7 @@ namespace PsdzClient.Core
             {
                 return iFHReservedField;
             }
+
             set
             {
                 if (iFHReservedField != null)
@@ -1275,6 +1274,7 @@ namespace PsdzClient.Core
             {
                 return forceReInitField;
             }
+
             set
             {
                 if (!forceReInitField.Equals(value))
@@ -1291,6 +1291,7 @@ namespace PsdzClient.Core
             {
                 return usePdmResultField;
             }
+
             set
             {
                 if (!usePdmResultField.Equals(value))
@@ -1307,6 +1308,7 @@ namespace PsdzClient.Core
             {
                 return pwfStateField;
             }
+
             set
             {
                 if (pwfStateField != null)
@@ -1332,6 +1334,7 @@ namespace PsdzClient.Core
             {
                 return connectionLossRecognizedField;
             }
+
             set
             {
                 if (!connectionLossRecognizedField.Equals(value))
@@ -1349,6 +1352,7 @@ namespace PsdzClient.Core
             {
                 return reconnectFailedField;
             }
+
             set
             {
                 if (!reconnectFailedField.Equals(value))
@@ -1366,6 +1370,7 @@ namespace PsdzClient.Core
             {
                 return underVoltageRecognizedField;
             }
+
             set
             {
                 if (!underVoltageRecognizedField.Equals(value))
@@ -1382,6 +1387,7 @@ namespace PsdzClient.Core
             {
                 return underVoltageRecognizedLastTimeField;
             }
+
             set
             {
                 if (!underVoltageRecognizedLastTimeField.Equals(value))
@@ -1399,6 +1405,7 @@ namespace PsdzClient.Core
             {
                 return underVoltageRecognizedLastTimeFieldSpecified;
             }
+
             set
             {
                 if (!underVoltageRecognizedLastTimeFieldSpecified.Equals(value))
@@ -1416,6 +1423,7 @@ namespace PsdzClient.Core
             {
                 return communicationDisturbanceRecognizedField;
             }
+
             set
             {
                 if (!communicationDisturbanceRecognizedField.Equals(value))
@@ -1427,7 +1435,6 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         [PreserveSource(Hint = "Unmodified")]
         public VCIDevice(VCIDeviceType vciType, string devid, string description)
         {
@@ -1451,6 +1458,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             string text = VIN.Substring(3, 3);
             switch (VIN[6])
             {
@@ -1485,18 +1493,21 @@ namespace PsdzClient.Core
                     text += VIN[6];
                     break;
             }
+
             // [UH] [IGNORE] replaced
             List<PsdzDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
             if (vehicleIdentByTypeKey == null)
             {
                 return;
             }
+
             BasicFeaturesVci vehicle = new BasicFeaturesVci();
             VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
             foreach (PsdzDatabase.Characteristics item in vehicleIdentByTypeKey)
             {
                 vehicleCharacteristicVCIDeviceHelper.AssignBasicFeaturesVciCharacteristic(item.RootNodeClass.ToString(), vehicle, item);
             }
+
             basicFeaturesVci = vehicle;
         }
 
@@ -1506,6 +1517,7 @@ namespace PsdzClient.Core
             {
                 return acceptedImibDevices.Contains(Description1);
             }
+
             return true;
         }
 
@@ -1515,6 +1527,7 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             string[] array = VciChannels.Split(';');
             foreach (string text in array)
             {
@@ -1524,9 +1537,11 @@ namespace PsdzClient.Core
                     {
                         return text.Contains("*");
                     }
+
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -1552,6 +1567,7 @@ namespace PsdzClient.Core
                         default:
                             return "Unbekannt";
                     }
+
                 default:
                     switch (devType)
                     {
@@ -1586,6 +1602,7 @@ namespace PsdzClient.Core
             {
                 arg = "\n";
             }
+
             try
             {
                 stringBuilder.AppendFormat(CultureInfo.InvariantCulture, "(DevId={0}),{1}", DevId, arg);
@@ -1623,6 +1640,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("VCIDevice.ToAttrList()", exception);
             }
+
             return stringBuilder.ToString();
         }
 
@@ -1651,6 +1669,7 @@ namespace PsdzClient.Core
                     Log.Warning("VCIDevice.GetVoltageForString()", "The voltage: {0} is not valid!", voltage);
                 }
             }
+
             return null;
         }
 
@@ -1662,13 +1681,16 @@ namespace PsdzClient.Core
                 {
                     return 1;
                 }
+
                 int num = DevId.Length.CompareTo(vCIDevice.DevId.Length);
                 if (num != 0)
                 {
                     return num;
                 }
+
                 return string.Compare(DevId, vCIDevice.DevId, StringComparison.Ordinal);
             }
+
             return 1;
         }
 
@@ -1687,6 +1709,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("VCIDevice.IntIPAddress2String()", exception);
             }
+
             return null;
         }
 
@@ -1708,6 +1731,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("VCIGuiDevice.UUIDString2UUID()", exception);
             }
+
             leastSigBits = 0L;
             mostSigBits = 0L;
         }
@@ -1718,6 +1742,7 @@ namespace PsdzClient.Core
             {
                 return Serial.GetHashCode();
             }
+
             return base.GetHashCode();
         }
 
@@ -1728,6 +1753,7 @@ namespace PsdzClient.Core
             {
                 return Serial.Equals(vCIDevice.Serial);
             }
+
             return base.Equals(obj);
         }
 
@@ -1832,5 +1858,8 @@ namespace PsdzClient.Core
         {
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        [PreserveSource(Hint = "Added")]
+        private ClientContext _clientContext;
     }
 }
