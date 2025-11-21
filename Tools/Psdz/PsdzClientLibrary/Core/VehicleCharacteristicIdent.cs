@@ -28,6 +28,7 @@ namespace PsdzClient.Core
             this.log = log;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         public bool AssignVehicleCharacteristic(string vehicleCode, IIdentVehicle vehicle, PsdzDatabase.Characteristics characteristic)
         {
             return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
