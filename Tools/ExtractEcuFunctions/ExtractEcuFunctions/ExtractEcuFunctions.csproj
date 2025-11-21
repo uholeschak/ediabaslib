@@ -15,15 +15,17 @@
     <Compile Include="..\..\..\EdiabasLib\BmwFileReader\EcuFunctionStructs.cs">
       <Link>EcuFunctionStructs.cs</Link>
     </Compile>
+    <Compile Include="..\..\Psdz\PsdzClientLibrary\Core\VehicleCharacteristic.cs" Link="VehicleCharacteristic.cs" />
     <Compile Include="..\..\Psdz\PsdzClientLibrary\Core\VehicleCharacteristicAbstract.cs">
       <Link>VehicleCharacteristicAbstract.cs</Link>
     </Compile>
+    <Compile Include="..\..\Psdz\PsdzClientLibrary\PreserveSourceAttribute.cs" Link="PreserveSourceAttribute.cs" />
     <Compile Include="..\Common\DatabaseFunctions.cs">
       <Link>DatabaseFunctions.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" Version="2.1.11" />
     <PackageReference Include="SQLitePCLRaw.core" Version="3.0.2" />
