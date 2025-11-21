@@ -42,7 +42,8 @@ namespace SourceCodeSync
             "internal_CharacteristicsGenerator",
             "BMW.Rheingold.Programming.Common.SecureCodingService",
             "BMW.Rheingold.Programming.ProgrammingService",
-            "BMW.iLean.CommonServices.Logging.Extensions"
+            "BMW.iLean.CommonServices.Logging.Extensions",
+            "BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility.GearboxUtility"
         ];
 
         private static readonly string[] _ignoreInterfaceNames =

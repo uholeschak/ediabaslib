@@ -8,8 +8,6 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
-    // ToDo: Check on update
-    // BMW.Rheingold.CoreFramework.DiagnosticsCommon.GearboxUtility
     public static class GearboxUtility
     {
         private static DateTime legacyDetectionConditionDate = new DateTime(2020, 7, 1);
