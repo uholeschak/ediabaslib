@@ -15,13 +15,6 @@ namespace PsdzClient.Core
 {
 	public class VCIDevice : IComparable, IVciDevice, INotifyPropertyChanged, IVciDeviceRuleEvaluation, ICloneable
     {
-        public enum DeviceTypeDetails
-        {
-            ICOM = 1,
-            ICOMNext = 2,
-            Unspecified = 0
-        }
-
         private readonly HashSet<DeviceState> connectableStates = new HashSet<DeviceState>
         {
             DeviceState.Init,
