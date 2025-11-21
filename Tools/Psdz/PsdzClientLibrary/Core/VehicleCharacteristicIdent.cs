@@ -262,6 +262,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Convert to decimal")]
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
