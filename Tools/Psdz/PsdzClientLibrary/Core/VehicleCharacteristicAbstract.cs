@@ -5,67 +5,6 @@ namespace PsdzClient.Core
 {
     public abstract class VehicleCharacteristicAbstract
     {
-        public enum VehicleCharacteristic : long
-        {
-            Motor = 40142338L,
-            Karosserie = 40146178L,
-            Baureihe = 40140418L,
-            Lenkung = 40141954L,
-            Hubraum = 40142722L,
-            Getriebe = 40141186L,
-            VerkaufsBezeichnung = 40143490L,
-            Typ = 40139650L,
-            Antrieb = 40143874L,
-            BrandName = 40144642L,
-            Leistungsklasse = 40141570L,
-            Ueberarbeitung = 40145794L,
-            Prodart = 40140034L,
-            Ereihe = 40140802L,
-            Land = 40146562L,
-            Tueren = 40144258L,
-            Motorarbeitsverfahren = 68771234050L,
-            Drehmoment = 68771234434L,
-            Hybridkennzeichen = 68771233666L,
-            Produktlinie = 40039947266L,
-            Kraftstoffart = 40143106L,
-            MOTKraftstoffart = 99999999909L,
-            BasicType = 99999999905L,
-            Baureihenverbund = 99999999950L,
-            Sicherheitsrelevant = 40145410L,
-            MOTEinbaulage = 99999999910L,
-            MOTBezeichnung = 99999999918L,
-            AELeistungsklasse = 99999999907L,
-            AEUeberarbeitung = 99999999908L,
-            AEKurzbezeichnung = 99999999906L,
-            BaustandsJahr = -100L,
-            BaustandsMonat = -101L,
-            EMOTBaureihe = 99999999880L,
-            EMOTArbeitsverfahren = 99999999878L,
-            EMOTDrehmoment = 99999999876L,
-            EMOTLeistungsklasse = 99999999874L,
-            EMOTUeberarbeitung = 99999999872L,
-            EMOTBezeichnung = 99999999870L,
-            EMOTKraftstoffart = 99999999868L,
-            EMOTEinbaulage = 99999999866L,
-            CountryOfAssembly = 99999999851L,
-            BaseVersion = 99999999850L,
-            ElektrischeReichweite = 99999999854L,
-            AEBezeichnung = 99999999848L,
-            EngineLabel2 = 99999999701L,
-            Engine2 = 99999999702L,
-            HeatMOTPlatzhalter1 = 99999999703L,
-            HeatMOTPlatzhalter2 = 99999999704L,
-            HeatMOTFortlaufendeNum = 99999999705L,
-            HeatMOTLeistungsklasse = 99999999706L,
-            HeatMOTLebenszyklus = 99999999707L,
-            HeatMOTKraftstoffart = 99999999708L,
-            KraftstoffartEinbaulage = 53330059L,
-            TypeKeyBasic = 40139652L,
-            ESeriesLifeCycle = 99999999858L,
-            LifeCycle = 99999999856L,
-            Sportausfuehrung = 99999999846L
-        }
-
         // ToDo: Check on update
         [PreserveSource(Hint = "Modified")]
         protected bool ComputeCharacteristic(string vehicleCode, params object[] param)
@@ -238,7 +177,7 @@ namespace PsdzClient.Core
                                 return ComputeMOTKraftstoffart(param);
                             case (VehicleCharacteristic)0L:
 #if !NO_DATABASE
-                                // [UH] adapted
+                                // [UH] [IGNORE] adapted
                                 if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is PsdzDatabase.Characteristics xepCharacteristics)
                                 {
                                     identVehicle.TempTypeKeyLeadFromDb = xepCharacteristics.Name;
