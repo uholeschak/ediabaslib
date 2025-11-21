@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PsdzClientLibrary
+namespace PsdzClient
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Enum | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Method | AttributeTargets.Constructor | AttributeTargets.Event, AllowMultiple = false, Inherited = false)]
     public class PreserveSourceAttribute : Attribute

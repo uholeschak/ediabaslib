@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient.Programming
 {

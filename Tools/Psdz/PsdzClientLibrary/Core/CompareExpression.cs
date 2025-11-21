@@ -1,4 +1,4 @@
-﻿using PsdzClientLibrary;
+﻿using PsdzClient;
 using System;
 using System.Globalization;
 using System.IO;

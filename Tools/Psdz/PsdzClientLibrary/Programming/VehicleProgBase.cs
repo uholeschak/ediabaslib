@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClientLibrary.Psdz;
 using System;
+using PsdzClientLibrary.Psdz;
 
 namespace PsdzClient.Programming
 {

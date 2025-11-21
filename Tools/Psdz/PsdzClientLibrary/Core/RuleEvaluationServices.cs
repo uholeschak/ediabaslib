@@ -1,8 +1,4 @@
-﻿using PsdzClient;
-using PsdzClient.Core;
-using PsdzClientLibrary;
-
-namespace PsdzClient.Core
+﻿namespace PsdzClient.Core
 {
     public class RuleEvaluationServices : IRuleEvaluationServices
     {

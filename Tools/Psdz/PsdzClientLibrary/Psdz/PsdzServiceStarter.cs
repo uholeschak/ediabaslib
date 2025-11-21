@@ -1,6 +1,6 @@
 ﻿using log4net;
 using PsdzClient.Core;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Diagnostics;
 using System.Globalization;

@@ -1,5 +1,5 @@
 ﻿using BMW.Rheingold.Psdz.Client;
-using PsdzClientLibrary;
+using PsdzClient;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz

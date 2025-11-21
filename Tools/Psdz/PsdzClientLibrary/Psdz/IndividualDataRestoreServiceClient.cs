@@ -1,7 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
-using PsdzClientLibrary;
+using PsdzClient;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 

@@ -14,7 +14,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient.Core
 {

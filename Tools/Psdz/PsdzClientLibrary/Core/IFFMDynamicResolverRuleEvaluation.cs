@@ -1,4 +1,4 @@
-﻿using PsdzClientLibrary;
+﻿using PsdzClient;
 
 namespace PsdzClient.Core
 {

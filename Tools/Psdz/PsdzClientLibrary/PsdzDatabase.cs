@@ -15,7 +15,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Win32;
 using PsdzClient.Core;
 using PsdzClient.Utility;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient
 {

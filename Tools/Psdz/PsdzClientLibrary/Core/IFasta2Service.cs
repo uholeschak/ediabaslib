@@ -4,7 +4,7 @@ using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Xml;
 using System;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient.Core
 {

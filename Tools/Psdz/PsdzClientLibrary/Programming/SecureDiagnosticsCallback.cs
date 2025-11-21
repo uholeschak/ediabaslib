@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace BMW.Rheingold.Psdz.Client
 {

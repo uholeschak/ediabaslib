@@ -1,5 +1,5 @@
 ﻿using net.sf.jni4net.attributes;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace BMW.Rheingold.Psdz.Client
 {

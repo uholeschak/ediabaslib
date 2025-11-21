@@ -3,7 +3,7 @@ using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using BMW.Rheingold.Psdz.Model.Sfa.RequestNcdSignatureResponseCto;
 using BMW.Rheingold.Psdz.Model.Tal;
-using PsdzClientLibrary;
+using PsdzClient;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;

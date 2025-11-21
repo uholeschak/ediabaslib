@@ -1,6 +1,6 @@
 ﻿using BMW.Rheingold.Psdz.Model.Comparer;
 using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;

@@ -7,7 +7,7 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Exceptions;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace BMW.Rheingold.Psdz.Client
 {

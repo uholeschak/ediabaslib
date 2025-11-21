@@ -6,7 +6,7 @@ using HarmonyLib;
 using Microsoft.Data.Sqlite;
 using log4net;
 
-namespace PsdzClientLibrary
+namespace PsdzClient
 {
     public static class SqlLoader
     {

@@ -1,7 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BmwFileReader;
 using PsdzClient.Utility;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

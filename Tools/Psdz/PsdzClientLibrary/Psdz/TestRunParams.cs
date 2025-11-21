@@ -1,5 +1,5 @@
 ﻿using BMW.Rheingold.Psdz.Model;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;

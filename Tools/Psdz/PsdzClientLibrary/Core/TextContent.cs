@@ -11,7 +11,7 @@ using System.Xml.Linq;
 using System.Xml.Xsl;
 using System.Xml;
 using System;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient.Core
 {

@@ -20,7 +20,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Text;
 using System;
-using PsdzClientLibrary;
+using PsdzClient;
 
 #pragma warning disable CS0618
 namespace PsdzClient.Core

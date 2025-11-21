@@ -1,7 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using log4net.Core;
 using PsdzClient.Core;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

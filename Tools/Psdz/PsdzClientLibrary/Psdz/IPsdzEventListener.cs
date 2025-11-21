@@ -1,5 +1,5 @@
 ﻿using BMW.Rheingold.Psdz.Model.Events;
-using PsdzClientLibrary;
+using PsdzClient;
 using System.ServiceModel;
 
 namespace BMW.Rheingold.Psdz

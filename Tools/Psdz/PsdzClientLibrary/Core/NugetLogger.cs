@@ -1,5 +1,5 @@
 ﻿using log4net;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Diagnostics;
 using System.IO;

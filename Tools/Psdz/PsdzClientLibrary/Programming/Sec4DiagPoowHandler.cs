@@ -3,7 +3,7 @@ using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;

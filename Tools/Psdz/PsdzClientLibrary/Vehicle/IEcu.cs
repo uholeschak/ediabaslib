@@ -1,6 +1,6 @@
 ﻿using PsdzClient.Core;
 using PsdzClient.Programming;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

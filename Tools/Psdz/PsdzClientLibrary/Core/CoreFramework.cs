@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient.Core
 {

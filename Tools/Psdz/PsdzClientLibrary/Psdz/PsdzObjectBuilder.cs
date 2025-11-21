@@ -10,7 +10,7 @@ using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using PsdzClient.Utility;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

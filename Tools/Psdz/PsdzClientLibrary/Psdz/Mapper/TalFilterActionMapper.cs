@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using PsdzClientLibrary.Psdz;
+using PsdzClient.Psdz;
 
 namespace BMW.Rheingold.Psdz
 {

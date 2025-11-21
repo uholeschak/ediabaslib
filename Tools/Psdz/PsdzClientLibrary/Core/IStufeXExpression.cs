@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PsdzClient.Utility;
-using PsdzClientLibrary;
+using PsdzClient;
 
 #pragma warning disable CS0169
 namespace PsdzClient.Core

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient.Programming
 {

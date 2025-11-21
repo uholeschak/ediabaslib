@@ -1,5 +1,5 @@
 ﻿using PsdzClient.Core;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient.Core
 {

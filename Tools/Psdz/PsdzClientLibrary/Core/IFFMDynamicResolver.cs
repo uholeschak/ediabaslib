@@ -1,6 +1,6 @@
 ﻿using net.sf.jni4net.jni;
 using PsdzClient.Programming;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;

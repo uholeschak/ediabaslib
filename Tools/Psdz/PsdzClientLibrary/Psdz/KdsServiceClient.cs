@@ -1,7 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Kds;
 using BMW.Rheingold.Psdz.Model.Sfa;
-using PsdzClientLibrary;
+using PsdzClient;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 

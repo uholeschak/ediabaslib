@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using PsdzClient.Core;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient.Programming
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using PsdzClient.Utility;
-using PsdzClientLibrary;
+using PsdzClient;
 
 namespace PsdzClient.Core.Container
 {

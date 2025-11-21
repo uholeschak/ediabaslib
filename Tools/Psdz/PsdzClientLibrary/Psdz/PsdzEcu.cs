@@ -1,7 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model.Comparer;
 using PsdzClient.Programming;
-using PsdzClientLibrary;
+using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Linq;
