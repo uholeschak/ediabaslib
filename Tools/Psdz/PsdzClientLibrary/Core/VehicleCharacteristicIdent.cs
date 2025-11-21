@@ -21,9 +21,9 @@ namespace PsdzClient.Core
 
         private readonly ILogger log;
 
+        [PreserveSource(Hint = "Reactor removed")]
         public VehicleCharacteristicIdent(ILogger log)
         {
-            //this.reactor = reactor;
             this.log = log;
         }
 
