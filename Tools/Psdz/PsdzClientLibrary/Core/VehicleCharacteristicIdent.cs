@@ -490,10 +490,11 @@ namespace PsdzClient.Core
             return false;
         }
 
+        [PreserveSource(Hint = "Reactor modified")]
         private void GetIdentParameters(params object[] parameters)
         {
             vecInfo = (IIdentVehicle)parameters[0];
-            // [UH] get reactor from vehicle
+            // [UH] [IGNORE] get reactor from vehicle
             reactor = (vecInfo as Vehicle)?.Reactor;
             characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
