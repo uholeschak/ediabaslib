@@ -832,10 +832,11 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         IVciDevice IVehicle.VCI => base.VCI;
-#if false
+
+        [PreserveSource(Hint = "IEnumerable<IZfsResult>", Placeholder = true)]
         [XmlIgnore]
-        IEnumerable<IZfsResult> IVehicle.ZFS => base.ZFS;
-#endif
+        PlaceholderType IVehicle.ZFS => base.ZFS;
+
         [XmlIgnore]
         public double Clamp15MinValue
         {

@@ -191,7 +191,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string ZCS { get; }
 
-        //IEnumerable<IZfsResult> ZFS { get; }
+        [PreserveSource(Hint = "IEnumerable<IZfsEntry>", Placeholder = true)]
+        PlaceholderType ZFS { get; }
 
         bool ZFS_SUCCESSFULLY { get; }
 
