@@ -791,16 +791,19 @@ namespace PsdzClient.Core
                 return null;
             }
         }
-#if false
-        [XmlIgnore]
-        IEnumerable<ICbsInfo> IVehicle.CBS => base.CBS;
 
+        [PreserveSource(Hint = "IEnumerable<ICbsInfo>", Placeholder = true)]
         [XmlIgnore]
-        IEnumerable<IDtc> IVehicle.CombinedFaults => base.CombinedFaults;
+        PlaceholderType IVehicle.CBS => base.CBS;
 
+        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
         [XmlIgnore]
-        IEnumerable<IDiagCode> IVehicle.DiagCodes => base.DiagCodes;
-#endif
+        PlaceholderType IVehicle.CombinedFaults => base.CombinedFaults;
+
+        [PreserveSource(Hint = "IEnumerable<IDiagCode>", Placeholder = true)]
+        [XmlIgnore]
+        PlaceholderType IVehicle.DiagCodes => base.DiagCodes;
+
         [XmlIgnore]
         IEnumerable<IEcu> IVehicle.ECU => base.ECU;
 
