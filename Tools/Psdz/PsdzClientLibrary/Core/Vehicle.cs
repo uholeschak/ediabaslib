@@ -1587,6 +1587,7 @@ namespace PsdzClient.Core
             return null;
         }
 
+        [PreserveSource(Hint = "Unmodified")]
         public bool AddEcu(IEcu ecu)
         {
             return base.ECU.AddIfNotContains(ecu as ECU);
