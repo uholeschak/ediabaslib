@@ -1755,6 +1755,7 @@ namespace PsdzClient.Core
             base.ECU.Add(ecu);
         }
 
+        [PreserveSource(Hint = "Database removed")]
         public void AddEcu(IIdentEcu ecu)
         {
             if ((base.VehicleIdentLevel != IdentificationLevel.VINVehicleReadout && base.VehicleIdentLevel != IdentificationLevel.VINVehicleReadoutOnlineUpdated) || base.BNType == BNType.BNK01X_MOTORBIKE)
@@ -1772,22 +1773,8 @@ namespace PsdzClient.Core
                     ECUTreeColor = ecu.ECUTreeColor,
                     ECUTitle = ecu.ECUTitle
                 };
-#if false
-                IXepEcuCliques xepEcuClique = ecu.XepEcuClique;
-                if (xepEcuClique != null && xepEcuClique.IsValid)
-                {
-                    eCU.XepEcuClique = new XEP_ECUCLIQUES(ecu.XepEcuClique);
-                }
-                else
-                {
-                    eCU.XepEcuClique = new InvalidEcuClique();
-                }
-                if (ecu.XepEcuVariant != null)
-                {
-                    eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
-                }
+
                 AddOrUpdateECU(eCU);
-#endif
             }
         }
 
@@ -2075,36 +2062,12 @@ namespace PsdzClient.Core
             }
             return default(T);
         }
-#if false
+
+        [PreserveSource(Hint = "Cleaned")]
         public void AddDiagCode(string diagCodeString, string diagCodeSuffixString, string originatingAblauf, IList<string> reparaturPaketList, bool teileClearingFlag)
         {
-            if (!string.IsNullOrEmpty(diagCodeString))
-            {
-                if (base.DiagCodes == null)
-                {
-                    base.DiagCodes = new ObservableCollection<typeDiagCode>();
-                }
-                typeDiagCode typeDiagCode2 = new typeDiagCode();
-                typeDiagCode2.DiagnoseCode = diagCodeString;
-                typeDiagCode2.DiagnoseCodeSuffix = diagCodeSuffixString;
-                typeDiagCode2.Origin = ((originatingAblauf == null) ? string.Empty : originatingAblauf);
-                if (reparaturPaketList != null)
-                {
-                    typeDiagCode2.ReparaturPaket = new ObservableCollection<string>(reparaturPaketList);
-                }
-                else
-                {
-                    typeDiagCode2.ReparaturPaket = new ObservableCollection<string>();
-                }
-                typeDiagCode2.TeileClearing = teileClearingFlag;
-                base.DiagCodes.Add(typeDiagCode2);
-                if (!string.IsNullOrEmpty(diagCodeString) && !diagCodesProgramming.Contains(diagCodeString))
-                {
-                    diagCodesProgramming.Add(diagCodeString);
-                }
-            }
         }
-#endif
+
         IEcu IVehicle.getECU(long? sgAdr)
         {
             return getECU(sgAdr);
