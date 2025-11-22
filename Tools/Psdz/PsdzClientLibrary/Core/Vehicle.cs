@@ -16,114 +16,62 @@ using PsdzClient.Programming;
 #pragma warning disable CS0169, CS0649, CS0618
 namespace PsdzClient.Core
 {
-    // ToDo: Check on update
     public class Vehicle : typeVehicle, IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle
     {
         public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";
-
         [PreserveSource(Hint = "ObservableCollectionEx<Fault>", Placeholder = true)]
         private readonly PlaceholderType pKodeList;
-
         private readonly ParameterContainer sessionDataStore;
-
         private string vinRangeType;
-
         private string vinRangeTypeLastResolvedType;
-
         private FA targetFA;
-
         private bool isBusy;
-
         private string productLine;
-
         private string doorNumber;
-
         private string securityRelevant;
-
         private DateTime? cDatetimeByModelYearMonth;
-
         private HashSet<int> validPWFStates;
-
         private double clamp15MinValue;
-
         private double clamp30MinValue;
-
         private bool withLfpBattery;
-
         private bool withLfpNCarBattery;
-
         [PreserveSource(Hint = "Database modified")]
         private PsdzDatabase.BatteryEnum batteryType;
-
         private bool isClosingOperationActive;
-
         private string verkaufsBezeichnungField;
-
         private bool powerSafeModeByOldEcus;
-
         private bool powerSafeModeByNewEcus;
-
         private bool vehicleTestDone;
-
         private bool isReadingFastaDataFinished = true;
-
         private bool vinNotReadbleFromCarAbort;
-
         private int? faultCodeSum;
-
         private int? nonSignalErrorFaultCodeSum;
-
         private string targetILevel;
-
         private readonly ObservableCollection<string> diagCodesProgramming;
-
         [PreserveSource(Hint = "IList<Fault>", Placeholder = true)]
         private PlaceholderType faultList;
-
         [PreserveSource(Hint = "ObservableCollection<CheckControlMessage>", Placeholder = true)]
         private PlaceholderType checkControlMessages;
-
         private bool noVehicleCommunicationRunning;
-
         private string salesDesignationBadgeUIText;
-
         private string eBezeichnungUIText;
-
         private const int indexOfFirsHDDAboUpdateInDecimal = 54;
-
         private bool isNewIdentActiveField;
-
         [PreserveSource(Hint = "BlockingCollection<VirtualFaultInfo>", Placeholder = true)]
         private PlaceholderType virtualFaultInfoList;
-
         private string hmiVersion;
-
         private string kraftstoffartEinbaulage;
-
         private string baustand;
-
         private string typeKey;
-
         private string typeKeyLead;
-
         private string typeKeyBasic;
-
         private string eSeriesLifeCycle;
-
         private string lifeCycle;
-
         private string sportausfuehrung;
-
         [PreserveSource(Hint = "Database modified")]
         private PsdzDatabase.BordnetsData bordnetsData;
-
         private VehicleClassification classification;
-
         private IVehicleProfileChecksum vpc;
-
-        [PreserveSource(Hint = "Local reactor")]
-        public Reactor Reactor { get; private set; }
-
         [XmlIgnore]
         public List<IEcu> SvtECU { get; set; } = new List<IEcu>();
 
@@ -133,6 +81,10 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public DateTime? LastProgramDate { get; set; }
 
+        [PreserveSource(Hint = "SessionStart", Placeholder = true)]
+        [XmlIgnore]
+        public PlaceholderType SessionStart { get; set; }
+
         [PreserveSource(Hint = "Database modified")]
         [XmlIgnore]
         public PsdzDatabase.BordnetsData BordnetsData
@@ -141,6 +93,7 @@ namespace PsdzClient.Core
             {
                 return bordnetsData;
             }
+
             set
             {
                 if (bordnetsData != value)
@@ -157,6 +110,7 @@ namespace PsdzClient.Core
             {
                 return verkaufsBezeichnungField;
             }
+
             set
             {
                 if (verkaufsBezeichnungField != value)
@@ -177,6 +131,7 @@ namespace PsdzClient.Core
             {
                 return hmiVersion;
             }
+
             set
             {
                 hmiVersion = value;
@@ -190,6 +145,7 @@ namespace PsdzClient.Core
             {
                 return eBezeichnungUIText;
             }
+
             set
             {
                 eBezeichnungUIText = value;
@@ -204,6 +160,7 @@ namespace PsdzClient.Core
             {
                 return salesDesignationBadgeUIText;
             }
+
             set
             {
                 salesDesignationBadgeUIText = value;
@@ -217,6 +174,7 @@ namespace PsdzClient.Core
             {
                 return kraftstoffartEinbaulage;
             }
+
             set
             {
                 if (kraftstoffartEinbaulage != value)
@@ -244,6 +202,7 @@ namespace PsdzClient.Core
             {
                 return targetFA;
             }
+
             set
             {
                 targetFA = value;
@@ -257,6 +216,7 @@ namespace PsdzClient.Core
             {
                 return targetILevel;
             }
+
             set
             {
                 targetILevel = value;
@@ -273,6 +233,7 @@ namespace PsdzClient.Core
                 {
                     return base.SerialGearBox.Substring(0, 7);
                 }
+
                 return base.SerialGearBox;
             }
         }
@@ -288,6 +249,7 @@ namespace PsdzClient.Core
             {
                 return vinRangeType;
             }
+
             set
             {
                 if (vinRangeType != value)
@@ -305,6 +267,7 @@ namespace PsdzClient.Core
             {
                 return isClosingOperationActive;
             }
+
             set
             {
                 isClosingOperationActive = value;
@@ -324,6 +287,7 @@ namespace PsdzClient.Core
                     {
                         return null;
                     }
+
                     return base.VIN17.Substring(0, 10);
                 }
                 catch (Exception exception)
@@ -342,6 +306,7 @@ namespace PsdzClient.Core
                 {
                     return base.MainSeriesSgbd.Substring(0, 3);
                 }
+
                 return base.Ereihe;
             }
         }
@@ -356,12 +321,14 @@ namespace PsdzClient.Core
                     {
                         return null;
                     }
+
                     return base.VIN17.Substring(10, 7);
                 }
                 catch (Exception exception)
                 {
                     Log.WarningException("Vehicle.get_VIN7", exception);
                 }
+
                 return null;
             }
         }
@@ -376,14 +343,17 @@ namespace PsdzClient.Core
                     {
                         return base.FA.TYPE;
                     }
+
                     if (string.IsNullOrEmpty(base.VIN17))
                     {
                         return null;
                     }
+
                     if (!string.IsNullOrEmpty(VINRangeType))
                     {
                         return VINRangeType;
                     }
+
                     if (!string.IsNullOrEmpty(VINType))
                     {
                         string text = VINType.Substring(0, 3);
@@ -419,6 +389,7 @@ namespace PsdzClient.Core
                             default:
                                 return VINType;
                         }
+
                         return text;
                     }
                 }
@@ -426,6 +397,7 @@ namespace PsdzClient.Core
                 {
                     Log.WarningException("Vehicle.get_VINType", exception);
                 }
+
                 return null;
             }
         }
@@ -440,12 +412,14 @@ namespace PsdzClient.Core
                     {
                         return null;
                     }
+
                     return base.VIN17.Substring(3, 4);
                 }
                 catch (Exception exception)
                 {
                     Log.WarningException("Vehicle.get_VINType", exception);
                 }
+
                 return null;
             }
         }
@@ -456,6 +430,7 @@ namespace PsdzClient.Core
             {
                 return isBusy;
             }
+
             set
             {
                 isBusy = value;
@@ -471,6 +446,7 @@ namespace PsdzClient.Core
             {
                 return productLine;
             }
+
             set
             {
                 if (productLine != value)
@@ -487,6 +463,7 @@ namespace PsdzClient.Core
             {
                 return securityRelevant;
             }
+
             set
             {
                 if (securityRelevant != value)
@@ -503,6 +480,7 @@ namespace PsdzClient.Core
             {
                 return doorNumber;
             }
+
             set
             {
                 if (doorNumber != value)
@@ -523,6 +501,7 @@ namespace PsdzClient.Core
             {
                 return typeKey;
             }
+
             set
             {
                 if (typeKey != value)
@@ -540,6 +519,7 @@ namespace PsdzClient.Core
             {
                 return typeKeyLead;
             }
+
             set
             {
                 if (typeKeyLead != value)
@@ -556,6 +536,7 @@ namespace PsdzClient.Core
             {
                 return typeKeyBasic;
             }
+
             set
             {
                 if (typeKeyBasic != value)
@@ -572,6 +553,7 @@ namespace PsdzClient.Core
             {
                 return eSeriesLifeCycle;
             }
+
             set
             {
                 if (eSeriesLifeCycle != value)
@@ -588,6 +570,7 @@ namespace PsdzClient.Core
             {
                 return lifeCycle;
             }
+
             set
             {
                 if (lifeCycle != value)
@@ -604,6 +587,7 @@ namespace PsdzClient.Core
             {
                 return sportausfuehrung;
             }
+
             set
             {
                 if (sportausfuehrung != value)
@@ -616,18 +600,15 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<CheckControlMessage>", Placeholder = true)]
         public PlaceholderType CheckControlMessages;
-
         [XmlIgnore]
         public bool IsCcmReadoutDone { get; set; }
 
         [PreserveSource(Hint = "IList<Fault>", Placeholder = true)]
         [XmlIgnore]
         public PlaceholderType FaultList;
-
         [PreserveSource(Hint = "BlockingCollection<VirtualFaultInfo>", Placeholder = true)]
         [XmlIgnore]
         public PlaceholderType VirtualFaultInfoList;
-
         [PreserveSource(Hint = "ObservableCollectionEx<Fault>", Placeholder = true)]
         public PlaceholderType PKodeList => pKodeList;
 
@@ -644,6 +625,7 @@ namespace PsdzClient.Core
             {
                 return vehicleTestDone;
             }
+
             set
             {
                 if (vehicleTestDone != value)
@@ -660,6 +642,7 @@ namespace PsdzClient.Core
             {
                 return isReadingFastaDataFinished;
             }
+
             set
             {
                 isReadingFastaDataFinished = value;
@@ -673,6 +656,7 @@ namespace PsdzClient.Core
             {
                 return isNewIdentActiveField;
             }
+
             set
             {
                 isNewIdentActiveField = value;
@@ -692,6 +676,7 @@ namespace PsdzClient.Core
                 {
                     return powerSafeModeByNewEcus;
                 }
+
                 return true;
             }
         }
@@ -703,6 +688,7 @@ namespace PsdzClient.Core
             {
                 return powerSafeModeByOldEcus;
             }
+
             set
             {
                 Log.Info("Vehicle.IsPowerSafeModeActiveByOldEcus_set", "Setting vehicle power safe modus from \"{0}\" to \"{1}\".", powerSafeModeByOldEcus, value);
@@ -717,6 +703,7 @@ namespace PsdzClient.Core
             {
                 return vinNotReadbleFromCarAbort;
             }
+
             set
             {
                 vinNotReadbleFromCarAbort = value;
@@ -730,6 +717,7 @@ namespace PsdzClient.Core
             {
                 return powerSafeModeByNewEcus;
             }
+
             set
             {
                 Log.Info("Vehicle.IsPowerSafeModeActiveByNewEcus_set", "Setting vehicle power safe modus from \"{0}\" to \"{1}\".", powerSafeModeByNewEcus, value);
@@ -744,6 +732,7 @@ namespace PsdzClient.Core
             {
                 return faultCodeSum;
             }
+
             set
             {
                 faultCodeSum = value;
@@ -758,6 +747,7 @@ namespace PsdzClient.Core
             {
                 return nonSignalErrorFaultCodeSum;
             }
+
             set
             {
                 nonSignalErrorFaultCodeSum = value;
@@ -776,12 +766,14 @@ namespace PsdzClient.Core
                     {
                         return base.FA.C_DATETIME;
                     }
+
                     if (!string.IsNullOrEmpty(base.Modelljahr) && !string.IsNullOrEmpty(base.Modellmonat))
                     {
                         if (!cDatetimeByModelYearMonth.HasValue)
                         {
                             cDatetimeByModelYearMonth = DateTime.Parse(string.Format(CultureInfo.InvariantCulture, "{0}-{1}-01", base.Modelljahr, base.Modellmonat), CultureInfo.InvariantCulture);
                         }
+
                         return cDatetimeByModelYearMonth;
                     }
                 }
@@ -789,6 +781,7 @@ namespace PsdzClient.Core
                 {
                     Log.WarningException("Vehicle.get_C_DATETIME()", exception);
                 }
+
                 return null;
             }
         }
@@ -809,7 +802,7 @@ namespace PsdzClient.Core
         IEnumerable<IEcu> IVehicle.ECU => base.ECU;
 
         [XmlIgnore]
-        IFa IVehicle.FA => base.FA;
+        BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa IVehicle.FA => base.FA;
 
         [XmlIgnore]
         IEnumerable<IFfmResult> IVehicle.FFM => base.FFM;
@@ -845,6 +838,7 @@ namespace PsdzClient.Core
             {
                 return clamp15MinValue;
             }
+
             set
             {
                 if (clamp15MinValue != value)
@@ -861,6 +855,7 @@ namespace PsdzClient.Core
             {
                 return withLfpBattery;
             }
+
             set
             {
                 if (withLfpBattery != value)
@@ -877,6 +872,7 @@ namespace PsdzClient.Core
             {
                 return withLfpNCarBattery;
             }
+
             set
             {
                 if (withLfpNCarBattery != value)
@@ -898,6 +894,7 @@ namespace PsdzClient.Core
             {
                 return batteryType;
             }
+
             set
             {
                 if (batteryType != value)
@@ -915,6 +912,7 @@ namespace PsdzClient.Core
             {
                 return clamp30MinValue;
             }
+
             set
             {
                 if (clamp30MinValue != value)
@@ -932,6 +930,7 @@ namespace PsdzClient.Core
             {
                 return validPWFStates;
             }
+
             set
             {
                 if (validPWFStates != value)
@@ -953,6 +952,7 @@ namespace PsdzClient.Core
             {
                 return baustand;
             }
+
             set
             {
                 if (baustand != value)
@@ -970,6 +970,7 @@ namespace PsdzClient.Core
             {
                 return noVehicleCommunicationRunning;
             }
+
             set
             {
                 noVehicleCommunicationRunning = value;
@@ -1000,6 +1001,7 @@ namespace PsdzClient.Core
             {
                 return base.FA;
             }
+
             set
             {
                 if (base.FA != value)
@@ -1016,6 +1018,7 @@ namespace PsdzClient.Core
             {
                 return (BordnetType)base.BNType;
             }
+
             set
             {
                 base.BNType = (BNType)value;
@@ -1029,6 +1032,7 @@ namespace PsdzClient.Core
             {
                 return classification;
             }
+
             set
             {
                 if (classification != value)
@@ -1046,6 +1050,7 @@ namespace PsdzClient.Core
             {
                 return Classification;
             }
+
             set
             {
                 Classification = (VehicleClassification)value;
@@ -1059,19 +1064,15 @@ namespace PsdzClient.Core
             {
                 return vpc;
             }
+
             set
             {
                 vpc = value;
             }
         }
 
-        [XmlIgnore]
         public string VehicleModelRecognition { get; set; }
-
-        [XmlIgnore]
         public string TempTypeKeyLeadFromDb { get; set; }
-
-        [XmlIgnore]
         public string TempTypeKeyBasicFromFbm { get; set; }
 
         [PreserveSource(Hint = "clientContext added")]
@@ -1085,11 +1086,7 @@ namespace PsdzClient.Core
             // [IGNORE] base.Testplan = new TestPlanType(this);
             diagCodesProgramming = new ObservableCollection<string>();
             IsClosingOperationActive = false;
-            validPWFStates = new HashSet<int>(new int[17]
-            {
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-                10, 11, 12, 13, 14, 15, 16
-            });
+            validPWFStates = new HashSet<int>(new int[17] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
             clamp15MinValue = ConfigSettings.GetConfigDouble("BMW.Rheingold.ISTAGUI.Clamp15MinVoltage", 0.0);
             clamp30MinValue = 9.95; // [UH] [IGNORE] new VoltageThreshold(BatteryEnum.Pb).MinError;
             // [IGNORE] RxSwin = new RxSwinData();
@@ -1118,6 +1115,7 @@ namespace PsdzClient.Core
                     return vinRangesByVin.TypeKey;
                 }
             }
+
             return null;
         }
 
@@ -1147,7 +1145,11 @@ namespace PsdzClient.Core
 
         public string GetFSCfromUpdateIndex(string updateIndex, string huVariante)
         {
-            string[] source = new string[2] { "HU_MGU", "ENAVEVO" };
+            string[] source = new string[2]
+            {
+                "HU_MGU",
+                "ENAVEVO"
+            };
             try
             {
                 int num = Convert.ToInt32(updateIndex, 16);
@@ -1156,6 +1158,7 @@ namespace PsdzClient.Core
                     string text = updateIndex.Substring(0, 2);
                     return updateIndex.Substring(2, 2) + "-" + text;
                 }
+
                 if (num > 45)
                 {
                     int months = num - 54;
@@ -1163,6 +1166,7 @@ namespace PsdzClient.Core
                     new DateTime(2017, 10, 1);
                     return dateTime.Month + "-" + dateTime.Year;
                 }
+
                 if (num > 33)
                 {
                     int num2 = 46 - num;
@@ -1170,6 +1174,7 @@ namespace PsdzClient.Core
                     DateTime dateTime2 = new DateTime(2017, 10, 1).AddMonths(months2);
                     return dateTime2.Month + "-" + dateTime2.Year;
                 }
+
                 return "-";
             }
             catch
@@ -1188,6 +1193,7 @@ namespace PsdzClient.Core
                     Log.Warning(Log.CurrentMethod() + "()", "file doesn't exist: {0}", filename);
                     return null;
                 }
+
                 using (FileStream input = File.OpenRead(filename))
                 {
                     using (XmlTextReader xmlReader = new XmlTextReader(input))
@@ -1202,6 +1208,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException(Log.CurrentMethod() + "()", exception);
             }
+
             return null;
         }
 
@@ -1274,8 +1281,10 @@ namespace PsdzClient.Core
                                         goto IL_01b5;
                                 }
                             }
+
                             goto IL_01b3;
                         }
+
                         if (c != 'E')
                         {
                             if (c != 'R')
@@ -1315,47 +1324,54 @@ namespace PsdzClient.Core
                         default:
                             goto IL_01b5;
                     }
+
                     if (ereihe == "K41" || ereihe == "R21")
                     {
                         goto IL_01b3;
                     }
                 }
             }
+
             goto IL_01b5;
-        IL_00fd:
-            if (ereihe == "247")
-            {
-                goto IL_01b3;
-            }
+            IL_00fd:
+                if (ereihe == "247")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
-        IL_0127:
-            if (ereihe == "K30")
-            {
-                goto IL_01b3;
-            }
+            IL_0127:
+                if (ereihe == "K30")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
-        IL_0112:
-            if (ereihe == "259")
-            {
-                goto IL_01b3;
-            }
+            IL_0112:
+                if (ereihe == "259")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
-        IL_01b3:
-            return true;
-        IL_00c3:
-            if (ereihe == "R22")
-            {
-                goto IL_01b3;
-            }
+            IL_01b3:
+                return true;
+            IL_00c3:
+                if (ereihe == "R22")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
-        IL_00d8:
-            if (ereihe == "R28" || ereihe == "248")
-            {
-                goto IL_01b3;
-            }
+            IL_00d8:
+                if (ereihe == "R28" || ereihe == "248")
+                {
+                    goto IL_01b3;
+                }
+
             goto IL_01b5;
-        IL_01b5:
-            return false;
+            IL_01b5:
+                return false;
         }
 
         public bool IsEreiheValid()
@@ -1364,6 +1380,7 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             return true;
         }
 
@@ -1386,14 +1403,21 @@ namespace PsdzClient.Core
 
         public typeECU_Transaction getECUTransaction(ECU transECU, string transId)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
+
             if (transECU == null)
             {
                 return null;
             }
+
             if (string.IsNullOrEmpty(transId))
             {
                 return null;
             }
+
             try
             {
                 if (transECU.TAL != null)
@@ -1411,11 +1435,17 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehicle.getECUTransaction()", exception);
             }
+
             return null;
         }
 
         public bool hasBusType(BusType bus)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
+
             if (base.ECU != null)
             {
                 foreach (ECU item in base.ECU)
@@ -1426,20 +1456,28 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             return false;
         }
 
         public bool HasSA(string checkSA)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
+
             if (string.IsNullOrEmpty(checkSA))
             {
                 Log.Warning("CoreFramework.hasSA()", "checkSA was null or empty");
                 return false;
             }
+
             if (base.FA == null)
             {
                 return false;
             }
+
             FA fA = ((targetFA != null) ? targetFA : base.FA);
             if (fA.SA != null)
             {
@@ -1449,12 +1487,14 @@ namespace PsdzClient.Core
                     {
                         return true;
                     }
+
                     if (item.Length == 4 && string.Compare(item.Substring(1), checkSA, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return true;
                     }
                 }
             }
+
             if (fA.E_WORT != null)
             {
                 foreach (string item2 in fA.E_WORT)
@@ -1465,6 +1505,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             if (fA.HO_WORT != null)
             {
                 foreach (string item3 in fA.HO_WORT)
@@ -1475,6 +1516,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             return false;
         }
 
@@ -1490,18 +1532,26 @@ namespace PsdzClient.Core
                         flag = (byte)((flag ? 1u : 0u) | 1u) != 0;
                     }
                 }
+
                 return flag;
             }
+
             return true;
         }
 
         public bool? hasFFM(string checkFFM)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
+
             if (string.IsNullOrEmpty(checkFFM))
             {
                 Log.Warning("CoreFramework.hasFFM()", "checkFFM was null or empty");
                 return true;
             }
+
             if (base.FFM != null)
             {
                 foreach (FFMResult item in base.FFM)
@@ -1512,6 +1562,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             return null;
         }
 
@@ -1521,6 +1572,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             foreach (FFMResult item in base.FFM)
             {
                 if (string.Compare(item.Name, ffm.Name, StringComparison.OrdinalIgnoreCase) == 0)
@@ -1532,11 +1584,17 @@ namespace PsdzClient.Core
                     return;
                 }
             }
+
             base.FFM.Add(new FFMResult(ffm));
         }
 
         public ECU getECU(long? sgAdr)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
+
             try
             {
                 foreach (ECU item in base.ECU)
@@ -1545,6 +1603,7 @@ namespace PsdzClient.Core
                     {
                         return item;
                     }
+
                     if (!string.IsNullOrEmpty(item.ECU_ADR))
                     {
                         string text = string.Empty;
@@ -1552,10 +1611,12 @@ namespace PsdzClient.Core
                         {
                             text = item.ECU_ADR.ToUpper().Substring(2);
                         }
+
                         if (item.ECU_ADR.Length == 2)
                         {
                             text = item.ECU_ADR.ToUpper();
                         }
+
                         if (text == string.Format(CultureInfo.InvariantCulture, "{0:X2}", sgAdr))
                         {
                             return item;
@@ -1567,11 +1628,17 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehicle.getECU()", exception);
             }
+
             return null;
         }
 
         public ECU getECU(long? sgAdr, long? subAddress)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
+
             try
             {
                 foreach (ECU item in base.ECU)
@@ -1586,6 +1653,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehcile.getECU()", exception);
             }
+
             return null;
         }
 
@@ -1602,10 +1670,16 @@ namespace PsdzClient.Core
 
         public IEcu getECUbyECU_SGBD(string ECU_SGBD)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed!!!");
+            }
+
             if (string.IsNullOrEmpty(ECU_SGBD))
             {
                 return null;
             }
+
             try
             {
                 string[] array = ECU_SGBD.Split('|');
@@ -1624,15 +1698,22 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehicle.getECUbyECU_SGBD()", exception);
             }
+
             return null;
         }
 
         public IEcu getECUbyTITLE_ECUTREE(string grobName)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
+
             if (string.IsNullOrEmpty(grobName))
             {
                 return null;
             }
+
             try
             {
                 foreach (ECU item in base.ECU)
@@ -1647,21 +1728,29 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehicle.getECUbyTITLE_ECUTREE()", exception);
             }
+
             return null;
         }
 
         public ECU getECUbyECU_GRUPPE(string ECU_GRUPPE)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
+
             if (string.IsNullOrEmpty(ECU_GRUPPE))
             {
                 Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "parameter was null or empty");
                 return null;
             }
+
             if (base.ECU == null)
             {
                 Log.Warning("Vehicle.getECUbyECU_GRUPPE()", "ECU was null");
                 return null;
             }
+
             try
             {
                 foreach (ECU item in base.ECU)
@@ -1670,6 +1759,7 @@ namespace PsdzClient.Core
                     {
                         continue;
                     }
+
                     string[] array = ECU_GRUPPE.Split('|');
                     string[] array2 = item.ECU_GRUPPE.Split('|');
                     foreach (string a in array2)
@@ -1689,11 +1779,17 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehicle.getECUbyECU_GRUPPE()", exception);
             }
+
             return null;
         }
 
         public uint getDiagProtECUCount(typeDiagProtocoll ecuDiag)
         {
+            if (!CoreFramework.validLicense)
+            {
+                throw new Exception("This copy of CoreFramework.dll is not licensed !!!");
+            }
+
             uint num = 0u;
             try
             {
@@ -1709,6 +1805,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehcile.getECU()", exception);
             }
+
             return num;
         }
 
@@ -1754,7 +1851,6 @@ namespace PsdzClient.Core
                     ECUTreeColor = ecu.ECUTreeColor,
                     ECUTitle = ecu.ECUTitle
                 };
-
                 AddOrUpdateECU(eCU);
             }
         }
@@ -1768,10 +1864,12 @@ namespace PsdzClient.Core
                     Log.Warning("Vehicle.AddOrUpdateECU()", "ecu was null");
                     return false;
                 }
+
                 if (base.ECU == null)
                 {
                     base.ECU = new ObservableCollection<ECU>();
                 }
+
                 foreach (ECU item in base.ECU)
                 {
                     if (item.ID_SG_ADR == nECU.ID_SG_ADR)
@@ -1785,6 +1883,7 @@ namespace PsdzClient.Core
                         }
                     }
                 }
+
                 base.ECU.Add(nECU);
                 Log.Info("Vehicle.AddOrUpdateECU()", "adding ecu: \"{0:X2}\" (hex.), slave address: \"{1:X2}\" (hex.).", nECU.ID_SG_ADR, nECU.ID_LIN_SLAVE_ADR);
                 return true;
@@ -1793,6 +1892,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehicle.AddOrUpdateECU()", exception);
             }
+
             return false;
         }
 
@@ -1804,6 +1904,7 @@ namespace PsdzClient.Core
             {
                 return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, this, datavalueId, internalResult);
             }
+
             Log.Warning("Vehicle.getISTACharactersitics()", "No entry found in CharacteristicRoots for id: {0}!", id);
             value = "???";
             return false;
@@ -1823,6 +1924,7 @@ namespace PsdzClient.Core
                 {
                     base.Status_FunctionProgress = progress.Value;
                 }
+
                 IsNoVehicleCommunicationRunning = base.Status_FunctionState != StateType.running;
             }
             catch (Exception exception)
@@ -1846,30 +1948,42 @@ namespace PsdzClient.Core
                 {
                     return true;
                 }
+
                 if (string.IsNullOrEmpty(base.ILevel))
                 {
                     Log.Info("Vehicle.evaILevelExpression()", "ILevel unknown; result will be true; expression was: {0}", iLevelExpressions);
                     return true;
                 }
+
                 if (iLevelExpressions.Contains("&"))
                 {
                     flag2 = false;
                     flag = true;
                 }
+
                 if (CoreFramework.DebugLevel > 0)
                 {
                     Log.Info("Vehicle.evalILevelExpression()", "expression:{0} vehicle iLEVEL:{1}", iLevelExpressions, base.ILevel);
                 }
-                string[] separator = new string[2] { "&", "|" };
+
+                string[] separator = new string[2]
+                {
+                    "&",
+                    "|"
+                };
                 string[] array = iLevelExpressions.Split(separator, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string text in array)
                 {
-                    string[] separator2 = new string[1] { "," };
+                    string[] separator2 = new string[1]
+                    {
+                        ","
+                    };
                     string[] array2 = text.Split(separator2, StringSplitOptions.RemoveEmptyEntries);
                     if (array2.Length != 2)
                     {
                         continue;
                     }
+
                     Log.Info("Vehicle.evalILevelExpression()", "expression {0} {1}", base.ILevel, text);
                     if (string.Compare(base.ILevel, 0, array2[1], 0, 4, StringComparison.OrdinalIgnoreCase) == 0)
                     {
@@ -1880,6 +1994,7 @@ namespace PsdzClient.Core
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "> was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) > FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "<":
@@ -1887,6 +2002,7 @@ namespace PsdzClient.Core
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "< was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) < FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "=":
@@ -1894,6 +2010,7 @@ namespace PsdzClient.Core
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "= was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) == FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case ">=":
@@ -1901,6 +2018,7 @@ namespace PsdzClient.Core
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", ">= was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) >= FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "<=":
@@ -1908,6 +2026,7 @@ namespace PsdzClient.Core
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "<= was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) <= FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                             case "!=":
@@ -1916,6 +2035,7 @@ namespace PsdzClient.Core
                                 {
                                     Log.Info("Vehicle.evalILevelExpression()", "!= was true");
                                 }
+
                                 flag = ((!flag2) ? (flag & (FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))) : (flag | (FormatConverter.ExtractNumericalILevel(base.ILevel) != FormatConverter.ExtractNumericalILevel(array2[1]))));
                                 break;
                         }
@@ -1925,6 +2045,7 @@ namespace PsdzClient.Core
                         Log.Warning("Vehicle.evalILevelExpression()", "iLevel main type does not match");
                     }
                 }
+
                 return flag;
             }
             catch (Exception exception)
@@ -1944,6 +2065,7 @@ namespace PsdzClient.Core
                     {
                         return true;
                     }
+
                     if (!string.IsNullOrEmpty(item.ECU_ADR) && !string.IsNullOrEmpty(checkSG.ECU_ADR) && string.Compare(item.ECU_ADR, checkSG.ECU_ADR, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return true;
@@ -1954,6 +2076,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehicle.isECUAlreadyScanned()", exception);
             }
+
             return false;
         }
 
@@ -1978,49 +2101,57 @@ namespace PsdzClient.Core
                             break;
                         case "/Result/DList":
                         case "/Result/GruppenListe":
+                        {
+                            string text4 = string.Empty;
+                            foreach (ECU item in base.ECU)
                             {
-                                string text4 = string.Empty;
-                                foreach (ECU item in base.ECU)
-                                {
-                                    text4 = text4 + item.ECU_GRUPPE + ",";
-                                }
-                                text4 = text4.TrimEnd(',');
-                                obj = text4;
-                                break;
+                                text4 = text4 + item.ECU_GRUPPE + ",";
                             }
+
+                            text4 = text4.TrimEnd(',');
+                            obj = text4;
+                            break;
+                        }
+
                         case "/Result/SonderAusstattungsListe":
+                        {
+                            string text3 = string.Empty;
+                            foreach (string item2 in base.FA.SA)
                             {
-                                string text3 = string.Empty;
-                                foreach (string item2 in base.FA.SA)
-                                {
-                                    text3 = text3 + item2 + ",";
-                                }
-                                text3 = text3.TrimEnd(',');
-                                obj = text3;
-                                break;
+                                text3 = text3 + item2 + ",";
                             }
+
+                            text3 = text3.TrimEnd(',');
+                            obj = text3;
+                            break;
+                        }
+
                         case "/Result/EWortListe":
+                        {
+                            string text2 = string.Empty;
+                            foreach (string item3 in base.FA.E_WORT)
                             {
-                                string text2 = string.Empty;
-                                foreach (string item3 in base.FA.E_WORT)
-                                {
-                                    text2 = text2 + item3 + ",";
-                                }
-                                text2 = text2.TrimEnd(',');
-                                obj = text2;
-                                break;
+                                text2 = text2 + item3 + ",";
                             }
+
+                            text2 = text2.TrimEnd(',');
+                            obj = text2;
+                            break;
+                        }
+
                         case "/Result/HOWortListe":
+                        {
+                            string text = string.Empty;
+                            foreach (string item4 in base.FA.HO_WORT)
                             {
-                                string text = string.Empty;
-                                foreach (string item4 in base.FA.HO_WORT)
-                                {
-                                    text = text + item4 + ",";
-                                }
-                                text = text.TrimEnd(',');
-                                obj = text;
-                                break;
+                                text = text + item4 + ",";
                             }
+
+                            text = text.TrimEnd(',');
+                            obj = text;
+                            break;
+                        }
+
                         case "/Result/Baustand":
                             obj = base.FA.C_DATE;
                             break;
@@ -2028,12 +2159,14 @@ namespace PsdzClient.Core
                             Log.Error("VehicleHelper.getResultAs<T>", "Unknown resultName '{0}' found!", resultName);
                             break;
                     }
+
                     if (obj != null)
                     {
                         if (obj.GetType() != typeFromHandle)
                         {
                             return (T)Convert.ChangeType(obj, typeFromHandle);
                         }
+
                         return (T)obj;
                     }
                 }
@@ -2042,6 +2175,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("Vehicle.getISTAResultAs(string resultName)", exception);
             }
+
             return default(T);
         }
 
@@ -2071,8 +2205,22 @@ namespace PsdzClient.Core
             {
                 string[] array = new string[16]
                 {
-                "ASCMK20", "absmk4", "absmk4g", "abs5", "abs_uc", "asc4gus", "asc5", "asc57", "asc57r75", "asc5d",
-                "ascmk20", "ascmk4.prg", "ascmk4g", "ascmk4g1", "asc_l22", "asc_t"
+                    "ASCMK20",
+                    "absmk4",
+                    "absmk4g",
+                    "abs5",
+                    "abs_uc",
+                    "asc4gus",
+                    "asc5",
+                    "asc57",
+                    "asc57r75",
+                    "asc5d",
+                    "ascmk20",
+                    "ascmk4.prg",
+                    "ascmk4g",
+                    "ascmk4g1",
+                    "asc_l22",
+                    "asc_t"
                 };
                 ECU eCU = getECU(86L, null);
                 if (eCU != null && eCU.IDENT_SUCCESSFULLY)
@@ -2085,8 +2233,10 @@ namespace PsdzClient.Core
                             return true;
                         }
                     }
+
                     return false;
                 }
+
                 eCU = getECU(41L, null);
                 if (eCU != null && eCU.IDENT_SUCCESSFULLY)
                 {
@@ -2098,8 +2248,10 @@ namespace PsdzClient.Core
                             return true;
                         }
                     }
+
                     return false;
                 }
+
                 eCU = getECU(54L, null);
                 if (eCU != null && eCU.IDENT_SUCCESSFULLY)
                 {
@@ -2111,9 +2263,11 @@ namespace PsdzClient.Core
                             return true;
                         }
                     }
+
                     return false;
                 }
             }
+
             return null;
         }
 
@@ -2143,8 +2297,9 @@ namespace PsdzClient.Core
         {
             if ((ConfigSettings.IsProgrammingEnabled() || (considerLogisticBase && ConfigSettings.IsLogisticBaseEnabled())) && GetProgrammingEnabledForBn(ConfigSettings.getConfigString("BMW.Rheingold.Programming.BN", "BN2020,BN2020_MOTORBIKE")))
             {
-                return ConfigSettings.OperationalMode != OperationalMode.TELESERVICE;
+                return !ConfigSettings.IsISTAModeRITA;
             }
+
             return false;
         }
 
@@ -2155,6 +2310,7 @@ namespace PsdzClient.Core
             {
                 return set;
             }
+
             string[] array = bnTypes.Split(',');
             foreach (string text in array)
             {
@@ -2163,8 +2319,10 @@ namespace PsdzClient.Core
                     set.Add(result);
                     continue;
                 }
+
                 Log.Error("Vehicle.GetBnTypes()", "Ignore BN \"{0}\", because of missconfiguration.", text);
             }
+
             return set;
         }
 
@@ -2178,6 +2336,7 @@ namespace PsdzClient.Core
                 num += base.VIN17.GetHashCode();
                 num *= num2;
             }
+
             ObservableCollection<ECU> eCU = base.ECU;
             if (eCU != null && eCU.Any())
             {
@@ -2192,22 +2351,32 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             if (!string.IsNullOrWhiteSpace(base.Ereihe))
             {
                 num += base.Ereihe.GetHashCode();
                 num *= num2;
             }
+
             if (!string.IsNullOrWhiteSpace(base.Baureihenverbund))
             {
                 num += base.Baureihenverbund.GetHashCode();
                 num *= num2;
             }
+
             if (C_DATETIME.HasValue)
             {
                 num += C_DATETIME.GetHashCode();
                 num *= num2;
             }
+
             return num;
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public int GetFaultListHashCode()
+        {
+            return 0;
         }
 
         public IReactorFa GetFaInstance()
@@ -2229,10 +2398,13 @@ namespace PsdzClient.Core
         {
             return getECUbyECU_GRUPPE(ECU_GRUPPE);
         }
+
         private List<IIdentEcu> GetEcusAsIIdentEcu()
         {
             return base.ECU.Cast<IIdentEcu>().ToList();
         }
 
+        [PreserveSource(Hint = "Local reactor")]
+        public Reactor Reactor { get; private set; }
     }
 }
