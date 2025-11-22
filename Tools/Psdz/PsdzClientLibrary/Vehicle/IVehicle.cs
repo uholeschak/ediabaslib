@@ -1,4 +1,5 @@
-﻿using PsdzClient.Contracts;
+﻿using PsdzClient;
+using PsdzClient.Contracts;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
@@ -45,13 +46,15 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string BaustandsMonat { get; }
 
-        //IEnumerable<ICbsInfo> CBS { get; }
+        [PreserveSource(Hint = "IEnumerable<ICbsInfo>", Placeholder = true)]
+        PlaceholderType CBS { get; }
 
         bool Ssl2RequestFailed { get; set; }
 
         ChassisType ChassisType { get; }
 
-        //IEnumerable<IDtc> CombinedFaults { get; }
+        [PreserveSource(Hint = "IEnumerable<IDtc>", Placeholder = true)]
+        PlaceholderType CombinedFaults { get; }
 
         VisibilityType ConnectIMIBIPState { get; }
 
@@ -69,8 +72,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool DOMRequestFailed { get; set; }
 
-        //[Obsolete("Please use Authoring -> Session.DiagCodes. Can be removed with 4.57.XX")]
-        //IEnumerable<IDiagCode> DiagCodes { get; }
+        [PreserveSource(Hint = "IEnumerable<IDiagCode>", Placeholder = true)]
+        PlaceholderType DiagCodes { get; }
 
         ObservableCollection<string> DiagCodesProgramming { get; }
 
@@ -116,7 +119,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         DateTime LastSaveDate { get; }
 
-        //IVciDevice MIB { get; }
+        IVciDevice MIB { get; }
 
         string Modelltag { get; }
 
@@ -144,7 +147,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string SerialGearBox { get; }
 
-        //IEnumerable<IServiceHistoryEntry> ServiceHistory { get; }
+        [PreserveSource(Hint = "IEnumerable<IServiceHistoryEntry>", Placeholder = true)]
+        PlaceholderType ServiceHistory { get; }
 
         bool SimulatedParts { get; }
 
@@ -160,7 +164,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         bool TecCampaignsRequestFailed { get; }
 
-        //IEnumerable<ITechnicalCampaign> TechnicalCampaigns { get; }
+        [PreserveSource(Hint = "IEnumerable<ITechnicalCampaign>", Placeholder = true)]
+        PlaceholderType TechnicalCampaigns { get; }
 
         string Typ { get; set; }
 

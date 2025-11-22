@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using PsdzClient.Programming;
 
-#pragma warning disable CS0169
+#pragma warning disable CS0169, CS0649
 namespace PsdzClient.Core
 {
     // ToDo: Check on update
@@ -818,16 +818,18 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         IEcu IVehicle.SelectedECU => base.SelectedECU;
-#if false
+
         [XmlIgnore]
         IVciDevice IVehicle.MIB => base.MIB;
 
+        [PreserveSource(Hint = "IEnumerable<IServiceHistoryEntry>", Placeholder = true)]
         [XmlIgnore]
-        IEnumerable<IServiceHistoryEntry> IVehicle.ServiceHistory => base.ServiceHistory;
+        PlaceholderType IVehicle.ServiceHistory => base.ServiceHistory;
 
+        [PreserveSource(Hint = "IEnumerable<ITechnicalCampaign>", Placeholder = true)]
         [XmlIgnore]
-        IEnumerable<ITechnicalCampaign> IVehicle.TechnicalCampaigns => base.TechnicalCampaigns;
-#endif
+        PlaceholderType IVehicle.TechnicalCampaigns => base.TechnicalCampaigns;
+
         [XmlIgnore]
         IVciDevice IVehicle.VCI => base.VCI;
 #if false
