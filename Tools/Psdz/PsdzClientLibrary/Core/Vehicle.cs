@@ -1794,6 +1794,7 @@ namespace PsdzClient.Core
             return false;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
         {
             PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
