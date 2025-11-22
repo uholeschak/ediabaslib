@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using PsdzClient.Programming;
 
-#pragma warning disable CS0169, CS0649
+#pragma warning disable CS0169, CS0649, CS0618
 namespace PsdzClient.Core
 {
     // ToDo: Check on update
@@ -939,10 +939,11 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
+
+        [PreserveSource(Hint = "IList<EslDocumentIsta>", Placeholder = true)]
         [XmlIgnore]
-        public IList<EslDocumentIsta> ESLDocuments { get; set; }
-#endif
+        public PlaceholderType ESLDocuments { get; set; }
+
         [XmlIgnore]
         public string Baustand
         {
@@ -2109,93 +2110,24 @@ namespace PsdzClient.Core
             }
             return null;
         }
-#if false
-        private static ObservableCollection<Fault> CalculateFaultList(Vehicle vehicle, IEnumerable<ECU> ecus, IEnumerable<DTC> combinedFaults, ObservableCollection<ZFSResult> zfs, IFFMDynamicResolver ffmFesolver = null)
+
+        [PreserveSource(Hint = "Cleaned")]
+        private static PlaceholderType CalculateFaultList()
         {
-            bool flag = true;
-            bool flag2 = true;
-            if (ConfigSettings.OperationalMode != OperationalMode.ISTA)
-            {
-                flag = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideBogusFaults", defaultValue: true);
-                flag2 = ConfigSettings.getConfigStringAsBoolean("TesterGUI.HideUnknownFaults", defaultValue: false);
-            }
-            ObservableCollection<Fault> observableCollection = new ObservableCollection<Fault>();
-            try
-            {
-                if (ecus != null)
-                {
-                    foreach (ECU item in ecus.Where((ECU item) => item.FEHLER != null))
-                    {
-                        foreach (DTC item2 in item.FEHLER)
-                        {
-                            Fault fault = new Fault(item, item2, zfs, vehicle.Classification.IsNewFaultMemoryActive);
-                            if (item2.Relevance == true)
-                            {
-                                if (ffmFesolver != null && ConfigSettings.getConfigStringAsBoolean("EnableRelevanceFaultCode", defaultValue: true))
-                                {
-                                    fault.ResolveRelevanceFaultCode(vehicle, ffmFesolver);
-                                    if (fault.DTC.Relevance == true)
-                                    {
-                                        observableCollection.AddIfNotContains(fault);
-                                    }
-                                }
-                                else
-                                {
-                                    observableCollection.AddIfNotContains(fault);
-                                }
-                            }
-                            else if (item2.Relevance == false && !flag)
-                            {
-                                observableCollection.AddIfNotContains(new Fault(item, item2, zfs, vehicle.Classification.IsNewFaultMemoryActive));
-                            }
-                            else if (!item2.Relevance.HasValue && !flag2)
-                            {
-                                observableCollection.AddIfNotContains(new Fault(item, item2, zfs, vehicle.Classification.IsNewFaultMemoryActive));
-                            }
-                        }
-                    }
-                }
-                if (combinedFaults == null)
-                {
-                    return observableCollection;
-                }
-                foreach (DTC combinedFault in combinedFaults)
-                {
-                    Fault fault2 = new Fault(null, combinedFault, null, vehicle.Classification.IsNewFaultMemoryActive);
-                    fault2.ResolveLabels(vehicle, null);
-                    observableCollection.AddIfNotContains(fault2);
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException("Vehicle.CalculateFaultList()", exception);
-            }
-            return observableCollection;
+            return PlaceholderType.Value;
         }
 
-        private static int? CalculateFaultCodeSum(IEnumerable<IEcu> ecus, IEnumerable<Fault> faults, bool onlyNonSignalFaultDtcs)
+        [PreserveSource(Hint = "Cleaned")]
+        private static int? CalculateFaultCodeSum()
         {
-            int num = 0;
-            num = (onlyNonSignalFaultDtcs ? faults.Where((Fault f) => f.FaultGroupNumber != 6).Count() : faults.Count());
-            if (num == 0 && (ecus == null || !ecus.Any() || ecus.Any((IEcu item) => !item.FS_SUCCESSFULLY && !item.BUS.ToString().Contains("VIRTUAL"))))
-            {
-                return null;
-            }
-            return num;
+            return null;
         }
 
-        public void AddCombinedDTC(DTC dtc)
+        [PreserveSource(Hint = "Cleaned")]
+        public void AddCombinedDTC()
         {
-            if (dtc == null)
-            {
-                Log.Warning("Vehicle.AddCombinedDTC()", "dtc was null");
-            }
-            else if (dtc.IsVirtual && dtc.IsCombined && base.CombinedFaults != null)
-            {
-                base.CombinedFaults.AddIfNotContains(dtc);
-            }
         }
-#endif
+
         public bool GetProgrammingEnabledForBn(string bn)
         {
             return GetBnTypes(bn).Contains(base.BNType);
@@ -2205,9 +2137,7 @@ namespace PsdzClient.Core
         {
             if ((ConfigSettings.IsProgrammingEnabled() || (considerLogisticBase && ConfigSettings.IsLogisticBaseEnabled())) && GetProgrammingEnabledForBn(ConfigSettings.getConfigString("BMW.Rheingold.Programming.BN", "BN2020,BN2020_MOTORBIKE")))
             {
-#pragma warning disable CS0618 // Type or member is obsolete
                 return ConfigSettings.OperationalMode != OperationalMode.TELESERVICE;
-#pragma warning restore CS0618 // Type or member is obsolete
             }
             return false;
         }
