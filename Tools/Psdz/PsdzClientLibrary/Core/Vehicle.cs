@@ -1387,89 +1387,22 @@ namespace PsdzClient.Core
             }
             return true;
         }
-#if false
+
+        [PreserveSource(Hint = "Cleaned")]
         public ECU GetECUbyDTC(decimal id)
         {
-            if (base.ECU != null)
-            {
-                foreach (ECU item in base.ECU)
-                {
-                    if (item.FEHLER != null)
-                    {
-                        foreach (DTC item2 in item.FEHLER)
-                        {
-                            if (id.Equals(item2.Id))
-                            {
-                                return item;
-                            }
-                        }
-                    }
-                    if (item.INFO == null)
-                    {
-                        continue;
-                    }
-                    foreach (DTC item3 in item.INFO)
-                    {
-                        if (id.Equals(item3.Id))
-                        {
-                            return item;
-                        }
-                    }
-                }
-            }
             return null;
         }
 
-        public DTC GetDTC(decimal id)
+        [PreserveSource(Hint = "Cleaned")]
+        public PlaceholderType GetDTC(decimal id)
         {
-            if (base.ECU != null)
-            {
-                foreach (ECU item in base.ECU)
-                {
-                    if (item.FEHLER != null)
-                    {
-                        foreach (DTC item2 in item.FEHLER)
-                        {
-                            if (id.Equals(item2.Id))
-                            {
-                                return item2;
-                            }
-                        }
-                    }
-                    if (item.INFO == null)
-                    {
-                        continue;
-                    }
-                    foreach (DTC item3 in item.INFO)
-                    {
-                        if (id.Equals(item3.Id))
-                        {
-                            return item3;
-                        }
-                    }
-                }
-            }
-            if (base.CombinedFaults != null)
-            {
-                return base.CombinedFaults.FirstOrDefault(delegate (DTC item)
-                {
-                    decimal? id2 = item.Id;
-                    decimal num = id;
-                    return (id2.GetValueOrDefault() == num) & id2.HasValue;
-                });
-            }
-            return null;
+            return PlaceholderType.Value;
         }
-#endif
+
+        [PreserveSource(Hint = "Cleaned")]
         public void CalculateFaultProperties(IFFMDynamicResolver ffmResolver = null)
         {
-#if false
-            ObservableCollection<Fault> observableCollection = CalculateFaultList(this, base.ECU, base.CombinedFaults, base.ZFS, ffmResolver);
-            FaultCodeSum = CalculateFaultCodeSum(base.ECU, observableCollection, onlyNonSignalFaultDtcs: false);
-            NonSignalErrorFaultCodeSum = CalculateFaultCodeSum(base.ECU, observableCollection, onlyNonSignalFaultDtcs: true);
-            Log.Info("Vehicle.CalculateFaultProperties()", "FaultCodeSum changed from \"{0}\" to \"{1}\".", FaultList?.Count, FaultCodeSum);
-            FaultList = new List<Fault>(observableCollection);
-#endif
         }
 
         public typeECU_Transaction getECUTransaction(ECU transECU, string transId)
@@ -1798,103 +1731,24 @@ namespace PsdzClient.Core
             }
             return num;
         }
-#if false
-        public typeCBSInfo getCBSMeasurementValue(typeCBSMeaurementType mType)
+
+        [PreserveSource(Hint = "Cleaned")]
+        public PlaceholderType getCBSMeasurementValue(typeCBSMeaurementType mType)
         {
-            try
-            {
-                if (base.CBS == null)
-                {
-                    return null;
-                }
-                foreach (typeCBSInfo cB in base.CBS)
-                {
-                    if (cB.Type == mType)
-                    {
-                        return cB;
-                    }
-                }
-                return null;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.getCBSMeasurementValue()", exception);
-            }
-            return null;
+            return PlaceholderType.Value;
         }
 
-        public bool addOrUpdateCBSMeasurementValue(typeCBSInfo cbsNew)
+        [PreserveSource(Hint = "Cleaned")]
+        public bool addOrUpdateCBSMeasurementValue()
         {
-            try
-            {
-                if (cbsNew == null)
-                {
-                    return false;
-                }
-                if (base.CBS == null)
-                {
-                    base.CBS = new ObservableCollection<typeCBSInfo>();
-                }
-                foreach (typeCBSInfo cB in base.CBS)
-                {
-                    if (cB.Type == cbsNew.Type)
-                    {
-                        base.CBS.Remove(cB);
-                        base.CBS.Add(cbsNew);
-                        return true;
-                    }
-                }
-                base.CBS.Add(cbsNew);
-                return true;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.addOrUpdateCBSMeasurementValue()", exception);
-            }
             return false;
         }
 
-        public bool addOrUpdateCBSMeasurementValues(IList<typeCBSInfo> cbsNewList)
+        [PreserveSource(Hint = "Cleaned")]
+        public bool addOrUpdateCBSMeasurementValues()
         {
-            try
-            {
-                if (cbsNewList == null)
-                {
-                    return false;
-                }
-                if (base.CBS == null)
-                {
-                    base.CBS = new ObservableCollection<typeCBSInfo>();
-                }
-                foreach (typeCBSInfo cbsNew in cbsNewList)
-                {
-                    bool flag = false;
-                    foreach (typeCBSInfo cB in base.CBS)
-                    {
-                        if (cB.Type == cbsNew.Type)
-                        {
-                            int num = base.CBS.IndexOf(cB);
-                            if (num >= 0 && num < base.CBS.Count)
-                            {
-                                base.CBS[num] = cbsNew;
-                            }
-                            flag = true;
-                        }
-                    }
-                    if (!flag)
-                    {
-                        base.CBS.Add(cbsNew);
-                    }
-                }
-                return true;
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException("Vehicle.addOrUpdateCBSMeasurementValue()", exception);
-            }
             return false;
         }
-#endif
 
         public void AddEcu(ECU ecu)
         {
