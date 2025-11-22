@@ -227,13 +227,15 @@ namespace PsdzClient.Core
         }
 
         public ObservableCollection<string> DiagCodesProgramming => diagCodesProgramming;
-#if false
-        [XmlIgnore]
-        public RxSwinData RxSwin { get; set; }
 
+        [PreserveSource(Hint = "RxSwinData", Placeholder = true)]
         [XmlIgnore]
-        public List<IRxSwinObject> RxSwinObjectList { get; set; }
-#endif
+        public PlaceholderType RxSwin { get; set; }
+
+        [PreserveSource(Hint = "List<IRxSwinObject>", Placeholder = true)]
+        [XmlIgnore]
+        public PlaceholderType RxSwinObjectList { get; set; }
+
         [XmlIgnore]
         public FA TargetFA
         {
@@ -610,57 +612,24 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
-        public ObservableCollection<CheckControlMessage> CheckControlMessages
-        {
-            get
-            {
-                return checkControlMessages;
-            }
-            set
-            {
-                if (checkControlMessages != value)
-                {
-                    checkControlMessages = value;
-                    OnPropertyChanged("CheckControlMessages");
-                }
-            }
-        }
-#endif
-        [XmlIgnore]
-        public bool IsCcmReadoutDone { get; set; }
-#if false
-        [XmlIgnore]
-        public IList<Fault> FaultList
-        {
-            get
-            {
-                return faultList;
-            }
-            set
-            {
-                if (value != null)
-                {
-                    faultList = value;
-                    OnPropertyChanged("FaultList");
-                }
-            }
-        }
+
+        [PreserveSource(Hint = "ObservableCollection<CheckControlMessage>", Placeholder = true)]
+        public PlaceholderType CheckControlMessages;
 
         [XmlIgnore]
-        public BlockingCollection<VirtualFaultInfo> VirtualFaultInfoList
-        {
-            get
-            {
-                return virtualFaultInfoList;
-            }
-            set
-            {
-                virtualFaultInfoList = value;
-            }
-        }
-        public ObservableCollectionEx<Fault> PKodeList => pKodeList;
-#endif
+        public bool IsCcmReadoutDone { get; set; }
+
+        [PreserveSource(Hint = "IList<Fault>", Placeholder = true)]
+        [XmlIgnore]
+        public PlaceholderType FaultList;
+
+        [PreserveSource(Hint = "BlockingCollection<VirtualFaultInfo>", Placeholder = true)]
+        [XmlIgnore]
+        public PlaceholderType VirtualFaultInfoList;
+
+        [PreserveSource(Hint = "ObservableCollectionEx<Fault>", Placeholder = true)]
+        public PlaceholderType PKodeList => pKodeList;
+
         [XmlIgnore]
         public bool IsFastaReadDone { get; set; }
 
