@@ -13,6 +13,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using PsdzClient.Programming;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Core
 {
     // ToDo: Check on update
@@ -1119,28 +1120,13 @@ namespace PsdzClient.Core
             Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
         }
 
-#if false
+        [PreserveSource(Hint = "Cleaned")]
         public List<string> PermanentSAEFehlercodesInFaultList()
         {
             List<string> list = new List<string>();
-            if (FaultList == null || FaultList.Count == 0)
-            {
-                return new List<string>();
-            }
-            foreach (Fault fault in FaultList)
-            {
-                if (fault.DTC.FortAsHexString == "S 0751")
-                {
-                    list.Add("S 0751");
-                }
-                if (fault.DTC.FortAsHexString == "S 0756")
-                {
-                    list.Add("S 0756");
-                }
-            }
             return list;
         }
-#endif
+
         public string SetVINRangeTypeFromVINRanges()
         {
             PsdzDatabase database = ClientContext.GetDatabase(this);
@@ -1155,110 +1141,31 @@ namespace PsdzClient.Core
             }
             return null;
         }
-#if false
-        public IEnumerable<Fault> GetEnrichedFaultList(IFFMDynamicResolver ffmDynamicResolver)
+
+        [PreserveSource(Hint = "Cleaned")]
+        public PlaceholderType GetEnrichedFaultList(IFFMDynamicResolver ffmDynamicResolver)
         {
-            if (!FaultList.Any())
-            {
-                return Enumerable.Empty<Fault>();
-            }
-            ComputeResolveLabelsForAllFaultAsync(this, ffmDynamicResolver).ConfigureAwait(continueOnCapturedContext: false).GetAwaiter().GetResult();
-            List<Fault> list = new List<Fault>();
-            foreach (Fault fault in FaultList)
-            {
-                list.Add(fault);
-            }
-            return list;
+            return PlaceholderType.Value;
         }
 
-        public async Task ComputeResolveLabelsForAllFaultAsync(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
+        [PreserveSource(Hint = "Cleaned")]
+        public PlaceholderType ComputeResolveLabelsForAllFaultAsync(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
-            IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel = DatabaseProviderFactory.Instance.GetRefFaultLabelsLabelIdByFaultList(FaultList.Where((Fault x) => !x.IsCheckControlMessage && !x.DTC.IsVirtual && !x.DTC.IsCombined));
-            Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> xepFaultModelLabelsTask = Task.Run(() => GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(refFaultLabel));
-            Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>> xepFaultLabelsTask = Task.Run(() => GetXepFaultLabelsByDtcFOrtEcuVariantAsync(vehicle, ffmDynamicResolver, refFaultLabel));
-            await Task.WhenAll(xepFaultModelLabelsTask, xepFaultLabelsTask).ConfigureAwait(continueOnCapturedContext: false);
-            foreach (Fault fault in FaultList)
-            {
-                fault.ResolveLabels(vehicle, ffmDynamicResolver, xepFaultModelLabelsTask.Result, xepFaultLabelsTask.Result);
-            }
+            return PlaceholderType.Value;
         }
 
-        private async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>> GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync(IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel)
+        [PreserveSource(Hint = "Cleaned")]
+        private PlaceholderType GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync()
         {
-            Collection<decimal> reffaultLabelsLabelIds = new Collection<decimal>();
-            refFaultLabel.ForEach(delegate (KeyValuePair<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> x)
-            {
-                reffaultLabelsLabelIds.AddRange(x.Value);
-            });
-            IEnumerable<decimal> enumerable = reffaultLabelsLabelIds.Distinct();
-            IDictionary<decimal, XEP_FAULTMODELABELS> dictionary2;
-            if (!enumerable.Any())
-            {
-                IDictionary<decimal, XEP_FAULTMODELABELS> dictionary = new Dictionary<decimal, XEP_FAULTMODELABELS>();
-                dictionary2 = dictionary;
-            }
-            else
-            {
-                dictionary2 = DatabaseProviderFactory.Instance.GetFaultModelLabelsByIds(enumerable);
-            }
-            IDictionary<decimal, XEP_FAULTMODELABELS> modelFaultLabelAll = dictionary2;
-            Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>> faultListFault = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTMODELABELS>>(refFaultLabel.Count);
-            DtcFOrtEcuVariantKey key;
-            foreach (FaultCodeIdDtcFOrtEcuVariantKey key2 in refFaultLabel.Keys)
-            {
-                key = key2.GetDtcFOrtEcuVariantKey();
-                if (!faultListFault.ContainsKey(key))
-                {
-                    faultListFault.Add(key, new Collection<XEP_FAULTMODELABELS>());
-                }
-                refFaultLabel[key2].ForEach(delegate (decimal x)
-                {
-                    if (modelFaultLabelAll.ContainsKey(x) && !faultListFault[key].Contains(modelFaultLabelAll[x]))
-                    {
-                        faultListFault[key].Add(modelFaultLabelAll[x]);
-                    }
-                });
-            }
-            return await Task.FromResult(faultListFault);
+            return PlaceholderType.Value;
         }
 
-        private async Task<IDictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>> GetXepFaultLabelsByDtcFOrtEcuVariantAsync(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver, IDictionary<FaultCodeIdDtcFOrtEcuVariantKey, ICollection<decimal>> refFaultLabel)
+        [PreserveSource(Hint = "Cleaned")]
+        private PlaceholderType GetXepFaultLabelsByDtcFOrtEcuVariantAsync()
         {
-            Collection<FaultCodeIdDtcFOrtEcuVariantKey> collection = new Collection<FaultCodeIdDtcFOrtEcuVariantKey>();
-            Collection<decimal> collection2 = new Collection<decimal>();
-            foreach (FaultCodeIdDtcFOrtEcuVariantKey key2 in refFaultLabel.Keys)
-            {
-                if (DatabaseProviderFactory.Instance.EvaluateXepRulesById(key2.FaultId, vehicle, ffmDynamicResolver))
-                {
-                    collection.Add(key2);
-                    collection2.AddRange(refFaultLabel[key2]);
-                }
-            }
-            Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>> xepFaultLabelsList = new Dictionary<DtcFOrtEcuVariantKey, ICollection<XEP_FAULTLABELS>>(collection.Count);
-            if (!collection.Any() || !collection2.Any())
-            {
-                return await Task.FromResult(xepFaultLabelsList);
-            }
-            IDictionary<decimal, XEP_FAULTLABELS> xepFaultLabels = DatabaseProviderFactory.Instance.GetFaultLabelXepFaultLabelByCodesAndIds(collection.Select((FaultCodeIdDtcFOrtEcuVariantKey x) => x.DtcF_Ort), collection2.Distinct());
-            DtcFOrtEcuVariantKey key;
-            foreach (FaultCodeIdDtcFOrtEcuVariantKey item in collection)
-            {
-                key = item.GetDtcFOrtEcuVariantKey();
-                if (!xepFaultLabelsList.ContainsKey(key))
-                {
-                    xepFaultLabelsList.Add(key, new Collection<XEP_FAULTLABELS>());
-                }
-                refFaultLabel[item].ForEach(delegate (decimal x)
-                {
-                    if (xepFaultLabels.ContainsKey(x) && !xepFaultLabelsList[key].Contains(xepFaultLabels[x]))
-                    {
-                        xepFaultLabelsList[key].Add(xepFaultLabels[x]);
-                    }
-                });
-            }
-            return await Task.FromResult(xepFaultLabelsList);
+            return PlaceholderType.Value;
         }
-#endif
+
         public string GetFSCfromUpdateIndex(string updateIndex, string huVariante)
         {
             string[] source = new string[2] { "HU_MGU", "ENAVEVO" };
