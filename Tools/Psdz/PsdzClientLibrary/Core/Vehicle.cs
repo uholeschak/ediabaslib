@@ -1103,6 +1103,7 @@ namespace PsdzClient.Core
             return list;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         public string SetVINRangeTypeFromVINRanges()
         {
             PsdzDatabase database = ClientContext.GetDatabase(this);
