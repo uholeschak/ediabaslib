@@ -51,7 +51,8 @@ namespace PsdzClient.Core
 
         private bool withLfpNCarBattery;
 
-        private PsdzDatabase.BatteryEnum batteryType;   // [UH] namespace changed
+        [PreserveSource(Hint = "Database modified")]
+        private PsdzDatabase.BatteryEnum batteryType;
 
         private bool isClosingOperationActive;
 
@@ -75,9 +76,11 @@ namespace PsdzClient.Core
 
         private readonly ObservableCollection<string> diagCodesProgramming;
 
-        //private IList<Fault> faultList;
+        [PreserveSource(Hint = "IList<Fault>", Placeholder = true)]
+        private PlaceholderType faultList;
 
-        //private ObservableCollection<CheckControlMessage> checkControlMessages;
+        [PreserveSource(Hint = "ObservableCollection<CheckControlMessage>", Placeholder = true)]
+        private PlaceholderType checkControlMessages;
 
         private bool noVehicleCommunicationRunning;
 
@@ -89,7 +92,8 @@ namespace PsdzClient.Core
 
         private bool isNewIdentActiveField;
 
-        //private BlockingCollection<VirtualFaultInfo> virtualFaultInfoList;
+        [PreserveSource(Hint = "BlockingCollection<VirtualFaultInfo>", Placeholder = true)]
+        private PlaceholderType virtualFaultInfoList;
 
         private string hmiVersion;
 
