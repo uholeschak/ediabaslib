@@ -1727,6 +1727,7 @@ namespace PsdzClient.Core
             return false;
         }
 
+        [PreserveSource(Hint = "Unmodified")]
         public void AddEcu(ECU ecu)
         {
             base.ECU.Add(ecu);
