@@ -133,6 +133,7 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public DateTime? LastProgramDate { get; set; }
 
+        [PreserveSource(Hint = "Database modified")]
         [XmlIgnore]
         public PsdzDatabase.BordnetsData BordnetsData
         {
@@ -889,6 +890,7 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public TransmissionDataType TransmissionDataType { get; private set; } = new TransmissionDataType();
 
+        [PreserveSource(Hint = "Database modified")]
         [XmlIgnore]
         public PsdzDatabase.BatteryEnum BatteryType
         {
