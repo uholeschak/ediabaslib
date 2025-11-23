@@ -14,43 +14,35 @@ namespace BMW.Rheingold.Psdz
     public interface IConfigurationService
     {
         bool IsReady();
-
-        [PreserveSource(Hint = "Added", KeepAttribute = true)]
-        [OperationContract]
-        [FaultContract(typeof(PsdzRuntimeException))]
-        string GetExpectedPsdzVersion();
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         string GetPsdzVersion();
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         string GetRootDirectory();
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(PsdzRuntimeException))]
         bool ImportPdx(string pathToPdxContainer, string projectName);
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         string RequestBaureihenverbund(string baureihe);
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void SetRootDirectory(string rootDir);
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void UnsetRootDirectory();
-
         RootDirectorySetupResultModel GetRootDirectorySetupResult();
+        [PreserveSource(Hint = "Added", KeepAttribute = true)]
+        [OperationContract]
+        [FaultContract(typeof(PsdzRuntimeException))]
+        string GetExpectedPsdzVersion();
     }
 }
