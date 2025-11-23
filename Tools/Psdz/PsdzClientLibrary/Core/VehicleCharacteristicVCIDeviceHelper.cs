@@ -41,6 +41,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -68,6 +69,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeBaseVersion(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -80,6 +82,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeBaureihe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -102,6 +105,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeBrandName(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -109,6 +113,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeCountryOfAssembly(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -166,6 +171,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeEreihe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -173,6 +179,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeGetriebe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -190,6 +197,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeKarosserie(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -202,6 +210,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeLand(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -214,6 +223,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeLenkung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -241,6 +251,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeProdart(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
