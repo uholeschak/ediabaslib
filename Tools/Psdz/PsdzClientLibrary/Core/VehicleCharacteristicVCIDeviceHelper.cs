@@ -9,19 +9,8 @@ namespace PsdzClient.Core
     public sealed class VehicleCharacteristicVCIDeviceHelper : VehicleCharacteristicAbstract
     {
         private BasicFeaturesVci basicFeatures;
-
         [PreserveSource(Hint = "Database modified")]
         private PsdzDatabase.Characteristics characteristic;
-
-        [PreserveSource(Hint = "Added")]
-        private ClientContext _clientContext;
-
-        [PreserveSource(Hint = "Added")]
-        public VehicleCharacteristicVCIDeviceHelper(ClientContext clientContext)
-        {
-            _clientContext = clientContext;
-        }
-
         [PreserveSource(Hint = "Database modified")]
         public bool AssignBasicFeaturesVciCharacteristic(string vehicleCode, BasicFeaturesVci vehicle, PsdzDatabase.Characteristics characteristic)
         {
@@ -372,6 +361,14 @@ namespace PsdzClient.Core
         {
             basicFeatures = (BasicFeaturesVci)parameters[0];
             characteristic = (PsdzDatabase.Characteristics)parameters[1];
+        }
+
+        [PreserveSource(Hint = "Added")]
+        private ClientContext _clientContext;
+        [PreserveSource(Hint = "Added")]
+        public VehicleCharacteristicVCIDeviceHelper(ClientContext clientContext)
+        {
+            _clientContext = clientContext;
         }
     }
 }
