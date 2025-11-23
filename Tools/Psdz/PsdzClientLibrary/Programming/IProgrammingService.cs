@@ -22,7 +22,8 @@ namespace PsdzClient.Programming
 
         bool CollectPsdzLog(string targetLogFilePath);
 
-        //FcFnActivationResult StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc, IEcuKom ecuKom, IProtocolBasic protocoller, IICOMHandler icomHandler);
+        [PreserveSource(Hint = "FcFnActivationResult", Placeholder = true)]
+        PlaceholderType StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc);
 
         [PreserveSource(Hint = "force added")]
         void CloseConnectionsToPsdz(bool force);

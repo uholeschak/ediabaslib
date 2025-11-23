@@ -149,14 +149,14 @@ namespace PsdzClient.Programming
                 session.TryClosePSdZConnection();
             }
         }
-
-        public FcFnActivationResult StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc, IEcuKom ecuKom, IProtocolBasic protocoller, IICOMHandler icomHandler)
-        {
-            FscService fscService = new FscService();
-            StartPsdzService(vehicle);
-            return fscService.StoreAndActivateFcFn(Psdz, vehicle, appNo, upgradeIdx, fsc, ecuKom, programmingWorker, protocoller, icomHandler);
-        }
 #endif
+
+        [PreserveSource(Hint = "FcFnActivationResult", Placeholder = true)]
+        public PlaceholderType StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc)
+        {
+            throw new NotImplementedException();
+        }
+
         public void CloseConnectionsToPsdz(bool force = false)
         {
             Log.Info(Log.CurrentMethod(), "Start.");
