@@ -118,40 +118,10 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
-#if false
-        private void FillAdditionalDataForPretestConfig(ProgrammingSession session, PretestProgrammingPlanParams pretestParams)
+        [PreserveSource(Hint = "Cleaned")]
+        private void FillAdditionalDataForPretestConfig()
         {
-            try
-            {
-                Log.Info(Log.CurrentMethod(), "Gathering the minimum data for token requests...");
-                IPsdzIstufe iStufe = Psdz.ObjectBuilder.BuildIstufe(session.Vehicle.ILevelWerk);
-                session.PsdzContext.TargetSelectors = Psdz.ConnectionFactoryService.GetTargetSelectors();
-                IPsdzConnection psdzConnection = ConnectToBn2020VehicleState.TryGetPsdzConnection(session);
-                if (psdzConnection == null)
-                {
-                    Log.Warning(Log.CurrentMethod(), "Unable to get a PSdZ conneciton here => Retrieving ECU list from PSdZ without PSdZ Connection...");
-                    session.PsdzContext.EcuListActual = Psdz.MacrosService.GetInstalledEcuList(pretestParams.Fa, iStufe);
-                }
-                else
-                {
-                    session.PsdzProg.ConnectionManager.SwitchFromEDIABASToPSdZIfConnectedViaPTTOrENET(session.PsdzContext);
-                    session.PsdzContext.EcuListActual = Psdz.MacrosService.GetInstalledEcuListWithConnection(psdzConnection, pretestParams.Fa, iStufe);
-                }
-                session.PsdzContext.SetSvtActual(pretestParams.Svt);
-                new RetrieveEcuUIDState().Handle(session);
-                Log.Info(Log.CurrentMethod(), "Setup specific to pretest programming sessions is concluded (not necessarily to satisfaction).");
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException(Log.CurrentMethod(), "Failed to completely set up pretest programming session! Expect things like token request without vehicle test not to work correctly.", exception);
-            }
-            finally
-            {
-                session.PsdzProg.ConnectionManager.SwitchFromPSdZToEDIABASIfConnectedViaPTTOrENET(session.PsdzContext);
-                session.TryClosePSdZConnection();
-            }
         }
-#endif
 
         [PreserveSource(Hint = "FcFnActivationResult", Placeholder = true)]
         public PlaceholderType StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc)
