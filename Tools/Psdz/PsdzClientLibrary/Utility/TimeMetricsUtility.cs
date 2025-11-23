@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Instrumentation;
 
-#pragma warning disable CS0169
+#pragma warning disable CS0169,CS0414
 namespace PsdzClient.Utility
 {
     [PreserveSource(Hint = "Simplified")]
