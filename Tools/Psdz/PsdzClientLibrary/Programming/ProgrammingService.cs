@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Threading;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Programming;
+using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Utility;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading;
 
 namespace PsdzClient.Programming
 {
@@ -193,6 +194,12 @@ namespace PsdzClient.Programming
             return psdzServiceGateway.PsdzLogFilePath;
         }
 
+        [PreserveSource(Hint = "Removed")]
+        public IPsdzStandardSvt GetVehicleSvtUsingPsdz()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool StartPsdzService(IVehicle vehicle = null)
         {
             if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
@@ -217,6 +224,18 @@ namespace PsdzClient.Programming
             Log.Info(Log.CurrentMethod(), "End.");
             TimeMetricsUtility.Instance.InitializePsdzStop();
             return true;
+        }
+
+        [PreserveSource(Hint = "Removed")]
+        public ISvt GetCurrentSvtFromPsdzSvt()
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Removed")]
+        public bool ExecuteEarlyEcuValidationUsingPsdz()
+        {
+            throw new NotImplementedException();
         }
 
         [PreserveSource(Hint = "Added istaFolder")]

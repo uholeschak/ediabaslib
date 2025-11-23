@@ -38,10 +38,13 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Changed to Boolean")]
         bool StartPsdzService(IVehicle vehicle);
 
-        //IPsdzStandardSvt GetVehicleSvtUsingPsdz(ILogic logic);
+        [PreserveSource(Hint = "Removed")]
+        IPsdzStandardSvt GetVehicleSvtUsingPsdz();
 
-        //bool ExecuteEarlyEcuValidationUsingPsdz(ILogic logic, IDatabaseProvider database, string mainseries, bool avoidTlsConnection);
+        [PreserveSource(Hint = "Removed")]
+        bool ExecuteEarlyEcuValidationUsingPsdz();
 
-        //ISvt GetCurrentSvtFromPsdzSvt(IPsdzStandardSvt psdzStandardSvt, IDatabaseProvider database, Vehicle vehicle, IFFMDynamicResolver fFMDynamicResolver);
+        [PreserveSource(Hint = "Removed")]
+        ISvt GetCurrentSvtFromPsdzSvt();
     }
 }
