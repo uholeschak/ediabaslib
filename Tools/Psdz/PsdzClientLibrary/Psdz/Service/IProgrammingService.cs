@@ -9,6 +9,7 @@ using PsdzClient;
 
 namespace BMW.Rheingold.Psdz
 {
+    [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required)]
     [ServiceKnownType(typeof(PsdzConnection))]
     [ServiceKnownType(typeof(PsdzSwtAction))]

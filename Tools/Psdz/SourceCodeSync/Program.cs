@@ -713,10 +713,7 @@ namespace SourceCodeSync
                             }
 
                             // Update modifiers and attributes from destination class
-                            if (GetAttributePropertyFromAttributeLists(cls.AttributeLists, _attributesModifiedProperty))
-                            {
-                                sourceClassCopy = sourceClassCopy.WithAttributeLists(cls.AttributeLists);
-                            }
+                            sourceClassCopy = sourceClassCopy.WithAttributeLists(cls.AttributeLists);
 
                             // Update attributes if AccessModified is set
                             if (GetAttributePropertyFromAttributeLists(cls.AttributeLists, _accessModifiedProperty))
@@ -840,10 +837,7 @@ namespace SourceCodeSync
                             }
 
                             // Update modifiers and attributes from destination interface
-                            if (GetAttributePropertyFromAttributeLists(interfaceDecl.AttributeLists, _attributesModifiedProperty))
-                            {
-                                sourceInterfaceCopy = sourceInterfaceCopy.WithAttributeLists(interfaceDecl.AttributeLists);
-                            }
+                            sourceInterfaceCopy = sourceInterfaceCopy.WithAttributeLists(interfaceDecl.AttributeLists);
 
                             // Update attributes if AccessModified is set
                             if (GetAttributePropertyFromAttributeLists(interfaceDecl.AttributeLists, _accessModifiedProperty))
