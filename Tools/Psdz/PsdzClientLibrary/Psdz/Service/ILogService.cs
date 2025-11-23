@@ -1,5 +1,6 @@
-﻿using System.ServiceModel;
-using BMW.Rheingold.Psdz.Model.Exceptions;
+﻿using BMW.Rheingold.Psdz.Model.Exceptions;
+using PsdzClient;
+using System.ServiceModel;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -12,15 +13,18 @@ namespace BMW.Rheingold.Psdz
         DEEP_TRACE
     }
 
+    [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required)]
     public interface ILogService
     {
         void PrepareLoggingForCurrentThread();
 
+        [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         string ClosePsdzLog();
 
+        [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void SetLogLevel(PsdzLoglevel psdzLoglevel);
