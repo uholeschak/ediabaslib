@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PsdzClient.Core
 {
-    // [UH] Simplified version
+    [PreserveSource(Hint = "Simplified")]
     public class CommonServiceWrapper
     {
         private static readonly object featureSwitchLockObj = new object();
