@@ -838,8 +838,24 @@ namespace SourceCodeSync
 
                             // Update modifiers and attributes from destination interface
                             sourceInterfaceCopy = sourceInterfaceCopy
-                                .WithModifiers(interfaceDecl.Modifiers)
-                                .WithAttributeLists(interfaceDecl.AttributeLists);
+                                .WithModifiers(interfaceDecl.Modifiers);
+
+                            // Update attributes if AccessModified is set
+                            if (GetAttributePropertyFromAttributeLists(interfaceDecl.AttributeLists, _accessModifiedProperty))
+                            {
+                                sourceInterfaceCopy = sourceInterfaceCopy.WithModifiers(interfaceDecl.Modifiers);
+                            }
+
+                            // Update inheritance/base types if InheritanceModified is set
+                            if (GetAttributePropertyFromAttributeLists(interfaceDecl.AttributeLists, _inheritanceModifiedProperty))
+                            {
+                                sourceInterfaceCopy = sourceInterfaceCopy.WithBaseList(interfaceDecl.BaseList);
+
+                                if (_verbosity >= Options.VerbosityOption.Info)
+                                {
+                                    Console.WriteLine("Interface {0} inheritance updated", interfaceNameFull);
+                                }
+                            }
                         }
 
                         // Check for preserved members
@@ -1507,7 +1523,6 @@ namespace SourceCodeSync
                         return false;
                     }
 
-                    // If KeepAttribute is true, or if the attribute exists without explicit false
                     return true;
                 }
             }
@@ -1637,7 +1652,6 @@ namespace SourceCodeSync
 
             foreach (var argument in attribute.ArgumentList.Arguments)
             {
-                // Check for named arguments like "KeepAttribute = true"
                 if (argument.NameEquals != null &&
                     argument.NameEquals.Name.Identifier.Text == propertyName)
                 {
