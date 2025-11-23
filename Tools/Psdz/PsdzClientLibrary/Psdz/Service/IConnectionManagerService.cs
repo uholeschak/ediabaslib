@@ -55,6 +55,7 @@ namespace BMW.Rheingold.Psdz
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe, bool tlsAlloed = false);
 
+        [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(PsdzRuntimeException))]
