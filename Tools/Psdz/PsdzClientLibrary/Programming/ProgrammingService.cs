@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Programming
 {
     [PreserveSource(Hint = "IDisposable added", InheritanceModified = true)]
@@ -23,6 +24,8 @@ namespace PsdzClient.Programming
 
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
         private readonly PlaceholderType programmingWorker;
+
+        private readonly IOperationServices services;
 
         [PreserveSource(Hint = "Added")]
         private readonly PsdzConfig psdzConfig;

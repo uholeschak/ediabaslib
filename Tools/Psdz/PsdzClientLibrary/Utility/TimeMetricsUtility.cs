@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Instrumentation;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Utility
 {
+    [PreserveSource(Hint = "Simplified")]
     public class TimeMetricsUtility
     {
         private static Lazy<TimeMetricsUtility> instance = new Lazy<TimeMetricsUtility>(() => new TimeMetricsUtility(), isThreadSafe: true);
@@ -21,7 +23,8 @@ namespace PsdzClient.Utility
 
         private int fastaApiDetailsCount;
 
-        //private static List<TimeMetrics> metrics = new List<TimeMetrics>();
+        [PreserveSource(Hint = "List<TimeMetrics>", Placeholder = true)]
+        private static PlaceholderType metrics = new PlaceholderType();
 
         public static TimeMetricsUtility Instance => instance.Value;
 
@@ -77,6 +80,5 @@ namespace PsdzClient.Utility
         public void InitializePsdzStop()
         {
         }
-
     }
 }
