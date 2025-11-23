@@ -18,6 +18,7 @@ namespace PsdzClient.Programming
     [PreserveSource(Hint = "IDisposable added", AccessModified = true)]
 	public class ProgrammingService : IProgrammingService, IDisposable
     {
+        [PreserveSource(Hint = "Added")]
         private readonly PsdzServiceGateway psdzServiceGateway;
 
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
