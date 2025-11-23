@@ -108,6 +108,7 @@ namespace PsdzClient.Programming
             psdzServiceGateway.SetLogLevel(PsdzLoglevel.TRACE, ProdiasLoglevel.INFO);
         }
 
+        [PreserveSource(Hint = "Added")]
         public void SetLogLevelToNormal()
         {
             psdzServiceGateway.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
