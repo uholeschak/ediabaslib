@@ -48,7 +48,7 @@ namespace SourceCodeSync
 
         private static readonly string[] _ignoreInterfaceNames =
         [
-            "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService",
+            "BMW.Rheingold.CoreFramework.Contracts.Programming.IProgrammingService",
             "BMW.Rheingold.ISTA.CoreFramework.ILogger"
         ];
 

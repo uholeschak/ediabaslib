@@ -16,7 +16,7 @@ using System.Threading;
 #pragma warning disable CS0169
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "IDisposable added", InheritanceModified = true)]
+    [PreserveSource(Hint = "Duplicate interface name")]
 	public class ProgrammingService : IProgrammingService, IDisposable
     {
         [PreserveSource(Hint = "Added")]
