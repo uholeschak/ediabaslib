@@ -88,12 +88,11 @@ namespace PsdzClient.Programming
             return false;
         }
 
-#if false
-        public IEnumerable<IProgrammingTask> RetrieveAvailableProgrammingTasks(IVehicle vehicle)
+        [PreserveSource(Hint = "IEnumerable<IProgrammingTask>", Placeholder = true)]
+        public PlaceholderType RetrieveAvailableProgrammingTasks(IVehicle vehicle)
         {
-            return programmingWorker.GetProgrammingTasks(vehicle);
+            throw new NotImplementedException();
         }
-#endif
 
         public void SetLogLevelToMax()
         {
@@ -104,28 +103,20 @@ namespace PsdzClient.Programming
         {
             psdzServiceGateway.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
         }
-#if false
-        public IProgrammingSessionExt Start(ProgrammingParam programmingParam, bool avoidTlsConnection)
+
+        [PreserveSource(Hint = "IProgrammingSessionExt", Placeholder = true)]
+        public PlaceholderType Start(PlaceholderType programmingParam)
         {
-            StartPsdzService(programmingParam.Vehicle);
-            ProgrammingSession programmingSession = new ProgrammingSession(Psdz, programmingParam, programmingWorker);
-            IFscValidationService fscValidationService = InitializeFscValidationService(programmingParam.FscValidationConfig);
-            programmingSession.FscValidationService = fscValidationService;
-            if (programmingParam.IsPretest)
-            {
-                if (avoidTlsConnection && programmingSession?.PsdzProg?.ConnectionManager != null)
-                {
-                    programmingSession.PsdzProg.ConnectionManager.AvoidTlsConnection = avoidTlsConnection;
-                }
-                FillAdditionalDataForPretestConfig(programmingSession, programmingParam.PretestConfig);
-            }
-            else
-            {
-                programmingSession.Start();
-            }
-            return programmingSession;
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "IProgrammingSessionExt", Placeholder = true)]
+        public PlaceholderType Start(PlaceholderType programmingParam, bool avoidTlsConnection)
+        {
+            throw new NotImplementedException();
+        }
+
+#if false
         private void FillAdditionalDataForPretestConfig(ProgrammingSession session, PretestProgrammingPlanParams pretestParams)
         {
             try

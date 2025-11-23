@@ -7,11 +7,14 @@ namespace PsdzClient.Programming
     {
         IPsdz Psdz { get; }
 
-        //IEnumerable<IProgrammingTask> RetrieveAvailableProgrammingTasks(IVehicle vehicle);
+        [PreserveSource(Hint = "IEnumerable<IProgrammingTask>", Placeholder = true)]
+        PlaceholderType RetrieveAvailableProgrammingTasks(IVehicle vehicle);
 
-        //IProgrammingSessionExt Start(ProgrammingParam programmingParam);
+        [PreserveSource(Hint = "IProgrammingSessionExt", Placeholder = true)]
+        PlaceholderType Start(PlaceholderType programmingParam);
 
-        //IProgrammingSessionExt Start(ProgrammingParam programmingParam, bool avoidTlsConnection);
+        [PreserveSource(Hint = "IProgrammingSessionExt", Placeholder = true)]
+        PlaceholderType Start(PlaceholderType programmingParam, bool avoidTlsConnection);
 
         void SetLogLevelToMax();
 
@@ -21,7 +24,7 @@ namespace PsdzClient.Programming
 
         //FcFnActivationResult StoreAndActivateFcFn(IVehicle vehicle, int appNo, int upgradeIdx, byte[] fsc, IEcuKom ecuKom, IProtocolBasic protocoller, IICOMHandler icomHandler);
 
-        // [UH] force added
+        [PreserveSource(Hint = "force added")]
         void CloseConnectionsToPsdz(bool force);
 
         //IProgrammingCallbackHandler CreateCallbackHandler(ILogic logic, IProgressMonitor progressMonitor);
@@ -30,7 +33,7 @@ namespace PsdzClient.Programming
 
         string GetPsdzLogFilePath();
 
-        // [UH] Boolean
+        [PreserveSource(Hint = "Changed to Boolean")]
         bool StartPsdzService(IVehicle vehicle);
 
         //IPsdzStandardSvt GetVehicleSvtUsingPsdz(ILogic logic);
