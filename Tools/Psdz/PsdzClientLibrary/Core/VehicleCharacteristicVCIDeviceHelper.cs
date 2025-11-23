@@ -274,6 +274,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeTyp(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -286,6 +287,7 @@ namespace PsdzClient.Core
             return true;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -365,6 +367,7 @@ namespace PsdzClient.Core
             return false;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         private void GetVCIDeviceParameters(params object[] parameters)
         {
             basicFeatures = (BasicFeaturesVci)parameters[0];
