@@ -1,9 +1,11 @@
 ﻿using BMW.Rheingold.Psdz.Model.Events;
 using BMW.Rheingold.Psdz.Model.Exceptions;
+using PsdzClient;
 using System.ServiceModel;
 
 namespace BMW.Rheingold.Psdz
 {
+    [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzEventListener))]
     public interface IEventManagerService
     {
@@ -11,10 +13,12 @@ namespace BMW.Rheingold.Psdz
 
         void PrepareListening();
 
+        [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void StartListening();
 
+        [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void StopListening();
