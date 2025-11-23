@@ -816,18 +816,6 @@ namespace SourceCodeSync
                     if (sourceInterface != null)
                     {
                         InterfaceDeclarationSyntax sourceInterfaceCopy = sourceInterface;
-#if true
-                        bool hasContract = HasContractAttribute(interfaceDecl.AttributeLists);
-                        bool sourceHasContract = HasContractAttribute(sourceInterfaceCopy.AttributeLists);
-                        if (hasContract && !sourceHasContract)
-                        {
-                            if (_verbosity >= Options.VerbosityOption.Warning)
-                            {
-                                Console.WriteLine("Skipping interface {0} with removed Contract", interfaceNameFull);
-                            }
-                            continue;
-                        }
-#endif
                         bool specialAttribute = HasSpecialSourceAttribute(interfaceDecl.AttributeLists);
                         if (specialAttribute)
                         {
