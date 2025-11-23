@@ -88,6 +88,8 @@ namespace SourceCodeSync
 
         private const string _accessModifiedProperty = "AccessModified";
 
+        private const string _inheritanceModifiedProperty = "InheritanceModified";
+
         private const string _attributesModifiedProperty = "AttributesModified";
 
         public class Options
@@ -1320,6 +1322,7 @@ namespace SourceCodeSync
                     {
                         case "PreserveSource":
                             if (GetAttributeProperty(attr, _accessModifiedProperty) ||
+                                GetAttributeProperty(attr, _inheritanceModifiedProperty) ||
                                 GetAttributeProperty(attr, _attributesModifiedProperty))
                             {
                                 return true;
@@ -1461,6 +1464,7 @@ namespace SourceCodeSync
                 {
                     // Check if AccessModified property is set to true
                     if (GetAttributeProperty(preserveAttribute, _accessModifiedProperty) ||
+                        GetAttributeProperty(preserveAttribute, _inheritanceModifiedProperty) ||
                         GetAttributeProperty(preserveAttribute, _attributesModifiedProperty))
                     {
                         return false;

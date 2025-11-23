@@ -15,7 +15,7 @@ using System.Threading;
 
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "IDisposable added", AccessModified = true)]
+    [PreserveSource(Hint = "IDisposable added", InheritanceModified = true)]
 	public class ProgrammingService : IProgrammingService, IDisposable
     {
         [PreserveSource(Hint = "Added")]

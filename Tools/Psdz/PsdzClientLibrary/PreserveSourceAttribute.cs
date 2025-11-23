@@ -15,6 +15,8 @@ namespace PsdzClient
 
         public bool AccessModified;
 
+        public bool InheritanceModified;
+
         public bool AttributesModified;
     }
 
