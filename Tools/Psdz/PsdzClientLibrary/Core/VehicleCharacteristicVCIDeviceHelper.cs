@@ -10,6 +10,7 @@ namespace PsdzClient.Core
     {
         private BasicFeaturesVci basicFeatures;
 
+        [PreserveSource(Hint = "Database modified")]
         private PsdzDatabase.Characteristics characteristic;
 
         [PreserveSource(Hint = "Added")]
@@ -21,11 +22,13 @@ namespace PsdzClient.Core
             _clientContext = clientContext;
         }
 
+        [PreserveSource(Hint = "Database modified")]
         public bool AssignBasicFeaturesVciCharacteristic(string vehicleCode, BasicFeaturesVci vehicle, PsdzDatabase.Characteristics characteristic)
         {
             return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
         }
 
+        [PreserveSource(Hint = "Database modified")]
         protected override bool ComputeMotor(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
