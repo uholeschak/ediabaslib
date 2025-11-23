@@ -12,27 +12,19 @@ namespace BMW.Rheingold.Psdz
         bool Listening { get; }
 
         void PrepareListening();
-
+        IConnectionLossEventListener AddPsdzEventListenerForConnectionLoss();
+        void RemovePsdzEventListenerForConnectionLoss();
+        void SendInternalEvent(IPsdzEvent psdzEvent);
+        void AddEventListener(IPsdzEventListener psdzEventListener);
+        void RemoveEventListener(IPsdzEventListener psdzEventListener);
+        void RemoveAllEventListeners();
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void StartListening();
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void StopListening();
-
-        IConnectionLossEventListener AddPsdzEventListenerForConnectionLoss();
-
-        void RemovePsdzEventListenerForConnectionLoss();
-
-        void SendInternalEvent(IPsdzEvent psdzEvent);
-
-        void AddEventListener(IPsdzEventListener psdzEventListener);
-
-        void RemoveEventListener(IPsdzEventListener psdzEventListener);
-
-        void RemoveAllEventListeners();
     }
 }
