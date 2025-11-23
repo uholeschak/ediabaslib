@@ -24,6 +24,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
         private readonly PlaceholderType programmingWorker;
 
+        [PreserveSource(Hint = "Added")]
         private readonly PsdzConfig psdzConfig;
 
         public IPsdzProgressListener PsdzProgressListener { get; private set; }
