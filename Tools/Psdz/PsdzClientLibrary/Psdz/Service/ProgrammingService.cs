@@ -13,9 +13,7 @@ namespace BMW.Rheingold.Psdz
     public class ProgrammingService : IProgrammingService
     {
         private IWebCallHandler _webCallHandler;
-
         private string endpointService = "programming";
-
         public ProgrammingService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
