@@ -28,7 +28,8 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "force added")]
         void CloseConnectionsToPsdz(bool force);
 
-        //IProgrammingCallbackHandler CreateCallbackHandler(ILogic logic, IProgressMonitor progressMonitor);
+        [PreserveSource(Hint = "IProgrammingCallbackHandler", Placeholder = true)]
+        PlaceholderType CreateCallbackHandler();
 
         string GetPsdzWebServiceLogFilePath();
 

@@ -177,6 +177,12 @@ namespace PsdzClient.Programming
             return psdzServiceGateway.PsdzServiceLogDir;
         }
 
+        [PreserveSource(Hint = "IProgrammingCallbackHandler", Placeholder = true)]
+        public PlaceholderType CreateCallbackHandler()
+        {
+            throw new NotImplementedException();
+        }
+
         public string GetPsdzWebServiceLogFilePath()
         {
             return psdzServiceGateway.PsdzWebServiceLogFilePath;
