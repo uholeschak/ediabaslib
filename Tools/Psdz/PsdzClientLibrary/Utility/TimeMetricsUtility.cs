@@ -10,7 +10,8 @@ namespace PsdzClient.Utility
     {
         private static Lazy<TimeMetricsUtility> instance = new Lazy<TimeMetricsUtility>(() => new TimeMetricsUtility(), isThreadSafe: true);
 
-        //private static TimeMetrics currentMetrics;
+        [PreserveSource(Hint = "TimeMetrics", Placeholder = true)]
+        private static PlaceholderType currentMetrics;
 
         private static bool metricsEnabled;
 
@@ -52,22 +53,30 @@ namespace PsdzClient.Utility
             return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Diagnostics.VehicleTestMetricsEnabled", defaultValue);
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Cleaned")]
         public void ApiJobEnd(string ecu, string job, string args, int argsLength)
         {
-            //currentMetrics?.ApiJobEnd(ecu, job, args, argsLength);
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Cleaned")]
         public void ApiJobStart(string ecu, string job, string args, int argsLength)
         {
-            //currentMetrics?.ApiJobStart(ecu, job, args, argsLength);
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Cleaned")]
         public void Sleep(int milliseconds, string reason)
         {
-            //currentMetrics?.Sleep(milliseconds, reason);
         }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void InitializePsdzStart()
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void InitializePsdzStop()
+        {
+        }
+
     }
 }

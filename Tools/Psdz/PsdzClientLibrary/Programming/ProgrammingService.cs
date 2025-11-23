@@ -10,6 +10,7 @@ using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
+using PsdzClient.Utility;
 
 namespace PsdzClient.Programming
 {
@@ -163,14 +164,14 @@ namespace PsdzClient.Programming
             psdzServiceGateway.CloseConnectionsToPsdz(force);
             Log.Info(Log.CurrentMethod(), "End.");
         }
-#if false
-        public PsdzProgramming CreatePsdzProg(IVehicle vehicle, IEcuKom ecuKom, IProtocolBasic protocoller, IICOMHandler icomHandler)
+
+        [PreserveSource(Hint = "FcFnActivationResult", Placeholder = true)]
+        public PlaceholderType CreatePsdzProg(IVehicle vehicle, IEcuKom ecuKom, IProtocolBasic protocoller)
         {
-            StartPsdzService(vehicle);
-            return programmingWorker.CreatePsdzProg(Psdz, vehicle, ecuKom, null, protocoller, icomHandler) as PsdzProgramming;
+            throw new NotImplementedException();
         }
-#endif
-        // [UH] added
+
+        [PreserveSource(Hint = "Added")]
         public string GetPsdzServiceHostLogDir()
         {
             return psdzServiceGateway.PsdzServiceLogDir;
@@ -193,7 +194,7 @@ namespace PsdzClient.Programming
                 Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
                 return true;
             }
-            //TimeMetricsUtility.Instance.InitializePsdzStart();
+            TimeMetricsUtility.Instance.InitializePsdzStart();
             Log.Info(Log.CurrentMethod(), "Start.");
             try
             {
@@ -208,10 +209,11 @@ namespace PsdzClient.Programming
                 return false;
             }
             Log.Info(Log.CurrentMethod(), "End.");
-            //TimeMetricsUtility.Instance.InitializePsdzStop();
+            TimeMetricsUtility.Instance.InitializePsdzStop();
             return true;
         }
 
+        [PreserveSource(Hint = "Added istaFolder")]
         private void PreparePsdzBackupDataPath(string istaFolder)
 		{
             string pathString = PsdzContext.GetBackupBasePath(istaFolder);
