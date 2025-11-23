@@ -2,6 +2,7 @@
 using BMW.Rheingold.Psdz.Model.Exceptions;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Tal;
+using PsdzClient;
 using PsdzClient.Contracts;
 using System;
 using System.IO;
@@ -10,6 +11,7 @@ using System.Threading;
 
 namespace BMW.Rheingold.Psdz
 {
+    [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
     [ServiceKnownType(typeof(PsdzConnection))]
     [ServiceKnownType(typeof(PsdzFa))]
@@ -20,16 +22,19 @@ namespace BMW.Rheingold.Psdz
     [ServiceKnownType(typeof(PsdzProgrammingProtectionDataCto))]
     public interface ITalExecutionService : ILifeCycleDependencyProvider
     {
+        [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzTal ExecuteTal(IPsdzConnection connection, IPsdzTal tal, IPsdzSvt svtTarget, IPsdzVin vin, IPsdzFa faTarget, TalExecutionSettings talExecutionConfig, string backupDataPath, CancellationToken ct);
 
+        [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(FileNotFoundException))]
         [FaultContract(typeof(PsdzRuntimeException))]
         IPsdzTal ExecuteTalFile(IPsdzConnection connection, string pathToTal, string vin, string pathToFa, TalExecutionSettings talExecutionSettings, CancellationToken ct);
 
+        [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(ArgumentException))]
         [FaultContract(typeof(PsdzRuntimeException))]
