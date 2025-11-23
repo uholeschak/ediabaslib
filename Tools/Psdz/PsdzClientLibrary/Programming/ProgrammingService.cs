@@ -31,10 +31,12 @@ namespace PsdzClient.Programming
 
         public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
 
+        [PreserveSource(Hint = "Added")]
         internal ProgrammingEventManager EventManager { get; private set; }
 
         public EcuProgrammingInfos ProgrammingInfos { get; private set; }
 
+        [PreserveSource(Hint = "Added")]
         public PsdzDatabase PsdzDatabase { get; private set; }
 
         public string BackupDataPath { get; private set; }
