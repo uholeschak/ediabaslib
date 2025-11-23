@@ -39,6 +39,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Added")]
         public PsdzDatabase PsdzDatabase { get; private set; }
 
+        [PreserveSource(Hint = "Added")]
         public string BackupDataPath { get; private set; }
 
         public IPsdz Psdz => psdzServiceGateway.Psdz;
