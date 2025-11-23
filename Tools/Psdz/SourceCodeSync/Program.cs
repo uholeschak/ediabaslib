@@ -817,6 +817,7 @@ namespace SourceCodeSync
                     if (sourceInterface != null)
                     {
                         InterfaceDeclarationSyntax sourceInterfaceCopy = sourceInterface;
+#if true
                         bool hasContract = HasContractAttribute(interfaceDecl.AttributeLists);
                         bool sourceHasContract = HasContractAttribute(sourceInterfaceCopy.AttributeLists);
                         if (hasContract && !sourceHasContract)
@@ -827,7 +828,7 @@ namespace SourceCodeSync
                             }
                             continue;
                         }
-
+#endif
                         bool specialAttribute = HasSpecialSourceAttribute(interfaceDecl.AttributeLists);
                         if (specialAttribute)
                         {
@@ -838,7 +839,7 @@ namespace SourceCodeSync
 
                             // Update modifiers and attributes from destination interface
                             sourceInterfaceCopy = sourceInterfaceCopy
-                                .WithModifiers(interfaceDecl.Modifiers);
+                                .WithAttributeLists(interfaceDecl.AttributeLists);
 
                             // Update attributes if AccessModified is set
                             if (GetAttributePropertyFromAttributeLists(interfaceDecl.AttributeLists, _accessModifiedProperty))
