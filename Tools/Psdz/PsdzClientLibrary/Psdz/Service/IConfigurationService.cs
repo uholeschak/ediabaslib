@@ -15,7 +15,7 @@ namespace BMW.Rheingold.Psdz
     {
         bool IsReady();
 
-        [PreserveSource(KeepAttribute = true)]
+        [PreserveSource(Hint = "Added", KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         string GetExpectedPsdzVersion();
