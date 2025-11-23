@@ -19,7 +19,8 @@ namespace PsdzClient.Programming
     {
         private readonly PsdzServiceGateway psdzServiceGateway;
 
-        //private readonly IProgrammingWorker programmingWorker;
+        [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
+        private readonly PlaceholderType programmingWorker;
 
         private readonly PsdzConfig psdzConfig;
 
@@ -37,6 +38,7 @@ namespace PsdzClient.Programming
 
         public IPsdz Psdz => psdzServiceGateway.Psdz;
 
+        [PreserveSource(Hint = "Modified, create services")]
         public ProgrammingService(string istaFolder, string dealerId)
         {
             this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
@@ -46,9 +48,9 @@ namespace PsdzClient.Programming
             this.EventManager = new ProgrammingEventManager();
             this.PsdzDatabase = new PsdzDatabase(istaFolder);
             PreparePsdzBackupDataPath(istaFolder);
-            //programmingWorker = CreateProgrammingWorker();
+            // [IGNORE] programmingWorker = CreateProgrammingWorker();
 
-            // [UH] added: create services
+            // [UH] [IGNORE] added: create services
             IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
             if (fasta2Service == null)
             {
