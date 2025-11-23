@@ -15,6 +15,7 @@ using System.Threading;
 
 namespace PsdzClient.Programming
 {
+    [PreserveSource(Hint = "IDisposable added", AccessModified = true)]
 	public class ProgrammingService : IProgrammingService, IDisposable
     {
         private readonly PsdzServiceGateway psdzServiceGateway;
