@@ -714,8 +714,24 @@ namespace SourceCodeSync
 
                             // Update modifiers and attributes from destination class
                             sourceClassCopy = sourceClassCopy
-                                .WithModifiers(cls.Modifiers)
                                 .WithAttributeLists(cls.AttributeLists);
+
+                            // Update attributes if AccessModified is set
+                            if (GetAttributePropertyFromAttributeLists(cls.AttributeLists, _accessModifiedProperty))
+                            {
+                                sourceClassCopy = sourceClassCopy.WithModifiers(cls.Modifiers);
+                            }
+
+                            // Update inheritance/base types if InheritanceModified is set
+                            if (GetAttributePropertyFromAttributeLists(cls.AttributeLists, _inheritanceModifiedProperty))
+                            {
+                                sourceClassCopy = sourceClassCopy.WithBaseList(cls.BaseList);
+
+                                if (_verbosity >= Options.VerbosityOption.Info)
+                                {
+                                    Console.WriteLine("Class {0} inheritance updated", classNameFull);
+                                }
+                            }
                         }
 
                         // Check if destination class has any preserved members
@@ -1020,9 +1036,12 @@ namespace SourceCodeSync
                     className += $"_<{typeParamCount}>";
                 }
 
-                if (classDeclaration.BaseList != null)
+                if (includeModifiers)
                 {
-                    className += ":" + GetBaseTypesText(classDeclaration.BaseList.Types);
+                    if (classDeclaration.BaseList != null)
+                    {
+                        className += ":" + GetBaseTypesText(classDeclaration.BaseList.Types);
+                    }
                 }
             }
             return className;
@@ -1328,6 +1347,24 @@ namespace SourceCodeSync
                                 return true;
                             }
                             break;
+                    }
+                    return false;
+                });
+        }
+
+        /// <summary>
+        /// Gets a boolean property value from attribute lists
+        /// </summary>
+        private static bool GetAttributePropertyFromAttributeLists(SyntaxList<AttributeListSyntax> attributeLists, string propertyName)
+        {
+            return attributeLists
+                .SelectMany(al => al.Attributes)
+                .Any(attr =>
+                {
+                    string attrName = attr.Name.ToString();
+                    if (attrName == "PreserveSource")
+                    {
+                        return GetAttributeProperty(attr, propertyName);
                     }
                     return false;
                 });
