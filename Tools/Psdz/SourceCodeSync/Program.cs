@@ -435,10 +435,18 @@ namespace SourceCodeSync
                         string name = tuple.Item2;
                         bool isFullName = tuple.Item3;
 
+                        ClassDeclarationSyntax classCopy = cls;
                         if (!string.IsNullOrEmpty(changeClassName))
                         {
                             string pattern = $@"(?<=^|[^a-zA-Z0-9]){Regex.Escape(classNameBare)}(?=[^a-zA-Z0-9]|$)";
                             name = Regex.Replace(name, pattern, changeClassName);
+
+                            SyntaxToken newIdentifier = SyntaxFactory.Identifier(
+                                cls.Identifier.LeadingTrivia,
+                                changeClassName,
+                                cls.Identifier.TrailingTrivia
+                            );
+                            classCopy = cls.WithIdentifier(newIdentifier);
                         }
 
                         if (dict.TryGetValue(name, out ClassDeclarationSyntax oldClassSyntax))
@@ -469,7 +477,7 @@ namespace SourceCodeSync
                         }
                         else
                         {
-                            if (!dict.TryAdd(name, cls))
+                            if (!dict.TryAdd(name, classCopy))
                             {
                                 if (_verbosity >= Options.VerbosityOption.Error)
                                 {
@@ -535,10 +543,18 @@ namespace SourceCodeSync
                         string name = tuple.Item2;
                         bool isFullName = tuple.Item3;
 
+                        InterfaceDeclarationSyntax interfaceCopy = interfaceDecl;
                         if (!string.IsNullOrEmpty(changeInterfaceName))
                         {
                             string pattern = $@"(?<=^|[^a-zA-Z0-9]){Regex.Escape(interfaceBareName)}(?=[^a-zA-Z0-9]|$)";
                             name = Regex.Replace(name, pattern, changeInterfaceName);
+
+                            SyntaxToken newIdentifier = SyntaxFactory.Identifier(
+                                interfaceDecl.Identifier.LeadingTrivia,
+                                changeInterfaceName,
+                                interfaceDecl.Identifier.TrailingTrivia
+                            );
+                            interfaceCopy = interfaceDecl.WithIdentifier(newIdentifier);
                         }
 
                         if (dict.TryGetValue(name, out InterfaceDeclarationSyntax oldInterfaceSyntax))
@@ -569,7 +585,7 @@ namespace SourceCodeSync
                         }
                         else
                         {
-                            if (!dict.TryAdd(name, interfaceDecl))
+                            if (!dict.TryAdd(name, interfaceCopy))
                             {
                                 if (_verbosity >= Options.VerbosityOption.Error)
                                 {
