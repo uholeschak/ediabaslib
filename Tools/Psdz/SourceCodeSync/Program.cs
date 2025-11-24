@@ -33,7 +33,7 @@ namespace SourceCodeSync
                 .Select(pattern => new Regex(pattern, RegexOptions.Compiled))
                 .ToArray();
 
-        private static Dictionary<string, string> _ignoreClassNames = new Dictionary<string, string>
+        private static Dictionary<string, string> _modifyClassNames = new()
         {
             {"public_static_LicenseHelper", null},
             {"internal_sealed_LicenseManager", null},
@@ -46,16 +46,16 @@ namespace SourceCodeSync
             {"BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility.GearboxUtility", null}
         };
 
-        private static Dictionary<string, string> _ignoreInterfaceNames = new Dictionary<string, string>
+        private static Dictionary<string, string> _modifyInterfaceNames = new()
         {
-            {"BMW.Rheingold.CoreFramework.Contracts.Programming.IProgrammingService", null},
+            {"BMW.Rheingold.CoreFramework.Contracts.Programming.IProgrammingService", "IProgrammingServiceProgramming"},
             {"BMW.Rheingold.ISTA.CoreFramework.ILogger", null}
         };
 
-        private static readonly string[] _ignoreEnumNames =
-        [
-            "BMW.iLean.CommonServices.Logging.EventKind",
-        ];
+        private static Dictionary<string, string> _modifyEnumNames = new()
+        {
+            {"BMW.iLean.CommonServices.Logging.EventKind", null}
+        };
 
         private static readonly string[] _decompileAssemblies =
         [
@@ -403,13 +403,13 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_ignoreClassNames.ContainsKey(classNameFull))
+                    if (_modifyClassNames.ContainsKey(classNameFull))
                     {
                         continue;
                     }
 
                     string classNameWithNamespace = GetClassName(cls, includeNamespace: true);
-                    if (_ignoreClassNames.ContainsKey(classNameWithNamespace))
+                    if (_modifyClassNames.ContainsKey(classNameWithNamespace))
                     {
                         continue;
                     }
@@ -487,13 +487,13 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_ignoreInterfaceNames.ContainsKey(interfaceNameFull))
+                    if (_modifyInterfaceNames.ContainsKey(interfaceNameFull))
                     {
                         continue;
                     }
 
                     string interfaceNameWithNamespace = GetInterfaceName(interfaceDecl, includeNamespace: true);
-                    if (_ignoreInterfaceNames.ContainsKey(interfaceNameWithNamespace))
+                    if (_modifyInterfaceNames.ContainsKey(interfaceNameWithNamespace))
                     {
                         continue;
                     }
@@ -572,13 +572,13 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_ignoreEnumNames.Contains(enumNameFull))
+                    if (_modifyEnumNames.ContainsKey(enumNameFull))
                     {
                         continue;
                     }
 
                     string enumNameWithNamespace = GetEnumName(enumDecl, includeNamespace: true);
-                    if (_ignoreEnumNames.Contains(enumNameWithNamespace))
+                    if (_modifyEnumNames.ContainsKey(enumNameWithNamespace))
                     {
                         continue;
                     }
