@@ -435,9 +435,10 @@ namespace SourceCodeSync
                         string name = tuple.Item2;
                         bool isFullName = tuple.Item3;
 
-                        if (!isFullName && !string.IsNullOrEmpty(changeClassName))
+                        if (!string.IsNullOrEmpty(changeClassName))
                         {
-                            name = name.Replace(classNameBare, changeClassName);
+                            string pattern = $@"(?<=^|[^a-zA-Z0-9]){Regex.Escape(classNameBare)}(?=[^a-zA-Z0-9]|$)";
+                            name = Regex.Replace(name, pattern, changeClassName);
                         }
 
                         if (dict.TryGetValue(name, out ClassDeclarationSyntax oldClassSyntax))
