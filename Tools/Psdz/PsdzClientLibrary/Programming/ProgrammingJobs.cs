@@ -293,7 +293,7 @@ namespace PsdzClient.Programming
         public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool okBtn, bool wait);
         public event ShowMessageDelegate ShowMessageEvent;
 
-        public delegate void ServiceInitialized(ProgrammingService programmingService);
+        public delegate void ServiceInitialized(ProgrammingService2 programmingService);
         public event ServiceInitialized ServiceInitializedEvent;
 
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgrammingJobs));
@@ -331,7 +331,7 @@ namespace PsdzClient.Programming
         private object _cacheLock = new object();
         private object _operationLock = new object();
         private object _optionsLock = new object();
-        public ProgrammingService ProgrammingService { get; private set; }
+        public ProgrammingService2 ProgrammingService { get; private set; }
         public List<OptionsItem> SelectedOptions { get; set; }
         public bool DisableTalFlash { get; set; }
         public PsdzDatabase.SwiRegisterGroup RegisterGroup { get; set; }
@@ -504,7 +504,7 @@ namespace PsdzClient.Programming
                 else
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Starting programming service MultiSession={0}", ConfigSettings.GetActivateSdpOnlinePatch());
-                    ProgrammingService = new ProgrammingService(istaFolder, _dealerId);
+                    ProgrammingService = new ProgrammingService2(istaFolder, _dealerId);
                     if (!EdiabasNet.IsDirectoryWritable(ProgrammingService.BackupDataPath))
                     {
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.DirectoryWriteProtected, ProgrammingService.BackupDataPath));

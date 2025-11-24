@@ -16,8 +16,7 @@ using System.Threading;
 #pragma warning disable CS0169
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "Duplicate interface name")]
-	public class ProgrammingService : IProgrammingService2, IDisposable
+	public class ProgrammingService2 : IProgrammingService2, IDisposable
     {
         [PreserveSource(Hint = "Added")]
         private readonly PsdzServiceGateway psdzServiceGateway;
@@ -48,7 +47,7 @@ namespace PsdzClient.Programming
         public IPsdz Psdz => psdzServiceGateway.Psdz;
 
         [PreserveSource(Hint = "Modified, create services")]
-        public ProgrammingService(string istaFolder, string dealerId)
+        public ProgrammingService2(string istaFolder, string dealerId)
         {
             this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
             psdzServiceGateway = new PsdzServiceGateway(psdzConfig, istaFolder, dealerId);

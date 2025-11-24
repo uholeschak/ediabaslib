@@ -21,7 +21,7 @@ namespace PsdzClient.Programming
         private PsdzSecureCodingConfigCto SecureCodingConfigCto { get; }
 
         // [UH] using programmingService
-        public static PsdzSecureCodingConfigCto GetSecureCodingConfig(ProgrammingService programmingService)
+        public static PsdzSecureCodingConfigCto GetSecureCodingConfig(ProgrammingService2 programmingService)
         {
             if (instance == null)
             {
@@ -37,7 +37,7 @@ namespace PsdzClient.Programming
         }
 
         // [UH] using programmingService
-        public static void ChangeNcdRecalculationValueTo(PsdzNcdRecalculationEtoEnum psdzNcdRecalculation, ProgrammingService programmingService)
+        public static void ChangeNcdRecalculationValueTo(PsdzNcdRecalculationEtoEnum psdzNcdRecalculation, ProgrammingService2 programmingService)
         {
             string value = string.Empty;// ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.NcdRecalculationEnum").ToUpper();
             if (!string.IsNullOrEmpty(value) && Enum.IsDefined(typeof(PsdzNcdRecalculationEtoEnum), value))
@@ -51,7 +51,7 @@ namespace PsdzClient.Programming
         }
 
         // [UH] using programmingService
-        public static void ChangeBackendNcdCalculationValueTo(PsdzBackendNcdCalculationEtoEnum backendNcdCalculation, ProgrammingService programmingService)
+        public static void ChangeBackendNcdCalculationValueTo(PsdzBackendNcdCalculationEtoEnum backendNcdCalculation, ProgrammingService2 programmingService)
         {
             string configString = string.Empty;// ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.BackendNcdCalculationMode");
             if (!string.IsNullOrEmpty(configString) && Enum.IsDefined(typeof(PsdzBackendNcdCalculationEtoEnum), configString))
@@ -65,12 +65,12 @@ namespace PsdzClient.Programming
         }
 
         // [UH] programmingService added
-        public static string GetSecureCodingPathWithVin(ProgrammingService programmingService, string vin)
+        public static string GetSecureCodingPathWithVin(ProgrammingService2 programmingService, string vin)
         {
             return Path.Combine(programmingService.BackupDataPath, NcdRoot, vin);
         }
 
-        private SecureCodingConfigWrapper(ProgrammingService programmingService)
+        private SecureCodingConfigWrapper(ProgrammingService2 programmingService)
         {
             this.SecureCodingConfigCto = new PsdzSecureCodingConfigCto();
             string configString = string.Empty; //ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.BackendNcdCalculationMode");

@@ -425,7 +425,7 @@ namespace BMW.Rheingold.Programming.Common
             return requestNcdEtos;
         }
 
-        public static TalExecutionSettings GetTalExecutionSettings(PsdzClient.Programming.ProgrammingService programmingService)
+        public static TalExecutionSettings GetTalExecutionSettings(PsdzClient.Programming.ProgrammingService2 programmingService)
         {
             TalExecutionSettings talExecutionSettings = new TalExecutionSettings
             {

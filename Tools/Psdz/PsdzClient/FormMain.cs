@@ -277,7 +277,7 @@ namespace PsdzClient
             labelProgressEvent.Text = message ?? string.Empty;
         }
 
-        private void ServiceInitialized(ProgrammingService programmingService)
+        private void ServiceInitialized(ProgrammingService2 programmingService)
         {
             string logFileName = "PsdzClient.log";
             if (_programmingJobs.IsModuleGenerationMode())

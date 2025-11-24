@@ -637,7 +637,7 @@ namespace PsdzClient.Programming
 			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
 		}
 
-        public bool UpdateVehicle(ProgrammingService programmingService)
+        public bool UpdateVehicle(ProgrammingService2 programmingService)
         {
             EcuCharacteristics = null;
             if (VecInfo == null)
@@ -797,7 +797,7 @@ namespace PsdzClient.Programming
         }
 
         // From ProgrammingSession
-        public void SetSollverbauung(ProgrammingService programmingService, IPsdzSollverbauung sollverbauung, IDictionary<string, string> orderNumbers = null)
+        public void SetSollverbauung(ProgrammingService2 programmingService, IPsdzSollverbauung sollverbauung, IDictionary<string, string> orderNumbers = null)
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
             ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
@@ -815,13 +815,13 @@ namespace PsdzClient.Programming
         }
 
         // From ProgrammingSession
-        public void SetSvtCurrent(ProgrammingService programmingService, global::BMW.Rheingold.Psdz.IPsdzStandardSvt standardSvt)
+        public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.IPsdzStandardSvt standardSvt)
         {
             SetSvtCurrent(programmingService, standardSvt, VecInfo.VIN17);
         }
 
         // From ProgrammingSession
-        public void SetSvtCurrent(ProgrammingService programmingService, global::BMW.Rheingold.Psdz.IPsdzStandardSvt standardSvt, string vin17)
+        public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.IPsdzStandardSvt standardSvt, string vin17)
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
             ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
@@ -1076,7 +1076,7 @@ namespace PsdzClient.Programming
             return ecuList;
         }
 
-        public bool SetFa(ProgrammingService programmingService)
+        public bool SetFa(ProgrammingService2 programmingService)
         {
             try
             {
@@ -1137,7 +1137,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public bool UpdateSALocalizedItems(ProgrammingService programmingService, ClientContext clientContext)
+        public bool UpdateSALocalizedItems(ProgrammingService2 programmingService, ClientContext clientContext)
         {
             try
             {
@@ -1167,7 +1167,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public void FillSaLocalizedItems(ProgrammingService programmingService, string language, List<string> source, string prodArt)
+        public void FillSaLocalizedItems(ProgrammingService2 programmingService, string language, List<string> source, string prodArt)
         {
             foreach (string item in source)
             {
