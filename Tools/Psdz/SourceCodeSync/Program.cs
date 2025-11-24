@@ -46,11 +46,11 @@ namespace SourceCodeSync
             {"BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility.GearboxUtility", null}
         };
 
-        private static readonly string[] _ignoreInterfaceNames =
-        [
-            "BMW.Rheingold.CoreFramework.Contracts.Programming.IProgrammingService",
-            "BMW.Rheingold.ISTA.CoreFramework.ILogger"
-        ];
+        private static Dictionary<string, string> _ignoreInterfaceNames = new Dictionary<string, string>
+        {
+            {"BMW.Rheingold.CoreFramework.Contracts.Programming.IProgrammingService", null},
+            {"BMW.Rheingold.ISTA.CoreFramework.ILogger", null}
+        };
 
         private static readonly string[] _ignoreEnumNames =
         [
@@ -487,13 +487,13 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_ignoreInterfaceNames.Contains(interfaceNameFull))
+                    if (_ignoreInterfaceNames.ContainsKey(interfaceNameFull))
                     {
                         continue;
                     }
 
                     string interfaceNameWithNamespace = GetInterfaceName(interfaceDecl, includeNamespace: true);
-                    if (_ignoreInterfaceNames.Contains(interfaceNameWithNamespace))
+                    if (_ignoreInterfaceNames.ContainsKey(interfaceNameWithNamespace))
                     {
                         continue;
                     }
