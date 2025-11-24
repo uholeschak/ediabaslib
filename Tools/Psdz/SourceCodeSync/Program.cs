@@ -447,6 +447,9 @@ namespace SourceCodeSync
                                 cls.Identifier.TrailingTrivia
                             );
                             classCopy = cls.WithIdentifier(newIdentifier);
+
+                            // Rename all constructors to match the new class name
+                            classCopy = RenameConstructors(classCopy, classNameBare, changeClassName);
                         }
 
                         if (dict.TryGetValue(name, out ClassDeclarationSyntax oldClassSyntax))
@@ -1417,6 +1420,41 @@ namespace SourceCodeSync
                     }
                     return false;
                 });
+        }
+
+        /// <summary>
+        /// Renames all constructors in a class to match the new class name
+        /// </summary>
+        private static ClassDeclarationSyntax RenameConstructors(
+            ClassDeclarationSyntax classDeclaration,
+            string oldClassName,
+            string newClassName)
+        {
+            var constructors = classDeclaration.Members
+                .OfType<ConstructorDeclarationSyntax>()
+                .Where(c => c.Identifier.Text == oldClassName)
+                .ToList();
+
+            if (!constructors.Any())
+            {
+                return classDeclaration;
+            }
+
+            ClassDeclarationSyntax updatedClass = classDeclaration;
+
+            foreach (var constructor in constructors)
+            {
+                var newIdentifier = SyntaxFactory.Identifier(
+                    constructor.Identifier.LeadingTrivia,
+                    newClassName,
+                    constructor.Identifier.TrailingTrivia
+                );
+
+                var newConstructor = constructor.WithIdentifier(newIdentifier);
+                updatedClass = updatedClass.ReplaceNode(constructor, newConstructor);
+            }
+
+            return updatedClass;
         }
 
         /// <summary>
