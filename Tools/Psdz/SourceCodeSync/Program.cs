@@ -502,15 +502,24 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_modifyInterfaceNames.ContainsKey(interfaceNameFull))
+                    string changeInterfaceName = null;
+                    if (_modifyInterfaceNames.TryGetValue(interfaceNameFull, out string newInterfaceName1))
                     {
-                        continue;
+                        if (string.IsNullOrEmpty(newInterfaceName1))
+                        {
+                            continue;
+                        }
+                        changeInterfaceName = newInterfaceName1;
                     }
 
                     string interfaceNameWithNamespace = GetInterfaceName(interfaceDecl, includeNamespace: true);
-                    if (_modifyInterfaceNames.ContainsKey(interfaceNameWithNamespace))
+                    if (_modifyInterfaceNames.TryGetValue(interfaceNameWithNamespace, out string newInterfaceName2))
                     {
-                        continue;
+                        if (string.IsNullOrEmpty(newInterfaceName2))
+                        {
+                            continue;
+                        }
+                        changeInterfaceName = newInterfaceName2;
                     }
 
                     List<Tuple<Dictionary<string, InterfaceDeclarationSyntax>, string, bool>> dictList =
@@ -525,6 +534,12 @@ namespace SourceCodeSync
                         Dictionary<string, InterfaceDeclarationSyntax> dict = tuple.Item1;
                         string name = tuple.Item2;
                         bool isFullName = tuple.Item3;
+
+                        if (!string.IsNullOrEmpty(changeInterfaceName))
+                        {
+                            string pattern = $@"(?<=^|[^a-zA-Z0-9]){Regex.Escape(interfaceBareName)}(?=[^a-zA-Z0-9]|$)";
+                            name = Regex.Replace(name, pattern, changeInterfaceName);
+                        }
 
                         if (dict.TryGetValue(name, out InterfaceDeclarationSyntax oldInterfaceSyntax))
                         {
