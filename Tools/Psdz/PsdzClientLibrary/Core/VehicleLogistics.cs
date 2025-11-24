@@ -13,7 +13,7 @@ namespace PsdzClient.Core
     {
         private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
 
-        //private static Lazy<bool> isGui = new Lazy<bool>(() => Process.GetCurrentProcess().ProcessName.ToLower() == "istagui");
+        [PreserveSource(Hint = "Modified")]
         private static Lazy<bool> isGui = new Lazy<bool>(false);
 
         public const string FallbackBordnetName = "BNT-XML-FALLBACK.xml";
