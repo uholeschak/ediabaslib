@@ -16,6 +16,7 @@ using System.Threading;
 #pragma warning disable CS0169
 namespace PsdzClient.Programming
 {
+    [PreserveSource(Hint = "ProgrammingService renamed", InheritanceModified = true)]
 	public class ProgrammingService2 : IProgrammingService2, IDisposable
     {
         [PreserveSource(Hint = "Added")]
