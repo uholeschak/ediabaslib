@@ -403,15 +403,24 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_modifyClassNames.ContainsKey(classNameFull))
+                    string changeClassName = null;
+                    if (_modifyClassNames.TryGetValue(classNameFull, out string newClassName1))
                     {
-                        continue;
+                        if (string.IsNullOrEmpty(newClassName1))
+                        {
+                            continue;
+                        }
+                        changeClassName = newClassName1;
                     }
 
                     string classNameWithNamespace = GetClassName(cls, includeNamespace: true);
-                    if (_modifyClassNames.ContainsKey(classNameWithNamespace))
+                    if (_modifyClassNames.TryGetValue(classNameWithNamespace, out string newClassName2))
                     {
-                        continue;
+                        if (string.IsNullOrEmpty(newClassName2))
+                        {
+                            continue;
+                        }
+                        changeClassName = newClassName2;
                     }
 
                     List<Tuple<Dictionary<string, ClassDeclarationSyntax>, string, bool>> dictList = new()
