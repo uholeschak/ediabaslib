@@ -33,18 +33,18 @@ namespace SourceCodeSync
                 .Select(pattern => new Regex(pattern, RegexOptions.Compiled))
                 .ToArray();
 
-        private static readonly string[] _ignoreClassNames =
-        [
-            "public_static_LicenseHelper",
-            "internal_sealed_LicenseManager",
-            "public_LicenseStatusChecker",
-            "public_LicenseWizardHelper",
-            "internal_CharacteristicsGenerator",
-            "BMW.Rheingold.Programming.Common.SecureCodingService",
-            "BMW.Rheingold.Programming.ProgrammingService",
-            "BMW.iLean.CommonServices.Logging.Extensions",
-            "BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility.GearboxUtility"
-        ];
+        private static Dictionary<string, string> _ignoreClassNames = new Dictionary<string, string>
+        {
+            {"public_static_LicenseHelper", null},
+            {"internal_sealed_LicenseManager", null},
+            {"public_LicenseStatusChecker", null},
+            {"public_LicenseWizardHelper", null },
+            {"internal_CharacteristicsGenerator", null },
+            {"BMW.Rheingold.Programming.Common.SecureCodingService", null },
+            {"BMW.Rheingold.Programming.ProgrammingService", "ProgrammingServiceProgramming"},
+            {"BMW.iLean.CommonServices.Logging.Extensions", null},
+            {"BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility.GearboxUtility", null}
+        };
 
         private static readonly string[] _ignoreInterfaceNames =
         [
@@ -403,13 +403,13 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_ignoreClassNames.Contains(classNameFull))
+                    if (_ignoreClassNames.ContainsKey(classNameFull))
                     {
                         continue;
                     }
 
                     string classNameWithNamespace = GetClassName(cls, includeNamespace: true);
-                    if (_ignoreClassNames.Contains(classNameWithNamespace))
+                    if (_ignoreClassNames.ContainsKey(classNameWithNamespace))
                     {
                         continue;
                     }
