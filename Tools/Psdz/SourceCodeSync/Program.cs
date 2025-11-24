@@ -621,15 +621,24 @@ namespace SourceCodeSync
                         continue;
                     }
 
-                    if (_modifyEnumNames.ContainsKey(enumNameFull))
+                    string changeEnumName = null;
+                    if (_modifyEnumNames.TryGetValue(enumNameFull, out string newEnumName1))
                     {
-                        continue;
+                        if (string.IsNullOrEmpty(newEnumName1))
+                        {
+                            continue;
+                        }
+                        changeEnumName = newEnumName1;
                     }
 
                     string enumNameWithNamespace = GetEnumName(enumDecl, includeNamespace: true);
-                    if (_modifyEnumNames.ContainsKey(enumNameWithNamespace))
+                    if (_modifyEnumNames.TryGetValue(enumNameWithNamespace, out string newEnumName2))
                     {
-                        continue;
+                        if (string.IsNullOrEmpty(newEnumName2))
+                        {
+                            continue;
+                        }
+                        changeEnumName = newEnumName2;
                     }
 
                     List<Tuple<Dictionary<string, EnumDeclarationSyntax>, string, bool>> dictList =
@@ -644,6 +653,19 @@ namespace SourceCodeSync
                         Dictionary<string, EnumDeclarationSyntax> dict = tuple.Item1;
                         string name = tuple.Item2;
                         bool isFullName = tuple.Item3;
+
+                        EnumDeclarationSyntax enumCopy = enumDecl;
+                        if (!string.IsNullOrEmpty(changeEnumName))
+                        {
+                            string pattern = $@"(?<=^|[^a-zA-Z0-9]){Regex.Escape(enumBareName)}(?=[^a-zA-Z0-9]|$)";
+                            name = Regex.Replace(name, pattern, changeEnumName);
+                            SyntaxToken newIdentifier = SyntaxFactory.Identifier(
+                                enumDecl.Identifier.LeadingTrivia,
+                                changeEnumName,
+                                enumDecl.Identifier.TrailingTrivia
+                            );
+                            enumCopy = enumDecl.WithIdentifier(newIdentifier);
+                        }
 
                         if (dict.TryGetValue(name, out EnumDeclarationSyntax oldEnumSyntax))
                         {
@@ -672,7 +694,7 @@ namespace SourceCodeSync
                         }
                         else
                         {
-                            if (!dict.TryAdd(name, enumDecl))
+                            if (!dict.TryAdd(name, enumCopy))
                             {
                                 if (_verbosity >= Options.VerbosityOption.Error)
                                 {
