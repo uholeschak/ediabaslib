@@ -176,6 +176,7 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Return bool")]
         public bool StartPsdzService(IVehicle vehicle = null)
         {
             if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
