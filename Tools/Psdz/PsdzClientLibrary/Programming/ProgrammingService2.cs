@@ -253,16 +253,19 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Added")]
         public bool IsPsdzServiceHostInitialized()
         {
             return this.Psdz.IsPsdzInitialized;
         }
 
+        [PreserveSource(Hint = "Added")]
         public void CreateEcuProgrammingInfos(IVehicle vehicle, IFFMDynamicResolver ffmResolver = null)
         {
             this.ProgrammingInfos = new EcuProgrammingInfos(vehicle, ffmResolver);
         }
 
+        [PreserveSource(Hint = "Added")]
 		public void AddListener(PsdzContext psdzContext)
         {
             RemoveListener();
@@ -272,6 +275,7 @@ namespace PsdzClient.Programming
             this.Psdz.AddPsdzEventListener(this.VehicleProgrammingEventHandler);
         }
 
+        [PreserveSource(Hint = "Added")]
 		public void RemoveListener()
         {
             if (PsdzProgressListener != null)
