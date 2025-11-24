@@ -10,37 +10,13 @@ using System.IO;
 namespace PsdzClient.Programming
 {
     [PreserveSource(Hint = "ProgrammingService renamed", InheritanceModified = true)]
-	public class ProgrammingService2 : IProgrammingService2, IDisposable
+    public class ProgrammingService2 : IProgrammingService2, IDisposable
     {
         [PreserveSource(Hint = "Added")]
         private readonly PsdzServiceGateway psdzServiceGateway;
-
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
         private readonly PlaceholderType programmingWorker;
-
         private readonly IOperationServices services;
-
-        [PreserveSource(Hint = "Added")]
-        private readonly PsdzConfig psdzConfig;
-
-        [PreserveSource(Hint = "Added")]
-        public IPsdzProgressListener PsdzProgressListener { get; private set; }
-
-        [PreserveSource(Hint = "Added")]
-        public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
-
-        [PreserveSource(Hint = "Added")]
-        internal ProgrammingEventManager EventManager { get; private set; }
-
-        [PreserveSource(Hint = "Added")]
-        public EcuProgrammingInfos ProgrammingInfos { get; private set; }
-
-        [PreserveSource(Hint = "Added")]
-        public PsdzDatabase PsdzDatabase { get; private set; }
-
-        [PreserveSource(Hint = "Added")]
-        public string BackupDataPath { get; private set; }
-
         public IPsdz Psdz => psdzServiceGateway.Psdz;
 
         [PreserveSource(Hint = "Modified, create services")]
@@ -49,12 +25,10 @@ namespace PsdzClient.Programming
             this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
             psdzServiceGateway = new PsdzServiceGateway(psdzConfig, istaFolder, dealerId);
             SetLogLevelToNormal();
-
             this.EventManager = new ProgrammingEventManager();
             this.PsdzDatabase = new PsdzDatabase(istaFolder);
             PreparePsdzBackupDataPath(istaFolder);
             // [IGNORE] programmingWorker = CreateProgrammingWorker();
-
             // [UH] [IGNORE] added: create services
             IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
             if (fasta2Service == null)
@@ -75,6 +49,7 @@ namespace PsdzClient.Programming
             {
                 return false;
             }
+
             string text = Psdz.LogService.ClosePsdzLog();
             if (!string.IsNullOrEmpty(text) && !string.IsNullOrEmpty(targetLogFilePath))
             {
@@ -88,12 +63,15 @@ namespace PsdzClient.Programming
                 {
                     Log.WarningException("ProgrammingService.CollectPsdzLog", exception);
                 }
+
                 if (!flag)
                 {
                     File.Copy(text, targetLogFilePath, overwrite: true);
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -151,12 +129,6 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Added")]
-        public string GetPsdzServiceHostLogDir()
-        {
-            return psdzServiceGateway.PsdzServiceLogDir;
-        }
-
         [PreserveSource(Hint = "IProgrammingCallbackHandler", Placeholder = true)]
         public PlaceholderType CreateCallbackHandler()
         {
@@ -179,33 +151,6 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Return bool")]
-        public bool StartPsdzService(IVehicle vehicle = null)
-        {
-            if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
-            {
-                Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
-                return true;
-            }
-            TimeMetricsUtility.Instance.InitializePsdzStart();
-            Log.Info(Log.CurrentMethod(), "Start.");
-            try
-            {
-                if (!psdzServiceGateway.StartIfNotRunning(vehicle))
-                {
-                    return false;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.ErrorException(Log.CurrentMethod(), ex);
-                return false;
-            }
-            Log.Info(Log.CurrentMethod(), "End.");
-            TimeMetricsUtility.Instance.InitializePsdzStop();
-            return true;
-        }
-
         [PreserveSource(Hint = "Removed")]
         public ISvt GetCurrentSvtFromPsdzSvt()
         {
@@ -220,29 +165,31 @@ namespace PsdzClient.Programming
 
         [PreserveSource(Hint = "Added istaFolder")]
         private void PreparePsdzBackupDataPath(string istaFolder)
-		{
+        {
             string pathString = PsdzContext.GetBackupBasePath(istaFolder);
             if (string.IsNullOrEmpty(pathString))
             {
                 throw new InvalidOperationException("Key 'BMW.Rheingold.Programming.PsdzBackupDataPath' is not set properly but is required for programming!");
             }
-			try
+
+            try
             {
-				if (!Directory.Exists(pathString))
-				{
-					Directory.CreateDirectory(pathString);
-				}
-				string path = Path.Combine(pathString, Guid.NewGuid().ToString());
-				File.WriteAllText(path, string.Empty);
-				File.Delete(path);
+                if (!Directory.Exists(pathString))
+                {
+                    Directory.CreateDirectory(pathString);
+                }
+
+                string path = Path.Combine(pathString, Guid.NewGuid().ToString());
+                File.WriteAllText(path, string.Empty);
+                File.Delete(path);
                 BackupDataPath = pathString;
             }
-			catch (Exception)
-			{
+            catch (Exception)
+            {
                 Log.Error("ProgrammingService.PreparePsdzBackupDataPath()", "No write access to the folder \"{0}\".", pathString);
-				throw;
-			}
-		}
+                throw;
+            }
+        }
 
         [PreserveSource(Hint = "IFscValidationService", Placeholder = true)]
         private PlaceholderType InitializeFscValidationService()
@@ -254,6 +201,61 @@ namespace PsdzClient.Programming
         private PlaceholderType CreateProgrammingWorker()
         {
             throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Return bool")]
+        public bool StartPsdzService(IVehicle vehicle = null)
+        {
+            if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
+            {
+                Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
+                return true;
+            }
+
+            TimeMetricsUtility.Instance.InitializePsdzStart();
+            Log.Info(Log.CurrentMethod(), "Start.");
+            try
+            {
+                if (!psdzServiceGateway.StartIfNotRunning(vehicle))
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(Log.CurrentMethod(), ex);
+                return false;
+            }
+
+            Log.Info(Log.CurrentMethod(), "End.");
+            TimeMetricsUtility.Instance.InitializePsdzStop();
+            return true;
+        }
+
+        [PreserveSource(Hint = "Added")]
+        private readonly PsdzConfig psdzConfig;
+        [PreserveSource(Hint = "Added")]
+        public IPsdzProgressListener PsdzProgressListener { get; private set; }
+
+        [PreserveSource(Hint = "Added")]
+        public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
+
+        [PreserveSource(Hint = "Added")]
+        internal ProgrammingEventManager EventManager { get; private set; }
+
+        [PreserveSource(Hint = "Added")]
+        public EcuProgrammingInfos ProgrammingInfos { get; private set; }
+
+        [PreserveSource(Hint = "Added")]
+        public PsdzDatabase PsdzDatabase { get; private set; }
+
+        [PreserveSource(Hint = "Added")]
+        public string BackupDataPath { get; private set; }
+
+        [PreserveSource(Hint = "Added")]
+        public string GetPsdzServiceHostLogDir()
+        {
+            return psdzServiceGateway.PsdzServiceLogDir;
         }
 
         [PreserveSource(Hint = "Added")]
@@ -269,7 +271,7 @@ namespace PsdzClient.Programming
         }
 
         [PreserveSource(Hint = "Added")]
-		public void AddListener(PsdzContext psdzContext)
+        public void AddListener(PsdzContext psdzContext)
         {
             RemoveListener();
             this.PsdzProgressListener = new PsdzProgressListener(this.EventManager);
@@ -279,13 +281,14 @@ namespace PsdzClient.Programming
         }
 
         [PreserveSource(Hint = "Added")]
-		public void RemoveListener()
+        public void RemoveListener()
         {
             if (PsdzProgressListener != null)
             {
                 this.Psdz.RemovePsdzProgressListener(this.PsdzProgressListener);
                 this.PsdzProgressListener = null;
             }
+
             if (VehicleProgrammingEventHandler != null)
             {
                 this.Psdz.RemovePsdzEventListener(this.VehicleProgrammingEventHandler);
@@ -297,12 +300,12 @@ namespace PsdzClient.Programming
         public void Dispose()
         {
             RemoveListener();
-			this.psdzServiceGateway.Dispose();
+            this.psdzServiceGateway.Dispose();
             if (this.PsdzDatabase != null)
             {
                 this.PsdzDatabase.Dispose();
                 this.PsdzDatabase = null;
             }
-		}
-	}
+        }
+    }
 }
