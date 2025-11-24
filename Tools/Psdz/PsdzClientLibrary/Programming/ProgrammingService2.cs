@@ -1,17 +1,10 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BMW.Rheingold.Programming;
-using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Client;
-using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Threading;
 
 #pragma warning disable CS0169
 namespace PsdzClient.Programming
