@@ -55,7 +55,7 @@ namespace PsdzClient.Core
             }
         }
 
-        // [UH] XEP_SALAPAS replaced
+        [PreserveSource(Hint = "XEP_SALAPAS replaced")]
         public static ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
@@ -202,8 +202,7 @@ namespace PsdzClient.Core
             return "fasta6_ux.cfg";
         }
 
-        // ToDo: Check on update
-        // [UH] changed to public
+        [PreserveSource(Hint = "Changed to public")]
         public static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
         {
             int customHashCode = vecInfo.GetCustomHashCode();
@@ -604,7 +603,7 @@ namespace PsdzClient.Core
             }
         }
 
-        // [UH] vehicle added
+        [PreserveSource(Hint = "vehicle added")]
         public static void DecodeVCMBackupFA(byte[] faAsByteArray, Vehicle vehicle)
         {
             if (faAsByteArray == null || faAsByteArray.Length < 160)
@@ -712,7 +711,7 @@ namespace PsdzClient.Core
             fA.HO_WORT_ANZ = (short)fA.E_WORT.Count;
             fA.ZUSBAU_ANZ = 0;
             fA.AlreadyDone = true;
-            vehicle.FA = fA;    // [UH] replaced
+            vehicle.FA = fA;    // [UH] [IGNORE] replaced
         }
 
         private static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
@@ -774,7 +773,7 @@ namespace PsdzClient.Core
             return CreateCharacteristicsInstance<T>(vecInfo, storedXmlFileName, storedXmlFileName);
         }
 
-        // [UH] public
+        [PreserveSource(Hint = "Changed to public")]
         public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name) where T : BaseEcuCharacteristics
         {
             try
@@ -814,7 +813,7 @@ namespace PsdzClient.Core
             }
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         private static PsdzDatabase.BordnetsData GetBordnetXmlFromDatabase(Vehicle vecInfo)
         {
             Log.Info(Log.CurrentMethod(), "Reading bordnet configuration from the database");
@@ -848,7 +847,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        // [UH] cleaned
+        [PreserveSource(Hint = "Cleaned")]
         private static void ValidateIfDiagnosticsHasValidLicense()
         {
         }
