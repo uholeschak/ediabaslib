@@ -272,7 +272,8 @@ namespace PsdzClient.Programming
                 this.VehicleProgrammingEventHandler = null;
             }
         }
-		
+
+        [PreserveSource(Hint = "Added")]
         public void Dispose()
         {
             RemoveListener();
