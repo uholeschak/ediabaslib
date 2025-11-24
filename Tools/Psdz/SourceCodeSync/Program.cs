@@ -435,6 +435,11 @@ namespace SourceCodeSync
                         string name = tuple.Item2;
                         bool isFullName = tuple.Item3;
 
+                        if (!isFullName && !string.IsNullOrEmpty(changeClassName))
+                        {
+                            name = name.Replace(classNameBare, changeClassName);
+                        }
+
                         if (dict.TryGetValue(name, out ClassDeclarationSyntax oldClassSyntax))
                         {
                             if (oldClassSyntax != null)
