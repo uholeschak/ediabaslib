@@ -30,6 +30,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Added")]
         internal ProgrammingEventManager EventManager { get; private set; }
 
+        [PreserveSource(Hint = "Added")]
         public EcuProgrammingInfos ProgrammingInfos { get; private set; }
 
         [PreserveSource(Hint = "Added")]
