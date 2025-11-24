@@ -16,7 +16,7 @@ namespace PsdzClient.Core
 
         private string characteristicValue;
 
-        // changed to string
+        [PreserveSource(Hint = "changed to string")]
         private string characteristicRootsNodeClass;
 
         private decimal characteristicId;
