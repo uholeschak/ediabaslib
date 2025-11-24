@@ -23,8 +23,10 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Added")]
         private readonly PsdzConfig psdzConfig;
 
+        [PreserveSource(Hint = "Added")]
         public IPsdzProgressListener PsdzProgressListener { get; private set; }
 
+        [PreserveSource(Hint = "Added")]
         public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
 
         [PreserveSource(Hint = "Added")]
