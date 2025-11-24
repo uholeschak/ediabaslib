@@ -11,8 +11,7 @@ namespace PsdzClient.Core
 {
 	public class VehicleCharacteristicVehicleHelper : VehicleCharacteristicAbstract
 	{
-        // [UH] replaced
-        //	private IDataProviderRuleEvaluation dataProvider;
+        [PreserveSource(Hint = "Dataprovider changed")]
         PsdzDatabase dataProvider;
 
         private string characteristicValue;
@@ -28,9 +27,9 @@ namespace PsdzClient.Core
 
         private ValidationRuleInternalResults internalResult;
 
+        [PreserveSource(Hint = "dbConnector removed")]
         public VehicleCharacteristicVehicleHelper(IVehicleRuleEvaluation vehicle)
         {
-            //dbConnector = DatabaseProviderFactory.Instance;
             characteristicValue = string.Empty;
             this.vehicle = vehicle;
             internalResult = new ValidationRuleInternalResults();
@@ -404,7 +403,7 @@ namespace PsdzClient.Core
             return dataProvider.LookupVehicleCharIdByName(vehicle.Sportausfuehrung, 99999999847L) == (decimal)datavalueId;
         }
 
-        // [UH] adapted
+        [PreserveSource(Hint = "Adapted")]
         private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, long datavalueId, ValidationRuleInternalResults internalResult, out string value, string rootNodeClass, decimal characteristicNodeclass)
         {
             if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal rootClassValue))
