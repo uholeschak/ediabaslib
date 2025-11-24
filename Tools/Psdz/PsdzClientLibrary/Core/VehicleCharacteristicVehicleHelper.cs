@@ -35,6 +35,7 @@ namespace PsdzClient.Core
             internalResult = new ValidationRuleInternalResults();
         }
 
+        [PreserveSource(Hint = "characteristicRootsNodeClass to string")]
         public bool GetISTACharacteristics(string characteristicRootsNodeClass, out string value, decimal id, IVehicleRuleEvaluation vehicle, long dataValueId, ValidationRuleInternalResults internalResult)
         {
             this.characteristicRootsNodeClass = characteristicRootsNodeClass;
