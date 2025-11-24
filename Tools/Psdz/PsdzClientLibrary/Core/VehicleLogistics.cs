@@ -714,6 +714,7 @@ namespace PsdzClient.Core
             vehicle.FA = fA;    // [UH] [IGNORE] replaced
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         private static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
         {
             return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
