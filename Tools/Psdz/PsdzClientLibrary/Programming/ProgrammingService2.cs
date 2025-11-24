@@ -241,6 +241,18 @@ namespace PsdzClient.Programming
 			}
 		}
 
+        [PreserveSource(Hint = "IFscValidationService", Placeholder = true)]
+        private PlaceholderType InitializeFscValidationService()
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
+        private PlaceholderType CreateProgrammingWorker()
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsPsdzServiceHostInitialized()
         {
             return this.Psdz.IsPsdzInitialized;
