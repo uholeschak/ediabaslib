@@ -17,17 +17,19 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
+#pragma warning disable CS0169
 namespace BMW.Rheingold.Programming.API
 {
     // ToDo: Check on update
-    // [UH] changed to public
+    [PreserveSource(Hint = "changed to public", AccessModified = true)]
     public class ProgrammingObjectBuilder : IProgrammingObjectBuilder
     {
         private readonly IFFMDynamicResolver ffmResolver;
 
         private readonly Vehicle vehicle;
 
-        //private readonly VehicleDataConverter vdc;
+        [PreserveSource(Hint = "VehicleDataConverter", Placeholder = true)]
+        private readonly PlaceholderType vdc;
 
         private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
 
