@@ -218,12 +218,6 @@ namespace PsdzClient.Core
             return "fasta6_ux.cfg";
         }
 
-        [PreserveSource(Hint = "Added")]
-        public static BaseEcuCharacteristics GetCharacteristicsPublic(Vehicle vecInfo)
-        {
-            return GetCharacteristics(vecInfo);
-        }
-
         private static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
         {
             int customHashCode = vecInfo.GetCustomHashCode();
@@ -919,6 +913,12 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "Cleaned")]
         private static void ValidateIfDiagnosticsHasValidLicense()
         {
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public static BaseEcuCharacteristics GetCharacteristicsPublic(Vehicle vecInfo)
+        {
+            return GetCharacteristics(vecInfo);
         }
     }
 }
