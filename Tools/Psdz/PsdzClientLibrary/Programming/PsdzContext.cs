@@ -792,7 +792,7 @@ namespace PsdzClient.Programming
             PerformVecInfoAssignments();
             DetectVehicle.SetVehicleLifeStartDate(VecInfo);
 
-            EcuCharacteristics = VehicleLogistics.GetCharacteristics(VecInfo);
+            EcuCharacteristics = VehicleLogistics.GetCharacteristicsPublic(VecInfo);
             return true;
         }
 

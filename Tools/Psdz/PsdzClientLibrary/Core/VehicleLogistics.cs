@@ -218,8 +218,13 @@ namespace PsdzClient.Core
             return "fasta6_ux.cfg";
         }
 
-        [PreserveSource(Hint = "Changed to public")]
-        public static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
+        [PreserveSource(Hint = "Added")]
+        public static BaseEcuCharacteristics GetCharacteristicsPublic(Vehicle vecInfo)
+        {
+            return GetCharacteristics(vecInfo);
+        }
+
+        private static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
         {
             int customHashCode = vecInfo.GetCustomHashCode();
             if (ecuCharacteristics.TryGetValue(customHashCode, out var value))
