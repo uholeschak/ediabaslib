@@ -8,16 +8,12 @@ using PsdzClient.Utility;
 
 namespace PsdzClient.Core
 {
-    // ToDo: Check on update
     public class VehicleLogistics
     {
         private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
-
         [PreserveSource(Hint = "Modified")]
         private static Lazy<bool> isGui = new Lazy<bool>(false);
-
         public const string FallbackBordnetName = "BNT-XML-FALLBACK.xml";
-
         public static BaseEcuCharacteristics CallGetCharacteristics(Vehicle vecInfo)
         {
             return GetCharacteristics(vecInfo);
@@ -30,11 +26,13 @@ namespace PsdzClient.Core
                 Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
+
             if (vecInfo.BNType == BNType.UNKNOWN)
             {
                 Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
                 return;
             }
+
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
             {
@@ -46,11 +44,11 @@ namespace PsdzClient.Core
             }
         }
 
-        // ToDo: Check on update
         public static void ShapeECUConfiguration(Vehicle vecInfo)
         {
             if ("E36,E38,E46,E53,E83,E85,R50".Contains(vecInfo.Ereihe))
             {
+                ValidateIfDiagnosticsHasValidLicense();
                 GetCharacteristics(vecInfo)?.ShapeECUConfiguration(vecInfo);
             }
         }
@@ -63,6 +61,7 @@ namespace PsdzClient.Core
             {
                 return characteristics.GetAvailableSALAPAs(vecInfo);
             }
+
             return new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
         }
 
@@ -78,6 +77,7 @@ namespace PsdzClient.Core
             {
                 return characteristics.GetBusAlias(bus);
             }
+
             return bus.ToString();
         }
 
@@ -94,7 +94,12 @@ namespace PsdzClient.Core
         public static bool CasNeedsZgmRepair(Vehicle vecInfo)
         {
             string baureihenverbund = vecInfo.Baureihenverbund;
-            string[] source = new string[3] { "F001", "F010", "F025" };
+            string[] source = new string[3]
+            {
+                "F001",
+                "F010",
+                "F025"
+            };
             bool flag = !string.IsNullOrEmpty(baureihenverbund) && source.Contains(baureihenverbund);
             Log.Info("VehicleLogistics.CasNeedsZgmRepair()", "Return {0} for BRV=\"{1}\".", flag, baureihenverbund);
             return flag;
@@ -118,15 +123,18 @@ namespace PsdzClient.Core
                 Log.Warning("VehicleLogistics.HasBus()", "vecInfo was null");
                 return false;
             }
+
             if (ecu == null)
             {
                 Log.Warning("VehicleLogistics.HasBus()", "ecu was null");
                 return false;
             }
+
             if (busType.Equals(ecu.BUS) || (ecu.SubBUS != null && ecu.SubBUS.Contains(busType)))
             {
                 return true;
             }
+
             return characteristics?.HasBus(busType, vecInfo, ecu) ?? false;
         }
 
@@ -139,11 +147,13 @@ namespace PsdzClient.Core
             {
                 text = GetCharacteristics(vecInfo)?.brSgbd;
             }
+
             return text;
         }
 
         public static BusType getECUBus(Vehicle vecInfo, long? iD_SG_ADR, string ecuGroup = null)
         {
+            ValidateIfDiagnosticsHasValidLicense();
             return GetCharacteristics(vecInfo)?.GetBus(iD_SG_ADR, vecInfo.VCI?.VCIType, ecuGroup) ?? BusType.UNKNOWN;
         }
 
@@ -158,6 +168,7 @@ namespace PsdzClient.Core
                 characteristics.GetEcuCoordinates(ecu.ID_SG_ADR, ecu.ID_LIN_SLAVE_ADR, out column, out row);
                 return true;
             }
+
             return false;
         }
 
@@ -169,6 +180,7 @@ namespace PsdzClient.Core
             {
                 return characteristics.GetECU_GROBNAME(sgAdr);
             }
+
             return string.Empty;
         }
 
@@ -180,6 +192,7 @@ namespace PsdzClient.Core
             {
                 return characteristics.GetECU_GROBNAMEByEcuGroup(ecuGroup);
             }
+
             return string.Empty;
         }
 
@@ -190,6 +203,7 @@ namespace PsdzClient.Core
             {
                 return string.Empty;
             }
+
             string text = produktart.ToUpper();
             if (!(text == "M"))
             {
@@ -197,8 +211,10 @@ namespace PsdzClient.Core
                 {
                     return "fasta6_pkw.cfg";
                 }
+
                 return null;
             }
+
             return "fasta6_ux.cfg";
         }
 
@@ -210,6 +226,7 @@ namespace PsdzClient.Core
             {
                 return value;
             }
+
             if (!string.IsNullOrEmpty(vecInfo.Baureihenverbund))
             {
                 switch (vecInfo.Baureihenverbund.ToUpper())
@@ -225,6 +242,7 @@ namespace PsdzClient.Core
                         return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                 }
             }
+
             IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             if (!string.IsNullOrEmpty(vecInfo.Ereihe))
             {
@@ -245,6 +263,7 @@ namespace PsdzClient.Core
                         {
                             return GetEcuCharacteristics<F01EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         if (vecInfo.ECU != null)
                         {
                             ECU eCU = vecInfo.getECU(16L);
@@ -253,6 +272,7 @@ namespace PsdzClient.Core
                                 return GetEcuCharacteristics<F01EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                             }
                         }
+
                         return GetEcuCharacteristics<F01_1307EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "F14":
                     case "F15":
@@ -265,6 +285,7 @@ namespace PsdzClient.Core
                         {
                             return GetEcuCharacteristics<F25EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         return GetEcuCharacteristics<F25_1404EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "F26":
                         return GetEcuCharacteristics<F25_1404EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
@@ -326,6 +347,7 @@ namespace PsdzClient.Core
                         {
                             return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         return GetEcuCharacteristics<F56EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "I01":
                     case "I12":
@@ -344,12 +366,14 @@ namespace PsdzClient.Core
                         {
                             return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         return GetEcuCharacteristics<BNT_G01_G02_G08_F97_F98_SP2015>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "G08":
                         if (vecInfo.IsBev() || vecInfo.HasHuMgu())
                         {
                             return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         return GetEcuCharacteristics<BNT_G01_G02_G08_F97_F98_SP2015>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "G30":
                     case "G31":
@@ -363,6 +387,7 @@ namespace PsdzClient.Core
                         {
                             return GetEcuCharacteristics<BNT_G11_G12_G3X_SP2015>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
                     case "G05":
                     case "G06":
@@ -414,10 +439,12 @@ namespace PsdzClient.Core
                         {
                             return GetEcuCharacteristics<E70EcuCharacteristicsAMPT>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         if (vecInfo.HasAmph70())
                         {
                             return GetEcuCharacteristics<E70EcuCharacteristicsAMPH>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         return GetEcuCharacteristics<E70EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "E72":
                         return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
@@ -428,6 +455,7 @@ namespace PsdzClient.Core
                         {
                             return GetEcuCharacteristics<RREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         return GetEcuCharacteristics<RR2EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "E65":
                     case "E66":
@@ -462,6 +490,7 @@ namespace PsdzClient.Core
                         {
                             return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "A67":
                     case "K25":
@@ -486,6 +515,7 @@ namespace PsdzClient.Core
                         {
                             return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
+
                         return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "H61":
                     case "H91":
@@ -555,8 +585,10 @@ namespace PsdzClient.Core
                     case "E34":
                         return GetEcuCharacteristicsFromFallback("iBusEcuCharacteristics.xml", vecInfo);
                 }
+
                 Log.Info("VehicleLogistics.GetCharacteristics()", "cannot retrieve bordnet configuration using ereihe");
             }
+
             switch (vecInfo.BNType)
             {
                 case BNType.BN2000_MOTORBIKE:
@@ -568,15 +600,16 @@ namespace PsdzClient.Core
                 case BNType.IBUS:
                     return GetEcuCharacteristics("iBusEcuCharacteristics.xml", vecInfo);
                 default:
+                {
+                    BaseEcuCharacteristics baseEcuCharacteristics = GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
+                    if (baseEcuCharacteristics != null)
                     {
-                        BaseEcuCharacteristics baseEcuCharacteristics = GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                        if (baseEcuCharacteristics != null)
-                        {
-                            return baseEcuCharacteristics;
-                        }
-                        Log.Warning("VehicleLogistics.GetCharacteristics()", $"No configuration found for vehicle with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}");
-                        return null;
+                        return baseEcuCharacteristics;
                     }
+
+                    Log.Warning("VehicleLogistics.GetCharacteristics()", $"No configuration found for vehicle with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}");
+                    return null;
+                }
             }
         }
 
@@ -587,11 +620,13 @@ namespace PsdzClient.Core
                 Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
+
             if (vecInfo.BNType == BNType.UNKNOWN)
             {
                 Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
                 return;
             }
+
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
             {
@@ -611,6 +646,7 @@ namespace PsdzClient.Core
                 Log.Warning("VehicleLogistics.DecodeVCMBackupFA()", "fa byte stream was null or too short");
                 return;
             }
+
             FA fA = new FA();
             try
             {
@@ -624,6 +660,7 @@ namespace PsdzClient.Core
                 {
                     text += Convert.ToString(faAsByteArray[i], 2).PadLeft(8, '0');
                 }
+
                 string value = text.Substring(0, 4);
                 string text2 = text;
                 if ("1000".Equals(value))
@@ -638,13 +675,16 @@ namespace PsdzClient.Core
                             j += 2;
                             break;
                         }
+
                         byte inChar = Convert.ToByte(text2.Substring(j + 6, 6), 2);
                         byte inChar2 = Convert.ToByte(text2.Substring(j + 12, 6), 2);
                         string item = $"{FormatConverter.DecodeFAChar((char)b)}{FormatConverter.DecodeFAChar((char)inChar)}{FormatConverter.DecodeFAChar((char)inChar2)}";
                         fA.SA.AddIfNotContains(item);
                     }
+
                     text2 = text2.Substring(j, text2.Length - j);
                 }
+
                 value = text2.Substring(0, 4);
                 text2 = text2.Substring(4, text2.Length - 4);
                 if ("0100".Equals(value))
@@ -658,14 +698,17 @@ namespace PsdzClient.Core
                             j += 2;
                             break;
                         }
+
                         byte inChar3 = Convert.ToByte(text2.Substring(j + 6, 6), 2);
                         byte inChar4 = Convert.ToByte(text2.Substring(j + 12, 6), 2);
                         byte inChar5 = Convert.ToByte(text2.Substring(j + 18, 6), 2);
                         string item2 = $"{FormatConverter.DecodeFAChar((char)b2)}{FormatConverter.DecodeFAChar((char)inChar3)}{FormatConverter.DecodeFAChar((char)inChar4)}{FormatConverter.DecodeFAChar((char)inChar5)}";
                         fA.E_WORT.AddIfNotContains(item2);
                     }
+
                     text2 = text2.Substring(j, text2.Length - j);
                 }
+
                 value = text2.Substring(0, 4);
                 text2 = text2.Substring(4, text2.Length - 4);
                 if ("1100".Equals(value))
@@ -679,12 +722,14 @@ namespace PsdzClient.Core
                             j += 2;
                             break;
                         }
+
                         byte inChar6 = Convert.ToByte(text2.Substring(j + 6, 6), 2);
                         byte inChar7 = Convert.ToByte(text2.Substring(j + 12, 6), 2);
                         byte inChar8 = Convert.ToByte(text2.Substring(j + 18, 6), 2);
                         string item3 = $"{FormatConverter.DecodeFAChar((char)b3)}{FormatConverter.DecodeFAChar((char)inChar6)}{FormatConverter.DecodeFAChar((char)inChar7)}{FormatConverter.DecodeFAChar((char)inChar8)}";
                         fA.HO_WORT.AddIfNotContains(item3);
                     }
+
                     text2 = text2.Substring(j, text2.Length - j);
                 }
             }
@@ -692,26 +737,30 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("VehicleLogistics.DecodeVCMBackupFA()", exception);
             }
+
             string text3 = string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}", fA.BR, fA.C_DATE, fA.TYPE, fA.LACK, fA.POLSTER);
             foreach (string item4 in fA.SA)
             {
                 text3 += string.Format(CultureInfo.InvariantCulture, "${0}", item4);
             }
+
             foreach (string item5 in fA.E_WORT)
             {
                 text3 += string.Format(CultureInfo.InvariantCulture, "-{0}", item5);
             }
+
             foreach (string item6 in fA.HO_WORT)
             {
                 text3 += string.Format(CultureInfo.InvariantCulture, "+{0}", item6);
             }
+
             fA.STANDARD_FA = text3;
             fA.SA_ANZ = (short)fA.SA.Count;
             fA.E_WORT_ANZ = (short)fA.HO_WORT.Count;
             fA.HO_WORT_ANZ = (short)fA.E_WORT.Count;
             fA.ZUSBAU_ANZ = 0;
             fA.AlreadyDone = true;
-            vehicle.FA = fA;    // [UH] [IGNORE] replaced
+            vehicle.FA = fA; // [UH] [IGNORE] replaced
         }
 
         [PreserveSource(Hint = "Unchanged")]
@@ -721,7 +770,8 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Hint = "Database replaced")]
-        public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
+        public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo)
+            where T : BaseEcuCharacteristics
         {
             Log.Info(Log.CurrentMethod(), $"Reading bordnet configuration with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}, target type: {typeof(T).Name}. The fallback xml file is: {storedXmlFileName}");
             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
@@ -747,6 +797,7 @@ namespace PsdzClient.Core
             {
                 LogMissingDatabaseBordnet(vecInfo, ex.Message);
             }
+
             if (!string.IsNullOrEmpty(storedXmlFileName))
             {
                 string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
@@ -759,6 +810,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             Log.Error(Log.CurrentMethod(), "No bordnet could be loaded.");
             return null;
         }
@@ -769,19 +821,24 @@ namespace PsdzClient.Core
             return CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, storedXmlFileName, storedXmlFileName);
         }
 
-        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback<T>(string storedXmlFileName, Vehicle vecInfo) where T : BaseEcuCharacteristics
+        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback<T>(string storedXmlFileName, Vehicle vecInfo)
+            where T : BaseEcuCharacteristics
         {
             Log.Info(Log.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
             return CreateCharacteristicsInstance<T>(vecInfo, storedXmlFileName, storedXmlFileName);
         }
 
         [PreserveSource(Hint = "Changed to public")]
-        public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name) where T : BaseEcuCharacteristics
+        public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name)
+            where T : BaseEcuCharacteristics
         {
             try
             {
                 Type typeFromHandle = typeof(T);
-                object[] args = new string[1] { xml };
+                object[] args = new string[1]
+                {
+                    xml
+                };
                 T val = (T)Activator.CreateInstance(typeFromHandle, args);
                 if (val != null)
                 {
@@ -789,6 +846,7 @@ namespace PsdzClient.Core
                     val.BordnetName = name;
                     Log.Info(Log.CurrentMethod(), "Found characteristics with group sgdb: " + val.brSgbd);
                 }
+
                 return val;
             }
             catch (Exception exception)
@@ -827,17 +885,20 @@ namespace PsdzClient.Core
                 {
                     return null;
                 }
+
                 List<PsdzDatabase.BordnetsData> collection = database.LoadBordnetsData(vecInfo);
                 if (collection != null && collection.Count == 1)
                 {
                     return collection.First();
                 }
+
                 if (collection != null && collection.Count > 1)
                 {
                     foreach (PsdzDatabase.BordnetsData item in collection)
                     {
                         text = text + item.InfoObjIdent + " ";
                     }
+
                     throw new Exception(text);
                 }
             }
@@ -846,6 +907,7 @@ namespace PsdzClient.Core
                 Log.Error(Log.CurrentMethod(), $"Reading bordnet configuration from the database failed: {ex}");
                 throw;
             }
+
             return null;
         }
 
