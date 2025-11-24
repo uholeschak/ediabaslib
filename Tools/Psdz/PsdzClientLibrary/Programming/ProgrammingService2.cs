@@ -134,6 +134,7 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "force added")]
         public void CloseConnectionsToPsdz(bool force = false)
         {
             Log.Info(Log.CurrentMethod(), "Start.");
