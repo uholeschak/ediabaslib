@@ -17,7 +17,7 @@ using System.Threading;
 namespace PsdzClient.Programming
 {
     [PreserveSource(Hint = "Duplicate interface name")]
-	public class ProgrammingService : IProgrammingService, IDisposable
+	public class ProgrammingService : IProgrammingService2, IDisposable
     {
         [PreserveSource(Hint = "Added")]
         private readonly PsdzServiceGateway psdzServiceGateway;

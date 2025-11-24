@@ -3,8 +3,7 @@ using BMW.Rheingold.Psdz;
 
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "Duplicate interface name")]
-    public interface IProgrammingService
+    public interface IProgrammingService2
     {
         IPsdz Psdz { get; }
 

@@ -41,14 +41,14 @@ namespace SourceCodeSync
             {"public_LicenseWizardHelper", null },
             {"internal_CharacteristicsGenerator", null },
             {"BMW.Rheingold.Programming.Common.SecureCodingService", null },
-            {"BMW.Rheingold.Programming.ProgrammingService", "ProgrammingServiceProgramming"},
+            {"BMW.Rheingold.Programming.ProgrammingService", "ProgrammingService2"},
             {"BMW.iLean.CommonServices.Logging.Extensions", null},
             {"BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility.GearboxUtility", null}
         };
 
         private static Dictionary<string, string> _modifyInterfaceNames = new()
         {
-            {"BMW.Rheingold.CoreFramework.Contracts.Programming.IProgrammingService", "IProgrammingServiceProgramming"},
+            {"BMW.Rheingold.CoreFramework.Contracts.Programming.IProgrammingService", "IProgrammingService2"},
             {"BMW.Rheingold.ISTA.CoreFramework.ILogger", null}
         };
 
