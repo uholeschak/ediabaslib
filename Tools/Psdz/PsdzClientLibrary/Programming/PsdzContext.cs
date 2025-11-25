@@ -23,21 +23,12 @@ using System.Text.RegularExpressions;
 namespace PsdzClient.Programming
 {
     [PreserveSource(Hint = "IDisposable added", AccessModified = true, InheritanceModified = true)]
-	public class PsdzContext : IPsdzContext, IDisposable
-	{
-        [PreserveSource(Hint = "Added")]
-        private const string IdrBackupFileName = "_IDR_Files.backup";
-
-        [PreserveSource(Hint = "Added")]
-        private bool _disposed;
-
+    public class PsdzContext : IPsdzContext, IDisposable
+    {
         private bool hasVinBackupDataFolder;
-
         private IEnumerable<IPsdzIstufe> possibleIstufenTarget;
-
         [PreserveSource(Hint = "IPsdzCentralConnectionService", Placeholder = true)]
         private readonly PlaceholderType service;
-
         public bool IsEmptyBackupTal
         {
             get
@@ -46,6 +37,7 @@ namespace PsdzClient.Programming
                 {
                     return !IndividualDataBackupTal.TalLines.Any();
                 }
+
                 return true;
             }
         }
@@ -58,6 +50,7 @@ namespace PsdzClient.Programming
                 {
                     return !IndividualDataRestorePrognosisTal.TalLines.Any();
                 }
+
                 return true;
             }
         }
@@ -70,6 +63,7 @@ namespace PsdzClient.Programming
                 {
                     return !IndividualDataRestoreTal.TalLines.Any();
                 }
+
                 return true;
             }
         }
@@ -82,32 +76,15 @@ namespace PsdzClient.Programming
                 {
                     return !Tal.TalLines.Any();
                 }
+
                 return true;
             }
         }
 
-        [PreserveSource(Hint = "Added")]
-        internal BackupTalResult CheckBackupTal()
-        {
-            if (!IsValidBackupTal)
-            {
-                return BackupTalResult.Error;
-            }
-            if (IsEmptyBackupTal)
-            {
-                return BackupTalResult.Success;
-            }
-            return BackupTalResult.Undefined;
-        }
-
         public string IstufeCurrent { get; private set; }
-
-		public string IstufeLast { get; private set; }
-
-		public string IstufeShipment { get; private set; }
-
+        public string IstufeLast { get; private set; }
+        public string IstufeShipment { get; private set; }
         public bool IsValidBackupTal => IndividualDataBackupTal != null;
-
         public IVehicleProfileChecksum VpcFromVcm { get; set; }
 
         public bool IsValidEcuListActual
@@ -118,6 +95,7 @@ namespace PsdzClient.Programming
                 {
                     return EcuListActual.Any();
                 }
+
                 return false;
             }
         }
@@ -130,6 +108,7 @@ namespace PsdzClient.Programming
                 {
                     return FaActual.IsValid;
                 }
+
                 return false;
             }
         }
@@ -142,14 +121,13 @@ namespace PsdzClient.Programming
                 {
                     return FaTarget.IsValid;
                 }
+
                 return false;
             }
         }
 
         public bool IsValidRestorePrognosisTal => IndividualDataRestorePrognosisTal != null;
-
         public bool IsValidRestoreTal => IndividualDataRestoreTal != null;
-
         public bool IsValidSollverbauung => Sollverbauung != null;
 
         public bool IsValidSvtActual
@@ -160,6 +138,7 @@ namespace PsdzClient.Programming
                 {
                     return SvtActual.IsValid;
                 }
+
                 return false;
             }
         }
@@ -175,37 +154,26 @@ namespace PsdzClient.Programming
                 {
                     return null;
                 }
+
                 return enumerable.Last().Value;
             }
         }
 
         public string ProjectName { get; set; }
-
         public SFASessionData SFASessionData { get; set; }
-
         public IPsdzSwtAction SwtAction { get; internal set; }
-
         public string VehicleInfo { get; set; }
-
         public string PathToBackupData { get; set; }
-
         public bool PsdZBackUpModeSet { get; set; }
-
         public IPsdzTalFilter TalFilterForIndividualDataTal { get; private set; }
-
         public RequestJson NCDLastCalculationRequest { get; internal set; }
 
         [PreserveSource(Hint = "Modified")]
         public IPsdzConnection Connection { get; set; }
-
         internal IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
-
         internal IDictionary<string, IList<string>> ExecutionOrderBottom { get; private set; }
-
         internal IDictionary<string, IList<string>> ExecutionOrderTop { get; private set; }
-
         internal IPsdzFa FaActual { get; private set; }
-
         internal IPsdzFa FaTarget { get; private set; }
 
         [PreserveSource(Hint = "List<EcuFilterOnSweLevel>", Placeholder = true)]
@@ -213,44 +181,16 @@ namespace PsdzClient.Programming
 
         [PreserveSource(Hint = "List<EcuFilterOnSmacLevel>", Placeholder = true)]
         internal PlaceholderType EcuSmacFilter { get; set; }
-
         internal IPsdzTal IndividualDataBackupTal { get; set; }
-
         internal IPsdzTal IndividualDataRestorePrognosisTal { get; set; }
-
         internal IPsdzTal IndividualDataRestoreTal { get; set; }
-
         internal IPsdzSollverbauung Sollverbauung { get; private set; }
-
         internal IPsdzSvt SvtActual { get; private set; }
-
         public IPsdzTal Tal { get; set; }
-
         internal IPsdzTalFilter TalFilter { get; private set; }
-
         internal IPsdzTalFilter TalFilterForECUWithIDRClassicState { get; private set; }
-
         internal IPsdzTal TalForECUWithIDRClassicState { get; set; }
-
         internal IEnumerable<IPsdzTargetSelector> TargetSelectors { get; set; }
-
-        [PreserveSource(Hint = "Added")]
-        public DetectVehicle DetectVehicle { get; set; }
-
-        [PreserveSource(Hint = "Added")]
-        public Vehicle VecInfo { get; set; }
-
-        [PreserveSource(Hint = "Added")]
-        public ISvt SvtTarget { get; private set; }
-
-        [PreserveSource(Hint = "Added")]
-        public ISvt SvtCurrent { get; private set; }
-
-        [PreserveSource(Hint = "Added")]
-        public string IstaFolder { get; private set; }
-
-        [PreserveSource(Hint = "Added")]
-        public BaseEcuCharacteristics EcuCharacteristics { get; private set; }
 
         [PreserveSource(Hint = "ServiceLocator removed")]
         public PsdzContext(string istaFolder)
@@ -259,7 +199,7 @@ namespace PsdzClient.Programming
             ExecutionOrderTop = new Dictionary<string, IList<string>>();
             ExecutionOrderBottom = new Dictionary<string, IList<string>>();
             SFASessionData = new SFASessionData();
-            // [IGNORE] ServiceLocator.Current.TryGetService<IPsdzCentralConnectionService>(out service);
+        // [IGNORE] ServiceLocator.Current.TryGetService<IPsdzCentralConnectionService>(out service);
         }
 
         public string GetBaseVariant(int diagnosticAddress)
@@ -268,6 +208,7 @@ namespace PsdzClient.Programming
             {
                 return SvtActual.Ecus.Single((IPsdzEcu ecu) => diagnosticAddress == ecu.PrimaryKey.DiagAddrAsInt).BaseVariant;
             }
+
             Log.Warning("PsdzContext.GetBaseVariant", "Ecu with DiagAdr:{0} was not found.", diagnosticAddress);
             return string.Empty;
         }
@@ -295,6 +236,7 @@ namespace PsdzClient.Programming
                             }
                         }
                     }
+
                     list.AddRange(list3.Select((IPsdzSgbmId x) => new SgbmIdChange(null, x.HexString)));
                 }
                 catch (InvalidOperationException exception)
@@ -313,6 +255,7 @@ namespace PsdzClient.Programming
             {
                 Log.Warning("PsdzContext.GetDifferntSgbmIds()", "Parameter ecuId is null.");
             }
+
             return list;
         }
 
@@ -320,9 +263,153 @@ namespace PsdzClient.Programming
         {
             bool? result = false;
             IEnumerable<ISgbmIdChange> differentSgbmIds = GetDifferentSgbmIds(diagnosticAddress);
-            result = ((differentSgbmIds != null) ? new bool?(!differentSgbmIds.Where((ISgbmIdChange a) => a.Actual != null && !a.Actual.StartsWith("NAVD-") && !a.Actual.StartsWith("ENTD-")).Any()) : ((bool?)null));
+            result = ((differentSgbmIds != null) ? new bool? (!differentSgbmIds.Any((ISgbmIdChange a) => a.Actual != null && !a.Actual.StartsWith("NAVD-") && !a.Actual.StartsWith("ENTD-"))) : ((bool? )null));
             return result;
         }
+
+        [PreserveSource(Hint = "Return value added")]
+        public bool SetPathToBackupData(string vin17)
+        {
+            hasVinBackupDataFolder = false;
+            string pathString = GetBackupBasePath(IstaFolder);
+            if (string.IsNullOrEmpty(pathString))
+            {
+                Log.Warning("PsdzContext.SetPathToBackupData()", "Backup data path (\"BMW.Rheingold.Programming.PsdzBackupDataPath\") is not set. Thus data recovery is disabled.");
+                PathToBackupData = null;
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(vin17))
+            {
+                PathToBackupData = Path.GetFullPath(pathString);
+            }
+            else
+            {
+                hasVinBackupDataFolder = true;
+                PathToBackupData = Path.GetFullPath(Path.Combine(pathString, vin17));
+            }
+
+            if (!Directory.Exists(PathToBackupData))
+            {
+                Log.Info("PsdzContext.SetPathToBackupData()", "Backup data path (\"{0}\") is not an existing directory. Try to create...", PathToBackupData);
+                Directory.CreateDirectory(PathToBackupData);
+            }
+
+            Log.Info("PsdzContext.SetPathToBackupData()", "Backup data path: \"{0}\"", PathToBackupData);
+            return true;
+        }
+
+        internal void CleanupBackupData()
+        {
+            if (!string.IsNullOrEmpty(PathToBackupData) && hasVinBackupDataFolder && !Directory.EnumerateFileSystemEntries(PathToBackupData).Any())
+            {
+                Directory.Delete(PathToBackupData);
+                Log.Info("PsdzContext.CleanupBackupData()", "Empty backup folder ('{0}') deleted!", PathToBackupData);
+                hasVinBackupDataFolder = false;
+            }
+        }
+
+        internal void SetFaActual(IPsdzFa fa)
+        {
+            FaActual = fa;
+        }
+
+        internal void SetFaTarget(IPsdzFa fa)
+        {
+            FaTarget = fa;
+        }
+
+        internal void SetIstufen(IPsdzIstufenTriple istufenTriple)
+        {
+            if (istufenTriple != null)
+            {
+                IstufeShipment = istufenTriple.Shipment;
+                IstufeLast = istufenTriple.Last;
+                IstufeCurrent = istufenTriple.Current;
+            }
+            else
+            {
+                IstufeShipment = null;
+                IstufeLast = null;
+                IstufeCurrent = null;
+            }
+
+            string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.BuildILevel", null);
+            if (!string.IsNullOrEmpty(configString))
+            {
+                IstufeShipment = configString;
+                Log.Info(Log.CurrentMethod(), "Build i-Level manually set to {0}", IstufeShipment);
+            }
+        }
+
+        internal void SetPossibleIstufenTarget(IEnumerable<IPsdzIstufe> possibleIstufenTarget)
+        {
+            this.possibleIstufenTarget = possibleIstufenTarget;
+        }
+
+        [PreserveSource(Hint = "Unmodified")]
+        public void SetSollverbauung(IPsdzSollverbauung sollverbauung)
+        {
+            this.Sollverbauung = sollverbauung;
+        }
+
+        internal void SetSvtActual(IPsdzSvt svt)
+        {
+            SvtActual = svt;
+        }
+
+        internal void SetTalFilter(IPsdzTalFilter talFilter)
+        {
+            TalFilter = talFilter;
+        }
+
+        internal void SetTalFilterForECUWithIDRClassicState(IPsdzTalFilter talFilter)
+        {
+            TalFilterForECUWithIDRClassicState = talFilter;
+        }
+
+        internal void SetTalFilterForIndividualDataTal(IPsdzTalFilter talFilterForIndividualDataTal)
+        {
+            TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
+        }
+
+        [PreserveSource(Hint = "Added")]
+        private const string IdrBackupFileName = "_IDR_Files.backup";
+        [PreserveSource(Hint = "Added")]
+        private bool _disposed;
+        [PreserveSource(Hint = "Added")]
+        internal BackupTalResult CheckBackupTal()
+        {
+            if (!IsValidBackupTal)
+            {
+                return BackupTalResult.Error;
+            }
+
+            if (IsEmptyBackupTal)
+            {
+                return BackupTalResult.Success;
+            }
+
+            return BackupTalResult.Undefined;
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public DetectVehicle DetectVehicle { get; set; }
+
+        [PreserveSource(Hint = "Added")]
+        public Vehicle VecInfo { get; set; }
+
+        [PreserveSource(Hint = "Added")]
+        public ISvt SvtTarget { get; private set; }
+
+        [PreserveSource(Hint = "Added")]
+        public ISvt SvtCurrent { get; private set; }
+
+        [PreserveSource(Hint = "Added")]
+        public string IstaFolder { get; private set; }
+
+        [PreserveSource(Hint = "Added")]
+        public BaseEcuCharacteristics EcuCharacteristics { get; private set; }
 
         [PreserveSource(Hint = "Added")]
         public ICombinedEcuHousingEntry GetEcuHousingEntry(int diagnosticAddress)
@@ -390,58 +477,8 @@ namespace PsdzClient.Programming
             {
                 pathString = Path.Combine(istaFolder, "Temp");
             }
+
             return pathString;
-        }
-
-        [PreserveSource(Hint = "Return value added")]
-        public bool SetPathToBackupData(string vin17)
-        {
-            hasVinBackupDataFolder = false;
-            string pathString = GetBackupBasePath(IstaFolder);
-            if (string.IsNullOrEmpty(pathString))
-            {
-                Log.Warning("PsdzContext.SetPathToBackupData()", "Backup data path (\"BMW.Rheingold.Programming.PsdzBackupDataPath\") is not set. Thus data recovery is disabled.");
-                PathToBackupData = null;
-                return false;
-            }
-            if (string.IsNullOrEmpty(vin17))
-            {
-                PathToBackupData = Path.GetFullPath(pathString);
-            }
-            else
-            {
-                hasVinBackupDataFolder = true;
-                PathToBackupData = Path.GetFullPath(Path.Combine(pathString, vin17));
-            }
-            if (!Directory.Exists(PathToBackupData))
-            {
-                Log.Info("PsdzContext.SetPathToBackupData()", "Backup data path (\"{0}\") is not an existing directory. Try to create...", PathToBackupData);
-                Directory.CreateDirectory(PathToBackupData);
-            }
-            Log.Info("PsdzContext.SetPathToBackupData()", "Backup data path: \"{0}\"", PathToBackupData);
-            return true;
-        }
-
-        internal void CleanupBackupData()
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(PathToBackupData) || !Directory.Exists(PathToBackupData))
-                {
-                    Log.Info("PsdzContext.CleanupBackupData()", "Missing backup folder: '{0}'", PathToBackupData ?? string.Empty);
-                    return;
-                }
-                if (!string.IsNullOrEmpty(PathToBackupData) && hasVinBackupDataFolder && !Directory.EnumerateFileSystemEntries(PathToBackupData).Any())
-                {
-                    Directory.Delete(PathToBackupData);
-                    Log.Info("PsdzContext.CleanupBackupData()", "Empty backup folder ('{0}') deleted!", PathToBackupData);
-                    hasVinBackupDataFolder = false;
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error("PsdzContext.CleanupBackupData() Exception: {0}", e.Message);
-            }
         }
 
         [PreserveSource(Hint = "Added")]
@@ -458,8 +495,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Added")]
         public bool HasBackupData()
         {
-            if (!string.IsNullOrEmpty(PathToBackupData) && this.hasVinBackupDataFolder &&
-                    Directory.Exists(PathToBackupData) && Directory.EnumerateFileSystemEntries(PathToBackupData).Any<string>())
+            if (!string.IsNullOrEmpty(PathToBackupData) && this.hasVinBackupDataFolder && Directory.Exists(PathToBackupData) && Directory.EnumerateFileSystemEntries(PathToBackupData).Any<string>())
             {
                 return true;
             }
@@ -515,12 +551,11 @@ namespace PsdzClient.Programming
                 }
 
                 System.IO.Compression.ZipFile.CreateFromDirectory(backupPath, backupFile);
-
                 return true;
             }
             catch (Exception)
             {
-                // [IGNORE] ignored
+            // [IGNORE] ignored
             }
 
             return false;
@@ -544,12 +579,11 @@ namespace PsdzClient.Programming
                 }
 
                 System.IO.Compression.ZipFile.ExtractToDirectory(backupFile, backupPath);
-
                 return true;
             }
             catch (Exception)
             {
-                // [IGNORE] ignored
+            // [IGNORE] ignored
             }
 
             return false;
@@ -576,7 +610,7 @@ namespace PsdzClient.Programming
             }
             catch (Exception)
             {
-                // [IGNORE] ignored
+            // [IGNORE] ignored
             }
 
             return false;
@@ -603,74 +637,11 @@ namespace PsdzClient.Programming
             }
             catch (Exception)
             {
-                // [IGNORE] ignored
+            // [IGNORE] ignored
             }
 
             return false;
         }
-
-        public void SetFaActual(IPsdzFa fa)
-		{
-			this.FaActual = fa;
-            if (VecInfo != null)
-            {   // [UH] [IGNORE] added
-                VecInfo.FA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.BrName);
-            }
-		}
-
-		public void SetFaTarget(IPsdzFa fa)
-		{
-			this.FaTarget = fa;
-            if (VecInfo != null)
-            {   // [UH] [IGNORE] added
-                VecInfo.TargetFA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.BrName);
-            }
-		}
-
-		public void SetIstufen(IPsdzIstufenTriple istufenTriple)
-		{
-			if (istufenTriple != null)
-			{
-				this.IstufeShipment = istufenTriple.Shipment;
-				this.IstufeLast = istufenTriple.Last;
-				this.IstufeCurrent = istufenTriple.Current;
-				return;
-			}
-			this.IstufeShipment = null;
-			this.IstufeLast = null;
-			this.IstufeCurrent = null;
-		}
-
-        public void SetPossibleIstufenTarget(IEnumerable<IPsdzIstufe> possibleIstufenTarget)
-		{
-			this.possibleIstufenTarget = possibleIstufenTarget;
-		}
-
-        [PreserveSource(Hint = "Unmodified")]
-        public void SetSollverbauung(IPsdzSollverbauung sollverbauung)
-		{
-			this.Sollverbauung = sollverbauung;
-		}
-
-        public void SetSvtActual(IPsdzSvt svt)
-		{
-			this.SvtActual = svt;
-		}
-
-        public void SetTalFilter(IPsdzTalFilter talFilter)
-		{
-			this.TalFilter = talFilter;
-		}
-
-        public void SetTalFilterForECUWithIDRClassicState(IPsdzTalFilter talFilter)
-		{
-			this.TalFilterForECUWithIDRClassicState = talFilter;
-		}
-
-        public void SetTalFilterForIndividualDataTal(IPsdzTalFilter talFilterForIndividualDataTal)
-		{
-			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
-		}
 
         [PreserveSource(Hint = "Added")]
         public bool UpdateVehicle(ProgrammingService2 programmingService)
@@ -690,15 +661,13 @@ namespace PsdzClient.Programming
             IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             VecInfo.VehicleIdentLevel = IdentificationLevel.VINVehicleReadout;
             VecInfo.ILevelWerk = !string.IsNullOrEmpty(IstufeShipment) ? IstufeShipment : DetectVehicle.ILevelShip;
-            VecInfo.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent: DetectVehicle.ILevelCurrent;
+            VecInfo.ILevel = !string.IsNullOrEmpty(IstufeCurrent) ? IstufeCurrent : DetectVehicle.ILevelCurrent;
             VecInfo.VIN17 = DetectVehicle.Vin;
-
             if (DetectVehicle.ConstructDate != null)
             {
                 VecInfo.Modelljahr = DetectVehicle.ConstructYear;
                 VecInfo.Modellmonat = DetectVehicle.ConstructMonth;
                 VecInfo.Modelltag = "01";
-
                 if (string.IsNullOrEmpty(VecInfo.BaustandsJahr) || string.IsNullOrEmpty(VecInfo.BaustandsMonat))
                 {
                     VecInfo.BaustandsJahr = DetectVehicle.ConstructDate.Value.ToString("yy", CultureInfo.InvariantCulture);
@@ -730,7 +699,6 @@ namespace PsdzClient.Programming
                         VecInfo.Modelljahr = vinRangesByVin.ProductionYear;
                         VecInfo.Modellmonat = vinRangesByVin.ProductionMonth.PadLeft(2, '0');
                         VecInfo.Modelltag = "01";
-
                         if (VecInfo.Modelljahr.Length == 4)
                         {
                             VecInfo.BaustandsJahr = VecInfo.Modelljahr.Substring(2, 2);
@@ -742,13 +710,11 @@ namespace PsdzClient.Programming
 
             if (!string.IsNullOrEmpty(VecInfo.Modellmonat) && !string.IsNullOrEmpty(VecInfo.Modelljahr))
             {
-                VecInfo.ProductionDate = DateTime.ParseExact(string.Format(CultureInfo.InvariantCulture, "{0}.{1}",
-                    VecInfo.Modellmonat, VecInfo.Modelljahr), "MM.yyyy", new CultureInfo("de-DE"));
-                // [IGNORE] VecInfo.ProductionDateSpecified is set automatically
+                VecInfo.ProductionDate = DateTime.ParseExact(string.Format(CultureInfo.InvariantCulture, "{0}.{1}", VecInfo.Modellmonat, VecInfo.Modelljahr), "MM.yyyy", new CultureInfo("de-DE"));
+            // [IGNORE] VecInfo.ProductionDateSpecified is set automatically
             }
 
             VecInfo.Ereihe = DetectVehicle.Series;
-
             ClientContext clientContext = ClientContext.GetClientContext(VecInfo);
             SetFa(programmingService);
             UiBrand brand = UiBrand.BMWBMWiMINI;
@@ -788,6 +754,7 @@ namespace PsdzClient.Programming
                     {
                         ecu.ECU_GRUPPE = ecuInfo.Grp;
                     }
+
                     EcuList.Add(ecu);
                 }
 
@@ -806,7 +773,6 @@ namespace PsdzClient.Programming
             }
 
             UpdateSALocalizedItems(programmingService, clientContext);
-
             VecInfo.FA.AlreadyDone = true;
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
             {
@@ -821,13 +787,10 @@ namespace PsdzClient.Programming
             VecInfo.WithLfpBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP;
             VecInfo.WithLfpNCarBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP_NCAR;
             VecInfo.MainSeriesSgbd = DetectVehicle.GroupSgbd;
-
             // [IGNORE] DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
-
             PerformVecInfoAssignments();
             DetectVehicle.SetVehicleLifeStartDate(VecInfo);
-
             EcuCharacteristics = VehicleLogistics.GetCharacteristicsPublic(VecInfo);
             return true;
         }
@@ -837,7 +800,6 @@ namespace PsdzClient.Programming
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
             ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
-
             IDictionary<string, string> useOrderNumbers = orderNumbers;
             if (useOrderNumbers == null)
             {
@@ -872,7 +834,7 @@ namespace PsdzClient.Programming
         {
             if (vehicle == null)
             {
-                return false; 
+                return false;
             }
 
             VehicleCharacteristicIdent vehicleCharacteristicIdent = new VehicleCharacteristicIdent(new NugetLogger());
@@ -933,15 +895,18 @@ namespace PsdzClient.Programming
                 {
                     return;
                 }
+
                 if (VecInfo.ECU != null && VecInfo.ECU.Count > 0)
-                {   // [UH] [IGNORE] ECU check added
+                { // [UH] [IGNORE] ECU check added
                     GearboxUtility.PerformGearboxAssignments(VecInfo);
                 }
+
                 if (VecInfo.BNType == BNType.UNKNOWN && !string.IsNullOrEmpty(VecInfo.Ereihe))
                 {
                     IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
                     VecInfo.BNType = service.GetBNType(VecInfo);
                 }
+
                 // [UH] [IGNORE] Extra block start
                 if (string.IsNullOrEmpty(VecInfo.Prodart))
                 {
@@ -954,6 +919,7 @@ namespace PsdzClient.Programming
                         VecInfo.Prodart = "M";
                     }
                 }
+
                 if ((string.IsNullOrEmpty(VecInfo.Lenkung) || VecInfo.Lenkung == "UNBEK" || VecInfo.Lenkung.Trim() == string.Empty) && (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4)))
                 {
                     switch (VecInfo.VINType[3])
@@ -973,6 +939,7 @@ namespace PsdzClient.Programming
                             break;
                     }
                 }
+
                 if (string.IsNullOrWhiteSpace(VecInfo.BaseVersion) && (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4)))
                 {
                     switch (VecInfo.VINType[3])
@@ -987,6 +954,7 @@ namespace PsdzClient.Programming
                             break;
                     }
                 }
+
                 if (string.IsNullOrEmpty(VecInfo.Land) || VecInfo.Land == "UNBEK")
                 {
                     if (!string.IsNullOrEmpty(VecInfo.VINType) & (VecInfo.VINType.Length == 4))
@@ -1007,15 +975,18 @@ namespace PsdzClient.Programming
                                 break;
                         }
                     }
+
                     if (VecInfo.HasSA("807") && VecInfo.Prodart == "P")
                     {
                         VecInfo.Land = "JP";
                     }
+
                     if (VecInfo.HasSA("8AA") && VecInfo.Prodart == "P")
                     {
                         VecInfo.Land = "CHN";
                     }
                 }
+
                 // [UH] [IGNORE] Extra block end
                 if (string.IsNullOrEmpty(VecInfo.Modelljahr) && !string.IsNullOrEmpty(VecInfo.ILevelWerk))
                 {
@@ -1037,19 +1008,23 @@ namespace PsdzClient.Programming
                         Log.WarningException("VehicleIdent.finalizeFASTAHeader()", exception);
                     }
                 }
+
                 if (string.IsNullOrEmpty(VecInfo.MainSeriesSgbd))
-                {   // [UH] [IGNORE] simplified
+                { // [UH] [IGNORE] simplified
                     VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
                 }
+
                 if (!string.IsNullOrEmpty(VecInfo.Motor) && !(VecInfo.Motor == "UNBEK"))
                 {
                     return;
                 }
+
                 ECU eCUbyECU_GRUPPE = VecInfo.getECUbyECU_GRUPPE("D_MOTOR");
                 if (eCUbyECU_GRUPPE == null)
                 {
                     eCUbyECU_GRUPPE = VecInfo.getECUbyECU_GRUPPE("G_MOTOR");
                 }
+
                 if (eCUbyECU_GRUPPE != null && !string.IsNullOrEmpty(eCUbyECU_GRUPPE.VARIANTE))
                 {
                     Match match = Regex.Match(eCUbyECU_GRUPPE.VARIANTE, "[SNM]\\d\\d");
@@ -1078,6 +1053,7 @@ namespace PsdzClient.Programming
                         VecInfo.VehicleIdentAlreadyDone = true;
                     }
                 }
+
                 return;
             }
 
@@ -1147,8 +1123,7 @@ namespace PsdzClient.Programming
                     VecInfo.FA.TYPE = DetectVehicle.TypeKey;
                 }
 
-                if (VecInfo.FA.SA.Count == 0 && VecInfo.FA.HO_WORT.Count == 0 &&
-                    VecInfo.FA.E_WORT.Count == 0 && VecInfo.FA.ZUSBAU_WORT.Count == 0)
+                if (VecInfo.FA.SA.Count == 0 && VecInfo.FA.HO_WORT.Count == 0 && VecInfo.FA.E_WORT.Count == 0 && VecInfo.FA.ZUSBAU_WORT.Count == 0)
                 {
                     foreach (string salapa in DetectVehicle.Salapa)
                     {
@@ -1196,7 +1171,6 @@ namespace PsdzClient.Programming
 
                 string language = clientContext.Language;
                 string prodArt = PsdzDatabase.GetProdArt(VecInfo);
-
                 FillSaLocalizedItems(programmingService, language, DetectVehicle.Salapa, prodArt);
                 FillSaLocalizedItems(programmingService, language, DetectVehicle.HoWords, prodArt);
                 FillSaLocalizedItems(programmingService, language, DetectVehicle.EWords, prodArt);
@@ -1257,7 +1231,7 @@ namespace PsdzClient.Programming
         {
             if (!_disposed)
             {
-				if (disposing)
+                if (disposing)
                 {
                     if (DetectVehicle != null)
                     {
@@ -1271,6 +1245,5 @@ namespace PsdzClient.Programming
                 _disposed = true;
             }
         }
-
-	}
+    }
 }
