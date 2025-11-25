@@ -3,7 +3,7 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-    // [UH] dummy class only
+    [PreserveSource(Hint = "Dummy class")]
     public class ProgrammingSession
     {
         public IFFMDynamicResolver FFMResolver { get; set; }
