@@ -1112,6 +1112,7 @@ namespace PsdzClient.Programming
             return ecuList;
         }
 
+        [PreserveSource(Hint = "Added")]
         public bool SetFa(ProgrammingService2 programmingService)
         {
             try
