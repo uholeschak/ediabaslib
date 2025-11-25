@@ -348,7 +348,7 @@ namespace PsdzClient.Programming
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        public void SetSollverbauung(IPsdzSollverbauung sollverbauung)
+        internal void SetSollverbauung(IPsdzSollverbauung sollverbauung)
         {
             this.Sollverbauung = sollverbauung;
         }
