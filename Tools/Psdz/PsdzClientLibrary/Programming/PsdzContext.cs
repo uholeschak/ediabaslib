@@ -86,6 +86,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Added")]
         internal BackupTalResult CheckBackupTal()
         {
             if (!IsValidBackupTal)
