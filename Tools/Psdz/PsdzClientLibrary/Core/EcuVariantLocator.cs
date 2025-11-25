@@ -127,9 +127,9 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        public EcuVariantLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
+        public EcuVariantLocator(decimal id, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
-            this.vecInfo = vec;
+            this.vecInfo = vecInfo;
             this.ecuVariant = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
             this.ffmResolver = ffmResolver;
         }
