@@ -86,6 +86,8 @@ namespace SourceCodeSync
             { "BMW.Rheingold.CoreFramework.Extensions.AddRange", "Extensions.AddRange" },
         };
 
+        private const string _signatureModifiedProperty = "SignatureModified";
+
         private const string _accessModifiedProperty = "AccessModified";
 
         private const string _inheritanceModifiedProperty = "InheritanceModified";
@@ -1480,6 +1482,50 @@ namespace SourceCodeSync
         }
 
         /// <summary>
+        /// Merges signature from source member with body from preserved member
+        /// </summary>
+        private static MemberDeclarationSyntax MergeMemberSignatureWithBody(
+            MemberDeclarationSyntax sourceMember,
+            MemberDeclarationSyntax preservedMember)
+        {
+            return sourceMember switch
+            {
+                MethodDeclarationSyntax sourceMethod when preservedMember is MethodDeclarationSyntax preservedMethod =>
+                    sourceMethod
+                        .WithBody(preservedMethod.Body)
+                        .WithExpressionBody(preservedMethod.ExpressionBody)
+                        .WithSemicolonToken(preservedMethod.SemicolonToken)
+                        .WithAttributeLists(preservedMember.AttributeLists),
+
+                PropertyDeclarationSyntax sourceProperty when preservedMember is PropertyDeclarationSyntax preservedProperty =>
+                    sourceProperty
+                        .WithAccessorList(preservedProperty.AccessorList)
+                        .WithExpressionBody(preservedProperty.ExpressionBody)
+                        .WithInitializer(preservedProperty.Initializer)
+                        .WithSemicolonToken(preservedProperty.SemicolonToken)
+                        .WithAttributeLists(preservedMember.AttributeLists),
+
+                ConstructorDeclarationSyntax sourceCtor when preservedMember is ConstructorDeclarationSyntax preservedCtor =>
+                    sourceCtor
+                        .WithBody(preservedCtor.Body)
+                        .WithExpressionBody(preservedCtor.ExpressionBody)
+                        .WithInitializer(preservedCtor.Initializer)
+                        .WithSemicolonToken(preservedCtor.SemicolonToken)
+                        .WithAttributeLists(preservedMember.AttributeLists),
+
+                IndexerDeclarationSyntax sourceIndexer when preservedMember is IndexerDeclarationSyntax preservedIndexer =>
+                    sourceIndexer
+                        .WithAccessorList(preservedIndexer.AccessorList)
+                        .WithExpressionBody(preservedIndexer.ExpressionBody)
+                        .WithSemicolonToken(preservedIndexer.SemicolonToken)
+                        .WithAttributeLists(preservedMember.AttributeLists),
+
+                // Fallback: return preserved member as-is
+                _ => preservedMember
+            };
+        }
+
+        /// <summary>
         /// Merges source class into destination, preserving marked members at their original positions
         /// </summary>
         public static ClassDeclarationSyntax MergeClassPreservingMarked(
@@ -1487,7 +1533,7 @@ namespace SourceCodeSync
             ClassDeclarationSyntax sourceClass)
         {
             // Get all members from destination that should be preserved
-            var preservedMembers = destClass.Members
+            List<MemberDeclarationSyntax> preservedMembers = destClass.Members
                 .Where(m => ShouldPreserveMember(m))
                 .ToList();
 
@@ -1506,14 +1552,28 @@ namespace SourceCodeSync
                 string sourceMemberName = GetMemberName(sourceMember);
 
                 // Find matching preserved member by name
-                var matchingPreservedMember = preservedMembers
+                MemberDeclarationSyntax matchingPreservedMember = preservedMembers
                     .FirstOrDefault(pm => !processedPreservedMembers.Contains(pm) &&
                                           GetMemberName(pm) == sourceMemberName);
 
                 if (matchingPreservedMember != null)
                 {
-                    // Use preserved version at the same position as source
-                    newMembers.Add(matchingPreservedMember);
+                    MemberDeclarationSyntax memberToAdd = matchingPreservedMember;
+
+                    // Check if SignatureModified is set - if so, merge signature from source with body from preserved
+                    if (matchingPreservedMember is MemberDeclarationSyntax memberDecl &&
+                        GetAttributePropertyFromAttributeLists(memberDecl.AttributeLists, _signatureModifiedProperty))
+                    {
+                        memberToAdd = MergeMemberSignatureWithBody(sourceMember, matchingPreservedMember);
+
+                        if (_verbosity >= Options.VerbosityOption.Info)
+                        {
+                            Console.WriteLine($"Member {sourceMemberName} signature updated, body preserved");
+                        }
+                    }
+
+                    // Use preserved version (or merged version) at the same position as source
+                    newMembers.Add(memberToAdd);
                     processedPreservedMembers.Add(matchingPreservedMember);
                 }
                 else
@@ -1591,14 +1651,14 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-                 /// Checks if a member has a preserve marker
-                 /// </summary>
+        /// Checks if a member has a preserve marker
+        /// </summary>
         public static bool ShouldPreserveMember(SyntaxNode member)
         {
             // Check for attributes like [Preserve] or [DoNotSync]
             if (member is MemberDeclarationSyntax memberDecl)
             {
-                var preserveAttribute = memberDecl.AttributeLists
+                AttributeSyntax preserveAttribute = memberDecl.AttributeLists
                     .SelectMany(al => al.Attributes)
                     .FirstOrDefault(attr =>
                     {
