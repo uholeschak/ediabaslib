@@ -864,6 +864,7 @@ namespace PsdzClient.Programming
             SetSvtActual(psdzSvt);
         }
 
+        [PreserveSource(Hint = "Added")]
         public static bool AssignVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, Vehicle vehicle)
         {
             if (vehicle == null)
@@ -886,6 +887,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        [PreserveSource(Hint = "Added")]
         public static bool UpdateAlpinaCharacteristics(PsdzDatabase database, Vehicle vehicle)
         {
             List<PsdzDatabase.Characteristics> list = new List<PsdzDatabase.Characteristics>();
@@ -898,6 +900,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        [PreserveSource(Hint = "Added")]
         public static bool UpdateAllVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, PsdzDatabase database, Vehicle vehicle)
         {
             if (database == null || vehicle == null)
