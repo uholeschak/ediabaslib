@@ -43,6 +43,7 @@ namespace BMW.Rheingold.Programming.API
 
         private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
 
+        [PreserveSource(Hint = "Vehicle added")]
         public ProgrammingObjectBuilder(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             this.vehicle = vehicle;
