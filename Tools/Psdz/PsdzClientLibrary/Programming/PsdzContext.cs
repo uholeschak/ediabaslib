@@ -551,6 +551,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
+        [PreserveSource(Hint = "Added")]
         public bool HasIndividualDataFilesInPuk()
         {
             try
