@@ -213,25 +213,32 @@ namespace PsdzClient.Programming
 
         internal IEnumerable<IPsdzTargetSelector> TargetSelectors { get; set; }
 
-        public DetectVehicle DetectVehicle { get; set; }    // [UH] added
+        [PreserveSource(Hint = "Added")]
+        public DetectVehicle DetectVehicle { get; set; }
 
-        public Vehicle VecInfo { get; set; }    // [UH] added
+        [PreserveSource(Hint = "Added")]
+        public Vehicle VecInfo { get; set; }
 
-        public ISvt SvtTarget { get; private set; }    // [UH] added
+        [PreserveSource(Hint = "Added")]
+        public ISvt SvtTarget { get; private set; }
 
-        public ISvt SvtCurrent { get; private set; }    // [UH] added
+        [PreserveSource(Hint = "Added")]
+        public ISvt SvtCurrent { get; private set; }
 
-        public string IstaFolder { get; private set; }    // [UH] added
+        [PreserveSource(Hint = "Added")]
+        public string IstaFolder { get; private set; }
 
-        public BaseEcuCharacteristics EcuCharacteristics { get; private set; }    // [UH] added
+        [PreserveSource(Hint = "Added")]
+        public BaseEcuCharacteristics EcuCharacteristics { get; private set; }
 
+        [PreserveSource(Hint = "ServiceLocator removed")]
         public PsdzContext(string istaFolder)
         {
             this.IstaFolder = istaFolder;
             ExecutionOrderTop = new Dictionary<string, IList<string>>();
             ExecutionOrderBottom = new Dictionary<string, IList<string>>();
             SFASessionData = new SFASessionData();
-            //ServiceLocator.Current.TryGetService<IPsdzCentralConnectionService>(out service);
+            // [IGNORE] ServiceLocator.Current.TryGetService<IPsdzCentralConnectionService>(out service);
         }
 
         public string GetBaseVariant(int diagnosticAddress)
@@ -340,7 +347,7 @@ namespace PsdzClient.Programming
             return null;
         }
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public static string GetBackupBasePath(string istaFolder)
         {
             string pathConfig = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", "%ISPIDATA%\\BMW\\ISPI\\data\\TRIC\\ISTA\\Temp\\");
@@ -363,7 +370,7 @@ namespace PsdzClient.Programming
             return pathString;
         }
 
-        // [UH] return value added
+        [PreserveSource(Hint = "Return value added")]
         public bool SetPathToBackupData(string vin17)
         {
             hasVinBackupDataFolder = false;
@@ -435,7 +442,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        // [UH] added, keep directory
+        [PreserveSource(Hint = "Added, keep directory")]
         public bool RemoveBackupData()
         {
             if (!string.IsNullOrEmpty(PathToBackupData) && this.hasVinBackupDataFolder)
@@ -465,7 +472,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        // From ProgrammingSession.AddIdividualDataFilesToPuk
+        [PreserveSource(Hint = "From ProgrammingSession.AddIdividualDataFilesToPuk")]
         public bool AddIdividualDataFilesToPuk()
         {
             try
@@ -488,13 +495,13 @@ namespace PsdzClient.Programming
             }
             catch (Exception)
             {
-                // ignored
+                // [IGNORE] ignored
             }
 
             return false;
         }
 
-        // From ProgrammingSession.DownloadIndividualDataFromPuk
+        [PreserveSource(Hint = "From ProgrammingSession.DownloadIndividualDataFromPuk")]
         public bool DownloadIndividualDataFromPuk()
         {
             try
@@ -517,7 +524,7 @@ namespace PsdzClient.Programming
             }
             catch (Exception)
             {
-                // ignored
+                // [IGNORE] ignored
             }
 
             return false;
@@ -543,13 +550,13 @@ namespace PsdzClient.Programming
             }
             catch (Exception)
             {
-                // ignored
+                // [IGNORE] ignored
             }
 
             return false;
         }
 
-        // From ProgrammingSession.DeleteIndividualDataFromPuk
+        [PreserveSource(Hint = "From ProgrammingSession.DeleteIndividualDataFromPuk")]
         public bool DeleteIndividualDataFromPuk()
         {
             try
@@ -570,7 +577,7 @@ namespace PsdzClient.Programming
             }
             catch (Exception)
             {
-                // ignored
+                // [IGNORE] ignored
             }
 
             return false;
@@ -580,7 +587,7 @@ namespace PsdzClient.Programming
 		{
 			this.FaActual = fa;
             if (VecInfo != null)
-            {   // [UH] added
+            {   // [UH] [IGNORE] added
                 VecInfo.FA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.BrName);
             }
 		}
@@ -589,7 +596,7 @@ namespace PsdzClient.Programming
 		{
 			this.FaTarget = fa;
             if (VecInfo != null)
-            {   // [UH] added
+            {   // [UH] [IGNORE] added
                 VecInfo.TargetFA = ProgrammingUtils.BuildVehicleFa(fa, DetectVehicle.BrName);
             }
 		}
@@ -709,7 +716,7 @@ namespace PsdzClient.Programming
             {
                 VecInfo.ProductionDate = DateTime.ParseExact(string.Format(CultureInfo.InvariantCulture, "{0}.{1}",
                     VecInfo.Modellmonat, VecInfo.Modelljahr), "MM.yyyy", new CultureInfo("de-DE"));
-                // VecInfo.ProductionDateSpecified is set automatically
+                // [IGNORE] VecInfo.ProductionDateSpecified is set automatically
             }
 
             VecInfo.Ereihe = DetectVehicle.Series;
@@ -787,7 +794,7 @@ namespace PsdzClient.Programming
             VecInfo.WithLfpNCarBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP_NCAR;
             VecInfo.MainSeriesSgbd = DetectVehicle.GroupSgbd;
 
-            // DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway
+            // [IGNORE] DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);
 
             PerformVecInfoAssignments();
@@ -797,7 +804,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        // From ProgrammingSession
+        [PreserveSource(Hint = "From ProgrammingSession")]
         public void SetSollverbauung(ProgrammingService2 programmingService, IPsdzSollverbauung sollverbauung, IDictionary<string, string> orderNumbers = null)
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
@@ -815,13 +822,13 @@ namespace PsdzClient.Programming
             SetSollverbauung(sollverbauung);
         }
 
-        // From ProgrammingSession
+        [PreserveSource(Hint = "From ProgrammingSession")]
         public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.IPsdzStandardSvt standardSvt)
         {
             SetSvtCurrent(programmingService, standardSvt, VecInfo.VIN17);
         }
 
-        // From ProgrammingSession
+        [PreserveSource(Hint = "From ProgrammingSession")]
         public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.IPsdzStandardSvt standardSvt, string vin17)
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
