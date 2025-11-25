@@ -18,12 +18,24 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Programming
 {
     [PreserveSource(Hint = "IDisposable added", InheritanceModified = true)]
 	public class PsdzContext : IPsdzContext, IDisposable
 	{
+        [PreserveSource(Hint = "Added")]
         private const string IdrBackupFileName = "_IDR_Files.backup";
+
+        [PreserveSource(Hint = "Added")]
+        private bool _disposed;
+
+        private bool hasVinBackupDataFolder;
+
+        private IEnumerable<IPsdzIstufe> possibleIstufenTarget;
+
+        [PreserveSource(Hint = "IPsdzCentralConnectionService", Placeholder = true)]
+        private readonly PlaceholderType service;
 
         public bool IsEmptyBackupTal
         {
@@ -1207,11 +1219,6 @@ namespace PsdzClient.Programming
 
             return sb.ToString();
         }
-
-        private bool _disposed;
-		private bool hasVinBackupDataFolder;
-
-		private IEnumerable<IPsdzIstufe> possibleIstufenTarget;
 
         [PreserveSource(Hint = "IDisposable added")]
         public void Dispose()
