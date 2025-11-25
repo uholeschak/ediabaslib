@@ -68,7 +68,7 @@ namespace PsdzClient.Programming
             psdzServiceArgs.PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
             psdzServiceArgs.EdiabasBinPath = Path.Combine(istaFolder, @"Ediabas\BIN");
             psdzServiceArgs.IsTestRun = (isTestRun.HasValue ? isTestRun.Value : false);
-            psdzServiceArgs.IdleTimeout = ConfigSettings.getConfigint("BMW.Rheingold.Programming.PsdzService.HostIdleTimeout", 10000);  // [UH] timeout modified
+            psdzServiceArgs.IdleTimeout = ConfigSettings.getConfigint("BMW.Rheingold.Programming.PsdzService.HostIdleTimeout", 10000);  // [UH] [IGNORE] timeout modified
             psdzServiceArgs.ClientConfigArgs = new ClientConfigArgs();
             psdzServiceArgs.ClientConfigArgs.DealerID = dealerId;
             return psdzServiceArgs;
