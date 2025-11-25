@@ -51,7 +51,7 @@ namespace BMW.Rheingold.Programming.API
             // [IGNORE] vdc = new VehicleDataConverter(db);
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(IPsdzStandardFa faInput)
         {
             if (faInput == null)
@@ -72,7 +72,7 @@ namespace BMW.Rheingold.Programming.API
             };
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IVehicleProfile Build(IPsdzFp fp)
         {
             VehicleProfile obj = (VehicleProfile)Build((IPsdzStandardFp)fp);
@@ -81,7 +81,7 @@ namespace BMW.Rheingold.Programming.API
             return obj;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IVehicleProfile Build(IPsdzStandardFp standardFp)
         {
             if (standardFp == null)
@@ -102,7 +102,7 @@ namespace BMW.Rheingold.Programming.API
             return new VehicleProfile(standardFp.AsString, standardFp.CategoryId2CategoryName, dictionary);
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IVehicleProfileCriterion Build(IPsdzStandardFpCriterion criterion)
         {
             if (criterion == null)
@@ -112,7 +112,7 @@ namespace BMW.Rheingold.Programming.API
             return new VehicleProfileCriterion(criterion.Value, criterion.Name, criterion.NameEn);
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa faInput)
         {
             if (faInput == null)
@@ -135,7 +135,7 @@ namespace BMW.Rheingold.Programming.API
             return vehicleOrder;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public FA Build(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faInput)
         {
             if (faInput == null)
@@ -183,7 +183,7 @@ namespace BMW.Rheingold.Programming.API
             return fA;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IStandardSvk Build(IPsdzStandardSvk svkInput)
         {
             if (svkInput == null)
@@ -287,7 +287,7 @@ namespace BMW.Rheingold.Programming.API
             return ecu.BaseVariant + "-" + ecu.PrimaryKey.DiagAddrAsInt;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public ISvt Build(IPsdzSollverbauung sollVerbauung, IDictionary<string, string> orderNumbers)
         {
             if (sollVerbauung == null || sollVerbauung.Svt == null)
@@ -405,7 +405,7 @@ namespace BMW.Rheingold.Programming.API
             return eCU;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         private IEcuPdxInfo Build(IPsdzEcuPdxInfo psdzEcuPdxInfo)
         {
             if (psdzEcuPdxInfo != null)
@@ -437,7 +437,7 @@ namespace BMW.Rheingold.Programming.API
             return null;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IEcuIdentifier Build(IPsdzEcuIdentifier ecuIdentifierInput)
         {
             if (ecuIdentifierInput == null)
@@ -447,7 +447,7 @@ namespace BMW.Rheingold.Programming.API
             return BuildEcuIdentifier(ecuIdentifierInput.BaseVariant, ecuIdentifierInput.DiagAddrAsInt);
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public ISwt Build(IPsdzSwtAction swtAction)
         {
             if (swtAction == null)
@@ -463,7 +463,7 @@ namespace BMW.Rheingold.Programming.API
             return swt;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public ISwtApplicationId Build(IPsdzSwtApplicationId swtApplicationId)
         {
             if (swtApplicationId == null)
@@ -501,7 +501,7 @@ namespace BMW.Rheingold.Programming.API
             return new SwtApplicationIdObj(appNo, upgradeIdx);
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IFetchEcuCertCheckingResult Build(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
         {
             if (psdzFetchEcuCertCheckingResult == null)
@@ -676,7 +676,7 @@ namespace BMW.Rheingold.Programming.API
             return list;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         internal IIstufenTriple Build(IPsdzIstufenTriple istufenTriple)
         {
             if (istufenTriple == null)
@@ -686,7 +686,7 @@ namespace BMW.Rheingold.Programming.API
             return new IntegrationLevelTriple(istufenTriple.Shipment, istufenTriple.Last, istufenTriple.Current);
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         internal SystemVerbauKennung Build(ISvk svkInput)
         {
             if (svkInput == null)
@@ -730,7 +730,7 @@ namespace BMW.Rheingold.Programming.API
             return dictionary;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         private ISwtEcu Build(IPsdzSwtEcu swtEcuInput)
         {
             if (swtEcuInput == null)
@@ -749,7 +749,7 @@ namespace BMW.Rheingold.Programming.API
             return swtEcuObj;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         private ISwtApplication Build(IPsdzSwtApplication swtApplicationInput)
         {
             if (swtApplicationInput == null)
@@ -774,7 +774,7 @@ namespace BMW.Rheingold.Programming.API
             };
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         private IObdData Build(IPsdzObdData psdzObdData)
         {
             ObdData obdData = new ObdData();

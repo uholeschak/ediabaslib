@@ -13,6 +13,8 @@ namespace PsdzClient
 
         public bool KeepAttribute;
 
+        public bool SignatureModified;
+
         public bool AccessModified;
 
         public bool InheritanceModified;
