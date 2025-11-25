@@ -22,7 +22,7 @@ using System.Text.RegularExpressions;
 #pragma warning disable CS0169
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "IDisposable added", InheritanceModified = true)]
+    [PreserveSource(Hint = "IDisposable added", AccessModified = true, InheritanceModified = true)]
 	public class PsdzContext : IPsdzContext, IDisposable
 	{
         [PreserveSource(Hint = "Added")]
