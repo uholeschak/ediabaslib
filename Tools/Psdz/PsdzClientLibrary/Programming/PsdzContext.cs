@@ -2,6 +2,7 @@
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
+using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Svb;
@@ -205,6 +206,12 @@ namespace PsdzClient.Programming
         internal IPsdzFa FaActual { get; private set; }
 
         internal IPsdzFa FaTarget { get; private set; }
+
+        [PreserveSource(Hint = "List<EcuFilterOnSweLevel>", Placeholder = true)]
+        internal PlaceholderType EcuSweFilter { get; set; }
+
+        [PreserveSource(Hint = "List<EcuFilterOnSmacLevel>", Placeholder = true)]
+        internal PlaceholderType EcuSmacFilter { get; set; }
 
         internal IPsdzTal IndividualDataBackupTal { get; set; }
 
