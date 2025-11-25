@@ -193,6 +193,7 @@ namespace PsdzClient.Programming
 
         public RequestJson NCDLastCalculationRequest { get; internal set; }
 
+        [PreserveSource(Hint = "Modified")]
         public IPsdzConnection Connection { get; set; }
 
         internal IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
