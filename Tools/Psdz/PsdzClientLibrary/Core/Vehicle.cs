@@ -1657,7 +1657,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Unmodified")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public bool AddEcu(IEcu ecu)
         {
             return base.ECU.AddIfNotContains(ecu as ECU);
@@ -1827,7 +1827,7 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Unmodified")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public void AddEcu(ECU ecu)
         {
             base.ECU.Add(ecu);

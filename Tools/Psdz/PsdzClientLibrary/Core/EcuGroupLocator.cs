@@ -83,7 +83,7 @@ namespace PsdzClient.Core
             this.parents = null;
         }
 
-        [PreserveSource(Hint = "Unmodified")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public EcuGroupLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
         {
             this.ecuGroup = ClientContext.GetDatabase(vec)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));

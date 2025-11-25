@@ -347,7 +347,7 @@ namespace PsdzClient.Programming
             this.possibleIstufenTarget = possibleIstufenTarget;
         }
 
-        [PreserveSource(Hint = "Unmodified")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public void SetSollverbauung(IPsdzSollverbauung sollverbauung)
         {
             this.Sollverbauung = sollverbauung;

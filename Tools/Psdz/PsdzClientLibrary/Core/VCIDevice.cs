@@ -1435,7 +1435,7 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        [PreserveSource(Hint = "Unmodified")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public VCIDevice(VCIDeviceType vciType, string devid, string description)
         {
             ScanDate = DateTime.Now;
