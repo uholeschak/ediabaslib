@@ -1064,6 +1064,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Added")]
         private void CalculateECUConfiguration()
         {
             if (VecInfo.BNType != BNType.BN2020_MOTORBIKE && VecInfo.BNType != BNType.BNK01X_MOTORBIKE && VecInfo.BNType != BNType.BN2000_MOTORBIKE)
@@ -1086,6 +1087,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Added")]
         public List<PsdzDatabase.EcuInfo> GetEcuList(bool individualOnly = false)
         {
             List<PsdzDatabase.EcuInfo> ecuList = new List<PsdzDatabase.EcuInfo>();
