@@ -126,7 +126,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Unchanged")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public EcuVariantLocator(decimal id, Vehicle vec, IFFMDynamicResolver ffmResolver)
         {
             this.vecInfo = vec;
