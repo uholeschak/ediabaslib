@@ -323,6 +323,7 @@ namespace PsdzClient.Programming
             return result;
         }
 
+        [PreserveSource(Hint = "Added")]
         public ICombinedEcuHousingEntry GetEcuHousingEntry(int diagnosticAddress)
         {
             ICollection<ICombinedEcuHousingEntry> combinedEcuHousingTable = EcuCharacteristics?.GetCombinedEcuHousingTable();
@@ -349,6 +350,7 @@ namespace PsdzClient.Programming
             return null;
         }
 
+        [PreserveSource(Hint = "Added")]
         public IEcuLogisticsEntry GetEcuLogisticsEntry(int diagnosticAddress)
         {
             if (EcuCharacteristics == null)
