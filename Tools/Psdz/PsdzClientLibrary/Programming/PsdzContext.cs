@@ -886,7 +886,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        // ToDo: Check on update
+        [PreserveSource(Hint = "Modified updates")]
         private void PerformVecInfoAssignments()
         {
             try
@@ -896,7 +896,7 @@ namespace PsdzClient.Programming
                     return;
                 }
                 if (VecInfo.ECU != null && VecInfo.ECU.Count > 0)
-                {   // [UH] ECU check added
+                {   // [UH] [IGNORE] ECU check added
                     GearboxUtility.PerformGearboxAssignments(VecInfo);
                 }
                 if (VecInfo.BNType == BNType.UNKNOWN && !string.IsNullOrEmpty(VecInfo.Ereihe))
@@ -904,7 +904,7 @@ namespace PsdzClient.Programming
                     IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
                     VecInfo.BNType = service.GetBNType(VecInfo);
                 }
-                // [UH] Extra block start
+                // [UH] [IGNORE] Extra block start
                 if (string.IsNullOrEmpty(VecInfo.Prodart))
                 {
                     if (!VecInfo.Classification.IsMotorcycle())
@@ -978,7 +978,7 @@ namespace PsdzClient.Programming
                         VecInfo.Land = "CHN";
                     }
                 }
-                // [UH] Extra block end
+                // [UH] [IGNORE] Extra block end
                 if (string.IsNullOrEmpty(VecInfo.Modelljahr) && !string.IsNullOrEmpty(VecInfo.ILevelWerk))
                 {
                     try
@@ -1000,7 +1000,7 @@ namespace PsdzClient.Programming
                     }
                 }
                 if (string.IsNullOrEmpty(VecInfo.MainSeriesSgbd))
-                {   // [UH] simplified
+                {   // [UH] [IGNORE] simplified
                     VecInfo.MainSeriesSgbd = VehicleLogistics.getBrSgbd(VecInfo);
                 }
                 if (!string.IsNullOrEmpty(VecInfo.Motor) && !(VecInfo.Motor == "UNBEK"))
@@ -1206,24 +1206,18 @@ namespace PsdzClient.Programming
 
 		private IEnumerable<IPsdzIstufe> possibleIstufenTarget;
 
+        [PreserveSource(Hint = "IDisposable added")]
         public void Dispose()
         {
             Dispose(true);
-            // This object will be cleaned up by the Dispose method.
-            // Therefore, you should call GC.SupressFinalize to
-            // take this object off the finalization queue
-            // and prevent finalization code for this object
-            // from executing a second time.
             GC.SuppressFinalize(this);
         }
 
+        [PreserveSource(Hint = "IDisposable added")]
         protected virtual void Dispose(bool disposing)
         {
-            // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-				// If disposing equals true, dispose all managed
-				// and unmanaged resources.
 				if (disposing)
                 {
                     if (DetectVehicle != null)
@@ -1235,7 +1229,6 @@ namespace PsdzClient.Programming
                     VecInfo = null;
                 }
 
-                // Note disposing has been done.
                 _disposed = true;
             }
         }
