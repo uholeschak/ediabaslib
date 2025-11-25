@@ -1174,6 +1174,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        [PreserveSource(Hint = "Added")]
         public bool UpdateSALocalizedItems(ProgrammingService2 programmingService, ClientContext clientContext)
         {
             try
@@ -1204,6 +1205,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        [PreserveSource(Hint = "Added")]
         public void FillSaLocalizedItems(ProgrammingService2 programmingService, string language, List<string> source, string prodArt)
         {
             foreach (string item in source)
@@ -1220,6 +1222,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Added")]
         public string GetLocalizedSaString()
         {
             StringBuilder sb = new StringBuilder();
