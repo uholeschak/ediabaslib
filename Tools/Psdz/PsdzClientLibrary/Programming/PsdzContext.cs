@@ -20,6 +20,7 @@ using System.Text.RegularExpressions;
 
 namespace PsdzClient.Programming
 {
+    [PreserveSource(Hint = "IDisposable added", InheritanceModified = true)]
 	public class PsdzContext : IPsdzContext, IDisposable
 	{
         private const string IdrBackupFileName = "_IDR_Files.backup";
