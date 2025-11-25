@@ -25,7 +25,7 @@ namespace PsdzClient.Programming
 
         public PsdzServiceArgs PsdzServiceArgs { get; }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         public PsdzConfig(string istaFolder, string dealerId)
         {
             string psdzHostSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\hostx64" : @"PSdZ\host";
@@ -57,7 +57,7 @@ namespace PsdzClient.Programming
             Log.Info("PsdzConfig.PsdzConfig()", "PsdzServiceArgs: \n{0}", PsdzServiceArgs);
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         private static PsdzServiceArgs CreateServiceArgs(bool? isTestRun, string istaFolder, string psdzLogFilePath = null, string dealerId = null)
         {
             string psdzPath = Psdz64BitPathResolver.GetPsdzPath(istaFolder);
@@ -76,7 +76,7 @@ namespace PsdzClient.Programming
 
         // [UH] GetEdiabasBinPath removed
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         private static string[] GetPsdzJvmOptions(string psdzBinaryPath, string psdzLogFilePath)
         {
             int num = 1024;
