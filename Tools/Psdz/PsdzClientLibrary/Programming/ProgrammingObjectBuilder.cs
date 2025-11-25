@@ -50,6 +50,7 @@ namespace BMW.Rheingold.Programming.API
             // [IGNORE] vdc = new VehicleDataConverter(db);
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(IPsdzStandardFa faInput)
         {
             if (faInput == null)
@@ -70,6 +71,7 @@ namespace BMW.Rheingold.Programming.API
             };
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public IVehicleProfile Build(IPsdzFp fp)
         {
             VehicleProfile obj = (VehicleProfile)Build((IPsdzStandardFp)fp);
@@ -78,6 +80,7 @@ namespace BMW.Rheingold.Programming.API
             return obj;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public IVehicleProfile Build(IPsdzStandardFp standardFp)
         {
             if (standardFp == null)
@@ -98,6 +101,7 @@ namespace BMW.Rheingold.Programming.API
             return new VehicleProfile(standardFp.AsString, standardFp.CategoryId2CategoryName, dictionary);
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public IVehicleProfileCriterion Build(IPsdzStandardFpCriterion criterion)
         {
             if (criterion == null)
@@ -107,6 +111,7 @@ namespace BMW.Rheingold.Programming.API
             return new VehicleProfileCriterion(criterion.Value, criterion.Name, criterion.NameEn);
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa faInput)
         {
             if (faInput == null)
@@ -129,6 +134,7 @@ namespace BMW.Rheingold.Programming.API
             return vehicleOrder;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public FA Build(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faInput)
         {
             if (faInput == null)
@@ -176,6 +182,7 @@ namespace BMW.Rheingold.Programming.API
             return fA;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public IStandardSvk Build(IPsdzStandardSvk svkInput)
         {
             if (svkInput == null)
@@ -493,6 +500,7 @@ namespace BMW.Rheingold.Programming.API
             return new SwtApplicationIdObj(appNo, upgradeIdx);
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public IFetchEcuCertCheckingResult Build(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
         {
             if (psdzFetchEcuCertCheckingResult == null)
@@ -667,6 +675,7 @@ namespace BMW.Rheingold.Programming.API
             return list;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         internal IIstufenTriple Build(IPsdzIstufenTriple istufenTriple)
         {
             if (istufenTriple == null)
@@ -676,6 +685,7 @@ namespace BMW.Rheingold.Programming.API
             return new IntegrationLevelTriple(istufenTriple.Shipment, istufenTriple.Last, istufenTriple.Current);
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         internal SystemVerbauKennung Build(ISvk svkInput)
         {
             if (svkInput == null)
@@ -719,6 +729,7 @@ namespace BMW.Rheingold.Programming.API
             return dictionary;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         private ISwtEcu Build(IPsdzSwtEcu swtEcuInput)
         {
             if (swtEcuInput == null)
@@ -737,6 +748,7 @@ namespace BMW.Rheingold.Programming.API
             return swtEcuObj;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         private ISwtApplication Build(IPsdzSwtApplication swtApplicationInput)
         {
             if (swtApplicationInput == null)
@@ -761,6 +773,7 @@ namespace BMW.Rheingold.Programming.API
             };
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         private IObdData Build(IPsdzObdData psdzObdData)
         {
             ObdData obdData = new ObdData();
