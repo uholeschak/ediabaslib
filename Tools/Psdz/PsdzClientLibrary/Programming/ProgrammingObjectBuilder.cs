@@ -279,6 +279,7 @@ namespace BMW.Rheingold.Programming.API
             return ecu.BaseVariant + "-" + ecu.PrimaryKey.DiagAddrAsInt;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public ISvt Build(IPsdzSollverbauung sollVerbauung, IDictionary<string, string> orderNumbers)
         {
             if (sollVerbauung == null || sollVerbauung.Svt == null)
@@ -396,6 +397,7 @@ namespace BMW.Rheingold.Programming.API
             return eCU;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         private IEcuPdxInfo Build(IPsdzEcuPdxInfo psdzEcuPdxInfo)
         {
             if (psdzEcuPdxInfo != null)
@@ -427,6 +429,7 @@ namespace BMW.Rheingold.Programming.API
             return null;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public IEcuIdentifier Build(IPsdzEcuIdentifier ecuIdentifierInput)
         {
             if (ecuIdentifierInput == null)
@@ -436,6 +439,7 @@ namespace BMW.Rheingold.Programming.API
             return BuildEcuIdentifier(ecuIdentifierInput.BaseVariant, ecuIdentifierInput.DiagAddrAsInt);
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public ISwt Build(IPsdzSwtAction swtAction)
         {
             if (swtAction == null)
@@ -451,6 +455,7 @@ namespace BMW.Rheingold.Programming.API
             return swt;
         }
 
+        [PreserveSource(Hint = "Unchanged")]
         public ISwtApplicationId Build(IPsdzSwtApplicationId swtApplicationId)
         {
             if (swtApplicationId == null)
