@@ -669,6 +669,7 @@ namespace PsdzClient.Programming
 			this.TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
 		}
 
+        [PreserveSource(Hint = "Added")]
         public bool UpdateVehicle(ProgrammingService2 programmingService)
         {
             EcuCharacteristics = null;
