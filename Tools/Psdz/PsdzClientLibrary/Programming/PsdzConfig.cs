@@ -11,6 +11,7 @@ using PsdzClient.Core;
 namespace PsdzClient.Programming
 {
     // ToDo: Check on update
+    [PreserveSource(Hint = "Has been removed")]
     public class PsdzConfig
     {
         public string PsdzServiceHostLogFilePath { get; }
