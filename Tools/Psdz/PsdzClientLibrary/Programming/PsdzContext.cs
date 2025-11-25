@@ -441,6 +441,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Added")]
         public bool HasBackupDataDir()
         {
             if (!string.IsNullOrEmpty(PathToBackupData) && this.hasVinBackupDataFolder && Directory.Exists(PathToBackupData))
