@@ -1568,7 +1568,7 @@ namespace SourceCodeSync
 
                         if (_verbosity >= Options.VerbosityOption.Info)
                         {
-                            Console.WriteLine($"Member {sourceMemberName} signature updated, body preserved");
+                            Console.WriteLine($"Member {sourceMemberName} body preserved, signature updated");
                         }
                     }
 
