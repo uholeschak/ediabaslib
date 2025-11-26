@@ -4,6 +4,7 @@ using BMW.Rheingold.Psdz.Client;
 using PsdzClient.Core;
 using PsdzClient.Programming;
 using System;
+using PsdzClient;
 
 namespace BMW.Rheingold.Programming
 {
@@ -11,7 +12,7 @@ namespace BMW.Rheingold.Programming
     {
         private readonly PsdzWebServiceConfig _psdzConfig;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         private readonly string _istaFolder;
 
         private ProdiasLoglevel? _prodiasLoglevel = ProdiasLoglevel.ERROR;
@@ -66,10 +67,10 @@ namespace BMW.Rheingold.Programming
 
         public IProgrammingTokenService ProgrammingTokenService => _psdzWebService.ProgrammingTokenService;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public string PsdzServiceLogDir => _psdzConfig.PsdzWebApiLogDir;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public string ExpectedPsdzVersion { get; private set; }
 
         public bool IsValidPsdzVersion => true;
@@ -108,7 +109,7 @@ namespace BMW.Rheingold.Programming
 
         public string ProdiasDriverLogFilePath => _psdzConfig.ProdiasDriverLogFilePath;
 
-        // [UH] istaFolder added
+        [PreserveSource(Hint = "istaFolder added")]
         public PsdzWebServiceWrapper(PsdzWebServiceConfig psdzConfig, string istaFolder)
         {
             _psdzConfig = psdzConfig ?? throw new ArgumentNullException("psdzConfig");
