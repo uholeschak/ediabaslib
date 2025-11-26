@@ -4,7 +4,9 @@ using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
+using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
+using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient;
 using PsdzClient.Core;
@@ -242,6 +244,283 @@ namespace BMW.Rheingold.Programming.Common
             inputTalFilter = objectBuilder.DefineFilterForAllEcus(set3.ToArray(), TalFilterOptions.MustNot, inputTalFilter);
             Log.Info("ProgrammingUtils.CreateTalFilter()", "TALFilter: {0}", NormalizeXmlText(inputTalFilter?.AsXml));
             return inputTalFilter;
+        }
+
+        internal static IEcuJob ExecuteFinalizeJob(IEcuKom ecuKom, string ecu, string job, string argument)
+        {
+            IEcuJob ecuJob = ecuKom.ApiJob(ecu, job, argument, string.Empty);
+            string msg = string.Format("apiJob('{0}','{1}','{2}','') - JOB_STATUS: '{3}'", ecu, job, argument, string.IsNullOrEmpty(ecuJob.getStringResult("JOB_STATUS")) ? "<None>" : ecuJob.getStringResult("JOB_STATUS"));
+            if (ecuJob.IsOkay())
+            {
+                Log.Info("ProgrammingUtils.ExecuteFinalizeJob()", msg);
+            }
+            else
+            {
+                Log.Warning("ProgrammingUtils.ExecuteFinalizeJob()", msg);
+            }
+            return ecuJob;
+        }
+
+        internal static IPsdzTal FilterTalByBn2020ProgrammingActions(ILogicService logicService, EcuProgrammingInfos ecuProgrammingInfos, IPsdzTal srcTal, IPsdzObjectBuilder objectBuilder)
+        {
+            if (logicService == null)
+            {
+                throw new ArgumentNullException("logicService");
+            }
+            if (ecuProgrammingInfos == null)
+            {
+                throw new ArgumentNullException("ecuProgrammingInfos");
+            }
+            if (srcTal == null)
+            {
+                throw new ArgumentNullException("srcTal");
+            }
+            IPsdzTalFilter psdzTalFilter = objectBuilder.BuildTalFilter();
+            foreach (IPsdzEcuIdentifier affectedEcu in srcTal.AffectedEcus)
+            {
+                EcuProgrammingInfo itemFromProgrammingInfos = ecuProgrammingInfos.GetItemFromProgrammingInfos(affectedEcu.DiagAddrAsInt);
+                if (itemFromProgrammingInfos.Ecu.IsSmartActuator)
+                {
+                    continue;
+                }
+                if (itemFromProgrammingInfos != null)
+                {
+                    ISet<TaCategories> set = new HashSet<TaCategories>();
+                    Dictionary<string, TalFilterOptions> smartActuatorFilter = GetSmartActuatorFilter(ecuProgrammingInfos, affectedEcu.DiagAddrAsInt);
+                    int num = 0;
+                    foreach (IProgrammingAction programmingAction in itemFromProgrammingInfos.ProgrammingActions)
+                    {
+                        if (!programmingAction.IsSelected)
+                        {
+                            switch (programmingAction.Type)
+                            {
+                                case ProgrammingActionType.Programming:
+                                    set.Add(TaCategories.SwDeploy);
+                                    set.Add(TaCategories.EcuMirrorDeploy);
+                                    set.Add(TaCategories.EcuActivate);
+                                    set.Add(TaCategories.EcuPoll);
+                                    break;
+                                case ProgrammingActionType.BootloaderProgramming:
+                                    set.Add(TaCategories.BlFlash);
+                                    break;
+                                case ProgrammingActionType.Coding:
+                                    set.Add(TaCategories.CdDeploy);
+                                    break;
+                                case ProgrammingActionType.Unmounting:
+                                    set.Add(TaCategories.HwDeinstall);
+                                    break;
+                                case ProgrammingActionType.Mounting:
+                                    set.Add(TaCategories.HwInstall);
+                                    break;
+                                case ProgrammingActionType.Replacement:
+                                    set.Add(TaCategories.HwInstall);
+                                    set.Add(TaCategories.HwDeinstall);
+                                    break;
+                                default:
+                                    Log.Warning("ProgrammingUtils.FilterTalByBn2020ProgrammingActions()", "Type '{0}' not yet supported!", programmingAction.Type);
+                                    break;
+                            }
+                            num++;
+                        }
+                    }
+                    if (object.Equals(num, itemFromProgrammingInfos.ProgrammingActions.Count()))
+                    {
+                        psdzTalFilter = objectBuilder.DefineFilterForSelectedEcus(EnabledTaCategories, new int[1] { affectedEcu.DiagAddrAsInt }, TalFilterOptions.MustNot, psdzTalFilter, smartActuatorFilter);
+                    }
+                    else if (set.Count > 0)
+                    {
+                        psdzTalFilter = objectBuilder.DefineFilterForSelectedEcus(set.ToArray(), new int[1] { affectedEcu.DiagAddrAsInt }, TalFilterOptions.MustNot, psdzTalFilter, smartActuatorFilter);
+                    }
+                    else if (smartActuatorFilter.Any())
+                    {
+                        psdzTalFilter = objectBuilder.DefineFilterForSelectedEcus(set.ToArray(), new int[1] { affectedEcu.DiagAddrAsInt }, TalFilterOptions.Must, psdzTalFilter, smartActuatorFilter);
+                    }
+                }
+                else
+                {
+                    Log.Warning("ProgrammingUtils.FilterTalByBn2020ProgrammingActions()", "ECU for identifier '{0}' could not be found!", affectedEcu.ToString());
+                }
+            }
+            return logicService.FilterTal(srcTal, psdzTalFilter);
+        }
+
+        public static IPsdzTal FilterTalBySWEs(List<EcuFilterOnSweLevel> sweFilter, IPsdzTal curTal, IPsdzObjectBuilder objectBuilder, ILogicService logicService)
+        {
+            IPsdzTal result = curTal;
+            try
+            {
+                if (sweFilter != null && sweFilter.Any())
+                {
+                    IPsdzTalFilter talFilter = objectBuilder.BuildTalFilter();
+                    talFilter = UpdateTalFilterWithSweFilter(sweFilter, talFilter, objectBuilder, curTal.TalLines);
+                    IPsdzTal psdzTal = logicService.FilterTal(curTal, talFilter);
+                    if (psdzTal != null)
+                    {
+                        result = psdzTal;
+                        Log.Info(Log.CurrentMethod(), "Updated TAL with TalFilter on SweLevel. Used TalFilter: " + talFilter.AsXml);
+                    }
+                    else
+                    {
+                        Log.Error(Log.CurrentMethod(), "TAL is null after trying to filter it on swe level - use old Tal");
+                    }
+                }
+            }
+            catch (Exception arg)
+            {
+                Log.Error(Log.CurrentMethod(), $"Error when trying to filter TAL on swe level - {arg}");
+            }
+            return result;
+        }
+
+        private static IPsdzTalFilter UpdateTalFilterWithSweFilter(List<EcuFilterOnSweLevel> ecuSweFilter, IPsdzTalFilter talFilter, IPsdzObjectBuilder objectBuilder, IEnumerable<IPsdzTalLine> talLines)
+        {
+            if (ecuSweFilter != null)
+            {
+                foreach (EcuFilterOnSweLevel item in ecuSweFilter)
+                {
+                    List<IPsdzTa> tAs = GetTAs(talLines, item.TaCategory);
+                    foreach (ISweTalFilterOptions sweFilter in item.SweTalFilterOptions)
+                    {
+                        IPsdzTa psdzTa = tAs.FirstOrDefault((IPsdzTa x) => x.SgbmId.ProcessClass.ToLower().Equals(sweFilter.ProcessClass.ToLower()));
+                        if (psdzTa == null)
+                        {
+                            Log.Info(Log.CurrentMethod(), $"No TA found for diagaddress '{item.DiagAddress}' and ProcessClass '{sweFilter.ProcessClass}'");
+                        }
+                        else
+                        {
+                            sweFilter.Ta = psdzTa;
+                        }
+                    }
+                    talFilter = objectBuilder.DefineFilterForSWEs(item, talFilter);
+                }
+            }
+            return talFilter;
+        }
+
+        private static List<IPsdzTa> GetTAs(IEnumerable<IPsdzTalLine> talLines, TaCategories category)
+        {
+            switch (category)
+            {
+                case TaCategories.SwDeploy:
+                    return talLines.Where((IPsdzTalLine x) => !x.SwDeploy.IsEmpty).SelectMany((IPsdzTalLine x) => x.SwDeploy.Tas).ToList();
+                case TaCategories.EcuActivate:
+                    return talLines.Where((IPsdzTalLine x) => !x.EcuActivate.IsEmpty).SelectMany((IPsdzTalLine x) => x.EcuActivate.Tas).ToList();
+                case TaCategories.EcuPoll:
+                    return talLines.Where((IPsdzTalLine x) => !x.EcuPoll.IsEmpty).SelectMany((IPsdzTalLine x) => x.EcuPoll.Tas).ToList();
+                case TaCategories.EcuMirrorDeploy:
+                    return talLines.Where((IPsdzTalLine x) => !x.EcuMirrorDeploy.IsEmpty).SelectMany((IPsdzTalLine x) => x.EcuMirrorDeploy.Tas).ToList();
+                default:
+                    throw new ArgumentException("Ta Category '" + category.ToString() + "' is not supported");
+            }
+        }
+
+        private static Dictionary<string, TalFilterOptions> GetSmartActuatorFilter(EcuProgrammingInfos ecuProgrammingInfos, int masterEcuID)
+        {
+            Dictionary<string, TalFilterOptions> dictionary = new Dictionary<string, TalFilterOptions>();
+            foreach (IEcuProgrammingInfo ecuProgrammingInfo in ecuProgrammingInfos)
+            {
+                if (ecuProgrammingInfo.Ecu is SmartActuatorECU smartActuatorECU && smartActuatorECU != null && smartActuatorECU.SmacMasterDiagAddressAsInt == masterEcuID && ecuProgrammingInfo.ProgrammingActions.Any((IProgrammingAction x) => !x.IsSelected))
+                {
+                    dictionary.Add(smartActuatorECU.SmacID, TalFilterOptions.MustNot);
+                }
+            }
+            return dictionary;
+        }
+
+        internal static IList<IKmmPlanElement> GetFilteredKmmPlanElements(IDictionary<IProgrammingAction, IKmmPlanElement> kmmProgrammingActionMap, KmmPlanElementAction filterAction)
+        {
+            if (kmmProgrammingActionMap == null)
+            {
+                throw new ArgumentNullException("kmmProgrammingActionMap");
+            }
+            List<IKmmPlanElement> list = new List<IKmmPlanElement>();
+            foreach (KeyValuePair<IProgrammingAction, IKmmPlanElement> item in kmmProgrammingActionMap)
+            {
+                if (item.Key.IsSelected)
+                {
+                    IKmmPlanElement value = item.Value;
+                    if (value != null && value.Action == filterAction)
+                    {
+                        list.Add(value);
+                    }
+                }
+            }
+            list.Sort();
+            return list;
+        }
+
+        internal static ProgrammingActionType GetProgrammingActionType(string datafile)
+        {
+            if (!string.IsNullOrEmpty(datafile))
+            {
+                if (Regex.IsMatch(datafile, "\\.(baf|0ba)$", RegexOptions.IgnoreCase))
+                {
+                    return ProgrammingActionType.BootloaderProgramming;
+                }
+                if (Regex.IsMatch(datafile, "\\.(daf|0da)$", RegexOptions.IgnoreCase))
+                {
+                    return ProgrammingActionType.DataProgramming;
+                }
+            }
+            return ProgrammingActionType.Programming;
+        }
+
+        internal static bool IsKmmPlanElementRelevant(ProgrammingTaskFlags programmingTaskFlags, IKmmPlanElement kmmPlanElement)
+        {
+            if (kmmPlanElement != null)
+            {
+                switch (kmmPlanElement.Action)
+                {
+                    case KmmPlanElementAction.MountEcu:
+                        return (programmingTaskFlags & ProgrammingTaskFlags.Mount) == ProgrammingTaskFlags.Mount;
+                    case KmmPlanElementAction.UnmountEcu:
+                        return (programmingTaskFlags & ProgrammingTaskFlags.Unmount) == ProgrammingTaskFlags.Unmount;
+                    case KmmPlanElementAction.ReplaceEcu:
+                        return (programmingTaskFlags & ProgrammingTaskFlags.Replace) == ProgrammingTaskFlags.Replace;
+                    case KmmPlanElementAction.FlashEcu:
+                        return (programmingTaskFlags & ProgrammingTaskFlags.Flash) == ProgrammingTaskFlags.Flash;
+                    case KmmPlanElementAction.CodeEcu:
+                        return (programmingTaskFlags & ProgrammingTaskFlags.Code) == ProgrammingTaskFlags.Code;
+                    case KmmPlanElementAction.ImportFsc:
+                    case KmmPlanElementAction.ActivateSwt:
+                    case KmmPlanElementAction.DeactivateSwt:
+                        return false;
+                }
+            }
+            return false;
+        }
+
+        internal static bool PerformFlashPostconditionsExxe(IEcu ecu, IEcuKom ecuKom, IVehicle vehicle, IProgressMonitor progressMonitor)
+        {
+            if (!ecuKom.Refresh(vehicle.IsDoIP))
+            {
+                Log.Error("ProgramBn2000EcusExxeState.PerformFlashPostconditions()", "Connection to EDIABAS could not be established!");
+                return false;
+            }
+            if (!ActiveGatewayUtils.WriteRoutingTable(ecuKom, vehicle, null))
+            {
+                return false;
+            }
+            return RequestClamp15State(progressMonitor, ecuKom, vehicle);
+        }
+
+        internal static bool PerformFlashPreconditionsExxe(IEcu ecu, IEcuKom ecuKom, IVehicle vehicle, IProgressMonitor progressMonitor)
+        {
+            if (!ecuKom.Refresh(vehicle.IsDoIP))
+            {
+                Log.Error("ProgrammingUtils.PerformFlashPreconditionsExxe()", "Connection to EDIABAS could not be established!");
+                return false;
+            }
+            if (!ActiveGatewayUtils.WriteRoutingTable(ecuKom, vehicle, null))
+            {
+                return false;
+            }
+            bool flag = ((ecu.ID_SG_ADR != 64) ? RequestClamp15State(progressMonitor, ecuKom, vehicle) : RequestClamp30State(progressMonitor, ecuKom));
+            if (flag && IsUsedSpecificRoutingTable(ecu))
+            {
+                flag = ActiveGatewayUtils.WriteRoutingTable(ecuKom, vehicle, ecu.ID_SG_ADR);
+            }
+            return flag;
         }
 
         internal static ProgrammingTaskFlags RetrieveProgrammingTaskFlagsFromTasks(IEnumerable<IProgrammingTask> programmingTasks)
