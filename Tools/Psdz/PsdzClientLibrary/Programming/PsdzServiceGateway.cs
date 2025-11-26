@@ -164,6 +164,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Added")]
         private bool WaitForPsdzServiceHostInitialization()
         {
             if (_psdzServiceHostWrapper == null)
