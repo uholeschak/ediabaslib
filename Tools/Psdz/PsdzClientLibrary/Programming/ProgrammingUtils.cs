@@ -717,6 +717,7 @@ namespace BMW.Rheingold.Programming.Common
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "From CheckSoftwareAvailabilityBase")]
         public static IEnumerable<IPsdzSgbmId> RemoveCafdsCalculatedOnSCB(IEnumerable<string> cafdList, IEnumerable<IPsdzSgbmId> sweList)
         {
             List<string> list = cafdList.ToList();
