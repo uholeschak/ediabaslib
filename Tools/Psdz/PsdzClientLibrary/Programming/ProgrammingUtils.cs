@@ -370,13 +370,12 @@ namespace BMW.Rheingold.Programming.Common
         public static bool CheckIfThereAreAnyNcdInTheRequest(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
-#if ENABLE_OLD_REQUEST_JSON
             if (ecuData == null && jsonContentObj?.ecuData != null)
             {
-                // For backward compatibility with old request JSON format
+                // [UH] [IGNORE] For backward compatibility with old request JSON format
                 ecuData = jsonContentObj.ecuData;
             }
-#endif
+
             if (ecuData != null)
             {
                 foreach (EcuData data in ecuData)
@@ -396,13 +395,11 @@ namespace BMW.Rheingold.Programming.Common
         public static IEnumerable<string> CafdCalculatedInSCB(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
-#if ENABLE_OLD_REQUEST_JSON
             if (ecuData == null && jsonContentObj?.ecuData != null)
             {
-                // For backward compatibility with old request JSON format
+                // [UH] [IGNORE] For backward compatibility with old request JSON format
                 ecuData = jsonContentObj.ecuData;
             }
-#endif
             if (ecuData != null)
             {
                 return ecuData.SelectMany(a => a.CafdId);
