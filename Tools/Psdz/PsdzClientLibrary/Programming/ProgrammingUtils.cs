@@ -61,6 +61,24 @@ namespace BMW.Rheingold.Programming.Common
             return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
+        public static bool RequestClamp15State(IProgressMonitor monitor, IEcuKom ecuKom, IVehicle vehicle)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public static bool RequestClamp30State(IProgressMonitor monitor, IEcuKom ecuKom)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public static string RetrieveNewZbNr()
+        {
+            throw new NotImplementedException();
+        }
+
         public static bool WriteBn2000Istufen(IEcuKom ecuKom, string groupSgbd, string iStufeWerk, string iStufeHo, string iStufeHoBackup)
         {
             if (ecuKom == null)
@@ -91,6 +109,12 @@ namespace BMW.Rheingold.Programming.Common
             }
             Log.Error("ProgrammingUtils.WriteBn2000Istufen()", "Failed to write integration level ({0})! (SGBD: '{1}')", text, groupSgbd);
             return false;
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        internal static IProgrammingAction AddProgrammingActionToEcu(EcuProgrammingInfo ecu)
+        {
+            throw new NotImplementedException();
         }
 
         internal static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
