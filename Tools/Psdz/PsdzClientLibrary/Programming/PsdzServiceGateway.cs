@@ -47,6 +47,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         public string PsdzWebServiceLogFilePath
         {
             get
@@ -60,6 +61,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         public string PsdzLogFilePath
         {
             get
