@@ -15,6 +15,7 @@ namespace PsdzClient.Programming
 
         private PsdzWebServiceWrapper _psdzWebServiceWrapper;
 
+        [PreserveSource(Hint = "Added")]
         private readonly Action _psdzServiceHostStarter;
 
         private bool disposedValue;
