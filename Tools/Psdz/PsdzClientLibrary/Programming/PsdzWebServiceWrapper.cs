@@ -11,72 +11,34 @@ namespace BMW.Rheingold.Programming
     public class PsdzWebServiceWrapper : IPsdz, IPsdzService, IPsdzInfo
     {
         private readonly PsdzWebServiceConfig _psdzConfig;
-
-        [PreserveSource(Hint = "Added")]
-        private readonly string _istaFolder;
-
         private ProdiasLoglevel? _prodiasLoglevel = ProdiasLoglevel.ERROR;
-
         private PsdzLoglevel? _psdzLoglevel = PsdzLoglevel.FINE;
-
         private IPsdzObjectBuilder _objectBuilder;
-
         private IPsdzWebService _psdzWebService { get; }
-
         public ICertificateManagementService CertificateManagementService => _psdzWebService.CertificateManagementService;
-
         public IConfigurationService ConfigurationService => _psdzWebService.ConfigurationService;
-
         public IConnectionFactoryService ConnectionFactoryService => _psdzWebService.ConnectionFactoryService;
-
         public IConnectionManagerService ConnectionManagerService => _psdzWebService.ConnectionManagerService;
-
         public IEcuService EcuService => _psdzWebService.EcuService;
-
         public IEventManagerService EventManagerService => _psdzWebService.EventManagerService;
-
         public IHttpConfigurationService HttpConfigurationService => _psdzWebService.HttpConfigurationService;
-
         public IHttpServerService HttpServerService => _psdzWebService.HttpServerService;
-
         public IIndividualDataRestoreService IndividualDataRestoreService => _psdzWebService.IndividualDataRestoreService;
-
         public IKdsService KdsService => _psdzWebService.KdsService;
-
         public ILogicService LogicService => _psdzWebService.LogicService;
-
         public ILogService LogService => _psdzWebService.LogService;
-
         public IMacrosService MacrosService => _psdzWebService.MacrosService;
-
         public IObjectBuilderService ObjectBuilderService => _psdzWebService.ObjectBuilderService;
-
         public IProgrammingService ProgrammingService => _psdzWebService.ProgrammingService;
-
         public ISecureCodingService SecureCodingService => _psdzWebService.SecureCodingService;
-
         public ISecureFeatureActivationService SecureFeatureActivationService => _psdzWebService.SecureFeatureActivationService;
-
         public ISecurityManagementService SecurityManagementService => _psdzWebService.SecurityManagementService;
-
         public ITalExecutionService TalExecutionService => _psdzWebService.TalExecutionService;
-
         public IVcmService VcmService => _psdzWebService.VcmService;
-
         public ISecureDiagnosticsService SecureDiagnosticsService => _psdzWebService.SecureDiagnosticsService;
-
         public IProgrammingTokenService ProgrammingTokenService => _psdzWebService.ProgrammingTokenService;
-
-        [PreserveSource(Hint = "Added")]
-        public string PsdzServiceLogDir => _psdzConfig.PsdzWebApiLogDir;
-
-        [PreserveSource(Hint = "Added")]
-        public string ExpectedPsdzVersion { get; private set; }
-
         public bool IsValidPsdzVersion => true;
-
         public string PsdzDataPath => _psdzWebService.ConfigurationService.GetRootDirectory();
-
         public string PsdzVersion => _psdzWebService.ConfigurationService.GetPsdzVersion();
 
         public IPsdzObjectBuilder ObjectBuilder
@@ -87,6 +49,7 @@ namespace BMW.Rheingold.Programming
                 {
                     _objectBuilder = new PsdzObjectBuilder(ObjectBuilderService);
                 }
+
                 return _objectBuilder;
             }
         }
@@ -99,21 +62,20 @@ namespace BMW.Rheingold.Programming
                 {
                     return false;
                 }
+
                 return _psdzWebService.IsReady();
             }
         }
 
         public string PsdzServiceLogFilePath => _psdzConfig.PsdzWebServiceLogFilePath;
-
         public string PsdzLogFilePath => _psdzConfig.PsdzLogFilePath;
-
         public string ProdiasDriverLogFilePath => _psdzConfig.ProdiasDriverLogFilePath;
 
         [PreserveSource(Hint = "istaFolder added")]
         public PsdzWebServiceWrapper(PsdzWebServiceConfig psdzConfig, string istaFolder)
         {
             _psdzConfig = psdzConfig ?? throw new ArgumentNullException("psdzConfig");
-            _istaFolder = istaFolder;   // [UH] [IGNORE] added
+            _istaFolder = istaFolder; // [UH] [IGNORE] added
             _psdzWebService = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);
         }
 
@@ -127,13 +89,13 @@ namespace BMW.Rheingold.Programming
             catch (JavaInstallationException exception)
             {
                 Log.ErrorException(Log.CurrentMethod(), "PSdZ could not be initialized: {0}", exception);
-                // [IGNORE] ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
-                // [IGNORE] service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation").Localize());
+            // [IGNORE] ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
+            // [IGNORE] service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation").Localize());
             }
             catch (Exception ex)
             {
                 Log.Error(Log.CurrentMethod(), "PSdZ could not be initialized: {0}", ex);
-                throw new Exception("PSdZNotStarted");   // [IGNORE] AppException replaced
+                throw new Exception("PSdZNotStarted"); // [IGNORE] AppException replaced
             }
         }
 
@@ -176,5 +138,13 @@ namespace BMW.Rheingold.Programming
                 ConnectionManagerService.SetProdiasLogLevel(prodiasLoglevel);
             }
         }
+
+        [PreserveSource(Hint = "Added")]
+        private readonly string _istaFolder;
+        [PreserveSource(Hint = "Added")]
+        public string PsdzServiceLogDir => _psdzConfig.PsdzWebApiLogDir;
+
+        [PreserveSource(Hint = "Added")]
+        public string ExpectedPsdzVersion { get; private set; }
     }
 }
