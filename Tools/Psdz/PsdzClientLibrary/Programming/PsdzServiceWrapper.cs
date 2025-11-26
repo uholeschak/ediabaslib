@@ -140,7 +140,7 @@ namespace BMW.Rheingold.Programming
 
         public IHttpConfigurationService HttpConfigurationService => psdzServiceClient.HttpConfigurationService;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public string PsdzServiceLogDir => psdzServiceHostLogDir;
 
         public string PsdzServiceLogFilePath => psdzServiceHostLogFilePath;
@@ -195,7 +195,7 @@ namespace BMW.Rheingold.Programming
             }
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         public bool StartHostIfNotRunning(IVehicle vehicle = null)
         {
             try
