@@ -6,6 +6,7 @@ using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.SecureCoding;
 using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
+using PsdzClient;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Programming;
@@ -365,7 +366,7 @@ namespace BMW.Rheingold.Programming.Common
             return enumerable2;
         }
 
-        // [UH] From SecureCodingLogic
+        [PreserveSource(Hint = "From SecureCodingLogic")]
         public static bool CheckIfThereAreAnyNcdInTheRequest(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
@@ -391,7 +392,7 @@ namespace BMW.Rheingold.Programming.Common
             return false;
         }
 
-        // [UH] From SecureCodingLogic.GetCafdCalculatedInSCB
+        [PreserveSource(Hint = "From SecureCodingLogic.GetCafdCalculatedInSCB")]
         public static IEnumerable<string> CafdCalculatedInSCB(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;

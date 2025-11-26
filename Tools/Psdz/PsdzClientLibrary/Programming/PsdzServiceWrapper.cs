@@ -12,7 +12,7 @@ namespace BMW.Rheingold.Programming
 {
     [PreserveSource(Removed = true)]
     public class PsdzServiceWrapper : IPsdz, IPsdzService, IPsdzInfo, IDisposable
-   {
+    {
         private readonly PsdzServiceArgs psdzServiceArgs;
 
         private readonly PsdzServiceClient psdzServiceClient;
