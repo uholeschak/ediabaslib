@@ -308,6 +308,7 @@ namespace BMW.Rheingold.Programming.Common
             return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
         }
 
+        [PreserveSource(Hint = "Added")]
         public static FA BuildVehicleFa(IPsdzFa faInput, string br)
         {
             if (faInput == null)
