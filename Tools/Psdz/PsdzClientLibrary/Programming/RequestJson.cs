@@ -12,6 +12,7 @@ using System.Xml.Linq;
 
 namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
 {
+    [PreserveSource(Hint = "Changed to public", AccessModified = true)]
     [DataContract]
     public class RequestJson
     {
