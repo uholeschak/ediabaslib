@@ -18,23 +18,14 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
     {
         [DataMember(Name = "FA")]
         public readonly string fa;
-
         [DataMember(Name = "testerNo")]
         public readonly string testerNo;
-
         [DataMember(Name = "vpc")]
         public readonly string vpc;
-
         [DataMember(Name = "calcEcuData")]
         public readonly EcuDataGroup calcEcuData;
-
         [DataMember(Name = "currEcuData")]
         public readonly EcuDataGroup currEcuData;
-
-        [PreserveSource(Hint = "Added for backward compatibility")]
-        [DataMember(Name = "ecuData")]
-        public readonly EcuData[] ecuData;
-
         internal string FaAsXml => Encoding.Default.GetString(Convert.FromBase64String(fa));
 
         public RequestJson(string fa)
@@ -57,7 +48,8 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
         private string CleanHeaderAttibutes(string xmlContent)
         {
             XDocument xDocument = XDocument.Parse(xmlContent);
-            (from x in xDocument.Descendants().FirstOrDefault((XElement p) => p.Name.LocalName == "header").Attributes()
+            (
+                from x in xDocument.Descendants().FirstOrDefault((XElement p) => p.Name.LocalName == "header").Attributes()
                 where x.Name == "date" || x.Name == "time" || x.Name == "createdBy"
                 select x).Select(delegate (XAttribute x)
             {
@@ -66,5 +58,9 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
             }).ToList();
             return xDocument.ToString();
         }
+
+        [PreserveSource(Hint = "Added for backward compatibility")]
+        [DataMember(Name = "ecuData")]
+        public readonly EcuData[] ecuData;
     }
 }
