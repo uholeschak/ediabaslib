@@ -193,7 +193,6 @@ namespace BMW.Rheingold.Programming.Common
 
         internal static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
         {
-            // [IGNORE] ProgrammingTaskFlags.Mount | ProgrammingTaskFlags.Unmount | ProgrammingTaskFlags.Replace | ProgrammingTaskFlags.Flash | Programming.ProgrammingTaskFlags.Code | ProgrammingTaskFlags.DataRecovery | ProgrammingTaskFlags.Fsc
             ISet<TaCategories> set = new HashSet<TaCategories>();
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.EnforceCoding))
             {
