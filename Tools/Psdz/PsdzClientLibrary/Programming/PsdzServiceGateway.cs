@@ -10,28 +10,8 @@ namespace PsdzClient.Programming
 {
     public class PsdzServiceGateway : IPsdzServiceGateway, IDisposable
     {
-        [PreserveSource(Hint = "Added")]
-        private PsdzServiceWrapper _psdzServiceHostWrapper;
-
-        private PsdzWebServiceWrapper _psdzWebServiceWrapper;
-
-        [PreserveSource(Hint = "Added")]
-        private readonly Action _psdzServiceHostStarter;
-
-        private bool disposedValue;
-
-        [PreserveSource(Hint = "Added")]
-        public string PsdzServiceLogDir
-        {
-            get
-            {
-                if (_psdzWebServiceWrapper != null)
-                {
-                    return _psdzWebServiceWrapper.PsdzServiceLogDir;
-                }
-                return _psdzServiceHostWrapper.PsdzServiceLogDir;
-            }
-        }
+        private readonly PsdzWebServiceWrapper _psdzWebServiceWrapper;
+        public static Type PsdzServiceType { get; set; }
 
         [PreserveSource(Hint = "Modified")]
         public IPsdz Psdz
@@ -43,6 +23,7 @@ namespace PsdzClient.Programming
                 {
                     return _psdzWebServiceWrapper;
                 }
+
                 return _psdzServiceHostWrapper;
             }
         }
@@ -57,6 +38,7 @@ namespace PsdzClient.Programming
                 {
                     return _psdzWebServiceWrapper.PsdzServiceLogFilePath;
                 }
+
                 return _psdzServiceHostWrapper.PsdzServiceLogFilePath;
             }
         }
@@ -71,6 +53,7 @@ namespace PsdzClient.Programming
                 {
                     return _psdzWebServiceWrapper.PsdzLogFilePath;
                 }
+
                 return _psdzServiceHostWrapper.PsdzLogFilePath;
             }
         }
@@ -98,8 +81,8 @@ namespace PsdzClient.Programming
                 Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
                 return true;
             }
-            Log.Info(Log.CurrentMethod(), "Start.");
 
+            Log.Info(Log.CurrentMethod(), "Start.");
             bool started = false;
             if (_psdzWebServiceWrapper != null)
             {
@@ -134,7 +117,6 @@ namespace PsdzClient.Programming
 
             Log.Info(Log.CurrentMethod(), "Started: {0}", started);
             Log.Info(Log.CurrentMethod(), "End.");
-
             return started;
         }
 
@@ -167,31 +149,6 @@ namespace PsdzClient.Programming
         }
 
         [PreserveSource(Hint = "Added")]
-        private bool WaitForPsdzServiceHostInitialization()
-        {
-            if (_psdzServiceHostWrapper == null)
-            {   // [UH] [IGNORE] added
-                Log.Error(Log.CurrentMethod(), $"_psdzServiceHostWrapper is null");
-                return false;
-            }
-
-            int num = 40;
-            DateTime dateTime = DateTime.Now.AddSeconds(num);
-            while (!_psdzServiceHostWrapper.IsPsdzInitialized)
-            {
-                if (DateTime.Now > dateTime)
-                {
-                    Log.Error(Log.CurrentMethod(), $"PsdzServiceHost failed to start in {num} seconds. The method will stop waiting for it.");
-                    return false;
-                }
-                Task.Delay(500).Wait();
-            }
-            _psdzServiceHostWrapper.DoInitSettings();
-
-            return true;
-        }
-
-        [PreserveSource(Hint = "Added")]
         public void SetLogLevel(PsdzLoglevel psdzLoglevel, ProdiasLoglevel prodiasLoglevel)
         {
             _psdzServiceHostWrapper?.SetLogLevel(psdzLoglevel, prodiasLoglevel);
@@ -205,26 +162,53 @@ namespace PsdzClient.Programming
             _psdzWebServiceWrapper?.Shutdown();
         }
 
-        protected virtual void Dispose(bool disposing)
+        public void Dispose()
         {
-            if (!disposedValue)
+            GC.SuppressFinalize(this);
+        }
+
+        [PreserveSource(Hint = "Added")]
+        private PsdzServiceWrapper _psdzServiceHostWrapper;
+        [PreserveSource(Hint = "Added")]
+        private readonly Action _psdzServiceHostStarter;
+        [PreserveSource(Hint = "Added")]
+        public string PsdzServiceLogDir
+        {
+            get
             {
-                if (disposing)
+                if (_psdzWebServiceWrapper != null)
                 {
-                    if (_psdzServiceHostWrapper != null)
-                    {
-                        _psdzServiceHostWrapper.Dispose();
-                        _psdzServiceHostWrapper = null;
-                    }
+                    return _psdzWebServiceWrapper.PsdzServiceLogDir;
                 }
-                disposedValue = true;
+
+                return _psdzServiceHostWrapper.PsdzServiceLogDir;
             }
         }
 
-        public void Dispose()
+        [PreserveSource(Hint = "Added")]
+        private bool WaitForPsdzServiceHostInitialization()
         {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            if (_psdzServiceHostWrapper == null)
+            { // [UH] [IGNORE] added
+                Log.Error(Log.CurrentMethod(), $"_psdzServiceHostWrapper is null");
+                return false;
+            }
+
+            int num = 40;
+            DateTime dateTime = DateTime.Now.AddSeconds(num);
+            while (!_psdzServiceHostWrapper.IsPsdzInitialized)
+            {
+                if (DateTime.Now > dateTime)
+                {
+                    Log.Error(Log.CurrentMethod(), $"PsdzServiceHost failed to start in {num} seconds. The method will stop waiting for it.");
+                    return false;
+                }
+
+                Task.Delay(500).Wait();
+            }
+
+            _psdzServiceHostWrapper.DoInitSettings();
+            return true;
         }
     }
 }
