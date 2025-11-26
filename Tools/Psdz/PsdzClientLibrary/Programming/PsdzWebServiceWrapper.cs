@@ -51,7 +51,7 @@ namespace BMW.Rheingold.Programming
 
         public IObjectBuilderService ObjectBuilderService => _psdzWebService.ObjectBuilderService;
 
-        public BMW.Rheingold.Psdz.IProgrammingService ProgrammingService => _psdzWebService.ProgrammingService;
+        public IProgrammingService ProgrammingService => _psdzWebService.ProgrammingService;
 
         public ISecureCodingService SecureCodingService => _psdzWebService.SecureCodingService;
 
