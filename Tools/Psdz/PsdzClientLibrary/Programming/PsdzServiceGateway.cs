@@ -18,7 +18,7 @@ namespace PsdzClient.Programming
 
         private bool disposedValue;
 
-        // [UH] added
+        [PreserveSource(Hint = "Added")]
         public string PsdzServiceLogDir
         {
             get
@@ -31,11 +31,12 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         public IPsdz Psdz
         {
             get
             {
-                // [UH] modified
+                // [UH] [IGNORE] modified
                 if (_psdzWebServiceWrapper != null)
                 {
                     return _psdzWebServiceWrapper;
@@ -48,7 +49,7 @@ namespace PsdzClient.Programming
         {
             get
             {
-                // [UH] modified
+                // [UH] [IGNORE] modified
                 if (_psdzWebServiceWrapper != null)
                 {
                     return _psdzWebServiceWrapper.PsdzServiceLogFilePath;
@@ -61,7 +62,7 @@ namespace PsdzClient.Programming
         {
             get
             {
-                // [UH] modified
+                // [UH] [IGNORE] modified
                 if (_psdzWebServiceWrapper != null)
                 {
                     return _psdzWebServiceWrapper.PsdzLogFilePath;
@@ -70,11 +71,11 @@ namespace PsdzClient.Programming
             }
         }
 
-        // [UH] istaFolder, dealerId added
+        [PreserveSource(Hint = "istaFolder, dealerId added")]
         public PsdzServiceGateway(PsdzConfig psdzConfig, string istaFolder, string dealerId, Action psdzServiceHostStarter = null)
         {
             _psdzServiceHostStarter = psdzServiceHostStarter;
-            // [UH] modified
+            // [UH] [IGNORE] modified
             if (ClientContext.EnablePsdzWebService())
             {
                 _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
@@ -85,7 +86,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         public bool StartIfNotRunning(IVehicle vehicle = null)
         {
             if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
@@ -133,7 +134,7 @@ namespace PsdzClient.Programming
             return started;
         }
 
-        // [UH] modified
+        [PreserveSource(Hint = "Modified")]
         public void CloseConnectionsToPsdz(bool force = false)
         {
             try
@@ -164,7 +165,7 @@ namespace PsdzClient.Programming
         private bool WaitForPsdzServiceHostInitialization()
         {
             if (_psdzServiceHostWrapper == null)
-            {   // [UH] added
+            {   // [UH] [IGNORE] added
                 Log.Error(Log.CurrentMethod(), $"_psdzServiceHostWrapper is null");
                 return false;
             }
