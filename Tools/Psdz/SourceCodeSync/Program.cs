@@ -84,6 +84,7 @@ namespace SourceCodeSync
         private static readonly Dictionary<string, string> _textReplacements = new Dictionary<string, string>
         {
             { "BMW.Rheingold.CoreFramework.Extensions.AddRange", "Extensions.AddRange" },
+            { "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService", "IProgrammingService" },
         };
 
         private const string _signatureModifiedProperty = "SignatureModified";
