@@ -107,9 +107,9 @@ namespace BMW.Rheingold.Programming.Common
             return false;
         }
 
-        // ProgrammingTaskFlags.Mount | ProgrammingTaskFlags.Unmount | ProgrammingTaskFlags.Replace | ProgrammingTaskFlags.Flash | Programming.ProgrammingTaskFlags.Code | ProgrammingTaskFlags.DataRecovery | ProgrammingTaskFlags.Fsc
         internal static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
         {
+            // [IGNORE] ProgrammingTaskFlags.Mount | ProgrammingTaskFlags.Unmount | ProgrammingTaskFlags.Replace | ProgrammingTaskFlags.Flash | Programming.ProgrammingTaskFlags.Code | ProgrammingTaskFlags.DataRecovery | ProgrammingTaskFlags.Fsc
             ISet<TaCategories> set = new HashSet<TaCategories>();
             if (programmingTaskFlags.HasFlag(ProgrammingTaskFlags.EnforceCoding))
             {
@@ -265,7 +265,7 @@ namespace BMW.Rheingold.Programming.Common
             };
         }
 
-        // Example call in: ABL_AUS_RETROFITPROTECTIONOFFOOTWEARACTIVATION, ABL_AUS_RETROFITSETOILINTERVALTOSA8KL: Change_FA
+        [PreserveSource(Hint = "Example call in: ABL_AUS_RETROFITPROTECTIONOFFOOTWEARACTIVATION, ABL_AUS_RETROFITSETOILINTERVALTOSA8KL: Change_FA")]
         public static bool ModifyFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa, List<string> faModList, bool addEntry)
         {
             if (fa == null)
@@ -318,7 +318,7 @@ namespace BMW.Rheingold.Programming.Common
             return true;
         }
 
-        // From BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa
+        [PreserveSource(Hint = "From BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa")]
         public static string CompareFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faCurrent, BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faTarget)
         {
             if (faCurrent != null && faTarget != null)
