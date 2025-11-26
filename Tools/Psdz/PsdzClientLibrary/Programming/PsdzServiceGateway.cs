@@ -10,6 +10,7 @@ namespace PsdzClient.Programming
 {
     public class PsdzServiceGateway : IPsdzServiceGateway, IDisposable
     {
+        [PreserveSource(Hint = "Added")]
         private PsdzServiceWrapper _psdzServiceHostWrapper;
 
         private PsdzWebServiceWrapper _psdzWebServiceWrapper;
