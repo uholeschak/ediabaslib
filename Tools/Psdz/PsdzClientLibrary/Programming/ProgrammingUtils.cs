@@ -607,6 +607,7 @@ namespace BMW.Rheingold.Programming.Common
             return fa;
         }
 
+        [PreserveSource(Hint = "Added")]
         public static BMW.Rheingold.CoreFramework.Contracts.Programming.IFa BuildFa(IPsdzStandardFa faInput)
         {
             if (faInput == null)
