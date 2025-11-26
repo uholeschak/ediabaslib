@@ -394,6 +394,7 @@ namespace BMW.Rheingold.Programming.Common
             return new string[0];
         }
 
+        [PreserveSource(Hint = "Added")]
         public static List<IPsdzRequestNcdEto> CreateRequestNcdEtos(IPsdzCheckNcdResultEto psdzCheckNcdResultEto)
         {
             List<IPsdzRequestNcdEto> requestNcdEtos = new List<IPsdzRequestNcdEto>();
@@ -409,6 +410,7 @@ namespace BMW.Rheingold.Programming.Common
             return requestNcdEtos;
         }
 
+        [PreserveSource(Hint = "Added")]
         public static TalExecutionSettings GetTalExecutionSettings(PsdzClient.Programming.ProgrammingService2 programmingService)
         {
             TalExecutionSettings talExecutionSettings = new TalExecutionSettings
@@ -432,6 +434,7 @@ namespace BMW.Rheingold.Programming.Common
             return talExecutionSettings;
         }
 
+        [PreserveSource(Hint = "Added")]
         public static void LogTalExecutionSettings(string methodeName, TalExecutionSettings talExecutionSettings)
         {
             Log.Info(methodeName, "{0}: '{1}'", "Parallel", talExecutionSettings.Parallel);
