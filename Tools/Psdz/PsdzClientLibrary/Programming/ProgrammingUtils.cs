@@ -21,20 +21,6 @@ namespace BMW.Rheingold.Programming.Common
 {
     public class ProgrammingUtils
     {
-        [Flags]
-        [AuthorAPI(SelectableTypeDeclaration = true)]
-        public enum KmmFlashFlags
-        {
-            FlashNormal = 1,
-            FlashCD = 2,
-            FlashDVD = 4,
-            FlashMOSTSync = 8,
-            FlashMOSTAsync = 0x10,
-            FlashMOSTControl = 0x20,
-            FlashCAN = 0x40,
-            FlashByteFlight = 0x80
-        }
-
         private static TaCategories[] DisabledTaCategories = new TaCategories[1] { TaCategories.Unknown };
 
         public static readonly TaCategories[] EnabledTaCategories = (from TaCategories x in Enum.GetValues(typeof(TaCategories))
