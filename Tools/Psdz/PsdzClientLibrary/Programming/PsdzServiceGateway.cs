@@ -191,12 +191,14 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        [PreserveSource(Hint = "Added")]
         public void SetLogLevel(PsdzLoglevel psdzLoglevel, ProdiasLoglevel prodiasLoglevel)
         {
             _psdzServiceHostWrapper?.SetLogLevel(psdzLoglevel, prodiasLoglevel);
             _psdzWebServiceWrapper?.SetLogLevel(psdzLoglevel, prodiasLoglevel);
         }
 
+        [PreserveSource(Hint = "Added")]
         public void Shutdown()
         {
             _psdzServiceHostWrapper?.Shutdown();
