@@ -117,6 +117,78 @@ namespace BMW.Rheingold.Programming.Common
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
+        public static FormatedData CreateProgrammingMessageClamp30(double? voltage, BatteryEnum vehicleBattery, double clampMinValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public static bool CheckClamp30ForProgramming(double voltage, BatteryEnum vehicleBattery)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "VehicleProgramingProhibitionReason", Placeholder = true)]
+        public static PlaceholderType CheckVehicleProgramingProhibits()
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "ConnectionResult<FormatedData>", Placeholder = true)]
+        public static PlaceholderType CheckConnectionLan()
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public static bool IsToyota()
+        {
+            return false;
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        private static void CheckClamp30(Vehicle vehicle)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static bool ProhibitionIsCircumvented()
+        {
+            bool defaultValue = ConfigSettings.IsLightModeActive;
+            return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.RheingoldSessionController.CircumventProgramingProhibition", defaultValue);
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        private static void CheckBatteryStatus()
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "ConnectionResult<FormatedData>", Placeholder = true)]
+        protected static PlaceholderType CheckConnectionWithResult(Vehicle vehicle)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        [Obsolete("Use the method CheckConnectionWithResult instead")]
+        protected static void CheckConnection(Vehicle vehicle)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool VCIHasWIFIConnection(Vehicle vehicle)
+        {
+            string text = 1.ToString();
+            return vehicle.VCI.NetworkType == text;
+        }
+
+        private static bool PCHasWIFIConnection(Vehicle vehicle)
+        {
+            return NetworkType.WLAN == vehicle.VCI.LocalAdapterNetworkType;
+        }
+
         internal static IPsdzTalFilter CreateTalFilter(ProgrammingTaskFlags programmingTaskFlags, IPsdzObjectBuilder objectBuilder)
         {
             // [IGNORE] ProgrammingTaskFlags.Mount | ProgrammingTaskFlags.Unmount | ProgrammingTaskFlags.Replace | ProgrammingTaskFlags.Flash | Programming.ProgrammingTaskFlags.Code | ProgrammingTaskFlags.DataRecovery | ProgrammingTaskFlags.Fsc

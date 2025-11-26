@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BmwFileReader;
@@ -78,15 +79,6 @@ namespace PsdzClient
             VarGroupId,
             VarPrgEcuId,
             SwiRegister,
-        }
-
-        public enum BatteryEnum
-        {
-            Unknown,
-            Pb,
-            LFP,
-            LFP_NCAR,
-            PbNew
         }
 
         public enum SwiActionLinkType

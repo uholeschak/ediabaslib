@@ -784,8 +784,8 @@ namespace PsdzClient.Programming
             }
 
             VecInfo.BatteryType = PsdzDatabase.ResolveBatteryType(VecInfo);
-            VecInfo.WithLfpBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP;
-            VecInfo.WithLfpNCarBattery = VecInfo.BatteryType == PsdzDatabase.BatteryEnum.LFP_NCAR;
+            VecInfo.WithLfpBattery = VecInfo.BatteryType == BatteryEnum.LFP;
+            VecInfo.WithLfpNCarBattery = VecInfo.BatteryType == BatteryEnum.LFP_NCAR;
             VecInfo.MainSeriesSgbd = DetectVehicle.GroupSgbd;
             // [IGNORE] DetectVehicle.SgbdAdd ist calculated by GetMainSeriesSgbdAdditional anyway
             VecInfo.MainSeriesSgbdAdditional = service.GetMainSeriesSgbdAdditional(VecInfo);

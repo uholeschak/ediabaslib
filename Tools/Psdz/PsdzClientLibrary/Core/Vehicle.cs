@@ -11,6 +11,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
+using BMW.Rheingold.Programming.Common;
 using PsdzClient.Programming;
 
 #pragma warning disable CS0169, CS0649, CS0618
@@ -36,7 +37,7 @@ namespace PsdzClient.Core
         private bool withLfpBattery;
         private bool withLfpNCarBattery;
         [PreserveSource(Hint = "Database modified")]
-        private PsdzDatabase.BatteryEnum batteryType;
+        private BatteryEnum batteryType;
         private bool isClosingOperationActive;
         private string verkaufsBezeichnungField;
         private bool powerSafeModeByOldEcus;
@@ -888,7 +889,7 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "Database modified")]
         [XmlIgnore]
-        public PsdzDatabase.BatteryEnum BatteryType
+        public BatteryEnum BatteryType
         {
             get
             {
