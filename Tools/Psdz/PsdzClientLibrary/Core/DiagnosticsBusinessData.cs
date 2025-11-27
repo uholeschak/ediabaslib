@@ -10,27 +10,22 @@ using System.Text.RegularExpressions;
 namespace PsdzClient.Core
 {
     public delegate object DoECUIdentDelegate(IVehicle vecInfo, ECU mECU, IEcuKom ecuKom, ref bool resetMOSTGWdone, IProgressMonitor monitor, int retry, bool forceReRead, bool tryReanimation, bool IdentForceOnUnidentified = false);
-
     public class DiagnosticsBusinessData : DiagnosticsBusinessDataCore, IDiagnosticsBusinessData
     {
         internal class EcuKomConfig
         {
             private string ecu;
-
             private string job;
-
             private string param;
-
             private ushort set;
-
             private string result;
-
             public string Ecu
             {
                 get
                 {
                     return ecu;
                 }
+
                 set
                 {
                     ecu = value;
@@ -43,6 +38,7 @@ namespace PsdzClient.Core
                 {
                     return job;
                 }
+
                 set
                 {
                     job = value;
@@ -55,6 +51,7 @@ namespace PsdzClient.Core
                 {
                     return param;
                 }
+
                 set
                 {
                     param = value;
@@ -67,6 +64,7 @@ namespace PsdzClient.Core
                 {
                     return set;
                 }
+
                 set
                 {
                     set = value;
@@ -79,6 +77,7 @@ namespace PsdzClient.Core
                 {
                     return result;
                 }
+
                 set
                 {
                     result = value;
@@ -98,25 +97,19 @@ namespace PsdzClient.Core
         internal class EcuKomSamples
         {
             private string ecu;
-
             private string job;
-
             private string param;
-
             private ushort set;
-
             private string type;
-
             private string result;
-
             private int satz;
-
             public string Ecu
             {
                 get
                 {
                     return ecu;
                 }
+
                 set
                 {
                     ecu = value;
@@ -129,6 +122,7 @@ namespace PsdzClient.Core
                 {
                     return job;
                 }
+
                 set
                 {
                     job = value;
@@ -141,6 +135,7 @@ namespace PsdzClient.Core
                 {
                     return param;
                 }
+
                 set
                 {
                     param = value;
@@ -153,6 +148,7 @@ namespace PsdzClient.Core
                 {
                     return set;
                 }
+
                 set
                 {
                     set = value;
@@ -165,6 +161,7 @@ namespace PsdzClient.Core
                 {
                     return type;
                 }
+
                 set
                 {
                     type = value;
@@ -177,6 +174,7 @@ namespace PsdzClient.Core
                 {
                     return result;
                 }
+
                 set
                 {
                     result = value;
@@ -189,6 +187,7 @@ namespace PsdzClient.Core
                 {
                     return satz;
                 }
+
                 set
                 {
                     satz = value;
@@ -208,121 +207,413 @@ namespace PsdzClient.Core
         }
 
         private const string ILevelBN2020RegexPattern = "([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}";
-
         private static readonly DateTime LciDateE36 = DateTime.Parse("1998-03-01", CultureInfo.InvariantCulture);
-
         private static readonly DateTime LciDateE60 = DateTime.Parse("2005-09-01", CultureInfo.InvariantCulture);
-
         private string ServiceCodeValuePattern = "{0}_{1}";
-
         private LayoutGroup layoutGroup = LayoutGroup.D;
-
         private readonly List<string> fsLesenExpertVariants = new List<string>
         {
-            "PCU48", "DME9FF_R", "DME98_R", "D94BX7A0", "DME98_L", "IB_I20", "IB_G70", "GSMA02QZ", "GSMA02PU", "GSZF04GD",
-            "GSZF04GF", "SCR04", "SCR05", "CCU_P1", "HVS_02", "GSMA02PL", "GSZF04GA"
+            "PCU48",
+            "DME9FF_R",
+            "DME98_R",
+            "D94BX7A0",
+            "DME98_L",
+            "IB_I20",
+            "IB_G70",
+            "GSMA02QZ",
+            "GSMA02PU",
+            "GSZF04GD",
+            "GSZF04GF",
+            "SCR04",
+            "SCR05",
+            "CCU_P1",
+            "HVS_02",
+            "GSMA02PL",
+            "GSZF04GA"
         };
-
         private readonly List<string> specificModelsNoPopUp = new List<string>
         {
-            "H61", "H91", "M12", "M13", "N18", "J29", "A67", "C01", "X_K001", "AERO",
-            "GT1", "247", "247E", "248", "259", "259C", "259E", "259R", "259S"
+            "H61",
+            "H91",
+            "M12",
+            "M13",
+            "N18",
+            "J29",
+            "A67",
+            "C01",
+            "X_K001",
+            "AERO",
+            "GT1",
+            "247",
+            "247E",
+            "248",
+            "259",
+            "259C",
+            "259E",
+            "259R",
+            "259S"
         };
-
         private readonly List<string> placeholderModelsNopPopUp = new List<string>
         {
-            "Vxx", "Rxx", "Fxx", "Exx", "Exxx", "RRx", "RRxx", "Kxx", "Kxxx", "MFx",
-            "MFxx", "MFx-S", "MRKxx"
+            "Vxx",
+            "Rxx",
+            "Fxx",
+            "Exx",
+            "Exxx",
+            "RRx",
+            "RRxx",
+            "Kxx",
+            "Kxxx",
+            "MFx",
+            "MFxx",
+            "MFx-S",
+            "MRKxx"
         };
-
         private readonly string[] maxGrpListMINI = new string[31]
         {
-            "D_0008", "D_0012", "D_0013", "D_0031", "D_003B", "D_0044", "D_0050", "D_0057", "D_005B", "D_0060",
-            "D_0068", "D_006A", "D_0070", "D_0074", "D_0076", "D_007F", "D_0080", "D_0081", "D_009A", "D_009C",
-            "D_00A4", "D_00BB", "D_00C8", "D_00CE", "D_00E8", "D_00ED", "D_00F0", "D_ABSKWP", "D_EGS", "D_MOTOR",
+            "D_0008",
+            "D_0012",
+            "D_0013",
+            "D_0031",
+            "D_003B",
+            "D_0044",
+            "D_0050",
+            "D_0057",
+            "D_005B",
+            "D_0060",
+            "D_0068",
+            "D_006A",
+            "D_0070",
+            "D_0074",
+            "D_0076",
+            "D_007F",
+            "D_0080",
+            "D_0081",
+            "D_009A",
+            "D_009C",
+            "D_00A4",
+            "D_00BB",
+            "D_00C8",
+            "D_00CE",
+            "D_00E8",
+            "D_00ED",
+            "D_00F0",
+            "D_ABSKWP",
+            "D_EGS",
+            "D_MOTOR",
             "D_ZKE_GM"
         };
-
         private readonly string[] maxGrpListBMWRest = new string[60]
         {
-            "D_0014", "D_009A", "D_0022", "D_0040", "D_0013", "D_0000", "D_0008", "D_0012", "D_0032", "D_003B",
-            "D_0044", "D_0048", "D_0050", "D_0056", "D_0057", "D_005B", "D_0060", "D_0065", "D_0066", "D_0068",
-            "D_006A", "D_0070", "D_0072", "D_0074", "D_0076", "D_007F", "D_0080", "D_0081", "D_009C", "D_009B",
-            "D_00A4", "D_00B0", "D_00BB", "D_00C0", "D_00C2", "D_00C8", "D_00CE", "D_00D0", "D_00E8", "D_00EA",
-            "D_00ED", "D_00F0", "D_ABSKWP", "D_AHM", "D_BFS", "D_CID", "D_EGS", "D_EKP", "D_EPS", "D_FAS",
-            "D_FLA", "D_MOTOR", "D_SIM", "D_STVL2", "D_STVR2", "D_SZM", "D_VGSG", "D_VVT", "D_ZKE_GM", "D_ZUHEIZ"
+            "D_0014",
+            "D_009A",
+            "D_0022",
+            "D_0040",
+            "D_0013",
+            "D_0000",
+            "D_0008",
+            "D_0012",
+            "D_0032",
+            "D_003B",
+            "D_0044",
+            "D_0048",
+            "D_0050",
+            "D_0056",
+            "D_0057",
+            "D_005B",
+            "D_0060",
+            "D_0065",
+            "D_0066",
+            "D_0068",
+            "D_006A",
+            "D_0070",
+            "D_0072",
+            "D_0074",
+            "D_0076",
+            "D_007F",
+            "D_0080",
+            "D_0081",
+            "D_009C",
+            "D_009B",
+            "D_00A4",
+            "D_00B0",
+            "D_00BB",
+            "D_00C0",
+            "D_00C2",
+            "D_00C8",
+            "D_00CE",
+            "D_00D0",
+            "D_00E8",
+            "D_00EA",
+            "D_00ED",
+            "D_00F0",
+            "D_ABSKWP",
+            "D_AHM",
+            "D_BFS",
+            "D_CID",
+            "D_EGS",
+            "D_EKP",
+            "D_EPS",
+            "D_FAS",
+            "D_FLA",
+            "D_MOTOR",
+            "D_SIM",
+            "D_STVL2",
+            "D_STVR2",
+            "D_SZM",
+            "D_VGSG",
+            "D_VVT",
+            "D_ZKE_GM",
+            "D_ZUHEIZ"
         };
-
         private readonly List<string> ereiheForGrpListBMWRest = new List<string>
         {
-            "E30", "E31", "E32", "E34", "E36", "E38", "E39", "E46", "E83", "E85",
+            "E30",
+            "E31",
+            "E32",
+            "E34",
+            "E36",
+            "E38",
+            "E39",
+            "E46",
+            "E83",
+            "E85",
             "E86"
         };
-
         private readonly string[] maxGrpListBMW = new string[37]
         {
-        "D_0000", "D_0012", "D_0032", "D_003B", "D_0044", "D_0056", "D_0057", "D_005B", "D_0068", "D_006A",
-        "D_0070", "D_0072", "D_0074", "D_007F", "D_0081", "D_0080", "D_009C", "D_00A4", "D_00B0", "D_00BB",
-        "D_00C0", "D_00C8", "D_00CE", "D_00D0", "D_00E8", "D_00EA", "D_00ED", "D_00F0", "D_ABSKWP", "D_EGS",
-        "D_MOTOR", "D_SZM", "D_VGSG", "D_VVT", "D_VVT2", "D_ZKE_GM", "D_ZUHEIZ"
+            "D_0000",
+            "D_0012",
+            "D_0032",
+            "D_003B",
+            "D_0044",
+            "D_0056",
+            "D_0057",
+            "D_005B",
+            "D_0068",
+            "D_006A",
+            "D_0070",
+            "D_0072",
+            "D_0074",
+            "D_007F",
+            "D_0081",
+            "D_0080",
+            "D_009C",
+            "D_00A4",
+            "D_00B0",
+            "D_00BB",
+            "D_00C0",
+            "D_00C8",
+            "D_00CE",
+            "D_00D0",
+            "D_00E8",
+            "D_00EA",
+            "D_00ED",
+            "D_00F0",
+            "D_ABSKWP",
+            "D_EGS",
+            "D_MOTOR",
+            "D_SZM",
+            "D_VGSG",
+            "D_VVT",
+            "D_VVT2",
+            "D_ZKE_GM",
+            "D_ZUHEIZ"
         };
-
-        private readonly List<string> ereiheForGrpListBMW = new List<string> { "E52", "E53" };
-
+        private readonly List<string> ereiheForGrpListBMW = new List<string>
+        {
+            "E52",
+            "E53"
+        };
         private readonly string[] maxGrpListFull = new string[96]
         {
-        "d_egs", "d_0000", "d_0008", "d_000d", "d_0010", "d_0011", "d_0012", "d_motor", "d_0013", "d_0014",
-        "d_0015", "d_0016", "d_0020", "d_0021", "d_0022", "d_0024", "d_0028", "d_002c", "d_002e", "d_0030",
-        "d_0032", "d_0035", "d_0036", "d_003b", "d_0040", "d_0044", "d_0045", "d_0050", "d_0056", "d_0057",
-        "d_0059", "d_005a", "d_005b", "d_0060", "d_0068", "d_0069", "d_006a", "d_006c", "d_0070", "d_0071",
-        "d_0072", "d_007f", "d_0080", "d_0086", "d_0099", "d_009a", "d_009b", "d_009c", "d_009d", "d_009e",
-        "d_00a0", "d_00a4", "d_00a6", "d_00a7", "d_00ac", "d_00b0", "d_00b9", "d_00bb", "d_00c0", "d_00c8",
-        "d_00cd", "d_00d0", "d_00da", "d_00e0", "d_00e8", "d_00ed", "d_00f0", "d_00f5", "d_00ff", "d_b8_d0",
-        "", "d_m60_10", "d_m60_12", "d_spmbt", "d_spmft", "d_szm", "d_zke3bt", "d_zke3ft", "d_zke3pm", "d_zke3sb",
-        "d_zke3sd", "d_zke_gm", "d_zuheiz", "d_sitz_f", "d_sitz_b", "d_0047", "d_0048", "d_00ce", "d_00ea", "d_abskwp",
-        "d_0031", "d_0019", "d_smac", "d_0081", "d_xen_l", "d_xen_r"
+            "d_egs",
+            "d_0000",
+            "d_0008",
+            "d_000d",
+            "d_0010",
+            "d_0011",
+            "d_0012",
+            "d_motor",
+            "d_0013",
+            "d_0014",
+            "d_0015",
+            "d_0016",
+            "d_0020",
+            "d_0021",
+            "d_0022",
+            "d_0024",
+            "d_0028",
+            "d_002c",
+            "d_002e",
+            "d_0030",
+            "d_0032",
+            "d_0035",
+            "d_0036",
+            "d_003b",
+            "d_0040",
+            "d_0044",
+            "d_0045",
+            "d_0050",
+            "d_0056",
+            "d_0057",
+            "d_0059",
+            "d_005a",
+            "d_005b",
+            "d_0060",
+            "d_0068",
+            "d_0069",
+            "d_006a",
+            "d_006c",
+            "d_0070",
+            "d_0071",
+            "d_0072",
+            "d_007f",
+            "d_0080",
+            "d_0086",
+            "d_0099",
+            "d_009a",
+            "d_009b",
+            "d_009c",
+            "d_009d",
+            "d_009e",
+            "d_00a0",
+            "d_00a4",
+            "d_00a6",
+            "d_00a7",
+            "d_00ac",
+            "d_00b0",
+            "d_00b9",
+            "d_00bb",
+            "d_00c0",
+            "d_00c8",
+            "d_00cd",
+            "d_00d0",
+            "d_00da",
+            "d_00e0",
+            "d_00e8",
+            "d_00ed",
+            "d_00f0",
+            "d_00f5",
+            "d_00ff",
+            "d_b8_d0",
+            "",
+            "d_m60_10",
+            "d_m60_12",
+            "d_spmbt",
+            "d_spmft",
+            "d_szm",
+            "d_zke3bt",
+            "d_zke3ft",
+            "d_zke3pm",
+            "d_zke3sb",
+            "d_zke3sd",
+            "d_zke_gm",
+            "d_zuheiz",
+            "d_sitz_f",
+            "d_sitz_b",
+            "d_0047",
+            "d_0048",
+            "d_00ce",
+            "d_00ea",
+            "d_abskwp",
+            "d_0031",
+            "d_0019",
+            "d_smac",
+            "d_0081",
+            "d_xen_l",
+            "d_xen_r"
         };
-
-        private readonly string[] varianteListFor14DigitSerialNumber = new string[9] { "NBT", "NBTEVO", "ENTRYNAV", "ENAVEVO", "ENTRY", "HU_MGU", "BIS01", "MGU_02_L", "MGU_02_A" };
-
-        private readonly string[] newFaultMemoryEnabledESeriesLifeCycles = new string[8] { "F95-1", "F96-1", "G05-1", "G06-1", "G07-1", "G09-0", "G18-1", "RR25-0" };
-
+        private readonly string[] varianteListFor14DigitSerialNumber = new string[9]
+        {
+            "NBT",
+            "NBTEVO",
+            "ENTRYNAV",
+            "ENAVEVO",
+            "ENTRY",
+            "HU_MGU",
+            "BIS01",
+            "MGU_02_L",
+            "MGU_02_A"
+        };
+        private readonly string[] newFaultMemoryEnabledESeriesLifeCycles = new string[8]
+        {
+            "F95-1",
+            "F96-1",
+            "G05-1",
+            "G06-1",
+            "G07-1",
+            "G09-0",
+            "G18-1",
+            "RR25-0"
+        };
         private readonly List<string> ereiheWithoutFA = new List<string>
-    {
-        "E36", "E38", "E39", "E52", "E53", "R50", "R52", "R53", "E83", "E85",
-        "E86", "E30", "E31", "E32", "E34"
-    };
-
+        {
+            "E36",
+            "E38",
+            "E39",
+            "E52",
+            "E53",
+            "R50",
+            "R52",
+            "R53",
+            "E83",
+            "E85",
+            "E86",
+            "E30",
+            "E31",
+            "E32",
+            "E34"
+        };
         private const string RsuStopModuleName = "ABL-DIT-AG6510_RSU_STOP";
-
         private const string RsuStartModuleName = "ABL-DIT-AG6510_RSU_START";
-
         private const string CheckVoltageModuleName = "ABL-LIF-FAHRZEUGDATEN__BATTERIE";
-
         private const string RequestApplicationNumberAndUpgradeModuleName = "ABL-GEN-DETERMINE_REFURBISH_SWID";
-
         private const string ServiceHistoryActionModuleName = "ABL-WAR-AS6100_SERVICEHISTORIE_AIR";
-
         private static IDictionary<string, string> Mapping = new Dictionary<string, string>
-    {
-        { "STATUS_VCM_BACKUP_FAHRZEUGAUFTRAG_LESEN", "STATUS_VCM_BACKUP_FAHRZEUGAUFTRAG_LESEN_SP2021" },
-        { "STATUS_LESEN", "STATUS_LESEN" },
-        { "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR", "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR" },
-        { "STATUS_GWSZ_ANZEIGE", "STATUS_LESEN" },
-        { "CBS_DATEN_LESEN", "STATUS_CBS_DATEN_LESEN" },
-        { "CBS_INFO", "STATUS_CBS_INFO" }
-    };
-
-        public List<string> ProductLinesEpmBlacklist => new List<string> { "PL0", "PL2", "PL3", "PL3-ALT", "PL4", "PL5", "PL5-ALT", "PL6", "PL6-ALT", "PL7" };
-
+        {
+            {
+                "STATUS_VCM_BACKUP_FAHRZEUGAUFTRAG_LESEN",
+                "STATUS_VCM_BACKUP_FAHRZEUGAUFTRAG_LESEN_SP2021"
+            },
+            {
+                "STATUS_LESEN",
+                "STATUS_LESEN"
+            },
+            {
+                "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR",
+                "STATUS_I_STUFE_LESEN_OHNE_SIGNATUR"
+            },
+            {
+                "STATUS_GWSZ_ANZEIGE",
+                "STATUS_LESEN"
+            },
+            {
+                "CBS_DATEN_LESEN",
+                "STATUS_CBS_DATEN_LESEN"
+            },
+            {
+                "CBS_INFO",
+                "STATUS_CBS_INFO"
+            }
+        };
+        public List<string> ProductLinesEpmBlacklist => new List<string>
+        {
+            "PL0",
+            "PL2",
+            "PL3",
+            "PL3-ALT",
+            "PL4",
+            "PL5",
+            "PL5-ALT",
+            "PL6",
+            "PL6-ALT",
+            "PL7"
+        };
         public DateTime DTimeF25Lci => DateTime.ParseExact("01.04.2014", "dd.MM.yyyy", new CultureInfo("de-DE"));
-
         public DateTime DTimeF01BN2020MostDomain => DateTime.ParseExact("30.06.2010", "dd.MM.yyyy", new CultureInfo("de-DE"));
-
         public DateTime DTime2022_07 => DateTime.ParseExact("01.07.2022", "dd.MM.yyyy", new CultureInfo("de-DE"));
-
         public DateTime DTime2023_03 => DateTime.ParseExact("01.03.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
-
         public DateTime DTime2023_07 => DateTime.ParseExact("01.07.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
 
         DateTime IDiagnosticsBusinessData.DTimeRR_S2 => DiagnosticsBusinessDataCore.DTimeRR_S2;
@@ -367,19 +658,23 @@ namespace PsdzClient.Core
                             list.Add(dictionary["D_KOMBI"]);
                         }
                     }
+
                     if (vecInfo.Classification.IsSp2021)
                     {
                         list.Add(dictionary["G_VIP"]);
                         list.Add(dictionary["G_ZGW"]);
                     }
+
                     if (vecInfo.Classification.IsNCar)
                     {
                         list.Add(dictionary["IPF1_FAR"]);
                     }
+
                     if (vecInfo.getECUbyECU_GRUPPE("G_KOMBI") == null)
                     {
                         list.Add(dictionary["G_MMI"]);
                     }
+
                     list.Add(dictionary["G_KOMBI_V1"]);
                     list.Add(dictionary["G_KOMBI_V2"]);
                     list.Add(dictionary["G_CAS"]);
@@ -419,6 +714,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             if (list.Count <= 0)
             {
                 foreach (KeyValuePair<string, EcuKomConfig> item in dictionary)
@@ -426,6 +722,7 @@ namespace PsdzClient.Core
                     list.Add(item.Value);
                 }
             }
+
             return ReadGwszFromEcus(ecuKom, list);
         }
 
@@ -451,10 +748,12 @@ namespace PsdzClient.Core
                                     {
                                         num = 1.609344m;
                                     }
+
                                     decimal value = num;
                                     decimal? mileageFromJob = GetMileageFromJob(ecuJob2, "STAT_GWSZ_ANZEIGE_WERT", (ushort)1);
-                                    return (decimal?)value * mileageFromJob;
+                                    return (decimal? )value * mileageFromJob;
                                 }
+
                                 if (ecuJob2.getResultFormat("GWSZ") != -1)
                                 {
                                     string stringResult2 = ecuJob2.getStringResult("STAT_GWSZ_ANZEIGE_EINH");
@@ -463,10 +762,12 @@ namespace PsdzClient.Core
                                     {
                                         num = 1.609344m;
                                     }
+
                                     decimal value = num;
                                     decimal? mileageFromJob2 = GetMileageFromJob(ecuJob2, "GWSZ", (ushort)1);
-                                    return (decimal?)value * mileageFromJob2;
+                                    return (decimal? )value * mileageFromJob2;
                                 }
+
                                 if (ecuJob2.getResultFormat("STAT_GWSZ") != -1)
                                 {
                                     string stringResult3 = ecuJob2.getStringResult("STAT_GWSZ_ANZEIGE_EINH");
@@ -475,9 +776,10 @@ namespace PsdzClient.Core
                                     {
                                         num = 1.609344m;
                                     }
+
                                     decimal value = num;
                                     decimal? mileageFromJob2 = GetMileageFromJob(ecuJob2, "STAT_GWSZ", (ushort)1);
-                                    vehicle2.Gwsz = (decimal?)value * mileageFromJob2;
+                                    vehicle2.Gwsz = (decimal? )value * mileageFromJob2;
                                 }
                             }
                             else
@@ -494,25 +796,30 @@ namespace PsdzClient.Core
                     {
                         Log.WarningException("VehicleIdent.doReadGwsz()", exception);
                     }
+
                     break;
                 case BNType.BN2020_MOTORBIKE:
+                {
+                    logIfEcuMissing(vehicle2, "G_MRKOMB", "STATUS_LESEN");
+                    IEcuJob ecuJob = ecuKom.ApiJob("G_MRKOMB", "STATUS_LESEN", "ARG;GWSZ_MR", string.Empty, cacheAdding: false);
+                    if (!ecuJob.IsOkay())
                     {
-                        logIfEcuMissing(vehicle2, "G_MRKOMB", "STATUS_LESEN");
-                        IEcuJob ecuJob = ecuKom.ApiJob("G_MRKOMB", "STATUS_LESEN", "ARG;GWSZ_MR", string.Empty, cacheAdding: false);
-                        if (!ecuJob.IsOkay())
-                        {
-                            ecuJob = ecuKom.ApiJob("G_MRZGW", "STATUS_LESEN", "ARG;GWSZ_MR", string.Empty, cacheAdding: false);
-                        }
-                        if (ecuJob.IsOkay())
-                        {
-                            return GetMileageFromJob(ecuJob, "STAT_GWSZ_WERT").GetValueOrDefault();
-                        }
-                        break;
+                        ecuJob = ecuKom.ApiJob("G_MRMOT", "STATUS_LESEN", "ARG;GWSZ_MR", string.Empty, cacheAdding: false);
                     }
+
+                    if (ecuJob.IsOkay())
+                    {
+                        return GetMileageFromJob(ecuJob, "STAT_GWSZ_WERT").GetValueOrDefault();
+                    }
+
+                    break;
+                }
+
                 case BNType.BNK01X_MOTORBIKE:
                     Log.Info("VehicleIdent.doReadGwsz()", "no gwsz readout available for BNK10X motor cycles");
                     break;
             }
+
             return null;
         }
 
@@ -534,6 +841,7 @@ namespace PsdzClient.Core
             {
                 Log.Info(Log.CurrentMethod(), "Mileage could not be retrieved from job: '" + job.JobName + "' using result name: '" + resultName + "'");
             }
+
             return null;
         }
 
@@ -549,6 +857,7 @@ namespace PsdzClient.Core
                     {
                         continue;
                     }
+
                     object result = ecuJob.getResult(ecuKomconfig.Set, ecuKomconfig.Result);
                     if (result != null)
                     {
@@ -567,8 +876,10 @@ namespace PsdzClient.Core
                                 }
                             }
                         }
+
                         return num;
                     }
+
                     Log.Warning("ReadGwszFromEcus()", "(Ecu: {0}, Job: {1}, Parameter: {2}, set: {3}) - JobResult {4} was null.", ecuKomconfig.Ecu, ecuKomconfig.Job, ecuKomconfig.Param, ecuKomconfig.Set, ecuKomconfig.Result);
                 }
                 catch (Exception exception)
@@ -576,6 +887,7 @@ namespace PsdzClient.Core
                     Log.WarningException("DiagnosticsBusinessData.ReadGwszFromEcus()", exception);
                 }
             }
+
             return null;
         }
 
@@ -587,6 +899,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             IEcuJob ecuJob = new ECUJob();
             if (IsSp2021Gateway(vecInfo, ecuKom, retryCount))
             {
@@ -638,6 +951,7 @@ namespace PsdzClient.Core
                 vecInfo.ILevelBackup = text3;
                 return true;
             }
+
             return false;
         }
 
@@ -653,6 +967,7 @@ namespace PsdzClient.Core
                 vecInfo.ILevelBackup = stringResult3;
                 return true;
             }
+
             return false;
         }
 
@@ -697,13 +1012,17 @@ namespace PsdzClient.Core
         {
             string method = Log.CurrentMethod() + "()";
             Log.Info(method, "Check if iLevel is excluded from validation");
-            string[] source = new string[1] { "REM_20" };
+            string[] source = new string[1]
+            {
+                "REM_20"
+            };
             string ecuVariante = iJob.getStringResult(0, "VARIANTE");
             if (source.Any((string x) => x.Equals(ecuVariante, StringComparison.OrdinalIgnoreCase)))
             {
                 Log.Info(method, "Vehicle is excluded from I-Level validation");
                 return true;
             }
+
             return false;
         }
 
@@ -715,6 +1034,7 @@ namespace PsdzClient.Core
                 Log.Warning(Log.CurrentMethod(), "Validation of ILevel " + ilevelInput + " for type " + iLevelDescription + " failed");
                 return false;
             }
+
             return true;
         }
 
@@ -734,10 +1054,10 @@ namespace PsdzClient.Core
             {
                 vecInfo.Produktlinie = "-";
             }
+
             return vecInfo.Produktlinie?.StartsWith("21") ?? false;
         }
 
-        // ToDo: Check on update
         public bool IsSp2021Gateway(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
             string text = "";
@@ -750,11 +1070,13 @@ namespace PsdzClient.Core
                     text = "";
                 }
             }
+
             if (vecInfo.Classification.IsSp2021 || text.Equals("BCP_SP21", StringComparison.OrdinalIgnoreCase))
             {
                 Log.Info(Log.CurrentMethod(), "Vehicle gateway is bcp_sp21!");
                 return true;
             }
+
             Log.Info(Log.CurrentMethod(), "Vehicle gateway is not bcp_sp21!");
             return false;
         }
@@ -765,6 +1087,7 @@ namespace PsdzClient.Core
             {
                 vecInfo.Produktlinie = "-";
             }
+
             return vecInfo.Produktlinie?.StartsWith("25") ?? false;
         }
 
@@ -775,14 +1098,15 @@ namespace PsdzClient.Core
                 Log.Info(Log.CurrentMethod(), "New condition for enabling new fault memory is disabled. Using old method (sp2021).");
                 return vecInfo.Classification.IsSp2021;
             }
+
             if (!vecInfo.Classification.IsSp2021 && !vecInfo.Classification.IsSp2025)
             {
                 return newFaultMemoryEnabledESeriesLifeCycles.Any((string eslc) => eslc.Equals(vecInfo.ESeriesLifeCycle, StringComparison.InvariantCultureIgnoreCase));
             }
+
             return true;
         }
 
-        // ToDo: Check on update
         public List<int> GetGatewayEcuAdresses(IVehicle vecInfo)
         {
             List<int> list = new List<int>();
@@ -816,6 +1140,7 @@ namespace PsdzClient.Core
                             {
                                 list.Add(128);
                             }
+
                             break;
                         case "PL3-ALT":
                             list.Add(128);
@@ -844,6 +1169,7 @@ namespace PsdzClient.Core
                             {
                                 list.Add(16);
                             }
+
                             break;
                         case "PL7":
                             if (vecInfo.Ereihe == "F25" || vecInfo.Ereihe == "F26")
@@ -851,6 +1177,7 @@ namespace PsdzClient.Core
                                 list.Add(16);
                                 break;
                             }
+
                             list.Add(16);
                             list.Add(64);
                             break;
@@ -930,6 +1257,7 @@ namespace PsdzClient.Core
                                 list.Add(16);
                                 list.Add(64);
                             }
+
                             break;
                         case "21LI":
                         case "21LU":
@@ -939,6 +1267,7 @@ namespace PsdzClient.Core
                             {
                                 list.Add(64);
                             }
+
                             break;
                         case "25LN":
                         case "25XNF":
@@ -950,8 +1279,10 @@ namespace PsdzClient.Core
                             break;
                     }
                 }
+
                 return list;
             }
+
             if (vecInfo.Prodart == "M")
             {
                 if (!string.IsNullOrEmpty(vecInfo.Baureihe))
@@ -971,19 +1302,21 @@ namespace PsdzClient.Core
                             break;
                     }
                 }
+
                 return list;
             }
+
             Log.Info(Log.CurrentMethod(), "Returning null for product line: " + vecInfo?.Produktlinie + ", ereihe: " + vecInfo.Ereihe);
             return null;
         }
 
-        // ToDo: Check on update
         public bool IsEES25Vehicle(IVehicle vecInfo)
         {
             if (vecInfo.Classification.IsSp2025)
             {
                 return true;
             }
+
             if (vecInfo.LifeCycle != "BAS")
             {
                 if (vecInfo.Ereihe == "G60" || vecInfo.Ereihe == "G61" || vecInfo.Ereihe == "G68" || vecInfo.Ereihe == "G70" || vecInfo.Ereihe == "G90" || vecInfo.Ereihe == "G99")
@@ -995,16 +1328,15 @@ namespace PsdzClient.Core
             {
                 return true;
             }
+
             return false;
         }
 
-        // ToDo: Check on update
         public BNType GetBNType(IVehicle vehicle)
         {
             return (BNType)GetBordnetType(vehicle.Baureihenverbund, vehicle.Prodart, vehicle.Ereihe, new NugetLogger());
         }
 
-        // ToDo: Check on update
         public void BN2000HandleKMMFixes(IVehicle vecInfo, IEcuKom ecuKom, bool resetMOSTDone, IProgressMonitor monitor, int retryCount, DoECUIdentDelegate doECUIdentDelegate)
         {
             if ((vecInfo.HasSA("6VC") || vecInfo.HasSA("612") || vecInfo.HasSA("633")) && vecInfo.getECU(54L) == null)
@@ -1017,6 +1349,7 @@ namespace PsdzClient.Core
                 vecInfo.AddEcu(eCU);
                 doECUIdentDelegate(vecInfo, eCU, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
+
             if (vecInfo.HasSA("610") && vecInfo.getECU(61L) == null)
             {
                 ECU eCU2 = new ECU();
@@ -1027,6 +1360,7 @@ namespace PsdzClient.Core
                 vecInfo.AddEcu(eCU2);
                 doECUIdentDelegate(vecInfo, eCU2, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
+
             if (vecInfo.HasSA("672") && vecInfo.getECU(60L) == null)
             {
                 ECU eCU3 = new ECU();
@@ -1037,6 +1371,7 @@ namespace PsdzClient.Core
                 vecInfo.AddEcu(eCU3);
                 doECUIdentDelegate(vecInfo, eCU3, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
+
             if (vecInfo.HasSA("696") && vecInfo.getECU(49L) == null)
             {
                 ECU eCU4 = new ECU();
@@ -1047,6 +1382,7 @@ namespace PsdzClient.Core
                 vecInfo.AddEcu(eCU4);
                 doECUIdentDelegate(vecInfo, eCU4, ecuKom, ref resetMOSTDone, monitor, retryCount, forceReRead: false, tryReanimation: true);
             }
+
             if (vecInfo.hasBusType(BusType.MOST) && vecInfo.getECUbyECU_GRUPPE("D_MOSTGW") != null)
             {
                 ECU eCU5 = new ECU();
@@ -1070,12 +1406,15 @@ namespace PsdzClient.Core
                     {
                         return maxGrpListBMWRest;
                     }
+
                     if (ereiheForGrpListBMW.Contains(ereihe))
                     {
                         return maxGrpListBMW;
                     }
+
                     break;
             }
+
             return maxGrpListFull;
         }
 
@@ -1105,6 +1444,7 @@ namespace PsdzClient.Core
                     vecInfo.AddEcu(eCUbyECU_GRUPPE);
                 }
             }
+
             IEcu eCUbyECU_GRUPPE2 = vecInfo.getECUbyECU_GRUPPE("D_ISPB");
             if (eCUbyECU_GRUPPE2 != null && !eCUbyECU_GRUPPE2.IDENT_SUCCESSFULLY)
             {
@@ -1115,6 +1455,7 @@ namespace PsdzClient.Core
                     ecusToRemoveKMM.Add(eCUbyECU_GRUPPE2);
                 }
             }
+
             foreach (IEcu item in ecusToRemoveKMM)
             {
                 Log.Info("VehicleIdent.doECUIdent()", "remove ECU at address: {0} due to KMM error.", item.ID_SG_ADR);
@@ -1151,10 +1492,12 @@ namespace PsdzClient.Core
             {
                 return false;
             }
+
             if (vehicle.BrandName != BrandName.BMWMOTORRAD)
             {
                 return !ProductLinesEpmBlacklist.Contains(vehicle.Produktlinie);
             }
+
             return false;
         }
 
@@ -1164,16 +1507,13 @@ namespace PsdzClient.Core
             {
                 return ecuKom.ApiJobWithRetries(variant, "FS_LESEN_EXPERT", ";0x2C;0x20", string.Empty, retries);
             }
+
             return null;
         }
 
         public void MaskResultsFromFSLesenExpertForFSLesenDetail(IEcuJob ecuJob)
         {
-            MaskResultFASTARelevant(ecuJob, 1, 1, new List<string>
-            {
-                "F_ORT_NR", "F_EREIGNIS_DTC", "F_UEBERLAUF", "F_VORHANDEN_NR", "F_READY_NR", "F_WARNUNG_NR", "F_HFK", "F_HLZ", "F_SAE_CODE_STRING", "F_HEX_CODE",
-                "F_FEHLERKLASSE"
-            });
+            MaskResultFASTARelevant(ecuJob, 1, 1, new List<string> { "F_ORT_NR", "F_EREIGNIS_DTC", "F_UEBERLAUF", "F_VORHANDEN_NR", "F_READY_NR", "F_WARNUNG_NR", "F_HFK", "F_HLZ", "F_SAE_CODE_STRING", "F_HEX_CODE", "F_FEHLERKLASSE" });
             MaskResultFASTARelevant(ecuJob, 1, -2, new List<string> { "F_UW_KM", "F_UW_KM_SUPREME", "F_UW_ZEIT", "F_UW_ZEIT_SUPREME", "F_UW_ANZ", "F_UW*_NR", "F_UW*_WERT", "F_UW_BN", "F_UW_TN" });
         }
 
@@ -1187,6 +1527,7 @@ namespace PsdzClient.Core
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -1196,10 +1537,12 @@ namespace PsdzClient.Core
             {
                 return ereihe.Insert(1, "0");
             }
+
             if (ereihe != null && ereihe.Length == 4)
             {
                 return ereihe;
             }
+
             return string.Empty;
         }
 
@@ -1210,6 +1553,7 @@ namespace PsdzClient.Core
             {
                 salapa = salapa.Select((string x) => x.Substring(1)).ToList();
             }
+
             return salapa;
         }
 
@@ -1226,6 +1570,7 @@ namespace PsdzClient.Core
                     dictionary.Add(ecu, (ECUJob)source2.First());
                 }
             }
+
             foreach (KeyValuePair<IEcu, ECUJob> item in dictionary)
             {
                 IEcu key = item.Key;
@@ -1253,6 +1598,7 @@ namespace PsdzClient.Core
                 {
                     continue;
                 }
+
                 IEcuJob ecuJob = ecuKom.ApiJob(eCU.VARIANTE, "STATUS_LESEN", "ID;0xD019", string.Empty, 3);
                 if (ecuJob.IsOkay())
                 {
@@ -1292,6 +1638,7 @@ namespace PsdzClient.Core
             {
                 return true;
             }
+
             return false;
         }
 
@@ -1303,11 +1650,13 @@ namespace PsdzClient.Core
                 {
                     return true;
                 }
+
                 if ("E36".Equals(ereihe))
                 {
                     return c_DateTime < LciDateE36;
                 }
             }
+
             return false;
         }
 
@@ -1317,6 +1666,7 @@ namespace PsdzClient.Core
             {
                 return true;
             }
+
             return false;
         }
 
@@ -1329,6 +1679,7 @@ namespace PsdzClient.Core
                     {
                         return true;
                     }
+
                     return false;
                 case "PL5-ALT":
                 case "PL3-ALT":
@@ -1382,6 +1733,7 @@ namespace PsdzClient.Core
             {
                 vehicleLifeStartDate = vehicleLifeStartDate.AddMilliseconds(-milliseconds.Value);
             }
+
             vehicle.VehicleLifeStartDate = vehicleLifeStartDate;
             vehicle.VehicleSystemTime = (double)seconds + (milliseconds.HasValue ? ((double)milliseconds.Value / 1000.0) : 0.0);
         }
@@ -1397,11 +1749,13 @@ namespace PsdzClient.Core
                 {
                     num = eCUJob.getlongResult(1, alternativeResult);
                 }
+
                 long? milliseconds = eCUJob.getlongResult(supremeResultName);
                 if (!milliseconds.HasValue && !string.IsNullOrWhiteSpace(alternativeSupremeResultName))
                 {
                     milliseconds = eCUJob.getlongResult(alternativeSupremeResultName);
                 }
+
                 if (num.HasValue)
                 {
                     SetVehicleLifeStartDateWithJobResult(vehicle, num.Value, milliseconds);
@@ -1412,6 +1766,7 @@ namespace PsdzClient.Core
                     Log.Warning(Log.CurrentMethod(), "VehicleLifeStartdate could not be read out of the vehicle with the Job " + eCUJob.JobName + ", params " + eCUJob.JobParam + " and resultnames: " + resultname + ", " + alternativeResult + ", " + supremeResultName + ", " + alternativeSupremeResultName);
                 }
             }
+
             return result;
         }
 
@@ -1427,45 +1782,47 @@ namespace PsdzClient.Core
                         clampJob = ecuKom.ApiJobWithRetries("D_CAS", "STEUERN_KL15_ABSCHALTUNG", i_geschw_schwelle.ToString(CultureInfo.InvariantCulture), string.Empty, retryCount);
                         break;
                     case BNType.BN2020:
+                    {
+                        string variante = null;
+                        DetermineBn2020CentralEcuVariant(vecInfo, ecuKom, retryCount, ref clampJob, ref variante);
+                        switch (variante)
                         {
-                            string variante = null;
-                            DetermineBn2020CentralEcuVariant(vecInfo, ecuKom, retryCount, ref clampJob, ref variante);
-                            switch (variante)
-                            {
-                                case "CAS4_2":
-                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ID;0xAC51;STR;" + i_geschw_schwelle, string.Empty, retryCount);
-                                    break;
-                                case "FEM_20":
-                                case "BDC":
-                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
-                                    break;
-                                case "BDC_G05":
-                                case "BDC_G11":
-                                    vecInfo.PADVehicle = true;
-                                    ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
-                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
-                                    break;
-                                case "BCP_SP21":
-                                    vecInfo.PADVehicle = true;
-                                    ecuKom.ApiJobWithRetries("G_ZGW", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
-                                    clampJob = ecuKom.ApiJobWithRetries("G_ZGW", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
-                                    break;
-                                case "IPB_APP1":
-                                    vecInfo.PADVehicle = true;
-                                    clampJob = ecuKom.ApiJobWithRetries("IPB_APP1", "STEUERN_ROUTINE", "ARG;Zustand_Fahrzeug;STR;7", string.Empty, retryCount);
-                                    ecuKom.ApiJobWithRetries("IPB_APP1", "STATUS_LESEN", "ARG;Zustand_Fahrzeug", string.Empty, retryCount);
-                                    clampJob = ecuKom.ApiJobWithRetries("IPB_APP1", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;3;", string.Empty, retryCount);
-                                    break;
-                                default:
-                                    Log.Info(Log.CurrentMethod(), "Unexpected Variant for clamp shutdown management appeared: " + variante);
-                                    ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
-                                    clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KLEMME15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
-                                    break;
-                            }
-                            break;
+                            case "CAS4_2":
+                                clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ID;0xAC51;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                break;
+                            case "FEM_20":
+                            case "BDC":
+                                clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                break;
+                            case "BDC_G05":
+                            case "BDC_G11":
+                                vecInfo.PADVehicle = true;
+                                ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
+                                clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                break;
+                            case "BCP_SP21":
+                                vecInfo.PADVehicle = true;
+                                ecuKom.ApiJobWithRetries("G_ZGW", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
+                                clampJob = ecuKom.ApiJobWithRetries("G_ZGW", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                break;
+                            case "IPB_APP1":
+                                vecInfo.PADVehicle = true;
+                                clampJob = ecuKom.ApiJobWithRetries("IPB_APP1", "STEUERN_ROUTINE", "ARG;Zustand_Fahrzeug;STR;7", string.Empty, retryCount);
+                                ecuKom.ApiJobWithRetries("IPB_APP1", "STATUS_LESEN", "ARG;Zustand_Fahrzeug", string.Empty, retryCount);
+                                clampJob = ecuKom.ApiJobWithRetries("IPB_APP1", "STEUERN_ROUTINE", "ARG;STEUERN_KL15_ABSCHALTUNG;STR;3;", string.Empty, retryCount);
+                                break;
+                            default:
+                                Log.Info(Log.CurrentMethod(), "Unexpected Variant for clamp shutdown management appeared: " + variante);
+                                ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ZUSTAND_FAHRZEUG", "PRUEFEN_ANALYSE_DIAGNOSE", string.Empty, retryCount);
+                                clampJob = ecuKom.ApiJobWithRetries("G_CAS", "STEUERN_ROUTINE", "ARG;STEUERN_KLEMME15_ABSCHALTUNG;STR;" + i_geschw_schwelle, string.Empty, retryCount);
+                                break;
                         }
+
+                        break;
+                    }
                 }
             }
+
             return clampJob;
         }
 
@@ -1478,6 +1835,7 @@ namespace PsdzClient.Core
                 {
                     variante = ((!string.IsNullOrEmpty(eCUbyECU_GRUPPE.VARIANTE)) ? eCUbyECU_GRUPPE.VARIANTE.ToUpper() : null);
                 }
+
                 if (string.IsNullOrEmpty(variante))
                 {
                     IEcuJob ecuJob = ecuKom.DefaultApiJob("G_ZGW", "IDENT", string.Empty, string.Empty);
@@ -1486,13 +1844,16 @@ namespace PsdzClient.Core
                         variante = ecuJob.getStringResult("VARIANTE");
                     }
                 }
+
                 return;
             }
+
             IEcu eCUbyECU_GRUPPE2 = vecInfo.getECUbyECU_GRUPPE("G_CAS");
             if (eCUbyECU_GRUPPE2 != null)
             {
                 variante = ((!string.IsNullOrEmpty(eCUbyECU_GRUPPE2.VARIANTE)) ? eCUbyECU_GRUPPE2.VARIANTE.ToUpper() : null);
             }
+
             if (string.IsNullOrEmpty(variante))
             {
                 clampJob = ecuKom.DefaultApiJob("G_CAS", "IDENT", string.Empty, string.Empty);
@@ -1513,8 +1874,10 @@ namespace PsdzClient.Core
                 {
                     param = "ARG;GWSZ_ANZEIGE_WERT";
                 }
+
                 return ecuKom.ApiJobWithRetries("G_MMI", Mapping[job], param, resultFilter, retries);
             }
+
             return ecuKom.ApiJobWithRetries("G_KOMBI", job, param, resultFilter, retries);
         }
 
@@ -1528,10 +1891,12 @@ namespace PsdzClient.Core
                 Log.Info(Log.CurrentMethod(), "No G_KOMBI and G_MMI ecu group exists in the vehicle. CCM readout will be skipped.");
                 return null;
             }
+
             if (ecu.VARIANTE == "IDCEVO25")
             {
                 param = "ARG;BMW_CC_DATA_RECORD";
             }
+
             Log.Info(Log.CurrentMethod(), "CCM readout will use '" + ecu.VARIANTE + "' ecu.");
             return ecuKom.ApiJobWithRetries(ecu.VARIANTE, job, param, string.Empty, 1);
         }
@@ -1544,25 +1909,26 @@ namespace PsdzClient.Core
         public string SgbdNext(IEcuKom ecuKom)
         {
             Dictionary<string, EcuKomSamples> obj = new Dictionary<string, EcuKomSamples>
-        {
             {
-                "FIELD",
-                new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x1828", 1, "string[]", "STAT_LOG_CHANNEL_NAMES[].LOG_CHANNEL_NAME", -1)
-            },
-            {
-                "FIELD2D",
-                new EcuKomSamples("MARS01", "STEUERN_ROUTINE", "ID;0x1118;STR", 1, "double[,]", "IKE_ENTRIES[].CHILD_SA_ENTRIES[].PROTOCOL", -1)
-            },
-            {
-                "FIELDxD",
-                new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x0000", 1, "int[,,,,,]", "A[].B[].C[].D[].E[].F[].V", -1)
-            }
-        };
+                {
+                    "FIELD",
+                    new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x1828", 1, "string[]", "STAT_LOG_CHANNEL_NAMES[].LOG_CHANNEL_NAME", -1)
+                },
+                {
+                    "FIELD2D",
+                    new EcuKomSamples("MARS01", "STEUERN_ROUTINE", "ID;0x1118;STR", 1, "double[,]", "IKE_ENTRIES[].CHILD_SA_ENTRIES[].PROTOCOL", -1)
+                },
+                {
+                    "FIELDxD",
+                    new EcuKomSamples("MARS01", "STATUS_LESEN", "ID;0x0000", 1, "int[,,,,,]", "A[].B[].C[].D[].E[].F[].V", -1)
+                }
+            };
             List<EcuKomSamples> list = new List<EcuKomSamples>();
             foreach (KeyValuePair<string, EcuKomSamples> item in obj)
             {
                 list.Add(item.Value);
             }
+
             DoNewJob(ecuKom);
             DoNewBinaryJob(ecuKom);
             return DoSgbdNextJob(ecuKom, list);
@@ -1577,42 +1943,42 @@ namespace PsdzClient.Core
                 byte[] defaultRes3 = null;
                 byte[] defaultRes4 = null;
                 long[] defaultRes5 = null;
-                byte[,] defaultRes6 = new byte[3, 3];
-                byte[,] defaultRes7 = null;
-                byte[,] defaultRes8 = null;
+                byte[, ] defaultRes6 = new byte[3, 3];
+                byte[, ] defaultRes7 = null;
+                byte[, ] defaultRes8 = null;
                 string[] defaultRes9 = null;
-                long[,,,] defaultRes10 = null;
-                long[,,,] defaultRes11 = new long[0, 0, 0, 0];
-                long[,,,] defaultRes12 = new long[4, 2, 3, 5];
-                long[,,,] defaultRes13 = new long[5, 5, 5, 5];
-                long[,,] defaultRes14 = null;
-                long[,,] defaultRes15 = new long[0, 0, 0];
-                long[,,] defaultRes16 = new long[2, 3, 5];
-                long[,,] defaultRes17 = new long[5, 5, 5];
-                long[,,] defaultRes18 = null;
-                long[,,] defaultRes19 = new long[0, 0, 0];
-                long[,,] defaultRes20 = new long[2, 3, 5];
-                long[,,] defaultRes21 = new long[5, 5, 5];
-                long[,,] defaultRes22 = null;
-                long[,,] defaultRes23 = new long[0, 0, 0];
-                long[,,] defaultRes24 = new long[2, 3, 5];
-                long[,,] defaultRes25 = new long[5, 5, 5];
-                long[,,] defaultRes26 = null;
-                long[,,] defaultRes27 = new long[0, 0, 0];
-                long[,,] defaultRes28 = new long[2, 3, 5];
-                long[,,] defaultRes29 = new long[5, 5, 5];
-                long[,,] defaultRes30 = null;
-                long[,,] defaultRes31 = new long[0, 0, 0];
-                long[,,] defaultRes32 = new long[2, 3, 5];
-                long[,,] defaultRes33 = new long[5, 5, 5];
-                long[,,] defaultRes34 = null;
-                long[,,] defaultRes35 = new long[0, 0, 0];
-                long[,,] defaultRes36 = new long[2, 3, 5];
-                long[,,] defaultRes37 = new long[5, 5, 5];
-                long[,,] defaultRes38 = null;
-                long[,,] defaultRes39 = new long[0, 0, 0];
-                long[,,] defaultRes40 = new long[2, 3, 5];
-                long[,,] defaultRes41 = new long[5, 5, 5];
+                long[,,, ] defaultRes10 = null;
+                long[,,, ] defaultRes11 = new long[0, 0, 0, 0];
+                long[,,, ] defaultRes12 = new long[4, 2, 3, 5];
+                long[,,, ] defaultRes13 = new long[5, 5, 5, 5];
+                long[,, ] defaultRes14 = null;
+                long[,, ] defaultRes15 = new long[0, 0, 0];
+                long[,, ] defaultRes16 = new long[2, 3, 5];
+                long[,, ] defaultRes17 = new long[5, 5, 5];
+                long[,, ] defaultRes18 = null;
+                long[,, ] defaultRes19 = new long[0, 0, 0];
+                long[,, ] defaultRes20 = new long[2, 3, 5];
+                long[,, ] defaultRes21 = new long[5, 5, 5];
+                long[,, ] defaultRes22 = null;
+                long[,, ] defaultRes23 = new long[0, 0, 0];
+                long[,, ] defaultRes24 = new long[2, 3, 5];
+                long[,, ] defaultRes25 = new long[5, 5, 5];
+                long[,, ] defaultRes26 = null;
+                long[,, ] defaultRes27 = new long[0, 0, 0];
+                long[,, ] defaultRes28 = new long[2, 3, 5];
+                long[,, ] defaultRes29 = new long[5, 5, 5];
+                long[,, ] defaultRes30 = null;
+                long[,, ] defaultRes31 = new long[0, 0, 0];
+                long[,, ] defaultRes32 = new long[2, 3, 5];
+                long[,, ] defaultRes33 = new long[5, 5, 5];
+                long[,, ] defaultRes34 = null;
+                long[,, ] defaultRes35 = new long[0, 0, 0];
+                long[,, ] defaultRes36 = new long[2, 3, 5];
+                long[,, ] defaultRes37 = new long[5, 5, 5];
+                long[,, ] defaultRes38 = null;
+                long[,, ] defaultRes39 = new long[0, 0, 0];
+                long[,, ] defaultRes40 = new long[2, 3, 5];
+                long[,, ] defaultRes41 = new long[5, 5, 5];
                 string text = "";
                 text += 8405239;
                 IEcuJob ecuJob = ecukom.ApiJob("BCP_SP21", "FS_LESEN_DETAIL", text, string.Empty);
@@ -1665,6 +2031,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("VehicleIdent.GetVin17()", exception);
             }
+
             return null;
         }
 
@@ -1672,38 +2039,38 @@ namespace PsdzClient.Core
         {
             try
             {
-                byte[,,,,] defaultRes = null;
-                byte[,,,,] defaultRes2 = new byte[0, 0, 0, 0, 0];
-                byte[,,,,] defaultRes3 = new byte[4, 2, 3, 5, 4];
-                byte[,,,,] defaultRes4 = new byte[5, 5, 5, 5, 5];
-                byte[,,,] defaultRes5 = null;
-                byte[,,,] defaultRes6 = new byte[0, 0, 0, 0];
-                byte[,,,] defaultRes7 = new byte[2, 3, 5, 4];
-                byte[,,,] defaultRes8 = new byte[5, 5, 5, 5];
-                byte[,,,] defaultRes9 = null;
-                byte[,,,] defaultRes10 = new byte[0, 0, 0, 0];
-                byte[,,,] defaultRes11 = new byte[2, 3, 5, 4];
-                byte[,,,] defaultRes12 = new byte[5, 5, 5, 5];
-                byte[,,,] defaultRes13 = null;
-                byte[,,,] defaultRes14 = new byte[0, 0, 0, 0];
-                byte[,,,] defaultRes15 = new byte[2, 3, 5, 4];
-                byte[,,,] defaultRes16 = new byte[5, 5, 5, 5];
-                byte[,,,] defaultRes17 = null;
-                byte[,,,] defaultRes18 = new byte[0, 0, 0, 0];
-                byte[,,,] defaultRes19 = new byte[2, 3, 5, 4];
-                byte[,,,] defaultRes20 = new byte[5, 5, 5, 5];
-                byte[,,,] defaultRes21 = null;
-                byte[,,,] defaultRes22 = new byte[0, 0, 0, 0];
-                byte[,,,] defaultRes23 = new byte[2, 3, 5, 4];
-                byte[,,,] defaultRes24 = new byte[5, 5, 5, 5];
-                byte[,,,] defaultRes25 = null;
-                byte[,,,] defaultRes26 = new byte[0, 0, 0, 0];
-                byte[,,,] defaultRes27 = new byte[2, 3, 5, 4];
-                byte[,,,] defaultRes28 = new byte[5, 5, 5, 5];
-                byte[,,,] defaultRes29 = null;
-                byte[,,,] defaultRes30 = new byte[0, 0, 0, 0];
-                byte[,,,] defaultRes31 = new byte[2, 3, 5, 4];
-                byte[,,,] defaultRes32 = new byte[5, 5, 5, 5];
+                byte[,,,, ] defaultRes = null;
+                byte[,,,, ] defaultRes2 = new byte[0, 0, 0, 0, 0];
+                byte[,,,, ] defaultRes3 = new byte[4, 2, 3, 5, 4];
+                byte[,,,, ] defaultRes4 = new byte[5, 5, 5, 5, 5];
+                byte[,,, ] defaultRes5 = null;
+                byte[,,, ] defaultRes6 = new byte[0, 0, 0, 0];
+                byte[,,, ] defaultRes7 = new byte[2, 3, 5, 4];
+                byte[,,, ] defaultRes8 = new byte[5, 5, 5, 5];
+                byte[,,, ] defaultRes9 = null;
+                byte[,,, ] defaultRes10 = new byte[0, 0, 0, 0];
+                byte[,,, ] defaultRes11 = new byte[2, 3, 5, 4];
+                byte[,,, ] defaultRes12 = new byte[5, 5, 5, 5];
+                byte[,,, ] defaultRes13 = null;
+                byte[,,, ] defaultRes14 = new byte[0, 0, 0, 0];
+                byte[,,, ] defaultRes15 = new byte[2, 3, 5, 4];
+                byte[,,, ] defaultRes16 = new byte[5, 5, 5, 5];
+                byte[,,, ] defaultRes17 = null;
+                byte[,,, ] defaultRes18 = new byte[0, 0, 0, 0];
+                byte[,,, ] defaultRes19 = new byte[2, 3, 5, 4];
+                byte[,,, ] defaultRes20 = new byte[5, 5, 5, 5];
+                byte[,,, ] defaultRes21 = null;
+                byte[,,, ] defaultRes22 = new byte[0, 0, 0, 0];
+                byte[,,, ] defaultRes23 = new byte[2, 3, 5, 4];
+                byte[,,, ] defaultRes24 = new byte[5, 5, 5, 5];
+                byte[,,, ] defaultRes25 = null;
+                byte[,,, ] defaultRes26 = new byte[0, 0, 0, 0];
+                byte[,,, ] defaultRes27 = new byte[2, 3, 5, 4];
+                byte[,,, ] defaultRes28 = new byte[5, 5, 5, 5];
+                byte[,,, ] defaultRes29 = null;
+                byte[,,, ] defaultRes30 = new byte[0, 0, 0, 0];
+                byte[,,, ] defaultRes31 = new byte[2, 3, 5, 4];
+                byte[,,, ] defaultRes32 = new byte[5, 5, 5, 5];
                 string text = "";
                 text += 8405239;
                 IEcuJob ecuJob = ecukom.ApiJob("BCP_SP21", "FS_LESEN_DETAIL_BINARY", text, string.Empty);
@@ -1747,6 +2114,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("VehicleIdent.GetVin17()", exception);
             }
+
             return null;
         }
 
@@ -1758,7 +2126,7 @@ namespace PsdzClient.Core
                 string defaultRes2 = null;
                 byte[] defaultRes3 = null;
                 long[] array = null;
-                byte[,] array2 = new byte[3, 3];
+                byte[, ] array2 = new byte[3, 3];
                 string text = "";
                 text += 8405239;
                 IEcuJob ecuJob = ecukom.ApiJob("BCP_SP21", "FS_LESEN_DETAIL", text, string.Empty);
@@ -1776,14 +2144,17 @@ namespace PsdzClient.Core
                             }
                         }
                     }
+
                     if (array == null || array.Length < ecuJob.JobResultSets)
                     {
                         array = (long[])__initArray<long>(new int[1] { ecuJob.JobResultSets }, long.MaxValue);
                     }
+
                     for (int k = 0; k < array.Length; k++)
                     {
                         array[k] = ecuJob.getResultAs((ushort)(k + 1), "F_UW_KM", array[k]);
                     }
+
                     defaultRes = ecuJob.getResultAs("JOB_STATUS", defaultRes, getLast: true);
                     defaultRes2 = ecuJob.getResultAs(0, "VARIANTE", defaultRes2);
                 }
@@ -1792,6 +2163,7 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("VehicleIdent.GetVin17()", exception);
             }
+
             return null;
         }
 
@@ -1812,15 +2184,17 @@ namespace PsdzClient.Core
                                 defaultRes3 = ecuJob.getResultsAs(ecuKomSample.Result, defaultRes3);
                                 break;
                             }
+
                             case "double[,]":
                             {
-                                double[,] defaultRes2 = null;
+                                double[, ] defaultRes2 = null;
                                 defaultRes2 = ecuJob.getResultsAs(ecuKomSample.Result, defaultRes2);
                                 break;
                             }
+
                             case "int[,,,,,]":
                             {
-                                int[,,,,,] defaultRes = null;
+                                int[,,,,, ] defaultRes = null;
                                 defaultRes = ecuJob.getResultsAs(ecuKomSample.Result, defaultRes);
                                 break;
                             }
@@ -1832,6 +2206,7 @@ namespace PsdzClient.Core
                     Log.WarningException("VehicleIdent.GetVin17()", exception);
                 }
             }
+
             return null;
         }
 
@@ -1845,17 +2220,20 @@ namespace PsdzClient.Core
                 {
                     type = type.GetElementType();
                 }
+
                 array = Array.CreateInstance(type, sizes);
                 T val = default(T);
                 if (initValue != null && typeof(T).IsAssignableFrom(initValue.GetType()))
                 {
                     val = (T)initValue;
                 }
+
                 int num = sizes[0];
                 for (int i = 1; i < sizes.Length; i++)
                 {
                     num *= sizes[i];
                 }
+
                 int[] array2 = new int[sizes.Length];
                 for (int j = 0; j < num; j++)
                 {
@@ -1877,6 +2255,7 @@ namespace PsdzClient.Core
             catch (Exception)
             {
             }
+
             return array;
         }
 
@@ -1925,8 +2304,10 @@ namespace PsdzClient.Core
                     {
                         list.Add(item.Value);
                     }
+
                     break;
             }
+
             return ReadVinFromEcus(ecuKom, list);
         }
 
@@ -1966,8 +2347,10 @@ namespace PsdzClient.Core
                     {
                         list.Add(item.Value);
                     }
+
                     break;
             }
+
             return ReadVinFromEcus(ecuKom, list);
         }
 
@@ -1995,6 +2378,7 @@ namespace PsdzClient.Core
                     Log.WarningException("VehicleIdent.GetVin17()", exception);
                 }
             }
+
             return null;
         }
     }
