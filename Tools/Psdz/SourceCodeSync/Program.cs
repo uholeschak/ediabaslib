@@ -85,6 +85,7 @@ namespace SourceCodeSync
         {
             { "BMW.Rheingold.CoreFramework.Extensions.AddRange", "Extensions.AddRange" },
             { "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService", "IProgrammingService" },
+            { "BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore", "DiagnosticsBusinessDataCore" }
         };
 
         private const string _signatureModifiedProperty = "SignatureModified";
