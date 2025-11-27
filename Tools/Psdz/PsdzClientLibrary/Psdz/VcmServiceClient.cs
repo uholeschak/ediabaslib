@@ -6,10 +6,11 @@ using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model;
+using PsdzClient;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    // [UH] Only for compatibility with older version
+    [PreserveSource(Hint = "For compatibility")]
     internal sealed class VcmServiceClient : PsdzClientBase<IVcmService>, IVcmService
     {
         internal VcmServiceClient(Binding binding, EndpointAddress remoteAddress)
