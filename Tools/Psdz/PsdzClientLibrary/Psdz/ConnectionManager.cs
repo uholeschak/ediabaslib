@@ -14,6 +14,7 @@ using System.Security.Cryptography.X509Certificates;
 using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
+using PsdzClient.Programming;
 
 namespace PsdzClient.Psdz
 {
@@ -126,65 +127,11 @@ namespace PsdzClient.Psdz
             return VCI.VCIType == VCIDeviceType.ENET;
         }
 
-#if false
+        [PreserveSource(Hint = "Cleaned")]
         internal IPsdzConnection ConnectToProject(string projectName, string vehicleInfo, int diagPort)
         {
-            bool isTlsAllowed = VCI.IsDoIP && !AvoidTlsConnection;
-            if (isTlsAllowed && !ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Psdz.ConnectionIsTlsAllowed", defaultValue: true))
-            {
-                isTlsAllowed = false;
-            }
-            string url;
-            IPsdzConnection psdzConnection;
-            string psdzFctName;
-            switch (VCI.VCIType)
-            {
-                case VCIDeviceType.SIM:
-                    url = "tcp://127.0.0.1:6801";
-                    psdzConnection = psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverEthernet(projectName, vehicleInfo, url, EReihe, BauIstufe, isTlsAllowed));
-                    psdzFctName = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverEthernet('{0}', '{1}', '{2}')", projectName, vehicleInfo, url);
-                    break;
-                case VCIDeviceType.ICOM:
-                    url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", VCI?.IPAddress, diagPort);
-                    psdzConnection = psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverIcom(projectName, vehicleInfo, url, 1000, EReihe, BauIstufe, IcomConnectionType, shouldSetConnectionToDcan, isTlsAllowed));
-                    psdzFctName = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverIcom('{0}', '{1}', '{2}', {3}, '{4}', '{5}', '{6}', '{7}')", projectName, vehicleInfo, url, 1000, EReihe, BauIstufe, IcomConnectionType, shouldSetConnectionToDcan);
-                    break;
-                case VCIDeviceType.EDIABAS:
-                    {
-                        string ipFromEdiabasIni = EdiabasConnection.GetIpFromEdiabasIni();
-                        url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipFromEdiabasIni, diagPort);
-                        psdzConnection = psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverEthernet(projectName, vehicleInfo, url, EReihe, BauIstufe, isTlsAllowed));
-                        psdzFctName = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverEthernet('{0}', '{1}', '{2}', '{3}', '{4}')", projectName, vehicleInfo, url, EReihe, BauIstufe);
-                        break;
-                    }
-                case VCIDeviceType.ENET:
-                    url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", VCI.IPAddress, diagPort);
-                    psdzConnection = psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverEthernet(projectName, vehicleInfo, url, EReihe, BauIstufe, isTlsAllowed));
-                    psdzFctName = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverEthernet('{0}', '{1}', '{2}', '{3}', '{4}')", projectName, vehicleInfo, url, EReihe, BauIstufe);
-                    break;
-                case VCIDeviceType.PTT:
-                    {
-                        BusObject busObject = new BusObject(1, "DCan");
-                        psdzConnection = psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverPtt(projectName, vehicleInfo, PsdzBus.BUSNAME_D_CAN, EReihe, BauIstufe, isTlsAllowed));
-                        psdzFctName = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverPtt('{0}', '{1}', {2}, '{3}', '{4}')", projectName, vehicleInfo, busObject.Name, EReihe, BauIstufe);
-                        break;
-                    }
-                default:
-                    psdzConnection = psdzCentralConnectionService.OpenConnection(() => PsdzConnectionManager.ConnectionManagerService.ConnectOverVin(projectName, vehicleInfo, Vin17, EReihe, BauIstufe, isTlsAllowed));
-                    psdzFctName = string.Format(CultureInfo.InvariantCulture, "Psdz.ConnectOverVin('{0}', '{1}', '{2}', '{3}', '{4}')", projectName, vehicleInfo, Vin17, EReihe, BauIstufe);
-                    break;
-            }
-            bool success = psdzConnection != null;
-            LogPsdzCall("ConnectToProject()", psdzFctName, success);
-            if (isTlsAllowed && !VCI.IsSimulation)
-            {
-                RegisterCallbackAndPassCertificatesToPsdz(psdzConnection);
-                secureDiagnosticsService.UnlockGateway(psdzConnection);
-            }
-            psdzCentralConnectionService.FillLocalIpAddress(httpConfigurationService);
-            return psdzConnection;
+            throw new NotImplementedException();
         }
-#endif
 
         public void RegisterCallbackAndPassCertificatesToPsdz(IPsdzConnection connection)
         {
@@ -237,36 +184,23 @@ namespace PsdzClient.Psdz
                 .ToArray();
         }
 
-#if false
+
+        [PreserveSource(Hint = "Cleaned")]
         internal bool IsConnected(IPsdzConnection connection)
         {
-            return PsdzConnectionManager.IsConnected(connection);
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         internal bool IsConnected(IPsdzConnection connection, out string psdzMessage)
         {
-            return PsdzConnectionManager.IsConnected(connection, out psdzMessage);
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         internal IPsdzConnection ConnectToProject(string projectName, string vehicleInfo, bool restartHsfzOnError)
         {
-            IPsdzConnection psdzConnection = ConnectToProject(projectName, vehicleInfo);
-            if (psdzConnection == null || PsdzConnectionManager.IsConnected(psdzConnection))
-            {
-                return psdzConnection;
-            }
-            if (restartHsfzOnError && VCI.VCIType == VCIDeviceType.ICOM && !(Vehicle?.Classification.IsSp2025 ?? false))
-            {
-                Log.Info(Log.CurrentMethod(), "Try to restart HSFZ before connecting ...");
-                Hsfz hsfz = EdiabasConnection.CreateHsfz();
-                VCIDevice device = (VCIDevice)VCI;
-                IICOMHandler iCOMHandler = ICOMHandler;
-                if (iCOMHandler != null && iCOMHandler.DoHsfzRestart(ref device, hsfz, Vin17, BRV, EReihe, IsDoIP.Value))
-                {
-                    return ConnectToProject(projectName, vehicleInfo);
-                }
-            }
-            return null;
+            throw new NotImplementedException();
         }
 
         internal IPsdzConnection ConnectToProjectOverDcan(string projectName, string vehicleInfo)
@@ -301,34 +235,16 @@ namespace PsdzClient.Psdz
             }
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         internal void SwitchFromEDIABASToPSdZIfConnectedViaPTTOrENET(PsdzContext context)
         {
-            CloseEdiabasConnectionIfConnectedViaPTTOrENET();
-            if (PsdzConnectionManager.IsConnected(context?.Connection))
-            {
-                Log.Info(Log.CurrentMethod(), "The PSDZ connection is already open.");
-                return;
-            }
-            ReconnectToPsdz(context);
-            Log.Info(Log.CurrentMethod(), "The PSDZ connection has been reopened.");
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         internal void SwitchFromEDIABASToPSdZ(PsdzContext context)
         {
-            Log.Info(Log.CurrentMethod(), "Closing EDIABAS connection and reopening connection to car.");
-            if (context == null)
-            {
-                throw new ArgumentNullException("PsdzProgramming.context");
-            }
-            if (context.Connection != null && PsdzConnectionManager.IsConnected(context.Connection))
-            {
-                Log.Info(Log.CurrentMethod(), "The PsdzConnection is already established. So no need to switch");
-                return;
-            }
-            EdiabasConnection.CloseConnection();
-            Pause();
-            ReconnectToPsdz(context);
-            Log.Info(Log.CurrentMethod(), "EDIABAS connection closed and PSDZ connection reopened.");
+            throw new NotImplementedException();
         }
 
         internal void SwitchFromPSdZToEDIABASIfConnectedViaPTTOrENET(PsdzContext context)
@@ -343,22 +259,10 @@ namespace PsdzClient.Psdz
             }
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         internal void SwitchFromPSdZToEDIABAS(PsdzContext context, bool isDoIP)
         {
-            Log.Info(Log.CurrentMethod(), "Called");
-            if (context?.Connection != null)
-            {
-                psdzCentralConnectionService.ReleaseConnection();
-                Pause();
-                Log.Info(Log.CurrentMethod(), "The PSdZ connection closed.");
-            }
-            else
-            {
-                string text = ((context == null) ? "context" : "Connection");
-                Log.Info(Log.CurrentMethod(), "The PSdZ connection cannot be closed because object '" + text + "' is null");
-            }
-            EdiabasConnection.OpenConnection(VCI, isDoIP);
-            Log.Info(Log.CurrentMethod(), "The EDIABAS connection reopened.");
+            throw new NotImplementedException();
         }
 
         internal IPsdzConnection SwitchFromEDIABASToPSdZIfConnectedViaPTTOrENET(bool restartHsfzOnError = false)
@@ -367,28 +271,16 @@ namespace PsdzClient.Psdz
             return ConnectToPsdz(restartHsfzOnError);
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         internal void CloseEdiabasConnectionIfConnectedViaPTTOrENET()
         {
-            if (IsNotConnectedViaPttAndEnet)
-            {
-                Log.Info(Log.CurrentMethod(), " ISTA is NOT connected via PTT or ENET, no action required.");
-                return;
-            }
-            Log.Info(Log.CurrentMethod(), " ISTA is connected via PTT or ENET -> Closing EDIABAS connection");
-            EdiabasConnection.CloseConnection();
-            Pause();
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         internal void SwitchFromPSdZToEDIABASIfConnectedViaPTTOrENET(IPsdzConnection connection)
         {
-            if (IsConnectedViaPttOrEnet)
-            {
-                Log.Info(Log.CurrentMethod(), "Closing PSdZ connection");
-                psdzCentralConnectionService.ReleaseConnection();
-                Log.Info(Log.CurrentMethod(), " ISTA is connected via PTT or ENET -> Reopening EDIABAS connection");
-                Pause();
-                EdiabasConnection.OpenConnection(VCI, Vehicle.IsDoIP);
-            }
+            throw new NotImplementedException();
         }
 
         private void LogPsdzCall(string method, string psdzFctName, bool success)
@@ -413,139 +305,28 @@ namespace PsdzClient.Psdz
             }
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private IPsdzConnection ConnectToCar(string projectName, string vehicleInfo, int defaultVehicleConnectionPort)
         {
-            Log.Debug("ConnectionManager.ConnectToCar", "vehicle is car, connecting...");
-            if (VCI != null && VCI.VCIType == VCIDeviceType.ENET)
-            {
-                int diagPort = (UseTheDoipPort() ? 13400 : 6801);
-                return ConnectToProject(projectName, vehicleInfo, diagPort);
-            }
-            int num = ((ConnectionPort == -1) ? defaultVehicleConnectionPort : ConnectionPort);
-            IPsdzConnection connection = ConnectToProject(projectName, vehicleInfo, num);
-            if (!PsdzConnectionManager.IsConnected(connection) && !AvoidTlsConnection)
-            {
-                if (VCI.VCIType == VCIDeviceType.PTT)
-                {
-                    throw new PsdzConnectionException("PTT connection to the car failed!", "n/a", "n/a", appendIPsBeforeAndAfterHSFZRestart: false);
-                }
-                if (!IsEES25Vehicle)
-                {
-                    connection = DoHsfzRestartAndConnectAgain(projectName, vehicleInfo, num);
-                }
-                if (connection == null || IsEES25Vehicle)
-                {
-                    if (ICOMHandler == null || VCI.VCIType != VCIDeviceType.ICOM || !ConfigSettings.GetActivateICOMReboot())
-                    {
-                        throw new PsdzConnectionException($"Connection failed for '{VCI.VCIType}'.", "n/a", "n/a", appendIPsBeforeAndAfterHSFZRestart: false);
-                    }
-                    if (!DoIcomRestartAndConnectAgain(projectName, vehicleInfo, num, out connection))
-                    {
-                        throw new PsdzConnectionException("Connection failed after ICOM Restart.", "n/a", "n/a", appendIPsBeforeAndAfterHSFZRestart: false);
-                    }
-                }
-            }
-            else if (VCI.VCIType == VCIDeviceType.ICOM)
-            {
-                fastaService.AddServiceCode(ServiceCodes.CON04_PsdzConnectionSuccessfulWithoutHsfzRestart_nu_LF, "PSdZ connection is successful.", LayoutGroup.X);
-            }
-            return connection;
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private IPsdzConnection ConnectToMotorcycle(string projectName, string vehicleInfo, int defaultMotorcycleConnectionPort, int fallbackMotorcycleConnectionPort)
         {
-            Log.Debug("ConnectionManager.ConnectToMotorcycle", " vehicle is motorcycle, connecting...");
-            int num = ((ConnectionPort == -1) ? defaultMotorcycleConnectionPort : ConnectionPort);
-            IPsdzConnection psdzConnection;
-            if (num == 52410)
-            {
-                Log.Info("ConnectionManager.ConnectToMotorcycle()", "Trying to establish a connection with DCAN");
-                shouldSetConnectionToDcan = true;
-                psdzConnection = ConnectToProject(projectName, vehicleInfo, num);
-                Log.Info("ConnectionManager.ConnectToMotorcycle()", $"Connection with DCAN established: {PsdzConnectionManager.IsConnected(psdzConnection)}");
-            }
-            else
-            {
-                psdzConnection = ConnectToProject(projectName, vehicleInfo, num);
-            }
-            if (PsdzConnectionManager.IsConnected(psdzConnection))
-            {
-                ConnectionPort = num;
-            }
-            else
-            {
-                LogWarn("ConnectionManager.ConnectToMotorcycle()", $"Connection over port [{num}] failed.");
-                psdzCentralConnectionService.ReleaseConnection();
-                Log.Info("ConnectionManager.ConnectToMotorcycle()", $"Trying fallback: establish a connection with DCAN (PORT: {fallbackMotorcycleConnectionPort})");
-                shouldSetConnectionToDcan = true;
-                psdzConnection = ConnectToProject(projectName, vehicleInfo, fallbackMotorcycleConnectionPort);
-                Log.Info("ConnectionManager.ConnectToMotorcycle()", $"Connection with DCAN established: {PsdzConnectionManager.IsConnected(psdzConnection)}");
-                if (PsdzConnectionManager.IsConnected(psdzConnection))
-                {
-                    ConnectionPort = fallbackMotorcycleConnectionPort;
-                }
-                else
-                {
-                    LogWarn("ConnectionManager.ConnectToMotorcycle()", "Connection over DCAN failed.");
-                    psdzConnection = null;
-                }
-            }
-            return psdzConnection;
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private IPsdzConnection DoHsfzRestartAndConnectAgain(string projectName, string vehicleInfo, int port)
         {
-            if (ICOMHandler == null)
-            {
-                Log.Error(Log.CurrentMethod(), "HSFZ cannot be restarted because ICOMHandler is null.");
-                return null;
-            }
-            Hsfz hsfz = EdiabasConnection.CreateHsfz();
-            VCIDevice device = (VCIDevice)VCI;
-            string zgmIpAddress = hsfz.GetZgmIpAddress(device.IPAddress, BRV, EReihe, IsDoIP.Value);
-            if (!ICOMHandler.DoHsfzRestart(ref device, hsfz, Vin17, BRV, EReihe, IsDoIP.Value))
-            {
-                Log.Error(Log.CurrentMethod(), "HSFZ restart is failed.");
-                return null;
-            }
-            psdzCentralConnectionService.ReleaseConnection();
-            IPsdzConnection psdzConnection = ConnectToProject(projectName, vehicleInfo, port);
-            if (!PsdzConnectionManager.IsConnected(psdzConnection))
-            {
-                string zgmIpAddress2 = hsfz.GetZgmIpAddress(VCI.IPAddress, BRV, EReihe, IsDoIP.Value);
-                Log.Error(Log.CurrentMethod(), "Connection failed after HSFZ restart - ZgmIPAddressBefore: " + zgmIpAddress + " - ZgmIPAddressAfter: " + zgmIpAddress2);
-                fastaService.AddServiceCode(string.Format(ServiceCodes.CON09_NoPsdzConnectionAfterHsfzRestart_nu_LF), "No PSdZ connection after HSFZ restart.", LayoutGroup.X, allowMultipleEntries: true);
-                return null;
-            }
-            fastaService.AddServiceCode(string.Format(ServiceCodes.CON08_PsdzConnectionSuccessfulAfterHsfzRestart_nu_LF), "PSdZ connection is successful after HSFZ restart.", LayoutGroup.X, allowMultipleEntries: true);
-            return psdzConnection;
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private bool DoIcomRestartAndConnectAgain(string projectName, string vehicleInfo, int port, out IPsdzConnection connection)
         {
-            connection = null;
-            if (ICOMHandler.RestartCounter >= 2)
-            {
-                Log.Info(Log.CurrentMethod(), $"ICOM '{VCI.DevId}' was already restarted {2} times without success in this session.");
-            }
-            else
-            {
-                Log.Info(Log.CurrentMethod(), "HsfzRestart failed - Restart ICOM.");
-                VCIDevice device = (VCIDevice)VCI;
-                psdzCentralConnectionService.ReleaseConnection();
-                if (ICOMHandler.RestartIcom(ref device, Vin17))
-                {
-                    connection = ConnectToProject(projectName, vehicleInfo, port);
-                    if (PsdzConnectionManager.IsConnected(connection))
-                    {
-                        Log.Info(Log.CurrentMethod(), "ICOM Reboot was successful - Reset Restart Counter");
-                        fastaService.AddServiceCode(ServiceCodes.CON10_PsdzConnectionSuccessfulAfterIcomReboot_nu_LF, "PSdZ connection is successful after ICOM reboot.", LayoutGroup.X, allowMultipleEntries: true);
-                        ICOMHandler.RestartCounter = 0;
-                        return true;
-                    }
-                }
-            }
-            return false;
+            throw new NotImplementedException();
         }
 
         private bool UseTheDoipPort()
@@ -565,28 +346,17 @@ namespace PsdzClient.Psdz
             return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private void ReconnectToPsdz(PsdzContext context)
         {
-            IPsdzTargetSelector targetSelector = PsdzConnectionManager.GetTargetSelector(EReihe);
-            ConnectToProject(targetSelector.Project, targetSelector.VehicleInfo);
-            if (context.Connection == null || !PsdzConnectionManager.IsConnected(context.Connection))
-            {
-                throw new PsdzConnectionException("Connection to the vehicle failed!", "n/a", "n/a", appendIPsBeforeAndAfterHSFZRestart: false);
-            }
+            throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         private IPsdzConnection ConnectToPsdz(bool restartHsfzOnError = false)
         {
-            IPsdzTargetSelector targetSelector = PsdzConnectionManager.GetTargetSelector(EReihe);
-            Log.Info(Log.CurrentMethod(), "Opening a PSdZ connection to the vehicle");
-            IPsdzConnection psdzConnection = ConnectToProject(targetSelector.Project, targetSelector.VehicleInfo, restartHsfzOnError);
-            if (psdzConnection == null || !PsdzConnectionManager.IsConnected(psdzConnection))
-            {
-                throw new PsdzConnectionException("Connection to the vehicle failed!", "n/a", "n/a", appendIPsBeforeAndAfterHSFZRestart: false);
-            }
-            Log.Info(Log.CurrentMethod(), "PSdZ connection opened successfully");
-            return psdzConnection;
+            throw new NotImplementedException();
         }
-#endif
+
     }
 }
