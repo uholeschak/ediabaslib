@@ -33,7 +33,7 @@ namespace BMW.Rheingold.Psdz.Client
 
         private const string istaPIDfileName = "PsdzInstances.txt";
 
-        // [UH] initialized in static constructor
+        [PreserveSource(Hint = "initialized in static constructor")]
         private static string istaPIDfilePath;
 
         private static readonly ILog Logger = LogManager.GetLogger(typeof(PsdzServiceStarter));
@@ -91,9 +91,10 @@ namespace BMW.Rheingold.Psdz.Client
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         private static bool IsPsdzServiceHostRunning(int istaProcessId)
         {
-            if (istaProcessId != 0 && File.Exists(istaPIDfilePath))   // [UH] check for PID file support
+            if (istaProcessId != 0 && File.Exists(istaPIDfilePath))   // [UH] [IGNORE] check for PID file support
             {
                 checkForPsdzInstancesLogFile();
                 Logger.Info($"Checking for already running PsdzServiceHost instances for ISTA Process ID {istaProcessId} ...");
@@ -125,7 +126,7 @@ namespace BMW.Rheingold.Psdz.Client
                 }
             }
 
-            // [UH] old code
+            // [UH] [IGNORE] old code
             Process[] processesByName = Process.GetProcessesByName(PsdzServiceHostProcessName);
             if (istaProcessId == 0)
             {
@@ -195,10 +196,11 @@ namespace BMW.Rheingold.Psdz.Client
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         private PsdzServiceStartResult StartServerInstance(int istaProcessId)
         {
             Logger.Info("Starting new PsdzServiceHost instance...");
-            Logger.Info($"PID file path: {istaPIDfilePath}");   // [UH] added
+            Logger.Info($"PID file path: {istaPIDfilePath}");   // [UH] [IGNORE] added
             string tempFileName = Path.GetTempFileName();
             PsdzServiceArgs.Serialize(tempFileName, psdzServiceArgs);
             ProcessStartInfo processStartInfo = new ProcessStartInfo();
@@ -211,7 +213,7 @@ namespace BMW.Rheingold.Psdz.Client
             processStartInfo.CreateNoWindow = true;
             processStartInfo.Environment["PSDZSERVICEHOST_LOGDIR"] = psdzServiceHostLogDir;
 
-            // [UH] check for PID file support start
+            // [UH] [IGNORE] check for PID file support start
             bool pidFileSupport = false;
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(processStartInfo.FileName);
             if (fileVersionInfo.FileVersion != null)
@@ -258,7 +260,7 @@ namespace BMW.Rheingold.Psdz.Client
             {
                 case 0:
                 {
-                    // [UH] check for PID file support and valid process ID start
+                    // [UH] [IGNORE] check for PID file support and valid process ID start
                     if (pidFileSupport && istaProcessId != 0)
                     {
                         checkForPsdzInstancesLogFile();
@@ -274,7 +276,7 @@ namespace BMW.Rheingold.Psdz.Client
                             Logger.Error($"Failed to append PID file: {istaPIDfilePath} - {e.Message}");
                         }
                     }
-                    // [UH] check for PID file support end
+                    // [UH] [IGNORE] check for PID file support end
                     Logger.Info("Start of new PsdzServiceHost instance successful!");
                     return PsdzServiceStartResult.PsdzStartOk;
                 }
@@ -305,8 +307,7 @@ namespace BMW.Rheingold.Psdz.Client
             }
         }
 
-        // [UH] from App.ClearIstaPIDsFile
-        // ToDo: Check on update
+        [PreserveSource(Hint = "from App.ClearIstaPIDsFile")]
         public static void ClearIstaPIDsFile()
         {
             try
