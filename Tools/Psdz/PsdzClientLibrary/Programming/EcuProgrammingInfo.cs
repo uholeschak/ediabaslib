@@ -26,7 +26,8 @@ namespace PsdzClient.Programming
         CodingScheduledByUser = 8
     }
 
-	public class EcuProgrammingInfo : INotifyPropertyChanged, IEcuProgrammingInfo
+    [PreserveSource(Hint = "Modified", AccessModified = true)]
+    public class EcuProgrammingInfo : INotifyPropertyChanged, IEcuProgrammingInfo
 	{
         protected EcuProgrammingInfoData data;
 
