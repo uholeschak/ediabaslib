@@ -35,7 +35,7 @@ namespace PsdzClient.Psdz
 
         private bool shouldSetConnectionToDcan;
 
-        //private readonly IProtocolBasic fastaService;
+        private readonly IProtocolBasic fastaService;
 
         public readonly IPsdzCentralConnectionService psdzCentralConnectionService;
 
@@ -43,11 +43,14 @@ namespace PsdzClient.Psdz
 
         private readonly IHttpConfigurationService httpConfigurationService;
 
-        //private EdiabasConnectionManager EdiabasConnection { get; }
+        [PreserveSource(Hint = "EdiabasConnectionManager", Placeholder = true)]
+        private PlaceholderType EdiabasConnection { get; }
 
-        //private PsdzConnectionManager PsdzConnectionManager { get; }
+        [PreserveSource(Hint = "PsdzConnectionManager", Placeholder = true)]
+        private PlaceholderType PsdzConnectionManager { get; }
 
-        //private IICOMHandler ICOMHandler { get; }
+        [PreserveSource(Hint = "IICOMHandler", Placeholder = true)]
+        private PlaceholderType ICOMHandler { get; }
 
         public bool AvoidTlsConnection { get; set; }
 
