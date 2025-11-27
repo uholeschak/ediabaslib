@@ -168,25 +168,12 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         public ProgrammingActionState? State
         {
             get
             {
-                ProgrammingActionState? programmingActionState = null;
-#if false
-                foreach (IProgrammingAction programmingAction in ProgrammingActions)
-                {
-                    if (programmingAction.IsSelected)
-                    {
-                        programmingActionState = programmingAction.StateProgramming;
-                        if (programmingActionState.HasValue && programmingActionState != ProgrammingActionState.ActionSuccessful)
-                        {
-                            break;
-                        }
-                    }
-                }
-#endif
-                return programmingActionState;
+                return null;
             }
         }
 
