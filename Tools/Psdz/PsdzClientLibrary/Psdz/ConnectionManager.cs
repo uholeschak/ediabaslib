@@ -133,8 +133,7 @@ namespace PsdzClient.Psdz
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Changed to public", SignatureModified = true)]
-        public void RegisterCallbackAndPassCertificatesToPsdz(IPsdzConnection connection)
+        private void RegisterCallbackAndPassCertificatesToPsdz(IPsdzConnection connection)
         {
             Log.Info(Log.CurrentMethod(), "Registering callbacks and passing certificates to psdz");
             if (!ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out var service))
@@ -162,6 +161,13 @@ namespace PsdzClient.Psdz
             {
                 Log.WarningException(Log.CurrentMethod(), exception);
             }
+        }
+
+
+        [PreserveSource(Hint = "Added")]
+        public void RegisterCallbackAndPassCertificatesToPsdzPublic(IPsdzConnection connection)
+        {
+            RegisterCallbackAndPassCertificatesToPsdz(connection);
         }
 
         private byte[] calculateAuthService29Certificate(X509Certificate2 s29Certificate, X509Certificate2 subCaCertificate, X509Certificate2 caCertificate)

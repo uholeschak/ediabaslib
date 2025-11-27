@@ -1241,7 +1241,7 @@ namespace PsdzClient.Programming
                     }
 
                     ConnectionManager connectionManager = new ConnectionManager(ProgrammingService.Psdz, vehicle, null);
-                    connectionManager.RegisterCallbackAndPassCertificatesToPsdz(psdzConnection);
+                    connectionManager.RegisterCallbackAndPassCertificatesToPsdzPublic(psdzConnection);
                     ProgrammingService.Psdz.SecureDiagnosticsService.UnlockGateway(psdzConnection);
                 }
 
