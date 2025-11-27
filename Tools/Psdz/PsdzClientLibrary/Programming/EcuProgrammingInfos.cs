@@ -17,6 +17,7 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
+    [PreserveSource(Hint = "Changed to public", AccessModified = true)]
 	public class EcuProgrammingInfos : IEnumerable<IEcuProgrammingInfo>, IEcuProgrammingInfos, IEnumerable
 	{
 		public event PropertyChangedEventHandler PropertyChanged;
