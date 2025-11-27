@@ -9,26 +9,6 @@ using System.Text.RegularExpressions;
 
 namespace PsdzClient.Core
 {
-    public enum LayoutGroup
-    {
-        X,
-        D,
-        P,
-        PB,
-        PK,
-        PR,
-        PBV,
-        L,
-        R,
-        F,
-        PA,
-        PS,
-        PAP,
-        PAV,
-        PAE,
-        PAN
-    }
-
     public delegate object DoECUIdentDelegate(IVehicle vecInfo, ECU mECU, IEcuKom ecuKom, ref bool resetMOSTGWdone, IProgressMonitor monitor, int retry, bool forceReRead, bool tryReanimation, bool IdentForceOnUnidentified = false);
 
     public class DiagnosticsBusinessData : DiagnosticsBusinessDataCore, IDiagnosticsBusinessData
