@@ -12,6 +12,7 @@ namespace PsdzClient.Programming
 {
 	public class SecureCodingConfigWrapper
     {
+        [PreserveSource(Hint = "Added")]
         public const string NcdRoot = "ncd";
 
         private static PsdzSecureCodingConfigCto instance;
