@@ -133,6 +133,7 @@ namespace PsdzClient.Psdz
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Changed to public", SignatureModified = true)]
         public void RegisterCallbackAndPassCertificatesToPsdz(IPsdzConnection connection)
         {
             Log.Info(Log.CurrentMethod(), "Registering callbacks and passing certificates to psdz");
