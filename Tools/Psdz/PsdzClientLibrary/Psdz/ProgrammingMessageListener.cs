@@ -1,6 +1,6 @@
 ﻿using PsdzClient.Core;
 
-namespace PsdzClientLibrary.Psdz
+namespace PsdzClient.Psdz
 {
     public abstract class ProgrammingMessageListener
     {

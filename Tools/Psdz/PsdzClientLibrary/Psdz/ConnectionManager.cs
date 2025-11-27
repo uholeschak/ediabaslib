@@ -7,13 +7,15 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
-using PsdzClient.Programming;
 using System;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
+using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient;
 
-namespace PsdzClientLibrary.Psdz
+namespace PsdzClient.Psdz
 {
     public class ConnectionManager : ProgrammingMessageListener, IPsdzProg
     {
@@ -35,7 +37,7 @@ namespace PsdzClientLibrary.Psdz
 
         //private readonly IProtocolBasic fastaService;
 
-        //public readonly IPsdzCentralConnectionService psdzCentralConnectionService;
+        public readonly IPsdzCentralConnectionService psdzCentralConnectionService;
 
         private readonly ISecureDiagnosticsService secureDiagnosticsService;
 
@@ -93,19 +95,19 @@ namespace PsdzClientLibrary.Psdz
 
         internal int ConnectionPort { get; set; }
 
-        // [UH] IProtocolBasic protocoller, IICOMHandler icomHandler, removed
+        [PreserveSource(Hint = "IProtocolBasic protocoller, IICOMHandler icomHandler, removed")]
         internal ConnectionManager(IPsdz psdz, IVehicle vehicle, IProgMsgListener progMsgListener, bool shouldSetConnectionToDcan = false, int connectionPort = -1)
             : base(progMsgListener)
         {
-            //PsdzConnectionManager = new PsdzConnectionManager(psdz, protocoller);
-            //psdzCentralConnectionService = PsdzCentralConnectionService.CreateInstance(PsdzConnectionManager);
-            //ServiceLocator.Current.TryAddService(psdzCentralConnectionService);
-            //EdiabasConnection = new EdiabasConnectionManager(ecuKom, progMsgListener);
+            // [IGNORE] PsdzConnectionManager = new PsdzConnectionManager(psdz, protocoller);
+            // [IGNORE] psdzCentralConnectionService = PsdzCentralConnectionService.CreateInstance(PsdzConnectionManager);
+            // [IGNORE] ServiceLocator.Current.TryAddService(psdzCentralConnectionService);
+            // [IGNORE] EdiabasConnection = new EdiabasConnectionManager(ecuKom, progMsgListener);
             Vehicle = vehicle;
             this.shouldSetConnectionToDcan = shouldSetConnectionToDcan;
             ConnectionPort = connectionPort;
-            //ICOMHandler = icomHandler;
-            //fastaService = protocoller;
+            // [IGNORE] ICOMHandler = icomHandler;
+            // [IGNORE] fastaService = protocoller;
             secureDiagnosticsService = psdz.SecureDiagnosticsService;
             AvoidTlsConnection = false;
             httpConfigurationService = psdz.HttpConfigurationService;
@@ -180,6 +182,7 @@ namespace PsdzClientLibrary.Psdz
             return psdzConnection;
         }
 #endif
+
         public void RegisterCallbackAndPassCertificatesToPsdz(IPsdzConnection connection)
         {
             Log.Info(Log.CurrentMethod(), "Registering callbacks and passing certificates to psdz");

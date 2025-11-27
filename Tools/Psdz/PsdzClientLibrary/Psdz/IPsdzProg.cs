@@ -1,4 +1,4 @@
-﻿namespace PsdzClientLibrary.Psdz
+﻿namespace PsdzClient.Psdz
 {
     public interface IPsdzProg
     {

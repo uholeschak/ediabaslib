@@ -20,7 +20,6 @@ using log4net;
 using log4net.Config;
 using Microsoft.Win32;
 using PsdzClient.Core;
-using PsdzClientLibrary.Psdz;
 using PsdzClientLibrary.Resources;
 using System;
 using System.Collections.Generic;
@@ -35,6 +34,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
+using PsdzClient.Psdz;
 
 namespace PsdzClient.Programming
 {
