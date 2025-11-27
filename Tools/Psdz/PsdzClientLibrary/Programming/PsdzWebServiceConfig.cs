@@ -101,10 +101,11 @@ namespace BMW.Rheingold.Programming
             return "\"" + string.Join("\" \"", JarArguments) + "\"";
         }
 
+        [PreserveSource(Hint = "Modified")]
         private string[] GetPsdzJvmOptions()
         {
             int num = 1280;
-            if (Environment.Is64BitOperatingSystem) // [UH] replaced
+            if (Environment.Is64BitOperatingSystem) // [UH] [IGNORE] replaced
             {
                 int totalPhysicalMemoryInGb = GetTotalPhysicalMemoryInGb();
                 int configint = ConfigSettings.getConfigint("BMW.Rheingold.CoreFramework.ParallelOperationsLimit", -1);
