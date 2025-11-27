@@ -51,32 +51,10 @@ namespace PsdzClient.Programming
             return $"ECU: 0x{DiagAddrAsInt:X2}, FeatureId: 0X{FeatureIdAsInt:X6}, Status: {Status.ToString()}";
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public static string GetSecureFeatureName(long featureIdAsInt)
         {
-            //IDatabaseProvider instance = DatabaseProviderFactory.Instance;
-            string text = string.Empty;
-#if false
-            try
-            {
-                Log.Info(Log.CurrentMethod(), "Trying to resolve feature name for feature '0x{0:X6}'", featureIdAsInt);
-                text = instance.GetSwiActivationCodeSFAFeatureNameByIdAndLanguage(featureIdAsInt, instance.AttributeLanguageExtension);
-                if (string.IsNullOrEmpty(text) && instance.AttributeLanguageExtension != "ENGB")
-                {
-                    text = instance.GetSwiActivationCodeSFAFeatureNameByIdAndLanguage(featureIdAsInt, "ENGB");
-                }
-            }
-            catch (Exception exception)
-            {
-                Log.WarningException(Log.CurrentMethod(), exception);
-            }
-            if (string.IsNullOrEmpty(text))
-            {
-                Log.Warning(Log.CurrentMethod(), $"Could not find Feature Name for ID= {featureIdAsInt} and Language= {instance.AttributeLanguageExtension}. Trying to get fallback value.");
-                return "unkown";
-            }
-            Log.Info(Log.CurrentMethod(), $"Found feature name= {text} for ID= {featureIdAsInt} and Language= {instance.AttributeLanguageExtension}.");
-#endif
-            return text;
+            return string.Empty;
         }
     }
 }
