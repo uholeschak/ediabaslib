@@ -247,16 +247,9 @@ namespace PsdzClient.Psdz
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         internal void SwitchFromPSdZToEDIABASIfConnectedViaPTTOrENET(PsdzContext context)
         {
-            if (IsNotConnectedViaPttAndEnet)
-            {
-                Log.Info(Log.CurrentMethod(), " ISTA is NOT connected via PTT or ENET, no action required.");
-            }
-            else
-            {
-                SwitchFromPSdZToEDIABAS(context, Vehicle.IsDoIP);
-            }
         }
 
         [PreserveSource(Hint = "Cleaned")]
