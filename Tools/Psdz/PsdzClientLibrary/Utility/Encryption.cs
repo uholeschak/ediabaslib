@@ -9,6 +9,7 @@ using System.Text;
 
 namespace PsdzClient.Utility
 {
+    [PreserveSource(Hint = "Changed to public", AccessModified = true)]
     public class Encryption
     {
         private static string _clientId = string.Empty;
