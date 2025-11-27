@@ -213,9 +213,9 @@ namespace PsdzClient.Core
 
         private static readonly DateTime LciDateE60 = DateTime.Parse("2005-09-01", CultureInfo.InvariantCulture);
 
-        //private string ServiceCodeValuePattern = "{0}_{1}";
+        private string ServiceCodeValuePattern = "{0}_{1}";
 
-        //private LayoutGroup layoutGroup = LayoutGroup.D;
+        private LayoutGroup layoutGroup = LayoutGroup.D;
 
         private readonly List<string> fsLesenExpertVariants = new List<string>
         {
