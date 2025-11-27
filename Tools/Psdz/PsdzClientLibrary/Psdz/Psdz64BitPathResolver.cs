@@ -5,11 +5,10 @@ using System.IO;
 
 namespace PsdzClient.Programming
 {
+    [PreserveSource(Hint = "Adapted")]
     public static class Psdz64BitPathResolver
     {
-        // Force64Bit removed
-
-        // [UH] modified
+        [PreserveSource(Hint = "Added")]
         public static string GetPsdzPath(string istaFolder)
         {
             string psdzSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\binx64" : @"PSdZ\bin";
@@ -17,7 +16,7 @@ namespace PsdzClient.Programming
             return psdzBinaryPath;
         }
 
-        // [UH] istaFolder, psdzWebService added
+        [PreserveSource(Hint = "istaFolder, psdzWebService added")]
         public static string GetJrePath(string istaFolder, bool psdzWebService = false)
         {
             string text = string.Empty;
