@@ -250,6 +250,7 @@ namespace PsdzClient.Psdz
         [PreserveSource(Hint = "Cleaned")]
         internal void SwitchFromPSdZToEDIABASIfConnectedViaPTTOrENET(PsdzContext context)
         {
+            throw new NotImplementedException();
         }
 
         [PreserveSource(Hint = "Cleaned")]
