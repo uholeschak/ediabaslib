@@ -122,7 +122,7 @@ namespace BMW.Rheingold.Programming
             };
             string defaultValue = string.Join(" ", values);
             string[] source = Regex.Split(ConfigSettings.getConfigString("BMW.Rheingold.Programming.PsdzWebservice.JvmOptions", defaultValue), "\\s+(?=\\-)");
-            string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Path", Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\Security\\cacerts"))); //[UH] modified path
+            string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Path", Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\Security\\cacerts"))); //[UH] [IGNORE] path modified
             if (!File.Exists(configString))
             {
                 Log.Error(Log.CurrentMethod(), "Truststore File '" + configString + "' does not exist. You can check BMW.Rheingold.Programming.Truststore.Path registry key.");
