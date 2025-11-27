@@ -279,7 +279,8 @@ namespace PsdzClient.Programming
 
         public virtual string EcuIdentifier => string.Format(CultureInfo.InvariantCulture, "{0}_0x{1:X2}", Ecu.TITLE_ECUTREE, Ecu.ID_SG_ADR);
 
-        //internal ICollection<XEP_SWIACTION> XepSwiActionList { get; private set; }
+        [PreserveSource(Hint = "ICollection<XEP_SWIACTION>", Placeholder = true)]
+        internal PlaceholderType XepSwiActionList { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
