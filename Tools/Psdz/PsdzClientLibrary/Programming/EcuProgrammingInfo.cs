@@ -320,14 +320,16 @@ namespace PsdzClient.Programming
             SvkCurrent = null;
         }
 
+        [PreserveSource(Hint = "Modified")]
         private void Init()
         {
             scheduled = EcuScheduledState.NothingScheduled;
-            //XepSwiActionList = new Collection<XEP_SWIACTION>();
+            // [IGNORE] XepSwiActionList = new Collection<XEP_SWIACTION>();
             programmingActionList = new ObservableCollectionEx<ProgrammingAction>();
             programmingActionList.CollectionChanged += OnProgrammingActionsCollectionChanged;
         }
 
+        [PreserveSource(Hint = "Modified")]
         protected void InitData(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder)
         {
             if (data == null)
@@ -336,16 +338,7 @@ namespace PsdzClient.Programming
             }
             Ecu = ecu;
             data.EcuTitle = Ecu.TITLE_ECUTREE;
-#if false
-            if (Ecu is ECU eCU && eCU.XepEcuClique != null && eCU.XepEcuClique.TITLEID.HasValue)
-            {
-                data.EcuDescription = eCU.XepEcuClique.Title;
-            }
-            else
-#endif
-            {
-                data.EcuDescription = data.EcuTitle;
-            }
+            data.EcuDescription = data.EcuTitle;
             try
             {
                 SvkCurrent = programmingObjectBuilder.Build(ecu.SVK);
