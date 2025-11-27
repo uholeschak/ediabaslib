@@ -21,29 +21,17 @@ namespace PsdzClient.Psdz
     public class ConnectionManager : ProgrammingMessageListener, IPsdzProg
     {
         protected const int DEFAULT_VEHICLE_CONNECTION_PORT = 50160;
-
         protected const int DEFAULT_SP25_VEHICLE_CONNECTION_PORT = 50162;
-
         protected const int DEFAULT_ETHERNET_CONNECTION_PORT = 6801;
-
         protected const int DEFAULT_SP25_ETHERNET_CONNECTION_PORT = 13400;
-
         protected const int DEFAULT_MOTORCYCLE_CONNECTION_PORT = 50960;
-
         protected const int FALLBACK_MOTORCYCLE_CONNECTION_PORT = 52410;
-
         protected const int ICOM_REBOOT_RETRY = 2;
-
         private bool shouldSetConnectionToDcan;
-
         private readonly IProtocolBasic fastaService;
-
         public readonly IPsdzCentralConnectionService psdzCentralConnectionService;
-
         private readonly ISecureDiagnosticsService secureDiagnosticsService;
-
         private readonly IHttpConfigurationService httpConfigurationService;
-
         [PreserveSource(Hint = "EdiabasConnectionManager", Placeholder = true)]
         private PlaceholderType EdiabasConnection { get; }
 
@@ -52,15 +40,10 @@ namespace PsdzClient.Psdz
 
         [PreserveSource(Hint = "IICOMHandler", Placeholder = true)]
         private PlaceholderType ICOMHandler { get; }
-
         public bool AvoidTlsConnection { get; set; }
-
         protected virtual IVehicle Vehicle { get; }
-
         protected virtual string Vin17 => Vehicle?.VIN17;
-
         protected virtual string EReihe => Vehicle?.Ereihe;
-
         protected virtual bool? IsDoIP => Vehicle?.IsDoIP;
 
         protected virtual bool IsEES25Vehicle
@@ -71,16 +54,14 @@ namespace PsdzClient.Psdz
                 {
                     return Vehicle.Classification.IsNCar;
                 }
+
                 return false;
             }
         }
 
         protected virtual string BRV => Vehicle?.Baureihenverbund;
-
         protected virtual IVciDevice VCI => Vehicle?.VCI;
-
         protected virtual string BauIstufe => Vehicle?.ILevelWerk;
-
         protected virtual IcomConnectionType IcomConnectionType => IcomConnectionType.DCan;
 
         internal bool IsNotConnectedViaPttAndEnet
@@ -91,17 +72,16 @@ namespace PsdzClient.Psdz
                 {
                     return !IsConnectedViaENET();
                 }
+
                 return false;
             }
         }
 
         internal bool IsConnectedViaPttOrEnet => !IsNotConnectedViaPttAndEnet;
-
         internal int ConnectionPort { get; set; }
 
         [PreserveSource(Hint = "IProtocolBasic protocoller, IICOMHandler icomHandler, removed")]
-        internal ConnectionManager(IPsdz psdz, IVehicle vehicle, IProgMsgListener progMsgListener, bool shouldSetConnectionToDcan = false, int connectionPort = -1)
-            : base(progMsgListener)
+        internal ConnectionManager(IPsdz psdz, IVehicle vehicle, IProgMsgListener progMsgListener, bool shouldSetConnectionToDcan = false, int connectionPort = -1) : base(progMsgListener)
         {
             // [IGNORE] PsdzConnectionManager = new PsdzConnectionManager(psdz, protocoller);
             // [IGNORE] psdzCentralConnectionService = PsdzCentralConnectionService.CreateInstance(PsdzConnectionManager);
@@ -140,6 +120,7 @@ namespace PsdzClient.Psdz
             {
                 return;
             }
+
             try
             {
                 Log.Info(Log.CurrentMethod(), "Generating certificates");
@@ -163,13 +144,6 @@ namespace PsdzClient.Psdz
             }
         }
 
-
-        [PreserveSource(Hint = "Added")]
-        public void RegisterCallbackAndPassCertificatesToPsdzPublic(IPsdzConnection connection)
-        {
-            RegisterCallbackAndPassCertificatesToPsdz(connection);
-        }
-
         private byte[] calculateAuthService29Certificate(X509Certificate2 s29Certificate, X509Certificate2 subCaCertificate, X509Certificate2 caCertificate)
         {
             Log.Info(Log.CurrentMethod(), "Calculating S29 certificate chain");
@@ -185,12 +159,8 @@ namespace PsdzClient.Psdz
             Log.Debug(Log.CurrentMethod(), "subCA Certificte in bytes array: " + BitConverter.ToString(rawCertData2));
             Log.Debug(Log.CurrentMethod(), "Lenght of CA Certificte in bytes array: " + BitConverter.ToString(array3));
             Log.Debug(Log.CurrentMethod(), "CA Certificte in bytes array: " + BitConverter.ToString(rawCertData3));
-            return array.Concat(rawCertData).Concat(array2).Concat(rawCertData2)
-                .Concat(array3)
-                .Concat(rawCertData3)
-                .ToArray();
+            return array.Concat(rawCertData).Concat(array2).Concat(rawCertData2).Concat(array3).Concat(rawCertData3).ToArray();
         }
-
 
         [PreserveSource(Hint = "Cleaned")]
         internal bool IsConnected(IPsdzConnection connection)
@@ -223,6 +193,7 @@ namespace PsdzClient.Psdz
             {
                 return ConnectToMotorcycle(projectName, vehicleInfo, 50960, 52410);
             }
+
             int defaultVehicleConnectionPort = (UseTheDoipPort() ? 50162 : 50160);
             return ConnectToCar(projectName, vehicleInfo, defaultVehicleConnectionPort);
         }
@@ -266,16 +237,16 @@ namespace PsdzClient.Psdz
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
-        internal void CloseEdiabasConnectionIfConnectedViaPTTOrENET()
-        {
-            throw new NotImplementedException();
-        }
-
         internal IPsdzConnection SwitchFromEDIABASToPSdZIfConnectedViaPTTOrENET(bool restartHsfzOnError = false)
         {
             CloseEdiabasConnectionIfConnectedViaPTTOrENET();
             return ConnectToPsdz(restartHsfzOnError);
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        internal void CloseEdiabasConnectionIfConnectedViaPTTOrENET()
+        {
+            throw new NotImplementedException();
         }
 
         [PreserveSource(Hint = "Cleaned")]
@@ -340,10 +311,13 @@ namespace PsdzClient.Psdz
                     {
                         return true;
                     }
+
                     return false;
                 }
+
                 return true;
             }
+
             return false;
         }
 
@@ -359,5 +333,10 @@ namespace PsdzClient.Psdz
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Added")]
+        public void RegisterCallbackAndPassCertificatesToPsdzPublic(IPsdzConnection connection)
+        {
+            RegisterCallbackAndPassCertificatesToPsdz(connection);
+        }
     }
 }
