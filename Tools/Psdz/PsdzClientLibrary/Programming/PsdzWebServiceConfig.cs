@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Text.RegularExpressions;
+using PsdzClient;
 
 namespace BMW.Rheingold.Programming
 {
@@ -36,10 +37,10 @@ namespace BMW.Rheingold.Programming
 
         public string[] JarArguments { get; }
 
-        // [UH] istaFolder added
+        [PreserveSource(Hint = "istaFolder added")]
         public PsdzWebServiceConfig(string istaFolder, string dealerId = null)
         {
-            // [UH] replaced logs dir
+            // [UH] [IGNORE] replaced logs dir
             string logsDir = Path.Combine(istaFolder, "logs");
             PsdzWebApiLogDir = Path.Combine(logsDir, "webclient");
             if (!Directory.Exists(PsdzWebApiLogDir))
@@ -67,7 +68,7 @@ namespace BMW.Rheingold.Programming
             {
                 File.Create(ProdiasDriverLogFilePath).Close();
             }
-            // [UH] modified
+            // [UH] [IGNORE] modified
             PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
             EdiabasBinPath = Path.Combine(istaFolder, @"Ediabas\BIN");
             if (EdiabasBinPath == null)
@@ -151,7 +152,7 @@ namespace BMW.Rheingold.Programming
             return 0;
         }
 
-        // [UH] webServiceDir added
+        [PreserveSource(Hint = "webServiceDir added")]
         private static string GetLog4JConfigFilePath(string webServiceDir)
         {
             if (!Directory.Exists(webServiceDir))
@@ -177,7 +178,19 @@ namespace BMW.Rheingold.Programming
             return false;
         }
 
-        // [UH] GetEdiabasBinPath removed
+        private static string GetEdiabasBinPath()
+        {
+            string environmentVariable = Environment.GetEnvironmentVariable("PATH");
+            string[] array = (string.IsNullOrEmpty(environmentVariable) ? new string[0] : environmentVariable.Split(';'));
+            foreach (string text in array)
+            {
+                if (File.Exists(Path.Combine(text, "api32.dll")))
+                {
+                    return text;
+                }
+            }
+            return null;
+        }
 
         private string convertDealerIdToHex(string dealerId)
         {
