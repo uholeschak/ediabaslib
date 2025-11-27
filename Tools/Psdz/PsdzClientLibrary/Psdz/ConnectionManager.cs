@@ -265,16 +265,16 @@ namespace PsdzClient.Psdz
             throw new NotImplementedException();
         }
 
-        internal IPsdzConnection SwitchFromEDIABASToPSdZIfConnectedViaPTTOrENET(bool restartHsfzOnError = false)
-        {
-            CloseEdiabasConnectionIfConnectedViaPTTOrENET();
-            return ConnectToPsdz(restartHsfzOnError);
-        }
-
         [PreserveSource(Hint = "Cleaned")]
         internal void CloseEdiabasConnectionIfConnectedViaPTTOrENET()
         {
             throw new NotImplementedException();
+        }
+
+        internal IPsdzConnection SwitchFromEDIABASToPSdZIfConnectedViaPTTOrENET(bool restartHsfzOnError = false)
+        {
+            CloseEdiabasConnectionIfConnectedViaPTTOrENET();
+            return ConnectToPsdz(restartHsfzOnError);
         }
 
         [PreserveSource(Hint = "Cleaned")]
