@@ -1279,21 +1279,13 @@ namespace PsdzClient.Core
                 }
             }
         }
-#if false
+
+        [PreserveSource(Hint = "Cleaned")]
         public void ShowIsarPopup(IVehicle vecInfo, IFFMDynamicResolver fFMResolver, IInteractionService services)
         {
-            InfoObject documentAndValidateAgainstRuleEvaluation = DocumentUtlitiy.GetDocumentAndValidateAgainstRuleEvaluation(vecInfo, fFMResolver, "POP-IDE%");
-            if (documentAndValidateAgainstRuleEvaluation != null)
-            {
-                services.Register(new InteractionISARPopupModel
-                {
-                    Html = documentAndValidateAgainstRuleEvaluation.Content.TransformedDocument,
-                    Title = documentAndValidateAgainstRuleEvaluation.Title,
-                    DialogSize = 2
-                });
-            }
+            throw new NotImplementedException();
         }
-#endif
+
         public bool ShouldNotValidateFAForOldCars(string ereihe, DateTime constructionDate)
         {
             if (ereiheWithoutFA.Contains(ereihe) || (ereihe == "E46" && constructionDate < new DateTime(2004, 4, 1)))
