@@ -76,21 +76,21 @@ namespace PsdzClient.Core
 
         string GetFourCharEreihe(string ereihe);
 
-        //string GetServiceProgramName(TestModuleName testmodulename);
+        string GetServiceProgramName(TestModuleName testmodulename);
 
-        //IEcuJob SendJobToKombiOrMmi(IVehicle vecInfo, IEcuKom ecuKom, string job, string param, string resultFilter, int retries);
+        IEcuJob SendJobToKombiOrMmi(IVehicle vecInfo, IEcuKom ecuKom, string job, string param, string resultFilter, int retries);
 
-        //IEcuJob SendStatusLesenCcmJobToKombiOrMmi(IVehicle vecInfo, IEcuKom ecuKom);
+        IEcuJob SendStatusLesenCcmJobToKombiOrMmi(IVehicle vecInfo, IEcuKom ecuKom);
 
-        //List<string> RemoveFirstDigitOfSalapaIfLengthIs4(List<string> salapa);
+        List<string> RemoveFirstDigitOfSalapaIfLengthIs4(List<string> salapa);
 
-        //void Add14DigitFakeSerialNumberToFstdat(IVehicle vecInfo, IEnumerable<IEcuJob> jobList);
+        void Add14DigitFakeSerialNumberToFstdat(IVehicle vecInfo, IEnumerable<IEcuJob> jobList);
 
-        //void CheckEcusFor14DigitSerialNumber(IEcuKom ecuKom, IEnumerable<IEcu> ecus);
+        void CheckEcusFor14DigitSerialNumber(IEcuKom ecuKom, IEnumerable<IEcu> ecus);
 
         string[] GetMaxEcuList(BrandName brand, string ereihe);
 
-        //bool ShouldNotValidateFAForOldCars(string ereihe, DateTime constructionDate);
+        bool ShouldNotValidateFAForOldCars(string ereihe, DateTime constructionDate);
 
         bool IsEES25Vehicle(IVehicle vecInfo);
 
