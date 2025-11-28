@@ -16,6 +16,7 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient;
 using PsdzClient.Programming;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Psdz
 {
     public class ConnectionManager : ProgrammingMessageListener, IPsdzProg

@@ -5,15 +5,6 @@ using PsdzClient.Core.Container;
 
 namespace PsdzClient.Core
 {
-    public enum TestModuleName
-    {
-        CheckVoltage,
-        RequestApplicationNumberAndUpgrade,
-        ServiceHistoryAction,
-        RsuStop,
-        RsuStart
-    }
-
     // ToDo: Check on update
     public interface IDiagnosticsBusinessData
     {
@@ -45,7 +36,7 @@ namespace PsdzClient.Core
 
         List<int> GetGatewayEcuAdresses(IVehicle vecInfo);
 
-        //void ShowIsarPopup(IVehicle vecInfo, IFFMDynamicResolver FFMResolver, IInteractionService services);
+        void ShowIsarPopup(IVehicle vecInfo, IFFMDynamicResolver FFMResolver, IInteractionService services);
 
         BNType GetBNType(IVehicle vehicle);
 
@@ -63,11 +54,11 @@ namespace PsdzClient.Core
 
         bool CheckForSpecificModelPopUpForElectricalChecks(string ereihe);
 
-        //void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
+        void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
 
         bool ProcessILevelJobResults(Reactor reactor, IVehicle vecInfo, IEcuJob iJob);
 
-        //bool ProcessILevelJobResultsEES25(Reactor reactor, IVehicle vecInfo, IEcuJob iJob);
+        bool ProcessILevelJobResultsEES25(Reactor reactor, IVehicle vecInfo, IEcuJob iJob);
 
         bool IsSp2021Gateway(IVehicle vecInfo, IEcuKom ecuKom, int retryCount);
 
@@ -75,7 +66,7 @@ namespace PsdzClient.Core
 
         string ReadVinForGroupCars(BNType bNType, IEcuKom ecuKom);
 
-        //string ReadVinForGroupCarsNcar(BNType bNType, IEcuKom ecuKom);
+        string ReadVinForGroupCarsNcar(BNType bNType, IEcuKom ecuKom);
 
         string ReadVinForMotorcycles(BNType bNType, IEcuKom ecuKom);
 
