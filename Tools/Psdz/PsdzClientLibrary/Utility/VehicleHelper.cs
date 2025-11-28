@@ -11,6 +11,7 @@ namespace PsdzClient.Utility
             {
                 return false;
             }
+
             IFARuleEvaluation iFARuleEvaluation = ((vehicle.TargetFA != null) ? vehicle.TargetFA : vehicle.FA);
             if (iFARuleEvaluation.SA != null)
             {
@@ -20,12 +21,14 @@ namespace PsdzClient.Utility
                     {
                         return true;
                     }
+
                     if (item.Length == 4 && string.Compare(item.Substring(1), checkSA, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         return true;
                     }
                 }
             }
+
             if (iFARuleEvaluation.E_WORT != null)
             {
                 foreach (string item2 in iFARuleEvaluation.E_WORT)
@@ -36,6 +39,7 @@ namespace PsdzClient.Utility
                     }
                 }
             }
+
             if (iFARuleEvaluation.HO_WORT != null)
             {
                 foreach (string item3 in iFARuleEvaluation.HO_WORT)
@@ -46,6 +50,7 @@ namespace PsdzClient.Utility
                     }
                 }
             }
+
             return false;
         }
 
@@ -55,6 +60,7 @@ namespace PsdzClient.Utility
             {
                 return null;
             }
+
             foreach (IIdentEcu item in vehicle.ECU)
             {
                 if (string.Compare(item.TITLE_ECUTREE, grobName, StringComparison.OrdinalIgnoreCase) == 0)
@@ -62,6 +68,7 @@ namespace PsdzClient.Utility
                     return item;
                 }
             }
+
             return null;
         }
 
@@ -71,7 +78,8 @@ namespace PsdzClient.Utility
             {
                 return null;
             }
-            string[] array = ECU_SGBD.Split(new char[1] { '|' });
+
+            string[] array = ECU_SGBD.Split('|');
             string[] array2 = array;
             foreach (string b in array2)
             {
@@ -83,6 +91,7 @@ namespace PsdzClient.Utility
                     }
                 }
             }
+
             return null;
         }
 
@@ -92,14 +101,16 @@ namespace PsdzClient.Utility
             {
                 return null;
             }
+
             foreach (IIdentEcu item in vehicle.ECU)
             {
                 if (string.IsNullOrEmpty(item.ECU_GRUPPE))
                 {
                     continue;
                 }
-                string[] array = ECU_GRUPPE.Split(new char[1] { '|' });
-                string[] array2 = item.ECU_GRUPPE.Split(new char[1] { '|' });
+
+                string[] array = ECU_GRUPPE.Split('|');
+                string[] array2 = item.ECU_GRUPPE.Split('|');
                 string[] array3 = array2;
                 foreach (string a in array3)
                 {
@@ -113,6 +124,7 @@ namespace PsdzClient.Utility
                     }
                 }
             }
+
             return null;
         }
 
