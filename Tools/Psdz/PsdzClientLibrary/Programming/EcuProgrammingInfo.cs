@@ -17,16 +17,12 @@ using System.Linq;
 namespace PsdzClient.Programming
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]
-    public class EcuProgrammingInfo : INotifyPropertyChanged, IEcuProgrammingInfo
-	{
+    public class EcuProgrammingInfo : IEcuProgrammingInfo, INotifyPropertyChanged
+    {
         protected EcuProgrammingInfoData data;
-
         private ObservableCollectionEx<ProgrammingAction> programmingActionList;
-
         private EcuScheduledState scheduled;
-
         public IProgrammingAction this[ProgrammingActionType type] => GetProgrammingAction(type);
-
         internal EcuProgrammingInfoData Data => data;
 
         public IEcu Ecu
@@ -35,6 +31,7 @@ namespace PsdzClient.Programming
             {
                 return data.Ecu;
             }
+
             private set
             {
                 data.Ecu = value;
@@ -47,6 +44,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsCodingDisabled;
             }
+
             set
             {
                 data.IsCodingDisabled = value;
@@ -59,6 +57,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsCodingScheduled;
             }
+
             set
             {
                 if (value && !Scheduled.HasFlag(EcuScheduledState.CodingScheduledByUser))
@@ -78,6 +77,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsProgrammingDisabled;
             }
+
             set
             {
                 data.IsProgrammingDisabled = value;
@@ -90,6 +90,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsProgrammingSelectionDisabled;
             }
+
             set
             {
                 data.IsProgrammingSelectionDisabled = value;
@@ -102,6 +103,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsCodingSelectionDisabled;
             }
+
             set
             {
                 data.IsCodingSelectionDisabled = value;
@@ -114,6 +116,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsProgrammingScheduled;
             }
+
             set
             {
                 if (value && !Scheduled.HasFlag(EcuScheduledState.ProgrammingScheduledByUser))
@@ -135,6 +138,7 @@ namespace PsdzClient.Programming
             {
                 return data.ProgressValue;
             }
+
             set
             {
                 data.ProgressValue = value;
@@ -148,6 +152,7 @@ namespace PsdzClient.Programming
             {
                 return scheduled;
             }
+
             private set
             {
                 if (scheduled != value)
@@ -174,6 +179,7 @@ namespace PsdzClient.Programming
             {
                 return data.SvkCurrent;
             }
+
             internal set
             {
                 data.SvkCurrent = value;
@@ -187,6 +193,7 @@ namespace PsdzClient.Programming
             {
                 return data.SvkTarget;
             }
+
             internal set
             {
                 data.SvkTarget = value;
@@ -200,6 +207,7 @@ namespace PsdzClient.Programming
             {
                 return data.Category;
             }
+
             set
             {
                 data.Category = value;
@@ -212,6 +220,7 @@ namespace PsdzClient.Programming
             {
                 return Data.FlashOrder;
             }
+
             set
             {
                 Data.FlashOrder = value;
@@ -224,6 +233,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsExchangeDoneDisabled;
             }
+
             set
             {
                 data.IsExchangeDoneDisabled = value;
@@ -236,6 +246,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsExchangeScheduledDisabled;
             }
+
             set
             {
                 data.IsExchangeScheduledDisabled = value;
@@ -248,6 +259,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsExchangeDone;
             }
+
             set
             {
                 data.IsExchangeDone = value;
@@ -261,6 +273,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsExchangeScheduled;
             }
+
             set
             {
                 data.IsExchangeScheduled = value;
@@ -274,21 +287,23 @@ namespace PsdzClient.Programming
         internal PlaceholderType XepSwiActionList { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         internal EcuProgrammingInfo(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder, bool withInitData = true)
         {
             if (ecu == null)
             {
                 throw new ArgumentNullException("ecu");
             }
+
             if (programmingObjectBuilder == null)
             {
                 throw new ArgumentNullException("programmingObjectBuilder");
             }
+
             if (withInitData)
             {
                 InitData(ecu, programmingObjectBuilder);
             }
+
             Init();
         }
 
@@ -315,6 +330,7 @@ namespace PsdzClient.Programming
             {
                 data = new EcuProgrammingInfoData();
             }
+
             Ecu = ecu;
             data.EcuTitle = Ecu.TITLE_ECUTREE;
             data.EcuDescription = data.EcuTitle;
@@ -338,6 +354,7 @@ namespace PsdzClient.Programming
                     return programmingAction;
                 }
             }
+
             return null;
         }
 
@@ -349,6 +366,7 @@ namespace PsdzClient.Programming
                 list.AddRange(ProgrammingActions);
                 return list;
             }
+
             foreach (IProgrammingAction programmingAction in ProgrammingActions)
             {
                 if (programmingActionTypeFilter.Contains(programmingAction.Type))
@@ -356,6 +374,7 @@ namespace PsdzClient.Programming
                     list.Add(programmingAction);
                 }
             }
+
             return list;
         }
 
@@ -369,6 +388,7 @@ namespace PsdzClient.Programming
                     list.Add(programmingAction);
                 }
             }
+
             return list;
         }
 
@@ -384,9 +404,11 @@ namespace PsdzClient.Programming
                         dictionary[item].Add(talLine);
                         continue;
                     }
+
                     dictionary.Add(item, new List<IPsdzTalLine> { talLine });
                 }
             }
+
             foreach (ProgrammingActionType key in dictionary.Keys)
             {
                 List<ProgrammingAction> list;
@@ -399,6 +421,7 @@ namespace PsdzClient.Programming
                     list = new List<ProgrammingAction>();
                     list.Add(GetProgrammingAction(key) as ProgrammingAction);
                 }
+
                 foreach (ProgrammingAction item2 in list)
                 {
                     if (item2 != null)
@@ -422,6 +445,7 @@ namespace PsdzClient.Programming
             {
                 Log.Error("ProgrammingUtils.AddProgrammingActionsToEcu()", "Param 'talLines' is missing!");
             }
+
             IDictionary<ProgrammingActionType, IList<SgbmIdChange>> dictionary = CalculateActionStates(talLines);
             if (dictionary.ContainsKey(ProgrammingActionType.Unmounting) && dictionary.ContainsKey(ProgrammingActionType.Mounting))
             {
@@ -431,6 +455,7 @@ namespace PsdzClient.Programming
                 AddSingleProgrammingAction(ProgrammingActionType.Replacement, preselectAction, order, null, null, list);
                 return;
             }
+
             IList<int> affectedEcuDiagAddressesFromTalLines = GetAffectedEcuDiagAddressesFromTalLines(talLines);
             foreach (ProgrammingActionType key in dictionary.Keys)
             {
@@ -438,11 +463,13 @@ namespace PsdzClient.Programming
                 {
                     order *= 100;
                 }
+
                 if (key == ProgrammingActionType.SFAWrite || key == ProgrammingActionType.SFADelete)
                 {
                     AddSingleSfaProgrammingAction(talLines, key, preselectAction, order);
                     continue;
                 }
+
                 string additionalTitleInfoForFscActions = GetAdditionalTitleInfoForFscActions(key, talLines, session);
                 AddSingleProgrammingAction(key, preselectAction, order, null, null, dictionary[key], additionalTitleInfoForFscActions, affectedEcuDiagAddressesFromTalLines);
             }
@@ -450,21 +477,23 @@ namespace PsdzClient.Programming
 
         private static List<int> GetAffectedEcuDiagAddressesFromTalLines(IEnumerable<IPsdzTalLine> talLines)
         {
-            return (from talLine in talLines
+            return (
+                from talLine in talLines
                 where talLine.EcuIdentifier != null
                 select talLine.EcuIdentifier.DiagAddrAsInt).Distinct().ToList();
         }
 
         private void AddSingleSfaProgrammingAction(IEnumerable<IPsdzTalLine> talLines, ProgrammingActionType actionType, bool preselectAction, int order)
         {
-            var (sgbmIdList, sgbmIdList2) = GetDividedSgbmIdsForSfa(talLines, actionType);
-            var (enumerable, enumerable2) = GroupTalLinesForSfa(actionType, talLines);
+            var(sgbmIdList, sgbmIdList2) = GetDividedSgbmIdsForSfa(talLines, actionType);
+            var(enumerable, enumerable2) = GroupTalLinesForSfa(actionType, talLines);
             if (enumerable.Any())
             {
                 string additionalTitleInfoForSfaActions = GetAdditionalTitleInfoForSfaActions(actionType, enumerable, systemFunction: true);
                 List<int> affectedEcuDiagAddressesFromTalLines = GetAffectedEcuDiagAddressesFromTalLines(enumerable);
                 AddSingleProgrammingAction(actionType, preselectAction, order, null, null, sgbmIdList, additionalTitleInfoForSfaActions, affectedEcuDiagAddressesFromTalLines, isSystemSfaAction: true);
             }
+
             if (enumerable2.Any())
             {
                 string additionalTitleInfoForSfaActions2 = GetAdditionalTitleInfoForSfaActions(actionType, enumerable2, systemFunction: false);
@@ -486,6 +515,7 @@ namespace PsdzClient.Programming
                     {
                         continue;
                     }
+
                     IPsdzFsaTa psdzFsaTa = GetSfaTasForActionType(talLine, actionType).FirstOrDefault((IPsdzFsaTa x) => x.SgbmId == id);
                     if (psdzFsaTa != null)
                     {
@@ -506,6 +536,7 @@ namespace PsdzClient.Programming
                     }
                 }
             }
+
             return (systemTokenSgbmIds: list, customerTokenSgbmIds: list2);
         }
 
@@ -522,13 +553,16 @@ namespace PsdzClient.Programming
                     {
                         list.Add(item);
                     }
+
                     if (GetSfaTasForActionType(item, actionType).Any((IPsdzFsaTa x) => x == null || !SecureFeatureData.IsSystemFeature(x.FeatureId)))
                     {
                         list2.Add(item);
                     }
                 }
+
                 return (systemTalLines: list, customerTalLines: list2);
             }
+
             return (systemTalLines: null, customerTalLines: null);
         }
 
@@ -551,15 +585,17 @@ namespace PsdzClient.Programming
             {
                 foreach (IPsdzTalLine item in talLines.Where((IPsdzTalLine x) => x.TaCategories == PsdzTaCategories.SFADeploy).ToList())
                 {
-                    IEnumerable<IPsdzFsaTa> tas = from x in GetSfaTasForActionType(item, actionType)
-                                                  where SecureFeatureData.IsSystemFeature(x.FeatureId) == systemFunction
-                                                  select x;
+                    IEnumerable<IPsdzFsaTa> tas =
+                        from x in GetSfaTasForActionType(item, actionType)
+                        where SecureFeatureData.IsSystemFeature(x.FeatureId) == systemFunction
+                        select x;
                     if (talLines.Any())
                     {
                         return GetDetailedDescriptionLineFromSfaDeployTa(tas, systemFunction);
                     }
                 }
             }
+
             return null;
         }
 
@@ -569,6 +605,7 @@ namespace PsdzClient.Programming
             {
                 return string.Join(Environment.NewLine, tas.Select((IPsdzFsaTa x) => string.Format(CultureInfo.InvariantCulture, " 0x{0:X6}", x.FeatureId)));
             }
+
             return string.Join(Environment.NewLine, tas.Select((IPsdzFsaTa x) => " " + SecureFeatureData.GetSecureFeatureName(x.FeatureId) + " (" + string.Format(CultureInfo.InvariantCulture, "0x{0:X6}", x.FeatureId) + ")"));
         }
 
@@ -581,6 +618,7 @@ namespace PsdzClient.Programming
                     Log.Warning(Log.CurrentMethod(), "session is null, so the additional FSC title lines can't be calculated (The title of each ta requires data from the session to be determined).");
                     return null;
                 }
+
                 foreach (IPsdzTalLine item in talLines.Where((IPsdzTalLine x) => x.TaCategories == PsdzTaCategories.FscDeploy).ToList())
                 {
                     List<IPsdzTa> list = FilterTalsByProgrammingActionType(item, actionType).ToList();
@@ -591,6 +629,7 @@ namespace PsdzClient.Programming
                     }
                 }
             }
+
             return null;
         }
 
@@ -601,6 +640,7 @@ namespace PsdzClient.Programming
                 Log.Warning(Log.CurrentMethod(), "psdzTa.ApplicationId is null, preventing us from displaying a proper description.");
                 return " " + FormatedData.Localize("#TherapyPlanEntryOrigin.unknown");
             }
+
             string text = string.Format(CultureInfo.InvariantCulture, $"0x{psdzFscTa.ApplicationId.ApplicationNumber:X4}{psdzFscTa.ApplicationId.UpgradeIndex:X4}");
             string enablingCodeName = EnablingCodeData.GetEnablingCodeName(psdzFscTa.ApplicationId.ApplicationNumber, psdzFscTa.ApplicationId.UpgradeIndex, (Vehicle)session.Vehicle, session.FFMResolver);
             return " " + enablingCodeName + " (" + text + ")";
@@ -618,10 +658,12 @@ namespace PsdzClient.Programming
             {
                 programmingAction.SgbmIds.AddRange(sgbmIdList);
             }
+
             if (!string.IsNullOrEmpty(extraTitle))
             {
                 programmingAction.Title = programmingAction.Title + Environment.NewLine + extraTitle;
             }
+
             programmingActionList.Add(programmingAction);
             data.ProgrammingActionData.Add(programmingAction.DataContext);
             Log.Info("EcuProgrammingInfo.AddSingleProgrammingAction()", "ECU: 0x{0:X2} - Action: {1} - State: {2}", Ecu.ID_SG_ADR, programmingAction.Type, programmingAction.StateProgramming);
@@ -638,12 +680,14 @@ namespace PsdzClient.Programming
                 {
                     IsExchangeScheduled = false;
                 }
+
                 IsExchangeDone = false;
             }
             else
             {
                 Scheduled &= ~remove;
             }
+
             IsCodingDisabled = IsCodingSelectionDisabled;
             IsProgrammingDisabled = IsProgrammingSelectionDisabled;
             IsExchangeScheduledDisabled = false;
@@ -673,6 +717,7 @@ namespace PsdzClient.Programming
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -687,6 +732,7 @@ namespace PsdzClient.Programming
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -712,8 +758,8 @@ namespace PsdzClient.Programming
                     set.Add(ProgrammingActionType.FscBakup);
                     break;
                 case PsdzTaCategories.FscDeploy:
-                    foreach (PsdzSwtActionType? item in from ta in talLine.FscDeploy.Tas.OfType<PsdzFscDeployTa>()
-                                                        select ta.Action)
+                    foreach (PsdzSwtActionType? item in
+                        from ta in talLine.FscDeploy.Tas.OfType<PsdzFscDeployTa>()select ta.Action)
                     {
                         switch (item)
                         {
@@ -732,6 +778,7 @@ namespace PsdzClient.Programming
                                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported FSC action {0}.", item));
                         }
                     }
+
                     break;
                 case PsdzTaCategories.HddUpdate:
                     set.Add(ProgrammingActionType.HddUpdate);
@@ -756,20 +803,24 @@ namespace PsdzClient.Programming
                     {
                         set.Add(ProgrammingActionType.SFAWrite);
                     }
+
                     if (talLine.SFADeploy.Tas.OfType<PsdzSFADeleteTA>().Any())
                     {
                         set.Add(ProgrammingActionType.SFADelete);
                     }
+
                     if (talLine.SFADeploy.Tas.OfType<PsdzSFAVerifyTA>().Any())
                     {
                         set.Add(ProgrammingActionType.SFAVerfy);
                     }
+
                     break;
                 default:
                     throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported TA category type {0}.", talLine.TaCategories));
                 case PsdzTaCategories.Unknown:
                     break;
             }
+
             return set;
         }
 
@@ -782,61 +833,73 @@ namespace PsdzClient.Programming
                     {
                         return new List<PsdzFscDeployTa>();
                     }
-                    return from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
-                           where ta.Action == PsdzSwtActionType.ActivateStore
-                           select ta;
+
+                    return
+                        from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
+                        where ta.Action == PsdzSwtActionType.ActivateStore
+                        select ta;
                 case ProgrammingActionType.FscActivate:
                     if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
                     {
                         return new List<PsdzFscDeployTa>();
                     }
-                    return from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
-                           where ta.Action == PsdzSwtActionType.ActivateUpdate || ta.Action == PsdzSwtActionType.ActivateUpgrade || ta.Action == PsdzSwtActionType.WriteVin
-                           select ta;
+
+                    return
+                        from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
+                        where ta.Action == PsdzSwtActionType.ActivateUpdate || ta.Action == PsdzSwtActionType.ActivateUpgrade || ta.Action == PsdzSwtActionType.WriteVin
+                        select ta;
                 case ProgrammingActionType.FscDeactivate:
                     if (talLine.TaCategories != PsdzTaCategories.FscDeploy)
                     {
                         return new List<PsdzFscDeployTa>();
                     }
-                    return from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
-                           where ta.Action == PsdzSwtActionType.Deactivate
-                           select ta;
+
+                    return
+                        from ta in talLine.TaCategory.Tas.OfType<PsdzFscDeployTa>()
+                        where ta.Action == PsdzSwtActionType.Deactivate
+                        select ta;
                 case ProgrammingActionType.SFAWrite:
                     if (talLine.TaCategories != PsdzTaCategories.SFADeploy)
                     {
                         return new List<PsdzSFAWriteTA>();
                     }
+
                     return talLine.TaCategory.Tas.OfType<PsdzSFAWriteTA>();
                 case ProgrammingActionType.SFADelete:
                     if (talLine.TaCategories != PsdzTaCategories.SFADeploy)
                     {
                         return new List<PsdzSFADeleteTA>();
                     }
+
                     return talLine.TaCategory.Tas.OfType<PsdzSFADeleteTA>();
                 case ProgrammingActionType.SFAVerfy:
                     if (talLine.TaCategories != PsdzTaCategories.SFADeploy)
                     {
                         return new List<PsdzSFAVerifyTA>();
                     }
+
                     return talLine.TaCategory.Tas.OfType<PsdzSFAVerifyTA>();
                 default:
+                {
+                    ISet<ProgrammingActionType> set = MapProgrammingActionType(talLine);
+                    if (set.Count == 0)
                     {
-                        ISet<ProgrammingActionType> set = MapProgrammingActionType(talLine);
-                        if (set.Count == 0)
-                        {
-                            Log.Warning(Log.CurrentMethod(), "talLineActionTypes was empty. Assuming all tas are of the correct type.");
-                            return talLine.TaCategory.Tas;
-                        }
-                        if (set.Count > 1)
-                        {
-                            Log.Warning(Log.CurrentMethod(), "talLineActionTypes had multiple values yet fell through to the default handling. This likely means that MapProgrammingActionType has been changed with more special cases, so updating this method as well would probably not be amiss.");
-                        }
-                        if (!set.Contains(programmingActionType))
-                        {
-                            return new List<IPsdzTa>();
-                        }
+                        Log.Warning(Log.CurrentMethod(), "talLineActionTypes was empty. Assuming all tas are of the correct type.");
                         return talLine.TaCategory.Tas;
                     }
+
+                    if (set.Count > 1)
+                    {
+                        Log.Warning(Log.CurrentMethod(), "talLineActionTypes had multiple values yet fell through to the default handling. This likely means that MapProgrammingActionType has been changed with more special cases, so updating this method as well would probably not be amiss.");
+                    }
+
+                    if (!set.Contains(programmingActionType))
+                    {
+                        return new List<IPsdzTa>();
+                    }
+
+                    return talLine.TaCategory.Tas;
+                }
             }
         }
 
@@ -852,6 +915,7 @@ namespace PsdzClient.Programming
                         Log.Warning(Log.CurrentMethod(), "'" + Ecu.EcuUid + "' seems to be Master and not Smac");
                         continue;
                     }
+
                     Log.Info(Log.CurrentMethod(), $"Found SmacTransfer TalLine: '{ta.Id}'");
                     if (talLine.TaCategories == PsdzTaCategories.SmacTransferStart)
                     {
@@ -868,6 +932,7 @@ namespace PsdzClient.Programming
                     }
                 }
             }
+
             return list;
         }
 
@@ -887,6 +952,7 @@ namespace PsdzClient.Programming
                     list.Add(new SgbmIdChange(GetSgbmIdActual(item), sgbmIdentifier.ToString()));
                 }
             }
+
             return list;
         }
 
@@ -914,6 +980,7 @@ namespace PsdzClient.Programming
                     }
                 }
             }
+
             return "--";
         }
 
@@ -928,10 +995,12 @@ namespace PsdzClient.Programming
                     {
                         dictionary.Add(item, new List<SgbmIdChange>());
                     }
+
                     IList<SgbmIdChange> sgbmIds = GetSgbmIds(talLine);
                     dictionary[item].AddRange(sgbmIds);
                 }
             }
+
             return dictionary;
         }
 
@@ -947,6 +1016,7 @@ namespace PsdzClient.Programming
                             notifyPropertyChanged2.PropertyChanged += OnPropertyChanged;
                         }
                     }
+
                     this.PropertyChanged.NotifyPropertyChanged(this, () => State);
                     OnPropertyChanged("Item[]");
                     break;
@@ -958,6 +1028,7 @@ namespace PsdzClient.Programming
                             notifyPropertyChanged.PropertyChanged -= OnPropertyChanged;
                         }
                     }
+
                     this.PropertyChanged.NotifyPropertyChanged(this, () => State);
                     OnPropertyChanged("Item[]");
                     break;
