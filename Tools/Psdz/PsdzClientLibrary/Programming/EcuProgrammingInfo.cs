@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "Modified", AccessModified = true)]
+    [PreserveSource(Hint = "Changed to public", AccessModified = true)]
     public class EcuProgrammingInfo : INotifyPropertyChanged, IEcuProgrammingInfo
 	{
         protected EcuProgrammingInfoData data;
