@@ -11,6 +11,7 @@ namespace PsdzClient.Core
     {
         private readonly IRuleEvaluationServices ruleEvaluationServices;
 
+        [PreserveSource(Hint = "Added")]
         private readonly PsdzDatabase database;
 
         private Action startRuleMetrics;
