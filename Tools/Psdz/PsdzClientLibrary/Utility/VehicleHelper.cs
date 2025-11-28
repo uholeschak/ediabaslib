@@ -116,19 +116,10 @@ namespace PsdzClient.Utility
             return null;
         }
 
-#if false
-        internal static bool GetISTACharacteristics(decimal id, out string value, long datavalueId, IDataProviderRuleEvaluation dataProvider, ILogger logger, IVehicleRuleEvaluation vehcile, ValidationRuleInternalResults internalResult)
+        [PreserveSource(Hint = "Cleaned")]
+        internal static bool GetISTACharacteristics(decimal id, out string value, long datavalueId)
         {
-            IXepCharacteristicRoots characteristicRootsById = dataProvider.GetCharacteristicRootsById(id);
-            if (characteristicRootsById != null)
-            {
-                VehicleCharacteristicVehicleHelper vehicleCharacteristicVehicleHelper = new VehicleCharacteristicVehicleHelper(dataProvider, vehcile);
-                return vehicleCharacteristicVehicleHelper.GetISTACharacteristics(characteristicRootsById.Nodeclass, out value, id, vehcile, datavalueId, internalResult);
-            }
-            logger.Warning("Vehicle.getISTACharactersitics()", "No entry found in CharacteristicRoots for id: {0}!", id);
-            value = "???";
-            return false;
+            throw new NotImplementedException();
         }
-#endif
     }
 }
