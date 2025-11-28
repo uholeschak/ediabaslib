@@ -17,13 +17,14 @@ namespace PsdzClient.Core
 
         private Action stopRuleMetrics;
 
+        [PreserveSource(Hint = "Modified")]
         public RuleEvaluationUtill(IRuleEvaluationServices ruleEvaluationServices, PsdzDatabase database, Action startRuleMetrics = null, Action stopRuleMetrics = null)
         {
-            //ruleCache = dataProvider.RuleCache;
-            //this.dealer = dealer;
+            // [IGNORE] ruleCache = dataProvider.RuleCache;
+            // [IGNORE] this.dealer = dealer;
             this.ruleEvaluationServices = ruleEvaluationServices;
             this.database = database;
-            //this.dataProvider = dataProvider;
+            //  [IGNORE] this.dataProvider = dataProvider;
             this.startRuleMetrics = startRuleMetrics;
             this.stopRuleMetrics = stopRuleMetrics;
         }
