@@ -5,37 +5,24 @@ using System;
 using System.Linq;
 using PsdzClient;
 
+#pragma warning disable CS0649, CS0169
 namespace PsdzClient.Core
 {
     public class RuleEvaluationUtill
     {
         private readonly IRuleCache ruleCache;
-
         private readonly IRuleEvaluationServices ruleEvaluationServices;
-
         [PreserveSource(Hint = "IDataProviderRuleEvaluation", Placeholder = true)]
         private readonly PlaceholderType dataProvider;
-
         private IFFMDynamicResolverRuleEvaluation ffmResolver;
-
         private HashSet<decimal> notValidRulesIds;
-
         private Dictionary<decimal, IRuleExpression> ruleExpressionsToEvaluate;
-
         private HashSet<decimal> rulesToEvaluate;
-
         private IVehicleRuleEvaluation vehicle;
-
         [PreserveSource(Hint = "IDealer", Placeholder = true)]
         private PlaceholderType dealer;
-
         private Action startRuleMetrics;
-
         private Action stopRuleMetrics;
-
-        [PreserveSource(Hint = "Added")]
-        private readonly PsdzDatabase database;
-
         [PreserveSource(Hint = "Modified")]
         public RuleEvaluationUtill(IRuleEvaluationServices ruleEvaluationServices, PsdzDatabase database, Action startRuleMetrics = null, Action stopRuleMetrics = null)
         {
@@ -54,6 +41,7 @@ namespace PsdzClient.Core
             {
                 return new HashSet<decimal>();
             }
+
             notValidRulesIds = new HashSet<decimal>();
             rulesToEvaluate = new HashSet<decimal>();
             ruleExpressionsToEvaluate = new Dictionary<decimal, IRuleExpression>();
@@ -61,6 +49,7 @@ namespace PsdzClient.Core
             {
                 rulesToEvaluate.Add(item);
             }
+
             this.vehicle = vehicle;
             this.ffmResolver = ffmResolver;
             try
@@ -75,6 +64,7 @@ namespace PsdzClient.Core
             {
                 ruleEvaluationServices.Logger.ErrorException(ruleEvaluationServices.Logger.CurrentMethod(), exception);
             }
+
             return notValidRulesIds;
         }
 
@@ -90,6 +80,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             HashSet<decimal> hashSet = new HashSet<decimal>();
             foreach (decimal item in rulesToEvaluate)
             {
@@ -100,16 +91,19 @@ namespace PsdzClient.Core
                     AddIfNotContains(hashSet, item);
                     ruleEvaluationServices.Logger.Info(ruleEvaluationServices.Logger.CurrentMethod(), $"Mapped ID '{value.Value}' to Rule with ID '{item}'");
                 }
+
                 if (ruleExpression == null && ruleCache.CacheXepRules.ContainsKey(item))
                 {
                     ruleExpression = ruleCache.CacheXepRules[item];
                     AddIfNotContains(hashSet, item);
                 }
+
                 if (ruleExpression != null)
                 {
                     ruleExpressionsToEvaluate[item] = ruleExpression;
                 }
             }
+
             if (hashSet.Any())
             {
                 rulesToEvaluate = new HashSet<decimal>(rulesToEvaluate.Except(hashSet));
@@ -123,6 +117,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             HashSet<decimal> hashSet = new HashSet<decimal>();
             foreach (decimal item in rulesToEvaluate)
             {
@@ -134,9 +129,11 @@ namespace PsdzClient.Core
                         ruleCache.SearchCacheContainer.SetDiagObj(item, validity: false);
                         ruleCache.SearchCacheContainer.SetInfoObj(item, validity: false);
                     }
+
                     AddIfNotContains(hashSet, item);
                 }
             }
+
             rulesToEvaluate = new HashSet<decimal>(rulesToEvaluate.Except(hashSet));
         }
 
@@ -151,6 +148,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             HashSet<decimal> hashSet = new HashSet<decimal>();
             foreach (decimal item in rulesToEvaluate)
             {
@@ -159,12 +157,14 @@ namespace PsdzClient.Core
                 {
                     key = value.Value;
                 }
+
                 if (ruleCache.PatchXepRules.ContainsKey(key))
                 {
                     ruleExpressionsToEvaluate[item] = ruleCache.PatchXepRules[key];
                     AddIfNotContains(hashSet, item);
                 }
             }
+
             if (hashSet.Any())
             {
                 rulesToEvaluate = new HashSet<decimal>(rulesToEvaluate.Except(hashSet));
@@ -186,6 +186,7 @@ namespace PsdzClient.Core
             {
                 return;
             }
+
             startRuleMetrics?.Invoke();
             foreach (decimal key in ruleExpressionsToEvaluate.Keys)
             {
@@ -199,6 +200,7 @@ namespace PsdzClient.Core
                     ruleCache?.SearchCacheContainer.SetDiagObj(key, validity: false);
                     ruleCache?.SearchCacheContainer?.SetInfoObj(key, validity: false);
                 }
+
                 if (ruleCache?.SearchCacheContainer != null)
                 {
                     IRuleCache obj = ruleCache;
@@ -208,7 +210,11 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             stopRuleMetrics?.Invoke();
         }
+
+        [PreserveSource(Hint = "Added")]
+        private readonly PsdzDatabase database;
     }
 }
