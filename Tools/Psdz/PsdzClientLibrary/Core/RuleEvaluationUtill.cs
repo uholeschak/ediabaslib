@@ -78,6 +78,7 @@ namespace PsdzClient.Core
             return notValidRulesIds;
         }
 
+        [PreserveSource(Hint = "ruleId as string")]
         internal bool EvaluateSingleRuleExpression(Vehicle vehicle, string ruleId, IFFMDynamicResolver ffmResolver)
         {
             return database.EvaluateXepRulesById(ruleId, vehicle, ffmResolver, null);
