@@ -1097,8 +1097,7 @@ namespace CarSimulator
                                 if (pkcs12Data != null)
                                 {
 #if NET9_0_OR_GREATER
-                                    X509Certificate2Collection collection = new X509Certificate2Collection();
-                                    collection.Import(pkcs12Data, ServerCertPwd, X509KeyStorageFlags.Exportable);
+                                    X509Certificate2Collection collection = X509CertificateLoader.LoadPkcs12Collection(pkcs12Data, ServerCertPwd);
                                     if (collection.Count > 0)
                                     {
                                         _serverCertificate = collection[0]; // First cert with private key
