@@ -1215,7 +1215,11 @@ namespace S29CertGenerator
                     return null;
                 }
 
+#if NET9_0_OR_GREATER
+                X509Certificate2 caCert = X509CertificateLoader.LoadCertificate(issuerCert.GetEncoded());
+#else
                 X509Certificate2 caCert = new X509Certificate2(issuerCert.GetEncoded());
+#endif
                 if (!EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa, caCert.Thumbprint) ||
                     !EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa, subCaCert.Thumbprint))
                 {
