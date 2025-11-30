@@ -14,6 +14,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Threading;
+using PsdzClient;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -42,6 +43,7 @@ namespace BMW.Rheingold.Psdz
 
         public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged;
 
+        [PreserveSource(Hint = "Modified")]
         public WebCallHandler(string baseUrl, Action prepareExecuteRequestAction, Func<bool> isPsdzInitialized)
         {
             Name = "WebCallHandler";
@@ -51,9 +53,7 @@ namespace BMW.Rheingold.Psdz
             RestClientOptions options = new RestClientOptions(baseUrl)
             {
                 ThrowOnAnyError = true,
-#pragma warning disable CS0618 // Type or member is obsolete
-                MaxTimeout = (int)TimeSpan.FromMinutes(5.0).TotalMilliseconds,
-#pragma warning restore CS0618 // Type or member is obsolete
+                // [IGNORE] MaxTimeout = (int)TimeSpan.FromMinutes(5.0).TotalMilliseconds,
                 RemoteCertificateValidationCallback = ValidateWebserviceCertificate
             };
             _client = new RestClient(options);

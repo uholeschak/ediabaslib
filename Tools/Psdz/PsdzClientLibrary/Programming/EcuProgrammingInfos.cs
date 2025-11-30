@@ -474,7 +474,8 @@ namespace PsdzClient.Programming
 
 		protected IVehicle vehicle;
 
-		//private readonly IDatabaseProvider db;
+        [PreserveSource(Hint = "Added", Placeholder = true)]
+		private readonly PlaceholderType db;
 
 		private readonly IFFMDynamicResolver ffmResolver;
 
