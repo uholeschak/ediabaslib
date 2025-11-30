@@ -35,6 +35,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "Changed to public")]
         public ProgrammingObjectBuilder ProgrammingObjectBuilder
         {
             get
