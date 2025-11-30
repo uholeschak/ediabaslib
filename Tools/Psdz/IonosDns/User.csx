@@ -1,4 +1,5 @@
 ﻿#r "System.Xml.dll"
+#r "System.Xml.ReaderWriter.dll"
 // Requires CodegenCS.SourceGenerator NuGet package
 using CodegenCS.Runtime;
 using Newtonsoft.Json;

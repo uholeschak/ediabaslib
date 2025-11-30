@@ -1,4 +1,5 @@
 ﻿#r "System.Xml.dll"
+#r "System.Xml.ReaderWriter.dll"
 // // Requires CodegenCS VS extension
 // https://marketplace.visualstudio.com/items?itemName=Drizin.CodegenCS
 // Additionally install: dotnet tool install --global dotnet-codegencs

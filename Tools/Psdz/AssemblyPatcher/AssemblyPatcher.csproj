@@ -12,9 +12,6 @@
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="User.log" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -23,24 +20,35 @@
   </ItemGroup>
   <ItemGroup>
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CodegenCSOutput" />
-    <AdditionalFiles Include="User.csx" CodegenCSOutput="File" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnpatch\dnpatch.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="CodegenCS.SourceGenerator" Version="3.5.2" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="dnlib" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup>
     <None Update="User.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <DependentUpon>User.csx</DependentUpon>
+    </None>
+    <None Update="User.log">
+      <DependentUpon>User.csx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Data\License.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="User.csx">
+      <Generator>CodegenCS</Generator>
+      <LastGenOutput>User.log</LastGenOutput>
+    </Content>
   </ItemGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;set &quot;CodegenCs=%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe&quot;&#xD;&#xA;IF NOT EXIST !CodegenCs! (&#xD;&#xA;  echo install: dotnet tool install --global dotnet-codegencs&#xD;&#xA;  EXIT /b 1&#xD;&#xA;)&#xD;&#xA;set &quot;OutputDir=$(ProjectDir)&quot;&#xD;&#xA;IF &quot;!OutputDir:~-1!&quot;==&quot;\&quot; SET &quot;OutputDir=!OutputDir:~0,-1!&quot;&#xD;&#xA;echo Output dir: &quot;!OutputDir!&quot;&#xD;&#xA;!CodegenCs!  template run &quot;$(ProjectDir)User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;!OutputDir!&quot;" />
+  </Target>
 </Project>
