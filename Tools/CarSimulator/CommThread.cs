@@ -1130,7 +1130,7 @@ namespace CarSimulator
                         }
                         catch (Exception e)
                         {
-                            Debug.WriteLine("Fail to load Server cert: {0}", e.Message);
+                            Debug.WriteLine("Fail to load Server cert: {0}", (object)e.Message);
                         }
                     }
 
