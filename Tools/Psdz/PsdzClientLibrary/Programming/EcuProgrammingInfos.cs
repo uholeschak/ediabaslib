@@ -277,6 +277,73 @@ namespace PsdzClient.Programming
                     Log.Warning("EcuProgrammingInfos.UpdateProgrammingActions", "Could not find ecu programming object for 0x{0:X2}", affectedEcu.DiagAddrAsInt);
                 }
             }
+            UpdateSmartActuators(tal);
+        }
+
+        private void UpdateSmartActuators(IPsdzTal tal)
+        {
+            try
+            {
+                IEnumerable<IPsdzTalLine> enumerable = tal.TalLines.Where((IPsdzTalLine x) => !x.SmacTransferStart.IsEmpty || !x.SmacTransferStatus.IsEmpty);
+                TalLineHelper talLineHelper = new TalLineHelper(tal);
+                foreach (IPsdzTalLine item in enumerable)
+                {
+                    foreach (IPsdzTa ta in item.TaCategory.Tas)
+                    {
+                        List<string> list = new List<string>();
+                        if (ta is PsdzSmacTransferStartTA psdzSmacTransferStartTA)
+                        {
+                            list.AddRange(psdzSmacTransferStartTA.SmartActuatorData.Keys);
+                        }
+                        if (ta is PsdzSmacTransferStatusTA psdzSmacTransferStatusTA)
+                        {
+                            list.AddRange(psdzSmacTransferStatusTA.SmartActuatorIDs);
+                        }
+                        foreach (string item2 in list)
+                        {
+                            PsdzDiagAddress psdzDiagAddress = talLineHelper.CalculateSmacDiagAddress(item.EcuIdentifier.DiagnosisAddress, item2);
+                            GetItemFromProgrammingInfos(psdzDiagAddress.Offset).UpdateSingleProgrammingAction(ProgrammingActionType.Programming, MapState(ta.ExecutionState), executed: false);
+                        }
+                    }
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException(Log.CurrentMethod(), exception);
+            }
+        }
+
+        private ProgrammingActionState MapState(PsdzTaExecutionState? executionStateInput)
+        {
+            PsdzTaExecutionState psdzTaExecutionState;
+            if (executionStateInput.HasValue)
+            {
+                psdzTaExecutionState = executionStateInput.Value;
+            }
+            else
+            {
+                Log.Warning("ProgrammingAction.MapState", "input is null. 'TaExecutionState.Inactive' will be used.");
+                psdzTaExecutionState = PsdzTaExecutionState.Inactive;
+            }
+            switch (psdzTaExecutionState)
+            {
+                case PsdzTaExecutionState.Executable:
+                case PsdzTaExecutionState.Inactive:
+                    return ProgrammingActionState.ActionPlanned;
+                case PsdzTaExecutionState.NotExecutable:
+                    return ProgrammingActionState.MissingPrerequisitesForAction;
+                case PsdzTaExecutionState.AbortedByError:
+                case PsdzTaExecutionState.AbortedByUser:
+                case PsdzTaExecutionState.FinishedWithError:
+                    return ProgrammingActionState.ActionFailed;
+                case PsdzTaExecutionState.Finished:
+                case PsdzTaExecutionState.FinishedWithWarnings:
+                    return ProgrammingActionState.ActionSuccessful;
+                case PsdzTaExecutionState.Running:
+                    return ProgrammingActionState.ActionInProcess;
+                default:
+                    throw new ArgumentException($"Unsupported TA execution state: {psdzTaExecutionState}");
+            }
         }
 
         protected virtual void OnActionPropertyChanged(object sender, PropertyChangedEventArgs e)
