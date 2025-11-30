@@ -15,6 +15,7 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Programming
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]
