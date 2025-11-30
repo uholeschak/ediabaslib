@@ -197,6 +197,7 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "db removed")]
         internal void ResetProgrammingInfos(bool unregister = true, bool resetAll = true)
         {
             if (resetAll)
