@@ -19,16 +19,24 @@ using PsdzClient.Core;
 namespace PsdzClient.Programming
 {
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]
-    public class EcuProgrammingInfos : IEnumerable<IEcuProgrammingInfo>, IEcuProgrammingInfos, IEnumerable
-	{
-		public event PropertyChangedEventHandler PropertyChanged;
-
+    public class EcuProgrammingInfos : IEcuProgrammingInfos, IEnumerable<IEcuProgrammingInfo>, IEnumerable
+    {
+        protected readonly IList<EcuProgrammingInfo> ecuProgrammingInfos;
+        protected IDictionary<IEcu, EcuProgrammingInfo> ecuProgrammingInfosMap;
+        protected IVehicle vehicle;
+        [PreserveSource(Hint = "Added", Placeholder = true)]
+        private readonly PlaceholderType db;
+        private readonly IFFMDynamicResolver ffmResolver;
+        private readonly object threadLock = new object ();
+        private IEcuProgrammingInfosData dataContext;
+        private ProgrammingObjectBuilder programmingObjectBuilder;
         public IEcuProgrammingInfosData DataContext
         {
             get
             {
                 return dataContext;
             }
+
             set
             {
                 dataContext = value;
@@ -43,19 +51,22 @@ namespace PsdzClient.Programming
             {
                 return programmingObjectBuilder;
             }
+
             set
             {
                 programmingObjectBuilder = value;
             }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
         [PreserveSource(Hint = "db removed")]
         public EcuProgrammingInfos(IVehicle vehicle, IFFMDynamicResolver ffmResolver, bool standard = true)
-		{
+        {
             if (vehicle == null)
             {
                 throw new ArgumentNullException("vehicle");
             }
+
             // [IGNORE] this.db = db;
             this.vehicle = vehicle;
             this.ffmResolver = ffmResolver;
@@ -65,7 +76,7 @@ namespace PsdzClient.Programming
                 dataContext = new EcuProgrammingInfosData();
                 ResetProgrammingInfos(unregister: false);
             }
-		}
+        }
 
         ~EcuProgrammingInfos()
         {
@@ -73,8 +84,8 @@ namespace PsdzClient.Programming
         }
 
         public virtual void EstablishSelection()
-		{
-		}
+        {
+        }
 
         public IEnumerator<IEcuProgrammingInfo> GetEnumerator()
         {
@@ -103,6 +114,7 @@ namespace PsdzClient.Programming
             {
                 throw new ArgumentNullException("ecu");
             }
+
             IProgrammingAction programmingAction = item.GetProgrammingAction(ProgrammingActionType.Coding);
             programmingAction?.Select(value);
             if (programmingAction != null)
@@ -118,6 +130,7 @@ namespace PsdzClient.Programming
             {
                 throw new ArgumentNullException("ecu");
             }
+
             foreach (IProgrammingAction programmingAction in item.GetProgrammingActions(null))
             {
                 programmingAction?.Select(value);
@@ -126,6 +139,7 @@ namespace PsdzClient.Programming
                     item.IsCodingScheduled = value;
                 }
             }
+
             item.IsProgrammingScheduled = value;
         }
 
@@ -140,6 +154,7 @@ namespace PsdzClient.Programming
             {
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Diagnosis address 0x{0:X2} is already added.", ecu.ID_SG_ADR));
             }
+
             EcuProgrammingInfo ecuProgrammingInfo = new EcuProgrammingInfo(ecu, programmingObjectBuilder);
             RegisterEventHandler(ecuProgrammingInfo);
             ecuProgrammingInfos.Add(ecuProgrammingInfo);
@@ -163,6 +178,7 @@ namespace PsdzClient.Programming
             {
                 return ecuProgrammingInfosMap[ecu];
             }
+
             return null;
         }
 
@@ -175,6 +191,7 @@ namespace PsdzClient.Programming
                     return ecuProgrammingInfo;
                 }
             }
+
             return null;
         }
 
@@ -188,6 +205,7 @@ namespace PsdzClient.Programming
                     list.AddRange(((IEcuProgrammingInfo)ecuProgrammingInfo).GetProgrammingActions(programmingActionTypeFilter));
                 }
             }
+
             return list;
         }
 
@@ -209,6 +227,7 @@ namespace PsdzClient.Programming
                 {
                     UnregisterEventHandler();
                 }
+
                 programmingObjectBuilder = new ProgrammingObjectBuilder((Vehicle)vehicle, ffmResolver);
                 CreateEcuProgrammingInfos(vehicle.ECU);
                 ecuProgrammingInfosMap = new Dictionary<IEcu, EcuProgrammingInfo>();
@@ -218,6 +237,7 @@ namespace PsdzClient.Programming
                 });
                 return;
             }
+
             foreach (IEcu item in (IEnumerable<IEcu>)new List<IEcu>(ecuProgrammingInfosMap.Keys.Where((IEcu ecu) => !vehicle.ECU.Contains(ecu))))
             {
                 EcuProgrammingInfo ecuProgrammingInfo = ecuProgrammingInfosMap[item];
@@ -228,7 +248,6 @@ namespace PsdzClient.Programming
             }
         }
 
-
         internal void SetSvkCurrentForEachEcu(ISvt svt)
         {
             if (svt == null)
@@ -236,6 +255,7 @@ namespace PsdzClient.Programming
                 SetSvkCurrentToNull();
                 return;
             }
+
             UpdateProgrammingInfo(svt);
             RefreshProgrammingInfoBeforeReplace(DataContext.List.ToList());
         }
@@ -248,8 +268,10 @@ namespace PsdzClient.Programming
                 {
                     ecuProgrammingInfo.SvkTarget = null;
                 }
+
                 return;
             }
+
             foreach (IEcuObj ecu in svt.Ecus)
             {
                 EcuProgrammingInfo itemFromProgrammingInfos = GetItemFromProgrammingInfos(ecu.EcuIdentifier.DiagAddrAsInt);
@@ -280,6 +302,7 @@ namespace PsdzClient.Programming
                     Log.Warning("EcuProgrammingInfos.UpdateProgrammingActions", "Could not find ecu programming object for 0x{0:X2}", affectedEcu.DiagAddrAsInt);
                 }
             }
+
             UpdateSmartActuators(tal);
         }
 
@@ -298,10 +321,12 @@ namespace PsdzClient.Programming
                         {
                             list.AddRange(psdzSmacTransferStartTA.SmartActuatorData.Keys);
                         }
+
                         if (ta is PsdzSmacTransferStatusTA psdzSmacTransferStatusTA)
                         {
                             list.AddRange(psdzSmacTransferStatusTA.SmartActuatorIDs);
                         }
+
                         foreach (string item2 in list)
                         {
                             PsdzDiagAddress psdzDiagAddress = talLineHelper.CalculateSmacDiagAddress(item.EcuIdentifier.DiagnosisAddress, item2);
@@ -328,6 +353,7 @@ namespace PsdzClient.Programming
                 Log.Warning("ProgrammingAction.MapState", "input is null. 'TaExecutionState.Inactive' will be used.");
                 psdzTaExecutionState = PsdzTaExecutionState.Inactive;
             }
+
             switch (psdzTaExecutionState)
             {
                 case PsdzTaExecutionState.Executable:
@@ -355,6 +381,7 @@ namespace PsdzClient.Programming
             {
                 return;
             }
+
             lock (threadLock)
             {
                 if (!programmingAction.IsSelected && dataContext.SelectedActionData.Contains(programmingAction.DataContext))
@@ -394,6 +421,7 @@ namespace PsdzClient.Programming
                 {
                     notifyCollectionChanged.CollectionChanged -= OnEcuProgrammingActionsChanged;
                 }
+
                 foreach (IProgrammingAction programmingAction in ((IEcuProgrammingInfo)ecuProgrammingInfo).ProgrammingActions)
                 {
                     programmingAction.PropertyChanged -= OnActionPropertyChanged;
@@ -413,6 +441,7 @@ namespace PsdzClient.Programming
                     return;
                 }
             }
+
             dataContext.SelectedActionData.Add(itemToAdd.DataContext);
             OnPropertyChanged("SelectedActions");
         }
@@ -423,6 +452,7 @@ namespace PsdzClient.Programming
             {
                 throw new ArgumentNullException();
             }
+
             ecuProgrammingInfos.Clear();
             IList<EcuProgrammingInfoData> list = new List<EcuProgrammingInfoData>();
             foreach (IEcu ecu in ecus)
@@ -436,10 +466,12 @@ namespace PsdzClient.Programming
                         ecuProgrammingInfo.Ecu.ProgrammingVariantName = ecuProgrammingInfosMap[ecu].Ecu.ProgrammingVariantName;
                     }
                 }
+
                 RegisterEventHandler(ecuProgrammingInfo);
                 ecuProgrammingInfos.Add(ecuProgrammingInfo);
                 list.Add(ecuProgrammingInfo.Data);
             }
+
             RefreshProgrammingInfoBeforeReplace(list);
             RefreshProgrammingInfo(list);
         }
@@ -463,12 +495,14 @@ namespace PsdzClient.Programming
             {
                 return;
             }
+
             foreach (object newItem in e.NewItems)
             {
                 if (!(newItem is IProgrammingAction programmingAction))
                 {
                     continue;
                 }
+
                 lock (threadLock)
                 {
                     if (e.Action == NotifyCollectionChangedAction.Add)
@@ -491,17 +525,18 @@ namespace PsdzClient.Programming
             }
         }
 
-
         private bool ProgrammingInfoCanBeAdded(IEcuProgrammingInfoData ecuProgrammingInfoData)
         {
             if (!OnlyAddECUsWithIndividualData() || vehicle.Classification.IsMotorcycle())
             {
                 return true;
             }
+
             if (ecuProgrammingInfoData.Ecu != null && ecuProgrammingInfoData.Ecu.StatusInfo != null)
             {
                 return ecuProgrammingInfoData.Ecu.StatusInfo.HasIndividualData;
             }
+
             return false;
         }
 
@@ -534,27 +569,11 @@ namespace PsdzClient.Programming
                     {
                         itemFromProgrammingInfos.Ecu.ProgrammingVariantName = ecu.BnTnName;
                     }
+
                     itemFromProgrammingInfos.Ecu.StatusInfo = ecu.EcuStatusInfo;
                     itemFromProgrammingInfos.SvkCurrent = ecu.StandardSvk;
                 }
             }
         }
-
-        protected readonly IList<EcuProgrammingInfo> ecuProgrammingInfos;
-
-		protected IDictionary<IEcu, EcuProgrammingInfo> ecuProgrammingInfosMap;
-
-		protected IVehicle vehicle;
-
-        [PreserveSource(Hint = "Added", Placeholder = true)]
-		private readonly PlaceholderType db;
-
-		private readonly IFFMDynamicResolver ffmResolver;
-
-		private readonly object threadLock = new object();
-
-		private IEcuProgrammingInfosData dataContext;
-
-		private ProgrammingObjectBuilder programmingObjectBuilder;
-	}
+    }
 }
