@@ -46,13 +46,14 @@ namespace PsdzClient.Programming
             }
         }
 
+        [PreserveSource(Hint = "db removed")]
         public EcuProgrammingInfos(IVehicle vehicle, IFFMDynamicResolver ffmResolver, bool standard = true)
 		{
             if (vehicle == null)
             {
                 throw new ArgumentNullException("vehicle");
             }
-            //this.db = db;
+            // [IGNORE] this.db = db;
             this.vehicle = vehicle;
             this.ffmResolver = ffmResolver;
             ecuProgrammingInfos = new List<EcuProgrammingInfo>();
