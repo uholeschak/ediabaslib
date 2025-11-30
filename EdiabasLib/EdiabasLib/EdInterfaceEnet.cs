@@ -4330,7 +4330,8 @@ namespace EdiabasLib
                                     try
                                     {
 #if NET9_0_OR_GREATER
-                                        X509Certificate2 cert = X509CertificateLoader.LoadCertificate(pkcs12Data);
+                                        X509Certificate2Collection collection = X509CertificateLoader.LoadPkcs12Collection(pkcs12Data, null);
+                                        X509Certificate2 cert = collection[0]; // First cert with private key
 #else
                                         X509Certificate2 cert = new X509Certificate2(pkcs12Data);
 #endif
