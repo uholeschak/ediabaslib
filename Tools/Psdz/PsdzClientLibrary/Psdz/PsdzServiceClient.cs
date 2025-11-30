@@ -5,13 +5,13 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
 	public class PsdzServiceClient : IDisposable, IPsdzService
 	{
-        // ToDo: Check all clients on update
-        // Search for: [OperationContract] [DataContract]
         private readonly ConfigurationServiceClient configurationService;
 
         private readonly ConnectionFactoryServiceClient connectionFactoryService;
