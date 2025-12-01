@@ -1,7 +1,10 @@
-﻿#if OLD_PSDZ_BUS
+﻿using PsdzClient;
+
+#if OLD_PSDZ_BUS
 #warning OLD_PSDZ_BUS activated. Do not use for release builds.
 namespace BMW.Rheingold.Psdz.Model.Ecu
 {
+    [PreserveSource(Hint = "Old implementation")]
     public enum PsdzBus
     {
         Unknown = -1,
