@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.VehicleCommunication.ECUKom
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using Ediabas;
 using EdiabasLib;
 using PsdzClient.Contracts;

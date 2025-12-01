@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.ISTA.CoreFramework.AdapterError
-using System;
+﻿using System;
 
 namespace PsdzClient.Core.Container
 {
