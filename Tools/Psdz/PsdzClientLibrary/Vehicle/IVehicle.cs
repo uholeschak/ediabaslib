@@ -21,7 +21,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     {
         bool IsEcuIdentSuccessfull { get; set; }
 
-        //SessionStart SessionStart { get; set; }
+        [PreserveSource(Hint = "SessionStart", Placeholder = true)]
+        PlaceholderType SessionStart { get; set; }
 
         new string AELeistungsklasse { get; }
 
