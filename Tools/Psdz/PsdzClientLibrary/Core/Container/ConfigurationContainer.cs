@@ -11,16 +11,6 @@ namespace PsdzClient.Core.Container
 {
     [Serializable]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
-    public enum CompressionMethod
-    {
-        Undefined,
-        GZip,
-        Zip,
-        None
-    }
-
-    [Serializable]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
     [XmlRoot(Namespace = "", IsNullable = false)]
     [DataContract(Name = "ConfigurationContainer")]
