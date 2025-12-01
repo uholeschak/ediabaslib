@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.Module.ISTA.Text
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
@@ -7,16 +6,6 @@ using System.Xml.Serialization;
 
 namespace PsdzClient.Core.Container
 {
-    [Serializable]
-    [GeneratedCode("Xsd2Code", "3.4.0.32990")]
-    public enum TranslationMode
-    {
-        All,
-        RuntimeOnly,
-        DesigntimeOnly,
-        None
-    }
-
     [Serializable]
     [GeneratedCode("Xsd2Code", "3.4.0.32990")]
     [DesignerCategory("code")]
