@@ -3,6 +3,7 @@ using PsdzClient.Core;
 using System;
 using System.Management;
 
+#pragma warning disable CS0168
 namespace PsdzClient.Utility
 {
     internal static class WMIInfo
