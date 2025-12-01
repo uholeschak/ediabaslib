@@ -9,22 +9,28 @@ namespace PsdzClient.Core
     {
         void Deregister(InteractionModel model);
 
-        //void DeregisterBackground(IInteractionProgressModel model);
+        [PreserveSource(Hint = "IInteractionProgressModel", Placeholder = true)]
+        void DeregisterBackground();
 
         void Register(InteractionModel model);
 
-        //Task<TResponse> RegisterAsync<TResponse>(InteractionRequestModel<TResponse> model) where TResponse : InteractionResponse;
+        Task<TResponse> RegisterAsync<TResponse>(InteractionRequestModel<TResponse> model) where TResponse : InteractionResponse;
 
-        //void RegisterBackground(IInteractionProgressModel model);
+        [PreserveSource(Hint = "IInteractionProgressModel", Placeholder = true)]
+        void RegisterBackground();
 
-        //InteractionMessageModel RegisterMessage(string title, string message, string details = "", int dialogSize = 0);
+        [PreserveSource(Hint = "InteractionMessageModel", Placeholder = true)]
+        PlaceholderType RegisterMessage(string title, string message, string details = "", int dialogSize = 0);
 
-        //InteractionMessageModel RegisterMessage(IList<LocalizedText> titleList, IList<LocalizedText> msgList, string details = "", int dialogSize = 0);
+        [PreserveSource(Hint = "InteractionMessageModel", Placeholder = true)]
+        PlaceholderType RegisterMessage(IList<LocalizedText> titleList, IList<LocalizedText> msgList, string details = "", int dialogSize = 0);
 
-        //Task<InteractionButtonResponse> RegisterMessageAsync(string title, string message, string details = "", int dialogSize = 0);
+        Task<InteractionButtonResponse> RegisterMessageAsync(string title, string message, string details = "", int dialogSize = 0);
 
-        //InteractionQuestionModel RegisterQuestion(string title, string message);
+        [PreserveSource(Hint = "InteractionMessageModel", Placeholder = true)]
+        PlaceholderType RegisterQuestion(string title, string message);
 
-        //InteractionQuestionModel RegisterQuestion(IList<LocalizedText> titleList, IList<LocalizedText> msgList);
+        [PreserveSource(Hint = "InteractionQuestionModel", Placeholder = true)]
+        PlaceholderType RegisterQuestion(IList<LocalizedText> titleList, IList<LocalizedText> msgList);
     }
 }

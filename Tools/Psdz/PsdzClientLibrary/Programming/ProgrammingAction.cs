@@ -15,34 +15,6 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-    public enum typeDiagObjectState
-    {
-        NotCalled,
-        Minimized,
-        Suspected,
-        Canceled,
-        Performed,
-        Running
-    }
-
-    public enum SwiActionCategory
-    {
-        AL,
-        UR,
-        RR,
-        CU,
-        NR,
-        FCA,
-        UNM,
-        FCD,
-        IDR,
-        PRG,
-        HDD,
-        COD,
-        MNT,
-        SFA
-    }
-
 	public class ProgrammingAction : IComparable<IProgrammingAction>, INotifyPropertyChanged, IProgrammingAction
 	{
         private ProgrammingActionData data;
@@ -187,7 +159,8 @@ namespace PsdzClient.Programming
 
         public string InfoType => BuildTherapyPlanType(Type);
 
-        //public ICollection<IEscalationStep> EscalationSteps { get; private set; }
+        [PreserveSource(Hint = "ICollection<IEscalationStep>", Placeholder = true)]
+        public PlaceholderType EscalationSteps { get; private set; }
 
         internal IList<LocalizedText> TitleExtension { get; set; }
 

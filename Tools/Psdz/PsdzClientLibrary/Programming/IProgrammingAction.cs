@@ -27,7 +27,8 @@ namespace PsdzClient.Programming
 
         string PartNumber { get; }
 
-        //ICollection<IEscalationStep> EscalationSteps { get; }
+        [PreserveSource(Hint = "ICollection<IEscalationStep>", Placeholder = true)]
+        PlaceholderType EscalationSteps { get; }
 
         IProgrammingActionData DataContext { get; }
 
