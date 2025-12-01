@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.CoreFramework.Contracts.IDiagnosticDeviceResult
-using System;
+﻿using System;
 using System.ComponentModel;
 
 namespace PsdzClient.Core.Container

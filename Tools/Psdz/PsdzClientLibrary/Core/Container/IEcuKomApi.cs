@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication.IEcuKomApi
-
+﻿
 namespace PsdzClient.Core.Container
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]

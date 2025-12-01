@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication.IEcuKom
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Contracts;
 
 namespace PsdzClient.Core.Container

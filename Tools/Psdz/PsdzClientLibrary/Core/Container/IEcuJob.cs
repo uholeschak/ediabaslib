@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication.IEcuJob
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
