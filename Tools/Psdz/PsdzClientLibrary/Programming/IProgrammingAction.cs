@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Programming
 {
-    public interface IProgrammingAction : INotifyPropertyChanged, IComparable<IProgrammingAction>
+    public interface IProgrammingAction : INotifyPropertyChanged, IComparable<IProgrammingAction>, ITherapyPlanAction2, ITherapyPlanAction
     {
         DateTime StartExecution { get; }
 
