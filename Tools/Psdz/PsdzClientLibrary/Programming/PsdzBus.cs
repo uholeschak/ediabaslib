@@ -44,6 +44,7 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
         Ipb17CanFd = 50,
     }
 #else
+    // Todo: Check on update
     public class PsdzBus : IComparable<PsdzBus>
     {
         public const string ETHERNET_PATTERN = "ETHERNET";
