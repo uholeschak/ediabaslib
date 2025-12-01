@@ -15,7 +15,6 @@ using System.Xml.Serialization;
 #pragma warning disable CS0618
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
-    // ToDo: Check on update
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IVehicle : INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle
     {
@@ -23,11 +22,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         [PreserveSource(Hint = "SessionStart", Placeholder = true)]
         PlaceholderType SessionStart { get; set; }
-
         new string AELeistungsklasse { get; }
-
         new string AEUeberarbeitung { get; }
-
         new string Antrieb { get; set; }
 
         string ApplicationVersion { get; }
@@ -38,9 +34,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         BNMixed BNMixed { get; set; }
 
         BNType BNType { get; set; }
-
         new string Baureihe { get; set; }
-
         new string Baureihenverbund { get; set; }
 
         string BaustandsJahr { get; }
@@ -81,9 +75,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         string DriveType { get; }
 
         string ECTypeApproval { get; }
-
         new IEnumerable<IEcu> ECU { get; }
-
         new IFa FA { get; }
 
         bool FASTAAlreadyDone { get; }
@@ -169,7 +161,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         PlaceholderType TechnicalCampaigns { get; }
 
         string Typ { get; set; }
-
         new IVciDevice VCI { get; }
 
         bool IsSendFastaDataForbidden { get; set; }
@@ -220,15 +211,10 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         DateTime VehicleLifeStartDate { get; set; }
 
         double VehicleSystemTime { get; set; }
-
         new string TypeKeyBasic { get; set; }
-
         new string TypeKey { get; set; }
-
         new string TypeKeyLead { get; set; }
-
         new string ESeriesLifeCycle { get; set; }
-
         new string LifeCycle { get; set; }
 
         bool IsDoIP { get; set; }
@@ -238,25 +224,15 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         IVehicleProfileChecksum VPC { get; set; }
 
         IEcu getECU(long? sgAdr);
-
         IEcu getECU(long? sgAdr, long? subAddress);
-
         IEcu getECUbyECU_GRUPPE(string ECU_GRUPPE);
-
         IEcu getECUbyECU_SGBD(string ECU_SGBD);
-
         IEcu getECUbyTITLE_ECUTREE(string grobName);
-
         bool AddEcu(IEcu ecu);
-
         bool RemoveEcu(IEcu ecu);
-
         bool IsProgrammingSupported(bool considerLogisticBase);
-
         bool IsEreiheValid();
-
         bool hasBusType(BusType bus);
-
         bool HasSA(string checkSA);
     }
 }
