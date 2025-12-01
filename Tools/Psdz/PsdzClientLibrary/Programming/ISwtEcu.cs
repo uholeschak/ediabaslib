@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum RootCertificateState
     {
         Accepted,
@@ -15,7 +16,7 @@ namespace PsdzClient.Programming
         Rejected
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public enum SoftwareSigState
     {
         Accepted,
@@ -25,7 +26,7 @@ namespace PsdzClient.Programming
         Rejected
     }
 
-    //[AuthorAPI(SelectableTypeDeclaration = true)]
+    [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ISwtEcu
     {
         IEcuIdentifier EcuIdentifier { get; }

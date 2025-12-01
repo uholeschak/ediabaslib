@@ -1,6 +1,4 @@
-﻿// BMW.Rheingold.CoreFramework.Contracts.INativeError
-
-namespace PsdzClient.Core
+﻿namespace PsdzClient.Core
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface INativeError
