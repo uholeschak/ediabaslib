@@ -1,9 +1,7 @@
-﻿namespace PsdzClient.Core
-{
-    // BMW.ISPI.TRIC.ISTA.MultisourceLogic, Version=4.35.0.0, Culture=neutral, PublicKeyToken=6505efbdc3e5f324
-    // BMW.ISPI.TRIC.ISTA.MultisourceLogic.DataSourcePriority
-    using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
+namespace PsdzClient.Core
+{
     public class DataSourcePriority
     {
         private static List<DataSource> defaultPriorities = new List<DataSource>

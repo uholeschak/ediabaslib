@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.CoreFramework.Contracts.IAdapterError
-using System;
+﻿using System;
 
 namespace PsdzClient.Core
 {

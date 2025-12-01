@@ -1,8 +1,6 @@
-﻿// BMW.Rheingold.Module.ISTA.ValueBase
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
-using System.Data;
 using System.Runtime.Serialization;
 using System.Web.UI.WebControls;
 using System.Xml.Serialization;

@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.CoreFramework.Contracts.VehicleCommunication.IEcuResult
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace PsdzClient.Core
 {
