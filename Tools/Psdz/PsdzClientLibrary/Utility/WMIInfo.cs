@@ -22,6 +22,7 @@ namespace PsdzClient.Utility
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         public static string GetWMIInfoITools(string segment, string info, string argument = null)
         {
             ExceptionAtStartup = false;
@@ -34,7 +35,7 @@ namespace PsdzClient.Utility
             }
             catch (ManagementException)
             {
-                //Logger.Instance()?.Log(ICSEventId.ICS0001, "WMIInfo.GetWMIInfoITools", "Could not retrieve WMIInfoITools", EventKind.Technical, LogLevel.Warning, exception);
+                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0001, "WMIInfo.GetWMIInfoITools", "Could not retrieve WMIInfoITools", EventKind.Technical, LogLevel.Warning, exception);
                 return string.Empty;
             }
             finally
@@ -70,6 +71,7 @@ namespace PsdzClient.Utility
             }
         }
 
+        [PreserveSource(Hint = "Modified")]
         private static string GetObjectValue(string info, string result, ManagementBaseObject obj)
         {
             try
@@ -80,7 +82,7 @@ namespace PsdzClient.Utility
             }
             catch (NullReferenceException)
             {
-                //Logger.Instance()?.Log(ICSEventId.ICS0123, "WMIInfo.GetObjectValue", ex.Message, EventKind.Technical, LogLevel.Warning, ex);
+                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0123, "WMIInfo.GetObjectValue", ex.Message, EventKind.Technical, LogLevel.Warning, ex);
                 return string.Empty;
             }
         }
