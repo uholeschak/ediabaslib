@@ -1,5 +1,4 @@
-﻿// BMW.Rheingold.Module.ISTA.AChoice
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Runtime.Serialization;
