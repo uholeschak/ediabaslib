@@ -8,25 +8,6 @@ using PsdzClient.Core;
 namespace PsdzClient.Programming
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum RootCertificateState
-    {
-        Accepted,
-        Invalid,
-        NotAvailable,
-        Rejected
-    }
-
-    [AuthorAPI(SelectableTypeDeclaration = true)]
-    public enum SoftwareSigState
-    {
-        Accepted,
-        Imported,
-        Invalid,
-        NotAvailable,
-        Rejected
-    }
-
-    [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface ISwtEcu
     {
         IEcuIdentifier EcuIdentifier { get; }
