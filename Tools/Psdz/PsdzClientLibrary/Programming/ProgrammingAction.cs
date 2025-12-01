@@ -13,6 +13,7 @@ using BMW.Rheingold.Psdz.Model.Swt;
 using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Programming
 {
 	public class ProgrammingAction : IComparable<IProgrammingAction>, INotifyPropertyChanged, IProgrammingAction
@@ -21,7 +22,7 @@ namespace PsdzClient.Programming
 
         private string assemblyNumberSetPoint;
 
-        //private string pn;
+        private string pn;
 
         private IList<ISgbmIdChange> sgbmIds;
 
@@ -182,6 +183,7 @@ namespace PsdzClient.Programming
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        [PreserveSource(Hint = "Modified")]
         internal ProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order)
         {
             data = new ProgrammingActionData();
@@ -192,7 +194,7 @@ namespace PsdzClient.Programming
             data.Order = order;
             data.StateProgramming = ProgrammingActionState.ActionPlanned;
             SgbmIds = new List<ISgbmIdChange>();
-            //EscalationSteps = new List<IEscalationStep>();
+            // [IGNORE] EscalationSteps = new List<IEscalationStep>();
             Title = BuildTitle(Type, ParentEcu, ConfigSettings.CurrentUICulture);
             data.Channel = string.Empty;
             data.Note = string.Empty;
