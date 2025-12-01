@@ -7,6 +7,7 @@ namespace PsdzClient.Utility
 {
     internal static class SecureStringHelper
     {
+        [PreserveSource(Hint = "Modified")]
         public static SecureString ConvertToSecureString(string input)
         {
             SecureString secureString = null;
@@ -28,11 +29,11 @@ namespace PsdzClient.Utility
             }
             catch (ArgumentOutOfRangeException)
             {
-                //Logger.Instance()?.Log(ICSEventId.ICS0123, "SecureStringHelper.ConvertToSecureString", $"Length of the secure string is grater than 65,536 characters:  {ex}", EventKind.Technical, LogLevel.Error, ex);
+                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0123, "SecureStringHelper.ConvertToSecureString", $"Length of the secure string is grater than 65,536 characters:  {ex}", EventKind.Technical, LogLevel.Error, ex);
             }
             catch (CryptographicException)
             {
-                //Logger.Instance()?.Log(ICSEventId.ICS0010, "SecureStringHelper.ConvertToSecureString", $"Error converting to secure string: {ex2}", EventKind.Technical, LogLevel.Error, ex2);
+                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0010, "SecureStringHelper.ConvertToSecureString", $"Error converting to secure string: {ex2}", EventKind.Technical, LogLevel.Error, ex2);
             }
             finally
             {
@@ -68,6 +69,7 @@ namespace PsdzClient.Utility
             return ConvertToUnsecureString(str1) == ConvertToUnsecureString(str2);
         }
 
+        [PreserveSource(Hint = "Modified")]
         public static byte[] GetAsByteArray(SecureString input)
         {
             if (IsNullOrEmpty(input))
@@ -90,7 +92,7 @@ namespace PsdzClient.Utility
             }
             catch (AccessViolationException)
             {
-                //Logger.Instance()?.Log(ICSEventId.ICSNone, "SecureStringHelper.GetAsByteArray", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
+                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICSNone, "SecureStringHelper.GetAsByteArray", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
             }
             finally
             {
