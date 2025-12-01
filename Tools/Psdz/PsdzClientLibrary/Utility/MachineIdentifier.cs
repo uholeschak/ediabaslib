@@ -9,6 +9,7 @@ namespace PsdzClient.Utility
 {
     internal static class MachineIdentifier
     {
+        [PreserveSource(Hint = "Modified")]
         public static string GetVolumeSerialNumber()
         {
             string pathRoot = Path.GetPathRoot(Environment.SystemDirectory);
@@ -26,10 +27,11 @@ namespace PsdzClient.Utility
                 text += num.ToString(CultureInfo.InvariantCulture);
                 num++;
             }
-            //Logger.Instance()?.Log(ICSEventId.ICSNone, "MachineIdentifier.GetVolumeSerialNumber", "Volume serial number: " + text, EventKind.Technical, LogLevel.Info);
+            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICSNone, "MachineIdentifier.GetVolumeSerialNumber", "Volume serial number: " + text, EventKind.Technical, LogLevel.Info);
             return text.Substring(0, 8);
         }
 
+        [PreserveSource(Hint = "Modified")]
         public static string GetMachineGuid()
         {
             string text = string.Empty;
@@ -52,15 +54,15 @@ namespace PsdzClient.Utility
             }
             catch (UnauthorizedAccessException)
             {
-                //Logger.Instance()?.Log(ICSEventId.ICS0005, "MachineIdentifier.GetMachineGuid", $"The user does not have the necessary registry rights: Error  {ex}", EventKind.Technical, LogLevel.Error, ex);
+                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0005, "MachineIdentifier.GetMachineGuid", $"The user does not have the necessary registry rights: Error  {ex}", EventKind.Technical, LogLevel.Error, ex);
             }
             catch (SecurityException)
             {
-                //Logger.Instance()?.Log(ICSEventId.ICS0131, "MachineIdentifier.GetMachineGuid", $"The user does not have the permissions required to perform this action.: Error  {ex2}", EventKind.Technical, LogLevel.Error, ex2);
+                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0131, "MachineIdentifier.GetMachineGuid", $"The user does not have the permissions required to perform this action.: Error  {ex2}", EventKind.Technical, LogLevel.Error, ex2);
             }
             catch (IOException)
             {
-                //Logger.Instance()?.Log(ICSEventId.ICS0117, "MachineIdentifier.GetMachineGuid", $"The RegistryKey that contains the specified value has been marked for deletion.: Error  {ex3}", EventKind.Technical, LogLevel.Error, ex3);
+                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0117, "MachineIdentifier.GetMachineGuid", $"The RegistryKey that contains the specified value has been marked for deletion.: Error  {ex3}", EventKind.Technical, LogLevel.Error, ex3);
             }
             finally
             {
@@ -70,6 +72,7 @@ namespace PsdzClient.Utility
             return text;
         }
 
+        [PreserveSource(Hint = "Modified")]
         public static string GetUuid()
         {
             ProcessStartInfo startInfo = new ProcessStartInfo("cmd", "/c wmic csproduct get UUID")
@@ -85,7 +88,7 @@ namespace PsdzClient.Utility
             string text = process.StandardOutput.ReadToEnd().Replace("UUID", string.Empty).Replace("-", string.Empty)
                 .Trim(trimChars)
                 .ToUpper();
-            //Logger.Instance()?.Log(ICSEventId.ICS0117, "MachineIdentifier.GetUuid", "id: " + text, EventKind.Technical, LogLevel.Info);
+            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0117, "MachineIdentifier.GetUuid", "id: " + text, EventKind.Technical, LogLevel.Info);
             process.Close();
             return text;
         }
