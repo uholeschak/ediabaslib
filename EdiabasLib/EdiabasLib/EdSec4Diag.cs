@@ -442,7 +442,11 @@ namespace EdiabasLib
 
                 foreach (Org.BouncyCastle.X509.X509Certificate x509Certificate in x509CertChain)
                 {
+#if NET9_0_OR_GREATER
+                    X509Certificate2 cert = X509CertificateLoader.LoadCertificate(x509Certificate.GetEncoded());
+#else
                     X509Certificate2 cert = new X509Certificate2(x509Certificate.GetEncoded());
+#endif
                     string cnName = cert.GetNameInfo(X509NameType.SimpleName, false);
                     DeleteCertificateBySubjectName(cnName);
                     InstallCertificate(cert);
