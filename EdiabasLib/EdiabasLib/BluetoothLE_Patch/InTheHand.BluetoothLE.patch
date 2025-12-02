@@ -1,21 +1,21 @@
 diff --git a/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj b/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj
-index 4e8c8f6..f496447 100644
+index 6420554..f136f1d 100644
 --- a/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj
 +++ b/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj
 @@ -1,8 +1,8 @@
  ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
  	<Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="1.2.25" />
  	<PropertyGroup>
--		<TargetFrameworks>netstandard2.0;net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
--		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);monoandroid10.0;xamarinios10;xamarintvos10;xamarin.watchos10;net8.0-windows10.0.19041.0;uap10.0</TargetFrameworks>
-+		<TargetFrameworks>netstandard2.0;net8.0;net8.0-android</TargetFrameworks>
-+		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0;net462;uap10.0</TargetFrameworks>
+-		<TargetFrameworks>netstandard2.0;net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
+-		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);monoandroid10.0;xamarinios10;xamarintvos10;xamarin.watchos10;net9.0-windows10.0.19041.0;uap10.0</TargetFrameworks>
++		<TargetFrameworks>netstandard2.0;net9.0</TargetFrameworks>
++		<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0;net462</TargetFrameworks>
  		<Company>In The Hand Ltd</Company>
  		<Authors>Peter Foot</Authors>
  		<Product>32feet.NET</Product>
 @@ -23,7 +23,7 @@
  		<Description>32feet.NET is an open-source project to make personal area networking technologies such as Bluetooth easily accessible from .NET code.</Description>
- 		<FileVersion>4.0.43.831</FileVersion>
+ 		<FileVersion>4.0.44.1119</FileVersion>
  		<AssemblyVersion>4.0.0.0</AssemblyVersion>
 -		<AssemblyName>InTheHand.BluetoothLE</AssemblyName>
 +		<AssemblyName>InTheHand.BluetoothLEMod</AssemblyName>
@@ -43,12 +43,12 @@ index 4e8c8f6..f496447 100644
  
  	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
 -		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.22621.2428" />
-+		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.6901" />
++		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.7175" />
  		<Compile Include="Platforms\Windows\*.cs" />
  	</ItemGroup>
  	
 diff --git a/InTheHand.Net.Bluetooth/InTheHand.Net.Bluetooth.csproj b/InTheHand.Net.Bluetooth/InTheHand.Net.Bluetooth.csproj
-index 86b2d64..bbe71f6 100644
+index 86b2d64..50bdf62 100644
 --- a/InTheHand.Net.Bluetooth/InTheHand.Net.Bluetooth.csproj
 +++ b/InTheHand.Net.Bluetooth/InTheHand.Net.Bluetooth.csproj
 @@ -1,7 +1,7 @@
@@ -56,7 +56,7 @@ index 86b2d64..bbe71f6 100644
  	<Sdk Name="DotNet.ReproducibleBuilds.Isolated" Version="1.2.25" />
  	<PropertyGroup>
 -		<TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net8.0-windows7.0;net8.0-windows10.0.19041.0;net8.0-android;net8.0-ios;net462;monoandroid10.0;xamarinios10;uap10.0</TargetFrameworks>
-+		<TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net8.0-windows7.0;net8.0-windows10.0.19041.0;net8.0-ios;net462;uap10.0</TargetFrameworks>
++		<TargetFrameworks>netstandard2.0;netstandard2.1;net8.0;net8.0-windows7.0;net8.0-windows10.0.19041.0;net462</TargetFrameworks>
  		<Company>In The Hand Ltd</Company>
  		<Authors>Peter Foot</Authors>
  		<Product>32feet.NET</Product>
