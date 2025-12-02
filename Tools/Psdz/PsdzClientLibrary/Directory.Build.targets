@@ -1,5 +1,6 @@
 ﻿<Project>
    <PropertyGroup>
-     <DefineConstants>$(DefineConstants);_OLD_PSDZ_BUS;_OLD_PSDZ_FA</DefineConstants>
+       <!-- Activating these compiler switches require now more code adaptions -->
+       <DefineConstants>$(DefineConstants);_OLD_PSDZ_BUS;_OLD_PSDZ_FA</DefineConstants>
    </PropertyGroup>
 </Project>
