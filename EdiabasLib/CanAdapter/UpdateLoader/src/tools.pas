@@ -32,7 +32,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls,
-  Grids, ExtCtrls, EditBtn, Buttons, LCLType, LCLIntf, Registry;
+  Grids, ExtCtrls, EditBtn, Buttons, LCLType, LCLIntf, Registry, LazUtf8;
 
 type
   TMemoryBuffer = array of byte;

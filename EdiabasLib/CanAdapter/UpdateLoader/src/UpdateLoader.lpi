@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
-      <MainUnit Value="0"/>
+      <Flags>
+        <CompatibilityMode Value="True"/>
+      </Flags>
       <Title Value="UpdateLoader"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
@@ -60,6 +62,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
               <UseValgrind Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
@@ -81,13 +84,12 @@
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
-      <IncludeFileFilter Value="*.(pas|pp|inc|lfm|lpr|lrs|lpi|lpk|sh|xml)"/>
-      <ExcludeFileFilter Value="*.(bak|ppu|o|so);*~;backup"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="1">
       <Item1>
@@ -98,7 +100,8 @@
       <Unit0>
         <Filename Value="UpdateLoader.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos Y="18"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="16" Y="18"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -108,10 +111,9 @@
         <ComponentName Value="MainWindow"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="main"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="1151"/>
-        <CursorPos X="17" Y="1165"/>
+        <TopLine Value="428"/>
+        <CursorPos X="38" Y="446"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -119,18 +121,15 @@
       <Unit2>
         <Filename Value="tools.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="tools"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="61"/>
-        <CursorPos X="34" Y="81"/>
+        <TopLine Value="21"/>
+        <CursorPos X="73" Y="35"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="protocol.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="protocol"/>
         <EditorIndex Value="2"/>
         <TopLine Value="14"/>
         <CursorPos X="13" Y="34"/>
@@ -145,11 +144,10 @@
       </Unit4>
       <Unit5>
         <Filename Value="..\lib\synaser\synaser.pas"/>
-        <UnitName Value="synaser"/>
         <EditorIndex Value="3"/>
         <TopLine Value="1753"/>
         <CursorPos X="39" Y="1773"/>
-        <UsageCount Value="94"/>
+        <UsageCount Value="95"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
@@ -185,124 +183,124 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="main.pas"/>
-        <Caret Line="934" Column="3" TopLine="913"/>
+        <Filename Value="protocol.pas"/>
+        <Caret Line="199" Column="37" TopLine="195"/>
       </Position1>
       <Position2>
-        <Filename Value="main.pas"/>
-        <Caret Line="194" Column="22" TopLine="174"/>
+        <Filename Value="..\lib\synaser\synaser.pas"/>
+        <Caret Line="1773" Column="39" TopLine="1760"/>
       </Position2>
       <Position3>
-        <Filename Value="protocol.pas"/>
-        <Caret Line="47" Column="3" TopLine="26"/>
+        <Filename Value="..\lib\synaser\synaser.pas"/>
+        <Caret Line="119" Column="3" TopLine="99"/>
       </Position3>
       <Position4>
-        <Filename Value="main.pas"/>
-        <Caret Line="193" Column="81" TopLine="174"/>
+        <Filename Value="tools.pas"/>
+        <Caret Line="411" Column="15" TopLine="386"/>
       </Position4>
       <Position5>
-        <Filename Value="main.pas"/>
-        <Caret Line="1124" Column="44" TopLine="1105"/>
+        <Filename Value="tools.pas"/>
+        <Caret Line="81" Column="34" TopLine="61"/>
       </Position5>
       <Position6>
-        <Filename Value="main.pas"/>
-        <Caret Line="582" Column="30" TopLine="561"/>
+        <Filename Value="tools.pas"/>
+        <Caret Line="35" Column="73" TopLine="21"/>
       </Position6>
       <Position7>
         <Filename Value="main.pas"/>
-        <Caret Line="193" Column="63" TopLine="173"/>
+        <Caret Line="38" Column="50" TopLine="33"/>
       </Position7>
       <Position8>
         <Filename Value="main.pas"/>
-        <Caret Line="363" Column="43" TopLine="343"/>
+        <Caret Line="453" Column="70" TopLine="428"/>
       </Position8>
       <Position9>
-        <Filename Value="protocol.pas"/>
-        <Caret Line="41" Column="3" TopLine="26"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="563" Column="4" TopLine="543"/>
       </Position9>
       <Position10>
         <Filename Value="main.pas"/>
-        <Caret Line="1123" Column="7" TopLine="1104"/>
+        <Caret Line="761" Column="18" TopLine="746"/>
       </Position10>
       <Position11>
         <Filename Value="main.pas"/>
-        <Caret Line="195" Column="33" TopLine="172"/>
+        <Caret Line="821" Column="37" TopLine="816"/>
       </Position11>
       <Position12>
         <Filename Value="main.pas"/>
-        <Caret Line="594" Column="5" TopLine="574"/>
+        <Caret Line="479" TopLine="465"/>
       </Position12>
       <Position13>
         <Filename Value="main.pas"/>
-        <Caret Line="954" Column="16" TopLine="935"/>
+        <Caret Line="761" Column="24" TopLine="737"/>
       </Position13>
       <Position14>
         <Filename Value="main.pas"/>
-        <Caret Line="199" Column="57" TopLine="189"/>
+        <Caret Line="67" Column="19" TopLine="53"/>
       </Position14>
       <Position15>
-        <Filename Value="protocol.pas"/>
-        <Caret Line="114" Column="61" TopLine="96"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="443" TopLine="428"/>
       </Position15>
       <Position16>
-        <Filename Value="protocol.pas"/>
-        <Caret Line="81" Column="31" TopLine="35"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="445" Column="17" TopLine="428"/>
       </Position16>
       <Position17>
-        <Filename Value="protocol.pas"/>
-        <Caret Line="141" Column="79" TopLine="122"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="442" TopLine="428"/>
       </Position17>
       <Position18>
         <Filename Value="main.pas"/>
-        <Caret Line="207" Column="41" TopLine="189"/>
+        <Caret Line="435" Column="52" TopLine="428"/>
       </Position18>
       <Position19>
         <Filename Value="main.pas"/>
-        <Caret Line="1190" Column="36" TopLine="1170"/>
+        <Caret Line="446" TopLine="428"/>
       </Position19>
       <Position20>
         <Filename Value="main.pas"/>
-        <Caret Line="1165" Column="18" TopLine="1155"/>
+        <Caret Line="443" TopLine="428"/>
       </Position20>
       <Position21>
         <Filename Value="main.pas"/>
-        <Caret Line="981" Column="6" TopLine="961"/>
+        <Caret Line="446" TopLine="428"/>
       </Position21>
       <Position22>
         <Filename Value="main.pas"/>
-        <Caret Line="1014" Column="6" TopLine="994"/>
+        <Caret Line="444" TopLine="428"/>
       </Position22>
       <Position23>
         <Filename Value="main.pas"/>
-        <Caret Line="1061" Column="6" TopLine="1041"/>
+        <Caret Line="446" TopLine="428"/>
       </Position23>
       <Position24>
         <Filename Value="main.pas"/>
-        <Caret Line="1165" TopLine="1148"/>
+        <Caret Line="444" TopLine="428"/>
       </Position24>
       <Position25>
         <Filename Value="main.pas"/>
-        <Caret Line="1184" Column="3" TopLine="1164"/>
+        <Caret Line="446" TopLine="428"/>
       </Position25>
       <Position26>
         <Filename Value="main.pas"/>
-        <Caret Line="1103" Column="3" TopLine="1083"/>
+        <Caret Line="444" TopLine="428"/>
       </Position26>
       <Position27>
-        <Filename Value="protocol.pas"/>
-        <Caret Line="199" Column="37" TopLine="195"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="455" TopLine="437"/>
       </Position27>
       <Position28>
-        <Filename Value="..\lib\synaser\synaser.pas"/>
-        <Caret Line="1773" Column="39" TopLine="1760"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="442" Column="55" TopLine="428"/>
       </Position28>
       <Position29>
-        <Filename Value="..\lib\synaser\synaser.pas"/>
-        <Caret Line="119" Column="3" TopLine="99"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="447" Column="24" TopLine="428"/>
       </Position29>
       <Position30>
-        <Filename Value="tools.pas"/>
-        <Caret Line="411" Column="15" TopLine="386"/>
+        <Filename Value="main.pas"/>
+        <Caret Line="446" TopLine="428"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -340,6 +338,7 @@
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="False"/>
+        <DebugInfoType Value="dsDwarf3"/>
         <UseLineInfoUnit Value="False"/>
         <StripSymbols Value="True"/>
       </Debugging>
@@ -355,24 +354,16 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Watches Count="5">
+    <Watches Count="3">
       <Item1>
-        <Expression Value="portName"/>
-        <DisplayStyle Value="wdfMemDump"/>
+        <Expression Value="fileversion"/>
       </Item1>
       <Item2>
-        <Expression Value="nameString"/>
-        <DisplayStyle Value="wdfString"/>
+        <Expression Value="edtVersionInfo"/>
       </Item2>
       <Item3>
-        <Expression Value="currentKey"/>
+        <Expression Value="MainWindow.Caption"/>
       </Item3>
-      <Item4>
-        <Expression Value="friendlyName"/>
-      </Item4>
-      <Item5>
-        <Expression Value="progressBar"/>
-      </Item5>
     </Watches>
     <Exceptions Count="3">
       <Item1>
