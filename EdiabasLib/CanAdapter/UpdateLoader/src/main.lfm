@@ -113,13 +113,13 @@ object MainWindow: TMainWindow
     0458FFFE0F4EFFFE0380FFFE0380FFFF0009FFFF8011FFFF8013FFFFF003FFFF
     FE0F
   }
+  ParentBiDiMode = False
+  Position = poScreenCenter
+  LCLVersion = '4.4.0.0'
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnShow = FormShow
-  ParentBiDiMode = False
-  Position = poScreenCenter
-  LCLVersion = '1.4.0.4'
   object StatusBar: TStatusBar
     Left = 0
     Height = 23
@@ -160,23 +160,17 @@ object MainWindow: TMainWindow
           Top = 22
           Width = 305
           ItemHeight = 15
-          OnChange = cmbComPortChange
           ParentShowHint = False
           Style = csDropDownList
           TabOrder = 0
+          OnChange = cmbComPortChange
         end
         object edtBootloaderPassword: TLabeledEdit
           Left = 5
           Height = 23
           Top = 70
           Width = 170
-          EditLabel.AnchorSideLeft.Control = edtBootloaderPassword
-          EditLabel.AnchorSideRight.Control = edtBootloaderPassword
-          EditLabel.AnchorSideRight.Side = asrBottom
-          EditLabel.AnchorSideBottom.Control = edtBootloaderPassword
-          EditLabel.Left = 5
           EditLabel.Height = 15
-          EditLabel.Top = 52
           EditLabel.Width = 170
           EditLabel.Caption = 'Bootloader-Passwort'
           EditLabel.ParentColor = False
@@ -195,10 +189,10 @@ object MainWindow: TMainWindow
           Left = 190
           Height = 19
           Top = 72
-          Width = 116
+          Width = 114
           Caption = 'Erweiterter Modus'
-          OnChange = ckbAdvancedModeChange
           TabOrder = 2
+          OnChange = ckbAdvancedModeChange
         end
       end
       object gpbUpdate: TGroupBox
@@ -215,13 +209,7 @@ object MainWindow: TMainWindow
           Height = 23
           Top = 23
           Width = 225
-          EditLabel.AnchorSideLeft.Control = edtFirmwareFilename
-          EditLabel.AnchorSideRight.Control = edtFirmwareFilename
-          EditLabel.AnchorSideRight.Side = asrBottom
-          EditLabel.AnchorSideBottom.Control = edtFirmwareFilename
-          EditLabel.Left = 5
           EditLabel.Height = 15
-          EditLabel.Top = 5
           EditLabel.Width = 225
           EditLabel.Caption = 'Firmware-Datei'
           EditLabel.ParentColor = False
@@ -238,9 +226,9 @@ object MainWindow: TMainWindow
           Caption = 'Update starten!'
           Enabled = False
           Font.Height = -18
-          OnClick = btnUpdateControlClick
           ParentFont = False
           TabOrder = 1
+          OnClick = btnUpdateControlClick
         end
         object btnSelectFirmwareFilename: TButton
           Left = 240
@@ -248,8 +236,8 @@ object MainWindow: TMainWindow
           Top = 23
           Width = 70
           Caption = 'Auswählen'
-          OnClick = btnSelectFirmwareFilenameClick
           TabOrder = 0
+          OnClick = btnSelectFirmwareFilenameClick
         end
       end
       object gpbInfo: TGroupBox
@@ -319,8 +307,6 @@ object MainWindow: TMainWindow
           ScrollBars = ssVertical
           TabOrder = 0
           TabStop = False
-          TitleFont.Height = -11
-          TitleFont.Name = 'Lucida Console'
           TitleStyle = tsNative
           OnDrawCell = stgMemoryViewDrawCell
         end
@@ -360,7 +346,7 @@ object MainWindow: TMainWindow
           Left = 180
           Height = 19
           Top = 12
-          Width = 103
+          Width = 101
           Caption = 'Programmieren'
           TabOrder = 2
         end
@@ -368,7 +354,7 @@ object MainWindow: TMainWindow
           Left = 180
           Height = 19
           Top = 32
-          Width = 80
+          Width = 78
           Caption = 'Überprüfen'
           TabOrder = 3
         end
@@ -377,7 +363,7 @@ object MainWindow: TMainWindow
           Height = 19
           Hint = 'Deaktiviert die Benutzerführung (Gerät jetzt ausschalten, ...) während dem Update-Vorgang'
           Top = 12
-          Width = 145
+          Width = 143
           Caption = 'Meldungen ausblenden'
           ParentShowHint = False
           ShowHint = True
@@ -396,13 +382,7 @@ object MainWindow: TMainWindow
           Height = 23
           Top = 70
           Width = 125
-          EditLabel.AnchorSideLeft.Control = edtConnectTries
-          EditLabel.AnchorSideRight.Control = edtConnectTries
-          EditLabel.AnchorSideRight.Side = asrBottom
-          EditLabel.AnchorSideBottom.Control = edtConnectTries
-          EditLabel.Left = 5
           EditLabel.Height = 15
-          EditLabel.Top = 52
           EditLabel.Width = 125
           EditLabel.Caption = 'Verbindungsversuche'
           EditLabel.ParentColor = False
@@ -415,7 +395,7 @@ object MainWindow: TMainWindow
           Height = 19
           Hint = 'Vor dem Aufspielen die Hex-Datei neu von der Festplatte laden'
           Top = 72
-          Width = 102
+          Width = 100
           Caption = 'Datei neu laden'
           ParentShowHint = False
           ShowHint = True
@@ -425,17 +405,17 @@ object MainWindow: TMainWindow
           Left = 345
           Height = 19
           Top = 32
-          Width = 127
+          Width = 125
           Caption = 'Programm anzeigen'
-          OnChange = ckbShowMemoryChange
           TabOrder = 7
+          OnChange = ckbShowMemoryChange
         end
         object ckbProgramStart: TCheckBox
           Left = 180
           Height = 19
           Hint = 'Neu eingespielte Firmware nach dem Update starten'
           Top = 52
-          Width = 116
+          Width = 114
           Caption = 'Programm starten'
           ParentShowHint = False
           ShowHint = True
@@ -446,7 +426,7 @@ object MainWindow: TMainWindow
           Height = 19
           Hint = 'Erkennung von Eindrahtverbindungen aktivieren'
           Top = 52
-          Width = 115
+          Width = 113
           Caption = '1-Wire Erkennung'
           ParentShowHint = False
           ShowHint = True
@@ -457,7 +437,7 @@ object MainWindow: TMainWindow
           Height = 19
           Hint = 'Sendet Reset-Kommando an die Applikation'
           Top = 72
-          Width = 169
+          Width = 167
           Caption = 'Reset an Applikation senden'
           ParentShowHint = False
           ShowHint = True
@@ -530,7 +510,7 @@ object MainWindow: TMainWindow
           Left = 5
           Height = 15
           Top = 90
-          Width = 39
+          Width = 38
           Caption = 'Version'
           ParentColor = False
         end
@@ -549,27 +529,27 @@ object MainWindow: TMainWindow
           Height = 19
           Hint = 'Konfigurationsdatei für den Programmpaket-Modus konfigurieren'
           Top = 5
-          Width = 153
+          Width = 151
           Caption = 'Programmpaket erstellen'
-          OnChange = ckbEnableDevModeChange
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
+          OnChange = ckbEnableDevModeChange
         end
         object ckbDevMiniGUI: TCheckBox
           Left = 10
           Height = 19
           Top = 35
-          Width = 92
+          Width = 90
           Caption = 'Minimale GUI'
-          OnChange = ckbDevMiniGUIChange
           TabOrder = 2
+          OnChange = ckbDevMiniGUIChange
         end
         object ckbDevOnTop: TCheckBox
           Left = 10
           Height = 19
           Top = 55
-          Width = 126
+          Width = 124
           Caption = 'Fenster immer oben'
           TabOrder = 3
         end
@@ -578,7 +558,7 @@ object MainWindow: TMainWindow
           Height = 19
           Hint = 'Dateiname schreibgeschützt'
           Top = 35
-          Width = 119
+          Width = 117
           Caption = 'Dateiname sperren'
           ParentShowHint = False
           ShowHint = True
@@ -589,7 +569,7 @@ object MainWindow: TMainWindow
           Height = 19
           Hint = 'Passwort schreibgeschützt'
           Top = 55
-          Width = 109
+          Width = 107
           Caption = 'Passwort sperren'
           ParentShowHint = False
           ShowHint = True
@@ -600,12 +580,12 @@ object MainWindow: TMainWindow
           Height = 19
           Hint = 'Passwort-Feld ausblenden'#13#10'Achtung: Das Passwort wird im Klartext in der Konfigurationsdatei abgelegt!'
           Top = 75
-          Width = 131
+          Width = 129
           Caption = 'Passwort ausblenden'
-          OnChange = ckbDevHidePassChange
           ParentShowHint = False
           ShowHint = True
           TabOrder = 7
+          OnChange = ckbDevHidePassChange
         end
         object btnClearSettings: TButton
           Left = 355
@@ -613,8 +593,8 @@ object MainWindow: TMainWindow
           Top = 5
           Width = 200
           Caption = 'Alle Einstellungen zurücksetzen'
-          OnClick = btnClearSettingsClick
           TabOrder = 1
+          OnClick = btnClearSettingsClick
         end
         object btnSaveSettings: TButton
           Left = 355
@@ -622,15 +602,15 @@ object MainWindow: TMainWindow
           Top = 69
           Width = 200
           Caption = 'Konfiguration speichern'
-          OnClick = btnSaveSettingsClick
           TabOrder = 8
+          OnClick = btnSaveSettingsClick
         end
         object ckbDevHideAdv: TCheckBox
           Left = 10
           Height = 19
           Hint = 'Reiter "Erweitert" deaktivieren'#13#10'Erweiterte Optionen werden weiterhin ausgewertet'
           Top = 75
-          Width = 143
+          Width = 141
           Caption = 'Erweitertes Ausblenden'
           ParentShowHint = False
           ShowHint = True
@@ -694,7 +674,7 @@ object MainWindow: TMainWindow
       Left = 5
       Height = 15
       Top = 3
-      Width = 54
+      Width = 53
       Caption = 'Verbinden'
       ParentColor = False
     end
@@ -728,13 +708,13 @@ object MainWindow: TMainWindow
     Filter = 'Firmware-Dateien (*.hex)|*.hex'
     FilterIndex = 0
     Options = [ofHideReadOnly, ofPathMustExist, ofFileMustExist, ofNoNetworkButton, ofEnableSizing, ofDontAddToRecent, ofViewDetail]
-    left = 344
-    top = 408
+    Left = 344
+    Top = 408
   end
   object tmrFlashNotice: TTimer
     Enabled = False
     OnTimer = tmrFlashNoticeTimer
-    left = 440
-    top = 408
+    Left = 440
+    Top = 408
   end
 end

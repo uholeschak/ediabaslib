@@ -606,7 +606,7 @@ begin
   x := rpos(':', Value);
   if (x > 0) and ((Length(Value) - x) > 2) then
     Value := Copy(Value, 1, x + 2);
-  Value := ReplaceString(Value, ':', TimeSeparator);
+  Value := ReplaceString(Value, ':', DefaultFormatSettings.TimeSeparator);
   Result := -1;
   try
     Result := StrToTime(Value);
@@ -2059,7 +2059,7 @@ var
 begin
   for n :=  1 to 12 do
   begin
-    CustomMonthNames[n] := ShortMonthNames[n];
-    MyMonthNames[0, n] := ShortMonthNames[n];
+    CustomMonthNames[n] := DefaultFormatSettings.ShortMonthNames[n];
+    MyMonthNames[0, n] := DefaultFormatSettings.ShortMonthNames[n];
   end;
 end.

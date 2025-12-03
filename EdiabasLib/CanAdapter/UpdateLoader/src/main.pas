@@ -35,7 +35,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ComCtrls, FileInfo,
   Grids, StdCtrls, ExtCtrls, EditBtn, Buttons, LCLType, IniFiles,
-  LCLIntf, Tools, Protocol, SynaSer;
+  LCLIntf, Tools, Protocol, SynaSer, LazFileUtils;
 
 type
 
@@ -438,19 +438,20 @@ begin
     try
       fileVersion := TFileVersionInfo.Create(Application);
       fileVersion.fileName := Application.ExeName;
+      fileVersion.ReadFileInfo;
 
-      edtVersionInfo.Text := 'Version: ' + fileversion.getVersionSetting('ProductName') +
-        ' ' + fileversion.getVersionSetting('ProductVersion') +
-        ' (Build ' + fileversion.getVersionSetting('FileVersion') + ', ' +
+      edtVersionInfo.Text := 'Version: ' + fileversion.VersionStrings.Values['ProductName'] +
+        ' ' + fileversion.VersionStrings.Values['ProductVersion'] +
+        ' (Build ' + fileversion.VersionStrings.Values['FileVersion'] + ', ' +
 {$I %DATE%}
         +')';
 
-      Application.Title := fileversion.getVersionSetting('ProductName') +
-        ' ' + fileversion.getVersionSetting('ProductVersion');
+      Application.Title := fileversion.VersionStrings.Values['ProductName'] +
+        ' ' + fileversion.VersionStrings.Values['ProductVersion'];
 
-      MainWindow.Caption := fileversion.getVersionSetting('ProductName') +
-        ' ' + fileversion.getVersionSetting('ProductVersion') +
-        ' (Build ' + fileversion.getVersionSetting('FileVersion') + ')';
+      MainWindow.Caption := fileversion.VersionStrings.Values['ProductName'] +
+        ' ' + fileversion.VersionStrings.Values['ProductVersion'] +
+        ' (Build ' + fileversion.VersionStrings.Values['FileVersion'] + ')';
 
       lblBootloaderVersion.Caption := 'Bootloader-Version: ' + settingValidBootloader;
     finally
@@ -476,7 +477,7 @@ begin
   cmbComPort.ItemIndex := 0;
   cmbBaudRate.ItemIndex := defaultBaudrate;
   StatusBar.Panels[0].Text := 'Bereit, keine Firmware-Datei geladen';
-  stgMemoryView.RowCount := 0;
+  stgMemoryView.Clear;
 
   settingsFile := ExtractFilePath(Application.ExeName) + 'UpdateLoader.ini';
 
@@ -532,6 +533,7 @@ end;
 procedure TMainWindow.FormCreate(Sender: TObject);
 var
   dialogTranslation: TPOFile;
+  Item: TPOFileItem;
 begin
   inherited;
 
@@ -553,11 +555,11 @@ begin
   //Schaltflächen übersetzen
   dialogTranslation := TPOFile.Create;
 
-  dialogTranslation.Add('rsmbyes', '&Yes', '&Ja', '-', 'lclstrconsts', '', '');
-  dialogTranslation.Add('rsmbno', '&No', '&Nein', '-', 'lclstrconsts', '', '');
-  dialogTranslation.Add('rsmbok', '&OK', '&OK', '-', 'lclstrconsts', '', '');
-  dialogTranslation.Add('rsmbcancel', 'Cancel', 'Abbrechen', '-',
-    'lclstrconsts', '', '');
+  Item := Nil;
+  dialogTranslation.FillItem(Item, 'rsmbyes', '&Yes', '&Ja', '-', 'lclstrconsts', '', '');
+  dialogTranslation.FillItem(Item,'rsmbno', '&No', '&Nein', '-', 'lclstrconsts', '', '');
+  dialogTranslation.FillItem(Item,'rsmbok', '&OK', '&OK', '-', 'lclstrconsts', '', '');
+  dialogTranslation.FillItem(Item,'rsmbcancel', 'Cancel', 'Abbrechen', '-', 'lclstrconsts', '', '');
 
   Translations.TranslateUnitResourceStrings('LCLStrConsts', dialogTranslation);
 end;
@@ -757,7 +759,7 @@ begin
   begin
     memoryViewUpdate := False;
 
-    stgMemoryView.RowCount := 0;
+    stgMemoryView.Clear;
     gpbMemoryView.Caption := ' Programm ';
   end;
 end;
