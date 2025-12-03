@@ -1919,11 +1919,9 @@ var
   bol:      PANSIChar;
   lng:      integer;
   s:        ANSIString;
-  BackStop: ANSIString;
   eob1:     PANSIChar;
   eob2:     PANSIChar;
 begin
-  BackStop := '--'+ABoundary;
   eob2     := nil;
   // Copying until Boundary will be reached
   while (APtr<AEtx) do

@@ -4,9 +4,6 @@
     <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
-      <Flags>
-        <CompatibilityMode Value="True"/>
-      </Flags>
       <Title Value="UpdateLoader"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
@@ -24,9 +21,9 @@
       <Language Value="0407"/>
       <StringTable Comments="UpdateLoader für FastBoot V2.1 von Peter Dannegger" CompanyName="Leo-Andres Hofmann" FileDescription="UpdateLoader für FastBoot V2.1" InternalName="UpdateLoader" LegalCopyright="Copyright (C) 2012-2013 Leo-Andres Hofmann" ProductName="UpdateLoader" ProductVersion="2.2"/>
     </VersionInfo>
-    <BuildModes Count="2" Active="Release">
-      <Item1 Name="Release" Default="True"/>
-      <Item2 Name="Debug">
+    <BuildModes Active="Release">
+      <Item Name="Release" Default="True"/>
+      <Item Name="Debug">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -80,31 +77,31 @@
             </Verbosity>
           </Other>
         </CompilerOptions>
-      </Item2>
+      </Item>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes Count="1">
-        <Mode0 Name="default"/>
+      <Modes>
+        <Mode Name="default"/>
       </Modes>
     </RunParams>
-    <RequiredPackages Count="1">
-      <Item1>
+    <RequiredPackages>
+      <Item>
         <PackageName Value="LCL"/>
-      </Item1>
+      </Item>
     </RequiredPackages>
-    <Units Count="12">
-      <Unit0>
+    <Units>
+      <Unit>
         <Filename Value="UpdateLoader.lpr"/>
         <IsPartOfProject Value="True"/>
         <CursorPos Y="13"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
-      </Unit0>
-      <Unit1>
+      </Unit>
+      <Unit>
         <Filename Value="main.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainWindow"/>
@@ -116,8 +113,8 @@
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
-      </Unit1>
-      <Unit2>
+      </Unit>
+      <Unit>
         <Filename Value="tools.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="6"/>
@@ -125,8 +122,8 @@
         <CursorPos X="73" Y="35"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
-      </Unit2>
-      <Unit3>
+      </Unit>
+      <Unit>
         <Filename Value="protocol.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="4"/>
@@ -134,55 +131,55 @@
         <CursorPos X="13" Y="34"/>
         <UsageCount Value="212"/>
         <Loaded Value="True"/>
-      </Unit3>
-      <Unit4>
+      </Unit>
+      <Unit>
         <Filename Value="C:\lazarus\lcl\grids.pas"/>
         <TopLine Value="8645"/>
         <CursorPos Y="8675"/>
         <UsageCount Value="2"/>
-      </Unit4>
-      <Unit5>
+      </Unit>
+      <Unit>
         <Filename Value="..\lib\synaser\synaser.pas"/>
         <EditorIndex Value="5"/>
         <TopLine Value="1143"/>
         <CursorPos X="12" Y="1158"/>
         <UsageCount Value="102"/>
         <Loaded Value="True"/>
-      </Unit5>
-      <Unit6>
+      </Unit>
+      <Unit>
         <Filename Value="C:\lazarus\lcl\include\progressbar.inc"/>
         <TopLine Value="167"/>
         <CursorPos Y="183"/>
         <UsageCount Value="7"/>
-      </Unit6>
-      <Unit7>
+      </Unit>
+      <Unit>
         <Filename Value="..\lib\synaser\synafpc.pas"/>
         <TopLine Value="55"/>
         <CursorPos X="63" Y="80"/>
         <UsageCount Value="7"/>
-      </Unit7>
-      <Unit8>
+      </Unit>
+      <Unit>
         <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\objpas\sysutils\sysutilh.inc"/>
         <TopLine Value="75"/>
         <CursorPos X="4" Y="104"/>
         <UsageCount Value="2"/>
-      </Unit8>
-      <Unit9>
+      </Unit>
+      <Unit>
         <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\objpas\classes\classesh.inc"/>
         <TopLine Value="689"/>
         <CursorPos X="3" Y="714"/>
         <UsageCount Value="7"/>
-      </Unit9>
-      <Unit10>
+      </Unit>
+      <Unit>
         <Filename Value="..\lib\synaser\synautil.pas"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="2035"/>
-        <CursorPos X="49" Y="2063"/>
+        <TopLine Value="1928"/>
+        <CursorPos Y="1925"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
-      </Unit10>
-      <Unit11>
+      </Unit>
+      <Unit>
         <Filename Value="C:\Programs\lazarus\components\lazutils\translations.pas"/>
         <UnitName Value="Translations"/>
         <EditorIndex Value="3"/>
@@ -190,129 +187,129 @@
         <CursorPos X="23" Y="978"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
-      </Unit11>
+      </Unit>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
-      <Position1>
-        <Filename Value="main.pas"/>
-        <Caret Line="445" Column="17" TopLine="428"/>
-      </Position1>
-      <Position2>
+    <JumpHistory HistoryIndex="29">
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="442" TopLine="428"/>
-      </Position2>
-      <Position3>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="435" Column="52" TopLine="428"/>
-      </Position3>
-      <Position4>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="446" TopLine="428"/>
-      </Position4>
-      <Position5>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="443" TopLine="428"/>
-      </Position5>
-      <Position6>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="446" TopLine="428"/>
-      </Position6>
-      <Position7>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="444" TopLine="428"/>
-      </Position7>
-      <Position8>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="446" TopLine="428"/>
-      </Position8>
-      <Position9>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="444" TopLine="428"/>
-      </Position9>
-      <Position10>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="446" TopLine="428"/>
-      </Position10>
-      <Position11>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="444" TopLine="428"/>
-      </Position11>
-      <Position12>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="455" TopLine="437"/>
-      </Position12>
-      <Position13>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="442" Column="55" TopLine="428"/>
-      </Position13>
-      <Position14>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="447" Column="24" TopLine="428"/>
-      </Position14>
-      <Position15>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="446" TopLine="428"/>
-      </Position15>
-      <Position16>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="518" Column="60" TopLine="508"/>
-      </Position16>
-      <Position17>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="563" TopLine="548"/>
-      </Position17>
-      <Position18>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="557" Column="85" TopLine="543"/>
-      </Position18>
-      <Position19>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="552" Column="44" TopLine="543"/>
-      </Position19>
-      <Position20>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="557" Column="24" TopLine="543"/>
-      </Position20>
-      <Position21>
+      </Position>
+      <Position>
         <Filename Value="C:\Programs\lazarus\components\lazutils\translations.pas"/>
         <Caret Line="152" Column="23" TopLine="146"/>
-      </Position21>
-      <Position22>
+      </Position>
+      <Position>
         <Filename Value="C:\Programs\lazarus\components\lazutils\translations.pas"/>
         <Caret Line="982" Column="15" TopLine="964"/>
-      </Position22>
-      <Position23>
+      </Position>
+      <Position>
         <Filename Value="C:\Programs\lazarus\components\lazutils\translations.pas"/>
         <Caret Line="1705" Column="43" TopLine="1701"/>
-      </Position23>
-      <Position24>
+      </Position>
+      <Position>
         <Filename Value="C:\Programs\lazarus\components\lazutils\translations.pas"/>
         <Caret Line="42" Column="80" TopLine="32"/>
-      </Position24>
-      <Position25>
+      </Position>
+      <Position>
         <Filename Value="C:\Programs\lazarus\components\lazutils\translations.pas"/>
         <Caret Line="156" Column="75" TopLine="138"/>
-      </Position25>
-      <Position26>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="559" Column="34" TopLine="537"/>
-      </Position26>
-      <Position27>
+      </Position>
+      <Position>
         <Filename Value="main.pas"/>
         <Caret Line="556" Column="39" TopLine="533"/>
-      </Position27>
-      <Position28>
+      </Position>
+      <Position>
         <Filename Value="..\lib\synaser\synautil.pas"/>
         <Caret Line="609" Column="60" TopLine="607"/>
-      </Position28>
-      <Position29>
+      </Position>
+      <Position>
         <Filename Value="..\lib\synaser\synaser.pas"/>
         <Caret Line="1042" Column="12" TopLine="1016"/>
-      </Position29>
-      <Position30>
+      </Position>
+      <Position>
         <Filename Value="..\lib\synaser\synaser.pas"/>
         <Caret Line="1158" Column="12" TopLine="1143"/>
-      </Position30>
+      </Position>
+      <Position>
+        <Filename Value="..\lib\synaser\synautil.pas"/>
+        <Caret Line="2063" Column="49" TopLine="2035"/>
+      </Position>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
@@ -364,27 +361,27 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Watches Count="3">
-      <Item1>
+    <Watches>
+      <Item>
         <Expression Value="fileversion"/>
-      </Item1>
-      <Item2>
+      </Item>
+      <Item>
         <Expression Value="edtVersionInfo"/>
-      </Item2>
-      <Item3>
+      </Item>
+      <Item>
         <Expression Value="MainWindow.Caption"/>
-      </Item3>
+      </Item>
     </Watches>
-    <Exceptions Count="3">
-      <Item1>
+    <Exceptions>
+      <Item>
         <Name Value="EAbort"/>
-      </Item1>
-      <Item2>
+      </Item>
+      <Item>
         <Name Value="ECodetoolError"/>
-      </Item2>
-      <Item3>
+      </Item>
+      <Item>
         <Name Value="EFOpenError"/>
-      </Item3>
+      </Item>
     </Exceptions>
   </Debugging>
 </CONFIG>
