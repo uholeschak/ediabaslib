@@ -161,7 +161,7 @@ public class ApkUncompressCommon
             else if (entryFileName.StartsWith(MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER, StringComparison.OrdinalIgnoreCase))
             {
                 assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER.Length);
-                // MonoAndroidHelper.SATELLITE_CULTURE_END_MARKER_CHAR is incorrect!
+                // MonoAndroidHelper.SATELLITE_CULTURE_END_MARKER_CHAR is incorrect for NET9 '-' and only correct for NET10 '_'
                 MatchCollection cultureMatches = regexCulture.Matches(assemblyFileName);
                 if ((cultureMatches.Count == 1) && (cultureMatches[0].Groups.Count == 2))
                 {
