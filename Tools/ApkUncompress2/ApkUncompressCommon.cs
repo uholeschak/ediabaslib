@@ -163,7 +163,7 @@ public class ApkUncompressCommon
                 assemblyFileName = cleanedFileName.Remove(0, MonoAndroidHelper.MANGLED_ASSEMBLY_SATELLITE_ASSEMBLY_MARKER.Length);
                 // MonoAndroidHelper.SATELLITE_CULTURE_END_MARKER_CHAR is incorrect!
                 MatchCollection cultureMatches = regexCulture.Matches(assemblyFileName);
-                if ((cultureMatches.Count == 1) || (cultureMatches[0].Groups.Count == 2))
+                if ((cultureMatches.Count == 1) && (cultureMatches[0].Groups.Count == 2))
                 {
                     cultureDir = cultureMatches[0].Groups[1].Value;
                 }
