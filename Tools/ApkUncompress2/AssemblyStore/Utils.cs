@@ -102,36 +102,41 @@ static class Utils
         }
     }
 
-    public static (FileFormat format, FileInfo? info) DetectFileFormat (string path)
-	{
-		if (String.IsNullOrEmpty (path)) {
-			return (FileFormat.Unknown, null);
-		}
+    public static (FileFormat format, FileInfo? info) DetectFileFormat(string path)
+    {
+        if (String.IsNullOrEmpty(path))
+        {
+            return (FileFormat.Unknown, null);
+        }
 
-		var info = new FileInfo (path);
-		if (!info.Exists) {
-			return (FileFormat.Unknown, null);
-		}
+        var info = new FileInfo(path);
+        if (!info.Exists)
+        {
+            return (FileFormat.Unknown, null);
+        }
 
-		using var reader = new BinaryReader (info.OpenRead ());
+        using var reader = new BinaryReader(info.OpenRead());
 
-		// ATM, all formats we recognize have 4-byte magic at the start
-		FileFormat format = reader.ReadUInt32 () switch {
-			Utils.ZIP_MAGIC            => FileFormat.Zip,
-			Utils.ELF_MAGIC            => FileFormat.ELF,
-			Utils.ASSEMBLY_STORE_MAGIC => FileFormat.AssemblyStore,
-			_                          => FileFormat.Unknown
-		};
+        // ATM, all formats we recognize have 4-byte magic at the start
+        FileFormat format = reader.ReadUInt32() switch
+        {
+            Utils.ZIP_MAGIC => FileFormat.Zip,
+            Utils.ELF_MAGIC => FileFormat.ELF,
+            Utils.ASSEMBLY_STORE_MAGIC => FileFormat.AssemblyStore,
+            _ => FileFormat.Unknown
+        };
 
-		if (format == FileFormat.Unknown || format != FileFormat.Zip) {
-			return (format, info);
-		}
+        if (format == FileFormat.Unknown || format != FileFormat.Zip)
+        {
+            return (format, info);
+        }
 
-		return (DetectAndroidArchive (info, format), info);
-	}
+        return (DetectAndroidArchive(info, format), info);
+    }
 
-	static FileFormat DetectAndroidArchive (FileInfo info, FileFormat defaultFormat)
-	{
+    // [UH] modified
+    static FileFormat DetectAndroidArchive (FileInfo info, FileFormat defaultFormat)
+    {
         ZipFile? zf = null;
         try
         {
@@ -167,7 +172,7 @@ static class Utils
         }
 
         return defaultFormat;
-	}
+    }
 
     static bool HasAllEntries (ZipFile zf, string[] entries)
     {
