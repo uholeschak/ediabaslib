@@ -101,7 +101,7 @@
         <Filename Value="UpdateLoader.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <CursorPos X="16" Y="18"/>
+        <CursorPos Y="13"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -113,7 +113,7 @@
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
         <TopLine Value="428"/>
-        <CursorPos X="38" Y="446"/>
+        <CursorPos X="12" Y="446"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -140,45 +140,45 @@
         <Filename Value="C:\lazarus\lcl\grids.pas"/>
         <TopLine Value="8645"/>
         <CursorPos Y="8675"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\lib\synaser\synaser.pas"/>
         <EditorIndex Value="3"/>
         <TopLine Value="1753"/>
         <CursorPos X="39" Y="1773"/>
-        <UsageCount Value="95"/>
+        <UsageCount Value="102"/>
         <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="C:\lazarus\lcl\include\progressbar.inc"/>
         <TopLine Value="167"/>
         <CursorPos Y="183"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\lib\synaser\synafpc.pas"/>
         <TopLine Value="55"/>
         <CursorPos X="63" Y="80"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit7>
       <Unit8>
         <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\objpas\sysutils\sysutilh.inc"/>
         <TopLine Value="75"/>
         <CursorPos X="4" Y="104"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
       </Unit8>
       <Unit9>
         <Filename Value="C:\lazarus\fpc\2.6.2\source\rtl\objpas\classes\classesh.inc"/>
         <TopLine Value="689"/>
         <CursorPos X="3" Y="714"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\lib\synaser\synautil.pas"/>
         <TopLine Value="584"/>
         <CursorPos X="51" Y="609"/>
-        <UsageCount Value="27"/>
+        <UsageCount Value="25"/>
       </Unit10>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
@@ -329,8 +329,6 @@
         <RangeChecks Value="True"/>
         <OverflowChecks Value="True"/>
       </Checks>
-      <TargetCPU Value="i386"/>
-      <TargetOS Value="win32"/>
       <Optimizations>
         <OptimizationLevel Value="3"/>
       </Optimizations>
