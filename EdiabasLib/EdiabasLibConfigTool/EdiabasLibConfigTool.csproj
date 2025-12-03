@@ -72,6 +72,7 @@
   <PropertyGroup>
     <PlatformTarget>x86</PlatformTarget>
     <Nullable>disable</Nullable>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;set &quot;ApiDir=$(TargetDir)Api32&quot;&#xD;&#xA;REM echo ApiDir &quot;!ApiDir!&quot;&#xD;&#xA;IF NOT EXIST &quot;!ApiDir!&quot; mkdir &quot;!ApiDir!&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)..\Api32\$(Configuration)\Api32.dll&quot; &quot;!ApiDir!&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)..\Api32\x64\$(Configuration)\Api64.dll&quot; &quot;!ApiDir!&quot;&#xD;&#xA;copy /y &quot;$(ProjectDir)..\EdiabasLib\EdiabasLib.config&quot; &quot;!ApiDir!&quot;" />
