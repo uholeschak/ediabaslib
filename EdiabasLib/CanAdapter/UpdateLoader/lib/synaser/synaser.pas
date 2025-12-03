@@ -1039,6 +1039,7 @@ begin
   end
   else
     SetSynaError(y);
+  err := 0;
   ClearCommError(FHandle, err, nil);
   if err <> 0 then
     DecodeCommError(err);
@@ -1154,6 +1155,7 @@ begin
   end
   else
     SetSynaError(y);
+  err := 0;
   ClearCommError(FHandle, err, nil);
   if err <> 0 then
     DecodeCommError(err);
