@@ -113,7 +113,7 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="533"/>
-        <CursorPos X="70" Y="556"/>
+        <CursorPos X="39" Y="556"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -338,6 +338,7 @@
         <RangeChecks Value="True"/>
         <OverflowChecks Value="True"/>
       </Checks>
+      <TargetOS Value="win32"/>
       <Optimizations>
         <OptimizationLevel Value="3"/>
       </Optimizations>
