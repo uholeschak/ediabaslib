@@ -533,6 +533,7 @@ end;
 procedure TMainWindow.FormCreate(Sender: TObject);
 var
   dialogTranslation: TPOFile;
+  Item: TPOFileItem;
 begin
   inherited;
 
@@ -552,16 +553,15 @@ begin
   miniGUI := False;
 
   //Schaltflächen übersetzen
-  {
   dialogTranslation := TPOFile.Create;
 
-  dialogTranslation.Add('rsmbyes', '&Yes', '&Ja', '-', 'lclstrconsts', '', '');
-  dialogTranslation.Add('rsmbno', '&No', '&Nein', '-', 'lclstrconsts', '', '');
-  dialogTranslation.Add('rsmbok', '&OK', '&OK', '-', 'lclstrconsts', '', '');
-  dialogTranslation.Add('rsmbcancel', 'Cancel', 'Abbrechen', '-', 'lclstrconsts', '', '');
+  Item := Nil;
+  dialogTranslation.FillItem(Item, 'rsmbyes', '&Yes', '&Ja', '-', 'lclstrconsts', '', '');
+  dialogTranslation.FillItem(Item,'rsmbno', '&No', '&Nein', '-', 'lclstrconsts', '', '');
+  dialogTranslation.FillItem(Item,'rsmbok', '&OK', '&OK', '-', 'lclstrconsts', '', '');
+  dialogTranslation.FillItem(Item,'rsmbcancel', 'Cancel', 'Abbrechen', '-', 'lclstrconsts', '', '');
 
   Translations.TranslateUnitResourceStrings('LCLStrConsts', dialogTranslation);
-  }
 end;
 
 {$ENDREGION}
