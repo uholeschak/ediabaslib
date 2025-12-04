@@ -40,6 +40,7 @@
   <ItemGroup>
     <TrimmerRootAssembly Include="Mono.Android" RootMode="visible" />
     <TrimmerRootAssembly Include="System.Collections" RootMode="visible" />
+    <TrimmerRootAssembly Include="System.Private.CoreLib" RootMode="visible" />
     <TrimmerRootAssembly Include="Xamarin.AndroidX.Core" RootMode="visible" />
   </ItemGroup>
   <ItemGroup>
