@@ -4031,11 +4031,15 @@ namespace BmwDeepObd
             try
             {
                 Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("https://"));
-                if (intent.ResolveActivity(PackageManager) == null)
+                intent.AddCategory(Intent.CategoryBrowsable);
+                ComponentName componentName = intent.ResolveActivity(PackageManager);
+                if (componentName == null)
                 {
                     return false;
                 }
 
+                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
+                intent.SetComponent(componentName);
                 intent.SetData(Android.Net.Uri.Parse(url));
                 _context.StartActivity(intent);
             }
