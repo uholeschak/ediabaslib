@@ -15,7 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Apis.AndroidPublisher.v3">
-      <Version>1.72.0.3975</Version>
+      <Version>1.73.0.3980</Version>
     </PackageReference>
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Management" Version="10.0.0" />
