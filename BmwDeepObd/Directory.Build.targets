@@ -5,15 +5,4 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <AndroidUseAssemblyStore>True</AndroidUseAssemblyStore>
   </PropertyGroup>
-  <Target Name="PatchRemoveRegisterAttributeBefore" BeforeTargets="_RemoveRegisterAttribute">
-    <PropertyGroup>
-      <AndroidIncludeDebugSymbolsStd>$(AndroidIncludeDebugSymbols)</AndroidIncludeDebugSymbolsStd>
-      <AndroidIncludeDebugSymbols Condition=" '$(EmbedAssembliesIntoApk)' == 'True' ">True</AndroidIncludeDebugSymbols>
-    </PropertyGroup>
-  </Target>
-  <Target Name="PatchRemoveRegisterAttributeAfter" AfterTargets="_RemoveRegisterAttribute">
-    <PropertyGroup>
-      <AndroidIncludeDebugSymbols Condition=" '$(EmbedAssembliesIntoApk)' == 'True' ">$(AndroidIncludeDebugSymbolsStd)</AndroidIncludeDebugSymbols>
-    </PropertyGroup>
-  </Target>
 </Project>
