@@ -8729,7 +8729,7 @@ namespace BmwDeepObd
             ScanAllEcus = false;
             CollectDebugInfo = false;
             CompressTrace = true;
-            Translator = TranslatorType.Deepl;
+            Translator = TranslatorType.GoogleApis;
         }
 
         public string GetCurrentLanguage(bool iso3 = false)
