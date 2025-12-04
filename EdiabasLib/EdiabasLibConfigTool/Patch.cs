@@ -61,8 +61,8 @@ namespace EdiabasLibConfigTool
         public const string RegKeyIstaOpMode = @"BMW.Rheingold.OperationalMode";
         public const string SectionConfig = @"Configuration";
         public const string KeyInterface = @"Interface";
-        public const string VcRedistX32Link = @"https://aka.ms/vs/17/release/vc_redist.x86.exe";
-        public const string VcRedistX64Link = @"https://aka.ms/vs/17/release/vc_redist.x64.exe";
+        public const string VcRedistX32Link = @"https://aka.ms/vc14/vc_redist.x86.exe";
+        public const string VcRedistX64Link = @"https://aka.ms/vc14/vc_redist.x64.exe";
         public const string DcanKlineLink = @"https://uholeschak.github.io/ediabaslib/docs/Build_Bluetooth_D-CAN_adapter.html";
         private static readonly string[] RuntimeFiles = { "api-ms-win*.dll", "ucrtbase.dll", "msvcp140.dll", "vcruntime140.dll" };
 
