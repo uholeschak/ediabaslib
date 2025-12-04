@@ -59,6 +59,7 @@ namespace BmwDeepObd
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
 #pragma warning disable CS0618 // TabLayout.IOnTabSelectedListener2 creates compiler errors
     public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener
+        //, Android.App.KeyguardManager.IDeviceLockedStateListener
 #pragma warning restore CS0618
     {
         private delegate void ErrorMessageResultDelegate(ErrorMessageData errorMessageData);
@@ -279,6 +280,13 @@ namespace BmwDeepObd
             ClearPage(tab.Position);
         }
 
+        public void OnDeviceLockedStateChanged(bool isDeviceLocked)
+        {
+#if DEBUG
+            Log.Info(Tag, string.Format("OnDeviceLockedStateChanged: {0}", isDeviceLocked));
+#endif
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -297,6 +305,12 @@ namespace BmwDeepObd
                     if (GetSystemService(KeyguardService) is Android.App.KeyguardManager keyguardManager)
                     {
                         keyguardManager.RequestDismissKeyguard(this, null);
+#if false
+                        if (Build.VERSION.SdkInt > BuildVersionCodes.Baklava)
+                        {
+                            keyguardManager.AddDeviceLockedStateListener(new StateExecutor(), this);
+                        }
+#endif
                     }
                 }
                 else
@@ -3846,12 +3860,12 @@ namespace BmwDeepObd
 
                     if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
                     {
-#pragma warning disable CA1416 // Plattformkompatibilität überprüfen
+#pragma warning disable CA1416 // Plattformkompatibilitï¿½t ï¿½berprï¿½fen
                         if (ActivityCommon.SwapMultiWindowOrientation && IsInMultiWindowMode)
                         {
                             portrait = !portrait;
                         }
-#pragma warning restore CA1416 // Plattformkompatibilität überprüfen
+#pragma warning restore CA1416 // Plattformkompatibilitï¿½t ï¿½berprï¿½fen
                     }
 
                     int gaugeCount = portrait ? pageInfo.GaugesPortraitValue : pageInfo.GaugesLandscapeValue;
@@ -8221,6 +8235,13 @@ namespace BmwDeepObd
                 {
                     // ignored
                 }
+            }
+        }
+
+        private class StateExecutor : Java.Lang.Object, Java.Util.Concurrent.IExecutor
+        {
+            public void Execute(Java.Lang.IRunnable command)
+            {
             }
         }
 
