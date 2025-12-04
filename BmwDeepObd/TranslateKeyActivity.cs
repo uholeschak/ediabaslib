@@ -314,7 +314,7 @@ namespace BmwDeepObd
                     switch (ActivityCommon.SelectedTranslator)
                     {
                         case ActivityCommon.TranslatorType.GoogleApis:
-                            _activityCommon.OpenWebUrl("https://uholeschak.github.io/ediabaslib/docs/Deep_OBD_for_BMW_and_VAG.html#google-translation-apis");
+                            _activityCommon.OpenWebUrl("https://github.com/uholeschak/ediabaslib/blob/master/docs/Deep_OBD_for_BMW_and_VAG.md#google-translation-apis");
                             break;
                     }
                 });
