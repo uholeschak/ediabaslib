@@ -20,6 +20,7 @@
 
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='Balloon.Companion']" name="managedName">CompanionNet</attr>
   <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonPersistence.Companion']" name="managedName">CompanionNet</attr>
+  <attr path="/api/package[@name='com.skydoves.balloon']/class[@name='BalloonStroke.Companion']" name="managedName">CompanionNet</attr>
 
   <attr path="/api/package[@name='com.skydoves.balloon.animations']/class[@name='BalloonRotateAnimation']" name="final">false</attr>
   <attr path="/api/package[@name='com.skydoves.balloon.animations']/class[@name='BalloonRotateAnimation.Builder']" name="final">false</attr>
