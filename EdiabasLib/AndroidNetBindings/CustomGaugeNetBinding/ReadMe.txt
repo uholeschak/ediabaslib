@@ -11,5 +11,5 @@ set JAVA_HOME=C:\Program Files\Java\jdk-11.0.17
 
 Build:
 gradlew.bat clean
-gradlew.bat build
+gradlew.bat build -x lint
 copy build\outputs\aar\CustomGauge-release.aar to CustomGaugeNetBinding
