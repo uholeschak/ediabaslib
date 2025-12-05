@@ -9,6 +9,7 @@
   <PropertyGroup>
     <ApplicationIcon>AppIcon.ico</ApplicationIcon>
     <Nullable>disable</Nullable>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn />
