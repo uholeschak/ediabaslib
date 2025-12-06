@@ -306,7 +306,7 @@ namespace BmwDeepObd
                     {
                         keyguardManager.RequestDismissKeyguard(this, null);
 #if false
-                        if (Build.VERSION.SdkIntFull > (int) BuildVersionCodesFull.Baklava)
+                        if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
                         {
                             keyguardManager.AddDeviceLockedStateListener(new StateExecutor(), this);
                         }
