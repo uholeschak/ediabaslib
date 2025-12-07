@@ -315,16 +315,13 @@ namespace BmwDeepObd
 
             try
             {
-                Android.App.KeyguardManager keyguardManager = _activityCommon?.KeyguardManager;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
+                Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
+                if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
                 {
-                    if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
+                    Java.Util.Concurrent.IExecutor executor = MainExecutor;
+                    if (executor != null)
                     {
-                        Java.Util.Concurrent.IExecutor executor = MainExecutor;
-                        if (executor != null)
-                        {
-                            keyguardManager?.AddDeviceLockedStateListener(executor, this);
-                        }
+                        keyguardManager?.AddDeviceLockedStateListener(executor, this);
                     }
                 }
 
@@ -802,7 +799,7 @@ namespace BmwDeepObd
             {
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
                 {
-                    Android.App.KeyguardManager keyguardManager = _activityCommon?.KeyguardManager;
+                    Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
                     if (keyguardManager != null)
                     {
                         _deviceLocked = keyguardManager.IsDeviceLocked;
@@ -973,7 +970,11 @@ namespace BmwDeepObd
             {
                 if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
                 {
-                    _activityCommon?.KeyguardManager?.RemoveDeviceLockedStateListener(this);
+                    Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
+                    if (keyguardManager != null)
+                    {
+                        keyguardManager?.RemoveDeviceLockedStateListener(this);
+                    }
                 }
             }
             catch (Exception)
