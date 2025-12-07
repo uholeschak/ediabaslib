@@ -301,16 +301,12 @@ namespace BmwDeepObd
                 Android.App.KeyguardManager keyguardManager = _activityCommon?.KeyguardManager;
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
                 {
-                    if (keyguardManager != null)
+                    if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
                     {
-                        _deviceLocked = keyguardManager.IsDeviceLocked;
-                        if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
+                        Java.Util.Concurrent.IExecutor executor = MainExecutor;
+                        if (executor != null)
                         {
-                            Java.Util.Concurrent.IExecutor executor = MainExecutor;
-                            if (executor != null)
-                            {
-                                keyguardManager.AddDeviceLockedStateListener(executor, this);
-                            }
+                            keyguardManager?.AddDeviceLockedStateListener(executor, this);
                         }
                     }
                 }
@@ -783,6 +779,22 @@ namespace BmwDeepObd
             if (_storageAccessGranted)
             {
                 _activityCommon?.RequestUsbPermission(null);
+            }
+
+            try
+            {
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
+                {
+                    Android.App.KeyguardManager keyguardManager = _activityCommon?.KeyguardManager;
+                    if (keyguardManager != null)
+                    {
+                        _deviceLocked = keyguardManager.IsDeviceLocked;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             _activityActive = true;
