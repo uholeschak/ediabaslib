@@ -58,7 +58,7 @@ namespace BmwDeepObd
         ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
 #pragma warning disable CS0618 // TabLayout.IOnTabSelectedListener2 creates compiler errors
-    public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener, Android.App.KeyguardManager.IDeviceLockedStateListener
+    public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener
 #pragma warning restore CS0618
     {
         private delegate void ErrorMessageResultDelegate(ErrorMessageData errorMessageData);
@@ -201,7 +201,6 @@ namespace BmwDeepObd
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
-        private bool _deviceLocked;
         private bool _lastCompileCrash;
         private bool _backPressed;
         private long _lastBackPressedTime;
@@ -280,31 +279,6 @@ namespace BmwDeepObd
             ClearPage(tab.Position);
         }
 
-        public void OnDeviceLockedStateChanged(bool isDeviceLocked)
-        {
-#if DEBUG
-            Log.Info(Tag, string.Format("OnDeviceLockedStateChanged: {0}", isDeviceLocked));
-#endif
-            RunOnUiThread(() =>
-            {
-                if (_activityCommon == null)
-                {
-                    return;
-                }
-
-                if (!_activityActive)
-                {
-                    return;
-                }
-
-                _deviceLocked = isDeviceLocked;
-
-                UpdateLockState();
-                UpdateOptionsMenu();
-                UpdateDisplay();
-            });
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -313,31 +287,13 @@ namespace BmwDeepObd
             SetTheme();
             base.OnCreate(savedInstanceState);
 
-            Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
-            try
-            {
-                if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
-                {
-                    Java.Util.Concurrent.IExecutor executor = MainExecutor;
-                    if (executor != null)
-                    {
-                        keyguardManager?.AddDeviceLockedStateListener(executor, this);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-#if DEBUG
-                Log.Info(Tag, string.Format("AddDeviceLockedStateListener Exception: {0}", ex.Message));
-#endif
-            }
-
             try
             {
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.OMr1)
                 {
                     SetShowWhenLocked(true);
                     SetTurnScreenOn(true);
+                    Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
                     keyguardManager?.RequestDismissKeyguard(this, null);
                 }
                 else
@@ -804,22 +760,6 @@ namespace BmwDeepObd
                 _activityCommon?.RequestUsbPermission(null);
             }
 
-            try
-            {
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
-                {
-                    Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
-                    if (keyguardManager != null)
-                    {
-                        _deviceLocked = keyguardManager.IsDeviceLocked;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
             _activityActive = true;
 
             UpdateLockState();
@@ -973,22 +913,6 @@ namespace BmwDeepObd
                 {
                     // ignored
                 }
-            }
-
-            try
-            {
-                if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
-                {
-                    Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
-                    if (keyguardManager != null)
-                    {
-                        keyguardManager.RemoveDeviceLockedStateListener(this);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // ignored
             }
 
             _checkAdapter?.Dispose();
