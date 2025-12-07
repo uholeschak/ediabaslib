@@ -313,9 +313,9 @@ namespace BmwDeepObd
             SetTheme();
             base.OnCreate(savedInstanceState);
 
+            Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
             try
             {
-                Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
                 if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
                 {
                     Java.Util.Concurrent.IExecutor executor = MainExecutor;
@@ -324,7 +324,16 @@ namespace BmwDeepObd
                         keyguardManager?.AddDeviceLockedStateListener(executor, this);
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+#if DEBUG
+                Log.Info(Tag, string.Format("AddDeviceLockedStateListener Exception: {0}", ex.Message));
+#endif
+            }
 
+            try
+            {
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.OMr1)
                 {
                     SetShowWhenLocked(true);
@@ -973,7 +982,7 @@ namespace BmwDeepObd
                     Android.App.KeyguardManager keyguardManager = GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
                     if (keyguardManager != null)
                     {
-                        keyguardManager?.RemoveDeviceLockedStateListener(this);
+                        keyguardManager.RemoveDeviceLockedStateListener(this);
                     }
                 }
             }
