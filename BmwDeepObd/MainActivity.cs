@@ -170,7 +170,7 @@ namespace BmwDeepObd
         private static readonly string Tag = typeof(ActivityMain).FullName;
 #endif
         private const string EcuDownloadUrl = @"https://www.holeschak.de/BmwDeepObd/Obb.php";
-        private const long EcuExtractSize = 2900000000;         // extracted ecu files size
+        private const long EcuExtractSize = 3000000000;         // extracted ecu files size
         private const string EcuPackInfoXmlName = "EcuPackInfo.xml";
         private const string SampleInfoFileName = "SampleInfo.xml";
         private const string CaCertInfoFileName = "CaCertsInfo.xml";
