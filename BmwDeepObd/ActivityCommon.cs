@@ -1109,6 +1109,7 @@ namespace BmwDeepObd
         private readonly ConnectivityManager _maConnectivity;
         private readonly UsbManager _usbManager;
         private readonly LocationManager _locationManager;
+        private readonly Android.App.KeyguardManager _keyguardManager;
         private readonly Android.App.NotificationManager _notificationManager;
         private readonly NotificationManagerCompat _notificationManagerCompat;
         private readonly PowerManager _powerManager;
@@ -1694,6 +1695,8 @@ namespace BmwDeepObd
 
         public LocationManager LocationManager => _locationManager;
 
+        public Android.App.KeyguardManager KeyguardManager => _keyguardManager;
+
         public Android.App.NotificationManager NotificationManager => _notificationManager;
 
         public NotificationManagerCompat NotificationManagerCompat => _notificationManagerCompat;
@@ -1770,6 +1773,7 @@ namespace BmwDeepObd
             _networkData = new TcpClientWithTimeout.NetworkData(_maConnectivity);
             _usbManager = context?.GetSystemService(Context.UsbService) as UsbManager;
             _locationManager = context?.GetSystemService(Context.LocationService) as LocationManager;
+            _keyguardManager = context?.GetSystemService(Context.KeyguardService) as Android.App.KeyguardManager;
             _notificationManager = context?.GetSystemService(Context.NotificationService) as Android.App.NotificationManager;
             _notificationManagerCompat = NotificationManagerCompat.From(context);
             RegisterNotificationChannels();

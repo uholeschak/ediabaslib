@@ -201,6 +201,7 @@ namespace BmwDeepObd
         public static bool StoreXmlEditor = Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1;
         private InstanceData _instanceData = new InstanceData();
         private bool _activityRecreated;
+        private bool _deviceLocked;
         private bool _lastCompileCrash;
         private bool _backPressed;
         private long _lastBackPressedTime;
@@ -284,6 +285,7 @@ namespace BmwDeepObd
 #if DEBUG
             Log.Info(Tag, string.Format("OnDeviceLockedStateChanged: {0}", isDeviceLocked));
 #endif
+            _deviceLocked = isDeviceLocked;
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
@@ -296,19 +298,28 @@ namespace BmwDeepObd
 
             try
             {
+                Android.App.KeyguardManager keyguardManager = _activityCommon?.KeyguardManager;
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.LollipopMr1)
+                {
+                    if (keyguardManager != null)
+                    {
+                        _deviceLocked = keyguardManager.IsDeviceLocked;
+                        if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
+                        {
+                            Java.Util.Concurrent.IExecutor executor = MainExecutor;
+                            if (executor != null)
+                            {
+                                keyguardManager.AddDeviceLockedStateListener(executor, this);
+                            }
+                        }
+                    }
+                }
+
                 if (Build.VERSION.SdkInt >= BuildVersionCodes.OMr1)
                 {
                     SetShowWhenLocked(true);
                     SetTurnScreenOn(true);
-
-                    if (GetSystemService(KeyguardService) is Android.App.KeyguardManager keyguardManager)
-                    {
-                        keyguardManager.RequestDismissKeyguard(this, null);
-                        if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
-                        {
-                            keyguardManager.AddDeviceLockedStateListener(new StateExecutor(), this);
-                        }
-                    }
+                    keyguardManager?.RequestDismissKeyguard(this, null);
                 }
                 else
                 {
@@ -927,6 +938,18 @@ namespace BmwDeepObd
                 {
                     // ignored
                 }
+            }
+
+            try
+            {
+                if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
+                {
+                    _activityCommon?.KeyguardManager?.RemoveDeviceLockedStateListener(this);
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
 
             _checkAdapter?.Dispose();
