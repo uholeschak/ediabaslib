@@ -58,8 +58,7 @@ namespace BmwDeepObd
         ConfigurationChanges = ActivityConfigChanges)]
     [Android.App.MetaData("android.support.UI_OPTIONS", Value = "splitActionBarWhenNarrow")]
 #pragma warning disable CS0618 // TabLayout.IOnTabSelectedListener2 creates compiler errors
-    public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener
-        //, Android.App.KeyguardManager.IDeviceLockedStateListener
+    public class ActivityMain : BaseActivity, TabLayout.IOnTabSelectedListener, Android.App.KeyguardManager.IDeviceLockedStateListener
 #pragma warning restore CS0618
     {
         private delegate void ErrorMessageResultDelegate(ErrorMessageData errorMessageData);
@@ -305,12 +304,10 @@ namespace BmwDeepObd
                     if (GetSystemService(KeyguardService) is Android.App.KeyguardManager keyguardManager)
                     {
                         keyguardManager.RequestDismissKeyguard(this, null);
-#if false
-                        if (Build.VERSION.SdkInt > BuildVersionCodes.Baklava)
+                        if (OperatingSystem.IsAndroidVersionAtLeast(36, 1))
                         {
                             keyguardManager.AddDeviceLockedStateListener(new StateExecutor(), this);
                         }
-#endif
                     }
                 }
                 else
