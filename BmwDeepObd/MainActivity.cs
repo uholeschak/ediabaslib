@@ -285,7 +285,24 @@ namespace BmwDeepObd
 #if DEBUG
             Log.Info(Tag, string.Format("OnDeviceLockedStateChanged: {0}", isDeviceLocked));
 #endif
-            _deviceLocked = isDeviceLocked;
+            RunOnUiThread(() =>
+            {
+                if (_activityCommon == null)
+                {
+                    return;
+                }
+
+                if (!_activityActive)
+                {
+                    return;
+                }
+
+                _deviceLocked = isDeviceLocked;
+
+                UpdateLockState();
+                UpdateOptionsMenu();
+                UpdateDisplay();
+            });
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416: Validate platform compatibility")]
