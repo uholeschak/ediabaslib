@@ -3394,7 +3394,7 @@ namespace PsdzClient
 
         public EcuReps GetEcuRepsById(string ecuId)
         {
-            log.InfoFormat("GetEcuRepsById Sortcut: {0}", ecuId);
+            log.InfoFormat("GetEcuRepsById Shortcut: {0}", ecuId);
             if (string.IsNullOrEmpty(ecuId))
             {
                 return null;
@@ -3422,7 +3422,7 @@ namespace PsdzClient
                 return null;
             }
 
-            log.InfoFormat("GetEcuRepsById Sortcut: {0}", ecuReps?.EcuShortcut);
+            log.InfoFormat("GetEcuRepsById Shortcut: {0}", ecuReps?.EcuShortcut);
             return ecuReps;
         }
 
