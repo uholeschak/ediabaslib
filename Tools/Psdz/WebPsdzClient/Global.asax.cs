@@ -1,9 +1,16 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Client;
+using log4net;
+using PsdzClient;
+using PsdzClient.Programming;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Web;
 using System.Web.Http;
 using System.Web.Optimization;
@@ -11,10 +18,6 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.UI;
-using BMW.Rheingold.Psdz.Client;
-using log4net;
-using PsdzClient;
-using PsdzClient.Programming;
 using WebPsdzClient.App_Data;
 
 namespace WebPsdzClient
@@ -134,7 +137,8 @@ namespace WebPsdzClient
                 if (!string.IsNullOrEmpty(hostAddress) &&
                     (string.Compare(hostAddress, "127.0.0.1", StringComparison.OrdinalIgnoreCase) == 0 ||
                      string.Compare(hostAddress, "::1", StringComparison.OrdinalIgnoreCase) == 0 ||
-                     hostAddress.StartsWith("192.168.", StringComparison.OrdinalIgnoreCase))
+                     hostAddress.StartsWith("192.168.", StringComparison.OrdinalIgnoreCase) ||
+                     IsLocalIPv6Subnet(hostAddress))
                     )
                 {
                     valid = true;
@@ -190,6 +194,72 @@ namespace WebPsdzClient
             }
         }
 
+        /// <summary>
+        /// Checks if the client IPv6 address is in the same /64 subnet as any local IPv6 address
+        /// </summary>
+        private static bool IsLocalIPv6Subnet(string clientAddress)
+        {
+            if (!IPAddress.TryParse(clientAddress, out IPAddress clientIp))
+            {
+                return false;
+            }
+
+            if (clientIp.AddressFamily != AddressFamily.InterNetworkV6)
+            {
+                return false;
+            }
+
+            // Get first 64 bits (8 bytes) of client address
+            byte[] clientBytes = clientIp.GetAddressBytes();
+            byte[] clientPrefix = new byte[8];
+            Array.Copy(clientBytes, 0, clientPrefix, 0, 8);
+
+            // Get all local IPv6 addresses
+            NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
+            foreach (NetworkInterface ni in interfaces)
+            {
+                if (ni.OperationalStatus != OperationalStatus.Up)
+                {
+                    continue;
+                }
+
+                IPInterfaceProperties properties = ni.GetIPProperties();
+                foreach (UnicastIPAddressInformation addr in properties.UnicastAddresses)
+                {
+                    if (addr.Address.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        // Skip link-local addresses (fe80::)
+                        if (addr.Address.IsIPv6LinkLocal)
+                        {
+                            continue;
+                        }
+
+                        // Get first 64 bits of local address
+                        byte[] localBytes = addr.Address.GetAddressBytes();
+                        byte[] localPrefix = new byte[8];
+                        Array.Copy(localBytes, 0, localPrefix, 0, 8);
+
+                        // Compare first 64 bits
+                        bool match = true;
+                        for (int i = 0; i < 8; i++)
+                        {
+                            if (clientPrefix[i] != localPrefix[i])
+                            {
+                                match = false;
+                                break;
+                            }
+                        }
+
+                        if (match)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
         private void SetupLog4Net()
         {
             if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
