@@ -528,6 +528,7 @@
     <Content Include="App_GlobalResources\Global.de.resx">
       <Generator>GlobalResourceProxyGenerator</Generator>
       <LastGenOutput>Global.de.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
