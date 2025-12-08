@@ -16,5 +16,5 @@ echo Config dir: "!CONFIG_DST_PATH!"
 xcopy /y /q "!CONFIG_SRC_FILE!" "!CONFIG_DST_PATH!" || EXIT /b 1
 
 echo WebPsdzClient files copied
-timeout /T 3
+timeout /T 2
 exit /b 0
