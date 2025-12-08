@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{EE741859-CB0F-4130-9F07-5CEC56A982C6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
