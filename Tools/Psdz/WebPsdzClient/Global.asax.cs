@@ -210,9 +210,10 @@ namespace WebPsdzClient
             }
 
             // Get first 64 bits (8 bytes) of client address
+            int compareLength = 8;
             byte[] clientBytes = clientIp.GetAddressBytes();
-            byte[] clientPrefix = new byte[8];
-            Array.Copy(clientBytes, 0, clientPrefix, 0, 8);
+            byte[] clientPrefix = new byte[compareLength];
+            Array.Copy(clientBytes, 0, clientPrefix, 0, clientPrefix.Length);
 
             // Get all local IPv6 addresses
             NetworkInterface[] interfaces = NetworkInterface.GetAllNetworkInterfaces();
@@ -236,12 +237,12 @@ namespace WebPsdzClient
 
                         // Get first 64 bits of local address
                         byte[] localBytes = addr.Address.GetAddressBytes();
-                        byte[] localPrefix = new byte[8];
-                        Array.Copy(localBytes, 0, localPrefix, 0, 8);
+                        byte[] localPrefix = new byte[compareLength];
+                        Array.Copy(localBytes, 0, localPrefix, 0, localPrefix.Length);
 
                         // Compare first 64 bits
                         bool match = true;
-                        for (int i = 0; i < 8; i++)
+                        for (int i = 0; i < localPrefix.Length; i++)
                         {
                             if (clientPrefix[i] != localPrefix[i])
                             {
