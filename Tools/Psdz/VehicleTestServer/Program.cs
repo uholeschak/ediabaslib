@@ -16,7 +16,7 @@ namespace VehicleTestServer
                 VehicleIp = string.Empty;
             }
 
-            [Option('v', "vehicle", Required = false, HelpText = "Vehicle IP, default is 127.0.0.1")]
+            [Option('v', "vehicle", Required = false, HelpText = "Vehicle IP, default is auto:all")]
             public string VehicleIp { get; set; }
         }
 
@@ -61,10 +61,10 @@ namespace VehicleTestServer
             EdiabasNet ediabas = EdiabasSetup(vehicleIp);
             EdWebServer edWebServer = new EdWebServer(ediabas, message =>
             {
-                outWriter?.WriteLine(message);
+                outWriter.WriteLine(message);
             });
             edWebServer.StartTcpListener("http://127.0.0.1:8080");
-            outWriter?.WriteLine("Press ESC to stop");
+            outWriter.WriteLine("Press ESC to stop");
             do
             {
                 while (!Console.KeyAvailable)
