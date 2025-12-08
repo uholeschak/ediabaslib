@@ -9,7 +9,7 @@
         <HintPath>$(PkgInTheHand_Net_Bluetooth)\lib\net8.0-windows7.0\InTheHand.Net.Bluetooth.dll</HintPath>
       </Reference>
       <Reference Include="InTheHand.BluetoothLE.dll">
-        <HintPath>$(PkgInTheHand_BluetoothLE)\lib\net8.0-windows10.0.19041\InTheHand.BluetoothLE.dll</HintPath>
+        <HintPath>$(PkgInTheHand_BluetoothLE)\lib\net9.0-windows10.0.19041\InTheHand.BluetoothLE.dll</HintPath>
       </Reference>
     </ItemGroup>
   </Target>

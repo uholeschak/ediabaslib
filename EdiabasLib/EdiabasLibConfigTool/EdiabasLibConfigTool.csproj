@@ -24,7 +24,7 @@
     <ProjectReference Include="..\EdiabasLib\EdiabasLib.csproj" />
   </ItemGroup>
   <ItemGroup>
-      <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.43" GeneratePathProperty="true">
+      <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" GeneratePathProperty="true">
           <ExcludeAssets>all</ExcludeAssets>
       </PackageReference>
       <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.2" GeneratePathProperty="true">
