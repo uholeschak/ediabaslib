@@ -2900,8 +2900,24 @@ namespace PsdzClient.Programming
 
                 sbResult.AppendLine(Strings.RequestingEcuContext);
                 UpdateStatus(sbResult.ToString());
-                log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context");
-                IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
+                IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = null;
+                for (int retry = 0; retry < 3; retry++)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context retry: {0}", retry);
+                    psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
+                    if (psdzEcuContextInfos != null)
+                    {
+                        break;
+                    }
+
+                    if (ProgrammingService.PsdzDatabase.IsExecutable())
+                    {
+                        break;
+                    }
+
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, retry: {0}", retry);
+                }
+
                 if (psdzEcuContextInfos == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed");
