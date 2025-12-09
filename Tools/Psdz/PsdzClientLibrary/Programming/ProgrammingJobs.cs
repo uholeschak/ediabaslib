@@ -2912,6 +2912,7 @@ namespace PsdzClient.Programming
 
                     if (ProgrammingService.PsdzDatabase.IsExecutable())
                     {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, aborting");
                         break;
                     }
 
