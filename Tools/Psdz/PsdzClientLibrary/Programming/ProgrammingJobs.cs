@@ -2927,9 +2927,9 @@ namespace PsdzClient.Programming
                             break;
                         }
 
-                        if ((Stopwatch.GetTimestamp() - startTime) > 30000 * TickResolMs)
+                        if ((Stopwatch.GetTimestamp() - startTime) > 20000 * TickResolMs)
                         {
-                            log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, queue timeout");
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context queue timeout, continuing");
                             break;
                         }
 
@@ -2937,7 +2937,7 @@ namespace PsdzClient.Programming
                     }
 
                     long queueWaitTime = (Stopwatch.GetTimestamp() - startTime) / TickResolMs;
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, queue wait time: {0}", queueWaitTime);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, queue wait time: {0}s", queueWaitTime / 1000);
 
                     if (queueSize < 0)
                     {
