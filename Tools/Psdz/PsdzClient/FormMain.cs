@@ -100,6 +100,7 @@ namespace PsdzClient
             _programmingJobs.UpdateOptionsEvent += UpdateOptions;
             _programmingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
             _programmingJobs.ShowMessageEvent += ShowMessageEvent;
+            _programmingJobs.TelSendQueueSizeEvent += TelSendQueueSizeEvent;
             _programmingJobs.ServiceInitializedEvent += ServiceInitialized;
         }
 
@@ -415,6 +416,11 @@ namespace PsdzClient
             }));
 
             return true;
+        }
+
+        private int TelSendQueueSizeEvent()
+        {
+            return -1;
         }
 
         private void SelectOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)

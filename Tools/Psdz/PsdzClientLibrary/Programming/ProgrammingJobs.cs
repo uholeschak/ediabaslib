@@ -293,6 +293,9 @@ namespace PsdzClient.Programming
         public delegate bool ShowMessageDelegate(CancellationTokenSource cts, string message, bool okBtn, bool wait);
         public event ShowMessageDelegate ShowMessageEvent;
 
+        public delegate int TelSendQueueSizeDelegate();
+        public event TelSendQueueSizeDelegate TelSendQueueSizeEvent;
+
         public delegate void ServiceInitialized(ProgrammingService2 programmingService);
         public event ServiceInitialized ServiceInitializedEvent;
 
@@ -2910,10 +2913,29 @@ namespace PsdzClient.Programming
                         break;
                     }
 
-                    if (ProgrammingService.PsdzDatabase.IsExecutable())
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed");
+
+                    int queueSize;
+                    for (;;)
+                    {
+                        queueSize = -1;
+                        if (TelSendQueueSizeEvent != null)
+                        {
+                            queueSize = TelSendQueueSizeEvent.Invoke();
+                        }
+
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context queue size: {0}", queueSize);
+                        if (queueSize < 1)
+                        {
+                            break;
+                        }
+
+                        Thread.Sleep(1000);
+                    }
+
+                    if (queueSize < 0)
                     {
                         log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, aborting");
-                        break;
                     }
 
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, retry: {0}", retry);

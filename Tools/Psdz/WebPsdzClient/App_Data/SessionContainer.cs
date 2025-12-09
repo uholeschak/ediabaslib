@@ -588,6 +588,7 @@ namespace WebPsdzClient.App_Data
             ProgrammingJobs.UpdateOptionsEvent += UpdateOptions;
             ProgrammingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
             ProgrammingJobs.ShowMessageEvent += ShowMessageEvent;
+            ProgrammingJobs.TelSendQueueSizeEvent += TelSendQueueSizeEvent;
             ProgrammingJobs.GenServiceModules = false;
             StatusText = string.Empty;
             ProgressText = string.Empty;
@@ -2558,6 +2559,46 @@ namespace WebPsdzClient.App_Data
             }
 
             return ShowMessageModalResult;
+        }
+
+        private int TelSendQueueSizeEvent()
+        {
+            if (_enetTcpChannels.Count == 0)
+            {
+                return -1;
+            }
+
+            int queueSize = 0;
+            try
+            {
+                foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+                {
+                    if (enetTcpChannel.Control)
+                    {
+                        continue;
+                    }
+
+                    foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
+                    {
+                        if (enetTcpClientData.TcpClientStream == null)
+                        {
+                            continue;
+                        }
+
+                        lock (enetTcpClientData.RecPacketQueue)
+                        {
+                            queueSize += enetTcpClientData.RecPacketQueue.Count;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("TelSendQueueSizeEvent Exception: {0}", ex.Message);
+                return -1;
+            }
+
+            return queueSize;
         }
 
         private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
