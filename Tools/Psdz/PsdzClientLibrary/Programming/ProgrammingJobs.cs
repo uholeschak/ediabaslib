@@ -2915,8 +2915,8 @@ namespace PsdzClient.Programming
 
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed");
 
-                    int queueSize;
-                    for (;;)
+                    int queueSize = -1;
+                    for (int waitCount = 0; waitCount < 10; waitCount++)
                     {
                         queueSize = -1;
                         if (TelSendQueueSizeEvent != null)
