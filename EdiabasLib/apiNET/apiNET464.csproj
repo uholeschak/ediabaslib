@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{A210DA60-5EFE-4373-A553-7C7F746BDD81}</ProjectGuid>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
     <AssemblyTitle>EdiabasLib interface wrapper</AssemblyTitle>
     <Product>EdiabasLib</Product>
     <Description>EdiabasLib interface wrapper</Description>
