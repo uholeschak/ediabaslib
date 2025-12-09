@@ -62,6 +62,7 @@ namespace PsdzClient.Programming
         public const string ArgumentGenerateTestModules = "-GenerateTestModules";
         public const string GlobalMutexGenerateServiceModules = "PsdzClient_GenerateServiceModules";
         public const string GlobalMutexGenerateTestModules = "PsdzClient_GenerateTestModules";
+        public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
         [PreserveSource(Hint = "Custom code")]
         public enum ExecutionMode
@@ -2915,30 +2916,35 @@ namespace PsdzClient.Programming
 
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed");
 
-                    int queueSize = -1;
-                    for (int waitCount = 0; waitCount < 10; waitCount++)
+                    long startTime = Stopwatch.GetTimestamp();
+                    int queueSize;
+                    for (;;)
                     {
-                        queueSize = -1;
-                        if (TelSendQueueSizeEvent != null)
-                        {
-                            queueSize = TelSendQueueSizeEvent.Invoke();
-                        }
-
-                        log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context queue size: {0}", queueSize);
+                        queueSize = TelSendQueueSizeEvent?.Invoke() ?? -1;
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context queue size: {0}", queueSize);
                         if (queueSize < 1)
                         {
+                            break;
+                        }
+
+                        if ((Stopwatch.GetTimestamp() - startTime) > 30000 * TickResolMs)
+                        {
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, queue timeout");
                             break;
                         }
 
                         Thread.Sleep(1000);
                     }
 
+                    long queueWaitTime = (Stopwatch.GetTimestamp() - startTime) / TickResolMs;
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, queue wait time: {0}", queueWaitTime);
+
                     if (queueSize < 0)
                     {
                         log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, aborting");
                     }
 
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, retry: {0}", retry);
+                    log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, retry: {0}", retry);
                 }
 
                 if (psdzEcuContextInfos == null)
