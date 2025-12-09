@@ -3,7 +3,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{4D348EAC-E423-4F6E-8508-BEA18A623701}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net481</TargetFramework>
     <AssemblyTitle>EdiabasTest</AssemblyTitle>
     <Product>EdiabasTest</Product>
     <Copyright>Copyright ©  2014</Copyright>
