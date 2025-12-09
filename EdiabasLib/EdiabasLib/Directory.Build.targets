@@ -10,7 +10,7 @@
     <Message Text="NuGet path BouncyCastle.Cryptography $(TargetFramework): $(PkgBouncyCastle_Cryptography)" Importance="High" />
     <Message Text="NuGet path Newtonsoft.Json $(TargetFramework): $(PkgNewtonsoft_Json)" Importance="High" />
     <Message Text="NuGet path System.IO.Ports $(TargetFramework): $(PkgSystem_IO_Ports)" Importance="High" />
-      <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+      <ItemGroup Condition=" ('$(TargetFramework)' == 'net48') Or ('$(TargetFramework)' == 'net481') ">
       <Reference Include="$(ProjectDir)\Binaries\net462\InTheHand.BluetoothLEMod.dll"/>
       <EmbeddedResource Include="$(ProjectDir)\Binaries\net462\InTheHand.BluetoothLEMod.dll"/>
       <EmbeddedResource Include="$(PkgInTheHand_Net_Bluetooth)\lib\net462\*.dll" />

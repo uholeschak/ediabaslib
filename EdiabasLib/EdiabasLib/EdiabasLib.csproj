@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}</ProjectGuid>
-    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net48</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net48;net481</TargetFrameworks>
     <AssemblyTitle>EDIABAS .NET Library</AssemblyTitle>
     <Product>EdiabasLib</Product>
     <Description>EDIABAS .NET Library</Description>
@@ -20,7 +20,7 @@
     <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.2" GeneratePathProperty="true" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" GeneratePathProperty="true" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' ">
+  <ItemGroup Condition=" ('$(TargetFramework)' == 'net48') Or ('$(TargetFramework)' == 'net481')">
      <Reference Include="System.Net.Http" />
      <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.7175" GeneratePathProperty="true" />
   </ItemGroup>
