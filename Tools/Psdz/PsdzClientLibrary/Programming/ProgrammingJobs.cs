@@ -20,6 +20,7 @@ using log4net;
 using log4net.Config;
 using Microsoft.Win32;
 using PsdzClient.Core;
+using PsdzClient.Psdz;
 using PsdzClientLibrary.Resources;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Xml.Serialization;
-using PsdzClient.Psdz;
 
 namespace PsdzClient.Programming
 {
@@ -2916,32 +2916,10 @@ namespace PsdzClient.Programming
 
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed");
 
-                    long startTime = Stopwatch.GetTimestamp();
-                    int queueSize;
-                    for (;;)
-                    {
-                        queueSize = TelSendQueueSizeEvent?.Invoke() ?? -1;
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context queue size: {0}", queueSize);
-                        if (queueSize < 1)
-                        {
-                            break;
-                        }
-
-                        if ((Stopwatch.GetTimestamp() - startTime) > 20000 * TickResolMs)
-                        {
-                            log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context queue timeout, continuing");
-                            break;
-                        }
-
-                        Thread.Sleep(1000);
-                    }
-
-                    long queueWaitTime = (Stopwatch.GetTimestamp() - startTime) / TickResolMs;
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, queue wait time: {0}s", queueWaitTime / 1000);
-
-                    if (queueSize < 0)
+                    if (!WaitForEmptyVehicleQueue())
                     {
                         log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, aborting");
+                        break;
                     }
 
                     log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, retry: {0}", retry);
@@ -4005,6 +3983,43 @@ namespace PsdzClient.Programming
             }
 
             UpdateOptionSelectionsEvent?.Invoke(swiRegisterEnum);
+        }
+
+        private bool WaitForEmptyVehicleQueue(int timeout = 20000)
+        {
+            log.InfoFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Timeout: {0}", timeout);
+
+            long startTime = Stopwatch.GetTimestamp();
+            int queueSize;
+            for (; ; )
+            {
+                queueSize = TelSendQueueSizeEvent?.Invoke() ?? -1;
+                log.InfoFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Queue size: {0}", queueSize);
+                if (queueSize < 1)
+                {
+                    break;
+                }
+
+                if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
+                {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Timeout, continuing");
+                    break;
+                }
+
+                Thread.Sleep(1000);
+            }
+
+            long queueWaitTime = (Stopwatch.GetTimestamp() - startTime) / TickResolMs;
+            log.InfoFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Queue wait time: {0}s", queueWaitTime / 1000);
+
+            if (queueSize < 0)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue No queue");
+                return false;
+            }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Final queue: {0}", queueSize);
+            return true;
         }
 
         public static void SetupLog4Net(string logFile)
