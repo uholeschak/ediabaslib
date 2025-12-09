@@ -209,6 +209,11 @@ namespace WebPsdzClient
                 return false;
             }
 
+            if (clientIp.IsIPv6LinkLocal)
+            {   // always accept link local addresses
+                return true;
+            }
+
             // Get first 64 bits (8 bytes) of client address
             int compareLength = 8;
             byte[] clientBytes = clientIp.GetAddressBytes();
