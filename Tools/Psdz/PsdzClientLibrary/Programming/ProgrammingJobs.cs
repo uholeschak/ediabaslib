@@ -943,7 +943,7 @@ namespace PsdzClient.Programming
 
         public bool ConnectVehicle(CancellationTokenSource cts, string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
         {
-            log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Start - IstaFolder: {0}, Ip: {1}, ICOM: {2}", istaFolder, remoteHost, useIcom);
+            log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Start - IstaFolder: {0}, Ip: {1}, ICOM: {2}, Timeout: {3}", istaFolder, remoteHost, useIcom, addTimeout);
             StringBuilder sbResult = new StringBuilder();
 
             if (string.IsNullOrEmpty(istaFolder) || !Directory.Exists(istaFolder))
@@ -1037,7 +1037,7 @@ namespace PsdzClient.Programming
                     }
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Ip: {0}, Diag: {1}, Control: {2}, ICOM: {3}", ipAddress, diagPort, controlPort, icomConnection);
+                log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Ip: {0}, Diag: {1}, Control: {2}, ICOM: {3}, Timeout: {4}", ipAddress, diagPort, controlPort, icomConnection, addTimeout);
                 EdInterfaceEnet.EnetConnection.InterfaceType interfaceType = EdInterfaceEnet.EnetConnection.InterfaceType.DirectHsfz;
                 if (icomConnection)
                 {
