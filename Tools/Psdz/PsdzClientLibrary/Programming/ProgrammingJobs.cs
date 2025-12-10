@@ -2904,25 +2904,24 @@ namespace PsdzClient.Programming
 
                 sbResult.AppendLine(Strings.RequestingEcuContext);
                 UpdateStatus(sbResult.ToString());
+
+                bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
                 IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = null;
-                for (int retry = 0; retry < 3; retry++)
+                for (int retry = 0; retry < 2; retry++)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context retry: {0}", retry);
                     psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
-                    if (psdzEcuContextInfos != null)
+                    if (!hasVehicleQueue)
                     {
                         break;
                     }
 
-                    log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed");
-
-                    if (!WaitForEmptyVehicleQueue())
+                    if (psdzEcuContextInfos == null)
                     {
-                        log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, aborting");
-                        break;
+                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed retry: {0}", retry);
                     }
 
-                    log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed, retry: {0}", retry);
+                    WaitForEmptyVehicleQueue();
                 }
 
                 if (psdzEcuContextInfos == null)
@@ -3985,6 +3984,17 @@ namespace PsdzClient.Programming
             UpdateOptionSelectionsEvent?.Invoke(swiRegisterEnum);
         }
 
+        private int GetVehicleQueueSize()
+        {
+            if (TelSendQueueSizeEvent == null)
+            {
+                return -1;
+            }
+
+            int queueSize = TelSendQueueSizeEvent.Invoke();
+            return queueSize;
+        }
+
         private bool WaitForEmptyVehicleQueue(int timeout = 20000)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Timeout: {0}", timeout);
@@ -3993,7 +4003,7 @@ namespace PsdzClient.Programming
             int queueSize;
             for (; ; )
             {
-                queueSize = TelSendQueueSizeEvent?.Invoke() ?? -1;
+                queueSize = GetVehicleQueueSize();
                 log.InfoFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Queue size: {0}", queueSize);
                 if (queueSize < 1)
                 {
