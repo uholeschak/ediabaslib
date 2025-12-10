@@ -2500,10 +2500,28 @@ namespace PsdzClient.Programming
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Latest: {0}", psdzIstufeLatest.Value);
                 cts?.Token.ThrowIfCancellationRequested();
 
+                bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
                 sbResult.AppendLine(Strings.DetectingInstalledEcus);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting ECU list");
-                IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = ProgrammingService.Psdz.MacrosService.GetInstalledEcuList(PsdzContext.FaActual, psdzIstufeShip);
+                IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = null;
+                for (int step = 0; step < 2; step++)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting ECU list: {0}", step);
+                    psdzEcuIdentifiers = ProgrammingService.Psdz.MacrosService.GetInstalledEcuList(PsdzContext.FaActual, psdzIstufeShip);
+                    if (!hasVehicleQueue)
+                    {
+                        break;
+                    }
+
+                    if (psdzEcuIdentifiers == null)
+                    {
+                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting ECU list failed step: {0}", step);
+                    }
+
+                    WaitForEmptyVehicleQueue();
+                }
+
                 if (psdzEcuIdentifiers == null)
                 {
                     sbResult.AppendLine(Strings.DetectInstalledEcusFailed);
@@ -2511,8 +2529,9 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifiers.Count());
-                foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiers)
+                List<IPsdzEcuIdentifier> psdzEcuIdentifierList = psdzEcuIdentifiers.ToList();
+                log.InfoFormat(CultureInfo.InvariantCulture, "EcuIds: {0}", psdzEcuIdentifierList.Count());
+                foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifierList)
                 {
                     if (ecuIdentifier == null)
                     {
@@ -2905,11 +2924,10 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.RequestingEcuContext);
                 UpdateStatus(sbResult.ToString());
 
-                bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
                 IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = null;
-                for (int retry = 0; retry < 2; retry++)
+                for (int step = 0; step < 2; step++)
                 {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context retry: {0}", retry);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context step: {0}", step);
                     psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
                     if (!hasVehicleQueue)
                     {
@@ -2918,7 +2936,7 @@ namespace PsdzClient.Programming
 
                     if (psdzEcuContextInfos == null)
                     {
-                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed retry: {0}", retry);
+                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed step: {0}", step);
                     }
 
                     WaitForEmptyVehicleQueue();
@@ -2932,8 +2950,9 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                log.InfoFormat(CultureInfo.InvariantCulture, "Ecu contexts: {0}", psdzEcuContextInfos.Count());
-                foreach (IPsdzEcuContextInfo ecuContextInfo in psdzEcuContextInfos)
+                List<IPsdzEcuContextInfo> ecuContextInfoList = psdzEcuContextInfos.ToList();
+                log.InfoFormat(CultureInfo.InvariantCulture, "Ecu contexts: {0}", ecuContextInfoList.Count);
+                foreach (IPsdzEcuContextInfo ecuContextInfo in ecuContextInfoList)
                 {
                     if (ecuContextInfo != null)
                     {
