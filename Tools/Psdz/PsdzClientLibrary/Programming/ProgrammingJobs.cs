@@ -2543,7 +2543,7 @@ namespace PsdzClient.Programming
 
                 // From GetVehicleSvtUsingPsdz
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Svt");
-                IPsdzStandardSvt psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifiers);
+                IPsdzStandardSvt psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifierList);
                 if (psdzStandardSvt == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting SVT failed");
@@ -2797,7 +2797,7 @@ namespace PsdzClient.Programming
 
                 PsdzContext.Tal = null;
                 log.InfoFormat(CultureInfo.InvariantCulture, "Reading ECU Ids");
-                IPsdzReadEcuUidResultCto psdzReadEcuUid = ProgrammingService.Psdz.SecurityManagementService.readEcuUid(PsdzContext.Connection, psdzEcuIdentifiers, PsdzContext.SvtActual);
+                IPsdzReadEcuUidResultCto psdzReadEcuUid = ProgrammingService.Psdz.SecurityManagementService.readEcuUid(PsdzContext.Connection, psdzEcuIdentifierList, PsdzContext.SvtActual);
                 if (psdzReadEcuUid != null)
                 {
                     if (psdzReadEcuUid.EcuUids != null)
@@ -2831,7 +2831,7 @@ namespace PsdzClient.Programming
                 cts?.Token.ThrowIfCancellationRequested();
 
                 log.InfoFormat(CultureInfo.InvariantCulture, "Reading status");
-                IPsdzReadStatusResultCto psdzReadStatusResult = ProgrammingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, PsdzContext.Connection, PsdzContext.SvtActual, psdzEcuIdentifiers, true, 3, 100);
+                IPsdzReadStatusResultCto psdzReadStatusResult = ProgrammingService.Psdz.SecureFeatureActivationService.ReadStatus(PsdzStatusRequestFeatureTypeEtoEnum.ALL_FEATURES, PsdzContext.Connection, PsdzContext.SvtActual, psdzEcuIdentifierList, true, 3, 100);
                 if (psdzReadStatusResult != null)
                 {
                     if (psdzReadStatusResult.Failures != null)
@@ -2928,7 +2928,7 @@ namespace PsdzClient.Programming
                 for (int step = 0; step < 2; step++)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context step: {0}", step);
-                    psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifiers);
+                    psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifierList);
                     if (!hasVehicleQueue)
                     {
                         break;
