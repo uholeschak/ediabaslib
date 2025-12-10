@@ -1479,12 +1479,13 @@ namespace PsdzClient.Programming
                         return false;
                     }
 
-                    int prgCounter = psdzEcuIdentifiersPrg.Count();
+                    List<IPsdzEcuIdentifier> psdzEcuIdentifiersPrgList = psdzEcuIdentifiersPrg.ToList();
+                    int prgCounter = psdzEcuIdentifiersPrgList.Count();
                     sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.PrgCounters, prgCounter));
                     UpdateStatus(sbResult.ToString());
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "ProgCounter: {0}", prgCounter);
-                    foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiersPrg)
+                    foreach (IPsdzEcuIdentifier ecuIdentifier in psdzEcuIdentifiersPrgList)
                     {
                         log.InfoFormat(CultureInfo.InvariantCulture, " EcuId: BaseVar={0}, DiagAddr={1}, DiagOffset={2}",
                             ecuIdentifier.BaseVariant, ecuIdentifier.DiagAddrAsInt, ecuIdentifier.DiagnosisAddress.Offset);
@@ -2504,24 +2505,7 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.DetectingInstalledEcus);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting ECU list");
-                IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = null;
-                for (int step = 0; step < 2; step++)
-                {
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting ECU list: {0}", step);
-                    psdzEcuIdentifiers = ProgrammingService.Psdz.MacrosService.GetInstalledEcuList(PsdzContext.FaActual, psdzIstufeShip);
-                    if (!hasVehicleQueue)
-                    {
-                        break;
-                    }
-
-                    if (psdzEcuIdentifiers == null)
-                    {
-                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting ECU list failed step: {0}", step);
-                    }
-
-                    WaitForEmptyVehicleQueue();
-                }
-
+                IEnumerable<IPsdzEcuIdentifier> psdzEcuIdentifiers = ProgrammingService.Psdz.MacrosService.GetInstalledEcuList(PsdzContext.FaActual, psdzIstufeShip);
                 if (psdzEcuIdentifiers == null)
                 {
                     sbResult.AppendLine(Strings.DetectInstalledEcusFailed);
@@ -2543,7 +2527,24 @@ namespace PsdzClient.Programming
 
                 // From GetVehicleSvtUsingPsdz
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Svt");
-                IPsdzStandardSvt psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifierList);
+                IPsdzStandardSvt psdzStandardSvt = null;
+                for (int step = 0; step < 2; step++)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Svt: {0}", step);
+                    psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifierList);
+                    if (!hasVehicleQueue)
+                    {
+                        break;
+                    }
+
+                    if (psdzStandardSvt == null)
+                    {
+                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Svt failed step: {0}", step);
+                    }
+
+                    WaitForEmptyVehicleQueue();
+                }
+
                 if (psdzStandardSvt == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting SVT failed");
@@ -2967,7 +2968,24 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.SwtAction);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Swt action");
-                IPsdzSwtAction psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, true);
+                IPsdzSwtAction psdzSwtAction = null;
+                for (int step = 0; step < 2; step++)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Swt action step: {0}", step);
+                    psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, true);
+                    if (!hasVehicleQueue)
+                    {
+                        break;
+                    }
+
+                    if (psdzSwtAction == null)
+                    {
+                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Swt action failed step: {0}", step);
+                    }
+
+                    WaitForEmptyVehicleQueue();
+                }
+
                 if (psdzSwtAction == null)
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "Requesting Swt action failed");
@@ -3013,7 +3031,24 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.TalGenerating);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Generating TAL");
-                IPsdzTal psdzTal = ProgrammingService.Psdz.LogicService.GenerateTal(PsdzContext.Connection, PsdzContext.SvtActual, psdzSollverbauung, PsdzContext.SwtAction, PsdzContext.TalFilter, PsdzContext.FaActual.Vin);
+                IPsdzTal psdzTal = null;
+                for (int step = 0; step < 2; step++)
+                {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Generating TAL step: {0}", step);
+                    psdzTal = ProgrammingService.Psdz.LogicService.GenerateTal(PsdzContext.Connection, PsdzContext.SvtActual, psdzSollverbauung, PsdzContext.SwtAction, PsdzContext.TalFilter, PsdzContext.FaActual.Vin);
+                    if (!hasVehicleQueue)
+                    {
+                        break;
+                    }
+
+                    if (psdzTal == null)
+                    {
+                        log.WarnFormat(CultureInfo.InvariantCulture, "Generating TAL failed step: {0}", step);
+                    }
+
+                    WaitForEmptyVehicleQueue();
+                }
+
                 if (psdzTal == null)
                 {
                     sbResult.AppendLine(Strings.TalGenerationFailed);
