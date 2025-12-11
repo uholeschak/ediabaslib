@@ -4090,21 +4090,14 @@ namespace PsdzClient.Programming
         {
             try
             {
-                string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
-                if (!string.IsNullOrEmpty(codeBase))
+                string appDir = EdiabasNet.AssemblyDirectory;
+                if (!string.IsNullOrEmpty(appDir))
                 {
-                    UriBuilder uri = new UriBuilder(codeBase);
-                    string path = Uri.UnescapeDataString(uri.Path);
-                    string appDir = Path.GetDirectoryName(path);
-
-                    if (!string.IsNullOrEmpty(appDir))
+                    string log4NetConfig = Path.Combine(appDir, "log4net_config.xml");
+                    if (File.Exists(log4NetConfig))
                     {
-                        string log4NetConfig = Path.Combine(appDir, "log4net_config.xml");
-                        if (File.Exists(log4NetConfig))
-                        {
-                            log4net.GlobalContext.Properties["LogFileName"] = logFile;
-                            XmlConfigurator.Configure(new FileInfo(log4NetConfig));
-                        }
+                        log4net.GlobalContext.Properties["LogFileName"] = logFile;
+                        XmlConfigurator.Configure(new FileInfo(log4NetConfig));
                     }
                 }
             }

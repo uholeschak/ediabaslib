@@ -1,4 +1,4 @@
-﻿#if NETFRAMEWORK
+﻿#if !NET
 using SQLitePCL;
 using System.Reflection;
 using System;
