@@ -20,9 +20,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography;
 using System.Text;
 using System;
-using PsdzClient;
 
-#pragma warning disable CS0618
+#pragma warning disable CS0618, SYSLIB0057
 namespace PsdzClient.Core
 {
     public sealed class Sec4DiagHandler : ISec4DiagHandler

@@ -12,6 +12,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
+#pragma warning disable SYSLIB0051
 namespace PsdzClient.Core
 {
     [Serializable]
