@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{EEF1264D-D00F-44D4-B21C-D65CF54E149E}</ProjectGuid>
-    <TargetFramework>net481</TargetFramework>
+    <TargetFrameworks>net481</TargetFrameworks>
+    <UseWPF>true</UseWPF>
     <AssemblyTitle>PsdzClientLibrary</AssemblyTitle>
     <Product>PsdzClientLibrary</Product>
     <Copyright>Copyright ©  2021</Copyright>
