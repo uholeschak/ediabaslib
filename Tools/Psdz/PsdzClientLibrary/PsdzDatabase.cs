@@ -1536,8 +1536,8 @@ namespace PsdzClient
 
             log.InfoFormat("PsdzDatabase: ISTA framework path: {0}", _frameworkPath);
 
-#if NETFRAMEWORK
             _harmony = new Harmony("de.holeschak.PsdzClient");
+#if NETFRAMEWORK
             if (!SqlLoader.PatchLoader(_harmony))
             {
                 log.ErrorFormat("PsdzDatabase: PatchLoader failed");

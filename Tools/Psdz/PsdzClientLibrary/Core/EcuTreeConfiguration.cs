@@ -9,8 +9,8 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using BmwFileReader;
 
+#pragma warning disable CA2022
 namespace PsdzClient.Core
 {
     [Serializable]

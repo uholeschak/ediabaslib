@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#pragma warning disable CA2022
 namespace PsdzClient.Core
 {
     [Serializable]
