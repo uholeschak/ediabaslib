@@ -1,6 +1,7 @@
 ﻿using PsdzClient;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -16,7 +17,7 @@ namespace BMW.Rheingold.Psdz.Client
 #if NETFRAMEWORK
             : base((ChannelFactory<TChannel>)new DuplexChannelFactory<TChannel>(callbackInstance, binding, remoteAddress))
 #else
-            : base((ChannelFactory<TChannel>)new DuplexChannelFactory<TChannel>(typeof(IPsdzProgressListener), binding, remoteAddress))
+            : base((ChannelFactory<TChannel>)new DuplexChannelFactory<TChannel>(new InstanceContext(callbackInstance), binding, remoteAddress))
 #endif
         {
         }
