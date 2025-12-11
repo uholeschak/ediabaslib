@@ -3,4 +3,20 @@
        <!-- Activating these compiler switches requires now more code adaptions -->
        <DefineConstants>$(DefineConstants);_OLD_PSDZ_BUS;_OLD_PSDZ_FA</DefineConstants>
    </PropertyGroup>
+    <Target Name="AddReferences" BeforeTargets="PrepareForBuild">
+        <Message Text="Adding references $(TargetFramework)" Importance="High" />
+        <ItemGroup Condition=" ('$(TargetFramework)' == 'net48') Or ('$(TargetFramework)' == 'net481') ">
+            <Reference Include="System.ComponentModel.DataAnnotations" />
+            <Reference Include="System.Configuration" />
+            <Reference Include="System.IO.Compression" />
+            <Reference Include="System.Management" />
+            <Reference Include="System.ServiceModel" />
+            <Reference Include="System.Web" />
+            <Reference Include="System.Windows" />
+            <Reference Include="System.Data.DataSetExtensions" />
+            <Reference Include="Microsoft.CSharp" />
+            <Reference Include="System.Net.Http" />
+            <Reference Include="WindowsBase" />
+        </ItemGroup>
+    </Target>
 </Project>
