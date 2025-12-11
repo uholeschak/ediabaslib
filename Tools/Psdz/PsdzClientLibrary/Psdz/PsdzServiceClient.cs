@@ -94,7 +94,6 @@ namespace BMW.Rheingold.Psdz.Client
 
         public ISecureCodingService SecureCodingService => secureCodingService;
 
-        // ToDo: Check on update
         public PsdzServiceClient(string clientLogDir, int istaProcessId = 0)
         {
             NetNamedPipeBinding netNamedPipeBinding = new NetNamedPipeBinding
