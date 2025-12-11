@@ -1,4 +1,5 @@
-﻿using SQLitePCL;
+﻿#if NETFRAMEWORK
+using SQLitePCL;
 using System.Reflection;
 using System;
 using System.IO;
@@ -184,3 +185,4 @@ namespace PsdzClient
         }
     }
 }
+#endif
