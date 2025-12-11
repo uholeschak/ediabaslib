@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{14CA7A28-7FA8-40A0-ABC6-81E9F36318DE}</ProjectGuid>
-    <TargetFramework>net481</TargetFramework>
+    <TargetFrameworks>net10.0-windows;net481</TargetFrameworks>
+    <UseWindowsForms>true</UseWindowsForms>
     <AssemblyTitle>dnpatch</AssemblyTitle>
     <Product>dnpatch</Product>
     <Copyright>Copyright ©  2016</Copyright>
@@ -11,12 +12,6 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>dnpatch.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="dnlib" Version="4.5.0" />
   </ItemGroup>
