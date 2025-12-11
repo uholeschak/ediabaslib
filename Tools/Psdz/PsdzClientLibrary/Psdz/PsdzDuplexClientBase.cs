@@ -13,7 +13,11 @@ namespace BMW.Rheingold.Psdz.Client
     internal abstract class PsdzDuplexClientBase<TChannel, TCallback> : PsdzClientBase<TChannel> where TChannel : class where TCallback : class
     {
         protected PsdzDuplexClientBase(TCallback callbackInstance, Binding binding, EndpointAddress remoteAddress)
+#if NETFRAMEWORK
             : base((ChannelFactory<TChannel>)new DuplexChannelFactory<TChannel>(callbackInstance, binding, remoteAddress))
+#else
+            : base((ChannelFactory<TChannel>)new DuplexChannelFactory<TChannel>(typeof(IPsdzProgressListener), binding, remoteAddress))
+#endif
         {
         }
     }
