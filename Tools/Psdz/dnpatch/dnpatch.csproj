@@ -12,6 +12,12 @@
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>dnpatch.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+    <ItemGroup Condition=" ('$(TargetFramework)' == 'net48') Or ('$(TargetFramework)' == 'net481') ">
+        <Reference Include="System.Windows.Forms" />
+        <Reference Include="System.Data.DataSetExtensions" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Net.Http" />
+    </ItemGroup>
   <ItemGroup>
     <PackageReference Include="dnlib" Version="4.5.0" />
   </ItemGroup>
