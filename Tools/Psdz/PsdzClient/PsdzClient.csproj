@@ -3,6 +3,7 @@
     <ProjectGuid>{EE741859-CB0F-4130-9F07-5CEC56A982C6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net481</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
@@ -26,20 +27,6 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Remove="Properties\Resources.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Serialization" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="FormMain.cs">
