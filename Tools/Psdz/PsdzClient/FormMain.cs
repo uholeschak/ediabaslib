@@ -79,15 +79,16 @@ namespace PsdzClient
             _executionMode = ProgrammingJobs.ExecutionMode.Normal;
             if (args != null && args.Length > 0)
             {
-                if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateModulesDirect, StringComparison.OrdinalIgnoreCase) == 0)
+                string arg0 = args[0].Trim();
+                if (string.Compare(arg0, ProgrammingJobs.ArgumentGenerateModulesDirect, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _executionMode = ProgrammingJobs.ExecutionMode.GenerateModulesDirect;
                 }
-                else if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateServiceModules, StringComparison.OrdinalIgnoreCase) == 0)
+                else if (string.Compare(arg0, ProgrammingJobs.ArgumentGenerateServiceModules, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _executionMode = ProgrammingJobs.ExecutionMode.GenerateServiceModules;
                 }
-                else if (string.Compare(args[0], ProgrammingJobs.ArgumentGenerateTestModules, StringComparison.OrdinalIgnoreCase) == 0)
+                else if (string.Compare(arg0, ProgrammingJobs.ArgumentGenerateTestModules, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     _executionMode = ProgrammingJobs.ExecutionMode.GenerateTestModules;
                 }
