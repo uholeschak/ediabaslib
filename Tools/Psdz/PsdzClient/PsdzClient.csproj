@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{EE741859-CB0F-4130-9F07-5CEC56A982C6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net481</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows10.0.26100.0;net481</TargetFrameworks>
     <UseWindowsForms>true</UseWindowsForms>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
@@ -88,7 +88,6 @@
         <Reference Include="System.Windows.Forms" />
         <Reference Include="System.Xml.Serialization" />
         <Reference Include="WindowsBase" />
-        <PackageReference Include="IPAddressControl" Version="1.2.4446.28646" />
     </ItemGroup>
     <ItemGroup Condition=" ('$(TargetFramework)' == 'net8.0-windows10.0.26100.0') Or ('$(TargetFramework)' == 'net10.0-windows10.0.26100.0') ">
         <PackageReference Include="System.ServiceModel.NetNamedPipe" Version="10.0.652802" />

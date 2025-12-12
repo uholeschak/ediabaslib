@@ -38,7 +38,6 @@ namespace PsdzClient
             this.buttonIstaFolder = new System.Windows.Forms.Button();
             this.buttonStopHost = new System.Windows.Forms.Button();
             this.timerUpdate = new System.Windows.Forms.Timer(this.components);
-            this.ipAddressControlVehicleIp = new IPAddressControlLib.IPAddressControl();
             this.labelVehicleIp = new System.Windows.Forms.Label();
             this.buttonConnect = new System.Windows.Forms.Button();
             this.buttonDisconnect = new System.Windows.Forms.Button();
@@ -63,6 +62,7 @@ namespace PsdzClient
             this.openFileDialogDecrypt = new System.Windows.Forms.OpenFileDialog();
             this.textBoxStatus = new System.Windows.Forms.RichTextBox();
             this.saveFileDialogDecrypt = new System.Windows.Forms.SaveFileDialog();
+            this.ipAddressControlVehicleIp = new PsdzClient.Controls.IpAddressControl();
             this.SuspendLayout();
             // 
             // textBoxIstaFolder
@@ -108,17 +108,6 @@ namespace PsdzClient
             // timerUpdate
             // 
             this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
-            // 
-            // ipAddressControlVehicleIp
-            // 
-            this.ipAddressControlVehicleIp.AllowInternalTab = false;
-            this.ipAddressControlVehicleIp.AutoHeight = true;
-            this.ipAddressControlVehicleIp.BackColor = System.Drawing.SystemColors.Window;
-            this.ipAddressControlVehicleIp.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.ipAddressControlVehicleIp.Cursor = System.Windows.Forms.Cursors.IBeam;
-            resources.ApplyResources(this.ipAddressControlVehicleIp, "ipAddressControlVehicleIp");
-            this.ipAddressControlVehicleIp.Name = "ipAddressControlVehicleIp";
-            this.ipAddressControlVehicleIp.ReadOnly = false;
             // 
             // labelVehicleIp
             // 
@@ -273,12 +262,18 @@ namespace PsdzClient
             // 
             resources.ApplyResources(this.saveFileDialogDecrypt, "saveFileDialogDecrypt");
             // 
+            // ipAddressControlVehicleIp
+            // 
+            resources.ApplyResources(this.ipAddressControlVehicleIp, "ipAddressControlVehicleIp");
+            this.ipAddressControlVehicleIp.Name = "ipAddressControlVehicleIp";
+            // 
             // FormMain
             // 
             this.AcceptButton = this.buttonClose;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonAbort;
+            this.Controls.Add(this.ipAddressControlVehicleIp);
             this.Controls.Add(this.textBoxStatus);
             this.Controls.Add(this.buttonDecryptFile);
             this.Controls.Add(this.checkBoxGenServiceModules);
@@ -300,7 +295,6 @@ namespace PsdzClient
             this.Controls.Add(this.buttonDisconnect);
             this.Controls.Add(this.buttonConnect);
             this.Controls.Add(this.labelVehicleIp);
-            this.Controls.Add(this.ipAddressControlVehicleIp);
             this.Controls.Add(this.buttonStopHost);
             this.Controls.Add(this.buttonIstaFolder);
             this.Controls.Add(this.buttonAbort);
@@ -325,7 +319,6 @@ namespace PsdzClient
         private System.Windows.Forms.Button buttonIstaFolder;
         private System.Windows.Forms.Button buttonStopHost;
         private System.Windows.Forms.Timer timerUpdate;
-        private IPAddressControlLib.IPAddressControl ipAddressControlVehicleIp;
         private System.Windows.Forms.Label labelVehicleIp;
         private System.Windows.Forms.Button buttonConnect;
         private System.Windows.Forms.Button buttonDisconnect;
@@ -350,6 +343,7 @@ namespace PsdzClient
         private System.Windows.Forms.OpenFileDialog openFileDialogDecrypt;
         private System.Windows.Forms.RichTextBox textBoxStatus;
         private System.Windows.Forms.SaveFileDialog saveFileDialogDecrypt;
+        private Controls.IpAddressControl ipAddressControlVehicleIp;
     }
 }
 

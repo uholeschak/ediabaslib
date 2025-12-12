@@ -255,33 +255,6 @@
   <metadata name="timerUpdate.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>199, 17</value>
   </metadata>
-  <data name="ipAddressControlVehicleIp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 68</value>
-  </data>
-  <data name="ipAddressControlVehicleIp.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>87, 20</value>
-  </data>
-  <data name="ipAddressControlVehicleIp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>87, 20</value>
-  </data>
-  <data name="ipAddressControlVehicleIp.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="ipAddressControlVehicleIp.Text" xml:space="preserve">
-    <value>...</value>
-  </data>
-  <data name="&gt;&gt;ipAddressControlVehicleIp.Name" xml:space="preserve">
-    <value>ipAddressControlVehicleIp</value>
-  </data>
-  <data name="&gt;&gt;ipAddressControlVehicleIp.Type" xml:space="preserve">
-    <value>IPAddressControlLib.IPAddressControl, IPAddressControlLib, Version=1.2.4446.28646, Culture=neutral, PublicKeyToken=64ca5a4287aa7107</value>
-  </data>
-  <data name="&gt;&gt;ipAddressControlVehicleIp.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;ipAddressControlVehicleIp.ZOrder" xml:space="preserve">
-    <value>21</value>
-  </data>
   <data name="labelVehicleIp.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -307,7 +280,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelVehicleIp.ZOrder" xml:space="preserve">
-    <value>20</value>
+    <value>21</value>
   </data>
   <data name="buttonConnect.Location" type="System.Drawing.Point, System.Drawing">
     <value>93, 97</value>
@@ -331,7 +304,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonConnect.ZOrder" xml:space="preserve">
-    <value>19</value>
+    <value>20</value>
   </data>
   <data name="buttonDisconnect.Location" type="System.Drawing.Point, System.Drawing">
     <value>174, 97</value>
@@ -355,7 +328,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonDisconnect.ZOrder" xml:space="preserve">
-    <value>18</value>
+    <value>19</value>
   </data>
   <data name="buttonModILevel.Location" type="System.Drawing.Point, System.Drawing">
     <value>336, 97</value>
@@ -379,7 +352,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonModILevel.ZOrder" xml:space="preserve">
-    <value>17</value>
+    <value>18</value>
   </data>
   <data name="labelIstaFolder.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -406,7 +379,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelIstaFolder.ZOrder" xml:space="preserve">
-    <value>16</value>
+    <value>17</value>
   </data>
   <data name="buttonModFa.Location" type="System.Drawing.Point, System.Drawing">
     <value>417, 97</value>
@@ -430,7 +403,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonModFa.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>16</value>
   </data>
   <data name="buttonExecuteTal.Location" type="System.Drawing.Point, System.Drawing">
     <value>498, 97</value>
@@ -454,7 +427,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonExecuteTal.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>15</value>
   </data>
   <data name="progressBarEvent.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -478,7 +451,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;progressBarEvent.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>14</value>
   </data>
   <data name="labelProgressEvent.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Left</value>
@@ -508,13 +481,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelProgressEvent.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>13</value>
   </data>
   <data name="checkBoxIcom.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="checkBoxIcom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>186, 70</value>
+    <value>255, 72</value>
   </data>
   <data name="checkBoxIcom.Size" type="System.Drawing.Size, System.Drawing">
     <value>53, 17</value>
@@ -535,10 +508,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxIcom.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>12</value>
   </data>
   <data name="buttonVehicleSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>255, 66</value>
+    <value>336, 68</value>
   </data>
   <data name="buttonVehicleSearch.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -559,7 +532,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonVehicleSearch.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>11</value>
   </data>
   <data name="buttonCreateOptions.Location" type="System.Drawing.Point, System.Drawing">
     <value>255, 97</value>
@@ -583,7 +556,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonCreateOptions.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>10</value>
   </data>
   <data name="checkedListBoxOptions.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -607,7 +580,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkedListBoxOptions.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>9</value>
   </data>
   <data name="comboBoxOptionType.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -631,7 +604,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;comboBoxOptionType.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="label1.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -658,7 +631,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="labelLanguage.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -685,7 +658,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;labelLanguage.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="comboBoxLanguage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -709,10 +682,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;comboBoxLanguage.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="buttonInternalTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>336, 66</value>
+    <value>417, 68</value>
   </data>
   <data name="buttonInternalTest.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -733,7 +706,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonInternalTest.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <metadata name="openFileDialogTest.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>319, 17</value>
@@ -745,7 +718,7 @@
     <value>True</value>
   </data>
   <data name="checkBoxGenServiceModules.Location" type="System.Drawing.Point, System.Drawing">
-    <value>498, 70</value>
+    <value>668, 72</value>
   </data>
   <data name="checkBoxGenServiceModules.Size" type="System.Drawing.Size, System.Drawing">
     <value>104, 17</value>
@@ -766,10 +739,10 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxGenServiceModules.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="buttonDecryptFile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>417, 66</value>
+    <value>498, 68</value>
   </data>
   <data name="buttonDecryptFile.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
@@ -790,7 +763,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonDecryptFile.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <metadata name="openFileDialogDecrypt.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>473, 17</value>
@@ -826,13 +799,34 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;textBoxStatus.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <metadata name="saveFileDialogDecrypt.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>647, 17</value>
   </metadata>
   <data name="saveFileDialogDecrypt.Filter" xml:space="preserve">
     <value>*.*|*.*</value>
+  </data>
+  <data name="ipAddressControlVehicleIp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>93, 68</value>
+  </data>
+  <data name="ipAddressControlVehicleIp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>150, 25</value>
+  </data>
+  <data name="ipAddressControlVehicleIp.TabIndex" type="System.Int32, mscorlib">
+    <value>27</value>
+  </data>
+  <data name="&gt;&gt;ipAddressControlVehicleIp.Name" xml:space="preserve">
+    <value>ipAddressControlVehicleIp</value>
+  </data>
+  <data name="&gt;&gt;ipAddressControlVehicleIp.Type" xml:space="preserve">
+    <value>PsdzClient.Controls.IpAddressControl, PsdzClient, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;ipAddressControlVehicleIp.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;ipAddressControlVehicleIp.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
