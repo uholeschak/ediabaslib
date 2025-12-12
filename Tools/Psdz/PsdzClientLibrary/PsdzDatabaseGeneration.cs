@@ -1,4 +1,12 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using BmwFileReader;
+using HarmonyLib;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+using Microsoft.Data.Sqlite;
+using PsdzClient.Core;
+using PsdzClient.Programming;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -647,7 +655,7 @@ namespace PsdzClient
 
         public class MethodAbortedException : Exception
         {
-            public MethodAbortedException(string message) : base(message)
+            public MethodAbortedException(string method, string message) : base(method + ": " + message)
             {
             }
         }
@@ -923,8 +931,7 @@ namespace PsdzClient
                     log.Error(callStack);
                 }
 
-                throw new MethodAbortedException("CreateServiceDialogPrefix Aborted");
-                //Thread.CurrentThread.Abort();
+                throw new MethodAbortedException("CreateServiceDialogPrefix", "Max calls limit reached");
             }
 
             __result = serviceDialog;
@@ -1231,8 +1238,7 @@ namespace PsdzClient
                     log.Error(callStack);
                 }
 
-                throw new MethodAbortedException("ServiceDialogCmdBaseInvokePrefix Aborted");
-                //Thread.CurrentThread.Abort();
+                throw new MethodAbortedException("ServiceDialogCmdBaseInvokePrefix", "Max calls limit reached");
             }
 
             return false;
@@ -1329,8 +1335,7 @@ namespace PsdzClient
                     log.Error(callStack);
                 }
 
-                throw new MethodAbortedException("CharacteristicsPrefix Aborted");
-                //Thread.CurrentThread.Abort();
+                throw new MethodAbortedException("CharacteristicsPrefix", "Max calls limit reached");
             }
 
             __result = null;
