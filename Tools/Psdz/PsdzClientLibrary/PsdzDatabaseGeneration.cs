@@ -645,6 +645,13 @@ namespace PsdzClient
             }
         }
 
+        public class MethodAbortedException : Exception
+        {
+            public MethodAbortedException(string message) : base(message)
+            {
+            }
+        }
+
         private const int MaxCallsLimit = 10;
         private const int MaxCallsStorage = 2;
         private const int MaxResultDataLen = 20;
@@ -916,7 +923,8 @@ namespace PsdzClient
                     log.Error(callStack);
                 }
 
-                Thread.CurrentThread.Abort();
+                throw new MethodAbortedException("CreateServiceDialogPrefix Aborted");
+                //Thread.CurrentThread.Abort();
             }
 
             __result = serviceDialog;
@@ -1223,7 +1231,8 @@ namespace PsdzClient
                     log.Error(callStack);
                 }
 
-                Thread.CurrentThread.Abort();
+                throw new MethodAbortedException("ServiceDialogCmdBaseInvokePrefix Aborted");
+                //Thread.CurrentThread.Abort();
             }
 
             return false;
@@ -1320,7 +1329,8 @@ namespace PsdzClient
                     log.Error(callStack);
                 }
 
-                Thread.CurrentThread.Abort();
+                throw new MethodAbortedException("CharacteristicsPrefix Aborted");
+                //Thread.CurrentThread.Abort();
             }
 
             __result = null;
