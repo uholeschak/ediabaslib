@@ -41,44 +41,48 @@ namespace PsdzClient.Controls
             // 
             // textBox1
             // 
-            textBox1.Location = new System.Drawing.Point(0, 0);
+            textBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            textBox1.Location = new System.Drawing.Point(2, 2);
             textBox1.Margin = new System.Windows.Forms.Padding(0);
             textBox1.MaxLength = 3;
             textBox1.Name = "textBox1";
-            textBox1.Size = new System.Drawing.Size(34, 23);
+            textBox1.Size = new System.Drawing.Size(34, 16);
             textBox1.TabIndex = 0;
             textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             textBox1.KeyPress += ValidateNumericInput;
             // 
             // textBox2
             // 
-            textBox2.Location = new System.Drawing.Point(44, 0);
+            textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            textBox2.Location = new System.Drawing.Point(46, 2);
             textBox2.Margin = new System.Windows.Forms.Padding(0);
             textBox2.MaxLength = 3;
             textBox2.Name = "textBox2";
-            textBox2.Size = new System.Drawing.Size(34, 23);
+            textBox2.Size = new System.Drawing.Size(34, 16);
             textBox2.TabIndex = 1;
             textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             textBox2.KeyPress += ValidateNumericInput;
             // 
             // textBox3
             // 
-            textBox3.Location = new System.Drawing.Point(88, 0);
+            textBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            textBox3.Location = new System.Drawing.Point(90, 2);
             textBox3.Margin = new System.Windows.Forms.Padding(0);
             textBox3.MaxLength = 3;
             textBox3.Name = "textBox3";
-            textBox3.Size = new System.Drawing.Size(34, 23);
+            textBox3.Size = new System.Drawing.Size(34, 16);
             textBox3.TabIndex = 2;
             textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             textBox3.KeyPress += ValidateNumericInput;
             // 
             // textBox4
             // 
-            textBox4.Location = new System.Drawing.Point(132, 0);
+            textBox4.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            textBox4.Location = new System.Drawing.Point(134, 2);
             textBox4.Margin = new System.Windows.Forms.Padding(0);
             textBox4.MaxLength = 3;
             textBox4.Name = "textBox4";
-            textBox4.Size = new System.Drawing.Size(34, 23);
+            textBox4.Size = new System.Drawing.Size(34, 16);
             textBox4.TabIndex = 3;
             textBox4.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             textBox4.KeyPress += ValidateNumericInput;
@@ -86,8 +90,8 @@ namespace PsdzClient.Controls
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(34, 3);
-            label1.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            label1.Location = new System.Drawing.Point(36, 2);
+            label1.Margin = new System.Windows.Forms.Padding(0);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(10, 15);
             label1.TabIndex = 4;
@@ -96,8 +100,8 @@ namespace PsdzClient.Controls
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(78, 3);
-            label2.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            label2.Location = new System.Drawing.Point(80, 2);
+            label2.Margin = new System.Windows.Forms.Padding(0);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(10, 15);
             label2.TabIndex = 5;
@@ -106,8 +110,8 @@ namespace PsdzClient.Controls
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(122, 3);
-            label3.Margin = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            label3.Location = new System.Drawing.Point(124, 2);
+            label3.Margin = new System.Windows.Forms.Padding(0);
             label3.Name = "label3";
             label3.Size = new System.Drawing.Size(10, 15);
             label3.TabIndex = 6;
@@ -117,6 +121,8 @@ namespace PsdzClient.Controls
             // 
             panel.AutoSize = true;
             panel.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            panel.BackColor = System.Drawing.SystemColors.Window;
+            panel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             panel.Controls.Add(textBox1);
             panel.Controls.Add(label1);
             panel.Controls.Add(textBox2);
@@ -128,7 +134,8 @@ namespace PsdzClient.Controls
             panel.Location = new System.Drawing.Point(0, 0);
             panel.Margin = new System.Windows.Forms.Padding(0);
             panel.Name = "panel";
-            panel.Size = new System.Drawing.Size(168, 25);
+            panel.Padding = new System.Windows.Forms.Padding(2);
+            panel.Size = new System.Drawing.Size(172, 22);
             panel.TabIndex = 0;
             panel.WrapContents = false;
             // 
@@ -137,9 +144,9 @@ namespace PsdzClient.Controls
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             Controls.Add(panel);
-            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Margin = new System.Windows.Forms.Padding(0);
             Name = "IpAddressControl";
-            Size = new System.Drawing.Size(168, 25);
+            Size = new System.Drawing.Size(172, 22);
             panel.ResumeLayout(false);
             panel.PerformLayout();
             ResumeLayout(false);

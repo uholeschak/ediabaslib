@@ -242,7 +242,7 @@
     <value>23</value>
   </data>
   <data name="buttonStopHost.Location" type="System.Drawing.Point, System.Drawing">
-    <value>14, 112</value>
+    <value>13, 112</value>
   </data>
   <data name="buttonStopHost.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -302,7 +302,7 @@
     <value>21</value>
   </data>
   <data name="buttonConnect.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 112</value>
+    <value>109, 112</value>
   </data>
   <data name="buttonConnect.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -329,7 +329,7 @@
     <value>20</value>
   </data>
   <data name="buttonDisconnect.Location" type="System.Drawing.Point, System.Drawing">
-    <value>203, 112</value>
+    <value>205, 112</value>
   </data>
   <data name="buttonDisconnect.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -356,7 +356,7 @@
     <value>19</value>
   </data>
   <data name="buttonModILevel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>392, 112</value>
+    <value>397, 112</value>
   </data>
   <data name="buttonModILevel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -413,7 +413,7 @@
     <value>17</value>
   </data>
   <data name="buttonModFa.Location" type="System.Drawing.Point, System.Drawing">
-    <value>486, 112</value>
+    <value>493, 112</value>
   </data>
   <data name="buttonModFa.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -440,7 +440,7 @@
     <value>16</value>
   </data>
   <data name="buttonExecuteTal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>581, 112</value>
+    <value>589, 112</value>
   </data>
   <data name="buttonExecuteTal.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -530,7 +530,7 @@
     <value>True</value>
   </data>
   <data name="checkBoxIcom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>298, 83</value>
+    <value>289, 83</value>
   </data>
   <data name="checkBoxIcom.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -557,7 +557,7 @@
     <value>12</value>
   </data>
   <data name="buttonVehicleSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>392, 78</value>
+    <value>397, 78</value>
   </data>
   <data name="buttonVehicleSearch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -584,7 +584,7 @@
     <value>11</value>
   </data>
   <data name="buttonCreateOptions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>298, 112</value>
+    <value>301, 112</value>
   </data>
   <data name="buttonCreateOptions.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -752,7 +752,7 @@
     <value>5</value>
   </data>
   <data name="buttonInternalTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>486, 78</value>
+    <value>493, 78</value>
   </data>
   <data name="buttonInternalTest.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -784,11 +784,14 @@
   <data name="openFileDialogTest.Filter" xml:space="preserve">
     <value>*.xml|*.xml|*.*|*.*</value>
   </data>
+  <data name="checkBoxGenServiceModules.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
   <data name="checkBoxGenServiceModules.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="checkBoxGenServiceModules.Location" type="System.Drawing.Point, System.Drawing">
-    <value>779, 83</value>
+    <value>790, 83</value>
   </data>
   <data name="checkBoxGenServiceModules.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -815,7 +818,7 @@
     <value>3</value>
   </data>
   <data name="buttonDecryptFile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>581, 78</value>
+    <value>589, 78</value>
   </data>
   <data name="buttonDecryptFile.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 3, 4, 3</value>
@@ -893,13 +896,13 @@
     <value>GrowAndShrink</value>
   </data>
   <data name="ipAddressControlVehicleIp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 79</value>
+    <value>108, 80</value>
   </data>
   <data name="ipAddressControlVehicleIp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 3, 5, 3</value>
   </data>
   <data name="ipAddressControlVehicleIp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>166, 23</value>
+    <value>172, 22</value>
   </data>
   <data name="ipAddressControlVehicleIp.TabIndex" type="System.Int32, mscorlib">
     <value>27</value>
