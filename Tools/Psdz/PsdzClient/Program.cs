@@ -1,9 +1,10 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using log4net;
 
 namespace PsdzClient
 {
@@ -17,6 +18,9 @@ namespace PsdzClient
         [STAThread]
         static void Main(string[] args)
         {
+#if NET
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
             Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
             Application.ThreadException += (sender, exArgs) =>
             {
