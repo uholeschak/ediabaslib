@@ -886,14 +886,20 @@
   <data name="saveFileDialogDecrypt.Filter" xml:space="preserve">
     <value>*.*|*.*</value>
   </data>
+  <data name="ipAddressControlVehicleIp.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="ipAddressControlVehicleIp.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
+    <value>GrowAndShrink</value>
+  </data>
   <data name="ipAddressControlVehicleIp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>108, 78</value>
+    <value>108, 79</value>
   </data>
   <data name="ipAddressControlVehicleIp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>5, 3, 5, 3</value>
   </data>
   <data name="ipAddressControlVehicleIp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>175, 29</value>
+    <value>166, 23</value>
   </data>
   <data name="ipAddressControlVehicleIp.TabIndex" type="System.Int32, mscorlib">
     <value>27</value>

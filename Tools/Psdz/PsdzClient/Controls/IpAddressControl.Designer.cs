@@ -128,7 +128,7 @@ namespace PsdzClient.Controls
             panel.Location = new System.Drawing.Point(0, 0);
             panel.Margin = new System.Windows.Forms.Padding(0);
             panel.Name = "panel";
-            panel.Size = new System.Drawing.Size(174, 26);
+            panel.Size = new System.Drawing.Size(168, 25);
             panel.TabIndex = 0;
             panel.WrapContents = false;
             // 
@@ -139,7 +139,7 @@ namespace PsdzClient.Controls
             Controls.Add(panel);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "IpAddressControl";
-            Size = new System.Drawing.Size(174, 26);
+            Size = new System.Drawing.Size(168, 25);
             panel.ResumeLayout(false);
             panel.PerformLayout();
             ResumeLayout(false);
