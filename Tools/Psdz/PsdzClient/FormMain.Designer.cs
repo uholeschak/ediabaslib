@@ -29,284 +29,284 @@ namespace PsdzClient
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
-            this.textBoxIstaFolder = new System.Windows.Forms.TextBox();
-            this.buttonClose = new System.Windows.Forms.Button();
-            this.buttonAbort = new System.Windows.Forms.Button();
-            this.folderBrowserDialogIsta = new System.Windows.Forms.FolderBrowserDialog();
-            this.buttonIstaFolder = new System.Windows.Forms.Button();
-            this.buttonStopHost = new System.Windows.Forms.Button();
-            this.timerUpdate = new System.Windows.Forms.Timer(this.components);
-            this.labelVehicleIp = new System.Windows.Forms.Label();
-            this.buttonConnect = new System.Windows.Forms.Button();
-            this.buttonDisconnect = new System.Windows.Forms.Button();
-            this.buttonModILevel = new System.Windows.Forms.Button();
-            this.labelIstaFolder = new System.Windows.Forms.Label();
-            this.buttonModFa = new System.Windows.Forms.Button();
-            this.buttonExecuteTal = new System.Windows.Forms.Button();
-            this.progressBarEvent = new System.Windows.Forms.ProgressBar();
-            this.labelProgressEvent = new System.Windows.Forms.Label();
-            this.checkBoxIcom = new System.Windows.Forms.CheckBox();
-            this.buttonVehicleSearch = new System.Windows.Forms.Button();
-            this.buttonCreateOptions = new System.Windows.Forms.Button();
-            this.checkedListBoxOptions = new System.Windows.Forms.CheckedListBox();
-            this.comboBoxOptionType = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.labelLanguage = new System.Windows.Forms.Label();
-            this.comboBoxLanguage = new System.Windows.Forms.ComboBox();
-            this.buttonInternalTest = new System.Windows.Forms.Button();
-            this.openFileDialogTest = new System.Windows.Forms.OpenFileDialog();
-            this.checkBoxGenServiceModules = new System.Windows.Forms.CheckBox();
-            this.buttonDecryptFile = new System.Windows.Forms.Button();
-            this.openFileDialogDecrypt = new System.Windows.Forms.OpenFileDialog();
-            this.textBoxStatus = new System.Windows.Forms.RichTextBox();
-            this.saveFileDialogDecrypt = new System.Windows.Forms.SaveFileDialog();
-            this.ipAddressControlVehicleIp = new PsdzClient.Controls.IpAddressControl();
-            this.SuspendLayout();
+            textBoxIstaFolder = new System.Windows.Forms.TextBox();
+            buttonClose = new System.Windows.Forms.Button();
+            buttonAbort = new System.Windows.Forms.Button();
+            folderBrowserDialogIsta = new System.Windows.Forms.FolderBrowserDialog();
+            buttonIstaFolder = new System.Windows.Forms.Button();
+            buttonStopHost = new System.Windows.Forms.Button();
+            timerUpdate = new System.Windows.Forms.Timer(components);
+            labelVehicleIp = new System.Windows.Forms.Label();
+            buttonConnect = new System.Windows.Forms.Button();
+            buttonDisconnect = new System.Windows.Forms.Button();
+            buttonModILevel = new System.Windows.Forms.Button();
+            labelIstaFolder = new System.Windows.Forms.Label();
+            buttonModFa = new System.Windows.Forms.Button();
+            buttonExecuteTal = new System.Windows.Forms.Button();
+            progressBarEvent = new System.Windows.Forms.ProgressBar();
+            labelProgressEvent = new System.Windows.Forms.Label();
+            checkBoxIcom = new System.Windows.Forms.CheckBox();
+            buttonVehicleSearch = new System.Windows.Forms.Button();
+            buttonCreateOptions = new System.Windows.Forms.Button();
+            checkedListBoxOptions = new System.Windows.Forms.CheckedListBox();
+            comboBoxOptionType = new System.Windows.Forms.ComboBox();
+            label1 = new System.Windows.Forms.Label();
+            labelLanguage = new System.Windows.Forms.Label();
+            comboBoxLanguage = new System.Windows.Forms.ComboBox();
+            buttonInternalTest = new System.Windows.Forms.Button();
+            openFileDialogTest = new System.Windows.Forms.OpenFileDialog();
+            checkBoxGenServiceModules = new System.Windows.Forms.CheckBox();
+            buttonDecryptFile = new System.Windows.Forms.Button();
+            openFileDialogDecrypt = new System.Windows.Forms.OpenFileDialog();
+            textBoxStatus = new System.Windows.Forms.RichTextBox();
+            saveFileDialogDecrypt = new System.Windows.Forms.SaveFileDialog();
+            ipAddressControlVehicleIp = new PsdzClient.Controls.IpAddressControl();
+            SuspendLayout();
             // 
             // textBoxIstaFolder
             // 
-            resources.ApplyResources(this.textBoxIstaFolder, "textBoxIstaFolder");
-            this.textBoxIstaFolder.Name = "textBoxIstaFolder";
+            resources.ApplyResources(textBoxIstaFolder, "textBoxIstaFolder");
+            textBoxIstaFolder.Name = "textBoxIstaFolder";
             // 
             // buttonClose
             // 
-            resources.ApplyResources(this.buttonClose, "buttonClose");
-            this.buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonClose.Name = "buttonClose";
-            this.buttonClose.UseVisualStyleBackColor = true;
-            this.buttonClose.Click += new System.EventHandler(this.buttonClose_Click);
+            resources.ApplyResources(buttonClose, "buttonClose");
+            buttonClose.DialogResult = System.Windows.Forms.DialogResult.OK;
+            buttonClose.Name = "buttonClose";
+            buttonClose.UseVisualStyleBackColor = true;
+            buttonClose.Click += buttonClose_Click;
             // 
             // buttonAbort
             // 
-            resources.ApplyResources(this.buttonAbort, "buttonAbort");
-            this.buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonAbort.Name = "buttonAbort";
-            this.buttonAbort.UseVisualStyleBackColor = true;
-            this.buttonAbort.Click += new System.EventHandler(this.buttonAbort_Click);
+            resources.ApplyResources(buttonAbort, "buttonAbort");
+            buttonAbort.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            buttonAbort.Name = "buttonAbort";
+            buttonAbort.UseVisualStyleBackColor = true;
+            buttonAbort.Click += buttonAbort_Click;
             // 
             // folderBrowserDialogIsta
             // 
-            this.folderBrowserDialogIsta.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            this.folderBrowserDialogIsta.ShowNewFolderButton = false;
+            folderBrowserDialogIsta.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            folderBrowserDialogIsta.ShowNewFolderButton = false;
             // 
             // buttonIstaFolder
             // 
-            resources.ApplyResources(this.buttonIstaFolder, "buttonIstaFolder");
-            this.buttonIstaFolder.Name = "buttonIstaFolder";
-            this.buttonIstaFolder.UseVisualStyleBackColor = true;
-            this.buttonIstaFolder.Click += new System.EventHandler(this.buttonIstaFolder_Click);
+            resources.ApplyResources(buttonIstaFolder, "buttonIstaFolder");
+            buttonIstaFolder.Name = "buttonIstaFolder";
+            buttonIstaFolder.UseVisualStyleBackColor = true;
+            buttonIstaFolder.Click += buttonIstaFolder_Click;
             // 
             // buttonStopHost
             // 
-            resources.ApplyResources(this.buttonStopHost, "buttonStopHost");
-            this.buttonStopHost.Name = "buttonStopHost";
-            this.buttonStopHost.UseVisualStyleBackColor = true;
-            this.buttonStopHost.Click += new System.EventHandler(this.buttonStopHost_Click);
+            resources.ApplyResources(buttonStopHost, "buttonStopHost");
+            buttonStopHost.Name = "buttonStopHost";
+            buttonStopHost.UseVisualStyleBackColor = true;
+            buttonStopHost.Click += buttonStopHost_Click;
             // 
             // timerUpdate
             // 
-            this.timerUpdate.Tick += new System.EventHandler(this.timerUpdate_Tick);
+            timerUpdate.Tick += timerUpdate_Tick;
             // 
             // labelVehicleIp
             // 
-            resources.ApplyResources(this.labelVehicleIp, "labelVehicleIp");
-            this.labelVehicleIp.Name = "labelVehicleIp";
+            resources.ApplyResources(labelVehicleIp, "labelVehicleIp");
+            labelVehicleIp.Name = "labelVehicleIp";
             // 
             // buttonConnect
             // 
-            resources.ApplyResources(this.buttonConnect, "buttonConnect");
-            this.buttonConnect.Name = "buttonConnect";
-            this.buttonConnect.UseVisualStyleBackColor = true;
-            this.buttonConnect.Click += new System.EventHandler(this.buttonConnect_Click);
+            resources.ApplyResources(buttonConnect, "buttonConnect");
+            buttonConnect.Name = "buttonConnect";
+            buttonConnect.UseVisualStyleBackColor = true;
+            buttonConnect.Click += buttonConnect_Click;
             // 
             // buttonDisconnect
             // 
-            resources.ApplyResources(this.buttonDisconnect, "buttonDisconnect");
-            this.buttonDisconnect.Name = "buttonDisconnect";
-            this.buttonDisconnect.UseVisualStyleBackColor = true;
-            this.buttonDisconnect.Click += new System.EventHandler(this.buttonDisconnect_Click);
+            resources.ApplyResources(buttonDisconnect, "buttonDisconnect");
+            buttonDisconnect.Name = "buttonDisconnect";
+            buttonDisconnect.UseVisualStyleBackColor = true;
+            buttonDisconnect.Click += buttonDisconnect_Click;
             // 
             // buttonModILevel
             // 
-            resources.ApplyResources(this.buttonModILevel, "buttonModILevel");
-            this.buttonModILevel.Name = "buttonModILevel";
-            this.buttonModILevel.UseVisualStyleBackColor = true;
-            this.buttonModILevel.Click += new System.EventHandler(this.buttonFunc_Click);
+            resources.ApplyResources(buttonModILevel, "buttonModILevel");
+            buttonModILevel.Name = "buttonModILevel";
+            buttonModILevel.UseVisualStyleBackColor = true;
+            buttonModILevel.Click += buttonFunc_Click;
             // 
             // labelIstaFolder
             // 
-            resources.ApplyResources(this.labelIstaFolder, "labelIstaFolder");
-            this.labelIstaFolder.Name = "labelIstaFolder";
+            resources.ApplyResources(labelIstaFolder, "labelIstaFolder");
+            labelIstaFolder.Name = "labelIstaFolder";
             // 
             // buttonModFa
             // 
-            resources.ApplyResources(this.buttonModFa, "buttonModFa");
-            this.buttonModFa.Name = "buttonModFa";
-            this.buttonModFa.UseVisualStyleBackColor = true;
-            this.buttonModFa.Click += new System.EventHandler(this.buttonFunc_Click);
+            resources.ApplyResources(buttonModFa, "buttonModFa");
+            buttonModFa.Name = "buttonModFa";
+            buttonModFa.UseVisualStyleBackColor = true;
+            buttonModFa.Click += buttonFunc_Click;
             // 
             // buttonExecuteTal
             // 
-            resources.ApplyResources(this.buttonExecuteTal, "buttonExecuteTal");
-            this.buttonExecuteTal.Name = "buttonExecuteTal";
-            this.buttonExecuteTal.UseVisualStyleBackColor = true;
-            this.buttonExecuteTal.Click += new System.EventHandler(this.buttonFunc_Click);
+            resources.ApplyResources(buttonExecuteTal, "buttonExecuteTal");
+            buttonExecuteTal.Name = "buttonExecuteTal";
+            buttonExecuteTal.UseVisualStyleBackColor = true;
+            buttonExecuteTal.Click += buttonFunc_Click;
             // 
             // progressBarEvent
             // 
-            resources.ApplyResources(this.progressBarEvent, "progressBarEvent");
-            this.progressBarEvent.Name = "progressBarEvent";
+            resources.ApplyResources(progressBarEvent, "progressBarEvent");
+            progressBarEvent.Name = "progressBarEvent";
             // 
             // labelProgressEvent
             // 
-            resources.ApplyResources(this.labelProgressEvent, "labelProgressEvent");
-            this.labelProgressEvent.Name = "labelProgressEvent";
+            resources.ApplyResources(labelProgressEvent, "labelProgressEvent");
+            labelProgressEvent.Name = "labelProgressEvent";
             // 
             // checkBoxIcom
             // 
-            resources.ApplyResources(this.checkBoxIcom, "checkBoxIcom");
-            this.checkBoxIcom.Name = "checkBoxIcom";
-            this.checkBoxIcom.UseVisualStyleBackColor = true;
+            resources.ApplyResources(checkBoxIcom, "checkBoxIcom");
+            checkBoxIcom.Name = "checkBoxIcom";
+            checkBoxIcom.UseVisualStyleBackColor = true;
             // 
             // buttonVehicleSearch
             // 
-            resources.ApplyResources(this.buttonVehicleSearch, "buttonVehicleSearch");
-            this.buttonVehicleSearch.Name = "buttonVehicleSearch";
-            this.buttonVehicleSearch.UseVisualStyleBackColor = true;
-            this.buttonVehicleSearch.Click += new System.EventHandler(this.buttonVehicleSearch_Click);
+            resources.ApplyResources(buttonVehicleSearch, "buttonVehicleSearch");
+            buttonVehicleSearch.Name = "buttonVehicleSearch";
+            buttonVehicleSearch.UseVisualStyleBackColor = true;
+            buttonVehicleSearch.Click += buttonVehicleSearch_Click;
             // 
             // buttonCreateOptions
             // 
-            resources.ApplyResources(this.buttonCreateOptions, "buttonCreateOptions");
-            this.buttonCreateOptions.Name = "buttonCreateOptions";
-            this.buttonCreateOptions.UseVisualStyleBackColor = true;
-            this.buttonCreateOptions.Click += new System.EventHandler(this.buttonFunc_Click);
+            resources.ApplyResources(buttonCreateOptions, "buttonCreateOptions");
+            buttonCreateOptions.Name = "buttonCreateOptions";
+            buttonCreateOptions.UseVisualStyleBackColor = true;
+            buttonCreateOptions.Click += buttonFunc_Click;
             // 
             // checkedListBoxOptions
             // 
-            resources.ApplyResources(this.checkedListBoxOptions, "checkedListBoxOptions");
-            this.checkedListBoxOptions.CheckOnClick = true;
-            this.checkedListBoxOptions.Name = "checkedListBoxOptions";
-            this.checkedListBoxOptions.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.checkedListBoxOptions_ItemCheck);
+            resources.ApplyResources(checkedListBoxOptions, "checkedListBoxOptions");
+            checkedListBoxOptions.CheckOnClick = true;
+            checkedListBoxOptions.Name = "checkedListBoxOptions";
+            checkedListBoxOptions.ItemCheck += checkedListBoxOptions_ItemCheck;
             // 
             // comboBoxOptionType
             // 
-            resources.ApplyResources(this.comboBoxOptionType, "comboBoxOptionType");
-            this.comboBoxOptionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxOptionType.FormattingEnabled = true;
-            this.comboBoxOptionType.Name = "comboBoxOptionType";
-            this.comboBoxOptionType.SelectedIndexChanged += new System.EventHandler(this.comboBoxOptionType_SelectedIndexChanged);
+            resources.ApplyResources(comboBoxOptionType, "comboBoxOptionType");
+            comboBoxOptionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxOptionType.FormattingEnabled = true;
+            comboBoxOptionType.Name = "comboBoxOptionType";
+            comboBoxOptionType.SelectedIndexChanged += comboBoxOptionType_SelectedIndexChanged;
             // 
             // label1
             // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.Name = "label1";
+            resources.ApplyResources(label1, "label1");
+            label1.Name = "label1";
             // 
             // labelLanguage
             // 
-            resources.ApplyResources(this.labelLanguage, "labelLanguage");
-            this.labelLanguage.Name = "labelLanguage";
+            resources.ApplyResources(labelLanguage, "labelLanguage");
+            labelLanguage.Name = "labelLanguage";
             // 
             // comboBoxLanguage
             // 
-            resources.ApplyResources(this.comboBoxLanguage, "comboBoxLanguage");
-            this.comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxLanguage.FormattingEnabled = true;
-            this.comboBoxLanguage.Name = "comboBoxLanguage";
-            this.comboBoxLanguage.SelectedIndexChanged += new System.EventHandler(this.comboBoxLanguage_SelectedIndexChanged);
+            resources.ApplyResources(comboBoxLanguage, "comboBoxLanguage");
+            comboBoxLanguage.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            comboBoxLanguage.FormattingEnabled = true;
+            comboBoxLanguage.Name = "comboBoxLanguage";
+            comboBoxLanguage.SelectedIndexChanged += comboBoxLanguage_SelectedIndexChanged;
             // 
             // buttonInternalTest
             // 
-            resources.ApplyResources(this.buttonInternalTest, "buttonInternalTest");
-            this.buttonInternalTest.Name = "buttonInternalTest";
-            this.buttonInternalTest.UseVisualStyleBackColor = true;
-            this.buttonInternalTest.Click += new System.EventHandler(this.buttonInternalTest_Click);
+            resources.ApplyResources(buttonInternalTest, "buttonInternalTest");
+            buttonInternalTest.Name = "buttonInternalTest";
+            buttonInternalTest.UseVisualStyleBackColor = true;
+            buttonInternalTest.Click += buttonInternalTest_Click;
             // 
             // openFileDialogTest
             // 
-            this.openFileDialogTest.DefaultExt = "*.xml";
-            resources.ApplyResources(this.openFileDialogTest, "openFileDialogTest");
-            this.openFileDialogTest.ShowReadOnly = true;
-            this.openFileDialogTest.SupportMultiDottedExtensions = true;
+            openFileDialogTest.DefaultExt = "*.xml";
+            resources.ApplyResources(openFileDialogTest, "openFileDialogTest");
+            openFileDialogTest.ShowReadOnly = true;
+            openFileDialogTest.SupportMultiDottedExtensions = true;
             // 
             // checkBoxGenServiceModules
             // 
-            resources.ApplyResources(this.checkBoxGenServiceModules, "checkBoxGenServiceModules");
-            this.checkBoxGenServiceModules.Name = "checkBoxGenServiceModules";
-            this.checkBoxGenServiceModules.UseVisualStyleBackColor = true;
+            resources.ApplyResources(checkBoxGenServiceModules, "checkBoxGenServiceModules");
+            checkBoxGenServiceModules.Name = "checkBoxGenServiceModules";
+            checkBoxGenServiceModules.UseVisualStyleBackColor = true;
             // 
             // buttonDecryptFile
             // 
-            resources.ApplyResources(this.buttonDecryptFile, "buttonDecryptFile");
-            this.buttonDecryptFile.Name = "buttonDecryptFile";
-            this.buttonDecryptFile.UseVisualStyleBackColor = true;
-            this.buttonDecryptFile.Click += new System.EventHandler(this.buttonDecryptFile_Click);
+            resources.ApplyResources(buttonDecryptFile, "buttonDecryptFile");
+            buttonDecryptFile.Name = "buttonDecryptFile";
+            buttonDecryptFile.UseVisualStyleBackColor = true;
+            buttonDecryptFile.Click += buttonDecryptFile_Click;
             // 
             // openFileDialogDecrypt
             // 
-            resources.ApplyResources(this.openFileDialogDecrypt, "openFileDialogDecrypt");
-            this.openFileDialogDecrypt.ShowReadOnly = true;
-            this.openFileDialogDecrypt.SupportMultiDottedExtensions = true;
+            resources.ApplyResources(openFileDialogDecrypt, "openFileDialogDecrypt");
+            openFileDialogDecrypt.ShowReadOnly = true;
+            openFileDialogDecrypt.SupportMultiDottedExtensions = true;
             // 
             // textBoxStatus
             // 
-            resources.ApplyResources(this.textBoxStatus, "textBoxStatus");
-            this.textBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxStatus.DetectUrls = false;
-            this.textBoxStatus.Name = "textBoxStatus";
-            this.textBoxStatus.ReadOnly = true;
+            resources.ApplyResources(textBoxStatus, "textBoxStatus");
+            textBoxStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBoxStatus.DetectUrls = false;
+            textBoxStatus.Name = "textBoxStatus";
+            textBoxStatus.ReadOnly = true;
             // 
             // saveFileDialogDecrypt
             // 
-            resources.ApplyResources(this.saveFileDialogDecrypt, "saveFileDialogDecrypt");
+            resources.ApplyResources(saveFileDialogDecrypt, "saveFileDialogDecrypt");
             // 
             // ipAddressControlVehicleIp
             // 
-            resources.ApplyResources(this.ipAddressControlVehicleIp, "ipAddressControlVehicleIp");
-            this.ipAddressControlVehicleIp.Name = "ipAddressControlVehicleIp";
+            resources.ApplyResources(ipAddressControlVehicleIp, "ipAddressControlVehicleIp");
+            ipAddressControlVehicleIp.Name = "ipAddressControlVehicleIp";
             // 
             // FormMain
             // 
-            this.AcceptButton = this.buttonClose;
+            AcceptButton = buttonClose;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.buttonAbort;
-            this.Controls.Add(this.ipAddressControlVehicleIp);
-            this.Controls.Add(this.textBoxStatus);
-            this.Controls.Add(this.buttonDecryptFile);
-            this.Controls.Add(this.checkBoxGenServiceModules);
-            this.Controls.Add(this.buttonInternalTest);
-            this.Controls.Add(this.comboBoxLanguage);
-            this.Controls.Add(this.labelLanguage);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.comboBoxOptionType);
-            this.Controls.Add(this.checkedListBoxOptions);
-            this.Controls.Add(this.buttonCreateOptions);
-            this.Controls.Add(this.buttonVehicleSearch);
-            this.Controls.Add(this.checkBoxIcom);
-            this.Controls.Add(this.labelProgressEvent);
-            this.Controls.Add(this.progressBarEvent);
-            this.Controls.Add(this.buttonExecuteTal);
-            this.Controls.Add(this.buttonModFa);
-            this.Controls.Add(this.labelIstaFolder);
-            this.Controls.Add(this.buttonModILevel);
-            this.Controls.Add(this.buttonDisconnect);
-            this.Controls.Add(this.buttonConnect);
-            this.Controls.Add(this.labelVehicleIp);
-            this.Controls.Add(this.buttonStopHost);
-            this.Controls.Add(this.buttonIstaFolder);
-            this.Controls.Add(this.buttonAbort);
-            this.Controls.Add(this.buttonClose);
-            this.Controls.Add(this.textBoxIstaFolder);
-            this.MaximizeBox = false;
-            this.Name = "FormMain";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FormMain_FormClosed);
-            this.Load += new System.EventHandler(this.FormMain_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = buttonAbort;
+            Controls.Add(ipAddressControlVehicleIp);
+            Controls.Add(textBoxStatus);
+            Controls.Add(buttonDecryptFile);
+            Controls.Add(checkBoxGenServiceModules);
+            Controls.Add(buttonInternalTest);
+            Controls.Add(comboBoxLanguage);
+            Controls.Add(labelLanguage);
+            Controls.Add(label1);
+            Controls.Add(comboBoxOptionType);
+            Controls.Add(checkedListBoxOptions);
+            Controls.Add(buttonCreateOptions);
+            Controls.Add(buttonVehicleSearch);
+            Controls.Add(checkBoxIcom);
+            Controls.Add(labelProgressEvent);
+            Controls.Add(progressBarEvent);
+            Controls.Add(buttonExecuteTal);
+            Controls.Add(buttonModFa);
+            Controls.Add(labelIstaFolder);
+            Controls.Add(buttonModILevel);
+            Controls.Add(buttonDisconnect);
+            Controls.Add(buttonConnect);
+            Controls.Add(labelVehicleIp);
+            Controls.Add(buttonStopHost);
+            Controls.Add(buttonIstaFolder);
+            Controls.Add(buttonAbort);
+            Controls.Add(buttonClose);
+            Controls.Add(textBoxIstaFolder);
+            MaximizeBox = false;
+            Name = "FormMain";
+            FormClosing += FormMain_FormClosing;
+            FormClosed += FormMain_FormClosed;
+            Load += FormMain_Load;
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

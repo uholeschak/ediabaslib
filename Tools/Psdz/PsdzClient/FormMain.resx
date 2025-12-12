@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -117,16 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="textBoxIstaFolder.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="textBoxIstaFolder.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 12</value>
+    <value>108, 14</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="textBoxIstaFolder.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="textBoxIstaFolder.Size" type="System.Drawing.Size, System.Drawing">
-    <value>647, 20</value>
+    <value>754, 23</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="textBoxIstaFolder.TabIndex" type="System.Int32, mscorlib">
@@ -136,7 +140,7 @@
     <value>textBoxIstaFolder</value>
   </data>
   <data name="&gt;&gt;textBoxIstaFolder.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;textBoxIstaFolder.Parent" xml:space="preserve">
     <value>$this</value>
@@ -148,10 +152,13 @@
     <value>Bottom, Right</value>
   </data>
   <data name="buttonClose.Location" type="System.Drawing.Point, System.Drawing">
-    <value>701, 626</value>
+    <value>818, 722</value>
+  </data>
+  <data name="buttonClose.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonClose.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonClose.TabIndex" type="System.Int32, mscorlib">
     <value>26</value>
@@ -163,7 +170,7 @@
     <value>buttonClose</value>
   </data>
   <data name="&gt;&gt;buttonClose.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonClose.Parent" xml:space="preserve">
     <value>$this</value>
@@ -175,10 +182,13 @@
     <value>Bottom, Right</value>
   </data>
   <data name="buttonAbort.Location" type="System.Drawing.Point, System.Drawing">
-    <value>620, 626</value>
+    <value>723, 722</value>
+  </data>
+  <data name="buttonAbort.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonAbort.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonAbort.TabIndex" type="System.Int32, mscorlib">
     <value>25</value>
@@ -190,7 +200,7 @@
     <value>buttonAbort</value>
   </data>
   <data name="&gt;&gt;buttonAbort.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonAbort.Parent" xml:space="preserve">
     <value>$this</value>
@@ -205,10 +215,13 @@
     <value>Top, Right</value>
   </data>
   <data name="buttonIstaFolder.Location" type="System.Drawing.Point, System.Drawing">
-    <value>746, 10</value>
+    <value>870, 12</value>
+  </data>
+  <data name="buttonIstaFolder.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonIstaFolder.Size" type="System.Drawing.Size, System.Drawing">
-    <value>30, 23</value>
+    <value>35, 27</value>
   </data>
   <data name="buttonIstaFolder.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -220,7 +233,7 @@
     <value>buttonIstaFolder</value>
   </data>
   <data name="&gt;&gt;buttonIstaFolder.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonIstaFolder.Parent" xml:space="preserve">
     <value>$this</value>
@@ -229,10 +242,13 @@
     <value>23</value>
   </data>
   <data name="buttonStopHost.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 97</value>
+    <value>14, 112</value>
+  </data>
+  <data name="buttonStopHost.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonStopHost.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonStopHost.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -244,7 +260,7 @@
     <value>buttonStopHost</value>
   </data>
   <data name="&gt;&gt;buttonStopHost.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonStopHost.Parent" xml:space="preserve">
     <value>$this</value>
@@ -259,10 +275,13 @@
     <value>True</value>
   </data>
   <data name="labelVehicleIp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 73</value>
+    <value>14, 84</value>
+  </data>
+  <data name="labelVehicleIp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="labelVehicleIp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 13</value>
+    <value>60, 15</value>
   </data>
   <data name="labelVehicleIp.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -274,7 +293,7 @@
     <value>labelVehicleIp</value>
   </data>
   <data name="&gt;&gt;labelVehicleIp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;labelVehicleIp.Parent" xml:space="preserve">
     <value>$this</value>
@@ -283,10 +302,13 @@
     <value>21</value>
   </data>
   <data name="buttonConnect.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 97</value>
+    <value>108, 112</value>
+  </data>
+  <data name="buttonConnect.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonConnect.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonConnect.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -298,7 +320,7 @@
     <value>buttonConnect</value>
   </data>
   <data name="&gt;&gt;buttonConnect.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonConnect.Parent" xml:space="preserve">
     <value>$this</value>
@@ -307,10 +329,13 @@
     <value>20</value>
   </data>
   <data name="buttonDisconnect.Location" type="System.Drawing.Point, System.Drawing">
-    <value>174, 97</value>
+    <value>203, 112</value>
+  </data>
+  <data name="buttonDisconnect.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonDisconnect.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonDisconnect.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -322,7 +347,7 @@
     <value>buttonDisconnect</value>
   </data>
   <data name="&gt;&gt;buttonDisconnect.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonDisconnect.Parent" xml:space="preserve">
     <value>$this</value>
@@ -331,10 +356,13 @@
     <value>19</value>
   </data>
   <data name="buttonModILevel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>336, 97</value>
+    <value>392, 112</value>
+  </data>
+  <data name="buttonModILevel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonModILevel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonModILevel.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
@@ -346,7 +374,7 @@
     <value>buttonModILevel</value>
   </data>
   <data name="&gt;&gt;buttonModILevel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonModILevel.Parent" xml:space="preserve">
     <value>$this</value>
@@ -358,10 +386,13 @@
     <value>True</value>
   </data>
   <data name="labelIstaFolder.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 15</value>
+    <value>14, 17</value>
+  </data>
+  <data name="labelIstaFolder.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="labelIstaFolder.Size" type="System.Drawing.Size, System.Drawing">
-    <value>59, 13</value>
+    <value>64, 15</value>
   </data>
   <data name="labelIstaFolder.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -373,7 +404,7 @@
     <value>labelIstaFolder</value>
   </data>
   <data name="&gt;&gt;labelIstaFolder.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;labelIstaFolder.Parent" xml:space="preserve">
     <value>$this</value>
@@ -382,10 +413,13 @@
     <value>17</value>
   </data>
   <data name="buttonModFa.Location" type="System.Drawing.Point, System.Drawing">
-    <value>417, 97</value>
+    <value>486, 112</value>
+  </data>
+  <data name="buttonModFa.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonModFa.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonModFa.TabIndex" type="System.Int32, mscorlib">
     <value>17</value>
@@ -397,7 +431,7 @@
     <value>buttonModFa</value>
   </data>
   <data name="&gt;&gt;buttonModFa.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonModFa.Parent" xml:space="preserve">
     <value>$this</value>
@@ -406,10 +440,13 @@
     <value>16</value>
   </data>
   <data name="buttonExecuteTal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>498, 97</value>
+    <value>581, 112</value>
+  </data>
+  <data name="buttonExecuteTal.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonExecuteTal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonExecuteTal.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>
@@ -421,7 +458,7 @@
     <value>buttonExecuteTal</value>
   </data>
   <data name="&gt;&gt;buttonExecuteTal.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonExecuteTal.Parent" xml:space="preserve">
     <value>$this</value>
@@ -433,10 +470,13 @@
     <value>Bottom, Left</value>
   </data>
   <data name="progressBarEvent.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 626</value>
+    <value>14, 722</value>
+  </data>
+  <data name="progressBarEvent.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="progressBarEvent.Size" type="System.Drawing.Size, System.Drawing">
-    <value>140, 23</value>
+    <value>163, 27</value>
   </data>
   <data name="progressBarEvent.TabIndex" type="System.Int32, mscorlib">
     <value>23</value>
@@ -445,7 +485,7 @@
     <value>progressBarEvent</value>
   </data>
   <data name="&gt;&gt;progressBarEvent.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ProgressBar, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;progressBarEvent.Parent" xml:space="preserve">
     <value>$this</value>
@@ -460,10 +500,13 @@
     <value>True</value>
   </data>
   <data name="labelProgressEvent.Location" type="System.Drawing.Point, System.Drawing">
-    <value>158, 631</value>
+    <value>184, 728</value>
+  </data>
+  <data name="labelProgressEvent.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="labelProgressEvent.Size" type="System.Drawing.Size, System.Drawing">
-    <value>21, 13</value>
+    <value>23, 15</value>
   </data>
   <data name="labelProgressEvent.TabIndex" type="System.Int32, mscorlib">
     <value>24</value>
@@ -475,7 +518,7 @@
     <value>labelProgressEvent</value>
   </data>
   <data name="&gt;&gt;labelProgressEvent.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;labelProgressEvent.Parent" xml:space="preserve">
     <value>$this</value>
@@ -487,10 +530,13 @@
     <value>True</value>
   </data>
   <data name="checkBoxIcom.Location" type="System.Drawing.Point, System.Drawing">
-    <value>255, 72</value>
+    <value>298, 83</value>
+  </data>
+  <data name="checkBoxIcom.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="checkBoxIcom.Size" type="System.Drawing.Size, System.Drawing">
-    <value>53, 17</value>
+    <value>57, 19</value>
   </data>
   <data name="checkBoxIcom.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -502,7 +548,7 @@
     <value>checkBoxIcom</value>
   </data>
   <data name="&gt;&gt;checkBoxIcom.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxIcom.Parent" xml:space="preserve">
     <value>$this</value>
@@ -511,10 +557,13 @@
     <value>12</value>
   </data>
   <data name="buttonVehicleSearch.Location" type="System.Drawing.Point, System.Drawing">
-    <value>336, 68</value>
+    <value>392, 78</value>
+  </data>
+  <data name="buttonVehicleSearch.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonVehicleSearch.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonVehicleSearch.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -526,7 +575,7 @@
     <value>buttonVehicleSearch</value>
   </data>
   <data name="&gt;&gt;buttonVehicleSearch.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonVehicleSearch.Parent" xml:space="preserve">
     <value>$this</value>
@@ -535,10 +584,13 @@
     <value>11</value>
   </data>
   <data name="buttonCreateOptions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>255, 97</value>
+    <value>298, 112</value>
+  </data>
+  <data name="buttonCreateOptions.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonCreateOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonCreateOptions.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -550,7 +602,7 @@
     <value>buttonCreateOptions</value>
   </data>
   <data name="&gt;&gt;buttonCreateOptions.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonCreateOptions.Parent" xml:space="preserve">
     <value>$this</value>
@@ -562,10 +614,13 @@
     <value>Top, Left, Right</value>
   </data>
   <data name="checkedListBoxOptions.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 153</value>
+    <value>14, 177</value>
+  </data>
+  <data name="checkedListBoxOptions.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="checkedListBoxOptions.Size" type="System.Drawing.Size, System.Drawing">
-    <value>764, 154</value>
+    <value>891, 166</value>
   </data>
   <data name="checkedListBoxOptions.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
@@ -574,7 +629,7 @@
     <value>checkedListBoxOptions</value>
   </data>
   <data name="&gt;&gt;checkedListBoxOptions.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckedListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckedListBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkedListBoxOptions.Parent" xml:space="preserve">
     <value>$this</value>
@@ -583,13 +638,16 @@
     <value>9</value>
   </data>
   <data name="comboBoxOptionType.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
+    <value>Top, Left, Right</value>
   </data>
   <data name="comboBoxOptionType.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 126</value>
+    <value>108, 145</value>
+  </data>
+  <data name="comboBoxOptionType.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="comboBoxOptionType.Size" type="System.Drawing.Size, System.Drawing">
-    <value>683, 21</value>
+    <value>796, 23</value>
   </data>
   <data name="comboBoxOptionType.TabIndex" type="System.Int32, mscorlib">
     <value>20</value>
@@ -598,7 +656,7 @@
     <value>comboBoxOptionType</value>
   </data>
   <data name="&gt;&gt;comboBoxOptionType.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;comboBoxOptionType.Parent" xml:space="preserve">
     <value>$this</value>
@@ -610,10 +668,13 @@
     <value>True</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 129</value>
+    <value>14, 149</value>
+  </data>
+  <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 13</value>
+    <value>63, 15</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
@@ -625,7 +686,7 @@
     <value>label1</value>
   </data>
   <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;label1.Parent" xml:space="preserve">
     <value>$this</value>
@@ -637,10 +698,13 @@
     <value>True</value>
   </data>
   <data name="labelLanguage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 44</value>
+    <value>14, 51</value>
+  </data>
+  <data name="labelLanguage.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="labelLanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>58, 13</value>
+    <value>62, 15</value>
   </data>
   <data name="labelLanguage.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -652,7 +716,7 @@
     <value>labelLanguage</value>
   </data>
   <data name="&gt;&gt;labelLanguage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;labelLanguage.Parent" xml:space="preserve">
     <value>$this</value>
@@ -661,13 +725,16 @@
     <value>6</value>
   </data>
   <data name="comboBoxLanguage.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Right</value>
+    <value>Top, Left, Right</value>
   </data>
   <data name="comboBoxLanguage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 41</value>
+    <value>108, 47</value>
+  </data>
+  <data name="comboBoxLanguage.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="comboBoxLanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>683, 21</value>
+    <value>796, 23</value>
   </data>
   <data name="comboBoxLanguage.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -676,7 +743,7 @@
     <value>comboBoxLanguage</value>
   </data>
   <data name="&gt;&gt;comboBoxLanguage.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;comboBoxLanguage.Parent" xml:space="preserve">
     <value>$this</value>
@@ -685,10 +752,13 @@
     <value>5</value>
   </data>
   <data name="buttonInternalTest.Location" type="System.Drawing.Point, System.Drawing">
-    <value>417, 68</value>
+    <value>486, 78</value>
+  </data>
+  <data name="buttonInternalTest.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonInternalTest.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonInternalTest.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -700,7 +770,7 @@
     <value>buttonInternalTest</value>
   </data>
   <data name="&gt;&gt;buttonInternalTest.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonInternalTest.Parent" xml:space="preserve">
     <value>$this</value>
@@ -718,10 +788,13 @@
     <value>True</value>
   </data>
   <data name="checkBoxGenServiceModules.Location" type="System.Drawing.Point, System.Drawing">
-    <value>668, 72</value>
+    <value>779, 83</value>
+  </data>
+  <data name="checkBoxGenServiceModules.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="checkBoxGenServiceModules.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 17</value>
+    <value>112, 19</value>
   </data>
   <data name="checkBoxGenServiceModules.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -733,7 +806,7 @@
     <value>checkBoxGenServiceModules</value>
   </data>
   <data name="&gt;&gt;checkBoxGenServiceModules.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxGenServiceModules.Parent" xml:space="preserve">
     <value>$this</value>
@@ -742,10 +815,13 @@
     <value>3</value>
   </data>
   <data name="buttonDecryptFile.Location" type="System.Drawing.Point, System.Drawing">
-    <value>498, 68</value>
+    <value>581, 78</value>
+  </data>
+  <data name="buttonDecryptFile.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="buttonDecryptFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>88, 27</value>
   </data>
   <data name="buttonDecryptFile.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -757,7 +833,7 @@
     <value>buttonDecryptFile</value>
   </data>
   <data name="&gt;&gt;buttonDecryptFile.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonDecryptFile.Parent" xml:space="preserve">
     <value>$this</value>
@@ -775,13 +851,16 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="textBoxStatus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 313</value>
+    <value>14, 361</value>
+  </data>
+  <data name="textBoxStatus.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
   </data>
   <data name="textBoxStatus.ScrollBars" type="System.Windows.Forms.RichTextBoxScrollBars, System.Windows.Forms">
     <value>Vertical</value>
   </data>
   <data name="textBoxStatus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>764, 307</value>
+    <value>891, 354</value>
   </data>
   <data name="textBoxStatus.TabIndex" type="System.Int32, mscorlib">
     <value>22</value>
@@ -793,7 +872,7 @@
     <value>textBoxStatus</value>
   </data>
   <data name="&gt;&gt;textBoxStatus.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;textBoxStatus.Parent" xml:space="preserve">
     <value>$this</value>
@@ -808,10 +887,13 @@
     <value>*.*|*.*</value>
   </data>
   <data name="ipAddressControlVehicleIp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>93, 68</value>
+    <value>108, 78</value>
+  </data>
+  <data name="ipAddressControlVehicleIp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 3, 5, 3</value>
   </data>
   <data name="ipAddressControlVehicleIp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>150, 25</value>
+    <value>175, 29</value>
   </data>
   <data name="ipAddressControlVehicleIp.TabIndex" type="System.Int32, mscorlib">
     <value>27</value>
@@ -820,7 +902,7 @@
     <value>ipAddressControlVehicleIp</value>
   </data>
   <data name="&gt;&gt;ipAddressControlVehicleIp.Type" xml:space="preserve">
-    <value>PsdzClient.Controls.IpAddressControl, PsdzClient, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>PsdzClient.Controls.IpAddressControl, PsdzClient, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;ipAddressControlVehicleIp.Parent" xml:space="preserve">
     <value>$this</value>
@@ -832,10 +914,10 @@
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
+    <value>7, 15</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>784, 661</value>
+    <value>915, 763</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -5973,8 +6055,11 @@
         FVAoVhMCiABdwCEMp18PIG+y+vn/Ae/rUYPaN2JQAAAAAElFTkSuQmCC
 </value>
   </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 3, 4, 3</value>
+  </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>800, 700</value>
+    <value>931, 802</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>PsdzClient</value>
@@ -5983,36 +6068,36 @@
     <value>folderBrowserDialogIsta</value>
   </data>
   <data name="&gt;&gt;folderBrowserDialogIsta.Type" xml:space="preserve">
-    <value>System.Windows.Forms.FolderBrowserDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.FolderBrowserDialog, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;timerUpdate.Name" xml:space="preserve">
     <value>timerUpdate</value>
   </data>
   <data name="&gt;&gt;timerUpdate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Timer, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Timer, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;openFileDialogTest.Name" xml:space="preserve">
     <value>openFileDialogTest</value>
   </data>
   <data name="&gt;&gt;openFileDialogTest.Type" xml:space="preserve">
-    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;openFileDialogDecrypt.Name" xml:space="preserve">
     <value>openFileDialogDecrypt</value>
   </data>
   <data name="&gt;&gt;openFileDialogDecrypt.Type" xml:space="preserve">
-    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.OpenFileDialog, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;saveFileDialogDecrypt.Name" xml:space="preserve">
     <value>saveFileDialogDecrypt</value>
   </data>
   <data name="&gt;&gt;saveFileDialogDecrypt.Type" xml:space="preserve">
-    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.SaveFileDialog, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>FormMain</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
