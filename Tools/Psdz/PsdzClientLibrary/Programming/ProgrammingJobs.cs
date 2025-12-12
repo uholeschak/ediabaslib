@@ -1066,7 +1066,7 @@ namespace PsdzClient.Programming
                     enetConnection = new EdInterfaceEnet.EnetConnection(interfaceType, IPAddress.Parse(ipAddress));
                 }
 
-                PsdzContext.DetectVehicle = new DetectVehicle(ProgrammingService.PsdzDatabase, ClientContext, istaFolder, enetConnection, useIcom, addTimeout);
+                PsdzContext.DetectVehicle = new DetectVehicle(this, ClientContext, istaFolder, enetConnection, useIcom, addTimeout);
                 if (!EdiabasNet.IsDirectoryWritable(PsdzContext.DetectVehicle.DoIpS29BasePath))
                 {
                     sbResult.AppendLine(string.Format(Strings.DirectoryWriteProtected, PsdzContext.DetectVehicle.DoIpS29BasePath));
@@ -4038,7 +4038,7 @@ namespace PsdzClient.Programming
             UpdateOptionSelectionsEvent?.Invoke(swiRegisterEnum);
         }
 
-        private int GetVehicleQueueSize()
+        public int GetVehicleQueueSize()
         {
             if (TelSendQueueSizeEvent == null)
             {
@@ -4049,7 +4049,7 @@ namespace PsdzClient.Programming
             return queueSize;
         }
 
-        private bool WaitForEmptyVehicleQueue(int timeout = 20000)
+        public bool WaitForEmptyVehicleQueue(int timeout = 20000)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Timeout: {0}", timeout);
 

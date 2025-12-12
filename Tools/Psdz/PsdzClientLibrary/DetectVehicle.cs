@@ -40,6 +40,7 @@ namespace PsdzClient
         public delegate bool AbortDelegate();
         public delegate void ProgressDelegate(int percent);
 
+        private ProgrammingJobs _programmingJobs;
         private PsdzDatabase _pdszDatabase;
         private ClientContext _clientContext;
         private string _istaFolder;
@@ -58,12 +59,14 @@ namespace PsdzClient
 
         public bool IsDoIp { get; protected set; }
 
-        public DetectVehicle(PsdzDatabase pdszDatabase, ClientContext clientContext, string istaFolder, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
+        public DetectVehicle(ProgrammingJobs programmingJobs, ClientContext clientContext, string istaFolder, EdInterfaceEnet.EnetConnection enetConnection = null, bool allowAllocate = true, int addTimeout = 0)
         {
-            _pdszDatabase = pdszDatabase;
+            _programmingJobs = programmingJobs;
+            _pdszDatabase = programmingJobs.ProgrammingService.PsdzDatabase;
             _clientContext = clientContext;
             _istaFolder = istaFolder;
 
+            bool hasVehicleQueue = _programmingJobs.GetVehicleQueueSize() >= 0;
             string ecuPath = Path.Combine(istaFolder, @"Ecu");
             string securityPath = Path.Combine(istaFolder, "EDIABAS", EdInterfaceEnet.DoIpSecurityDir);
             _doIpSslSecurityPath = Path.Combine(securityPath, EdInterfaceEnet.DoIpSslTrustDir);
@@ -88,7 +91,7 @@ namespace PsdzClient
             }
 
             string vehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
-            if (_pdszDatabase.IsExecutable())
+            if (!hasVehicleQueue)
             {
                 vehicleProtocol += "," + EdInterfaceEnet.ProtocolDoIp;
                 hostAddress = hostAddress.Replace(":" + EdInterfaceEnet.ProtocolHsfz, string.Empty);
