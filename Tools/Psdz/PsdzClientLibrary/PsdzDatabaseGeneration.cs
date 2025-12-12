@@ -677,6 +677,7 @@ namespace PsdzClient
         // ReSharper disable once UnusedMember.Local
         private static bool CallModuleRefPrefix(string refPath, object inParameters, ref object outParameters, ref object inAndOutParameters)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("CallModuleRefPrefix refPath: {0}", refPath);
             _moduleRefPath = refPath;
             if (inParameters != null)
@@ -724,6 +725,7 @@ namespace PsdzClient
         // ReSharper disable once UnusedMember.Local
         private static bool CallWriteFaPrefix()
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("CallWriteFaPrefix");
             return false;
         }
@@ -731,6 +733,7 @@ namespace PsdzClient
         // ReSharper disable once UnusedMember.Local
         private static bool CallGetDatabaseProviderSQLitePrefix(ref object __result)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("CallGetDatabaseProviderSQLitePrefix");
             __result = null;
             return false;
@@ -739,6 +742,7 @@ namespace PsdzClient
         // ReSharper disable once UnusedMember.Local
         private static bool CreateServiceDialogPrefix(ref object __result, object callingModule, string methodName, string path, object globalTabModuleISTA, int elementNo, object inParameters, ref object inoutParameters)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("CreateServiceDialogPrefix, Method: {0}, Path: {1}, Element: {2}", methodName, path, elementNo);
 
             string dialogRef = null;
@@ -933,6 +937,7 @@ namespace PsdzClient
         // ReSharper disable once UnusedMember.Local
         private static bool ServiceDialogCmdBaseInvokePrefix(object __instance, string method, object inParam, ref object outParam, ref object inoutParam)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("ServiceDialogCmdBaseInvokePrefix, Method: {0}", method);
 
             string stateKey = method ?? string.Empty;
@@ -1239,6 +1244,7 @@ namespace PsdzClient
         // ReSharper disable once UnusedMember.Local
         private static bool ConfigurationContainerDeserializePrefix(string configurationContainer)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("ConfigurationContainerDeserializePrefix");
             return true;
         }
@@ -1246,6 +1252,7 @@ namespace PsdzClient
         // ReSharper disable once UnusedMember.Local
         private static void ConfigurationContainerDeserializePostfix(ref object __result, string configurationContainer)
         {
+            Thread.Sleep(0);    // for thread interrupt
             string resultType = __result != null ? __result.GetType().FullName : string.Empty;
             log.InfoFormat("ConfigurationContainerDeserializePostfix Result: {0}", resultType);
             dynamic resultDyn = __result;
@@ -1265,6 +1272,7 @@ namespace PsdzClient
         // ReSharper disable once UnusedMember.Local
         private static bool IndirectDocumentPrefix3(ref object __result, string title, string heading, string informationsTyp)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("IndirectDocumentPrefix3 Title: {0}, Heading: {1}, Info: {2}", title ?? string.Empty, heading ?? string.Empty, informationsTyp ?? string.Empty);
 
             object documentList = null;
@@ -1285,6 +1293,7 @@ namespace PsdzClient
         // ReSharper disable once UnusedMember.Local
         private static bool CharacteristicsPrefix(ref object __result, string controlId)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("CharacteristicsPrefix ControlId: {0}", controlId ?? string.Empty);
 
             string stateKey = controlId ?? string.Empty;
@@ -1336,6 +1345,7 @@ namespace PsdzClient
 
         private static bool ModuleTextPrefix2(ref object __result, string value, object paramArray)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("ModuleTextPrefix2 Value: {0}", value ?? string.Empty);
 
             lock (_moduleThreadLock)
@@ -1354,6 +1364,7 @@ namespace PsdzClient
 
         private static bool GetIstaResultAsTypePrefix(object __instance, ref object __result, string resultName, Type targetType)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("GetIstaResultAsTypePrefix Value: '{0}', Type: {1}", resultName ?? string.Empty, targetType);
 
             __result = null;
@@ -1362,6 +1373,7 @@ namespace PsdzClient
 
         private static void GetIstaResultAsTypePostfix(object __instance, ref object __result, string resultName, Type targetType)
         {
+            Thread.Sleep(0);    // for thread interrupt
             string resultData = __result != null ? __result.ToString() : string.Empty;
             log.InfoFormat("GetIstaResultAsTypePostfix Data: '{0}', Value: '{1}', Type: {2}", resultData, resultName ?? string.Empty, targetType);
 
@@ -1423,6 +1435,7 @@ namespace PsdzClient
 
         private static bool GetModuleParameterPrefix1(object __instance, ref object __result, string name)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("GetModuleParameterPrefix1 Name: '{0}'", name ?? string.Empty);
 
             __result = null;
@@ -1431,6 +1444,7 @@ namespace PsdzClient
 
         private static void GetModuleParameterPostfix1(object __instance, ref object __result, string name)
         {
+            Thread.Sleep(0);    // for thread interrupt
             string resultData = __result != null ? __result.ToString() : string.Empty;
             log.InfoFormat("GetModuleParameterPostfix1 Name: '{0}', Data: '{1}'", name ?? string.Empty, resultData);
             ServiceModuleDataItem serviceModuleDataItem = GetServiceModuleItemForParameter(__instance, out bool isInParam, out ServiceModuleInvokeItem serviceModuleInvokeItem);
@@ -1448,6 +1462,7 @@ namespace PsdzClient
 
         private static bool GetModuleParameterPrefix2(object __instance, ref object __result, string name, object defaultValue)
         {
+            Thread.Sleep(0);    // for thread interrupt
             if (defaultValue != _defaultObject)
             {
                 string defaultData = defaultValue != null ? defaultValue.ToString() : string.Empty;
@@ -1460,6 +1475,7 @@ namespace PsdzClient
 
         private static void GetModuleParameterPostfix2(object __instance, ref object __result, string name, object defaultValue)
         {
+            Thread.Sleep(0);    // for thread interrupt
             if (defaultValue != _defaultObject)
             {
                 string defaultData = defaultValue != null ? defaultValue.ToString() : string.Empty;
@@ -1482,6 +1498,7 @@ namespace PsdzClient
 
         private static bool GetModuleParameterGetParameterPrefix(object __instance, ref object __result, object name, object defaultValue)
         {
+            Thread.Sleep(0);    // for thread interrupt
             string nameString = name?.ToString() ?? string.Empty;
             log.InfoFormat("GetModuleParameterGetParameterPrefix Name: '{0}'", nameString);
 
@@ -1490,6 +1507,7 @@ namespace PsdzClient
 
         private static void GetModuleParameterGetParameterPostfix(object __instance, ref object __result, object name, object defaultValue)
         {
+            Thread.Sleep(0);    // for thread interrupt
             if (__result == null)
             {
                 string nameString = name?.ToString() ?? string.Empty;
@@ -1499,24 +1517,28 @@ namespace PsdzClient
 
         private static bool ModuleSleepPrefix(object __instance, int millisecondsTimeout)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("ModuleSleepPrefix Time: {0}", millisecondsTimeout);
             return false;
         }
 
         private static bool ModuleClearErrorInfoMemoryPrefix(object __instance)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("ModuleClearErrorInfoMemoryPrefix");
             return false;
         }
 
         private static bool ModuleReadErrorInfoMemoryPrefix(object __instance)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("ModuleReadErrorInfoMemoryPrefix");
             return false;
         }
 
         private static bool ModulePrivateMethodPrefix(object __instance)
         {
+            Thread.Sleep(0);    // for thread interrupt
             if (DetectRecursion())
             {
                 return false;
@@ -1527,6 +1549,7 @@ namespace PsdzClient
 
         private static bool CtorEcuKomStatemenPrefix(object __instance, object callingModule)
         {
+            Thread.Sleep(0);    // for thread interrupt
             log.InfoFormat("CtorEcuKomStatemenPrefix");
             return false;
         }
