@@ -20,14 +20,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using BmwFileReader;
-using HarmonyLib;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
-using Microsoft.Data.Sqlite;
-using PsdzClient.Core;
-using PsdzClient.Programming;
 
 namespace PsdzClient
 {
@@ -3253,7 +3245,8 @@ namespace PsdzClient
                             if (waitCount > 20)
                             {
                                 log.ErrorFormat("ReadServiceModule Method timeout, aborting: {0}, Module: {1}, Aborting", simpleMethod.Name, moduleName);
-                                moduleThread.Abort();
+                                //moduleThread.Abort();
+                                moduleThread.Interrupt();
                                 failure = true;
                             }
                         }
