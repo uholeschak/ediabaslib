@@ -171,7 +171,8 @@ namespace PsdzClient.Controls
                     return;
                 }
 
-                if (IPAddress.TryParse(value, out IPAddress ip))
+                if (IPAddress.TryParse(value, out IPAddress ip) &&
+                    ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 {
                     string[] parts = value.Split('.');
                     if (parts.Length == 4)
