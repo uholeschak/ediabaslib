@@ -8,6 +8,8 @@ namespace PsdzClient.Controls
 {
     public class IpAddressControl : UserControl
     {
+        private const string DefaultIpAddress = "0.0.0.0";
+
         private TextBox textBox1;
         private TextBox textBox2;
         private TextBox textBox3;
@@ -150,7 +152,7 @@ namespace PsdzClient.Controls
             {
                 if (textBox1 == null || textBox2 == null || textBox3 == null || textBox4 == null)
                 {
-                    return "0.0.0.0";
+                    return DefaultIpAddress;
                 }
 
                 return $"{textBox1.Text}.{textBox2.Text}.{textBox3.Text}.{textBox4.Text}";
@@ -162,25 +164,22 @@ namespace PsdzClient.Controls
                     return;
                 }
 
-                if (string.IsNullOrEmpty(value))
+                string text = value;
+                if (string.IsNullOrEmpty(text))
                 {
-                    textBox1.Text = "0";
-                    textBox2.Text = "0";
-                    textBox3.Text = "0";
-                    textBox4.Text = "0";
-                    return;
+                    text = DefaultIpAddress;
                 }
 
-                if (IPAddress.TryParse(value, out IPAddress ip) &&
+                if (IPAddress.TryParse(text, out IPAddress ip) &&
                     ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 {
-                    string[] parts = value.Split('.');
-                    if (parts.Length == 4)
+                    byte[] addrBytes = ip.GetAddressBytes();
+                    if (addrBytes.Length == 4)
                     {
-                        textBox1.Text = parts[0];
-                        textBox2.Text = parts[1];
-                        textBox3.Text = parts[2];
-                        textBox4.Text = parts[3];
+                        textBox1.Text = addrBytes[0].ToString();
+                        textBox2.Text = addrBytes[1].ToString();
+                        textBox3.Text = addrBytes[2].ToString();
+                        textBox4.Text = addrBytes[3].ToString();
                     }
                 }
             }
