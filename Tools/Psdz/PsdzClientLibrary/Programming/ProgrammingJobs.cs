@@ -1013,6 +1013,7 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.VehicleDetecting);
                 UpdateStatus(sbResult.ToString());
 
+                bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
                 CacheResponseType = CacheType.NoResponse;
                 bool icomConnection = useIcom;
                 if (hostParts.Length > 1)
@@ -1049,7 +1050,7 @@ namespace PsdzClient.Programming
                 }
                 else
                 {
-                    if (ProgrammingService.PsdzDatabase.IsExecutable())
+                    if (!hasVehicleQueue)
                     {
                         interfaceType = EdInterfaceEnet.EnetConnection.InterfaceType.Undefined;
                     }
@@ -1418,6 +1419,7 @@ namespace PsdzClient.Programming
                 sbResult.AppendLine(Strings.ExecutingVehicleFunc);
                 UpdateStatus(sbResult.ToString());
 
+                bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
                 CacheResponseType = CacheType.FuncAddress;
                 if (ProgrammingService == null)
                 {
@@ -2384,7 +2386,6 @@ namespace PsdzClient.Programming
                     case PsdzDatabase.SwiRegisterGroup.HwDeinstall:
                         UpdateTalFilterForSelectedEcus(new[] { TaCategories.HwDeinstall }, diagAddrList.ToArray(), TalFilterOptions.Must);
                         break;
-
                 }
 
                 if (PsdzContext.TalFilter != null)
@@ -2501,7 +2502,6 @@ namespace PsdzClient.Programming
                 log.InfoFormat(CultureInfo.InvariantCulture, "ILevel Latest: {0}", psdzIstufeLatest.Value);
                 cts?.Token.ThrowIfCancellationRequested();
 
-                bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
                 sbResult.AppendLine(Strings.DetectingInstalledEcus);
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting ECU list");
