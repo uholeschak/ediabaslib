@@ -3,6 +3,7 @@
     <ProjectGuid>{EE741859-CB0F-4130-9F07-5CEC56A982C6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net10.0-windows10.0.26100.0;net481</TargetFrameworks>
+    <DefaultTargetFramework>net481</DefaultTargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>

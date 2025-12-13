@@ -2,7 +2,8 @@
   <PropertyGroup>
     <ProjectGuid>{1FC28DE0-43C8-444F-AF00-CF9B0DFF4AE4}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net481</TargetFramework>
+    <TargetFrameworks>net10.0-windows;net481</TargetFrameworks>
+    <DefaultTargetFramework>net481</DefaultTargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyTitle>AssemblyPatcher</AssemblyTitle>
     <Product>AssemblyPatcher</Product>
@@ -11,13 +12,12 @@
   <PropertyGroup>
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
+    <ItemGroup Condition=" ('$(TargetFramework)' == 'net48') Or ('$(TargetFramework)' == 'net481') ">
+        <Reference Include="System.Windows.Forms" />
+        <Reference Include="System.Data.DataSetExtensions" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Net.Http" />
+    </ItemGroup>
   <ItemGroup>
     <CompilerVisibleItemMetadata Include="AdditionalFiles" MetadataName="CodegenCSOutput" />
   </ItemGroup>
@@ -27,6 +27,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="dnlib" Version="4.5.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.1" />
   </ItemGroup>
   <ItemGroup>
     <None Update="User.config">
@@ -49,6 +50,6 @@
     </Content>
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;set &quot;CodegenCs=%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe&quot;&#xD;&#xA;IF NOT EXIST !CodegenCs! (&#xD;&#xA;  echo install: dotnet tool install --global dotnet-codegencs&#xD;&#xA;  EXIT /b 1&#xD;&#xA;)&#xD;&#xA;set &quot;OutputDir=$(ProjectDir)&quot;&#xD;&#xA;IF &quot;!OutputDir:~-1!&quot;==&quot;\&quot; SET &quot;OutputDir=!OutputDir:~0,-1!&quot;&#xD;&#xA;echo Output dir: &quot;!OutputDir!&quot;&#xD;&#xA;!CodegenCs!  template run &quot;$(ProjectDir)User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;!OutputDir!&quot;" />
+    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;echo Target framework: $(TargetFramework)&#xD;&#xA;IF NOT [$(TargetFramework)] == [net10.0-windows] (&#xD;&#xA;  echo Ignoring&#xD;&#xA;  EXIT /b 0&#xD;&#xA;)&#xD;&#xA;set &quot;CodegenCs=%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe&quot;&#xD;&#xA;IF NOT EXIST !CodegenCs! (&#xD;&#xA;  echo install: dotnet tool install --global dotnet-codegencs&#xD;&#xA;  EXIT /b 1&#xD;&#xA;)&#xD;&#xA;set &quot;OutputDir=$(ProjectDir)&quot;&#xD;&#xA;IF &quot;!OutputDir:~-1!&quot;==&quot;\&quot; SET &quot;OutputDir=!OutputDir:~0,-1!&quot;&#xD;&#xA;echo Output dir: &quot;!OutputDir!&quot;&#xD;&#xA;!CodegenCs!  template run &quot;$(ProjectDir)User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;!OutputDir!&quot;" />
   </Target>
 </Project>
