@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using PsdzClient;
 using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using PsdzClient;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -270,6 +270,24 @@ namespace BMW.Rheingold.Psdz
                     }
                     Task.Delay(50);
                 }
+            }
+        }
+
+        [PreserveSource(Hint = "from App.ClearPsdzWebServiceSessionDataFile")]
+        public static void ClearPsdzWebServiceSessionDataFile()
+        {
+            try
+            {
+                if (!Directory.Exists(Path.GetDirectoryName(sessionDataFilePath)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(sessionDataFilePath));
+                }
+                File.WriteAllText(sessionDataFilePath, string.Empty);
+                Log.Info(Log.CurrentMethod(), "PSdZ Webservice Session Data file successfully cleared!");
+            }
+            catch (Exception ex)
+            {
+                Log.ErrorException(Log.CurrentMethod(), "Failed to clear PSdZ Webservice Session Data file! {0}", ex);
             }
         }
     }

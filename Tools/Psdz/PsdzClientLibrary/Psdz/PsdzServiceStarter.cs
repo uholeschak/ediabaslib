@@ -310,6 +310,7 @@ namespace BMW.Rheingold.Psdz.Client
         [PreserveSource(Hint = "from App.ClearIstaPIDsFile")]
         public static void ClearIstaPIDsFile()
         {
+            PsdzWebserviceRegistrar.ClearPsdzWebServiceSessionDataFile();
             try
             {
                 if (!Directory.Exists(Path.GetDirectoryName(istaPIDfilePath)))
@@ -321,7 +322,7 @@ namespace BMW.Rheingold.Psdz.Client
                     File.Create(istaPIDfilePath).Close();
                 }
                 File.WriteAllText(istaPIDfilePath, string.Empty);
-                Log.Info(Log.CurrentMethod(), "PsdzInstances file successfully cleared!");
+                Logger.Info("PsdzInstances file successfully cleared!");
             }
             catch (Exception e)
             {
