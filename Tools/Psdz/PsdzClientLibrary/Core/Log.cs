@@ -204,6 +204,7 @@ namespace PsdzClient.Core
             Debug(logState, logThreshhold, method, msg, EventKind.T, args);
         }
 
+        [PreserveSource(Hint = "Fixed output")]
         public static void Debug(int logState, int logThreshhold, string method, string msg, EventKind evtKind, params object[] args)
         {
             if (logState < logThreshhold)
@@ -213,11 +214,7 @@ namespace PsdzClient.Core
 
             try
             {
-                string format = BuildEntry(TraceLevel.DEBUG, evtKind, method, msg);
-                if (args != null && args.Any())
-                {
-                    string.Format(format, args);
-                }
+                WriteTraceEntry(method, msg, TraceLevel.DEBUG, evtKind, args);
             }
             catch (Exception ex)
             {
