@@ -893,6 +893,7 @@ namespace PsdzClient.Programming
                 {
                     if (!ProgrammingService.Psdz.IsPsdzInitialized)
                     {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "StartProgrammingService IsPsdzInitialized false, disposing");
                         ProgrammingService.Dispose();
                         ProgrammingService = null;
                     }
