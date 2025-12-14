@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using PsdzClient;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -187,10 +187,19 @@ namespace BMW.Rheingold.Psdz
             return NetUtils.GetFirstFreePort((num == 0) ? 50000 : (num + 1), 50200);
         }
 
+        [PreserveSource(Hint = "ApplicationData changed for IIS")]
         static PsdzWebserviceRegistrar()
         {
-            sessionDataFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ISTA", "PsdzWebserviceSessions.json");
-            lockFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ISTA", "PsdzWebserviceSessions.lck");
+            string basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            if (string.IsNullOrEmpty(basePath))
+            {
+                basePath = Path.GetTempPath();
+            }
+
+            sessionDataFilePath = Path.Combine(basePath, "ISTA", "PsdzWebserviceSessions.json");
+            lockFilePath = Path.Combine(basePath, "ISTA", "PsdzWebserviceSessions.lck");
+            Log.Info(Log.CurrentMethod(), "Using SessionDataFile: {0}", sessionDataFilePath);
+            Log.Info(Log.CurrentMethod(), "Using SessionLockFile: {0}", lockFilePath);
             Directory.CreateDirectory(Path.GetDirectoryName(sessionDataFilePath));
             if (!File.Exists(sessionDataFilePath))
             {
