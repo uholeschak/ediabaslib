@@ -49,7 +49,4 @@
       <LastGenOutput>User.log</LastGenOutput>
     </Content>
   </ItemGroup>
-  <Target Name="PreBuild" BeforeTargets="Build" Condition="'$(IsCrossTargetingBuild)' == 'true'">
-    <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;set &quot;CodegenCs=%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe&quot;&#xD;&#xA;IF NOT EXIST !CodegenCs! (&#xD;&#xA;  echo install: dotnet tool install --global dotnet-codegencs&#xD;&#xA;  EXIT /b 1&#xD;&#xA;)&#xD;&#xA;set &quot;OutputDir=$(ProjectDir)&quot;&#xD;&#xA;IF &quot;!OutputDir:~-1!&quot;==&quot;\&quot; SET &quot;OutputDir=!OutputDir:~0,-1!&quot;&#xD;&#xA;echo Output dir: &quot;!OutputDir!&quot;&#xD;&#xA;!CodegenCs!  template run &quot;$(ProjectDir)User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;!OutputDir!&quot;" />
-  </Target>
 </Project>
