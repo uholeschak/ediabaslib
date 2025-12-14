@@ -809,4 +809,4 @@ Server access ports:
 8443: (https)
 
 IIS: Access rights:
-IIS_IUSRS requires read, view and execute on wwwroot
+IIS_IUSRS requires read, view and execute on wwwroot and "C:\Program Files\BMW\ISPI\TRIC\ISTA"
