@@ -961,11 +961,13 @@ namespace PsdzClient.Programming
             {
                 if (!StartProgrammingService(cts, istaFolder))
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "StartProgrammingService failed");
                     return false;
                 }
 
                 if (IsModuleGenerationMode())
                 {
+                    log.InfoFormat(CultureInfo.InvariantCulture, "IsModuleGenerationMode");
                     return true;
                 }
             }
@@ -977,6 +979,7 @@ namespace PsdzClient.Programming
 
                 if (ProgrammingService == null)
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "ProgrammingService null");
                     return false;
                 }
 
@@ -1002,12 +1005,14 @@ namespace PsdzClient.Programming
                 string[] hostParts = remoteHost.Split(':');
                 if (hostParts.Length < 1)
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "Host parts too short: {0}", hostParts.Length);
                     return false;
                 }
 
                 string ipAddress = hostParts[0];
                 if (!InitProgrammingObjects(istaFolder))
                 {
+                    log.ErrorFormat(CultureInfo.InvariantCulture, "InitProgrammingObjects failed");
                     return false;
                 }
 
