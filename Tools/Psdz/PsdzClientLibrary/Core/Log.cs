@@ -1,19 +1,20 @@
-﻿using Microsoft.Win32;
+﻿using log4net;
+using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.ServiceModel.Channels;
-using System.ServiceModel;
-using System.Threading;
-using System;
-using System.IO;
 using System.Net.Sockets;
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 using System.Text;
+using System.Threading;
 
 #pragma warning disable SYSLIB0005
 namespace PsdzClient.Core
@@ -29,6 +30,8 @@ namespace PsdzClient.Core
             FATAL
         }
 
+        [PreserveSource(Hint = "log added")]
+        private static readonly ILog log = LogManager.GetLogger(typeof(Log));
         private static readonly CultureInfo LogCulture = CultureInfo.CreateSpecificCulture("de-DE");
         public static bool LogCallerPid { get; set; }
 
@@ -50,9 +53,11 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "log added")]
         private static void TraceTraceError(string format, params object[] args)
         {
             Trace.TraceError(format, args);
+            log?.ErrorFormat(format, args);
             Flush();
         }
 
@@ -169,12 +174,14 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "log added")]
         public static void Fatal(string method, string msg, params object[] args)
         {
             try
             {
                 string text = BuildEntry(TraceLevel.FATAL, EventKind.T, method, msg);
                 Trace.Fail((args == null) ? text : string.Format(text, args));
+                log?.Error((args == null) ? text : string.Format(text, args));
             }
             catch (Exception ex)
             {
@@ -347,10 +354,34 @@ namespace PsdzClient.Core
             return sb.ToString();
         }
 
+        [PreserveSource(Hint = "log added")]
         private static void WriteTraceEntry(string method, string msg, TraceLevel level, EventKind evtKind, params object[] args)
         {
             string text = BuildEntry(level, evtKind, method, msg);
             Trace.WriteLine((args != null && args.Any()) ? string.Format(text, args) : text);
+            if (log != null)
+            {
+                string formattedMessage = (args != null && args.Any()) ? string.Format(text, args) : text;
+                switch (level)
+                {
+                    case TraceLevel.INFO:
+                        log.Info(formattedMessage);
+                        break;
+
+                    case TraceLevel.DEBUG:
+                        log.Debug(formattedMessage);
+                        break;
+
+                    case TraceLevel.WARNING:
+                        log.Warn(formattedMessage);
+                        break;
+
+                    case TraceLevel.ERROR:
+                    case TraceLevel.FATAL:
+                        log.Error(formattedMessage);
+                        break;
+                }
+            }
         }
     }
 }
