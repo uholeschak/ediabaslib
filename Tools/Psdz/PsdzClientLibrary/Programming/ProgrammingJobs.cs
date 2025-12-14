@@ -863,6 +863,7 @@ namespace PsdzClient.Programming
                     log.InfoFormat(CultureInfo.InvariantCulture, "Starting host");
                     if (!ProgrammingService.StartPsdzService())
                     {
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Host start failed");
                         sbResult.AppendLine(Strings.HostStartFailed);
                         UpdateStatus(sbResult.ToString());
                         return false;
