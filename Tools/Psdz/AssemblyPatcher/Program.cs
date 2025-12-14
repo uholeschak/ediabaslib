@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 // switch to artifacs directory layout:
 // create dotnet new buildprops --use-artifacts
@@ -169,16 +170,7 @@ namespace AssemblyPatcher
                     return 1;
                 }
 
-                string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
-                if (string.IsNullOrEmpty(codeBase))
-                {
-                    Console.WriteLine("*** Assembly location not found");
-                    return 1;
-                }
-
-                UriBuilder uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
-                string appDir = Path.GetDirectoryName(path);
+                string appDir = AssemblyDirectory;
                 if (string.IsNullOrEmpty(appDir))
                 {
                     Console.WriteLine("*** Assembly location not found");
@@ -1874,6 +1866,30 @@ namespace AssemblyPatcher
 
             // Uri's use forward slashes so convert back to backward slashes
             return relativeUri.ToString().Replace("/", "\\");
+        }
+
+        public static string AssemblyDirectory
+        {
+            get
+            {
+#if NET
+                string location = Assembly.GetExecutingAssembly().Location;
+                if (string.IsNullOrEmpty(location) || !File.Exists(location))
+                {
+                    return null;
+                }
+                return Path.GetDirectoryName(location);
+#else
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                {
+                    return null;
+                }
+                return Path.GetDirectoryName(path);
+#endif
+            }
         }
     }
 }
