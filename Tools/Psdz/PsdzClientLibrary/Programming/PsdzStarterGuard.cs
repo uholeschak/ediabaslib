@@ -19,6 +19,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Added")]
         private bool _isExecutable;
 
+        [PreserveSource(Hint = "Modified")]
         private PsdzStarterGuard()
         {
             _isExecutable = CheckIsExecutable();
