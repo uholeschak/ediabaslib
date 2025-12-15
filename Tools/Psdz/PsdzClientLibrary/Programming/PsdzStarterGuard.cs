@@ -1,5 +1,6 @@
 ﻿using PsdzClient.Core;
 using System;
+using System.Reflection;
 
 namespace PsdzClient.Programming
 {
@@ -19,8 +20,14 @@ namespace PsdzClient.Programming
         {
         }
 
+        [PreserveSource(Hint = "IsExecutable added for IIS")]
         public bool IsInitializationAlreadyAttempted()
         {
+            if (!IsExecutable())
+            {
+                return false;
+            }
+
             if (!_isInitialized)
             {
                 return _isInitializationError;
@@ -64,6 +71,29 @@ namespace PsdzClient.Programming
                 Log.Info(Log.CurrentMethod(), $"Initialization result: {_isInitialized}");
                 return _isInitialized;
             }
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public bool IsExecutable()
+        {
+            Log.Info(Log.CurrentMethod(), "IsExecutable Start");
+
+            try
+            {
+                Assembly entryAssembly = Assembly.GetEntryAssembly();
+                if (entryAssembly != null)
+                {
+                    Log.Info(Log.CurrentMethod(), "IsExecutable Executable");
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.ErrorException(Log.CurrentMethod(), "IsExecutable", e);
+            }
+
+            Log.Info(Log.CurrentMethod(), "IsExecutable No executable");
+            return false;
         }
     }
 }
