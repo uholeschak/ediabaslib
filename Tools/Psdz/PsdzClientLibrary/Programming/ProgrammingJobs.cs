@@ -770,6 +770,7 @@ namespace PsdzClient.Programming
                         {
                             log.ErrorFormat("No test module data present");
                             sbResult.AppendLine(Strings.TestModuleDataMissing);
+                            UpdateStatus(sbResult.ToString());
                             return false;
                         }
 
