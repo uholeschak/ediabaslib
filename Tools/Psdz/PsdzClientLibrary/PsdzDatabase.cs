@@ -1432,6 +1432,7 @@ namespace PsdzClient
         private SqliteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
+        private bool? _isExecutable;
         private string _tableForFTSSearch = string.Empty;
         private bool? _doesXMLValuePrimitiveTableHaveFTS;
         private Dictionary<string, XepRule> _xepRuleDict;
@@ -2126,21 +2127,28 @@ namespace PsdzClient
 
         public bool IsExecutable()
         {
+            if (_isExecutable.HasValue)
+            {
+                return _isExecutable.Value;
+            }
+
             try
             {
                 Assembly entryAssembly = Assembly.GetEntryAssembly();
                 if (entryAssembly != null)
                 {
-                    log.InfoFormat("IsExecutable true");
+                    Log.Info(Log.CurrentMethod(), "IsExecutable true");
+                    _isExecutable = true;
                     return true;
                 }
             }
             catch (Exception e)
             {
-                log.ErrorFormat("IsExecutable Exception: '{0}'", e.Message);
+                Log.ErrorException(Log.CurrentMethod(), "IsExecutable", e);
             }
 
-            log.InfoFormat("IsExecutable false");
+            Log.Info(Log.CurrentMethod(), "IsExecutable false");
+            _isExecutable = false;
             return false;
         }
 
