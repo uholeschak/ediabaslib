@@ -30,8 +30,6 @@ namespace PsdzClient.Core
             FATAL
         }
 
-        [PreserveSource(Hint = "log added")]
-        private static readonly ILog log = LogManager.GetLogger(typeof(Log));
         private static readonly CultureInfo LogCulture = CultureInfo.CreateSpecificCulture("de-DE");
         public static bool LogCallerPid { get; set; }
 
@@ -367,15 +365,12 @@ namespace PsdzClient.Core
                     case TraceLevel.INFO:
                         log.Info(formattedMessage);
                         break;
-
                     case TraceLevel.DEBUG:
                         log.Debug(formattedMessage);
                         break;
-
                     case TraceLevel.WARNING:
                         log.Warn(formattedMessage);
                         break;
-
                     case TraceLevel.ERROR:
                     case TraceLevel.FATAL:
                         log.Error(formattedMessage);
@@ -383,5 +378,8 @@ namespace PsdzClient.Core
                 }
             }
         }
+
+        [PreserveSource(Hint = "log added")]
+        private static readonly ILog log = LogManager.GetLogger(typeof(Log));
     }
 }
