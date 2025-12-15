@@ -18,9 +18,10 @@ namespace EdiabasLibConfigTool
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            if (GetNetFrameworkVersion() < 0x480)
+            int netFrameworkVersion = GetNetFrameworkVersion();
+            if (netFrameworkVersion < 0x481)
             {
-                string message = string.Format(Resources.Strings.NetFrameworkMissing, "4.8");
+                string message = string.Format(Resources.Strings.NetFrameworkMissing, "4.8.1");
                 MessageBox.Show(message, Resources.Strings.TitleError, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
