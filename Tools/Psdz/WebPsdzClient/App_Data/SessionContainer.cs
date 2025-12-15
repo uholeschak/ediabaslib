@@ -2604,11 +2604,6 @@ namespace WebPsdzClient.App_Data
 
         private void ServiceInitializedEvent(ProgrammingService2 programmingService)
         {
-            if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
-            {
-                log.ErrorFormat("ServiceInitializedEvent Resetting PsdzStarterGuard initialization");
-                PsdzStarterGuard.Instance.ResetInitialization();
-            }
         }
 
         private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
