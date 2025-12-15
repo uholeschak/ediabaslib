@@ -189,22 +189,25 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public static void Debug(string method, string msg, params object[] args)
         {
             Debug(CoreFramework.DebugLevel, 1, method, msg, args);
         }
 
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public static void Debug(int logState, string method, string msg, params object[] args)
         {
             Debug(logState, 1, method, msg, args);
         }
 
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public static void Debug(int logState, int logThreshhold, string method, string msg, params object[] args)
         {
             Debug(logState, logThreshhold, method, msg, EventKind.T, args);
         }
 
-        [PreserveSource(Hint = "Fixed output")]
+        [PreserveSource(Hint = "Fixed logging")]
         public static void Debug(int logState, int logThreshhold, string method, string msg, EventKind evtKind, params object[] args)
         {
             if (logState < logThreshhold)
