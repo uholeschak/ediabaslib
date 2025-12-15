@@ -16,6 +16,9 @@ namespace PsdzClient.Programming
 
         public static PsdzStarterGuard Instance => _instance.Value;
 
+        [PreserveSource(Hint = "Added")]
+        private bool? _isExecutable;
+
         private PsdzStarterGuard()
         {
         }
@@ -77,12 +80,18 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Added")]
         public bool IsExecutable()
         {
+            if (_isExecutable.HasValue)
+            {
+                return _isExecutable.Value;
+            }
+
             try
             {
                 Assembly entryAssembly = Assembly.GetEntryAssembly();
                 if (entryAssembly != null)
                 {
                     Log.Info(Log.CurrentMethod(), "IsExecutable true");
+                    _isExecutable = true;
                     return true;
                 }
             }
@@ -92,6 +101,7 @@ namespace PsdzClient.Programming
             }
 
             Log.Info(Log.CurrentMethod(), "IsExecutable false");
+            _isExecutable = false;
             return false;
         }
     }
