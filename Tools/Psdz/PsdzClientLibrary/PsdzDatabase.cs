@@ -2126,14 +2126,12 @@ namespace PsdzClient
 
         public bool IsExecutable()
         {
-            log.InfoFormat("IsExecutable Start");
-
             try
             {
                 Assembly entryAssembly = Assembly.GetEntryAssembly();
                 if (entryAssembly != null)
                 {
-                    log.InfoFormat("IsExecutable Executable");
+                    log.InfoFormat("IsExecutable true");
                     return true;
                 }
             }
@@ -2142,7 +2140,7 @@ namespace PsdzClient
                 log.ErrorFormat("IsExecutable Exception: '{0}'", e.Message);
             }
 
-            log.InfoFormat("IsExecutable No executable");
+            log.InfoFormat("IsExecutable false");
             return false;
         }
 

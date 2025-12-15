@@ -25,6 +25,7 @@ namespace PsdzClient.Programming
         {
             if (!IsExecutable())
             {
+                Log.Info(Log.CurrentMethod(), "IsInitializationAlreadyAttempted ignoring");
                 return false;
             }
 
@@ -76,14 +77,12 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Added")]
         public bool IsExecutable()
         {
-            Log.Info(Log.CurrentMethod(), "IsExecutable Start");
-
             try
             {
                 Assembly entryAssembly = Assembly.GetEntryAssembly();
                 if (entryAssembly != null)
                 {
-                    Log.Info(Log.CurrentMethod(), "IsExecutable Executable");
+                    Log.Info(Log.CurrentMethod(), "IsExecutable true");
                     return true;
                 }
             }
@@ -92,7 +91,7 @@ namespace PsdzClient.Programming
                 Log.ErrorException(Log.CurrentMethod(), "IsExecutable", e);
             }
 
-            Log.Info(Log.CurrentMethod(), "IsExecutable No executable");
+            Log.Info(Log.CurrentMethod(), "IsExecutable false");
             return false;
         }
     }
