@@ -1,4 +1,10 @@
 ﻿//#define EDIABAS_CONNECTION
+using EdiabasLib;
+using log4net;
+using Microsoft.AspNet.SignalR;
+using MySqlConnector;
+using PsdzClient;
+using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,12 +17,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using EdiabasLib;
-using log4net;
-using Microsoft.AspNet.SignalR;
-using MySqlConnector;
-using PsdzClient;
-using PsdzClient.Programming;
 
 namespace WebPsdzClient.App_Data
 {
@@ -589,6 +589,7 @@ namespace WebPsdzClient.App_Data
             ProgrammingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
             ProgrammingJobs.ShowMessageEvent += ShowMessageEvent;
             ProgrammingJobs.TelSendQueueSizeEvent += TelSendQueueSizeEvent;
+            ProgrammingJobs.ServiceInitializedEvent += ServiceInitializedEvent;
             ProgrammingJobs.GenServiceModules = false;
             StatusText = string.Empty;
             ProgressText = string.Empty;
@@ -2599,6 +2600,15 @@ namespace WebPsdzClient.App_Data
             }
 
             return queueSize;
+        }
+
+        private void ServiceInitializedEvent(ProgrammingService2 programmingService)
+        {
+            if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
+            {
+                log.ErrorFormat("ServiceInitializedEvent Resetting PsdzStarterGuard initialization");
+                PsdzStarterGuard.Instance.ResetInitialization();
+            }
         }
 
         private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)

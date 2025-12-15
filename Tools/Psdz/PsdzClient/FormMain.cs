@@ -102,7 +102,7 @@ namespace PsdzClient
             _programmingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
             _programmingJobs.ShowMessageEvent += ShowMessageEvent;
             _programmingJobs.TelSendQueueSizeEvent += TelSendQueueSizeEvent;
-            _programmingJobs.ServiceInitializedEvent += ServiceInitialized;
+            _programmingJobs.ServiceInitializedEvent += ServiceInitializedEvent;
         }
 
         private void UpdateDisplay()
@@ -279,7 +279,7 @@ namespace PsdzClient
             labelProgressEvent.Text = message ?? string.Empty;
         }
 
-        private void ServiceInitialized(ProgrammingService2 programmingService)
+        private void ServiceInitializedEvent(ProgrammingService2 programmingService)
         {
             string logFileName = "PsdzClient.log";
             if (_programmingJobs.IsModuleGenerationMode())
