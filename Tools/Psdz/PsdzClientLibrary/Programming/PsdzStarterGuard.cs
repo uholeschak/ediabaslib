@@ -17,16 +17,17 @@ namespace PsdzClient.Programming
         public static PsdzStarterGuard Instance => _instance.Value;
 
         [PreserveSource(Hint = "Added")]
-        private bool? _isExecutable;
+        private bool _isExecutable;
 
         private PsdzStarterGuard()
         {
+            _isExecutable = CheckIsExecutable();
         }
 
         [PreserveSource(Hint = "IsExecutable added for IIS")]
         public bool IsInitializationAlreadyAttempted()
         {
-            if (!IsExecutable())
+            if (!_isExecutable)
             {
                 Log.Info(Log.CurrentMethod(), "IsInitializationAlreadyAttempted ignoring");
                 return false;
@@ -78,20 +79,14 @@ namespace PsdzClient.Programming
         }
 
         [PreserveSource(Hint = "Added")]
-        public bool IsExecutable()
+        private bool CheckIsExecutable()
         {
-            if (_isExecutable.HasValue)
-            {
-                return _isExecutable.Value;
-            }
-
             try
             {
                 Assembly entryAssembly = Assembly.GetEntryAssembly();
                 if (entryAssembly != null)
                 {
                     Log.Info(Log.CurrentMethod(), "IsExecutable true");
-                    _isExecutable = true;
                     return true;
                 }
             }
@@ -101,7 +96,6 @@ namespace PsdzClient.Programming
             }
 
             Log.Info(Log.CurrentMethod(), "IsExecutable false");
-            _isExecutable = false;
             return false;
         }
     }

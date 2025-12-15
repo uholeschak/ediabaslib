@@ -2295,7 +2295,7 @@ namespace PsdzClient
                     }
 
                     log.InfoFormat("GenerateServiceModuleData Converting modules");
-                    if (!IsExecutable)
+                    if (!AllowDbGeneration)
                     {
                         log.ErrorFormat("GenerateServiceModuleData Started from DLL");
                         return false;
@@ -3717,7 +3717,7 @@ namespace PsdzClient
                     }
 
                     log.InfoFormat("GenerateTestModuleData Converting test modules");
-                    if (!IsExecutable)
+                    if (!AllowDbGeneration)
                     {
                         log.ErrorFormat("GenerateTestModuleData Started from DLL");
                         return false;
@@ -3927,7 +3927,7 @@ namespace PsdzClient
                 if (ecuCharacteristicsData == null || !dataValid)
                 {
                     log.InfoFormat("GenerateEcuCharacteristicsData Converting Xml");
-                    if (!IsExecutable)
+                    if (!AllowDbGeneration)
                     {
                         log.ErrorFormat("GenerateEcuCharacteristicsData Started from DLL");
                         return false;

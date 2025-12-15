@@ -1443,6 +1443,7 @@ namespace PsdzClient
         public EcuCharacteristicsData EcuCharacteristicsStorage { get; private set; }
         public bool UseIsAtLeastOnePathToRootValid { get; set; }
         public bool IsExecutable { get; private set; }
+        public bool AllowDbGeneration { get; private set; }
         public static bool RestartRequired { get; private set; }
 
         public PsdzDatabase(string istaFolder)
@@ -1564,7 +1565,11 @@ namespace PsdzClient
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
             IsExecutable = CheckIsExecutable();
-
+#if NET
+            AllowDbGeneration = false;
+#else
+            AllowDbGeneration = IsExecutable;
+#endif
             _xepRuleDict = null;
             _diagObjRootNodes = null;
             _diagObjRootNodeIdSet = null;
