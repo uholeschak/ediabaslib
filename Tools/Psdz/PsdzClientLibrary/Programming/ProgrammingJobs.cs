@@ -540,7 +540,7 @@ namespace PsdzClient.Programming
                     };
 
                     bool executeDirect = _executionMode == ExecutionMode.GenerateModulesDirect;
-                    if (ProgrammingService.PsdzDatabase.IsExecutable())
+                    if (ProgrammingService.PsdzDatabase.IsExecutable)
                     {
                         if (!ProgrammingService.PsdzDatabase.SaveVehicleSeriesInfo(ClientContext,
                                 (startConvert, progress, failures) =>
@@ -766,7 +766,7 @@ namespace PsdzClient.Programming
                             return false;
                         }, checkOnlyTest && !executeDirect);
 
-                        if (!resultTest && !ProgrammingService.PsdzDatabase.IsExecutable())
+                        if (!resultTest && !ProgrammingService.PsdzDatabase.IsExecutable)
                         {
                             log.ErrorFormat("No test module data present");
                             sbResult.AppendLine(Strings.TestModuleDataMissing);
@@ -836,7 +836,7 @@ namespace PsdzClient.Programming
 
                     if (!resultEcuCharacteristics)
                     {
-                        if (!ProgrammingService.PsdzDatabase.IsExecutable())
+                        if (!ProgrammingService.PsdzDatabase.IsExecutable)
                         {
                             log.ErrorFormat("No test module data present");
                             sbResult.AppendLine(Strings.TestModuleDataMissing);

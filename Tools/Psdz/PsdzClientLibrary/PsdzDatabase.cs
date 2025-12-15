@@ -1432,7 +1432,6 @@ namespace PsdzClient
         private SqliteConnection _mDbConnection;
         private string _rootENameClassId;
         private string _typeKeyClassId;
-        private bool? _isExecutable;
         private string _tableForFTSSearch = string.Empty;
         private bool? _doesXMLValuePrimitiveTableHaveFTS;
         private Dictionary<string, XepRule> _xepRuleDict;
@@ -1443,6 +1442,7 @@ namespace PsdzClient
         public TestModules TestModuleStorage { get; private set; }
         public EcuCharacteristicsData EcuCharacteristicsStorage { get; private set; }
         public bool UseIsAtLeastOnePathToRootValid { get; set; }
+        public bool IsExecutable { get; private set; }
         public static bool RestartRequired { get; private set; }
 
         public PsdzDatabase(string istaFolder)
@@ -1563,6 +1563,7 @@ namespace PsdzClient
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
+            IsExecutable = CheckIsExecutable();
 
             _xepRuleDict = null;
             _diagObjRootNodes = null;
@@ -2110,6 +2111,25 @@ namespace PsdzClient
             return string.Empty;
         }
 
+        private bool CheckIsExecutable()
+        {
+            try
+            {
+                Assembly entryAssembly = Assembly.GetEntryAssembly();
+                if (entryAssembly != null)
+                {
+                    Log.Info(Log.CurrentMethod(), "IsExecutable true");
+                    return true;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.ErrorException(Log.CurrentMethod(), "IsExecutable", e);
+            }
+
+            Log.Info(Log.CurrentMethod(), "IsExecutable false");
+            return false;
+        }
 
         public string GetFlowForInfoObj(SwiInfoObj swiInfoObj)
         {
@@ -2123,33 +2143,6 @@ namespace PsdzClient
             string data = GetXmlValuePrimitivesById(swiInfoObj.FlowXml, "DEDE");
             log.InfoFormat("GetFlowForInfoObj Data: {0}", data);
             return data;
-        }
-
-        public bool IsExecutable()
-        {
-            if (_isExecutable.HasValue)
-            {
-                return _isExecutable.Value;
-            }
-
-            try
-            {
-                Assembly entryAssembly = Assembly.GetEntryAssembly();
-                if (entryAssembly != null)
-                {
-                    Log.Info(Log.CurrentMethod(), "IsExecutable true");
-                    _isExecutable = true;
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                Log.ErrorException(Log.CurrentMethod(), "IsExecutable", e);
-            }
-
-            Log.Info(Log.CurrentMethod(), "IsExecutable false");
-            _isExecutable = false;
-            return false;
         }
 
         public bool GetEcuVariants(List<EcuInfo> ecuList, Vehicle vehicle = null, IFFMDynamicResolver ffmDynamicResolver = null)
