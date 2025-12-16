@@ -29,6 +29,10 @@ namespace BMW.Rheingold.Programming
 
         private readonly string psdzLogFilePath;
 
+
+        [PreserveSource(Hint = "Dummy")]
+        public IBaureiheUtilityService BaureiheUtilityService => psdzServiceClient.BaureiheUtilityService;
+
         public IConfigurationService ConfigurationService => psdzServiceClient.ConfigurationService;
 
         public IConnectionFactoryService ConnectionFactoryService => psdzServiceClient.ConnectionFactoryService;

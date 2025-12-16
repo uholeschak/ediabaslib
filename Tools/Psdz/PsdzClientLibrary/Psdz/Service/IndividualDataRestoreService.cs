@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using RestSharp;
@@ -18,27 +19,16 @@ namespace BMW.Rheingold.Psdz
     internal class IndividualDataRestoreService : IIndividualDataRestoreService
     {
         private int _activeBackupTalExecutions;
-
         private TalModel statusTal;
-
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly IPsdzProgressListener progressListener;
-
         private readonly string _endpoint = "idr";
-
         private readonly MacrosService _macrosService;
-
         private readonly IProgrammingService _programmingService;
-
         private static readonly TaExecutionStateMapper _taExecutionStateMapper = new TaExecutionStateMapper();
-
         private static readonly TalExecutionStateMapper _talExecutionStateMapper = new TalExecutionStateMapper();
-
         private bool _ignoreTalRelease = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Psdz.IgnoreTalRelease", defaultValue: true);
-
         public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged;
-
         public IndividualDataRestoreService(IWebCallHandler webCallHandler, IPsdzProgressListener progressListener, IMacrosService macrosService, IProgrammingService programmingService)
         {
             _webCallHandler = webCallHandler;
@@ -56,13 +46,14 @@ namespace BMW.Rheingold.Psdz
                     Log.Warning(Log.CurrentMethod(), "No file existing for the provided backupDataPath: " + backupDataPath + ".");
                     return null;
                 }
+
                 GenerateBackupTalRequestModel requestBodyObject = new GenerateBackupTalRequestModel
                 {
                     BackupPath = backupDataPath,
                     StandardTal = TalMapper.Map(standardTal),
                     TalFilter = TalFilterMapper.Map(talFilter)
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(_endpoint, $"generatebackuptal/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(_endpoint, $"generatebackuptal/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -80,6 +71,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Warning(Log.CurrentMethod(), "No file existing for the provided backupDataPath: " + backupDataPath + ".");
                     return null;
                 }
+
                 GenerateRestorePrognosisTalRequestModel requestBodyObject = new GenerateRestorePrognosisTalRequestModel
                 {
                     BackupPath = backupDataPath,
@@ -87,7 +79,7 @@ namespace BMW.Rheingold.Psdz
                     StandardTal = TalMapper.Map(standardTal),
                     TalFilter = TalFilterMapper.Map(talFilter)
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(_endpoint, $"generaterestoreprognosistal/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(_endpoint, $"generaterestoreprognosistal/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -96,22 +88,23 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzTal GenerateRestoreTal(IPsdzConnection connection, string backupDataPath, IPsdzTal standardTal, IPsdzTalFilter talFilter)
+        public IPsdzTal GenerateRestoreTal(IPsdzConnection connection, string backupDataFilePath, IPsdzTal standardTal, IPsdzTalFilter talFilter)
         {
             try
             {
-                if (!Directory.Exists(backupDataPath))
+                if (!Directory.Exists(backupDataFilePath))
                 {
-                    Log.Warning(Log.CurrentMethod(), "No file existing for the provided backupDataPath: " + backupDataPath + ".");
+                    Log.Warning(Log.CurrentMethod(), "No file existing for the provided backupDataPath: " + backupDataFilePath + ".");
                     return null;
                 }
+
                 GenerateRestoreTalRequestModel requestBodyObject = new GenerateRestoreTalRequestModel
                 {
-                    BackupPath = backupDataPath,
+                    BackupPath = backupDataFilePath,
                     StandardTal = TalMapper.Map(standardTal),
                     TalFilter = TalFilterMapper.Map(talFilter)
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(_endpoint, $"generaterestoretal/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(_endpoint, $"generaterestoretal/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -166,6 +159,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     RequestBackupdata(text, backupDataPath, callingMethod, talModel);
                 }
+
                 Log.Info(callingMethod, "Finished to execute TAL " + NormalizeXmlText(tal.AsXml));
                 return TalMapper.Map(talModel);
             }
@@ -180,6 +174,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     _programmingService.Release(text);
                 }
+
                 int itemCount2 = Interlocked.Decrement(ref _activeBackupTalExecutions);
                 this.ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount2));
                 NotifyListenerAboutFinished(listener);
@@ -212,6 +207,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     RequestBackupdata(text, backupFilePath, callingMethod, statusTal);
                 }
+
                 Log.Info(callingMethod, "Finished to execute TAL " + NormalizeXmlText(tal.AsXml));
                 return TalMapper.Map(statusTal);
             }
@@ -226,6 +222,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     _programmingService.Release(text);
                 }
+
                 int itemCount2 = Interlocked.Decrement(ref _activeBackupTalExecutions);
                 this.ActiveDependencyCountChanged?.Invoke(this, new DependencyCountChangedEventArgs(itemCount2));
                 NotifyListenerAboutFinished(listener);
@@ -279,6 +276,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Warning(Log.CurrentMethod(), "Progress notification cannot be sent because the listener is null.");
                     return;
                 }
+
                 long num = DateTime.Now.Ticks / 10000;
                 long end = execTime.PlannedEndTime + 60000;
                 end = NeverEnd(end, num);
@@ -298,6 +296,7 @@ namespace BMW.Rheingold.Psdz
             for (num = end; num - current < 10000; num += 10000)
             {
             }
+
             return num;
         }
 
@@ -307,6 +306,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return int.MaxValue;
             }
+
             return (int)(end - start);
         }
 
@@ -317,6 +317,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return !value.Equals(PsdzTalExecutionState.Running);
             }
+
             return false;
         }
 
@@ -343,6 +344,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return false;
             }
+
             ICollection<TalLineModel> talLines = tal.TalLines;
             int i = 0;
             for (int count = talLines.Count; i < count; i++)
@@ -358,6 +360,7 @@ namespace BMW.Rheingold.Psdz
                         return true;
                     }
                 }
+
                 FscBackupModel fscBackup = talLineModel.FscBackup;
                 PsdzTaExecutionState? value2 = _taExecutionStateMapper.GetValue(fscBackup.ExecutionStatus);
                 if (value2.HasValue)
@@ -369,14 +372,15 @@ namespace BMW.Rheingold.Psdz
                     }
                 }
             }
+
             return false;
         }
 
         private void LogDirectoryContent(string path, string method)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
-            Log.Info(method, string.Format(CultureInfo.InvariantCulture, "Directory " + path + " contains the following files: " + string.Join(" | ", (from file in directoryInfo.GetFiles()
-                                                                                                                                                       select file.Name).ToList())));
+            Log.Info(method, string.Format(CultureInfo.InvariantCulture, "Directory " + path + " contains the following files: " + string.Join(" | ", (
+                from file in directoryInfo.GetFiles()select file.Name).ToList())));
         }
 
         private static string NormalizeXmlText(string xmlText)
@@ -385,6 +389,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return xmlText;
             }
+
             return Regex.Replace(xmlText.Trim(), ">\\s+<", "><");
         }
     }

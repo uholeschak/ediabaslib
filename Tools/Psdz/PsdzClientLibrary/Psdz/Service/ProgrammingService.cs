@@ -6,6 +6,7 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -27,7 +28,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Tal = TalMapper.Map(tal)
                 };
-                return _webCallHandler.ExecuteRequest<IEnumerable<EcuIdentifierModel>>(endpointService, $"checkprogrammingcounter/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
+                return _webCallHandler.ExecuteRequest<IEnumerable<EcuIdentifierModel>>(endpointService, $"checkprogrammingcounter/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
             }
             catch (Exception exception)
             {
@@ -45,7 +46,7 @@ namespace BMW.Rheingold.Psdz
                     EcuIdentifier = EcuIdentifierMapper.Map(ecuIdentifier),
                     SwtApplicationId = SwtApplicationIdMapper.Map(swtApplicationId)
                 };
-                return _webCallHandler.ExecuteRequest<bool>(endpointService, $"disablefsc/{connection.Id}", Method.Post, requestBodyObject).Data;
+                return _webCallHandler.ExecuteRequest<bool>(endpointService, $"disablefsc/{connection.Id}", HttpMethod.Post, requestBodyObject).Data;
             }
             catch (Exception exception)
             {
@@ -64,7 +65,7 @@ namespace BMW.Rheingold.Psdz
                     JobId = jobId,
                     InputMap = inputDictionary.GetCopy()
                 };
-                return _webCallHandler.ExecuteRequest<IDictionary<string, object>>(endpointService, $"executeasamjob/{connection.Id}", Method.Post, requestBodyObject).Data;
+                return _webCallHandler.ExecuteRequest<IDictionary<string, object>>(endpointService, $"executeasamjob/{connection.Id}", HttpMethod.Post, requestBodyObject).Data;
             }
             catch (Exception exception)
             {
@@ -82,7 +83,7 @@ namespace BMW.Rheingold.Psdz
                     Tal = TalMapper.Map(tal),
                     Parallel = isParallel
                 };
-                return _webCallHandler.ExecuteRequest<long>(endpointService, $"getexecutiontimeestimate/{connection.Id}", Method.Post, requestBodyObject).Data;
+                return _webCallHandler.ExecuteRequest<long>(endpointService, $"getexecutiontimeestimate/{connection.Id}", HttpMethod.Post, requestBodyObject).Data;
             }
             catch (Exception exception)
             {
@@ -100,7 +101,7 @@ namespace BMW.Rheingold.Psdz
                     EcuIdentifier = EcuIdentifierMapper.Map(ecuIdentifier),
                     SwtApplicationId = SwtApplicationIdMapper.Map(swtApplicationId)
                 };
-                return _webCallHandler.ExecuteRequest<byte[]>(endpointService, $"getfsc/{connection.Id}", Method.Post, requestBodyObject).Data;
+                return _webCallHandler.ExecuteRequest<byte[]>(endpointService, $"getfsc/{connection.Id}", HttpMethod.Post, requestBodyObject).Data;
             }
             catch (Exception exception)
             {
@@ -109,7 +110,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public void RequestBackupdata(string executionId, string targetDir)
+        public void RequestBackupdata(string talExecutionId, string targetDir)
         {
             try
             {
@@ -117,7 +118,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     BackupPath = targetDir
                 };
-                _webCallHandler.ExecuteRequest(endpointService, "requestbackupdata?executionId=" + executionId, Method.Post, requestBodyObject);
+                _webCallHandler.ExecuteRequest(endpointService, "requestbackupdata?executionId=" + talExecutionId, HttpMethod.Post, requestBodyObject);
             }
             catch (Exception exception)
             {
@@ -136,7 +137,7 @@ namespace BMW.Rheingold.Psdz
                     PeriodicalCheck = periodicalCheck,
                     SwtApplicationId = SwtApplicationIdMapper.Map(swtApplicationId)
                 };
-                return SwtActionMapper.Map(_webCallHandler.ExecuteRequest<SwtActionModel>(endpointService, $"requestswtstatusforecu/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return SwtActionMapper.Map(_webCallHandler.ExecuteRequest<SwtActionModel>(endpointService, $"requestswtstatusforecu/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -153,7 +154,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     PeriodicalCheck = periodicalCheck
                 };
-                return SwtActionMapper.Map(_webCallHandler.ExecuteRequest<SwtActionModel>(endpointService, $"requestswtstatus/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return SwtActionMapper.Map(_webCallHandler.ExecuteRequest<SwtActionModel>(endpointService, $"requestswtstatus/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -172,7 +173,7 @@ namespace BMW.Rheingold.Psdz
                     SwtApplicationId = SwtApplicationIdMapper.Map(swtApplicationId),
                     Fsc = fsc
                 };
-                return _webCallHandler.ExecuteRequest<bool>(endpointService, $"storefsc/{connection.Id}", Method.Post, requestBodyObject).Data;
+                return _webCallHandler.ExecuteRequest<bool>(endpointService, $"storefsc/{connection.Id}", HttpMethod.Post, requestBodyObject).Data;
             }
             catch (Exception exception)
             {
@@ -192,7 +193,7 @@ namespace BMW.Rheingold.Psdz
                     Fa = FaMapper.Map(fa),
                     Vin = VinMapper.Map(vin)
                 };
-                return _webCallHandler.ExecuteRequest<string>(endpointService, $"executehddupdate/{connection.Id}", Method.Post, requestBodyObject).Data;
+                return _webCallHandler.ExecuteRequest<string>(endpointService, $"executehddupdate/{connection.Id}", HttpMethod.Post, requestBodyObject).Data;
             }
             catch (Exception exception)
             {
@@ -211,7 +212,7 @@ namespace BMW.Rheingold.Psdz
                     SvtTarget = SvtMapper.Map(svtTarget),
                     SvtActual = SvtMapper.Map(svtActual)
                 };
-                _webCallHandler.ExecuteRequest(endpointService, $"tslupdate/{connection.Id}", Method.Post, requestBodyObject);
+                _webCallHandler.ExecuteRequest(endpointService, $"tslupdate/{connection.Id}", HttpMethod.Post, requestBodyObject);
             }
             catch (Exception exception)
             {
@@ -224,7 +225,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "requestexecutionstatus?executionId=" + executionId, Method.Get).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "requestexecutionstatus?executionId=" + executionId, HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -237,7 +238,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "requesthddupdatestatus?executionId=" + executionId, Method.Get).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "requesthddupdatestatus?executionId=" + executionId, HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -248,14 +249,14 @@ namespace BMW.Rheingold.Psdz
 
         public void Release(string executionId)
         {
-            _webCallHandler.ExecuteRequest(endpointService, "release?executionId=" + executionId, Method.Post);
+            _webCallHandler.ExecuteRequest(endpointService, "release?executionId=" + executionId, HttpMethod.Post);
         }
 
         public IPsdzTal Cancel(string executionId)
         {
             try
             {
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "cancel?executionId=" + executionId, Method.Get).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "cancel?executionId=" + executionId, HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -276,7 +277,7 @@ namespace BMW.Rheingold.Psdz
                     TalExecutionConfig = TalExecutionConfigMapper.Map(talExecutionSettings),
                     Vin = VinMapper.Map(vin)
                 };
-                return _webCallHandler.ExecuteRequest<string>(endpointService, $"executeasync/{connection.Id}", Method.Post, requestBodyObject).Data;
+                return _webCallHandler.ExecuteRequest<string>(endpointService, $"executeasync/{connection.Id}", HttpMethod.Post, requestBodyObject).Data;
             }
             catch (Exception exception)
             {

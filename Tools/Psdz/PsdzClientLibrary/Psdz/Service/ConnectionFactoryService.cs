@@ -4,6 +4,7 @@ using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -21,7 +22,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<IList<TargetSelectorModel>>(_endpointService, "gettargetselectors", Method.Get).Data?.Select(TargetSelectorMapper.Map);
+                return _webCallHandler.ExecuteRequest<IList<TargetSelectorModel>>(_endpointService, "gettargetselectors", HttpMethod.Get).Data?.Select(TargetSelectorMapper.Map);
             }
             catch (Exception exception)
             {
@@ -34,7 +35,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<IList<VehicleIdModel>>(_endpointService, "requestavailablevehicles", Method.Get).Data?.Select(VehicleIdMapper.Map);
+                return _webCallHandler.ExecuteRequest<IList<VehicleIdModel>>(_endpointService, "requestavailablevehicles", HttpMethod.Get).Data?.Select(VehicleIdMapper.Map);
             }
             catch (Exception exception)
             {

@@ -9,6 +9,8 @@ namespace BMW.Rheingold.Psdz
 {
     public interface IPsdzService
     {
+        IBaureiheUtilityService BaureiheUtilityService { get; }
+
         IConfigurationService ConfigurationService { get; }
 
         IConnectionFactoryService ConnectionFactoryService { get; }

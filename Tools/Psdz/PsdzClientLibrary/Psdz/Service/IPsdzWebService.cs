@@ -12,6 +12,8 @@ namespace BMW.Rheingold.Psdz
 
     public interface IPsdzWebService
     {
+        IBaureiheUtilityService BaureiheUtilityService { get; }
+
         ICertificateManagementService CertificateManagementService { get; }
 
         IConfigurationService ConfigurationService { get; }
@@ -57,17 +59,11 @@ namespace BMW.Rheingold.Psdz
         IProgrammingTokenService ProgrammingTokenService { get; }
 
         void StartIfNotRunning(string jrePath, string jvmOptions, string jarArguments);
-
         void Shutdown();
-
         void SetPsdzEventListener(IPsdzEventListener eventListener);
-
         void SetPsdzProgressListener(IPsdzProgressListener progressListener);
-
         void RemovePsdzEventListener(IPsdzEventListener eventListener);
-
         void RemovePsdzProgressListener(IPsdzProgressListener progressListener);
-
         bool IsReady();
     }
 }

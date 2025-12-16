@@ -7,6 +7,7 @@ using BMW.Rheingold.Psdz.Model.Sfa;
 using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -14,9 +15,7 @@ namespace BMW.Rheingold.Psdz
     internal class SecurityManagementService : ISecurityManagementService
     {
         private IWebCallHandler _webCallHandler;
-
         private string endpointService = "securitymanagement";
-
         public SecurityManagementService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
@@ -28,14 +27,10 @@ namespace BMW.Rheingold.Psdz
             {
                 GenerateEcuListWithIPsecBitmasksDifferingRequestModel requestBodyObject = new GenerateEcuListWithIPsecBitmasksDifferingRequestModel
                 {
-                    EcuBitmasks = ecuBms.Select((KeyValuePair<IPsdzEcuIdentifier, byte[]> kvPair) => new KeyValuePairModel<EcuIdentifierModel, byte[]>
-                    {
-                        Key = EcuIdentifierMapper.Map(kvPair.Key),
-                        Value = kvPair.Value
-                    }).ToList(),
+                    EcuBitmasks = ecuBms.Select((KeyValuePair<IPsdzEcuIdentifier, byte[]> kvPair) => new KeyValuePairModel<EcuIdentifierModel, byte[]> { Key = EcuIdentifierMapper.Map(kvPair.Key), Value = kvPair.Value }).ToList(),
                     TargetBitmask = targetBm
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuIdentifierModel>>(endpointService, "generateeculistwithipsecbitmasksdiffering", Method.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
+                return _webCallHandler.ExecuteRequest<IList<EcuIdentifierModel>>(endpointService, "generateeculistwithipsecbitmasksdiffering", HttpMethod.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
             }
             catch (Exception exception)
             {
@@ -52,7 +47,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Svt = SvtMapper.Map(svt)
                 };
-                ApiResult<TargetBitmaskModel> apiResult = _webCallHandler.ExecuteRequest<TargetBitmaskModel>(endpointService, $"generateipsectargetbitmask/{connection.Id}", Method.Post, requestBodyObject);
+                ApiResult<TargetBitmaskModel> apiResult = _webCallHandler.ExecuteRequest<TargetBitmaskModel>(endpointService, $"generateipsectargetbitmask/{connection.Id}", HttpMethod.Post, requestBodyObject);
                 return new PsdzTargetBitmask
                 {
                     FailedEcus = apiResult.Data?.FailedEcus.Select(EcuFailureResponseCtoMapper.MapCto).ToList(),
@@ -74,7 +69,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Svt = SvtMapper.Map(svt)
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuIdentifierModel>>(endpointService, "getipsecenabledecus", Method.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
+                return _webCallHandler.ExecuteRequest<IList<EcuIdentifierModel>>(endpointService, "getipsecenabledecus", HttpMethod.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
             }
             catch (Exception exception)
             {
@@ -92,7 +87,7 @@ namespace BMW.Rheingold.Psdz
                     Ecus = ecus.Select(EcuIdentifierMapper.Map).ToList(),
                     Svt = SvtMapper.Map(svt)
                 };
-                return ReadEcuUidResultMapper.Map(_webCallHandler.ExecuteRequest<ReadEcuUidResultModel>(endpointService, $"readecuuid/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return ReadEcuUidResultMapper.Map(_webCallHandler.ExecuteRequest<ReadEcuUidResultModel>(endpointService, $"readecuuid/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -110,7 +105,7 @@ namespace BMW.Rheingold.Psdz
                     Ecus = ecus.Select(EcuIdentifierMapper.Map).ToList(),
                     Svt = SvtMapper.Map(svt)
                 };
-                ApiResult<IPsecEcuBitmaskResultCtoModel> apiResult = _webCallHandler.ExecuteRequest<IPsecEcuBitmaskResultCtoModel>(endpointService, $"readipsecbitmasks/{connection.Id}", Method.Post, requestBodyObject);
+                ApiResult<IPsecEcuBitmaskResultCtoModel> apiResult = _webCallHandler.ExecuteRequest<IPsecEcuBitmaskResultCtoModel>(endpointService, $"readipsecbitmasks/{connection.Id}", HttpMethod.Post, requestBodyObject);
                 return new PsdzIPsecEcuBitmaskResultCto
                 {
                     SuccessEcus = apiResult.Data?.SuccessEcus.ToDictionary((KeyValuePairModel<EcuIdentifierModel, byte[]> x) => EcuIdentifierMapper.Map(x.Key), (KeyValuePairModel<EcuIdentifierModel, byte[]> y) => y.Value),
@@ -134,7 +129,7 @@ namespace BMW.Rheingold.Psdz
                     TargetBm = targetBm,
                     Svt = SvtMapper.Map(svt)
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"writeipsecbitmasks/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto);
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"writeipsecbitmasks/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto);
             }
             catch (Exception exception)
             {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
@@ -9,9 +10,7 @@ namespace BMW.Rheingold.Psdz
     public class VcmService : IVcmService
     {
         private readonly IWebCallHandler webCallHandler;
-
         private readonly string serviceName = "vcm";
-
         public VcmService(IWebCallHandler webCallHandler)
         {
             this.webCallHandler = webCallHandler;
@@ -21,7 +20,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return ILevelTripleMapper.Map(webCallHandler.ExecuteRequest<ILevelTripleModel>(serviceName, $"requestistufen/{connection.Id}", Method.Get).Data);
+                return ILevelTripleMapper.Map(webCallHandler.ExecuteRequest<ILevelTripleModel>(serviceName, $"requestistufen/{connection.Id}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -34,7 +33,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return ILevelTripleMapper.Map(webCallHandler.ExecuteRequest<ILevelTripleModel>(serviceName, $"requestistufenfrombackup/{connection.Id}", Method.Get).Data);
+                return ILevelTripleMapper.Map(webCallHandler.ExecuteRequest<ILevelTripleModel>(serviceName, $"requestistufenfrombackup/{connection.Id}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -47,7 +46,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return StandardFaMapper.Map(webCallHandler.ExecuteRequest<StandardFaModel>(serviceName, $"requestfa/{connection.Id}", Method.Get).Data);
+                return StandardFaMapper.Map(webCallHandler.ExecuteRequest<StandardFaModel>(serviceName, $"requestfa/{connection.Id}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -60,7 +59,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return StandardFaMapper.Map(webCallHandler.ExecuteRequest<StandardFaModel>(serviceName, $"requestfabackup/{connection.Id}", Method.Get).Data);
+                return StandardFaMapper.Map(webCallHandler.ExecuteRequest<StandardFaModel>(serviceName, $"requestfabackup/{connection.Id}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -73,7 +72,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return StandardFpMapper.Map(webCallHandler.ExecuteRequest<StandardFpModel>(serviceName, $"requestfp/{connection.Id}", Method.Get).Data);
+                return StandardFpMapper.Map(webCallHandler.ExecuteRequest<StandardFpModel>(serviceName, $"requestfp/{connection.Id}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -86,8 +85,8 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                webCallHandler.ExecuteRequest(serviceName, $"generatesvtist/{connection.Id}", Method.Post);
-                return StandardSvtMapper.Map(webCallHandler.ExecuteRequest<StandardSvtModel>(serviceName, $"requestsvtactual/{connection.Id}", Method.Get).Data);
+                webCallHandler.ExecuteRequest(serviceName, $"generatesvtist/{connection.Id}", HttpMethod.Post);
+                return StandardSvtMapper.Map(webCallHandler.ExecuteRequest<StandardSvtModel>(serviceName, $"requestsvtactual/{connection.Id}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -100,7 +99,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                ApiResult<string> apiResult = webCallHandler.ExecuteRequest<string>(serviceName, $"requestvinfrombackup/{connection.Id}", Method.Get);
+                ApiResult<string> apiResult = webCallHandler.ExecuteRequest<string>(serviceName, $"requestvinfrombackup/{connection.Id}", HttpMethod.Get);
                 return new PsdzVin
                 {
                     Value = apiResult.Data
@@ -117,7 +116,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                ApiResult<string> apiResult = webCallHandler.ExecuteRequest<string>(serviceName, $"requestvinfrommaster/{connection.Id}", Method.Get);
+                ApiResult<string> apiResult = webCallHandler.ExecuteRequest<string>(serviceName, $"requestvinfrommaster/{connection.Id}", HttpMethod.Get);
                 return new PsdzVin
                 {
                     Value = apiResult.Data
@@ -134,7 +133,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return ReadVpcFromVcmCtoMapper.Map(webCallHandler.ExecuteRequest<ReadVpcFromVcmCtoModel>(serviceName, $"requestVpcFromVcm/{connection.Id}", Method.Get).Data);
+                return ReadVpcFromVcmCtoMapper.Map(webCallHandler.ExecuteRequest<ReadVpcFromVcmCtoModel>(serviceName, $"requestVpcFromVcm/{connection.Id}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -151,7 +150,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Fa = StandardFaMapper.Map(standardFa)
                 };
-                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writefa/{connection.Id}", Method.Post, requestBodyObject));
+                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writefa/{connection.Id}", HttpMethod.Post, requestBodyObject));
             }
             catch (Exception exception)
             {
@@ -168,7 +167,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Fa = StandardFaMapper.Map(standardFa)
                 };
-                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writefatobackup/{connection.Id}", Method.Post, requestBodyObject));
+                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writefatobackup/{connection.Id}", HttpMethod.Post, requestBodyObject));
             }
             catch (Exception exception)
             {
@@ -185,7 +184,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     FpAsString = standardFp.AsString
                 };
-                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writefp/{connection.Id}", Method.Post, requestBodyObject));
+                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writefp/{connection.Id}", HttpMethod.Post, requestBodyObject));
             }
             catch (Exception exception)
             {
@@ -202,7 +201,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     FpAsString = standardFp
                 };
-                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writefp/{connection.Id}", Method.Post, requestBodyObject));
+                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writefp/{connection.Id}", HttpMethod.Post, requestBodyObject));
             }
             catch (Exception exception)
             {
@@ -221,7 +220,7 @@ namespace BMW.Rheingold.Psdz
                     IStufeLast = iStufeLast,
                     IStufeShipment = iStufeShipment
                 };
-                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writeistufen/{connection.Id}", Method.Post, requestBodyObject));
+                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writeistufen/{connection.Id}", HttpMethod.Post, requestBodyObject));
             }
             catch (Exception exception)
             {
@@ -240,7 +239,7 @@ namespace BMW.Rheingold.Psdz
                     IStufeLast = iStufeLast,
                     IStufeShipment = iStufeShipment
                 };
-                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writeistufentobackup/{connection.Id}", Method.Post, requestBodyObject));
+                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writeistufentobackup/{connection.Id}", HttpMethod.Post, requestBodyObject));
             }
             catch (Exception exception)
             {
@@ -257,7 +256,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     StandardSvt = StandardSvtMapper.Map(standardSvt)
                 };
-                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writesvt/{connection.Id}", Method.Post, requestBodyObject));
+                return GetResult(webCallHandler.ExecuteRequest<PsdzResultStateEto>(serviceName, $"writesvt/{connection.Id}", HttpMethod.Post, requestBodyObject));
             }
             catch (Exception exception)
             {
@@ -272,6 +271,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return res.Data;
             }
+
             return PsdzResultStateEto.FINISHED_WITH_ERROR;
         }
     }

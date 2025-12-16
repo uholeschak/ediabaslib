@@ -5,6 +5,7 @@ using PsdzClient.Core;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Timers;
 using RestSharp;
@@ -14,29 +15,21 @@ namespace BMW.Rheingold.Psdz
     internal class EventManagerService : IEventManagerService
     {
         private readonly IWebCallHandler webCallHandler;
-
         private readonly string endpointService = "eventmanagement";
-
         private readonly System.Timers.Timer pollingTimer = new System.Timers.Timer(1000.0);
-
         private readonly ConnectionLossEventListener connectionLossEventListener = new ConnectionLossEventListener();
-
         private readonly List<IPsdzEventListener> registeredEventListeners = new List<IPsdzEventListener>();
-
         private readonly ConcurrentQueue<IPsdzEvent> eventsToBeHandled = new ConcurrentQueue<IPsdzEvent>();
-
-        private readonly object eventFiringLock = new object();
-
-        private readonly object eventQueuingLock = new object();
-
+        private readonly object eventFiringLock = new object ();
+        private readonly object eventQueuingLock = new object ();
         private readonly string clientId;
-
         public bool Listening
         {
             get
             {
                 return pollingTimer.Enabled;
             }
+
             private set
             {
                 pollingTimer.Enabled = value;
@@ -55,7 +48,7 @@ namespace BMW.Rheingold.Psdz
             try
             {
                 Log.Debug(Log.CurrentMethod(), "Set Client-ID as Event-ID: '{0}'", clientId);
-                webCallHandler.ExecuteRequest(endpointService, "seteventid/" + clientId, Method.Post);
+                webCallHandler.ExecuteRequest(endpointService, "seteventid/" + clientId, HttpMethod.Post);
             }
             catch (Exception exception)
             {
@@ -72,11 +65,12 @@ namespace BMW.Rheingold.Psdz
                 {
                     Log.Debug(Log.CurrentMethod(), "Attempting to start listening even though listening is already ongoing. EventId: " + clientId);
                 }
+
                 EventListeningRequestModel requestBodyObject = new EventListeningRequestModel
                 {
                     PsdZEventTypes = null
                 };
-                webCallHandler.ExecuteRequest(endpointService, "startlistening/" + clientId, Method.Post, requestBodyObject);
+                webCallHandler.ExecuteRequest(endpointService, "startlistening/" + clientId, HttpMethod.Post, requestBodyObject);
                 Listening = true;
                 Log.Debug(Log.CurrentMethod(), "Commenced listening. ClientId: " + clientId);
             }
@@ -95,7 +89,8 @@ namespace BMW.Rheingold.Psdz
                 {
                     Log.Debug(Log.CurrentMethod(), "Attempting to stop listening even though listening is not started. EventId: " + clientId);
                 }
-                webCallHandler.ExecuteRequest(endpointService, "stoplistening/" + clientId, Method.Post);
+
+                webCallHandler.ExecuteRequest(endpointService, "stoplistening/" + clientId, HttpMethod.Post);
                 Listening = false;
                 Log.Debug(Log.CurrentMethod(), "Ceased listening. ClientId: " + clientId);
             }
@@ -120,6 +115,7 @@ namespace BMW.Rheingold.Psdz
                 AddEventListener(connectionLossEventListener);
                 return connectionLossEventListener;
             }
+
             return null;
         }
 
@@ -139,6 +135,7 @@ namespace BMW.Rheingold.Psdz
                 Log.Debug(Log.CurrentMethod(), "Caller attempted to add a null listener. ClientId: " + clientId);
                 return;
             }
+
             lock (registeredEventListeners)
             {
                 if (registeredEventListeners.Contains(psdzEventListener))
@@ -146,6 +143,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Debug(Log.CurrentMethod(), "Caller attempted to add a listener that was already added. ClientId: " + clientId);
                     return;
                 }
+
                 registeredEventListeners.Add(psdzEventListener);
                 Log.Debug(Log.CurrentMethod(), "Listener added. ClientId: " + clientId);
                 if (!Listening)
@@ -162,6 +160,7 @@ namespace BMW.Rheingold.Psdz
                 Log.Debug(Log.CurrentMethod(), "Caller attempted to remove a null listener. ClientId: " + clientId);
                 return;
             }
+
             lock (registeredEventListeners)
             {
                 if (!registeredEventListeners.Contains(psdzEventListener))
@@ -169,6 +168,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Debug(Log.CurrentMethod(), "Caller attempted to remove a listener, but alas 'twas not there to be removed. ClientId: " + clientId);
                     return;
                 }
+
                 registeredEventListeners.Remove(psdzEventListener);
                 Log.Debug(Log.CurrentMethod(), "Listener removed. ClientId: " + clientId);
                 if (!registeredEventListeners.Any() && Listening)
@@ -203,11 +203,13 @@ namespace BMW.Rheingold.Psdz
                         eventsToBeHandled.Enqueue(item);
                     }
                 }
+
                 if (eventToAppend != null)
                 {
                     eventsToBeHandled.Enqueue(eventToAppend);
                 }
             }
+
             FireEventHandlers();
         }
 
@@ -215,7 +217,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return webCallHandler.ExecuteRequest<IList<EventModel>>(endpointService, "getevents/" + clientId, Method.Get)?.Data?.Select(EventMapper.Map);
+                return webCallHandler.ExecuteRequest<IList<EventModel>>(endpointService, "getevents/" + clientId, HttpMethod.Get)?.Data?.Select(EventMapper.Map);
             }
             catch (Exception exception)
             {

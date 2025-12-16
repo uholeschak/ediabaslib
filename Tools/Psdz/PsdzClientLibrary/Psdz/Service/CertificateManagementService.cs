@@ -5,6 +5,7 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient.Core;
 using System;
 using System.Linq;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -12,9 +13,7 @@ namespace BMW.Rheingold.Psdz
     internal class CertificateManagementService : ICertificateManagementService
     {
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly string endpointService = "securitymanagement";
-
         public CertificateManagementService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
@@ -29,7 +28,7 @@ namespace BMW.Rheingold.Psdz
                     BindingsFromCbb = bindingsFromCbb?.Select(SecurityMemoryObjectEtoMapper.Map).ToList(),
                     BindingsFromVehicle = bindingsFromVehicle?.Select(SecurityMemoryObjectEtoMapper.Map).ToList()
                 };
-                return _webCallHandler.ExecuteRequest<SecurityMemoryObjectEtoModel[]>(endpointService, "calculatebindingdistribution", Method.Post, requestBodyObject).Data?.Select(SecurityMemoryObjectEtoMapper.Map).ToArray();
+                return _webCallHandler.ExecuteRequest<SecurityMemoryObjectEtoModel[]>(endpointService, "calculatebindingdistribution", HttpMethod.Post, requestBodyObject).Data?.Select(SecurityMemoryObjectEtoMapper.Map).ToArray();
             }
             catch (Exception exception)
             {
@@ -43,7 +42,7 @@ namespace BMW.Rheingold.Psdz
             try
             {
                 string text = (string.IsNullOrEmpty(bindingsFile) ? null : bindingsFile);
-                return FetchCertificatesBindingsAndKeypacksCalculationResultMapper.Map(_webCallHandler.ExecuteRequest<FetchCertificatesBindingsAndKeypacksCalculationResultModel>(endpointService, "fetchcertificatesbindingsandkeypacksoffline?bindingsfile=" + text, Method.Get).Data);
+                return FetchCertificatesBindingsAndKeypacksCalculationResultMapper.Map(_webCallHandler.ExecuteRequest<FetchCertificatesBindingsAndKeypacksCalculationResultModel>(endpointService, "fetchcertificatesbindingsandkeypacksoffline?bindingsfile=" + text, HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -62,7 +61,7 @@ namespace BMW.Rheingold.Psdz
                     Ecus = ecus?.Select(EcuIdentifierMapper.Map).ToList(),
                     Retries = retries
                 };
-                return FetchEcuSecCheckingResultMapper.Map(_webCallHandler.ExecuteRequest<FetchEcuSecCheckingResultModel>(endpointService, $"fetchecusecchecking/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return FetchEcuSecCheckingResultMapper.Map(_webCallHandler.ExecuteRequest<FetchEcuSecCheckingResultModel>(endpointService, $"fetchecusecchecking/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -81,7 +80,7 @@ namespace BMW.Rheingold.Psdz
                     Ecus = ecus?.Select(EcuIdentifierMapper.Map).ToList(),
                     SecurityMemoryObjectType = new SecurityMemoryObjectTypeEtoMapper().GetValue(certMemoryObjectType)
                 };
-                return ReadSecurityMemoryObjectResultMapper.Map(_webCallHandler.ExecuteRequest<ReadSecurityMemoryObjectResultModel>(endpointService, $"readsecuritymemoryobjects/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return ReadSecurityMemoryObjectResultMapper.Map(_webCallHandler.ExecuteRequest<ReadSecurityMemoryObjectResultModel>(endpointService, $"readsecuritymemoryobjects/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -103,7 +102,7 @@ namespace BMW.Rheingold.Psdz
                     Vin = VinMapper.Map(vin),
                     Svt = SvtMapper.Map(svt)
                 };
-                return _webCallHandler.ExecuteRequest<SecurityBackendRequestFailureCtoModel[]>(endpointService, "requestcertificatesbindingsandkeypacksoffline", Method.Post, requestBodyObject).Data?.Select(BindingCalculationFailureMapper.Map).ToArray();
+                return _webCallHandler.ExecuteRequest<SecurityBackendRequestFailureCtoModel[]>(endpointService, "requestcertificatesbindingsandkeypacksoffline", HttpMethod.Post, requestBodyObject).Data?.Select(BindingCalculationFailureMapper.Map).ToArray();
             }
             catch (Exception exception)
             {
@@ -122,7 +121,7 @@ namespace BMW.Rheingold.Psdz
                     Ecus = ecus?.Select(EcuIdentifierMapper.Map).ToList(),
                     Retries = retries
                 };
-                return RequestEcuSecCheckingResultMapper.Map(_webCallHandler.ExecuteRequest<RequestEcuSecCheckingResultModel>(endpointService, $"requestecusecchecking/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return RequestEcuSecCheckingResultMapper.Map(_webCallHandler.ExecuteRequest<RequestEcuSecCheckingResultModel>(endpointService, $"requestecusecchecking/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -140,7 +139,7 @@ namespace BMW.Rheingold.Psdz
                     SvtIst = SvtMapper.Map(svtIst),
                     Certificates = certificates?.Select(SecurityMemoryObjectEtoMapper.Map).ToList()
                 };
-                return _webCallHandler.ExecuteRequest<EcuFailureResponseCtoModel[]>(endpointService, $"writesecuritymemoryobjects/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.Map).ToArray();
+                return _webCallHandler.ExecuteRequest<EcuFailureResponseCtoModel[]>(endpointService, $"writesecuritymemoryobjects/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.Map).ToArray();
             }
             catch (Exception exception)
             {

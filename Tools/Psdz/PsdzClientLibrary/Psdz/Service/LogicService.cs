@@ -11,6 +11,7 @@ using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -18,9 +19,7 @@ namespace BMW.Rheingold.Psdz
     internal class LogicService : ILogicService
     {
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly string endpointService = "logic";
-
         public LogicService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
@@ -36,7 +35,7 @@ namespace BMW.Rheingold.Psdz
                     SwtApplicationIdWhiteList = swtApplicationIdsWhitelist?.Select(SwtApplicationIdMapper.Map).ToList(),
                     SwtApplicationIdBlackList = swtApplicationIdsBlacklist?.Select(SwtApplicationIdMapper.Map).ToList()
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "deleteswttransactions", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "deleteswttransactions", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -54,7 +53,7 @@ namespace BMW.Rheingold.Psdz
                     Baureihenverbund = baureihenverbund,
                     Svt = StandardSvtMapper.Map(svt)
                 };
-                return StandardSvtMapper.Map(_webCallHandler.ExecuteRequest<StandardSvtModel>(endpointService, "fillbntnnamesformainseries", Method.Post, requestBodyObject).Data);
+                return StandardSvtMapper.Map(_webCallHandler.ExecuteRequest<StandardSvtModel>(endpointService, "fillbntnnamesformainseries", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -72,7 +71,7 @@ namespace BMW.Rheingold.Psdz
                     Tal = TalMapper.Map(tal),
                     SwtApplications = swtApplications?.Select(SwtApplicationMapper.Map).ToList()
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "fillfsc", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "fillfsc", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -90,7 +89,7 @@ namespace BMW.Rheingold.Psdz
                     Tal = TalMapper.Map(tal),
                     TalFilter = TalFilterMapper.Map(talFilter)
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "filtertal", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "filtertal", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -109,7 +108,7 @@ namespace BMW.Rheingold.Psdz
                     Svt = SvtMapper.Map(svtActual),
                     TalFilter = TalFilterMapper.Map(talFilter)
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "generatefcfntal", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "generatefcfntal", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -126,7 +125,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Fa = FaMapper.Map(fa)
                 };
-                return FpMapper.Map(_webCallHandler.ExecuteRequest<FpModel>(endpointService, "generatefp", Method.Post, requestBodyObject).Data);
+                return FpMapper.Map(_webCallHandler.ExecuteRequest<FpModel>(endpointService, "generatefp", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -144,7 +143,7 @@ namespace BMW.Rheingold.Psdz
                     Baureihe = baureihe,
                     Fp = FpMapper.Map(fp)
                 };
-                return FpMapper.Map(_webCallHandler.ExecuteRequest<FpModel>(endpointService, "generatefpinterpretation", Method.Post, requestBodyObject).Data);
+                return FpMapper.Map(_webCallHandler.ExecuteRequest<FpModel>(endpointService, "generatefpinterpretation", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -162,7 +161,7 @@ namespace BMW.Rheingold.Psdz
                     SvtCurrent = null,
                     PsdzTokenPack = tokenPack?.Select(SecureTokenEtoMapper.Map).ToList()
                 };
-                return SollSfaCtoMapper.Map(_webCallHandler.ExecuteRequest<SollSfaCtoModel>(endpointService, "generatesfasollstand", Method.Post, requestBodyObject).Data);
+                return SollSfaCtoMapper.Map(_webCallHandler.ExecuteRequest<SollSfaCtoModel>(endpointService, "generatesfasollstand", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -184,7 +183,7 @@ namespace BMW.Rheingold.Psdz
                     TalFilter = TalFilterMapper.Map(talFilter),
                     FaultTolerant = false
                 };
-                return SollverbauungMapper.Map(_webCallHandler.ExecuteRequest<SollverbauungModel>(endpointService, $"generatesollverbauunggesamtflash/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return SollverbauungMapper.Map(_webCallHandler.ExecuteRequest<SollverbauungModel>(endpointService, $"generatesollverbauunggesamtflash/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -206,7 +205,7 @@ namespace BMW.Rheingold.Psdz
                     TalFilter = TalFilterMapper.Map(talFilter),
                     FaultTolerant = true
                 };
-                return SollverbauungMapper.Map(_webCallHandler.ExecuteRequest<SollverbauungModel>(endpointService, "generatesollverbauunggesamtflashwithmatcher", Method.Post, requestBodyObject).Data);
+                return SollverbauungMapper.Map(_webCallHandler.ExecuteRequest<SollverbauungModel>(endpointService, "generatesollverbauunggesamtflashwithmatcher", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -232,7 +231,7 @@ namespace BMW.Rheingold.Psdz
                     TalFilter = TalFilterMapper.Map(talFilter),
                     VinFromFa = ((vinFromFA == "") ? null : vinFromFA)
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, $"generatetal/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, $"generatetal/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -254,7 +253,7 @@ namespace BMW.Rheingold.Psdz
                     VinFromFa = ((vinFromFA == "") ? null : vinFromFA),
                     TalGenerationSettings = TalGenerationSettingsMapper.Map(config)
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, $"generateTalWithSettings/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, $"generateTalWithSettings/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -279,7 +278,7 @@ namespace BMW.Rheingold.Psdz
                     FeatureIdBlackList = featureIdBlackList?.Select(FeatureIdCtoMapper.Map).ToList(),
                     SupressCreationOfSfaWriteTA = suppressCreationOfSfaWriteTA
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "generatetalforsfa", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "generatetalforsfa", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -304,7 +303,7 @@ namespace BMW.Rheingold.Psdz
                     FeatureIdBlackList = featureIdBlackList?.Select(FeatureIdCtoMapper.Map).ToList(),
                     SuppressCreationOfSfaWriteTA = suppressCreationOfSfaWriteTA
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "generatetalforsfaonly", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "generatetalforsfaonly", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -321,7 +320,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Tal = TalMapper.Map(tal)
                 };
-                return ProgrammingProtectionDataCtoMapper.Map(_webCallHandler.ExecuteRequest<ProgrammingProtectionDataCtoModel>(endpointService, $"generateswelistforprogrammingprotection/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return ProgrammingProtectionDataCtoMapper.Map(_webCallHandler.ExecuteRequest<ProgrammingProtectionDataCtoModel>(endpointService, $"generateswelistforprogrammingprotection/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -338,7 +337,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Fa = FaMapper.Map(fa)
                 };
-                IEnumerable<IPsdzIstufe> listOfIStufe = _webCallHandler.ExecuteRequest<List<ILevelModel>>(endpointService, "getpossibleintegrationlevel", Method.Post, requestBodyObject).Data?.Select(ILevelMapper.Map);
+                IEnumerable<IPsdzIstufe> listOfIStufe = _webCallHandler.ExecuteRequest<List<ILevelModel>>(endpointService, "getpossibleintegrationlevel", HttpMethod.Post, requestBodyObject).Data?.Select(ILevelMapper.Map);
                 return OrderIntegrationLevelsAscending(listOfIStufe);
             }
             catch (Exception exception)
@@ -359,7 +358,7 @@ namespace BMW.Rheingold.Psdz
                     SwtAction = SwtActionMapper.Map(swtAction),
                     BackupPath = backupDataPath
                 };
-                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, $"requesthddupdatetal/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, $"requesthddupdatetal/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -376,7 +375,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     SvtActual = SvtMapper.Map(svtActual)
                 };
-                return _webCallHandler.ExecuteRequest<RequestRelevantObdDataResponseModel>(endpointService, $"requestrelevantobddata/{connection.Id}", Method.Post, requestBodyObject).Data?.EcuToObdMap?.ToDictionary((KeyValuePairModel<EcuIdentifierModel, ObdDataModel> map) => EcuIdentifierMapper.Map(map.Key), (KeyValuePairModel<EcuIdentifierModel, ObdDataModel> map) => ObdDataMapper.Map(map.Value));
+                return _webCallHandler.ExecuteRequest<RequestRelevantObdDataResponseModel>(endpointService, $"requestrelevantobddata/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.EcuToObdMap?.ToDictionary((KeyValuePairModel<EcuIdentifierModel, ObdDataModel> map) => EcuIdentifierMapper.Map(map.Key), (KeyValuePairModel<EcuIdentifierModel, ObdDataModel> map) => ObdDataMapper.Map(map.Value));
             }
             catch (Exception exception)
             {
@@ -394,7 +393,7 @@ namespace BMW.Rheingold.Psdz
                     Tal = TalMapper.Map(tal),
                     IgnoreSwDelete = ignoreSwDelete
                 };
-                return _webCallHandler.ExecuteRequest<IList<SgbmIdModel>>(endpointService, "requestswelist", Method.Post, requestBodyObject).Data?.Select(SgbmIdMapper.Map);
+                return _webCallHandler.ExecuteRequest<IList<SgbmIdModel>>(endpointService, "requestswelist", HttpMethod.Post, requestBodyObject).Data?.Select(SgbmIdMapper.Map);
             }
             catch (Exception exception)
             {

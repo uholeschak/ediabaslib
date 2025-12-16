@@ -8,6 +8,7 @@ using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -15,9 +16,7 @@ namespace BMW.Rheingold.Psdz
     internal class SecureCodingService : ISecureCodingService
     {
         private readonly IWebCallHandler _webCallHandler;
-
         private string endpointService = "securecoding";
-
         public SecureCodingService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
@@ -33,7 +32,7 @@ namespace BMW.Rheingold.Psdz
                     NcdDirectory = ncdDirectory,
                     Vin = VinMapper.Map(vin)
                 };
-                return CheckNcdResultEtoMapper.Map(_webCallHandler.ExecuteRequest<CheckNcdResultEtoModel>(endpointService, "checkncdavailabilityforgivental", Method.Post, requestBodyObject).Data);
+                return CheckNcdResultEtoMapper.Map(_webCallHandler.ExecuteRequest<CheckNcdResultEtoModel>(endpointService, "checkncdavailabilityforgivental", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -53,7 +52,7 @@ namespace BMW.Rheingold.Psdz
                     CafdSgbmId = SgbmIdMapper.Map(cafdSgbmid),
                     BtldSgbmNumber = btldSgbmNumber
                 };
-                return NcdMapper.Map(_webCallHandler.ExecuteRequest<NcdModel>(endpointService, "readncdfromfile", Method.Post, requestBodyObject).Data);
+                return NcdMapper.Map(_webCallHandler.ExecuteRequest<NcdModel>(endpointService, "readncdfromfile", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -75,7 +74,7 @@ namespace BMW.Rheingold.Psdz
                     Fa = FaMapper.Map(fa),
                     Vpc = vpc
                 };
-                return _webCallHandler.ExecuteRequest<IList<SecurityBackendRequestFailureCtoModel>>(endpointService, "requestcalculationncdandsignatureoffline", Method.Post, requestBodyObject).Data?.Select(SecurityBackendRequestFailureCtoMapper.Map).ToList();
+                return _webCallHandler.ExecuteRequest<IList<SecurityBackendRequestFailureCtoModel>>(endpointService, "requestcalculationncdandsignatureoffline", HttpMethod.Post, requestBodyObject).Data?.Select(SecurityBackendRequestFailureCtoMapper.Map).ToList();
             }
             catch (Exception exception)
             {

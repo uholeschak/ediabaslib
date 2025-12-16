@@ -54,6 +54,8 @@ namespace BMW.Rheingold.Psdz.Client
 
         private readonly KdsServiceClient kdsService;
 
+        public IBaureiheUtilityService BaureiheUtilityService => null;
+
         public IConfigurationService ConfigurationService => configurationService;
 
         public IConnectionFactoryService ConnectionFactoryService => connectionFactoryService;

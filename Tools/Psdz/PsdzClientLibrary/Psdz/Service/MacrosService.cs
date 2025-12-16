@@ -7,6 +7,7 @@ using BMW.Rheingold.Psdz.Model.Tal;
 using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -14,9 +15,7 @@ namespace BMW.Rheingold.Psdz
     internal class MacrosService : IMacrosService
     {
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly string endpointService = "macros";
-
         public MacrosService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
@@ -30,7 +29,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     SgbmIdList = sgbmIds?.Select(SgbmIdMapper.Map).ToList()
                 };
-                return _webCallHandler.ExecuteRequest<List<SgbmIdModel>>(endpointService, "checkswes", Method.Post, requestBodyObject).Data?.Select(SgbmIdMapper.Map);
+                return _webCallHandler.ExecuteRequest<List<SgbmIdModel>>(endpointService, "checkswes", HttpMethod.Post, requestBodyObject).Data?.Select(SgbmIdMapper.Map);
             }
             catch (Exception exception)
             {
@@ -49,7 +48,7 @@ namespace BMW.Rheingold.Psdz
                 getInstalledECUListRequestModel.DiagAddressModels = new DiagAddressModel[0];
                 getInstalledECUListRequestModel.Blacklisted = true;
                 GetInstalledECUListRequestModel requestBodyObject = getInstalledECUListRequestModel;
-                return _webCallHandler.ExecuteRequest<List<EcuIdentifierModel>>(endpointService, "getinstalledeculist", Method.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
+                return _webCallHandler.ExecuteRequest<List<EcuIdentifierModel>>(endpointService, "getinstalledeculist", HttpMethod.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
             }
             catch (Exception exception)
             {
@@ -68,7 +67,7 @@ namespace BMW.Rheingold.Psdz
                 getInstalledECUListRequestModel.DiagAddressModels = new DiagAddressModel[0];
                 getInstalledECUListRequestModel.Blacklisted = true;
                 GetInstalledECUListRequestModel requestBodyObject = getInstalledECUListRequestModel;
-                return _webCallHandler.ExecuteRequest<List<EcuIdentifierModel>>(endpointService, $"getinstalledeculist/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
+                return _webCallHandler.ExecuteRequest<List<EcuIdentifierModel>>(endpointService, $"getinstalledeculist/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuIdentifierMapper.Map);
             }
             catch (Exception exception)
             {
@@ -90,7 +89,7 @@ namespace BMW.Rheingold.Psdz
                     Vin = VinMapper.Map(vin),
                     TalExecutionConfig = TalExecutionConfigMapper.Map(talExecutionSettings)
                 };
-                return _webCallHandler.ExecuteRequest<string>(endpointService, $"executetal/{connection.Id}", Method.Post, requestBodyObject).Data;
+                return _webCallHandler.ExecuteRequest<string>(endpointService, $"executetal/{connection.Id}", HttpMethod.Post, requestBodyObject).Data;
             }
             catch (Exception exception)
             {

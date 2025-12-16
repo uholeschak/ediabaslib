@@ -15,6 +15,7 @@ namespace BMW.Rheingold.Programming
         private PsdzLoglevel? _psdzLoglevel = PsdzLoglevel.FINE;
         private IPsdzObjectBuilder _objectBuilder;
         private IPsdzWebService _psdzWebService { get; }
+        public IBaureiheUtilityService BaureiheUtilityService => _psdzWebService.BaureiheUtilityService;
         public ICertificateManagementService CertificateManagementService => _psdzWebService.CertificateManagementService;
         public IConfigurationService ConfigurationService => _psdzWebService.ConfigurationService;
         public IConnectionFactoryService ConnectionFactoryService => _psdzWebService.ConnectionFactoryService;

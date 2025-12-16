@@ -8,6 +8,7 @@ using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -15,21 +16,13 @@ namespace BMW.Rheingold.Psdz
     internal class ObjectBuilderService : IObjectBuilderService
     {
         private static TalFilterActionMapper talFilterActionMapper = new TalFilterActionMapper();
-
         private static TaCategoryTypeMapper taCategoryTypeMapper = new TaCategoryTypeMapper();
-
         private static ProtocolMapper protocolMapper = new ProtocolMapper();
-
         private readonly IWebCallHandler webCallHandler;
-
         private readonly string faControllerName = "fa";
-
         private readonly string swtActionControllerName = "swtaction";
-
         private readonly string talControllerName = "tal";
-
         private readonly string talFilterControllerName = "talfilter";
-
         public ObjectBuilderService(IWebCallHandler webCallHandler)
         {
             this.webCallHandler = webCallHandler;
@@ -43,7 +36,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Fa = FaMapper.Map(faInput)
                 };
-                return FaMapper.Map(webCallHandler.ExecuteRequest<FaModel>(faControllerName, "build", Method.Post, requestBodyObject).Data);
+                return FaMapper.Map(webCallHandler.ExecuteRequest<FaModel>(faControllerName, "build", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -60,7 +53,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Xml = xmlFa
                 };
-                return FaMapper.Map(webCallHandler.ExecuteRequest<FaModel>(faControllerName, "buildfromxml", Method.Post, requestBodyObject).Data);
+                return FaMapper.Map(webCallHandler.ExecuteRequest<FaModel>(faControllerName, "buildfromxml", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -77,7 +70,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Xml = xml
                 };
-                return SwtActionMapper.Map(webCallHandler.ExecuteRequest<SwtActionModel>(swtActionControllerName, "buildfromxml", Method.Post, requestBodyObject).Data);
+                return SwtActionMapper.Map(webCallHandler.ExecuteRequest<SwtActionModel>(swtActionControllerName, "buildfromxml", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -90,7 +83,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return TalMapper.Map(webCallHandler.ExecuteRequest<TalModel>(talControllerName, "createempty", Method.Get).Data);
+                return TalMapper.Map(webCallHandler.ExecuteRequest<TalModel>(talControllerName, "createempty", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -107,7 +100,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Xml = xmlTal
                 };
-                return TalMapper.Map(webCallHandler.ExecuteRequest<TalModel>(talControllerName, "buildfromxml", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(webCallHandler.ExecuteRequest<TalModel>(talControllerName, "buildfromxml", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -126,7 +119,7 @@ namespace BMW.Rheingold.Psdz
                     InstalledEcuListIst = installedEcuListIst.Select(EcuIdentifierMapper.Map).ToList(),
                     InstalledEcuListSoll = installedEcuListSoll.Select(EcuIdentifierMapper.Map).ToList()
                 };
-                return TalMapper.Map(webCallHandler.ExecuteRequest<TalModel>(talControllerName, "updateecus", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(webCallHandler.ExecuteRequest<TalModel>(talControllerName, "updateecus", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -145,7 +138,7 @@ namespace BMW.Rheingold.Psdz
                     Ecu = EcuIdentifierMapper.Map(ecu),
                     Protocol = protocolMapper.GetValue(psdzProtocol)
                 };
-                return TalMapper.Map(webCallHandler.ExecuteRequest<TalModel>(talControllerName, "setpreferredflashprotocol", Method.Post, requestBodyObject).Data);
+                return TalMapper.Map(webCallHandler.ExecuteRequest<TalModel>(talControllerName, "setpreferredflashprotocol", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -158,7 +151,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "createempty", Method.Get).Data);
+                return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "createempty", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -177,7 +170,7 @@ namespace BMW.Rheingold.Psdz
                     TalfilterAction = talFilterActionMapper.GetValue(talFilterAction),
                     InputTalFilter = TalFilterMapper.Map(filter)
                 };
-                return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "defineforallecus", Method.Post, requestBodyObject).Data);
+                return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "defineforallecus", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -195,6 +188,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     smacFilter2 = smacFilter.ToDictionary((KeyValuePair<string, PsdzTalFilterAction> x) => x.Key, (KeyValuePair<string, PsdzTalFilterAction> y) => talFilterActionMapper.GetValue(y.Value));
                 }
+
                 DefineFilterForSelectedEcusRequestModel requestBodyObject = new DefineFilterForSelectedEcusRequestModel
                 {
                     TaCategories = psdzTaCategories.Select(taCategoryTypeMapper.GetValue).ToList(),
@@ -203,7 +197,7 @@ namespace BMW.Rheingold.Psdz
                     InputTalFilter = TalFilterMapper.Map(filter),
                     SmacFilter = smacFilter2
                 };
-                return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "defineforselectedecus", Method.Post, requestBodyObject).Data);
+                return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "defineforselectedecus", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -222,14 +216,9 @@ namespace BMW.Rheingold.Psdz
                     Filter = TalFilterMapper.Map(filter),
                     TalfilterAction = talFilterActionMapper.GetValue(talFilterAction),
                     TaCategory = taCategoryTypeMapper.GetValue(category),
-                    SweFilter = sweTaFilters.Select((IPsdzSweTalFilterOptions x) => new SweTalFilterOptionsModel
-                    {
-                        ProcessClass = x.ProcessClass,
-                        Ta = TaMapper.Map(x.Ta),
-                        SweFilter = x.SweFilter.ToDictionary((KeyValuePair<string, PsdzTalFilterAction> key) => key.Key, (KeyValuePair<string, PsdzTalFilterAction> val) => talFilterActionMapper.GetValue(val.Value))
-                    }).ToList()
+                    SweFilter = sweTaFilters.Select((IPsdzSweTalFilterOptions x) => new SweTalFilterOptionsModel { ProcessClass = x.ProcessClass, Ta = TaMapper.Map(x.Ta), SweFilter = x.SweFilter.ToDictionary((KeyValuePair<string, PsdzTalFilterAction> key) => key.Key, (KeyValuePair<string, PsdzTalFilterAction> val) => talFilterActionMapper.GetValue(val.Value)) }).ToList()
                 };
-                return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "definefilterforswes", Method.Post, requestBodyObject).Data);
+                return TalFilterMapper.Map(webCallHandler.ExecuteRequest<TalFilterModel>(talFilterControllerName, "definefilterforswes", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {

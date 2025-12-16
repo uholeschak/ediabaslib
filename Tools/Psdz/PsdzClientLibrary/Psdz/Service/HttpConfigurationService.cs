@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using BMW.Rheingold.Psdz;
 using PsdzClient.Core;
 using RestSharp;
@@ -8,9 +9,7 @@ namespace BMW.Rheingold.Psdz
     internal class HttpConfigurationService : IHttpConfigurationService
     {
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly string _endpointService = "httpconfiguration";
-
         public HttpConfigurationService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
@@ -20,7 +19,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<string>(_endpointService, "gethttpserveraddress", Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<string>(_endpointService, "gethttpserveraddress", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -33,7 +32,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<string>(_endpointService, "getnetworkendpointset", Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<string>(_endpointService, "getnetworkendpointset", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -50,7 +49,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     ServerAddress = address
                 };
-                _webCallHandler.ExecuteRequest(_endpointService, "sethttpserveraddress", Method.Post, requestBodyObject);
+                _webCallHandler.ExecuteRequest(_endpointService, "sethttpserveraddress", HttpMethod.Post, requestBodyObject);
             }
             catch (Exception exception)
             {
@@ -63,7 +62,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<int>(_endpointService, "gethttpserverport", Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<int>(_endpointService, "gethttpserverport", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -80,7 +79,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     ServerPort = port
                 };
-                _webCallHandler.ExecuteRequest(_endpointService, "sethttpserverport", Method.Post, requestBodyObject);
+                _webCallHandler.ExecuteRequest(_endpointService, "sethttpserverport", HttpMethod.Post, requestBodyObject);
             }
             catch (Exception exception)
             {

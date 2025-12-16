@@ -21,9 +21,13 @@ namespace BMW.Rheingold.Psdz
         private readonly PsdzProgressListenerDispatcher progressListenerDispatcher = new PsdzProgressListenerDispatcher();
         private readonly ManualResetEvent _terminationSignal = new ManualResetEvent(initialState: false);
         private readonly Func<bool> _isPsdzInitialized;
+        private const int DEFAULT_HTTP_SERVER_PORT_MIN = 12300;
+        private const int DEFAULT_HTTP_SERVER_PORT_MAX = 12400;
+        private const int HTTP_SERVER_FALLBACK_PORT = 8888;
         private IWebCallHandler webCallHandler;
         private PsdzWebApiLifeCycleController lifeCycleController;
         private Process psdzWebserviceProcess;
+        public IBaureiheUtilityService BaureiheUtilityService { get; private set; }
         public ICertificateManagementService CertificateManagementService { get; private set; }
         public IConfigurationService ConfigurationService { get; private set; }
         public IConnectionFactoryService ConnectionFactoryService { get; private set; }
@@ -437,6 +441,7 @@ namespace BMW.Rheingold.Psdz
         private void InitServices()
         {
             string clientId = Guid.NewGuid().ToString();
+            BaureiheUtilityService = new BaureiheUtilityService(webCallHandler);
             HttpServerService = new HttpServerService(webCallHandler);
             HttpConfigurationService = new HttpConfigurationService(webCallHandler);
             ConnectionFactoryService = new ConnectionFactoryService(webCallHandler);
@@ -564,7 +569,7 @@ namespace BMW.Rheingold.Psdz
 
         private void SetPortForPsdzHttpServer()
         {
-            int num = ((!ConfigSettings.GetFeatureEnabledStatus("UseReducedPortRangeForMirror").IsActive) ? NetUtils.GetFirstFreePort(12300, 12400) : NetUtils.GetFirstFreePort(12304, 12319));
+            int num = DetermineHttpPort();
             if (num != -1)
             {
                 Log.Info(Log.CurrentMethod(), $"Set the HTTP server port to {num}");
@@ -574,6 +579,40 @@ namespace BMW.Rheingold.Psdz
             {
                 Log.Info(Log.CurrentMethod(), "The HTTP server port is not set");
             }
+        }
+
+        private int DetermineHttpPort()
+        {
+            int? forcedPortFromRegKey = GetForcedPortFromRegKey("BMW.Rheingold.Programming.PsdzProg.HttpServerPort.Min");
+            int? forcedPortFromRegKey2 = GetForcedPortFromRegKey("BMW.Rheingold.Programming.PsdzProg.HttpServerPort.Max");
+            if (forcedPortFromRegKey.HasValue || forcedPortFromRegKey2.HasValue)
+            {
+                int minPort = forcedPortFromRegKey ?? 12300;
+                int maxPort = forcedPortFromRegKey2 ?? 12400;
+                Log.Info(Log.CurrentMethod(), "Determining Port via Registry Keys...");
+                return NetUtils.GetFirstFreePort(minPort, maxPort, 8888);
+            }
+
+            if (ConfigSettings.GetFeatureEnabledStatus("UseReducedPortRangeForMirror").IsActive)
+            {
+                Log.Info(Log.CurrentMethod(), "Determining Port via Generic Feature Switch...");
+                return NetUtils.GetFirstFreePort(12304, 12319, 8888);
+            }
+
+            Log.Info(Log.CurrentMethod(), "Determining Port via Default Values...");
+            return NetUtils.GetFirstFreePort(12300, 12400, 8888);
+        }
+
+        private int? GetForcedPortFromRegKey(string regKey)
+        {
+            int configint = ConfigSettings.getConfigint(regKey, -1);
+            int? result = null;
+            if (configint > 0)
+            {
+                result = configint;
+            }
+
+            return result;
         }
 
         private void SetPsdzLogLevel()

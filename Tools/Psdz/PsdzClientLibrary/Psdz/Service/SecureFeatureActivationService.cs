@@ -6,6 +6,7 @@ using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -13,24 +14,22 @@ namespace BMW.Rheingold.Psdz
     internal class SecureFeatureActivationService : ISecureFeatureActivationService
     {
         private readonly string endpointService = "semsfa";
-
         private readonly IWebCallHandler _webCallHandler;
-
         public SecureFeatureActivationService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
         }
 
-        public IEnumerable<IPsdzEcuFailureResponseCto> DeleteSecureToken(IPsdzConnection connection, IPsdzEcuIdentifier ecuIdentifier, IPsdzFeatureIdCto featureId)
+        public IEnumerable<IPsdzEcuFailureResponseCto> DeleteSecureToken(IPsdzConnection connection, IPsdzEcuIdentifier psdzEcuIdentifier, IPsdzFeatureIdCto psdzFeatureId)
         {
             try
             {
                 DeleteSecureTokenRequestModel requestBodyObject = new DeleteSecureTokenRequestModel
                 {
-                    EcuIdentifier = EcuIdentifierMapper.Map(ecuIdentifier),
-                    FeatureId = FeatureIdCtoMapper.Map(featureId)
+                    EcuIdentifier = EcuIdentifierMapper.Map(psdzEcuIdentifier),
+                    FeatureId = FeatureIdCtoMapper.Map(psdzFeatureId)
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"deletesecuretoken/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"deletesecuretoken/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
             }
             catch (Exception exception)
             {
@@ -47,7 +46,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Svt = SvtMapper.Map(svt)
                 };
-                return DiscoverFeatureStatusResultCtoMapper.Map(_webCallHandler.ExecuteRequest<DiscoverFeatureStatusResultCtoModel>(endpointService, $"discoverallfeaturestatus/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return DiscoverFeatureStatusResultCtoMapper.Map(_webCallHandler.ExecuteRequest<DiscoverFeatureStatusResultCtoModel>(endpointService, $"discoverallfeaturestatus/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -65,7 +64,7 @@ namespace BMW.Rheingold.Psdz
                     SecureTokenFilePath = secureTokenFilePath,
                     Svt = SvtMapper.Map(svtIst)
                 };
-                return FetchCalculationSecureTokensResultCtoMapper.Map(_webCallHandler.ExecuteRequest<FetchCalculationSecureTokensResultCtoModel>(endpointService, "fetchcalculationofsecuretokensoffline", Method.Post, requestBodyObject).Data);
+                return FetchCalculationSecureTokensResultCtoMapper.Map(_webCallHandler.ExecuteRequest<FetchCalculationSecureTokensResultCtoModel>(endpointService, "fetchcalculationofsecuretokensoffline", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -82,7 +81,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     SecurityBackendRequestId = SecurityBackendRequestIdEtoMapper.Map(securityBackendRequestIdEto)
                 };
-                return FetchCalculationSecureTokensResultCtoMapper.Map(_webCallHandler.ExecuteRequest<FetchCalculationSecureTokensResultCtoModel>(endpointService, "fetchresultofsecuretokencalculation", Method.Post, requestBodyObject).Data);
+                return FetchCalculationSecureTokensResultCtoMapper.Map(_webCallHandler.ExecuteRequest<FetchCalculationSecureTokensResultCtoModel>(endpointService, "fetchresultofsecuretokencalculation", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -100,7 +99,7 @@ namespace BMW.Rheingold.Psdz
                     Svt = SvtMapper.Map(svt),
                     WhitelistedEcus = whitelistedECUs?.Select(EcuIdentifierMapper.Map).ToList()
                 };
-                return ReadLcsResultCtoMapper.Map(_webCallHandler.ExecuteRequest<ReadLcsResultCtoModel>(endpointService, $"readlcs/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return ReadLcsResultCtoMapper.Map(_webCallHandler.ExecuteRequest<ReadLcsResultCtoModel>(endpointService, $"readlcs/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -118,7 +117,7 @@ namespace BMW.Rheingold.Psdz
                     Ecus = ecus?.Select(EcuIdentifierMapper.Map).ToList(),
                     Svt = SvtMapper.Map(svt)
                 };
-                return ReadSecureEcuModeResultCtoMapper.Map(_webCallHandler.ExecuteRequest<ReadSecureEcuModeResultCtoModel>(endpointService, $"readsecureecumode/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return ReadSecureEcuModeResultCtoMapper.Map(_webCallHandler.ExecuteRequest<ReadSecureEcuModeResultCtoModel>(endpointService, $"readsecureecumode/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -140,7 +139,7 @@ namespace BMW.Rheingold.Psdz
                     Retries = retries,
                     TimeBetweenRetries = timeBetweenRetries
                 };
-                return ReadStatusResultCtoMapper.Map(_webCallHandler.ExecuteRequest<ReadStatusResultCtoModel>(endpointService, $"readstatus/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return ReadStatusResultCtoMapper.Map(_webCallHandler.ExecuteRequest<ReadStatusResultCtoModel>(endpointService, $"readstatus/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -162,7 +161,7 @@ namespace BMW.Rheingold.Psdz
                     Vin = VinMapper.Map(vin),
                     SecureTokenRequest = SecureTokenRequestCtoMapper.Map(secureTokenRequest)
                 };
-                return _webCallHandler.ExecuteRequest<IList<SecurityBackendRequestFailureCtoModel>>(endpointService, "requestdirectsecuretokenspackageoffline", Method.Post, requestBodyObject).Data?.Select(SecurityBackendRequestFailureCtoMapper.Map).ToList();
+                return _webCallHandler.ExecuteRequest<IList<SecurityBackendRequestFailureCtoModel>>(endpointService, "requestdirectsecuretokenspackageoffline", HttpMethod.Post, requestBodyObject).Data?.Select(SecurityBackendRequestFailureCtoMapper.Map).ToList();
             }
             catch (Exception exception)
             {
@@ -186,7 +185,7 @@ namespace BMW.Rheingold.Psdz
                     SvtIst = SvtMapper.Map(svtIst),
                     RebuildTokens = rebuildTokens
                 };
-                return SecurityBackendRequestIdEtoMapper.Map(_webCallHandler.ExecuteRequest<SecurityBackendRequestIdEtoModel>(endpointService, "requestnewestsecuretokenpackageforvehicle", Method.Post, requestBodyObject).Data);
+                return SecurityBackendRequestIdEtoMapper.Map(_webCallHandler.ExecuteRequest<SecurityBackendRequestIdEtoModel>(endpointService, "requestnewestsecuretokenpackageforvehicle", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -207,7 +206,7 @@ namespace BMW.Rheingold.Psdz
                     Vin = VinMapper.Map(vin),
                     RebuildTokens = rebuildTokens
                 };
-                return _webCallHandler.ExecuteRequest<IList<SecurityBackendRequestFailureCtoModel>>(endpointService, "requestnewestsecuretokenpackageforvehicleoffline", Method.Post, requestBodyObject).Data?.Select(SecurityBackendRequestFailureCtoMapper.Map).ToList();
+                return _webCallHandler.ExecuteRequest<IList<SecurityBackendRequestFailureCtoModel>>(endpointService, "requestnewestsecuretokenpackageforvehicleoffline", HttpMethod.Post, requestBodyObject).Data?.Select(SecurityBackendRequestFailureCtoMapper.Map).ToList();
             }
             catch (Exception exception)
             {
@@ -225,7 +224,7 @@ namespace BMW.Rheingold.Psdz
                     EcuLcsValues = lcsValues?.Select(EcuLcsValueCtoMapper.Map).ToList(),
                     Svt = SvtMapper.Map(svt)
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"setlcs/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"setlcs/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
             }
             catch (Exception exception)
             {
@@ -243,7 +242,7 @@ namespace BMW.Rheingold.Psdz
                     Ecus = ecus?.Select(EcuIdentifierMapper.Map).ToList(),
                     Svt = SvtMapper.Map(svt)
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"switchtosecureecumodefield/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"switchtosecureecumodefield/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
             }
             catch (Exception exception)
             {
@@ -261,7 +260,7 @@ namespace BMW.Rheingold.Psdz
                     SecureTokens = secureTokens?.Select(SecureTokenEtoMapper.Map).ToList(),
                     Svt = SvtMapper.Map(svt)
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"writesecuretoken/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"writesecuretoken/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
             }
             catch (Exception exception)
             {
@@ -285,7 +284,7 @@ namespace BMW.Rheingold.Psdz
                     Svt = SvtMapper.Map(svt),
                     SecureTokenRequest = SecureTokenRequestCtoMapper.Map(secureTokenRequest)
                 };
-                return SecurityBackendRequestIdEtoMapper.Map(_webCallHandler.ExecuteRequest<SecurityBackendRequestIdEtoModel>(endpointService, "requestdirectsecuretokenspackagewithoutcrlfiles", Method.Post, requestBodyObject).Data);
+                return SecurityBackendRequestIdEtoMapper.Map(_webCallHandler.ExecuteRequest<SecurityBackendRequestIdEtoModel>(endpointService, "requestdirectsecuretokenspackagewithoutcrlfiles", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -309,7 +308,7 @@ namespace BMW.Rheingold.Psdz
                     Svt = SvtMapper.Map(svt),
                     SecureTokenRequest = SecureTokenRequestCtoMapper.Map(secureTokenRequest)
                 };
-                return SecurityBackendRequestIdEtoMapper.Map(_webCallHandler.ExecuteRequest<SecurityBackendRequestIdEtoModel>(endpointService, "requestdirectsecuretokenspackagewithoutcrlfileswithreturntoken", Method.Post, requestBodyObject).Data);
+                return SecurityBackendRequestIdEtoMapper.Map(_webCallHandler.ExecuteRequest<SecurityBackendRequestIdEtoModel>(endpointService, "requestdirectsecuretokenspackagewithoutcrlfileswithreturntoken", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -327,7 +326,7 @@ namespace BMW.Rheingold.Psdz
                     Svt = SvtMapper.Map(svt),
                     Ecus = ecusToBeReset?.Select(EcuIdentifierCtoMapper.Map).ToList()
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"resetecus/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"resetecus/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
             }
             catch (Exception exception)
             {
@@ -346,7 +345,7 @@ namespace BMW.Rheingold.Psdz
                     Ecus = ecusToBeReset?.Select(EcuIdentifierCtoMapper.Map).ToList(),
                     PerformWithFlashMode = performWithFlashMode
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"resetecus/{connection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"resetecus/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
             }
             catch (Exception exception)
             {
@@ -368,7 +367,7 @@ namespace BMW.Rheingold.Psdz
                     Svt = SvtMapper.Map(svtIst),
                     SecureTokenRequest = SecureTokenRequestCtoMapper.Map(secureTokenRequest)
                 };
-                return _webCallHandler.ExecuteRequest<IList<SecurityBackendRequestFailureCtoModel>>(endpointService, "requesttokendirectforvehicleoffline", Method.Post, requestBodyObject).Data?.Select(SecurityBackendRequestFailureCtoMapper.Map).ToList();
+                return _webCallHandler.ExecuteRequest<IList<SecurityBackendRequestFailureCtoModel>>(endpointService, "requesttokendirectforvehicleoffline", HttpMethod.Post, requestBodyObject).Data?.Select(SecurityBackendRequestFailureCtoMapper.Map).ToList();
             }
             catch (Exception exception)
             {
@@ -387,23 +386,13 @@ namespace BMW.Rheingold.Psdz
                     Svt = SvtMapper.Map(svt),
                     Ecus = ecus?.Select(EcuIdentifierMapper.Map).ToList()
                 };
-                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"writesecuretokentoecus/{pConnection.Id}", Method.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"writesecuretokentoecus/{pConnection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
             }
             catch (Exception exception)
             {
                 Log.ErrorException(Log.CurrentMethod(), exception);
                 return null;
             }
-        }
-
-        public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackage(IEnumerable<string> backendUrlList, IEnumerable<string> crl, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
-        {
-            throw new NotImplementedException("Not implemented in the PSdZ Web API.");
-        }
-
-        public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForEcuOffline(string requestFile, string client, string system, IPsdzVin vin, bool rebuildTokens, IPsdzEcuIdentifier ecu)
-        {
-            throw new NotImplementedException("Not implemented in the PSdZ Web API.");
         }
     }
 }

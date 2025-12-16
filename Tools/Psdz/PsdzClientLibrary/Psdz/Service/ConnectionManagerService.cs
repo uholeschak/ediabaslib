@@ -5,6 +5,7 @@ using BMW.Rheingold.Psdz.Model.Ecu;
 using PsdzClient.Core;
 using System;
 using System.Net;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -12,15 +13,10 @@ namespace BMW.Rheingold.Psdz
     internal class ConnectionManagerService : IConnectionManagerService
     {
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly IConnectionFactoryService _connectionFactoryService;
-
         private readonly IHttpConfigurationService _httpConfigurationService;
-
         private readonly string _endpointService = "connection";
-
         private string _logLevel;
-
         public ConnectionManagerService(IWebCallHandler webCallHandler, IConnectionFactoryService connectionFactoryService, IHttpConfigurationService httpConfigurationService)
         {
             _webCallHandler = webCallHandler;
@@ -37,7 +33,8 @@ namespace BMW.Rheingold.Psdz
                 {
                     throw new ArgumentNullException("connection");
                 }
-                return _webCallHandler.ExecuteRequest<bool>(_endpointService, $"check/{connection.Id}", Method.Get).Data;
+
+                return _webCallHandler.ExecuteRequest<bool>(_endpointService, $"check/{connection.Id}", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -54,7 +51,8 @@ namespace BMW.Rheingold.Psdz
                 {
                     throw new ArgumentNullException("connection");
                 }
-                return ConnectionMapper.Map(_webCallHandler.ExecuteRequest<CheckConnectionVerboseResultModel>(_endpointService, $"checkVerbose/{connection.Id}", Method.Get).Data);
+
+                return ConnectionMapper.Map(_webCallHandler.ExecuteRequest<CheckConnectionVerboseResultModel>(_endpointService, $"checkVerbose/{connection.Id}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -69,7 +67,7 @@ namespace BMW.Rheingold.Psdz
             {
                 if (connection != null)
                 {
-                    _webCallHandler.ExecuteRequest(_endpointService, $"close/{connection.Id}", Method.Post);
+                    _webCallHandler.ExecuteRequest(_endpointService, $"close/{connection.Id}", HttpMethod.Post);
                 }
             }
             catch (Exception exception)
@@ -79,7 +77,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe, bool isTlsAllowed)
+        public IPsdzConnection ConnectOverBus(string project, string vehicleInfo, PsdzBus bus, InterfaceType interfaceType, string baureihe, string bauIstufe, bool tlsAllowed)
         {
             try
             {
@@ -100,7 +98,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe, bool isTlsAllowed)
+        public IPsdzConnection ConnectOverEthernet(string project, string vehicleInfo, string url, string baureihe, string bauIstufe, bool tlsAllowed)
         {
             try
             {
@@ -115,9 +113,9 @@ namespace BMW.Rheingold.Psdz
                     Baureihe = baureihe,
                     BauIstufe = bauIstufe,
                     LogLevel = _logLevel,
-                    IsTlsAllowed = isTlsAllowed
+                    IsTlsAllowed = tlsAllowed
                 };
-                ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectoverethernet", Method.Post, requestBodyObject);
+                ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectoverethernet", HttpMethod.Post, requestBodyObject);
                 return apiResult.IsSuccessful ? ConnectionMapper.Map(apiResult.Data) : null;
             }
             catch (Exception exception)
@@ -127,7 +125,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan, bool isTlsAllowed)
+        public IPsdzConnection ConnectOverIcom(string project, string vehicleInfo, string url, int additionalTransmissionTimeout, string baureihe, string bauIstufe, IcomConnectionType connectionType, bool shouldSetLinkPropertiesToDCan, bool tlsAllowed)
         {
             try
             {
@@ -149,11 +147,12 @@ namespace BMW.Rheingold.Psdz
                         BauIstufe = bauIstufe,
                         ShouldSetLinkPropertiesToDCan = shouldSetLinkPropertiesToDCan,
                         LogLevel = _logLevel,
-                        IsTlsAllowed = isTlsAllowed
+                        IsTlsAllowed = tlsAllowed
                     };
-                    ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectovericom", Method.Post, requestBodyObject);
+                    ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectovericom", HttpMethod.Post, requestBodyObject);
                     return apiResult.IsSuccessful ? ConnectionMapper.Map(apiResult.Data) : null;
                 }
+
                 throw new ArgumentException("Param 'url' is malformed!");
             }
             catch (Exception exception)
@@ -163,7 +162,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe, bool isTlsAllowed)
+        public IPsdzConnection ConnectOverVin(string project, string vehicleInfo, string vin, string baureihe, string bauIstufe, bool tlsAllowed)
         {
             try
             {
@@ -183,12 +182,13 @@ namespace BMW.Rheingold.Psdz
                             Baureihe = baureihe,
                             BauIstufe = bauIstufe,
                             LogLevel = _logLevel,
-                            IsTlsAllowed = isTlsAllowed
+                            IsTlsAllowed = tlsAllowed
                         };
-                        ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectoverethernet", Method.Post, requestBodyObject);
+                        ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectoverethernet", HttpMethod.Post, requestBodyObject);
                         return apiResult.IsSuccessful ? ConnectionMapper.Map(apiResult.Data) : null;
                     }
                 }
+
                 return null;
             }
             catch (Exception exception)
@@ -198,7 +198,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe, bool isTlsAllowed)
+        public IPsdzConnection ConnectOverPtt(string project, string vehicleInfo, PsdzBus bus, string baureihe, string bauIstufe, bool tlsAllowed)
         {
             try
             {
@@ -213,13 +213,15 @@ namespace BMW.Rheingold.Psdz
                         Id = bus.Id,
                         Name = bus.Name,
                         DirectAccess = bus.DirectAccess
-                    } : null),
+                    }
+
+                    : null),
                     Baureihe = baureihe,
                     BauIstufe = bauIstufe,
                     LogLevel = _logLevel,
-                    IsTlsAllowed = isTlsAllowed
+                    IsTlsAllowed = tlsAllowed
                 };
-                ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectoverptt", Method.Post, requestBodyObject);
+                ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectoverptt", HttpMethod.Post, requestBodyObject);
                 return apiResult.IsSuccessful ? ConnectionMapper.Map(apiResult.Data) : null;
             }
             catch (Exception exception)
@@ -257,16 +259,19 @@ namespace BMW.Rheingold.Psdz
                     Id = bus.Id,
                     Name = bus.Name,
                     DirectAccess = bus.DirectAccess
-                } : null),
+                }
+
+                : null),
                 Baureihe = baureihe,
                 BauIstufe = bauIstufe,
                 LogLevel = _logLevel
             };
-            ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectovervector", Method.Post, requestBodyObject);
+            ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectovervector", HttpMethod.Post, requestBodyObject);
             if (!apiResult.IsSuccessful)
             {
                 return null;
             }
+
             return ConnectionMapper.Map(apiResult.Data);
         }
 
@@ -283,16 +288,19 @@ namespace BMW.Rheingold.Psdz
                     Id = bus.Id,
                     Name = bus.Name,
                     DirectAccess = bus.DirectAccess
-                } : null),
+                }
+
+                : null),
                 Baureihe = baureihe,
                 BauIstufe = bauIstufe,
                 LogLevel = _logLevel
             };
-            ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectoveromitec", Method.Post, requestBodyObject);
+            ApiResult<ConnectionModel> apiResult = _webCallHandler.ExecuteRequest<ConnectionModel>(_endpointService, "connectoveromitec", HttpMethod.Post, requestBodyObject);
             if (!apiResult.IsSuccessful)
             {
                 return null;
             }
+
             return ConnectionMapper.Map(apiResult.Data);
         }
     }

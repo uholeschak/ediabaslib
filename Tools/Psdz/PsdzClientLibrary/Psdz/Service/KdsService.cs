@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
@@ -12,9 +13,7 @@ namespace BMW.Rheingold.Psdz
     internal class KdsService : IKdsService
     {
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly string endpointService = "kds";
-
         public KdsService(IWebCallHandler webCallHandler)
         {
             _webCallHandler = webCallHandler;
@@ -24,7 +23,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return KdsClientsForRefurbishResultCtoMapper.Map(_webCallHandler.ExecuteRequest<KdsClientsForRefurbishResultCtoModel>(endpointService, $"getkdsclientsforrefurbish/{connection.Id}?" + $"retries={retries}&" + $"timeBetweenRetries={timeBetweenRetries}", Method.Get).Data);
+                return KdsClientsForRefurbishResultCtoMapper.Map(_webCallHandler.ExecuteRequest<KdsClientsForRefurbishResultCtoModel>(endpointService, $"getkdsclientsforrefurbish/{connection.Id}?" + $"retries={retries}&" + $"timeBetweenRetries={timeBetweenRetries}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -43,7 +42,7 @@ namespace BMW.Rheingold.Psdz
                     Retries = retries,
                     TimeBetweenRetries = timeBetweenRetries
                 };
-                return PerformQuickKdsCheckResultCtoMapper.Map(_webCallHandler.ExecuteRequest<PerformQuickKdsCheckResultCtoModel>(endpointService, $"performquickkdscheck/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return PerformQuickKdsCheckResultCtoMapper.Map(_webCallHandler.ExecuteRequest<PerformQuickKdsCheckResultCtoModel>(endpointService, $"performquickkdscheck/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -62,7 +61,7 @@ namespace BMW.Rheingold.Psdz
                     Retries = retries,
                     TimeBetweenRetries = timeBetweenRetries
                 };
-                return PerformQuickKdsCheckSP25ResultCtoMapper.Map(_webCallHandler.ExecuteRequest<PerformQuickKdsCheckSP25ResultCtoModel>(endpointService, $"performquickkdschecksp25/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return PerformQuickKdsCheckSP25ResultCtoMapper.Map(_webCallHandler.ExecuteRequest<PerformQuickKdsCheckSP25ResultCtoModel>(endpointService, $"performquickkdschecksp25/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -84,7 +83,7 @@ namespace BMW.Rheingold.Psdz
                     SecureToken = SecureTokenEtoMapper.Map(secureToken),
                     KdsActionId = kdsActionIdEtoMapper.GetValue(psdzKdsActionId)
                 };
-                return KdsActionStatusResultCtoMapper.Map(_webCallHandler.ExecuteRequest<KdsActionStatusResultCtoModel>(endpointService, $"performrefurbishprocess/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return KdsActionStatusResultCtoMapper.Map(_webCallHandler.ExecuteRequest<KdsActionStatusResultCtoModel>(endpointService, $"performrefurbishprocess/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -97,7 +96,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return ReadPublicKeyResultCtoMapper.Map(_webCallHandler.ExecuteRequest<ReadPublicKeyResultCtoModel>(endpointService, $"readpublickey/{connection.Id}?" + $"kdsId={kdsId.Id}&" + $"retries={retries}&" + $"timeBetweenRetries={timeBetweenRetries}", Method.Get).Data);
+                return ReadPublicKeyResultCtoMapper.Map(_webCallHandler.ExecuteRequest<ReadPublicKeyResultCtoModel>(endpointService, $"readpublickey/{connection.Id}?" + $"kdsId={kdsId.Id}&" + $"retries={retries}&" + $"timeBetweenRetries={timeBetweenRetries}", HttpMethod.Get).Data);
             }
             catch (Exception exception)
             {
@@ -116,7 +115,7 @@ namespace BMW.Rheingold.Psdz
                     Retries = retries,
                     TimeBetweenRetries = timeBetweenRetries
                 };
-                return KdsActionStatusResultCtoMapper.Map(_webCallHandler.ExecuteRequest<KdsActionStatusResultCtoModel>(endpointService, $"switchoncomponenttheftprotection/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return KdsActionStatusResultCtoMapper.Map(_webCallHandler.ExecuteRequest<KdsActionStatusResultCtoModel>(endpointService, $"switchoncomponenttheftprotection/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {

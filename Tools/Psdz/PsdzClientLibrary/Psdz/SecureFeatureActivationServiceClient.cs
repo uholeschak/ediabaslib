@@ -25,13 +25,6 @@ namespace BMW.Rheingold.Psdz.Client
             return CallFunction((ISecureFeatureActivationService service) => service.RequestNewestSecureTokenPackageForVehicle(backendUrls, client, system, retries, timeout, vin, svtIst, rebuildTokens));
         }
 
-        public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackage(IEnumerable<string> backendUrlList, IEnumerable<string> crl, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
-        {
-#pragma warning disable CS0612 // Type or member is obsolete
-            return CallFunction((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackage(backendUrlList, crl, client, system, retries, timeout, vin, svt, secureTokenRequest));
-#pragma warning restore CS0612 // Type or member is obsolete
-        }
-
         public IPsdzSecurityBackendRequestIdEto RequestDirectSecureTokensPackageWithoutCrlFiles(IEnumerable<string> backendUrlList, string client, string system, int retries, int timeout, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
         {
             return CallFunction((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackageWithoutCrlFiles(backendUrlList, client, system, retries, timeout, vin, svt, secureTokenRequest));
@@ -46,11 +39,6 @@ namespace BMW.Rheingold.Psdz.Client
         public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestDirectSecureTokensPackageOffline(string filePath, string client, string system, IPsdzVin vin, IPsdzSvt svt, IPsdzSecureTokenRequestCto secureTokenRequest)
         {
             return CallFunction((ISecureFeatureActivationService service) => service.RequestDirectSecureTokensPackageOffline(filePath, client, system, vin, svt, secureTokenRequest));
-        }
-
-        public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestNewestSecureTokenPackageForEcuOffline(string requestFile, string client, string system, IPsdzVin vin, bool rebuildTokens, IPsdzEcuIdentifier ecu)
-        {
-            return CallFunction((ISecureFeatureActivationService service) => service.RequestNewestSecureTokenPackageForEcuOffline(requestFile, client, system, vin, rebuildTokens, ecu));
         }
 
         public IPsdzFetchCalculationSecureTokensResultCto FetchResultOfSecureTokenCalculation(IPsdzSecurityBackendRequestIdEto securityBackendRequestIdEto)
@@ -116,11 +104,6 @@ namespace BMW.Rheingold.Psdz.Client
         public IEnumerable<IPsdzEcuFailureResponseCto> ResetEcusFlashMode(IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecusToBeReset, bool performWithFlashMode)
         {
             return CallFunction((ISecureFeatureActivationService service) => service.ResetEcusFlashMode(connection, svt, ecusToBeReset, performWithFlashMode));
-        }
-
-        public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestTokenDirectForVehicleOffline(string requestFilePath, string client, string system, IPsdzVin vin, IPsdzSvt svtIst, IPsdzSecureTokenRequestCto secureTokenRequest)
-        {
-            return CallFunction((ISecureFeatureActivationService service) => service.RequestTokenDirectForVehicleOffline(requestFilePath, client, system, vin, svtIst, secureTokenRequest));
         }
     }
 }

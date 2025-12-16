@@ -2,6 +2,7 @@
 using PsdzClient.Core;
 using RestSharp;
 using System;
+using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,7 @@ namespace BMW.Rheingold.Psdz
             try
             {
                 StartStatusCheckTask();
-                return _webCallHandler.ExecuteRequest<bool>(_endpointService, "start", Method.Post).Data;
+                return _webCallHandler.ExecuteRequest<bool>(_endpointService, "start", HttpMethod.Post).Data;
             }
             catch (Exception exception)
             {
@@ -38,7 +39,7 @@ namespace BMW.Rheingold.Psdz
             try
             {
                 StopStatusCheckTaskIfRunning();
-                return _webCallHandler.ExecuteRequest<bool>(_endpointService, "stop", Method.Post).Data;
+                return _webCallHandler.ExecuteRequest<bool>(_endpointService, "stop", HttpMethod.Post).Data;
             }
             catch (Exception exception)
             {
@@ -51,7 +52,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<ServerStatus>(_endpointService, "getstatus", Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<ServerStatus>(_endpointService, "getstatus", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {

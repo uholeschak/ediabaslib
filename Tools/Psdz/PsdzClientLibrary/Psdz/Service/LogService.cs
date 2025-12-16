@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Net.Http;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz
@@ -11,17 +12,11 @@ namespace BMW.Rheingold.Psdz
     public class LogService : ILogService
     {
         private readonly IWebCallHandler _webCallHandler;
-
         private readonly string _clientId;
-
         private readonly string _clientLogDir;
-
         private readonly string _endpointService = "logging";
-
         private readonly IDictionary<string, string> _psdzLogFiles = new Dictionary<string, string>();
-
         private const PsdzLoglevel StandardPsdzLoglevel = PsdzLoglevel.FINE;
-
         public LogService(IWebCallHandler webCallHandler, string clientId, string clientLogDir)
         {
             _webCallHandler = webCallHandler;
@@ -38,7 +33,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     if (_psdzLogFiles.ContainsKey(_clientId))
                     {
-                        _webCallHandler.ExecuteRequest(_endpointService, "closelog/" + _clientId, Method.Post);
+                        _webCallHandler.ExecuteRequest(_endpointService, "closelog/" + _clientId, HttpMethod.Post);
                         text = _psdzLogFiles[_clientId];
                         Log.Debug(Log.CurrentMethod(), "Stopped writing to temporary log file '" + text + "' for Client-ID '" + _clientId + "'");
                         _psdzLogFiles.Remove(_clientId);
@@ -48,6 +43,7 @@ namespace BMW.Rheingold.Psdz
                         Log.Warning(Log.CurrentMethod(), "No log file available for Client-ID '" + _clientId + "'.");
                     }
                 }
+
                 return text;
             }
             catch (Exception exception)
@@ -65,7 +61,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Threshold = (int)psdzLogLevel
                 };
-                _webCallHandler.ExecuteRequest(_endpointService, "setthreshold", Method.Post, requestBodyObject);
+                _webCallHandler.ExecuteRequest(_endpointService, "setthreshold", HttpMethod.Post, requestBodyObject);
             }
             catch (Exception exception)
             {
@@ -100,7 +96,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<string>(_endpointService, "getcurrentlogidordefault", Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<string>(_endpointService, "getcurrentlogidordefault", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -117,7 +113,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     LogFilePath = logFilePath
                 };
-                return _webCallHandler.ExecuteRequest(_endpointService, "setlogid/" + _clientId, Method.Post, requestBodyObject).IsSuccessful;
+                return _webCallHandler.ExecuteRequest(_endpointService, "setlogid/" + _clientId, HttpMethod.Post, requestBodyObject).IsSuccessful;
             }
             catch (Exception exception)
             {
@@ -150,12 +146,14 @@ namespace BMW.Rheingold.Psdz
                 Log.Info(Log.CurrentMethod(), "Preferred logging directory is not specified. Use following temporary path instead: '" + Path.GetTempPath() + "'");
                 return Path.GetTempPath();
             }
+
             string fullPath = Path.GetFullPath(preferredLoggingDir);
             if (!IsDirectoryWriteable(fullPath))
             {
                 Log.Warning(Log.CurrentMethod(), "Preferred logging directory ('" + fullPath + "') is not accessible. Use following temporary path instead: '" + Path.GetTempPath() + "'");
                 return Path.GetTempPath();
             }
+
             return fullPath;
         }
 

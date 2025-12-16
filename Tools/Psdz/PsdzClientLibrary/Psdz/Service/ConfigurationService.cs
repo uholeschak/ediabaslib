@@ -5,6 +5,7 @@ using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -25,7 +26,7 @@ namespace BMW.Rheingold.Psdz
             try
             {
                 _webCallHandler.IgnorePrepareExecuteRequest = true;
-                return _webCallHandler.ExecuteRequest<bool>(_endpointService, "isready", Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<bool>(_endpointService, "isready", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -43,7 +44,7 @@ namespace BMW.Rheingold.Psdz
             try
             {
                 _webCallHandler.IgnorePrepareExecuteRequest = true;
-                return _webCallHandler.ExecuteRequest<RootDirectorySetupResultModel>(_endpointService, "rootdirectorysetupresultmodel", Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<RootDirectorySetupResultModel>(_endpointService, "rootdirectorysetupresultmodel", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -60,7 +61,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<string>(_endpointService, "getpsdzversion", Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<string>(_endpointService, "getpsdzversion", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -73,7 +74,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<string>(_endpointService, "getrootdirectory", Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<string>(_endpointService, "getrootdirectory", HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -99,7 +100,7 @@ namespace BMW.Rheingold.Psdz
                     PathToPdxContainer = pathToPdxContainer2,
                     ProjectName = projectName
                 };
-                _webCallHandler.ExecuteRequest(_endpointService, "importpdx", Method.Post, requestBodyObject);
+                _webCallHandler.ExecuteRequest(_endpointService, "importpdx", HttpMethod.Post, requestBodyObject);
                 SetRootDirectory(rootDirectory);
                 return true;
             }
@@ -114,7 +115,7 @@ namespace BMW.Rheingold.Psdz
         {
             try
             {
-                return _webCallHandler.ExecuteRequest<string>(_endpointService, "requestbaureihenverbund/" + baureihe, Method.Get).Data;
+                return _webCallHandler.ExecuteRequest<string>(_endpointService, "requestbaureihenverbund/" + baureihe, HttpMethod.Get).Data;
             }
             catch (Exception exception)
             {
@@ -134,7 +135,7 @@ namespace BMW.Rheingold.Psdz
                     ProgrammierGeraeteSeriennummer = programmierGeraeteSeriennummer,
                     TesterEinsatzKennung = testerEinsatzKennung
                 };
-                _webCallHandler.ExecuteRequest(_endpointService, "setpsdzproperties", Method.Post, requestBodyObject);
+                _webCallHandler.ExecuteRequest(_endpointService, "setpsdzproperties", HttpMethod.Post, requestBodyObject);
             }
             catch (Exception exception)
             {
@@ -151,7 +152,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     RootDirectoryPath = rootDir
                 };
-                _webCallHandler.ExecuteRequest(_endpointService, "setrootdirectory", Method.Post, requestBodyObject);
+                _webCallHandler.ExecuteRequest(_endpointService, "setrootdirectory", HttpMethod.Post, requestBodyObject);
                 _httpServerService.Start();
             }
             catch (Exception exception)
@@ -166,7 +167,7 @@ namespace BMW.Rheingold.Psdz
             try
             {
                 _httpServerService.Stop();
-                _webCallHandler.ExecuteRequest(_endpointService, "unsetrootdirectory", Method.Post);
+                _webCallHandler.ExecuteRequest(_endpointService, "unsetrootdirectory", HttpMethod.Post);
             }
             catch (Exception exception)
             {

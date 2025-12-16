@@ -11,16 +11,24 @@ namespace BMW.Rheingold.Psdz
 {
     public static class NetUtils
     {
-        public static int GetFirstFreePort(int minPort, int maxPort)
+        public static int GetFirstFreePort(int minPort, int maxPort, int? fallbackPort = null)
         {
-            Log.Info(Log.CurrentMethod(), "called. Params: [minPort: {0}, maxPort: {1}]", minPort, maxPort);
+            Log.Info(Log.CurrentMethod(), "called. Params: [minPort: {0}, maxPort: {1}, fallbackPort: {2}]", minPort, maxPort, fallbackPort);
             if (minPort > maxPort)
             {
                 throw new ArgumentException("Param 'minPort' must be less or equal than 'maxPort'!");
             }
+            if (fallbackPort.HasValue && fallbackPort <= 0)
+            {
+                throw new ArgumentException("Param 'fallbackPort' must be positive.");
+            }
             IPEndPoint[] activeTcpListeners = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners();
-            int currPort;
-            for (currPort = minPort; currPort <= maxPort; currPort++)
+            List<int> list = Enumerable.Range(minPort, maxPort - minPort + 1).ToList();
+            if (fallbackPort.HasValue)
+            {
+                list.Add(fallbackPort.GetValueOrDefault());
+            }
+            foreach (int currPort in list)
             {
                 if (!activeTcpListeners.Any((IPEndPoint e) => e.Port == currPort))
                 {

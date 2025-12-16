@@ -6,16 +6,14 @@ using PsdzClient.Core;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using PsdzClient;
-using RestSharp;
 
 namespace BMW.Rheingold.Psdz
 {
@@ -23,7 +21,7 @@ namespace BMW.Rheingold.Psdz
     {
         private readonly Action _prepareExecuteRequestAction;
 
-        private readonly RestClient _client;
+        private readonly HttpClient _httpClient;
 
         private readonly string _baseUrl;
 
@@ -43,129 +41,58 @@ namespace BMW.Rheingold.Psdz
 
         public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged;
 
-        [PreserveSource(Hint = "Modified")]
         public WebCallHandler(string baseUrl, Action prepareExecuteRequestAction, Func<bool> isPsdzInitialized)
         {
             Name = "WebCallHandler";
             Description = "Tracks/Counts all client-requests";
             _prepareExecuteRequestAction = prepareExecuteRequestAction;
             _baseUrl = baseUrl;
-            RestClientOptions options = new RestClientOptions(baseUrl)
+            HttpClientHandler handler = new HttpClientHandler
             {
-                ThrowOnAnyError = true,
-                // [IGNORE] MaxTimeout = (int)TimeSpan.FromMinutes(5.0).TotalMilliseconds,
-                RemoteCertificateValidationCallback = ValidateWebserviceCertificate
+                ServerCertificateCustomValidationCallback = (HttpRequestMessage message, X509Certificate2 cert, X509Chain chain, SslPolicyErrors errors) => ValidateWebserviceCertificate(message, cert, chain, errors)
             };
-            _client = new RestClient(options);
+            _httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri(baseUrl),
+                Timeout = TimeSpan.FromMinutes(5.0)
+            };
             _isPsdzInitialized = isPsdzInitialized;
         }
 
-        public ApiResult ExecuteRequest(string serviceName, string endpoint, Method method, object requestBodyObject = null, IDictionary<string, string> queryParameters = null)
+        public ApiResult ExecuteRequest(string serviceName, string endpoint, HttpMethod method, object requestBodyObject = null, IDictionary<string, string> queryParameters = null)
         {
             return ExecuteRequestImpl<object>(serviceName, endpoint, method, requestBodyObject, queryParameters);
         }
 
-        public ApiResult<T> ExecuteRequest<T>(string serviceName, string endpoint, Method method, object requestBodyObject = null, IDictionary<string, string> queryParameters = null)
+        public ApiResult<T> ExecuteRequest<T>(string serviceName, string endpoint, HttpMethod method, object requestBodyObject = null, IDictionary<string, string> queryParameters = null)
         {
             return ExecuteRequestImpl<T>(serviceName, endpoint, method, requestBodyObject, queryParameters);
         }
 
-        private ApiResult<T> ExecuteRequestImpl<T>(string serviceName, string endpoint, Method method, object requestBodyObject = null, IDictionary<string, string> queryParameters = null)
+        private ApiResult<T> ExecuteRequestImpl<T>(string serviceName, string endpoint, HttpMethod method, object requestBodyObject = null, IDictionary<string, string> queryParameters = null)
         {
-            if (!endpoint.Equals("isready") && !_isPsdzInitialized())
-            {
-                Log.Debug(Log.CurrentMethod(), "WebService is not initialized. Cannot execute request");
-                return new ApiResult<T>(default(T), isSuccessful: false);
-            }
-            RestResponse restResponse = null;
+            HttpResponseMessage httpResponseMessage = null;
             try
             {
-                if (!IgnorePrepareExecuteRequest && _prepareExecuteRequestAction != null)
+                if (!endpoint.Equals("isready") && !_isPsdzInitialized())
                 {
-                    _prepareExecuteRequestAction();
+                    Log.Debug(Log.CurrentMethod(), "WebService is not initialized. Cannot execute request");
+                    return new ApiResult<T>(default(T), isSuccessful: false);
                 }
-                IncrementRequestCounts();
-                RestRequest restRequest = new RestRequest(Path.Combine(serviceName, endpoint) ?? "", method);
-                if (queryParameters != null)
+                HttpRequestMessage request = PrepareRequest(serviceName, endpoint, method, requestBodyObject, queryParameters);
+                Log.Debug(Log.CurrentMethod(), CreateRequestLogMessage("API-Request", _httpClient, request, requestBodyObject));
+                httpResponseMessage = _httpClient.SendAsync(request).GetAwaiter().GetResult();
+                if (httpResponseMessage.IsSuccessStatusCode)
                 {
-                    foreach (KeyValuePair<string, string> queryParameter in queryParameters)
-                    {
-                        restRequest.AddQueryParameter(queryParameter.Key, queryParameter.Value);
-                    }
-                }
-                if (requestBodyObject != null)
-                {
-                    JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
-                    {
-                        Formatting = Formatting.None,
-                        ContractResolver = new CamelCasePropertyNamesContractResolver()
-                    };
-                    jsonSerializerSettings.Converters.Add(new StringEnumConverter());
-                    string obj = JsonConvert.SerializeObject(requestBodyObject, jsonSerializerSettings);
-                    restRequest.RequestFormat = DataFormat.Json;
-                    restRequest.AddJsonBody(obj);
-                }
-                Log.Debug(Log.CurrentMethod(), CreateRequestLogMessage("API-Request", _client, restRequest, requestBodyObject));
-                restResponse = _client.Execute(restRequest);
-                if (restResponse.IsSuccessful)
-                {
-                    T responseData = GetResponseData<T>(restResponse);
-                    Log.Debug(Log.CurrentMethod(), CreateResponseLogMessage("API-Response-Valid", restResponse, responseData));
+                    T responseData = GetResponseData<T>(httpResponseMessage);
+                    Log.Debug(Log.CurrentMethod(), CreateResponseLogMessage("API-Response-Valid", httpResponseMessage, responseData));
                     return new ApiResult<T>(responseData, isSuccessful: true);
                 }
-                Log.Error(Log.CurrentMethod(), CreateResponseLogMessage("API-Response-Invalid", restResponse, GetResponseData<T>(restResponse)));
+                Log.Error(Log.CurrentMethod(), CreateResponseLogMessage("API-Response-Invalid", httpResponseMessage, GetResponseData<T>(httpResponseMessage)));
             }
-            catch (WebException ex)
+            catch (Exception ex)
             {
-                if ((HttpWebResponse)ex.Response == null)
-                {
-                    Dictionary<string, string> additionalInformation = new Dictionary<string, string> { { "ErrorMessage", "No response from server" } };
-                    Log.Error(Log.CurrentMethod(), CreateResponseLogMessage("API-Error", restResponse, GetResponseData<T>(restResponse), additionalInformation));
-                }
-                string msg = CreateResponseLogMessage("API-Error", restResponse, GetResponseData<T>(restResponse), new Dictionary<string, string> { { "Message", ex.Message } });
-                Log.Error(Log.CurrentMethod(), msg);
-            }
-            catch (JsonSerializationException ex2)
-            {
-                Dictionary<string, string> additionalInformation2 = new Dictionary<string, string>
-            {
-                { "Message", ex2.Message },
-                { "Path", ex2.Path },
-                {
-                    "LineNumber",
-                    ex2.ToString()
-                },
-                {
-                    "LinePosition",
-                    ex2.LinePosition.ToString()
-                }
-            };
-                string msg2 = CreateResponseLogMessage("API-JSON-Error", restResponse, GetResponseData<T>(restResponse), additionalInformation2);
-                Log.Error(Log.CurrentMethod(), msg2);
-            }
-            catch (JsonReaderException ex3)
-            {
-                Dictionary<string, string> additionalInformation3 = new Dictionary<string, string>
-            {
-                { "Message", ex3.Message },
-                { "Path", ex3.Path },
-                {
-                    "LineNumber",
-                    ex3.LineNumber.ToString()
-                },
-                {
-                    "LinePosition",
-                    ex3.LinePosition.ToString()
-                }
-            };
-                string msg3 = CreateResponseLogMessage("API-JSON-Error", restResponse, GetResponseData<T>(restResponse), additionalInformation3);
-                Log.Error(Log.CurrentMethod(), msg3);
-            }
-            catch (Exception ex4)
-            {
-                Dictionary<string, string> additionalInformation4 = new Dictionary<string, string> { { "Message", ex4.Message } };
-                string msg4 = CreateResponseLogMessage("API-Error", restResponse, GetResponseData<T>(restResponse), additionalInformation4);
-                Log.Error(Log.CurrentMethod(), msg4);
+                HandleException<T>(ex, httpResponseMessage, serviceName, endpoint, method, Log.CurrentMethod());
             }
             finally
             {
@@ -174,24 +101,24 @@ namespace BMW.Rheingold.Psdz
             return new ApiResult<T>(default(T), isSuccessful: false);
         }
 
-        private static T GetResponseData<T>(RestResponse response)
+        private static T GetResponseData<T>(HttpResponseMessage response)
         {
             T result = default(T);
             if (response != null && response.StatusCode != HttpStatusCode.NoContent)
             {
-                return JsonConvert.DeserializeObject<GenericApiResponse<T>>(response.Content).Data;
+                return JsonConvert.DeserializeObject<GenericApiResponse<T>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()).Data;
             }
             return result;
         }
 
-        private string CreateRequestLogMessage(string loggerKeys, RestClient client, RestRequest request, object requestBodyObject)
+        private string CreateRequestLogMessage(string loggerKeys, HttpClient client, HttpRequestMessage request, object requestBodyObject)
         {
             try
             {
                 dynamic val = new ExpandoObject();
                 val.type = loggerKeys;
-                val.method = request.Method.ToString().ToUpperInvariant();
-                val.uri = client.BuildUri(request);
+                val.method = request.Method.Method.ToUpperInvariant();
+                val.uri = request.RequestUri;
                 if (ShouldRequestDataBeLogged(request))
                 {
                     val.requestObject = requestBodyObject;
@@ -204,22 +131,22 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        private string CreateResponseLogMessage(string loggerKeys, RestResponse response, object dataObject, IDictionary<string, string> additionalInformation = null)
+        private string CreateResponseLogMessage(string loggerKeys, HttpResponseMessage response, object dataObject, IDictionary<string, string> additionalInformation = null)
         {
             try
             {
                 dynamic val = new ExpandoObject();
                 val.Type = loggerKeys;
                 val.StatusCode = response?.StatusCode;
-                val.ResponseUri = response?.ResponseUri;
+                val.ResponseUri = response?.RequestMessage?.RequestUri;
                 if (ShouldResponseDataBeLogged(response))
                 {
                     val.RequestObject = dataObject;
                 }
                 IDictionary<string, object> dictionary = (IDictionary<string, object>)val;
-                if (!string.IsNullOrWhiteSpace(response?.ErrorMessage))
+                if (!string.IsNullOrWhiteSpace(response?.ReasonPhrase))
                 {
-                    dictionary.Add("ErrorMessage", response.ErrorMessage);
+                    dictionary.Add("ReasonPhrase", response.ReasonPhrase);
                 }
                 if (additionalInformation != null && additionalInformation.Any())
                 {
@@ -241,23 +168,23 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        private bool ShouldResponseDataBeLogged(RestResponse response)
+        private bool ShouldResponseDataBeLogged(HttpResponseMessage response)
         {
             if (response == null)
             {
                 return false;
             }
-            string path = response.ResponseUri?.AbsolutePath ?? string.Empty;
+            string path = response.RequestMessage?.RequestUri?.OriginalString ?? string.Empty;
             return !methodsNotToBeLogged.Any((string cmd) => path.Contains(cmd));
         }
 
-        private bool ShouldRequestDataBeLogged(RestRequest request)
+        private bool ShouldRequestDataBeLogged(HttpRequestMessage request)
         {
             if (request == null)
             {
                 return false;
             }
-            string path = request.Resource ?? string.Empty;
+            string path = request.RequestUri?.OriginalString ?? string.Empty;
             return !methodsNotToBeLogged.Any((string cmd) => path.Contains(cmd));
         }
 
@@ -280,12 +207,72 @@ namespace BMW.Rheingold.Psdz
 
         private bool ValidateWebserviceCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
         {
-            if ((sender as HttpRequestMessage).RequestUri.AbsoluteUri.StartsWith(_baseUrl) && certificate.GetCertHashString() != "5B:D6:82:8D:38:E1:E9:94:7D:FC:67:2C:B8:59:5B:C4:69:B6:C0:A9".Replace(":", string.Empty))
+            string text = (sender as HttpRequestMessage)?.RequestUri?.AbsoluteUri ?? string.Empty;
+            if (!string.IsNullOrEmpty(text) && text.StartsWith(_baseUrl) && certificate.GetCertHashString() != "5B:D6:82:8D:38:E1:E9:94:7D:FC:67:2C:B8:59:5B:C4:69:B6:C0:A9".Replace(":", string.Empty))
             {
                 Log.Error(Log.CurrentMethod(), $"Certificate Validation Error: {sslPolicyErrors}");
                 return false;
             }
             return true;
+        }
+
+        private HttpRequestMessage PrepareRequest(string serviceName, string endpoint, HttpMethod method, object requestBodyObject = null, IDictionary<string, string> queryParameters = null)
+        {
+            if (!IgnorePrepareExecuteRequest && _prepareExecuteRequestAction != null)
+            {
+                _prepareExecuteRequestAction();
+            }
+            IncrementRequestCounts();
+            string text = serviceName.TrimEnd(new char[1] { '/' }) + "/" + endpoint.TrimStart(new char[1] { '/' });
+            if (queryParameters != null && queryParameters.Any())
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append('?');
+                stringBuilder.Append(string.Join("&", queryParameters.Select((KeyValuePair<string, string> kv) => Uri.EscapeDataString(kv.Key) + "=" + Uri.EscapeDataString(kv.Value))));
+                text += stringBuilder.ToString();
+            }
+            HttpRequestMessage httpRequestMessage = new HttpRequestMessage(method, text);
+            if (requestBodyObject != null)
+            {
+                JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    Formatting = Formatting.None,
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                };
+                jsonSerializerSettings.Converters.Add(new StringEnumConverter());
+                string content = JsonConvert.SerializeObject(requestBodyObject, jsonSerializerSettings);
+                httpRequestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            }
+            return httpRequestMessage;
+        }
+
+        private void HandleException<T>(Exception ex, HttpResponseMessage response, string serviceName, string endpoint, HttpMethod method, string methodName)
+        {
+            Dictionary<string, string> dictionary = new Dictionary<string, string>
+        {
+            {
+                "Endpoint",
+                serviceName + "/" + endpoint
+            },
+            {
+                "Method",
+                method.ToString()
+            },
+            { "Message", ex.Message }
+        };
+            if (ex is JsonSerializationException || ex is JsonReaderException)
+            {
+                dictionary.Add("Path", (ex as JsonSerializationException)?.Path ?? (ex as JsonReaderException)?.Path);
+                dictionary.Add("LineNumber", (ex as JsonSerializationException)?.LineNumber.ToString() ?? (ex as JsonReaderException)?.LineNumber.ToString());
+                dictionary.Add("LinePosition", (ex as JsonSerializationException)?.LinePosition.ToString() ?? (ex as JsonReaderException)?.LinePosition.ToString());
+            }
+            else if (ex is WebException ex2 && (HttpWebResponse)ex2.Response == null)
+            {
+                dictionary.Add("ErrorMessage", "No response from server");
+                Log.Error(methodName, CreateResponseLogMessage("API-Error", response, GetResponseData<T>(response), dictionary));
+            }
+            string msg = CreateResponseLogMessage("API-Error", response, GetResponseData<T>(response), dictionary);
+            Log.Error(methodName, msg);
         }
     }
 }

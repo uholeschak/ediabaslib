@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Tal;
@@ -10,9 +11,7 @@ namespace BMW.Rheingold.Psdz
     public class ProgrammingTokenService : IProgrammingTokenService
     {
         private readonly IWebCallHandler webCallHandler;
-
         private readonly string serviceName = "programmingtoken";
-
         public ProgrammingTokenService(IWebCallHandler webCallHandler)
         {
             this.webCallHandler = webCallHandler;
@@ -30,7 +29,7 @@ namespace BMW.Rheingold.Psdz
                     SvtTarget = SvtMapper.Map(svtTarget),
                     RequestFilePath = requestFilePath
                 };
-                return ProgrammingTokensResultCtoMapper.Map(webCallHandler.ExecuteRequest<ProgrammingTokensResultCtoModel>(serviceName, $"requestprogrammingtokensofflinewithgenericresult/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return ProgrammingTokensResultCtoMapper.Map(webCallHandler.ExecuteRequest<ProgrammingTokensResultCtoModel>(serviceName, $"requestprogrammingtokensofflinewithgenericresult/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
@@ -52,7 +51,7 @@ namespace BMW.Rheingold.Psdz
                     TokenVersion = tokenVersion,
                     RequestFilePath = requestFilePath
                 };
-                return ProgrammingTokensResultCtoMapper.Map(webCallHandler.ExecuteRequest<ProgrammingTokensResultCtoModel>(serviceName, $"requestprogrammingtokensofflinewithtokenversionwithgenericresult/{connection.Id}", Method.Post, requestBodyObject).Data);
+                return ProgrammingTokensResultCtoMapper.Map(webCallHandler.ExecuteRequest<ProgrammingTokensResultCtoModel>(serviceName, $"requestprogrammingtokensofflinewithtokenversionwithgenericresult/{connection.Id}", HttpMethod.Post, requestBodyObject).Data);
             }
             catch (Exception exception)
             {
