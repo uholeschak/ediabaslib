@@ -25,6 +25,7 @@ namespace SourceCodeSync
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Enums\.UserLogin$",
             @"^BMW\.Rheingold\.CoreFramework\.OSS$",
             @"^BMW\.Rheingold\.CoreFramework\.IndustrialCustomer\..*",
+            @"^BMW\.Rheingold\.CoreFramework\.Contracts\.Programming\.TherapyPlan$",
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Models\..*",
             @"^BMW\.Rheingold\.InfoProvider\.(SWT|Tric|Broker|igDom|service|Current|SCC|NOP|EDGE|Properties).*",
         ];
