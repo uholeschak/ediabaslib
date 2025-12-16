@@ -1,19 +1,18 @@
-﻿using System;
+﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
+using PsdzClient.Programming;
+using PsdzClient.Utility;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient.Utility;
 
 namespace PsdzClient.Core
 {
-    public class FA : INotifyPropertyChanged, IFa, IFARuleEvaluation, IReactorFa
+    public class FA : INotifyPropertyChanged, BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa, IFARuleEvaluation, IReactorFa
     {
         private short? sA_ANZField;
         private ObservableCollection<string> saField;
@@ -599,22 +598,22 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
-        IEnumerable<string> IFa.DealerInstalledSA => null;
+        IEnumerable<string> BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa.DealerInstalledSA => null;
 
         [XmlIgnore]
-        IEnumerable<string> IFa.E_WORT => E_WORT;
+        IEnumerable<string> BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa.E_WORT => E_WORT;
 
         [XmlIgnore]
-        IEnumerable<string> IFa.HO_WORT => HO_WORT;
+        IEnumerable<string> BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa.HO_WORT => HO_WORT;
 
         [XmlIgnore]
-        IEnumerable<string> IFa.SA => SA;
+        IEnumerable<string> BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa.SA => SA;
 
         [XmlIgnore]
-        IEnumerable<string> IFa.ZUSBAU_WORT => ZUSBAU_WORT;
+        IEnumerable<string> BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa.ZUSBAU_WORT => ZUSBAU_WORT;
 
         [XmlIgnore]
-        ICollection<LocalizedSAItem> IFa.SaLocalizedItems => SaLocalizedItems;
+        ICollection<LocalizedSAItem> BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa.SaLocalizedItems => SaLocalizedItems;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public FA()
@@ -642,7 +641,29 @@ namespace PsdzClient.Core
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}{5}{6}{7}", FormatConverter.ConvertToBn2020ConformModelSeries(BR), C_DATE, TYPE, LACK, POLSTER, ConcatStrElems(SA, "$"), ConcatStrElems(E_WORT, "-"), ConcatStrElems(HO_WORT, "+"));
+            return string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}{5}{6}{7}", GetFormattedModelSeries(BR), C_DATE, TYPE, LACK, POLSTER, ConcatStrElems(SA, "$"), ConcatStrElems(E_WORT, "-"), ConcatStrElems(HO_WORT, "+"));
+        }
+
+        [PreserveSource(Hint = "IProgrammingService2")]
+        private string GetFormattedModelSeries(string baureihe)
+        {
+            try
+            {
+                using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
+                {
+                    if (istaIcsServiceClient.IsAvailable() && istaIcsServiceClient.GetFeatureEnabledStatus("UsePsdzSeriesFormatter", istaIcsServiceClient.IsAvailable()).IsActive)
+                    {
+                        return ServiceLocator.Current.GetService<IProgrammingService2>()?.Psdz?.BaureiheUtilityService?.GetBaureihe(baureihe) ?? FormatConverter.ConvertToBn2020ConformModelSeries(baureihe);
+                    }
+                }
+
+                return FormatConverter.ConvertToBn2020ConformModelSeries(baureihe);
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException("Baureihereader logged exception while reading baureihe from psdz.", exception);
+                return FormatConverter.ConvertToBn2020ConformModelSeries(baureihe);
+            }
         }
 
         public string ExtractEreihe()

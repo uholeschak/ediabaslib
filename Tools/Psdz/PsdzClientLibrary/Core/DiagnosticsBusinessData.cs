@@ -1434,7 +1434,7 @@ namespace PsdzClient.Core
                     eCUbyECU_GRUPPE.TITLE_ECUTREE = "RLS";
                     vecInfo.AddEcu(eCUbyECU_GRUPPE);
                 }
-                else if ((ecuKom.DefaultApiJob("D_RLS", "IDENT", string.Empty, string.Empty) as ECUJob).IsOkay())
+                else if (ecuKom.DefaultApiJob("D_RLS", "IDENT", string.Empty, string.Empty).IsOkay())
                 {
                     eCUbyECU_GRUPPE = new ECU();
                     eCUbyECU_GRUPPE.ECU_GRUPPE = "D_RLS";
@@ -1571,6 +1571,7 @@ namespace PsdzClient.Core
                     dictionary.Add(ecu, source2.First());
                 }
             }
+
             foreach (KeyValuePair<IEcu, IEcuJob> item in dictionary)
             {
                 IEcu key = item.Key;
@@ -1599,7 +1600,7 @@ namespace PsdzClient.Core
                     continue;
                 }
 
-                IEcuJob ecuJob = ecuKom.ApiJob(eCU.VARIANTE, "STATUS_LESEN", "ID;0xD019", string.Empty, 3);
+                IEcuJob ecuJob = ecuKom.ApiJob(eCU.VARIANTE, "STATUS_LESEN", "ID;0xD019", string.Empty, 3, fastaActive: true);
                 if (ecuJob.IsOkay())
                 {
                     string sERIENNUMMER = eCU.SERIENNUMMER;
@@ -1741,19 +1742,19 @@ namespace PsdzClient.Core
         private bool ExecuteVehicleLifeStartDateJobAndProcessResults(string sgbd, string jobName, string jobParams, int retryCount, string resultname, IEcuKom ecuKom, IVehicle vehicle, string alternativeResult = null, string supremeResultName = null, string alternativeSupremeResultName = null)
         {
             bool result = false;
-            ECUJob eCUJob = ecuKom.ApiJobWithRetries(sgbd, jobName, jobParams, string.Empty, retryCount) as ECUJob;
-            if (eCUJob.IsOkay())
+            IEcuJob ecuJob = ecuKom.ApiJobWithRetries(sgbd, jobName, jobParams, string.Empty, retryCount);
+            if (ecuJob.IsOkay())
             {
-                long? num = eCUJob.getlongResult(1, resultname);
+                long? num = ecuJob.getlongResult(1, resultname);
                 if (!num.HasValue && !string.IsNullOrWhiteSpace(alternativeResult))
                 {
-                    num = eCUJob.getlongResult(1, alternativeResult);
+                    num = ecuJob.getlongResult(1, alternativeResult);
                 }
 
-                long? milliseconds = eCUJob.getlongResult(supremeResultName);
+                long? milliseconds = ecuJob.getlongResult(supremeResultName);
                 if (!milliseconds.HasValue && !string.IsNullOrWhiteSpace(alternativeSupremeResultName))
                 {
-                    milliseconds = eCUJob.getlongResult(alternativeSupremeResultName);
+                    milliseconds = ecuJob.getlongResult(alternativeSupremeResultName);
                 }
 
                 if (num.HasValue)
@@ -1763,7 +1764,7 @@ namespace PsdzClient.Core
                 }
                 else
                 {
-                    Log.Warning(Log.CurrentMethod(), "VehicleLifeStartdate could not be read out of the vehicle with the Job " + eCUJob.JobName + ", params " + eCUJob.JobParam + " and resultnames: " + resultname + ", " + alternativeResult + ", " + supremeResultName + ", " + alternativeSupremeResultName);
+                    Log.Warning(Log.CurrentMethod(), "VehicleLifeStartdate could not be read out of the vehicle with the Job " + ecuJob.JobName + ", params " + ecuJob.JobParam + " and resultnames: " + resultname + ", " + alternativeResult + ", " + supremeResultName + ", " + alternativeSupremeResultName);
                 }
             }
 
