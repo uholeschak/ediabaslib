@@ -77,6 +77,17 @@ namespace PsdzClient.Core
             return false;
         }
 
+        public static bool AddIfNotContains<T, T2>(this IDictionary<T, T2> collection, T key, T2 item)
+        {
+            if (!collection.ContainsKey(key))
+            {
+                collection.Add(key, item);
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool AddIfNotContains<T>(this HashSet<T> collection, T item)
         {
             if (!collection.Contains(item))
