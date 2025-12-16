@@ -47,6 +47,7 @@ namespace BMW.Rheingold.Programming
 
         public string ExpectedPsdzVersion { get; private set; }
 
+        [PreserveSource(Hint = "PsdzObjectBuilder modified")]
         public PsdzServiceWrapper(PsdzConfig psdzConfig)
         {
             if (psdzConfig == null)
@@ -66,7 +67,7 @@ namespace BMW.Rheingold.Programming
             {
                 psdzServiceClient = new PsdzServiceClient(psdzConfig.ClientLogPath);
             }
-            ObjectBuilder = new PsdzObjectBuilder(psdzServiceClient.ObjectBuilderService);
+            ObjectBuilder = new PsdzObjectBuilder(psdzServiceClient.ObjectBuilderService, this);
         }
 
         public bool IsPsdzInitialized

@@ -22,6 +22,8 @@ namespace BMW.Rheingold.Psdz
     internal class PsdzObjectBuilder : IPsdzObjectBuilder
     {
         private readonly IObjectBuilderService objectBuilderService;
+        [PreserveSource(Hint = "Init in constructor")]
+        private readonly BaureiheReader baureiheReader;
         private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
         private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
         [PreserveSource(Hint = "Namespace modified")]
@@ -32,9 +34,11 @@ namespace BMW.Rheingold.Psdz
         [PreserveSource(Hint = "Namespace modified")]
         private readonly PsdzClient.Programming.SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new PsdzClient.Programming.SoftwareSigStateEnumMapper();
         private readonly TaCategoriesEnumMapper taCategoriesEnumMapper = new TaCategoriesEnumMapper();
-        public PsdzObjectBuilder(IObjectBuilderService objectBuilderService)
+        [PreserveSource(Hint = "iPsdz added")]
+        public PsdzObjectBuilder(IObjectBuilderService objectBuilderService, IPsdz iPsdz)
         {
             this.objectBuilderService = objectBuilderService;
+            baureiheReader = new BaureiheReader(iPsdz);
         }
 
         public IPsdzDiagAddress BuildDiagAddress(int diagAddress)
@@ -246,8 +250,8 @@ namespace BMW.Rheingold.Psdz
                 PsdzStandardFa psdzStandardFa = new PsdzStandardFa();
                 if (vehicleContext.FA != null)
                 {
-                    string entwicklungsbaureihe = FormatConverter.ConvertToBn2020ConformModelSeries(vehicleContext.FA.BR);
-                    psdzStandardFa.Entwicklungsbaureihe = entwicklungsbaureihe;
+                    string baureiheFormatted = baureiheReader.GetBaureiheFormatted(vehicleContext.FA.BR);
+                    psdzStandardFa.Entwicklungsbaureihe = baureiheFormatted;
                     psdzStandardFa.Type = vehicleContext.FA.TYPE;
                     psdzStandardFa.Zeitkriterium = vehicleContext.FA.C_DATE;
                     psdzStandardFa.Lackcode = vehicleContext.FA.LACK;
@@ -522,7 +526,7 @@ namespace BMW.Rheingold.Psdz
             return objectBuilderService.DefineFilterForAllEcus(psdzTaCategories, talFilterAction, filter);
         }
 
-        public IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter filter, IDictionary<string, TalFilterOptions> smacFilter = null)
+        public IPsdzTalFilter DefineFilterForSelectedEcus(TaCategories[] taCategories, int[] diagAddress, TalFilterOptions talFilterOptions, IPsdzTalFilter inputTalFilter, IDictionary<string, TalFilterOptions> smacFilter = null)
         {
             taCategories = RemoveIdDeleteAndLogOccurence(taCategories);
             PsdzTalFilterAction talFilterAction = ConvertTalFilterOptionToTalFilterAction(talFilterOptions);
@@ -533,7 +537,7 @@ namespace BMW.Rheingold.Psdz
                 smacFilter2 = smacFilter.Select((KeyValuePair<string, TalFilterOptions> x) => new KeyValuePair<string, PsdzTalFilterAction>(x.Key, ConvertTalFilterOptionToTalFilterAction(x.Value))).ToDictionary((KeyValuePair<string, PsdzTalFilterAction> x) => x.Key, (KeyValuePair<string, PsdzTalFilterAction> y) => y.Value);
             }
 
-            return objectBuilderService.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, filter, smacFilter2);
+            return objectBuilderService.DefineFilterForSelectedEcus(psdzTaCategories, diagAddress, talFilterAction, inputTalFilter, smacFilter2);
         }
 
         public IPsdzTalFilter DefineFilterForSWEs(IEcuFilterOnSweLevel ecuFilter, IPsdzTalFilter talFilter)

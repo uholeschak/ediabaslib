@@ -20,27 +20,25 @@ namespace BMW.Rheingold.Psdz
     public class WebCallHandler : IWebCallHandler, ILifeCycleDependencyProvider
     {
         private readonly Action _prepareExecuteRequestAction;
-
         private readonly HttpClient _httpClient;
-
         private readonly string _baseUrl;
-
         private readonly Func<bool> _isPsdzInitialized;
-
         private const int DefaultTimoutForPsdzWebService = 5;
-
         private int _activeWebRequests;
-
-        private readonly List<string> methodsNotToBeLogged = new List<string> { "seteventid", "getevents", "startlistening", "stoplistening", "getcurrentlogidordefault", "setlogid" };
-
+        private readonly List<string> methodsNotToBeLogged = new List<string>
+        {
+            "seteventid",
+            "getevents",
+            "startlistening",
+            "stoplistening",
+            "getcurrentlogidordefault",
+            "setlogid"
+        };
         public string Description { get; }
-
         public string Name { get; }
-
         public bool IgnorePrepareExecuteRequest { get; set; }
 
         public event EventHandler<DependencyCountChangedEventArgs> ActiveDependencyCountChanged;
-
         public WebCallHandler(string baseUrl, Action prepareExecuteRequestAction, Func<bool> isPsdzInitialized)
         {
             Name = "WebCallHandler";
@@ -79,6 +77,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Debug(Log.CurrentMethod(), "WebService is not initialized. Cannot execute request");
                     return new ApiResult<T>(default(T), isSuccessful: false);
                 }
+
                 HttpRequestMessage request = PrepareRequest(serviceName, endpoint, method, requestBodyObject, queryParameters);
                 Log.Debug(Log.CurrentMethod(), CreateRequestLogMessage("API-Request", _httpClient, request, requestBodyObject));
                 httpResponseMessage = _httpClient.SendAsync(request).GetAwaiter().GetResult();
@@ -88,6 +87,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Debug(Log.CurrentMethod(), CreateResponseLogMessage("API-Response-Valid", httpResponseMessage, responseData));
                     return new ApiResult<T>(responseData, isSuccessful: true);
                 }
+
                 Log.Error(Log.CurrentMethod(), CreateResponseLogMessage("API-Response-Invalid", httpResponseMessage, GetResponseData<T>(httpResponseMessage)));
             }
             catch (Exception ex)
@@ -98,6 +98,7 @@ namespace BMW.Rheingold.Psdz
             {
                 DecrementRequestCounts();
             }
+
             return new ApiResult<T>(default(T), isSuccessful: false);
         }
 
@@ -108,6 +109,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return JsonConvert.DeserializeObject<GenericApiResponse<T>>(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()).Data;
             }
+
             return result;
         }
 
@@ -123,6 +125,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     val.requestObject = requestBodyObject;
                 }
+
                 return Regex.Replace(JsonConvert.SerializeObject(val, Formatting.None), "[{}']", "").Replace(",", " - ");
             }
             catch (Exception ex)
@@ -143,11 +146,13 @@ namespace BMW.Rheingold.Psdz
                 {
                     val.RequestObject = dataObject;
                 }
+
                 IDictionary<string, object> dictionary = (IDictionary<string, object>)val;
                 if (!string.IsNullOrWhiteSpace(response?.ReasonPhrase))
                 {
                     dictionary.Add("ReasonPhrase", response.ReasonPhrase);
                 }
+
                 if (additionalInformation != null && additionalInformation.Any())
                 {
                     foreach (KeyValuePair<string, string> item in additionalInformation)
@@ -155,6 +160,7 @@ namespace BMW.Rheingold.Psdz
                         dictionary.Add(item.Key, item.Value);
                     }
                 }
+
                 JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings
                 {
                     Formatting = Formatting.None,
@@ -174,6 +180,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return false;
             }
+
             string path = response.RequestMessage?.RequestUri?.OriginalString ?? string.Empty;
             return !methodsNotToBeLogged.Any((string cmd) => path.Contains(cmd));
         }
@@ -184,6 +191,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return false;
             }
+
             string path = request.RequestUri?.OriginalString ?? string.Empty;
             return !methodsNotToBeLogged.Any((string cmd) => path.Contains(cmd));
         }
@@ -213,6 +221,7 @@ namespace BMW.Rheingold.Psdz
                 Log.Error(Log.CurrentMethod(), $"Certificate Validation Error: {sslPolicyErrors}");
                 return false;
             }
+
             return true;
         }
 
@@ -222,8 +231,9 @@ namespace BMW.Rheingold.Psdz
             {
                 _prepareExecuteRequestAction();
             }
+
             IncrementRequestCounts();
-            string text = serviceName.TrimEnd(new char[1] { '/' }) + "/" + endpoint.TrimStart(new char[1] { '/' });
+            string text = serviceName.TrimEnd('/') + "/" + endpoint.TrimStart('/');
             if (queryParameters != null && queryParameters.Any())
             {
                 StringBuilder stringBuilder = new StringBuilder();
@@ -231,6 +241,7 @@ namespace BMW.Rheingold.Psdz
                 stringBuilder.Append(string.Join("&", queryParameters.Select((KeyValuePair<string, string> kv) => Uri.EscapeDataString(kv.Key) + "=" + Uri.EscapeDataString(kv.Value))));
                 text += stringBuilder.ToString();
             }
+
             HttpRequestMessage httpRequestMessage = new HttpRequestMessage(method, text);
             if (requestBodyObject != null)
             {
@@ -243,23 +254,27 @@ namespace BMW.Rheingold.Psdz
                 string content = JsonConvert.SerializeObject(requestBodyObject, jsonSerializerSettings);
                 httpRequestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
             }
+
             return httpRequestMessage;
         }
 
         private void HandleException<T>(Exception ex, HttpResponseMessage response, string serviceName, string endpoint, HttpMethod method, string methodName)
         {
             Dictionary<string, string> dictionary = new Dictionary<string, string>
-        {
             {
-                "Endpoint",
-                serviceName + "/" + endpoint
-            },
-            {
-                "Method",
-                method.ToString()
-            },
-            { "Message", ex.Message }
-        };
+                {
+                    "Endpoint",
+                    serviceName + "/" + endpoint
+                },
+                {
+                    "Method",
+                    method.ToString()
+                },
+                {
+                    "Message",
+                    ex.Message
+                }
+            };
             if (ex is JsonSerializationException || ex is JsonReaderException)
             {
                 dictionary.Add("Path", (ex as JsonSerializationException)?.Path ?? (ex as JsonReaderException)?.Path);
@@ -271,6 +286,7 @@ namespace BMW.Rheingold.Psdz
                 dictionary.Add("ErrorMessage", "No response from server");
                 Log.Error(methodName, CreateResponseLogMessage("API-Error", response, GetResponseData<T>(response), dictionary));
             }
+
             string msg = CreateResponseLogMessage("API-Error", response, GetResponseData<T>(response), dictionary);
             Log.Error(methodName, msg);
         }

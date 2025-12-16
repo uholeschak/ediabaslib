@@ -15,22 +15,15 @@ namespace BMW.Rheingold.Psdz
         private class SessionData
         {
             public IList<int> IstaProcessIds { get; set; }
-
             public int PsdzWebserviceProcessId { get; set; }
-
             public int PsdzWebServicePort { get; set; }
-
             public WebserviceSessionStatus Status { get; set; }
         }
 
         private const string PSDZ_WEBSERVICE_SESSIONS_FILENAME = "PsdzWebserviceSessions.json";
-
         private const string PSDZ_WEBSERVICE_SESSIONS_LOCK_FILENAME = "PsdzWebserviceSessions.lck";
-
         private static readonly string sessionDataFilePath;
-
         private static readonly string lockFilePath;
-
         public static int RegisterCurrentProcess()
         {
             Process process = Process.GetCurrentProcess();
@@ -44,19 +37,24 @@ namespace BMW.Rheingold.Psdz
                     Log.Debug(Log.CurrentMethod(), "No appropriate session was found, so creating a new one.");
                     sessionData = new SessionData
                     {
-                        IstaProcessIds = new List<int> { process.Id },
+                        IstaProcessIds = new List<int>
+                        {
+                            process.Id
+                        },
                         PsdzWebServicePort = ConfigSettings.getConfigint("BMW.Rheingold.Programming.PsdzWebservice.Port", -1)
                     };
                     if (sessionData.PsdzWebServicePort == -1)
                     {
                         sessionData.PsdzWebServicePort = GetPort(list);
                     }
+
                     list.Add(sessionData);
                 }
                 else
                 {
                     sessionData.IstaProcessIds.AddIfNotContains(process.Id);
                 }
+
                 WriteSessionsToFile(lockFileStream, list);
                 return sessionData.PsdzWebServicePort;
             }
@@ -76,6 +74,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Info(Log.CurrentMethod(), $"A webservice process has already been started, no need to start another. Webservice process: {sessionData.PsdzWebserviceProcessId}");
                     return false;
                 }
+
                 if (configStringAsBoolean)
                 {
                     Log.Info(Log.CurrentMethod(), "SkipProcessStart is true, so we will not start the process and we'll leave the webservice PID at the default value of 0.");
@@ -85,9 +84,11 @@ namespace BMW.Rheingold.Psdz
                     webserviceProcess.Start();
                     sessionData.PsdzWebserviceProcessId = webserviceProcess.Id;
                 }
+
                 sessionData.Status = WebserviceSessionStatus.ProcessStarted;
                 WriteSessionsToFile(lockFileStream, list);
             }
+
             string text = (configStringAsBoolean ? "(no process actually started)" : webserviceProcess.Id.ToString());
             Log.Info(Log.CurrentMethod(), "Started webservice process: " + text);
             return true;
@@ -104,9 +105,11 @@ namespace BMW.Rheingold.Psdz
                 {
                     throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
                 }
+
                 source.Single().Status = WebserviceSessionStatus.Running;
                 WriteSessionsToFile(lockFileStream, list);
             }
+
             Log.Info(Log.CurrentMethod(), $"The webservice session for ISTA process {process.ProcessName} ({process.Id}) is now marked as running, so other threads can use it.");
         }
 
@@ -122,6 +125,7 @@ namespace BMW.Rheingold.Psdz
                     Log.Warning(Log.CurrentMethod(), $"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}). We were going to deregister anyway, but this may be a sign of some problem.");
                     return false;
                 }
+
                 SessionData sessionData = source.Single();
                 if (sessionData.IstaProcessIds.Count == 1)
                 {
@@ -145,10 +149,12 @@ namespace BMW.Rheingold.Psdz
                             Log.WarningException(Log.CurrentMethod(), exception);
                         }
                     }
+
                     list.Remove(sessionData);
                     WriteSessionsToFile(lockFileStream, list);
                     return true;
                 }
+
                 Log.Info(Log.CurrentMethod(), "Shutdown has been requested, but other ISTA processes also use this session. Shutdown will not be executed yet.");
                 sessionData.IstaProcessIds.Remove(process.Id);
                 WriteSessionsToFile(lockFileStream, list);
@@ -164,27 +170,31 @@ namespace BMW.Rheingold.Psdz
             {
                 source = ReadSessionsFromFile(lockFileStream);
             }
+
             IEnumerable<SessionData> source2 = source.Where((SessionData s) => s.IstaProcessIds.Contains(process.Id));
             if (!source2.Any())
             {
                 throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
             }
+
             return source2.Single().Status;
         }
 
         private static int GetPort(IEnumerable<SessionData> allSessions)
         {
             Log.Debug(Log.CurrentMethod(), "Looking for a free port to initialize the Psdz Webservice...");
-            List<int> list = (from s in allSessions
-                              select s.PsdzWebServicePort into p
-                              orderby p
-                              select p).ToList();
+            List<int> list = (
+                from s in allSessions
+                select s.PsdzWebServicePort into p
+                    orderby p
+                    select p).ToList();
             foreach (int item in list)
             {
                 Log.Debug(Log.CurrentMethod(), $"Port {item} is already used by another instance.");
             }
+
             int num = list.LastOrDefault();
-            return NetUtils.GetFirstFreePort((num == 0) ? 50000 : (num + 1), 50200);
+            return NetUtils.GetFirstFreePort((num == 0) ? 50000 : (num + 1), 50200, 8888);
         }
 
         [PreserveSource(Hint = "ApplicationData changed for IIS")]
@@ -205,6 +215,7 @@ namespace BMW.Rheingold.Psdz
             {
                 File.Create(sessionDataFilePath).Close();
             }
+
             if (!File.Exists(lockFilePath))
             {
                 File.Create(lockFilePath).Close();
@@ -217,11 +228,13 @@ namespace BMW.Rheingold.Psdz
             {
                 throw new IOException("Lockfile stream does not have write permission (or may have been closed). This means we cannot safely write to the sessions file.");
             }
+
             string text = JsonConvert.SerializeObject(allSessions, Formatting.Indented);
             using (StreamWriter streamWriter = new StreamWriter(sessionDataFilePath, append: false))
             {
                 streamWriter.Write(text);
             }
+
             Log.Debug(Log.CurrentMethod(), "The following content has been written to the Session Data file: \n" + text);
         }
 
@@ -231,11 +244,13 @@ namespace BMW.Rheingold.Psdz
             {
                 throw new IOException("Lockfile stream does not have read permission (or may have been closed). This means we cannot safely read from the sessions file.");
             }
+
             string text;
             using (StreamReader streamReader = new StreamReader(sessionDataFilePath, detectEncodingFromByteOrderMarks: true))
             {
                 text = streamReader.ReadToEnd();
             }
+
             List<SessionData> list = JsonConvert.DeserializeObject<List<SessionData>>(text) ?? new List<SessionData>();
             Log.Debug(Log.CurrentMethod(), $"{list.Count} PSdZ Webservice session(s) have been read out from the file {sessionDataFilePath}: \n{text}");
             return list;
@@ -268,6 +283,7 @@ namespace BMW.Rheingold.Psdz
                         Log.ErrorException(Log.CurrentMethod(), "Out of retries, so rethrowing exception: ", exception);
                         throw;
                     }
+
                     Task.Delay(50);
                 }
             }
@@ -282,6 +298,7 @@ namespace BMW.Rheingold.Psdz
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(sessionDataFilePath));
                 }
+
                 File.WriteAllText(sessionDataFilePath, string.Empty);
                 Log.Info(Log.CurrentMethod(), "PSdZ Webservice Session Data file successfully cleared!");
             }
