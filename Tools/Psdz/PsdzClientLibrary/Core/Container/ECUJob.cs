@@ -75,10 +75,10 @@ namespace PsdzClient.Core.Container
 
             if (base.JobResult != null)
             {
-                ECUResult eCUResult = base.JobResult.FirstOrDefault((ECUResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                if (eCUResult != null)
+                IEcuResult ecuResult = base.JobResult.FirstOrDefault((IEcuResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase));
+                if (ecuResult != null)
                 {
-                    return eCUResult.FASTARelevant;
+                    return ecuResult.FASTARelevant;
                 }
             }
 
@@ -199,7 +199,7 @@ namespace PsdzClient.Core.Container
 
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult)
+                    foreach (IEcuResult item in base.JobResult)
                     {
                         string arg = string.Empty;
                         if (item.Format != 7)
@@ -301,7 +301,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 1)
                         {
@@ -335,7 +335,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 1)
                         {
@@ -633,10 +633,10 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    ECUResult eCUResult = base.JobResult.FirstOrDefault((ECUResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase));
-                    if (eCUResult != null)
+                    IEcuResult ecuResult = base.JobResult.FirstOrDefault((IEcuResult item) => item.Set == set && string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase));
+                    if (ecuResult != null)
                     {
-                        return eCUResult.Value;
+                        return ecuResult.Value;
                     }
 
                     Log.Warning("ECUJob.getResult()", "({0},{1}) - result not found in JobResult list.", set, resultName);
@@ -665,10 +665,10 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    ECUResult eCUResult = (getLast ? base.JobResult.LastOrDefault((ECUResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)) : base.JobResult.FirstOrDefault((ECUResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)));
-                    if (eCUResult != null)
+                    IEcuResult ecuResult = (getLast ? base.JobResult.LastOrDefault((IEcuResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)) : base.JobResult.FirstOrDefault((IEcuResult item) => string.Equals(item.Name, resultName, StringComparison.OrdinalIgnoreCase)));
+                    if (ecuResult != null)
                     {
-                        return eCUResult.Value;
+                        return ecuResult.Value;
                     }
 
                     Log.Warning("ECUJob.getResult()", "no matching result found for result name: {0}", resultName);
@@ -756,51 +756,17 @@ namespace PsdzClient.Core.Container
 
         public T getResultsAs<T>(string resultName, T defaultRes = default(T), int set = -1)
         {
-            object obj = null;
-            try
+            if (base.JobResult == null || base.JobResult.Count == 0)
             {
-                if (!typeof(T).IsArray)
-                {
-                    Type typeFromHandle = typeof(T);
-                    Log.Debug("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "result: {0} requested type is {1} - processing as a classic (simple type) result", resultName, typeFromHandle.ToString());
-                    bool isSetRelevant = set > -1;
-                    if (set != -1)
-                    {
-                        _ = set;
-                    }
-                    else
-                    {
-                        base.JobResult.Max((ECUResult res) => res.Set);
-                    }
-
-                    ECUResult eCUResult = base.JobResult.FirstOrDefault((ECUResult x) => string.Equals(x.Name, resultName, StringComparison.InvariantCultureIgnoreCase) && (!isSetRelevant || x.Set == set));
-                    if (eCUResult == null)
-                    {
-                        return defaultRes;
-                    }
-
-                    obj = eCUResult.Value;
-                    if (obj.GetType() != typeFromHandle)
-                    {
-                        if (Nullable.GetUnderlyingType(typeFromHandle) != null)
-                        {
-                            return (T)Convert.ChangeType(obj, Nullable.GetUnderlyingType(typeFromHandle), CultureInfo.InvariantCulture);
-                        }
-
-                        Log.Debug("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "result: {0} obj type is {1} targetType is: {2}", resultName, obj.GetType().ToString(), typeFromHandle.ToString());
-                        return (T)Convert.ChangeType(obj, typeFromHandle, CultureInfo.InvariantCulture);
-                    }
-
-                    return (T)obj;
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Warning("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "Fetching of the job result: " + resultName + " failed for the requested type: " + typeof(T).Name + ". The discovered type is: " + obj?.GetType()?.Name + ". Error: " + ex.Message);
                 return defaultRes;
             }
 
-            object obj2 = null;
+            if (!typeof(T).IsArray)
+            {
+                return GetResultsAsClassic(resultName, defaultRes, set);
+            }
+
+            object obj = null;
             try
             {
                 if (string.IsNullOrEmpty(resultName))
@@ -816,7 +782,7 @@ namespace PsdzClient.Core.Container
                 bool flag3 = num > 0;
                 bool flag4 = false;
                 Log.Debug("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "ECUJob.getResultsAs(string resultName, T defaultRes, int set) -> result: {0}, set: {1}, fields: {2}", resultName, set, num);
-                Dictionary<ECUResult, List<int>> dictionary = new Dictionary<ECUResult, List<int>>();
+                Dictionary<IEcuResult, List<int>> dictionary = new Dictionary<IEcuResult, List<int>>();
                 List<int> list = new List<int>();
                 if (flag)
                 {
@@ -824,7 +790,7 @@ namespace PsdzClient.Core.Container
                 }
 
                 Regex regex = new Regex("^" + resultName.Replace("[].", "[(\\d+)]\\.").Replace("[", "\\[").Replace("]", "\\]") + "$", RegexOptions.IgnoreCase);
-                foreach (ECUResult item in base.JobResult)
+                foreach (IEcuResult item in base.JobResult)
                 {
                     Match match = regex.Match(item.Name);
                     if (!match.Success)
@@ -862,21 +828,21 @@ namespace PsdzClient.Core.Container
 
                     if (flag3)
                     {
-                        for (int num3 = 1; num3 < match.Groups.Count; num3++)
+                        for (int i = 1; i < match.Groups.Count; i++)
                         {
-                            string value = match.Groups[num3].Value;
+                            string value = match.Groups[i].Value;
                             if (IsDigitsOnly(value))
                             {
-                                int num4 = Convert.ToInt32(value);
-                                list2.Add(num4);
-                                num4++;
+                                int num3 = Convert.ToInt32(value);
+                                list2.Add(num3);
+                                num3++;
                                 if (list.Count < list2.Count)
                                 {
-                                    list.Add(num4);
+                                    list.Add(num3);
                                 }
-                                else if (list[list2.Count - 1] < num4)
+                                else if (list[list2.Count - 1] < num3)
                                 {
-                                    list[list2.Count - 1] = num4;
+                                    list[list2.Count - 1] = num3;
                                 }
 
                                 continue;
@@ -917,27 +883,27 @@ namespace PsdzClient.Core.Container
                     return defaultRes;
                 }
 
-                Type typeFromHandle2 = typeof(T);
+                Type typeFromHandle = typeof(T);
                 Type type = null;
                 bool flag6 = false;
-                if (typeFromHandle2.BaseType == typeof(Array))
+                if (typeFromHandle.BaseType == typeof(Array))
                 {
                     List<int> list3 = new List<int>();
-                    type = typeFromHandle2.GetElementType();
-                    int arrayRank = typeFromHandle2.GetArrayRank();
+                    type = typeFromHandle.GetElementType();
+                    int arrayRank = typeFromHandle.GetArrayRank();
                     if (defaultRes != null)
                     {
                         Array array = defaultRes as Array;
-                        for (int num5 = 0; num5 < arrayRank; num5++)
+                        for (int j = 0; j < arrayRank; j++)
                         {
-                            list3.Add(array.GetLength(num5));
+                            list3.Add(array.GetLength(j));
                         }
 
                         if (list3.Count == list.Count)
                         {
-                            for (int num6 = 0; num6 < arrayRank; num6++)
+                            for (int k = 0; k < arrayRank; k++)
                             {
-                                if (list3[num6] < list[num6])
+                                if (list3[k] < list[k])
                                 {
                                     flag6 = true;
                                     break;
@@ -956,36 +922,36 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    type = typeFromHandle2;
+                    type = typeFromHandle;
                 }
 
                 if (!flag && !flag3)
                 {
-                    obj2 = null;
-                    ECUResult eCUResult2 = dictionary.Keys.FirstOrDefault((ECUResult item) => item.Set == relevantSet);
-                    if (eCUResult2 != null)
+                    obj = null;
+                    IEcuResult ecuResult = dictionary.Keys.FirstOrDefault((IEcuResult item) => item.Set == relevantSet);
+                    if (ecuResult != null)
                     {
-                        obj2 = eCUResult2.Value;
+                        obj = ecuResult.Value;
                     }
 
-                    if (obj2 == null)
+                    if (obj == null)
                     {
                         Log.Error("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "obj was null when query for {0}; guess your testmodule will die... cross your fingers", resultName);
                         return defaultRes;
                     }
 
-                    if (obj2.GetType() != typeFromHandle2)
+                    if (obj.GetType() != typeFromHandle)
                     {
-                        if (Nullable.GetUnderlyingType(typeFromHandle2) != null)
+                        if (Nullable.GetUnderlyingType(typeFromHandle) != null)
                         {
-                            return (T)Convert.ChangeType(obj2, Nullable.GetUnderlyingType(typeFromHandle2), CultureInfo.InvariantCulture);
+                            return (T)Convert.ChangeType(obj, Nullable.GetUnderlyingType(typeFromHandle), CultureInfo.InvariantCulture);
                         }
 
-                        Log.Debug("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "result: {0} obj type is {1} targetType is: {2}", resultName, obj2.GetType().ToString(), typeFromHandle2.ToString());
-                        return (T)Convert.ChangeType(obj2, typeFromHandle2, CultureInfo.InvariantCulture);
+                        Log.Debug("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", "result: {0} obj type is {1} targetType is: {2}", resultName, obj.GetType().ToString(), typeFromHandle.ToString());
+                        return (T)Convert.ChangeType(obj, typeFromHandle, CultureInfo.InvariantCulture);
                     }
 
-                    return (T)obj2;
+                    return (T)obj;
                 }
 
                 Array array2 = null;
@@ -1038,25 +1004,25 @@ namespace PsdzClient.Core.Container
                 }
 
                 array2 = array2 ?? (defaultRes as Array);
-                foreach (ECUResult key in dictionary.Keys)
+                foreach (IEcuResult key in dictionary.Keys)
                 {
                     if (!flag && relevantSet != key.Set)
                     {
                         continue;
                     }
 
-                    obj2 = key.Value;
+                    obj = key.Value;
                     if (!flag4)
                     {
-                        obj2 = Convert.ChangeType(obj2, type, CultureInfo.InvariantCulture);
+                        obj = Convert.ChangeType(obj, type, CultureInfo.InvariantCulture);
                         int[] indices = dictionary[key].ToArray();
-                        array2.SetValue(obj2, indices);
+                        array2.SetValue(obj, indices);
                         continue;
                     }
 
-                    obj2 = Convert.ChangeType(obj2, typeof(byte[]), CultureInfo.InvariantCulture);
+                    obj = Convert.ChangeType(obj, typeof(byte[]), CultureInfo.InvariantCulture);
                     int[] array3 = dictionary[key].ToArray();
-                    byte[] array4 = obj2 as byte[];
+                    byte[] array4 = obj as byte[];
                     foreach (byte b in array4)
                     {
                         array2.SetValue(b, array3);
@@ -1064,12 +1030,88 @@ namespace PsdzClient.Core.Container
                     }
                 }
 
-                return (T)Convert.ChangeType(array2, typeFromHandle2, CultureInfo.InvariantCulture);
+                return (T)Convert.ChangeType(array2, typeFromHandle, CultureInfo.InvariantCulture);
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                Log.WarningException("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", exception);
+                Log.WarningException("ECUJob.getResultsAs(string resultName, T defaultRes, int set)", ex);
+                string name = typeof(T).Name;
+                string actualType = obj?.GetType()?.Name;
+                ProtocolGetResultError(ex, name, actualType, resultName);
                 return defaultRes;
+            }
+        }
+
+        private T GetResultsAsClassic<T>(string resultName, T defaultRes = default(T), int set = -1)
+        {
+            object obj = null;
+            try
+            {
+                if (!typeof(T).IsArray)
+                {
+                    Type typeFromHandle = typeof(T);
+                    Log.Debug("GetResultsAsClassic", "result: {0} requested type is {1} - processing as a classic (simple type) result", resultName, typeFromHandle.ToString());
+                    bool isSetRelevant = set > -1;
+                    if (set != -1)
+                    {
+                        _ = set;
+                    }
+                    else
+                    {
+                        base.JobResult.Max((IEcuResult res) => res.Set);
+                    }
+
+                    IEcuResult ecuResult = base.JobResult.FirstOrDefault((IEcuResult x) => string.Equals(x.Name, resultName, StringComparison.InvariantCultureIgnoreCase) && (!isSetRelevant || x.Set == set));
+                    if (ecuResult == null)
+                    {
+                        return defaultRes;
+                    }
+
+                    obj = ecuResult.Value;
+                    if (obj.GetType() != typeFromHandle)
+                    {
+                        if (Nullable.GetUnderlyingType(typeFromHandle) != null)
+                        {
+                            return (T)Convert.ChangeType(obj, Nullable.GetUnderlyingType(typeFromHandle), CultureInfo.InvariantCulture);
+                        }
+
+                        Log.Debug("GetResultsAsClassic", "result: {0} obj type is {1} targetType is: {2}", resultName, obj.GetType().ToString(), typeFromHandle.ToString());
+                        return (T)Convert.ChangeType(obj, typeFromHandle, CultureInfo.InvariantCulture);
+                    }
+
+                    return (T)obj;
+                }
+            }
+            catch (Exception ex)
+            {
+                string fullName = typeof(T).FullName;
+                string text = obj?.GetType()?.FullName;
+                Log.Warning("GetResultsAsClassic", "Fetching of the job result: " + resultName + " failed for the requested type: " + fullName + ". The discovered type is: " + text + ". Error: " + ex.Message);
+                ProtocolGetResultError(ex, fullName, text, resultName);
+            }
+
+            return defaultRes;
+        }
+
+        private void ProtocolGetResultError(Exception ex, string requestedType, string actualType, string resultName)
+        {
+            try
+            {
+                if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service))
+                {
+                    string currentlyRunningModuleName = TimeMetricsUtility.Instance.GetCurrentlyRunningModuleName();
+                    string value = "Source: " + currentlyRunningModuleName + ", ecu: " + base.EcuName + ", job: " + base.JobName + ", args: " + base.JobParam + ", result name: " + resultName + ", requested type: " + requestedType + ", actual type: " + actualType + ". Error: " + ex.Message;
+                    service.AddServiceCode(ServiceCodes.ANA09_ResultSetFailed_nu_LF, value, LayoutGroup.D, allowMultipleEntries: true);
+                }
+            }
+            catch (Exception ex2)
+            {
+                Log.Error(Log.CurrentMethod(), "Cannot protocol " + ServiceCodes.ANA09_ResultSetFailed_nu_LF + ", ex: " + ex2.Message);
+            }
+
+            if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Diagnostics.ThrowOnJobRetrievalError", defaultValue: false))
+            {
+                throw ex;
             }
         }
 
@@ -1139,7 +1181,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    using (IEnumerator<ECUResult> enumerator = base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)).GetEnumerator())
+                    using (IEnumerator<IEcuResult> enumerator = base.JobResult.Where((IEcuResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)).GetEnumerator())
                     {
                         if (enumerator.MoveNext())
                         {
@@ -1199,7 +1241,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => result.Set == set))
+                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => result.Set == set))
                     {
                         list.Add(item);
                     }
@@ -1260,7 +1302,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult)
+                    foreach (IEcuResult item in base.JobResult)
                     {
                         if (item.Set < startSet || item.Set > stopSet)
                         {
@@ -1380,7 +1422,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => result.Set == set && string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 0)
                         {
@@ -1414,7 +1456,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 0)
                         {
@@ -1472,7 +1514,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 8)
                         {
@@ -1710,7 +1752,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         if (item.Format == 3)
                         {
@@ -1814,7 +1856,7 @@ namespace PsdzClient.Core.Container
             return null;
         }
 
-        public static void Dump(ECUJob dJob)
+        public static void Dump(IEcuJob dJob)
         {
             if (!VehicleCommunication.validLicense)
             {
@@ -1865,7 +1907,7 @@ namespace PsdzClient.Core.Container
                     return;
                 }
 
-                foreach (ECUResult item in dJob.JobResult)
+                foreach (IEcuResult item in dJob.JobResult)
                 {
                     string text = string.Empty;
                     if (item.Format != 7)
@@ -1890,7 +1932,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        public static void DumpList(IList<ECUJob> jobList)
+        public static void DumpList(IList<IEcuJob> jobList)
         {
             if (!VehicleCommunication.validLicense)
             {
@@ -1905,7 +1947,7 @@ namespace PsdzClient.Core.Container
                     return;
                 }
 
-                foreach (ECUJob job in jobList)
+                foreach (IEcuJob job in jobList)
                 {
                     string text = ((!string.IsNullOrEmpty(job.JobResultFilter)) ? job.JobResultFilter : string.Empty);
                     string text2 = ((!string.IsNullOrEmpty(job.JobParam)) ? job.JobParam : string.Empty);
@@ -1918,7 +1960,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        public static IList<string> scanECUfromFunctionalResponse(ECUJob job)
+        public static IList<string> scanECUfromFunctionalResponse(IEcuJob job)
         {
             try
             {
@@ -1928,7 +1970,7 @@ namespace PsdzClient.Core.Container
                 }
 
                 List<string> list = new List<string>();
-                foreach (ECUResult item in job.JobResult)
+                foreach (IEcuResult item in job.JobResult)
                 {
                     if (item.Name == "ECU_GROBNAME")
                     {
@@ -1969,7 +2011,7 @@ namespace PsdzClient.Core.Container
             {
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult.Where((ECUResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
+                    foreach (IEcuResult item in base.JobResult.Where((IEcuResult result) => string.Equals(result.Name, resultName, StringComparison.OrdinalIgnoreCase)))
                     {
                         list.Add(item.Value);
                     }
@@ -1999,7 +2041,7 @@ namespace PsdzClient.Core.Container
                 FASTARelevant = defRelevant;
                 if (base.JobResult != null)
                 {
-                    foreach (ECUResult item in base.JobResult)
+                    foreach (IEcuResult item in base.JobResult)
                     {
                         item.FASTARelevant = defRelevant;
                     }
@@ -2031,7 +2073,7 @@ namespace PsdzClient.Core.Container
                 {
                     num = ((stopSet < 0) ? ((ushort)(base.JobResultSets + stopSet + 1)) : ((ushort)stopSet));
                     {
-                        foreach (ECUResult item in base.JobResult)
+                        foreach (IEcuResult item in base.JobResult)
                         {
                             if (item.FASTARelevant || item.Set < startSet || item.Set > num)
                             {

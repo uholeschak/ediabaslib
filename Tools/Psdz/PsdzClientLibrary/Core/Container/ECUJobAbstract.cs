@@ -3,11 +3,13 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 namespace PsdzClient.Core.Container
 {
     [Serializable]
+    [KnownType(typeof(ECUResult))]
     [GeneratedCode("System.Xml", "2.0.50727.3082")]
     [DebuggerStepThrough]
     [DesignerCategory("code")]
@@ -16,7 +18,7 @@ namespace PsdzClient.Core.Container
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public abstract class ECUJobAbstract : INotifyPropertyChanged
     {
-        private List<ECUResult> jobResult;
+        private List<IEcuResult> ecuJobResults;
         private string ecuName;
         private DateTime executionStartTime;
         private DateTime executionEndTime;
@@ -27,18 +29,20 @@ namespace PsdzClient.Core.Container
         private string jobErrorText;
         private int jobResultSets;
         [XmlElement("jobResult", IsNullable = true)]
-        public List<ECUResult> JobResult
+        public List<ECUResult> JobResultsForSerialization { get; set; }
+
+        [XmlIgnore]
+        public List<IEcuResult> JobResult
         {
             get
             {
-                return jobResult;
+                return ecuJobResults;
             }
-
             set
             {
-                if (jobResult != value)
+                if (ecuJobResults != value)
                 {
-                    jobResult = value;
+                    ecuJobResults = value;
                     RaisePropertyChanged("JobResult");
                 }
             }
@@ -211,9 +215,9 @@ namespace PsdzClient.Core.Container
         {
         }
 
-        protected ECUJobAbstract(List<ECUResult> jobResult, string ecuName, DateTime executionStartTime, DateTime executionEndTime, string jobName, string jobParam, string jobResultFilter, int jobErrorCode, string jobErrorText, int jobResultSets)
+        protected ECUJobAbstract(List<IEcuResult> jobResult, string ecuName, DateTime executionStartTime, DateTime executionEndTime, string jobName, string jobParam, string jobResultFilter, int jobErrorCode, string jobErrorText, int jobResultSets)
         {
-            this.jobResult = jobResult;
+            ecuJobResults = jobResult;
             this.ecuName = ecuName;
             this.executionStartTime = executionStartTime;
             this.executionEndTime = executionEndTime;

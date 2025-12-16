@@ -1562,31 +1562,30 @@ namespace PsdzClient.Core
         {
             IEnumerable<IEcu> enumerable = vecInfo.ECU.Where((IEcu x) => varianteListFor14DigitSerialNumber.Contains(x.VARIANTE) && x.SERIENNUMMER != null && x.SERIENNUMMER.Length == 14);
             IEnumerable<IEcuJob> source = jobList.Where((IEcuJob x) => x.JobName.Equals("SERIENNUMMER_LESEN"));
-            Dictionary<IEcu, ECUJob> dictionary = new Dictionary<IEcu, ECUJob>();
+            Dictionary<IEcu, IEcuJob> dictionary = new Dictionary<IEcu, IEcuJob>();
             foreach (IEcu ecu in enumerable)
             {
                 IEnumerable<IEcuJob> source2 = source.Where((IEcuJob job) => job.EcuName.Equals(ecu.ECU_SGBD, StringComparison.OrdinalIgnoreCase) || job.EcuName.Equals(ecu.ECU_GRUPPE, StringComparison.OrdinalIgnoreCase));
                 if (source2.Count() != 0)
                 {
-                    dictionary.Add(ecu, (ECUJob)source2.First());
+                    dictionary.Add(ecu, source2.First());
                 }
             }
-
-            foreach (KeyValuePair<IEcu, ECUJob> item in dictionary)
+            foreach (KeyValuePair<IEcu, IEcuJob> item in dictionary)
             {
                 IEcu key = item.Key;
-                ECUJob value = item.Value;
-                ECUResult eCUResult = value.JobResult.FirstOrDefault((ECUResult x) => x.Name == "SERIENNUMMER");
-                if (eCUResult != null)
+                IEcuJob value = item.Value;
+                IEcuResult ecuResult = value.JobResult.FirstOrDefault((IEcuResult x) => x.Name == "SERIENNUMMER");
+                if (ecuResult != null)
                 {
-                    ECUResult eCUResult2 = new ECUResult();
-                    eCUResult2.Name = "SERIENNUMMER14";
-                    eCUResult2.Value = key.SERIENNUMMER;
-                    eCUResult2.Set = eCUResult.Set;
-                    eCUResult2.Format = 6;
-                    eCUResult2.Length = 0u;
-                    eCUResult2.FASTARelevant = true;
-                    value.JobResult.Add(eCUResult2);
+                    ECUResult eCUResult = new ECUResult();
+                    eCUResult.Name = "SERIENNUMMER14";
+                    eCUResult.Value = key.SERIENNUMMER;
+                    eCUResult.Set = ecuResult.Set;
+                    eCUResult.Format = 6;
+                    eCUResult.Length = 0u;
+                    eCUResult.FASTARelevant = true;
+                    value.JobResult.Add(eCUResult);
                 }
             }
         }

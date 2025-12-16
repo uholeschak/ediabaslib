@@ -8,25 +8,29 @@ namespace PsdzClient.Core.Container
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuJob : INotifyPropertyChanged
     {
-        string EcuName { get; }
+        string EcuName { get; set; }
 
-        DateTime ExecutionEndTime { get; }
+        DateTime ExecutionEndTime { get; set; }
 
-        DateTime ExecutionStartTime { get; }
+        DateTime ExecutionStartTime { get; set; }
 
-        bool FASTARelevant { get; }
+        bool FASTARelevant { get; set; }
 
-        int JobErrorCode { get; }
+        int JobErrorCode { get; set; }
 
-        string JobErrorText { get; }
+        string JobErrorText { get; set; }
 
-        string JobName { get; }
+        string JobName { get; set; }
 
-        string JobParam { get; }
+        string JobParam { get; set; }
 
-        string JobResultFilter { get; }
+        string JobResultFilter { get; set; }
 
-        int JobResultSets { get; }
+        int JobResultSets { get; set; }
+
+        List<IEcuResult> JobResult { get; set; }
+
+        int NrForJobResultSets { get; }
 
         bool IsDone();
         bool IsFASTARelevant(ushort set, string resultName);

@@ -13,11 +13,11 @@ namespace PsdzClient.Core.Container
         private byte[] ecuData;
         private string ecuGroup = string.Empty;
         private string ecuJob = string.Empty;
-        private ECUKom ecuKom;
+        private IEcuKom ecuKom;
         private string ecuParam = string.Empty;
         private string ecuResultFilter = string.Empty;
         private bool parameterizationDone;
-        public EDIABASAdapter(bool StandardErrorHandling, ECUKom ecuKom, ConfigurationContainer configContainer) : base(StandardErrorHandling, configContainer)
+        public EDIABASAdapter(bool StandardErrorHandling, IEcuKom ecuKom, ConfigurationContainer configContainer) : base(StandardErrorHandling, configContainer)
         {
             this.ecuKom = ecuKom;
         }
@@ -239,7 +239,7 @@ namespace PsdzClient.Core.Container
             return Execute(null);
         }
 
-        private void MarkAsFastaRelevant(ECUJob job, IEnumerable<string> jobNames)
+        private void MarkAsFastaRelevant(IEcuJob job, IEnumerable<string> jobNames)
         {
             jobNames.ForEach(delegate (string fastaRelevantJobName)
             {
@@ -276,25 +276,25 @@ namespace PsdzClient.Core.Container
                     return new EDIABASAdapterDeviceResult(new ECUJob(), inParameters);
                 }
 
-                if (parameterizationDone && !string.IsNullOrEmpty(ecuGroup) && !string.IsNullOrEmpty(ecuJob))
+                if (parameterizationDone && !string.IsNullOrEmpty(ecuGroup) && !string.IsNullOrEmpty(this.ecuJob))
                 {
                     if (!binModeReq || !CheckForBinModeRequired())
                     {
-                        ECUJob eCUJob = ecuKom.apiJob(ecuGroup, ecuJob, ecuParam, ecuResultFilter);
-                        eCUJob.maskResultFASTARelevant(1, -1, "JOB_STATUS");
-                        MarkAsFastaRelevant(eCUJob, RetrieveFastaRelevantJobNames(inParameters));
-                        Log.Error("EidiabusAdapter", string.Join("\n", eCUJob.JobResult.Select((ECUResult x) => $"name: {x.Name}, value: {x.Value}, relevant: {x.FASTARelevant}, set: {x.Set}")));
-                        Log.Info("EDIABASAdapter.Execute()", "apiJob('{0}', '{1}', '{2}') - JobStatus: {3}:{4}", ecuGroup, ecuJob, ecuParam, eCUJob?.JobErrorCode ?? (-1), (eCUJob != null) ? eCUJob.JobErrorText : "null");
-                        return new EDIABASAdapterDeviceResult(eCUJob, inParameters);
+                        IEcuJob ecuJob = ecuKom.ApiJob(ecuGroup, this.ecuJob, ecuParam, ecuResultFilter);
+                        ecuJob.maskResultFASTARelevant(1, -1, "JOB_STATUS");
+                        MarkAsFastaRelevant(ecuJob, RetrieveFastaRelevantJobNames(inParameters));
+                        Log.Error("EidiabusAdapter", string.Join("\n", ecuJob.JobResult.Select((IEcuResult x) => $"name: {x.Name}, value: {x.Value}, relevant: {x.FASTARelevant}, set: {x.Set}")));
+                        Log.Info("EDIABASAdapter.Execute()", "apiJob('{0}', '{1}', '{2}') - JobStatus: {3}:{4}", ecuGroup, this.ecuJob, ecuParam, ecuJob?.JobErrorCode ?? (-1), (ecuJob != null) ? ecuJob.JobErrorText : "null");
+                        return new EDIABASAdapterDeviceResult(ecuJob, inParameters);
                     }
 
                     if (ecuData != null)
                     {
-                        ECUJob eCUJob2 = ecuKom.apiJobData(ecuGroup, ecuJob, ecuData, ecuData.Length, ecuResultFilter, string.Empty);
-                        eCUJob2.maskResultFASTARelevant(1, -1, "JOB_STATUS");
-                        MarkAsFastaRelevant(eCUJob2, RetrieveFastaRelevantJobNames(inParameters));
-                        Log.Info("EDIABASAdapter.Execute()", "apiJobData('{0}', '{1}', Data Len: {2}) - JobStatus: {3}:{4}", ecuGroup, ecuJob, (ecuData != null) ? ecuData.Length.ToString(CultureInfo.InvariantCulture) : "null", eCUJob2?.JobErrorCode ?? (-1), (eCUJob2 != null) ? eCUJob2.JobErrorText : "null");
-                        return new EDIABASAdapterDeviceResult(eCUJob2, inParameters);
+                        IEcuJob ecuJob2 = ecuKom.apiJobData(ecuGroup, this.ecuJob, ecuData, ecuData.Length, ecuResultFilter, string.Empty);
+                        ecuJob2.maskResultFASTARelevant(1, -1, "JOB_STATUS");
+                        MarkAsFastaRelevant(ecuJob2, RetrieveFastaRelevantJobNames(inParameters));
+                        Log.Info("EDIABASAdapter.Execute()", "apiJobData('{0}', '{1}', Data Len: {2}) - JobStatus: {3}:{4}", ecuGroup, this.ecuJob, (ecuData != null) ? ecuData.Length.ToString(CultureInfo.InvariantCulture) : "null", ecuJob2?.JobErrorCode ?? (-1), (ecuJob2 != null) ? ecuJob2.JobErrorText : "null");
+                        return new EDIABASAdapterDeviceResult(ecuJob2, inParameters);
                     }
 
                     Log.Warning("EDIABASAdapter.Execute()", "binModeReq was true but no valid ecuData");
