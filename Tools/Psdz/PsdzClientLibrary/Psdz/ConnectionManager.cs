@@ -1,6 +1,5 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
-using BMW.Rheingold.Psdz.Client;
 using BMW.Rheingold.Psdz.Model;
 using Org.BouncyCastle.Asn1.Pkcs;
 using Org.BouncyCastle.Crypto;
@@ -8,12 +7,8 @@ using Org.BouncyCastle.Pkcs;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using System;
-using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using BMW.Rheingold.CoreFramework.Programming.Data.Ecu;
-using BMW.Rheingold.Psdz.Model.Ecu;
-using PsdzClient;
 using PsdzClient.Programming;
 
 #pragma warning disable CS0169
