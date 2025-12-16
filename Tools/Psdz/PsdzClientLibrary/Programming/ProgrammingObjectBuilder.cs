@@ -25,24 +25,17 @@ namespace BMW.Rheingold.Programming.API
     public class ProgrammingObjectBuilder : IProgrammingObjectBuilder
     {
         private readonly IFFMDynamicResolver ffmResolver;
-
         private readonly Vehicle vehicle;
-
         [PreserveSource(Hint = "VehicleDataConverter", Placeholder = true)]
         private readonly PlaceholderType vdc;
-
+        [PreserveSource(Hint = "BaureiheReader", Placeholder = true)]
+        private readonly PlaceholderType baureiheReader;
         private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
-
         private readonly SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new SoftwareSigStateEnumMapper();
-
         private readonly FscStateEnumMapper fscStateEnumMapper = new FscStateEnumMapper();
-
         private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
-
         private readonly SwtTypeEnumMapper swtTypeEnumMapper = new SwtTypeEnumMapper();
-
         private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
-
         [PreserveSource(Hint = "Vehicle added")]
         public ProgrammingObjectBuilder(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
@@ -58,6 +51,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             return new BMW.Rheingold.Programming.API.VehicleOrder
             {
                 FaVersion = faInput.FaVersion,
@@ -88,17 +82,20 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             if (!standardFp.IsValid)
             {
                 Log.Warning("ProgrammingObjectBuilder.Build()", "Vehicle profile 'standardFp' is not valid!");
                 return null;
             }
+
             IDictionary<int, IEnumerable<IVehicleProfileCriterion>> dictionary = new Dictionary<int, IEnumerable<IVehicleProfileCriterion>>();
             foreach (int key in standardFp.Category2Criteria.Keys)
             {
                 IEnumerable<IVehicleProfileCriterion> value = standardFp.Category2Criteria[key].Select(Build);
                 dictionary.Add(key, value);
             }
+
             return new VehicleProfile(standardFp.AsString, standardFp.CategoryId2CategoryName, dictionary);
         }
 
@@ -109,11 +106,12 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             return new VehicleProfileCriterion(criterion.Value, criterion.Name, criterion.NameEn);
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa faInput)
+        [PreserveSource(Hint = "baureiheReader added")]
+        public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa faInput, Psdz.BaureiheReader baureiheReader)
         {
             if (faInput == null)
             {
@@ -124,7 +122,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 vehicleOrder.FaVersion = int.Parse(faInput.VERSION);
             }
-            vehicleOrder.Entwicklungsbaureihe = FormatConverter.ConvertToBn2020ConformModelSeries(faInput.BR);
+            vehicleOrder.Entwicklungsbaureihe = baureiheReader.GetBaureiheFormatted(faInput.BR);
             vehicleOrder.Lackcode = faInput.LACK;
             vehicleOrder.Polstercode = faInput.POLSTER;
             vehicleOrder.Type = faInput.TYPE;
@@ -190,6 +188,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             SystemVerbauKennung systemVerbauKennung = new SystemVerbauKennung();
             systemVerbauKennung.SvkVersion = svkInput.SvkVersion;
             systemVerbauKennung.ProgDepChecked = svkInput.ProgDepChecked;
@@ -207,9 +206,11 @@ namespace BMW.Rheingold.Programming.API
                     sgbmIdentifier.PatchVersion = item.PatchVersion;
                     list.Add(sgbmIdentifier);
                 }
+
                 list.Sort();
                 systemVerbauKennung.SgbmIds = list;
             }
+
             return systemVerbauKennung;
         }
 
@@ -220,6 +221,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             SystemVerbauTabelle systemVerbauTabelle = new SystemVerbauTabelle();
             systemVerbauTabelle.Version = svtInput.Version;
             systemVerbauTabelle.HoSignature = svtInput.HoSignature;
@@ -233,6 +235,7 @@ namespace BMW.Rheingold.Programming.API
                     systemVerbauTabelle.AddEcu(ecu);
                 }
             }
+
             return systemVerbauTabelle;
         }
 
@@ -243,6 +246,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             return new VehicleProfileChecksum
             {
                 VpcVersion = vpcInput.VpcVersion,
@@ -259,6 +263,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return;
             }
+
             foreach (IPsdzEcu item in ecus)
             {
                 IEcuObj ecuObj = Build(item);
@@ -266,6 +271,7 @@ namespace BMW.Rheingold.Programming.API
                 {
                     continue;
                 }
+
                 IPsdzEcuVariantInstance[] bntnVariantInstances = psdzOrderList.BntnVariantInstances;
                 foreach (IPsdzEcuVariantInstance psdzEcuVariantInstance in bntnVariantInstances)
                 {
@@ -284,6 +290,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             return ecu.BaseVariant + "-" + ecu.PrimaryKey.DiagAddrAsInt;
         }
 
@@ -294,6 +301,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             IPsdzSvt svt = sollVerbauung.Svt;
             _ = sollVerbauung.PsdzOrderList;
             SystemVerbauTabelle systemVerbauTabelle = new SystemVerbauTabelle();
@@ -314,9 +322,11 @@ namespace BMW.Rheingold.Programming.API
                             eCU.OrderNumber = orderNumbers[key];
                         }
                     }
+
                     systemVerbauTabelle.AddEcu(eCU);
                 }
             }
+
             return systemVerbauTabelle;
         }
 
@@ -327,11 +337,12 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             ECU eCU = new ECU();
             eCU.BaseVariant = ecuInput.BaseVariant;
             eCU.EcuVariant = ecuInput.EcuVariant;
             eCU.BnTnName = ecuInput.BnTnName;
-            eCU.GatewayDiagAddrAsInt = ((ecuInput.GatewayDiagAddr != null) ? new int?(ecuInput.GatewayDiagAddr.Offset) : ((int?)null));
+            eCU.GatewayDiagAddrAsInt = ((ecuInput.GatewayDiagAddr != null) ? new int? (ecuInput.GatewayDiagAddr.Offset) : ((int? )null));
             eCU.DiagBus = BusMapper.MapToBus(ecuInput.DiagnosticBus);
             eCU.SerialNumber = ecuInput.SerialNumber;
             eCU.EcuIdentifier = Build(ecuInput.PrimaryKey);
@@ -344,6 +355,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 eCU.ID_SG_ADR = eCU.EcuIdentifier.DiagAddrAsInt;
             }
+
             eCU.IsSmartActuator = ecuInput.IsSmartActuator;
             // [UH] [IGNORE] database replaced start
             PsdzDatabase database = ClientContext.GetDatabase(this.vehicle);
@@ -351,7 +363,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 string bnTnName = ecuInput.BnTnName;
                 IEcuIdentifier ecuIdentifier = eCU.EcuIdentifier;
-                PsdzDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int?(ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
+                PsdzDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int? (ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
                 if (ecuVar != null && !string.IsNullOrEmpty(ecuVar.Name))
                 {
                     // [IGNORE] eCU.XepEcuVariant = xEP_ECUVARIANTS;
@@ -363,6 +375,7 @@ namespace BMW.Rheingold.Programming.API
                     {
                         eCU.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
                     }
+
                     PsdzDatabase.EcuReps ecuReps = database.FindEcuRep(ecuClique);
                     if (ecuReps != null)
                     {
@@ -374,6 +387,7 @@ namespace BMW.Rheingold.Programming.API
                     Log.Warning("ProgrammingObjectBuilder.Build", "No valid ECU variant found for \"{0}\".", ecuInput.BnTnName);
                 }
             }
+
             // [UH] [IGNORE] database replaced end
             if (eCU.IsSmartActuator)
             {
@@ -382,13 +396,15 @@ namespace BMW.Rheingold.Programming.API
                     Log.Error(Log.CurrentMethod(), $"{ecuInput} is not a SmartActuator");
                     return eCU;
                 }
+
                 return new SmartActuatorECU(eCU)
                 {
                     ID_HW_NR = "n/a",
-                    SmacMasterDiagAddressAsInt = ((psdzSmartActuatorEcu.SmacMasterDiagAddress != null) ? new int?(psdzSmartActuatorEcu.SmacMasterDiagAddress.Offset) : ((int?)null)),
+                    SmacMasterDiagAddressAsInt = ((psdzSmartActuatorEcu.SmacMasterDiagAddress != null) ? new int? (psdzSmartActuatorEcu.SmacMasterDiagAddress.Offset) : ((int? )null)),
                     SmacID = psdzSmartActuatorEcu.SmacID
                 };
             }
+
             if (ecuInput.PsdzEcuPdxInfo != null && ecuInput.PsdzEcuPdxInfo.IsSmartActuatorMaster)
             {
                 if (!(ecuInput is PsdzSmartActuatorMasterEcu psdzSmartActuatorMasterEcu))
@@ -396,12 +412,14 @@ namespace BMW.Rheingold.Programming.API
                     Log.Error(Log.CurrentMethod(), $"'{ecuInput.PrimaryKey}' is not a SmartActuatorMaster");
                     return eCU;
                 }
+
                 return new SmartActuatorMasterECU(eCU)
                 {
                     SmacMasterSVK = Build(psdzSmartActuatorMasterEcu.SmacMasterSVK),
                     SmartActuators = psdzSmartActuatorMasterEcu.SmartActuatorEcus.Select((IPsdzEcu x) => (ISmartActuatorEcu)Build(x)).ToList()
                 };
             }
+
             return eCU;
         }
 
@@ -434,6 +452,7 @@ namespace BMW.Rheingold.Programming.API
                     IsAclEnabled = psdzEcuPdxInfo.AclEnabled
                 };
             }
+
             return null;
         }
 
@@ -444,6 +463,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             return BuildEcuIdentifier(ecuIdentifierInput.BaseVariant, ecuIdentifierInput.DiagAddrAsInt);
         }
 
@@ -454,12 +474,14 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             Swt swt = new Swt();
             foreach (IPsdzSwtEcu swtEcu2 in swtAction.SwtEcus)
             {
                 ISwtEcu swtEcu = Build(swtEcu2);
                 swt.AddEcu(swtEcu);
             }
+
             return swt;
         }
 
@@ -470,6 +492,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             return BuildSwtApplicationId(swtApplicationId.ApplicationNumber, swtApplicationId.UpgradeIndex);
         }
 
@@ -489,6 +512,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             return new EcuFailureResponse
             {
                 Ecu = BuildEcuIdentifier(failedEcu.EcuIdentifierCto.BaseVariant, failedEcu.EcuIdentifierCto.DiagAddrAsInt),
@@ -502,52 +526,40 @@ namespace BMW.Rheingold.Programming.API
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        public IFetchEcuCertCheckingResult Build(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
+        public IFetchEcuCertCheckingResult Build(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult, IEnumerable<IPsdzEcu> ecusWithPsdzPdxInfo)
         {
             if (psdzFetchEcuCertCheckingResult == null)
             {
                 return null;
             }
-            return BuildFetchEcuCertCheckingResult(psdzFetchEcuCertCheckingResult);
+            return BuildFetchEcuCertCheckingResult(psdzFetchEcuCertCheckingResult, ecusWithPsdzPdxInfo);
         }
 
-        private IFetchEcuCertCheckingResult BuildFetchEcuCertCheckingResult(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult)
+        private IFetchEcuCertCheckingResult BuildFetchEcuCertCheckingResult(PsdzFetchEcuCertCheckingResult psdzFetchEcuCertCheckingResult, IEnumerable<IPsdzEcu> ecusWithPsdzPdxInfo)
         {
             if (psdzFetchEcuCertCheckingResult == null)
             {
                 return null;
             }
+
             return new FetchEcuCertCheckingResult
             {
                 FailedEcus = BuildEcuCertCheckingResultFailedEcus(psdzFetchEcuCertCheckingResult.FailedEcus),
-                Results = BuildEcuCertCheckingResults(psdzFetchEcuCertCheckingResult.Results)
+                Results = BuildEcuCertCheckingResults(psdzFetchEcuCertCheckingResult.Results, ecusWithPsdzPdxInfo)
             };
         }
 
-        private IEnumerable<IEcuCertCheckingResponse> BuildEcuCertCheckingResults(IEnumerable<PsdzEcuCertCheckingResponse> results)
+        private IEnumerable<IEcuCertCheckingResponse> BuildEcuCertCheckingResults(IEnumerable<PsdzEcuCertCheckingResponse> results, IEnumerable<IPsdzEcu> ecusWithPsdzPdxInfo)
         {
             List<EcuCertCheckingResponse> list = new List<EcuCertCheckingResponse>();
             if (results != null && results.Count() > 0)
             {
                 foreach (PsdzEcuCertCheckingResponse result in results)
                 {
-                    list.Add(new EcuCertCheckingResponse
-                    {
-                        BindingDetailStatus = BuildDetailStatus(result.BindingDetailStatus),
-                        BindingsStatus = BuildEcuCertCheckingStatus(result.BindingsStatus),
-                        CertificateStatus = BuildEcuCertCheckingStatus(result.CertificateStatus),
-                        Ecu = BuildEcuIdentifier(result.Ecu.BaseVariant, result.Ecu.DiagAddrAsInt),
-                        OtherBindingDetailStatus = BuildOtherBindingDetailStatus(result.OtherBindingDetailStatus),
-                        OtherBindingsStatus = BuildEcuCertCheckingStatus(result.OtherBindingsStatus),
-                        KeypackStatus = BuildEcuCertCheckingStatus(result.KeyPackStatus),
-                        OnlineCertificateStatus = BuildEcuCertCheckingStatus(result.OnlineCertificateStatus),
-                        OnlineBindingsStatus = BuildEcuCertCheckingStatus(result.OnlineBindingsStatus),
-                        OnlineBindingDetailStatus = BuildDetailStatus(result.OnlineBindingDetailStatus),
-                        KeyPackDetailedStatus = BuildKeypackDetailStatus(result.KeyPackDatailedStatus),
-                        CreationTimestamp = result.CreationTimestamp
-                    });
+                    list.Add(new EcuCertCheckingResponse { BindingDetailStatus = BuildDetailStatus(result.BindingDetailStatus), BindingsStatus = BuildEcuCertCheckingStatus(result.BindingsStatus), CertificateStatus = BuildEcuCertCheckingStatus(result.CertificateStatus), Ecu = BuildEcuIdentifier(result.Ecu.BaseVariant, result.Ecu.DiagAddrAsInt), OtherBindingDetailStatus = BuildOtherBindingDetailStatus(result.OtherBindingDetailStatus), OtherBindingsStatus = BuildEcuCertCheckingStatus(result.OtherBindingsStatus), KeypackStatus = BuildEcuCertCheckingStatus(result.KeyPackStatus), OnlineCertificateStatus = BuildEcuCertCheckingStatus(result.OnlineCertificateStatus), OnlineBindingsStatus = BuildEcuCertCheckingStatus(result.OnlineBindingsStatus), OnlineBindingDetailStatus = BuildDetailStatus(result.OnlineBindingDetailStatus), KeyPackDetailedStatus = BuildKeypackDetailStatus(result.KeyPackDatailedStatus), PdxInfo = Build(ecusWithPsdzPdxInfo?.FirstOrDefault((IPsdzEcu ec) => ec?.PrimaryKey?.DiagAddrAsInt == result.Ecu.DiagAddrAsInt)?.PsdzEcuPdxInfo), CreationTimestamp = result.CreationTimestamp });
                 }
             }
+
             return list;
         }
 
@@ -558,18 +570,15 @@ namespace BMW.Rheingold.Programming.API
             {
                 foreach (PsdzOtherBindingDetailsStatus psdzOtherBindingDetailsStatus in arrPsdzOtherBindingDetailStatus)
                 {
-                    list.Add(new OtherBindingDetailsStatus
-                    {
-                        EcuName = psdzOtherBindingDetailsStatus.EcuName,
-                        OtherBindingStatus = BuildEcuCertCheckingStatus(psdzOtherBindingDetailsStatus.OtherBindingStatus),
-                        RollenName = psdzOtherBindingDetailsStatus.RollenName
-                    });
+                    list.Add(new OtherBindingDetailsStatus { EcuName = psdzOtherBindingDetailsStatus.EcuName, OtherBindingStatus = BuildEcuCertCheckingStatus(psdzOtherBindingDetailsStatus.OtherBindingStatus), RollenName = psdzOtherBindingDetailsStatus.RollenName });
                 }
             }
+
             if (list != null && list.Count > 0)
             {
                 return list.ToArray();
             }
+
             return null;
         }
 
@@ -623,18 +632,15 @@ namespace BMW.Rheingold.Programming.API
             {
                 foreach (PsdzBindingDetailsStatus psdzBindingDetailsStatus in arrPsdzBindingDetailStatus)
                 {
-                    list.Add(new BindingDetailsStatus
-                    {
-                        BindingStatus = BuildEcuCertCheckingStatus(psdzBindingDetailsStatus.BindingStatus),
-                        CertificateStatus = BuildEcuCertCheckingStatus(psdzBindingDetailsStatus.CertificateStatus),
-                        RollenName = psdzBindingDetailsStatus.RollenName
-                    });
+                    list.Add(new BindingDetailsStatus { BindingStatus = BuildEcuCertCheckingStatus(psdzBindingDetailsStatus.BindingStatus), CertificateStatus = BuildEcuCertCheckingStatus(psdzBindingDetailsStatus.CertificateStatus), RollenName = psdzBindingDetailsStatus.RollenName });
                 }
             }
+
             if (list != null && list.Count > 0)
             {
                 return list.ToArray();
             }
+
             return null;
         }
 
@@ -644,6 +650,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             KeypackDetailStatus[] array = new KeypackDetailStatus[psdzKeypackDetailStatuses.Length];
             for (int i = 0; i < psdzKeypackDetailStatuses.Length; i++)
             {
@@ -656,6 +663,7 @@ namespace BMW.Rheingold.Programming.API
                     };
                 }
             }
+
             return array;
         }
 
@@ -666,13 +674,10 @@ namespace BMW.Rheingold.Programming.API
             {
                 foreach (PsdzEcuFailureResponse psdzFailedEcu in psdzFailedEcus)
                 {
-                    list.Add(new EcuFailureResponse
-                    {
-                        Ecu = BuildEcuIdentifier(psdzFailedEcu.Ecu.BaseVariant, psdzFailedEcu.Ecu.DiagAddrAsInt),
-                        Reason = psdzFailedEcu.Reason
-                    });
+                    list.Add(new EcuFailureResponse { Ecu = BuildEcuIdentifier(psdzFailedEcu.Ecu.BaseVariant, psdzFailedEcu.Ecu.DiagAddrAsInt), Reason = psdzFailedEcu.Reason });
                 }
             }
+
             return list;
         }
 
@@ -683,6 +688,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             return new IntegrationLevelTriple(istufenTriple.Shipment, istufenTriple.Last, istufenTriple.Current);
         }
 
@@ -693,6 +699,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             SystemVerbauKennung systemVerbauKennung = new SystemVerbauKennung();
             SgbmIdParser sgbmIdParser = new SgbmIdParser();
             IEnumerable<string> xWE_SGBMID = svkInput.XWE_SGBMID;
@@ -712,9 +719,11 @@ namespace BMW.Rheingold.Programming.API
                         list.Add(sgbmIdentifier);
                     }
                 }
+
                 list.Sort();
                 systemVerbauKennung.SgbmIds = list;
             }
+
             return systemVerbauKennung;
         }
 
@@ -727,6 +736,7 @@ namespace BMW.Rheingold.Programming.API
                 IObdData value = Build(item.Value);
                 dictionary.Add(new KeyValuePair<IEcuIdentifier, IObdData>(key, value));
             }
+
             return dictionary;
         }
 
@@ -737,6 +747,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             SwtEcuObj swtEcuObj = new SwtEcuObj();
             swtEcuObj.EcuIdentifier = Build(swtEcuInput.EcuIdentifier);
             swtEcuObj.RootCertificateState = rootCertificateStateEnumMapper.GetValue(swtEcuInput.RootCertState);
@@ -746,6 +757,7 @@ namespace BMW.Rheingold.Programming.API
                 ISwtApplication swtApplication = Build(swtApplication2);
                 swtEcuObj.AddApplication(swtApplication);
             }
+
             return swtEcuObj;
         }
 
@@ -756,11 +768,13 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             IPsdzSwtApplicationId swtApplicationId = swtApplicationInput.SwtApplicationId;
             if (swtApplicationId == null)
             {
                 return null;
             }
+
             return new SwtApplicationObj(Build(swtApplicationId))
             {
                 Fsc = swtApplicationInput.Fsc,
@@ -768,7 +782,7 @@ namespace BMW.Rheingold.Programming.API
                 FscCertificate = swtApplicationInput.FscCert,
                 FscCertificateState = fscCertificateStateEnumMapper.GetValue(swtApplicationInput.FscCertState),
                 SwtType = swtTypeEnumMapper.GetValue(swtApplicationInput.SwtType),
-                SwtActionType = (swtApplicationInput.SwtActionType.HasValue ? new SwtActionType?(swtActionTypeEnumMapper.GetValue(swtApplicationInput.SwtActionType.Value)) : ((SwtActionType?)null)),
+                SwtActionType = (swtApplicationInput.SwtActionType.HasValue ? new SwtActionType? (swtActionTypeEnumMapper.GetValue(swtApplicationInput.SwtActionType.Value)) : ((SwtActionType? )null)),
                 IsBackupPossible = swtApplicationInput.IsBackupPossible,
                 Position = swtApplicationInput.Position
             };
@@ -783,6 +797,7 @@ namespace BMW.Rheingold.Programming.API
                 ObdTripleValue item = new ObdTripleValue(obdTripleValue.CalId, obdTripleValue.ObdId, obdTripleValue.SubCVN);
                 obdData.ObdTripleValues.Add(item);
             }
+
             return obdData;
         }
     }
