@@ -54,7 +54,8 @@ namespace SourceCodeSync
 
         private static Dictionary<string, string> _modifyEnumNames = new()
         {
-            {"BMW.iLean.CommonServices.Logging.EventKind", null}
+            {"BMW.iLean.CommonServices.Logging.EventKind", null},
+            {"BMW.Rheingold.CoreFramework.Contracts.Programming.TherapyPlan.SwiActionCategory", null}
         };
 
         private static readonly string[] _decompileAssemblies =
