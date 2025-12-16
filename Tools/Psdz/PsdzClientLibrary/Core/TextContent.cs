@@ -15,19 +15,20 @@ namespace PsdzClient.Core
 {
     public class TextContent : SPELocator, ITextContent, ISPELocator
     {
-        private readonly string[] elementWithAttributeXmlSpace = new string[4]
-        {
-            "PARAGRAPH",
-            "HINT",
-            "CAUTION",
-            "WARNING"
-        };
+        private readonly string[] elementWithAttributeXmlSpace = new string[4] { "PARAGRAPH", "HINT", "CAUTION", "WARNING" };
+
         private string myText = string.Empty;
+
         private bool toStringAsPlainText;
+
         private string localPlainText = string.Empty;
+
         private IList<LocalizedText> locText;
+
         private static XslCompiledTransform transformer;
+
         public IList<LocalizedText> TextLocalized => locText;
+
         private bool IsLocalized => locText != null;
 
         public string FormattedText
@@ -38,12 +39,12 @@ namespace PsdzClient.Core
                 {
                     return locText[0].TextItem;
                 }
-
                 return myText;
             }
         }
 
         public string PlainText => BuildPlainText(FormattedText);
+
         public string Text => FormattedText;
 
         private static XslCompiledTransform CompiledTransformer
@@ -54,7 +55,6 @@ namespace PsdzClient.Core
                 {
                     transformer = CreateTransformer();
                 }
-
                 return transformer;
             }
         }
@@ -84,7 +84,6 @@ namespace PsdzClient.Core
             {
                 return TextLocator.Empty.TextContent.FormattedText;
             }
-
             try
             {
                 XElement xElement = null;
@@ -93,7 +92,6 @@ namespace PsdzClient.Core
                     xElement = ParseXml(text);
                     return xElement.Print(removeWhiteSpace: false);
                 }
-
                 string plainText = EscapeXmlElementContent(text);
                 xElement = ParseXml(Create(plainText));
                 return xElement.Print();
@@ -112,7 +110,6 @@ namespace PsdzClient.Core
             {
                 return content.Replace("&", "&amp;").Replace("<", "&lt;");
             }
-
             return content;
         }
 
@@ -123,7 +120,6 @@ namespace PsdzClient.Core
             {
                 xElement2.Add(new XText(text));
             }
-
             return new TextContent(xElement.Print());
         }
 
@@ -138,10 +134,8 @@ namespace PsdzClient.Core
                         return item.TextItem;
                     }
                 }
-
                 throw new ArgumentException("Unsupported language \"" + language + "\".");
             }
-
             return myText;
         }
 
@@ -163,7 +157,6 @@ namespace PsdzClient.Core
                 string text = (IsLocalized ? locText[i].TextItem : myText);
                 list.Add(new LocalizedText(BuildPlainText(text), lang[i]));
             }
-
             return list;
         }
 
@@ -188,7 +181,6 @@ namespace PsdzClient.Core
                 {
                     flag = false;
                 }
-
                 foreach (XNode item in root.Nodes())
                 {
                     if (item.NodeType == XmlNodeType.Text)
@@ -212,13 +204,11 @@ namespace PsdzClient.Core
                         }
                     }
                 }
-
                 if (flag)
                 {
                     return stringBuilder.ToString().Trim();
                 }
             }
-
             return stringBuilder.ToString();
         }
 
@@ -228,7 +218,6 @@ namespace PsdzClient.Core
             {
                 return false;
             }
-
             string localName = element.Name.LocalName;
             if ("UNIT".Equals(localName) || "SYMBOL".Equals(localName))
             {
@@ -237,10 +226,8 @@ namespace PsdzClient.Core
                 {
                     result.Append(attibuteValue);
                 }
-
                 return true;
             }
-
             if ("VALUEUNIT".Equals(localName))
             {
                 string attibuteValue = GetAttibuteValue("VALUE", element);
@@ -248,17 +235,14 @@ namespace PsdzClient.Core
                 {
                     result.Append(attibuteValue);
                 }
-
                 attibuteValue = GetAttibuteValue("UNIT", element);
                 if (attibuteValue != null)
                 {
                     result.Append(" ");
                     result.Append(attibuteValue);
                 }
-
                 return true;
             }
-
             if ("PARAMETER".Equals(localName) && !element.HasElements)
             {
                 string attibuteValue = GetAttibuteValue("ID", element);
@@ -266,17 +250,14 @@ namespace PsdzClient.Core
                 {
                     result.Append(attibuteValue);
                 }
-
                 attibuteValue = GetAttibuteValue("UNIT", element, logMissing: false);
                 if (attibuteValue != null)
                 {
                     result.Append(" ");
                     result.Append(attibuteValue);
                 }
-
                 return true;
             }
-
             return false;
         }
 
@@ -289,10 +270,8 @@ namespace PsdzClient.Core
                 {
                     Log.Warning("TextContentManager.GetAttibuteValue()", "Element \"{0}\" has no attribute \"{1}\", retuning null.", element?.Name?.LocalName, name);
                 }
-
                 return null;
             }
-
             return xAttribute.Value;
         }
 
@@ -316,7 +295,6 @@ namespace PsdzClient.Core
             {
                 xsltArgumentList.AddParam("fullHtml", string.Empty, true);
             }
-
             xsltArgumentList.AddParam("lang", string.Empty, language);
             using (StringReader input = new StringReader(textItem))
             {
@@ -436,7 +414,6 @@ namespace PsdzClient.Core
             {
                 throw new ArgumentNullException("textContent");
             }
-
             if (IsLocalized)
             {
                 if (textContent.IsLocalized && locText.Count == textContent.TextLocalized.Count())
@@ -446,13 +423,10 @@ namespace PsdzClient.Core
                         LocalizedText localizedText = locText[i];
                         localizedText.TextItem = ConcatFormattedText(localizedText.TextItem, textContent.TextLocalized[i].TextItem);
                     }
-
                     return new TextContent(new List<LocalizedText>(locText));
                 }
-
                 return Concat(textContent.FormattedText);
             }
-
             if (textContent.IsLocalized)
             {
                 IList<LocalizedText> list = new List<LocalizedText>();
@@ -462,12 +436,10 @@ namespace PsdzClient.Core
                     LocalizedText localizedText2 = textContent.TextLocalized[j];
                     list.Add(new LocalizedText(ConcatFormattedText(formattedText, localizedText2.TextItem), localizedText2.Language));
                 }
-
                 myText = string.Empty;
                 locText = list;
                 return new TextContent(new List<LocalizedText>(locText));
             }
-
             return Concat(textContent.FormattedText);
         }
 
@@ -481,7 +453,6 @@ namespace PsdzClient.Core
                 });
                 return new TextContent(locText);
             }
-
             myText = ConcatFormattedText(myText, add);
             return new TextContent(myText.Clone() as string);
         }
@@ -504,7 +475,6 @@ namespace PsdzClient.Core
                     list.Add(new LocalizedText(textItem, plainText[j].Language));
                 }
             }
-
             return new TextContent(list);
         }
 
@@ -545,7 +515,6 @@ namespace PsdzClient.Core
                 xElement5.Add(new XText(appendPlain));
                 xElement.Add(xElement5);
             }
-
             return xElement.Print();
         }
 
@@ -559,10 +528,8 @@ namespace PsdzClient.Core
                 {
                     break;
                 }
-
                 xElement2 = firstNode as XElement;
             }
-
             return xElement2;
         }
 
@@ -600,7 +567,6 @@ namespace PsdzClient.Core
                     xElement.Add(xElement4);
                 }
             }
-
             return xElement.Print();
         }
 
@@ -616,7 +582,6 @@ namespace PsdzClient.Core
             {
                 text += theMetaInformation;
             }
-
             return Concat(text);
         }
 
@@ -626,24 +591,20 @@ namespace PsdzClient.Core
             {
                 return false;
             }
-
             if (!(obj is TextContent textContent))
             {
                 return false;
             }
-
             if (textContent.myText != myText)
             {
                 return false;
             }
-
             if (textContent.locText != null)
             {
                 if (locText == null || locText.Count != textContent.locText.Count)
                 {
                     return false;
                 }
-
                 for (int i = 0; i < locText.Count; i++)
                 {
                     if (!locText.Equals(textContent.locText))
@@ -656,67 +617,54 @@ namespace PsdzClient.Core
             {
                 return false;
             }
-
             if (textContent.Children != base.Children)
             {
                 return false;
             }
-
             if (textContent.DataClassName != base.DataClassName)
             {
                 return false;
             }
-
             if (textContent.Exception != base.Exception)
             {
                 return false;
             }
-
             if (textContent.FormattedText != FormattedText)
             {
                 return false;
             }
-
             if (textContent.HasException != base.HasException)
             {
                 return false;
             }
-
             if (textContent.Id != base.Id)
             {
                 return false;
             }
-
             if (textContent.IncomingLinkNames != base.IncomingLinkNames)
             {
                 return false;
             }
-
             if (textContent.OutgoingLinkNames != base.OutgoingLinkNames)
             {
                 return false;
             }
-
             if (textContent.Parents != base.Parents)
             {
                 return false;
             }
-
             if (textContent.PlainText != PlainText)
             {
                 return false;
             }
-
             if (textContent.SignedId != base.SignedId)
             {
                 return false;
             }
-
             if (textContent.Text != Text)
             {
                 return false;
             }
-
             return true;
         }
 
@@ -731,7 +679,6 @@ namespace PsdzClient.Core
             {
                 return PlainText;
             }
-
             return FormattedText;
         }
     }
