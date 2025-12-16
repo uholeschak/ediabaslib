@@ -54,7 +54,8 @@ namespace BMW.Rheingold.Psdz.Client
 
         private readonly KdsServiceClient kdsService;
 
-        public IBaureiheUtilityService BaureiheUtilityService => null;
+        [PreserveSource(Hint = "Dummy")]
+        public IBaureiheUtilityService BaureiheUtilityService { get; private set; }
 
         public IConfigurationService ConfigurationService => configurationService;
 
