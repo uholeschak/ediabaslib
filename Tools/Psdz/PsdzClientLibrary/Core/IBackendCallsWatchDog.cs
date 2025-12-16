@@ -63,7 +63,14 @@ namespace PsdzClient.Core
         FBMUpload,
         Sec4DiagCertReqProfil,
         TCM,
-        PortalIntegrationGetVersions
+        PortalIntegrationGetVersions,
+        ConWoyVinRangesByProductionDate,
+        ConWoyVinRangesByVin17_4_7,
+        ConWoyVinRangesByBand,
+        ConWoyLocalizedSA,
+        ConWoySwiRegisterByParentId,
+        ConWoyServiceProgramByIdentifier,
+        ConWoyCharacteristicsByTypeKey
     }
 
     public interface IBackendCallsWatchDog

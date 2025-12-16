@@ -82,10 +82,6 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public DateTime? LastProgramDate { get; set; }
 
-        [PreserveSource(Hint = "SessionStart", Placeholder = true)]
-        [XmlIgnore]
-        public PlaceholderType SessionStart { get; set; }
-
         [PreserveSource(Hint = "Database modified")]
         [XmlIgnore]
         public PsdzDatabase.BordnetsData BordnetsData
@@ -1072,6 +1068,7 @@ namespace PsdzClient.Core
             }
         }
 
+        [XmlIgnore]
         public string VehicleModelRecognition { get; set; }
         public string TempTypeKeyLeadFromDb { get; set; }
         public string TempTypeKeyBasicFromFbm { get; set; }
@@ -2404,6 +2401,10 @@ namespace PsdzClient.Core
         {
             return base.ECU.Cast<IIdentEcu>().ToList();
         }
+
+        [PreserveSource(Hint = "SessionStart", Placeholder = true)]
+        [XmlIgnore]
+        public PlaceholderType SessionStart { get; set; }
 
         [PreserveSource(Hint = "Local reactor")]
         public Reactor Reactor { get; private set; }

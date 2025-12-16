@@ -5,20 +5,20 @@ namespace PsdzClient.Core
     [AuthorAPI(SelectableTypeDeclaration = true)]
     public interface IEcuResult : INotifyPropertyChanged
     {
-        bool FASTARelevant { get; }
+        bool FASTARelevant { get; set; }
 
-        int Format { get; }
+        int Format { get; set; }
 
-        uint Length { get; }
+        uint Length { get; set; }
 
-        bool LengthSpecified { get; }
+        bool LengthSpecified { get; set; }
 
-        string Name { get; }
+        string Name { get; set; }
 
-        ushort Set { get; }
+        ushort Set { get; set; }
 
-        bool SetSpecified { get; }
+        bool SetSpecified { get; set; }
 
-        object Value { get; }
+        object Value { get; set; }
     }
 }

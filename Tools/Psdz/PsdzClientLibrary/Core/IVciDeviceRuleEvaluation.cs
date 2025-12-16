@@ -4,6 +4,6 @@ namespace PsdzClient.Core
 {
     public interface IVciDeviceRuleEvaluation
     {
-        VCIDeviceType VCIType { get; }
+        VCIDeviceType VCIType { get; set; }
     }
 }

@@ -8,10 +8,8 @@ namespace PsdzClient.Core.Container
 {
     internal class EDIABASAdapterDeviceResult : IDiagnosticDeviceResult
     {
-        private ECUJob job;
-
+        private IEcuJob job;
         private ParameterContainer inParameters;
-
         public IEcuJob ECUJob
         {
             get
@@ -20,6 +18,7 @@ namespace PsdzClient.Core.Container
                 {
                     return job;
                 }
+
                 return new ECUJob();
             }
         }
@@ -33,12 +32,12 @@ namespace PsdzClient.Core.Container
             job = new ECUJob();
         }
 
-        public EDIABASAdapterDeviceResult(ECUJob job)
+        public EDIABASAdapterDeviceResult(IEcuJob job)
         {
             this.job = job;
         }
 
-        public EDIABASAdapterDeviceResult(ECUJob job, ParameterContainer inParameters)
+        public EDIABASAdapterDeviceResult(IEcuJob job, ParameterContainer inParameters)
         {
             this.job = job;
             this.inParameters = inParameters;
@@ -75,7 +74,7 @@ namespace PsdzClient.Core.Container
                                 {
                                     string text2 = item.Value.ToString();
                                     string value = ((iSTAResult is char) ? FormatConverter.CompareChar((char)iSTAResult, text2) : ((!(iSTAResult is double)) ? iSTAResult.ToString() : FormatConverter.CompareDouble((double)iSTAResult, text2)));
-                                    if (text2.Equals(value) && inParameters.getParameter(item.Key.Replace("/Value", "/Text")) is ITextLocator textLocator)
+                                    if (text2.Equals(value) && inParameters.getParameter(item.Key.Replace("/Value", "/Text"))is ITextLocator textLocator)
                                     {
                                         return textLocator.Text;
                                     }
@@ -89,6 +88,7 @@ namespace PsdzClient.Core.Container
             {
                 Log.WarningException("EDIABASAdapterDeviceResult.getISTAResultAsType()", exception);
             }
+
             return job.getISTAResultAsType(resultName, targetType);
         }
 

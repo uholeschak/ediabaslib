@@ -320,26 +320,13 @@ namespace PsdzClient.Core
             xsltArgumentList.AddParam("lang", string.Empty, language);
             using (StringReader input = new StringReader(textItem))
             {
-                using (StringWriter stringWriter = new StringWriter())
+                using (XmlReader input2 = XmlReader.Create(input))
                 {
-                    using (XmlReader input2 = XmlReader.Create(input))
+                    using (StringWriter stringWriter = new StringWriter())
                     {
-                        new XmlWriterSettings
-                        {
-                            Indent = false,
-                            NamespaceHandling = NamespaceHandling.OmitDuplicates,
-                            Encoding = Encoding.UTF8,
-                            NewLineChars = "",
-                            NewLineHandling = NewLineHandling.Replace,
-                            OmitXmlDeclaration = true
-                        };
-                        using (HtmlTextWriter results = new HtmlTextWriter(stringWriter))
-                        {
-                            CompiledTransformer.Transform(input2, xsltArgumentList, results);
-                        }
+                        CompiledTransformer.Transform(input2, xsltArgumentList, stringWriter);
+                        return stringWriter.ToString().Replace(" xmlns:spe=\"http://bmw.com/2014/Spe_Text_2.0\"", "");
                     }
-
-                    return stringWriter.ToString().Replace(" xmlns:spe=\"http://bmw.com/2014/Spe_Text_2.0\"", "");
                 }
             }
         }

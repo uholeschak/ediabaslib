@@ -2,6 +2,7 @@
 {
     public static class ServiceCodes
     {
+        public static string ANA09_ResultSetFailed_nu_LF = "ANA09_ResultSetFailed_nu_LF";
         public static readonly string ESL01_FaultPatternDetectedId_nu_ST = "ESL01_FaultPatternDetectedId_nu_ST";
         public static readonly string ESL02_FaultPatternDisplayedId_nu_ST = "ESL02_FaultPatternDisplayedId_nu_ST";
         public const string SUC01_NoInternetConnection_nu_LF = "SUC01_NoInternetConnection_nu_LF";
@@ -34,6 +35,10 @@
         public const string PWS03_JavaInitializationValidationError_nu_LF = "PWS03_JavaInitializationValidationError_nu_LF";
         public const string PWS04_PsdzWebServiceSetRootDirectoryFailed_nu_LF = "PWS04_PsdzWebServiceSetRootDirectoryFailed_nu_LF";
         public const string PWS05_WebserviceStartRuntimeError_nu_LF = "PWS05_WebserviceStartRuntimeError_nu_LF";
+        public static string S4C00_InfoCode_nu_LF = "S4C00_InfoCode_nu_LF";
+        public static string S4C01_ErrorCode_nu_LF = "S4C01_ErrorCode_nu_LF";
+        public static string S4D02_InfoCode_nu_LF = "S4D02_InfoCode_nu_LF";
+        public static string S4D03_ErrorCode_nu_LF = "S4D03_ErrorCode_nu_LF";
         public static string TRC01_TricCloudOk_nu_LF => "TRC01_TricCloudOk_nu_LF";
         public static string TRC02_TricCloudNok_TricZentralOk_nu_LF => "TRC02_TricCloudNok_TricZentralOk_nu_LF";
         public static string TRC03_TricCloudNok_TricZentralNok_nu_LF => "TRC03_TricCloudNok_TricZentralNok_nu_LF";
@@ -44,6 +49,7 @@
         public static string ANA05_ISTAspezDOC_nu_LF => "ANA05_ISTAspezDOC_nu_LF";
         public static string ANA06_TestmodulCalledDBFunctionInNotAllowedWay_nu_LF => "ANA06_TestmodulCalledDBFunctionInNotAllowedWay_nu_LF";
         public static string ANA07_FastaMesswerteConsumeToMuchTime_nu_LF => "ANA07_FastaMesswerteConsumeToMuchTime_nu_LF";
+        public static string ANA08_TestmodulesUsingNotAllowedIstaFunctions_nu_LF => "ANA08_TestmodulesUsingNotAllowedIstaFunctions_nu_LF";
         public static string BNT01_BnTopologieNotFound_nu_LF => "BNT01_BnTopologieNotFound_nu_LF";
         public static string EDI00_SGBDW2VinUse_nu_LF => "EDI00_SGBDW2VinUse_nu_LF";
         public static string ECU01_EdiabasError_nu_LF => "ECU01_EdiabasError_nu_LF";
@@ -185,5 +191,6 @@
         public static string HDD07_HddUpdateFinished_nu_LF => "HDD07_HddUpdateFinished_nu_LF";
         public static string HDD08_HddActivationFinished_nu_LF => "HDD08_HddActivationFinished_nu_LF";
         public static string S4D01_CallSec4DiagInBackground_nu_LF => "S4D01_CallSec4DiagInBackground_nu_LF";
+        public static string S4D04_DiagJobRejectByZdf_nu_LF => "S4D04_DiagJobRejectByZdf_nu_LF";
     }
 }
