@@ -125,16 +125,37 @@ namespace PsdzClient.Psdz
             try
             {
                 Log.Info(Log.CurrentMethod(), "Generating certificates");
-                string vin = ((!string.IsNullOrEmpty(Vin17)) ? Vin17 : VCI.VIN);
-                service.GenerateS29ForPSdZ(vin);
-                X509Certificate2 s29CertPSdZ = service.Sec4DiagCertificates.S29CertPSdZ;
-                AsymmetricKeyParameter asymmetricKeyParameter = service.Service29KeyPair?.Private;
-                X509Certificate2 caCert = service.Sec4DiagCertificates.CaCert;
-                X509Certificate2 subCaCert = service.Sec4DiagCertificates.SubCaCert;
-                if (s29CertPSdZ != null && asymmetricKeyParameter != null)
+                string text = ((!string.IsNullOrEmpty(Vin17)) ? Vin17 : VCI.VIN);
+                X509Certificate2 x509Certificate = null;
+                AsymmetricKeyParameter asymmetricKeyParameter = null;
+                X509Certificate2 caCertificate = null;
+                X509Certificate2 subCaCertificate = null;
+                if (ConfigSettings.IsOssModeActive && ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out var service2) && ServiceLocator.Current.TryGetService<IstaLoginServiceClient>(out var service3))
+                {
+                    WebCallResponse<Sec4DiagResponseData> webCallResponse = Sec4DiagProcessorFactory.Create(service2).SendDataToBackend(service.BuildRequestModelForPSdZInAos(text), BackendServiceType.AosSec4Diag, service3.GetUserTokenByOperationId()?.UserToken);
+                    service.Sec4DiagCertificatesForPSdZInAos = service.CreateS29CertificateInstallCertificatesAndWriteToFileForAos(webCallResponse.Response.CertificateChain[0], webCallResponse.Response.CertificateChain[1], webCallResponse.Response.Certificate, writeFile: false);
+                    x509Certificate = service.Sec4DiagCertificatesForPSdZInAos.S29Cert;
+                    caCertificate = service.Sec4DiagCertificatesForPSdZInAos.CaCert;
+                    subCaCertificate = service.Sec4DiagCertificatesForPSdZInAos.SubCaCert;
+                    asymmetricKeyParameter = service.IstaKeyPair?.Private;
+                }
+                else if (!ConfigSettings.IsOssModeActive)
+                {
+                    service.GenerateS29ForPSdZ(text);
+                    x509Certificate = service.Sec4DiagCertificates.S29CertPSdZ;
+                    caCertificate = service.Sec4DiagCertificates.CaCert;
+                    subCaCertificate = service.Sec4DiagCertificates.SubCaCert;
+                    asymmetricKeyParameter = service.Service29KeyPair?.Private;
+                }
+                else
+                {
+                    Log.Error(Log.CurrentMethod(), "In ISTA AOS BackendCallsWatchDog OR UserService in the ServiceLocator did not exists!");
+                }
+
+                if (x509Certificate != null && asymmetricKeyParameter != null)
                 {
                     Log.Info(Log.CurrentMethod(), "Registering Callback");
-                    byte[] s29CertificateChainByteArray = calculateAuthService29Certificate(s29CertPSdZ, subCaCert, caCert);
+                    byte[] s29CertificateChainByteArray = calculateAuthService29Certificate(x509Certificate, subCaCertificate, caCertificate);
                     PrivateKeyInfo privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(asymmetricKeyParameter);
                     secureDiagnosticsService.RegisterAuthService29Callback(s29CertificateChainByteArray, privateKeyInfo.ToAsn1Object().GetDerEncoded(), connection);
                 }
