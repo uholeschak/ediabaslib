@@ -33,7 +33,7 @@ namespace SourceCodeSync
                 .Select(pattern => new Regex(pattern, RegexOptions.Compiled))
                 .ToArray();
 
-        private static Dictionary<string, string> _modifyClassNames = new()
+        private static readonly Dictionary<string, string> _modifyClassNames = new()
         {
             {"public_static_LicenseHelper", null},
             {"internal_sealed_LicenseManager", null},
@@ -46,13 +46,13 @@ namespace SourceCodeSync
             {"BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility.GearboxUtility", null}
         };
 
-        private static Dictionary<string, string> _modifyInterfaceNames = new()
+        private static readonly Dictionary<string, string> _modifyInterfaceNames = new()
         {
             {"BMW.Rheingold.CoreFramework.Contracts.Programming.IProgrammingService", "IProgrammingService2"},
             {"BMW.Rheingold.ISTA.CoreFramework.ILogger", null}
         };
 
-        private static Dictionary<string, string> _modifyEnumNames = new()
+        private static readonly Dictionary<string, string> _modifyEnumNames = new()
         {
             {"BMW.iLean.CommonServices.Logging.EventKind", null},
             {"BMW.Rheingold.CoreFramework.Contracts.Programming.TherapyPlan.SwiActionCategory", null}
