@@ -257,6 +257,10 @@ namespace SourceCodeSync
 
                 Console.WriteLine("Assembly dir: {0}", assemblyDir);
                 Console.WriteLine("Source dir: {0}", sourceDir);
+                if (filterParts != null && filterParts.Length > 0)
+                {
+                    Console.WriteLine("Filter: {0}", string.Join(", ", filterParts));
+                }
                 Console.WriteLine();
 
                 List<string> searchList = new List<string>() { assemblyDir };
