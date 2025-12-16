@@ -19,9 +19,6 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     public interface IVehicle : INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle
     {
         bool IsEcuIdentSuccessfull { get; set; }
-
-        [PreserveSource(Hint = "SessionStart", Placeholder = true)]
-        PlaceholderType SessionStart { get; set; }
         new string AELeistungsklasse { get; }
         new string AEUeberarbeitung { get; }
         new string Antrieb { get; set; }
@@ -234,5 +231,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         bool IsEreiheValid();
         bool hasBusType(BusType bus);
         bool HasSA(string checkSA);
+        [PreserveSource(Hint = "SessionStart", Placeholder = true)]
+        PlaceholderType SessionStart { get; set; }
     }
 }
