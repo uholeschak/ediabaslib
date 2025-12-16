@@ -66,11 +66,6 @@ namespace PsdzClient.Utility
         }
 
         [PreserveSource(Hint = "Cleaned")]
-        public void Sleep(int milliseconds, string reason)
-        {
-        }
-
-        [PreserveSource(Hint = "Cleaned")]
         public void InitializePsdzStart()
         {
         }
@@ -78,6 +73,89 @@ namespace PsdzClient.Utility
         [PreserveSource(Hint = "Cleaned")]
         public void InitializePsdzStop()
         {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void PopupClosed(string description)
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void PopupShown(string description)
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void PsdzUsageStart()
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void PsdzUsageStop()
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void RuleEnd()
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void RuleStart()
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void Sleep(int milliseconds, string reason)
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void TestModuleEnd(string name)
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void TestModuleStart(string name)
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void VehicleCommunicationEnd(object[] args)
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void VehicleCommunicationStart(object[] args, string methodName)
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void Start(TimeMetricsStage stage)
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public void Stop()
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public List<MetricApiJob> GetSlowFastaJobs()
+        {
+            return new List<MetricApiJob>();
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public TimeSpan GetPopupDuration()
+        {
+            return TimeSpan.Zero;
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public string GetCurrentlyRunningModuleName()
+        {
+            return "ISTA";
         }
     }
 }
