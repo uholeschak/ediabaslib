@@ -9,130 +9,154 @@ using PsdzClient.Core;
 namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 {
     [AuthorAPI(SelectableTypeDeclaration = true)]
-    public interface IVciDevice : INotifyPropertyChanged, IVciDeviceRuleEvaluation
+    public interface IVciDevice : INotifyPropertyChanged, IVciDeviceRuleEvaluation, ICloneable
     {
-        string AccuCapacity { get; }
+        string AccuCapacity { get; set; }
 
         IBasicFeatures BasicFeatures { get; }
 
-        string Color { get; }
+        string Color { get; set; }
 
-        bool CommunicationDisturbanceRecognized { get; }
+        bool CommunicationDisturbanceRecognized { get; set; }
 
-        bool ConnectionLossRecognized { get; }
+        bool ConnectionLossRecognized { get; set; }
 
-        bool IsDoIP { get; }
+        bool IsDoIP { get; set; }
 
-        int? ControlPort { get; }
+        int? ControlPort { get; set; }
 
-        string Counter { get; }
+        string Counter { get; set; }
 
-        string Description { get; }
+        string Description { get; set; }
 
-        string Description1 { get; }
+        string Description1 { get; set; }
 
-        string DevId { get; }
+        string DevId { get; set; }
 
-        string DevType { get; }
+        string DevType { get; set; }
 
-        bool ForceReInit { get; }
+        DeviceTypeDetails DeviceTypeDetail { get; set; }
 
-        string Gateway { get; }
+        DeviceState DeviceState { get; set; }
 
-        string IFHParameter { get; }
+        bool ForceReInit { get; set; }
 
-        string IFHReserved { get; }
+        string Gateway { get; set; }
 
-        string IPAddress { get; }
+        string IFHParameter { get; set; }
 
-        string ImageVersionApplication { get; }
+        string IFHReserved { get; set; }
 
-        string ImageVersionBoot { get; }
+        string IPAddress { get; set; }
 
-        string ImageVersionPackage { get; }
+        string ImageVersionApplication { get; set; }
 
-        string Imagename { get; }
+        string ImageVersionBoot { get; set; }
+
+        string ImageVersionPackage { get; set; }
+
+        string Imagename { get; set; }
 
         bool IsConnectable { get; }
+
+        bool IsVehicleProgrammingPossible { get; }
+
+        bool IsDead { get; }
+
+        bool IsAlive { get; }
 
         bool IsImibR2 { get; }
 
         bool IsImibNext { get; }
 
-        string Kl15Trigger { get; }
+        string Kl15Trigger { get; set; }
 
-        string Kl15Voltage { get; }
+        string Kl15Voltage { get; set; }
 
-        string Kl30Trigger { get; }
+        string Kl30Trigger { get; set; }
 
-        string Kl30Voltage { get; }
+        string Kl30Voltage { get; set; }
 
-        string MacAddress { get; }
+        string MacAddress { get; set; }
 
-        string Netmask { get; }
+        string WLANMacAddress { get; set; }
 
-        string NetworkType { get; }
+        string Netmask { get; set; }
+
+        string NetworkType { get; set; }
 
         string NetworkTypeLabel { get; }
 
-        string Owner { get; }
+        NetworkType LocalAdapterNetworkType { get; set; }
 
-        int? Port { get; }
+        string Owner { get; set; }
 
-        string PwfState { get; }
+        int? Port { get; set; }
 
-        string ReceivingIP { get; }
+        string PwfState { get; set; }
 
-        bool ReconnectFailed { get; }
+        string ReceivingIP { get; set; }
 
-        long ReserveHandle { get; }
+        bool ReconnectFailed { get; set; }
 
-        DateTime ScanDate { get; }
+        long ReserveHandle { get; set; }
 
-        string Serial { get; }
+        DateTime ScanDate { get; set; }
 
-        string Service { get; }
+        string Serial { get; set; }
 
-        string SignalStrength { get; }
+        string Service { get; set; }
 
-        string State { get; }
+        string SignalStrength { get; set; }
 
-        string UUID { get; }
+        string State { get; set; }
 
-        bool UnderVoltageRecognized { get; }
+        string UUID { get; set; }
 
-        DateTime UnderVoltageRecognizedLastTime { get; }
+        bool UnderVoltageRecognized { get; set; }
 
-        bool UnderVoltageRecognizedLastTimeSpecified { get; }
+        DateTime UnderVoltageRecognizedLastTime { get; set; }
 
-        bool UsePdmResult { get; }
+        bool UnderVoltageRecognizedLastTimeSpecified { get; set; }
 
-        VCIReservationType VCIReservation { get; }
+        bool UsePdmResult { get; set; }
 
-        string VIN { get; }
+        VCIReservationType VCIReservation { get; set; }
 
-        string VciChannels { get; }
+        string VIN { get; set; }
 
-        long leastSigBits { get; }
+        string VciChannels { get; set; }
 
-        bool leastSigBitsSpecified1 { get; }
+        long leastSigBits { get; set; }
 
-        long mostSigBits { get; }
+        bool leastSigBitsSpecified1 { get; set; }
 
-        bool mostSigBitsSpecified1 { get; }
+        long mostSigBits { get; set; }
 
-        bool IsConnected { get; }
+        bool mostSigBitsSpecified1 { get; set; }
+
+        bool IsConnected { get; set; }
 
         bool IsMarkedToDefault { get; set; }
 
         bool IsSimulation { get; set; }
+
         new VCIDeviceType VCIType { get; set; }
 
         bool CheckChannel(string channelId);
+
         double? GetClamp15();
+
         double? GetClamp30();
+
         string ToAttrList();
+
         string ToAttrList(bool addLineFeed);
+
         string getVCIDescription(VCIDeviceType devType);
+
+        void SetAlive();
+
+        bool IsSupportedImibOrICOM(string[] acceptedImibDevices);
     }
 }
