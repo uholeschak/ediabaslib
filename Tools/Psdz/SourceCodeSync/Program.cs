@@ -13,12 +13,12 @@ namespace SourceCodeSync
 {
     internal class Program
     {
-        private static Dictionary<string, ClassDeclarationSyntax> _classDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
-        private static Dictionary<string, ClassDeclarationSyntax> _classBareDict = new Dictionary<string, ClassDeclarationSyntax>(StringComparer.Ordinal);
-        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDict = new Dictionary<string, InterfaceDeclarationSyntax>(StringComparer.Ordinal);
-        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceBareDict = new Dictionary<string, InterfaceDeclarationSyntax>(StringComparer.Ordinal);
-        private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.Ordinal);
-        private static Dictionary<string, EnumDeclarationSyntax> _enumBareDict = new Dictionary<string, EnumDeclarationSyntax>(StringComparer.Ordinal);
+        private static Dictionary<string, ClassDeclarationSyntax> _classDict = new (StringComparer.Ordinal);
+        private static Dictionary<string, ClassDeclarationSyntax> _classBareDict = new (StringComparer.Ordinal);
+        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDict = new (StringComparer.Ordinal);
+        private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceBareDict = new (StringComparer.Ordinal);
+        private static Dictionary<string, EnumDeclarationSyntax> _enumDict = new (StringComparer.Ordinal);
+        private static Dictionary<string, EnumDeclarationSyntax> _enumBareDict = new (StringComparer.Ordinal);
 
         private static readonly string[] _ignoreNamespaces =
         [
