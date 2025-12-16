@@ -1,5 +1,6 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
 using PsdzClient.Utility;
@@ -163,6 +164,12 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
+        [PreserveSource(Hint = "Removed")]
+        public bool ImportSecureTokenForSec4CnSp21()
+        {
+            throw new NotImplementedException();
+        }
+
         [PreserveSource(Hint = "Added istaFolder")]
         private void PreparePsdzBackupDataPath(string istaFolder)
         {
@@ -230,6 +237,38 @@ namespace PsdzClient.Programming
             Log.Info(Log.CurrentMethod(), "End.");
             TimeMetricsUtility.Instance.InitializePsdzStop();
             return true;
+        }
+
+        private bool ExecuteEcuValidationViaBusinessServiceProgrammes(ProgrammingSession session)
+        {
+            Log.Info(Log.CurrentMethod(), "called.");
+            string businessVehicleAction = "FZA_AL_EARLIER_ECU_CERT_VALIDATION";
+            return ExecuteBusinessServiceProgrames(businessVehicleAction, session);
+        }
+
+        private bool ExecuteSecureTokenImportForSec4CnSp21ViaBusinessServiceProgrammes(ProgrammingSession session)
+        {
+            Log.Info(Log.CurrentMethod(), "called.");
+            string businessVehicleAction = "FZA_AL_SEC4CN_IMPORTSECURETOKEN_SP21";
+            return ExecuteBusinessServiceProgrames(businessVehicleAction, session);
+        }
+
+        [PreserveSource(Hint = "Removed")]
+        private bool ExecuteBusinessServiceProgrames(string businessVehicleAction, ProgrammingSession session)
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Removed")]
+        private IPsdzTargetSelector GetTargetSelectorForMainSeries()
+        {
+            throw new NotImplementedException();
+        }
+
+        [PreserveSource(Hint = "Removed")]
+        private void PrepareSvtForProgrammingSession()
+        {
+            throw new NotImplementedException();
         }
 
         [PreserveSource(Hint = "Added")]

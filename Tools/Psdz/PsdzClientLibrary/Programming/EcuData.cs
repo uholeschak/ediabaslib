@@ -16,7 +16,10 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
         public readonly string btld;
         [DataMember(Name = "CAFD-SGBM-ID")]
         public readonly string[] cafd;
-        public List<string> CafdId => cafd.Select((string a) => a.Split('.')[0].Replace("cafd_", "").ToUpper()).ToList();
+        public List<string> GetCafdId()
+        {
+            return cafd.Select((string a) => a.Split('.')[0].Replace("cafd_", "").ToUpper()).ToList();
+        }
 
         public override string ToString()
         {

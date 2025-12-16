@@ -765,7 +765,7 @@ namespace BMW.Rheingold.Programming.Common
             }
             if (ecuData != null)
             {
-                return ecuData.SelectMany(a => a.CafdId);
+                return ecuData.SelectMany((EcuData a) => a.GetCafdId());
             }
 
             return new string[0];

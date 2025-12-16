@@ -46,6 +46,9 @@ namespace PsdzClient.Programming
         bool ExecuteEarlyEcuValidationUsingPsdz();
 
         [PreserveSource(Hint = "Removed")]
+        bool ImportSecureTokenForSec4CnSp21();
+
+        [PreserveSource(Hint = "Removed")]
         ISvt GetCurrentSvtFromPsdzSvt();
     }
 }
