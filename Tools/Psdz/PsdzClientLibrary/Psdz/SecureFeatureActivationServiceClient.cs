@@ -9,6 +9,7 @@ using PsdzClient;
 
 namespace BMW.Rheingold.Psdz.Client
 {
+    [PreserveSource(Removed = true)]
     internal sealed class SecureFeatureActivationServiceClient : PsdzDuplexClientBase<ISecureFeatureActivationService, IPsdzProgressListener>, ISecureFeatureActivationService
     {
         internal SecureFeatureActivationServiceClient(IPsdzProgressListener progressListener, Binding binding, EndpointAddress remoteAddress)
