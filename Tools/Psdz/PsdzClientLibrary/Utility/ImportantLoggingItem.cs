@@ -20,6 +20,7 @@ namespace PsdzClient.Utility
         private static Dictionary<string, string> dicMessagesToLog = new Dictionary<string, string>();
         private static Dictionary<string, int> doubleIdentifiers = new Dictionary<string, int>();
         private static List<string> Sec4DiagCode = new List<string>();
+        private static List<string> Sec4CNCode = new List<string>();
         private static Dictionary<TYPES, string> typeDescriptions = new Dictionary<TYPES, string>
         {
             {
@@ -119,6 +120,9 @@ namespace PsdzClient.Utility
                 case TYPES.Sec4Diag:
                     Sec4DiagCode.Add(typeDescription + ": " + item);
                     break;
+                case TYPES.Sec4CN:
+                    Sec4CNCode.Add(typeDescription + ": " + item);
+                    break;
                 default:
                     importantItems.Add(typeDescription + ": " + item);
                     break;
@@ -210,6 +214,7 @@ namespace PsdzClient.Utility
             LogInfoList("Metrics", metrics, method);
             LogMessagesDic(method);
             LogInfoList("Sec4Diag", Sec4DiagCode, method);
+            LogInfoList("Sec4CN", Sec4CNCode, method);
             Log.Info(method, "*************** ***************");
         }
 
