@@ -1500,7 +1500,6 @@ namespace SourceCodeSync
             {
                 MethodDeclarationSyntax sourceMethod when preservedMember is MethodDeclarationSyntax preservedMethod =>
                     sourceMethod
-                        .WithBody(preservedMethod.Body)
                         .WithExpressionBody(preservedMethod.ExpressionBody)
                         .WithSemicolonToken(preservedMethod.SemicolonToken)
                         .WithAttributeLists(preservedMember.AttributeLists),
@@ -1515,7 +1514,6 @@ namespace SourceCodeSync
 
                 ConstructorDeclarationSyntax sourceCtor when preservedMember is ConstructorDeclarationSyntax preservedCtor =>
                     sourceCtor
-                        .WithBody(preservedCtor.Body)
                         .WithExpressionBody(preservedCtor.ExpressionBody)
                         .WithInitializer(preservedCtor.Initializer)
                         .WithSemicolonToken(preservedCtor.SemicolonToken)
