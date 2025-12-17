@@ -1781,6 +1781,9 @@ namespace PsdzClient
                     return null;
                 }
 
+                object sessionInfoModule = Activator.CreateInstance(sessionInfoType);
+                object sessionInfoAccessorModule = Activator.CreateInstance(sessionInfoAccessorType);
+
                 MethodInfo methodWriteFaPrefix = typeof(PsdzDatabase).GetMethod("CallWriteFaPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodWriteFaPrefix == null)
                 {
