@@ -41,7 +41,7 @@ namespace BMW.Rheingold.Programming.API
         {
             this.vehicle = vehicle;
             this.ffmResolver = ffmResolver;
-            // [IGNORE] vdc = new VehicleDataConverter(db);
+        // [IGNORE] vdc = new VehicleDataConverter(db);
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
@@ -52,7 +52,7 @@ namespace BMW.Rheingold.Programming.API
                 return null;
             }
 
-            return new BMW.Rheingold.Programming.API.VehicleOrder
+            return new VehicleOrder
             {
                 FaVersion = faInput.FaVersion,
                 Entwicklungsbaureihe = faInput.Entwicklungsbaureihe,
@@ -117,11 +117,13 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             BMW.Rheingold.Programming.API.VehicleOrder vehicleOrder = new BMW.Rheingold.Programming.API.VehicleOrder();
             if (!string.IsNullOrWhiteSpace(faInput.VERSION) && Regex.IsMatch(faInput.VERSION.Trim(), "^\\d+$"))
             {
                 vehicleOrder.FaVersion = int.Parse(faInput.VERSION);
             }
+
             vehicleOrder.Entwicklungsbaureihe = baureiheReader.GetBaureiheFormatted(faInput.BR);
             vehicleOrder.Lackcode = faInput.LACK;
             vehicleOrder.Polstercode = faInput.POLSTER;
@@ -140,6 +142,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             FA fA = new FA();
             fA.VERSION = faInput.FaVersion.ToString(CultureInfo.InvariantCulture);
             fA.BR = faInput.Entwicklungsbaureihe;
@@ -157,6 +160,7 @@ namespace BMW.Rheingold.Programming.API
                 fA.E_WORT_ANZ = (short)faInput.EWords.Count;
                 fA.E_WORT = new ObservableCollection<string>(faInput.EWords);
             }
+
             if (faInput.HOWords == null)
             {
                 fA.HO_WORT_ANZ = 0;
@@ -167,6 +171,7 @@ namespace BMW.Rheingold.Programming.API
                 fA.HO_WORT_ANZ = (short)faInput.HOWords.Count;
                 fA.HO_WORT = new ObservableCollection<string>(faInput.HOWords);
             }
+
             if (faInput.Salapas == null)
             {
                 fA.SA_ANZ = 0;
@@ -177,6 +182,7 @@ namespace BMW.Rheingold.Programming.API
                 fA.SA_ANZ = (short)faInput.Salapas.Count;
                 fA.SA = new ObservableCollection<string>(faInput.Salapas);
             }
+
             fA.STANDARD_FA = faInput.ToString();
             return fA;
         }
@@ -532,6 +538,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             return BuildFetchEcuCertCheckingResult(psdzFetchEcuCertCheckingResult, ecusWithPsdzPdxInfo);
         }
 
