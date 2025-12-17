@@ -1767,30 +1767,31 @@ namespace PsdzClient
                 }
                 Assembly istaCommonAssembly = Assembly.LoadFrom(istaCommonFile);
 
-                Type sessionInfoType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfo");
-                if (sessionInfoType == null)
-                {
-                    log.ErrorFormat("PatchCommonMethods SessionInfo not found");
-                    return null;
-                }
-
                 Type sessionInfoAccessorType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfoAccessor");
                 if (sessionInfoAccessorType == null)
                 {
-                    log.ErrorFormat("PatchCommonMethods SessionInfoAccessor not found");
-                    return null;
+                    log.WarnFormat("PatchCommonMethods SessionInfoAccessor not found, ignoring");
                 }
-
-                object sessionInfoModule = Activator.CreateInstance(sessionInfoType);
-                MethodInfo methodAccessorInitialize = sessionInfoAccessorType.GetMethod("Initialize", BindingFlags.Public | BindingFlags.Static,
-                    null, new Type[] { sessionInfoType }, null);
-                if (methodAccessorInitialize == null)
+                else
                 {
-                    log.ErrorFormat("ReadTestModule SessionInfoAccessor.Initialize not found");
-                    return null;
-                }
+                    Type sessionInfoType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfo");
+                    if (sessionInfoType == null)
+                    {
+                        log.ErrorFormat("PatchCommonMethods SessionInfo not found");
+                        return null;
+                    }
 
-                methodAccessorInitialize.Invoke(null, new object[] { sessionInfoModule });
+                    object sessionInfoModule = Activator.CreateInstance(sessionInfoType);
+                    MethodInfo methodAccessorInitialize = sessionInfoAccessorType.GetMethod("Initialize", BindingFlags.Public | BindingFlags.Static,
+                        null, new Type[] { sessionInfoType }, null);
+                    if (methodAccessorInitialize == null)
+                    {
+                        log.ErrorFormat("ReadTestModule SessionInfoAccessor.Initialize not found");
+                        return null;
+                    }
+
+                    methodAccessorInitialize.Invoke(null, new object[] { sessionInfoModule });
+                }
 
                 MethodInfo methodWriteFaPrefix = typeof(PsdzDatabase).GetMethod("CallWriteFaPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodWriteFaPrefix == null)
