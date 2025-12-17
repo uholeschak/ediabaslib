@@ -262,7 +262,7 @@ namespace SourceCodeSync
                 {
                     Console.WriteLine("Filter: {0}", string.Join(", ", filterParts));
                 }
-                Console.WriteLine();
+                Console.WriteLine("Decompiling ...");
 
                 List<string> searchList = new List<string>() { assemblyDir };
                 foreach (string assemblyName in _decompileAssemblies)
@@ -319,6 +319,9 @@ namespace SourceCodeSync
                     }
                 }
 
+                Console.WriteLine("Dest dir: {0}", destDir);
+                Console.WriteLine("Updating source ...");
+
                 string[] sourceFiles = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in sourceFiles)
                 {
@@ -330,9 +333,6 @@ namespace SourceCodeSync
                         }
                     }
                 }
-
-                Console.WriteLine("Dest dir: {0}", destDir);
-                Console.WriteLine();
 
                 string[] destFiles = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in destFiles)
