@@ -1911,7 +1911,7 @@ namespace PsdzClient
                     return false;
                 }
 
-                MethodInfo methodIstaModuleModuleRef = istaModuleType.GetMethod("callModuleRef", BindingFlags.Instance | BindingFlags.NonPublic);
+                MethodInfo methodIstaModuleModuleRef = istaModuleType.GetMethod("callModuleRef", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (methodIstaModuleModuleRef == null)
                 {
                     log.ErrorFormat("PatchCommonMethods ISTAModule callModuleRef not found");
