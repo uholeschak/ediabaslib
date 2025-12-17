@@ -2309,7 +2309,7 @@ namespace PsdzClient.Core.Container
                 if (isDoIP2 || isDoIP)
                 {
                     int id = Process.GetCurrentProcess().Id;
-                    // [UH] removed interactionService
+                    // [UH] [IGNORE] removed interactionService
                     if (!device.IsSimulation)
                     {
                         boolResultObject2 = HandleS29Authentication(device);
