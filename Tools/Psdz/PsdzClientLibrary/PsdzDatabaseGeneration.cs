@@ -1759,6 +1759,28 @@ namespace PsdzClient
                     return null;
                 }
 
+                string istaCommonFile = Path.Combine(_frameworkPath, "BMW.ISPI.TRIC.ISTA.Common.dll");
+                if (!File.Exists(istaCommonFile))
+                {
+                    log.ErrorFormat("ReadTestModule ISTA common not found: {0}", istaCommonFile);
+                    return null;
+                }
+                Assembly istaCommonAssembly = Assembly.LoadFrom(istaCommonFile);
+
+                Type sessionInfoType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfo");
+                if (sessionInfoType == null)
+                {
+                    log.ErrorFormat("PatchCommonMethods SessionInfo not found");
+                    return null;
+                }
+
+                Type sessionInfoAccessorType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfoAccessor");
+                if (sessionInfoAccessorType == null)
+                {
+                    log.ErrorFormat("PatchCommonMethods SessionInfoAccessor not found");
+                    return null;
+                }
+
                 MethodInfo methodWriteFaPrefix = typeof(PsdzDatabase).GetMethod("CallWriteFaPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodWriteFaPrefix == null)
                 {
