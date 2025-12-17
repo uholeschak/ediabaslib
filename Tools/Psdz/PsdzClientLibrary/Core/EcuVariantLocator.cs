@@ -29,7 +29,7 @@ namespace PsdzClient.Core
 
         public string Id => ecuVariant.Id.ToString(CultureInfo.InvariantCulture);
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database modified")]
         public ISPELocator[] Parents
         {
             get
@@ -114,7 +114,7 @@ namespace PsdzClient.Core
             this.children = new ISPELocator[0];
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database modified")]
         public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             PsdzDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
@@ -126,7 +126,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Database modified")]
         public EcuVariantLocator(decimal id, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             this.vecInfo = vecInfo;
