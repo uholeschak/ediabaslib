@@ -187,10 +187,10 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Using DebugLevel, logThreshhold=6")]
         public static void Debug(string method, string msg, params object[] args)
         {
-            Debug(CoreFramework.DebugLevel, 1, method, msg, args);
+            Debug(CoreFramework.DebugLevel, 6, method, msg, args);
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
