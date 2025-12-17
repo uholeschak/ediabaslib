@@ -1782,7 +1782,15 @@ namespace PsdzClient
                 }
 
                 object sessionInfoModule = Activator.CreateInstance(sessionInfoType);
-                object sessionInfoAccessorModule = Activator.CreateInstance(sessionInfoAccessorType);
+                MethodInfo methodAccessorInitialize = sessionInfoAccessorType.GetMethod("Initialize", BindingFlags.Public | BindingFlags.Static,
+                    null, new Type[] { sessionInfoType }, null);
+                if (methodAccessorInitialize == null)
+                {
+                    log.ErrorFormat("ReadTestModule SessionInfoAccessor.Initialize not found");
+                    return null;
+                }
+
+                methodAccessorInitialize.Invoke(null, new object[] { sessionInfoModule });
 
                 MethodInfo methodWriteFaPrefix = typeof(PsdzDatabase).GetMethod("CallWriteFaPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                 if (methodWriteFaPrefix == null)
