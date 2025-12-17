@@ -350,7 +350,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         internal void SetSollverbauung(IPsdzSollverbauung sollverbauung)
         {
-            this.Sollverbauung = sollverbauung;
+            Sollverbauung = sollverbauung;
         }
 
         internal void SetSvtActual(IPsdzSvt svt)
