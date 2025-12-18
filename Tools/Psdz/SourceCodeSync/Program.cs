@@ -1599,9 +1599,19 @@ namespace SourceCodeSync
                     string originalHash = GetOriginalHashAttribute(memberToAdd.AttributeLists);
                     if (originalHash != null)
                     {
-                        if (_verbosity >= Options.VerbosityOption.Error)
+                        // Calculate current hash of source member
+                        string currentHash = sourceMember switch
                         {
-                            Console.WriteLine($"Member {sourceMemberName}, Hash: '{originalHash}'");
+                            MethodDeclarationSyntax method => CalculateMethodHash(method),
+                            _ => null
+                        };
+
+                        if (currentHash != null && currentHash != originalHash)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine($"Member {sourceMemberName}, hash mismatch: '{currentHash}' -> '{originalHash}'");
+                            }
                         }
                     }
 
