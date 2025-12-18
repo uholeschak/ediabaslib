@@ -91,6 +91,8 @@ namespace SourceCodeSync
             { "BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore", "DiagnosticsBusinessDataCore" }
         };
 
+        private const string _attributPreserveSource = "PreserveSource";
+
         private const string _signatureModifiedProperty = "SignatureModified";
 
         private const string _accessModifiedProperty = "AccessModified";
@@ -98,6 +100,8 @@ namespace SourceCodeSync
         private const string _inheritanceModifiedProperty = "InheritanceModified";
 
         private const string _attributesModifiedProperty = "AttributesModified";
+
+        private const string _attributesOriginalHashProperty = "OriginalHash";
 
         public class Options
         {
@@ -798,13 +802,13 @@ namespace SourceCodeSync
                             sourceClassCopy = sourceClassCopy.WithAttributeLists(cls.AttributeLists);
 
                             // Update attributes if AccessModified is set
-                            if (GetAttributePropertyFromAttributeLists(cls.AttributeLists, _accessModifiedProperty))
+                            if (GetAttributeBoolPropertyFromAttributeLists(cls.AttributeLists, _accessModifiedProperty))
                             {
                                 sourceClassCopy = sourceClassCopy.WithModifiers(cls.Modifiers);
                             }
 
                             // Update inheritance/base types if InheritanceModified is set
-                            if (GetAttributePropertyFromAttributeLists(cls.AttributeLists, _inheritanceModifiedProperty))
+                            if (GetAttributeBoolPropertyFromAttributeLists(cls.AttributeLists, _inheritanceModifiedProperty))
                             {
                                 sourceClassCopy = sourceClassCopy.WithBaseList(cls.BaseList);
 
@@ -910,13 +914,13 @@ namespace SourceCodeSync
                             sourceInterfaceCopy = sourceInterfaceCopy.WithAttributeLists(interfaceDecl.AttributeLists);
 
                             // Update attributes if AccessModified is set
-                            if (GetAttributePropertyFromAttributeLists(interfaceDecl.AttributeLists, _accessModifiedProperty))
+                            if (GetAttributeBoolPropertyFromAttributeLists(interfaceDecl.AttributeLists, _accessModifiedProperty))
                             {
                                 sourceInterfaceCopy = sourceInterfaceCopy.WithModifiers(interfaceDecl.Modifiers);
                             }
 
                             // Update inheritance/base types if InheritanceModified is set
-                            if (GetAttributePropertyFromAttributeLists(interfaceDecl.AttributeLists, _inheritanceModifiedProperty))
+                            if (GetAttributeBoolPropertyFromAttributeLists(interfaceDecl.AttributeLists, _inheritanceModifiedProperty))
                             {
                                 sourceInterfaceCopy = sourceInterfaceCopy.WithBaseList(interfaceDecl.BaseList);
 
@@ -1424,10 +1428,10 @@ namespace SourceCodeSync
                     string attrName = attr.Name.ToString();
                     switch (attrName)
                     {
-                        case "PreserveSource":
-                            if (GetAttributeProperty(attr, _accessModifiedProperty) ||
-                                GetAttributeProperty(attr, _inheritanceModifiedProperty) ||
-                                GetAttributeProperty(attr, _attributesModifiedProperty))
+                        case _attributPreserveSource:
+                            if (GetAttributeBoolProperty(attr, _accessModifiedProperty) ||
+                                GetAttributeBoolProperty(attr, _inheritanceModifiedProperty) ||
+                                GetAttributeBoolProperty(attr, _attributesModifiedProperty))
                             {
                                 return true;
                             }
@@ -1440,16 +1444,16 @@ namespace SourceCodeSync
         /// <summary>
         /// Gets a boolean property value from attribute lists
         /// </summary>
-        private static bool GetAttributePropertyFromAttributeLists(SyntaxList<AttributeListSyntax> attributeLists, string propertyName)
+        private static bool GetAttributeBoolPropertyFromAttributeLists(SyntaxList<AttributeListSyntax> attributeLists, string propertyName)
         {
             return attributeLists
                 .SelectMany(al => al.Attributes)
                 .Any(attr =>
                 {
                     string attrName = attr.Name.ToString();
-                    if (attrName == "PreserveSource")
+                    if (attrName == _attributPreserveSource)
                     {
-                        return GetAttributeProperty(attr, propertyName);
+                        return GetAttributeBoolProperty(attr, propertyName);
                     }
                     return false;
                 });
@@ -1569,7 +1573,7 @@ namespace SourceCodeSync
 
                     // Check if SignatureModified is set - if so, merge signature from source with body from preserved
                     if (matchingPreservedMember is MemberDeclarationSyntax memberDecl &&
-                        GetAttributePropertyFromAttributeLists(memberDecl.AttributeLists, _signatureModifiedProperty))
+                        GetAttributeBoolPropertyFromAttributeLists(memberDecl.AttributeLists, _signatureModifiedProperty))
                     {
                         memberToAdd = MergeMemberSignatureWithBody(sourceMember, matchingPreservedMember);
 
@@ -1670,15 +1674,15 @@ namespace SourceCodeSync
                     .FirstOrDefault(attr =>
                     {
                         string attrName = attr.Name.ToString();
-                        return attrName == "PreserveSource";
+                        return attrName == _attributPreserveSource;
                     });
 
                 if (preserveAttribute != null)
                 {
                     // Check if AccessModified property is set to true
-                    if (GetAttributeProperty(preserveAttribute, _accessModifiedProperty) ||
-                        GetAttributeProperty(preserveAttribute, _inheritanceModifiedProperty) ||
-                        GetAttributeProperty(preserveAttribute, _attributesModifiedProperty))
+                    if (GetAttributeBoolProperty(preserveAttribute, _accessModifiedProperty) ||
+                        GetAttributeBoolProperty(preserveAttribute, _inheritanceModifiedProperty) ||
+                        GetAttributeBoolProperty(preserveAttribute, _attributesModifiedProperty))
                     {
                         return false;
                     }
@@ -1803,7 +1807,7 @@ namespace SourceCodeSync
         /// <summary>
         /// Gets a boolean property value from an attribute
         /// </summary>
-        private static bool GetAttributeProperty(AttributeSyntax attribute, string propertyName)
+        private static bool GetAttributeBoolProperty(AttributeSyntax attribute, string propertyName)
         {
             if (attribute.ArgumentList == null)
             {
@@ -1827,7 +1831,7 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Gets the string value of a property from an attribute (for Hint)
+        /// Gets the string value of a property from an attribute
         /// </summary>
         private static string GetAttributeStringProperty(AttributeSyntax attribute, string propertyName)
         {

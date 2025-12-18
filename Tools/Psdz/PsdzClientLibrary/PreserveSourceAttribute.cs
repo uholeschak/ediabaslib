@@ -7,6 +7,8 @@ namespace PsdzClient
     {
         public string Hint;
 
+        public string OriginalHash;
+
         public bool Removed;
 
         public bool Placeholder;

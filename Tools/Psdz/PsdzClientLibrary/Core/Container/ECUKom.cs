@@ -496,7 +496,7 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "")]
         public string GetLogPath()
         {
             string result = null;
@@ -516,7 +516,7 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "")]
         public BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP)
         {
             BoolResultObject boolResultObject = new BoolResultObject();
@@ -772,7 +772,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "")]
         private bool InitializePttDevice(IVciDevice device, bool logging, bool isDoIP)
         {
             if (isDoIP)
@@ -784,7 +784,7 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "")]
         private bool InitializeIcomDevice(IVciDevice device, bool logging, bool isDoIP, bool slpDoIpFromIcom)
         {
             if (slpDoIpFromIcom || isDoIP)
