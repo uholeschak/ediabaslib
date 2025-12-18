@@ -1606,11 +1606,12 @@ namespace SourceCodeSync
                             _ => null
                         };
 
-                        if (currentHash != null && currentHash != originalHash)
+                        if (currentHash != null && string.Compare(currentHash, originalHash, StringComparison.Ordinal) != 0)
                         {
                             if (_verbosity >= Options.VerbosityOption.Error)
                             {
-                                Console.WriteLine($"Member {sourceMemberName}, hash mismatch: '{currentHash}' -> '{originalHash}'");
+                                string className = GetClassName(sourceClass);
+                                Console.WriteLine($"Class {className}, Member {sourceMemberName}, hash mismatch: '{currentHash}'");
                             }
                         }
                     }
@@ -1908,7 +1909,7 @@ namespace SourceCodeSync
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(noSpaces));
-                return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
+                return Convert.ToBase64String(hashBytes);
             }
         }
     }
