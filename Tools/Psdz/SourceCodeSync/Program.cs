@@ -1441,6 +1441,31 @@ namespace SourceCodeSync
                 });
         }
 
+        public static string GetOriginalHashAttribute(SyntaxList<AttributeListSyntax> attributeLists)
+        {
+            foreach (AttributeListSyntax attributeListSyntax in attributeLists)
+            {
+                foreach (AttributeSyntax attr in attributeListSyntax.Attributes)
+                {
+                    string attrName = attr.Name.ToString();
+                    switch (attrName)
+                    {
+                        case _attributPreserveSource:
+                        {
+                            string hash = GetAttributeStringProperty(attr, _attributesOriginalHashProperty);
+                            if (hash != null)
+                            {
+                                return hash;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Gets a boolean property value from attribute lists
         /// </summary>
@@ -1570,6 +1595,15 @@ namespace SourceCodeSync
                 if (matchingPreservedMember != null)
                 {
                     MemberDeclarationSyntax memberToAdd = matchingPreservedMember;
+
+                    string originalHash = GetOriginalHashAttribute(memberToAdd.AttributeLists);
+                    if (originalHash != null)
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine($"Member {sourceMemberName}, Hash: '{originalHash}'");
+                        }
+                    }
 
                     // Check if SignatureModified is set - if so, merge signature from source with body from preserved
                     if (matchingPreservedMember is MemberDeclarationSyntax memberDecl &&
