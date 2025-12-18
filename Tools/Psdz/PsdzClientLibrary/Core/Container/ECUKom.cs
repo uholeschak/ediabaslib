@@ -787,7 +787,7 @@ namespace PsdzClient.Core.Container
         [PreserveSource(Hint = "Modified", OriginalHash = "4EEFCD7416F97299B5B4DA761513E05D")]
         private bool InitializeIcomDevice(IVciDevice device, bool logging, bool isDoIP, bool slpDoIpFromIcom)
         {
-            if (slpDoIpFromIcom || isDoIP || isDoIP)
+            if (slpDoIpFromIcom || isDoIP)
             {
                 return InitEdiabasForDoIP(device);
             }
