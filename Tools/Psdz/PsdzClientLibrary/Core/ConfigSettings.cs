@@ -1,25 +1,19 @@
-﻿using PsdzClient.Core;
-using PsdzClient;
-
-namespace PsdzClient.Core
-{
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-    using System.Configuration;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Runtime.InteropServices;
-    using System.Runtime.Serialization;
-    using System.Text;
-    using System.Text.RegularExpressions;
-    using System.Threading;
-    using System.Xml;
-    using System.Xml.Serialization;
-    using Microsoft.Win32;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Xml.Serialization;
+using Microsoft.Win32;
 
 #pragma warning disable CS0618
+namespace PsdzClient.Core
+{
     public class ConfigSettings
     {
         public const string BMW_RHEINGOLD_CONFIG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\BMWGroup\\ISPI\\Rheingold";
