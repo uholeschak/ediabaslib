@@ -160,7 +160,7 @@ namespace PsdzClient.Core
 
         public static bool IsISTAModeRITA => OperationalMode == OperationalMode.RITA;
 
-        [PreserveSource(Hint = "TOYOTA removed")]
+        [PreserveSource(Hint = "TOYOTA removed", OriginalHash = "")]
         public static UiBrand SelectedBrand
         {
             get
@@ -195,14 +195,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
-        public static bool IsILeanActive
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public static bool IsILeanActive => true;
 
         public static string OssParamFile { get; set; }
 
@@ -593,7 +586,7 @@ namespace PsdzClient.Core
             return CurrentCultureInfo.TwoLetterISOLanguageName;
         }
 
-        [PreserveSource(Hint = "Simplified")]
+        [PreserveSource(Hint = "Simplified", OriginalHash = "")]
         public static string InitCulture()
         {
             string configString = getConfigString("TesterGUI.Language", "en-GB");
@@ -618,12 +611,12 @@ namespace PsdzClient.Core
             return currentUiCulture;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "")]
         private static void SetCurrentUICultureFromPortalConfig()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "")]
         private static void SetCurrentUICultureFromDB()
         {
         }
@@ -1157,12 +1150,6 @@ namespace PsdzClient.Core
             return getConfigStringAsBoolean("BMW.Rheingold.Programming.Enabled");
         }
 
-        [PreserveSource(Hint = "Cleaned")]
-        public static bool IsInRdpSession()
-        {
-            return false;
-        }
-
         public static bool IsLogisticBaseEnabled()
         {
             return !IsProgrammingLocked;
@@ -1307,7 +1294,7 @@ namespace PsdzClient.Core
             return GetFeatureEnabledStatus("ConwoyStorage").IsActive;
         }
 
-        [PreserveSource(Hint = "replaced by EnablePsdzMultiSession")]
+        [PreserveSource(Hint = "replaced by EnablePsdzMultiSession", OriginalHash = "")]
         public static bool GetActivateSdpOnlinePatch()
         {
             return ClientContext.EnablePsdzMultiSession();
@@ -1353,7 +1340,7 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "TOYOTA removed")]
+        [PreserveSource(Hint = "TOYOTA removed", OriginalHash = "")]
         public static (bool IsActive, string Message) GetFeatureEnabledStatus(string feature)
         {
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
