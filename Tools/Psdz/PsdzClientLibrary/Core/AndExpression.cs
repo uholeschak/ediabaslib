@@ -41,7 +41,7 @@ namespace PsdzClient.Core
             operands[1] = secondOperand;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "vec added, dataProvider removed", OriginalHash = "44691E384FFDE8DDFBF0D6B0C367709D")]
         public new static AndExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             int value = 0;
@@ -65,7 +65,7 @@ namespace PsdzClient.Core
             operands = array;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed, using ruleEvaluationServices", OriginalHash = "FE38671C9753BEC32F058C9DF688C3D5")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             internalResult.RuleExpression = this;
