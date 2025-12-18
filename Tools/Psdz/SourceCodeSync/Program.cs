@@ -1909,7 +1909,7 @@ namespace SourceCodeSync
             using (SHA256 sha256 = SHA256.Create())
             {
                 byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(noSpaces));
-                return Convert.ToBase64String(hashBytes);
+                return BitConverter.ToString(hashBytes, 0, 16).Replace("-", "").ToUpperInvariant();
             }
         }
     }

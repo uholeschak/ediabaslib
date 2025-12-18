@@ -496,7 +496,7 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "4esv96C8SylOP6KTcPDfaxS3RuhbndseB1931TaC428=")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "E1EB2FF7A0BC4B294E3FA29370F0DF6B")]
         public string GetLogPath()
         {
             string result = null;
@@ -516,7 +516,7 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "VqI9Vb11iBM0D4xjgqnRxNZTYT4N3dzoCS7wveRlcFg=")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "56A23D55BD758813340F8C6382A9D1C4")]
         public BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP)
         {
             BoolResultObject boolResultObject = new BoolResultObject();
@@ -772,7 +772,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "Gvcc40mBQ4KLx20Hd5pFGccOQCjbZKKllKHen4+RNII=")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "1AF71CE3498143828BC76D07779A4519")]
         private bool InitializePttDevice(IVciDevice device, bool logging, bool isDoIP)
         {
             if (isDoIP)
@@ -784,7 +784,7 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "Tu/NdBb5cpm1tNp2FRPgXXLGfQRleOwGRnG7i3Vh/Hk=")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "4EEFCD7416F97299B5B4DA761513E05D")]
         private bool InitializeIcomDevice(IVciDevice device, bool logging, bool isDoIP, bool slpDoIpFromIcom)
         {
             if (slpDoIpFromIcom || isDoIP || isDoIP)
