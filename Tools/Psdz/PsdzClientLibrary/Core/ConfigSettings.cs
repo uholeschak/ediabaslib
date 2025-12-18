@@ -190,7 +190,6 @@ namespace PsdzClient.Core
         }
 
         public static bool IsILeanActive => true;
-
         public static string OssParamFile { get; set; }
 
         private static bool IsProgrammingLocked
@@ -580,7 +579,7 @@ namespace PsdzClient.Core
             return CurrentCultureInfo.TwoLetterISOLanguageName;
         }
 
-        [PreserveSource(Hint = "Simplified", OriginalHash = "")]
+        [PreserveSource(Hint = "Simplified", OriginalHash = "D41ABDF8E7F71C8452BC4602A19F06FC")]
         public static string InitCulture()
         {
             string configString = getConfigString("TesterGUI.Language", "en-GB");
@@ -605,12 +604,12 @@ namespace PsdzClient.Core
             return currentUiCulture;
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "EECFE5EC809B526B930FDFCDD55256AB")]
         private static void SetCurrentUICultureFromPortalConfig()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "621155A20863CAF36EE6CBA46A437C60")]
         private static void SetCurrentUICultureFromDB()
         {
         }
@@ -661,7 +660,7 @@ namespace PsdzClient.Core
             return registryKey.OpenSubKey(path)?.GetValue(key)?.ToString();
         }
 
-        protected static void AddNewKey(string key, object defaultValue)
+        public static void AddNewKey(string key, object defaultValue)
         {
             if (currentConfigValues.ContainsKey(key))
             {
@@ -1288,7 +1287,7 @@ namespace PsdzClient.Core
             return GetFeatureEnabledStatus("ConwoyStorage").IsActive;
         }
 
-        [PreserveSource(Hint = "replaced by EnablePsdzMultiSession", OriginalHash = "")]
+        [PreserveSource(Hint = "replaced by EnablePsdzMultiSession", OriginalHash = "46D053337A353A986C73BD8735611D19")]
         public static bool GetActivateSdpOnlinePatch()
         {
             return ClientContext.EnablePsdzMultiSession();
@@ -1334,7 +1333,7 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "TOYOTA removed", OriginalHash = "")]
+        [PreserveSource(Hint = "TOYOTA removed", OriginalHash = "3F2095BFA77BB8DEFECE34785A4A34B3")]
         public static (bool IsActive, string Message) GetFeatureEnabledStatus(string feature)
         {
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
