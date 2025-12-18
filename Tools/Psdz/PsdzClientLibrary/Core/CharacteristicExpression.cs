@@ -60,7 +60,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataprovider replaced by vec", OriginalHash = "")]
         public CharacteristicExpression(long dataclassId, long datavalueId, Vehicle vec)
         {
             this.dataclassId = dataclassId;
@@ -70,7 +70,7 @@ namespace PsdzClient.Core
             CharacteristicValue = GetCharacteristicValueFromDb(this.dataProvider);
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataprovider replaced by vec", OriginalHash = "DB9F2E998DF196D144594A8ED52C8E40")]
         public static CharacteristicExpression Deserialize(Stream ms, Vehicle vec)
         {
             byte[] array = new byte[16];
@@ -80,36 +80,35 @@ namespace PsdzClient.Core
             return new CharacteristicExpression(num, num2, vec);
         }
 
-        [PreserveSource(Hint = "VehicleHelper replaced")]
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+        [PreserveSource(Hint = "VehicleHelper replaced", OriginalHash = "8CC662A990A700621FCB64ACA6310FC8")]
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
-            logger = ruleEvaluationServices.Logger;
+            logger = ruleEvaluationUtils.Logger;
             string value = null;
             bool flag;
             if (vec == null || vec.VCI == null || vec.VCI.VCIType == VCIDeviceType.UNKNOWN)
             {
                 if (CharacteristicRoot.Equals("Marke"))
                 {
-                    return ruleEvaluationServices.ConfigSettings.SelectedBrand.Any((BrandName b) => string.Equals(GetBrandNameAsString(b), CharacteristicValue, StringComparison.InvariantCultureIgnoreCase));
+                    return ruleEvaluationUtils.ConfigSettings.SelectedBrand.Any((BrandName b) => string.Equals(GetBrandNameAsString(b), CharacteristicValue, StringComparison.InvariantCultureIgnoreCase));
                 }
-
                 if ("Sicherheitsrelevant".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase) || "Sicherheitsfahrzeug".Equals(CharacteristicRoot, StringComparison.OrdinalIgnoreCase))
                 {
-                    ruleEvaluationServices.Logger.Info("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer false for 'Sicherheitsrelevant'", CharacteristicRoot);
+                    ruleEvaluationUtils.Logger.Info("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer false for 'Sicherheitsrelevant'", CharacteristicRoot);
                     flag = false;
                 }
                 else
                 {
-                    ruleEvaluationServices.Logger.Warning("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer true", CharacteristicRoot);
+                    ruleEvaluationUtils.Logger.Warning("CharacteristicExpression.Evaluate()", "Failed to evaluate {0} without vehcile context; will answer true", CharacteristicRoot);
                     flag = true;
                 }
             }
             else
             {
+                // [UH] [IGNORE] VehicleHelper replaced
                 flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult);
             }
-
-            ruleEvaluationServices.Logger.Debug("CharacteristicExpression.Evaluate()", "rule: {0}={1} result: {2} (session context: {3}) [original rule: {4}={5}]", CharacteristicRoot, CharacteristicValue, flag, value, dataclassId, datavalueId);
+            ruleEvaluationUtils.Logger.Debug("CharacteristicExpression.Evaluate()", "rule: {0}={1} result: {2} (session context: {3}) [original rule: {4}={5}]", CharacteristicRoot, CharacteristicValue, flag, value, dataclassId, datavalueId);
             return flag;
         }
 
@@ -160,7 +159,7 @@ namespace PsdzClient.Core
             return CharacteristicRoot + "=" + CharacteristicValue + " [" + dataclassId.ToString(CultureInfo.InvariantCulture) + "=" + datavalueId.ToString(CultureInfo.InvariantCulture) + "]";
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataprovider replaced", OriginalHash = "30F1C04B6385C027C32D3E99F74620E5")]
         private string GetCharacteristicRootFromDb(PsdzDatabase database)
         {
             string result = string.Empty;
@@ -173,7 +172,7 @@ namespace PsdzClient.Core
             return result;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataprovider replaced", OriginalHash = "0564D4A0CA9081D8E82546DBB8D91EC7")]
         private string GetCharacteristicValueFromDb(PsdzDatabase database)
         {
             return database?.LookupVehicleCharDeDeById(this.datavalueId.ToString(CultureInfo.InvariantCulture));
