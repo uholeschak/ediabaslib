@@ -13,13 +13,12 @@ namespace PsdzClient.Core
         {
         }
 
-        [PreserveSource(Hint = "Modified")]
         public bool IsAvailable()
         {
             return true;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Simplified, from DetermineFeatureEnabledStatus")]
         public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature, bool checkLbps = true)
         {
             string configString = ConfigSettings.getConfigString(LBPFeatureSwitches.FeatureRegistryKey(feature));
@@ -34,14 +33,7 @@ namespace PsdzClient.Core
         private string GetAndLogOutputMessage(string feature, bool value, string type)
         {
             string text = LBPFeatureSwitches.OutputMessage(feature, value, type);
-            lock (featureSwitchLockObj)
-            {
-                if (!loggedSwitches.Contains(feature))
-                {
-                    Log.Info(Log.CurrentMethod(), text);
-                    loggedSwitches.Add(feature);
-                }
-            }
+            Log.Info(Log.CurrentMethod(), text);
             return text;
         }
     }
