@@ -182,7 +182,7 @@ namespace PsdzClient.Core
             CalculateECUConfiguration(vecInfo, ffmResolver, null, null);
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "XEP_SALAPAS replaced", OriginalHash = "06C65D01A22B482BAF3CCC068A9F01B1")]
         public virtual ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
             ObservableCollectionEx<PsdzDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
@@ -617,7 +617,7 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "database replaced", OriginalHash = "015862B025BE93769B8DDB689F03EE2A")]
         public void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             ValidateIfDiagnosticsHasValidLicense();
@@ -695,7 +695,7 @@ namespace PsdzClient.Core
             return bus.ToString();
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "database replaced", OriginalHash = "6298F12D495976BE9A20FC2133D8A04C")]
         protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
@@ -952,7 +952,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "2819C4DCEAA5BD34796E5A75B8AA394D")]
         private void ValidateIfDiagnosticsHasValidLicense()
         {
         }
