@@ -91,7 +91,7 @@ namespace PsdzClient.Core
         public static bool OSSModeActive => ConfigSettings.IsOssModeActive;
         public static bool IsLightModeActive => ConfigSettings.IsLightModeActive;
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "License modified", OriginalHash = "0E8F4F0BC770A5AB1C0D3B1C60F6741C")]
         static CoreFramework()
         {
             Log.Info("CoreFramework.CoreFramework()", "ctor called.");
