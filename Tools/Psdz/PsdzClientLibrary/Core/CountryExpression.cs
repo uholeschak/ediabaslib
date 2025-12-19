@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-    [PreserveSource(Hint = "Database replaced")]
     [Serializable]
     public class CountryExpression : SingleAssignmentExpression
     {
@@ -19,7 +18,7 @@ namespace PsdzClient.Core
         {
         }
 
-        [PreserveSource(Hint = "dataProvider removed")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "")]
         public CountryExpression(long countryId)
         {
             this.value = countryId;
@@ -39,7 +38,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             this.vecInfo = vec;
