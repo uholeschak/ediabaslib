@@ -60,7 +60,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "dataprovider replaced by vec", OriginalHash = "")]
+        [PreserveSource(Hint = "dataprovider replaced by vec", OriginalHash = "813F284C4D464BA5576A5DAC7B44974E")]
         public CharacteristicExpression(long dataclassId, long datavalueId, Vehicle vec)
         {
             this.dataclassId = dataclassId;

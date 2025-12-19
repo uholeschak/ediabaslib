@@ -1522,9 +1522,6 @@ namespace SourceCodeSync
         /// <summary>
         /// Merges signature from source member with body from preserved member
         /// </summary>
-        /// <summary>
-        /// Merges signature from source member with body from preserved member
-        /// </summary>
         private static MemberDeclarationSyntax MergeMemberSignatureWithBody(
             MemberDeclarationSyntax sourceMember,
             MemberDeclarationSyntax preservedMember)
@@ -1533,6 +1530,7 @@ namespace SourceCodeSync
             {
                 MethodDeclarationSyntax sourceMethod when preservedMember is MethodDeclarationSyntax preservedMethod =>
                     sourceMethod
+                        .WithBody(preservedMethod.Body)
                         .WithExpressionBody(preservedMethod.ExpressionBody)
                         .WithSemicolonToken(preservedMethod.SemicolonToken)
                         .WithAttributeLists(preservedMember.AttributeLists),
@@ -1547,6 +1545,7 @@ namespace SourceCodeSync
 
                 ConstructorDeclarationSyntax sourceCtor when preservedMember is ConstructorDeclarationSyntax preservedCtor =>
                     sourceCtor
+                        .WithBody(preservedCtor.Body)
                         .WithExpressionBody(preservedCtor.ExpressionBody)
                         .WithInitializer(preservedCtor.Initializer)
                         .WithSemicolonToken(preservedCtor.SemicolonToken)
@@ -1559,7 +1558,7 @@ namespace SourceCodeSync
                         .WithSemicolonToken(preservedIndexer.SemicolonToken)
                         .WithAttributeLists(preservedMember.AttributeLists),
 
-                // NEW: Field support - merge type and modifiers from source, keep initializer from preserved
+                // Field support - merge type and modifiers from source, keep initializer from preserved
                 FieldDeclarationSyntax sourceField when preservedMember is FieldDeclarationSyntax preservedField =>
                     sourceField
                         .WithDeclaration(sourceField.Declaration
@@ -1572,6 +1571,10 @@ namespace SourceCodeSync
                 _ => preservedMember
             };
         }
+
+        /// <summary>
+        /// Merges source class into destination, preserving marked members at their original positions
+        /// </summary>
         /// <summary>
         /// Merges source class into destination, preserving marked members at their original positions
         /// </summary>
@@ -1617,6 +1620,7 @@ namespace SourceCodeSync
                             MethodDeclarationSyntax method => CalculateMethodHash(method),
                             FieldDeclarationSyntax field => CalculateMethodHash(field),
                             PropertyDeclarationSyntax property => CalculatePropertyHash(property),
+                            ConstructorDeclarationSyntax constructor => CalculateConstructorHash(constructor),
                             _ => null
                         };
 
@@ -1958,6 +1962,18 @@ namespace SourceCodeSync
         {
             // Normalize and remove whitespaces for hash calculation
             string normalized = property.NormalizeWhitespace().ToFullString();
+            string noSpaces = Regex.Replace(normalized, @"\s+", "");
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(noSpaces));
+                return BitConverter.ToString(hashBytes, 0, 16).Replace("-", "").ToUpperInvariant();
+            }
+        }
+
+        public static string CalculateConstructorHash(ConstructorDeclarationSyntax constructor)
+        {
+            string normalized = constructor.NormalizeWhitespace().ToFullString();
             string noSpaces = Regex.Replace(normalized, @"\s+", "");
 
             using (SHA256 sha256 = SHA256.Create())
