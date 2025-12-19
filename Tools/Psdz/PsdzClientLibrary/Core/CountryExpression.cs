@@ -1,29 +1,20 @@
 ﻿using PsdzClient;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
+#pragma warning disable CS0169
 namespace PsdzClient.Core
 {
     [Serializable]
     public class CountryExpression : SingleAssignmentExpression
     {
         private string countryCode;
+        [PreserveSource(Hint = "IDataProviderRuleEvaluation", Placeholder = true)]
+        private readonly PlaceholderType dataProvider;
 
-        public CountryExpression()
-        {
-        }
-
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "")]
-        public CountryExpression(long countryId)
-        {
-            this.value = countryId;
-        }
-
+        [PreserveSource(Hint = "Use database", OriginalHash = "")]
         private string CountryCode
         {
             get
@@ -36,6 +27,17 @@ namespace PsdzClient.Core
 
                 return this.countryCode;
             }
+        }
+
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "")]
+        public CountryExpression()
+        {
+        }
+
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "")]
+        public CountryExpression(long countryId)
+        {
+            this.value = countryId;
         }
 
         [PreserveSource(Hint = "dataProvider removed", OriginalHash = "")]
