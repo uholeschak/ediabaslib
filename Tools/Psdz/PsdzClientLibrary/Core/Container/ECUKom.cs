@@ -675,7 +675,7 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "BA191431D3FE8C0F1F6D3D0813C723D5")]
         private bool IsActiveLBPFeatureSwitchForCallCertreqProfiles(IstaIcsServiceClient ics)
         {
             return false;
@@ -1283,19 +1283,19 @@ namespace PsdzClient.Core.Container
             return dateTime - now;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "A54CCEFE36F21D280EC1F996CDF6E24E")]
         private WebCallResponse<Sec4DiagResponseData> RequestCaAndSubCACertificates(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog, bool testRun)
         {
             throw new InvalidOperationException("IDataContext service not found.");
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "4D1D0C7E4C6AD0B5B12DE7429ABD37CE")]
         private WebCallResponse<bool> RequestCertReqProfil(ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
             throw new InvalidOperationException("IDataContext service not found.");
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "F7D287B4437241744997FAB84CF754A0")]
         private WebCallResponse<Sec4DiagResponseData> RequestCertificate(IVciDevice device, ISec4DiagHandler sec4DiagHandler, IBackendCallsWatchDog backendCallsWatchDog)
         {
             throw new InvalidOperationException("IDataContext service not found.");
@@ -1343,7 +1343,7 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, string.Empty);
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", OriginalHash = "E748E842A368307A2BD15189317CC2C0", SignatureModified = true)]
         public IEcuJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "", IProtocolBasic fastaprotocoller = null, [CallerMemberName] string callerMember = "")
         {
             if (FromFastaConfig && !string.IsNullOrEmpty(sgbd) && apiJobNamesToBeCached.Contains(job))
@@ -1358,7 +1358,7 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, 0, fastaprotocoller, callerMember);
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", OriginalHash = "0745B52F886AC4DC091D3DA9B97DFAF1", SignatureModified = true)]
         public IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             if (!VehicleCommunication.validLicense)
@@ -1408,7 +1408,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", OriginalHash = "FEAAFE7A9FA1FC5561E83BC13A680CC5", SignatureModified = true)]
         public IEcuJob apiJob(string ecu, string job, string param, string resultFilter, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             try
@@ -1454,7 +1454,7 @@ namespace PsdzClient.Core.Container
             return eCUJob;
         }
 
-        [PreserveSource(Hint = "serviceIsRunning removed")]
+        [PreserveSource(Hint = "serviceIsRunning removed", OriginalHash = "796BF13BE9581058ED479421B650DE1F")]
         public IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
@@ -1827,7 +1827,7 @@ namespace PsdzClient.Core.Container
             return detectedSpecialSecurityCase;
         }
 
-        [PreserveSource(Hint = "Converted")]
+        [PreserveSource(Hint = "Converted", OriginalHash = "63C84AF0509F04C78071A4269D3886E2")]
         private bool UseConfigFileTraces()
         {
             api.apiGetConfig("ApiTrace", out string text);
