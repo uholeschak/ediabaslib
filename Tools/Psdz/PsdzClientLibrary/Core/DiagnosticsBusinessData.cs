@@ -892,7 +892,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Using rector from vehicle")]
+        [PreserveSource(Hint = "Using rector from vehicle", OriginalHash = "639106127F8F20CFA54C3CA46F761CB2")]
         public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
             Reactor instance = (vecInfo as Vehicle)?.Reactor;
@@ -1627,7 +1627,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "1AC651E019A894D50F8D62FD2BACECA2")]
         public void ShowIsarPopup(IVehicle vecInfo, IFFMDynamicResolver fFMResolver, IInteractionService services)
         {
             throw new NotImplementedException();
