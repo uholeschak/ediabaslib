@@ -156,7 +156,7 @@ namespace PsdzClient.Core
 
         public static bool IsISTAModeRITA => OperationalMode == OperationalMode.RITA;
 
-        [PreserveSource(Hint = "TOYOTA removed", OriginalHash = "")]
+        [PreserveSource(Hint = "TOYOTA removed", OriginalHash = "8A825AA8CF4AD34A1AD9CBFFDE3436BC")]
         public static UiBrand SelectedBrand
         {
             get

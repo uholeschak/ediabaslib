@@ -1596,6 +1596,7 @@ namespace SourceCodeSync
                 {
                     MemberDeclarationSyntax memberToAdd = matchingPreservedMember;
 
+                    // Hash validation
                     string originalHash = GetOriginalHashAttribute(memberToAdd.AttributeLists);
                     if (originalHash != null)
                     {
@@ -1603,6 +1604,8 @@ namespace SourceCodeSync
                         string currentHash = sourceMember switch
                         {
                             MethodDeclarationSyntax method => CalculateMethodHash(method),
+                            FieldDeclarationSyntax field => CalculateMethodHash(field),
+                            PropertyDeclarationSyntax property => CalculatePropertyHash(property),
                             _ => null
                         };
 
@@ -1916,6 +1919,19 @@ namespace SourceCodeSync
         public static string CalculateMethodHash(FieldDeclarationSyntax field)
         {
             string normalized = field.NormalizeWhitespace().ToFullString();
+            string noSpaces = Regex.Replace(normalized, @"\s+", "");
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(noSpaces));
+                return BitConverter.ToString(hashBytes, 0, 16).Replace("-", "").ToUpperInvariant();
+            }
+        }
+
+        public static string CalculatePropertyHash(PropertyDeclarationSyntax property)
+        {
+            // Normalize and remove whitespaces for hash calculation
+            string normalized = property.NormalizeWhitespace().ToFullString();
             string noSpaces = Regex.Replace(normalized, @"\s+", "");
 
             using (SHA256 sha256 = SHA256.Create())
