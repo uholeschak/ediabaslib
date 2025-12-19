@@ -1767,25 +1767,26 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        [PreserveSource(Hint = "Modified")]
+
+        [PreserveSource(Hint = "Unchanged", OriginalHash = "879276A46FA5BDD31930A0163729BCCE", SignatureModified = true)]
         protected ECU(ECU ecu) : this()
         {
             BaseVariant = ecu.BaseVariant;
             EcuVariant = ecu.EcuVariant;
             BnTnName = ecu.BnTnName;
             GatewayDiagAddrAsInt = ecu.GatewayDiagAddrAsInt;
-            DiagnosticBus = ecu.DiagnosticBus;
+            DiagBus = ecu.DiagBus;
             SerialNumber = ecu.SerialNumber;
             EcuIdentifier = ecu.EcuIdentifier;
             StandardSvk = ecu.StandardSvk;
-            BusConnections = ecu.BusConnections;
+            BusCons = ecu.BusCons;
             EcuDetailInfo = ecu.EcuDetailInfo;
             EcuStatusInfo = ecu.EcuStatusInfo;
             EcuPdxInfo = ecu.EcuPdxInfo;
             ID_SG_ADR = ecu.ID_SG_ADR;
-            // [IGNORE] XepEcuVariant = ecu.XepEcuVariant;
+            XepEcuVariant = ecu.XepEcuVariant;
             EcuVariant = ecu.EcuVariant;
-            // [IGNORE] XepEcuClique = ecu.XepEcuClique;
+            XepEcuClique = ecu.XepEcuClique;
             EcuGroup = ecu.EcuGroup;
             EcuRep = ecu.EcuRep;
             IsSmartActuator = ecu.IsSmartActuator;
@@ -1999,7 +2000,7 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "F486A9952B9B93F952D0B5663177646B")]
         public ECU()
         {
             subBUSField = new ObservableCollection<BusType>();
@@ -2010,7 +2011,7 @@ namespace PsdzClient.Core
             sVKField = new SVK();
             // [IGNORE] iNFOField = new ObservableCollection<DTC>();
             // [IGNORE] FEHLER = new ObservableCollection<DTC>();
-            aIFField = new ObservableCollection<AIF>();
+            // [IGNORE] aIFField = new ObservableCollection<AIF>();
             // [IGNORE] jOBSField = new ObservableCollection<JOB>();
             bUSField = BusType.UNKNOWN;
             diagProtocollField = typeDiagProtocoll.UNKNOWN;
@@ -2034,9 +2035,12 @@ namespace PsdzClient.Core
             dATEN_REFERENZ_SUCCESSFULLYField = false;
             fLASH_STATEField = -1;
             eCU_ASSEMBLY_CONFIRMEDField = true;
+            DiagBus = BusObject.ACan;
+            eCU_NAMEField = string.Empty;
+            eCU_SGBDField = string.Empty;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "798C0814C72C55C6E9E0D1F8AC2D1F11")]
         private void FEHLER_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
         }
