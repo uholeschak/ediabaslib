@@ -188,12 +188,12 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, null, null, "ApiJobWithRetries");
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", , OriginalHash = "51C307D42A9AD131FF2AFA3978639FE3", SignatureModified = true)]
         public ECUKom() : this(null, new List<string>())
         {
         }
 
-        [PreserveSource(Hint = "ediabas added, EDIABAS_MONITOR removed")]
+        [PreserveSource(Hint = "ediabas added, EDIABAS_MONITOR removed", OriginalHash = "2E10BFC5B2F8982CA8AB69928D29E1E5")]
         public ECUKom(string app, IList<string> lang, EdiabasNet ediabas = null)
         {
             api = CreateApi(ediabas);
