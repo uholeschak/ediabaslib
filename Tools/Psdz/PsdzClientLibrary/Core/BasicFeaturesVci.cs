@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-    [PreserveSource(Hint = "Incorrectly decompiled")]
+    [PreserveSource(Hint = "Class incorrectly decompiled")]
     public class BasicFeaturesVci : typeBasicFeatures, IBasicFeatures, INotifyPropertyChanged
     {
         string IBasicFeatures.Baureihe => base.Baureihe;

@@ -22,10 +22,9 @@ namespace PsdzClient.Core.Container
 
         public static bool validLicense => _validLicense;
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "License modified", OriginalHash = "8A55A937F33E877507003C6920BB1500")]
         static VehicleCommunication()
         {
-            debuglevel = 0;
             // [UH] [IGNORE] modified
             _validLicense = true;
             Log.Info("VehicleCommunication.VehicleCommunication()", "ctor called.");

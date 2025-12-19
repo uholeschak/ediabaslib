@@ -2,7 +2,7 @@
 
 namespace PsdzClient.Core.Container
 {
-    [PreserveSource(Hint = "Dummy")]
+    [PreserveSource(Hint = "Dummy interface")]
     public interface IProtocolBasic
     {
     }

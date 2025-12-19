@@ -32,7 +32,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "License modified", OriginalHash = "8F4E46F16271E70EFA0245D9580BDA10")]
         static ISTACoreFramwork()
         {
             // [UH] [IGNORE] modified

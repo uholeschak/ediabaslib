@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace PsdzClient.Core.Container
 {
-    [PreserveSource(Hint = "Cleaned")]
+    [PreserveSource(Hint = "Class cleaned")]
     public class CachedApiJobConfigParser
     {
         public static List<string> Parse()

@@ -44,7 +44,7 @@ namespace PsdzClient.Core.Container
             "SWFK-0000CED0",
             "SWFK-0000CFBC"
         };
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "api modified")]
         private ApiInternal api;
         private string _APP;
         private CommMode communicationMode;
