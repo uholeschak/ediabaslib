@@ -2011,7 +2011,7 @@ namespace PsdzClient.Core
             sVKField = new SVK();
             // [IGNORE] iNFOField = new ObservableCollection<DTC>();
             // [IGNORE] FEHLER = new ObservableCollection<DTC>();
-            // [IGNORE] aIFField = new ObservableCollection<AIF>();
+            aIFField = new ObservableCollection<AIF>();
             // [IGNORE] jOBSField = new ObservableCollection<JOB>();
             bUSField = BusType.UNKNOWN;
             diagProtocollField = typeDiagProtocoll.UNKNOWN;
