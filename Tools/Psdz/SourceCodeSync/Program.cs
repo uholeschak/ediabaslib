@@ -1912,5 +1912,17 @@ namespace SourceCodeSync
                 return BitConverter.ToString(hashBytes, 0, 16).Replace("-", "").ToUpperInvariant();
             }
         }
+
+        public static string CalculateMethodHash(FieldDeclarationSyntax field)
+        {
+            string normalized = field.NormalizeWhitespace().ToFullString();
+            string noSpaces = Regex.Replace(normalized, @"\s+", "");
+
+            using (SHA256 sha256 = SHA256.Create())
+            {
+                byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(noSpaces));
+                return BitConverter.ToString(hashBytes, 0, 16).Replace("-", "").ToUpperInvariant();
+            }
+        }
     }
 }
