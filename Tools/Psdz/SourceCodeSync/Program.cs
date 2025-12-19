@@ -1522,6 +1522,9 @@ namespace SourceCodeSync
         /// <summary>
         /// Merges signature from source member with body from preserved member
         /// </summary>
+        /// <summary>
+        /// Merges signature from source member with body from preserved member
+        /// </summary>
         private static MemberDeclarationSyntax MergeMemberSignatureWithBody(
             MemberDeclarationSyntax sourceMember,
             MemberDeclarationSyntax preservedMember)
@@ -1556,11 +1559,19 @@ namespace SourceCodeSync
                         .WithSemicolonToken(preservedIndexer.SemicolonToken)
                         .WithAttributeLists(preservedMember.AttributeLists),
 
+                // NEW: Field support - merge type and modifiers from source, keep initializer from preserved
+                FieldDeclarationSyntax sourceField when preservedMember is FieldDeclarationSyntax preservedField =>
+                    sourceField
+                        .WithDeclaration(sourceField.Declaration
+                            .WithVariables(SyntaxFactory.SeparatedList(
+                                sourceField.Declaration.Variables.Zip(preservedField.Declaration.Variables,
+                                    (sourceVar, preservedVar) => sourceVar.WithInitializer(preservedVar.Initializer)))))
+                        .WithAttributeLists(preservedMember.AttributeLists),
+
                 // Fallback: return preserved member as-is
                 _ => preservedMember
             };
         }
-
         /// <summary>
         /// Merges source class into destination, preserving marked members at their original positions
         /// </summary>
@@ -1763,11 +1774,26 @@ namespace SourceCodeSync
             {
                 MethodDeclarationSyntax method => GetMethodName(method),
                 PropertyDeclarationSyntax property => GetPropertyName(property),
-                FieldDeclarationSyntax field => field.Declaration.Variables.FirstOrDefault()?.Identifier.Text,
+                FieldDeclarationSyntax field => GetFieldName(field),
                 EventDeclarationSyntax eventDecl => eventDecl.Identifier.Text,
                 ConstructorDeclarationSyntax ctor => ctor.Identifier.Text,
                 _ => null
             };
+        }
+
+        /// <summary>
+        /// Gets the field name (supports multiple variable declarators)
+        /// </summary>
+        private static string GetFieldName(FieldDeclarationSyntax field)
+        {
+            // For fields with multiple variables (e.g., int x, y, z;), 
+            // use the first variable's name
+            var firstVariable = field.Declaration.Variables.FirstOrDefault();
+            if (firstVariable != null)
+            {
+                return firstVariable.Identifier.Text;
+            }
+            return null;
         }
 
         /// <summary>
