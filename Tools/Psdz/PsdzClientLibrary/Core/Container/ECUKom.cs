@@ -188,7 +188,7 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, null, null, "ApiJobWithRetries");
         }
 
-        [PreserveSource(Hint = "Unchanged", , OriginalHash = "51C307D42A9AD131FF2AFA3978639FE3", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", OriginalHash = "51C307D42A9AD131FF2AFA3978639FE3", SignatureModified = true)]
         public ECUKom() : this(null, new List<string>())
         {
         }
@@ -209,7 +209,7 @@ namespace PsdzClient.Core.Container
             ServiceLocator.Current.TryGetService<IFasta2Service>(out fasta2Service);
         }
 
-        [PreserveSource(Hint = "ediabas added")]
+        [PreserveSource(Hint = "ediabas added, using ApiInternal", OriginalHash = "C27EC725B0A417FBC992621884C10648")]
         private ApiInternal CreateApi(EdiabasNet ediabas)
         {
             return new ApiInternal(ediabas);
@@ -237,7 +237,7 @@ namespace PsdzClient.Core.Container
             return EdiabasIniFilePath(iniFilename);
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", OriginalHash = "D854ED9025186F9CAC413BAA8F027F57", SignatureModified = true)]
         public BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP)
         {
             BoolResultObject result = InitVCI(vciDevice, logging: true, isDoIP);
@@ -374,15 +374,29 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "ediabas added")]
+        [PreserveSource(Hint = "ediabas added", OriginalHash = "61E52CD0CDCD30B0C2817B500EFB9893")]
         public static ECUKom DeSerialize(string filename, EdiabasNet ediabas = null)
         {
             Log.Info("ECUKom.DeSerialize()", "called");
+            if (!VehicleCommunication.validLicense)
+            {
+                throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
+            }
             ECUKom eCUKom;
             try
             {
                 XmlTextReader xmlTextReader = new XmlTextReader(filename);
                 eCUKom = (ECUKom)new XmlSerializer(typeof(ECUKom)).Deserialize(xmlTextReader);
+                // [UH] [IGNORE] create api with ediabas
+                eCUKom.api = eCUKom.CreateApi(ediabas);
+                eCUKom.jobList.ForEach(delegate (ECUJob job)
+                {
+                    if (job?.JobResultsForSerialization != null)
+                    {
+                        job.JobResult = ((IEnumerable<IEcuResult>)job.JobResultsForSerialization).ToList();
+                        job.JobResultsForSerialization = null;
+                    }
+                });
                 xmlTextReader.Close();
             }
             catch (Exception exception)
@@ -391,7 +405,6 @@ namespace PsdzClient.Core.Container
                 // [UH] [IGNORE] ediabas added
                 eCUKom = new ECUKom("Rheingold", new List<string>(), ediabas);
             }
-
             VCIDevice vCIDevice = new VCIDevice(VCIDeviceType.SIM, "SIM", filename);
             vCIDevice.Serial = filename;
             vCIDevice.IPAddress = "127.0.0.1";
@@ -413,7 +426,6 @@ namespace PsdzClient.Core.Container
             {
                 Log.Warning("ECUKom.DeSerialize()", "failed to normalize EcuName and JobName tu uppercase with exception: {0}", ex.ToString());
             }
-
             Log.Info("ECUKom.DeSerialize()", "successfully done");
             return eCUKom;
         }

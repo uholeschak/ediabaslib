@@ -1829,6 +1829,7 @@ namespace SourceCodeSync
 
             return method.Identifier.Text;
         }
+
         /// <summary>
         /// Checks if member has preserve comment markers
         /// </summary>
