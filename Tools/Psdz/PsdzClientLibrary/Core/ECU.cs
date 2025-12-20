@@ -1842,7 +1842,7 @@ namespace PsdzClient.Core
             return PlaceholderType.Value;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "B54C30A1CCDB6796BA74B03A37B86EEF")]
         IDtc IEcu.getDTCbyF_ORT(int F_ORT)
         {
             return null;
@@ -1900,7 +1900,7 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "5B92EB2927076346CBD95F5F584ACFD4")]
         public bool IsSet(long fOrt)
         {
             return false;

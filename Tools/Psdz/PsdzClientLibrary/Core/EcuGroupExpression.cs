@@ -21,7 +21,7 @@ namespace PsdzClient.Core
             value = ecuGroupId;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "0D69BFC6F27343587858C90B70887CA2")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
