@@ -21,7 +21,7 @@ namespace PsdzClient.Core
             value = ecuCliqueId;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataprovider removed", OriginalHash = "E395A20717D72A0923FF1DDD1F37ABE1")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             PsdzDatabase database = ClientContext.GetDatabase(vec);
@@ -48,7 +48,7 @@ namespace PsdzClient.Core
                 return false;
             }
 
-            List<PsdzDatabase.EcuVar> ecuVariantsByEcuCliquesId = ClientContext.GetDatabase(vec)?.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
+            List<PsdzDatabase.EcuVar> ecuVariantsByEcuCliquesId = database.GetEcuVariantsByEcuCliquesId(ecuClique.Id);
             if (ecuVariantsByEcuCliquesId == null || ecuVariantsByEcuCliquesId.Count == 0)
             {
                 ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Unable to find ECU variants for ECU clique id: {0}", ecuClique.Id);
@@ -60,6 +60,7 @@ namespace PsdzClient.Core
                 foreach (PsdzDatabase.EcuVar ecuVar in ecuVariantsByEcuCliquesId)
                 {
                     flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuVar.Id, ffmResolver);
+                    ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CliqueName, vec.VehicleIdentLevel, flag);
                     if (!flag)
                     {
                         continue;
@@ -68,6 +69,7 @@ namespace PsdzClient.Core
                     if (!string.IsNullOrEmpty(ecuVar.EcuGroupId))
                     {
                         flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuVar.EcuGroupId, ffmResolver);
+                        ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "ECU variant: {0} was valid, group.Id:{1} evaluation result was: {2}", ecuVar.Name, ecuVar.EcuGroupId, flag);
                         if (flag)
                         {
                             break;

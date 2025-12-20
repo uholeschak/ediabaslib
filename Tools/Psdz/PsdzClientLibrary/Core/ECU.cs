@@ -1842,7 +1842,7 @@ namespace PsdzClient.Core
             return PlaceholderType.Value;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Cleaned")]
         IDtc IEcu.getDTCbyF_ORT(int F_ORT)
         {
             return null;
@@ -1900,7 +1900,7 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Cleaned")]
         public bool IsSet(long fOrt)
         {
             return false;
