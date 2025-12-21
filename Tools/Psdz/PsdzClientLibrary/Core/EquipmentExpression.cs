@@ -1,19 +1,17 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
     public class EquipmentExpression : SingleAssignmentExpression
     {
         private static object evaluationLockObject = new object ();
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "BAB0AFAB1D8F890EAA3BAF184268ADC9")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             ILogger logger = ruleEvaluationServices.Logger;
@@ -22,7 +20,6 @@ namespace PsdzClient.Core
                 logger.Error("EquipmentExpression.Evaluate()", "vec was null");
                 return false;
             }
-
             if (vec.VehicleIdentLevel == IdentificationLevel.None)
             {
                 return false;
