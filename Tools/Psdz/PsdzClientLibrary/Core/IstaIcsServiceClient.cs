@@ -249,7 +249,7 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-        [PreserveSource(Hint = "get from registry or default value")]
+        [PreserveSource(Hint = "get from registry or default value", OriginalHash = "E886871F0E5E807DF68460715F4D8DE5")]
         public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature, bool checkLbps = true)
         {
             string configString = ConfigSettings.getConfigString(LBPFeatureSwitches.FeatureRegistryKey(feature));

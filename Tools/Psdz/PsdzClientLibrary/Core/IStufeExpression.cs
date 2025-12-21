@@ -15,33 +15,32 @@ namespace PsdzClient.Core
         private string iStufe;
         [PreserveSource(Hint = "IDataProviderRuleEvaluation", Placeholder = true)]
         private readonly PlaceholderType dataProvider;
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "5DD33CC69635A0CB84E46EEAC5CC1B5A")]
         private string IStufe
         {
             get
             {
-                if (string.IsNullOrEmpty(this.iStufe))
+                if (string.IsNullOrEmpty(iStufe))
                 {
-                    this.iStufe = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
-                    return this.iStufe;
+                    iStufe = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
+                    return iStufe;
                 }
-
-                return this.iStufe;
+                return iStufe;
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "C10874AF3701858B254968057305EE14")]
         public IStufeExpression()
         {
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "06B7F89FD4225D6B31E7D90AEDFD30E9")]
         public IStufeExpression(long iStufeId)
         {
-            this.value = iStufeId;
+            value = iStufeId;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "23985ADDF883DEA5B904497A90D113F0")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -49,7 +48,7 @@ namespace PsdzClient.Core
                 return false;
             }
 
-            this.vecInfo = vec; // [UH] [IGNORE] added
+            vecInfo = vec; // [UH] [IGNORE] added
             bool flag;
             if (string.IsNullOrEmpty(vec.ILevel) || vec.ILevel == "0")
             {
@@ -61,7 +60,6 @@ namespace PsdzClient.Core
                 flag = vec.ILevel == IStufe;
                 ruleEvaluationServices.Logger.Debug("IStufeExpression.Evaluate()", "IStufe: {0} result: {1} [original rule: {2}]", IStufe, flag, value);
             }
-
             return flag;
         }
 
