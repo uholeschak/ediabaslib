@@ -71,6 +71,7 @@ namespace SourceCodeSync
             "BMW.ISPI.TRIC.ISTA.VehicleIdentification",
             "CommonServices",
             "DiagnosticsBusinessData",
+            "IstaServicesClient",
             "IstaServicesContract",
             "RheingoldCoreContracts",
             "RheingoldCoreFramework",

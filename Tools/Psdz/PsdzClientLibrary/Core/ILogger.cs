@@ -1,5 +1,4 @@
-﻿using PsdzClient;
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 
 namespace PsdzClient.Core
@@ -14,7 +13,7 @@ namespace PsdzClient.Core
         void Warning(string method, string msg, params object[] args);
         void WarningException(string method, Exception exception);
         void WarningException(string method, string msg, Exception exception);
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Arguments added", SignatureModified = true)]
         string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null);
     }
 }

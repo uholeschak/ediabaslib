@@ -9,7 +9,7 @@ namespace PsdzClient.Core
 {
     public interface IRuleExpression
     {
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed")]
         bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult);
     }
 }
