@@ -1,13 +1,12 @@
-﻿using PsdzClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ServiceModel;
 
 namespace PsdzClient.Core
 {
-    [PreserveSource(Hint = "Dummy")]
+    [PreserveSource(Hint = "Changed to IDisposable", InheritanceModified = true)]
     public class IstaIcsServiceClient : IDisposable
     {
+        [PreserveSource(Hint = "Added")]
         public void Dispose()
         {
         }
