@@ -17,7 +17,7 @@ namespace PsdzClient.Core
         private readonly IFFMDynamicResolverRuleEvaluation ffmResolver;
         private readonly ISPELocator[] parents;
         private ISPELocator[] children;
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "23F7E4420C13B2429379BCD46C3EAADC")]
         public ISPELocator[] Children
         {
             get
@@ -58,7 +58,7 @@ namespace PsdzClient.Core
             "VALIDFROM"
         };
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Use ConvertToInt", OriginalHash = "4465D41838B9D67581BD145743BEDB74")]
         public decimal SignedId
         {
             get
@@ -75,67 +75,63 @@ namespace PsdzClient.Core
         public Exception Exception => null;
         public bool HasException => false;
 
-        [PreserveSource(Hint = "ecuGroup modified")]
+        [PreserveSource(Hint = "ecuGroup modified", OriginalHash = "06BD86D992742E8CEB3DF15DD20F7425")]
         public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup)
         {
             this.ecuGroup = ecuGroup;
             this.children = new ISPELocator[0];
-            this.parents = null;
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "062B06F28CEEF71621BB52FF3194BAB9")]
         public EcuGroupLocator(decimal id, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             this.ecuGroup = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));
-            this.children = new ISPELocator[0];
-            this.parents = null;
+            children = new ISPELocator[0];
             this.vecInfo = vecInfo;
             this.ffmResolver = ffmResolver;
         }
 
-        [PreserveSource(Hint = "ecuGroup modified")]
+        [PreserveSource(Hint = "ecuGroup modified", OriginalHash = "8EDAAF275E011A7D60865AA2A4E4C118")]
         public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup, Vehicle vecInfo, IFFMDynamicResolverRuleEvaluation ffmResolver)
         {
             this.ecuGroup = ecuGroup;
-            this.children = new ISPELocator[0];
-            this.parents = null;
+            children = new ISPELocator[0];
             this.vecInfo = vecInfo;
             this.ffmResolver = ffmResolver;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "457AEE8771A8A4D2D0BD097120D8DA14")]
         public string GetDataValue(string name)
         {
-            if (ecuGroup != null && !string.IsNullOrEmpty(name))
+            if (ecuGroup == null || string.IsNullOrEmpty(name))
             {
-                switch (name.ToUpperInvariant())
-                {
-                    case "FAULTMEMORYDELETEWAITINGTIME":
-                        return ecuGroup.FaultMemDelWaitTime;
-                    case "NODECLASS":
-                        return "5717890";
-                    case "ID":
-                        return ecuGroup.Id.ToString(CultureInfo.InvariantCulture);
-                    case "NAME":
-                        return ecuGroup.Name;
-                    case "OBDIDENTIFICATION":
-                        return ecuGroup.ObdIdent;
-                    case "VIRTUELL":
-                        return ecuGroup.Virt;
-                    case "VALIDFROM":
-                        return ecuGroup.ValidFrom;
-                    case "FAULTMEMORYDELETEIDENTIFICATIO":
-                        return ecuGroup.FaultMemDelIdent;
-                    case "SICHERHEITSRELEVANT":
-                        return ecuGroup.SafetyRelevant;
-                    case "VALIDTO":
-                        return ecuGroup.ValidTo;
-                    default:
-                        return string.Empty;
-                }
+                return null;
             }
-
-            return null;
+            switch (name.ToUpperInvariant())
+            {
+                case "ID":
+                    return ecuGroup.Id.ToString(CultureInfo.InvariantCulture);
+                case "NODECLASS":
+                    return "5717890";
+                case "OBDIDENTIFICATION":
+                    return ecuGroup.ObdIdent;
+                case "FAULTMEMORYDELETEIDENTIFICATIO":
+                    return ecuGroup.FaultMemDelIdent;
+                case "FAULTMEMORYDELETEWAITINGTIME":
+                    return ecuGroup.FaultMemDelWaitTime;
+                case "NAME":
+                    return ecuGroup.Name;
+                case "VIRTUELL":
+                    return ecuGroup.Virt;
+                case "VALIDFROM":
+                    return ecuGroup.ValidFrom;
+                case "VALIDTO":
+                    return ecuGroup.ValidTo;
+                case "SICHERHEITSRELEVANT":
+                    return ecuGroup.SafetyRelevant;
+                default:
+                    return string.Empty;
+            }
         }
 
         public ISPELocator[] GetIncomingLinks()
