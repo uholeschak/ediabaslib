@@ -382,6 +382,7 @@ namespace PsdzClient.Core.Container
             {
                 throw new Exception("This copy of VehicleCommunication.dll is not licensed !!!");
             }
+
             ECUKom eCUKom;
             try
             {
@@ -405,6 +406,7 @@ namespace PsdzClient.Core.Container
                 // [UH] [IGNORE] ediabas added
                 eCUKom = new ECUKom("Rheingold", new List<string>(), ediabas);
             }
+
             VCIDevice vCIDevice = new VCIDevice(VCIDeviceType.SIM, "SIM", filename);
             vCIDevice.Serial = filename;
             vCIDevice.IPAddress = "127.0.0.1";
@@ -426,6 +428,7 @@ namespace PsdzClient.Core.Container
             {
                 Log.Warning("ECUKom.DeSerialize()", "failed to normalize EcuName and JobName tu uppercase with exception: {0}", ex.ToString());
             }
+
             Log.Info("ECUKom.DeSerialize()", "successfully done");
             return eCUKom;
         }
