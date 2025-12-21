@@ -1,5 +1,7 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient;
+using PsdzClient.Core.Container;
+using PsdzClient.Utility;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,7 +25,7 @@ namespace PsdzClient.Core
             value = ecuVariantId;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "34482A4EBE0783DD3BB3134572099D27")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -70,7 +72,7 @@ namespace PsdzClient.Core
                 ruleEvaluationServices.Logger.Info("EcuVariantExpression.Evaluate()", "Infosession and manual VIN input => no ECU variant evaluation for {0} due to VehicleIdentLevel: {1}", VariantName, vec.VehicleIdentLevel);
                 return true;
             }
-            bool flag = vec.getECUbyECU_SGBD(VariantName) != null;
+            bool flag = VehicleHelper.GetECUbyECU_SGBD(vec, VariantName) != null;
             ruleEvaluationServices.Logger.Debug("EcuVariantExpression.Evaluate()", "EcuVariantId: {0} (original rule: {1})  result: {2}", value, VariantName, flag);
             return flag;
         }
