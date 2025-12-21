@@ -644,7 +644,7 @@ namespace PsdzClient.Core
             return string.Format(CultureInfo.InvariantCulture, "{0}#{1}*{2}%{3}&{4}{5}{6}{7}", GetFormattedModelSeries(BR), C_DATE, TYPE, LACK, POLSTER, ConcatStrElems(SA, "$"), ConcatStrElems(E_WORT, "-"), ConcatStrElems(HO_WORT, "+"));
         }
 
-        [PreserveSource(Hint = "IProgrammingService2")]
+        [PreserveSource(Hint = "Changed to IProgrammingService2", OriginalHash = "56C08045066BBE0CB56F6D078FBF66CB")]
         private string GetFormattedModelSeries(string baureihe)
         {
             try
