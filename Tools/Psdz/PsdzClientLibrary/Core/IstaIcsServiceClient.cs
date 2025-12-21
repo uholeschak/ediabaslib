@@ -6,14 +6,9 @@ namespace PsdzClient.Core
     [PreserveSource(Hint = "Changed to IDisposable", InheritanceModified = true)]
     public class IstaIcsServiceClient : IDisposable
     {
-        [PreserveSource(Hint = "Added")]
-        public void Dispose()
+        [PreserveSource(Hint = "Cleaned")]
+        private void ValidateHost()
         {
-        }
-
-        public bool IsAvailable()
-        {
-            return false;
         }
 
         [PreserveSource(Hint = "Cleaned")]
@@ -58,6 +53,7 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetSharedStoragePath()
         {
             return string.Empty;
@@ -128,13 +124,13 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Hint = "Cleaned")]
-        public string GetCurrentLocationWebEamNext()
+        public string GetSecureFeatureActivationUrl()
         {
             return string.Empty;
         }
 
         [PreserveSource(Hint = "Cleaned")]
-        public string GetSecureFeatureActivationUrl()
+        public string PrepareSecureFeatureActivationQaProdUrlIfRequired(string url)
         {
             return string.Empty;
         }
@@ -200,12 +196,6 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Hint = "Cleaned")]
-        public bool GetKaiServiceHistoryEnabled()
-        {
-            return false;
-        }
-
-        [PreserveSource(Hint = "Cleaned")]
         public string GetAirServiceUrl()
         {
             return string.Empty;
@@ -231,18 +221,6 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "Cleaned")]
         public string GetSec4DiagUrl()
-        {
-            return string.Empty;
-        }
-
-        [PreserveSource(Hint = "Cleaned")]
-        public string GetConWoyAPIClientUrl()
-        {
-            return string.Empty;
-        }
-
-        [PreserveSource(Hint = "Cleaned")]
-        public string GetUseConwoyStorage()
         {
             return string.Empty;
         }
@@ -279,6 +257,7 @@ namespace PsdzClient.Core
             {
                 return (IsActive: result, Message: "REGISTRY KEY");
             }
+
             bool flag = LBPFeatureSwitches.Features.DefaultValue(feature, IstaMode.HO);
             return (IsActive: flag, Message: "DEFAULT VALUE");
         }
@@ -329,6 +308,41 @@ namespace PsdzClient.Core
         public int? GetTimeoutLengthWebserviceStart()
         {
             return null;
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public bool IsAvailable()
+        {
+            return false;
+        }
+
+        [PreserveSource(Hint = "Added")]
+        public void Dispose()
+        {
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public string GetCurrentLocationWebEamNext()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public bool GetKaiServiceHistoryEnabled()
+        {
+            return false;
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public string GetConWoyAPIClientUrl()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Hint = "Cleaned")]
+        public string GetUseConwoyStorage()
+        {
+            return string.Empty;
         }
     }
 }
