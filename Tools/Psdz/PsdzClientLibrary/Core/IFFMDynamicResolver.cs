@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-    [PreserveSource(Hint = "Cleaned")]
+    [PreserveSource(Hint = "Class cleaned")]
     public interface IFFMDynamicResolver : IFFMDynamicResolverRuleEvaluation
     {
     }
