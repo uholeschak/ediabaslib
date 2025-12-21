@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
-    [PreserveSource(Hint = "Dummy")]
     public interface IInteractionService
     {
         void Deregister(InteractionModel model);
