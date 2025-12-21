@@ -1531,7 +1531,6 @@ namespace SourceCodeSync
                 MethodDeclarationSyntax sourceMethod when preservedMember is MethodDeclarationSyntax preservedMethod =>
                     sourceMethod
                         .WithParameterList(preservedMethod.ParameterList)
-                        .WithBody(preservedMethod.Body)
                         .WithExpressionBody(preservedMethod.ExpressionBody)
                         .WithSemicolonToken(preservedMethod.SemicolonToken)
                         .WithAttributeLists(preservedMember.AttributeLists),
@@ -1547,7 +1546,6 @@ namespace SourceCodeSync
                 ConstructorDeclarationSyntax sourceCtor when preservedMember is ConstructorDeclarationSyntax preservedCtor =>
                     sourceCtor
                         .WithParameterList(preservedCtor.ParameterList)
-                        .WithBody(preservedCtor.Body)
                         .WithExpressionBody(preservedCtor.ExpressionBody)
                         .WithInitializer(preservedCtor.Initializer)
                         .WithSemicolonToken(preservedCtor.SemicolonToken)
@@ -1645,7 +1643,7 @@ namespace SourceCodeSync
 
                         if (_verbosity >= Options.VerbosityOption.Info)
                         {
-                            Console.WriteLine($"Member {sourceMemberName} body preserved, signature updated");
+                            Console.WriteLine($"Member {sourceMemberName} signature preserved, body updated");
                         }
                     }
 
