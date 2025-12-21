@@ -10,13 +10,13 @@ namespace PsdzClient.Core
 {
     public class EcuProgrammingVariantExpression : SingleAssignmentExpression
     {
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database replaced")]
         private PsdzDatabase.EcuPrgVar programmingVariant;
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database replaced")]
         private PsdzDatabase.EcuVar ecuVariant;
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "0805F1B8A8056092F58311DF13015715")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             ILogger logger = ruleEvaluationServices.Logger;
@@ -28,14 +28,14 @@ namespace PsdzClient.Core
                     return false;
                 }
 
-                this.programmingVariant = ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
+                programmingVariant = ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
                 if (programmingVariant == null)
                 {
                     logger.Warning(logger.CurrentMethod(), "no valid programming variant information found for id: {0}", value);
                     return false;
                 }
 
-                this.ecuVariant = ClientContext.GetDatabase(vec)?.GetEcuVariantById(this.programmingVariant.EcuVarId);
+                ecuVariant = ClientContext.GetDatabase(vec)?.GetEcuVariantById(this.programmingVariant.EcuVarId);
                 if (ecuVariant == null)
                 {
                     logger.Warning(logger.CurrentMethod(), "no valid EcuVariant information found for id: {0}", value);
@@ -47,7 +47,6 @@ namespace PsdzClient.Core
                 {
                     return true;
                 }
-
                 return false;
             }
             catch (Exception exception)
