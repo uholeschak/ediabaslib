@@ -265,7 +265,7 @@ namespace PsdzClient.Core
             return children;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "4A8CA5648240C30EA714ADA304782496")]
         public T GetDataValue<T>(string name)
         {
             try
@@ -275,77 +275,26 @@ namespace PsdzClient.Core
                     object obj = null;
                     switch (name.ToUpperInvariant())
                     {
-                        case "TITLE_JA":
-                            obj = ecuVariant.EcuTranslation.TextJa;
-                            break;
-                        case "SORT":
-                            obj = ecuVariant.Sort;
-                            break;
-                        case "TITLE_ENUS":
-                            obj = ecuVariant.EcuTranslation.TextEn;
+                        case "ID":
+                            obj = ecuVariant.Id;
                             break;
                         case "NODECLASS":
                             obj = "5719042";
                             break;
-                        case "TITLE_ENGB":
-                            obj = ecuVariant.EcuTranslation.TextEn;
-                            break;
-                        case "TITLE_NL":
-                            obj = ecuVariant.EcuTranslation.TextNl;
-                            break;
-                        case "TITLE_ZHTW":
-                            obj = ecuVariant.EcuTranslation.TextZh;
-                            break;
-                        case "TITLE_ZHCN":
-                            obj = ecuVariant.EcuTranslation.TextZh;
-                            break;
-                        case "TITLE_TH":
-                            obj = ecuVariant.EcuTranslation.TextTh;
-                            break;
-                        case "TITLE_KO":
-                            obj = ecuVariant.EcuTranslation.TextKo;
-                            break;
-                        case "TITLE":
-                            obj = ecuVariant.EcuTranslation.GetTitle(ClientContext.GetClientContext(vecInfo));
-                            break;
-                        case "TITLE_RU":
-                            obj = ecuVariant.EcuTranslation.TextRu;
-                            break;
-                        case "TITLE_TR":
-                            obj = ecuVariant.EcuTranslation.TextTr;
-                            break;
-                        case "TITLE_CSCZ":
-                            obj = ecuVariant.EcuTranslation.TextCs;
-                            break;
                         case "TITLE_DEDE":
                             obj = ecuVariant.EcuTranslation.TextDe;
                             break;
-                        case "ID":
-                            obj = ecuVariant.Id;
+                        case "TITLE_ENGB":
+                            obj = ecuVariant.EcuTranslation.TextEn;
                             break;
-                        case "NAME":
-                            obj = ecuVariant.Name;
+                        case "TITLE_ENUS":
+                            obj = ecuVariant.EcuTranslation.TextEn;
                             break;
-                        case "FAULTMEMORYDELETEWAITINGTIME":
-                            obj = ecuVariant.FaultMemDelWaitTime;
+                        case "TITLE_FR":
+                            obj = ecuVariant.EcuTranslation.TextFr;
                             break;
-                        case "TITLE_PLPL":
-                            obj = ecuVariant.EcuTranslation.TextPl;
-                            break;
-                        case "VALIDFROM":
-                            obj = !string.IsNullOrEmpty(ecuVariant.ValidFrom);
-                            break;
-                        case "SICHERHEITSRELEVANT":
-                            obj = ecuVariant.SafetyRelevant;
-                            break;
-                        case "VALIDTO":
-                            obj = !string.IsNullOrEmpty(ecuVariant.ValidTo);
-                            break;
-                        case "TITLE_EL":
-                            obj = ecuVariant.EcuTranslation.TextEl;
-                            break;
-                        case "ECUGROUPID":
-                            obj = ecuVariant.EcuGroupId;
+                        case "TITLE_TH":
+                            obj = ecuVariant.EcuTranslation.TextTh;
                             break;
                         case "TITLE_SV":
                             obj = ecuVariant.EcuTranslation.TextSv;
@@ -356,17 +305,67 @@ namespace PsdzClient.Core
                         case "TITLE_ES":
                             obj = ecuVariant.EcuTranslation.TextEs;
                             break;
-                        case "TITLE_PT":
-                            obj = ecuVariant.EcuTranslation.TextPt;
-                            break;
-                        case "TITLE_FR":
-                            obj = ecuVariant.EcuTranslation.TextFr;
-                            break;
                         case "TITLE_ID":
                             obj = ecuVariant.EcuTranslation.TextId;
                             break;
+                        case "TITLE_KO":
+                            obj = ecuVariant.EcuTranslation.TextKo;
+                            break;
+                        case "TITLE_EL":
+                            obj = ecuVariant.EcuTranslation.TextEl;
+                            break;
+                        case "TITLE_TR":
+                            obj = ecuVariant.EcuTranslation.TextTr;
+                            break;
+                        case "TITLE_ZHCN":
+                            obj = ecuVariant.EcuTranslation.TextZh;
+                            break;
+                        case "TITLE_RU":
+                            obj = ecuVariant.EcuTranslation.TextRu;
+                            break;
+                        case "TITLE_NL":
+                            obj = ecuVariant.EcuTranslation.TextNl;
+                            break;
+                        case "TITLE_PT":
+                            obj = ecuVariant.EcuTranslation.TextPt;
+                            break;
+                        case "TITLE_ZHTW":
+                            obj = ecuVariant.EcuTranslation.TextZh;
+                            break;
+                        case "TITLE_JA":
+                            obj = ecuVariant.EcuTranslation.TextJa;
+                            break;
+                        case "TITLE_CSCZ":
+                            obj = ecuVariant.EcuTranslation.TextCs;
+                            break;
+                        case "TITLE_PLPL":
+                            obj = ecuVariant.EcuTranslation.TextPl;
+                            break;
+                        case "FAULTMEMORYDELETEWAITINGTIME":
+                            obj = ecuVariant.FaultMemDelWaitTime;
+                            break;
+                        case "NAME":
+                            obj = ecuVariant.Name;
+                            break;
+                        case "ECUGROUPID":
+                            obj = ecuVariant.EcuGroupId;
+                            break;
+                        case "SORT":
+                            obj = ecuVariant.Sort;
+                            break;
+                        case "VALIDFROM":
+                            obj = !string.IsNullOrEmpty(ecuVariant.ValidFrom);
+                            break;
+                        case "VALIDTO":
+                            obj = !string.IsNullOrEmpty(ecuVariant.ValidTo);
+                            break;
+                        case "SICHERHEITSRELEVANT":
+                            obj = ecuVariant.SafetyRelevant;
+                            break;
+                        case "TITLE":
+                            obj = ecuVariant.EcuTranslation.GetTitle(ClientContext.GetClientContext(vecInfo));
+                            break;
                     }
-
                     if (obj != null)
                     {
                         return (T)Convert.ChangeType(obj, typeof(T));
@@ -377,7 +376,6 @@ namespace PsdzClient.Core
             {
                 Log.WarningException("EcuVariantLocator.GetDataValue<T>()", exception);
             }
-
             return default(T);
         }
     }
