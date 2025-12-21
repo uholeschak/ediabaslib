@@ -16,11 +16,13 @@ namespace PsdzClient.Core
             return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public bool IsContinuousWorkingPermitted()
         {
             return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public bool IsThisDeviceRegistered()
         {
             return false;
@@ -44,11 +46,13 @@ namespace PsdzClient.Core
             return PlaceholderType.Value;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public DateTime GetLastTimeOnline()
         {
             return DateTime.MinValue;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetDefaultSharedStoragePath()
         {
             return string.Empty;
@@ -59,25 +63,30 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public void UploadErrorReport(string zipArchiv)
         {
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetEnvironmentUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetEnvironment()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetMarketLanguage()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetISPIProcessServicesURL()
         {
             return string.Empty;
@@ -89,145 +98,174 @@ namespace PsdzClient.Core
             return PlaceholderType.Value;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetSecureWebRequestHeader(string url)
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public void VerifyLicense()
         {
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public IDictionary<string, string> GetLocationBasedParameters()
         {
             return new Dictionary<string, string>();
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetEcuValidationUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetLogin2faRequired()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetCurrentLocationWebEamNext()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetSecureFeatureActivationUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetSecureCodingUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetSecureCodingFallbackUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetTricCentralUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetTricBitsUploadUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetIVDServerUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetBMWConnectionCheckUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetBMWConnectionCheckFallbackUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetISTAEdgeAPIUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetCKFUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetCKFNewUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public bool GetKaiServiceHistoryEnabled()
         {
             return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetAirServiceUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetAirForkServiceUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public bool GetSessionTakeover()
         {
             return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public int GetAutomaticLogoutTime()
         {
             return 0;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetSec4DiagUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetConWoyAPIClientUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetUseConwoyStorage()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetActivateSdpOnlinePatch()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public bool GetAirTeileClearingEnabled()
         {
             return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetWebEAMNextStage()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetActivateICOMReboot()
         {
             return string.Empty;
@@ -245,41 +283,49 @@ namespace PsdzClient.Core
             return (IsActive: flag, Message: "DEFAULT VALUE");
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public bool GetVehicleMetricsEnabled()
         {
             return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetLoginDbOperationRetryCount()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetLoginDbTimeoutTermToTermRule()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public bool GetSec4DiagEnabledInBackground()
         {
             return false;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetNVIWhitelisteEReihe()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public string GetTricCloudUrl()
         {
             return string.Empty;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public int? GetJvmHeapspace()
         {
             return null;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public int? GetTimeoutLengthWebserviceStart()
         {
             return null;
