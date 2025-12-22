@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using BMW.Rheingold.Psdz;
 
 namespace PsdzClient.Programming
@@ -16,7 +14,7 @@ namespace PsdzClient.Programming
         private static readonly object @lock = new object ();
         private PsdzSecureCodingConfigCto SecureCodingConfigCto { get; }
 
-        [PreserveSource(Hint = "using programmingService")]
+        [PreserveSource(Hint = "errorManager replaced with programmingService", OriginalHash = "0C89D092A368E98E912AE2897B4300DC")]
         public static PsdzSecureCodingConfigCto GetSecureCodingConfig(ProgrammingService2 programmingService)
         {
             if (instance == null)
@@ -33,7 +31,7 @@ namespace PsdzClient.Programming
             return instance;
         }
 
-        [PreserveSource(Hint = "using programmingService")]
+        [PreserveSource(Hint = "errorManager replaced with programmingService", OriginalHash = "ACB053E0C9D063859F854A2D070192A7")]
         public static void ChangeNcdRecalculationValueTo(PsdzNcdRecalculationEtoEnum psdzNcdRecalculation, ProgrammingService2 programmingService)
         {
             string value = string.Empty; // [IGNORE] ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.NcdRecalculationEnum").ToUpper();
@@ -47,7 +45,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "using programmingService")]
+        [PreserveSource(Hint = "errorManager replaced with programmingService", OriginalHash = "09E01FC607579DF9B9E2F33CB520DC5B")]
         public static void ChangeBackendNcdCalculationValueTo(PsdzBackendNcdCalculationEtoEnum backendNcdCalculation, ProgrammingService2 programmingService)
         {
             string configString = string.Empty; // [IGNORE] ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.BackendNcdCalculationMode");
@@ -61,13 +59,13 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "programmingService added")]
+        [PreserveSource(Hint = "programmingService added", OriginalHash = "8FAA63AD26F0FF0BA8EB976A997C56ED")]
         public static string GetSecureCodingPathWithVin(ProgrammingService2 programmingService, string vin)
         {
             return Path.Combine(programmingService.BackupDataPath, NcdRoot, vin);
         }
 
-        [PreserveSource(Hint = "using programmingService")]
+        [PreserveSource(Hint = "errorManager replaced with programmingService", OriginalHash = "2ECA4840EAA1B4F5D8108162071CA654")]
         private SecureCodingConfigWrapper(ProgrammingService2 programmingService)
         {
             this.SecureCodingConfigCto = new PsdzSecureCodingConfigCto();
