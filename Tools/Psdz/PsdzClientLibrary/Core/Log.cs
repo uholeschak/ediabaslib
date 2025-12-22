@@ -51,7 +51,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "log added")]
+        [PreserveSource(Hint = "log added", OriginalHash = "C07C7B27B8B4656249D35441D0DF0493")]
         private static void TraceTraceError(string format, params object[] args)
         {
             Trace.TraceError(format, args);
@@ -172,7 +172,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "log added")]
+        [PreserveSource(Hint = "log added", OriginalHash = "ADD392DF33C2EE40A9BF9962DA9E31E6")]
         public static void Fatal(string method, string msg, params object[] args)
         {
             try
@@ -187,19 +187,19 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Using DebugLevel, logThreshhold=6")]
+        [PreserveSource(Hint = "Using DebugLevel, logThreshhold=6", OriginalHash = "59B40BA46EA6DF1B23F9BF9AE45721C3")]
         public static void Debug(string method, string msg, params object[] args)
         {
             Debug(CoreFramework.DebugLevel, 6, method, msg, args);
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", OriginalHash = "6D965120D004A442F298CAF873F038A7", SignatureModified = true)]
         public static void Debug(int logState, string method, string msg, params object[] args)
         {
             Debug(logState, 1, method, msg, args);
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", OriginalHash = "016339AA4B32ABE50A5F40A87ACB25F0", SignatureModified = true)]
         public static void Debug(int logState, int logThreshhold, string method, string msg, params object[] args)
         {
             Debug(logState, logThreshhold, method, msg, EventKind.T, args);
