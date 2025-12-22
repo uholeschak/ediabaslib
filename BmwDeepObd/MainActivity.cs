@@ -399,7 +399,10 @@ namespace BmwDeepObd
                     SslProtocols = ActivityCommon.DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
                     Proxy = ActivityCommon.GetProxySettings()
-                });
+                })
+                {
+                    Timeout = TimeSpan.FromSeconds(ActivityCommon.HttpClientTimeout)
+                };
             }
 
             HandleIntent(Intent);

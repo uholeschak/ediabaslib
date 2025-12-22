@@ -796,6 +796,7 @@ namespace BmwDeepObd
         public const int MinSendCommErrors = 3;
         public const int UserNotificationIdMax = 1000;
         public const int BalloonDismissDuration = 4000;
+        public const int HttpClientTimeout = 20;    // default timeout in seconds
         private const int StreamBufferSize = 4096;
         public const SslProtocols DefaultSslProtocols = SslProtocols.None;
         public const string PrimaryVolumeName = "primary";
@@ -7596,7 +7597,10 @@ namespace BmwDeepObd
                     SslProtocols = DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (msg, certificate2, arg3, arg4) => true,
                     Proxy = GetProxySettings()
-                });
+                })
+                {
+                    Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
+                };
             }
 
             PackageInfo packageInfo = GetPackageInfo();
@@ -8489,7 +8493,10 @@ namespace BmwDeepObd
                         SslProtocols = DefaultSslProtocols,
                         ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
                         Proxy = GetProxySettings()
-                    });
+                    })
+                    {
+                        Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
+                    };
                 }
 
                 string certInfo = GetCertificateInfo();
@@ -9966,7 +9973,10 @@ namespace BmwDeepObd
                     SslProtocols = DefaultSslProtocols,
                     ServerCertificateCustomValidationCallback = (message, certificate2, arg3, arg4) => true,
                     Proxy = GetProxySettings()
-                });
+                })
+                {
+                    Timeout = TimeSpan.FromSeconds(HttpClientTimeout)
+                };
             }
 
             if (_translateProgress == null)
