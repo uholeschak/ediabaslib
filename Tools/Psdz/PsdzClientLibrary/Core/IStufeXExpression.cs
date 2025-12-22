@@ -26,27 +26,29 @@ namespace PsdzClient.Core
         private readonly ECompareOperator compareOperator;
         private readonly long iLevelId;
         private readonly ILevelyType iLevelType;
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed, vec added", OriginalHash = "6AF0B4B5F3FBCE46C6695C84138592C1")]
         public IStufeXExpression(ECompareOperator compareOperator, long ilevelid, IStufeXExpression.ILevelyType iLevelType, Vehicle vec)
         {
-            this.iLevelId = ilevelid;
+            iLevelId = ilevelid;
             this.iLevelType = iLevelType;
             this.compareOperator = compareOperator;
-            this.vecInfo = vec;
+            vecInfo = vec;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed, vec added", OriginalHash = "EC3FA1BD18B1CF86EDFB8149E6606F37")]
         public static IStufeXExpression Deserialize(Stream ms, Vehicle vec)
         {
-            ECompareOperator ecompareOperator = (ECompareOperator)((byte)ms.ReadByte());
-            IStufeXExpression.ILevelyType levelyType = (IStufeXExpression.ILevelyType)ms.ReadByte();
+            byte b = (byte)ms.ReadByte();
+            ECompareOperator eCompareOperator = (ECompareOperator)b;
+            byte b2 = (byte)ms.ReadByte();
+            ILevelyType levelyType = (ILevelyType)b2;
             byte[] array = new byte[8];
             ms.Read(array, 0, 8);
             long ilevelid = BitConverter.ToInt64(array, 0);
-            return new IStufeXExpression(ecompareOperator, ilevelid, levelyType, vec);
+            return new IStufeXExpression(eCompareOperator, ilevelid, levelyType, vec);
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "1D1747445CAE51602D4B511CFF4A4E65")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -54,81 +56,54 @@ namespace PsdzClient.Core
                 return false;
             }
 
-            this.vecInfo = vec;
-            string ilevelOperand = this.GetILevelOperand(vec);
-            string istufeById = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
-            if (string.IsNullOrEmpty(istufeById))
+            // [UH] [IGNORE] Store vec for later use
+            vecInfo = vec;
+            bool flag = false;
+            string iLevelOperand = GetILevelOperand(vec);
+            // [UH] [IGNORE] Use database
+            string iStufeById = ClientContext.GetDatabase(vecInfo)?.GetIStufeById(iLevelId.ToString(CultureInfo.InvariantCulture));
+            if (string.IsNullOrEmpty(iStufeById))
             {
+                ruleEvaluationUtils.Logger.Warning("IStufeXExpression.Evaluate()", "IStufe id: {0} not found in database", iLevelId);
                 return false;
             }
-
-            if (string.IsNullOrEmpty(ilevelOperand) || "0".Equals(ilevelOperand))
+            if (string.IsNullOrEmpty(iLevelOperand) || "0".Equals(iLevelOperand))
             {
                 return true;
             }
-
-            string[] ilevelParts = this.GetILevelParts(istufeById);
-            if (ilevelParts.Length > 1 && string.Compare(ilevelParts[0], 0, ilevelOperand, 0, ilevelParts[0].Length, StringComparison.OrdinalIgnoreCase) != 0)
+            string[] iLevelParts = GetILevelParts(iStufeById);
+            if (iLevelParts.Length > 1 && string.Compare(iLevelParts[0], 0, iLevelOperand, 0, iLevelParts[0].Length, StringComparison.OrdinalIgnoreCase) != 0)
             {
-                return false;
+                flag = false;
+                ruleEvaluationUtils.Logger.Info("IStufeXExpression.Evaluate()", "IStufe : {0} operator: {1} type: {2} result: {3} by not fitting product line", iStufeById, compareOperator, GetILevelTypeDescription(), flag);
+                return flag;
             }
-
-            bool flag;
-            switch (this.compareOperator)
+            switch (compareOperator)
             {
                 case ECompareOperator.EQUAL:
-                {
-                    int? num = FormatConverter.ExtractNumericalILevel(ilevelOperand);
-                    int? num2 = FormatConverter.ExtractNumericalILevel(istufeById);
-                    flag = (num.GetValueOrDefault() == num2.GetValueOrDefault() & num != null == (num2 != null));
+                    flag = ExtractNumericalILevel(iLevelOperand, ruleEvaluationUtils) == ExtractNumericalILevel(iStufeById, ruleEvaluationUtils);
                     break;
-                }
-
                 case ECompareOperator.NOT_EQUAL:
-                {
-                    int? num2 = FormatConverter.ExtractNumericalILevel(ilevelOperand);
-                    int? num = FormatConverter.ExtractNumericalILevel(istufeById);
-                    flag = !(num2.GetValueOrDefault() == num.GetValueOrDefault() & num2 != null == (num != null));
+                    flag = ExtractNumericalILevel(iLevelOperand, ruleEvaluationUtils) != ExtractNumericalILevel(iStufeById, ruleEvaluationUtils);
                     break;
-                }
-
                 case ECompareOperator.GREATER:
-                {
-                    int? num = FormatConverter.ExtractNumericalILevel(ilevelOperand);
-                    int? num2 = FormatConverter.ExtractNumericalILevel(istufeById);
-                    flag = (num.GetValueOrDefault() > num2.GetValueOrDefault() & (num != null & num2 != null));
+                    flag = ExtractNumericalILevel(iLevelOperand, ruleEvaluationUtils) > ExtractNumericalILevel(iStufeById, ruleEvaluationUtils);
                     break;
-                }
-
                 case ECompareOperator.GREATER_EQUAL:
-                {
-                    int? num2 = FormatConverter.ExtractNumericalILevel(ilevelOperand);
-                    int? num = FormatConverter.ExtractNumericalILevel(istufeById);
-                    flag = (num2.GetValueOrDefault() >= num.GetValueOrDefault() & (num2 != null & num != null));
+                    flag = ExtractNumericalILevel(iLevelOperand, ruleEvaluationUtils) >= ExtractNumericalILevel(iStufeById, ruleEvaluationUtils);
                     break;
-                }
-
                 case ECompareOperator.LESS:
-                {
-                    int? num = FormatConverter.ExtractNumericalILevel(ilevelOperand);
-                    int? num2 = FormatConverter.ExtractNumericalILevel(istufeById);
-                    flag = (num.GetValueOrDefault() < num2.GetValueOrDefault() & (num != null & num2 != null));
+                    flag = ExtractNumericalILevel(iLevelOperand, ruleEvaluationUtils) < ExtractNumericalILevel(iStufeById, ruleEvaluationUtils);
                     break;
-                }
-
                 case ECompareOperator.LESS_EQUAL:
-                {
-                    int? num2 = FormatConverter.ExtractNumericalILevel(ilevelOperand);
-                    int? num = FormatConverter.ExtractNumericalILevel(istufeById);
-                    flag = (num2.GetValueOrDefault() <= num.GetValueOrDefault() & (num2 != null & num != null));
+                    flag = ExtractNumericalILevel(iLevelOperand, ruleEvaluationUtils) <= ExtractNumericalILevel(iStufeById, ruleEvaluationUtils);
                     break;
-                }
-
                 default:
+                    ruleEvaluationUtils.Logger.Warning("IStufeXExpression.Evaluate", "unknown logical operator: {0}", compareOperator);
                     flag = false;
                     break;
             }
-
+            ruleEvaluationUtils.Logger.Debug("IStufeXExpression.Evaluate()", "IStufe : {0} operator: {1} type: {2} result: {3} vehicle: {4}", iStufeById, compareOperator, GetILevelTypeDescription(), flag, iLevelOperand);
             return flag;
         }
 
@@ -155,12 +130,12 @@ namespace PsdzClient.Core
             ms.Write(BitConverter.GetBytes(iLevelId), 0, 8);
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Use database", OriginalHash = "1F968E04F0603CB84E2A4E47396ECF89")]
         public override string ToString()
         {
-            string istufeById = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
-            string ilevelTypeDescription = this.GetILevelTypeDescription();
-            return string.Format(CultureInfo.InvariantCulture, "IStufeX: {0}-I-Stufe {1} '{2}' [{3}]", new object[] { ilevelTypeDescription, this.compareOperator, istufeById, this.iLevelId });
+            string iStufeById = ClientContext.GetDatabase(vecInfo)?.GetIStufeById(iLevelId.ToString(CultureInfo.InvariantCulture));
+            string iLevelTypeDescription = GetILevelTypeDescription();
+            return string.Format(CultureInfo.InvariantCulture, "IStufeX: {0}-I-Stufe {1} '{2}' [{3}]", iLevelTypeDescription, compareOperator, iStufeById, iLevelId);
         }
 
         private int? ExtractNumericalILevel(string iLevel, IRuleEvaluationServices ruleEvaluationServices)
@@ -231,7 +206,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "Added")]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
-            string istufeById = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
+            string istufeById = ClientContext.GetDatabase(vecInfo)?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));
             int? iLevelValue = null;
             if (!string.IsNullOrEmpty(istufeById))
             {
