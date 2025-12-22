@@ -10,7 +10,7 @@
         [PreserveSource(Hint = "Added")]
         public Vehicle Vec { get; }
 
-        [PreserveSource(Hint = "Using ClientContext")]
+        [PreserveSource(Hint = "Constructor added, using ClientContext")]
         public RuleEvaluationServices(Vehicle vec)
         {
             this.Vec = vec;
