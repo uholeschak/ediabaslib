@@ -12,7 +12,7 @@ namespace PsdzClient.Core
 {
     public class NugetLogger : ILogger
     {
-        [PreserveSource(Hint = "Replaced")]
+        [PreserveSource(Hint = "Arguments changed", OriginalHash = "B2DDF7AEEAB7F72B627236C48A296719")]
         public string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null)
         {
             StringBuilder sb = new StringBuilder();

@@ -41,7 +41,7 @@ namespace PsdzClient.Core
             operands[1] = secondOperand;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "4D1363B62AD03D057C5D3689F76E3908")]
         public new static OrExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             int value = 0;
@@ -64,17 +64,17 @@ namespace PsdzClient.Core
             operands = array;
         }
 
-        [PreserveSource(Hint = "Modified")]
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "9895C1C44368BC677DEFE5779D24E509")]
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             bool flag = false;
             internalResult.RuleExpression = this;
-            ILogger logger = ruleEvaluationServices.Logger;
+            ILogger logger = ruleEvaluationUtils.Logger;
             RuleExpression[] array = operands;
             foreach (RuleExpression ruleExpression in array)
             {
                 logger.Debug("OrExpression.Evaluate()", "operand: {0}", ruleExpression);
-                flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationServices, internalResult);
+                flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
             }
 
             logger.Debug("OrExpression.Evaluate()", "validity: {0}", flag);
