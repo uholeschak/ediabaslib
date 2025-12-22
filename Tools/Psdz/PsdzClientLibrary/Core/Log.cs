@@ -178,8 +178,8 @@ namespace PsdzClient.Core
             try
             {
                 string text = BuildEntry(TraceLevel.FATAL, EventKind.T, method, msg);
-                Trace.Fail((args == null) ? text : string.Format(text, args));
                 log?.Error((args == null) ? text : string.Format(text, args));
+                Trace.Fail((args == null) ? text : string.Format(text, args));
             }
             catch (Exception ex)
             {
@@ -205,7 +205,7 @@ namespace PsdzClient.Core
             Debug(logState, logThreshhold, method, msg, EventKind.T, args);
         }
 
-        [PreserveSource(Hint = "Fixed logging")]
+        [PreserveSource(Hint = "Fixed logging", OriginalHash = "53B9F1AFEB1F623F161712B5FCC5FBD4")]
         public static void Debug(int logState, int logThreshhold, string method, string msg, EventKind evtKind, params object[] args)
         {
             if (logState < logThreshhold)
@@ -249,7 +249,6 @@ namespace PsdzClient.Core
             Info("Log.SystemRessources()", "Total Processor Time: " + currentProcess.TotalProcessorTime.ToString());
         }
 
-        [PreserveSource(Hint = "Log removed")]
         public static void SystemInformation()
         {
             try
@@ -330,7 +329,7 @@ namespace PsdzClient.Core
             return "Log.BuildEntry() - failed";
         }
 
-        [PreserveSource(Hint = "Replaced")]
+        [PreserveSource(Hint = "Replaced", OriginalHash = "C398BE0F33BAA776C088C861D41C9E99")]
         public static string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null)
         {
             StringBuilder sb = new StringBuilder();
