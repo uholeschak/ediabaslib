@@ -3509,8 +3509,10 @@ namespace EdiabasLib
                     IcomAllocateDeviceHttpClient = new HttpClient(new HttpClientHandler()
                     {
                         UseProxy = false
-                    });
-                    IcomAllocateDeviceHttpClient.Timeout = TimeSpan.FromSeconds(5);
+                    })
+                    {
+                        Timeout = TimeSpan.FromSeconds(5)
+                    };
                 }
 
                 // ISTA: IVMUtils.ReserveVCIDeviceIcom, IVMUtils.ReleaseVCIDeviceIcom
