@@ -1,10 +1,6 @@
-﻿using PsdzClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
@@ -30,22 +26,24 @@ namespace PsdzClient.Core
             this.operand = operand;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "9CEC5C40B994789774000BE4ED96FB83")]
         public new static NotExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             return new NotExpression(RuleExpression.Deserialize(ms, logger, vec));
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "4D3D365233F16224C35B94035A677897")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
+            ILogger logger = ruleEvaluationUtils.Logger;
             if (vec == null)
             {
                 return false;
             }
 
+            logger.Debug("NotExpression.Evaluate()", "operand {0}", operand);
             internalResult.RuleExpression = this;
-            return !RuleExpression.Evaluate(vec, this.operand, ffmResolver, ruleEvaluationUtils, internalResult);
+            return !RuleExpression.Evaluate(vec, operand, ffmResolver, ruleEvaluationUtils, internalResult);
         }
 
         public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)
