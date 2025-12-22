@@ -143,13 +143,13 @@ namespace BMW.Rheingold.Programming.Common
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "7FC863B731110E8C4456F2073E8BE8F5")]
         public static bool IsToyota()
         {
             return false;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "C222EF38D34939CDBD98728578208800")]
         private static void CheckClamp30(Vehicle vehicle)
         {
             throw new NotImplementedException();
@@ -161,7 +161,7 @@ namespace BMW.Rheingold.Programming.Common
             return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.RheingoldSessionController.CircumventProgramingProhibition", defaultValue);
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "A4E9AB03DE103323608792E045FBE180")]
         private static void CheckBatteryStatus()
         {
             throw new NotImplementedException();
@@ -173,7 +173,7 @@ namespace BMW.Rheingold.Programming.Common
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "F7566E35F78D5A3BF71E9D0048964DF0")]
         [Obsolete("Use the method CheckConnectionWithResult instead")]
         protected static void CheckConnection(Vehicle vehicle)
         {

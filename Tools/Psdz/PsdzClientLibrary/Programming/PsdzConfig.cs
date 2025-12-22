@@ -10,7 +10,7 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "Has been removed")]
+    [PreserveSource(Hint = "Class has been removed")]
     public class PsdzConfig
     {
         public string PsdzServiceHostLogFilePath { get; }

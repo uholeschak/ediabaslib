@@ -192,10 +192,10 @@ namespace PsdzClient.Programming
         internal IPsdzTal TalForECUWithIDRClassicState { get; set; }
         internal IEnumerable<IPsdzTargetSelector> TargetSelectors { get; set; }
 
-        [PreserveSource(Hint = "ServiceLocator removed")]
+        [PreserveSource(Hint = "istaFolder added", OriginalHash = "4CECC7DD2ABD296C128B977855C3D159")]
         public PsdzContext(string istaFolder)
         {
-            this.IstaFolder = istaFolder;
+            IstaFolder = istaFolder;
             ExecutionOrderTop = new Dictionary<string, IList<string>>();
             ExecutionOrderBottom = new Dictionary<string, IList<string>>();
             SFASessionData = new SFASessionData();
@@ -267,10 +267,11 @@ namespace PsdzClient.Programming
             return result;
         }
 
-        [PreserveSource(Hint = "Return value added")]
+        [PreserveSource(Hint = "Return value added", OriginalHash = "9B19DDE3C22E278F5B13321802AEB013")]
         public bool SetPathToBackupData(string vin17)
         {
             hasVinBackupDataFolder = false;
+            // [UH] [IGNORE] use GetBackupBasePath
             string pathString = GetBackupBasePath(IstaFolder);
             if (string.IsNullOrEmpty(pathString))
             {
@@ -347,7 +348,7 @@ namespace PsdzClient.Programming
             this.possibleIstufenTarget = possibleIstufenTarget;
         }
 
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", OriginalHash = "F5DA905ACD95E3000DA1E438CE4277A6", SignatureModified = true)]
         internal void SetSollverbauung(IPsdzSollverbauung sollverbauung)
         {
             Sollverbauung = sollverbauung;
