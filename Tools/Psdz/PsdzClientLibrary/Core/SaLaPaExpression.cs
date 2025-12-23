@@ -43,7 +43,7 @@ namespace PsdzClient.Core
             return EEvaluationResult.INVALID;
         }
 
-        [PreserveSource(Hint = "dataProvider removed, vec added", OriginalHash = "")]
+        [PreserveSource(Hint = "dataProvider removed, vec added", OriginalHash = "D15C7D3E9EE95108E6C8F3BECDA71207")]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
