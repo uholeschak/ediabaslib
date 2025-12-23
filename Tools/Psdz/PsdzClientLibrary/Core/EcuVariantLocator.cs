@@ -12,7 +12,7 @@ namespace PsdzClient.Core
 {
     public class EcuVariantLocator : IEcuVariantLocator, ISPELocator
     {
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database modified")]
         private readonly PsdzDatabase.EcuVar ecuVariant;
         private readonly ISPELocator[] children;
         private ISPELocator[] parents;
