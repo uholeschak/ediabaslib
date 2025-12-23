@@ -3,7 +3,6 @@ using ICSharpCode.Decompiler.CSharp;
 using ICSharpCode.Decompiler.CSharp.OutputVisitor;
 using ICSharpCode.Decompiler.Metadata;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using ICSharpCode.Decompiler.TypeSystem;
 
@@ -40,7 +39,9 @@ public class DecompilerHelper
             UseDebugSymbols = true,
             UsingDeclarations = true,
             UsingStatement = true,
-            CSharpFormattingOptions = formattingOptions
+            CSharpFormattingOptions = formattingOptions,
+            ShowXmlDocumentation = false,      // XML-Dokumentationskommentare ausblenden
+            FoldBraces = false,                // Keine Region-Kommentare
         };
         settings.SetLanguageVersion(LanguageVersion.CSharp7_3);
 
@@ -96,6 +97,8 @@ public class DecompilerHelper
                 }
             }
 
+            // Remove comments
+            typeCode = System.Text.RegularExpressions.Regex.Replace(typeCode, @"^\s*//.*$", "", System.Text.RegularExpressions.RegexOptions.Multiline);
             File.WriteAllText(filePath, typeCode);
         }
 
