@@ -48,11 +48,11 @@ namespace PsdzClient.Core
 
         private string _certificateFileNameWithoutEnding { get; } = $"certificates_{Process.GetCurrentProcess().Id}";
 
-        [PreserveSource(Hint = "istaFolder added")]
+        [PreserveSource(Hint = "istaFolder added", OriginalHash = "C16A15A24573B48F1269B6EBEE8AE1D6")]
         public Sec4DiagHandler(string istaFolder = null)
         {
             if (!string.IsNullOrEmpty(istaFolder))
-            {
+            {   // [UH] [IGNORE] override default paths
                 _ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
                 _istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
             }
