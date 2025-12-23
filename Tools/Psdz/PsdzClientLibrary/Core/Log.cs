@@ -351,7 +351,7 @@ namespace PsdzClient.Core
             return sb.ToString();
         }
 
-        [PreserveSource(Hint = "log added")]
+        [PreserveSource(Hint = "log added", OriginalHash = "6DD82DFE437E785462F695423C97AA02")]
         private static void WriteTraceEntry(string method, string msg, TraceLevel level, EventKind evtKind, params object[] args)
         {
             string text = BuildEntry(level, evtKind, method, msg);

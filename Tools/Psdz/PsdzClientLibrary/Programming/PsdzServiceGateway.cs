@@ -120,7 +120,7 @@ namespace PsdzClient.Programming
             return started;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Added service host", OriginalHash = "B16B1A32BB80FEB5DE2E576D47AFBE40")]
         public void CloseConnectionsToPsdz(bool force = false)
         {
             try
