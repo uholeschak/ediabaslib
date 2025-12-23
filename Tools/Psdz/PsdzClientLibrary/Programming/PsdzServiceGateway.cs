@@ -13,7 +13,7 @@ namespace PsdzClient.Programming
         private readonly PsdzWebServiceWrapper _psdzWebServiceWrapper;
         public static Type PsdzServiceType { get; set; }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Added service host", OriginalHash = "C60FDDC78BCC55F8280E56E617864EA9")]
         public IPsdz Psdz
         {
             get
@@ -28,7 +28,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Added service host", OriginalHash = "FAEBB11719E72CAFA7CE7407E9C005F5")]
         public string PsdzWebServiceLogFilePath
         {
             get
@@ -43,7 +43,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Added service host", OriginalHash = "9FA19EABF011B967C0DB531E9CEA9906")]
         public string PsdzLogFilePath
         {
             get
@@ -58,7 +58,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "istaFolder, dealerId added")]
+        [PreserveSource(Hint = "istaFolder, dealerId, service host added", OriginalHash = "5684E9EC27BEDFC1149E71FFCABB5D41")]
         public PsdzServiceGateway(PsdzConfig psdzConfig, string istaFolder, string dealerId, Action psdzServiceHostStarter = null)
         {
             _psdzServiceHostStarter = psdzServiceHostStarter;
@@ -73,7 +73,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Return bool, service host added", OriginalHash = "3611706C96D5401E249248D5C98E1450")]
         public bool StartIfNotRunning(IVehicle vehicle = null)
         {
             if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
