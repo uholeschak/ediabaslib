@@ -15,7 +15,7 @@ namespace PsdzClient.Core
         protected long value;
         public long Value => value;
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "9B80D176470C78725F5F89E46718BD08")]
         public static RuleExpression Deserialize(Stream ms, EExpressionType type, ILogger logger, Vehicle vec)
         {
             byte[] buffer = new byte[8];
@@ -73,7 +73,7 @@ namespace PsdzClient.Core
             return singleAssignmentExpression;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "896E969176A3874B85317D15815F618F", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             return false;
