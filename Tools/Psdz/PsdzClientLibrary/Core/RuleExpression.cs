@@ -15,7 +15,7 @@ namespace PsdzClient.Core
         public const long MISSING_DATE_EXPRESSION = -1L;
         protected const long MEMORYSIZE_OBJECT = 8L;
         protected const long MEMORYSIZE_REFERENCE = 8L;
-        [PreserveSource(Hint = "dataProvider replaced by vec")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "F80012312B5848E95CB166A6C0080344")]
         public static RuleExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();
@@ -57,7 +57,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "21FBCA9CDB373106D216F2EBFBD0B404")]
         public static bool Evaluate(Vehicle vec, IRuleExpression exp, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils = null, ValidationRuleInternalResults internalResult = null)
         {
             if (ruleEvaluationUtils == null)
@@ -80,26 +80,26 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "dataProvider removed")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "0A7E6E6BAD3A02FF6CACDE588B995D83")]
         public static string ParseAndSerializeVariantRule(string rule)
         {
             RuleExpression expression = VariantRuleParser.Parse(rule);
             return SerializeToString(expression);
         }
 
-        [PreserveSource(Hint = "dataProvider removed")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "5AD08763624343397340C66D6B47418E")]
         public static RuleExpression ParseEmpiricalRule(string rule)
         {
             return EmpiricalRuleParser.Parse(rule);
         }
 
-        [PreserveSource(Hint = "dataProvider removed")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "3DFE88DD28B543110D4709F2CA0F4A27")]
         public static RuleExpression ParseFaultClassRule(string rule)
         {
             return FaultClassRuleParser.Parse(rule);
         }
 
-        [PreserveSource(Hint = "dataProvider removed")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "DC2E5A85B2E67280D99422031BB62095")]
         public static RuleExpression ParseVariantRule(string rule)
         {
             return VariantRuleParser.Parse(rule);
@@ -119,7 +119,7 @@ namespace PsdzClient.Core
             return Convert.ToBase64String(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
         }
 
-        [PreserveSource(Hint = "removed dealer and dataProvider")]
+        [PreserveSource(Hint = "removed dealer and dataProvider", OriginalHash = "16F5F46F99A94A893752F2D82191CD5D")]
         public virtual bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             ruleEvaluationUtils.Logger.Error("RuleExpression.Evaluate(Vehicle vec)", "method Evaluate(Vehicle vec) is missing.");
