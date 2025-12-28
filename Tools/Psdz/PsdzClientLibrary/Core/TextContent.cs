@@ -309,7 +309,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "database replaced")]
+        [PreserveSource(Hint = "Database replaced", OriginalHash = "B11176690EC7E119C83C08AB1E1FED1A")]
         public static string ReplaceTextReferences(string xmlText, PsdzDatabase database, string language)
         {
             string result = xmlText;
