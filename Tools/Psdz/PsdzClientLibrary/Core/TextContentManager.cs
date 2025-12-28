@@ -549,7 +549,7 @@ namespace PsdzClient.Core
             return XElement.Load(XmlReader.Create(new StringReader(xml)));
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "22969877A5988939909D54554F80A1A0")]
         private ITextLocator CreateText(string xmlText, __TextParameter[] paramArray)
         {
             if (old)
@@ -562,8 +562,8 @@ namespace PsdzClient.Core
                     return new TextLocator(list);
                 }
 
-                IList<LocalizedText> textById = db.GetTextById(xmlText, lang);
-                return ReplaceTextReferencesAndHandleParameter(textById, paramArray);
+                IList<LocalizedText> textCollectionById = db.GetTextById(xmlText, lang);
+                return ReplaceTextReferencesAndHandleParameter(textCollectionById, paramArray);
             }
 
             if (Regex.IsMatch(xmlText.Trim(), "^\\d+$"))
