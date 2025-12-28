@@ -62,7 +62,7 @@ namespace PsdzClient.Programming
         {
             string psdzPath = Psdz64BitPathResolver.GetPsdzPath(istaFolder);
             PsdzServiceArgs psdzServiceArgs = new PsdzServiceArgs();
-            psdzServiceArgs.JrePath = Psdz64BitPathResolver.GetJrePath(istaFolder);
+            psdzServiceArgs.JrePath = Psdz64BitPathResolver.GetJrePath(istaFolder, false);
             psdzServiceArgs.JvmOptions = GetPsdzJvmOptions(psdzPath, psdzLogFilePath);
             psdzServiceArgs.PsdzBinaryPath = psdzPath;
             psdzServiceArgs.PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");

@@ -42,7 +42,7 @@ namespace BMW.Rheingold.Programming
         public string PsdzDataPath => _psdzWebService.ConfigurationService.GetRootDirectory();
         public string PsdzVersion => _psdzWebService.ConfigurationService.GetPsdzVersion();
 
-        [PreserveSource(Hint = "PsdzObjectBuilder modified")]
+        [PreserveSource(Hint = "PsdzObjectBuilder modified", OriginalHash = "C48486360A1B592A23F907B3C084F52A")]
         public IPsdzObjectBuilder ObjectBuilder
         {
             get
@@ -73,7 +73,7 @@ namespace BMW.Rheingold.Programming
         public string PsdzLogFilePath => _psdzConfig.PsdzLogFilePath;
         public string ProdiasDriverLogFilePath => _psdzConfig.ProdiasDriverLogFilePath;
 
-        [PreserveSource(Hint = "istaFolder added")]
+        [PreserveSource(Hint = "istaFolder added", OriginalHash = "7661B61F7E408F5AD61E90F9A873E7CC")]
         public PsdzWebServiceWrapper(PsdzWebServiceConfig psdzConfig, string istaFolder)
         {
             _psdzConfig = psdzConfig ?? throw new ArgumentNullException("psdzConfig");
@@ -81,7 +81,7 @@ namespace BMW.Rheingold.Programming
             _psdzWebService = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "E6280E3729DA431115371FCC3F0CBF67")]
         public void StartIfNotRunning()
         {
             try

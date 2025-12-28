@@ -34,11 +34,11 @@ namespace BMW.Rheingold.Psdz
         [PreserveSource(Hint = "Namespace modified")]
         private readonly PsdzClient.Programming.SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new PsdzClient.Programming.SoftwareSigStateEnumMapper();
         private readonly TaCategoriesEnumMapper taCategoriesEnumMapper = new TaCategoriesEnumMapper();
-        [PreserveSource(Hint = "iPsdz added")]
+        [PreserveSource(Hint = "iPsdz added", OriginalHash = "AA09B3E8CD6FBB71B5ADFB0FD55BF1E5")]
         public PsdzObjectBuilder(IObjectBuilderService objectBuilderService, IPsdz iPsdz)
         {
             this.objectBuilderService = objectBuilderService;
-            baureiheReader = new BaureiheReader(iPsdz);
+            baureiheReader = new BaureiheReader(iPsdz); // [UH] [IGNORE] added
         }
 
         public IPsdzDiagAddress BuildDiagAddress(int diagAddress)

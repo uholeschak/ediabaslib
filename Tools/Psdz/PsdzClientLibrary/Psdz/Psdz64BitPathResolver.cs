@@ -16,8 +16,8 @@ namespace PsdzClient.Programming
             return psdzBinaryPath;
         }
 
-        [PreserveSource(Hint = "istaFolder, psdzWebService added")]
-        public static string GetJrePath(string istaFolder, bool psdzWebService = false)
+        [PreserveSource(Hint = "istaFolder, psdzWebService added", OriginalHash = "")]
+        public static string GetJrePath(string istaFolder, bool psdzWebService)
         {
             string text = string.Empty;
             if (psdzWebService)
@@ -25,7 +25,7 @@ namespace PsdzClient.Programming
                 text = "WebService\\";
                 string javaPath = Path.Combine(istaFolder, "WebService", "OpenJREx64", "bin", "java.exe");
                 if (!File.Exists(javaPath))
-                {
+                {   // [UH] [IGNORE] Fallback for older installations
                     text = "PSdZ\\WebService\\";
                 }
             }
