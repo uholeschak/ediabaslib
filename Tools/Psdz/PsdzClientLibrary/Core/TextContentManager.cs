@@ -16,13 +16,13 @@ namespace PsdzClient.Core
     {
         [PreserveSource(Hint = "readonly removed")]
         private IList<string> lang;
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database replaced")]
         private readonly PsdzDatabase db;
         private readonly bool old;
         private XmlNamespaceManager namespaceManager;
         private readonly ITextLocator serviceProgramCollection;
         private IList<XElement> serviceProgramCollectionRoot;
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database replaced")]
         private readonly PsdzDatabase.SwiInfoObj xepInfoObj;
         private const string DefaultParameterValue = "";
         private ITextLocator ServiceProgramCollection
@@ -38,7 +38,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "83507142D79A3AD147FCFC9F8FBEBC76")]
         public static ITextContentManager Create(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
@@ -51,16 +51,16 @@ namespace PsdzClient.Core
                 throw new ArgumentNullException("lang");
             }
 
-            if (xepInfoObj != null && !(xepInfoObj.Id.ConvertToInt(-1) == -1))
+            if (xepInfoObj == null || xepInfoObj.Id.ConvertToInt(-1) == -1)
             {
-                return new TextContentManager(databaseProvider, lang, xepInfoObj, serviceDialogName);
+                Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identification + "(" + xepInfoObj.ControlId + ")"));
+                return new TextContentManagerDummy();
             }
 
-            Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identification + "(" + xepInfoObj.ControlId + ")"));
-            return new TextContentManagerDummy();
+            return new TextContentManager(databaseProvider, lang, xepInfoObj, serviceDialogName);
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "F08D3F763B0300FB9C826E72B9C70345")]
         private TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
@@ -73,8 +73,8 @@ namespace PsdzClient.Core
                 throw new ArgumentNullException("lang");
             }
 
-            string num2 = xepInfoObj.Id;
-            if (num2.ConvertToInt(-1) == 0m)
+            string num = xepInfoObj.Id;
+            if (num.ConvertToInt(-1) == 0m)
             {
                 string text = xepInfoObj.Identifier;
                 if (text.StartsWith("ABL_"))
@@ -82,14 +82,21 @@ namespace PsdzClient.Core
                     text = new Regex(Regex.Escape("_")).Replace(text, "-", 2);
                 }
 
-                num2 = databaseProvider.GetInfoObjectIdByIdentifier(text);
+                num = databaseProvider.GetInfoObjectIdByIdentifier(text);
             }
 
             db = databaseProvider;
             this.lang = lang;
             old = false;
             this.xepInfoObj = xepInfoObj;
-            serviceProgramCollection = ReadTextCollection(num2);
+            if (ConfigSettings.IsConwoyDataProviderConigured)
+            {
+                serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId);
+            }
+            else
+            {
+                serviceProgramCollection = ReadTextCollection(num);
+            }
             serviceProgramCollectionRoot = null;
             Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identification, xepInfoObj.ControlId);
         }
