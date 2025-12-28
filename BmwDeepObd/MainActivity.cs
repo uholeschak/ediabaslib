@@ -6313,9 +6313,26 @@ namespace BmwDeepObd
 
         private void ShowAssetMissingTerminate()
         {
-            Toast.MakeText(this, GetString(Resource.String.asset_missing_terminate), ToastLength.Long)?.Show();
-            StoreSettings();
-            Finish();
+            AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
+                .SetCancelable(true)
+                .SetMessage(Resource.String.asset_missing_terminate)
+                .SetTitle(Resource.String.alert_title_error)
+                .Show();
+
+            if (alertDialog != null)
+            {
+                alertDialog.DismissEvent += (sender, args) =>
+                {
+                    if (_activityCommon == null)
+                    {
+                        return;
+                    }
+
+                    StoreSettings();
+                    Finish();
+                };
+            }
         }
 
         private bool DisplayUpdateInfo(EventHandler<EventArgs> handler)
