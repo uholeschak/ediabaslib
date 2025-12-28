@@ -6312,11 +6312,6 @@ namespace BmwDeepObd
 
         private void ShowObbMissingRestart()
         {
-            if (_assetManager != null)
-            {
-                return;
-            }
-
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                 .SetCancelable(true)
