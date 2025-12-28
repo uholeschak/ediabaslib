@@ -145,7 +145,7 @@ namespace PsdzClient.Core
             old = true;
         }
 
-        [PreserveSource(Hint = "Database modified",OriginalHash = "1D8FEA0D5908F6220749A4787F10D320")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "1D8FEA0D5908F6220749A4787F10D320")]
         public ITextLocator __StandardText(decimal value, __TextParameter[] paramArray)
         {
             IList<LocalizedText> list = new List<LocalizedText>();
@@ -258,7 +258,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "C9E33E6384143476985DDEC9CC08C8A3", SignatureModified = true)]
         private XElement ParseSpeXml(string xml, string language, PsdzDatabase database)
         {
             XElement xElement = ParseXml(xml);
@@ -471,7 +471,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "AA2463833DC2FA0A650BFEDDB28B543D")]
         private void AppendDiagcode(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PsdzDatabase db)
         {
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:DIAGCODE[not(spe:CONTENT)]", namespaceManager);
@@ -483,7 +483,8 @@ namespace PsdzClient.Core
             foreach (XElement item in enumerable)
             {
                 string value = item.Attribute(XName.Get("ID")).Value;
-                string diagnosisCode = this.db.GetDiagnosisCode(value);
+                // [UH] [IGNORE] Use local database variable
+                string diagnosisCode = db.GetDiagnosisCode(value);
                 if (!string.IsNullOrEmpty(diagnosisCode))
                 {
                     XElement xElement = new XElement(XName.Get("CONTENT", "http://bmw.com/2014/Spe_Text_2.0"));
@@ -493,13 +494,12 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "4DA3C0E3FE5FF32C17DF21A24A0BD2CC")]
         private void AppendStandardText(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PsdzDatabase db, string language, int repeat)
         {
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:STANDARDTEXT[not(spe:CONTENT)]", namespaceManager);
             if (enumerable != null)
             {
-                int items = 0;
                 foreach (XElement item in enumerable)
                 {
                     string value = item.Attribute(XName.Get("ID")).Value;
@@ -518,11 +518,9 @@ namespace PsdzClient.Core
                     XElement xElement = new XElement(XName.Get("CONTENT", "http://bmw.com/2014/Spe_Text_2.0"));
                     xElement.Add(ParseStandardTextItem(localizedXmlValue));
                     item.Add(xElement);
-                    items++;
                 }
 
-                // [IGNORE] enumerable.Any is not working after enumeration!
-                if (items > 0)
+                if (enumerable != null && enumerable.Any())
                 {
                     if (repeat == 10)
                     {
