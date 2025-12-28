@@ -51,7 +51,7 @@ namespace BMW.Rheingold.Psdz
         public IVcmService VcmService { get; private set; }
         public IProgrammingTokenService ProgrammingTokenService { get; private set; }
 
-        [PreserveSource(Hint = "istaFolder added")]
+        [PreserveSource(Hint = "istaFolder added", OriginalHash = "FB96671FAE8C1C84822A52D3519C5A1E")]
         public PsdzWebService(string psdzWebAPILogDir, Func<bool> isPsdzInitialized, string istaFolder)
         {
             _psdzWebApiLogDir = psdzWebAPILogDir;
@@ -114,7 +114,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [PreserveSource(Hint = "GetSwiVersionNum added, ServiceLocator removed")]
+        [PreserveSource(Hint = "GetSwiVersionNum added, ServiceLocator removed", OriginalHash = "A20B170633B726E4F34433C00F658DCA")]
         public bool IsReady()
         {
             IConfigurationService configurationService = ConfigurationService;
@@ -124,7 +124,7 @@ namespace BMW.Rheingold.Psdz
             }
 
             if (ClientContext.GetSwiVersionNum() < 40056)
-            {
+            {   // [UH] [IGNORE] SWI version before 4.0.56 supports no GetRootDirectorySetupResult()
                 return true;
             }
 
@@ -135,6 +135,7 @@ namespace BMW.Rheingold.Psdz
             }
 
             Log.Error(Log.CurrentMethod(), "PSDZ WebService could not set root directory " + rootDirectorySetupResult?.Message);
+            // [UH] [IGNORE] ServiceLocator removed
             TryKillTree(psdzWebserviceProcess);
             return false;
         }
@@ -386,7 +387,7 @@ namespace BMW.Rheingold.Psdz
             return process;
         }
 
-        [PreserveSource(Hint = "fullPath modified")]
+        [PreserveSource(Hint = "fullPath modified", OriginalHash = "E0C8A22FACEFCFFB1BCAEA09C69B224A")]
         private string GetJarPath()
         {
             string fullPath = Path.Combine(_istaFolder, "PSdZ\\WebService");
