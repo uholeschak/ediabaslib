@@ -101,7 +101,7 @@ namespace PsdzClient.Core
             Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identification, xepInfoObj.ControlId);
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "FA6322591CFE13D1AA8D3AB05476E1D2")]
         internal TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, string textCollection)
         {
             if (databaseProvider == null)
@@ -127,7 +127,7 @@ namespace PsdzClient.Core
             serviceProgramCollection = new TextLocator(list);
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "AC71E18590FC4BDEC640742129F1517B")]
         internal TextContentManager(PsdzDatabase databaseProvider, IList<string> lang)
         {
             if (databaseProvider == null)
@@ -145,7 +145,7 @@ namespace PsdzClient.Core
             old = true;
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified",OriginalHash = "1D8FEA0D5908F6220749A4787F10D320")]
         public ITextLocator __StandardText(decimal value, __TextParameter[] paramArray)
         {
             IList<LocalizedText> list = new List<LocalizedText>();
@@ -153,7 +153,7 @@ namespace PsdzClient.Core
             {
                 PsdzDatabase.EcuTranslation o = db.GetSpTextItemsByControlId(value.ToString(CultureInfo.InvariantCulture));
                 if (o != null)
-                {
+                {   // [UH] [IGNORE] Check for null
                     list.AddRange(lang.Select((string x) => new LocalizedText(o.GetTitle(x), x)));
                 }
             }
@@ -192,7 +192,7 @@ namespace PsdzClient.Core
             return list;
         }
 
-        [PreserveSource(Hint = "Log modified")]
+        [PreserveSource(Hint = "Log modified", OriginalHash = "72FAC8462D294D0A4E134D0F071125A0")]
         public IList<LocalizedText> GetTextItem(string textItemId, __TextParameter[] paramArray)
         {
             serviceProgramCollectionRoot = new List<XElement>();
@@ -267,7 +267,7 @@ namespace PsdzClient.Core
             return xElement;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified", OriginalHash = "5AAA6A5F9A60BF403D3DA0567CF03A25")]
         private ITextLocator ReadTextCollection(string idInfoObject)
         {
             IList<LocalizedText> textCollectionById = db.GetTextCollectionById(idInfoObject, lang);
@@ -276,6 +276,7 @@ namespace PsdzClient.Core
                 return null;
             }
 
+            // [UH] [IGNORE] build lang list
             IList<string> langList = new List<string>();
             IList<LocalizedText> list = new List<LocalizedText>();
             foreach (LocalizedText item in textCollectionById)
