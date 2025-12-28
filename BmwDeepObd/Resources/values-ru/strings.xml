@@ -92,7 +92,7 @@
   <string name="vag_mode_info_ballon">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо Deep OBD устройство с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
   <string name="asset_missing_restart">Файл ресурсов не найден,\nнеобходимо перезапустить приложение.</string>
 
-    <!-- Update info -->
+  <!-- Update info -->
   <string name="update_header">Обновление доступно в Google Play.</string>
   <string name="update_version">Версия приложения: {0}</string>
   <string name="update_info">Информация по обновлению:</string>

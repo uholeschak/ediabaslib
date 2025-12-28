@@ -90,7 +90,7 @@
   <string name="vag_mode_info_ballon">The VAG mode ist still experimental and only for vehicles until {0}.\nA Deep OBD adapter with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.</string>
   <string name="asset_missing_restart">The asset file has not been found,\nthe app has to be restarted.</string>
 
-    <!-- Update info -->
+  <!-- Update info -->
   <string name="update_header">An update is available at Google Play.</string>
   <string name="update_version">App version: {0}</string>
   <string name="update_info">Update information:</string>
