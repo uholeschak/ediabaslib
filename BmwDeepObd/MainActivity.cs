@@ -3288,6 +3288,7 @@ namespace BmwDeepObd
             if (!_activityCommon.UpdateDirectories(_instanceData))
             {
                 Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long)?.Show();
+                StoreSettings();
                 Finish();
             }
 
@@ -5398,7 +5399,7 @@ namespace BmwDeepObd
         {
             if (string.IsNullOrEmpty(_assetEcuFileName))
             {
-                ShowAssetMissingRestart();
+                ShowAssetMissingTerminate();
                 return;
             }
 
@@ -6256,7 +6257,7 @@ namespace BmwDeepObd
 
             if (string.IsNullOrEmpty(_assetEcuFileName))
             {
-                ShowAssetMissingRestart();
+                ShowAssetMissingTerminate();
                 return false;
             }
 
@@ -6310,28 +6311,11 @@ namespace BmwDeepObd
             return true;
         }
 
-        private void ShowAssetMissingRestart()
+        private void ShowAssetMissingTerminate()
         {
-            AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
-                .SetCancelable(true)
-                .SetMessage(Resource.String.asset_missing_restart)
-                .SetTitle(Resource.String.alert_title_error)
-                .Show();
-
-            if (alertDialog != null)
-            {
-                alertDialog.DismissEvent += (sender, args) =>
-                {
-                    if (_activityCommon == null)
-                    {
-                        return;
-                    }
-
-                    StoreSettings();
-                    _activityCommon.RestartAppSoft();
-                };
-            }
+            Toast.MakeText(this, GetString(Resource.String.asset_missing_terminate), ToastLength.Long)?.Show();
+            StoreSettings();
+            Finish();
         }
 
         private bool DisplayUpdateInfo(EventHandler<EventArgs> handler)
