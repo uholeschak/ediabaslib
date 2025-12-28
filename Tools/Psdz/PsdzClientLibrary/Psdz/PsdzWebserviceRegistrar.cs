@@ -197,12 +197,12 @@ namespace BMW.Rheingold.Psdz
             return NetUtils.GetFirstFreePort((num == 0) ? 50000 : (num + 1), 50200, 8888);
         }
 
-        [PreserveSource(Hint = "ApplicationData changed for IIS")]
+        [PreserveSource(Hint = "ApplicationData changed for IIS", OriginalHash = "9FFE6F697251B9C74A43FE6EB1C24085")]
         static PsdzWebserviceRegistrar()
         {
             string basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             if (string.IsNullOrEmpty(basePath))
-            {
+            {   // [UH] [IGNORE] Fallback for empty ApplicationData
                 basePath = Path.GetTempPath();
             }
 
