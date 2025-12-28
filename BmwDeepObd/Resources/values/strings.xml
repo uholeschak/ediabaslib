@@ -88,29 +88,13 @@
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">The VAG mode ist still experimental and only for vehicles until {0}.\nA &lt;a href=\'https://uholeschak.github.io/ediabaslib/docs/Replacement_firmware_for_ELM327.html\'&gt;Deep OBD adapter&lt;/a&gt; with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.</string>
   <string name="vag_mode_info_ballon">The VAG mode ist still experimental and only for vehicles until {0}.\nA Deep OBD adapter with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.</string>
+  <string name="asset_missing_restart">The asset file has not been found,\nthe app has to be restarted.</string>
 
-  <!-- Update info -->
+    <!-- Update info -->
   <string name="update_header">An update is available at Google Play.</string>
   <string name="update_version">App version: {0}</string>
   <string name="update_info">Update information:</string>
   <string name="update_show">Do you want to show the update?\nYou could also skip this app version.</string>
-
-  <!-- Expansion downloader -->
-  <string name="exp_down_paused_cellular">Would you like to enable downloading over cellular connections? Depending on your data plan, this may cost you money.</string>
-  <string name="exp_down_paused_cellular_2">If you choose not to enable downloading over cellular connections, the download will automatically resume when wi-fi is available.</string>
-  <string name="exp_down_button_resume_cellular">Resume download</string>
-  <string name="exp_down_button_wifi_settings">Wi-Fi settings</string>
-  <string name="exp_down_verifying_download">Verifying Download</string>
-  <string name="exp_down_validation_complete">XAPK File Validation Complete.</string>
-  <string name="exp_down_validation_failed">XAPK File Validation Failed.</string>
-  <string name="exp_down_button_pause">Pause Download</string>
-  <string name="exp_down_button_resume">Resume Download</string>
-  <string name="exp_down_button_cancel">Cancel</string>
-  <string name="exp_down_button_cancel_verify">Cancel Verification</string>
-  <string name="exp_down_obb_missing">The app has not been downloaded from Google Play and the expansion file is missing.\nDownload the OBB file with an APK downloader from Google Play and copy it with the name:\n\'{0}\'\nin one of the directories:\n{1}\nThere is no support, the usage of Google Play is the only recommend way.</string>
-  <string name="exp_down_time_remaining">Time remaining: {0}</string>
-  <string name="obb_missing_restart">The expansion file has not been found,\nthe app has to be restarted.</string>
-  <string name="obb_not_readable">The expansion file:\n{0}\nis not readable.\nCheck the access permissions or delete the file.</string>
 
   <!-- Downloader library (modfications) -->
   <string name="state_failed_unlicensed">Download failed because the app may not be downloaded from Google Play</string>

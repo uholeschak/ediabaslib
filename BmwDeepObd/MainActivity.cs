@@ -5398,7 +5398,7 @@ namespace BmwDeepObd
         {
             if (string.IsNullOrEmpty(_assetEcuFileName))
             {
-                ShowObbMissingRestart();
+                ShowAssetMissingRestart();
                 return;
             }
 
@@ -6256,7 +6256,7 @@ namespace BmwDeepObd
 
             if (string.IsNullOrEmpty(_assetEcuFileName))
             {
-                ShowObbMissingRestart();
+                ShowAssetMissingRestart();
                 return false;
             }
 
@@ -6310,12 +6310,12 @@ namespace BmwDeepObd
             return true;
         }
 
-        private void ShowObbMissingRestart()
+        private void ShowAssetMissingRestart()
         {
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                 .SetCancelable(true)
-                .SetMessage(Resource.String.obb_missing_restart)
+                .SetMessage(Resource.String.asset_missing_restart)
                 .SetTitle(Resource.String.alert_title_error)
                 .Show();
 

@@ -90,29 +90,13 @@
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://uholeschak.github.io/ediabaslib/docs/Replacement_firmware_for_ELM327.html\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
   <string name="vag_mode_info_ballon">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо Deep OBD устройство с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
+  <string name="asset_missing_restart">Файл ресурсов не найден,\nнеобходимо перезапустить приложение.</string>
 
-  <!-- Update info -->
+    <!-- Update info -->
   <string name="update_header">Обновление доступно в Google Play.</string>
   <string name="update_version">Версия приложения: {0}</string>
   <string name="update_info">Информация по обновлению:</string>
   <string name="update_show">Показывать обновление?\nВы также можете пропустить эту версию приложения.</string>
-
-  <!-- Expansion downloader -->
-  <string name="exp_down_paused_cellular">Хотите активировать загрузку через мобильное соединение? Это может привести к дополнительным расходам.</string>
-  <string name="exp_down_paused_cellular_2">Если вы не активировали мобильное соединение, то загрузка возобновится автоматически, когда будет доступно соединение Wi-Fi.</string>
-  <string name="exp_down_button_resume_cellular">Продолжить загрузку</string>
-  <string name="exp_down_button_wifi_settings">Настройки Wi-Fi</string>
-  <string name="exp_down_verifying_download">Проверить загрузку</string>
-  <string name="exp_down_validation_complete">Проверка XAPK файла завершена.</string>
-  <string name="exp_down_validation_failed">Ошибка проверки XAPK файла.</string>
-  <string name="exp_down_button_pause">Остановить загрузку</string>
-  <string name="exp_down_button_resume">Продолжить загрузку</string>
-  <string name="exp_down_button_cancel">Отменить</string>
-  <string name="exp_down_button_cancel_verify">Отменить проверку</string>
-  <string name="exp_down_obb_missing">Приложение не было загружено из Google Play и файл расширения отсутствует.\nЗагрузите OBB-файл при помощи APK-загрузчика и скопируйте его с именем:\n\'{0}\'\nв папку:\n{1}\nВ данном случае поддержка отсутствует, использование Google Play - единственный рекомендуемый способ.</string>
-  <string name="exp_down_time_remaining">Необходимое время: {0}</string>
-  <string name="obb_missing_restart">Файл расширения не найден,\nнеобходимо перезапустить приложение.</string>
-  <string name="obb_not_readable">Файл расширения:\n{0}\nошибка чтения.\nПроверьте права доступа или удалите файл.</string>
 
   <!-- Alert titles -->
   <string name="alert_title_info">Информация</string>
