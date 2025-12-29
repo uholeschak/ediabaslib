@@ -949,8 +949,11 @@ namespace BmwDeepObd
                     CarContext.StartActivity(intent);
                     return true;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+#if DEBUG
+                    Android.Util.Log.Error(Tag, $"ShowMainActivity Exception: {ex.Message}");
+#endif
                     return false;
                 }
             }
