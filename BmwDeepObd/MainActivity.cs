@@ -2792,32 +2792,6 @@ namespace BmwDeepObd
 
         private void GetSettings()
         {
-            string assetEcuFileName = ActivityCommon.GetAssetEcuFilename();
-            if (!string.IsNullOrEmpty(assetEcuFileName))
-            {
-                try
-                {
-                    AssetManager assetManager = ActivityCommon.GetPackageContext()?.Assets;
-                    if (assetManager != null)
-                    {
-                        AssetFileDescriptor assetFile = assetManager.OpenFd(assetEcuFileName);
-                        _assetManager = assetManager;
-                        _assetEcuFileName = assetEcuFileName;
-                        _assetEcuFileSize = assetFile.Length;
-                    }
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-            }
-
-            if (_assetManager == null)
-            {
-                _assetEcuFileName = string.Empty;
-                _assetEcuFileSize = -1;
-            }
-
             if (_activityCommon.GetSettings(_instanceData, ActivityCommon.SettingsMode.All, !_activityRecreated))
             {
                 return;
@@ -3287,6 +3261,35 @@ namespace BmwDeepObd
                 Toast.MakeText(this, GetString(Resource.String.no_ext_storage), ToastLength.Long)?.Show();
                 StoreSettings();
                 Finish();
+            }
+
+            if (_assetManager == null || string.IsNullOrEmpty(_assetEcuFileName))
+            {
+                string assetEcuFileName = ActivityCommon.GetAssetEcuFilename();
+                if (!string.IsNullOrEmpty(assetEcuFileName))
+                {
+                    try
+                    {
+                        AssetManager assetManager = ActivityCommon.GetPackageContext()?.Assets;
+                        if (assetManager != null)
+                        {
+                            AssetFileDescriptor assetFile = assetManager.OpenFd(assetEcuFileName);
+                            _assetManager = assetManager;
+                            _assetEcuFileName = assetEcuFileName;
+                            _assetEcuFileSize = assetFile.Length;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                if (_assetManager == null)
+                {
+                    _assetEcuFileName = string.Empty;
+                    _assetEcuFileSize = -1;
+                }
             }
 
             string backgroundImageFile = Path.Combine(_instanceData.AppDataPath, "Images", "Background.jpg");

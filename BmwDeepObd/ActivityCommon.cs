@@ -1078,7 +1078,6 @@ namespace BmwDeepObd
         private bool? _usbSupport;
         private bool? _mtcBtService;
         private bool? _mtcBtManager;
-        private static string _assetEcuFileName;
         private static string _mtcBtModuleName;
         private static readonly object LockObject = new object();
         private static readonly object JobReaderLockObject = new object();
@@ -11385,11 +11384,6 @@ namespace BmwDeepObd
 
         public static string GetAssetEcuFilename()
         {
-            if (!string.IsNullOrEmpty(_assetEcuFileName))
-            {
-                return _assetEcuFileName;
-            }
-
             try
             {
                 AssetManager assets = GetPackageContext()?.Assets;
@@ -11403,7 +11397,6 @@ namespace BmwDeepObd
                         {
                             if (regex.IsMatch(fileName))
                             {
-                                _assetEcuFileName = fileName;
                                 return fileName;
                             }
                         }
@@ -11415,7 +11408,6 @@ namespace BmwDeepObd
                 // ignored
             }
 
-            _assetEcuFileName = string.Empty;
             return null;
         }
 
