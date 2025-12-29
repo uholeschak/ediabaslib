@@ -2818,9 +2818,6 @@ namespace BmwDeepObd
                 _assetEcuFileSize = -1;
             }
 
-            ActivityCommon.AssetEcuFileName = _assetEcuFileName;
-            ActivityCommon.AssetEcuFileSize = _assetEcuFileSize;
-
             if (_activityCommon.GetSettings(_instanceData, ActivityCommon.SettingsMode.All, !_activityRecreated))
             {
                 return;

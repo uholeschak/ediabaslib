@@ -1365,36 +1365,6 @@ namespace BmwDeepObd
 
         public static string UsbFirmwareFileName { get; set; }
 
-        public static string AssetEcuFileName { get; set; }
-
-        public static long AssetEcuFileSize { get; set; }
-
-        public static string AssetEcuId
-        {
-            get
-            {
-                StringBuilder sbName = new StringBuilder();
-                string fileName = Path.GetFileName(AssetEcuFileName);
-
-                if (!string.IsNullOrEmpty(fileName))
-                {
-                    sbName.Append(fileName);
-                }
-
-                if (AssetEcuFileSize >= 0)
-                {
-                    if (sbName.Length > 0)
-                    {
-                        sbName.Append("_");
-                    }
-
-                    sbName.Append(string.Format(CultureInfo.InvariantCulture, "{0}", AssetEcuFileSize));
-                }
-
-                return sbName.ToString();
-            }
-        }
-
         public static string AppId
         {
             get
@@ -1719,8 +1689,6 @@ namespace BmwDeepObd
             JobReader = new JobReader(false);
             _recentConfigList = new List<string>();
             _serialInfoList = new List<SerialInfoEntry>();
-            AssetEcuFileName = string.Empty;
-            AssetEcuFileSize = -1;
             EdiabasNet.EncodeFileNameKey = string.Empty;
         }
 
