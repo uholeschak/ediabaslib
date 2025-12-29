@@ -2723,6 +2723,54 @@ namespace BmwDeepObd
             }
         }
 
+        public static long GetAssetEcuFileSize(AssetManager assetManager, string assetEcuFileName)
+        {
+            long fileSize = -1;
+
+            try
+            {
+                using (AssetFileDescriptor assetFile = assetManager.OpenFd(assetEcuFileName))
+                {
+                    fileSize = assetFile.Length;
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            if (fileSize <= 0)
+            {
+                try
+                {
+                    using (Stream stream = assetManager.Open(assetEcuFileName, Access.Streaming))
+                    {
+                        byte[] buffer = new byte[8192];
+                        long size = 0;
+
+                        for (;;)
+                        {
+                            int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                            if (bytesRead <= 0)
+                            {
+                                break;
+                            }
+
+                            size += bytesRead;
+                        }
+
+                        fileSize = size;
+                    }
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
+            }
+
+            return fileSize;
+        }
+
         public static Android.Graphics.Color GetStyleColor(Context context, int attribute)
         {
             TypedArray typedArray = context.Theme.ObtainStyledAttributes([attribute]);

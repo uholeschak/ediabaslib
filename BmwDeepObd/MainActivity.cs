@@ -3273,10 +3273,13 @@ namespace BmwDeepObd
                         AssetManager assetManager = ActivityCommon.GetPackageContext()?.Assets;
                         if (assetManager != null)
                         {
-                            AssetFileDescriptor assetFile = assetManager.OpenFd(assetEcuFileName);
-                            _assetManager = assetManager;
-                            _assetEcuFileName = assetEcuFileName;
-                            _assetEcuFileSize = assetFile.Length;
+                            long fileSize = ActivityCommon.GetAssetEcuFileSize(assetManager, assetEcuFileName);
+                            if (fileSize > 0)
+                            {
+                                _assetManager = assetManager;
+                                _assetEcuFileName = assetEcuFileName;
+                                _assetEcuFileSize = fileSize;
+                            }
                         }
                     }
                     catch (Exception)
