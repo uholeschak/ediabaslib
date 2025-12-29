@@ -3,4 +3,4 @@ SETLOCAL EnableDelayedExpansion
 
 set BATPATH=%~dp0
 "C:\Program Files (x86)\CSR\BlueSuite 2.6.8\BlueFlashCmd.exe" identify
-pause
+timeout /t 2
