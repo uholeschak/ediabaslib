@@ -946,7 +946,16 @@ namespace BmwDeepObd
                         intent.PutExtra(ActivityMain.ExtraStoreOption, storeOption);
                     }
 
-                    CarContext.StartActivity(intent);
+                    Android.App.PendingIntentFlags intentFlags = Android.App.PendingIntentFlags.UpdateCurrent;
+                    if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+                    {
+                        intentFlags |= Android.App.PendingIntentFlags.Immutable;
+                    }
+
+                    Android.App.PendingIntent pendingIntent = Android.App.PendingIntent.GetActivity(
+                        CarContext, 0, intent, intentFlags);
+                    pendingIntent?.Send();
+
                     return true;
                 }
                 catch (Exception ex)
