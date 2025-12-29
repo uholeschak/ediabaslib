@@ -2743,7 +2743,7 @@ namespace BmwDeepObd
             {
                 try
                 {
-                    using (Stream stream = assetManager.Open(assetEcuFileName, Access.Random))
+                    using (Stream stream = assetManager.Open(assetEcuFileName))
                     {
                         byte[] buffer = new byte[8192];
                         long size = 0;
@@ -11493,14 +11493,26 @@ namespace BmwDeepObd
                         {
                             try
                             {
-                                AssetFileDescriptor assetFile = null;
                                 Stream fsRead = null;
                                 try
                                 {
                                     if (assetManager != null)
                                     {
-                                        assetFile = assetManager.OpenFd(archiveFilenameIn);
-                                        fsRead = assetFile.CreateInputStream();
+                                        using (Stream inputStream = assetManager.Open(archiveFilenameIn))
+                                        {
+                                            if (inputStream == null)
+                                            {
+                                                throw new IOException("Opening asset stream failed");
+                                            }
+
+                                            byte[] buffer = new byte[StreamBufferSize];
+                                            string tempFileName = Path.GetTempFileName();
+                                            fs = File.Create(tempFileName, StreamBufferSize, FileOptions.DeleteOnClose);
+                                            StreamUtils.Copy(inputStream, fs, buffer);
+                                            fs.Seek(0, SeekOrigin.Begin);
+                                        }
+
+                                        fsRead = fs;
                                     }
                                     else if (resourceAssembly != null)
                                     {
@@ -11551,7 +11563,6 @@ namespace BmwDeepObd
                                 finally
                                 {
                                     fsRead?.Dispose();
-                                    assetFile?.Close();
                                 }
 
                                 break;
@@ -11578,7 +11589,7 @@ namespace BmwDeepObd
                 {
                     if (assetManager != null)
                     {
-                        using (Stream inputStream = assetManager.Open(archiveFilenameIn, Access.Random))
+                        using (Stream inputStream = assetManager.Open(archiveFilenameIn))
                         {
                             if (inputStream == null)
                             {
