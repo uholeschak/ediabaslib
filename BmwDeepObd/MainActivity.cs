@@ -6319,7 +6319,7 @@ namespace BmwDeepObd
             AlertDialog alertDialog = new AlertDialog.Builder(this)
                 .SetNeutralButton(Resource.String.button_ok, (sender, args) => { })
                 .SetCancelable(true)
-                .SetMessage(Resource.String.asset_missing_terminate)
+                .SetMessage(Resource.String.asset_read_error)
                 .SetTitle(Resource.String.alert_title_error)
                 .Show();
 

@@ -90,7 +90,7 @@
   <string name="app_info_message">Deep OBD для BMW и VAG\nВерсия: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо &lt;a href=\'https://uholeschak.github.io/ediabaslib/docs/Replacement_firmware_for_ELM327.html\'&gt;Deep OBD устройство&lt;/a&gt; с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
   <string name="vag_mode_info_ballon">VAG режим пока что экспериментальный и предназначен только для автомобилей до {0}.\nНеобходимо Deep OBD устройство с версией программного обеспечения не менее 0.11.\nНа данный момент поддерживаются только KWP2000, KWP1281, TP2.0 и UDS протоколы.</string>
-  <string name="asset_missing_terminate">Файл ресурсов не найден, пожалуйста, проверьте установку.</string>
+  <string name="asset_read_error">Не удалось прочитать файл ресурса, недостаточно доступной памяти.</string>
 
   <!-- Update info -->
   <string name="update_header">Обновление доступно в Google Play.</string>
