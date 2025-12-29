@@ -84,7 +84,7 @@
 \nFeel free to contribute or to report problems.
 \nA detailed documentation could also be found on this website.</string>
   <string name="version_last_changes_header">Changes in this version:</string>
-  <string name="version_last_changes">- BMW database update.\n- Android 36.1\n- Detect VXSCAN ENET adapter.\n- BMW database update.\n- ICOM RPLUS support.\n- HC06 BLE support.\n- Fixed minor problems</string>
+  <string name="version_last_changes">- Removed 32 bit devices.\n- BMW database update.\n- Android 36.1\n- Detect VXSCAN ENET adapter.\n- BMW database update.\n- ICOM RPLUS support.\n- HC06 BLE support.\n- Fixed minor problems</string>
   <string name="app_info_message">Deep OBD for BMW and VAG\nVersion: {0}\nId: {1}</string>
   <string formatted="false" name="vag_mode_info">The VAG mode ist still experimental and only for vehicles until {0}.\nA &lt;a href=\'https://uholeschak.github.io/ediabaslib/docs/Replacement_firmware_for_ELM327.html\'&gt;Deep OBD adapter&lt;/a&gt; with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.</string>
   <string name="vag_mode_info_ballon">The VAG mode ist still experimental and only for vehicles until {0}.\nA Deep OBD adapter with at least firmware version 0.11 is required.\nAt the moment only the protocols KWP2000, KWP1281, TP2.0 and UDS are supported.</string>
