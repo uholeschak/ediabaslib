@@ -2723,10 +2723,15 @@ namespace BmwDeepObd
             }
         }
 
-        public static long GetAssetEcuFileSize(AssetManager assetManager, string assetEcuFileName)
+        public static long GetAssetEcuFileSize(AssetManager assetManager, string assetEcuFileNames)
         {
+            if (string.IsNullOrEmpty(assetEcuFileNames))
+            {
+                return -1;
+            }
+
             long fileSize;
-            string[] assetFiles = assetEcuFileName.Split(";");
+            string[] assetFiles = assetEcuFileNames.Split(";");
 
             try
             {
@@ -2779,6 +2784,22 @@ namespace BmwDeepObd
             }
 
             return fileSize;
+        }
+
+        public static string GetAssetEcuFileBaseName(string assetEcuFileNames)
+        {
+            if (string.IsNullOrEmpty(assetEcuFileNames))
+            {
+                return string.Empty;
+            }
+
+            string[] assetFiles = assetEcuFileNames.Split(";");
+            if (assetFiles.Length > 0)
+            {
+                return Path.GetFileNameWithoutExtension(assetFiles[0]);
+            }
+
+            return string.Empty;
         }
 
         public static Android.Graphics.Color GetStyleColor(Context context, int attribute)
