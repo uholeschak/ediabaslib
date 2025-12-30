@@ -3265,7 +3265,7 @@ namespace BmwDeepObd
 
             if (_assetManager == null || string.IsNullOrEmpty(_assetEcuFileName))
             {
-                string assetEcuFileName = ActivityCommon.GetAssetEcuFilename();
+                string assetEcuFileName = ActivityCommon.GetAssetEcuFilenames();
                 if (!string.IsNullOrEmpty(assetEcuFileName))
                 {
                     try
