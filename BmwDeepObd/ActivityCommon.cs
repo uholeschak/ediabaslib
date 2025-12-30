@@ -12282,7 +12282,7 @@ namespace BmwDeepObd
             if (isArm)
             {
                 // the release version uses _ and debug uses -
-                return is64Bit ? ["arm64", "arm64_v8a", "arm64-v8a", "aarch64"] : ["armeabi_v7a", "armeabi-v7a"];
+                return is64Bit ? ["arm64", "arm64_v8a", "arm64-v8a", "aarch64"] : ["armeabi_v7a", "armeabi-v7a", "arm"];
             }
 
             // only the _ variant is used for release and debug
