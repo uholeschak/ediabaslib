@@ -2796,7 +2796,13 @@ namespace BmwDeepObd
             string[] assetFiles = assetEcuFileNames.Split(";");
             if (assetFiles.Length > 0)
             {
-                return Path.GetFileNameWithoutExtension(assetFiles[0]);
+                string baseName = Path.GetFileNameWithoutExtension(assetFiles[0]);
+                int underscoreIndex = baseName.IndexOf('_');
+                if (underscoreIndex >= 0)
+                {
+                    baseName = baseName.Substring(0, underscoreIndex);
+                }
+                return baseName;
             }
 
             return string.Empty;
