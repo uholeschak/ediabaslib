@@ -49,19 +49,35 @@ namespace CreateObb
                 key = args[2];
             }
 
-            if (!CreateContentFile(inDir, Path.Combine(inDir, "Content.xml")))
+            if (!File.Exists(outFile))
             {
-                Console.WriteLine("Creating content file failed");
+                if (!CreateContentFile(inDir, Path.Combine(inDir, "Content.xml")))
+                {
+                    Console.WriteLine("Creating content file failed");
+                    return 1;
+                }
+
+                if (!CreateZipFile(inDir, outFile, key))
+                {
+                    Console.WriteLine("Creating Zip file failed");
+                    return 1;
+                }
+
+                Console.WriteLine("Creating Zip file done");
+            }
+            else
+            {
+                Console.WriteLine($"Output file {outFile} already existing");
+            }
+
+            int parts = SplitZipFile(outFile, Path.GetDirectoryName(outFile), 1024 * 1024 * 100);
+            if (parts < 0)
+            {
+                Console.WriteLine("Splitting Zip file failed");
                 return 1;
             }
 
-            if (!CreateZipFile(inDir, outFile, key))
-            {
-                Console.WriteLine("Creating Zip file failed");
-                return 1;
-            }
-            Console.WriteLine("Creating Zip file done");
-
+            Console.WriteLine("Split zip file in {0} parts", parts);
             return 0;
         }
 
@@ -215,6 +231,42 @@ namespace CreateObb
             }
 
             return true;
+        }
+
+        private static int SplitZipFile(string inFile, string outDir, int maxSize)
+        {
+            try
+            {
+                string baseFileName = Path.GetFileNameWithoutExtension(inFile);
+                int fileIndex = 0;
+                using (Stream inStream = new FileStream(inFile, FileMode.Open, FileAccess.Read))
+                {
+                    byte[] buffer = new byte[4096];
+                    while (inStream.Position < inStream.Length)
+                    {
+                        string outFile = Path.Combine(outDir, $"{baseFileName}_part{fileIndex:D2}.bin");
+                        using (Stream outStream = new FileStream(outFile, FileMode.Create, FileAccess.Write))
+                        {
+                            int bytesWritten = 0;
+                            while (bytesWritten < maxSize && inStream.Position < inStream.Length)
+                            {
+                                int bytesToRead = Math.Min(buffer.Length, maxSize - bytesWritten);
+                                int bytesRead = inStream.Read(buffer, 0, bytesToRead);
+                                outStream.Write(buffer, 0, bytesRead);
+                                bytesWritten += bytesRead;
+                            }
+                        }
+
+                        fileIndex++;
+                    }
+                }
+
+                return fileIndex;
+            }
+            catch (Exception)
+            {
+                return -1;
+            }
         }
 
         private static void CompressFolder(string path, ZipOutputStream zipStream, int folderOffset)
