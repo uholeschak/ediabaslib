@@ -11498,20 +11498,25 @@ namespace BmwDeepObd
                                 {
                                     if (assetManager != null)
                                     {
-                                        using (Stream inputStream = assetManager.Open(archiveFilenameIn))
-                                        {
-                                            if (inputStream == null)
-                                            {
-                                                throw new IOException("Opening asset stream failed");
-                                            }
+                                        string tempFileName = Path.GetTempFileName();
+                                        fs = File.Create(tempFileName, StreamBufferSize, FileOptions.DeleteOnClose);
+                                        string[] archiveFiles = archiveFilenameIn.Split(";");
+                                        byte[] buffer = new byte[StreamBufferSize];
 
-                                            byte[] buffer = new byte[StreamBufferSize];
-                                            string tempFileName = Path.GetTempFileName();
-                                            fs = File.Create(tempFileName, StreamBufferSize, FileOptions.DeleteOnClose);
-                                            StreamUtils.Copy(inputStream, fs, buffer);
-                                            fs.Seek(0, SeekOrigin.Begin);
+                                        foreach (string archiveFile in archiveFiles)
+                                        {
+                                            using (Stream inputStream = assetManager.Open(archiveFile))
+                                            {
+                                                if (inputStream == null)
+                                                {
+                                                    throw new IOException($"Opening asset stream {archiveFile} failed");
+                                                }
+
+                                                StreamUtils.Copy(inputStream, fs, buffer);
+                                            }
                                         }
 
+                                        fs.Seek(0, SeekOrigin.Begin);
                                         fsRead = fs;
                                     }
                                     else if (resourceAssembly != null)
@@ -11589,19 +11594,25 @@ namespace BmwDeepObd
                 {
                     if (assetManager != null)
                     {
-                        using (Stream inputStream = assetManager.Open(archiveFilenameIn))
-                        {
-                            if (inputStream == null)
-                            {
-                                throw new IOException("Opening asset stream failed");
-                            }
+                        string tempFileName = Path.GetTempFileName();
+                        fs = File.Create(tempFileName, StreamBufferSize, FileOptions.DeleteOnClose);
+                        string[] archiveFiles = archiveFilenameIn.Split(";");
+                        byte[] buffer = new byte[StreamBufferSize];
 
-                            byte[] buffer = new byte[StreamBufferSize];
-                            string tempFileName = Path.GetTempFileName();
-                            fs = File.Create(tempFileName, StreamBufferSize, FileOptions.DeleteOnClose);
-                            StreamUtils.Copy(inputStream, fs, buffer);
-                            fs.Seek(0, SeekOrigin.Begin);
+                        foreach (string archiveFile in archiveFiles)
+                        {
+                            using (Stream inputStream = assetManager.Open(archiveFile))
+                            {
+                                if (inputStream == null)
+                                {
+                                    throw new IOException($"Opening asset stream {archiveFile} failed");
+                                }
+
+                                StreamUtils.Copy(inputStream, fs, buffer);
+                            }
                         }
+
+                        fs.Seek(0, SeekOrigin.Begin);
                     }
                     else if (resourceAssembly != null)
                     {
