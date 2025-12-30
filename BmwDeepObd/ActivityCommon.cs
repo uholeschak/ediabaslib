@@ -2725,46 +2725,56 @@ namespace BmwDeepObd
 
         public static long GetAssetEcuFileSize(AssetManager assetManager, string assetEcuFileName)
         {
-            long fileSize = -1;
+            long fileSize;
+            string[] assetFiles = assetEcuFileName.Split(";");
 
             try
             {
-                using (AssetFileDescriptor assetFile = assetManager.OpenFd(assetEcuFileName))
+                long size = 0;
+                foreach (string assetFile in assetFiles)
                 {
-                    fileSize = assetFile.Length;
+                    using (AssetFileDescriptor fileDescriptor = assetManager.OpenFd(assetFile))
+                    {
+                        size += fileDescriptor.Length;
+                    }
                 }
+
+                fileSize = size;
             }
             catch (Exception)
             {
-                // ignored
+                fileSize = -1;
             }
 
             if (fileSize <= 0)
             {
                 try
                 {
-                    using (Stream stream = assetManager.Open(assetEcuFileName))
+                    long size = 0;
+                    foreach (string assetFile in assetFiles)
                     {
-                        byte[] buffer = new byte[8192];
-                        long size = 0;
-
-                        for (;;)
+                        using (Stream stream = assetManager.Open(assetFile))
                         {
-                            int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                            if (bytesRead <= 0)
+                            byte[] buffer = new byte[8192];
+
+                            for (; ; )
                             {
-                                break;
+                                int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                                if (bytesRead <= 0)
+                                {
+                                    break;
+                                }
+
+                                size += bytesRead;
                             }
-
-                            size += bytesRead;
                         }
-
-                        fileSize = size;
                     }
+
+                    fileSize = size;
                 }
                 catch (Exception)
                 {
-                    // ignored
+                    fileSize = -1;
                 }
             }
 
