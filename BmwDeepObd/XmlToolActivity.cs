@@ -1,7 +1,6 @@
 #define USE_DRAG_LIST
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -23,7 +22,6 @@ using Android.Widget;
 using BmwDeepObd.FilePicker;
 using EdiabasLib;
 using AndroidX.AppCompat.App;
-using AndroidX.Core.View;
 using AndroidX.RecyclerView.Widget;
 using BmwDeepObd.Dialogs;
 using BmwFileReader;

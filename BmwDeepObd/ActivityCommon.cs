@@ -11440,10 +11440,11 @@ namespace BmwDeepObd
             }
         }
 
-        public static string GetAssetEcuFilename()
+        public static string GetAssetEcuFilenames()
         {
             try
             {
+                List<string> assetEcuFileList = new List<string>();
                 AssetManager assets = GetPackageContext()?.Assets;
                 if (assets != null)
                 {
@@ -11455,9 +11456,16 @@ namespace BmwDeepObd
                         {
                             if (regex.IsMatch(fileName))
                             {
-                                return fileName;
+                                assetEcuFileList.Add(fileName);
                             }
                         }
+                    }
+
+                    assetEcuFileList = assetEcuFileList.OrderBy(n => n).ToList();
+                    if (assetEcuFileList.Count > 0)
+                    {
+                        string assetEcuFileNames = string.Join(";", assetEcuFileList);
+                        return assetEcuFileNames;
                     }
                 }
             }

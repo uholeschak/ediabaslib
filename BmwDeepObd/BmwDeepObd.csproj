@@ -33,20 +33,14 @@
   </PropertyGroup>
   <ItemGroup>
     <AndroidAsset Remove="Assets\.gitignore" />
-    <AndroidAsset Update="Assets\Ecu.bin" AssetPack="assets1" DeliveryType="InstallTime" />
-    <AndroidAsset Update="Assets\Sample.zip" AssetPack="assets1" DeliveryType="InstallTime" />
-    <AndroidAsset Update="Assets\CaCerts.zip" AssetPack="assets1" DeliveryType="InstallTime" />
+    <AndroidAsset Update="Assets\Ecu*.bin" AssetPack="assets1" DeliveryType="InstallTime" />
+    <AndroidAsset Update="Assets\Sample*.zip" AssetPack="assets1" DeliveryType="InstallTime" />
+    <AndroidAsset Update="Assets\CaCerts*.zip" AssetPack="assets1" DeliveryType="InstallTime" />
   </ItemGroup>
   <ItemGroup>
     <TrimmerRootAssembly Include="Mono.Android" RootMode="visible" />
     <TrimmerRootAssembly Include="System.Collections" RootMode="visible" />
     <TrimmerRootAssembly Include="Xamarin.AndroidX.Core" RootMode="visible" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Assets\Ecu.bin" />
-    <None Remove="Resources\layout\service_busy.xml" />
-    <None Remove="Resources\xml\automotive_app_desc.xml" />
-    <None Remove="Xml\BmwDeepObd.xsd" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\EdiabasLib\BmwFileReader\DetectVehicleBmw.cs" Link="DetectVehicleBmw.cs" />
