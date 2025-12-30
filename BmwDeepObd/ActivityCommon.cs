@@ -12286,7 +12286,7 @@ namespace BmwDeepObd
             }
 
             // only the _ variant is used for release and debug
-            return is64Bit ? ["x86_64", "x86-64"] : ["x86"];
+            return is64Bit ? ["x86_64", "x86-64"] : ["x86", "i686"];
         }
 
         public static List<Microsoft.CodeAnalysis.MetadataReference> GetLoadedMetadataReferences(string packageAssembiesDir, out List<string> errorList)
