@@ -244,7 +244,7 @@ namespace CreateObb
                     byte[] buffer = new byte[4096];
                     while (inStream.Position < inStream.Length)
                     {
-                        string outFile = Path.Combine(outDir, $"{baseFileName}_part{fileIndex:D2}.bin");
+                        string outFile = Path.Combine(outDir, $"{baseFileName}_{fileIndex:D2}.bin");
                         using (Stream outStream = new FileStream(outFile, FileMode.Create, FileAccess.Write))
                         {
                             int bytesWritten = 0;
