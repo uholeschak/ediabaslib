@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace CreateObb
@@ -289,11 +290,16 @@ namespace CreateObb
                 List<string> splitFiles = new List<string>();
                 string baseFileName = Path.GetFileNameWithoutExtension(inFile);
 
-                // Delete existing files matching the pattern
+                // Delete existing files matching the pattern with exactly 2 digits
+                Regex filePattern = new Regex($@"^{Regex.Escape(baseFileName)}_\d{{2}}\.bin$", RegexOptions.IgnoreCase);
                 string[] existingFiles = Directory.GetFiles(outDir, $"{baseFileName}_*.bin");
                 foreach (string existingFile in existingFiles)
                 {
-                    File.Delete(existingFile);
+                    string fileName = Path.GetFileName(existingFile);
+                    if (filePattern.IsMatch(fileName))
+                    {
+                        File.Delete(existingFile);
+                    }
                 }
 
                 int fileIndex = 0;
