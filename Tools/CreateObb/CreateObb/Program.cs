@@ -1,83 +1,139 @@
-﻿using System;
+﻿using CommandLine;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
+using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
-using ICSharpCode.SharpZipLib.Core;
-using ICSharpCode.SharpZipLib.Zip;
 
 namespace CreateObb
 {
     static class Program
     {
+        public class Options
+        {
+            public Options()
+            {
+                InputDir = string.Empty;
+                OutputFile = string.Empty;
+                Key = string.Empty;
+                Force = false;
+            }
+
+            public enum DebugOption
+            {
+                None,
+                MsgBox,
+                Break,
+            }
+
+            [Option('i', "inputdir", Required = true, HelpText = "Input directory.")]
+            public string InputDir { get; set; }
+
+            [Option('o', "outputfile", Required = false, HelpText = "Output file")]
+            public string OutputFile { get; set; }
+
+            [Option('k', "key", Required = false, HelpText = "Key")]
+            public string Key { get; set; }
+
+            [Option('f', "force", Required = false, HelpText = "Force creation of output file")]
+            public bool Force { get; set; }
+        }
+
         static int Main(string[] args)
         {
-            if (args.Length < 1)
+            try
             {
-                Console.WriteLine("No input directory specified");
-                return 1;
-            }
-            if (args.Length < 2)
-            {
-                Console.WriteLine("No output file name specified");
-                return 1;
-            }
+                string inputDir = null;
+                string outputFile = null;
+                string key = null;
+                bool force = false;
+                bool hasErrors = false;
 
-            string inDir = args[0];
-            string outFile = args[1];
-            if (string.IsNullOrEmpty(inDir))
-            {
-                Console.WriteLine("Input directory empty");
-                return 1;
-            }
-
-            if (!Directory.Exists(inDir))
-            {
-                Console.WriteLine("Input directory not existing");
-                return 1;
-            }
-
-            if (string.IsNullOrEmpty(outFile))
-            {
-                Console.WriteLine("Output file empty");
-                return 1;
-            }
-
-            string key = string.Empty;
-            if (args.Length >= 3)
-            {
-                key = args[2];
-            }
-
-            if (!File.Exists(outFile))
-            {
-                if (!CreateContentFile(inDir, Path.Combine(inDir, "Content.xml")))
+                Parser parser = new Parser(with =>
                 {
-                    Console.WriteLine("Creating content file failed");
+                    //ignore case for enum values
+                    with.CaseInsensitiveEnumValues = true;
+                    with.EnableDashDash = true;
+                    with.HelpWriter = Console.Out;
+                });
+
+                parser.ParseArguments<Options>(args)
+                    .WithParsed<Options>(o =>
+                    {
+                        inputDir = o.InputDir;
+                        outputFile = o.OutputFile;
+                        key = o.Key;
+                        force = o.Force;
+                    })
+                    .WithNotParsed(errs =>
+                    {
+                        string errors = string.Join("\n", errs);
+                        Console.WriteLine("Option parsing errors:\n{0}", string.Join("\n", errors));
+                        hasErrors = true;
+                    });
+
+                if (hasErrors)
+                {
                     return 1;
                 }
 
-                if (!CreateZipFile(inDir, outFile, key))
+                if (string.IsNullOrEmpty(inputDir))
                 {
-                    Console.WriteLine("Creating Zip file failed");
+                    Console.WriteLine("Input directory missing");
                     return 1;
                 }
 
-                Console.WriteLine("Creating Zip file done");
-            }
-            else
-            {
-                Console.WriteLine($"Output file {outFile} already existing");
-            }
+                if (!Directory.Exists(inputDir))
+                {
+                    Console.WriteLine("Input directory {0} not existing", inputDir);
+                    return 1;
+                }
 
-            int parts = SplitZipFile(outFile, Path.GetDirectoryName(outFile), 1024 * 1024 * 100);
-            if (parts < 0)
+                if (string.IsNullOrEmpty(outputFile))
+                {
+                    Console.WriteLine("Output file empty");
+                    return 1;
+                }
+
+                if (force || !File.Exists(outputFile))
+                {
+                    if (!CreateContentFile(inputDir, Path.Combine(inputDir, "Content.xml")))
+                    {
+                        Console.WriteLine("Creating content file failed");
+                        return 1;
+                    }
+
+                    if (!CreateZipFile(inputDir, outputFile, key))
+                    {
+                        Console.WriteLine("Creating Zip file failed");
+                        return 1;
+                    }
+
+                    Console.WriteLine("Creating Zip file done");
+                }
+                else
+                {
+                    Console.WriteLine($"Output file {outputFile} already existing");
+                }
+
+                int parts = SplitZipFile(outputFile, Path.GetDirectoryName(outputFile), 1024 * 1024 * 100);
+                if (parts < 0)
+                {
+                    Console.WriteLine("Splitting Zip file failed");
+                    return 1;
+                }
+
+                Console.WriteLine("Split zip file in {0} parts", parts);
+            }
+            catch (Exception e)
             {
-                Console.WriteLine("Splitting Zip file failed");
+                Console.WriteLine("*** Exception: {0}", e.Message);
                 return 1;
             }
 
-            Console.WriteLine("Split zip file in {0} parts", parts);
             return 0;
         }
 
