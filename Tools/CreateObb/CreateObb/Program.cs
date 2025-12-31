@@ -3,7 +3,6 @@ using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
@@ -20,13 +19,6 @@ namespace CreateObb
                 OutputFile = string.Empty;
                 Key = string.Empty;
                 Force = false;
-            }
-
-            public enum DebugOption
-            {
-                None,
-                MsgBox,
-                Break,
             }
 
             [Option('i', "inputdir", Required = true, HelpText = "Input directory.")]
