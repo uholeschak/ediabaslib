@@ -286,6 +286,14 @@ namespace CreateObb
             try
             {
                 string baseFileName = Path.GetFileNameWithoutExtension(inFile);
+
+                // Delete existing files matching the pattern
+                string[] existingFiles = Directory.GetFiles(outDir, $"{baseFileName}_*.bin");
+                foreach (string existingFile in existingFiles)
+                {
+                    File.Delete(existingFile);
+                }
+
                 int fileIndex = 0;
                 using (Stream inStream = new FileStream(inFile, FileMode.Open, FileAccess.Read))
                 {
