@@ -2,6 +2,7 @@
 using ICSharpCode.SharpZipLib.Core;
 using ICSharpCode.SharpZipLib.Zip;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -111,14 +112,14 @@ namespace CreateObb
                     Console.WriteLine($"Output file {outputFile} already existing");
                 }
 
-                int parts = SplitZipFile(outputFile, Path.GetDirectoryName(outputFile), 1024 * 1024 * 100);
-                if (parts < 0)
+                List<string> parts = SplitZipFile(outputFile, Path.GetDirectoryName(outputFile), 1024 * 1024 * 100);
+                if (parts == null || parts.Count == 0)
                 {
                     Console.WriteLine("Splitting Zip file failed");
                     return 1;
                 }
 
-                Console.WriteLine("Split zip file in {0} parts", parts);
+                Console.WriteLine("Split files created: {0}", string.Join(", ", parts));
             }
             catch (Exception e)
             {
@@ -281,10 +282,11 @@ namespace CreateObb
             return true;
         }
 
-        private static int SplitZipFile(string inFile, string outDir, int maxSize)
+        private static List<string> SplitZipFile(string inFile, string outDir, int maxSize)
         {
             try
             {
+                List<string> splitFiles = new List<string>();
                 string baseFileName = Path.GetFileNameWithoutExtension(inFile);
 
                 // Delete existing files matching the pattern
@@ -300,7 +302,8 @@ namespace CreateObb
                     byte[] buffer = new byte[4096];
                     while (inStream.Position < inStream.Length)
                     {
-                        string outFile = Path.Combine(outDir, $"{baseFileName}_{fileIndex:D2}.bin");
+                        string outFileName = $"{baseFileName}_{fileIndex:D2}.bin";
+                        string outFile = Path.Combine(outDir, outFileName);
                         using (Stream outStream = new FileStream(outFile, FileMode.Create, FileAccess.Write))
                         {
                             int bytesWritten = 0;
@@ -313,15 +316,16 @@ namespace CreateObb
                             }
                         }
 
+                        splitFiles.Add(outFileName);
                         fileIndex++;
                     }
                 }
 
-                return fileIndex;
+                return splitFiles;
             }
             catch (Exception)
             {
-                return -1;
+                return null;
             }
         }
 
