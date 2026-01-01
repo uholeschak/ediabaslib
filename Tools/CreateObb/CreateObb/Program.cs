@@ -289,10 +289,11 @@ namespace CreateObb
             {
                 List<string> splitFiles = new List<string>();
                 string baseFileName = Path.GetFileNameWithoutExtension(inFile);
+                string extension = Path.GetExtension(inFile);
 
                 // Delete existing files matching the pattern with exactly 2 digits
-                Regex filePattern = new Regex($@"^{Regex.Escape(baseFileName)}_\d{{2}}\.bin$", RegexOptions.IgnoreCase);
-                string[] existingFiles = Directory.GetFiles(outDir, $"{baseFileName}_*.bin");
+                Regex filePattern = new Regex($@"^{Regex.Escape(baseFileName)}_\d{{2}}{Regex.Escape(extension)}$", RegexOptions.IgnoreCase);
+                string[] existingFiles = Directory.GetFiles(outDir);
                 foreach (string existingFile in existingFiles)
                 {
                     string fileName = Path.GetFileName(existingFile);
@@ -308,7 +309,7 @@ namespace CreateObb
                     byte[] buffer = new byte[4096];
                     while (inStream.Position < inStream.Length)
                     {
-                        string outFileName = $"{baseFileName}_{fileIndex:D2}.bin";
+                        string outFileName = $"{baseFileName}_{fileIndex:D2}{extension}";
                         string outFile = Path.Combine(outDir, outFileName);
                         using (Stream outStream = new FileStream(outFile, FileMode.Create, FileAccess.Write))
                         {
