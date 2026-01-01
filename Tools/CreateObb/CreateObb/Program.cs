@@ -80,15 +80,29 @@ namespace CreateObb
                     return 1;
                 }
 
-                if (!Directory.Exists(inputDir))
-                {
-                    Console.WriteLine("Input directory {0} not existing", inputDir);
-                    return 1;
-                }
-
                 if (string.IsNullOrEmpty(outputFile))
                 {
                     Console.WriteLine("Output file empty");
+                    return 1;
+                }
+
+                Console.WriteLine("Input directory: '{0}'", inputDir);
+                Console.WriteLine("Output file: '{0}'", outputFile);
+                if (string.IsNullOrEmpty(key))
+                {
+                    Console.WriteLine("Key: not specified");
+                }
+                else
+                {
+                    Console.WriteLine("Key: specified");
+                }
+
+                Console.WriteLine("Force: {0} ", force);
+                Console.WriteLine();
+
+                if (!Directory.Exists(inputDir))
+                {
+                    Console.WriteLine("Input directory {0} not existing", inputDir);
                     return 1;
                 }
 
