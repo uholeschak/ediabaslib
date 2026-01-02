@@ -29,7 +29,8 @@ namespace PsdzClient.Core
             }
         }
 
-        private Reactor(IReactorVehicle reactorVehicle, ILogger logger, DataHolder dataHolder = null) : base(reactorVehicle, logger, dataHolder)
+        [PreserveSource(Hint = "Changed to public", AccessModified = true)]
+        public Reactor(IReactorVehicle reactorVehicle, ILogger logger, DataHolder dataHolder = null) : base(reactorVehicle, logger, dataHolder)
         {
         }
 
