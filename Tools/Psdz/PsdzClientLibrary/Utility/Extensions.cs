@@ -2,6 +2,7 @@
 
 namespace PsdzClient.Utility
 {
+    [PreserveSource(Hint = "Do not update")]
     public static class Extensions
     {
         public static string ToText<T>(this T value)
