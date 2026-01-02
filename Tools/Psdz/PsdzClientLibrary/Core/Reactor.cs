@@ -13,7 +13,6 @@ namespace PsdzClient.Core
     public class Reactor : ReactorEngine
     {
         private static Reactor singleton;
-
         [PreserveSource(Hint = "Instance disabled", KeepAttribute = true)]
         [Obsolete("Use only constructor", true)]
         public static Reactor Instance
@@ -29,7 +28,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Changed to public", AccessModified = true)]
+        [PreserveSource(Hint = "Changed to public", SignatureModified = true)]
         public Reactor(IReactorVehicle reactorVehicle, ILogger logger, DataHolder dataHolder = null) : base(reactorVehicle, logger, dataHolder)
         {
         }

@@ -21,7 +21,7 @@ using System.Text.RegularExpressions;
 namespace BMW.Rheingold.Programming.API
 {
     // ToDo: Check on update
-    [PreserveSource(Hint = "changed to public", AccessModified = true)]
+    [PreserveSource(Hint = "Changed to public", AccessModified = true)]
     public class ProgrammingObjectBuilder : IProgrammingObjectBuilder
     {
         private readonly IFFMDynamicResolver ffmResolver;
