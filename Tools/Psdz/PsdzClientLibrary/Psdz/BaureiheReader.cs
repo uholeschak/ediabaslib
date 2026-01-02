@@ -11,7 +11,7 @@ namespace BMW.Rheingold.Psdz
     {
         private readonly IPsdz psdz;
 
-        [PreserveSource(Hint = "iPsdz added")]
+        [PreserveSource(Hint = "iPsdz added", OriginalHash = "F98BD9D2D7315EE5F4FFAFEA2EBCA3DA")]
         public BaureiheReader(IPsdz iPsdz)
         {
             psdz = iPsdz;
@@ -37,7 +37,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "017EC1F95167348AF627A728304BD3E0")]
         private IPsdz StartPsdzWebService()
         {
             return null;
