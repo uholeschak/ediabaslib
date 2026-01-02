@@ -2402,7 +2402,7 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public PlaceholderType SessionStart { get; set; }
 
-        [PreserveSource(Hint = "Local reactor")]
+        [PreserveSource(Hint = "Local reactor added")]
         public Reactor Reactor { get; private set; }
     }
 }
