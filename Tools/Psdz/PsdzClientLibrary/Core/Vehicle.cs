@@ -1830,26 +1830,23 @@ namespace PsdzClient.Core
             base.ECU.Add(ecu);
         }
 
-        [PreserveSource(Hint = "Database removed")]
+        [PreserveSource(Hint = "XEP_ECUCLIQUES removed", OriginalHash = "FFF58050A256B72A929205601AC5D0C2")]
         public void AddEcu(IIdentEcu ecu)
         {
-            if ((base.VehicleIdentLevel != IdentificationLevel.VINVehicleReadout && base.VehicleIdentLevel != IdentificationLevel.VINVehicleReadoutOnlineUpdated) || base.BNType == BNType.BNK01X_MOTORBIKE)
+            ECU eCU = new ECU
             {
-                ECU eCU = new ECU
-                {
-                    ProgrammingVariantName = ecu.ProgrammingVariantName,
-                    SERIENNUMMER = ecu.SERIENNUMMER,
-                    ID_SG_ADR = ecu.ID_SG_ADR,
-                    ECU_SGBD = ecu.ECU_SGBD,
-                    VARIANTE = ecu.VARIANTE,
-                    ECU_ADR = ecu.ECU_ADR,
-                    ECU_GRUPPE = ecu.ECU_GRUPPE,
-                    TITLE_ECUTREE = ecu.TITLE_ECUTREE,
-                    ECUTreeColor = ecu.ECUTreeColor,
-                    ECUTitle = ecu.ECUTitle
-                };
-                AddOrUpdateECU(eCU);
-            }
+                ProgrammingVariantName = ecu.ProgrammingVariantName,
+                SERIENNUMMER = ecu.SERIENNUMMER,
+                ID_SG_ADR = ecu.ID_SG_ADR,
+                ECU_SGBD = ecu.ECU_SGBD,
+                VARIANTE = ecu.VARIANTE,
+                ECU_ADR = ecu.ECU_ADR,
+                ECU_GRUPPE = ecu.ECU_GRUPPE,
+                TITLE_ECUTREE = ecu.TITLE_ECUTREE,
+                ECUTreeColor = ecu.ECUTreeColor,
+                ECUTitle = ecu.ECUTitle
+            };
+            base.ECU.AddIfNotContains(eCU);
         }
 
         public bool AddOrUpdateECU(ECU nECU)
@@ -1893,7 +1890,7 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "B2BD63A6FC2FF0ED2D61C5AA6CDB4090")]
         public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
         {
             PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
