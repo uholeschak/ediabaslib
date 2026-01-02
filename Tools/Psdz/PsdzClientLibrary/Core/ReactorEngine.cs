@@ -11,7 +11,6 @@ namespace PsdzClient.Core
 {
     public class ReactorEngine
     {
-        [PreserveSource(Hint = "Namespace modified")]
         private MultisourceLogic multisourceLogic;
         private readonly FallbackMechanisms fallback;
         private readonly IReactorVehicle vehicle;
@@ -19,7 +18,6 @@ namespace PsdzClient.Core
         public DataHolder dataHolder;
         private bool observerEnabled;
         private static object obj = new object ();
-        [PreserveSource(Hint = "Namespace modified")]
         public ReactorEngine(IReactorVehicle reactorVehicle, ILogger logger, DataHolder dataHolder)
         {
             log = logger;
