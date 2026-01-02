@@ -9,7 +9,7 @@ namespace PsdzClient.Utility
 {
     internal static class MachineIdentifier
     {
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Log removed", OriginalHash = "D124FC999B22B5EF403D6F87F669E809")]
         public static string GetVolumeSerialNumber()
         {
             string pathRoot = Path.GetPathRoot(Environment.SystemDirectory);
@@ -31,7 +31,7 @@ namespace PsdzClient.Utility
             return text.Substring(0, 8);
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Log removed", OriginalHash = "21EA6126E88BC71D4844111AFF84A320")]
         public static string GetMachineGuid()
         {
             string text = string.Empty;
@@ -72,7 +72,7 @@ namespace PsdzClient.Utility
             return text;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Log removed", OriginalHash = "2718A3F6063FB675B1CD704CC0E9BD86")]
         public static string GetUuid()
         {
             ProcessStartInfo startInfo = new ProcessStartInfo("cmd", "/c wmic csproduct get UUID")
