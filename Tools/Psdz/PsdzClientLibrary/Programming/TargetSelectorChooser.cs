@@ -155,7 +155,6 @@ namespace PsdzClient.Programming
             this.interactionService = interactionService;
         }
 
-        [PreserveSource(Hint = "Modified")]
         public IPsdzTargetSelector GetNewestTargetSelectorByMainSeries(string mainSeries, bool notifyIfTargetSelectorCouldNotBeFound = false, string localizationId = null)
         {
             IEnumerable<TargetSelectorDetail> targetSelectorsByMainSeries = GetTargetSelectorsByMainSeries(mainSeries);
@@ -165,7 +164,16 @@ namespace PsdzClient.Programming
                 list.Sort();
                 return list.Last().TargetSelector;
             }
-
+            if (notifyIfTargetSelectorCouldNotBeFound)
+            {
+                if (interactionService == null)
+                {
+                    string text = "You have to pass InteractionService object to the constructor when you want to notify missing TargetSelector";
+                    Log.Error(Log.CurrentMethod(), text);
+                    throw new ArgumentNullException("interactionService", text);
+                }
+                interactionService.RegisterMessageAsync(FormatedData.Localize("#Info"), FormatedData.Localize(localizationId));
+            }
             return null;
         }
 
