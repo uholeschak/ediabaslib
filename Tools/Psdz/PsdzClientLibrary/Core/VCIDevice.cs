@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -273,14 +274,12 @@ namespace PsdzClient.Core
         public ushort PowerSupply { get; set; }
         public NetworkType LocalAdapterNetworkType { get; set; }
 
-        [PreserveSource(Hint = "Modified")]
         public bool IsVehicleProgrammingPossible
         {
             get
             {
                 if (NetworkType == "0" || NetworkType == "2")
                 {
-                    // [UH] [IGNORE] namespaced changed
                     if (LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.LAN && LocalAdapterNetworkType != BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.directLAN)
                     {
                         return false;
@@ -1441,7 +1440,7 @@ namespace PsdzClient.Core
             VCIType = vciType;
         }
 
-        [PreserveSource(Hint = "Database replaced")]
+        [PreserveSource(Hint = "Database replaced", OriginalHash = "47ED03CC4734A5360E2D37EB64CBE80C")]
         private void LoadCharacteristicsFromDatabase()
         {
             if (basicFeaturesVci != null)
@@ -1449,6 +1448,7 @@ namespace PsdzClient.Core
                 return;
             }
 
+            // [UH] [IGNORE] instance replaced
             if (VIN.Contains("XXXX") || VIN.Length != 17 || _clientContext == null)
             {
                 return;
@@ -1497,6 +1497,7 @@ namespace PsdzClient.Core
             }
 
             BasicFeaturesVci vehicle = new BasicFeaturesVci();
+            // [UH] [IGNORE] _clientContext added
             VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
             foreach (PsdzDatabase.Characteristics item in vehicleIdentByTypeKey)
             {
@@ -1762,7 +1763,7 @@ namespace PsdzClient.Core
             return "VCIDevice: " + ToAttrList(addLineFeed: true);
         }
 
-        [PreserveSource(Hint = "Added clientContext")]
+        [PreserveSource(Hint = "Added clientContext", OriginalHash = "045A22491687878A080DD331E4796C62")]
         public object Clone()
         {
             // [UH] [IGNORE] Added clientContext to constructor
@@ -1833,10 +1834,10 @@ namespace PsdzClient.Core
             return vCIDevice;
         }
 
-        [PreserveSource(Hint = "clientContext added")]
+        [PreserveSource(Hint = "clientContext added", OriginalHash = "E65B1CC30457B8791DB446866792804F")]
         public VCIDevice(ClientContext clientContext)
         {
-            this._clientContext = clientContext;
+            _clientContext = clientContext;
             vCITypeField = VCIDeviceType.UNKNOWN;
             vCIReservationField = VCIReservationType.NONE;
             portField = 6801;
