@@ -90,7 +90,8 @@ namespace SourceCodeSync
             { "BMW.Rheingold.CoreFramework.Extensions.AddRange", "Extensions.AddRange" },
             { "RheingoldPsdzWebApi.Adapter.Contracts.Services.IProgrammingService", "IProgrammingService" },
             { "BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore", "DiagnosticsBusinessDataCore" },
-            { "BMW.Rheingold.CoreFramework.Extensions", "Extensions" }
+            { "BMW.Rheingold.CoreFramework.Extensions", "Extensions" },
+            { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.NetworkType", "BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType"}
         };
 
         private const string _attributPreserveSource = "PreserveSource";

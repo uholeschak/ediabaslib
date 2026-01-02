@@ -3,13 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
-using PsdzClient;
 
 namespace PsdzClient.Core
 {
@@ -239,7 +236,6 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
         [XmlIgnore]
         public string NetworkTypeLabel
         {
@@ -262,7 +258,6 @@ namespace PsdzClient.Core
 
                 if ("2".Equals(NetworkType))
                 {
-                    // [UH] [IGNORE] namespaced changed
                     LocalAdapterNetworkType = BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType.directLAN;
                     return "directLAN";
                 }
