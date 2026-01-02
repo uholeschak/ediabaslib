@@ -827,7 +827,7 @@ namespace PsdzClient.Core
             return CreateCharacteristicsInstance<T>(vecInfo, storedXmlFileName, storedXmlFileName);
         }
 
-        [PreserveSource(Hint = "Changed to public")]
+        [PreserveSource(Hint = "Changed to public", SignatureModified = true)]
         public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name)
             where T : BaseEcuCharacteristics
         {
