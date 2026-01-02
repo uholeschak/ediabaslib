@@ -883,7 +883,6 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public TransmissionDataType TransmissionDataType { get; private set; } = new TransmissionDataType();
 
-        [PreserveSource(Hint = "Database modified")]
         [XmlIgnore]
         public BatteryEnum BatteryType
         {
