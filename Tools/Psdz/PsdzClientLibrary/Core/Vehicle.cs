@@ -1100,16 +1100,16 @@ namespace PsdzClient.Core
             return list;
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "991CED817BF1E4F638AF985457212396")]
         public string SetVINRangeTypeFromVINRanges()
         {
             PsdzDatabase database = ClientContext.GetDatabase(this);
-            if (database != null && !"XXXXXXX".Equals(this.VIN7) && !string.IsNullOrEmpty(this.VIN7) && !this.VIN7.Equals(this.vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
+            if (database != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
             {
-                PsdzDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(this.VINType, this.VIN7, false, IsVehicleWithOnlyVin7());
+                PsdzDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
                 if (vinRangesByVin != null)
                 {
-                    this.vinRangeTypeLastResolvedType = this.VIN7;
+                    vinRangeTypeLastResolvedType = VIN7;
                     return vinRangesByVin.TypeKey;
                 }
             }
