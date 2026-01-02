@@ -16,23 +16,21 @@ namespace PsdzClient.Utility
         private static string _volumeSNr = string.Empty;
         private const string logEncryptionPublicKey = "<RSAKeyValue><Modulus>o0DHJwtLBqYxDLkp7fqN9fhubcWACo2GVfz3qPUJxljUPT4xfZ0QUaFzLpf2YCeOqHGN9093V6dIYtNrukrnLZJtIiZ8kVdBSd3jlJ42QEBjW87XklMez5UKJmjzebs+2NDlaNNcEmhvli2l7GRSbkokqWUuN6SzrS6jIpO8MUk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
         private const string ICSLogEncryptionKeyName = "ICSLogEncryption";
-        [PreserveSource(Hint = "Log removed", OriginalHash = "11ED03B5190B41C56AB5C54BC1DCE759")]
+        [PreserveSource(Hint = "Changed to Aes", OriginalHash = "11ED03B5190B41C56AB5C54BC1DCE759")]
         public static string Encrypt(string toEncrypt, bool? isSensitive = false)
         {
             if (isSensitive.HasValue && isSensitive == true)
             {
-            // [IGNORE] Logger.Instance()?.LogEncrypted(ICSEventId.ICSNone, "Encryption.Encrypt - string to encrypt", toEncrypt, EventKind.Technical, LogLevel.Info);
+                Logger.Instance()?.LogEncrypted(ICSEventId.ICSNone, "Encryption.Encrypt - string to encrypt", toEncrypt, EventKind.Technical, LogLevel.Info);
             }
             else
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICSNone, "Encryption.Encrypt - string to encrypt", toEncrypt, EventKind.Technical, LogLevel.Info);
+                Logger.Instance()?.Log(ICSEventId.ICSNone, "Encryption.Encrypt - string to encrypt", toEncrypt, EventKind.Technical, LogLevel.Info);
             }
-
             if (string.IsNullOrEmpty(toEncrypt))
             {
                 return string.Empty;
             }
-
             Aes aesManaged = null;
             MemoryStream memoryStream = null;
             try
@@ -45,28 +43,27 @@ namespace PsdzClient.Utility
                 cryptoStream.FlushFinalBlock();
                 return Convert.ToBase64String(memoryStream.ToArray());
             }
-            catch (NotSupportedException)
+            catch (NotSupportedException ex)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0145, "Encryption.Encrypt", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
+                Logger.Instance()?.Log(ICSEventId.ICS0145, "Encryption.Encrypt", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
             }
-            catch (EncoderFallbackException)
+            catch (EncoderFallbackException ex2)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.Encrypt", ex2.ToString(), EventKind.Technical, LogLevel.Error, ex2);
+                Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.Encrypt", ex2.ToString(), EventKind.Technical, LogLevel.Error, ex2);
             }
-            catch (CryptographicException)
+            catch (CryptographicException ex3)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.Encrypt", ex3.ToString(), EventKind.Technical, LogLevel.Error, ex3);
+                Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.Encrypt", ex3.ToString(), EventKind.Technical, LogLevel.Error, ex3);
             }
-            catch (Exception ex4)when (ex4 is ArgumentOutOfRangeException || ex4 is ArgumentException)
+            catch (Exception ex4) when (ex4 is ArgumentOutOfRangeException || ex4 is ArgumentException)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.Encrypt", ex4.ToString(), EventKind.Technical, LogLevel.Error, ex4);
+                Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.Encrypt", ex4.ToString(), EventKind.Technical, LogLevel.Error, ex4);
             }
             finally
             {
                 memoryStream?.Dispose();
                 aesManaged?.Dispose();
             }
-
             return string.Empty;
         }
 
@@ -76,15 +73,14 @@ namespace PsdzClient.Utility
             return toEncrypt;
         }
 
-        [PreserveSource(Hint = "Log removed", OriginalHash = "8FBDD1B56316B1B6866356649637F496")]
+        [PreserveSource(Hint = "Changed to Aes", OriginalHash = "8FBDD1B56316B1B6866356649637F496")]
         public static string Decrypt(string toDecrypt)
         {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICSNone, "Encryption.Decrypt - string to decrypt", toDecrypt, EventKind.Technical, LogLevel.Info);
+            Logger.Instance()?.Log(ICSEventId.ICSNone, "Encryption.Decrypt - string to decrypt", toDecrypt, EventKind.Technical, LogLevel.Info);
             if (string.IsNullOrEmpty(toDecrypt))
             {
                 return string.Empty;
             }
-
             try
             {
                 using (Aes aesManaged = InializeAesProvider())
@@ -99,33 +95,32 @@ namespace PsdzClient.Utility
                     }
                 }
             }
-            catch (NotSupportedException)
+            catch (NotSupportedException ex)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0145, "Encryption.Decrypt", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
+                Logger.Instance()?.Log(ICSEventId.ICS0145, "Encryption.Decrypt", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
             }
-            catch (EncoderFallbackException)
+            catch (EncoderFallbackException ex2)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.Decrypt", ex2.ToString(), EventKind.Technical, LogLevel.Error, ex2);
+                Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.Decrypt", ex2.ToString(), EventKind.Technical, LogLevel.Error, ex2);
             }
-            catch (CryptographicException)
+            catch (CryptographicException ex3)
             {
-                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.Decrypt", ex3.ToString(), EventKind.Technical, LogLevel.Error, ex3);
+                Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.Decrypt", ex3.ToString(), EventKind.Technical, LogLevel.Error, ex3);
                 throw;
             }
-            catch (DecoderFallbackException)
+            catch (DecoderFallbackException ex4)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0143, "Encryption.Decrypt", ex4.ToString(), EventKind.Technical, LogLevel.Error, ex4);
+                Logger.Instance()?.Log(ICSEventId.ICS0143, "Encryption.Decrypt", ex4.ToString(), EventKind.Technical, LogLevel.Error, ex4);
             }
-            catch (FormatException)
+            catch (FormatException ex5)
             {
-                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0129, "Encryption.Decrypt", ex5.ToString(), EventKind.Technical, LogLevel.Error, ex5);
+                Logger.Instance()?.Log(ICSEventId.ICS0129, "Encryption.Decrypt", ex5.ToString(), EventKind.Technical, LogLevel.Error, ex5);
                 throw;
             }
-            catch (ArgumentException)
+            catch (ArgumentException ex6)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.Decrypt", ex6.ToString(), EventKind.Technical, LogLevel.Error, ex6);
+                Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.Decrypt", ex6.ToString(), EventKind.Technical, LogLevel.Error, ex6);
             }
-
             return string.Empty;
         }
 
@@ -139,7 +134,7 @@ namespace PsdzClient.Utility
             return SecureStringHelper.ConvertToSecureString(Decrypt(input));
         }
 
-        [PreserveSource(Hint = "Log removed, changed to Aes", OriginalHash = "44E009B63DFEC7852BC1CDB2DC4A26F8")]
+        [PreserveSource(Hint = "Changed to Aes", OriginalHash = "44E009B63DFEC7852BC1CDB2DC4A26F8")]
         internal static Aes InializeAesProvider()
         {
             Aes aesManaged = null;
@@ -158,14 +153,14 @@ namespace PsdzClient.Utility
                 aesManaged = null;
                 return aesManaged2;
             }
-            catch (EncoderFallbackException)
+            catch (EncoderFallbackException ex)
             {
-                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.InitializeAesProvider", $"Could not initialize Aes Provider: Error {ex}", EventKind.Technical, LogLevel.Error, ex);
+                Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.InitializeAesProvider", $"Could not initialize Aes Provider: Error {ex}", EventKind.Technical, LogLevel.Error, ex);
                 throw;
             }
-            catch (CryptographicException)
+            catch (CryptographicException ex2)
             {
-                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.InitializeAesProvider", $"Could not initialize Aes Provider: Error {ex2}", EventKind.Technical, LogLevel.Error, ex2);
+                Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.InitializeAesProvider", $"Could not initialize Aes Provider: Error {ex2}", EventKind.Technical, LogLevel.Error, ex2);
                 throw;
             }
             finally
@@ -207,7 +202,7 @@ namespace PsdzClient.Utility
             return new string (array);
         }
 
-        [PreserveSource(Hint = "Log removed, RijndaelManaged replaced", OriginalHash = "9D74D8D08B12D1C3915C71CE8702563C")]
+        [PreserveSource(Hint = "RijndaelManaged replaced", OriginalHash = "9D74D8D08B12D1C3915C71CE8702563C")]
         public static string DecryptPassword(string encryptedPassWord, string deviceIdent)
         {
             if (string.IsNullOrEmpty(encryptedPassWord) || string.IsNullOrEmpty(deviceIdent))
@@ -235,29 +230,29 @@ namespace PsdzClient.Utility
                 streamReader = new StreamReader(cryptoStream, detectEncodingFromByteOrderMarks: true);
                 result = streamReader.ReadToEnd();
             }
-            catch (CryptographicException)
+            catch (CryptographicException ex)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.DecryptPassword", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
+                Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.DecryptPassword", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
             }
-            catch (EncoderFallbackException)
+            catch (EncoderFallbackException ex2)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.DecryptPassword", ex2.ToString(), EventKind.Technical, LogLevel.Error, ex2);
+                Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.DecryptPassword", ex2.ToString(), EventKind.Technical, LogLevel.Error, ex2);
             }
-            catch (IOException)
+            catch (IOException ex3)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0117, "Encryption.DecryptPassword", ex3.ToString(), EventKind.Technical, LogLevel.Error, ex3);
+                Logger.Instance()?.Log(ICSEventId.ICS0117, "Encryption.DecryptPassword", ex3.ToString(), EventKind.Technical, LogLevel.Error, ex3);
             }
-            catch (FormatException)
+            catch (FormatException ex4)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0129, "Encryption.DecryptPassword", ex4.ToString(), EventKind.Technical, LogLevel.Error, ex4);
+                Logger.Instance()?.Log(ICSEventId.ICS0129, "Encryption.DecryptPassword", ex4.ToString(), EventKind.Technical, LogLevel.Error, ex4);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex5)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0001, "Encryption.DecryptPassword", ex5.ToString(), EventKind.Technical, LogLevel.Error, ex5);
+                Logger.Instance()?.Log(ICSEventId.ICS0001, "Encryption.DecryptPassword", ex5.ToString(), EventKind.Technical, LogLevel.Error, ex5);
             }
-            catch (Exception ex6)when (ex6 is ArgumentNullException || ex6 is ArgumentException)
+            catch (Exception ex6) when (ex6 is ArgumentNullException || ex6 is ArgumentException)
             {
-                // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.DecryptPassword", ex6.ToString(), EventKind.Technical, LogLevel.Error, ex6);
+                Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.DecryptPassword", ex6.ToString(), EventKind.Technical, LogLevel.Error, ex6);
                 throw;
             }
             finally
@@ -298,7 +293,7 @@ namespace PsdzClient.Utility
             return tokenObject;
         }
 
-        [PreserveSource(Hint = "Log removed, changed to SHA256", OriginalHash = "058171376B703BD354BBFA66FB17720E")]
+        [PreserveSource(Hint = "Changed to SHA256", OriginalHash = "058171376B703BD354BBFA66FB17720E")]
         private static string GeneratePasswordHash(string passwordString)
         {
             SHA256 sHA256Managed = null;
@@ -315,13 +310,13 @@ namespace PsdzClient.Utility
 
                 return stringBuilder.ToString();
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0001, "Encryption.GeneratePasswordHash", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
+                Logger.Instance()?.Log(ICSEventId.ICS0001, "Encryption.GeneratePasswordHash", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
             }
-            catch (EncoderFallbackException)
+            catch (EncoderFallbackException ex2)
             {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.GeneratePasswordHash", ex2.ToString(), EventKind.Technical, LogLevel.Error, ex2);
+                Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.GeneratePasswordHash", ex2.ToString(), EventKind.Technical, LogLevel.Error, ex2);
             }
             finally
             {
