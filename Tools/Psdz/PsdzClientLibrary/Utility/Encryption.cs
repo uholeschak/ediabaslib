@@ -16,7 +16,7 @@ namespace PsdzClient.Utility
         private static string _volumeSNr = string.Empty;
         private const string logEncryptionPublicKey = "<RSAKeyValue><Modulus>o0DHJwtLBqYxDLkp7fqN9fhubcWACo2GVfz3qPUJxljUPT4xfZ0QUaFzLpf2YCeOqHGN9093V6dIYtNrukrnLZJtIiZ8kVdBSd3jlJ42QEBjW87XklMez5UKJmjzebs+2NDlaNNcEmhvli2l7GRSbkokqWUuN6SzrS6jIpO8MUk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
         private const string ICSLogEncryptionKeyName = "ICSLogEncryption";
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Log removed", OriginalHash = "11ED03B5190B41C56AB5C54BC1DCE759")]
         public static string Encrypt(string toEncrypt, bool? isSensitive = false)
         {
             if (isSensitive.HasValue && isSensitive == true)
@@ -70,47 +70,13 @@ namespace PsdzClient.Utility
             return string.Empty;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Cleaned")]
         public static string EncryptSensitveContent(string toEncrypt)
         {
-            RSACryptoServiceProvider rSACryptoServiceProvider = null;
-            try
-            {
-                if (string.IsNullOrEmpty(toEncrypt))
-                {
-                    return string.Empty;
-                }
-
-                rSACryptoServiceProvider = new RSACryptoServiceProvider(new CspParameters { KeyContainerName = ICSLogEncryptionKeyName });
-                rSACryptoServiceProvider.FromXmlString(logEncryptionPublicKey);
-                rSACryptoServiceProvider.PersistKeyInCsp = true;
-                return Convert.ToBase64String(rSACryptoServiceProvider.Encrypt(Encoding.UTF8.GetBytes(toEncrypt), fOAEP: true));
-            }
-            catch (NotSupportedException)
-            {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0145, "Encryption.EncryptSensitveContent", ex.ToString(), EventKind.Technical, LogLevel.Error, ex);
-            }
-            catch (EncoderFallbackException)
-            {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0139, "Encryption.EncryptSensitveContent", ex2.ToString(), EventKind.Technical, LogLevel.Error, ex2);
-            }
-            catch (CryptographicException)
-            {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.EncryptSensitveContent", ex3.ToString(), EventKind.Technical, LogLevel.Error, ex3);
-            }
-            catch (Exception ex4)when (ex4 is ArgumentOutOfRangeException || ex4 is ArgumentException)
-            {
-            // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.EncryptSensitveContent", ex4.ToString(), EventKind.Technical, LogLevel.Error, ex4);
-            }
-            finally
-            {
-                rSACryptoServiceProvider?.Dispose();
-            }
-
-            return string.Empty;
+            return toEncrypt;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Log removed", OriginalHash = "8FBDD1B56316B1B6866356649637F496")]
         public static string Decrypt(string toDecrypt)
         {
             // [IGNORE] Logger.Instance()?.Log(ICSEventId.ICSNone, "Encryption.Decrypt - string to decrypt", toDecrypt, EventKind.Technical, LogLevel.Info);
@@ -173,8 +139,8 @@ namespace PsdzClient.Utility
             return SecureStringHelper.ConvertToSecureString(Decrypt(input));
         }
 
-        [PreserveSource(Hint = "Modified")]
-        public static Aes InializeAesProvider()
+        [PreserveSource(Hint = "Log removed, changed to Aes", OriginalHash = "44E009B63DFEC7852BC1CDB2DC4A26F8")]
+        internal static Aes InializeAesProvider()
         {
             Aes aesManaged = null;
             Aes aesManaged2 = null;
@@ -241,7 +207,7 @@ namespace PsdzClient.Utility
             return new string (array);
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Log removed, RijndaelManaged replaced", OriginalHash = "9D74D8D08B12D1C3915C71CE8702563C")]
         public static string DecryptPassword(string encryptedPassWord, string deviceIdent)
         {
             if (string.IsNullOrEmpty(encryptedPassWord) || string.IsNullOrEmpty(deviceIdent))
@@ -332,7 +298,7 @@ namespace PsdzClient.Utility
             return tokenObject;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Log removed, changed to SHA256", OriginalHash = "058171376B703BD354BBFA66FB17720E")]
         private static string GeneratePasswordHash(string passwordString)
         {
             SHA256 sHA256Managed = null;

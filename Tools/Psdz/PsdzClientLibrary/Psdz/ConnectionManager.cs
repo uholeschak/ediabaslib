@@ -6,10 +6,10 @@ using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using PsdzClient.Core;
 using PsdzClient.Core.Container;
+using PsdzClient.Programming;
 using System;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
-using PsdzClient.Programming;
 
 #pragma warning disable CS0169
 namespace PsdzClient.Psdz
@@ -76,7 +76,7 @@ namespace PsdzClient.Psdz
         internal bool IsConnectedViaPttOrEnet => !IsNotConnectedViaPttAndEnet;
         internal int ConnectionPort { get; set; }
 
-        [PreserveSource(Hint = "IProtocolBasic protocoller, IICOMHandler icomHandler, removed")]
+        [PreserveSource(Hint = "IProtocolBasic protocoller, IICOMHandler icomHandler, removed", OriginalHash = "31A3D9487CD0A315187BF6BB49810301")]
         internal ConnectionManager(IPsdz psdz, IVehicle vehicle, IProgMsgListener progMsgListener, bool shouldSetConnectionToDcan = false, int connectionPort = -1) : base(progMsgListener)
         {
             // [IGNORE] PsdzConnectionManager = new PsdzConnectionManager(psdz, protocoller);
