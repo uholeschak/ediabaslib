@@ -1542,6 +1542,7 @@ namespace SourceCodeSync
                 PropertyDeclarationSyntax sourceProperty when preservedMember is PropertyDeclarationSyntax preservedProperty =>
                     sourceProperty
                         .WithAccessorList(preservedProperty.AccessorList)
+                        .WithModifiers(preservedProperty.Modifiers)
                         .WithExpressionBody(preservedProperty.ExpressionBody)
                         .WithInitializer(preservedProperty.Initializer)
                         .WithSemicolonToken(preservedProperty.SemicolonToken)
@@ -1568,6 +1569,7 @@ namespace SourceCodeSync
                 // Field support - merge type and modifiers from source, keep initializer from preserved
                 FieldDeclarationSyntax sourceField when preservedMember is FieldDeclarationSyntax preservedField =>
                     sourceField
+                        .WithModifiers(preservedField.Modifiers)
                         .WithDeclaration(sourceField.Declaration
                             .WithVariables(SyntaxFactory.SeparatedList(
                                 sourceField.Declaration.Variables.Zip(preservedField.Declaration.Variables,

@@ -44,7 +44,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Changed to public")]
+        [PreserveSource(Hint = "Changed to public", SignatureModified = true)]
         public ProgrammingObjectBuilder ProgrammingObjectBuilder
         {
             get
