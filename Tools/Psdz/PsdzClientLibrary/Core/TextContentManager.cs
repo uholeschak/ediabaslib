@@ -14,7 +14,7 @@ namespace PsdzClient.Core
 {
     public class TextContentManager : ITextContentManager
     {
-        [PreserveSource(Hint = "readonly removed")]
+        [PreserveSource(Hint = "Removed readonly", SignatureModified = true)]
         private IList<string> lang;
         [PreserveSource(Hint = "Database replaced")]
         private readonly PsdzDatabase db;
