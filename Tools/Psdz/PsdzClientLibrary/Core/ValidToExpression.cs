@@ -19,7 +19,7 @@ namespace PsdzClient.Core
             value = date.ToBinary();
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "dataProvider removed, vec added", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             bool flag = ((DateTime.Now <= DateTime.FromBinary(value)) ? true : false);

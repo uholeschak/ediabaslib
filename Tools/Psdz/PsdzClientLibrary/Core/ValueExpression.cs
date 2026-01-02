@@ -21,13 +21,14 @@ namespace PsdzClient.Core
             this.value = value;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "vec added", SignatureModified = true)]
         public static ValueExpression Deserialize(Stream ms, Vehicle vec)
         {
             ms.ReadByte();
             byte[] buffer = new byte[8];
             ms.Read(buffer, 0, 8);
-            return new ValueExpression(BitConverter.ToInt64(buffer, 0));
+            long num = BitConverter.ToInt64(buffer, 0);
+            return new ValueExpression(num);
         }
 
         public override EEvaluationResult EvaluateEmpiricalRule(long[] premises)

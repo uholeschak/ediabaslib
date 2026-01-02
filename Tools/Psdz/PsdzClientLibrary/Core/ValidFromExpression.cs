@@ -19,7 +19,7 @@ namespace PsdzClient.Core
             value = date.ToBinary();
         }
 
-        [PreserveSource(Hint = "dataProvider removed, vec added", OriginalHash = "99E85E2D34F0827AD1057A0CC0199CC4")]
+        [PreserveSource(Hint = "dataProvider removed, vec added", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             bool flag = true;
