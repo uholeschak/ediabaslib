@@ -68,7 +68,7 @@ namespace PsdzClient.Utility
                 if (ExceptionAtStartup)
                 {
                     Logger.Instance()?.Log(ICSEventId.ICS0006, "WMIInfo.GetSearchResult", "Could not retrieve WMIInfo, possible WMI repository corruption", EventKind.Technical, LogLevel.Error, exception);
-                    string caption = "ISPI AdminClient error ICS0006";
+                    // [UH] [IGNORE] string caption = "ISPI AdminClient error ICS0006";
                     // [UH] [IGNORE] MessageBox.Show("Kritischer Fehler beim Lesen der lokalen WMI-Datenbank: Repository  ist möglicherweise beschädigt oder Windows Management Instrumentation Service muss neu gestartet werden. Bitte öffnen Sie ein Ticket für den technischen Support und geben Sie an, dass auf diesem Gerät der Fehler ICS0006 aufgetreten ist.\n\nCritical error in reading local WMI database: repository is corrupted or Windows Management Instrumentation service needs to be restarted. Please open a ticket to technical support mentioning error ICS0006 has occurred on this device.", caption, MessageBoxButtons.OK, MessageBoxIcon.Hand, MessageBoxDefaultButton.Button1, MessageBoxOptions.ServiceNotification);
                     throw new ManagementException("Critical error in reading WMI database: repository may be corrupted or Windows Management Instrumentation service needs to be restarted.");
                 }
