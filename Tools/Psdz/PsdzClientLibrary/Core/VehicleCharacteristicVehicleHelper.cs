@@ -9,25 +9,18 @@ using static PsdzClient.Core.ValidationRuleInternalResult;
 
 namespace PsdzClient.Core
 {
-	public class VehicleCharacteristicVehicleHelper : VehicleCharacteristicAbstract
-	{
+    public class VehicleCharacteristicVehicleHelper : VehicleCharacteristicAbstract
+    {
         [PreserveSource(Hint = "Dataprovider changed")]
         PsdzDatabase dataProvider;
-
         private string characteristicValue;
-
         [PreserveSource(Hint = "changed to string")]
         private string characteristicRootsNodeClass;
-
         private decimal characteristicId;
-
         private IVehicleRuleEvaluation vehicle;
-
         private long datavalueId;
-
         private ValidationRuleInternalResults internalResult;
-
-        [PreserveSource(Hint = "dbConnector removed")]
+        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "28FDCFD350584359CFB11BBC70A6E6E6")]
         public VehicleCharacteristicVehicleHelper(IVehicleRuleEvaluation vehicle)
         {
             characteristicValue = string.Empty;
@@ -35,7 +28,7 @@ namespace PsdzClient.Core
             internalResult = new ValidationRuleInternalResults();
         }
 
-        [PreserveSource(Hint = "characteristicRootsNodeClass to string")]
+        [PreserveSource(Hint = "characteristicRootsNodeClass to string", OriginalHash = "E3FB94742C30F9F1ABDCB9B44BC45A8F")]
         public bool GetISTACharacteristics(string characteristicRootsNodeClass, out string value, decimal id, IVehicleRuleEvaluation vehicle, long dataValueId, ValidationRuleInternalResults internalResult)
         {
             this.characteristicRootsNodeClass = characteristicRootsNodeClass;
@@ -43,7 +36,7 @@ namespace PsdzClient.Core
             this.vehicle = vehicle;
             datavalueId = dataValueId;
             this.internalResult = internalResult;
-            dataProvider = ClientContext.GetDatabase(vehicle as Vehicle);
+            dataProvider = ClientContext.GetDatabase(vehicle as Vehicle);   // [UH] [IGNORE] added
             bool result = ComputeCharacteristic(characteristicRootsNodeClass);
             value = characteristicValue;
             return result;
@@ -128,6 +121,7 @@ namespace PsdzClient.Core
             {
                 return dataProvider.LookupVehicleCharIdByName("BMW I", 40139010) == (decimal)datavalueId;
             }
+
             return dataProvider.LookupVehicleCharIdByName(vehicle.Marke, 40139010) == (decimal)datavalueId;
         }
 
@@ -341,6 +335,7 @@ namespace PsdzClient.Core
                 decimal num = dataProvider.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L);
                 return (num != 0m) ? (num == (decimal)datavalueId) : (dataProvider.LookupVehicleCharIdByName("MINI", 40039952514L) == (decimal)datavalueId);
             }
+
             return dataProvider.LookupVehicleCharIdByName(vehicle.Produktlinie, 40039952514L) == (decimal)datavalueId;
         }
 
@@ -429,8 +424,10 @@ namespace PsdzClient.Core
                     {
                         validationRuleInternalResult.IsValid = true;
                     }
+
                     internalResult.Add(validationRuleInternalResult);
                 }
+
                 IRuleExpression ruleExpression = internalResult.RuleExpression;
                 IRuleExpression ruleExpression2 = ruleExpression;
                 if (!(ruleExpression2 is AndExpression))
@@ -452,8 +449,10 @@ namespace PsdzClient.Core
                     validationRuleInternalResult.IsValid &= flag;
                 }
             }
+
             value = string.Join(",", vehicle.HeatMotors.Select((HeatMotor arg) => getProperty(arg)));
-            bool flag2 = (from r in internalResult
+            bool flag2 = (
+                from r in internalResult
                 group r by r.Id).Any((IGrouping<string, ValidationRuleInternalResult> g) => g.All((ValidationRuleInternalResult c) => c.IsValid));
             return (internalResult.RuleExpression is NotExpression) ? (!flag2) : flag2;
         }
