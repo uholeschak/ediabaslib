@@ -399,9 +399,10 @@ namespace PsdzClient.Core
             return dataProvider.LookupVehicleCharIdByName(vehicle.Sportausfuehrung, 99999999847L) == (decimal)datavalueId;
         }
 
-        [PreserveSource(Hint = "Adapted")]
+        [PreserveSource(Hint = "Modified rootNodeClass", OriginalHash = "E3C0DBAACCE860A15D67255D8321A858")]
         private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, long datavalueId, ValidationRuleInternalResults internalResult, out string value, string rootNodeClass, decimal characteristicNodeclass)
         {
+            // [UH] [IGNORE] Convert rootNodeClass
             if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal rootClassValue))
             {
                 rootClassValue = 0;
@@ -424,10 +425,8 @@ namespace PsdzClient.Core
                     {
                         validationRuleInternalResult.IsValid = true;
                     }
-
                     internalResult.Add(validationRuleInternalResult);
                 }
-
                 IRuleExpression ruleExpression = internalResult.RuleExpression;
                 IRuleExpression ruleExpression2 = ruleExpression;
                 if (!(ruleExpression2 is AndExpression))
