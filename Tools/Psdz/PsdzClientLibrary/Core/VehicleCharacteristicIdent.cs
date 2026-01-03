@@ -12,23 +12,18 @@ namespace PsdzClient.Core
     public sealed class VehicleCharacteristicIdent : VehicleCharacteristicAbstract
     {
         public const string DefaultEmptyCharacteristicValue = "-";
-
         private IIdentVehicle vecInfo;
-
         [PreserveSource(Hint = "Database modified")]
         private PsdzDatabase.Characteristics characteristic;
-
         private ReactorEngine reactor;
-
         private readonly ILogger log;
-
-        [PreserveSource(Hint = "Reactor removed")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "7E547C731AEA645296329C5AA599CF35")]
         public VehicleCharacteristicIdent(ILogger log)
         {
             this.log = log;
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Characteristic modified", SignatureModified = true)]
         public bool AssignVehicleCharacteristic(string vehicleCode, IIdentVehicle vehicle, PsdzDatabase.Characteristics characteristic)
         {
             return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
@@ -146,6 +141,7 @@ namespace PsdzClient.Core
                     log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "found unknown brand name: {0}", characteristic.Name);
                     break;
             }
+
             return true;
         }
 
@@ -271,6 +267,7 @@ namespace PsdzClient.Core
             {
                 istaVisible = visible;
             }
+
             if (!((istaVisible.GetValueOrDefault() == default(decimal)) & istaVisible.HasValue))
             {
                 reactor.SetVerkaufsBezeichnung(characteristic.Name, DataSource.Database);
@@ -279,6 +276,7 @@ namespace PsdzClient.Core
             {
                 reactor.SetVerkaufsBezeichnung("-", DataSource.Hardcoded);
             }
+
             return true;
         }
 
@@ -509,6 +507,7 @@ namespace PsdzClient.Core
             {
                 return heatMotor;
             }
+
             heatMotor = new HeatMotor
             {
                 DriveId = driveId

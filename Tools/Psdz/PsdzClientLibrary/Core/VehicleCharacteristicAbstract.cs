@@ -4,8 +4,7 @@ namespace PsdzClient.Core
 {
     public abstract class VehicleCharacteristicAbstract
     {
-        // ToDo: Check on update
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database modified", OriginalHash = "E5432F3B94B70C791445C4F8B749397A")]
         protected bool ComputeCharacteristic(string vehicleCode, params object[] param)
         {
             if (Enum.TryParse<VehicleCharacteristic>(vehicleCode, out var result))
