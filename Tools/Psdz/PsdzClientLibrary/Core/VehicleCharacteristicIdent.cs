@@ -258,12 +258,13 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Convert to decimal")]
+        [PreserveSource(Hint = "Convert to decimal", OriginalHash = "1EC76661F211BCE0EB5AC596DC117E79s")]
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
+            // [UH] [IGNORE] Convert IstaVisible to decimal
             decimal? istaVisible = null;
-            if (decimal.TryParse(this.characteristic.IstaVisible, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal visible))
+            if (decimal.TryParse(characteristic.IstaVisible, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal visible))
             {
                 istaVisible = visible;
             }
@@ -491,11 +492,11 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Reactor modified")]
+        [PreserveSource(Hint = "Reactor modified", OriginalHash = "8DBDA399844725DCC6051E15D0E508E9")]
         private void GetIdentParameters(params object[] parameters)
         {
             vecInfo = (IIdentVehicle)parameters[0];
-            // [UH] [IGNORE] get reactor from vehicle
+            // [UH] [IGNORE] get reactor from vehicle and store it for the caller
             reactor = (vecInfo as Vehicle)?.Reactor;
             characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
