@@ -11,7 +11,7 @@ namespace PsdzClient.Core
     public class VehicleLogistics
     {
         private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Removed ProcessName")]
         private static Lazy<bool> isGui = new Lazy<bool>(false);
         public const string FallbackBordnetName = "BNT-XML-FALLBACK.xml";
         public static BaseEcuCharacteristics CallGetCharacteristics(Vehicle vecInfo)
@@ -53,7 +53,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "XEP_SALAPAS replaced")]
+        [PreserveSource(Hint = "XEP_SALAPAS replaced", OriginalHash = "2DE262629641E65D97C76E267B66A764")]
         public static ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
@@ -637,7 +637,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "vehicle added")]
+        [PreserveSource(Hint = "vehicle added", OriginalHash = "0D6452912A4D52A8A7415BF86993706B")]
         public static void DecodeVCMBackupFA(byte[] faAsByteArray, Vehicle vehicle)
         {
             if (faAsByteArray == null || faAsByteArray.Length < 160)
@@ -768,7 +768,7 @@ namespace PsdzClient.Core
             return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
         }
 
-        [PreserveSource(Hint = "Database replaced")]
+        [PreserveSource(Hint = "Database replaced", OriginalHash = "667F08AEC8715791A2ED9ED4A44B98A6")]
         public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo)
             where T : BaseEcuCharacteristics
         {
@@ -872,7 +872,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Database replaced", OriginalHash = "45150DB4A9E5B539386C7250F0237857")]
         private static PsdzDatabase.BordnetsData GetBordnetXmlFromDatabase(Vehicle vecInfo)
         {
             Log.Info(Log.CurrentMethod(), "Reading bordnet configuration from the database");
