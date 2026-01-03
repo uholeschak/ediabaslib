@@ -258,7 +258,7 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Convert to decimal", OriginalHash = "1EC76661F211BCE0EB5AC596DC117E79s")]
+        [PreserveSource(Hint = "Convert to decimal", OriginalHash = "1EC76661F211BCE0EB5AC596DC117E79")]
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
