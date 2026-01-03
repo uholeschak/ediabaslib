@@ -10,11 +10,12 @@ namespace PsdzClient.Core
         private const string GoogleDNSIp = "8.8.8.8";
         private const string BaiduDNSIp = "180.76.76.76";
         private const int PingRetryCount = 4;
-        [PreserveSource(Hint = "Simplified")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "626656F77045111B48E965A4C6CC6EB1")]
         public static bool CheckForInternetConnection()
         {
             try
             {
+                // [UH] [IGNORE] Code removed
                 return LogToFastaAndReturnConnectionStatus();
             }
             catch (Exception exception)
@@ -24,7 +25,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Simplified")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "B9DD57AC84443AFFC1870B85B4CA25D1")]
         public static bool CheckForIntranetConnection()
         {
             try
