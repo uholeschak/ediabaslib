@@ -315,11 +315,11 @@ namespace PsdzClient.Programming
 
         public const int CodingConnectionTimeout = 10000;
 
-        public const double MinBatteryVoltageErrorPb = 9.95;
-        public const double MinBatteryVoltageErrorLfp = 10.25;
+        public const double MinBatteryVoltageErrorPb = VoltageThreshold.minErrorPbNewDefault;
+        public const double MinBatteryVoltageErrorLfp = VoltageThreshold.minErrorLFPDefault;
 
-        public const double MinBatteryVoltageWarnPb = 12.55;
-        public const double MinBatteryVoltageWarnLfp = 12.35;
+        public const double MinBatteryVoltageWarnPb = VoltageThreshold.minWarningPbNewDefault;
+        public const double MinBatteryVoltageWarnLfp = VoltageThreshold.minWarningLFPDefault;
 
         public const double MaxBatteryVoltageWarnPb = VoltageThreshold.maxWarningPbDefault;
         public const double MaxBatteryVoltageWarnLfp = VoltageThreshold.maxWarningLFPDefault;
