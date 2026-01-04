@@ -1,4 +1,5 @@
-﻿using PsdzClient;
+﻿using System;
+using PsdzClient;
 
 namespace PsdzClient.Core.Container
 {
@@ -25,12 +26,32 @@ namespace PsdzClient.Core.Container
         [PreserveSource(Hint = "License modified", OriginalHash = "8A55A937F33E877507003C6920BB1500")]
         static VehicleCommunication()
         {
-            // [UH] [IGNORE] modified
-            _validLicense = true;
+            Log.Info("VehicleCommunication.VehicleCommunication()", "ctor called.");
+            try
+            {
+                //[-] BMW.Rheingold.CoreFramework.LicenseManager.VerifyLicense();
+                Log.Info(string.Empty, "ISTA Activation succeeded");
+                _validLicense = true;
+            }
+            catch
+            {
+                Log.Info(string.Empty, "ISTA Activation failed");
+                _validLicense = false;
+            }
             Log.Info("VehicleCommunication.VehicleCommunication()", "ctor called.");
             debuglevel = ConfigSettings.getConfigint("DebugLevel", 0);
             debuglevel = ConfigSettings.getConfigint("BMW.Rheingold.VehicleCommunication.DebugLevel", debuglevel);
-            // [UH] [IGNORE] EnableEDIABASMultiThreading removed
+            try
+            {
+                bool configStringAsBoolean = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.VehicleCommunication.EnableEDIABASMultiThreading", defaultValue: false);
+                Log.Info("VehicleCommunication.VehicleCommunication()", "Setting up EDIABAS threading mode: {0}", configStringAsBoolean);
+                //[-] bool flag = API.enableMultiThreading(configStringAsBoolean);
+                //[-] Log.Info("VehicleCommunication.VehicleCommunication()", "Switching to EDIABAS threading mode result: {0}", flag);
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException("VehicleCommunication.VehicleCommunication()", exception);
+            }
         }
     }
 }
