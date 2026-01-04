@@ -25,7 +25,7 @@ namespace PsdzClient.Programming
 
         public PsdzServiceArgs PsdzServiceArgs { get; }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified, istaFolder added")]
         public PsdzConfig(string istaFolder, string dealerId)
         {
             string psdzHostSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\hostx64" : @"PSdZ\host";
@@ -57,7 +57,7 @@ namespace PsdzClient.Programming
             Log.Info("PsdzConfig.PsdzConfig()", "PsdzServiceArgs: \n{0}", PsdzServiceArgs);
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified, istaFolder added")]
         private static PsdzServiceArgs CreateServiceArgs(bool? isTestRun, string istaFolder, string psdzLogFilePath = null, string dealerId = null)
         {
             string psdzPath = Psdz64BitPathResolver.GetPsdzPath(istaFolder);
@@ -74,7 +74,7 @@ namespace PsdzClient.Programming
             return psdzServiceArgs;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified, 64 bit check replaced")]
         private static string[] GetPsdzJvmOptions(string psdzBinaryPath, string psdzLogFilePath)
         {
             int num = 1024;

@@ -168,7 +168,7 @@ namespace PsdzClient.Programming
         public IPsdzTalFilter TalFilterForIndividualDataTal { get; private set; }
         public RequestJson NCDLastCalculationRequest { get; internal set; }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Changed to property")]
         public IPsdzConnection Connection { get; set; }
         internal IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
         internal IDictionary<string, IList<string>> ExecutionOrderBottom { get; private set; }

@@ -37,7 +37,7 @@ namespace BMW.Rheingold.Programming
 
         public string[] JarArguments { get; }
 
-        [PreserveSource(Hint = "istaFolder added")]
+        [PreserveSource(Hint = "istaFolder added, modified directories", OriginalHash = "4E990733510C37CC5E6B216124777E32")]
         public PsdzWebServiceConfig(string istaFolder, string dealerId = null)
         {
             // [UH] [IGNORE] replaced logs dir
@@ -101,7 +101,7 @@ namespace BMW.Rheingold.Programming
             return "\"" + string.Join("\" \"", JarArguments) + "\"";
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Modified, 64 bit check replaced", OriginalHash = "FAD348C117E436B65C312FD73FA3C780")]
         private string[] GetPsdzJvmOptions()
         {
             int num = 1280;
@@ -153,7 +153,7 @@ namespace BMW.Rheingold.Programming
             return 0;
         }
 
-        [PreserveSource(Hint = "webServiceDir added")]
+        [PreserveSource(Hint = "webServiceDir added", OriginalHash = "0766999489AF6E03769588659C085120")]
         private static string GetLog4JConfigFilePath(string webServiceDir)
         {
             if (!Directory.Exists(webServiceDir))
