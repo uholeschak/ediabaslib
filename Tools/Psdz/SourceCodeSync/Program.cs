@@ -95,6 +95,8 @@ namespace SourceCodeSync
             { "BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic", "MultisourceLogic"}
         };
 
+        private const string _commentedCodeMarker = "//[-]";
+
         private const string _attributPreserveSource = "PreserveSource";
 
         private const string _signatureModifiedProperty = "SignatureModified";
@@ -1374,6 +1376,12 @@ namespace SourceCodeSync
                             continue;
                         }
 
+                        // Skip //[-] commented code markers - these will be handled separately
+                        if (comment.TrimStart().StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                        {
+                            continue;
+                        }
+
                         return true;
                     }
                 }
@@ -1585,9 +1593,6 @@ namespace SourceCodeSync
         /// <summary>
         /// Merges source class into destination, preserving marked members at their original positions
         /// </summary>
-        /// <summary>
-        /// Merges source class into destination, preserving marked members at their original positions
-        /// </summary>
         public static ClassDeclarationSyntax MergeClassPreservingMarked(
             ClassDeclarationSyntax destClass,
             ClassDeclarationSyntax sourceClass)
@@ -1734,6 +1739,114 @@ namespace SourceCodeSync
             return sourceInterface.WithMembers(SyntaxFactory.List(newMembers));
         }
 
+        /// <summary>
+        /// Extracts commented code from //[-] comments and returns the uncommented version
+        /// </summary>
+        private static string ExtractCommentedCode(string comment)
+        {
+            if (string.IsNullOrEmpty(comment))
+            {
+                return null;
+            }
+
+            string trimmed = comment.TrimStart();
+            if (!trimmed.StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            // Remove the //[-] prefix and return the code
+            return trimmed.Substring(_commentedCodeMarker.Length).TrimStart();
+        }
+
+        /// <summary>
+        /// Gets all //[-] commented code lines from a member's trivia
+        /// </summary>
+        private static List<(SyntaxTrivia trivia, string commentedCode)> GetCommentedCodeTrivia(SyntaxNode member)
+        {
+            var result = new List<(SyntaxTrivia, string)>();
+
+            if (member.HasLeadingTrivia)
+            {
+                foreach (var trivia in member.GetLeadingTrivia())
+                {
+                    if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
+                    {
+                        string comment = trivia.ToString();
+                        string code = ExtractCommentedCode(comment);
+                        if (code != null)
+                        {
+                            result.Add((trivia, code));
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Checks if the commented code matches the corresponding source code line
+        /// </summary>
+        private static bool CommentedCodeMatchesSource(string commentedCode, MemberDeclarationSyntax sourceMember)
+        {
+            if (string.IsNullOrEmpty(commentedCode) || sourceMember == null)
+            {
+                return false;
+            }
+
+            // Normalize both strings for comparison (remove whitespace)
+            string normalizedComment = Regex.Replace(commentedCode, @"\s+", "");
+            string sourceCode = sourceMember.NormalizeWhitespace().ToFullString();
+            string normalizedSource = Regex.Replace(sourceCode, @"\s+", "");
+
+            // Check if the commented code is contained in the source
+            return normalizedSource.Contains(normalizedComment, StringComparison.Ordinal);
+        }
+
+        /// <summary>
+        /// Preserves //[-] commented code trivia from destination to merged member if it matches source
+        /// </summary>
+        private static MemberDeclarationSyntax PreserveCommentedCodeTrivia(
+            MemberDeclarationSyntax destMember,
+            MemberDeclarationSyntax sourceMember,
+            MemberDeclarationSyntax mergedMember)
+        {
+            var commentedCodeTrivias = GetCommentedCodeTrivia(destMember);
+
+            if (!commentedCodeTrivias.Any())
+            {
+                return mergedMember;
+            }
+
+            // Filter trivias where commented code matches source
+            var matchingTrivias = commentedCodeTrivias
+                .Where(t => CommentedCodeMatchesSource(t.commentedCode, sourceMember))
+                .Select(t => t.trivia)
+                .ToList();
+
+            if (!matchingTrivias.Any())
+            {
+                return mergedMember;
+            }
+
+            // Get existing leading trivia from merged member
+            var existingTrivia = mergedMember.GetLeadingTrivia().ToList();
+
+            // Add matching //[-] comments at the beginning
+            var newTrivia = new List<SyntaxTrivia>();
+            newTrivia.AddRange(matchingTrivias);
+
+            // Add a newline after the comments if needed
+            if (matchingTrivias.Any() && existingTrivia.Any())
+            {
+                newTrivia.Add(SyntaxFactory.EndOfLine(Environment.NewLine));
+            }
+
+            newTrivia.AddRange(existingTrivia);
+
+            return mergedMember.WithLeadingTrivia(SyntaxFactory.TriviaList(newTrivia));
+        }
         /// <summary>
         /// Checks if a member has a preserve marker
         /// </summary>
