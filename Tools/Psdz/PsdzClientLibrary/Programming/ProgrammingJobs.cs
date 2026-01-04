@@ -321,11 +321,11 @@ namespace PsdzClient.Programming
         public const double MinBatteryVoltageWarnPb = 12.55;
         public const double MinBatteryVoltageWarnLfp = 12.35;
 
-        public const double MaxBatteryVoltageWarnPb = 14.85;
-        public const double MaxBatteryVoltageWarnLfp = 14.05;
+        public const double MaxBatteryVoltageWarnPb = VoltageThreshold.maxWarningPbDefault;
+        public const double MaxBatteryVoltageWarnLfp = VoltageThreshold.maxWarningLFPDefault;
 
-        public const double MaxBatteryVoltageErrorPb = 15.55;
-        public const double MaxBatteryVoltageErrorLfp = 14.45;
+        public const double MaxBatteryVoltageErrorPb = VoltageThreshold.maxErrorPbDefault;
+        public const double MaxBatteryVoltageErrorLfp = VoltageThreshold.maxErrorLFPDefault;
 
         private bool _disposed;
         public ClientContext ClientContext { get; private set; }
