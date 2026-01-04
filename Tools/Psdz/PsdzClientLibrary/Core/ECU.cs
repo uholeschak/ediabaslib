@@ -2005,14 +2005,14 @@ namespace PsdzClient.Core
         {
             subBUSField = new ObservableCollection<BusType>();
             sWTStatusField = new ObservableCollection<typeSWTStatus>();
-            // [IGNORE] selectedINFOField = new DTC();
-            // [IGNORE] selectedDTCField = new DTC();
+            //[-] selectedINFOField = new DTC();
+            //[-] selectedDTCField = new DTC();
             tALField = new ObservableCollection<typeECU_Transaction>();
             sVKField = new SVK();
-            // [IGNORE] iNFOField = new ObservableCollection<DTC>();
-            // [IGNORE] FEHLER = new ObservableCollection<DTC>();
+            //[-] iNFOField = new ObservableCollection<DTC>();
+            //[-] FEHLER = new ObservableCollection<DTC>();
             aIFField = new ObservableCollection<AIF>();
-            // [IGNORE] jOBSField = new ObservableCollection<JOB>();
+            //[-] jOBSField = new ObservableCollection<JOB>();
             bUSField = BusType.UNKNOWN;
             diagProtocollField = typeDiagProtocoll.UNKNOWN;
             eCUTreeColumnField = -1;

@@ -14,6 +14,17 @@ namespace SourceCodeSync
 {
     internal class Program
     {
+        /// <summary>
+        /// Represents a //[-] comment line with its context (preceding and following lines)
+        /// </summary>
+        private class CommentedCodeLineInfo
+        {
+            public string CommentLine { get; set; }
+            public string PrecedingCodeLine { get; set; }
+            public string FollowingCodeLine { get; set; }
+            public int OriginalLineNumber { get; set; }
+        }
+
         private static Dictionary<string, ClassDeclarationSyntax> _classDict = new (StringComparer.Ordinal);
         private static Dictionary<string, ClassDeclarationSyntax> _classBareDict = new (StringComparer.Ordinal);
         private static Dictionary<string, InterfaceDeclarationSyntax> _interfaceDict = new (StringComparer.Ordinal);
@@ -94,6 +105,8 @@ namespace SourceCodeSync
             { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.NetworkType", "BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType"},
             { "BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic", "MultisourceLogic"}
         };
+
+        private const string _commentedCodeMarker = "//[-]";
 
         private const string _attributPreserveSource = "PreserveSource";
 
@@ -1374,6 +1387,12 @@ namespace SourceCodeSync
                             continue;
                         }
 
+                        // Skip //[-] commented code markers - these will be handled separately
+                        if (comment.TrimStart().StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                        {
+                            continue;
+                        }
+
                         return true;
                     }
                 }
@@ -1585,9 +1604,6 @@ namespace SourceCodeSync
         /// <summary>
         /// Merges source class into destination, preserving marked members at their original positions
         /// </summary>
-        /// <summary>
-        /// Merges source class into destination, preserving marked members at their original positions
-        /// </summary>
         public static ClassDeclarationSyntax MergeClassPreservingMarked(
             ClassDeclarationSyntax destClass,
             ClassDeclarationSyntax sourceClass)
@@ -1777,6 +1793,197 @@ namespace SourceCodeSync
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Preserves //[-] commented code lines inside method bodies and other members
+        /// </summary>
+        private static MemberDeclarationSyntax PreserveCommentedCodeInsideBody(
+            MemberDeclarationSyntax destMember,
+            MemberDeclarationSyntax sourceMember)
+        {
+            // Get all //[-] comments from destination member (including inside body)
+            var destCommentedLines = GetAllCommentedCodeLines(destMember);
+
+            if (!destCommentedLines.Any())
+            {
+                return sourceMember;
+            }
+
+            // Get the source code as string and work with it line by line
+            string sourceCode = sourceMember.ToFullString();
+            string destCode = destMember.ToFullString();
+
+            // Parse dest code to find //[-] lines and their context
+            var linesToPreserve = FindCommentedCodeLinesWithContext(destCode);
+
+            if (!linesToPreserve.Any())
+            {
+                return sourceMember;
+            }
+
+            // Try to insert //[-] lines into source code at appropriate positions
+            string mergedCode = MergeCommentedCodeLines(sourceCode, destCode, linesToPreserve);
+
+            if (mergedCode == sourceCode)
+            {
+                return sourceMember;
+            }
+
+            // Parse the merged code back into a syntax node
+            SyntaxTree mergedTree = CSharpSyntaxTree.ParseText(mergedCode);
+            SyntaxNode mergedRoot = mergedTree.GetRoot();
+
+            // Find the member in the merged tree
+            var mergedMember = mergedRoot.DescendantNodes()
+                .OfType<MemberDeclarationSyntax>()
+                .FirstOrDefault();
+
+            return mergedMember ?? sourceMember;
+        }
+
+        /// <summary>
+        /// Gets all //[-] commented code lines from a member, including inside bodies
+        /// </summary>
+        private static List<string> GetAllCommentedCodeLines(SyntaxNode member)
+        {
+            var result = new List<string>();
+
+            foreach (var trivia in member.DescendantTrivia())
+            {
+                if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
+                {
+                    string comment = trivia.ToString();
+                    if (comment.TrimStart().StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                    {
+                        result.Add(comment);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Finds all //[-] comment lines with their surrounding context
+        /// </summary>
+        private static List<CommentedCodeLineInfo> FindCommentedCodeLinesWithContext(string code)
+        {
+            var result = new List<CommentedCodeLineInfo>();
+            var lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string trimmedLine = lines[i].TrimStart();
+                if (trimmedLine.StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                {
+                    var info = new CommentedCodeLineInfo
+                    {
+                        CommentLine = lines[i],
+                        PrecedingCodeLine = i > 0 ? NormalizeCodeLine(lines[i - 1]) : null,
+                        FollowingCodeLine = i < lines.Length - 1 ? NormalizeCodeLine(lines[i + 1]) : null,
+                        OriginalLineNumber = i
+                    };
+                    result.Add(info);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Normalizes a code line for comparison (removes whitespace)
+        /// </summary>
+        private static string NormalizeCodeLine(string line)
+        {
+            if (string.IsNullOrEmpty(line))
+            {
+                return null;
+            }
+
+            string trimmed = line.Trim();
+
+            // Skip empty lines and other comments
+            if (string.IsNullOrEmpty(trimmed) ||
+                trimmed.StartsWith("//", StringComparison.Ordinal) ||
+                trimmed.StartsWith("/*", StringComparison.Ordinal))
+            {
+                return null;
+            }
+
+            return Regex.Replace(trimmed, @"\s+", "");
+        }
+
+        /// <summary>
+        /// Merges //[-] commented code lines from dest into source code
+        /// </summary>
+        private static string MergeCommentedCodeLines(
+            string sourceCode,
+            string destCode,
+            List<CommentedCodeLineInfo> linesToPreserve)
+        {
+            var sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
+            var insertions = new List<(int lineIndex, string commentLine)>();
+
+            foreach (var commentInfo in linesToPreserve)
+            {
+                int insertIndex = -1;
+
+                // Strategy 1: Find by preceding line
+                if (commentInfo.PrecedingCodeLine != null)
+                {
+                    for (int i = 0; i < sourceLines.Count; i++)
+                    {
+                        string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
+                        if (normalizedSourceLine != null &&
+                            normalizedSourceLine == commentInfo.PrecedingCodeLine)
+                        {
+                            // Check if comment is not already there
+                            if (i + 1 < sourceLines.Count &&
+                                !sourceLines[i + 1].TrimStart().StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                            {
+                                insertIndex = i + 1;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                // Strategy 2: Find by following line
+                if (insertIndex == -1 && commentInfo.FollowingCodeLine != null)
+                {
+                    for (int i = 0; i < sourceLines.Count; i++)
+                    {
+                        string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
+                        if (normalizedSourceLine != null &&
+                            normalizedSourceLine == commentInfo.FollowingCodeLine)
+                        {
+                            // Check if comment is not already there
+                            if (i > 0 &&
+                                !sourceLines[i - 1].TrimStart().StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                            {
+                                insertIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                if (insertIndex >= 0)
+                {
+                    insertions.Add((insertIndex, commentInfo.CommentLine));
+                }
+            }
+
+            // Sort insertions by line index (descending) to insert from bottom to top
+            insertions = insertions.OrderByDescending(x => x.lineIndex).ToList();
+
+            foreach (var (lineIndex, commentLine) in insertions)
+            {
+                sourceLines.Insert(lineIndex, commentLine);
+            }
+
+            return string.Join(Environment.NewLine, sourceLines);
         }
 
         /// <summary>
