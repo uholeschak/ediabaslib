@@ -12,8 +12,9 @@ using PsdzClient.Core;
 #pragma warning disable CS0169
 namespace PsdzClient.Programming
 {
-	public class ProgrammingAction : IComparable<IProgrammingAction>, INotifyPropertyChanged, IProgrammingAction
-	{
+    [PreserveSource(Hint = "Changed to public", AccessModified = true)]
+    public class ProgrammingAction : IProgrammingAction, INotifyPropertyChanged, IComparable<IProgrammingAction>, ITherapyPlanAction2, ITherapyPlanAction
+    {
         private ProgrammingActionData data;
 
         private string assemblyNumberSetPoint;
