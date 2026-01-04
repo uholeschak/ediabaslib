@@ -17,9 +17,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
-using PsdzClient;
 
-#pragma warning disable CS0169
+#pragma warning disable CS0169, CS0649
 namespace PsdzClient.Core.Container
 {
     public class ECUKom : IEcuKom, IEcuKomApi

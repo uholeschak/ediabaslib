@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 using System;
-using PsdzClient;
 
+#pragma warning disable CS0649
 namespace PsdzClient.Core
 {
     public sealed class CoreFramework
     {
-        private static bool ValidLicense;
+        [PreserveSource(Hint = "Initialize with true")]
+        private static bool ValidLicense = true;
         private static readonly DateTime? lastCompileTime;
         private static int debuglevel;
         public static string AssemblyVersion
@@ -95,9 +96,8 @@ namespace PsdzClient.Core
         static CoreFramework()
         {
             Log.Info("CoreFramework.CoreFramework()", "ctor called.");
-            // [UH] [IGNORE] modified
-            validLicense = true;
-            lastCompileTime = null;
+            //[-] VerifyAssemblyHelper.VerifyStrongName(typeof(CoreFramework), force: true);
+            //[-] lastCompileTime = AssemblyHelper.GetBuildDateTime(Assembly.GetAssembly(typeof(CoreFramework)));
             debuglevel = ConfigSettings.getConfigint("DebugLevel", 0);
             debuglevel = ConfigSettings.getConfigint("BMW.Rheingold.CoreFramework.DebugLevel", debuglevel);
             Log.Info("CoreFramework.CoreFramework()", "CoreFramework.DebugLevel is {0}", debuglevel);
