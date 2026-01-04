@@ -26,8 +26,8 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "Modified", OriginalHash = "03862E515BC2300068C3F8A674BB8112")]
         public RuleEvaluationUtill(IRuleEvaluationServices ruleEvaluationServices, PsdzDatabase database, Action startRuleMetrics = null, Action stopRuleMetrics = null)
         {
-            // [IGNORE] ruleCache = dataProvider.RuleCache;
-            // [IGNORE] this.dealer = dealer;
+            //[-] ruleCache = dataProvider.RuleCache;
+            //[-] this.dealer = dealer;
             this.ruleEvaluationServices = ruleEvaluationServices;
             // replaced [IGNORE] this.dataProvider = dataProvider;
             this.database = database;

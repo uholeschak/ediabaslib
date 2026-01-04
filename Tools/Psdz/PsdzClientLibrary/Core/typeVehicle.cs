@@ -2328,25 +2328,25 @@ namespace PsdzClient.Core
         public typeVehicle(ClientContext clientContext)
         {
             _clientContext = clientContext;
-            // [IGNORE] perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
+            //[-] perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
             installedAdaptersField = new ObservableCollection<decimal>();
-            // [IGNORE] combinedFaultsField = new ObservableCollection<DTC>();
-            // [IGNORE] diagCodesField = new ObservableCollection<typeDiagCode>();
-            // [IGNORE] serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
-            // [IGNORE] technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
+            //[-] combinedFaultsField = new ObservableCollection<DTC>();
+            //[-] diagCodesField = new ObservableCollection<typeDiagCode>();
+            //[-] serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
+            //[-] technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
             mIBField = new VCIDevice(clientContext);
             vCIField = new VCIDevice(clientContext);
-            // [IGNORE] testplanField = new TestPlanType();
-            // [IGNORE] testPlanCache = new TestPlanCache();
-            // [IGNORE] historyInfoObjectsField = new ObservableCollection<InfoObject>();
+            //[-] testplanField = new TestPlanType();
+            //[-] testPlanCache = new TestPlanCache();
+            //[-] historyInfoObjectsField = new ObservableCollection<InfoObject>();
             faField = new FA();
             fFMField = new ObservableCollection<FFMResult>();
             eMotorField = new EMotor();
             heatMotorsField = new List<HeatMotor>();
             genericMotorField = new GenericMotor();
-            // [IGNORE] cBSField = new ObservableCollection<typeCBSInfo>();
+            //[-] cBSField = new ObservableCollection<typeCBSInfo>();
             selectedECUField = new ECU();
-            // [IGNORE] zFSField = new ObservableCollection<ZFSResult>();
+            //[-] zFSField = new ObservableCollection<ZFSResult>();
             eCUField = new ObservableCollection<ECU>();
             zFS_SUCCESSFULLYField = false;
             prodartField = "P";
@@ -2382,7 +2382,7 @@ namespace PsdzClient.Core
             refSchemaField = "http://www.bmw.com/Rheingold/Vehicle.xsd";
             versionField = "3.42.20.10700";
             dealerSessionProperties = new List<DealerSessionProperty>();
-        // [IGNORE] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
+            //[-] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
         }
 
         public virtual void OnPropertyChanged(string propertyName)

@@ -1076,18 +1076,18 @@ namespace PsdzClient.Core
         public Vehicle(ClientContext clientContext) : base(clientContext)
         {
             base.ConnectState = VisibilityType.Collapsed;
-            // [IGNORE] pKodeList = new ObservableCollectionEx<Fault>();
-            // [IGNORE] FaultList = new List<Fault>();
-            // [IGNORE] VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
+            //[-]  pKodeList = new ObservableCollectionEx<Fault>();
+            //[-] FaultList = new List<Fault>();
+            //[-] VirtualFaultInfoList = new BlockingCollection<VirtualFaultInfo>();
             sessionDataStore = new ParameterContainer();
-            // [IGNORE] base.Testplan = new TestPlanType(this);
+            //[-] base.Testplan = new TestPlanType(this);
             diagCodesProgramming = new ObservableCollection<string>();
             IsClosingOperationActive = false;
             validPWFStates = new HashSet<int>(new int[17] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
             clamp15MinValue = ConfigSettings.GetConfigDouble("BMW.Rheingold.ISTAGUI.Clamp15MinVoltage", 0.0);
-            clamp30MinValue = 9.95; // [UH] [IGNORE] new VoltageThreshold(BatteryEnum.Pb).MinError;
-            // [IGNORE] RxSwin = new RxSwinData();
-            // [IGNORE] checkControlMessages = new ObservableCollection<CheckControlMessage>();
+            clamp30MinValue = new VoltageThreshold(BatteryEnum.Pb).MinError;
+            //[-] RxSwin = new RxSwinData();
+            //[-] checkControlMessages = new ObservableCollection<CheckControlMessage>();
             Classification = new VehicleClassification(this);
             Reactor = new Reactor(this, new NugetLogger(), new DataHolder());   // [UH] [IGNORE] Reactor init
         }
