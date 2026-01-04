@@ -1530,7 +1530,7 @@ namespace SourceCodeSync
             MemberDeclarationSyntax sourceMember,
             MemberDeclarationSyntax preservedMember)
         {
-            return sourceMember switch
+            MemberDeclarationSyntax result = sourceMember switch
             {
                 MethodDeclarationSyntax sourceMethod when preservedMember is MethodDeclarationSyntax preservedMethod =>
                     sourceMethod
@@ -1567,7 +1567,6 @@ namespace SourceCodeSync
                         .WithSemicolonToken(preservedIndexer.SemicolonToken)
                         .WithAttributeLists(preservedMember.AttributeLists),
 
-                // Field support - merge type and modifiers from source, keep initializer from preserved
                 FieldDeclarationSyntax sourceField when preservedMember is FieldDeclarationSyntax preservedField =>
                     sourceField
                         .WithModifiers(preservedField.Modifiers)
@@ -1577,9 +1576,10 @@ namespace SourceCodeSync
                                     (sourceVar, preservedVar) => sourceVar.WithInitializer(preservedVar.Initializer)))))
                         .WithAttributeLists(preservedMember.AttributeLists),
 
-                // Fallback: return preserved member as-is
                 _ => preservedMember
             };
+
+            return result;
         }
 
         /// <summary>
