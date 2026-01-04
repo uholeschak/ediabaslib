@@ -1,4 +1,5 @@
-﻿using PsdzClient;
+﻿using System;
+using PsdzClient;
 
 namespace PsdzClient.Core.Container
 {
@@ -35,8 +36,19 @@ namespace PsdzClient.Core.Container
         [PreserveSource(Hint = "License modified", OriginalHash = "8F4E46F16271E70EFA0245D9580BDA10")]
         static ISTACoreFramwork()
         {
-            // [UH] [IGNORE] modified
-            _validLicense = true;
+            //[-] VerifyAssemblyHelper.VerifyStrongName(typeof(ISTACoreFramwork), force: true);
+            Log.Info("ISTACoreFramework.ISTACoreFramework()", "ctor called.");
+            try
+            {
+                //[-] BMW.Rheingold.CoreFramework.LicenseManager.VerifyLicense();
+                Log.Info(string.Empty, "ISTA Activation succeded");
+                _validLicense = true;
+            }
+            catch (Exception)
+            {
+                Log.Info(string.Empty, "ISTA Activation failed");
+                _validLicense = false;
+            }
             _debuglevel = ConfigSettings.getConfigint("DebugLevel", 0);
             _debuglevel = ConfigSettings.getConfigint("BMW.Rheingold.ISTA.CoreFramework.DebugLevel", _debuglevel);
         }
