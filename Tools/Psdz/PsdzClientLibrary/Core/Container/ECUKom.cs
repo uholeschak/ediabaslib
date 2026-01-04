@@ -1540,37 +1540,32 @@ namespace PsdzClient.Core.Container
                 try
                 {
                     SetTraceLevelToMax(callerMember);
-                    /* [IGNORE]
                     if (serviceIsRunning)
                     {
                         try
                         {
-                            sc.ExecuteCommand(150);
+                            //[-] sc.ExecuteCommand(150);
                         }
                         catch
                         {
-                            Log.Error("ECUKom.apiJob()", $"Ediabas monitor executeCommand failed for Command {EdiabasMonitorTrigger.apijob}");
+                            //[-] Log.Error("ECUKom.apiJob()", $"Ediabas monitor executeCommand failed for Command {EdiabasMonitorTrigger.apijob}");
                         }
                     }
-                    */
                     api.apiJob(ecu, jobName, param, resultFilter);
                     while (api.apiStateExt(1000) == 0)
                     {
                         SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
                     }
-
-                    /* [IGNORE]
                     if (serviceIsRunning)
                     {
                         try
                         {
-                            sc.ExecuteCommand(151);
+                            //[-] sc.ExecuteCommand(151);
                         }
                         catch
                         {
                         }
                     }
-                    */
                     RemoveTraceLevel(callerMember);
                     if (api.apiStateExt(1000) == 3)
                     {
@@ -1581,18 +1576,16 @@ namespace PsdzClient.Core.Container
                     }
 
                     api.apiResultSets(out var rsets);
-                    /* [IGNORE]
                     if (serviceIsRunning)
                     {
                         try
                         {
-                            sc.ExecuteCommand(152);
+                            //[-] sc.ExecuteCommand(152);
                         }
                         catch
                         {
                         }
                     }
-                    */
                     eCUJob.JobResultSets = rsets;
                     if (rsets > 0)
                     {
