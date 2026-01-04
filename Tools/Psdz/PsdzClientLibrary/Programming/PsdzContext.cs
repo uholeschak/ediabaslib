@@ -199,7 +199,7 @@ namespace PsdzClient.Programming
             ExecutionOrderTop = new Dictionary<string, IList<string>>();
             ExecutionOrderBottom = new Dictionary<string, IList<string>>();
             SFASessionData = new SFASessionData();
-        // [IGNORE] ServiceLocator.Current.TryGetService<IPsdzCentralConnectionService>(out service);
+            //[-] ServiceLocator.Current.TryGetService<IPsdzCentralConnectionService>(out service);
         }
 
         public string GetBaseVariant(int diagnosticAddress)

@@ -29,7 +29,7 @@ namespace PsdzClient.Programming
             this.EventManager = new ProgrammingEventManager();
             this.PsdzDatabase = new PsdzDatabase(istaFolder);
             PreparePsdzBackupDataPath(istaFolder);
-            // [IGNORE] programmingWorker = CreateProgrammingWorker();
+            //[-] programmingWorker = CreateProgrammingWorker();
             // [UH] [IGNORE] added: create services
             IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
             if (fasta2Service == null)

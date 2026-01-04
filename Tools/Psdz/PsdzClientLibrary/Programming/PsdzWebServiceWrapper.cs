@@ -91,8 +91,8 @@ namespace BMW.Rheingold.Programming
             catch (JavaInstallationException exception)
             {
                 Log.ErrorException(Log.CurrentMethod(), "PSdZ could not be initialized: {0}", exception);
-            // [IGNORE] ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
-            // [IGNORE] service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation").Localize());
+                //[-] ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
+                //[-] service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation").Localize());
             }
             catch (Exception ex)
             {

@@ -67,7 +67,7 @@ namespace PsdzClient.Programming
                 throw new ArgumentNullException("vehicle");
             }
 
-            // [IGNORE] this.db = db;
+            //[-] this.db = db;
             this.vehicle = vehicle;
             this.ffmResolver = ffmResolver;
             ecuProgrammingInfos = new List<EcuProgrammingInfo>();

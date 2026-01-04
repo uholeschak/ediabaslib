@@ -79,15 +79,15 @@ namespace PsdzClient.Psdz
         [PreserveSource(Hint = "IProtocolBasic protocoller, IICOMHandler icomHandler, removed", OriginalHash = "31A3D9487CD0A315187BF6BB49810301")]
         internal ConnectionManager(IPsdz psdz, IVehicle vehicle, IProgMsgListener progMsgListener, bool shouldSetConnectionToDcan = false, int connectionPort = -1) : base(progMsgListener)
         {
-            // [IGNORE] PsdzConnectionManager = new PsdzConnectionManager(psdz, protocoller);
-            // [IGNORE] psdzCentralConnectionService = PsdzCentralConnectionService.CreateInstance(PsdzConnectionManager);
-            // [IGNORE] ServiceLocator.Current.TryAddService(psdzCentralConnectionService);
-            // [IGNORE] EdiabasConnection = new EdiabasConnectionManager(ecuKom, progMsgListener);
+            //[-] PsdzConnectionManager = new PsdzConnectionManager(psdz, protocoller);
+            //[-] psdzCentralConnectionService = PsdzCentralConnectionService.CreateInstance(PsdzConnectionManager);
+            //[-] ServiceLocator.Current.TryAddService(psdzCentralConnectionService);
+            //[-] EdiabasConnection = new EdiabasConnectionManager(ecuKom, progMsgListener);
             Vehicle = vehicle;
             this.shouldSetConnectionToDcan = shouldSetConnectionToDcan;
             ConnectionPort = connectionPort;
-            // [IGNORE] ICOMHandler = icomHandler;
-            // [IGNORE] fastaService = protocoller;
+            //[-] ICOMHandler = icomHandler;
+            //[-] fastaService = protocoller;
             secureDiagnosticsService = psdz.SecureDiagnosticsService;
             AvoidTlsConnection = false;
             httpConfigurationService = psdz.HttpConfigurationService;

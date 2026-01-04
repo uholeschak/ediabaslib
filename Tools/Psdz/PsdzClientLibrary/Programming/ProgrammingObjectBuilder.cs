@@ -41,7 +41,7 @@ namespace BMW.Rheingold.Programming.API
         {
             this.vehicle = vehicle;
             this.ffmResolver = ffmResolver;
-        // [IGNORE] vdc = new VehicleDataConverter(db);
+            //[-] vdc = new VehicleDataConverter(db);
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
@@ -372,10 +372,10 @@ namespace BMW.Rheingold.Programming.API
                 PsdzDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int? (ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
                 if (ecuVar != null && !string.IsNullOrEmpty(ecuVar.Name))
                 {
-                    // [IGNORE] eCU.XepEcuVariant = xEP_ECUVARIANTS;
+                    //[-] eCU.XepEcuVariant = xEP_ECUVARIANTS;
                     eCU.EcuVariant = ecuVar.Name.ToUpper(CultureInfo.InvariantCulture);
                     PsdzDatabase.EcuClique ecuClique = database.FindEcuClique(ecuVar);
-                    // [IGNORE] eCU.XepEcuClique = vdc.FindEcuClique(xEP_ECUVARIANTS);
+                    //[-] eCU.XepEcuClique = vdc.FindEcuClique(xEP_ECUVARIANTS);
                     PsdzDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
                     if (ecuGroup != null)
                     {
