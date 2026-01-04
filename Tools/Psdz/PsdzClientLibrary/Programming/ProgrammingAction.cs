@@ -156,8 +156,7 @@ namespace PsdzClient.Programming
 
         public string InfoType => BuildTherapyPlanType(Type);
 
-        [PreserveSource(Hint = "ICollection<IEscalationStep>", Placeholder = true)]
-        public PlaceholderType EscalationSteps { get; private set; }
+        public ICollection<IEscalationStep> EscalationSteps { get; private set; }
 
         internal IList<LocalizedText> TitleExtension { get; set; }
 
@@ -179,7 +178,7 @@ namespace PsdzClient.Programming
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Assignment disabled", OriginalHash = "")]
         internal ProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order)
         {
             data = new ProgrammingActionData();
@@ -190,7 +189,7 @@ namespace PsdzClient.Programming
             data.Order = order;
             data.StateProgramming = ProgrammingActionState.ActionPlanned;
             SgbmIds = new List<ISgbmIdChange>();
-            // [IGNORE] EscalationSteps = new List<IEscalationStep>();
+            //[-] EscalationSteps = new List<IEscalationStep>();
             Title = BuildTitle(Type, ParentEcu, ConfigSettings.CurrentUICulture);
             data.Channel = string.Empty;
             data.Note = string.Empty;
@@ -379,7 +378,6 @@ namespace PsdzClient.Programming
             {
                 return;
             }
-#if false
             if (escalationSteps == 0)
             {
                 UpdateState(programmingActionState.Value, executed: true);
@@ -415,7 +413,6 @@ namespace PsdzClient.Programming
                 escalationStep2.AddErrorList(talLines);
                 EscalationSteps.Add(escalationStep2);
             }
-#endif
         }
 
         private ProgrammingActionState CalculateProgrammingState(IPsdzTalLine talLine)
