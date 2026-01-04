@@ -164,7 +164,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Cleaned", OriginalHash = "4392CA5C87048D4D52044B87A7F3B795")]
         public ProgrammingActionState? State
         {
             get
@@ -314,16 +314,16 @@ namespace PsdzClient.Programming
             SvkCurrent = null;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Disable init data", OriginalHash = "43F30EF06DEAAB6B0172C5E7FE202064")]
         private void Init()
         {
             scheduled = EcuScheduledState.NothingScheduled;
-            // [IGNORE] XepSwiActionList = new Collection<XEP_SWIACTION>();
+            //[-] XepSwiActionList = new Collection<XEP_SWIACTION>();
             programmingActionList = new ObservableCollectionEx<ProgrammingAction>();
             programmingActionList.CollectionChanged += OnProgrammingActionsCollectionChanged;
         }
 
-        [PreserveSource(Hint = "Modified")]
+        [PreserveSource(Hint = "Removed XepEcuClique", OriginalHash = "507A65430342B0B675ADA9D30AB78468")]
         protected void InitData(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder)
         {
             if (data == null)
@@ -334,6 +334,14 @@ namespace PsdzClient.Programming
             Ecu = ecu;
             data.EcuTitle = Ecu.TITLE_ECUTREE;
             data.EcuDescription = data.EcuTitle;
+            //[-] if (Ecu is ECU eCU && eCU.XepEcuClique != null && eCU.XepEcuClique.TITLEID.HasValue)
+            //[-] {
+            //[-]     data.EcuDescription = eCU.XepEcuClique.Title;
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-]     data.EcuDescription = data.EcuTitle;
+            //[-] }
             try
             {
                 SvkCurrent = programmingObjectBuilder.Build(ecu.SVK);

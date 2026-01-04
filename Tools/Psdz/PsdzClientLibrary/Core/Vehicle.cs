@@ -1089,7 +1089,7 @@ namespace PsdzClient.Core
             //[-] RxSwin = new RxSwinData();
             //[-] checkControlMessages = new ObservableCollection<CheckControlMessage>();
             Classification = new VehicleClassification(this);
-            Reactor = new Reactor(this, new NugetLogger(), new DataHolder());   // [UH] [IGNORE] Reactor init
+            Reactor = new Reactor(this, new NugetLogger(), new DataHolder());   // [UH] [IGNORE] Added reactor init
         }
 
         [PreserveSource(Hint = "Cleaned")]
