@@ -16,19 +16,12 @@ namespace PsdzClient.Programming
     public class ProgrammingAction : IProgrammingAction, INotifyPropertyChanged, IComparable<IProgrammingAction>, ITherapyPlanAction2, ITherapyPlanAction
     {
         private ProgrammingActionData data;
-
         private string assemblyNumberSetPoint;
-
         private string pn;
-
         private IList<ISgbmIdChange> sgbmIds;
-
         private typeDiagObjectState stateDiag;
-
         protected string titleTextId;
-
         public DateTime StartExecution { get; internal set; }
-
         public DateTime EndExecution { get; internal set; }
 
         public IList<ISgbmIdChange> SgbmIds
@@ -37,6 +30,7 @@ namespace PsdzClient.Programming
             {
                 return sgbmIds;
             }
+
             internal set
             {
                 this.PropertyChanged.NotifyPropertyChanged(this, () => SgbmIds, ref sgbmIds, value);
@@ -55,6 +49,7 @@ namespace PsdzClient.Programming
             {
                 return stateDiag;
             }
+
             internal set
             {
                 this.PropertyChanged.NotifyPropertyChanged(this, () => State, ref stateDiag, value);
@@ -71,6 +66,7 @@ namespace PsdzClient.Programming
             {
                 return assemblyNumberSetPoint;
             }
+
             internal set
             {
                 this.PropertyChanged.NotifyPropertyChanged(this, () => AssemblyNumberSetPoint, ref assemblyNumberSetPoint, value);
@@ -83,6 +79,7 @@ namespace PsdzClient.Programming
             {
                 return data.Channel;
             }
+
             internal set
             {
                 data.Channel = value;
@@ -90,7 +87,6 @@ namespace PsdzClient.Programming
         }
 
         public bool IsEditable => data.IsEditable;
-
         public bool IsFlashAction => data.IsFlashAction;
 
         public bool IsSelected
@@ -99,6 +95,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsSelected;
             }
+
             private set
             {
                 data.IsSelected = value;
@@ -112,6 +109,7 @@ namespace PsdzClient.Programming
             {
                 return data.Note;
             }
+
             internal set
             {
                 data.Note = value;
@@ -119,9 +117,7 @@ namespace PsdzClient.Programming
         }
 
         public int Order => data.Order;
-
         public IEcu ParentEcu { get; private set; }
-
         public IList<int> AffectedEcuDiagAddr { get; internal set; }
 
         public string PartNumber
@@ -132,6 +128,7 @@ namespace PsdzClient.Programming
                 {
                     return null;
                 }
+
                 return ParentEcu.ID_BMW_NR;
             }
         }
@@ -142,6 +139,7 @@ namespace PsdzClient.Programming
             {
                 return data.StateProgramming;
             }
+
             internal set
             {
                 data.StateProgramming = value;
@@ -149,18 +147,15 @@ namespace PsdzClient.Programming
                 {
                     ActionData.SetStateProgramming(value);
                 }
+
                 SetStateDiag();
             }
         }
 
         public ProgrammingActionType Type => data.Type;
-
         public string InfoType => BuildTherapyPlanType(Type);
-
         public ICollection<IEscalationStep> EscalationSteps { get; private set; }
-
         internal IList<LocalizedText> TitleExtension { get; set; }
-
         public ITherapyPlanActionData ActionData { get; set; }
 
         internal bool IsFailureIgnored
@@ -171,6 +166,7 @@ namespace PsdzClient.Programming
                 {
                     return Type == ProgrammingActionType.IdSave;
                 }
+
                 return true;
             }
         }
@@ -178,7 +174,6 @@ namespace PsdzClient.Programming
         public IProgrammingActionData DataContext => data;
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         internal ProgrammingAction(IEcu parentEcu, ProgrammingActionType type, bool isEditable, int order)
         {
             data = new ProgrammingActionData();
@@ -246,10 +241,12 @@ namespace PsdzClient.Programming
             {
                 return -1;
             }
+
             if (Order > other.Order)
             {
                 return 1;
             }
+
             return 0;
         }
 
@@ -259,6 +256,7 @@ namespace PsdzClient.Programming
             {
                 return data.IsEscalationActionType;
             }
+
             return false;
         }
 
@@ -287,9 +285,11 @@ namespace PsdzClient.Programming
                         localizedText.TextItem += localizedText2.TextItem;
                         list2.Add(localizedText);
                     }
+
                     return list2;
                 }
             }
+
             return list;
         }
 
@@ -333,6 +333,7 @@ namespace PsdzClient.Programming
                     programmingActionState = value;
                 }
             }
+
             if (programmingActionState.HasValue)
             {
                 UpdateState(programmingActionState.Value, executed: false);
@@ -351,6 +352,7 @@ namespace PsdzClient.Programming
                 {
                     programmingActionState = value;
                 }
+
                 if (dateTime.HasValue)
                 {
                     DateTime startTime = talLine.StartTime;
@@ -360,24 +362,28 @@ namespace PsdzClient.Programming
                         goto IL_009b;
                     }
                 }
+
                 dateTime = talLine.StartTime;
                 goto IL_009b;
                 IL_009b:
-                if (dateTime2.HasValue)
-                {
-                    DateTime startTime = talLine.EndTime;
-                    DateTime? dateTime3 = dateTime2;
-                    if (!(startTime > dateTime3))
+                    if (dateTime2.HasValue)
                     {
-                        continue;
+                        DateTime startTime = talLine.EndTime;
+                        DateTime? dateTime3 = dateTime2;
+                        if (!(startTime > dateTime3))
+                        {
+                            continue;
+                        }
                     }
-                }
+
                 dateTime2 = talLine.EndTime;
             }
+
             if (!programmingActionState.HasValue || !dateTime.HasValue || !dateTime2.HasValue)
             {
                 return;
             }
+
             if (escalationSteps == 0)
             {
                 UpdateState(programmingActionState.Value, executed: true);
@@ -410,6 +416,7 @@ namespace PsdzClient.Programming
                 {
                     EndExecution = escalationStep2.EndTime;
                 }
+
                 escalationStep2.AddErrorList(talLines);
                 EscalationSteps.Add(escalationStep2);
             }
@@ -434,9 +441,9 @@ namespace PsdzClient.Programming
                     }
                 }
             }
+
             return programmingActionState;
         }
-
 
         private ProgrammingActionState MapState(PsdzTaExecutionState? executionStateInput)
         {
@@ -450,6 +457,7 @@ namespace PsdzClient.Programming
                 Log.Warning("ProgrammingAction.MapState", "input is null. 'TaExecutionState.Inactive' will be used.");
                 psdzTaExecutionState = PsdzTaExecutionState.Inactive;
             }
+
             switch (psdzTaExecutionState)
             {
                 case PsdzTaExecutionState.Executable:
@@ -492,6 +500,7 @@ namespace PsdzClient.Programming
                 default:
                     throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Unsupported programming state {0}.", data.StateProgramming));
             }
+
             if (ActionData != null)
             {
                 ActionData.SetState(State);
@@ -517,6 +526,7 @@ namespace PsdzClient.Programming
                     Log.Warning("ProgrammingAction.GetFscTas", "Could not get TAs for FscDeploy since programming type {0} not supported", data.Type);
                     break;
             }
+
             return collection;
         }
 
