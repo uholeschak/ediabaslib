@@ -5,7 +5,8 @@ namespace PsdzClient.Core.Container
 {
     public class ISTACoreFramwork
     {
-        private static bool _validLicense;
+        [PreserveSource(Hint = "Initialize with true")]
+        private static bool _validLicense = true;
 
         private static int _debuglevel;
 
@@ -33,7 +34,6 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "License modified", OriginalHash = "8F4E46F16271E70EFA0245D9580BDA10")]
         static ISTACoreFramwork()
         {
             //[-] VerifyAssemblyHelper.VerifyStrongName(typeof(ISTACoreFramwork), force: true);

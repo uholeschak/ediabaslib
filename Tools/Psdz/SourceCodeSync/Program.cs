@@ -1830,7 +1830,7 @@ namespace SourceCodeSync
             }
 
             // Try to insert //[-] lines into source code at appropriate positions
-            string mergedCode = MergeCommentedCodeLines(sourceCode, destCode, linesToPreserve);
+            string mergedCode = MergeCommentedCodeLines(sourceCode, linesToPreserve);
 
             if (mergedCode == sourceCode)
             {
@@ -1939,7 +1939,6 @@ namespace SourceCodeSync
         /// </summary>
         private static string MergeCommentedCodeLines(
             string sourceCode,
-            string destCode,
             List<CommentedCodeLineInfo> linesToPreserve)
         {
             List<string> sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
