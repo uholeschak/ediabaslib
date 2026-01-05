@@ -1768,7 +1768,7 @@ namespace PsdzClient.Core
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        [PreserveSource(Hint = "Unchanged", OriginalHash = "879276A46FA5BDD31930A0163729BCCE", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         protected ECU(ECU ecu) : this()
         {
             BaseVariant = ecu.BaseVariant;
@@ -2000,7 +2000,7 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "F486A9952B9B93F952D0B5663177646B")]
+        [PreserveSource(Hint = "Code removed", SignatureModified = true)]
         public ECU()
         {
             subBUSField = new ObservableCollection<BusType>();
