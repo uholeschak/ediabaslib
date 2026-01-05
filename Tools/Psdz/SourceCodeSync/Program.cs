@@ -1945,53 +1945,76 @@ namespace SourceCodeSync
             List<string> sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
             List<(int lineIndex, string commentLine)> insertions = new List<(int lineIndex, string commentLine)>();
 
-            foreach (var commentInfo in linesToPreserve)
+            foreach (CommentedCodeLineInfo commentInfo in linesToPreserve)
             {
-                int insertIndex = -1;
+                bool isRemoveLine = commentInfo.CommentLine.TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase);
+                bool isAddLine = commentInfo.CommentLine.TrimStart().StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase);
 
-                // Strategy 1: Find by preceding line
-                if (commentInfo.PrecedingCodeLine != null)
+                if (isRemoveLine)
                 {
+                    // Try to find and remove the corresponding code line in source
+                    string normalizedCodeLineToRemove = NormalizeCodeLine(commentInfo.CommentLine);
                     for (int i = 0; i < sourceLines.Count; i++)
                     {
                         string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
                         if (normalizedSourceLine != null &&
-                            string.Compare(normalizedSourceLine, commentInfo.PrecedingCodeLine, StringComparison.OrdinalIgnoreCase) == 0)
+                            string.Compare(normalizedSourceLine, normalizedCodeLineToRemove, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            // Check if comment is not already there
-                            if (i + 1 < sourceLines.Count &&
-                                !sourceLines[i + 1].TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase))
-                            {
-                                insertIndex = i + 1;
-                                break;
-                            }
+                            // Replace the code line with the comment line
+                            sourceLines[i] = commentInfo.CommentLine;
+                            break;
                         }
                     }
+
+                    continue;
                 }
 
-                // Strategy 2: Find by following line
-                if (insertIndex == -1 && commentInfo.FollowingCodeLine != null)
+                if (isAddLine)
                 {
-                    for (int i = 0; i < sourceLines.Count; i++)
+                    int insertIndex = -1;
+
+                    // Strategy 1: Find by preceding line
+                    if (commentInfo.PrecedingCodeLine != null)
                     {
-                        string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
-                        if (normalizedSourceLine != null &&
-                            string.Compare(normalizedSourceLine, commentInfo.FollowingCodeLine, StringComparison.OrdinalIgnoreCase) == 0)
+                        for (int i = 0; i < sourceLines.Count; i++)
                         {
-                            // Check if comment is not already there
-                            if (i > 0 &&
-                                !sourceLines[i - 1].TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase))
+                            string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
+                            if (normalizedSourceLine != null &&
+                                string.Compare(normalizedSourceLine, commentInfo.PrecedingCodeLine, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                insertIndex = i;
-                                break;
+                                // Check if comment is not already there
+                                if (i + 1 < sourceLines.Count)
+                                {
+                                    insertIndex = i + 1;
+                                    break;
+                                }
                             }
                         }
                     }
-                }
 
-                if (insertIndex >= 0)
-                {
-                    insertions.Add((insertIndex, commentInfo.CommentLine));
+                    // Strategy 2: Find by following line
+                    if (insertIndex == -1 && commentInfo.FollowingCodeLine != null)
+                    {
+                        for (int i = 0; i < sourceLines.Count; i++)
+                        {
+                            string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
+                            if (normalizedSourceLine != null &&
+                                string.Compare(normalizedSourceLine, commentInfo.FollowingCodeLine, StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                // Check if comment is not already there
+                                if (i > 0)
+                                {
+                                    insertIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    if (insertIndex >= 0)
+                    {
+                        insertions.Add((insertIndex, commentInfo.CommentLine));
+                    }
                 }
             }
 
