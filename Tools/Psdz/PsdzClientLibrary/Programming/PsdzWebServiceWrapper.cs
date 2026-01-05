@@ -97,7 +97,7 @@ namespace BMW.Rheingold.Programming
             catch (Exception ex)
             {
                 Log.Error(Log.CurrentMethod(), "PSdZ could not be initialized: {0}", ex);
-                throw new Exception("PSdZNotStarted"); // [IGNORE] AppException replaced
+                throw new Exception("PSdZNotStarted"); //[+] throw new Exception("PSdZNotStarted");
             }
         }
 

@@ -39,7 +39,7 @@ namespace BMW.Rheingold.Programming.API
         [PreserveSource(Hint = "Vehicle added")]
         public ProgrammingObjectBuilder(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
-            this.vehicle = vehicle;
+            this.vehicle = vehicle; //[+] this.vehicle = vehicle;
             this.ffmResolver = ffmResolver;
             //[-] vdc = new VehicleDataConverter(db);
         }

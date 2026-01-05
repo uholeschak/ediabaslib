@@ -268,7 +268,6 @@ namespace BMW.Rheingold.Programming
             return true;
         }
 
-        [PreserveSource(Hint = "Modified")]
         private void DoSettingsForInitializedPsdz()
         {
             int configint = ConfigSettings.getConfigint("DebugLevel", 0);
