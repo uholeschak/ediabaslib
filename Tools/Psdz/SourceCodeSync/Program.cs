@@ -2000,19 +2000,26 @@ namespace SourceCodeSync
                     {
                         string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
                         if (normalizedSourceLine != null &&
-                            string.Compare(normalizedSourceLine, normalizedCodeLineToRemove, StringComparison.OrdinalIgnoreCase) == 0)
+                            string.Compare(normalizedSourceLine, normalizedCodeLineToRemove, StringComparison.Ordinal) == 0)
                         {
-                            string precedingLine = commentInfo.PrecedingCodeLine;
-                            string followingLine = commentInfo.FollowingCodeLine;
-                            // Verify context lines match
-                            bool precedingMatches =
-                                precedingLine == null ||
-                                (i > 0 && string.Compare(NormalizeCodeLine(sourceLines[i - 1]), precedingLine, StringComparison.OrdinalIgnoreCase) == 0);
-                            bool followingMatches =
-                                followingLine == null ||
-                                (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.OrdinalIgnoreCase) == 0);
+                            bool validLine = normalizedSourceLine.Length > 10;
 
-                            if (precedingMatches || followingMatches)
+                            if (!validLine)
+                            {
+                                string precedingLine = commentInfo.PrecedingCodeLine;
+                                string followingLine = commentInfo.FollowingCodeLine;
+                                // Verify context lines match
+                                bool precedingMatches =
+                                    precedingLine == null ||
+                                    (i > 0 && string.Compare(NormalizeCodeLine(sourceLines[i - 1]), precedingLine, StringComparison.Ordinal) == 0);
+                                bool followingMatches =
+                                    followingLine == null ||
+                                    (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.Ordinal) == 0);
+
+                                validLine = precedingMatches && followingMatches;
+                            }
+
+                            if (validLine)
                             {
                                 // Replace the code line with the comment line
                                 sourceLines[i] = commentInfo.CommentLine;
