@@ -81,23 +81,24 @@ namespace BMW.Rheingold.Programming
             _psdzWebService = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "E6280E3729DA431115371FCC3F0CBF67")]
         public void StartIfNotRunning()
         {
             try
             {
-                _psdzWebService.StartIfNotRunning(Psdz64BitPathResolver.GetJrePath(_istaFolder, true), _psdzConfig.GetJvmOptionsAsOneString(), _psdzConfig.GetJarArgumentsAsOneString());
+                _psdzWebService.StartIfNotRunning(Psdz64BitPathResolver.GetJrePath(), _psdzConfig.GetJvmOptionsAsOneString(), _psdzConfig.GetJarArgumentsAsOneString());
             }
             catch (JavaInstallationException exception)
             {
                 Log.ErrorException(Log.CurrentMethod(), "PSdZ could not be initialized: {0}", exception);
-                //[-] ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
-                //[-] service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation").Localize());
+            //[-] ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
+            //[-] service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation").Localize());
             }
             catch (Exception ex)
             {
                 Log.Error(Log.CurrentMethod(), "PSdZ could not be initialized: {0}", ex);
-                throw new Exception("PSdZNotStarted"); //[+] throw new Exception("PSdZNotStarted");
+                //[-] throw new AppException(new FormatedData("#PSdZNotStarted"));
+                //[+] throw new Exception("PSdZNotStarted");
+                throw new Exception("PSdZNotStarted");
             }
         }
 
