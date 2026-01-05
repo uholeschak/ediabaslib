@@ -1878,7 +1878,7 @@ namespace SourceCodeSync
                 string trimmedLine = lines[i].TrimStart();
                 if (trimmedLine.StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
                 {
-                    var info = new CommentedCodeLineInfo
+                    CommentedCodeLineInfo info = new CommentedCodeLineInfo
                     {
                         CommentLine = lines[i],
                         PrecedingCodeLine = i > 0 ? NormalizeCodeLine(lines[i - 1]) : null,
@@ -1909,7 +1909,10 @@ namespace SourceCodeSync
                 trimmed.StartsWith("//", StringComparison.Ordinal) ||
                 trimmed.StartsWith("/*", StringComparison.Ordinal))
             {
-                return null;
+                if (!trimmed.StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                {
+                    return null;
+                }
             }
 
             return Regex.Replace(trimmed, @"\s+", "");
