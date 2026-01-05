@@ -76,7 +76,7 @@ namespace PsdzClient.Psdz
         internal bool IsConnectedViaPttOrEnet => !IsNotConnectedViaPttAndEnet;
         internal int ConnectionPort { get; set; }
 
-        [PreserveSource(Hint = "IProtocolBasic protocoller, IICOMHandler icomHandler, removed", OriginalHash = "31A3D9487CD0A315187BF6BB49810301")]
+        [PreserveSource(Hint = "IProtocolBasic protocoller, IICOMHandler icomHandler, removed", SignatureModified = true)]
         internal ConnectionManager(IPsdz psdz, IVehicle vehicle, IProgMsgListener progMsgListener, bool shouldSetConnectionToDcan = false, int connectionPort = -1) : base(progMsgListener)
         {
             //[-] PsdzConnectionManager = new PsdzConnectionManager(psdz, protocoller);

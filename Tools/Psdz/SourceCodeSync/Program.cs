@@ -1843,14 +1843,45 @@ namespace SourceCodeSync
                 return sourceMember;
             }
 
-            // Parse the merged code back into a syntax node
-            SyntaxTree mergedTree = CSharpSyntaxTree.ParseText(mergedCode);
+            // Wrap in appropriate context for parsing
+            string wrapperClassName = sourceMember is ConstructorDeclarationSyntax ctor
+                ? ctor.Identifier.Text
+                : "__DummyClass__";
+
+            string wrappedCode = $@"class {wrapperClassName}
+{{
+{mergedCode}
+}}";
+
+            // Parse the wrapped code
+            SyntaxTree mergedTree = CSharpSyntaxTree.ParseText(wrappedCode);
+            var diagnostics = mergedTree.GetDiagnostics();
+            List<Diagnostic> errors = diagnostics.Where(d => d.Severity == DiagnosticSeverity.Error).ToList();
+
+            if (errors.Any())
+            {
+                if (_verbosity >= Options.VerbosityOption.Error)
+                {
+                    string memberName = GetMemberName(sourceMember);
+                    Console.WriteLine($"*** Parsing errors in merged code for member {memberName}:");
+                    foreach (var error in errors)
+                    {
+                        Console.WriteLine($"    {error.GetMessage()}");
+                    }
+                }
+
+                // Return original source member if parsing failed
+                return sourceMember;
+            }
+
             SyntaxNode mergedRoot = mergedTree.GetRoot();
 
-            // Find the member in the merged tree
-            var mergedMember = mergedRoot.DescendantNodes()
-                .OfType<MemberDeclarationSyntax>()
+            // Extract the member from the wrapper class
+            ClassDeclarationSyntax wrapperClass = mergedRoot.DescendantNodes()
+                .OfType<ClassDeclarationSyntax>()
                 .FirstOrDefault();
+
+            MemberDeclarationSyntax mergedMember = wrapperClass?.Members.FirstOrDefault();
 
             return mergedMember ?? sourceMember;
         }
