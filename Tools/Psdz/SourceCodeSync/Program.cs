@@ -1848,9 +1848,9 @@ namespace SourceCodeSync
         /// </summary>
         private static List<string> GetAllCommentedCodeLines(SyntaxNode member)
         {
-            var result = new List<string>();
+            List<string> result = new List<string>();
 
-            foreach (var trivia in member.DescendantTrivia())
+            foreach (SyntaxTrivia trivia in member.DescendantTrivia())
             {
                 if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
                 {
@@ -1870,8 +1870,8 @@ namespace SourceCodeSync
         /// </summary>
         private static List<CommentedCodeLineInfo> FindCommentedCodeLinesWithContext(string code)
         {
-            var result = new List<CommentedCodeLineInfo>();
-            var lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            List<CommentedCodeLineInfo> result = new List<CommentedCodeLineInfo>();
+            string[] lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
             for (int i = 0; i < lines.Length; i++)
             {
@@ -1923,8 +1923,8 @@ namespace SourceCodeSync
             string destCode,
             List<CommentedCodeLineInfo> linesToPreserve)
         {
-            var sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
-            var insertions = new List<(int lineIndex, string commentLine)>();
+            List<string> sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
+            List<(int lineIndex, string commentLine)> insertions = new List<(int lineIndex, string commentLine)>();
 
             foreach (var commentInfo in linesToPreserve)
             {
