@@ -36,12 +36,12 @@ namespace BMW.Rheingold.Programming.API
         private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
         private readonly SwtTypeEnumMapper swtTypeEnumMapper = new SwtTypeEnumMapper();
         private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
-        [PreserveSource(Hint = "Vehicle added")]
+        [PreserveSource(Hint = "db removed", SignatureModified = true)]
         public ProgrammingObjectBuilder(Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
-            this.vehicle = vehicle; //[+] this.vehicle = vehicle;
+            this.vehicle = vehicle;
             this.ffmResolver = ffmResolver;
-            //[-] vdc = new VehicleDataConverter(db);
+        //[-] vdc = new VehicleDataConverter(db);
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
