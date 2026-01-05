@@ -271,24 +271,22 @@ namespace BMW.Rheingold.Programming
         [PreserveSource(Hint = "Modified")]
         private void DoSettingsForInitializedPsdz()
         {
-            /* [IGNORE]
             int configint = ConfigSettings.getConfigint("DebugLevel", 0);
             if (configint > 0 && configint < 6)
             {
-                psdzLoglevel = (PsdzLoglevel)configint;
+                //[-] psdzLoglevel = (PsdzLoglevel)configint;
             }
-            */
 
             if (psdzLoglevel.HasValue && !psdzServiceArgs.IsTestRun)
             {
                 psdzServiceClient.LogService.SetLogLevel(psdzLoglevel.Value);
             }
-            /* [IGNORE]
+
             if (Enum.TryParse<ProdiasLoglevel>(ConfigSettings.getConfigString("BMW.Rheingold.Programming.Prodias.LogLevel", null), out var result))
             {
-                prodiasLoglevel = result;
+                //[-] prodiasLoglevel = result;
             }
-            */
+
             if (prodiasLoglevel.HasValue)
             {
                 psdzServiceClient.ConnectionManagerService.SetProdiasLogLevel(prodiasLoglevel.Value);
