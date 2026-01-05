@@ -2334,8 +2334,8 @@ namespace PsdzClient.Core
             //[-] diagCodesField = new ObservableCollection<typeDiagCode>();
             //[-] serviceHistoryField = new ObservableCollection<typeServiceHistoryEntry>();
             //[-] technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
-            mIBField = new VCIDevice(clientContext);
-            vCIField = new VCIDevice(clientContext);
+            mIBField = new VCIDevice(clientContext);    //[+] mIBField = new VCIDevice(clientContext);
+            vCIField = new VCIDevice(clientContext);    //[+] vCIField = new VCIDevice(clientContext);
             //[-] testplanField = new TestPlanType();
             //[-] testPlanCache = new TestPlanCache();
             //[-] historyInfoObjectsField = new ObservableCollection<InfoObject>();
