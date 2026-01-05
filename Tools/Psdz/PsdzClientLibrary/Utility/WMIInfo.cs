@@ -45,7 +45,6 @@ namespace PsdzClient.Utility
             }
         }
 
-        [PreserveSource(Hint = "MessageBox disabled", OriginalHash = "E315C7CE7D5B280E5354CDC03BB03EC8")]
         private static string GetSearchResult(string info, ManagementObjectSearcher searcher)
         {
             try
