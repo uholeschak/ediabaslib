@@ -2042,7 +2042,7 @@ namespace SourceCodeSync
                         {
                             string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
                             if (normalizedSourceLine != null &&
-                                string.Compare(normalizedSourceLine, commentInfo.PrecedingCodeLine, StringComparison.OrdinalIgnoreCase) == 0)
+                                string.Compare(normalizedSourceLine, commentInfo.PrecedingCodeLine, StringComparison.Ordinal) == 0)
                             {
                                 // Check if comment is not already there
                                 if (i + 1 < sourceLines.Count)
@@ -2061,7 +2061,7 @@ namespace SourceCodeSync
                         {
                             string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
                             if (normalizedSourceLine != null &&
-                                string.Compare(normalizedSourceLine, commentInfo.FollowingCodeLine, StringComparison.OrdinalIgnoreCase) == 0)
+                                string.Compare(normalizedSourceLine, commentInfo.FollowingCodeLine, StringComparison.Ordinal) == 0)
                             {
                                 // Check if comment is not already there
                                 if (i > 0)
