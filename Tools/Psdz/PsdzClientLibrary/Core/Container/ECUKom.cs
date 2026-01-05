@@ -1456,7 +1456,7 @@ namespace PsdzClient.Core.Container
             return eCUJob;
         }
 
-        [PreserveSource(Hint = "serviceIsRunning removed", OriginalHash = "796BF13BE9581058ED479421B650DE1F")]
+        [PreserveSource(Hint = "serviceIsRunning removed", SignatureModified = true)]
         public IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);

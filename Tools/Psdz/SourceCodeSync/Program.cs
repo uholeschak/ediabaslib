@@ -1629,7 +1629,8 @@ namespace SourceCodeSync
                 string sourceMemberName = GetMemberName(sourceMember);
 
                 MemberDeclarationSyntax destMember = destClass.Members
-                    .FirstOrDefault(dm => GetMemberName(dm) == sourceMemberName);
+                    .FirstOrDefault(dm => !processedPreservedMembers.Contains(dm) &&
+                                          GetMemberName(dm) == sourceMemberName);
 
                 // Find matching preserved member by name
                 MemberDeclarationSyntax matchingPreservedMember = preservedMembers
@@ -1668,10 +1669,15 @@ namespace SourceCodeSync
                     if (GetAttributeBoolPropertyFromAttributeLists(matchingPreservedMember.AttributeLists, _signatureModifiedProperty))
                     {
                         memberToAdd = MergeMemberSignatureWithBody(sourceMember, matchingPreservedMember);
-
                         if (_verbosity >= Options.VerbosityOption.Info)
                         {
                             Console.WriteLine($"Member {sourceMemberName} signature preserved, body updated");
+                        }
+
+                        if (destMember != null)
+                        {
+                            // Additionally preserve //[-] comments inside body
+                            memberToAdd = PreserveCommentedCodeInsideBody(destMember, memberToAdd);
                         }
                     }
 
