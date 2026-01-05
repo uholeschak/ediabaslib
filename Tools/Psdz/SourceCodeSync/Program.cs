@@ -1880,7 +1880,7 @@ namespace SourceCodeSync
                 {
                     CommentedCodeLineInfo info = new CommentedCodeLineInfo
                     {
-                        CommentLine = lines[i],
+                        CommentLine = NormalizeCodeLine(lines[i]),
                         PrecedingCodeLine = i > 0 ? NormalizeCodeLine(lines[i - 1]) : null,
                         FollowingCodeLine = i < lines.Length - 1 ? NormalizeCodeLine(lines[i + 1]) : null,
                         OriginalLineNumber = i
@@ -1913,6 +1913,7 @@ namespace SourceCodeSync
                 {
                     return null;
                 }
+                trimmed = trimmed.Substring(_commentedCodeMarker.Length).TrimStart();
             }
 
             return Regex.Replace(trimmed, @"\s+", "");
