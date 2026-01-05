@@ -314,7 +314,6 @@ namespace PsdzClient.Programming
             SvkCurrent = null;
         }
 
-        [PreserveSource(Hint = "Disable init data", OriginalHash = "43F30EF06DEAAB6B0172C5E7FE202064")]
         private void Init()
         {
             scheduled = EcuScheduledState.NothingScheduled;
