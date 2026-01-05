@@ -1919,7 +1919,7 @@ namespace SourceCodeSync
 
             for (int i = 0; i < lines.Length; i++)
             {
-                string trimmedLine = lines[i].TrimStart();
+                string trimmedLine = lines[i].Trim();
                 if (trimmedLine.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase) ||
                     trimmedLine.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase))
                 {
@@ -1988,8 +1988,9 @@ namespace SourceCodeSync
 
             foreach (CommentedCodeLineInfo commentInfo in linesToPreserve)
             {
-                bool isRemoveLine = commentInfo.CommentLine.TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase);
-                bool isAddLine = commentInfo.CommentLine.TrimStart().StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase);
+                string trimmedLine = commentInfo.CommentLine.Trim();
+                bool isRemoveLine = trimmedLine.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase);
+                bool isAddLine = trimmedLine.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase);
 
                 if (isRemoveLine)
                 {
@@ -2067,7 +2068,13 @@ namespace SourceCodeSync
 
                     if (insertIndex >= 0)
                     {
-                        insertions.Add((insertIndex, commentInfo.CommentLine));
+                        // add the line without the comment marker
+                        string addLine = trimmedLine.Substring(_commentedRemoveCodeMarker.Length).TrimStart();
+                        if (!string.IsNullOrEmpty(addLine))
+                        {
+                            string insertLines = commentInfo.CommentLine + Environment.NewLine + addLine;
+                            insertions.Add((insertIndex, insertLines));
+                        }
                     }
                 }
             }

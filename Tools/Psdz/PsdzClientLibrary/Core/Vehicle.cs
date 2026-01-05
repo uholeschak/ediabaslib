@@ -1072,7 +1072,7 @@ namespace PsdzClient.Core
         public string TempTypeKeyLeadFromDb { get; set; }
         public string TempTypeKeyBasicFromFbm { get; set; }
 
-        [PreserveSource(Hint = "clientContext added", OriginalHash = "8EBE51BFBEB5058EAFC36EF3F3322DCF")]
+        [PreserveSource(Hint = "clientContext added", SignatureModified = true)]
         public Vehicle(ClientContext clientContext) : base(clientContext)
         {
             base.ConnectState = VisibilityType.Collapsed;
@@ -1089,7 +1089,8 @@ namespace PsdzClient.Core
             //[-] RxSwin = new RxSwinData();
             //[-] checkControlMessages = new ObservableCollection<CheckControlMessage>();
             Classification = new VehicleClassification(this);
-            Reactor = new Reactor(this, new NugetLogger(), new DataHolder());   //[+] Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
+            //[+] Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
+            Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
         }
 
         [PreserveSource(Hint = "Cleaned")]
