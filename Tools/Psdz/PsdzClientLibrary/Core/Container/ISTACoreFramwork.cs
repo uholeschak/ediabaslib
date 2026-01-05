@@ -5,8 +5,7 @@ namespace PsdzClient.Core.Container
 {
     public class ISTACoreFramwork
     {
-        [PreserveSource(Hint = "Initialize with true")]
-        private static bool _validLicense = true;
+        private static bool _validLicense;
 
         private static int _debuglevel;
 

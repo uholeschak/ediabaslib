@@ -839,7 +839,7 @@ namespace SourceCodeSync
                         }
 
                         // Check if destination class has any preserved members
-                        bool hasPreservedMembers = cls.Members.Any(m => ShouldPreserveMember(m));
+                        bool hasPreservedMembers = cls.Members.Any(m => ShouldPreserveMember(m) || GetAllCommentedCodeLines(m).Any());
                         ClassDeclarationSyntax mergedClass;
 
                         if (hasPreservedMembers)
