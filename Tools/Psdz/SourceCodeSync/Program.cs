@@ -1602,7 +1602,7 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Merges source class into destination, preserving marked members at their original positions
+        /// Merges source class into destination, preserving marked members and //[-] comments
         /// </summary>
         public static ClassDeclarationSyntax MergeClassPreservingMarked(
             ClassDeclarationSyntax destClass,
@@ -1613,11 +1613,6 @@ namespace SourceCodeSync
                 .Where(m => ShouldPreserveMember(m))
                 .ToList();
 
-            if (!preservedMembers.Any())
-            {
-                return sourceClass;
-            }
-
             // Build a new member list, maintaining source order
             List<MemberDeclarationSyntax> newMembers = new List<MemberDeclarationSyntax>();
             HashSet<MemberDeclarationSyntax> processedPreservedMembers = new HashSet<MemberDeclarationSyntax>();
@@ -1626,6 +1621,9 @@ namespace SourceCodeSync
             foreach (var sourceMember in sourceClass.Members)
             {
                 string sourceMemberName = GetMemberName(sourceMember);
+
+                MemberDeclarationSyntax destMember = destClass.Members
+                    .FirstOrDefault(dm => GetMemberName(dm) == sourceMemberName);
 
                 // Find matching preserved member by name
                 MemberDeclarationSyntax matchingPreservedMember = preservedMembers
@@ -1661,8 +1659,7 @@ namespace SourceCodeSync
                     }
 
                     // Check if SignatureModified is set - if so, merge signature from source with body from preserved
-                    if (matchingPreservedMember is MemberDeclarationSyntax memberDecl &&
-                        GetAttributeBoolPropertyFromAttributeLists(memberDecl.AttributeLists, _signatureModifiedProperty))
+                    if (GetAttributeBoolPropertyFromAttributeLists(matchingPreservedMember.AttributeLists, _signatureModifiedProperty))
                     {
                         memberToAdd = MergeMemberSignatureWithBody(sourceMember, matchingPreservedMember);
 
@@ -1678,12 +1675,17 @@ namespace SourceCodeSync
                 }
                 else
                 {
-                    // Use source version
-                    newMembers.Add(sourceMember);
+                    // Not preserved - use source, but preserve //[-] comments inside body
+                    MemberDeclarationSyntax memberToAdd = sourceMember;
+                    if (destMember != null)
+                    {
+                        // Then preserve //[-] comments inside body
+                        memberToAdd = PreserveCommentedCodeInsideBody(destMember, memberToAdd);
+                    }
+                    newMembers.Add(memberToAdd);
                 }
             }
 
-            // Add any preserved members that didn't exist in source at the end
             foreach (var preservedMember in preservedMembers)
             {
                 if (!processedPreservedMembers.Contains(preservedMember))
@@ -1692,7 +1694,6 @@ namespace SourceCodeSync
                 }
             }
 
-            // Replace all members at once
             return sourceClass.WithMembers(SyntaxFactory.List(newMembers));
         }
 
@@ -1803,7 +1804,7 @@ namespace SourceCodeSync
             MemberDeclarationSyntax sourceMember)
         {
             // Get all //[-] comments from destination member (including inside body)
-            var destCommentedLines = GetAllCommentedCodeLines(destMember);
+            List<string> destCommentedLines = GetAllCommentedCodeLines(destMember);
 
             if (!destCommentedLines.Any())
             {
