@@ -1959,9 +1959,19 @@ namespace SourceCodeSync
                         if (normalizedSourceLine != null &&
                             string.Compare(normalizedSourceLine, normalizedCodeLineToRemove, StringComparison.OrdinalIgnoreCase) == 0)
                         {
-                            // Replace the code line with the comment line
-                            sourceLines[i] = commentInfo.CommentLine;
-                            break;
+                            string normalizedPrecedingLine = commentInfo.PrecedingCodeLine;
+                            string normalizedFollowingLine = commentInfo.FollowingCodeLine;
+                            // Verify context lines match
+                            bool precedingMatches = normalizedPrecedingLine == null ||
+                                                    (i > 0 && string.Compare(NormalizeCodeLine(sourceLines[i - 1]), normalizedPrecedingLine, StringComparison.OrdinalIgnoreCase) == 0);
+                            bool followingMatches = normalizedFollowingLine == null ||
+                                                    (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), normalizedFollowingLine, StringComparison.OrdinalIgnoreCase) == 0);
+                            if (precedingMatches && followingMatches)
+                            {
+                                // Replace the code line with the comment line
+                                sourceLines[i] = commentInfo.CommentLine;
+                                break;
+                            }
                         }
                     }
 
