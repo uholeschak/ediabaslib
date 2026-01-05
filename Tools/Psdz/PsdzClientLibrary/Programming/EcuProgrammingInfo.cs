@@ -322,7 +322,6 @@ namespace PsdzClient.Programming
             programmingActionList.CollectionChanged += OnProgrammingActionsCollectionChanged;
         }
 
-        [PreserveSource(Hint = "Removed XepEcuClique", OriginalHash = "507A65430342B0B675ADA9D30AB78468")]
         protected void InitData(IEcu ecu, ProgrammingObjectBuilder programmingObjectBuilder)
         {
             if (data == null)
@@ -332,15 +331,16 @@ namespace PsdzClient.Programming
 
             Ecu = ecu;
             data.EcuTitle = Ecu.TITLE_ECUTREE;
-            data.EcuDescription = data.EcuTitle;
             //[-] if (Ecu is ECU eCU && eCU.XepEcuClique != null && eCU.XepEcuClique.TITLEID.HasValue)
-            //[-] {
+            {
             //[-]     data.EcuDescription = eCU.XepEcuClique.Title;
-            //[-] }
+            }
+
             //[-] else
-            //[-] {
+            {
             //[-]     data.EcuDescription = data.EcuTitle;
-            //[-] }
+            }
+
             try
             {
                 SvkCurrent = programmingObjectBuilder.Build(ecu.SVK);
