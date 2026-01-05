@@ -195,7 +195,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "istaFolder added", OriginalHash = "4CECC7DD2ABD296C128B977855C3D159")]
         public PsdzContext(string istaFolder)
         {
-            IstaFolder = istaFolder;
+            IstaFolder = istaFolder;    //[+] IstaFolder = istaFolder;
             ExecutionOrderTop = new Dictionary<string, IList<string>>();
             ExecutionOrderBottom = new Dictionary<string, IList<string>>();
             SFASessionData = new SFASessionData();
