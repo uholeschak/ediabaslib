@@ -1384,17 +1384,17 @@ namespace SourceCodeSync
                             continue;
                         }
 
-                        if (comment.Contains("[IGNORE]", StringComparison.Ordinal))
+                        if (comment.Contains("[IGNORE]", StringComparison.OrdinalIgnoreCase))
                         {
                             continue;
                         }
 
-                        if (comment.TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.Ordinal))
+                        if (comment.TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase))
                         {
                             continue;
                         }
 
-                        if (comment.TrimStart().StartsWith(_commentedAddCodeMarker, StringComparison.Ordinal))
+                        if (comment.TrimStart().StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase))
                         {
                             continue;
                         }

@@ -2327,7 +2327,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "added clientContext", OriginalHash = "F8F3506659A8030891C18071CBDDFAA7")]
         public typeVehicle(ClientContext clientContext)
         {
-            _clientContext = clientContext;
+            _clientContext = clientContext; //[+] _clientContext = clientContext;
             //[-] perceivedSymptomsField = new ObservableCollection<XEP_PERCEIVEDSYMPTOMSEX>();
             installedAdaptersField = new ObservableCollection<decimal>();
             //[-] combinedFaultsField = new ObservableCollection<DTC>();
