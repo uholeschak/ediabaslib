@@ -2324,7 +2324,7 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        [PreserveSource(Hint = "added clientContext", OriginalHash = "F8F3506659A8030891C18071CBDDFAA7")]
+        [PreserveSource(Hint = "added clientContext", SignatureModified = true)]
         public typeVehicle(ClientContext clientContext)
         {
             //[+] _clientContext = clientContext;

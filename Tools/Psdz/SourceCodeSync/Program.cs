@@ -1982,9 +1982,7 @@ namespace SourceCodeSync
         /// <summary>
         /// Merges //[-] commented code lines from dest into source code
         /// </summary>
-        private static string MergeCommentedCodeLines(
-            string sourceCode,
-            List<CommentedCodeLineInfo> linesToPreserve)
+        private static string MergeCommentedCodeLines(string sourceCode, List<CommentedCodeLineInfo> linesToPreserve)
         {
             List<string> sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
             List<(int lineIndex, string commentLine)> insertions = new List<(int lineIndex, string commentLine)>();
@@ -2084,6 +2082,20 @@ namespace SourceCodeSync
                         {
                             string insertLines = commentInfo.CommentLine + Environment.NewLine + addLine;
                             insertions.Add((insertIndex, insertLines));
+                        }
+                        else
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine($"Unable to remove comment marker: {trimmedLine}");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine($"No valid insertion point found for: {trimmedLine}");
                         }
                     }
                 }
