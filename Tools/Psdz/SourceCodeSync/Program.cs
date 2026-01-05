@@ -106,7 +106,9 @@ namespace SourceCodeSync
             { "BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic", "MultisourceLogic"}
         };
 
-        private const string _commentedCodeMarker = "//[-]";
+        private const string _commentedRemoveCodeMarker = "//[-]";
+
+        private const string _commentedAddCodeMarker = "//[+]";
 
         private const string _attributPreserveSource = "PreserveSource";
 
@@ -1387,8 +1389,12 @@ namespace SourceCodeSync
                             continue;
                         }
 
-                        // Skip //[-] commented code markers - these will be handled separately
-                        if (comment.TrimStart().StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                        if (comment.TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.Ordinal))
+                        {
+                            continue;
+                        }
+
+                        if (comment.TrimStart().StartsWith(_commentedAddCodeMarker, StringComparison.Ordinal))
                         {
                             continue;
                         }
@@ -1855,7 +1861,8 @@ namespace SourceCodeSync
                 if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
                 {
                     string comment = trivia.ToString();
-                    if (comment.TrimStart().StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                    if (comment.TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase) ||
+                        comment.TrimStart().StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase))
                     {
                         result.Add(comment);
                     }
@@ -1876,7 +1883,8 @@ namespace SourceCodeSync
             for (int i = 0; i < lines.Length; i++)
             {
                 string trimmedLine = lines[i].TrimStart();
-                if (trimmedLine.StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                if (trimmedLine.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase) ||
+                    trimmedLine.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase))
                 {
                     CommentedCodeLineInfo info = new CommentedCodeLineInfo
                     {
@@ -1909,11 +1917,18 @@ namespace SourceCodeSync
                 trimmed.StartsWith("//", StringComparison.Ordinal) ||
                 trimmed.StartsWith("/*", StringComparison.Ordinal))
             {
-                if (!trimmed.StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                if (trimmed.StartsWith(_commentedRemoveCodeMarker, StringComparison.Ordinal))
+                {
+                    trimmed = trimmed.Substring(_commentedRemoveCodeMarker.Length).TrimStart();
+                }
+                else if (trimmed.StartsWith(_commentedAddCodeMarker, StringComparison.Ordinal))
+                {
+                    trimmed = trimmed.Substring(_commentedAddCodeMarker.Length).TrimStart();
+                }
+                else
                 {
                     return null;
                 }
-                trimmed = trimmed.Substring(_commentedCodeMarker.Length).TrimStart();
             }
 
             return Regex.Replace(trimmed, @"\s+", "");
@@ -1945,7 +1960,7 @@ namespace SourceCodeSync
                         {
                             // Check if comment is not already there
                             if (i + 1 < sourceLines.Count &&
-                                !sourceLines[i + 1].TrimStart().StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                                !sourceLines[i + 1].TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase))
                             {
                                 insertIndex = i + 1;
                                 break;
@@ -1965,7 +1980,7 @@ namespace SourceCodeSync
                         {
                             // Check if comment is not already there
                             if (i > 0 &&
-                                !sourceLines[i - 1].TrimStart().StartsWith(_commentedCodeMarker, StringComparison.Ordinal))
+                                !sourceLines[i - 1].TrimStart().StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase))
                             {
                                 insertIndex = i;
                                 break;
