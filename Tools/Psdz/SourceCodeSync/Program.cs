@@ -1926,8 +1926,8 @@ namespace SourceCodeSync
                     CommentedCodeLineInfo info = new CommentedCodeLineInfo
                     {
                         CommentLine = lines[i],
-                        PrecedingCodeLine = i > 0 ? NormalizeCodeLine(lines[i - 1]) : null,
-                        FollowingCodeLine = i < lines.Length - 1 ? NormalizeCodeLine(lines[i + 1]) : null,
+                        PrecedingCodeLine = i > 0 ? NormalizeCodeLine(lines[i - 1], true) : null,
+                        FollowingCodeLine = i < lines.Length - 1 ? NormalizeCodeLine(lines[i + 1], true) : null,
                         OriginalLineNumber = i
                     };
                     result.Add(info);
@@ -1940,7 +1940,7 @@ namespace SourceCodeSync
         /// <summary>
         /// Normalizes a code line for comparison (removes whitespace)
         /// </summary>
-        private static string NormalizeCodeLine(string line)
+        private static string NormalizeCodeLine(string line, bool ignoreAddedLine = false)
         {
             if (string.IsNullOrEmpty(line))
             {
@@ -1960,6 +1960,11 @@ namespace SourceCodeSync
                 }
                 else if (trimmed.StartsWith(_commentedAddCodeMarker, StringComparison.Ordinal))
                 {
+                    if (ignoreAddedLine)
+                    {
+                        return null;
+                    }
+
                     trimmed = trimmed.Substring(_commentedAddCodeMarker.Length).TrimStart();
                 }
                 else
