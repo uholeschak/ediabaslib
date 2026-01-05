@@ -1816,7 +1816,7 @@ namespace SourceCodeSync
             string destCode = destMember.ToFullString();
 
             // Parse dest code to find //[-] lines and their context
-            var linesToPreserve = FindCommentedCodeLinesWithContext(destCode);
+            List<CommentedCodeLineInfo> linesToPreserve = FindCommentedCodeLinesWithContext(destCode);
 
             if (!linesToPreserve.Any())
             {
@@ -1850,7 +1850,7 @@ namespace SourceCodeSync
         {
             List<string> result = new List<string>();
 
-            foreach (SyntaxTrivia trivia in member.DescendantTrivia())
+            foreach (SyntaxTrivia trivia in member.DescendantTrivia(descendIntoTrivia: true))
             {
                 if (trivia.IsKind(SyntaxKind.SingleLineCommentTrivia))
                 {
@@ -2053,21 +2053,17 @@ namespace SourceCodeSync
         /// </summary>
         public static bool HasPreserveComment(SyntaxNode member)
         {
-            if (member.HasLeadingTrivia)
+            foreach (SyntaxTrivia t in member.DescendantTrivia(descendIntoTrivia: true))
             {
-                var trivia = member.GetLeadingTrivia();
-                foreach (var t in trivia)
+                if (t.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
+                    t.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
+                    t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
+                    t.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
                 {
-                    if (t.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
-                        t.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
-                        t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
-                        t.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
+                    string comment = t.ToString().ToUpperInvariant();
+                    if (comment.Contains("[PRESERVE]"))
                     {
-                        string comment = t.ToString().ToUpperInvariant();
-                        if (comment.Contains("[PRESERVE]"))
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
             }
