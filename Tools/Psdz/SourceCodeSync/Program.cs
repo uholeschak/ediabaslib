@@ -1920,14 +1920,17 @@ namespace SourceCodeSync
             for (int i = 0; i < lines.Length; i++)
             {
                 string trimmedLine = lines[i].Trim();
-                if (trimmedLine.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase) ||
-                    trimmedLine.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase))
+                bool isRemoveLine = trimmedLine.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase);
+                bool isAddLine = trimmedLine.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase);
+
+                if (isRemoveLine || isAddLine)
                 {
+                    int nextLine = isAddLine ? 2 : 1;
                     CommentedCodeLineInfo info = new CommentedCodeLineInfo
                     {
                         CommentLine = lines[i],
                         PrecedingCodeLine = i > 0 ? NormalizeCodeLine(lines[i - 1], true) : null,
-                        FollowingCodeLine = i < lines.Length - 1 ? NormalizeCodeLine(lines[i + 1], true) : null,
+                        FollowingCodeLine = i < lines.Length - nextLine ? NormalizeCodeLine(lines[i + nextLine], true) : null,
                         OriginalLineNumber = i
                     };
                     result.Add(info);
