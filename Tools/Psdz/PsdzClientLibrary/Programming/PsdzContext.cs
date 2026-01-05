@@ -192,10 +192,11 @@ namespace PsdzClient.Programming
         internal IPsdzTal TalForECUWithIDRClassicState { get; set; }
         internal IEnumerable<IPsdzTargetSelector> TargetSelectors { get; set; }
 
-        [PreserveSource(Hint = "istaFolder added", OriginalHash = "4CECC7DD2ABD296C128B977855C3D159")]
+        [PreserveSource(Hint = "istaFolder added", SignatureModified = true)]
         public PsdzContext(string istaFolder)
         {
-            IstaFolder = istaFolder;    //[+] IstaFolder = istaFolder;
+            //[+] IstaFolder = istaFolder;
+            IstaFolder = istaFolder;
             ExecutionOrderTop = new Dictionary<string, IList<string>>();
             ExecutionOrderBottom = new Dictionary<string, IList<string>>();
             SFASessionData = new SFASessionData();
