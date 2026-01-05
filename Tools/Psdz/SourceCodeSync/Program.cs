@@ -2012,7 +2012,7 @@ namespace SourceCodeSync
                                 followingLine == null ||
                                 (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.OrdinalIgnoreCase) == 0);
 
-                            if (precedingMatches && followingMatches)
+                            if (precedingMatches || followingMatches)
                             {
                                 // Replace the code line with the comment line
                                 sourceLines[i] = commentInfo.CommentLine;
