@@ -805,7 +805,6 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "4EEFCD7416F97299B5B4DA761513E05D")]
         private bool InitializeIcomDevice(IVciDevice device, bool logging, bool isDoIP, bool slpDoIpFromIcom)
         {
             if (slpDoIpFromIcom || isDoIP)
@@ -813,21 +812,19 @@ namespace PsdzClient.Core.Container
                 return InitEdiabasForDoIP(device);
             }
 
-            if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
-            {
-                //[-] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty, logging);
-                //[+] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
-                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
-            }
+            //[-] if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
+            //[-] {
+            //[-] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty, logging);
+            //[-] }
 
-            if (!isDoIP)
-            {
-                //[-] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty, logging);
-                //[+] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
-                return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
-            }
+            //[-] if (!isDoIP)
+            //[-] {
+            //[-] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty, logging);
+            //[-] }
 
-            return false;
+            //[-] return false;
+            //[+] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
+            return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
         }
 
         private bool InitializeEnetDevice(IVciDevice device)

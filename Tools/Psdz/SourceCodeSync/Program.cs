@@ -2017,6 +2017,13 @@ namespace SourceCodeSync
                     string normalizedCodeLineToRemove = NormalizeCodeLine(commentInfo.CommentLine);
                     for (int i = 0; i < sourceLines.Count; i++)
                     {
+                        string sourceTrimmed = sourceLines[i].Trim();
+                        if (sourceTrimmed.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase) ||
+                            sourceTrimmed.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase))
+                        {
+                            continue;
+                        }
+
                         string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
                         if (normalizedSourceLine != null &&
                             string.Compare(normalizedSourceLine, normalizedCodeLineToRemove, StringComparison.Ordinal) == 0)
