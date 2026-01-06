@@ -52,7 +52,7 @@ namespace PsdzClient.Core
             return new IStufeXExpression(eCompareOperator, ilevelid, levelyType, vec);
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "1D1747445CAE51602D4B511CFF4A4E65")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -60,11 +60,12 @@ namespace PsdzClient.Core
                 return false;
             }
 
-            // [UH] [IGNORE] Store vec for later use
+            //[+] vecInfo = vec;
             vecInfo = vec;
             bool flag = false;
             string iLevelOperand = GetILevelOperand(vec);
-            // [UH] [IGNORE] Use database
+            //[-] string iStufeById = dataProvider.GetIStufeById(iLevelId);
+            //[+] string iStufeById = ClientContext.GetDatabase(vecInfo)?.GetIStufeById(iLevelId.ToString(CultureInfo.InvariantCulture));
             string iStufeById = ClientContext.GetDatabase(vecInfo)?.GetIStufeById(iLevelId.ToString(CultureInfo.InvariantCulture));
             if (string.IsNullOrEmpty(iStufeById))
             {
