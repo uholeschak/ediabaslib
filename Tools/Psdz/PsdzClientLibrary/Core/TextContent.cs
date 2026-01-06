@@ -309,7 +309,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database replaced", OriginalHash = "B11176690EC7E119C83C08AB1E1FED1A")]
+        [PreserveSource(Hint = "Database replaced", SignatureModified = true)]
         public static string ReplaceTextReferences(string xmlText, PsdzDatabase database, string language)
         {
             string result = xmlText;
@@ -349,7 +349,8 @@ namespace PsdzClient.Core
                             return string.Format(CultureInfo.InvariantCulture, "<TextItem SchemaVersion=\"1.0.0\">{0}</TextItem>", xmlText);
                         }
 
-                        // [UH] [IGNORE] database replaced
+                        //[-] string textItem = database.GetTextCollectionById(Convert.ToDecimal(xmlText, CultureInfo.InvariantCulture), new string[1] { language })[0].TextItem;
+                        //[+] string textItem = database.GetTextById(xmlText, new string[1] { language })[0].TextItem;
                         string textItem = database.GetTextById(xmlText, new string[1] { language })[0].TextItem;
                         if (!string.IsNullOrEmpty(textItem))
                         {
@@ -372,15 +373,23 @@ namespace PsdzClient.Core
                             {
                                 string value = xAttribute.Value;
                                 Log.Info("TextContentOld.ReplaceTextReferences()", "Found referenced text: {0} Path: {1}", xElement, xAttribute.Value);
-                                // [UH] [IGNORE] database replaced
+                                //[-] string localizedXmlValue = database.GetSpTextItemsByControlId(Convert.ToDecimal(value, CultureInfo.InvariantCulture)).GetLocalizedXmlValue(language);
+                                //[+] PsdzDatabase.EcuTranslation ecuTranslation = database.GetSpTextItemsByControlId(value);
                                 PsdzDatabase.EcuTranslation ecuTranslation = database.GetSpTextItemsByControlId(value);
+                                //[+] string localizedXmlValue = null;
                                 string localizedXmlValue = null;
+                                //[+] if (ecuTranslation != null)
                                 if (ecuTranslation != null)
+                                    //[+] {
                                 {
+                                    //[+] localizedXmlValue = ecuTranslation.GetTitle(language);
                                     localizedXmlValue = ecuTranslation.GetTitle(language);
+                                    //[+] }
                                 }
 
                                 XElement content;
+                                //[-] if (localizedXmlValue.Length == 0)
+                                //[+] if (string.IsNullOrEmpty(localizedXmlValue))
                                 if (string.IsNullOrEmpty(localizedXmlValue))
                                 {
                                     Log.Error("TextContentOld.ReplaceTextReferences()", "Failed to get the localized text for ID {0}.", value);
