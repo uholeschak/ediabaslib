@@ -4,7 +4,6 @@ namespace PsdzClient.Core
 {
     public abstract class VehicleCharacteristicAbstract
     {
-        [PreserveSource(Hint = "Database modified", OriginalHash = "E5432F3B94B70C791445C4F8B749397A")]
         protected bool ComputeCharacteristic(string vehicleCode, params object[] param)
         {
             if (Enum.TryParse<VehicleCharacteristic>(vehicleCode, out var result))
@@ -174,7 +173,8 @@ namespace PsdzClient.Core
                             case (VehicleCharacteristic)4L:
                                 return ComputeMOTKraftstoffart(param);
                             case (VehicleCharacteristic)0L:
-                                // [UH] [IGNORE] adapted
+                                //[-] if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is IXepCharacteristics xepCharacteristics)
+                                //[+] if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is PsdzDatabase.Characteristics xepCharacteristics)
                                 if (param.Length > 1 && param[0] is IIdentVehicle identVehicle && param[1] is PsdzDatabase.Characteristics xepCharacteristics)
                                 {
                                     identVehicle.TempTypeKeyLeadFromDb = xepCharacteristics.Name;
