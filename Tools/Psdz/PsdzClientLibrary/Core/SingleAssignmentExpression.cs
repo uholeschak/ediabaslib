@@ -1,10 +1,5 @@
-﻿using PsdzClient;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 #pragma warning disable CA2022
 namespace PsdzClient.Core
@@ -25,7 +20,8 @@ namespace PsdzClient.Core
             switch (type)
             {
                 case EExpressionType.COUNTRY:
-                    // [UH] [IGNORE] dataProvider removed
+                    //[-] singleAssignmentExpression = new CountryExpression(dataProvider);
+                    //[+] singleAssignmentExpression = new CountryExpression();
                     singleAssignmentExpression = new CountryExpression();
                     break;
                 case EExpressionType.ECUCLIQUE:
@@ -47,7 +43,8 @@ namespace PsdzClient.Core
                     singleAssignmentExpression = new EquipmentExpression();
                     break;
                 case EExpressionType.ISTUFE:
-                    // [UH] [IGNORE] dataProvider removed
+                    //[-] singleAssignmentExpression = new IStufeExpression(dataProvider);
+                    //[+] singleAssignmentExpression = new IStufeExpression();
                     singleAssignmentExpression = new IStufeExpression();
                     break;
                 case EExpressionType.SALAPA:
@@ -68,7 +65,7 @@ namespace PsdzClient.Core
             }
 
             singleAssignmentExpression.value = num;
-            // [UH] [IGNORE] added
+            //[+] singleAssignmentExpression.vecInfo = vec;
             singleAssignmentExpression.vecInfo = vec;
             return singleAssignmentExpression;
         }
