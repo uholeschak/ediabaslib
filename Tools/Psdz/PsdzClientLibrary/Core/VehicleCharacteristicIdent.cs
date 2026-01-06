@@ -496,12 +496,13 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Reactor modified", OriginalHash = "8DBDA399844725DCC6051E15D0E508E9")]
         private void GetIdentParameters(params object[] parameters)
         {
             vecInfo = (IIdentVehicle)parameters[0];
-            // [UH] [IGNORE] get reactor from vehicle and store it for the caller
+            //[-] characteristic = (IXepCharacteristics)parameters[1];
+            //[+] reactor = (vecInfo as Vehicle)?.Reactor;
             reactor = (vecInfo as Vehicle)?.Reactor;
+            //[+] characteristic = (PsdzDatabase.Characteristics)parameters[1];
             characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
 
