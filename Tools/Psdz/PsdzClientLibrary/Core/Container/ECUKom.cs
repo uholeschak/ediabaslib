@@ -373,7 +373,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "ediabas added", OriginalHash = "61E52CD0CDCD30B0C2817B500EFB9893")]
+        [PreserveSource(Hint = "ediabas added", SignatureModified = true)]
         public static ECUKom DeSerialize(string filename, EdiabasNet ediabas = null)
         {
             Log.Info("ECUKom.DeSerialize()", "called");
@@ -387,7 +387,7 @@ namespace PsdzClient.Core.Container
             {
                 XmlTextReader xmlTextReader = new XmlTextReader(filename);
                 eCUKom = (ECUKom)new XmlSerializer(typeof(ECUKom)).Deserialize(xmlTextReader);
-                // [UH] [IGNORE] create api with ediabas
+                //[+] eCUKom.api = eCUKom.CreateApi(ediabas);
                 eCUKom.api = eCUKom.CreateApi(ediabas);
                 eCUKom.jobList.ForEach(delegate (ECUJob job)
                 {
@@ -402,7 +402,8 @@ namespace PsdzClient.Core.Container
             catch (Exception exception)
             {
                 Log.WarningException("ECUKom.DeSerialize()", exception);
-                // [UH] [IGNORE] ediabas added
+                //[-] eCUKom = new ECUKom("Rheingold", new List<string>());
+                //[+] eCUKom = new ECUKom("Rheingold", new List<string>(), ediabas);
                 eCUKom = new ECUKom("Rheingold", new List<string>(), ediabas);
             }
 
