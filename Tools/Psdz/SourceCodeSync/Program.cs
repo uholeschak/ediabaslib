@@ -1561,6 +1561,7 @@ namespace SourceCodeSync
                 MethodDeclarationSyntax sourceMethod when preservedMember is MethodDeclarationSyntax preservedMethod =>
                     sourceMethod
                         .WithParameterList(preservedMethod.ParameterList)
+                        .WithReturnType(preservedMethod.ReturnType)
                         .WithModifiers(preservedMethod.Modifiers)
                         .WithExpressionBody(preservedMethod.ExpressionBody)
                         .WithSemicolonToken(preservedMethod.SemicolonToken)
