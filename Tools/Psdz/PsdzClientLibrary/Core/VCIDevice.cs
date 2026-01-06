@@ -1440,7 +1440,6 @@ namespace PsdzClient.Core
             VCIType = vciType;
         }
 
-        [PreserveSource(Hint = "Database replaced", OriginalHash = "47ED03CC4734A5360E2D37EB64CBE80C")]
         private void LoadCharacteristicsFromDatabase()
         {
             if (basicFeaturesVci != null)
@@ -1448,7 +1447,9 @@ namespace PsdzClient.Core
                 return;
             }
 
-            // [UH] [IGNORE] instance replaced
+            //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
+            //[-] if (VIN.Contains("XXXX") || VIN.Length != 17 || instance == null)
+            //[+] if (VIN.Contains("XXXX") || VIN.Length != 17 || _clientContext == null)
             if (VIN.Contains("XXXX") || VIN.Length != 17 || _clientContext == null)
             {
                 return;
@@ -1489,7 +1490,8 @@ namespace PsdzClient.Core
                     break;
             }
 
-            // [UH] [IGNORE] replaced
+            //[-] IList<IXepCharacteristics> vehicleIdentByTypeKey = instance.GetVehicleIdentByTypeKey(text);
+            //[+] List<PsdzDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
             List<PsdzDatabase.Characteristics> vehicleIdentByTypeKey = _clientContext?.Database?.GetVehicleIdentByTypeKey(text, false);
             if (vehicleIdentByTypeKey == null)
             {
@@ -1497,8 +1499,11 @@ namespace PsdzClient.Core
             }
 
             BasicFeaturesVci vehicle = new BasicFeaturesVci();
-            // [UH] [IGNORE] _clientContext added
+            //[-] VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper();
+            //[-] foreach (IXepCharacteristics item in vehicleIdentByTypeKey)
+            //[+] VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
             VehicleCharacteristicVCIDeviceHelper vehicleCharacteristicVCIDeviceHelper = new VehicleCharacteristicVCIDeviceHelper(_clientContext);
+            //[+] foreach (PsdzDatabase.Characteristics item in vehicleIdentByTypeKey)
             foreach (PsdzDatabase.Characteristics item in vehicleIdentByTypeKey)
             {
                 vehicleCharacteristicVCIDeviceHelper.AssignBasicFeaturesVciCharacteristic(item.RootNodeClass.ToString(), vehicle, item);
