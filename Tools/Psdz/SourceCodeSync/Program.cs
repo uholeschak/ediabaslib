@@ -1999,6 +1999,10 @@ namespace SourceCodeSync
         private static string MergeCommentedCodeLines(string sourceCode, List<CommentedCodeLineInfo> linesToPreserve)
         {
             List<string> sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
+            List<string> normalizedLines = sourceLines
+                .Select(line => NormalizeCodeLine(line, true))
+                .Where(line => !string.IsNullOrEmpty(line))
+                .ToList();
             List<(int lineIndex, string commentLine)> insertions = new List<(int lineIndex, string commentLine)>();
 
             foreach (CommentedCodeLineInfo commentInfo in linesToPreserve)
@@ -2027,18 +2031,8 @@ namespace SourceCodeSync
                                 followingLine == null ||
                                 (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.Ordinal) == 0);
 
-                            bool stableLine = normalizedSourceLine.Length > 40;
-                            if (!stableLine && normalizedSourceLine.Length > 10)
-                            {
-                                stableLine |= normalizedSourceLine.Contains("new");
-                                stableLine |= normalizedSourceLine.Contains("=");
-                                stableLine |= normalizedSourceLine.Contains("(");
-                                stableLine |= normalizedSourceLine.Contains(")");
-                                stableLine |= normalizedSourceLine.Contains("<");
-                                stableLine |= normalizedSourceLine.Contains(">");
-                            }
-
-                            bool validLine = stableLine ?
+                            int matchCount = normalizedLines.Count(line => string.Compare(line, normalizedSourceLine, StringComparison.Ordinal) == 0);
+                            bool validLine = matchCount <= 1?
                                 precedingMatches || followingMatches : precedingMatches && followingMatches;
 
                             if (validLine)
