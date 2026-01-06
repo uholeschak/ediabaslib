@@ -2027,7 +2027,18 @@ namespace SourceCodeSync
                                 followingLine == null ||
                                 (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.Ordinal) == 0);
 
-                            bool validLine = normalizedSourceLine.Length > 40 ?
+                            bool stableLine = normalizedSourceLine.Length > 40;
+                            if (!stableLine && normalizedSourceLine.Length > 10)
+                            {
+                                stableLine |= normalizedSourceLine.Contains("new");
+                                stableLine |= normalizedSourceLine.Contains("=");
+                                stableLine |= normalizedSourceLine.Contains("(");
+                                stableLine |= normalizedSourceLine.Contains(")");
+                                stableLine |= normalizedSourceLine.Contains("<");
+                                stableLine |= normalizedSourceLine.Contains(">");
+                            }
+
+                            bool validLine = stableLine ?
                                 precedingMatches || followingMatches : precedingMatches && followingMatches;
 
                             if (validLine)
