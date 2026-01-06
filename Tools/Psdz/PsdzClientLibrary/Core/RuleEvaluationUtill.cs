@@ -180,7 +180,6 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Evaluate modified", OriginalHash = "3B377A5FD3DA912B352A01E04A5DF9E9")]
         private void EvaluateRuleExpressions()
         {
             if (!ruleExpressionsToEvaluate.Any())
@@ -193,7 +192,8 @@ namespace PsdzClient.Core
             {
                 ruleEvaluationServices.Logger.Info(ruleEvaluationServices.Logger.CurrentMethod(), "Start evaluating rule with id: {0}", key);
                 IRuleExpression exp = ruleExpressionsToEvaluate[key];
-                // [UH] [IGNORE] arguments modified
+                //[-] bool flag = RuleExpression.Evaluate(vehicle, dealer, exp, ffmResolver, dataProvider, ruleEvaluationServices);
+                //[+] bool flag = RuleExpression.Evaluate((Vehicle)vehicle, exp, null);
                 bool flag = RuleExpression.Evaluate((Vehicle)vehicle, exp, null);
                 ruleEvaluationServices.Logger.Info(ruleEvaluationServices.Logger.CurrentMethod(), "End evaluating rule: {0} Overall Validity: {1}", key, flag.ToString());
                 if (!flag)
