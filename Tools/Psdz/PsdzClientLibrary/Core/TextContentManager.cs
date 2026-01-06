@@ -199,7 +199,6 @@ namespace PsdzClient.Core
             return list;
         }
 
-        [PreserveSource(Hint = "Log modified", OriginalHash = "72FAC8462D294D0A4E134D0F071125A0")]
         public IList<LocalizedText> GetTextItem(string textItemId, __TextParameter[] paramArray)
         {
             serviceProgramCollectionRoot = new List<XElement>();
@@ -216,7 +215,8 @@ namespace PsdzClient.Core
                 LocalizedText item;
                 if (num == 0)
                 {
-                    // [UH] [IGNORE] Identification adapted
+                    //[-] Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identifikator : "null");
+                    //[+] Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identification : "null");
                     Log.Error("TextContentManager.GetTextItem()", "Missing text item with ID \"{0}\" in collection for {1}, returning ID as TEXTITEM.", textItemId, (xepInfoObj != null) ? xepInfoObj.Identification : "null");
                     item = new LocalizedText("<spe:TEXTITEM xmlns:spe='http://bmw.com/2014/Spe_Text_2.0'><spe:PARAGRAPH>### " + textItemId + " ###</spe:PARAGRAPH></spe:TEXTITEM>", lang[j]);
                 }
