@@ -34,13 +34,14 @@ namespace PsdzClient.Core
         {
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "06B7F89FD4225D6B31E7D90AEDFD30E9")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public IStufeExpression(long iStufeId)
         {
             value = iStufeId;
+            //[-] this.dataProvider = dataProvider;
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "23985ADDF883DEA5B904497A90D113F0")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -48,7 +49,8 @@ namespace PsdzClient.Core
                 return false;
             }
 
-            vecInfo = vec; // [UH] [IGNORE] added
+            //[+] vecInfo = vec;
+            vecInfo = vec;
             bool flag;
             if (string.IsNullOrEmpty(vec.ILevel) || vec.ILevel == "0")
             {
