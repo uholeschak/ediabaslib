@@ -26,35 +26,36 @@ namespace PsdzClient.Core
 {
     public sealed class Sec4DiagHandler : ISec4DiagHandler
     {
-        private readonly byte[] roleMask = new byte[4] { 0, 0, 5, 75 };
-
+        private readonly byte[] roleMask = new byte[4]
+        {
+            0,
+            0,
+            5,
+            75
+        };
         public AsymmetricCipherKeyPair IstaKeyPair { get; set; }
-
         public AsymmetricCipherKeyPair Service29KeyPair { get; set; }
-
         public ISec4DiagCertificates Sec4DiagCertificates { get; set; }
-
         public ISec4DiagCertificates Sec4DiagCertificatesForPSdZInAos { get; set; }
-
         public AsymmetricKeyParameter EdiabasPublicKey { get; set; }
-
         public string CertificateFilePathWithoutEnding { get; set; }
-
         public int RoleMaskAsInt => BitConverter.ToInt32(roleMask.Reverse().ToArray(), 0);
-
         private string _ediabaasS29Path { get; } = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.S29Path", "..\\..\\..\\Ediabas\\Security\\S29\\Certificates");
-
         private string _istaKeyPairPath { get; } = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ista.KeyPair.Path", "..\\..\\..\\TesterGui\\keyContainer.pfx");
-
         private string _certificateFileNameWithoutEnding { get; } = $"certificates_{Process.GetCurrentProcess().Id}";
 
-        [PreserveSource(Hint = "istaFolder added", OriginalHash = "C16A15A24573B48F1269B6EBEE8AE1D6")]
+        [PreserveSource(Hint = "istaFolder added", SignatureModified = true)]
         public Sec4DiagHandler(string istaFolder = null)
         {
+            //[+] if (!string.IsNullOrEmpty(istaFolder))
             if (!string.IsNullOrEmpty(istaFolder))
-            {   // [UH] [IGNORE] override default paths
+            //[+] {
+            {
+                //[+] _ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
                 _ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
+                //[+] _istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
                 _istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
+            //[+] }
             }
 
             IstaKeyPair = LoadKeyPairFromFile(_istaKeyPairPath, "G#8x!9sD2@qZ6&lF1");
@@ -75,6 +76,7 @@ namespace PsdzClient.Core
                         return new AsymmetricCipherKeyPair(pkcs12Store.GetCertificate(alias).Certificate.GetPublicKey(), key.Key);
                     }
                 }
+
                 throw new InvalidOperationException("Private key not found in PKCS#12 store.");
             }
         }
@@ -92,6 +94,7 @@ namespace PsdzClient.Core
                     PublicKey = ConvertToPEM(EdiabasPublicKey)
                 };
             }
+
             empty = CertReqProfile.EnumType.crp_subCA_4ISTA.ToString();
             Sec4DiagRequestData sec4DiagRequestData = new Sec4DiagRequestData
             {
@@ -165,9 +168,21 @@ namespace PsdzClient.Core
             x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddDays(4.0));
             x509V3CertificateGenerator.SetSubjectDN(subject);
             DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.30");
-            byte[] contents = new byte[2] { 14, 243 };
-            byte[] contents2 = new byte[2] { 14, 244 };
-            byte[] contents3 = new byte[2] { 14, 245 };
+            byte[] contents = new byte[2]
+            {
+                14,
+                243
+            };
+            byte[] contents2 = new byte[2]
+            {
+                14,
+                244
+            };
+            byte[] contents3 = new byte[2]
+            {
+                14,
+                245
+            };
             DerOctetString element = new DerOctetString(contents);
             DerOctetString element2 = new DerOctetString(contents2);
             DerOctetString element3 = new DerOctetString(contents3);
@@ -241,8 +256,8 @@ namespace PsdzClient.Core
             Buffer.BlockCopy(array5, 0, array6, array.Length, array5.Length);
             byte[] array7 = new byte[2]
             {
-            (byte)((array6.Length >> 8) & 0xFF),
-            (byte)(array6.Length & 0xFF)
+                (byte)((array6.Length >> 8) & 0xFF),
+                (byte)(array6.Length & 0xFF)
             };
             byte[] array8 = new byte[2 + array7.Length + array6.Length + 2];
             array8[0] = 41;
@@ -264,10 +279,7 @@ namespace PsdzClient.Core
                 {
                     pemWriter.WriteObject(publicKey);
                     pemWriter.Writer.Flush();
-                    return stringWriter.ToString().Replace("-----BEGIN PUBLIC KEY-----", "").Replace("-----END PUBLIC KEY-----", "")
-                        .Replace("\r", "")
-                        .Replace("\n", "")
-                        .Trim();
+                    return stringWriter.ToString().Replace("-----BEGIN PUBLIC KEY-----", "").Replace("-----END PUBLIC KEY-----", "").Replace("\r", "").Replace("\n", "").Trim();
                 }
             }
         }
@@ -315,6 +327,7 @@ namespace PsdzClient.Core
                 Log.Info(method, "Not Certification for given Thumbprint found");
                 return Sec4DiagCertificateState.NotFound;
             }
+
             if (DateTime.Now < subCaCertificate[0].NotAfter.AddDays(-1.0) || DateTime.Now < caCertificate[0].NotAfter.AddDays(-1.0))
             {
                 if (DateTime.Now > subCaCertificate[0].NotAfter.AddDays(-7.0) || DateTime.Now > caCertificate[0].NotAfter.AddDays(-7.0))
@@ -322,15 +335,18 @@ namespace PsdzClient.Core
                     Log.Info(method, "Certificte is over the 3 Weeks. We are requesting new Certificates but if this failes we are using the old one.");
                     return Sec4DiagCertificateState.NotYetExpired;
                 }
+
                 Org.BouncyCastle.X509.X509Certificate x509Certificate = DotNetUtilities.FromX509Certificate(subCaCertificate[0]);
                 if (!AreKeyPairsEqual(x509Certificate.GetPublicKey(), IstaKeyPair))
                 {
                     Log.Info(method, "Certificate does not match the KeyPair from ISTA");
                     return Sec4DiagCertificateState.NotFound;
                 }
+
                 Log.Info(method, "Certification for given Thumbprint found and valid");
                 return Sec4DiagCertificateState.Valid;
             }
+
             Log.Info(method, "Certification for given Thumbprint found but not valid. Removing old once.");
             X509Certificate2Enumerator enumerator = subCaCertificate.GetEnumerator();
             while (enumerator.MoveNext())
@@ -338,12 +354,14 @@ namespace PsdzClient.Core
                 X509Certificate2 current = enumerator.Current;
                 x509Store.Remove(current);
             }
+
             enumerator = caCertificate.GetEnumerator();
             while (enumerator.MoveNext())
             {
                 X509Certificate2 current2 = enumerator.Current;
                 x509Store.Remove(current2);
             }
+
             ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca", string.Empty, overrideIsMaster: true);
             ConfigSettings.putConfigString("BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa", string.Empty, overrideIsMaster: true);
             subCaCertificate = null;
@@ -383,6 +401,7 @@ namespace PsdzClient.Core
                 WriteCertificateToFile(sec4DiagCertificates);
                 Log.Info(Log.CurrentMethod(), "Certificates are written to file.");
             }
+
             return sec4DiagCertificates;
         }
 
@@ -402,6 +421,7 @@ namespace PsdzClient.Core
                 boolResultObject.Result = true;
                 return boolResultObject;
             }
+
             Org.BouncyCastle.X509.X509Certificate issuerCert = DotNetUtilities.FromX509Certificate(subCaCertificate[0]);
             X509Certificate2 s29Cert = GenerateCertificate(issuerCert, EdiabasPublicKey, device.VIN);
             Sec4DiagCertificates = new Sec4DiagCertificates
@@ -421,6 +441,7 @@ namespace PsdzClient.Core
                 boolResultObject.ErrorCodeInt = 4;
                 return boolResultObject;
             }
+
             Log.Info(Log.CurrentMethod(), "Certificates are valid, S29 Certificate created and written to file.");
             boolResultObject.Result = true;
             return boolResultObject;
@@ -437,6 +458,7 @@ namespace PsdzClient.Core
                 Log.Info("ReadoutExpirationTime", "Not Certification for given Thumbprint found");
                 return string.Empty;
             }
+
             return x509Certificate2Collection[0].GetExpirationDateString();
         }
 
@@ -459,6 +481,7 @@ namespace PsdzClient.Core
             {
                 stringBuilder.AppendFormat("{0:X2}", b);
             }
+
             return stringBuilder.ToString();
         }
 
