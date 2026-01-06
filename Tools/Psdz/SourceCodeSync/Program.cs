@@ -1919,8 +1919,15 @@ namespace SourceCodeSync
             string[] lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
             CommentedCodeLineInfo lastAddInfo = null;
+            bool ignoreNextLine = false;
             for (int i = 0; i < lines.Length; i++)
             {
+                if (ignoreNextLine)
+                {
+                    ignoreNextLine = false;
+                    continue;
+                }
+
                 string trimmedLine = lines[i].Trim();
                 bool isRemoveLine = trimmedLine.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase);
                 bool isAddLine = trimmedLine.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase);
@@ -1947,7 +1954,16 @@ namespace SourceCodeSync
                         result.Add(info);
                     }
 
-                    lastAddInfo = isAddLine ? info : null;
+                    lastAddInfo = null;
+                    if (isAddLine)
+                    {
+                        lastAddInfo = info;
+                        ignoreNextLine = true;
+                    }
+                }
+                else
+                {
+                    lastAddInfo = null;
                 }
             }
 

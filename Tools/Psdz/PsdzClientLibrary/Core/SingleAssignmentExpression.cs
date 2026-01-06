@@ -10,7 +10,7 @@ namespace PsdzClient.Core
         protected long value;
         public long Value => value;
 
-        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "9B80D176470C78725F5F89E46718BD08")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", SignatureModified = true)]
         public static RuleExpression Deserialize(Stream ms, EExpressionType type, ILogger logger, Vehicle vec)
         {
             byte[] buffer = new byte[8];
