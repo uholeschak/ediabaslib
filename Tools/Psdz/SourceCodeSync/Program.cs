@@ -2027,7 +2027,7 @@ namespace SourceCodeSync
                                 followingLine == null ||
                                 (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.Ordinal) == 0);
 
-                            bool validLine = normalizedSourceLine.Length > 50 ?
+                            bool validLine = normalizedSourceLine.Length > 40 ?
                                 precedingMatches || followingMatches : precedingMatches && followingMatches;
 
                             if (validLine)
