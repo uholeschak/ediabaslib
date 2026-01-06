@@ -145,16 +145,23 @@ namespace PsdzClient.Core
             old = true;
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "1D8FEA0D5908F6220749A4787F10D320")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public ITextLocator __StandardText(decimal value, __TextParameter[] paramArray)
         {
             IList<LocalizedText> list = new List<LocalizedText>();
             try
             {
+                //[-] XEP_SPTEXTITEMS o = db.GetSpTextItemsByControlId(value);
+                //[-] list.AddRange(lang.Select((string x) => new LocalizedText(o.GetLocalizedXmlValue(x), x)));
+                //[+] PsdzDatabase.EcuTranslation o = db.GetSpTextItemsByControlId(value.ToString(CultureInfo.InvariantCulture));
                 PsdzDatabase.EcuTranslation o = db.GetSpTextItemsByControlId(value.ToString(CultureInfo.InvariantCulture));
+                //[+] if (o != null)
                 if (o != null)
-                {   // [UH] [IGNORE] Check for null
+                //[+] {
+                {
+                    //[+] list.AddRange(lang.Select((string x) => new LocalizedText(o.GetTitle(x), x)));
                     list.AddRange(lang.Select((string x) => new LocalizedText(o.GetTitle(x), x)));
+                //[+] }
                 }
             }
             catch (Exception ex)
