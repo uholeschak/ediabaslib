@@ -815,13 +815,15 @@ namespace PsdzClient.Core.Container
 
             if (!string.IsNullOrEmpty(device.VIN) && !isDoIP)
             {
-                // [UH] [IGNORE] logging removed
+                //[-] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty, logging);
+                //[+] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
                 return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
             }
 
             if (!isDoIP)
             {
-                // [UH] [IGNORE] logging removed
+                //[-] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty, logging);
+                //[+] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
                 return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
             }
 

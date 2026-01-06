@@ -2032,8 +2032,11 @@ namespace SourceCodeSync
                                 (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.Ordinal) == 0);
 
                             int matchCount = normalizedLines.Count(line => string.Compare(line, normalizedSourceLine, StringComparison.Ordinal) == 0);
-                            bool validLine = matchCount <= 1?
-                                precedingMatches || followingMatches : precedingMatches && followingMatches;
+                            bool validLine = precedingMatches || followingMatches;
+                            if (matchCount > 1)
+                            {
+                                validLine = precedingMatches && followingMatches;
+                            }
 
                             if (validLine)
                             {
