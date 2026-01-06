@@ -2337,13 +2337,13 @@ namespace PsdzClient.Core
             //[-] technicalCampaignsField = new ObservableCollection<technicalCampaignType>();
             //[-] mIBField = new VCIDevice();
             //[-] vCIField = new VCIDevice();
-            //[-] testplanField = new TestPlanType();
-            //[-] testPlanCache = new TestPlanCache();
-            //[-] historyInfoObjectsField = new ObservableCollection<InfoObject>();
             //[+] mIBField = new VCIDevice(clientContext);
             mIBField = new VCIDevice(clientContext);
             //[+] vCIField = new VCIDevice(clientContext);
             vCIField = new VCIDevice(clientContext);
+            //[-] testplanField = new TestPlanType();
+            //[-] testPlanCache = new TestPlanCache();
+            //[-] historyInfoObjectsField = new ObservableCollection<InfoObject>();
             faField = new FA();
             fFMField = new ObservableCollection<FFMResult>();
             eMotorField = new EMotor();
