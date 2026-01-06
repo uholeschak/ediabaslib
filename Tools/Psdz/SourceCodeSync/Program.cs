@@ -2070,7 +2070,6 @@ namespace SourceCodeSync
                             if (normalizedSourceLine != null &&
                                 string.Compare(normalizedSourceLine, commentInfo.PrecedingCodeLine, StringComparison.Ordinal) == 0)
                             {
-                                // Check if comment is not already there
                                 if (i + 1 < sourceLines.Count)
                                 {
                                     insertIndex = i + 1;
@@ -2089,7 +2088,6 @@ namespace SourceCodeSync
                             if (normalizedSourceLine != null &&
                                 string.Compare(normalizedSourceLine, commentInfo.FollowingCodeLine, StringComparison.Ordinal) == 0)
                             {
-                                // Check if comment is not already there
                                 if (i > 0)
                                 {
                                     insertIndex = i;
