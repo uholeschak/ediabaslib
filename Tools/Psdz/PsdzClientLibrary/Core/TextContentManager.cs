@@ -479,7 +479,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "AA2463833DC2FA0A650BFEDDB28B543D")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         private void AppendDiagcode(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PsdzDatabase db)
         {
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:DIAGCODE[not(spe:CONTENT)]", namespaceManager);
@@ -491,13 +491,17 @@ namespace PsdzClient.Core
             foreach (XElement item in enumerable)
             {
                 string value = item.Attribute(XName.Get("ID")).Value;
-                // [UH] [IGNORE] Use local database variable
+                //[-] string diagnosisCode = this.db.GetDiagnosisCode(Convert.ToDecimal(value, CultureInfo.InvariantCulture));
+                //[+] string diagnosisCode = db.GetDiagnosisCode(value);
                 string diagnosisCode = db.GetDiagnosisCode(value);
+                //[+] if (!string.IsNullOrEmpty(diagnosisCode))
                 if (!string.IsNullOrEmpty(diagnosisCode))
+                //[+] {
                 {
                     XElement xElement = new XElement(XName.Get("CONTENT", "http://bmw.com/2014/Spe_Text_2.0"));
                     xElement.Add(diagnosisCode);
                     item.Add(xElement);
+                //[+] }
                 }
             }
         }
