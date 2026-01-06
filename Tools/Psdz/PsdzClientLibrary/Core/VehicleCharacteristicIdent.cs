@@ -258,15 +258,19 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Convert to decimal", OriginalHash = "1EC76661F211BCE0EB5AC596DC117E79")]
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetIdentParameters(parameters);
-            // [UH] [IGNORE] Convert IstaVisible to decimal
+            //[-] decimal? istaVisible = characteristic.IstaVisible;
+            //[+] decimal? istaVisible = null;
             decimal? istaVisible = null;
+            //[+] if (decimal.TryParse(characteristic.IstaVisible, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal visible))
             if (decimal.TryParse(characteristic.IstaVisible, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal visible))
+            //[+] {
             {
+                //[+] istaVisible = visible;
                 istaVisible = visible;
+            //[+] }
             }
 
             if (!((istaVisible.GetValueOrDefault() == default(decimal)) & istaVisible.HasValue))
