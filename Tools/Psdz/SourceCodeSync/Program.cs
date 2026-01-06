@@ -1917,6 +1917,7 @@ namespace SourceCodeSync
             List<CommentedCodeLineInfo> result = new List<CommentedCodeLineInfo>();
             string[] lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
+            CommentedCodeLineInfo lastAddInfo = null;
             for (int i = 0; i < lines.Length; i++)
             {
                 string trimmedLine = lines[i].Trim();
@@ -1933,7 +1934,19 @@ namespace SourceCodeSync
                         FollowingCodeLine = i < lines.Length - nextLine ? NormalizeCodeLine(lines[i + nextLine], true) : null,
                         OriginalLineNumber = i
                     };
-                    result.Add(info);
+
+                    if (isAddLine && lastAddInfo != null)
+                    {
+                        // Chain added lines
+                        lastAddInfo.CommentLine += Environment.NewLine + info.CommentLine;
+                        lastAddInfo.FollowingCodeLine = info.FollowingCodeLine;
+                    }
+                    else
+                    {
+                        result.Add(info);
+                    }
+
+                    lastAddInfo = isAddLine ? info : null;
                 }
             }
 
