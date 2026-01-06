@@ -106,16 +106,35 @@ namespace BMW.Rheingold.Programming
             return "\"" + string.Join("\" \"", JarArguments) + "\"";
         }
 
-        [PreserveSource(Hint = "Modified, 64 bit check replaced", OriginalHash = "FAD348C117E436B65C312FD73FA3C780")]
         private string[] GetPsdzJvmOptions()
         {
             int num = 1280;
-            if (Environment.Is64BitOperatingSystem) // [UH] [IGNORE] replaced
+            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
+            {
+                if (istaIcsServiceClient.IsAvailable())
+                {
+                    int? jvmHeapspace = istaIcsServiceClient.GetJvmHeapspace();
+                    if (jvmHeapspace.HasValue && jvmHeapspace.Value > 0)
+                    {
+                        num = jvmHeapspace.Value;
+                        Log.Info(Log.CurrentMethod(), string.Format("JVM Heapspace set via LBP {0} to: {1}", "JVM_MaxHeapspace", num));
+                    }
+                }
+                else
+                {
+                    Log.Warning(Log.CurrentMethod(), "ICS was not available. Could not read JVM_MaxHeapspace");
+                }
+            }
+            //[-] if (!ConfigSettings.GetActivateSdpOnlinePatch())
+            //[+] if (Environment.Is64BitOperatingSystem)
+            if (Environment.Is64BitOperatingSystem)
             {
                 int totalPhysicalMemoryInGb = GetTotalPhysicalMemoryInGb();
                 int configint = ConfigSettings.getConfigint("BMW.Rheingold.CoreFramework.ParallelOperationsLimit", -1);
                 num = ((totalPhysicalMemoryInGb <= 8 || configint <= 3) ? ((int)((double)num * 2.5)) : (512 + 512 * configint));
             }
+            //[-] string item = ((Psdz64BitPathResolver.Force64Bit || (Environment.Is64BitOperatingSystem && !ConfigSettings.IsOssModeActive && !IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))) ? string.Format(CultureInfo.InvariantCulture, "-Xmx{0}m", num) : string.Format(CultureInfo.InvariantCulture, "-Xms{0}m", 1024));
+            //[+] string item = string.Format(CultureInfo.InvariantCulture, "-Xmx{0}m", num);
             string item = string.Format(CultureInfo.InvariantCulture, "-Xmx{0}m", num);
             List<string> values = new List<string>
             {
@@ -123,10 +142,14 @@ namespace BMW.Rheingold.Programming
                 item,
                 "-XX:MaxGCPauseMillis=50",
                 "-Dcom.sun.management.jmxremote",
+                //[-] "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath() + "\""
+                //[+] "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath(Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\WebService"))) + "\""
                 "-Dlog4j.configurationFile=\"" + GetLog4JConfigFilePath(Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\WebService"))) + "\""
             };
             string defaultValue = string.Join(" ", values);
             string[] source = Regex.Split(ConfigSettings.getConfigString("BMW.Rheingold.Programming.PsdzWebservice.JvmOptions", defaultValue), "\\s+(?=\\-)");
+            //[-] string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Path", Path.GetFullPath("..\\..\\..\\PSdZ\\Security\\cacerts"));
+            //[+] string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Path", Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\Security\\cacerts"))); //[UH] [IGNORE] path modified
             string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Path", Path.GetFullPath(Path.Combine(PsdzDataPath, "..\\Security\\cacerts"))); //[UH] [IGNORE] path modified
             if (!File.Exists(configString))
             {
