@@ -37,11 +37,13 @@ namespace BMW.Rheingold.Programming
 
         public string[] JarArguments { get; }
 
-        [PreserveSource(Hint = "istaFolder added, modified directories", OriginalHash = "4E990733510C37CC5E6B216124777E32")]
+        [PreserveSource(Hint = "istaFolder added, modified directories", SignatureModified = true)]
         public PsdzWebServiceConfig(string istaFolder, string dealerId = null)
         {
-            // [UH] [IGNORE] replaced logs dir
+            //[-] PsdzWebApiLogDir = Path.Combine(Path.GetFullPath(ConfigSettings.getPathString(ConfigSettings.GetActivateSdpOnlinePatch() ? "BMW.Rheingold.Logging.Directory.Current" : "BMW.Rheingold.Logging.Directory", "..\\..\\..\\logs")), "PsdzWebservice");
+            //[+] string logsDir = Path.Combine(istaFolder, "logs");
             string logsDir = Path.Combine(istaFolder, "logs");
+            //[+] PsdzWebApiLogDir = Path.Combine(logsDir, "webclient");
             PsdzWebApiLogDir = Path.Combine(logsDir, "webclient");
             if (!Directory.Exists(PsdzWebApiLogDir))
             {
@@ -68,8 +70,11 @@ namespace BMW.Rheingold.Programming
             {
                 File.Create(ProdiasDriverLogFilePath).Close();
             }
-            // [UH] [IGNORE] modified
+            //[-] PsdzDataPath = ((psdzDataPath != null) ? psdzDataPath : Path.GetFullPath(ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzDataPath", "..\\..\\..\\PSdZ\\data")));
+            //[-] EdiabasBinPath = GetEdiabasBinPath();
+            //[+] PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
             PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
+            //[+] EdiabasBinPath = Path.Combine(istaFolder, @"Ediabas\BIN");
             EdiabasBinPath = Path.Combine(istaFolder, @"Ediabas\BIN");
             if (EdiabasBinPath == null)
             {
