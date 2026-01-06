@@ -1768,10 +1768,10 @@ namespace PsdzClient.Core
             return "VCIDevice: " + ToAttrList(addLineFeed: true);
         }
 
-        [PreserveSource(Hint = "Added clientContext", OriginalHash = "045A22491687878A080DD331E4796C62")]
         public object Clone()
         {
-            // [UH] [IGNORE] Added clientContext to constructor
+            //[-] VCIDevice vCIDevice = new VCIDevice();
+            //[+] VCIDevice vCIDevice = new VCIDevice(_clientContext);
             VCIDevice vCIDevice = new VCIDevice(_clientContext);
             vCIDevice.CommunicationDisturbanceRecognized = CommunicationDisturbanceRecognized;
             vCIDevice.ConnectionLossRecognized = ConnectionLossRecognized;
@@ -1839,9 +1839,10 @@ namespace PsdzClient.Core
             return vCIDevice;
         }
 
-        [PreserveSource(Hint = "clientContext added", OriginalHash = "E65B1CC30457B8791DB446866792804F")]
+        [PreserveSource(Hint = "clientContext added", SignatureModified = true)]
         public VCIDevice(ClientContext clientContext)
         {
+            //[+] _clientContext = clientContext;
             _clientContext = clientContext;
             vCITypeField = VCIDeviceType.UNKNOWN;
             vCIReservationField = VCIReservationType.NONE;
