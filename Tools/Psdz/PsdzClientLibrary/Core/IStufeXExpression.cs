@@ -26,16 +26,18 @@ namespace PsdzClient.Core
         private readonly ECompareOperator compareOperator;
         private readonly long iLevelId;
         private readonly ILevelyType iLevelType;
-        [PreserveSource(Hint = "dataProvider removed, vec added", OriginalHash = "6AF0B4B5F3FBCE46C6695C84138592C1")]
+        [PreserveSource(Hint = "dataProvider removed, vec added", SignatureModified = true)]
         public IStufeXExpression(ECompareOperator compareOperator, long ilevelid, IStufeXExpression.ILevelyType iLevelType, Vehicle vec)
         {
             iLevelId = ilevelid;
             this.iLevelType = iLevelType;
             this.compareOperator = compareOperator;
+            //[-] this.dataProvider = dataProvider;
+            //[+] vecInfo = vec;
             vecInfo = vec;
         }
 
-        [PreserveSource(Hint = "dataProvider removed, vec added", OriginalHash = "EC3FA1BD18B1CF86EDFB8149E6606F37")]
+        [PreserveSource(Hint = "dataProvider removed, vec added", SignatureModified = true)]
         public static IStufeXExpression Deserialize(Stream ms, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();
@@ -45,6 +47,8 @@ namespace PsdzClient.Core
             byte[] array = new byte[8];
             ms.Read(array, 0, 8);
             long ilevelid = BitConverter.ToInt64(array, 0);
+            //[-] return new IStufeXExpression(eCompareOperator, ilevelid, levelyType, dataProvider);
+            //[+] return new IStufeXExpression(eCompareOperator, ilevelid, levelyType, vec);
             return new IStufeXExpression(eCompareOperator, ilevelid, levelyType, vec);
         }
 
