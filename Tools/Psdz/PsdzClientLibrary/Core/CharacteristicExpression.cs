@@ -1,5 +1,4 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -80,7 +79,7 @@ namespace PsdzClient.Core
             return new CharacteristicExpression(num, num2, vec);
         }
 
-        [PreserveSource(Hint = "VehicleHelper replaced", OriginalHash = "8CC662A990A700621FCB64ACA6310FC8")]
+        [PreserveSource(Hint = "dealer, dataProvider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             logger = ruleEvaluationUtils.Logger;
@@ -105,7 +104,8 @@ namespace PsdzClient.Core
             }
             else
             {
-                // [UH] [IGNORE] VehicleHelper replaced
+                //[-] flag = VehicleHelper.GetISTACharacteristics(dataclassId, out value, datavalueId, dataProvider, ruleEvaluationUtils.Logger, vec, internalResult);
+                //[+] flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult);
                 flag = vec.getISTACharacteristics(dataclassId, out value, datavalueId, internalResult);
             }
             ruleEvaluationUtils.Logger.Debug("CharacteristicExpression.Evaluate()", "rule: {0}={1} result: {2} (session context: {3}) [original rule: {4}={5}]", CharacteristicRoot, CharacteristicValue, flag, value, dataclassId, datavalueId);
