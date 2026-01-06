@@ -23,13 +23,14 @@ namespace PsdzClient.Core
         private PlaceholderType dealer;
         private Action startRuleMetrics;
         private Action stopRuleMetrics;
-        [PreserveSource(Hint = "Modified", OriginalHash = "03862E515BC2300068C3F8A674BB8112")]
+        [PreserveSource(Hint = "dataProvider replaced", SignatureModified = true)]
         public RuleEvaluationUtill(IRuleEvaluationServices ruleEvaluationServices, PsdzDatabase database, Action startRuleMetrics = null, Action stopRuleMetrics = null)
         {
             //[-] ruleCache = dataProvider.RuleCache;
             //[-] this.dealer = dealer;
             this.ruleEvaluationServices = ruleEvaluationServices;
-            // replaced [IGNORE] this.dataProvider = dataProvider;
+            //[-] this.dataProvider = dataProvider;
+            //[+] this.database = database;
             this.database = database;
             this.startRuleMetrics = startRuleMetrics;
             this.stopRuleMetrics = stopRuleMetrics;
