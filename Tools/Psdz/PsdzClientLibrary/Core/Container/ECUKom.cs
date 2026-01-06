@@ -511,16 +511,19 @@ namespace PsdzClient.Core.Container
             return false;
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "E1EB2FF7A0BC4B294E3FA29370F0DF6B")]
         public string GetLogPath()
         {
             string result = null;
             try
             {
-                // [UH] [IGNORE] adapted for EdiabasNet
+                //[-] result = api.apiGetConfig("TracePath");
+                //[+] if (api.apiGetConfig("TracePath", out string value))
                 if (api.apiGetConfig("TracePath", out string value))
+                //[+] {
                 {
+                    //[+] result = value;
                     result = value;
+                //[+] }
                 }
             }
             catch (Exception exception)
