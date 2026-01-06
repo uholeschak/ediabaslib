@@ -23,6 +23,7 @@ namespace SourceCodeSync
             public string PrecedingCodeLine { get; set; }
             public string FollowingCodeLine { get; set; }
             public int OriginalLineNumber { get; set; }
+            public CommentedCodeLineInfo NextInfo { get; set; }
         }
 
         private static Dictionary<string, ClassDeclarationSyntax> _classDict = new (StringComparer.Ordinal);
@@ -1938,7 +1939,7 @@ namespace SourceCodeSync
                     if (isAddLine && lastAddInfo != null)
                     {
                         // Chain added lines
-                        lastAddInfo.CommentLine += Environment.NewLine + info.CommentLine;
+                        lastAddInfo.NextInfo = info;
                         lastAddInfo.FollowingCodeLine = info.FollowingCodeLine;
                     }
                     else
@@ -2016,22 +2017,18 @@ namespace SourceCodeSync
                         if (normalizedSourceLine != null &&
                             string.Compare(normalizedSourceLine, normalizedCodeLineToRemove, StringComparison.Ordinal) == 0)
                         {
-                            bool validLine = normalizedSourceLine.Length > 10;
+                            string precedingLine = commentInfo.PrecedingCodeLine;
+                            string followingLine = commentInfo.FollowingCodeLine;
+                            // Verify context lines match
+                            bool precedingMatches =
+                                precedingLine == null ||
+                                (i > 0 && string.Compare(NormalizeCodeLine(sourceLines[i - 1]), precedingLine, StringComparison.Ordinal) == 0);
+                            bool followingMatches =
+                                followingLine == null ||
+                                (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.Ordinal) == 0);
 
-                            if (!validLine)
-                            {
-                                string precedingLine = commentInfo.PrecedingCodeLine;
-                                string followingLine = commentInfo.FollowingCodeLine;
-                                // Verify context lines match
-                                bool precedingMatches =
-                                    precedingLine == null ||
-                                    (i > 0 && string.Compare(NormalizeCodeLine(sourceLines[i - 1]), precedingLine, StringComparison.Ordinal) == 0);
-                                bool followingMatches =
-                                    followingLine == null ||
-                                    (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.Ordinal) == 0);
-
-                                validLine = precedingMatches && followingMatches;
-                            }
+                            bool validLine = normalizedSourceLine.Length > 50 ?
+                                precedingMatches || followingMatches : precedingMatches && followingMatches;
 
                             if (validLine)
                             {
@@ -2090,19 +2087,28 @@ namespace SourceCodeSync
                     if (insertIndex >= 0)
                     {
                         // add the line without the comment marker
-                        string addLine = trimmedLine.Substring(_commentedRemoveCodeMarker.Length).TrimStart();
-                        if (!string.IsNullOrEmpty(addLine))
+                        StringBuilder sbAddLines = new StringBuilder();
+                        CommentedCodeLineInfo info = commentInfo;
+                        while (info != null)
                         {
-                            string insertLines = commentInfo.CommentLine + Environment.NewLine + addLine;
-                            insertions.Add((insertIndex, insertLines));
-                        }
-                        else
-                        {
-                            if (_verbosity >= Options.VerbosityOption.Error)
+                            string trimmed = info.CommentLine.Trim();
+                            string addLine = trimmed.Substring(_commentedRemoveCodeMarker.Length).TrimStart();
+                            if (!string.IsNullOrEmpty(addLine))
                             {
-                                Console.WriteLine($"Unable to remove comment marker: {trimmedLine}");
+                                if (sbAddLines.Length > 0)
+                                {
+                                    sbAddLines.AppendLine();
+                                }
+
+                                sbAddLines.Append(info.CommentLine);
+                                sbAddLines.AppendLine();
+                                sbAddLines.Append(addLine);
                             }
+
+                            info = info.NextInfo;
                         }
+
+                        insertions.Add((insertIndex, sbAddLines.ToString()));
                     }
                     else
                     {
