@@ -20,7 +20,6 @@ using System.Text.RegularExpressions;
 #pragma warning disable CS0169
 namespace BMW.Rheingold.Programming.API
 {
-    // ToDo: Check on update
     [PreserveSource(Hint = "Changed to public", AccessModified = true)]
     public class ProgrammingObjectBuilder : IProgrammingObjectBuilder
     {

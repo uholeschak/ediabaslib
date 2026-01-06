@@ -268,16 +268,19 @@ namespace PsdzClient.Programming
             return result;
         }
 
-        [PreserveSource(Hint = "Return value added", OriginalHash = "9B19DDE3C22E278F5B13321802AEB013")]
+        [PreserveSource(Hint = "Return value added", SignatureModified = true)]
         public bool SetPathToBackupData(string vin17)
         {
             hasVinBackupDataFolder = false;
-            // [UH] [IGNORE] use GetBackupBasePath
+            //[-] string pathString = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", null);
+            //[+] string pathString = GetBackupBasePath(IstaFolder);
             string pathString = GetBackupBasePath(IstaFolder);
             if (string.IsNullOrEmpty(pathString))
             {
                 Log.Warning("PsdzContext.SetPathToBackupData()", "Backup data path (\"BMW.Rheingold.Programming.PsdzBackupDataPath\") is not set. Thus data recovery is disabled.");
                 PathToBackupData = null;
+                //[-] return;
+                //[+] return false;
                 return false;
             }
 
@@ -298,6 +301,7 @@ namespace PsdzClient.Programming
             }
 
             Log.Info("PsdzContext.SetPathToBackupData()", "Backup data path: \"{0}\"", PathToBackupData);
+            //[+] return true;
             return true;
         }
 
