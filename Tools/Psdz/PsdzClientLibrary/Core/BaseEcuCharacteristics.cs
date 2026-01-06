@@ -617,7 +617,6 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "database replaced", OriginalHash = "015862B025BE93769B8DDB689F03EE2A")]
         public void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
             ValidateIfDiagnosticsHasValidLicense();
@@ -654,16 +653,17 @@ namespace PsdzClient.Core
                         if (vecInfo.getECU(num) == null)
                         {
                             string ecuVariant = array2[1];
-                            // [UH] [IGNORE] database replaced
+                            //[+] PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
                             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
-                            if (database != null)
+                            //[-] XEP_ECUVARIANTS ecuVariantByName = DatabaseProviderFactory.Instance.GetEcuVariantByName(ecuVariant);
+                            //[+] PsdzDatabase.EcuVar ecuVariantByName = database?.GetEcuVariantByName(ecuVariant);
+                            PsdzDatabase.EcuVar ecuVariantByName = database?.GetEcuVariantByName(ecuVariant);
+                            //[-] if (ecuVariantByName != null && DatabaseProviderFactory.Instance.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && ecuVariantByName.EcuGroupId.HasValue && DatabaseProviderFactory.Instance.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
+                            //[+] if (ecuVariantByName != null && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && !string.IsNullOrEmpty(ecuVariantByName.EcuGroupId) && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
+                            if (ecuVariantByName != null && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && !string.IsNullOrEmpty(ecuVariantByName.EcuGroupId) && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
                             {
-                                PsdzDatabase.EcuVar ecuVariantByName = database.GetEcuVariantByName(ecuVariant);
-                                if (ecuVariantByName != null && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver) && !string.IsNullOrEmpty(ecuVariantByName.EcuGroupId) && database.EvaluateXepRulesById(ecuVariantByName.Id, vecInfo, ffmResolver))
-                                {
-                                    ECU item = CreateECU(num, array2[2], vecInfo.VCI?.VCIType);
-                                    vecInfo.ECU.Add(item);
-                                }
+                                ECU item = CreateECU(num, array2[2], vecInfo.VCI?.VCIType);
+                                vecInfo.ECU.Add(item);
                             }
                         }
                     }
