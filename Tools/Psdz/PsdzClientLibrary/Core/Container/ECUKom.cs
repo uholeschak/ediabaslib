@@ -531,7 +531,6 @@ namespace PsdzClient.Core.Container
             return result;
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "56A23D55BD758813340F8C6382A9D1C4")]
         public BoolResultObject InitVCI(IVciDevice device, bool logging, bool isDoIP)
         {
             BoolResultObject boolResultObject = new BoolResultObject();
@@ -552,8 +551,15 @@ namespace PsdzClient.Core.Container
                 CreateEdiabasPublicKeyIfNotExist(device);
                 if (isDoIP2 || isDoIP)
                 {
-                    int id = Process.GetCurrentProcess().Id;
-                    // [UH] [IGNORE] removed interactionService
+                    //[-] int id = Process.GetCurrentProcess().Id;
+                    //[-] if (interactionService.RegisterAsync(new InteractionDoIpCheckModel(id)).Result.Action == InteractionButton.Yes)
+                    //[-] {
+                    //[-]     boolResultObject.SetValues(result: false, ConnectToVehicleErrorCodes.IstaIsOffline.ToString(), "ISTA is offline");
+                    //[-]     boolResultObject.ErrorCodeInt = 7;
+                    //[-]     boolResultObject.ErrorMessage = "Only one NCAR session is possible at a time.";
+                    //[-]     boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.DoIpIsUsedByOtherOperationError.ToString();
+                    //[-]     return boolResultObject;
+                    //[-] }
                     if (!device.IsSimulation)
                     {
                         boolResultObject2 = HandleS29Authentication(device);
