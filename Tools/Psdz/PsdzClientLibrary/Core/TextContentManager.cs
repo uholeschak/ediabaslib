@@ -274,7 +274,7 @@ namespace PsdzClient.Core
             return xElement;
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "5AAA6A5F9A60BF403D3DA0567CF03A25")]
+        [PreserveSource(Hint = "idInfoObject as string", SignatureModified = true)]
         private ITextLocator ReadTextCollection(string idInfoObject)
         {
             IList<LocalizedText> textCollectionById = db.GetTextCollectionById(idInfoObject, lang);
@@ -283,17 +283,18 @@ namespace PsdzClient.Core
                 return null;
             }
 
-            // [UH] [IGNORE] build lang list
+            //[+] IList<string> langList = new List<string>();
             IList<string> langList = new List<string>();
             IList<LocalizedText> list = new List<LocalizedText>();
             foreach (LocalizedText item in textCollectionById)
             {
                 XElement node = ParseSpeXml(item.TextItem, item.Language, db);
                 list.Add(new LocalizedText(node.Print(removeWhiteSpace: false), item.Language));
+                //[+] langList.Add(item.Language);
                 langList.Add(item.Language);
             }
 
-            // [UH] [IGNORE] update lang list
+            //[+] lang = langList;
             lang = langList;
             return new TextLocator(list);
         }
