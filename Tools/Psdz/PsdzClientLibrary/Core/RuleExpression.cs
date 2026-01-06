@@ -12,7 +12,7 @@ namespace PsdzClient.Core
         public const long MISSING_DATE_EXPRESSION = -1L;
         protected const long MEMORYSIZE_OBJECT = 8L;
         protected const long MEMORYSIZE_REFERENCE = 8L;
-        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "F80012312B5848E95CB166A6C0080344")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", SignatureModified = true)]
         public static RuleExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();
@@ -20,20 +20,36 @@ namespace PsdzClient.Core
             switch (eExpressionType)
             {
                 case EExpressionType.COMP:
+                    //[-] return CompareExpression.Deserialize(ms);
+                    //[+] return CompareExpression.Deserialize(ms, vec);
                     return CompareExpression.Deserialize(ms, vec);
                 case EExpressionType.AND:
+                    //[-] return AndExpression.Deserialize(ms, logger, dataProvider);
+                    //[+] return AndExpression.Deserialize(ms, logger, vec);
                     return AndExpression.Deserialize(ms, logger, vec);
                 case EExpressionType.OR:
+                    //[-] return OrExpression.Deserialize(ms, logger, dataProvider);
+                    //[+] return OrExpression.Deserialize(ms, logger, vec);
                     return OrExpression.Deserialize(ms, logger, vec);
                 case EExpressionType.NOT:
+                    //[-] return NotExpression.Deserialize(ms, logger, dataProvider);
+                    //[+] return NotExpression.Deserialize(ms, logger, vec);
                     return NotExpression.Deserialize(ms, logger, vec);
                 case EExpressionType.DATE:
+                    //[-] return DateExpression.Deserialize(ms);
+                    //[+] return DateExpression.Deserialize(ms, vec);
                     return DateExpression.Deserialize(ms, vec);
                 case EExpressionType.CHARACTERISTIC:
+                    //[-] return CharacteristicExpression.Deserialize(ms, dataProvider);
+                    //[+] return CharacteristicExpression.Deserialize(ms, vec);
                     return CharacteristicExpression.Deserialize(ms, vec);
                 case EExpressionType.MANUFACTORINGDATE:
+                    //[-] return ManufactoringDateExpression.Deserialize(ms, logger);
+                    //[+] return ManufactoringDateExpression.Deserialize(ms, logger, vec);
                     return ManufactoringDateExpression.Deserialize(ms, logger, vec);
                 case EExpressionType.ISTUFEX:
+                    //[-] return IStufeXExpression.Deserialize(ms, dataProvider);
+                    //[+] return IStufeXExpression.Deserialize(ms, vec);
                     return IStufeXExpression.Deserialize(ms, vec);
                 case EExpressionType.ISTUFE:
                 case EExpressionType.VALID_FROM:
@@ -47,6 +63,8 @@ namespace PsdzClient.Core
                 case EExpressionType.SIFA:
                 case EExpressionType.ECUREPRESENTATIVE:
                 case EExpressionType.ECUPROGRAMMINGVARIANT:
+                    //[-] return SingleAssignmentExpression.Deserialize(ms, eExpressionType, logger, dataProvider);
+                    //[+] return SingleAssignmentExpression.Deserialize(ms, eExpressionType, logger, vec);
                     return SingleAssignmentExpression.Deserialize(ms, eExpressionType, logger, vec);
                 default:
                     logger.Error("RuleExpression.Deserialize()", "Unknown Expression-Type");
