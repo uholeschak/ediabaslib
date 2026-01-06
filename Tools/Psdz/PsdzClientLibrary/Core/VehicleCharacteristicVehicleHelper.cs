@@ -28,7 +28,7 @@ namespace PsdzClient.Core
             internalResult = new ValidationRuleInternalResults();
         }
 
-        [PreserveSource(Hint = "characteristicRootsNodeClass to string", OriginalHash = "E3FB94742C30F9F1ABDCB9B44BC45A8F")]
+        [PreserveSource(Hint = "characteristicRootsNodeClass to string", SignatureModified = true)]
         public bool GetISTACharacteristics(string characteristicRootsNodeClass, out string value, decimal id, IVehicleRuleEvaluation vehicle, long dataValueId, ValidationRuleInternalResults internalResult)
         {
             this.characteristicRootsNodeClass = characteristicRootsNodeClass;
@@ -36,7 +36,10 @@ namespace PsdzClient.Core
             this.vehicle = vehicle;
             datavalueId = dataValueId;
             this.internalResult = internalResult;
-            dataProvider = ClientContext.GetDatabase(vehicle as Vehicle);   // [UH] [IGNORE] added
+            //[-] bool result = ComputeCharacteristic(characteristicRootsNodeClass.ToString());
+            //[+] dataProvider = ClientContext.GetDatabase(vehicle as Vehicle);
+            dataProvider = ClientContext.GetDatabase(vehicle as Vehicle);
+            //[+] bool result = ComputeCharacteristic(characteristicRootsNodeClass);
             bool result = ComputeCharacteristic(characteristicRootsNodeClass);
             value = characteristicValue;
             return result;
@@ -399,17 +402,22 @@ namespace PsdzClient.Core
             return dataProvider.LookupVehicleCharIdByName(vehicle.Sportausfuehrung, 99999999847L) == (decimal)datavalueId;
         }
 
-        [PreserveSource(Hint = "Modified rootNodeClass", OriginalHash = "E3C0DBAACCE860A15D67255D8321A858")]
+        [PreserveSource(Hint = "Modified rootNodeClass", SignatureModified = true)]
         private bool HandleHeatMotorCharacteristic(Func<HeatMotor, string> getProperty, long datavalueId, ValidationRuleInternalResults internalResult, out string value, string rootNodeClass, decimal characteristicNodeclass)
         {
-            // [UH] [IGNORE] Convert rootNodeClass
+            //[+] if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal rootClassValue))
             if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal rootClassValue))
+             //[+] {
             {
+                //[+] rootClassValue = 0;
                 rootClassValue = 0;
+            //[+] }
             }
 
             foreach (HeatMotor hm in vehicle.HeatMotors)
             {
+                //[-] ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm.DriveId && r.Type == CharacteristicType.HeatMotor && r.CharacteristicId == rootNodeClass.Value);
+                //[+] ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm.DriveId && r.Type == CharacteristicType.HeatMotor && r.CharacteristicId == rootClassValue);
                 ValidationRuleInternalResult validationRuleInternalResult = internalResult.FirstOrDefault((ValidationRuleInternalResult r) => r.Id == hm.DriveId && r.Type == CharacteristicType.HeatMotor && r.CharacteristicId == rootClassValue);
                 decimal num = dataProvider.LookupVehicleCharIdByName(getProperty(hm), characteristicNodeclass);
                 bool flag = num == (decimal)datavalueId;
@@ -419,6 +427,8 @@ namespace PsdzClient.Core
                     {
                         Type = CharacteristicType.HeatMotor,
                         Id = hm.DriveId,
+                        //[-] CharacteristicId = rootNodeClass.Value
+                        //[+] CharacteristicId = rootClassValue
                         CharacteristicId = rootClassValue
                     };
                     if (!(internalResult.RuleExpression is OrExpression))
