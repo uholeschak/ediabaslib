@@ -1,10 +1,7 @@
-﻿using System;
+﻿using PsdzClient.Core.Container;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PsdzClient;
 
 namespace PsdzClient.Core
 {
@@ -57,12 +54,16 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "21FBCA9CDB373106D216F2EBFBD0B404")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public static bool Evaluate(Vehicle vec, IRuleExpression exp, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils = null, ValidationRuleInternalResults internalResult = null)
         {
+            //[+] if (ruleEvaluationUtils == null)
             if (ruleEvaluationUtils == null)
-            { // [UH] [IGNORE] added
+                //[+] {
+            {
+                //[+] ruleEvaluationUtils = new RuleEvaluationServices(vec);
                 ruleEvaluationUtils = new RuleEvaluationServices(vec);
+                //[+] }
             }
 
             if (internalResult == null)
@@ -72,7 +73,8 @@ namespace PsdzClient.Core
 
             if (exp is AndExpression || exp is OrExpression || exp is CharacteristicExpression || exp is DateExpression || exp is EcuCliqueExpression || exp is NotExpression || exp is SaLaPaExpression || exp is CountryExpression || exp is IStufeExpression || exp is IStufeXExpression || exp is EquipmentExpression || exp is ValidFromExpression || exp is ValidToExpression || exp is SiFaExpression || exp is EcuRepresentativeExpression || exp is ManufactoringDateExpression || exp is EcuVariantExpression || exp is EcuProgrammingVariantExpression)
             {
-                // [UH] [IGNORE] removed dealer and dataProvider
+                //[-] return exp.Evaluate(vec, dealer, ffmResolver, dataProvider, ruleEvaluationUtils, internalResult);
+                //[+] return exp.Evaluate(vec, ffmResolver, ruleEvaluationUtils, internalResult);
                 return exp.Evaluate(vec, ffmResolver, ruleEvaluationUtils, internalResult);
             }
 
