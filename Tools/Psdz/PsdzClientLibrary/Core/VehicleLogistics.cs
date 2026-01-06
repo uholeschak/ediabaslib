@@ -637,7 +637,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "vehicle added", OriginalHash = "0D6452912A4D52A8A7415BF86993706B")]
+        [PreserveSource(Hint = "vehicle added", SignatureModified = true)]
         public static void DecodeVCMBackupFA(byte[] faAsByteArray, Vehicle vehicle)
         {
             if (faAsByteArray == null || faAsByteArray.Length < 160)
@@ -759,7 +759,9 @@ namespace PsdzClient.Core
             fA.HO_WORT_ANZ = (short)fA.E_WORT.Count;
             fA.ZUSBAU_ANZ = 0;
             fA.AlreadyDone = true;
-            vehicle.FA = fA; // [UH] [IGNORE] replaced
+            //[-] Reactor.Instance.SetFA(fA, DataSource.Vehicle);
+            //[+] vehicle.FA = fA;
+            vehicle.FA = fA;
         }
 
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
