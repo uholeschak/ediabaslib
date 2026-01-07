@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClient.Core.Container;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -12,7 +13,6 @@ namespace PsdzClient.Core
         private string countryCode;
         [PreserveSource(Hint = "IDataProviderRuleEvaluation", Placeholder = true)]
         private readonly PlaceholderType dataProvider;
-
         private string CountryCode
         {
             get
@@ -24,28 +24,34 @@ namespace PsdzClient.Core
                     countryCode = ClientContext.GetDatabase(vecInfo)?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
                     return countryCode;
                 }
+
                 return countryCode;
             }
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "F47C25B9514B07B236F1A56D11D577F3")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public CountryExpression()
         {
+        //[-] this.dataProvider = dataProvider;
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "0ACDF08839B829F7C53F3944F492ED20")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public CountryExpression(long countryId)
         {
-            this.value = countryId;
+            value = countryId;
+        //[-] this.dataProvider = dataProvider;
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "5C241DE3DACE1C95CDA99CE2ACB0A19A")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
-            this.vecInfo = vec;
+            //[+] vecInfo = vec;
+            vecInfo = vec;
             bool flag = false;
             try
             {
+                //[-] string outletCountry = dealer.OutletCountry;
+                //[+] string outletCountry = ClientContext.GetCountry(this.vecInfo);
                 string outletCountry = ClientContext.GetCountry(this.vecInfo);
                 flag = outletCountry == CountryCode;
                 ruleEvaluationServices.Logger.Debug("CountryExpression.Evaluate()", "Country: {0} result: {1} (session context: {2}) [original rule: {3}])", CountryCode, flag, outletCountry, value);
