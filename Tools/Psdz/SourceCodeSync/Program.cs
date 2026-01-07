@@ -2093,18 +2093,25 @@ namespace SourceCodeSync
                     // Strategy 1: Find by preceding line
                     if (commentInfo.PrecedingCodeLine != null)
                     {
+                        int matchCount = 0;
                         for (int i = 0; i < sourceLines.Count; i++)
                         {
                             string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
-                            if (normalizedSourceLine != null && normalizedSourceLine.Length > 1 &&
+                            if (normalizedSourceLine != null &&
                                 string.Compare(normalizedSourceLine, commentInfo.PrecedingCodeLine, StringComparison.Ordinal) == 0)
                             {
                                 if (i + 1 < sourceLines.Count)
                                 {
+                                    matchCount++;
                                     insertIndex = i + 1;
-                                    break;
                                 }
                             }
+                        }
+
+                        // If multiple matches found, invalidate this strategy
+                        if (matchCount > 1)
+                        {
+                            insertIndex = -1;
                         }
                     }
 
