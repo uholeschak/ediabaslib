@@ -51,16 +51,22 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "errorManager replaced with programmingService", OriginalHash = "09E01FC607579DF9B9E2F33CB520DC5B")]
+        [PreserveSource(Hint = "errorManager replaced with programmingService", SignatureModified = true)]
         public static void ChangeBackendNcdCalculationValueTo(PsdzBackendNcdCalculationEtoEnum backendNcdCalculation, ProgrammingService2 programmingService)
         {
-            string configString = string.Empty; // [IGNORE] ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.BackendNcdCalculationMode");
+            //[-] string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.BackendNcdCalculationMode");
+            //[+] string configString = string.Empty;
+            string configString = string.Empty;
             if (!string.IsNullOrEmpty(configString) && Enum.IsDefined(typeof(PsdzBackendNcdCalculationEtoEnum), configString))
             {
+                //[-] GetSecureCodingConfig(errorManager).BackendNcdCalculationEtoEnum = (PsdzBackendNcdCalculationEtoEnum)Enum.Parse(typeof(PsdzBackendNcdCalculationEtoEnum), configString);
+                //[+] GetSecureCodingConfig(programmingService).BackendNcdCalculationEtoEnum = (PsdzBackendNcdCalculationEtoEnum)Enum.Parse(typeof(PsdzBackendNcdCalculationEtoEnum), configString);
                 GetSecureCodingConfig(programmingService).BackendNcdCalculationEtoEnum = (PsdzBackendNcdCalculationEtoEnum)Enum.Parse(typeof(PsdzBackendNcdCalculationEtoEnum), configString);
             }
             else
             {
+                //[-] GetSecureCodingConfig(errorManager).BackendNcdCalculationEtoEnum = backendNcdCalculation;
+                //[+] GetSecureCodingConfig(programmingService).BackendNcdCalculationEtoEnum = backendNcdCalculation;
                 GetSecureCodingConfig(programmingService).BackendNcdCalculationEtoEnum = backendNcdCalculation;
             }
         }
