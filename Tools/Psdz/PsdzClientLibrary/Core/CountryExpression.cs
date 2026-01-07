@@ -13,18 +13,18 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "IDataProviderRuleEvaluation", Placeholder = true)]
         private readonly PlaceholderType dataProvider;
 
-        [PreserveSource(Hint = "Use database", OriginalHash = "FC0F981C34C6C14223BC005A1E70E9DE")]
         private string CountryCode
         {
             get
             {
-                if (string.IsNullOrEmpty(this.countryCode))
+                if (string.IsNullOrEmpty(countryCode))
                 {
-                    this.countryCode = ClientContext.GetDatabase(this.vecInfo)?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
-                    return this.countryCode;
+                    //[-] countryCode = dataProvider.GetCountryById(value);
+                    //[+] countryCode = ClientContext.GetDatabase(vecInfo)?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
+                    countryCode = ClientContext.GetDatabase(vecInfo)?.GetCountryById(this.value.ToString(CultureInfo.InvariantCulture));
+                    return countryCode;
                 }
-
-                return this.countryCode;
+                return countryCode;
             }
         }
 
