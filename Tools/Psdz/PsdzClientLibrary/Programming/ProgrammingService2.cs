@@ -23,24 +23,35 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Modified, create services")]
         public ProgrammingService2(string istaFolder, string dealerId)
         {
-            this.psdzConfig = new PsdzConfig(istaFolder, dealerId);
+            //[+] psdzConfig = new PsdzConfig(istaFolder, dealerId);
+            psdzConfig = new PsdzConfig(istaFolder, dealerId);
             psdzServiceGateway = new PsdzServiceGateway(psdzConfig, istaFolder, dealerId);
             SetLogLevelToNormal();
-            this.EventManager = new ProgrammingEventManager();
-            this.PsdzDatabase = new PsdzDatabase(istaFolder);
+            //[+] EventManager = new ProgrammingEventManager();
+            EventManager = new ProgrammingEventManager();
+            //[+] PsdzDatabase = new PsdzDatabase(istaFolder);
+            PsdzDatabase = new PsdzDatabase(istaFolder);
             PreparePsdzBackupDataPath(istaFolder);
             //[-] programmingWorker = CreateProgrammingWorker();
-            // [UH] [IGNORE] added: create services
+            //[+] IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
             IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
+            //[+] if (fasta2Service == null)
             if (fasta2Service == null)
+            //[+] {
             {
+                //[+] ServiceLocator.Current.TryAddService((IFasta2Service)new Fasta2Service());
                 ServiceLocator.Current.TryAddService((IFasta2Service)new Fasta2Service());
+            //[+] }
             }
-
+            //[+] IDiagnosticsBusinessData diagnosticsBusiness = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             IDiagnosticsBusinessData diagnosticsBusiness = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
+            //[+] if (diagnosticsBusiness == null)
             if (diagnosticsBusiness == null)
+                //[+] {
             {
+                //[+] ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData());
                 ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData());
+                //[+] }
             }
         }
 
