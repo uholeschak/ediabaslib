@@ -71,13 +71,15 @@ namespace PsdzClient.Core
             CharacteristicValue = GetCharacteristicValueFromDb(this.dataProvider);
         }
 
-        [PreserveSource(Hint = "dataprovider replaced by vec", OriginalHash = "DB9F2E998DF196D144594A8ED52C8E40")]
+        [PreserveSource(Hint = "dataprovider replaced by vec", SignatureModified = true)]
         public static CharacteristicExpression Deserialize(Stream ms, Vehicle vec)
         {
             byte[] array = new byte[16];
             ms.Read(array, 0, 16);
             long num = BitConverter.ToInt64(array, 0);
             long num2 = BitConverter.ToInt64(array, 8);
+            //[-] return new CharacteristicExpression(num, num2, dataProvider);
+            //[+] return new CharacteristicExpression(num, num2, vec);
             return new CharacteristicExpression(num, num2, vec);
         }
 
