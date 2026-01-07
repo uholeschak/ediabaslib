@@ -2096,7 +2096,7 @@ namespace SourceCodeSync
                         for (int i = 0; i < sourceLines.Count; i++)
                         {
                             string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
-                            if (normalizedSourceLine != null &&
+                            if (normalizedSourceLine != null && normalizedSourceLine.Length > 1 &&
                                 string.Compare(normalizedSourceLine, commentInfo.PrecedingCodeLine, StringComparison.Ordinal) == 0)
                             {
                                 if (i + 1 < sourceLines.Count)

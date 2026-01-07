@@ -286,8 +286,6 @@ namespace PsdzClient.Core
 
             //[+] IList<string> langList = new List<string>();
             IList<string> langList = new List<string>();
-            //[+] lang = langList;
-            lang = langList;
             IList<LocalizedText> list = new List<LocalizedText>();
             foreach (LocalizedText item in textCollectionById)
             {
@@ -297,6 +295,8 @@ namespace PsdzClient.Core
                 langList.Add(item.Language);
             }
 
+            //[+] lang = langList;
+            lang = langList;
             return new TextLocator(list);
         }
 
