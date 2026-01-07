@@ -259,7 +259,7 @@ namespace PsdzClient.Core.Container
             return EdiabasIniFilePath(iniFilename);
         }
 
-        [PreserveSource(Hint = "Unchanged", OriginalHash = "D854ED9025186F9CAC413BAA8F027F57", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public BoolResultObject InitVCI(IVciDevice vciDevice, bool isDoIP)
         {
             BoolResultObject result = InitVCI(vciDevice, logging: true, isDoIP);
@@ -819,7 +819,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "1AF71CE3498143828BC76D07779A4519")]
+        [PreserveSource(Hint = "Modified", SignatureModified = true)]
         private bool InitializePttDevice(IVciDevice device, bool logging, bool isDoIP)
         {
             if (isDoIP)
@@ -827,7 +827,8 @@ namespace PsdzClient.Core.Container
                 string reserved = $"RemoteHost={device.IPAddress};selectCertificate={sec4DiagHandler.CertificateFilePathWithoutEnding};SSLPort={3496};Authentication=S29;NetworkProtocol=SSL";
                 return api.apiInitExt("ENET", "_", "Rheingold", reserved);
             }
-
+            //[-] return api.apiInitExtForPTT("RPLUS:ICOM_P:Remotehost=127.0.0.1;Port=6408", "_", "Rheingold", string.Empty, logging);
+            //[+] return false;
             return false;
         }
 
