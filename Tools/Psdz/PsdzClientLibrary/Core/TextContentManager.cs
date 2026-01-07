@@ -97,6 +97,7 @@ namespace PsdzClient.Core
             {
                 serviceProgramCollection = ReadTextCollection(num);
             }
+
             serviceProgramCollectionRoot = null;
             Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identification, xepInfoObj.ControlId);
         }
@@ -285,6 +286,8 @@ namespace PsdzClient.Core
 
             //[+] IList<string> langList = new List<string>();
             IList<string> langList = new List<string>();
+            //[+] lang = langList;
+            lang = langList;
             IList<LocalizedText> list = new List<LocalizedText>();
             foreach (LocalizedText item in textCollectionById)
             {
@@ -294,8 +297,6 @@ namespace PsdzClient.Core
                 langList.Add(item.Language);
             }
 
-            //[+] lang = langList;
-            lang = langList;
             return new TextLocator(list);
         }
 
