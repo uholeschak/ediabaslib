@@ -624,12 +624,12 @@ namespace PsdzClient.Core
             return currentUiCulture;
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "EECFE5EC809B526B930FDFCDD55256AB")]
+        [PreserveSource(Hint = "Cleaned")]
         private static void SetCurrentUICultureFromPortalConfig()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "621155A20863CAF36EE6CBA46A437C60")]
+        [PreserveSource(Hint = "Cleaned")]
         private static void SetCurrentUICultureFromDB()
         {
         }
@@ -1307,9 +1307,15 @@ namespace PsdzClient.Core
             return GetFeatureEnabledStatus("ConwoyStorage").IsActive;
         }
 
-        [PreserveSource(Hint = "replaced by EnablePsdzMultiSession", OriginalHash = "46D053337A353A986C73BD8735611D19")]
         public static bool GetActivateSdpOnlinePatch()
         {
+            //[-] if (IsOssModeActive)
+            //[-] {
+            //[-] Log.Info(Log.CurrentMethod(), "SDP patch not enabled in AOS mode.");
+            //[-] return false;
+            //[-] }
+            //[-] return GetFeatureEnabledStatus("SdpOnlinePatchAndMultisession").IsActive;
+            //[+] return ClientContext.EnablePsdzMultiSession();
             return ClientContext.EnablePsdzMultiSession();
         }
 
