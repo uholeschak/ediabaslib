@@ -79,8 +79,10 @@ namespace PsdzClient.Core
                 foreach (PsdzDatabase.EcuVar item in ecuVariantsByEcuCliquesId)
                 {
                     flag = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, item.Id, ffmResolver);
-                    ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CliqueName, vec.VehicleIdentLevel, flag);
+                    //[-] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CLIQUENKURZBEZEICHNUNG, vec.VehicleIdentLevel, flag);
                     //[-] if (!flag || !item.EcuGroupId.HasValue)
+                    //[+] ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CliqueName, vec.VehicleIdentLevel, flag);
+                    ruleEvaluationServices.Logger.Info("EcuCliqueExpression.Evaluate()", "Infosession with manual VIN input or basic features => ECU variant/clique evaluation based on other rules for {0} due to VehicleIdentLevel: {1} result: {2}", ecuClique.CliqueName, vec.VehicleIdentLevel, flag);
                     //[+] if (!flag)
                     if (!flag)
                     {
@@ -106,8 +108,6 @@ namespace PsdzClient.Core
                 }
 
                 //[-] ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CLIQUENKURZBEZEICHNUNG, flag, value);
-                //[+] ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
-                ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
                 return flag;
             }
 
@@ -123,8 +123,6 @@ namespace PsdzClient.Core
             }
 
             //[-] ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CLIQUENKURZBEZEICHNUNG, flag, value);
-            //[+] ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
-            ruleEvaluationServices.Logger.Debug("EcuCliqueExpression.Evaluate()", "ECU Clique: {0} Result: {1} [original rule: {2}]", ecuClique.CliqueName, flag, value);
             return flag;
         }
 
