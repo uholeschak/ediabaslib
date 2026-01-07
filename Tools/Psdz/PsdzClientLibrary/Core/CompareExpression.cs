@@ -45,7 +45,7 @@ namespace PsdzClient.Core
             this.compareOperator = compareOperator;
         }
 
-        [PreserveSource(Hint = "vec added", OriginalHash = "6B8AEADD27A8C6CB9023FA37EB0A6307")]
+        [PreserveSource(Hint = "vec added", SignatureModified = true)]
         public static CompareExpression Deserialize(Stream ms, Vehicle vec)
         {
             throw new Exception("Class CompExpression is only an intermediate class. Use special classes instead before serializing the rule!");
