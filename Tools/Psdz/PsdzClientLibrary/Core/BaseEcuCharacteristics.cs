@@ -182,9 +182,11 @@ namespace PsdzClient.Core
             CalculateECUConfiguration(vecInfo, ffmResolver, null, null);
         }
 
-        [PreserveSource(Hint = "XEP_SALAPAS replaced", OriginalHash = "06C65D01A22B482BAF3CCC068A9F01B1")]
+        [PreserveSource(Hint = "XEP_SALAPAS replaced", SignatureModified = true)]
         public virtual ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
         {
+            //[-] ObservableCollectionEx<XEP_SALAPAS> observableCollectionEx = new ObservableCollectionEx<XEP_SALAPAS>();
+            //[+] ObservableCollectionEx<PsdzDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
             ObservableCollectionEx<PsdzDatabase.SaLaPa> observableCollectionEx = new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
             if (vecInfo != null && !string.IsNullOrEmpty(compatibilityInfo))
             {
@@ -211,6 +213,8 @@ namespace PsdzClient.Core
                             {
                                 if (!string.IsNullOrEmpty(text2))
                                 {
+                                    //[-] XEP_SALAPAS saLaPaByProductTypeAndSalesKey = DatabaseProviderFactory.Instance.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
+                                    //[+] PsdzDatabase.SaLaPa saLaPaByProductTypeAndSalesKey = ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
                                     PsdzDatabase.SaLaPa saLaPaByProductTypeAndSalesKey = ClientContext.GetDatabase(vecInfo)?.GetSaLaPaByProductTypeAndSalesKey("M", text2.Replace("-", string.Empty));
                                     if (saLaPaByProductTypeAndSalesKey != null)
                                     {
