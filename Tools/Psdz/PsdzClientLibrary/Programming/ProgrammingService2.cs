@@ -20,7 +20,7 @@ namespace PsdzClient.Programming
         private readonly IOperationServices services;
         public IPsdz Psdz => psdzServiceGateway.Psdz;
 
-        [PreserveSource(Hint = "Modified, create services")]
+        [PreserveSource(Hint = "Modified, create services", SignatureModified = true)]
         public ProgrammingService2(string istaFolder, string dealerId)
         {
             //[-] this.services = services;
@@ -35,7 +35,9 @@ namespace PsdzClient.Programming
             EventManager = new ProgrammingEventManager();
             //[+] PsdzDatabase = new PsdzDatabase(istaFolder);
             PsdzDatabase = new PsdzDatabase(istaFolder);
+            //[+] PreparePsdzBackupDataPath(istaFolder);
             PreparePsdzBackupDataPath(istaFolder);
+            //[-] PreparePsdzBackupDataPath();
             //[-] programmingWorker = CreateProgrammingWorker();
             //[+] IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
             IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
