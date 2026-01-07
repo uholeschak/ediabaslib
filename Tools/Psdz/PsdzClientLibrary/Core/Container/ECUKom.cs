@@ -187,14 +187,16 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, null, null, "ApiJobWithRetries");
         }
 
-        [PreserveSource(Hint = "Unchanged", OriginalHash = "51C307D42A9AD131FF2AFA3978639FE3", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public ECUKom() : this(null, new List<string>())
         {
         }
 
-        [PreserveSource(Hint = "ediabas added, EDIABAS_MONITOR removed", OriginalHash = "2E10BFC5B2F8982CA8AB69928D29E1E5")]
+        [PreserveSource(Hint = "ediabas added, EDIABAS_MONITOR removed", SignatureModified = true)]
         public ECUKom(string app, IList<string> lang, EdiabasNet ediabas = null)
         {
+            //[-] api = CreateApi();
+            //[+] api = CreateApi(ediabas);
             api = CreateApi(ediabas);
             communicationMode = CommMode.Normal;
             jobList = new List<ECUJob>();
@@ -206,6 +208,20 @@ namespace PsdzClient.Core.Container
             ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out backendCallsWatchDog);
             ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
             ServiceLocator.Current.TryGetService<IFasta2Service>(out fasta2Service);
+            try
+            {
+                //[-] sc = new ServiceController("EDIABAS_MONITOR", Environment.MachineName);
+                //[-] scp = new ServiceControllerPermission(ServiceControllerPermissionAccess.Control, Environment.MachineName, "EDIABAS_MONITOR");
+                //[-] if (ServiceController.GetServices().Any((ServiceController x) => x.ServiceName.Equals("EDIABAS_MONITOR", StringComparison.OrdinalIgnoreCase)) && sc.Status == ServiceControllerStatus.Running)
+                //[-] {
+                //[-] scp.Assert();
+                //[-] sc.Refresh();
+                //[-] serviceIsRunning = true;
+                //[-] }
+            }
+            catch (Exception)
+            {
+            }
         }
 
         [PreserveSource(Hint = "ediabas added, using ApiInternal", OriginalHash = "C27EC725B0A417FBC992621884C10648")]
