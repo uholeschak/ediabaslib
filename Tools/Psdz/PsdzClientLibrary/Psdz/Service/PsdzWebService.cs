@@ -114,7 +114,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [PreserveSource(Hint = "GetSwiVersionNum added, ServiceLocator removed", OriginalHash = "A20B170633B726E4F34433C00F658DCA")]
+        [PreserveSource(Hint = "GetSwiVersionNum added, ServiceLocator removed", SignatureModified = true)]
         public bool IsReady()
         {
             IConfigurationService configurationService = ConfigurationService;
@@ -122,20 +122,34 @@ namespace BMW.Rheingold.Psdz
             {
                 return false;
             }
-
+            //[+] if (ClientContext.GetSwiVersionNum() < 40056)
             if (ClientContext.GetSwiVersionNum() < 40056)
-            {   // [UH] [IGNORE] SWI version before 4.0.56 supports no GetRootDirectorySetupResult()
+            //[+] {
+            {
+                //[+] return true;
                 return true;
+            //[+] }
             }
-
             RootDirectorySetupResultModel rootDirectorySetupResult = ConfigurationService.GetRootDirectorySetupResult();
             if (rootDirectorySetupResult != null && rootDirectorySetupResult.Success)
             {
                 return true;
             }
-
             Log.Error(Log.CurrentMethod(), "PSDZ WebService could not set root directory " + rootDirectorySetupResult?.Message);
-            // [UH] [IGNORE] ServiceLocator removed
+            //[-] if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service))
+            //[-] {
+            //[-] service.AddServiceCode("PWS04_PsdzWebServiceSetRootDirectoryFailed_nu_LF", "Setting up root directory for PSDZ web service failed", LayoutGroup.P);
+            //[-] }
+            //[-] if (ServiceLocator.Current.TryGetService<IInteractionService>(out var service2))
+            //[-] {
+            //[-] service2.RegisterAsync(new InteractionMessageModel
+            //[-] {
+            //[-] Title = new FormatedData("#NotificationMessageTitle.Error").Localize(),
+            //[-] MessageText = new FormatedData("#SetRootDirectoryFailed").Localize(),
+            //[-] IsDetailButtonVisible = false,
+            //[-] IsCloseButtonEnabled = false
+            //[-] });
+            //[-] }
             TryKillTree(psdzWebserviceProcess);
             return false;
         }

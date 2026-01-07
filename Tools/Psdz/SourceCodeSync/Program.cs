@@ -1919,8 +1919,10 @@ namespace SourceCodeSync
             List<CommentedCodeLineInfo> result = new List<CommentedCodeLineInfo>();
             string[] lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
 
+            CommentedCodeLineInfo rootAddInfo = null;
             CommentedCodeLineInfo lastAddInfo = null;
             bool ignoreNextLine = false;
+
             for (int i = 0; i < lines.Length; i++)
             {
                 if (ignoreNextLine)
@@ -1948,22 +1950,32 @@ namespace SourceCodeSync
                     {
                         // Chain added lines
                         lastAddInfo.NextInfo = info;
-                        lastAddInfo.FollowingCodeLine = info.FollowingCodeLine;
+                        rootAddInfo.FollowingCodeLine = info.FollowingCodeLine;
                     }
                     else
                     {
                         result.Add(info);
                     }
 
-                    lastAddInfo = null;
                     if (isAddLine)
                     {
+                        if (rootAddInfo == null)
+                        {
+                            rootAddInfo = info;
+                        }
+
                         lastAddInfo = info;
                         ignoreNextLine = true;
+                    }
+                    else
+                    {
+                        rootAddInfo = null;
+                        lastAddInfo = null;
                     }
                 }
                 else
                 {
+                    rootAddInfo = null;
                     lastAddInfo = null;
                 }
             }
