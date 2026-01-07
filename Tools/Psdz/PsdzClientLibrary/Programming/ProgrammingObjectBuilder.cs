@@ -362,6 +362,27 @@ namespace BMW.Rheingold.Programming.API
             }
 
             eCU.IsSmartActuator = ecuInput.IsSmartActuator;
+            //[-] XEP_ECUVARIANTS xEP_ECUVARIANTS = vdc.FindEcuVariantFromBntn(ecuInput.BnTnName, eCU.EcuIdentifier?.DiagAddrAsInt, vehicle, ffmResolver);
+            //[-] if (xEP_ECUVARIANTS != null && xEP_ECUVARIANTS.Name != null)
+            //[-] {
+            //[-] eCU.XepEcuVariant = xEP_ECUVARIANTS;
+            //[-] eCU.EcuVariant = xEP_ECUVARIANTS.Name.ToUpper(CultureInfo.InvariantCulture);
+            //[-] eCU.XepEcuClique = vdc.FindEcuClique(xEP_ECUVARIANTS);
+            //[-] XEP_ECUGROUPS xEP_ECUGROUPS = vdc.FindEcuGroup(xEP_ECUVARIANTS, vehicle, ffmResolver);
+            //[-] if (xEP_ECUGROUPS != null)
+            //[-] {
+            //[-] eCU.EcuGroup = xEP_ECUGROUPS.Name.ToUpper(CultureInfo.InvariantCulture);
+            //[-] }
+            //[-] XEP_ECUREPS xEP_ECUREPS = vdc.FindEcuRep(eCU.XepEcuClique);
+            //[-] if (xEP_ECUREPS != null)
+            //[-] {
+            //[-] eCU.EcuRep = xEP_ECUREPS.SteuergeraeteKuerzel;
+            //[-] }
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-] Log.Warning("ProgrammingObjectBuilder.Build", "No valid ECU variant found for \"{0}\".", ecuInput.BnTnName);
+            //[-] }
             //[+] PsdzDatabase database = ClientContext.GetDatabase(this.vehicle);
             PsdzDatabase database = ClientContext.GetDatabase(this.vehicle);
             //[+] if (database != null)
@@ -373,16 +394,13 @@ namespace BMW.Rheingold.Programming.API
                 PsdzDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int? (ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
                 if (ecuVar != null && !string.IsNullOrEmpty(ecuVar.Name))
                 {
-                    //[-] eCU.XepEcuVariant = xEP_ECUVARIANTS;
                     eCU.EcuVariant = ecuVar.Name.ToUpper(CultureInfo.InvariantCulture);
                     PsdzDatabase.EcuClique ecuClique = database.FindEcuClique(ecuVar);
-                    //[-] eCU.XepEcuClique = vdc.FindEcuClique(xEP_ECUVARIANTS);
                     PsdzDatabase.EcuGroup ecuGroup = database.FindEcuGroup(ecuVar, this.vehicle, this.ffmResolver);
                     if (ecuGroup != null)
                     {
                         eCU.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
                     }
-
                     PsdzDatabase.EcuReps ecuReps = database.FindEcuRep(ecuClique);
                     if (ecuReps != null)
                     {
