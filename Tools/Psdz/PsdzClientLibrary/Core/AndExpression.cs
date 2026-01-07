@@ -1,8 +1,6 @@
-﻿using PsdzClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 #pragma warning disable CA2022
@@ -67,16 +65,18 @@ namespace PsdzClient.Core
             operands = array;
         }
 
-        [PreserveSource(Hint = "dataProvider removed, using ruleEvaluationServices", OriginalHash = "FE38671C9753BEC32F058C9DF688C3D5")]
-        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
+        [PreserveSource(Hint = "dataProvider removed, using ruleEvaluationServices", SignatureModified = true)]
+        public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             internalResult.RuleExpression = this;
             RuleExpression[] array = operands;
             foreach (RuleExpression ruleExpression in array)
             {
-                ruleEvaluationServices.Logger.Debug("AndExpression.Evaluate()", "operand: {0}", ruleExpression);
-                bool flag = RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationServices, internalResult);
-                ruleEvaluationServices.Logger.Debug("AndExpression.Evaluate()", "validity: {0} for operand: {1}", flag, ruleExpression);
+                ruleEvaluationUtils.Logger.Debug("AndExpression.Evaluate()", "operand: {0}", ruleExpression);
+                //[-] bool flag = RuleExpression.Evaluate(vec, dealer, ruleExpression, ffmResolver, dataProvider, ruleEvaluationUtils, internalResult);
+                //[+] bool flag = RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
+                bool flag = RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
+                ruleEvaluationUtils.Logger.Debug("AndExpression.Evaluate()", "validity: {0} for operand: {1}", flag, ruleExpression);
                 if (!flag)
                 {
                     return false;
