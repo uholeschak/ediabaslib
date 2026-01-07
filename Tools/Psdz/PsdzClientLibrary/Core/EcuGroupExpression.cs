@@ -1,12 +1,10 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
-using PsdzClient;
-using System;
+using PsdzClient.Utility;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
@@ -21,7 +19,7 @@ namespace PsdzClient.Core
             value = ecuGroupId;
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "0D69BFC6F27343587858C90B70887CA2")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -30,6 +28,8 @@ namespace PsdzClient.Core
                 return false;
             }
 
+            //[-] IXepEcuGroups ecuGroupById = dataProvider.GetEcuGroupById(value);
+            //[+] PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(vec)?.GetEcuGroupById(value.ToString(CultureInfo.InvariantCulture));
             PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(vec)?.GetEcuGroupById(value.ToString(CultureInfo.InvariantCulture));
             if (ecuGroupById == null || string.IsNullOrEmpty(ecuGroupById.Name))
             {
@@ -49,7 +49,7 @@ namespace PsdzClient.Core
                 return true;
             }
 
-            bool flag = vec.getECUbyECU_GRUPPE(ecuGroupById.Name) != null;
+            bool flag = VehicleHelper.GetECUbyECU_GRUPPE(vec, ecuGroupById.Name) != null;
             ruleEvaluationServices.Logger.Debug("EcuGroupExpression.Evaluate()", "EcuGroupId: {0} (original rule: {1})  result: {2}", value, ecuGroupById.Name, flag);
             return flag;
         }
