@@ -167,7 +167,7 @@ namespace PsdzClient.Core
         private string GetCharacteristicRootFromDb(PsdzDatabase database)
         {
             string result = string.Empty;
-            PsdzDatabase.CharacteristicRoots characteristicRootsById = database?.GetCharacteristicRootsById(this.dataclassId.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.CharacteristicRoots characteristicRootsById = database?.GetCharacteristicRootsById(dataclassId.ToString(CultureInfo.InvariantCulture));
             if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
             {
                 result = characteristicRootsById.EcuTranslation.TextDe;
@@ -179,7 +179,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "dataprovider replaced", OriginalHash = "0564D4A0CA9081D8E82546DBB8D91EC7")]
         private string GetCharacteristicValueFromDb(PsdzDatabase database)
         {
-            return database?.LookupVehicleCharDeDeById(this.datavalueId.ToString(CultureInfo.InvariantCulture));
+            return database?.LookupVehicleCharDeDeById(datavalueId.ToString(CultureInfo.InvariantCulture));
         }
 
         private string GetBrandNameAsString(BrandName brand)
