@@ -1378,7 +1378,7 @@ namespace PsdzClient.Core.Container
             return apiJob(ecu, job, param, string.Empty);
         }
 
-        [PreserveSource(Hint = "Unchanged", OriginalHash = "E748E842A368307A2BD15189317CC2C0", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IEcuJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "", IProtocolBasic fastaprotocoller = null, [CallerMemberName] string callerMember = "")
         {
             if (FromFastaConfig && !string.IsNullOrEmpty(sgbd) && apiJobNamesToBeCached.Contains(job))
@@ -1393,7 +1393,7 @@ namespace PsdzClient.Core.Container
             return apiJob(variant, job, param, resultFilter, retries, 0, fastaprotocoller, callerMember);
         }
 
-        [PreserveSource(Hint = "Unchanged", OriginalHash = "0745B52F886AC4DC091D3DA9B97DFAF1", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             if (!VehicleCommunication.validLicense)
@@ -1443,7 +1443,7 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "Unchanged", OriginalHash = "FEAAFE7A9FA1FC5561E83BC13A680CC5", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IEcuJob apiJob(string ecu, string job, string param, string resultFilter, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             try
@@ -1855,12 +1855,20 @@ namespace PsdzClient.Core.Container
             return detectedSpecialSecurityCase;
         }
 
-        [PreserveSource(Hint = "Converted", OriginalHash = "63C84AF0509F04C78071A4269D3886E2")]
+        [PreserveSource(Hint = "Converted", SignatureModified = true)]
         private bool UseConfigFileTraces()
         {
+            //[-] string text = api.apiGetConfig("ApiTrace");
+            //[-] string text2 = api.apiGetConfig("IfhTrace");
+            //[-] string text3 = api.apiGetConfig("SystemTraceIfh");
+            //[-] string text4 = api.apiGetConfig("SystemTraceNet");
+            //[+] api.apiGetConfig("ApiTrace", out string text);
             api.apiGetConfig("ApiTrace", out string text);
+            //[+] api.apiGetConfig("IfhTrace", out string text2);
             api.apiGetConfig("IfhTrace", out string text2);
+            //[+] api.apiGetConfig("SystemTraceIfh", out string text3);
             api.apiGetConfig("SystemTraceIfh", out string text3);
+            //[+] api.apiGetConfig("SystemTraceNet", out string text4);
             api.apiGetConfig("SystemTraceNet", out string text4);
             if (text != "0" || text2 != "0" || text3 != "0" || text4 != "0")
             {
