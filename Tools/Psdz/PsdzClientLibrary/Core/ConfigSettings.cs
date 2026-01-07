@@ -584,12 +584,17 @@ namespace PsdzClient.Core
             return CurrentCultureInfo.TwoLetterISOLanguageName;
         }
 
-        [PreserveSource(Hint = "Simplified", OriginalHash = "D41ABDF8E7F71C8452BC4602A19F06FC")]
         public static string InitCulture()
         {
             string configString = getConfigString("TesterGUI.Language", "en-GB");
             try
             {
+                //[-] if (IsOssModeActive)
+                //[-] {
+                //[-] SetCurrentUICultureFromPortalConfig();
+                //[-] }
+                //[-] else if (!string.IsNullOrEmpty(configString))
+                //[+] if (!string.IsNullOrEmpty(configString))
                 if (!string.IsNullOrEmpty(configString))
                 {
                     LogInfo("ConfigSettings.InitCulture()", "found already configured language: {0}", configString);
@@ -597,7 +602,18 @@ namespace PsdzClient.Core
                 }
                 else
                 {
-                    SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "no sqlite database properly configured");
+                    //[-] Log.Warning("ConfigSettings.InitCulture()", "no preconfigured language found. Checking available languages");
+                    //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
+                    //[-] if (instance.DatabaseAccessType == DatabaseType.SQLite)
+                    //[+] if (false)
+                    if (false)
+                    {
+                        //[-] SetCurrentUICultureFromDB(instance);
+                    }
+                    else
+                    {
+                        SetCurrentUICultureToDefault("ConfigSettings.InitCulture()", "no sqlite database properly configured");
+                    }
                 }
             }
             catch (Exception exception)
@@ -605,7 +621,6 @@ namespace PsdzClient.Core
                 Log.WarningException("ConfigSettings.InitCulture()", exception);
                 CurrentUICulture = getConfigString("TesterGUI.Language", "en-GB");
             }
-
             return currentUiCulture;
         }
 

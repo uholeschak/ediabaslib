@@ -1870,6 +1870,10 @@ namespace SourceCodeSync
                     {
                         Console.WriteLine($"    {error.GetMessage()}");
                     }
+
+                    Console.WriteLine("-------------------------------");
+                    Console.Write(mergedCode);
+                    Console.WriteLine("-------------------------------");
                 }
 
                 // Return original source member if parsing failed
