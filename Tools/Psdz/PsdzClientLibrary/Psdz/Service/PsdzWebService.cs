@@ -122,6 +122,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return false;
             }
+
             //[+] if (ClientContext.GetSwiVersionNum() < 40056)
             if (ClientContext.GetSwiVersionNum() < 40056)
             //[+] {
@@ -130,6 +131,7 @@ namespace BMW.Rheingold.Psdz
                 return true;
             //[+] }
             }
+
             RootDirectorySetupResultModel rootDirectorySetupResult = ConfigurationService.GetRootDirectorySetupResult();
             if (rootDirectorySetupResult != null && rootDirectorySetupResult.Success)
             {

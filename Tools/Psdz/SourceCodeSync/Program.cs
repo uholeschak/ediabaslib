@@ -1917,7 +1917,7 @@ namespace SourceCodeSync
         private static List<CommentedCodeLineInfo> FindCommentedCodeLinesWithContext(string code)
         {
             List<CommentedCodeLineInfo> result = new List<CommentedCodeLineInfo>();
-            string[] lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            string[] lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
             CommentedCodeLineInfo rootAddInfo = null;
             CommentedCodeLineInfo lastAddInfo = null;
@@ -2027,7 +2027,7 @@ namespace SourceCodeSync
         /// </summary>
         private static string MergeCommentedCodeLines(string sourceCode, List<CommentedCodeLineInfo> linesToPreserve)
         {
-            List<string> sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None).ToList();
+            List<string> sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             List<string> normalizedLines = sourceLines
                 .Select(line => NormalizeCodeLine(line, true))
                 .Where(line => !string.IsNullOrEmpty(line))
