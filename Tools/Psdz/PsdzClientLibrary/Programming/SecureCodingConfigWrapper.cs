@@ -77,11 +77,13 @@ namespace PsdzClient.Programming
             return Path.Combine(programmingService.BackupDataPath, NcdRoot, vin);
         }
 
-        [PreserveSource(Hint = "errorManager replaced with programmingService", OriginalHash = "2ECA4840EAA1B4F5D8108162071CA654")]
+        [PreserveSource(Hint = "errorManager replaced with programmingService", SignatureModified = true)]
         private SecureCodingConfigWrapper(ProgrammingService2 programmingService)
         {
-            this.SecureCodingConfigCto = new PsdzSecureCodingConfigCto();
-            string configString = string.Empty; // [IGNORE] ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.BackendNcdCalculationMode");
+            SecureCodingConfigCto = new PsdzSecureCodingConfigCto();
+            //[-] string configString = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.BackendNcdCalculationMode");
+            //[+] string configString = string.Empty;
+            string configString = string.Empty;
             if (!string.IsNullOrEmpty(configString) && Enum.IsDefined(typeof(PsdzBackendNcdCalculationEtoEnum), configString))
             {
                 SecureCodingConfigCto.BackendNcdCalculationEtoEnum = (PsdzBackendNcdCalculationEtoEnum)Enum.Parse(typeof(PsdzBackendNcdCalculationEtoEnum), configString);
@@ -92,7 +94,9 @@ namespace PsdzClient.Programming
             }
 
             SecureCodingConfigCto.BackendSignatureEtoEnum = PsdzBackendSignatureEtoEnum.MUST_NOT;
-            string value = string.Empty; // [IGNORE] ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.NcdRecalculationEnum").ToUpper();
+            //[-] string value = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Security.SC.NcdRecalculationEnum").ToUpper();
+            //[+] string value = string.Empty;
+            string value = string.Empty;
             if (!string.IsNullOrEmpty(value) && Enum.IsDefined(typeof(PsdzNcdRecalculationEtoEnum), value))
             {
                 SecureCodingConfigCto.NcdRecalculationEtoEnum = (PsdzNcdRecalculationEtoEnum)Enum.Parse(typeof(PsdzNcdRecalculationEtoEnum), value);
@@ -104,13 +108,17 @@ namespace PsdzClient.Programming
 
             SecureCodingConfigCto.ConnectionTimeout = 5000;
             SecureCodingConfigCto.ScbPollingTimeout = 120;
-            SecureCodingConfigCto.NcdRootDirectory = Path.Combine(programmingService.BackupDataPath, NcdRoot); // [UH] [IGNORE] replaced
+            //[-] SecureCodingConfigCto.NcdRootDirectory = ScManagerHelper.GetDefaultSecureCodingPath();
+            //[+] SecureCodingConfigCto.NcdRootDirectory = Path.Combine(programmingService.BackupDataPath, NcdRoot);
+            SecureCodingConfigCto.NcdRootDirectory = Path.Combine(programmingService.BackupDataPath, NcdRoot);
             SecureCodingConfigCto.Retries = 3;
             SecureCodingConfigCto.Crls = null;
             SecureCodingConfigCto.SwlSecBackendUrls = null;
+            //[-] SecureCodingConfigCto.ScbUrls = new List<string> { GetBackendServiceUrl(BackendServiceType.SecureCoding, errorManager, ContextError.SecureCoding).ResultObject };
+            //[+] SecureCodingConfigCto.ScbUrls = new List<string> { string.Empty };
             SecureCodingConfigCto.ScbUrls = new List<string>
             {
-                string.Empty // [UH] [IGNORE] URL removed
+                string.Empty
             };
             SecureCodingConfigCto.PsdzAuthenticationTypeEto = PsdzAuthenticationTypeEto.SSL;
         }
