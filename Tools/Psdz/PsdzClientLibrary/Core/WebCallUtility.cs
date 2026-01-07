@@ -15,7 +15,6 @@ namespace PsdzClient.Core
         {
             try
             {
-                // [UH] [IGNORE] Code removed
                 return LogToFastaAndReturnConnectionStatus();
             }
             catch (Exception exception)
