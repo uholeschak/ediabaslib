@@ -2118,6 +2118,7 @@ namespace SourceCodeSync
                     // Strategy 2: Find by following line
                     if (insertIndex == -1 && commentInfo.FollowingCodeLine != null)
                     {
+                        int matchCount = 0;
                         for (int i = 0; i < sourceLines.Count; i++)
                         {
                             string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
@@ -2126,10 +2127,16 @@ namespace SourceCodeSync
                             {
                                 if (i > 0)
                                 {
+                                    matchCount++;
                                     insertIndex = i;
-                                    break;
                                 }
                             }
+                        }
+
+                        // If multiple matches found, invalidate this strategy
+                        if (matchCount > 1)
+                        {
+                            insertIndex = -1;
                         }
                     }
 
