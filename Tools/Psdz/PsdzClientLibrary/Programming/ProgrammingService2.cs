@@ -25,6 +25,8 @@ namespace PsdzClient.Programming
         {
             //[-] this.services = services;
             //[-] psdzServiceGateway = new PsdzServiceGateway();
+            //[-] PreparePsdzBackupDataPath();
+            //[-] programmingWorker = CreateProgrammingWorker();
             //[+] psdzConfig = new PsdzConfig(istaFolder, dealerId);
             psdzConfig = new PsdzConfig(istaFolder, dealerId);
             //[+] psdzServiceGateway = new PsdzServiceGateway(psdzConfig, istaFolder, dealerId);
@@ -37,8 +39,6 @@ namespace PsdzClient.Programming
             PsdzDatabase = new PsdzDatabase(istaFolder);
             //[+] PreparePsdzBackupDataPath(istaFolder);
             PreparePsdzBackupDataPath(istaFolder);
-            //[-] PreparePsdzBackupDataPath();
-            //[-] programmingWorker = CreateProgrammingWorker();
             //[+] IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
             IFasta2Service fasta2Service = ServiceLocator.Current.GetService<IFasta2Service>();
             //[+] if (fasta2Service == null)
