@@ -335,7 +335,7 @@ namespace BMW.Rheingold.Programming.API
             return systemVerbauTabelle;
         }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public ECU Build(IPsdzEcu ecuInput)
         {
             if (ecuInput == null)
