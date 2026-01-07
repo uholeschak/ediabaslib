@@ -956,7 +956,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "2819C4DCEAA5BD34796E5A75B8AA394D")]
+        [PreserveSource(Hint = "Cleaned")]
         private void ValidateIfDiagnosticsHasValidLicense()
         {
         }
