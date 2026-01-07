@@ -23,9 +23,13 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Modified, create services")]
         public ProgrammingService2(string istaFolder, string dealerId)
         {
+            //[-] this.services = services;
+            //[-] psdzServiceGateway = new PsdzServiceGateway();
             //[+] psdzConfig = new PsdzConfig(istaFolder, dealerId);
             psdzConfig = new PsdzConfig(istaFolder, dealerId);
+            //[+] psdzServiceGateway = new PsdzServiceGateway(psdzConfig, istaFolder, dealerId);
             psdzServiceGateway = new PsdzServiceGateway(psdzConfig, istaFolder, dealerId);
+            //[+] SetLogLevelToNormal();
             SetLogLevelToNormal();
             //[+] EventManager = new ProgrammingEventManager();
             EventManager = new ProgrammingEventManager();
