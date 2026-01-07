@@ -892,13 +892,19 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Using rector from vehicle", OriginalHash = "639106127F8F20CFA54C3CA46F761CB2")]
+        [PreserveSource(Hint = "Using rector from vehicle", SignatureModified = true)]
         public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
+            //[-] Reactor instance = Reactor.Instance;
+            //[+] Reactor instance = (vecInfo as Vehicle)?.Reactor;
             Reactor instance = (vecInfo as Vehicle)?.Reactor;
+            //[+] if (instance == null)
             if (instance == null)
+            //[+] {
             {
+                //[+] return;
                 return;
+            //[+] }
             }
 
             IEcuJob ecuJob = new ECUJob();
