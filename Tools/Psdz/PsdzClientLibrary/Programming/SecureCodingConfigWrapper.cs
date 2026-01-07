@@ -115,8 +115,8 @@ namespace PsdzClient.Programming
             SecureCodingConfigCto.Crls = null;
             SecureCodingConfigCto.SwlSecBackendUrls = null;
             //[-] SecureCodingConfigCto.ScbUrls = new List<string> { GetBackendServiceUrl(BackendServiceType.SecureCoding, errorManager, ContextError.SecureCoding).ResultObject };
-            //[+] SecureCodingConfigCto.ScbUrls = new List<string>();
-            SecureCodingConfigCto.ScbUrls = new List<string>();
+            //[+] SecureCodingConfigCto.ScbUrls = new List<string> { GetBackendServiceUrl(BackendServiceType.SecureCoding, ContextError.SecureCoding).ResultObject };
+            SecureCodingConfigCto.ScbUrls = new List<string> { GetBackendServiceUrl(BackendServiceType.SecureCoding, ContextError.SecureCoding).ResultObject };
             SecureCodingConfigCto.PsdzAuthenticationTypeEto = PsdzAuthenticationTypeEto.SSL;
         }
 
