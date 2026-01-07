@@ -224,9 +224,16 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        [PreserveSource(Hint = "ediabas added, using ApiInternal", OriginalHash = "C27EC725B0A417FBC992621884C10648")]
+        [PreserveSource(Hint = "ediabas added, using ApiInternal", SignatureModified = true)]
         private ApiInternal CreateApi(EdiabasNet ediabas)
         {
+            //[-] API aPI = new API();
+            //[-] if (!TimeMetricsUtility.ShouldEnableMetrics())
+            //[-] {
+            //[-] return aPI;
+            //[-] }
+            //[-] return new MetricsProxy<API>(aPI, TimeMetricsUtility.Instance.VehicleCommunicationStart, TimeMetricsUtility.Instance.VehicleCommunicationEnd).GetTransparentProxy() as API;
+            //[+] return new ApiInternal(ediabas);
             return new ApiInternal(ediabas);
         }
 
