@@ -164,7 +164,6 @@ namespace PsdzClient.Core
                 //[-] {
                 //[-]     return UiBrand.TOYOTA;
                 //[-] }
-
                 string configString = getConfigString("TesterGUI.SelectedBrand", "");
                 if (Enum.TryParse<UiBrand>(configString, ignoreCase: true, out var result))
                 {
@@ -1339,11 +1338,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "TOYOTA removed", OriginalHash = "3F2095BFA77BB8DEFECE34785A4A34B3")]
         public static (bool IsActive, string Message) GetFeatureEnabledStatus(string feature)
         {
             using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
             {
+                //[-] if (istaIcsServiceClient.IsAvailable() || IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
+                //[+] if (istaIcsServiceClient.IsAvailable())
                 if (istaIcsServiceClient.IsAvailable())
                 {
                     return istaIcsServiceClient.GetFeatureEnabledStatus(feature, istaIcsServiceClient.IsAvailable());
