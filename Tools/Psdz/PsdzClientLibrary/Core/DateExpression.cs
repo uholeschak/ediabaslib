@@ -21,7 +21,7 @@ namespace PsdzClient.Core
             this.compareOperator = compareOperator;
         }
 
-        [PreserveSource(Hint = "vec added", OriginalHash = "4305E01EA1B4C14DD529D21927042BFB")]
+        [PreserveSource(Hint = "vec added", SignatureModified = true)]
         public static DateExpression Deserialize(Stream ms, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();
@@ -32,7 +32,7 @@ namespace PsdzClient.Core
             return new DateExpression(eCompareOperator, num);
         }
 
-        [PreserveSource(Hint = "dataprovider removed", OriginalHash = "5EB30131E3895C075AF882C59E8313D0")]
+        [PreserveSource(Hint = "dataprovider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
