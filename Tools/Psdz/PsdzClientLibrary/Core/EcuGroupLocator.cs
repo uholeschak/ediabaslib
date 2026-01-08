@@ -100,7 +100,6 @@ namespace PsdzClient.Core
             this.ffmResolver = ffmResolver;
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "457AEE8771A8A4D2D0BD097120D8DA14")]
         public string GetDataValue(string name)
         {
             if (ecuGroup == null || string.IsNullOrEmpty(name))
@@ -115,20 +114,34 @@ namespace PsdzClient.Core
                 case "NODECLASS":
                     return "5717890";
                 case "OBDIDENTIFICATION":
+                    //[-] return ecuGroup.ObdIdentification.ToString(CultureInfo.InvariantCulture);
+                    //[+] return ecuGroup.ObdIdent;
                     return ecuGroup.ObdIdent;
                 case "FAULTMEMORYDELETEIDENTIFICATIO":
+                    //[-] return ecuGroup.FaultMemoryDeleteIdentificatio.ToString(CultureInfo.InvariantCulture);
+                    //[+] return ecuGroup.FaultMemDelIdent;
                     return ecuGroup.FaultMemDelIdent;
                 case "FAULTMEMORYDELETEWAITINGTIME":
+                    //[-] return ecuGroup.FaultMemoryDeleteWaitingTime.ToString(CultureInfo.InvariantCulture);
+                    //[+] return ecuGroup.FaultMemDelWaitTime;
                     return ecuGroup.FaultMemDelWaitTime;
                 case "NAME":
                     return ecuGroup.Name;
                 case "VIRTUELL":
+                    //[-] return ecuGroup.Virtuell.ToString(CultureInfo.InvariantCulture);
+                    //[+] return ecuGroup.Virt;
                     return ecuGroup.Virt;
                 case "VALIDFROM":
+                    //[-] return ecuGroup.ValidFrom.ToString();
+                    //[+] return ecuGroup.ValidFrom;
                     return ecuGroup.ValidFrom;
                 case "VALIDTO":
+                    //[-] return ecuGroup.ValidTo.ToString();
+                    //[+] return ecuGroup.ValidTo;
                     return ecuGroup.ValidTo;
                 case "SICHERHEITSRELEVANT":
+                    //[-] return ecuGroup.Sicherheitsrelevant.ToString(CultureInfo.InvariantCulture);
+                    //[+] return ecuGroup.SafetyRelevant;
                     return ecuGroup.SafetyRelevant;
                 default:
                     return string.Empty;
