@@ -16,7 +16,7 @@ namespace PsdzClient.Core
         [PreserveSource(Hint = "Database replaced")]
         private PsdzDatabase.EcuVar ecuVariant;
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "0805F1B8A8056092F58311DF13015715")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             ILogger logger = ruleEvaluationServices.Logger;
@@ -28,14 +28,18 @@ namespace PsdzClient.Core
                     return false;
                 }
 
-                programmingVariant = ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
+                //[-] programmingVariant = dataProvider.GetEcuProgrammingVariantById(value, vec, ffmResolver);
+                //[+] programmingVariant = ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
+                programmingVariant = ClientContext.GetDatabase(vec)?.GetEcuProgrammingVariantById(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver);
                 if (programmingVariant == null)
                 {
                     logger.Warning(logger.CurrentMethod(), "no valid programming variant information found for id: {0}", value);
                     return false;
                 }
 
-                ecuVariant = ClientContext.GetDatabase(vec)?.GetEcuVariantById(this.programmingVariant.EcuVarId);
+                //[-] ecuVariant = dataProvider.GetEcuVariantById(programmingVariant.EcuVariantId);
+                //[+] ecuVariant = ClientContext.GetDatabase(vec)?.GetEcuVariantById(programmingVariant.EcuVarId);
+                ecuVariant = ClientContext.GetDatabase(vec)?.GetEcuVariantById(programmingVariant.EcuVarId);
                 if (ecuVariant == null)
                 {
                     logger.Warning(logger.CurrentMethod(), "no valid EcuVariant information found for id: {0}", value);
