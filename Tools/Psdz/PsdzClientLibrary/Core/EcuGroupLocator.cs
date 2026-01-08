@@ -100,6 +100,7 @@ namespace PsdzClient.Core
             this.ffmResolver = ffmResolver;
         }
 
+        [PreserveSource(Hint = "Modified", SignatureModified = true)]
         public string GetDataValue(string name)
         {
             if (ecuGroup == null || string.IsNullOrEmpty(name))
@@ -168,6 +169,7 @@ namespace PsdzClient.Core
             return children;
         }
 
+        [PreserveSource(Hint = "Cleaned")]
         public T GetDataValue<T>(string name)
         {
             throw new NotImplementedException();
