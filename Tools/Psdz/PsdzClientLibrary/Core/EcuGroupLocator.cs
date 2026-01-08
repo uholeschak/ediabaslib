@@ -73,23 +73,25 @@ namespace PsdzClient.Core
         public Exception Exception => null;
         public bool HasException => false;
 
-        [PreserveSource(Hint = "ecuGroup modified", OriginalHash = "06BD86D992742E8CEB3DF15DD20F7425")]
+        [PreserveSource(Hint = "ecuGroup modified", SignatureModified = true)]
         public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup)
         {
             this.ecuGroup = ecuGroup;
-            this.children = new ISPELocator[0];
+            children = new ISPELocator[0];
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "062B06F28CEEF71621BB52FF3194BAB9")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public EcuGroupLocator(decimal id, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
-            this.ecuGroup = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));
+            //[-] ecuGroup = DatabaseProviderFactory.Instance.GetEcuGroupById(id);
+            //[+] ecuGroup = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));
+            ecuGroup = ClientContext.GetDatabase(vecInfo)?.GetEcuGroupById(id.ToString(CultureInfo.InvariantCulture));
             children = new ISPELocator[0];
             this.vecInfo = vecInfo;
             this.ffmResolver = ffmResolver;
         }
 
-        [PreserveSource(Hint = "ecuGroup modified", OriginalHash = "8EDAAF275E011A7D60865AA2A4E4C118")]
+        [PreserveSource(Hint = "ecuGroup modified", SignatureModified = true)]
         public EcuGroupLocator(PsdzDatabase.EcuGroup ecuGroup, Vehicle vecInfo, IFFMDynamicResolverRuleEvaluation ffmResolver)
         {
             this.ecuGroup = ecuGroup;
@@ -105,6 +107,7 @@ namespace PsdzClient.Core
             {
                 return null;
             }
+
             switch (name.ToUpperInvariant())
             {
                 case "ID":
