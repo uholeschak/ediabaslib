@@ -55,7 +55,6 @@ namespace PsdzClient.Core
             "VALIDFROM"
         };
 
-        [PreserveSource(Hint = "Use ConvertToInt", OriginalHash = "4465D41838B9D67581BD145743BEDB74")]
         public decimal SignedId
         {
             get
@@ -65,6 +64,8 @@ namespace PsdzClient.Core
                     return -1m;
                 }
 
+                //[-] return ecuGroup.Id;
+                //[+] return ecuGroup.Id.ConvertToInt();
                 return ecuGroup.Id.ConvertToInt();
             }
         }
