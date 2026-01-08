@@ -25,7 +25,7 @@ namespace PsdzClient.Core
             value = ecuVariantId;
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "34482A4EBE0783DD3BB3134572099D27")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -33,12 +33,19 @@ namespace PsdzClient.Core
                 ruleEvaluationServices.Logger.Warning("EcuVariantExpression.Evaluate()", "vec was null");
                 return false;
             }
+            //[+] PsdzDatabase database = ClientContext.GetDatabase(vec);
             PsdzDatabase database = ClientContext.GetDatabase(vec);
+            //[+] if (database == null)
             if (database == null)
+            //[+] {
             {
+                //[+] return false;
                 return false;
+            //[+] }
             }
-            PsdzDatabase.EcuVar ecuVariantById = database.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));
+            //[-] IXepEcuVariants ecuVariantById = dataProvider.GetEcuVariantById(value);
+            //[+] PsdzDatabase.EcuVar ecuVariantById = database.GetEcuVariantById(value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.EcuVar ecuVariantById = database.GetEcuVariantById(value.ToString(CultureInfo.InvariantCulture));
             if (ecuVariantById == null)
             {
                 ruleEvaluationServices.Logger.Warning("EcuVariantExpression.Evaluate()", "no valid variant information found for id: {0}", value);
@@ -47,9 +54,13 @@ namespace PsdzClient.Core
             VariantName = ecuVariantById.Name;
             if (vec.VCI != null && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
             {
+                //[-] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, dataProvider, dealer);
+                //[+] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
                 RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
                 if (ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, ecuVariantById.Id, ffmResolver))
                 {
+                    //[-] IXepEcuGroups ecuGroupById = dataProvider.GetEcuGroupById(ecuVariantById.EcuGroupId.Value);
+                    //[+] PsdzDatabase.EcuGroup ecuGroupById = database.GetEcuGroupById(ecuVariantById.EcuGroupId);
                     PsdzDatabase.EcuGroup ecuGroupById = database.GetEcuGroupById(ecuVariantById.EcuGroupId);
                     if (ecuGroupById != null)
                     {
