@@ -11,7 +11,7 @@ namespace PsdzClient.Core
         {
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "83A3EEE46CD8F6FE02FB201885D69D0D", SignatureModified = true)]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public static RuleExpression Parse(string rule)
         {
             Stack<Symbol> stack = new Stack<Symbol>();
