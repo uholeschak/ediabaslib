@@ -26,9 +26,11 @@ namespace PsdzClient.Core
             this.operand = operand;
         }
 
-        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "9CEC5C40B994789774000BE4ED96FB83")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", SignatureModified = true)]
         public new static NotExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
+            //[-] return new NotExpression(RuleExpression.Deserialize(ms, logger, dataProvider));
+            //[+] return new NotExpression(RuleExpression.Deserialize(ms, logger, vec));
             return new NotExpression(RuleExpression.Deserialize(ms, logger, vec));
         }
 
@@ -43,6 +45,8 @@ namespace PsdzClient.Core
 
             logger.Debug("NotExpression.Evaluate()", "operand {0}", operand);
             internalResult.RuleExpression = this;
+            //[-] return !RuleExpression.Evaluate(vec, dealer, operand, ffmResolver, dataProvider, ruleEvaluationUtils, internalResult);
+            //[+] return !RuleExpression.Evaluate(vec, operand, ffmResolver, ruleEvaluationUtils, internalResult);
             return !RuleExpression.Evaluate(vec, operand, ffmResolver, ruleEvaluationUtils, internalResult);
         }
 
