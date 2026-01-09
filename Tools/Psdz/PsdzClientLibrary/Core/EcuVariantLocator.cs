@@ -29,7 +29,6 @@ namespace PsdzClient.Core
 
         public string Id => ecuVariant.Id.ToString(CultureInfo.InvariantCulture);
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "8BD4112443B7FFD029BCC359A4B69F17")]
         public ISPELocator[] Parents
         {
             get
@@ -39,8 +38,12 @@ namespace PsdzClient.Core
                     return parents;
                 }
                 List<ISPELocator> list = new List<ISPELocator>();
-                if (string.IsNullOrEmpty(this.ecuVariant.EcuGroupId))
+                //[-] if (ecuVariant.EcuGroupId.HasValue)
+                //[+] if (string.IsNullOrEmpty(ecuVariant.EcuGroupId))
+                if (string.IsNullOrEmpty(ecuVariant.EcuGroupId))
                 {
+                    //[-] XEP_ECUGROUPS ecuGroupById = DatabaseProviderFactory.Instance.GetEcuGroupById(ecuVariant.EcuGroupId.Value);
+                    //[+] PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId);
                     PsdzDatabase.EcuGroup ecuGroupById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuGroupById(this.ecuVariant.EcuGroupId);
                     if (ecuGroupById != null)
                     {
