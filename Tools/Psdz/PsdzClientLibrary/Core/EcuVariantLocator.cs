@@ -92,7 +92,6 @@ namespace PsdzClient.Core
             "SORT"
         };
 
-        [PreserveSource(Hint = "Use ConvertToInt", OriginalHash = "E674B19A7932FCF0A948E3F00CC5FCF3")]
         public decimal SignedId
         {
             get
@@ -102,6 +101,8 @@ namespace PsdzClient.Core
                     return -1m;
                 }
 
+                //[-] return ecuVariant.Id;
+                //[+] return ecuVariant.Id.ConvertToInt();
                 return ecuVariant.Id.ConvertToInt();
             }
         }
