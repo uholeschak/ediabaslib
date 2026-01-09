@@ -110,16 +110,17 @@ namespace PsdzClient.Core
         public Exception Exception => null;
         public bool HasException => false;
 
-        [PreserveSource(Hint = "ecuVariant modified", OriginalHash = "8E5B65773EA09751505B070953098C4B")]
+        [PreserveSource(Hint = "ecuVariant modified", SignatureModified = true)]
         public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant)
         {
             this.ecuVariant = ecuVariant;
             children = new ISPELocator[0];
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "075E47B43169E8EAEEECF27BF5B048ED")]
         public static IEcuVariantLocator CreateEcuVariantLocator(string ecuVariant, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
+            //[-] XEP_ECUVARIANTS ecuVariantByName = DatabaseProviderFactory.Instance.GetEcuVariantByName(ecuVariant);
+            //[+] PsdzDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
             PsdzDatabase.EcuVar ecuVariantByName = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantByName(ecuVariant);
             if (ecuVariantByName != null)
             {
@@ -128,15 +129,17 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "08BE2E1CCFA59CF2186602C6B28BF6E3")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public EcuVariantLocator(decimal id, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
+            //[-] ecuVariant = DatabaseProviderFactory.Instance.GetEcuVariantById(id);
+            //[+] ecuVariant = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
             ecuVariant = ClientContext.GetDatabase(vecInfo)?.GetEcuVariantById(id.ToString(CultureInfo.InvariantCulture));
             this.vecInfo = vecInfo;
             this.ffmResolver = ffmResolver;
         }
 
-        [PreserveSource(Hint = "ecuVariant modified", OriginalHash = "CC3856D70B3BE36AF29DACB2006C5BC2")]
+        [PreserveSource(Hint = "ecuVariant modified", SignatureModified = true)]
         public EcuVariantLocator(PsdzDatabase.EcuVar ecuVariant, Vehicle vecInfo, IFFMDynamicResolverRuleEvaluation ffmResolver)
         {
             this.ecuVariant = ecuVariant;
