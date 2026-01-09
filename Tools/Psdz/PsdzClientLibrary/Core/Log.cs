@@ -357,30 +357,49 @@ namespace PsdzClient.Core
             return sb.ToString();
         }
 
-        [PreserveSource(Hint = "log added", OriginalHash = "6DD82DFE437E785462F695423C97AA02")]
         private static void WriteTraceEntry(string method, string msg, TraceLevel level, EventKind evtKind, params object[] args)
         {
             string text = BuildEntry(level, evtKind, method, msg);
             Trace.WriteLine((args != null && args.Any()) ? string.Format(text, args) : text);
+            //[+] if (log != null)
             if (log != null)
+            //[+] {
             {
+                //[+] string formattedMessage = (args != null && args.Any()) ? string.Format(text, args) : text;
                 string formattedMessage = (args != null && args.Any()) ? string.Format(text, args) : text;
+                //[+] switch (level)
                 switch (level)
+                //[+] {
                 {
+                    //[+] case TraceLevel.INFO:
                     case TraceLevel.INFO:
+                        //[+] log.Info(formattedMessage);
                         log.Info(formattedMessage);
+                        //[+] break;
                         break;
+                    //[+] case TraceLevel.DEBUG:
                     case TraceLevel.DEBUG:
+                        //[+] log.Debug(formattedMessage);
                         log.Debug(formattedMessage);
+                        //[+] break;
                         break;
+                    //[+] case TraceLevel.WARNING:
                     case TraceLevel.WARNING:
+                        //[+] log.Warn(formattedMessage);
                         log.Warn(formattedMessage);
+                        //[+] break;
                         break;
+                    //[+] case TraceLevel.ERROR:
                     case TraceLevel.ERROR:
+                    //[+] case TraceLevel.FATAL:
                     case TraceLevel.FATAL:
+                        //[+] log.Error(formattedMessage);
                         log.Error(formattedMessage);
+                        //[+] break;
                         break;
+                //[+] }
                 }
+            //[+] }
             }
         }
 
