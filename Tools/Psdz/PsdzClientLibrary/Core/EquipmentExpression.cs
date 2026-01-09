@@ -11,7 +11,7 @@ namespace PsdzClient.Core
     public class EquipmentExpression : SingleAssignmentExpression
     {
         private static object evaluationLockObject = new object ();
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "BAB0AFAB1D8F890EAA3BAF184268ADC9")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             ILogger logger = ruleEvaluationServices.Logger;
@@ -25,14 +25,19 @@ namespace PsdzClient.Core
                 return false;
             }
 
+            //[-] if (dataProvider == null)
+            //[+] PsdzDatabase database = ClientContext.GetDatabase(vec);
             PsdzDatabase database = ClientContext.GetDatabase(vec);
+            //[+] if (database == null)
             if (database == null)
             {
                 logger.Error("EquipmentExpression.Evaluate()", "database connection invalid");
                 return false;
             }
 
-            PsdzDatabase.Equipment equipmentById = database.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));
+            //[-] IXepEquipmentRuleEvaluation equipmentById = dataProvider.GetEquipmentById(value);
+            //[+] PsdzDatabase.Equipment equipmentById = database.GetEquipmentById(value.ToString(CultureInfo.InvariantCulture));
+            PsdzDatabase.Equipment equipmentById = database.GetEquipmentById(value.ToString(CultureInfo.InvariantCulture));
             if (equipmentById == null)
             {
                 logger.Warning("EquipmentExpression.Evaluate()", "unable to lookup equipment by id: {0}", value);
@@ -41,19 +46,29 @@ namespace PsdzClient.Core
 
             lock (evaluationLockObject)
             {
+                //[-] bool? flag = vec.hasFFM(equipmentById.NAME);
+                //[+] bool? flag = vec.hasFFM(equipmentById.Name);
                 bool? flag = vec.hasFFM(equipmentById.Name);
                 if (flag.HasValue)
                 {
+                    //[-] logger.Debug("EquipmentExpression.Evaluate()", "rule: {0} result: {1} [original rule: {2}]", equipmentById.NAME, flag, value);
+                    //[+] logger.Debug("EquipmentExpression.Evaluate()", "rule: {0} result: {1} [original rule: {2}]", equipmentById.Name, flag, value);
                     logger.Debug("EquipmentExpression.Evaluate()", "rule: {0} result: {1} [original rule: {2}]", equipmentById.Name, flag, value);
                     return flag.Value;
                 }
 
+                //[-] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, dataProvider, dealer);
+                //[+] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
                 RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
                 bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, this.value.ToString(CultureInfo.InvariantCulture), ffmResolver);
+                //[-] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.NAME, value, flag2);
+                //[+] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.Name, value, flag2);
                 logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.Name, value, flag2);
                 if (ffmResolver != null && flag2)
                 {
-                    List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = database.GetInfoObjectsByDiagObjectControlId(this.value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver, getHidden: true, null);
+                    //[-] IEnumerable<IXepInfoObjectRuleEvaluation> infoObjectsByDiagObjectControlId = dataProvider.GetInfoObjectsByDiagObjectControlId(value, vec, ffmResolver, getHidden: true);
+                    //[+] List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = database.GetInfoObjectsByDiagObjectControlId(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver, getHidden: true, null);
+                    List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = database.GetInfoObjectsByDiagObjectControlId(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver, getHidden: true, null);
                     if (infoObjectsByDiagObjectControlId == null || !infoObjectsByDiagObjectControlId.Any())
                     {
                         logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to no fitting test modules found)", equipmentById.Name, value);
@@ -61,13 +76,19 @@ namespace PsdzClient.Core
                     }
 
                     bool? flag3 = ffmResolver.Resolve(value, infoObjectsByDiagObjectControlId.First());
+                    //[-] vec.AddOrUpdateFFM(new FFMResultRuleEvaluation(equipmentById.ID, equipmentById.NAME, "FFMResolver", flag3, reeval: false));
+                    //[+] vec.AddOrUpdateFFM(new FFMResultRuleEvaluation(Convert.ToDecimal(equipmentById.Id), equipmentById.Name, "FFMResolver", flag3, reeval: false));
                     vec.AddOrUpdateFFM(new FFMResultRuleEvaluation(Convert.ToDecimal(equipmentById.Id), equipmentById.Name, "FFMResolver", flag3, reeval: false));
                     if (flag3.HasValue)
                     {
+                        //[-] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: {2}", equipmentById.NAME, value, flag3);
+                        //[+] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: {2}", equipmentById.Name, value, flag3);
                         logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: {2}", equipmentById.Name, value, flag3);
                         return flag3.Value;
                     }
 
+                    //[-] logger.Warning("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: True (due to result is unknown)", equipmentById.NAME, value);
+                    //[+] logger.Warning("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: True (due to result is unknown)", equipmentById.Name, value);
                     logger.Warning("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: True (due to result is unknown)", equipmentById.Name, value);
                     return true;
                 }
