@@ -23,7 +23,7 @@ namespace PsdzClient.Core
             this.datevalue = dateArgument.Ticks;
         }
 
-        [PreserveSource(Hint = "vec added", OriginalHash = "90BB6596183C73CE2BABA46E1D6824FA")]
+        [PreserveSource(Hint = "vec added", SignatureModified = true)]
         public new static ManufactoringDateExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             byte b = (byte)ms.ReadByte();
@@ -35,7 +35,7 @@ namespace PsdzClient.Core
             return new ManufactoringDateExpression(eCompareOperator, ticks);
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "D4E007F3B5B4CA436F40351FB5A05653")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             ILogger logger = ruleEvaluationUtils.Logger;
@@ -49,8 +49,7 @@ namespace PsdzClient.Core
             long ticks;
             try
             {
-                DateTime minValue = DateTime.MinValue;
-                if (!minValue.Ticks.Equals(vec.ProductionDate.Ticks))
+                if (!DateTime.MinValue.Ticks.Equals(vec.ProductionDate.Ticks))
                 {
                     ticks = vec.ProductionDate.Ticks;
                 }
