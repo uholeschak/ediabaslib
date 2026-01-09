@@ -58,10 +58,12 @@ namespace PsdzClient.Core
                 }
 
                 //[-] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, dataProvider, dealer);
+                //[-] bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, value, ffmResolver);
+                //[-] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.NAME, value, flag2);
                 //[+] RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
                 RuleEvaluationUtill ruleEvaluationUtill = new RuleEvaluationUtill(ruleEvaluationServices, database);
-                bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, this.value.ToString(CultureInfo.InvariantCulture), ffmResolver);
-                //[-] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.NAME, value, flag2);
+                //[+] bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, value.ToString(CultureInfo.InvariantCulture), ffmResolver);
+                bool flag2 = ruleEvaluationUtill.EvaluateSingleRuleExpression(vec, value.ToString(CultureInfo.InvariantCulture), ffmResolver);
                 //[+] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.Name, value, flag2);
                 logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  validity: {2}", equipmentById.Name, value, flag2);
                 if (ffmResolver != null && flag2)
@@ -71,6 +73,8 @@ namespace PsdzClient.Core
                     List<PsdzDatabase.SwiInfoObj> infoObjectsByDiagObjectControlId = database.GetInfoObjectsByDiagObjectControlId(value.ToString(CultureInfo.InvariantCulture), vec, ffmResolver, getHidden: true, null);
                     if (infoObjectsByDiagObjectControlId == null || !infoObjectsByDiagObjectControlId.Any())
                     {
+                        //[-] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to no fitting test modules found)", equipmentById.NAME, value);
+                        //[+] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to no fitting test modules found)", equipmentById.Name, value);
                         logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to no fitting test modules found)", equipmentById.Name, value);
                         return false;
                     }
@@ -95,10 +99,14 @@ namespace PsdzClient.Core
 
                 if (flag2)
                 {
+                    //[-] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1}) result: true (due to rule evaluation returned true even so ffmResolver result is unknown because ffmResolver was null)", equipmentById.NAME, value);
+                    //[+] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1}) result: true (due to rule evaluation returned true even so ffmResolver result is unknown because ffmResolver was null)", equipmentById.Name, value);
                     logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1}) result: true (due to rule evaluation returned true even so ffmResolver result is unknown because ffmResolver was null)", equipmentById.Name, value);
                     return true;
                 }
 
+                //[-] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to ffmResolver was null and rule evalauation was false)", equipmentById.NAME, value);
+                //[+] logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to ffmResolver was null and rule evalauation was false)", equipmentById.Name, value);
                 logger.Info("EquipmentExpression.Evaluate()", "EquipmentId: {0} (original rule: {1})  result: false (due to ffmResolver was null and rule evalauation was false)", equipmentById.Name, value);
                 return false;
             }
