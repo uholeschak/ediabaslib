@@ -135,9 +135,10 @@ namespace PsdzClient.Core
             ms.Write(BitConverter.GetBytes(iLevelId), 0, 8);
         }
 
-        [PreserveSource(Hint = "Use database", OriginalHash = "1F968E04F0603CB84E2A4E47396ECF89")]
         public override string ToString()
         {
+            //[-] string iStufeById = dataProvider.GetIStufeById(iLevelId);
+            //[+] string iStufeById = ClientContext.GetDatabase(vecInfo)?.GetIStufeById(iLevelId.ToString(CultureInfo.InvariantCulture));
             string iStufeById = ClientContext.GetDatabase(vecInfo)?.GetIStufeById(iLevelId.ToString(CultureInfo.InvariantCulture));
             string iLevelTypeDescription = GetILevelTypeDescription();
             return string.Format(CultureInfo.InvariantCulture, "IStufeX: {0}-I-Stufe {1} '{2}' [{3}]", iLevelTypeDescription, compareOperator, iStufeById, iLevelId);
