@@ -15,30 +15,33 @@ namespace PsdzClient.Core
         private string iStufe;
         [PreserveSource(Hint = "IDataProviderRuleEvaluation", Placeholder = true)]
         private readonly PlaceholderType dataProvider;
-        [PreserveSource(Hint = "Database modified", OriginalHash = "5DD33CC69635A0CB84E46EEAC5CC1B5A")]
         private string IStufe
         {
             get
             {
                 if (string.IsNullOrEmpty(iStufe))
                 {
+                    //[-] iStufe = dataProvider.GetIStufeById(value);
+                    //[+] iStufe = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
                     iStufe = ClientContext.GetDatabase(this.vecInfo)?.GetIStufeById(this.value.ToString(CultureInfo.InvariantCulture));
                     return iStufe;
                 }
+
                 return iStufe;
             }
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "C10874AF3701858B254968057305EE14")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public IStufeExpression()
         {
+            //[-] this.dataProvider = dataProvider;
         }
 
         [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public IStufeExpression(long iStufeId)
         {
             value = iStufeId;
-            //[-] this.dataProvider = dataProvider;
+        //[-] this.dataProvider = dataProvider;
         }
 
         [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
@@ -62,6 +65,7 @@ namespace PsdzClient.Core
                 flag = vec.ILevel == IStufe;
                 ruleEvaluationServices.Logger.Debug("IStufeExpression.Evaluate()", "IStufe: {0} result: {1} [original rule: {2}]", IStufe, flag, value);
             }
+
             return flag;
         }
 
