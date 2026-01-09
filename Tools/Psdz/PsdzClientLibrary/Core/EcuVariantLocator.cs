@@ -338,7 +338,7 @@ namespace PsdzClient.Core
             return children;
         }
 
-        [PreserveSource(Hint = "Modified", OriginalHash = "4A8CA5648240C30EA714ADA304782496")]
+        [PreserveSource(Hint = "Modified", SignatureModified = true)]
         public T GetDataValue<T>(string name)
         {
             try
@@ -355,66 +355,108 @@ namespace PsdzClient.Core
                             obj = "5719042";
                             break;
                         case "TITLE_DEDE":
+                            //[-] obj = ecuVariant.Title_dede;
+                            //[+] obj = ecuVariant.EcuTranslation.TextDe;
                             obj = ecuVariant.EcuTranslation.TextDe;
                             break;
                         case "TITLE_ENGB":
+                            //[-] obj = ecuVariant.Title_engb;
+                            //[+] obj = ecuVariant.EcuTranslation.TextEn;
                             obj = ecuVariant.EcuTranslation.TextEn;
                             break;
                         case "TITLE_ENUS":
+                            //[-] obj = ecuVariant.Title_enus;
+                            //[+] obj = ecuVariant.EcuTranslation.TextEn;
                             obj = ecuVariant.EcuTranslation.TextEn;
                             break;
                         case "TITLE_FR":
+                            //[-] obj = ecuVariant.Title_fr;
+                            //[+] obj = ecuVariant.EcuTranslation.TextFr;
                             obj = ecuVariant.EcuTranslation.TextFr;
                             break;
                         case "TITLE_TH":
+                            //[-] obj = ecuVariant.Title_th;
+                            //[+] obj = ecuVariant.EcuTranslation.TextTh;
                             obj = ecuVariant.EcuTranslation.TextTh;
                             break;
                         case "TITLE_SV":
+                            //[-] obj = ecuVariant.Title_sv;
+                            //[+] obj = ecuVariant.EcuTranslation.TextSv;
                             obj = ecuVariant.EcuTranslation.TextSv;
                             break;
                         case "TITLE_IT":
+                            //[-] obj = ecuVariant.Title_it;
+                            //[+] obj = ecuVariant.EcuTranslation.TextIt;
                             obj = ecuVariant.EcuTranslation.TextIt;
                             break;
                         case "TITLE_ES":
+                            //[-] obj = ecuVariant.Title_es;
+                            //[+] obj = ecuVariant.EcuTranslation.TextEs;
                             obj = ecuVariant.EcuTranslation.TextEs;
                             break;
                         case "TITLE_ID":
+                            //[-] obj = ecuVariant.Title_id;
+                            //[+] obj = ecuVariant.EcuTranslation.TextId;
                             obj = ecuVariant.EcuTranslation.TextId;
                             break;
                         case "TITLE_KO":
+                            //[-] obj = ecuVariant.Title_ko;
+                            //[+] obj = ecuVariant.EcuTranslation.TextKo;
                             obj = ecuVariant.EcuTranslation.TextKo;
                             break;
                         case "TITLE_EL":
+                            //[-] obj = ecuVariant.Title_el;
+                            //[+] obj = ecuVariant.EcuTranslation.TextEl;
                             obj = ecuVariant.EcuTranslation.TextEl;
                             break;
                         case "TITLE_TR":
+                            //[-] obj = ecuVariant.Title_tr;
+                            //[+] obj = ecuVariant.EcuTranslation.TextTr;
                             obj = ecuVariant.EcuTranslation.TextTr;
                             break;
                         case "TITLE_ZHCN":
+                            //[-] obj = ecuVariant.Title_zhcn;
+                            //[+] obj = ecuVariant.EcuTranslation.TextZh;
                             obj = ecuVariant.EcuTranslation.TextZh;
                             break;
                         case "TITLE_RU":
+                            //[-] obj = ecuVariant.Title_ru;
+                            //[+] obj = ecuVariant.EcuTranslation.TextRu;
                             obj = ecuVariant.EcuTranslation.TextRu;
                             break;
                         case "TITLE_NL":
+                            //[-] obj = ecuVariant.Title_nl;
+                            //[+] obj = ecuVariant.EcuTranslation.TextNl;
                             obj = ecuVariant.EcuTranslation.TextNl;
                             break;
                         case "TITLE_PT":
+                            //[-] obj = ecuVariant.Title_pt;
+                            //[+] obj = ecuVariant.EcuTranslation.TextPt;
                             obj = ecuVariant.EcuTranslation.TextPt;
                             break;
                         case "TITLE_ZHTW":
+                            //[-] obj = ecuVariant.Title_zhtw;
+                            //[+] obj = ecuVariant.EcuTranslation.TextZh;
                             obj = ecuVariant.EcuTranslation.TextZh;
                             break;
                         case "TITLE_JA":
+                            //[-] obj = ecuVariant.Title_ja;
+                            //[+] obj = ecuVariant.EcuTranslation.TextJa;
                             obj = ecuVariant.EcuTranslation.TextJa;
                             break;
                         case "TITLE_CSCZ":
+                            //[-] obj = ecuVariant.Title_cscz;
+                            //[+] obj = ecuVariant.EcuTranslation.TextCs;
                             obj = ecuVariant.EcuTranslation.TextCs;
                             break;
                         case "TITLE_PLPL":
+                            //[-] obj = ecuVariant.Title_plpl;
+                            //[+] obj = ecuVariant.EcuTranslation.TextPl;
                             obj = ecuVariant.EcuTranslation.TextPl;
                             break;
                         case "FAULTMEMORYDELETEWAITINGTIME":
+                            //[-] obj = ecuVariant.FaultMemoryDeleteWaitingTime;
+                            //[+] obj = ecuVariant.FaultMemDelWaitTime;
                             obj = ecuVariant.FaultMemDelWaitTime;
                             break;
                         case "NAME":
@@ -427,15 +469,23 @@ namespace PsdzClient.Core
                             obj = ecuVariant.Sort;
                             break;
                         case "VALIDFROM":
+                            //[-] obj = ecuVariant.ValidFrom.HasValue;
+                            //[+] obj = !string.IsNullOrEmpty(ecuVariant.ValidFrom);
                             obj = !string.IsNullOrEmpty(ecuVariant.ValidFrom);
                             break;
                         case "VALIDTO":
+                            //[-] obj = ecuVariant.ValidTo.HasValue;
+                            //[+] obj = !string.IsNullOrEmpty(ecuVariant.ValidTo);
                             obj = !string.IsNullOrEmpty(ecuVariant.ValidTo);
                             break;
                         case "SICHERHEITSRELEVANT":
+                            //[-] obj = ecuVariant.Sicherheitsrelevant;
+                            //[+] obj = ecuVariant.SafetyRelevant;
                             obj = ecuVariant.SafetyRelevant;
                             break;
                         case "TITLE":
+                            //[-] obj = ecuVariant.Title;
+                            //[+] obj = ecuVariant.EcuTranslation.GetTitle(ClientContext.GetClientContext(vecInfo));
                             obj = ecuVariant.EcuTranslation.GetTitle(ClientContext.GetClientContext(vecInfo));
                             break;
                     }
