@@ -34,7 +34,7 @@ namespace PsdzClient.Core
             return new NotExpression(RuleExpression.Deserialize(ms, logger, vec));
         }
 
-        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "4D3D365233F16224C35B94035A677897")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             ILogger logger = ruleEvaluationUtils.Logger;

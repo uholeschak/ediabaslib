@@ -1,8 +1,6 @@
-﻿using PsdzClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 #pragma warning disable CA2022
@@ -41,7 +39,7 @@ namespace PsdzClient.Core
             operands[1] = secondOperand;
         }
 
-        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "4D1363B62AD03D057C5D3689F76E3908")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", SignatureModified = true)]
         public new static OrExpression Deserialize(Stream ms, ILogger logger, Vehicle vec)
         {
             int value = 0;
@@ -51,6 +49,8 @@ namespace PsdzClient.Core
             OrExpression orExpression = new OrExpression();
             for (int i = 0; i < value; i++)
             {
+                //[-] orExpression.AddOperand(RuleExpression.Deserialize(ms, logger, dataProvider));
+                //[+] orExpression.AddOperand(RuleExpression.Deserialize(ms, logger, vec));
                 orExpression.AddOperand(RuleExpression.Deserialize(ms, logger, vec));
             }
             return orExpression;
@@ -64,7 +64,7 @@ namespace PsdzClient.Core
             operands = array;
         }
 
-        [PreserveSource(Hint = "dataProvider replaced by vec", OriginalHash = "9895C1C44368BC677DEFE5779D24E509")]
+        [PreserveSource(Hint = "dataProvider replaced by vec", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             bool flag = false;
@@ -74,6 +74,8 @@ namespace PsdzClient.Core
             foreach (RuleExpression ruleExpression in array)
             {
                 logger.Debug("OrExpression.Evaluate()", "operand: {0}", ruleExpression);
+                //[-] flag |= RuleExpression.Evaluate(vec, dealer, ruleExpression, ffmResolver, dataProvider, ruleEvaluationUtils, internalResult);
+                //[+] flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
                 flag |= RuleExpression.Evaluate(vec, ruleExpression, ffmResolver, ruleEvaluationUtils, internalResult);
             }
 
