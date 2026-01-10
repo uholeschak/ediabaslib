@@ -69,9 +69,11 @@ namespace PsdzClient.Core
             return notValidRulesIds;
         }
 
-        [PreserveSource(Hint = "ruleId as string", OriginalHash = "595C9B23B7FE1A6856DCC59AC1578A5E")]
+        [PreserveSource(Hint = "ruleId as string", SignatureModified = true)]
         internal bool EvaluateSingleRuleExpression(Vehicle vehicle, string ruleId, IFFMDynamicResolver ffmResolver)
         {
+            //[-] return !RetrieveNotValidRulesIds(new Dictionary<decimal, decimal?> { { ruleId, null } }, vehicle, ffmResolver).Any();
+            //[+] return database.EvaluateXepRulesById(ruleId, vehicle, ffmResolver, null);
             return database.EvaluateXepRulesById(ruleId, vehicle, ffmResolver, null);
         }
 
