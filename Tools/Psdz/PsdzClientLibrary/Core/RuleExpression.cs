@@ -77,11 +77,11 @@ namespace PsdzClient.Core
         {
             //[+] if (ruleEvaluationUtils == null)
             if (ruleEvaluationUtils == null)
-                //[+] {
+            //[+] {
             {
                 //[+] ruleEvaluationUtils = new RuleEvaluationServices(vec);
                 ruleEvaluationUtils = new RuleEvaluationServices(vec);
-                //[+] }
+            //[+] }
             }
 
             if (internalResult == null)
@@ -100,28 +100,36 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "0A7E6E6BAD3A02FF6CACDE588B995D83")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public static string ParseAndSerializeVariantRule(string rule)
         {
+            //[-] RuleExpression expression = VariantRuleParser.Parse(rule, dataProvider);
+            //[+] RuleExpression expression = VariantRuleParser.Parse(rule);
             RuleExpression expression = VariantRuleParser.Parse(rule);
             return SerializeToString(expression);
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "5AD08763624343397340C66D6B47418E")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public static RuleExpression ParseEmpiricalRule(string rule)
         {
+            //[-] return EmpiricalRuleParser.Parse(rule, dataProvider);
+            //[+] return EmpiricalRuleParser.Parse(rule);
             return EmpiricalRuleParser.Parse(rule);
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "3DFE88DD28B543110D4709F2CA0F4A27")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public static RuleExpression ParseFaultClassRule(string rule)
         {
+            //[-] return FaultClassRuleParser.Parse(rule, dataProvider);
+            //[+] return FaultClassRuleParser.Parse(rule);
             return FaultClassRuleParser.Parse(rule);
         }
 
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "DC2E5A85B2E67280D99422031BB62095")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public static RuleExpression ParseVariantRule(string rule)
         {
+            //[-] return VariantRuleParser.Parse(rule, dataProvider);
+            //[+] return VariantRuleParser.Parse(rule);
             return VariantRuleParser.Parse(rule);
         }
 
