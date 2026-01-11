@@ -139,7 +139,7 @@ namespace PsdzClient.Core
             serviceProgramCollection = new TextLocator(list);
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "AC71E18590FC4BDEC640742129F1517B")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         internal TextContentManager(PsdzDatabase databaseProvider, IList<string> lang)
         {
             if (databaseProvider == null)
@@ -277,7 +277,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "C9E33E6384143476985DDEC9CC08C8A3", SignatureModified = true)]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         private XElement ParseSpeXml(string xml, string language, PsdzDatabase database)
         {
             XElement xElement = ParseXml(xml);
@@ -518,7 +518,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "4DA3C0E3FE5FF32C17DF21A24A0BD2CC")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         private void AppendStandardText(XElement textCollectionRoot, XmlNamespaceManager namespaceManager, PsdzDatabase db, string language, int repeat)
         {
             IEnumerable<XElement> enumerable = textCollectionRoot.XPathSelectElements("//spe:STANDARDTEXT[not(spe:CONTENT)]", namespaceManager);
@@ -527,34 +527,45 @@ namespace PsdzClient.Core
                 foreach (XElement item in enumerable)
                 {
                     string value = item.Attribute(XName.Get("ID")).Value;
+                    //[-] string localizedXmlValue = db.GetSpTextItemsByControlId(Convert.ToDecimal(value, CultureInfo.InvariantCulture)).GetLocalizedXmlValue(language);
+                    //[+] PsdzDatabase.EcuTranslation ecuTranslation = db.GetSpTextItemsByControlId(value);
                     PsdzDatabase.EcuTranslation ecuTranslation = db.GetSpTextItemsByControlId(value);
+                    //[+] string localizedXmlValue = null;
                     string localizedXmlValue = null;
+                    //[+] if (ecuTranslation != null)
                     if (ecuTranslation != null)
+                    //[+] {
                     {
+                        //[+] localizedXmlValue = ecuTranslation.GetTitle(language);
                         localizedXmlValue = ecuTranslation.GetTitle(language);
+                    //[+] }
                     }
 
+                    //[+] if (string.IsNullOrEmpty(localizedXmlValue))
                     if (string.IsNullOrEmpty(localizedXmlValue))
+                    //[+] {
                     {
+                        //[+] continue;
                         continue;
+                    //[+] }
                     }
 
                     XElement xElement = new XElement(XName.Get("CONTENT", "http://bmw.com/2014/Spe_Text_2.0"));
                     xElement.Add(ParseStandardTextItem(localizedXmlValue));
                     item.Add(xElement);
                 }
+            }
 
-                if (enumerable != null && enumerable.Any())
+            if (enumerable != null && enumerable.Any())
+            {
+                if (repeat == 10)
                 {
-                    if (repeat == 10)
-                    {
-                        Log.Error("TextContentManager.AppendStandardText()", "Abort recursive replacement of spe:STANDARDTEXT (elementsToBeReplaced.Count={0}).", enumerable.Count());
-                    }
-                    else
-                    {
-                        repeat++;
-                        AppendStandardText(textCollectionRoot, namespaceManager, db, language, repeat);
-                    }
+                    Log.Error("TextContentManager.AppendStandardText()", "Abort recursive replacement of spe:STANDARDTEXT (elementsToBeReplaced.Count={0}).", enumerable.Count());
+                }
+                else
+                {
+                    repeat++;
+                    AppendStandardText(textCollectionRoot, namespaceManager, db, language, repeat);
                 }
             }
         }
