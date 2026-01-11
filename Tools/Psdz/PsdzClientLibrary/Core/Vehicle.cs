@@ -1100,16 +1100,24 @@ namespace PsdzClient.Core
             return list;
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "991CED817BF1E4F638AF985457212396")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public string SetVINRangeTypeFromVINRanges()
         {
+            //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
+            //[-] if (instance != null && instance.DatabaseAccessType != DatabaseType.None && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
+            //[+] PsdzDatabase database = ClientContext.GetDatabase(this);
             PsdzDatabase database = ClientContext.GetDatabase(this);
+            //[+] if (database != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
             if (database != null && !"XXXXXXX".Equals(VIN7) && !string.IsNullOrEmpty(VIN7) && !VIN7.Equals(vinRangeTypeLastResolvedType, StringComparison.OrdinalIgnoreCase))
             {
+                //[-] IVinRanges vinRangesByVin = instance.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
+                //[+] PsdzDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
                 PsdzDatabase.VinRanges vinRangesByVin = database.GetVinRangesByVin17(VINType, VIN7, returnFirstEntryWithoutCheck: false, IsVehicleWithOnlyVin7());
                 if (vinRangesByVin != null)
                 {
                     vinRangeTypeLastResolvedType = VIN7;
+                    //[-] return vinRangesByVin.TYPSCHLUESSEL;
+                    //[+] return vinRangesByVin.TypeKey;
                     return vinRangesByVin.TypeKey;
                 }
             }
