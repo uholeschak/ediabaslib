@@ -1839,7 +1839,7 @@ namespace PsdzClient.Core
             base.ECU.Add(ecu);
         }
 
-        [PreserveSource(Hint = "XEP_ECUCLIQUES removed", OriginalHash = "FFF58050A256B72A929205601AC5D0C2")]
+        [PreserveSource(Hint = "XEP_ECUCLIQUES removed", SignatureModified = true)]
         public void AddEcu(IIdentEcu ecu)
         {
             ECU eCU = new ECU
@@ -1855,6 +1855,34 @@ namespace PsdzClient.Core
                 ECUTreeColor = ecu.ECUTreeColor,
                 ECUTitle = ecu.ECUTitle
             };
+            //[-] IXepEcuCliques xepEcuClique = ecu.XepEcuClique;
+            //[-] if (xepEcuClique != null && xepEcuClique.IsValid)
+            //[-] {
+            //[-] if (ecu.XepEcuClique is XEP_ECUCLIQUES xepEcuClique2)
+            //[-] {
+            //[-] eCU.XepEcuClique = xepEcuClique2;
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-] eCU.XepEcuClique = new XEP_ECUCLIQUES(ecu.XepEcuClique);
+            //[-] }
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-] eCU.XepEcuClique = new InvalidEcuClique();
+            //[-] }
+            //[-] if (ecu.XepEcuVariant != null)
+            //[-] {
+            //[-] if (ecu.XepEcuVariant is XEP_ECUVARIANTS xepEcuVariant)
+            //[-] {
+            //[-] eCU.XepEcuVariant = xepEcuVariant;
+            //[-] }
+            //[-] else
+            //[-] {
+            //[-] eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
+            //[-] }
+            //[-] }
+
             base.ECU.AddIfNotContains(eCU);
         }
 
