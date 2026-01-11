@@ -1927,12 +1927,17 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "B2BD63A6FC2FF0ED2D61C5AA6CDB4090")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public bool getISTACharacteristics(decimal id, out string value, long datavalueId, ValidationRuleInternalResults internalResult)
         {
+            //[-] IDatabaseProvider instance = DatabaseProviderFactory.Instance;
+            //[-] IXepCharacteristicRoots characteristicRootsById = instance.GetCharacteristicRootsById(id);
+            //[+] PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
             PsdzDatabase.CharacteristicRoots characteristicRootsById = ClientContext.GetDatabase(this)?.GetCharacteristicRootsById(id.ToString(CultureInfo.InvariantCulture));
             if (characteristicRootsById != null)
             {
+                //[-] return new VehicleCharacteristicVehicleHelper(instance, this).GetISTACharacteristics(characteristicRootsById.Nodeclass, out value, id, this, datavalueId, internalResult);
+                //[+] return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, this, datavalueId, internalResult);
                 return new VehicleCharacteristicVehicleHelper(this).GetISTACharacteristics(characteristicRootsById.NodeClass, out value, id, this, datavalueId, internalResult);
             }
 
