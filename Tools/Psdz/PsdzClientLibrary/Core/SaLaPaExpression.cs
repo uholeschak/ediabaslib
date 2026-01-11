@@ -1,13 +1,9 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using PsdzClient.Utility;
-using PsdzClient;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PsdzClient.Core
 {
@@ -43,7 +39,7 @@ namespace PsdzClient.Core
             return EEvaluationResult.INVALID;
         }
 
-        [PreserveSource(Hint = "dataProvider removed, vec added", OriginalHash = "D15C7D3E9EE95108E6C8F3BECDA71207")]
+        [PreserveSource(Hint = "dataProvider removed, vec added", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -51,6 +47,8 @@ namespace PsdzClient.Core
                 return false;
             }
 
+            //[-] IXepSaLaPasRuleEvaluation saLaPaById = dataProvider.GetSaLaPaById(value);
+            //[+] PsdzDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
             PsdzDatabase.SaLaPa saLaPaById = ClientContext.GetDatabase(vec)?.GetSaLaPaById(this.value.ToString(CultureInfo.InvariantCulture));
             if (saLaPaById == null)
             {
