@@ -17,10 +17,12 @@ namespace PsdzClient.Core
             return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "AECFF1CCED2E0D4858A06B8F84520F51")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeMotor(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.Motor = characteristic.Title;
+            //[+] basicFeatures.Motor = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.Motor = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
