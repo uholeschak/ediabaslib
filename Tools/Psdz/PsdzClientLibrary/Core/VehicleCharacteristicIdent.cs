@@ -17,9 +17,10 @@ namespace PsdzClient.Core
         private PsdzDatabase.Characteristics characteristic;
         private ReactorEngine reactor;
         private readonly ILogger log;
-        [PreserveSource(Hint = "Database modified", OriginalHash = "7E547C731AEA645296329C5AA599CF35")]
+        [PreserveSource(Hint = "Reactor removed", SignatureModified = true)]
         public VehicleCharacteristicIdent(ILogger log)
         {
+            //[-] this.reactor = reactor;
             this.log = log;
         }
 
