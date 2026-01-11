@@ -8,7 +8,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using BmwFileReader;
-using PsdzClient;
 
 namespace PsdzClient.Core
 {
@@ -38,7 +37,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "83507142D79A3AD147FCFC9F8FBEBC76")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         public static ITextContentManager Create(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
@@ -51,8 +50,12 @@ namespace PsdzClient.Core
                 throw new ArgumentNullException("lang");
             }
 
+            //[-] if (xepInfoObj == null || xepInfoObj.Id == -1m)
+            //[+] if (xepInfoObj == null || xepInfoObj.Id.ConvertToInt(-1) == -1)
             if (xepInfoObj == null || xepInfoObj.Id.ConvertToInt(-1) == -1)
             {
+                //[-] Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identifikator + "(" + xepInfoObj.ControlId + ")"));
+                //[+] Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identification + "(" + xepInfoObj.ControlId + ")"));
                 Log.Info("TextContentManager.Create()", "Text collection not available, because of missing info object: {0}{1}.", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), (xepInfoObj == null) ? "null" : (xepInfoObj.Identification + "(" + xepInfoObj.ControlId + ")"));
                 return new TextContentManagerDummy();
             }
