@@ -147,7 +147,7 @@ namespace PsdzClient.Core
             return Convert.ToBase64String(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
         }
 
-        [PreserveSource(Hint = "removed dealer and dataProvider", OriginalHash = "16F5F46F99A94A893752F2D82191CD5D")]
+        [PreserveSource(Hint = "removed dealer and dataProvider", SignatureModified = true)]
         public virtual bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationUtils, ValidationRuleInternalResults internalResult)
         {
             ruleEvaluationUtils.Logger.Error("RuleExpression.Evaluate(Vehicle vec)", "method Evaluate(Vehicle vec) is missing.");
