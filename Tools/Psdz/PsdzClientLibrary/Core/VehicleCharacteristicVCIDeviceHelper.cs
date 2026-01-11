@@ -32,10 +32,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "E13C93A6F464E101BCAA0DD9E68BAA56")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.AEKurzbezeichnung = characteristic.Title;
+            //[+] basicFeatures.AEKurzbezeichnung = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.AEKurzbezeichnung = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
