@@ -63,7 +63,7 @@ namespace PsdzClient.Core
             return new TextContentManager(databaseProvider, lang, xepInfoObj, serviceDialogName);
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "F08D3F763B0300FB9C826E72B9C70345")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         private TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, PsdzDatabase.SwiInfoObj xepInfoObj, string serviceDialogName = null)
         {
             if (databaseProvider == null)
@@ -76,7 +76,11 @@ namespace PsdzClient.Core
                 throw new ArgumentNullException("lang");
             }
 
+            //[-] decimal num = xepInfoObj.Id;
+            //[-] if (num == 0m)
+            //[+] string num = xepInfoObj.Id;
             string num = xepInfoObj.Id;
+            //[+] if (num.ConvertToInt(-1) == 0m)
             if (num.ConvertToInt(-1) == 0m)
             {
                 string text = xepInfoObj.Identifier;
@@ -94,6 +98,8 @@ namespace PsdzClient.Core
             this.xepInfoObj = xepInfoObj;
             if (ConfigSettings.IsConwoyDataProviderConigured)
             {
+                //[-] serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId.Value);
+                //[+] serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId);
                 serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId);
             }
             else
@@ -102,10 +108,12 @@ namespace PsdzClient.Core
             }
 
             serviceProgramCollectionRoot = null;
+            //[-] Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identifikator, xepInfoObj.ControlId);
+            //[+] Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identification, xepInfoObj.ControlId);
             Log.Info("TextContentManager.TextContentManager()", "Text collection {0}available for {1}\"{2}\" ({3}).", (serviceProgramCollection == null) ? "not " : "", (serviceDialogName == null) ? "" : ("\"" + serviceDialogName + "\" "), xepInfoObj.Identification, xepInfoObj.ControlId);
         }
 
-        [PreserveSource(Hint = "Database modified", OriginalHash = "FA6322591CFE13D1AA8D3AB05476E1D2")]
+        [PreserveSource(Hint = "Database modified", SignatureModified = true)]
         internal TextContentManager(PsdzDatabase databaseProvider, IList<string> lang, string textCollection)
         {
             if (databaseProvider == null)
