@@ -772,22 +772,32 @@ namespace PsdzClient.Core
             return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
         }
 
-        [PreserveSource(Hint = "Database replaced", OriginalHash = "667F08AEC8715791A2ED9ED4A44B98A6")]
+        [PreserveSource(Hint = "Database replaced", SignatureModified = true)]
         public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo)
             where T : BaseEcuCharacteristics
         {
             Log.Info(Log.CurrentMethod(), $"Reading bordnet configuration with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}, target type: {typeof(T).Name}. The fallback xml file is: {storedXmlFileName}");
+            //[+] PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
+            //[+] if (database == null)
             if (database == null)
+            //[+] {
             {
+                //[+] return null;
                 return null;
+            //[+] }
             }
-
             try
             {
+                //[-] BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
+                //[-] if (bordnetsData != null)
+                //[+] PsdzDatabase.BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
                 PsdzDatabase.BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
+                //[+] if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
                 if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
                 {
+                    //[-] BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<T>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjectIdentifier);
+                    //[+] BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
                     BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
                     if (baseEcuCharacteristics != null)
                     {
@@ -801,16 +811,16 @@ namespace PsdzClient.Core
                 LogMissingDatabaseBordnet(vecInfo, ex.Message);
             }
 
-            if (!string.IsNullOrEmpty(storedXmlFileName))
+            //[-] if (!string.IsNullOrEmpty(storedXmlFileName))
+            //[+] string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
+            string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
+            //[+] if (!string.IsNullOrEmpty(storedXmlFileName) && !string.IsNullOrWhiteSpace(xml))
+            if (!string.IsNullOrEmpty(storedXmlFileName) && !string.IsNullOrWhiteSpace(xml))
             {
-                string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
-                if (!string.IsNullOrWhiteSpace(xml))
+                BaseEcuCharacteristics ecuCharacteristicsFromFallback = GetEcuCharacteristicsFromFallback<T>(storedXmlFileName, vecInfo);
+                if (ecuCharacteristicsFromFallback != null)
                 {
-                    BaseEcuCharacteristics ecuCharacteristicsFromFallback = GetEcuCharacteristicsFromFallback<T>(storedXmlFileName, vecInfo);
-                    if (ecuCharacteristicsFromFallback != null)
-                    {
-                        return ecuCharacteristicsFromFallback;
-                    }
+                    return ecuCharacteristicsFromFallback;
                 }
             }
 
