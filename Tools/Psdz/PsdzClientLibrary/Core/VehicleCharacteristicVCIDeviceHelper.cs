@@ -172,18 +172,22 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "C4C47519AD135D1C0E883089FCCF1085")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeEreihe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.Ereihe = characteristic.Title;
+            //[+] basicFeatures.Ereihe = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.Ereihe = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "F69B5855CEB575D813D14C12E260F334")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeGetriebe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.Getriebe = characteristic.Title;
+            //[+] basicFeatures.Getriebe = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.Getriebe = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
@@ -198,10 +202,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "D280F8952E087B101C92CF023BEF0A15")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeKarosserie(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.Karosserie = characteristic.Title;
+            //[+] basicFeatures.Karosserie = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.Karosserie = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
@@ -211,10 +217,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "3F7479012C995EB80D6572AE131DE213")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeLand(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.Land = characteristic.Title;
+            //[+] basicFeatures.Land = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.Land = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
@@ -224,10 +232,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "4B080246D6A89C8BBE8AE7AE757A5140")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeLenkung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.Lenkung = characteristic.Title;
+            //[+] basicFeatures.Lenkung = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.Lenkung = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
@@ -252,10 +262,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "F1B57DCADD2F8FE1418BC3067E27A08B")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeProdart(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.Prodart = characteristic.Title;
+            //[+] basicFeatures.Prodart = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.Prodart = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
@@ -275,10 +287,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "2F99642DA63A32FC3C1103DEAA938FDC")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeTyp(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.TypeCode = characteristic.Title;
+            //[+] basicFeatures.TypeCode = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.TypeCode = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
@@ -288,10 +302,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "C280A37FEBEA2977BAEDD3DF5C11D62B")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.VerkaufsBezeichnung = characteristic.Title;
+            //[+] basicFeatures.VerkaufsBezeichnung = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.VerkaufsBezeichnung = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
@@ -368,10 +384,12 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Characteristics modified", OriginalHash = "4F004AFB32A41631FF0A0D5BEFA63FA7")]
+        [PreserveSource(Hint = "Characteristics modified", SignatureModified = true)]
         private void GetVCIDeviceParameters(params object[] parameters)
         {
             basicFeatures = (BasicFeaturesVci)parameters[0];
+            //[-] characteristic = (XEP_CHARACTERISTICS)parameters[1];
+            //[+] characteristic = (PsdzDatabase.Characteristics)parameters[1];
             characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
 
