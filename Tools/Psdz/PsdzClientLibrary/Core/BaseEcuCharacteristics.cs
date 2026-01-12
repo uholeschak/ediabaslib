@@ -699,19 +699,36 @@ namespace PsdzClient.Core
             return bus.ToString();
         }
 
-        [PreserveSource(Hint = "database replaced", OriginalHash = "6298F12D495976BE9A20FC2133D8A04C")]
+        [PreserveSource(Hint = "database replaced", SignatureModified = true)]
         protected bool IsGroupValid(string groupName, Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
         {
+            //[-] if (DatabaseProviderFactory.Instance != null && DatabaseProviderFactory.Instance.DatabaseAccessType != DatabaseType.None)
+            //[-] {
+            //[-] XEP_ECUGROUPS ecuGroupByName = DatabaseProviderFactory.Instance.GetEcuGroupByName(groupName);
+            //[-] if (ecuGroupByName != null)
+            //[-] {
+            //[-] return DatabaseProviderFactory.Instance.EvaluateXepRulesById(ecuGroupByName.Id, vecInfo, ffmResolver);
+            //[-] }
+            //[-] }
+            //[+] PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
             PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
+            //[+] if (database == null)
             if (database == null)
+            //[+] {
             {
+                //[+] return false;
                 return false;
+            //[+] }
             }
-
+            //[+] PsdzDatabase.EcuGroup ecuGroupByName = database.GetEcuGroupByName(groupName);
             PsdzDatabase.EcuGroup ecuGroupByName = database.GetEcuGroupByName(groupName);
+            //[+] if (ecuGroupByName != null)
             if (ecuGroupByName != null)
+            //[+] {
             {
+                //[+] return database.EvaluateXepRulesById(ecuGroupByName.Id, vecInfo, ffmResolver);
                 return database.EvaluateXepRulesById(ecuGroupByName.Id, vecInfo, ffmResolver);
+            //[+] }
             }
 
             return false;
