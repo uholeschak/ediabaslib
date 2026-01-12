@@ -62,10 +62,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "39A39BEE743E60202A45736B63D41B4D")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeBaseVersion(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.BaseVersion = characteristic.Title;
+            //[+] basicFeatures.BaseVersion = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.BaseVersion = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
@@ -75,10 +77,12 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "DD5A7A57028965E3E904C4255884F341")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeBaureihe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.Baureihe = characteristic.Title;
+            //[+] basicFeatures.Baureihe = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.Baureihe = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
@@ -98,18 +102,22 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "B8DEB2244087B6025E48B31AAB89D846")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeBrandName(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.Marke = characteristic.Title;
+            //[+] basicFeatures.Marke = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.Marke = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", OriginalHash = "E6F5C513F735116F76E5B17FE83B2E88")]
+        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeCountryOfAssembly(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
+            //[-] basicFeatures.CountryOfAssembly = characteristic.Title;
+            //[+] basicFeatures.CountryOfAssembly = characteristic.EcuTranslation.GetTitle(_clientContext);
             basicFeatures.CountryOfAssembly = characteristic.EcuTranslation.GetTitle(_clientContext);
             return true;
         }
