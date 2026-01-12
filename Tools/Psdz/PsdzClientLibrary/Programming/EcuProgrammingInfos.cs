@@ -59,7 +59,7 @@ namespace PsdzClient.Programming
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        [PreserveSource(Hint = "db removed, vehicle added", OriginalHash = "C9C9FBE46346283BC027ED1AC156D8FB")]
+        [PreserveSource(Hint = "db removed, vehicle added", SignatureModified = true)]
         public EcuProgrammingInfos(IVehicle vehicle, IFFMDynamicResolver ffmResolver, bool standard = true)
         {
             if (vehicle == null)
