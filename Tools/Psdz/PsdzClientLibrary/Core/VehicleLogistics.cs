@@ -787,6 +787,7 @@ namespace PsdzClient.Core
                 return null;
             //[+] }
             }
+
             try
             {
                 //[-] BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
@@ -886,19 +887,25 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Database replaced", OriginalHash = "45150DB4A9E5B539386C7250F0237857")]
+        [PreserveSource(Hint = "Database replaced", SignatureModified = true)]
         private static PsdzDatabase.BordnetsData GetBordnetXmlFromDatabase(Vehicle vecInfo)
         {
             Log.Info(Log.CurrentMethod(), "Reading bordnet configuration from the database");
             string text = "Es gibt zu viele gültige Bordnetze: ";
             try
             {
+                //[-] ICollection<BordnetsData> collection = DatabaseProviderFactory.Instance.LoadBordnetsData(vecInfo);
+                //[+] PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
                 PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
+                //[+] if (database == null)
                 if (database == null)
+                //[+] {
                 {
+                    //[+] return null;
                     return null;
+                //[+] }
                 }
-
+                //[+] List<PsdzDatabase.BordnetsData> collection = database.LoadBordnetsData(vecInfo);
                 List<PsdzDatabase.BordnetsData> collection = database.LoadBordnetsData(vecInfo);
                 if (collection != null && collection.Count == 1)
                 {
@@ -907,8 +914,12 @@ namespace PsdzClient.Core
 
                 if (collection != null && collection.Count > 1)
                 {
+                    //[-] foreach (BordnetsData item in collection)
+                    //[+] foreach (PsdzDatabase.BordnetsData item in collection)
                     foreach (PsdzDatabase.BordnetsData item in collection)
                     {
+                        //[-] text = text + item.InfoObjectIdentifier + " ";
+                        //[+] text = text + item.InfoObjIdent + " ";
                         text = text + item.InfoObjIdent + " ";
                     }
 
@@ -918,7 +929,7 @@ namespace PsdzClient.Core
             catch (Exception ex)
             {
                 Log.Error(Log.CurrentMethod(), $"Reading bordnet configuration from the database failed: {ex}");
-                throw;
+                throw ex;
             }
 
             return null;
