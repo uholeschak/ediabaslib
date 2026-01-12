@@ -20,9 +20,10 @@ namespace PsdzClient.Core
         private IVehicleRuleEvaluation vehicle;
         private long datavalueId;
         private ValidationRuleInternalResults internalResult;
-        [PreserveSource(Hint = "dataProvider removed", OriginalHash = "28FDCFD350584359CFB11BBC70A6E6E6")]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public VehicleCharacteristicVehicleHelper(IVehicleRuleEvaluation vehicle)
         {
+            //[-] this.dataProvider = dataProvider;
             characteristicValue = string.Empty;
             this.vehicle = vehicle;
             internalResult = new ValidationRuleInternalResults();
@@ -407,7 +408,7 @@ namespace PsdzClient.Core
         {
             //[+] if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal rootClassValue))
             if (!decimal.TryParse(rootNodeClass, NumberStyles.Integer, CultureInfo.InvariantCulture, out decimal rootClassValue))
-             //[+] {
+            //[+] {
             {
                 //[+] rootClassValue = 0;
                 rootClassValue = 0;
@@ -435,8 +436,10 @@ namespace PsdzClient.Core
                     {
                         validationRuleInternalResult.IsValid = true;
                     }
+
                     internalResult.Add(validationRuleInternalResult);
                 }
+
                 IRuleExpression ruleExpression = internalResult.RuleExpression;
                 IRuleExpression ruleExpression2 = ruleExpression;
                 if (!(ruleExpression2 is AndExpression))
