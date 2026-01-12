@@ -42,13 +42,14 @@ namespace BMW.Rheingold.Programming
         public string PsdzDataPath => _psdzWebService.ConfigurationService.GetRootDirectory();
         public string PsdzVersion => _psdzWebService.ConfigurationService.GetPsdzVersion();
 
-        [PreserveSource(Hint = "PsdzObjectBuilder modified", OriginalHash = "C48486360A1B592A23F907B3C084F52A")]
         public IPsdzObjectBuilder ObjectBuilder
         {
             get
             {
                 if (_objectBuilder == null)
                 {
+                    //[-] _objectBuilder = new PsdzObjectBuilder(ObjectBuilderService);
+                    //[+] _objectBuilder = new PsdzObjectBuilder(ObjectBuilderService, this);
                     _objectBuilder = new PsdzObjectBuilder(ObjectBuilderService, this);
                 }
 
