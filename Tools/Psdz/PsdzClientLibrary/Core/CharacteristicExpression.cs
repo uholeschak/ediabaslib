@@ -163,14 +163,24 @@ namespace PsdzClient.Core
             return CharacteristicRoot + "=" + CharacteristicValue + " [" + dataclassId.ToString(CultureInfo.InvariantCulture) + "=" + datavalueId.ToString(CultureInfo.InvariantCulture) + "]";
         }
 
-        [PreserveSource(Hint = "dataprovider replaced", OriginalHash = "30F1C04B6385C027C32D3E99F74620E5")]
+        [PreserveSource(Hint = "dataprovider replaced", SignatureModified = true)]
         private string GetCharacteristicRootFromDb(PsdzDatabase database)
         {
             string result = string.Empty;
+            //[-] IXepCharacteristicRoots characteristicRootsById = dataProvider.GetCharacteristicRootsById(dataclassId);
+            //[-] if (characteristicRootsById != null && characteristicRootsById.Title_dede != null)
+            //[-] {
+            //[-] result = characteristicRootsById.Title_dede;
+            //[-] }
+            //[+] PsdzDatabase.CharacteristicRoots characteristicRootsById = database?.GetCharacteristicRootsById(dataclassId.ToString(CultureInfo.InvariantCulture));
             PsdzDatabase.CharacteristicRoots characteristicRootsById = database?.GetCharacteristicRootsById(dataclassId.ToString(CultureInfo.InvariantCulture));
+            //[+] if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
             if (characteristicRootsById != null && !string.IsNullOrEmpty(characteristicRootsById.EcuTranslation.TextDe))
+                //[+] {
             {
+                //[+] result = characteristicRootsById.EcuTranslation.TextDe;
                 result = characteristicRootsById.EcuTranslation.TextDe;
+                //[+] }
             }
 
             return result;
