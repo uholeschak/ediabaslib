@@ -186,9 +186,11 @@ namespace PsdzClient.Core
             return result;
         }
 
-        [PreserveSource(Hint = "dataprovider replaced", OriginalHash = "0564D4A0CA9081D8E82546DBB8D91EC7")]
+        [PreserveSource(Hint = "dataprovider replaced", SignatureModified = true)]
         private string GetCharacteristicValueFromDb(PsdzDatabase database)
         {
+            //[-] return dataProvider.LookupVehicleCharDeDeById(datavalueId);
+            //[+] return database?.LookupVehicleCharDeDeById(datavalueId.ToString(CultureInfo.InvariantCulture));
             return database?.LookupVehicleCharDeDeById(datavalueId.ToString(CultureInfo.InvariantCulture));
         }
 
