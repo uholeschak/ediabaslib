@@ -353,7 +353,7 @@ namespace PsdzClient.Programming
             this.possibleIstufenTarget = possibleIstufenTarget;
         }
 
-        [PreserveSource(Hint = "Unchanged", OriginalHash = "F5DA905ACD95E3000DA1E438CE4277A6", SignatureModified = true)]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         internal void SetSollverbauung(IPsdzSollverbauung sollverbauung)
         {
             Sollverbauung = sollverbauung;

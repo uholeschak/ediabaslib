@@ -12,19 +12,25 @@ namespace PsdzClient.Programming
         private static readonly object _lock = new object ();
         public static PsdzStarterGuard Instance => _instance.Value;
 
-        [PreserveSource(Hint = "Init _isExecutable", OriginalHash = "276CA42AD4C020D5231EFE1B3386F584")]
+        [PreserveSource(Hint = "Init _isExecutable", SignatureModified = true)]
         private PsdzStarterGuard()
         {
+            //[+] _isExecutable = CheckIsExecutable();
             _isExecutable = CheckIsExecutable();
         }
 
-        [PreserveSource(Hint = "IsExecutable check added for IIS", OriginalHash = "5E172F2EF995FA9097E4309388608503")]
+        [PreserveSource(Hint = "IsExecutable check added for IIS", SignatureModified = true)]
         public bool IsInitializationAlreadyAttempted()
         {
+            //[+] if (!_isExecutable)
             if (!_isExecutable)
+            //[+] {
             {
+                //[+] Log.Info(Log.CurrentMethod(), "IsInitializationAlreadyAttempted ignoring");
                 Log.Info(Log.CurrentMethod(), "IsInitializationAlreadyAttempted ignoring");
+                //[+] return false;
                 return false;
+            //[+] }
             }
 
             if (!_isInitialized)
