@@ -929,7 +929,9 @@ namespace PsdzClient.Core
             catch (Exception ex)
             {
                 Log.Error(Log.CurrentMethod(), $"Reading bordnet configuration from the database failed: {ex}");
-                throw ex;
+                //[-] throw ex;
+                //[+] throw;
+                throw;
             }
 
             return null;
