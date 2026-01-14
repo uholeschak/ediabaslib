@@ -892,7 +892,6 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Using rector from vehicle", SignatureModified = true)]
         public void ReadILevelBn2020(IVehicle vecInfo, IEcuKom ecuKom, int retryCount)
         {
             //[-] Reactor instance = Reactor.Instance;
