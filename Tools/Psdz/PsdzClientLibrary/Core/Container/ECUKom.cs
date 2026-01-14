@@ -1855,7 +1855,6 @@ namespace PsdzClient.Core.Container
             return detectedSpecialSecurityCase;
         }
 
-        [PreserveSource(Hint = "Converted", SignatureModified = true)]
         private bool UseConfigFileTraces()
         {
             //[-] string text = api.apiGetConfig("ApiTrace");
