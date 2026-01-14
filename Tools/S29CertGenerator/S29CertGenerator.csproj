@@ -13,7 +13,9 @@
   <ItemGroup>
     <Compile Include="..\Psdz\PsdzClientLibrary\PreserveSourceAttribute.cs" Link="PreserveSourceAttribute.cs" />
     <Compile Include="..\Psdz\PsdzClientLibrary\Utility\Encryption.cs" Link="Encryption.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\EventIdCatalog.cs" Link="EventIdCatalog.cs" />
     <Compile Include="..\Psdz\PsdzClientLibrary\Utility\EventKind.cs" Link="EventKind.cs" />
+    <Compile Include="..\Psdz\PsdzClientLibrary\Utility\Extensions.cs" Link="Extensions.cs" />
     <Compile Include="..\Psdz\PsdzClientLibrary\Utility\ICSEventId.cs" Link="ICSEventId.cs" />
     <Compile Include="..\Psdz\PsdzClientLibrary\Utility\Logger.cs" Link="Logger.cs" />
     <Compile Include="..\Psdz\PsdzClientLibrary\Utility\LogLevel.cs" Link="LogLevel.cs" />
