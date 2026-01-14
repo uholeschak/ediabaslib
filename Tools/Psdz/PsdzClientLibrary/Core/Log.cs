@@ -217,11 +217,13 @@ namespace PsdzClient.Core
 
             try
             {
-            //[-] string format = BuildEntry(TraceLevel.DEBUG, evtKind, method, msg);
-            //[-] if (args != null && args.Any())
-            //[-] {
-            //[-] string.Format(format, args);
-            //[-] }
+                //[+] WriteTraceEntry(method, msg, TraceLevel.DEBUG, evtKind, args);
+                WriteTraceEntry(method, msg, TraceLevel.DEBUG, evtKind, args);
+                //[-] string format = BuildEntry(TraceLevel.DEBUG, evtKind, method, msg);
+                //[-] if (args != null && args.Any())
+                //[-] {
+                //[-] string.Format(format, args);
+                //[-] }
             }
             catch (Exception ex)
             {
