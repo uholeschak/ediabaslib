@@ -58,18 +58,28 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "istaFolder, dealerId, service host added", OriginalHash = "5684E9EC27BEDFC1149E71FFCABB5D41")]
+        [PreserveSource(Hint = "istaFolder, dealerId, service host added", SignatureModified = true)]
         public PsdzServiceGateway(PsdzConfig psdzConfig, string istaFolder, string dealerId, Action psdzServiceHostStarter = null)
         {
+            //[-] _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(null, LicenseHelper.DealerInstance.GetDistributionPartnerNumber(5)));
+            //[-] new CommonServiceWrapper();
+            //[+] _psdzServiceHostStarter = psdzServiceHostStarter;
             _psdzServiceHostStarter = psdzServiceHostStarter;
-            // [UH] [IGNORE] modified
+            //[+] if (ClientContext.EnablePsdzWebService())
             if (ClientContext.EnablePsdzWebService())
+            //[+] {
             {
+                //[+] _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
                 _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
+            //[+] }
             }
+            //[+] else
             else
+            //[+] {
             {
+                //[+] _psdzServiceHostWrapper = new PsdzServiceWrapper(psdzConfig);
                 _psdzServiceHostWrapper = new PsdzServiceWrapper(psdzConfig);
+            //[+] }
             }
         }
 
