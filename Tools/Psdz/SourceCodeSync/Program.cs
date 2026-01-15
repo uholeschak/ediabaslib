@@ -2242,14 +2242,21 @@ namespace SourceCodeSync
         /// </summary>
         private static string GetMethodName(MethodDeclarationSyntax method)
         {
+            string typeParameterSuffix = "";
+            int typeParamCount = method.TypeParameterList?.Parameters.Count ?? 0;
+            if (typeParamCount > 0)
+            {
+                typeParameterSuffix = $"<{typeParamCount}>";
+            }
+
             // Check for explicit interface implementation
             if (method.ExplicitInterfaceSpecifier != null)
             {
                 // Format: IInterfaceName.MethodName
-                return $"{method.ExplicitInterfaceSpecifier.Name}.{method.Identifier.Text}";
+                return $"{method.ExplicitInterfaceSpecifier.Name}.{method.Identifier.Text}{typeParameterSuffix}";
             }
 
-            return method.Identifier.Text;
+            return $"{method.Identifier.Text}{typeParameterSuffix}";
         }
 
         /// <summary>
