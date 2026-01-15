@@ -170,26 +170,41 @@ namespace PsdzClient.Programming
             return started;
         }
 
-        [PreserveSource(Hint = "Added service host", OriginalHash = "B16B1A32BB80FEB5DE2E576D47AFBE40")]
+        [PreserveSource(Hint = "Added service host", SignatureModified = true)]
         public void CloseConnectionsToPsdz(bool force = false)
         {
             try
             {
+                //[-] _psdzWebServiceWrapper.Shutdown();
+                //[+] if (_psdzWebServiceWrapper != null)
                 if (_psdzWebServiceWrapper != null)
+                //[+] {
                 {
+                    //[+] _psdzWebServiceWrapper.Shutdown();
                     _psdzWebServiceWrapper.Shutdown();
+                //[+] }
                 }
-
+                //[+] if (_psdzServiceHostWrapper != null)
                 if (_psdzServiceHostWrapper != null)
+                //[+] {
                 {
+                    //[+] if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
                     if (ConfigSettings.GetActivateSdpOnlinePatch() || force)
+                    //[+] {
                     {
+                        //[+] _psdzServiceHostWrapper.Shutdown();
                         _psdzServiceHostWrapper.Shutdown();
+                    //[+] }
                     }
+                    //[+] else
                     else
+                    //[+] {
                     {
+                        //[+] _psdzServiceHostWrapper.CloseConnectionsToPsdzHost();
                         _psdzServiceHostWrapper.CloseConnectionsToPsdzHost();
+                    //[+] }
                     }
+                //[+] }
                 }
             }
             catch (Exception exception)
