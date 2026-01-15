@@ -100,7 +100,6 @@ namespace PsdzClient.Core
             this.ffmResolver = ffmResolver;
         }
 
-        [PreserveSource(Hint = "Modified", SignatureModified = true)]
         public string GetDataValue(string name)
         {
             if (ecuGroup == null || string.IsNullOrEmpty(name))
