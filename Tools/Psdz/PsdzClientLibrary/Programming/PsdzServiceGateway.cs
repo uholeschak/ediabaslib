@@ -83,50 +83,90 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Return bool, service host added", OriginalHash = "3611706C96D5401E249248D5C98E1450")]
+        [PreserveSource(Hint = "Return bool, service host added", SignatureModified = true)]
         public bool StartIfNotRunning(IVehicle vehicle = null)
         {
             if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
             {
                 Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
+                //[-] return;
+                //[+] return true;
                 return true;
             }
 
             Log.Info(Log.CurrentMethod(), "Start.");
+            //[-] PsdzStarterGuard.Instance.TryInitialize(delegate
+            //[-] {
+            //[-] _psdzWebServiceWrapper.StartIfNotRunning();
+            //[-] return _psdzWebServiceWrapper.IsPsdzInitialized;
+            //[-] });
+            //[-] Log.Info(Log.CurrentMethod(), "End.");
+
+            //[+] bool started = false;
             bool started = false;
+            //[+] if (_psdzWebServiceWrapper != null)
             if (_psdzWebServiceWrapper != null)
+            //[+] {
             {
+                //[+] started = PsdzStarterGuard.Instance.TryInitialize(delegate
                 started = PsdzStarterGuard.Instance.TryInitialize(delegate
+                //[+] {
                 {
+                    //[+] _psdzWebServiceWrapper.StartIfNotRunning();
                     _psdzWebServiceWrapper.StartIfNotRunning();
+                    //[+] return _psdzWebServiceWrapper.IsPsdzInitialized;
                     return _psdzWebServiceWrapper.IsPsdzInitialized;
+                //[+] });
                 });
+            //[+] }
             }
-
+            //[+] if (_psdzServiceHostWrapper != null)
             if (_psdzServiceHostWrapper != null)
+            //[+] {
             {
+                //[+] if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
                 if (ConfigSettings.GetActivateSdpOnlinePatch() || _psdzServiceHostStarter == null)
+                //[+] {
                 {
+                    //[+] started = PsdzStarterGuard.Instance.TryInitialize(delegate
                     started = PsdzStarterGuard.Instance.TryInitialize(delegate
+                    //[+] {
                     {
+                        //[+] _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
                         _psdzServiceHostWrapper.StartHostIfNotRunning(vehicle);
+                        //[+] WaitForPsdzServiceHostInitialization();
                         WaitForPsdzServiceHostInitialization();
+                        //[+] return _psdzServiceHostWrapper.IsPsdzInitialized;
                         return _psdzServiceHostWrapper.IsPsdzInitialized;
+                    //[+] });
                     });
+                //[+] }
                 }
+                //[+] else
                 else
+                //[+] {
                 {
+                    //[+] started = PsdzStarterGuard.Instance.TryInitialize(delegate
                     started = PsdzStarterGuard.Instance.TryInitialize(delegate
+                    //[+] {
                     {
+                        //[+] _psdzServiceHostStarter();
                         _psdzServiceHostStarter();
+                        //[+] WaitForPsdzServiceHostInitialization();
                         WaitForPsdzServiceHostInitialization();
+                        //[+] return _psdzServiceHostWrapper.IsPsdzInitialized;
                         return _psdzServiceHostWrapper.IsPsdzInitialized;
+                    //[+] });
                     });
+                //[+] }
                 }
+            //[+] }
             }
-
+            //[+] Log.Info(Log.CurrentMethod(), "Started: {0}", started);
             Log.Info(Log.CurrentMethod(), "Started: {0}", started);
+            //[+] Log.Info(Log.CurrentMethod(), "End.");
             Log.Info(Log.CurrentMethod(), "End.");
+            //[+] return started;
             return started;
         }
 
