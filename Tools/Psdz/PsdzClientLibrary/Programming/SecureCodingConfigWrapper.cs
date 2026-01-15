@@ -73,9 +73,11 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "programmingService added", OriginalHash = "8FAA63AD26F0FF0BA8EB976A997C56ED")]
+        [PreserveSource(Hint = "programmingService added", SignatureModified = true)]
         public static string GetSecureCodingPathWithVin(ProgrammingService2 programmingService, string vin)
         {
+            //[-] return ScManagerHelper.GetDefaultSecureCodingPathWithVin(vin);
+            //[+] return Path.Combine(programmingService.BackupDataPath, NcdRoot, vin);
             return Path.Combine(programmingService.BackupDataPath, NcdRoot, vin);
         }
 
