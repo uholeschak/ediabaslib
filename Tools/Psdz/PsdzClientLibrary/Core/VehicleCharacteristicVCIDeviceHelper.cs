@@ -17,7 +17,6 @@ namespace PsdzClient.Core
             return ComputeCharacteristic(vehicleCode, vehicle, characteristic);
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeMotor(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -32,7 +31,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeAEKurzbezeichnung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
