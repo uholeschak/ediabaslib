@@ -51,11 +51,12 @@ namespace BMW.Rheingold.Psdz
         public IVcmService VcmService { get; private set; }
         public IProgrammingTokenService ProgrammingTokenService { get; private set; }
 
-        [PreserveSource(Hint = "istaFolder added", OriginalHash = "FB96671FAE8C1C84822A52D3519C5A1E")]
+        [PreserveSource(Hint = "istaFolder added", SignatureModified = true)]
         public PsdzWebService(string psdzWebAPILogDir, Func<bool> isPsdzInitialized, string istaFolder)
         {
             _psdzWebApiLogDir = psdzWebAPILogDir;
             _isPsdzInitialized = isPsdzInitialized;
+            //[+] _istaFolder = istaFolder;
             _istaFolder = istaFolder;
         }
 
