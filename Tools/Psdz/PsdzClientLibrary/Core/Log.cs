@@ -337,25 +337,42 @@ namespace PsdzClient.Core
             return "Log.BuildEntry() - failed";
         }
 
-        [PreserveSource(Hint = "Replaced", OriginalHash = "C398BE0F33BAA776C088C861D41C9E99")]
+        [PreserveSource(Hint = "Arguments added", SignatureModified = true)]
         public static string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null)
         {
+            //[-] MethodBase method = new StackFrame(skipFrames).GetMethod();
+            //[-] if (method != null && method.DeclaringType != null)
+            //[-] {
+            //[-] return method.DeclaringType.Name + "." + method.Name;
+            //[-] }
+            //[-] return string.Empty;
+            //[+] StringBuilder sb = new StringBuilder();
             StringBuilder sb = new StringBuilder();
+            //[+] if (!string.IsNullOrEmpty(sourceFilePath))
             if (!string.IsNullOrEmpty(sourceFilePath))
+            //[+] {
             {
+                //[+] sb.Append(Path.GetFileName(sourceFilePath));
                 sb.Append(Path.GetFileName(sourceFilePath));
+                //[+] }
             }
-
+            //[+] if (!string.IsNullOrEmpty(memberName))
             if (!string.IsNullOrEmpty(memberName))
+            //[+] {
             {
+                //[+] if (sb.Length > 0)
                 if (sb.Length > 0)
+                //[+] {
                 {
+                    //[+] sb.Append(": ");
                     sb.Append(": ");
+                //[+] }
                 }
-
+                //[+] sb.Append(memberName);
                 sb.Append(memberName);
+                //[+] }
             }
-
+            //[+] return sb.ToString();
             return sb.ToString();
         }
 

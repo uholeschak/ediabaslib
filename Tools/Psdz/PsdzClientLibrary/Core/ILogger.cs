@@ -13,7 +13,7 @@ namespace PsdzClient.Core
         void Warning(string method, string msg, params object[] args);
         void WarningException(string method, Exception exception);
         void WarningException(string method, string msg, Exception exception);
-        [PreserveSource(Hint = "Arguments added", SignatureModified = true)]
+        [PreserveSource(Hint = "Arguments modified", SignatureModified = true)]
         string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null);
     }
 }

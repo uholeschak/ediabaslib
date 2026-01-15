@@ -1,12 +1,5 @@
-﻿using log4net;
-using PsdzClient;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
+﻿using System;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Windows.Interop;
 
 namespace PsdzClient.Core
 {
@@ -16,34 +9,8 @@ namespace PsdzClient.Core
         public string CurrentMethod([CallerMemberName] string memberName = null, [CallerFilePath] string sourceFilePath = null)
         {
             //[-] return Log.CurrentMethod(2);
-            //[+] StringBuilder sb = new StringBuilder();
-            StringBuilder sb = new StringBuilder();
-            //[+] if (!string.IsNullOrEmpty(sourceFilePath))
-            if (!string.IsNullOrEmpty(sourceFilePath))
-            //[+] {
-            {
-                //[+] sb.Append(Path.GetFileName(sourceFilePath));
-                sb.Append(Path.GetFileName(sourceFilePath));
-                //[+] }
-            }
-            //[+] if (!string.IsNullOrEmpty(memberName))
-            if (!string.IsNullOrEmpty(memberName))
-            //[+] {
-            {
-                //[+] if (sb.Length > 0)
-                if (sb.Length > 0)
-                //[+] {
-                {
-                    //[+] sb.Append(": ");
-                    sb.Append(": ");
-                    //[+] }
-                }
-                //[+] sb.Append(memberName);
-                sb.Append(memberName);
-                //[+] }
-            }
-            //[+] return sb.ToString();
-            return sb.ToString();
+            //[+] return Log.CurrentMethod(memberName, sourceFilePath);
+            return Log.CurrentMethod(memberName, sourceFilePath);
         }
 
         public void Info(string method, string msg, params object[] args)
