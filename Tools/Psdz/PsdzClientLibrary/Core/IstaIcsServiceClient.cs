@@ -249,16 +249,23 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-        [PreserveSource(Hint = "get from registry or default value", OriginalHash = "E886871F0E5E807DF68460715F4D8DE5")]
         public (bool IsActive, string Message) GetFeatureEnabledStatus(string feature, bool checkLbps = true)
         {
+            //[-] ValidateHost();
+            //[-] return CallFunction((IIstaIcsService channel) => channel.GetFeatureEnabledStatus(feature, checkLbps));
+            //[+] string configString = ConfigSettings.getConfigString(LBPFeatureSwitches.FeatureRegistryKey(feature));
             string configString = ConfigSettings.getConfigString(LBPFeatureSwitches.FeatureRegistryKey(feature));
+            //[+] if (!string.IsNullOrEmpty(configString) && bool.TryParse(configString, out var result))
             if (!string.IsNullOrEmpty(configString) && bool.TryParse(configString, out var result))
+            //[+] {
             {
+                //[+] return (IsActive: result, Message: "REGISTRY KEY");
                 return (IsActive: result, Message: "REGISTRY KEY");
+            //[+] }
             }
-
+            //[+] bool flag = LBPFeatureSwitches.Features.DefaultValue(feature, IstaMode.HO);
             bool flag = LBPFeatureSwitches.Features.DefaultValue(feature, IstaMode.HO);
+            //[+] return (IsActive: flag, Message: "DEFAULT VALUE");
             return (IsActive: flag, Message: "DEFAULT VALUE");
         }
 
