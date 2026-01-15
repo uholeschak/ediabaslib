@@ -60,7 +60,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeBaseVersion(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -75,7 +74,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeBaureihe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -100,7 +98,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeBrandName(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -110,7 +107,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeCountryOfAssembly(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -170,7 +166,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeEreihe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -180,7 +175,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeGetriebe(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -200,7 +194,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeKarosserie(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -215,7 +208,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeLand(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -230,7 +222,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeLenkung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -260,7 +251,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeProdart(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -285,7 +275,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeTyp(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -300,7 +289,6 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Use EcuTranslation", SignatureModified = true)]
         protected override bool ComputeVerkaufsBezeichnung(params object[] parameters)
         {
             GetVCIDeviceParameters(parameters);
@@ -382,7 +370,6 @@ namespace PsdzClient.Core
             return false;
         }
 
-        [PreserveSource(Hint = "Characteristics modified", SignatureModified = true)]
         private void GetVCIDeviceParameters(params object[] parameters)
         {
             basicFeatures = (BasicFeaturesVci)parameters[0];
