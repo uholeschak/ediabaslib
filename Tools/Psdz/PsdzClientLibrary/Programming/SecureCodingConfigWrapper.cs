@@ -14,7 +14,7 @@ namespace PsdzClient.Programming
         private static readonly object @lock = new object ();
         private PsdzSecureCodingConfigCto SecureCodingConfigCto { get; }
 
-        [PreserveSource(Hint = "errorManager replaced with programmingService", OriginalHash = "0C89D092A368E98E912AE2897B4300DC")]
+        [PreserveSource(Hint = "errorManager replaced with programmingService", SignatureModified = true)]
         public static PsdzSecureCodingConfigCto GetSecureCodingConfig(ProgrammingService2 programmingService)
         {
             if (instance == null)
@@ -23,6 +23,8 @@ namespace PsdzClient.Programming
                 {
                     if (instance == null)
                     {
+                        //[-] instance = new SecureCodingConfigWrapper(errorManager).SecureCodingConfigCto;
+                        //[+] instance = new SecureCodingConfigWrapper(programmingService).SecureCodingConfigCto;
                         instance = new SecureCodingConfigWrapper(programmingService).SecureCodingConfigCto;
                     }
                 }
