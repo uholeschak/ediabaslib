@@ -114,7 +114,6 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [PreserveSource(Hint = "GetSwiVersionNum added, ServiceLocator removed", SignatureModified = true)]
         public bool IsReady()
         {
             IConfigurationService configurationService = ConfigurationService;
