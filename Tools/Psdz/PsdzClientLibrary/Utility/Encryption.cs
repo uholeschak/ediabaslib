@@ -314,12 +314,15 @@ namespace PsdzClient.Utility
             return tokenObject;
         }
 
-        [PreserveSource(Hint = "Changed to SHA256", OriginalHash = "058171376B703BD354BBFA66FB17720E")]
         private static string GeneratePasswordHash(string passwordString)
         {
+            //[-] SHA256Managed sHA256Managed = null;
+            //[+] SHA256 sHA256Managed = null;
             SHA256 sHA256Managed = null;
             try
             {
+                //[-] sHA256Managed = new SHA256Managed();
+                //[+] sHA256Managed = SHA256.Create();
                 sHA256Managed = SHA256.Create();
                 byte[] array = sHA256Managed.ComputeHash(Encoding.ASCII.GetBytes(passwordString ?? string.Empty));
                 StringBuilder stringBuilder = new StringBuilder();
