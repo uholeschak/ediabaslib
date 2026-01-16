@@ -403,9 +403,11 @@ namespace BMW.Rheingold.Psdz
             return process;
         }
 
-        [PreserveSource(Hint = "fullPath modified", OriginalHash = "E0C8A22FACEFCFFB1BCAEA09C69B224A")]
+        [PreserveSource(Hint = "fullPath modified", SignatureModified = true)]
         private string GetJarPath()
         {
+            //[-] string fullPath = Path.GetFullPath(ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzWebservice.Directory", "..\\..\\..\\PSdZ\\WebService"));
+            //[+] string fullPath = Path.Combine(_istaFolder, "PSdZ\\WebService");
             string fullPath = Path.Combine(_istaFolder, "PSdZ\\WebService");
             if (!Directory.Exists(fullPath))
             {
