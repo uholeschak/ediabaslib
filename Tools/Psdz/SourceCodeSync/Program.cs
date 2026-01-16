@@ -2048,6 +2048,7 @@ namespace SourceCodeSync
                 {
                     // Try to find and remove the corresponding code line in source
                     string normalizedCodeLineToRemove = NormalizeCodeLine(commentInfo.CommentLine);
+                    bool lineRemoved = false;
                     for (int i = 0; i < sourceLines.Count; i++)
                     {
                         string sourceTrimmed = sourceLines[i].Trim();
@@ -2082,8 +2083,17 @@ namespace SourceCodeSync
                             {
                                 // Replace the code line with the comment line
                                 sourceLines[i] = commentInfo.CommentLine;
+                                lineRemoved = true;
                                 break;
                             }
+                        }
+                    }
+
+                    if (!lineRemoved)
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine($"No matching line found to remove for: {trimmedLine}");
                         }
                     }
 
