@@ -24,7 +24,7 @@ namespace PsdzClient.Core
             value = ecuCliqueId;
         }
 
-        [PreserveSource(Hint = "dataprovider removed", SignatureModified = true)]
+        [PreserveSource(Hint = "dataprovider removed, log output disabled", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             bool flag = false;
