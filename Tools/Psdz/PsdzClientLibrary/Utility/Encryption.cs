@@ -220,7 +220,6 @@ namespace PsdzClient.Utility
             return new string (array);
         }
 
-        [PreserveSource(Hint = "RijndaelManaged replaced", OriginalHash = "9D74D8D08B12D1C3915C71CE8702563C")]
         public static string DecryptPassword(string encryptedPassWord, string deviceIdent)
         {
             if (string.IsNullOrEmpty(encryptedPassWord) || string.IsNullOrEmpty(deviceIdent))
@@ -232,17 +231,21 @@ namespace PsdzClient.Utility
             MemoryStream memoryStream = null;
             CryptoStream cryptoStream = null;
             StreamReader streamReader = null;
-            Aes aes = null;
+            //[-] RijndaelManaged rijndaelManaged = null;
+            //[+] Aes rijndaelManaged = null;
+            Aes rijndaelManaged = null;
             try
             {
-                aes = Aes.Create();
+                //[-] rijndaelManaged = new RijndaelManaged();
+                //[+] rijndaelManaged = Aes.Create();
+                rijndaelManaged = Aes.Create();
                 TokenObject tokenObject = GenerateTokens(deviceIdent);
-                aes.Mode = CipherMode.CBC;
-                aes.Padding = PaddingMode.None;
-                aes.FeedbackSize = 128;
-                aes.Key = Encoding.UTF8.GetBytes(tokenObject.Password);
-                aes.IV = Encoding.UTF8.GetBytes(tokenObject.Token);
-                ICryptoTransform transform = aes.CreateDecryptor(aes.Key, aes.IV);
+                rijndaelManaged.Mode = CipherMode.CBC;
+                rijndaelManaged.Padding = PaddingMode.None;
+                rijndaelManaged.FeedbackSize = 128;
+                rijndaelManaged.Key = Encoding.UTF8.GetBytes(tokenObject.Password);
+                rijndaelManaged.IV = Encoding.UTF8.GetBytes(tokenObject.Token);
+                ICryptoTransform transform = rijndaelManaged.CreateDecryptor(rijndaelManaged.Key, rijndaelManaged.IV);
                 memoryStream = new MemoryStream(Convert.FromBase64String(encryptedPassWord));
                 cryptoStream = new CryptoStream(memoryStream, transform, CryptoStreamMode.Read);
                 streamReader = new StreamReader(cryptoStream, detectEncodingFromByteOrderMarks: true);
@@ -288,7 +291,7 @@ namespace PsdzClient.Utility
                     memoryStream?.Close();
                 }
 
-                aes?.Dispose();
+                rijndaelManaged?.Dispose();
             }
 
             return result;
