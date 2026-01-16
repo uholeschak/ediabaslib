@@ -22,7 +22,7 @@ namespace PsdzClient.Core
             value = ecuRepresentativeId;
         }
 
-        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
+        [PreserveSource(Hint = "dataProvider removed, log output disabled", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             ILogger logger = ruleEvaluationServices.Logger;
