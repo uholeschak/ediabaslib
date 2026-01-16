@@ -140,10 +140,14 @@ namespace PsdzClient.Utility
             return SecureStringHelper.ConvertToSecureString(Decrypt(input));
         }
 
-        [PreserveSource(Hint = "Changed to Aes", OriginalHash = "44E009B63DFEC7852BC1CDB2DC4A26F8")]
+        [PreserveSource(Hint = "Changed to Aes", SignatureModified = true)]
         internal static Aes InializeAesProvider()
         {
+            //[-] AesManaged aesManaged = null;
+            //[-] AesManaged aesManaged2 = null;
+            //[+] Aes aesManaged = null;
             Aes aesManaged = null;
+            //[+] Aes aesManaged2 = null;
             Aes aesManaged2 = null;
             try
             {
@@ -152,8 +156,16 @@ namespace PsdzClient.Utility
                 string text = ReverseString(volumeSNr);
                 string s = clientID.Substring(0, clientID.Length / 2);
                 string s2 = text + clientID.Substring(clientID.Length / 2) + volumeSNr;
+                //[-] aesManaged = new AesManaged
+                //[-] {
+                //[-] Key = Encoding.UTF8.GetBytes(s2),
+                //[-] IV = Encoding.UTF8.GetBytes(s)
+                //[-] };
+                //[+] aesManaged = Aes.Create();
                 aesManaged = Aes.Create();
+                //[+] aesManaged.Key = Encoding.UTF8.GetBytes(s2);
                 aesManaged.Key = Encoding.UTF8.GetBytes(s2);
+                //[+] aesManaged.IV = Encoding.UTF8.GetBytes(s);
                 aesManaged.IV = Encoding.UTF8.GetBytes(s);
                 aesManaged2 = aesManaged;
                 aesManaged = null;
