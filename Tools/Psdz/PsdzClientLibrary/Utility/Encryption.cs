@@ -16,8 +16,7 @@ namespace PsdzClient.Utility
         private static string _volumeSNr = string.Empty;
         private const string logEncryptionPublicKey = "<RSAKeyValue><Modulus>o0DHJwtLBqYxDLkp7fqN9fhubcWACo2GVfz3qPUJxljUPT4xfZ0QUaFzLpf2YCeOqHGN9093V6dIYtNrukrnLZJtIiZ8kVdBSd3jlJ42QEBjW87XklMez5UKJmjzebs+2NDlaNNcEmhvli2l7GRSbkokqWUuN6SzrS6jIpO8MUk=</Modulus><Exponent>AQAB</Exponent></RSAKeyValue>";
         private const string ICSLogEncryptionKeyName = "ICSLogEncryption";
-        [PreserveSource(Hint = "Changed to Aes", OriginalHash = "11ED03B5190B41C56AB5C54BC1DCE759")]
-        public static string Encrypt(string toEncrypt, bool? isSensitive = false)
+        internal static string Encrypt(string toEncrypt, bool? isSensitive = false)
         {
             if (isSensitive.HasValue && isSensitive == true)
             {
@@ -27,10 +26,14 @@ namespace PsdzClient.Utility
             {
                 Logger.Instance()?.Log(ICSEventId.ICSNone, "Encryption.Encrypt - string to encrypt", toEncrypt, EventKind.Technical, LogLevel.Info);
             }
+
             if (string.IsNullOrEmpty(toEncrypt))
             {
                 return string.Empty;
             }
+
+            //[-] AesManaged aesManaged = null;
+            //[+] Aes aesManaged = null;
             Aes aesManaged = null;
             MemoryStream memoryStream = null;
             try
@@ -55,7 +58,7 @@ namespace PsdzClient.Utility
             {
                 Logger.Instance()?.Log(ICSEventId.ICS0010, "Encryption.Encrypt", ex3.ToString(), EventKind.Technical, LogLevel.Error, ex3);
             }
-            catch (Exception ex4) when (ex4 is ArgumentOutOfRangeException || ex4 is ArgumentException)
+            catch (Exception ex4)when (ex4 is ArgumentOutOfRangeException || ex4 is ArgumentException)
             {
                 Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.Encrypt", ex4.ToString(), EventKind.Technical, LogLevel.Error, ex4);
             }
@@ -64,6 +67,7 @@ namespace PsdzClient.Utility
                 memoryStream?.Dispose();
                 aesManaged?.Dispose();
             }
+
             return string.Empty;
         }
 
@@ -81,6 +85,7 @@ namespace PsdzClient.Utility
             {
                 return string.Empty;
             }
+
             try
             {
                 using (Aes aesManaged = InializeAesProvider())
@@ -121,6 +126,7 @@ namespace PsdzClient.Utility
             {
                 Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.Decrypt", ex6.ToString(), EventKind.Technical, LogLevel.Error, ex6);
             }
+
             return string.Empty;
         }
 
@@ -250,7 +256,7 @@ namespace PsdzClient.Utility
             {
                 Logger.Instance()?.Log(ICSEventId.ICS0001, "Encryption.DecryptPassword", ex5.ToString(), EventKind.Technical, LogLevel.Error, ex5);
             }
-            catch (Exception ex6) when (ex6 is ArgumentNullException || ex6 is ArgumentException)
+            catch (Exception ex6)when (ex6 is ArgumentNullException || ex6 is ArgumentException)
             {
                 Logger.Instance()?.Log(ICSEventId.ICS0123, "Encryption.DecryptPassword", ex6.ToString(), EventKind.Technical, LogLevel.Error, ex6);
                 throw;
