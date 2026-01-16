@@ -71,14 +71,12 @@ namespace PsdzClient.Utility
             return string.Empty;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
-        public static string EncryptSensitveContent(string toEncrypt)
+        internal static string EncryptSensitveContent(string toEncrypt)
         {
             return toEncrypt;
         }
 
-        [PreserveSource(Hint = "Changed to Aes", OriginalHash = "8FBDD1B56316B1B6866356649637F496")]
-        public static string Decrypt(string toDecrypt)
+        internal static string Decrypt(string toDecrypt)
         {
             Logger.Instance()?.Log(ICSEventId.ICSNone, "Encryption.Decrypt - string to decrypt", toDecrypt, EventKind.Technical, LogLevel.Info);
             if (string.IsNullOrEmpty(toDecrypt))
@@ -88,6 +86,8 @@ namespace PsdzClient.Utility
 
             try
             {
+                //[-] using (AesManaged aesManaged = InializeAesProvider())
+                //[+] using (Aes aesManaged = InializeAesProvider())
                 using (Aes aesManaged = InializeAesProvider())
                 {
                     using (MemoryStream memoryStream = new MemoryStream())
