@@ -1626,7 +1626,7 @@ namespace SourceCodeSync
             HashSet<MemberDeclarationSyntax> processedPreservedMembers = new HashSet<MemberDeclarationSyntax>();
 
             // Iterate through source members and replace with preserved versions where needed
-            foreach (var sourceMember in sourceClass.Members)
+            foreach (MemberDeclarationSyntax sourceMember in sourceClass.Members)
             {
                 string sourceMemberName = GetMemberName(sourceMember);
 
@@ -1679,7 +1679,8 @@ namespace SourceCodeSync
                         if (destMember != null)
                         {
                             // Additionally preserve //[-] comments inside body
-                            memberToAdd = PreserveCommentedCodeInsideBody(destMember, memberToAdd);
+                            string className = GetClassName(destClass);
+                            memberToAdd = PreserveCommentedCodeInsideBody(destMember, memberToAdd, className);
                         }
                     }
 
@@ -1694,7 +1695,8 @@ namespace SourceCodeSync
                     if (destMember != null)
                     {
                         // Then preserve //[-] comments inside body
-                        memberToAdd = PreserveCommentedCodeInsideBody(destMember, memberToAdd);
+                        string className = GetClassName(destClass);
+                        memberToAdd = PreserveCommentedCodeInsideBody(destMember, memberToAdd, className);
                     }
                     newMembers.Add(memberToAdd);
                 }
@@ -1815,7 +1817,8 @@ namespace SourceCodeSync
         /// </summary>
         private static MemberDeclarationSyntax PreserveCommentedCodeInsideBody(
             MemberDeclarationSyntax destMember,
-            MemberDeclarationSyntax sourceMember)
+            MemberDeclarationSyntax sourceMember,
+            string className)
         {
             // Get all //[-] comments from destination member (including inside body)
             List<string> destCommentedLines = GetAllCommentedCodeLines(destMember);
@@ -1825,7 +1828,8 @@ namespace SourceCodeSync
                 return sourceMember;
             }
 
-            string destMemberName = GetMemberName(sourceMember);
+            string destMemberName = GetMemberName(destMember);
+            string locationInfo = $"{className}.{destMemberName}";
             // Get the source code as string and work with it line by line
             string sourceCode = sourceMember.ToFullString();
             string destCode = destMember.ToFullString();
@@ -1839,7 +1843,7 @@ namespace SourceCodeSync
             }
 
             // Try to insert //[-] lines into source code at appropriate positions
-            string mergedCode = MergeCommentedCodeLines(destMemberName, sourceCode, linesToPreserve);
+            string mergedCode = MergeCommentedCodeLines(sourceCode, linesToPreserve, locationInfo);
 
             if (mergedCode == sourceCode)
             {
@@ -2030,7 +2034,7 @@ namespace SourceCodeSync
         /// <summary>
         /// Merges //[-] commented code lines from dest into source code
         /// </summary>
-        private static string MergeCommentedCodeLines(string destMemberName, string sourceCode, List<CommentedCodeLineInfo> linesToPreserve)
+        private static string MergeCommentedCodeLines(string sourceCode, List<CommentedCodeLineInfo> linesToPreserve, string locationInfo)
         {
             List<string> sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             List<string> normalizedLines = sourceLines
@@ -2094,7 +2098,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine($"No matching line found in '{destMemberName}' to remove: {trimmedLine}");
+                            Console.WriteLine($"No matching line found in '{locationInfo}' to remove: {trimmedLine}");
                         }
                     }
 
@@ -2185,7 +2189,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine($"No valid insertion point found in '{destMemberName}': {trimmedLine}");
+                            Console.WriteLine($"No valid insertion point found in '{locationInfo}': {trimmedLine}");
                         }
                     }
                 }
