@@ -1825,6 +1825,7 @@ namespace SourceCodeSync
                 return sourceMember;
             }
 
+            string destMemberName = GetMemberName(sourceMember);
             // Get the source code as string and work with it line by line
             string sourceCode = sourceMember.ToFullString();
             string destCode = destMember.ToFullString();
@@ -1838,7 +1839,7 @@ namespace SourceCodeSync
             }
 
             // Try to insert //[-] lines into source code at appropriate positions
-            string mergedCode = MergeCommentedCodeLines(sourceCode, linesToPreserve);
+            string mergedCode = MergeCommentedCodeLines(destMemberName, sourceCode, linesToPreserve);
 
             if (mergedCode == sourceCode)
             {
@@ -2029,7 +2030,7 @@ namespace SourceCodeSync
         /// <summary>
         /// Merges //[-] commented code lines from dest into source code
         /// </summary>
-        private static string MergeCommentedCodeLines(string sourceCode, List<CommentedCodeLineInfo> linesToPreserve)
+        private static string MergeCommentedCodeLines(string destMemberName, string sourceCode, List<CommentedCodeLineInfo> linesToPreserve)
         {
             List<string> sourceLines = sourceCode.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries).ToList();
             List<string> normalizedLines = sourceLines
@@ -2093,7 +2094,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine($"No matching line found to remove for: {trimmedLine}");
+                            Console.WriteLine($"No matching line found in '{destMemberName}' to remove: {trimmedLine}");
                         }
                     }
 
@@ -2184,7 +2185,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine($"No valid insertion point found for: {trimmedLine}");
+                            Console.WriteLine($"No valid insertion point found in '{destMemberName}': {trimmedLine}");
                         }
                     }
                 }
