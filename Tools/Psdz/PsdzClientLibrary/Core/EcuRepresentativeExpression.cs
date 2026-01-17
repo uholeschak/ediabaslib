@@ -42,12 +42,12 @@ namespace PsdzClient.Core
             }
             if (vec.VCI != null && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
             {
-                //[-] logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
+                //[-](0) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
                 return true;
             }
             if (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && vec.ECU != null && !vec.ECU.Any())
             {
-                //[-] logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
+                //[-](1) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
                 return true;
             }
             //[-] bool flag = VehicleHelper.GetECUbyTITLE_ECUTREE(vec, ecuRepsById.SteuergeraeteKuerzel) != null;
