@@ -24,6 +24,7 @@ namespace SourceCodeSync
             public string FollowingCodeLine { get; set; }
             public int OriginalLineNumber { get; set; }
             public CommentedCodeLineInfo NextInfo { get; set; }
+            public int? Index { get; set; }
         }
 
         private static Dictionary<string, ClassDeclarationSyntax> _classDict = new (StringComparer.Ordinal);
@@ -46,6 +47,10 @@ namespace SourceCodeSync
         private static readonly Regex[] _compiledIgnoreNamespaces = _ignoreNamespaces
                 .Select(pattern => new Regex(pattern, RegexOptions.Compiled))
                 .ToArray();
+
+        // Regex pattern for extracting index from //[-](index) or //[+](index)
+        private static readonly Regex _commentedCodeWithIndexPattern = new Regex(
+            @"^//\[[-+]\]\((\d+)\)", RegexOptions.Compiled);
 
         private static readonly Dictionary<string, string> _modifyClassNames = new()
         {
@@ -1944,6 +1949,16 @@ namespace SourceCodeSync
                 bool isRemoveLine = trimmedLine.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase);
                 bool isAddLine = trimmedLine.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase);
 
+                int? index = null;
+                Match match = _commentedCodeWithIndexPattern.Match(trimmedLine);
+                if (match.Success && match.Groups.Count > 1)
+                {
+                    if (int.TryParse(match.Groups[1].Value, out int parsedIndex))
+                    {
+                        index = parsedIndex;
+                    }
+                }
+
                 if (isRemoveLine || isAddLine)
                 {
                     int nextLine = isAddLine ? 2 : 1;
@@ -1952,7 +1967,8 @@ namespace SourceCodeSync
                         CommentLine = lines[i],
                         PrecedingCodeLine = i > 0 ? NormalizeCodeLine(lines[i - 1], true) : null,
                         FollowingCodeLine = i < lines.Length - nextLine ? NormalizeCodeLine(lines[i + nextLine], true) : null,
-                        OriginalLineNumber = i
+                        OriginalLineNumber = i,
+                        Index = index
                     };
 
                     if (isAddLine && lastAddInfo != null)
