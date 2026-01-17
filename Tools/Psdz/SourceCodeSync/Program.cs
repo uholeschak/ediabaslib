@@ -2027,7 +2027,8 @@ namespace SourceCodeSync
             {
                 if (trimmed.StartsWith(_commentedRemoveCodeMarker, StringComparison.Ordinal))
                 {
-                    trimmed = trimmed.Substring(_commentedRemoveCodeMarker.Length).TrimStart();
+                    // Remove the marker and optional (index) part
+                    trimmed = RemoveCommentMarkerWithIndex(trimmed, _commentedRemoveCodeMarker);
                 }
                 else if (trimmed.StartsWith(_commentedAddCodeMarker, StringComparison.Ordinal))
                 {
@@ -2036,7 +2037,8 @@ namespace SourceCodeSync
                         return null;
                     }
 
-                    trimmed = trimmed.Substring(_commentedAddCodeMarker.Length).TrimStart();
+                    // Remove the marker and optional (index) part
+                    trimmed = RemoveCommentMarkerWithIndex(trimmed, _commentedAddCodeMarker);
                 }
                 else
                 {
@@ -2045,6 +2047,28 @@ namespace SourceCodeSync
             }
 
             return Regex.Replace(trimmed, @"\s+", "");
+        }
+
+        /// <summary>
+        /// Removes the comment marker and optional (index) part from a line
+        /// </summary>
+        private static string RemoveCommentMarkerWithIndex(string line, string marker)
+        {
+            // First remove the marker
+            string result = line.Substring(marker.Length);
+
+            // Check if there's an (index) part to remove
+            if (result.StartsWith("(", StringComparison.Ordinal))
+            {
+                int closeParenIndex = result.IndexOf(')', StringComparison.Ordinal);
+                if (closeParenIndex > 0)
+                {
+                    // Remove the (index) part
+                    result = result.Substring(closeParenIndex + 1);
+                }
+            }
+
+            return result.TrimStart();
         }
 
         /// <summary>
