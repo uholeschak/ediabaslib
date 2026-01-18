@@ -2128,13 +2128,10 @@ namespace SourceCodeSync
 
                             if (validLine)
                             {
-                                if (commentInfo.Index != null)
+                                if (commentInfo.Index != null && commentInfo.Index != matchCount)
                                 {
-                                    if (commentInfo.Index != matchCount)
-                                    {
-                                        matchCount++;
-                                        continue;
-                                    }
+                                    matchCount++;
+                                    continue;
                                 }
 
                                 // Replace the code line with the comment line
@@ -2172,14 +2169,18 @@ namespace SourceCodeSync
                             {
                                 if (i + 1 < sourceLines.Count)
                                 {
-                                    matchCount++;
-                                    insertIndex = i + 1;
+                                    if (commentInfo.Index == null || commentInfo.Index == matchCount)
+                                    {
+                                        insertIndex = i + 1;
+                                    }
                                 }
+
+                                matchCount++;
                             }
                         }
 
                         // If multiple matches found, invalidate this strategy
-                        if (matchCount > 1)
+                        if (matchCount > 1 && commentInfo.Index == null)
                         {
                             insertIndex = -1;
                         }
