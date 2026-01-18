@@ -1,5 +1,5 @@
 diff --git a/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj b/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj
-index 6420554..f136f1d 100644
+index 6420554..f4c83df 100644
 --- a/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj
 +++ b/InTheHand.BluetoothLE/InTheHand.BluetoothLE.csproj
 @@ -1,8 +1,8 @@
@@ -43,7 +43,7 @@ index 6420554..f136f1d 100644
  
  	<ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
 -		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.22621.2428" />
-+		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.7175" />
++		<PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.26100.7463" />
  		<Compile Include="Platforms\Windows\*.cs" />
  	</ItemGroup>
  	
