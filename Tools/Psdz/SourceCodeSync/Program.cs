@@ -2169,9 +2169,11 @@ namespace SourceCodeSync
                             {
                                 if (i + 1 < sourceLines.Count)
                                 {
-                                    if (commentInfo.Index == null || commentInfo.Index == matchCount)
+                                    insertIndex = i + 1;
+                                    if (commentInfo.Index != null && commentInfo.Index == matchCount)
                                     {
-                                        insertIndex = i + 1;
+                                        matchCount = 1;
+                                        break;
                                     }
                                 }
 
@@ -2180,7 +2182,7 @@ namespace SourceCodeSync
                         }
 
                         // If multiple matches found, invalidate this strategy
-                        if (matchCount > 1 && commentInfo.Index == null)
+                        if (matchCount > 1)
                         {
                             insertIndex = -1;
                         }
@@ -2198,9 +2200,11 @@ namespace SourceCodeSync
                             {
                                 if (i > 0)
                                 {
-                                    if (commentInfo.Index == null || commentInfo.Index == matchCount)
+                                    insertIndex = i;
+                                    if (commentInfo.Index != null && commentInfo.Index == matchCount)
                                     {
-                                        insertIndex = i;
+                                        matchCount = 1;
+                                        break;
                                     }
                                 }
 
@@ -2209,7 +2213,7 @@ namespace SourceCodeSync
                         }
 
                         // If multiple matches found, invalidate this strategy
-                        if (matchCount > 1 && commentInfo.Index == null)
+                        if (matchCount > 1)
                         {
                             insertIndex = -1;
                         }
@@ -2223,7 +2227,7 @@ namespace SourceCodeSync
                         while (info != null)
                         {
                             string trimmed = info.CommentLine.Trim();
-                            string addLine = trimmed.Substring(_commentedRemoveCodeMarker.Length).TrimStart();
+                            string addLine = RemoveCommentMarkerWithIndex(trimmed, _commentedRemoveCodeMarker).TrimStart();
                             if (!string.IsNullOrEmpty(addLine))
                             {
                                 if (sbAddLines.Length > 0)
