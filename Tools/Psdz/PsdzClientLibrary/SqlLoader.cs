@@ -1,8 +1,8 @@
-﻿#if !NET
-using SQLitePCL;
+﻿using SQLitePCL;
 using System.Reflection;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using HarmonyLib;
 using Microsoft.Data.Sqlite;
 using log4net;
@@ -127,33 +127,43 @@ namespace PsdzClient
                 UriBuilder uriBuilder = new UriBuilder(codeBase);
                 string path = Uri.UnescapeDataString(new Uri(uriBuilder.Path).LocalPath);
                 string libPath = GetLibPath(path);
+#if NET
+                DoDynamic_cdecl(libPath);
+#else
                 DoDynamic_cdecl(libPath, NativeLibrary.WHERE_PLAIN);
+#endif
             }
         }
 
-        public static void DoDynamic_cdecl(string name, int flags)
+        public static void DoDynamic_cdecl(string name, int flags = 0)
         {
             IGetFunctionPointer gf = MakeDynamic(name, flags);
+#if !NET
             SQLite3Provider_dynamic_cdecl.Setup(name, gf);
             raw.SetProvider(new SQLite3Provider_dynamic_cdecl());
+#endif
         }
 
-        public static IGetFunctionPointer MakeDynamic(string name, int flags)
+        public static IGetFunctionPointer MakeDynamic(string name, int flags = 0)
         {
             Assembly assembly = typeof(raw).Assembly;
+#if NET
+            return new MyGetFunctionPointer(NativeLibrary.Load(name, assembly, null));
+#else
             return new MyGetFunctionPointer(NativeLibrary.Load(name, assembly, flags));
+#endif
         }
 
         private class MyGetFunctionPointer : IGetFunctionPointer
         {
             private readonly IntPtr _dll;
 
-            public MyGetFunctionPointer(IntPtr dll) => this._dll = dll;
+            public MyGetFunctionPointer(IntPtr dll) => _dll = dll;
 
             public IntPtr GetFunctionPointer(string name)
             {
                 IntPtr address;
-                return NativeLibrary.TryGetExport(this._dll, name, out address) ? address : IntPtr.Zero;
+                return NativeLibrary.TryGetExport(_dll, name, out address) ? address : IntPtr.Zero;
             }
         }
 
@@ -185,4 +195,3 @@ namespace PsdzClient
         }
     }
 }
-#endif
