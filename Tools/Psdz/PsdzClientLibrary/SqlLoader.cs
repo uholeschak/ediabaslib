@@ -2,10 +2,12 @@
 using System.Reflection;
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using HarmonyLib;
 using Microsoft.Data.Sqlite;
 using log4net;
+#if NET
+using System.Runtime.InteropServices;
+#endif
 
 namespace PsdzClient
 {
