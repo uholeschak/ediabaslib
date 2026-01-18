@@ -1,18 +1,19 @@
-﻿using SQLitePCL;
-using System.Reflection;
+﻿using HarmonyLib;
+using log4net;
+using Microsoft.Data.Sqlite;
+using SQLitePCL;
 using System;
 using System.IO;
-using HarmonyLib;
-using Microsoft.Data.Sqlite;
-using log4net;
-#if NET
+using System.Reflection;
 using System.Runtime.InteropServices;
-#endif
 
 namespace PsdzClient
 {
     public static class SqlLoader
     {
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        static extern int AddDllDirectory(string NewDirectory);
+
         private static readonly ILog log = LogManager.GetLogger(typeof(SqlLoader));
 
         private static readonly string[] _testTypes =
@@ -35,7 +36,7 @@ namespace PsdzClient
 
             try
             {
-                bool patchSqliteInitRequired = false;
+                bool patchSqliteLoadRequired = false;
                 bool patchGetTypeRequired = false;
 
                 try
@@ -58,16 +59,42 @@ namespace PsdzClient
                     string libName = libPath + ".dll";
                     if (!File.Exists(libName))
                     {
-                        patchSqliteInitRequired = true;
+                        patchSqliteLoadRequired = true;
                     }
                 }
 
                 // https://github.com/ericsink/SQLitePCL.raw/issues/405
                 // Another option is setting shadowCopyBinAssemblies to false in the web.config file, section system.web.
                 // <hostingEnvironment shadowCopyBinAssemblies="false" />
-                if (patchSqliteInitRequired)
+                if (patchSqliteLoadRequired)
                 {
                     log.InfoFormat("PatchLoader: Patching Init");
+#if NET
+                    try
+                    {
+                        string assemblyDir = AssemblyDirectory;
+                        if (!string.IsNullOrEmpty(assemblyDir))
+                        {
+                            string libPath = GetLibPath(assemblyDir);
+                            AddDllDirectory(libPath);
+
+                            NativeLibrary.SetDllImportResolver(typeof(SQLite3Provider_e_sqlite3mc).Assembly, (name, assembly, path) =>
+                            {
+                                IntPtr libHandle = IntPtr.Zero;
+                                if (string.Compare(name, "e_sqlite3mc", StringComparison.OrdinalIgnoreCase) == 0)
+                                {
+                                    libHandle = NativeLibrary.Load(name, assembly, DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.UserDirectories);
+                                }
+                                return libHandle;
+                            });
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        log.ErrorFormat("PatchLoader: SetDllImportResolver Exception: {0}", e.Message);
+                        return false;
+                    }
+#else
                     MethodInfo methodCallSqliteInitPrefix = typeof(SqlLoader).GetMethod("CallSqliteInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
                     if (methodCallSqliteInitPrefix == null)
                     {
@@ -83,6 +110,7 @@ namespace PsdzClient
                     }
 
                     harmony.Patch(methodInit, new HarmonyMethod(methodCallSqliteInitPrefix));
+#endif
                 }
 
                 // Fixed in the next update
@@ -110,7 +138,7 @@ namespace PsdzClient
             }
             catch (Exception ex)
             {
-                log.ErrorFormat("PatchLoader: GetType Exception: {0}", ex.Message);
+                log.ErrorFormat("PatchLoader: Patch Exception: {0}", ex.Message);
                 return false;
             }
             finally
@@ -121,39 +149,59 @@ namespace PsdzClient
             return true;
         }
 
+        public static string AssemblyDirectory
+        {
+            get
+            {
+#if NET
+                string location = Assembly.GetExecutingAssembly().Location;
+                if (string.IsNullOrEmpty(location) || !File.Exists(location))
+                {
+                    return null;
+                }
+                return Path.GetDirectoryName(location);
+#else
+                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                UriBuilder uri = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(uri.Path);
+                if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                {
+                    return null;
+                }
+                return Path.GetDirectoryName(path);
+#endif
+            }
+        }
+
+        private static string GetLibPath(string path)
+        {
+            string ridBack = (IntPtr.Size == 8) ? "x64" : "x86";
+            string rid = "win-" + ridBack;
+            return Path.Combine(path, "runtimes", rid, "native", "e_sqlite3mc");
+        }
+
+#if !NET
         public static void Init()
         {
-            string codeBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
-            if (!string.IsNullOrEmpty(codeBase))
+            string assemblyDir = AssemblyDirectory;
+            if (!string.IsNullOrEmpty(assemblyDir))
             {
-                UriBuilder uriBuilder = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(new Uri(uriBuilder.Path).LocalPath);
-                string libPath = GetLibPath(path);
-#if NET
-                DoDynamic_cdecl(libPath);
-#else
+                string libPath = GetLibPath(assemblyDir);
                 DoDynamic_cdecl(libPath, NativeLibrary.WHERE_PLAIN);
-#endif
             }
         }
 
         public static void DoDynamic_cdecl(string name, int flags = 0)
         {
             IGetFunctionPointer gf = MakeDynamic(name, flags);
-#if !NET
             SQLite3Provider_dynamic_cdecl.Setup(name, gf);
             raw.SetProvider(new SQLite3Provider_dynamic_cdecl());
-#endif
         }
 
         public static IGetFunctionPointer MakeDynamic(string name, int flags = 0)
         {
             Assembly assembly = typeof(raw).Assembly;
-#if NET
-            return new MyGetFunctionPointer(NativeLibrary.Load(name, assembly, null));
-#else
             return new MyGetFunctionPointer(NativeLibrary.Load(name, assembly, flags));
-#endif
         }
 
         private class MyGetFunctionPointer : IGetFunctionPointer
@@ -169,19 +217,12 @@ namespace PsdzClient
             }
         }
 
-        private static string GetLibPath(string path)
-        {
-            string ridBack = (IntPtr.Size == 8) ? "x64" : "x86";
-            string rid = "win-" + ridBack;
-            return Path.Combine(path, "runtimes", rid, "native", "e_sqlite3mc");
-        }
-
         private static bool CallSqliteInitPrefix()
         {
             Init();
             return false;
         }
-
+#endif
         private static bool CallGetTypePrefix(ref object __result, string typeName)
         {
             if (!string.IsNullOrEmpty(typeName))

@@ -1539,12 +1539,11 @@ namespace PsdzClient
             log.InfoFormat("PsdzDatabase: ISTA framework path: {0}", _frameworkPath);
 
             _harmony = new Harmony("de.holeschak.PsdzClient");
-#if !NET
             if (!SqlLoader.PatchLoader(_harmony))
             {
                 log.ErrorFormat("PsdzDatabase: PatchLoader failed");
             }
-#endif
+
             string databaseFile = Path.Combine(_databasePath, "DiagDocDb.sqlite");
             if (!File.Exists(databaseFile))
             {
