@@ -2198,14 +2198,18 @@ namespace SourceCodeSync
                             {
                                 if (i > 0)
                                 {
-                                    matchCount++;
-                                    insertIndex = i;
+                                    if (commentInfo.Index == null || commentInfo.Index == matchCount)
+                                    {
+                                        insertIndex = i;
+                                    }
                                 }
+
+                                matchCount++;
                             }
                         }
 
                         // If multiple matches found, invalidate this strategy
-                        if (matchCount > 1)
+                        if (matchCount > 1 && commentInfo.Index == null)
                         {
                             insertIndex = -1;
                         }
