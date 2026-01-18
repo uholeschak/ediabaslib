@@ -22,7 +22,7 @@ namespace PsdzClient.Core
             value = ecuRepresentativeId;
         }
 
-        [PreserveSource(Hint = "dataProvider removed, log output disabled", SignatureModified = true)]
+        [PreserveSource(Hint = "dataProvider removed", SignatureModified = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             ILogger logger = ruleEvaluationServices.Logger;
@@ -43,11 +43,15 @@ namespace PsdzClient.Core
             if (vec.VCI != null && (vec.VehicleIdentLevel == IdentificationLevel.BasicFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINBasedFeatures || vec.VehicleIdentLevel == IdentificationLevel.VINOnly))
             {
                 //[-](0) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
+                //[+](0) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.EcuShortcut, vec.VehicleIdentLevel);
+                logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.EcuShortcut, vec.VehicleIdentLevel);
                 return true;
             }
             if (vec.VehicleIdentLevel == IdentificationLevel.VINBasedOnlineUpdated && vec.ECU != null && !vec.ECU.Any())
             {
                 //[-](1) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.SteuergeraeteKuerzel, vec.VehicleIdentLevel);
+                //[+](1) logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.EcuShortcut, vec.VehicleIdentLevel);
+                logger.Info("EcuRepresentativeExpression.Evaluate()", "infosession and manual VIN input => no ecu representative evaluation for {0} due to VehicleIdentLevel: {1}", ecuRepsById.EcuShortcut, vec.VehicleIdentLevel);
                 return true;
             }
             //[-] bool flag = VehicleHelper.GetECUbyTITLE_ECUTREE(vec, ecuRepsById.SteuergeraeteKuerzel) != null;
