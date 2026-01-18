@@ -2094,19 +2094,21 @@ namespace SourceCodeSync
                     // Try to find and remove the corresponding code line in source
                     string normalizedCodeLineToRemove = NormalizeCodeLine(commentInfo.CommentLine);
                     bool lineRemoved = false;
+                    int matchCount = 0;
                     for (int i = 0; i < sourceLines.Count; i++)
                     {
-                        string sourceTrimmed = sourceLines[i].Trim();
-                        if (sourceTrimmed.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase) ||
-                            sourceTrimmed.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase))
-                        {
-                            continue;
-                        }
-
                         string normalizedSourceLine = NormalizeCodeLine(sourceLines[i]);
                         if (normalizedSourceLine != null &&
                             string.Compare(normalizedSourceLine, normalizedCodeLineToRemove, StringComparison.Ordinal) == 0)
                         {
+                            string sourceTrimmed = sourceLines[i].Trim();
+                            if (sourceTrimmed.StartsWith(_commentedRemoveCodeMarker, StringComparison.OrdinalIgnoreCase) ||
+                                sourceTrimmed.StartsWith(_commentedAddCodeMarker, StringComparison.OrdinalIgnoreCase))
+                            {
+                                matchCount++;
+                                continue;
+                            }
+
                             string precedingLine = commentInfo.PrecedingCodeLine;
                             string followingLine = commentInfo.FollowingCodeLine;
                             // Verify context lines match
@@ -2117,15 +2119,24 @@ namespace SourceCodeSync
                                 followingLine == null ||
                                 (i + 1 < sourceLines.Count && string.Compare(NormalizeCodeLine(sourceLines[i + 1]), followingLine, StringComparison.Ordinal) == 0);
 
-                            int matchCount = normalizedLines.Count(line => string.Compare(line, normalizedSourceLine, StringComparison.Ordinal) == 0);
+                            int matchLines = normalizedLines.Count(line => string.Compare(line, normalizedSourceLine, StringComparison.Ordinal) == 0);
                             bool validLine = precedingMatches || followingMatches;
-                            if (matchCount > 1)
+                            if (matchLines > 1)
                             {
                                 validLine = precedingMatches && followingMatches;
                             }
 
                             if (validLine)
                             {
+                                if (commentInfo.Index != null)
+                                {
+                                    if (commentInfo.Index != matchCount)
+                                    {
+                                        matchCount++;
+                                        continue;
+                                    }
+                                }
+
                                 // Replace the code line with the comment line
                                 sourceLines[i] = commentInfo.CommentLine;
                                 lineRemoved = true;
