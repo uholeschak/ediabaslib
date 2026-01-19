@@ -1373,7 +1373,7 @@ namespace SourceCodeSync
         /// <summary>
         /// Checks if a trivia list contains special trivia
         /// </summary>
-        public static bool HasSpecialTrivia(SyntaxTriviaList triviaList, bool includeComments = true, bool includePreprocessor = true)
+        public static bool HasSpecialTrivia(SyntaxTriviaList triviaList, bool includeComments = true, bool includePreprocessor = false)
         {
             if (includeComments)
             {
