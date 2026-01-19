@@ -12,38 +12,57 @@ namespace PsdzClient.Programming
     {
         public static IBusObject MapToBus(PsdzBus psdzBus)
         {
+//[+] #if OLD_PSDZ_BUS
 #if OLD_PSDZ_BUS
-            int id = (int)psdzBus;
-            string name = Enum.GetName(typeof(PsdzBus), psdzBus) ?? "UNKNOWN";
-            return new BusObject(id, name);
+//[+] int id = (int)psdzBus;
+int id = (int)psdzBus;
+//[+] string name = Enum.GetName(typeof(PsdzBus), psdzBus) ?? "UNKNOWN";
+string name = Enum.GetName(typeof(PsdzBus), psdzBus) ?? "UNKNOWN";
+//[+] return new BusObject(id, name);
+return new BusObject(id, name);
+//[+] #else
 #else
             if (psdzBus == null)
             {
                 return BusObject.Unknown;
             }
+
             return new BusObject(psdzBus.Id, psdzBus.Name, psdzBus.DirectAccess);
+//[+] #endif
 #endif
         }
 
         public static PsdzBus MapToPsdzBus(IBusObject bus)
         {
+//[+] #if OLD_PSDZ_BUS
 #if OLD_PSDZ_BUS
-            if (bus == null)
-            {
-                return PsdzBus.Unknown;
-            }
-
-            if (!Enum.TryParse(bus.Name, true, out PsdzBus result))
-            {
-                return PsdzBus.Unknown;
-            }
-            return result;
+//[+] if (bus == null)
+if (bus == null)
+//[+] {
+{
+//[+] return PsdzBus.Unknown;
+return PsdzBus.Unknown;
+//[+] }
+}
+//[+] if (!Enum.TryParse(bus.Name, true, out PsdzBus result))
+if (!Enum.TryParse(bus.Name, true, out PsdzBus result))
+//[+] {
+{
+//[+] return PsdzBus.Unknown;
+return PsdzBus.Unknown;
+//[+] }
+}
+//[+] return result;
+return result;
+//[+] #else
 #else
             if (bus == null)
             {
                 return PsdzBus.BUSNAME_UNKNOWN;
             }
+
             return new PsdzBus(bus.Id, bus.Name, bus.DirectAddress);
+//[+] #endif
 #endif
         }
     }
