@@ -14,6 +14,8 @@ namespace PsdzClient
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         static extern int AddDllDirectory(string NewDirectory);
 
+        public const string SqliteLibName = "e_sqlite3mc";
+
         private static readonly ILog log = LogManager.GetLogger(typeof(SqlLoader));
 
         private static readonly string[] _testTypes =
@@ -76,17 +78,21 @@ namespace PsdzClient
                         if (!string.IsNullOrEmpty(assemblyDir))
                         {
                             string libPath = GetLibPath(assemblyDir);
-                            AddDllDirectory(libPath);
-
-                            NativeLibrary.SetDllImportResolver(typeof(SQLite3Provider_e_sqlite3mc).Assembly, (name, assembly, path) =>
+                            string dllDir = Path.GetDirectoryName(libPath);
+                            if (!string.IsNullOrEmpty(dllDir))
                             {
-                                IntPtr libHandle = IntPtr.Zero;
-                                if (string.Compare(name, "e_sqlite3mc", StringComparison.OrdinalIgnoreCase) == 0)
+                                AddDllDirectory(dllDir);
+
+                                NativeLibrary.SetDllImportResolver(typeof(SQLite3Provider_e_sqlite3mc).Assembly, (name, assembly, path) =>
                                 {
-                                    libHandle = NativeLibrary.Load(name, assembly, DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.UserDirectories);
-                                }
-                                return libHandle;
-                            });
+                                    IntPtr libHandle = IntPtr.Zero;
+                                    if (string.Compare(name, SqliteLibName, StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        libHandle = NativeLibrary.Load(name, assembly, DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.UserDirectories);
+                                    }
+                                    return libHandle;
+                                });
+                            }
                         }
                     }
                     catch (Exception e)
@@ -153,7 +159,7 @@ namespace PsdzClient
         {
             string ridBack = (IntPtr.Size == 8) ? "x64" : "x86";
             string rid = "win-" + ridBack;
-            return Path.Combine(path, "runtimes", rid, "native", "e_sqlite3mc");
+            return Path.Combine(path, "runtimes", rid, "native", SqliteLibName);
         }
 
 #if !NET
