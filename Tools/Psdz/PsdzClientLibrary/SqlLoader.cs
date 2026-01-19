@@ -27,7 +27,9 @@ namespace PsdzClient
         };
 
         private static bool _isPatched;
-        private static IntPtr _dllCookie = IntPtr.Zero;
+#if NET
+        private static IntPtr _dllDirCookie = IntPtr.Zero;
+#endif
 
         public static bool PatchLoader(Harmony harmony)
         {
@@ -75,7 +77,7 @@ namespace PsdzClient
 #if NET
                     try
                     {
-                        if (_dllCookie == IntPtr.Zero)
+                        if (_dllDirCookie == IntPtr.Zero)
                         {
                             string assemblyDir = Path.GetDirectoryName(typeof(SqliteConnection).Assembly.Location);
                             if (!string.IsNullOrEmpty(assemblyDir))
@@ -84,8 +86,8 @@ namespace PsdzClient
                                 string dllDir = Path.GetDirectoryName(libPath);
                                 if (!string.IsNullOrEmpty(dllDir))
                                 {
-                                    _dllCookie = AddDllDirectory(dllDir);
-                                    if (_dllCookie != IntPtr.Zero)
+                                    _dllDirCookie = AddDllDirectory(dllDir);
+                                    if (_dllDirCookie != IntPtr.Zero)
                                     {
                                         NativeLibrary.SetDllImportResolver(typeof(SQLite3Provider_e_sqlite3mc).Assembly, (name, assembly, path) =>
                                         {
