@@ -6,7 +6,6 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using EdiabasLib;
 
 namespace PsdzClient
 {
@@ -73,7 +72,7 @@ namespace PsdzClient
 #if NET
                     try
                     {
-                        string assemblyDir = EdiabasNet.AssemblyDirectory;
+                        string assemblyDir = Path.GetDirectoryName(typeof(SqliteConnection).Assembly.Location);
                         if (!string.IsNullOrEmpty(assemblyDir))
                         {
                             string libPath = GetLibPath(assemblyDir);
@@ -160,10 +159,12 @@ namespace PsdzClient
 #if !NET
         public static void Init()
         {
-            string assemblyDir = EdiabasNet.AssemblyDirectory;
-            if (!string.IsNullOrEmpty(assemblyDir))
+            string codeBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().CodeBase);
+            if (!string.IsNullOrEmpty(codeBase))
             {
-                string libPath = GetLibPath(assemblyDir);
+                UriBuilder uriBuilder = new UriBuilder(codeBase);
+                string path = Uri.UnescapeDataString(new Uri(uriBuilder.Path).LocalPath);
+                string libPath = GetLibPath(path);
                 DoDynamic_cdecl(libPath, NativeLibrary.WHERE_PLAIN);
             }
         }
