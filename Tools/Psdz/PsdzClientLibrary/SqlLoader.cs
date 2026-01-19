@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using EdiabasLib;
 
 namespace PsdzClient
 {
@@ -72,7 +73,7 @@ namespace PsdzClient
 #if NET
                     try
                     {
-                        string assemblyDir = AssemblyDirectory;
+                        string assemblyDir = EdiabasNet.AssemblyDirectory;
                         if (!string.IsNullOrEmpty(assemblyDir))
                         {
                             string libPath = GetLibPath(assemblyDir);
@@ -149,30 +150,6 @@ namespace PsdzClient
             return true;
         }
 
-        public static string AssemblyDirectory
-        {
-            get
-            {
-#if NET
-                string location = Assembly.GetExecutingAssembly().Location;
-                if (string.IsNullOrEmpty(location) || !File.Exists(location))
-                {
-                    return null;
-                }
-                return Path.GetDirectoryName(location);
-#else
-                string codeBase = Assembly.GetExecutingAssembly().CodeBase;
-                UriBuilder uri = new UriBuilder(codeBase);
-                string path = Uri.UnescapeDataString(uri.Path);
-                if (string.IsNullOrEmpty(path) || !File.Exists(path))
-                {
-                    return null;
-                }
-                return Path.GetDirectoryName(path);
-#endif
-            }
-        }
-
         private static string GetLibPath(string path)
         {
             string ridBack = (IntPtr.Size == 8) ? "x64" : "x86";
@@ -183,7 +160,7 @@ namespace PsdzClient
 #if !NET
         public static void Init()
         {
-            string assemblyDir = AssemblyDirectory;
+            string assemblyDir = EdiabasNet.AssemblyDirectory;
             if (!string.IsNullOrEmpty(assemblyDir))
             {
                 string libPath = GetLibPath(assemblyDir);
