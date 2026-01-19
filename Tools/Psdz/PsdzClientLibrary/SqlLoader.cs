@@ -12,7 +12,7 @@ namespace PsdzClient
     public static class SqlLoader
     {
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        static extern int AddDllDirectory(string NewDirectory);
+        static extern IntPtr AddDllDirectory(string NewDirectory);
 
         public const string SqliteLibName = "e_sqlite3mc";
 
@@ -27,6 +27,7 @@ namespace PsdzClient
         };
 
         private static bool _isPatched;
+        private static IntPtr _dllCookie = IntPtr.Zero;
 
         public static bool PatchLoader(Harmony harmony)
         {
@@ -74,31 +75,35 @@ namespace PsdzClient
 #if NET
                     try
                     {
-                        string assemblyDir = Path.GetDirectoryName(typeof(SqliteConnection).Assembly.Location);
-                        if (!string.IsNullOrEmpty(assemblyDir))
+                        if (_dllCookie == IntPtr.Zero)
                         {
-                            string libPath = GetLibPath(assemblyDir);
-                            string dllDir = Path.GetDirectoryName(libPath);
-                            if (!string.IsNullOrEmpty(dllDir))
+                            string assemblyDir = Path.GetDirectoryName(typeof(SqliteConnection).Assembly.Location);
+                            if (!string.IsNullOrEmpty(assemblyDir))
                             {
-                                AddDllDirectory(dllDir);
-
-                                NativeLibrary.SetDllImportResolver(typeof(SQLite3Provider_e_sqlite3mc).Assembly, (name, assembly, path) =>
+                                string libPath = GetLibPath(assemblyDir);
+                                string dllDir = Path.GetDirectoryName(libPath);
+                                if (!string.IsNullOrEmpty(dllDir))
                                 {
-                                    IntPtr libHandle = IntPtr.Zero;
-                                    if (string.Compare(name, SqliteLibName, StringComparison.OrdinalIgnoreCase) == 0)
+                                    _dllCookie = AddDllDirectory(dllDir);
+                                    if (_dllCookie != IntPtr.Zero)
                                     {
-                                        libHandle = NativeLibrary.Load(name, assembly, DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.UserDirectories);
+                                        NativeLibrary.SetDllImportResolver(typeof(SQLite3Provider_e_sqlite3mc).Assembly, (name, assembly, path) =>
+                                        {
+                                            IntPtr libHandle = IntPtr.Zero;
+                                            if (string.Compare(name, SqliteLibName, StringComparison.OrdinalIgnoreCase) == 0)
+                                            {
+                                                libHandle = NativeLibrary.Load(name, assembly, DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.UserDirectories);
+                                            }
+                                            return libHandle;
+                                        });
                                     }
-                                    return libHandle;
-                                });
+                                }
                             }
                         }
                     }
                     catch (Exception e)
                     {
                         log.ErrorFormat("PatchLoader: SetDllImportResolver Exception: {0}", e.Message);
-                        return false;
                     }
 #else
                     MethodInfo methodCallSqliteInitPrefix = typeof(SqlLoader).GetMethod("CallSqliteInitPrefix", BindingFlags.NonPublic | BindingFlags.Static);
