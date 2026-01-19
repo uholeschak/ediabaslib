@@ -15,7 +15,7 @@ namespace SourceCodeSync
     internal class Program
     {
         /// <summary>
-        /// Represents a //[-] comment line with its context (preceding and following lines)
+        /// Represents a //[-]//[+] comment line with its context (preceding and following lines)
         /// </summary>
         private class CommentedCodeLineInfo
         {
@@ -1615,7 +1615,7 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Merges source class into destination, preserving marked members and //[-] comments
+        /// Merges source class into destination, preserving marked members and //[-]//[+] comments
         /// </summary>
         public static ClassDeclarationSyntax MergeClassPreservingMarked(
             ClassDeclarationSyntax destClass,
@@ -1683,7 +1683,7 @@ namespace SourceCodeSync
 
                         if (destMember != null)
                         {
-                            // Additionally preserve //[-] comments inside body
+                            // Additionally preserve //[-]//[+] comments inside body
                             string className = GetClassName(destClass);
                             memberToAdd = PreserveCommentedCodeInsideBody(destMember, memberToAdd, className);
                         }
@@ -1695,11 +1695,11 @@ namespace SourceCodeSync
                 }
                 else
                 {
-                    // Not preserved - use source, but preserve //[-] comments inside body
+                    // Not preserved - use source, but preserve //[-]//[+] comments inside body
                     MemberDeclarationSyntax memberToAdd = sourceMember;
                     if (destMember != null)
                     {
-                        // Then preserve //[-] comments inside body
+                        // Then preserve //[-]//[+] comments inside body
                         string className = GetClassName(destClass);
                         memberToAdd = PreserveCommentedCodeInsideBody(destMember, memberToAdd, className);
                     }
@@ -1818,14 +1818,14 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Preserves //[-] commented code lines inside method bodies and other members
+        /// Preserves //[-]//[+] commented code lines inside method bodies and other members
         /// </summary>
         private static MemberDeclarationSyntax PreserveCommentedCodeInsideBody(
             MemberDeclarationSyntax destMember,
             MemberDeclarationSyntax sourceMember,
             string className)
         {
-            // Get all //[-] comments from destination member (including inside body)
+            // Get all //[-]//[+] comments from destination member (including inside body)
             List<string> destCommentedLines = GetAllCommentedCodeLines(destMember);
 
             if (!destCommentedLines.Any())
@@ -1839,7 +1839,7 @@ namespace SourceCodeSync
             string sourceCode = sourceMember.ToFullString();
             string destCode = destMember.ToFullString();
 
-            // Parse dest code to find //[-] lines and their context
+            // Parse dest code to find //[-]//[+] lines and their context
             List<CommentedCodeLineInfo> linesToPreserve = FindCommentedCodeLinesWithContext(destCode);
 
             if (!linesToPreserve.Any())
@@ -1847,7 +1847,7 @@ namespace SourceCodeSync
                 return sourceMember;
             }
 
-            // Try to insert //[-] lines into source code at appropriate positions
+            // Try to insert //[-]//[+] lines into source code at appropriate positions
             string mergedCode = MergeCommentedCodeLines(sourceCode, linesToPreserve, locationInfo);
 
             if (mergedCode == sourceCode)
@@ -1903,7 +1903,7 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Gets all //[-] commented code lines from a member, including inside bodies
+        /// Gets all //[-]//[+] commented code lines from a member, including inside bodies
         /// </summary>
         private static List<string> GetAllCommentedCodeLines(SyntaxNode member)
         {
@@ -1926,7 +1926,7 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Finds all //[-] comment lines with their surrounding context
+        /// Finds all //[-]//[+] comment lines with their surrounding context
         /// </summary>
         private static List<CommentedCodeLineInfo> FindCommentedCodeLinesWithContext(string code)
         {
@@ -2072,7 +2072,7 @@ namespace SourceCodeSync
         }
 
         /// <summary>
-        /// Merges //[-] commented code lines from dest into source code
+        /// Merges //[-]//[+] commented code lines from dest into source code
         /// </summary>
         private static string MergeCommentedCodeLines(string sourceCode, List<CommentedCodeLineInfo> linesToPreserve, string locationInfo)
         {
