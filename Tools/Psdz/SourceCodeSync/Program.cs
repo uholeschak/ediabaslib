@@ -1802,12 +1802,6 @@ namespace SourceCodeSync
                 }
             }
 
-            // Check for special comments
-            if (HasPreserveComment(member))
-            {
-                return true;
-            }
-
             // Check for naming convention
             if (HasPreserveNamingConvention(member))
             {
@@ -2332,29 +2326,6 @@ namespace SourceCodeSync
             }
 
             return $"{method.Identifier.Text}{typeParameterSuffix}";
-        }
-
-        /// <summary>
-        /// Checks if member has preserve comment markers
-        /// </summary>
-        public static bool HasPreserveComment(SyntaxNode member)
-        {
-            foreach (SyntaxTrivia t in member.DescendantTrivia(descendIntoTrivia: true))
-            {
-                if (t.IsKind(SyntaxKind.SingleLineCommentTrivia) ||
-                    t.IsKind(SyntaxKind.MultiLineCommentTrivia) ||
-                    t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia) ||
-                    t.IsKind(SyntaxKind.MultiLineDocumentationCommentTrivia))
-                {
-                    string comment = t.ToString().ToUpperInvariant();
-                    if (comment.Contains("[PRESERVE]"))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
         }
 
         /// <summary>
