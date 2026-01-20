@@ -1,11 +1,13 @@
-﻿using System.Linq;
-using BMW.Rheingold.Psdz;
+﻿using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient;
+using System.Linq;
 
 namespace BMW.Rheingold.Psdz
 {
     internal static class EcuMapper
     {
+        [PreserveSource(Hint = "Added compiler switch", SignatureModified = true)]
         public static IPsdzEcu Map(EcuModel ecuModel)
         {
             if (ecuModel == null)
@@ -17,6 +19,8 @@ namespace BMW.Rheingold.Psdz
             {
                 BaseVariant = ecuModel.BaseVariant,
                 BnTnName = ecuModel.BnTnName,
+//[+] #if !OLD_PSDZ_BUS
+#if !OLD_PSDZ_BUS
                 BusConnections = ecuModel.BusConnections?.Select((BusNameModel bus) => new PsdzBus { Id = bus.Id, Name = bus.Name, DirectAccess = bus.DirectAccess }).ToList(),
                 DiagnosticBus = ((ecuModel.DiagnosticBus != null) ? new PsdzBus
                 {
@@ -26,6 +30,8 @@ namespace BMW.Rheingold.Psdz
                 }
 
                 : null),
+//[+] #endif
+#endif
                 EcuDetailInfo = EcuDetailInfoMapper.Map(ecuModel.EcuDetailInfo),
                 EcuStatusInfo = EcuStatusInfoMapper.Map(ecuModel.EcuStatusInfo),
                 EcuVariant = ecuModel.EcuVariant,
@@ -58,6 +64,7 @@ namespace BMW.Rheingold.Psdz
             return psdzEcu;
         }
 
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public static EcuModel Map(IPsdzEcu ecu)
         {
             if (ecu == null)
@@ -94,6 +101,8 @@ namespace BMW.Rheingold.Psdz
         {
             ecuModel.BaseVariant = ecu.BaseVariant;
             ecuModel.BnTnName = ecu.BnTnName;
+//[+] #if !OLD_PSDZ_BUS
+#if !OLD_PSDZ_BUS
             ecuModel.BusConnections = ecu.BusConnections?.Select((PsdzBus bus) => new BusNameModel { Id = bus.Id, Name = bus.Name, DirectAccess = bus.DirectAccess }).ToList();
             ecuModel.DiagnosticBus = ((ecu.DiagnosticBus != null) ? new BusNameModel
             {
@@ -103,6 +112,8 @@ namespace BMW.Rheingold.Psdz
             }
 
             : null);
+//[+] #endif
+#endif
             ecuModel.EcuDetailInfo = EcuDetailInfoMapper.Map(ecu.EcuDetailInfo);
             ecuModel.EcuStatusInfo = EcuStatusInfoMapper.Map(ecu.EcuStatusInfo);
             ecuModel.EcuVariant = ecu.EcuVariant;
