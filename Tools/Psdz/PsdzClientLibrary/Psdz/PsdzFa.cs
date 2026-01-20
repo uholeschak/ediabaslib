@@ -16,14 +16,30 @@ namespace BMW.Rheingold.Psdz.Model
         {
             if (obj is PsdzFa psdzFa && base.Equals((object)psdzFa))
             {
+//[+] #if OLD_PSDZ_FA
+#if OLD_PSDZ_FA
+//[+] return string.Equals(Vin, psdzFa.Vin);
+return string.Equals(Vin, psdzFa.Vin);
+//[+] #else
+#else
                 return string.Equals(base.Vin, psdzFa.Vin);
+//[+] #endif
+#endif
             }
             return false;
         }
 
         public override int GetHashCode()
         {
+//[+] #if OLD_PSDZ_FA
+#if OLD_PSDZ_FA
+//[+] return (base.GetHashCode() * 397) ^ ((Vin != null) ? Vin.GetHashCode() : 0);
+return (base.GetHashCode() * 397) ^ ((Vin != null) ? Vin.GetHashCode() : 0);
+//[+] #else
+#else
             return (base.GetHashCode() * 397) ^ ((base.Vin != null) ? base.Vin.GetHashCode() : 0);
+//[+] #endif
+#endif
         }
     }
 }
