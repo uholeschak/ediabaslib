@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Net;
 using System.Windows.Forms;
 
@@ -52,6 +53,28 @@ namespace PsdzClient.Controls
                         textBox4.Text = addrBytes[3].ToString();
                     }
                 }
+            }
+        }
+
+        protected override void OnEnabledChanged(EventArgs e)
+        {
+            base.OnEnabledChanged(e);
+            UpdateBackgroundColor();
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            UpdateBackgroundColor();
+        }
+
+        private void UpdateBackgroundColor()
+        {
+            Color backColor = Enabled ? SystemColors.Window : SystemColors.Control;
+
+            if (panel != null)
+            {
+                panel.BackColor = backColor;
             }
         }
 
