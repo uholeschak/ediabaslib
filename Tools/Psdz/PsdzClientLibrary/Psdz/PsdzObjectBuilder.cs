@@ -190,6 +190,7 @@ namespace BMW.Rheingold.Psdz
             };
         }
 
+        [PreserveSource(Hint = "Added compiler switch", SignatureModified = true)]
         public IPsdzFa BuildFa(IPsdzStandardFa fa, string vin17)
         {
             if (fa == null)
@@ -219,6 +220,7 @@ namespace BMW.Rheingold.Psdz
             return ValidateBuiltFaObjectViaPsdz(fa2);
         }
 
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IPsdzFa BuildFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faInput, string vin17)
         {
             if (faInput == null)
