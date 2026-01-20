@@ -27,8 +27,8 @@ namespace BMW.Rheingold.Psdz
                 Salapas = model.Salapas,
                 Type = model.Type,
                 Zeitkriterium = model.Zeitkriterium,
-//[+] #if OLD_PSDZ_FA
-#if OLD_PSDZ_FA
+//[+] #if !OLD_PSDZ_FA
+#if !OLD_PSDZ_FA
                 Vin = model.Vin
 //[+] #endif
 #endif
@@ -56,8 +56,8 @@ namespace BMW.Rheingold.Psdz
                 Salapas = psdzStandardFa.Salapas.ToList(),
                 Type = psdzStandardFa.Type,
                 Zeitkriterium = psdzStandardFa.Zeitkriterium,
-//[+] #if OLD_PSDZ_FA
-#if OLD_PSDZ_FA
+//[+] #if !OLD_PSDZ_FA
+#if !OLD_PSDZ_FA
                 Vin = psdzStandardFa.Vin
 //[+] #endif
 #endif
