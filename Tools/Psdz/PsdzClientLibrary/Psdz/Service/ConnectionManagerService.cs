@@ -208,6 +208,8 @@ namespace BMW.Rheingold.Psdz
                 {
                     Project = project,
                     VehicleInfo = vehicleInfo,
+//[+] #if !OLD_PSDZ_BUS
+#if !OLD_PSDZ_BUS
                     BusName = ((bus != null) ? new BusNameModel
                     {
                         Id = bus.Id,
@@ -216,6 +218,8 @@ namespace BMW.Rheingold.Psdz
                     }
 
                     : null),
+//[+] #endif
+#endif
                     Baureihe = baureihe,
                     BauIstufe = bauIstufe,
                     LogLevel = _logLevel,
@@ -254,6 +258,8 @@ namespace BMW.Rheingold.Psdz
             {
                 Project = project,
                 VehicleInfo = vehicleInfo,
+//[+] #if !OLD_PSDZ_BUS
+#if !OLD_PSDZ_BUS
                 BusName = ((bus != null) ? new BusNameModel
                 {
                     Id = bus.Id,
@@ -262,6 +268,8 @@ namespace BMW.Rheingold.Psdz
                 }
 
                 : null),
+//[+] #endif
+#endif
                 Baureihe = baureihe,
                 BauIstufe = bauIstufe,
                 LogLevel = _logLevel
@@ -283,6 +291,8 @@ namespace BMW.Rheingold.Psdz
             {
                 Project = project,
                 VehicleInfo = vehicleInfo,
+//[+] #if !OLD_PSDZ_BUS
+#if !OLD_PSDZ_BUS
                 BusName = ((bus != null) ? new BusNameModel
                 {
                     Id = bus.Id,
@@ -291,6 +301,8 @@ namespace BMW.Rheingold.Psdz
                 }
 
                 : null),
+//[+] #endif
+#endif
                 Baureihe = baureihe,
                 BauIstufe = bauIstufe,
                 LogLevel = _logLevel
