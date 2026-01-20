@@ -1,10 +1,12 @@
-﻿using System.Linq;
-using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz.Model;
+using PsdzClient;
+using System.Linq;
 
 namespace BMW.Rheingold.Psdz
 {
     internal static class StandardFaMapper
     {
+        [PreserveSource(Hint = "Added compiler switch", SignatureModified = true)]
         public static IPsdzStandardFa Map(StandardFaModel model)
         {
             if (model == null)
@@ -25,10 +27,15 @@ namespace BMW.Rheingold.Psdz
                 Salapas = model.Salapas,
                 Type = model.Type,
                 Zeitkriterium = model.Zeitkriterium,
+//[+] #if OLD_PSDZ_BUS
+#if OLD_PSDZ_BUS
                 Vin = model.Vin
+//[+] #endif
+#endif
             };
         }
 
+        [PreserveSource(Hint = "Added compiler switch", SignatureModified = true)]
         public static StandardFaModel Map(IPsdzStandardFa psdzStandardFa)
         {
             if (psdzStandardFa == null)
@@ -49,7 +56,11 @@ namespace BMW.Rheingold.Psdz
                 Salapas = psdzStandardFa.Salapas.ToList(),
                 Type = psdzStandardFa.Type,
                 Zeitkriterium = psdzStandardFa.Zeitkriterium,
+//[+] #if OLD_PSDZ_BUS
+#if OLD_PSDZ_BUS
                 Vin = psdzStandardFa.Vin
+//[+] #endif
+#endif
             };
         }
     }
