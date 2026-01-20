@@ -199,7 +199,11 @@ namespace BMW.Rheingold.Psdz
 
             PsdzFa fa2 = new PsdzFa
             {
+//[+] #if !OLD_PSDZ_FA
+#if !OLD_PSDZ_FA
                 Vin = (string.IsNullOrEmpty(fa.Vin) ? vin17 : fa.Vin),
+//[+] #endif
+#endif
                 IsValid = fa.IsValid,
                 FaVersion = fa.FaVersion,
                 Entwicklungsbaureihe = fa.Entwicklungsbaureihe,
@@ -257,7 +261,11 @@ namespace BMW.Rheingold.Psdz
                     psdzStandardFa.Zeitkriterium = vehicleContext.FA.C_DATE;
                     psdzStandardFa.Lackcode = vehicleContext.FA.LACK;
                     psdzStandardFa.Polstercode = vehicleContext.FA.POLSTER;
+//[+] #if !OLD_PSDZ_FA
+#if !OLD_PSDZ_FA
                     psdzStandardFa.Vin = vehicleContext.VIN17;
+//[+] #endif
+#endif
                     IList<string> list = new List<string>();
                     foreach (string item in vehicleContext.FA.E_WORT)
                     {
