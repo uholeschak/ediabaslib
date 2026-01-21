@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using PsdzClient;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzAsamJobInputDictionary : IPsdzAsamJobInputDictionary
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         private IDictionary<string, object> jobParams = new Dictionary<string, object>();
 

@@ -803,16 +803,19 @@ namespace SourceCodeSync
                     if (sourceClass != null)
                     {
                         ClassDeclarationSyntax sourceClassCopy = sourceClass;
-                        bool hasContract = HasContractAttribute(cls.AttributeLists);
-                        bool sourceHasContract = HasContractAttribute(sourceClassCopy.AttributeLists);
-
-                        if (hasContract && !sourceHasContract)
+                        bool hasSpecialSourceAttribute = HasSpecialSourceAttribute(cls.AttributeLists);
+                        if (!hasSpecialSourceAttribute)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Warning)
+                            bool hasContract = HasContractAttribute(cls.AttributeLists);
+                            bool sourceHasContract = HasContractAttribute(sourceClassCopy.AttributeLists);
+                            if (hasContract && !sourceHasContract)
                             {
-                                Console.WriteLine("Skipping class {0} with removed Contract from file: {1}", classNameFull, fileName);
+                                if (_verbosity >= Options.VerbosityOption.Warning)
+                                {
+                                    Console.WriteLine("Skipping class {0} with removed Contract from file: {1}", classNameFull, fileName);
+                                }
+                                continue;
                             }
-                            continue;
                         }
 
                         bool specialAttribute = HasSpecialSourceAttribute(cls.AttributeLists);
