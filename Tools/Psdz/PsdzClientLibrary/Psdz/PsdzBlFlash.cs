@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzBlFlash : PsdzTaCategory
     {
