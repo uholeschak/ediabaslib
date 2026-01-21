@@ -788,7 +788,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Warning)
                         {
-                            Console.WriteLine("Skipping class {0} from file: {1}", classNameFull, fileName);
+                            Console.WriteLine("Skipping class {0} from file: {1}", classNameFull, Path.GetFileName(fileName));
                         }
                         continue;
                     }
@@ -813,7 +813,7 @@ namespace SourceCodeSync
                             {
                                 if (_verbosity >= Options.VerbosityOption.Important)
                                 {
-                                    Console.WriteLine("Skipping class {0} with removed Contract from file: {1}", classNameFull, fileName);
+                                    Console.WriteLine("Skipping class {0} with removed Contract from file: {1}", classNameFull, Path.GetFileName(fileName));
                                 }
                                 continue;
                             }
