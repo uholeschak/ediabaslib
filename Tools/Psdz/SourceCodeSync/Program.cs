@@ -144,6 +144,7 @@ namespace SourceCodeSync
             {
                 None,
                 Error,
+                Important,
                 Warning,
                 Info,
                 Debug
@@ -810,7 +811,7 @@ namespace SourceCodeSync
                             bool sourceHasContract = HasContractAttribute(sourceClassCopy.AttributeLists);
                             if (hasContract && !sourceHasContract)
                             {
-                                if (_verbosity >= Options.VerbosityOption.Warning)
+                                if (_verbosity >= Options.VerbosityOption.Important)
                                 {
                                     Console.WriteLine("Skipping class {0} with removed Contract from file: {1}", classNameFull, fileName);
                                 }
