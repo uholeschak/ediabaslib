@@ -1,7 +1,9 @@
-﻿using System.Runtime.Serialization;
+﻿using PsdzClient;
+using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzEcuMirrorDeploy : PsdzTaCategory
     {
