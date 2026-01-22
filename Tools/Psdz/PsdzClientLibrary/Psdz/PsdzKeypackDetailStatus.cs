@@ -1,18 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Certificate
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzKeypackDetailStatus
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuCertCheckingStatus? KeyPackStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string KeyId { get; set; }
     }

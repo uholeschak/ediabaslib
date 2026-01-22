@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Kds
 {
+    [PreserveSource(AttributesModified = true)]
     [KnownType(typeof(PsdzKdsIdCto))]
     [DataContract]
     public class PsdzKdsQuickCheckResultCto : IPsdzKdsQuickCheckResultCto
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzKdsIdCto KdsId { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzQuickCheckResultEto QuickCheckResult { get; set; }
     }
