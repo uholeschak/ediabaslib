@@ -1,12 +1,12 @@
-﻿using BMW.Rheingold.Psdz.Model.Tal;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzHddUpdateTA : PsdzTa
     {
-        [DataMember]
         public long SecondsToCompletion { get; set; }
     }
 }
