@@ -1,15 +1,14 @@
-﻿using System;
+﻿using PsdzClient;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzIdLightBasisTa : PsdzTa
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IEnumerable<string> Ids { get; set; }
     }

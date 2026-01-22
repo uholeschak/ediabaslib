@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using PsdzClient;
+using System;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzIstufe : IPsdzIstufe, IComparable<IPsdzIstufe>
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public bool IsValid { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = true)]
         public string Value { get; set; }
 
