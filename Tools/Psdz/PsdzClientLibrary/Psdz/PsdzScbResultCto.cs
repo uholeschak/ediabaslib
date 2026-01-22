@@ -1,13 +1,11 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Model.Sfa;
+using PsdzClient;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model.Sfa;
 
 namespace BMW.Rheingold.Psdz.Model.SecureCoding
 {
+    [PreserveSource(AttributesModified = true)]
     [KnownType(typeof(PsdzScbResultStatusCto))]
     [DataContract]
     [KnownType(typeof(PsdzSecurityBackendRequestFailureCto))]

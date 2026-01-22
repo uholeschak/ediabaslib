@@ -1,9 +1,6 @@
-﻿using System;
+﻿using PsdzClient;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Certificate
 {
@@ -45,21 +42,27 @@ namespace BMW.Rheingold.Psdz.Model.Certificate
         KeyIdDenied
     }
 
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzSecurityCalculatedObjectCto
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzCertMemoryObject MemoryObject { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzSecurityCalculationOverallStatus OverallStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IDictionary<string, PsdzCertCalculationDetailedStatus> RoleStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IDictionary<string, PsdzCertCalculationDetailedStatus> KeyIdStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string ServicePack { get; set; }
     }
