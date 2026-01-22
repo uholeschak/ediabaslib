@@ -1,14 +1,18 @@
-﻿using System.Runtime.Serialization;
+﻿using PsdzClient;
+using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model
 {
+    [PreserveSource(Hint = "Added OLD_PSDZ_FA")]
     [DataContract]
     public class PsdzFa : PsdzStandardFa, IPsdzFa, IPsdzStandardFa
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string AsXml { get; set; }
 
 #if OLD_PSDZ_FA
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Vin { get; set; }
 #endif
