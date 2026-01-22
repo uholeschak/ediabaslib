@@ -1,9 +1,7 @@
-﻿using System;
+﻿using PsdzClient;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Certificate
 {
@@ -15,24 +13,31 @@ namespace BMW.Rheingold.Psdz.Model.Certificate
         UnknownRequestId
     }
 
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzFetchBindingCalculationResult
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public int DurationOfLastRequest { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzSecurityCalculatedObjectCto[] CalculatedBindings { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzSecurityCalculatedObjectCto[] CalculatedCertificates { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzSecurityCalculatedObjectCto[] CalculatedKeypacks { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzBindingCalculationFailure[] Failures { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzBindingCalculationProgessStatus ProgressStatus { get; set; }
     }
