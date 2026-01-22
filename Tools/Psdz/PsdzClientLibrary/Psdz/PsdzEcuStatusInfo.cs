@@ -1,30 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Ecu
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzEcuStatusInfo : IPsdzEcuStatusInfo
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public byte ByteValue { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public bool HasIndividualData { get; set; }
 
         public override bool Equals(object obj)
         {
-            PsdzEcuStatusInfo psdzEcuStatusInfo = obj as PsdzEcuStatusInfo;
-            return psdzEcuStatusInfo != null && this.ByteValue == psdzEcuStatusInfo.ByteValue;
+            if (obj is PsdzEcuStatusInfo psdzEcuStatusInfo)
+            {
+                return ByteValue == psdzEcuStatusInfo.ByteValue;
+            }
+
+            return false;
         }
 
         public override int GetHashCode()
         {
-            return this.ByteValue.GetHashCode();
+            return ByteValue.GetHashCode();
         }
     }
 }
