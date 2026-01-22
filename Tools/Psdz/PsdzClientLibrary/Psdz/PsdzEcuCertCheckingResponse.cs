@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Model.Certificate
 {
@@ -29,43 +25,56 @@ namespace BMW.Rheingold.Psdz.Model.Certificate
         NotUsed
     }
 
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     [KnownType(typeof(PsdzEcuIdentifier))]
     public class PsdzEcuCertCheckingResponse
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzEcuIdentifier Ecu { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuCertCheckingStatus? CertificateStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuCertCheckingStatus? BindingsStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuCertCheckingStatus? OtherBindingsStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuCertCheckingStatus? OnlineCertificateStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuCertCheckingStatus? OnlineBindingsStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuCertCheckingStatus? KeyPackStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzBindingDetailsStatus[] BindingDetailStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzBindingDetailsStatus[] OnlineBindingDetailStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzOtherBindingDetailsStatus[] OtherBindingDetailStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzKeypackDetailStatus[] KeyPackDatailedStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string CreationTimestamp { get; set; }
     }

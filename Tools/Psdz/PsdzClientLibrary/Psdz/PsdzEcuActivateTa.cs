@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Model.Tal;
-using PsdzClient;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model.Tal

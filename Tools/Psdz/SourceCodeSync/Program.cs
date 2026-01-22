@@ -169,7 +169,7 @@ namespace SourceCodeSync
             public VerbosityOption Verbosity { get; set; }
         }
 
-        static Options.VerbosityOption _verbosity = Options.VerbosityOption.Error;
+        static Options.VerbosityOption _verbosity = Options.VerbosityOption.Important;
 
         static int Main(string[] args)
         {
