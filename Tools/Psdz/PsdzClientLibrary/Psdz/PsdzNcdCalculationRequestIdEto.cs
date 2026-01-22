@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.SecureCoding
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzNcdCalculationRequestIdEto : IPsdzNcdCalculationRequestIdEto
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string RequestId { get; set; }
     }
