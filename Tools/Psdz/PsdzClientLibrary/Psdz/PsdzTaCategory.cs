@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using PsdzClient;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     [KnownType(typeof(PsdzTa))]
     [KnownType(typeof(PsdzTaExecutionState))]
@@ -26,12 +28,15 @@ namespace BMW.Rheingold.Psdz.Model.Tal
     [KnownType(typeof(PsdzEcuPollTa))]
     public class PsdzTaCategory : IPsdzTaCategory
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public bool IsEmpty { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IEnumerable<IPsdzTa> Tas { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzTaExecutionState? ExecutionState { get; set; }
     }

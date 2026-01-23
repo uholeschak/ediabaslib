@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     [KnownType(typeof(PsdzSgbmId))]
     public class PsdzTa : PsdzTalElement, IPsdzTa, IPsdzTalElement
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzSgbmId SgbmId { get; set; }
     }

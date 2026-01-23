@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
@@ -15,13 +11,16 @@ namespace BMW.Rheingold.Psdz.Model.Tal
         MIRROR
     }
 
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     [KnownType(typeof(PsdzProtocol))]
     public class PsdzSwDeployTa : PsdzTa
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzProtocol? ActualProtocol { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzProtocol? PreferredProtocol { get; set; }
     }
