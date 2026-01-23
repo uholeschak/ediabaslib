@@ -1,13 +1,17 @@
-﻿using System.Runtime.Serialization;
+﻿using PsdzClient;
+using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzSvt : PsdzStandardSvt, IPsdzSvt, IPsdzStandardSvt
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public bool IsValid { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Vin { get; set; }
 

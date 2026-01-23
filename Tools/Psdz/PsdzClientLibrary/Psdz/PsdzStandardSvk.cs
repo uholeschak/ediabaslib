@@ -1,70 +1,60 @@
-﻿using System;
+﻿using PsdzClient;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Ecu
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     [KnownType(typeof(PsdzSgbmId))]
     public class PsdzStandardSvk : IPsdzStandardSvk
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public byte ProgDepChecked { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IEnumerable<IPsdzSgbmId> SgbmIds { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public byte SvkVersion { get; set; }
 
         public override bool Equals(object obj)
         {
-            PsdzStandardSvk psdzStandardSvk = obj as PsdzStandardSvk;
-            if (psdzStandardSvk == null)
+            if (!(obj is PsdzStandardSvk psdzStandardSvk))
             {
                 return false;
             }
-            if (this.ProgDepChecked != psdzStandardSvk.ProgDepChecked)
+
+            if (ProgDepChecked != psdzStandardSvk.ProgDepChecked)
             {
                 return false;
             }
-            if (this.SvkVersion != psdzStandardSvk.SvkVersion)
+
+            if (SvkVersion != psdzStandardSvk.SvkVersion)
             {
                 return false;
             }
-            if (this.SgbmIds == null)
+
+            if (SgbmIds != null)
             {
-                return psdzStandardSvk.SgbmIds == null;
+                if (psdzStandardSvk.SgbmIds != null)
+                {
+                    return SgbmIds.OrderBy((IPsdzSgbmId x) => x).SequenceEqual(psdzStandardSvk.SgbmIds.OrderBy((IPsdzSgbmId x) => x));
+                }
+
+                return false;
             }
-            if (psdzStandardSvk.SgbmIds != null)
-            {
-                return (from x in this.SgbmIds
-                    orderby x
-                    select x).SequenceEqual(from x in psdzStandardSvk.SgbmIds
-                    orderby x
-                    select x);
-            }
-            return false;
+
+            return psdzStandardSvk.SgbmIds == null;
         }
 
         public override int GetHashCode()
         {
-            int num = this.ProgDepChecked.GetHashCode() * 397;
-            int num2;
-            if (this.SgbmIds != null)
-            {
-                num2 = (from x in this.SgbmIds
-                    orderby x
-                    select x).Aggregate(17, (int current, IPsdzSgbmId sgbmId) => current * 397 ^ sgbmId.GetHashCode());
-            }
-            else
-            {
-                num2 = 0;
-            }
-            return (num ^ num2) * 397 ^ this.SvkVersion.GetHashCode();
+            return (((ProgDepChecked.GetHashCode() * 397) ^ ((SgbmIds != null) ? SgbmIds.OrderBy((IPsdzSgbmId x) => x).Aggregate(17, (int current, IPsdzSgbmId sgbmId) => (current * 397) ^ sgbmId.GetHashCode()) : 0)) * 397) ^ SvkVersion.GetHashCode();
         }
     }
 }

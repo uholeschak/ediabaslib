@@ -1,14 +1,18 @@
-﻿using System.Globalization;
+﻿using PsdzClient;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model.Swt
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzSwtApplicationId : IPsdzSwtApplicationId
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public int ApplicationNumber { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public int UpgradeIndex { get; set; }
 
