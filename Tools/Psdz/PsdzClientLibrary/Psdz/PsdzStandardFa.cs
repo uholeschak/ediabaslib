@@ -1,46 +1,60 @@
-﻿using System;
+﻿using PsdzClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model
 {
+    [PreserveSource(Hint = "Added OLD_PSDZ_FA")]
     [DataContract]
     public class PsdzStandardFa : IPsdzStandardFa
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string AsString { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IEnumerable<string> EWords { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Entwicklungsbaureihe { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public int FaVersion { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IEnumerable<string> HOWords { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public bool IsValid { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Lackcode { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Polstercode { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IEnumerable<string> Salapas { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Type { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Zeitkriterium { get; set; }
 #if !OLD_PSDZ_FA
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Vin { get; set; }
 #endif
@@ -64,42 +78,11 @@ namespace BMW.Rheingold.Psdz.Model
 
         public override int GetHashCode()
         {
-            int num = ((((((((((((this.FaVersion.GetHashCode() * 397) ^ ((this.Entwicklungsbaureihe != null) ? this.Entwicklungsbaureihe.GetHashCode() : 0)) * 397) ^ ((this.Type != null) ? this.Type.GetHashCode() : 0)) * 397) ^ ((this.Zeitkriterium != null) ? this.Zeitkriterium.GetHashCode() : 0)) * 397) ^ this.IsValid.GetHashCode()) * 397) ^ ((this.Lackcode != null) ? this.Lackcode.GetHashCode() : 0)) * 397) ^ ((this.Polstercode != null) ? this.Polstercode.GetHashCode() : 0)) * 397;
-            int num2;
-            if (this.EWords == null)
-            {
-                num2 = 0;
-            }
-            else
-            {
-                num2 = this.EWords.OrderBy((string x) => x).Aggregate(17, (int current, string sgbmId) => (current * 397) ^ sgbmId.ToLowerInvariant().GetHashCode());
-            }
-            int num3 = (num ^ num2) * 397;
-            int num4;
-            if (this.HOWords == null)
-            {
-                num4 = 0;
-            }
-            else
-            {
-                num4 = this.HOWords.OrderBy((string x) => x).Aggregate(17, (int current, string sgbmId) => (current * 397) ^ sgbmId.ToLowerInvariant().GetHashCode());
-            }
-            int num5 = (num3 ^ num4) * 397;
-            int num6;
-            if (this.Salapas == null)
-            {
-                num6 = 0;
-            }
-            else
-            {
-                num6 = this.Salapas.OrderBy((string x) => x).Aggregate(17, (int current, string sgbmId) => (current * 397) ^ sgbmId.ToLowerInvariant().GetHashCode());
-            }
-            int num7 = (num5 ^ num6) * 397;
-#if OLD_PSDZ_FA
-            return num7;
-#else
-            return num7 ^ ((this.Vin != null) ? this.Vin.GetHashCode() : 0);
+            return (((((((((((((((((((FaVersion.GetHashCode() * 397) ^ ((Entwicklungsbaureihe != null) ? Entwicklungsbaureihe.GetHashCode() : 0)) * 397) ^ ((Type != null) ? Type.GetHashCode() : 0)) * 397) ^ ((Zeitkriterium != null) ? Zeitkriterium.GetHashCode() : 0)) * 397) ^ IsValid.GetHashCode()) * 397) ^ ((Lackcode != null) ? Lackcode.GetHashCode() : 0)) * 397) ^ ((Polstercode != null) ? Polstercode.GetHashCode() : 0)) * 397) ^ ((EWords != null) ? EWords.OrderBy((string x) => x).Aggregate(17, (int current, string sgbmId) => (current * 397) ^ sgbmId.ToLowerInvariant().GetHashCode()) : 0)) * 397) ^ ((HOWords != null) ? HOWords.OrderBy((string x) => x).Aggregate(17, (int current, string sgbmId) => (current * 397) ^ sgbmId.ToLowerInvariant().GetHashCode()) : 0)) * 397) ^ ((Salapas != null) ? Salapas.OrderBy((string x) => x).Aggregate(17, (int current, string sgbmId) => (current * 397) ^ sgbmId.ToLowerInvariant().GetHashCode()) : 0)) * 397)
+#if !OLD_PSDZ_FA
+                   ^ ((Vin != null) ? Vin.GetHashCode() : 0)
 #endif
+                   ;
         }
 
         private static bool StringSequenceEqual(IEnumerable<string> first, IEnumerable<string> second)
