@@ -1,15 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using PsdzClient;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Model.Tal.TalFilter
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzTalFilter : IPsdzTalFilter
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string AsXml { get; set; }
     }

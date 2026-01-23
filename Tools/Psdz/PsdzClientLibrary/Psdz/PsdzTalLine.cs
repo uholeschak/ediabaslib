@@ -1,8 +1,10 @@
-﻿using System.Runtime.Serialization;
-using BMW.Rheingold.Psdz.Model.Ecu;
+﻿using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient;
+using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     [KnownType(typeof(PsdzEcuIdentifier))]
     [KnownType(typeof(PsdzTaCategory))]
@@ -25,54 +27,71 @@ namespace BMW.Rheingold.Psdz.Model.Tal
     [KnownType(typeof(PsdzSmacTransferStatus))]
     public class PsdzTalLine : PsdzTalElement, IPsdzTalLine, IPsdzTalElement
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzEcuIdentifier EcuIdentifier { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzFscDeploy FscDeploy { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzBlFlash BlFlash { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzIbaDeploy IbaDeploy { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzSwDeploy SwDeploy { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzIdRestore IdRestore { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzSFADeploy SFADeploy { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzIdBackup IdBackup { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzFscBackup FscBackup { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzHddUpdate HddUpdate { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzSmacTransferStart SmacTransferStart { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzSmacTransferStatus SmacTransferStatus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuMirrorDeploy EcuMirrorDeploy { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuActivate EcuActivate { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzEcuPoll EcuPoll { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzTaCategories TaCategories { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzTaCategory TaCategory { get; set; }
     }

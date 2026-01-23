@@ -1,13 +1,12 @@
-﻿using System;
+﻿using BMW.Rheingold.Psdz.Model.Ecu;
+using PsdzClient;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
-using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     [KnownType(typeof(PsdzEcuIdentifier))]
     [KnownType(typeof(PsdzTalLine))]
@@ -15,24 +14,31 @@ namespace BMW.Rheingold.Psdz.Model.Tal
     [KnownType(typeof(PsdzExecutionTime))]
     public class PsdzTal : PsdzTalElement, IPsdzTal, IPsdzTalElement
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = true)]
         public IEnumerable<IPsdzEcuIdentifier> AffectedEcus { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string AsXml { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = true)]
         public IEnumerable<IPsdzEcuIdentifier> InstalledEcuListIst { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = true)]
         public IEnumerable<IPsdzEcuIdentifier> InstalledEcuListSoll { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public PsdzTalExecutionState TalExecutionState { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember(IsRequired = true)]
         public IEnumerable<IPsdzTalLine> TalLines { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public IPsdzExecutionTime PsdzExecutionTime { get; set; }
     }

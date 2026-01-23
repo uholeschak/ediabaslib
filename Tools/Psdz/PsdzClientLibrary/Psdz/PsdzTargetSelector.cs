@@ -1,20 +1,26 @@
-﻿using System.Globalization;
+﻿using PsdzClient;
+using System.Globalization;
 using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model
 {
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzTargetSelector : IPsdzTargetSelector
     {
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Baureihenverbund { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public bool IsDirect { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string Project { get; set; }
 
+        [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string VehicleInfo { get; set; }
 
