@@ -1,6 +1,4 @@
-﻿using PsdzClient.Core;
-using System;
-using PsdzClient;
+﻿using System;
 
 namespace PsdzClient.Core
 {

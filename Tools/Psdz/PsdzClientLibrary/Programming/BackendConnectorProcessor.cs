@@ -3,7 +3,7 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "Dummy")]
+    [PreserveSource(Hint = "Dummy class")]
     public class BackendConnectorProcessor
     {
         [PreserveSource(Hint = "errorManager removed")]
