@@ -6,15 +6,15 @@ using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz
 {
-    [PreserveSource(KeepAttribute = true)]
+    [PreserveSource(AttributesModified = true)]
     [DataContract]
     [KnownType(typeof(PsdzEcu))]
     [KnownType(typeof(PsdzSmartActuatorMasterEcu))]
     [KnownType(typeof(PsdzSmartActuatorEcu))]
     public class PsdzStandardSvt : IPsdzStandardSvt
     {
+        private readonly List<IPsdzEcu> ecus = new List<IPsdzEcu>();
         private static readonly IEqualityComparer<PsdzStandardSvt> PsdzStandardSvtComparerInstance = new PsdzStandardSvtComparer();
-
         [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public string AsString { get; set; }
