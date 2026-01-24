@@ -126,6 +126,8 @@ namespace SourceCodeSync
 
         private const string _attributesModifiedProperty = "AttributesModified";
 
+        private const string _classRemovedProperty = "Removed";
+
         private const string _attributesOriginalHashProperty = "OriginalHash";
 
         private const string _attributesHintProperty = "Hint";
@@ -1813,6 +1815,13 @@ namespace SourceCodeSync
                     }
 
                     hint = GetAttributeStringProperty(preserveAttribute, _attributesHintProperty);
+                    if (string.IsNullOrEmpty(hint))
+                    {
+                        if (GetAttributeBoolProperty(preserveAttribute, _classRemovedProperty))
+                        {
+                            hint = "Class has been removed";
+                        }
+                    }
                     return true;
                 }
             }

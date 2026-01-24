@@ -185,7 +185,7 @@ namespace PsdzClient.Core
         }
 
         public abstract void Serialize(MemoryStream ms);
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Hint = "Class added")]
         public class FormulaConfig
         {
             public FormulaConfig(string getStringFunc, string getLongFunc, string checkStringFunc, string checkLongFunc, string ruleValidFunc, bool isRuleValidNumFunc = false, List<string> subRuleIds = null, string operatorSeparator = null)
