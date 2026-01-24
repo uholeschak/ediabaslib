@@ -1270,6 +1270,7 @@ namespace SourceCodeSync
             {
                 if (HasSpecialTrivia(classDeclaration.GetLeadingTrivia()))
                 {
+                    hint = "Comment in class declaration";
                     return true;
                 }
             }
@@ -1279,6 +1280,7 @@ namespace SourceCodeSync
             {
                 if (HasSpecialTrivia(classDeclaration.GetTrailingTrivia()))
                 {
+                    hint = "Comment in class declaration";
                     return true;
                 }
             }
@@ -1315,6 +1317,7 @@ namespace SourceCodeSync
             {
                 if (HasSpecialTrivia(interfaceDeclaration.GetLeadingTrivia()))
                 {
+                    hint = "Comment in interface declaration";
                     return true;
                 }
             }
@@ -1324,6 +1327,7 @@ namespace SourceCodeSync
             {
                 if (HasSpecialTrivia(interfaceDeclaration.GetTrailingTrivia()))
                 {
+                    hint = "Comment in interface declaration";
                     return true;
                 }
             }
@@ -1333,10 +1337,12 @@ namespace SourceCodeSync
             {
                 if (token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia))
                 {
+                    hint = "Comment in interface";
                     return true;
                 }
                 if (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia))
                 {
+                    hint = "Comment in interface";
                     return true;
                 }
             }
