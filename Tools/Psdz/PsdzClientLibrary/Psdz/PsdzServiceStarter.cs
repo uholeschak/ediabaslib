@@ -248,7 +248,7 @@ namespace BMW.Rheingold.Psdz.Client
                     processStartInfo.Arguments = string.Format(CultureInfo.InvariantCulture, "\"{0}\" \"{1}\"", tempFileName, istaProcessId);
                 }
             }
-            // [UH] check for PID file support end
+            // [UH] [IGNORE] check for PID file support end
             Logger.Info($"PsdzServiceHost start arguments: {processStartInfo.Arguments}");
             EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset, HostReadyEventName);
             EventWaitHandle eventWaitHandle2 = new EventWaitHandle(false, EventResetMode.AutoReset, HostFailedEventName);

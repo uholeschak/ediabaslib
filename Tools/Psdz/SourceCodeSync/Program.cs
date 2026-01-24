@@ -1284,14 +1284,16 @@ namespace SourceCodeSync
             }
 
             // Check all descendant tokens (comments inside the class)
-            foreach (var token in classDeclaration.DescendantTokens(descendIntoTrivia: true))
+            foreach (SyntaxToken token in classDeclaration.DescendantTokens(descendIntoTrivia: true))
             {
                 if (token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia))
                 {
+                    hint = "Comment in class";
                     return true;
                 }
                 if (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia))
                 {
+                    hint = "Comment in class";
                     return true;
                 }
             }
