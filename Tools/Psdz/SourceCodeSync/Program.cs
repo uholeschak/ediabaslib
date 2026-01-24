@@ -1364,11 +1364,13 @@ namespace SourceCodeSync
 
             if (enumDeclaration.HasLeadingTrivia && HasSpecialTrivia(enumDeclaration.GetLeadingTrivia()))
             {
+                hint = "Comment in enum declaration";
                 return true;
             }
 
             if (enumDeclaration.HasTrailingTrivia && HasSpecialTrivia(enumDeclaration.GetTrailingTrivia()))
             {
+                hint = "Comment in enum declaration";
                 return true;
             }
 
@@ -1376,10 +1378,12 @@ namespace SourceCodeSync
             {
                 if (token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia))
                 {
+                    hint = "Comment in enum";
                     return true;
                 }
                 if (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia))
                 {
+                    hint = "Comment in enum";
                     return true;
                 }
             }
