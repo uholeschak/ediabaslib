@@ -1783,23 +1783,32 @@ namespace SourceCodeSync
                         return false;
                     }
 
+                    StringBuilder sbReason = new StringBuilder();
                     string hint = GetAttributeStringProperty(preserveAttribute, _attributesHintProperty);
                     if (!string.IsNullOrEmpty(hint))
                     {
-                        reason = $"\"{hint}\"";
+                        sbReason.Append($"\"{hint}\"");
                     }
-                    else
-                    {
-                        if (GetAttributeBoolProperty(preserveAttribute, _removedProperty))
-                        {
-                            reason = $"[{_removedProperty}]";
-                        }
 
-                        if (GetAttributeBoolProperty(preserveAttribute, _attributesModifiedProperty))
+                    if (GetAttributeBoolProperty(preserveAttribute, _removedProperty))
+                    {
+                        if (sbReason.Length > 0)
                         {
-                            reason = $"[{_attributesModifiedProperty}]";
+                            sbReason.Append(" ");
                         }
+                        sbReason.Append($"[{_removedProperty}]");
                     }
+
+                    if (GetAttributeBoolProperty(preserveAttribute, _attributesModifiedProperty))
+                    {
+                        if (sbReason.Length > 0)
+                        {
+                            sbReason.Append(" ");
+                        }
+                        sbReason.Append($"[{_attributesModifiedProperty}]");
+                    }
+
+                    reason = sbReason.ToString();
                     return true;
                 }
             }
