@@ -1295,35 +1295,18 @@ namespace SourceCodeSync
         {
             hint = string.Empty;
 
-            // Check leading trivia (comments before the interface)
-            if (interfaceDeclaration.HasLeadingTrivia)
+            if ((interfaceDeclaration.HasLeadingTrivia && HasSpecialTrivia(interfaceDeclaration.GetLeadingTrivia())) ||
+                (interfaceDeclaration.HasTrailingTrivia && HasSpecialTrivia(interfaceDeclaration.GetTrailingTrivia())))
             {
-                if (HasSpecialTrivia(interfaceDeclaration.GetLeadingTrivia()))
-                {
-                    hint = "Comment in interface declaration";
-                    return true;
-                }
-            }
-
-            // Check trailing trivia (comments after the interface declaration line)
-            if (interfaceDeclaration.HasTrailingTrivia)
-            {
-                if (HasSpecialTrivia(interfaceDeclaration.GetTrailingTrivia()))
-                {
-                    hint = "Comment in interface declaration";
-                    return true;
-                }
+                hint = "Comment in interface declaration";
+                return true;
             }
 
             // Check all descendant tokens (comments inside the interface)
             foreach (var token in interfaceDeclaration.DescendantTokens(descendIntoTrivia: true))
             {
-                if (token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia))
-                {
-                    hint = "Comment in interface";
-                    return true;
-                }
-                if (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia))
+                if ((token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia)) ||
+                    (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia)))
                 {
                     hint = "Comment in interface";
                     return true;
@@ -1345,13 +1328,8 @@ namespace SourceCodeSync
         {
             hint = string.Empty;
 
-            if (enumDeclaration.HasLeadingTrivia && HasSpecialTrivia(enumDeclaration.GetLeadingTrivia()))
-            {
-                hint = "Comment in enum declaration";
-                return true;
-            }
-
-            if (enumDeclaration.HasTrailingTrivia && HasSpecialTrivia(enumDeclaration.GetTrailingTrivia()))
+            if ((enumDeclaration.HasLeadingTrivia && HasSpecialTrivia(enumDeclaration.GetLeadingTrivia())) ||
+                (enumDeclaration.HasTrailingTrivia && HasSpecialTrivia(enumDeclaration.GetTrailingTrivia())))
             {
                 hint = "Comment in enum declaration";
                 return true;
@@ -1359,12 +1337,8 @@ namespace SourceCodeSync
 
             foreach (var token in enumDeclaration.DescendantTokens(descendIntoTrivia: true))
             {
-                if (token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia))
-                {
-                    hint = "Comment in enum";
-                    return true;
-                }
-                if (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia))
+                if ((token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia)) ||
+                    (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia)))
                 {
                     hint = "Comment in enum";
                     return true;
