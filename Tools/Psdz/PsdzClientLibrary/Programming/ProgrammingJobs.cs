@@ -1076,14 +1076,16 @@ namespace PsdzClient.Programming
                 }
 
                 PsdzContext.DetectVehicle = new DetectVehicle(this, ClientContext, istaFolder, enetConnection, useIcom, addTimeout);
-                if (!EdiabasNet.IsDirectoryWritable(PsdzContext.DetectVehicle.DoIpS29BasePath))
+                if (Directory.Exists(PsdzContext.DetectVehicle.DoIpS29BasePath) &&
+                    !EdiabasNet.IsDirectoryWritable(PsdzContext.DetectVehicle.DoIpS29BasePath))
                 {
                     sbResult.AppendLine(string.Format(Strings.DirectoryWriteProtected, PsdzContext.DetectVehicle.DoIpS29BasePath));
                     UpdateStatus(sbResult.ToString());
                     return false;
                 }
 
-                if (!EdiabasNet.IsDirectoryWritable(PsdzContext.DetectVehicle.DoIpS29CertPath))
+                if (Directory.Exists(PsdzContext.DetectVehicle.DoIpS29CertPath) &&
+                    !EdiabasNet.IsDirectoryWritable(PsdzContext.DetectVehicle.DoIpS29CertPath))
                 {
                     sbResult.AppendLine(string.Format(Strings.DirectoryWriteProtected, PsdzContext.DetectVehicle.DoIpS29CertPath));
                     UpdateStatus(sbResult.ToString());
