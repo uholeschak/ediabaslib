@@ -126,7 +126,7 @@ namespace SourceCodeSync
 
         private const string _attributesModifiedProperty = "AttributesModified";
 
-        private const string _classRemovedProperty = "Removed";
+        private const string _removedProperty = "Removed";
 
         private const string _attributesOriginalHashProperty = "OriginalHash";
 
@@ -773,7 +773,7 @@ namespace SourceCodeSync
                 CompilationUnitSyntax newRoot = root;
 
                 // Update classes
-                var classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
+                List<ClassDeclarationSyntax> classes = root.DescendantNodes().OfType<ClassDeclarationSyntax>().ToList();
                 foreach (ClassDeclarationSyntax cls in classes)
                 {
                     string classNameFull = GetClassName(cls, includeModifiers: true);
@@ -788,11 +788,11 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (HasSpecialTrivia(cls, out string hint))
+                    if (HasSpecialTrivia(cls, out string reason))
                     {
                         if (_verbosity >= Options.VerbosityOption.Important)
                         {
-                            Console.WriteLine("Skipping class {0} from file: {1}, Reason: {2}", classNameFull, Path.GetFileName(fileName), hint);
+                            Console.WriteLine("Skipping class {0} reason: {1}", classNameFull, reason);
                         }
                         continue;
                     }
@@ -915,11 +915,11 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (HasSpecialTrivia(interfaceDecl, out string hint))
+                    if (HasSpecialTrivia(interfaceDecl, out string reason))
                     {
                         if (_verbosity >= Options.VerbosityOption.Warning)
                         {
-                            Console.WriteLine("Skipping interface {0} with comments: {1} Reason: {2}", interfaceNameFull, fileName, hint);
+                            Console.WriteLine("Skipping interface {0}, reason: {1}", interfaceNameFull, reason);
                         }
                         continue;
                     }
@@ -1018,11 +1018,11 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (HasSpecialTrivia(enumDecl, out string hint))
+                    if (HasSpecialTrivia(enumDecl, out string reason))
                     {
                         if (_verbosity >= Options.VerbosityOption.Warning)
                         {
-                            Console.WriteLine("Skipping enum {0} with comments: {1}, Reason: {2}", enumName, fileName, hint);
+                            Console.WriteLine("Skipping enum {0} reason: {1}", enumName, reason);
                         }
                         continue;
                     }
@@ -1261,14 +1261,14 @@ namespace SourceCodeSync
         /// <summary>
         /// Checks if a class declaration has any special trivia
         /// </summary>
-        public static bool HasSpecialTrivia(ClassDeclarationSyntax classDeclaration, out string hint)
+        public static bool HasSpecialTrivia(ClassDeclarationSyntax classDeclaration, out string reason)
         {
-            hint = string.Empty;
+            reason = string.Empty;
 
             if ((classDeclaration.HasLeadingTrivia && HasSpecialTrivia(classDeclaration.GetLeadingTrivia())) ||
                 (classDeclaration.HasTrailingTrivia && HasSpecialTrivia(classDeclaration.GetTrailingTrivia())))
             {
-                hint = "Comment in class declaration";
+                reason = "Comment in class declaration";
                 return true;
             }
 
@@ -1278,12 +1278,12 @@ namespace SourceCodeSync
                 if ((token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia)) ||
                     (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia)))
                 {
-                    hint = "Comment in class";
+                    reason = "Comment in class";
                     return true;
                 }
             }
 
-            if (ShouldPreserveMember(classDeclaration, out hint))
+            if (ShouldPreserveMember(classDeclaration, out reason))
             {
                 return true;
             }
@@ -1291,14 +1291,14 @@ namespace SourceCodeSync
             return false;
         }
 
-        public static bool HasSpecialTrivia(InterfaceDeclarationSyntax interfaceDeclaration, out string hint)
+        public static bool HasSpecialTrivia(InterfaceDeclarationSyntax interfaceDeclaration, out string reason)
         {
-            hint = string.Empty;
+            reason = string.Empty;
 
             if ((interfaceDeclaration.HasLeadingTrivia && HasSpecialTrivia(interfaceDeclaration.GetLeadingTrivia())) ||
                 (interfaceDeclaration.HasTrailingTrivia && HasSpecialTrivia(interfaceDeclaration.GetTrailingTrivia())))
             {
-                hint = "Comment in interface declaration";
+                reason = "Comment in interface declaration";
                 return true;
             }
 
@@ -1308,12 +1308,12 @@ namespace SourceCodeSync
                 if ((token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia)) ||
                     (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia)))
                 {
-                    hint = "Comment in interface";
+                    reason = "Comment in interface";
                     return true;
                 }
             }
 
-            if (ShouldPreserveMember(interfaceDeclaration, out hint))
+            if (ShouldPreserveMember(interfaceDeclaration, out reason))
             {
                 return true;
             }
@@ -1324,14 +1324,14 @@ namespace SourceCodeSync
         /// <summary>
         /// Same comment detection methods for enums
         /// </summary>
-        public static bool HasSpecialTrivia(EnumDeclarationSyntax enumDeclaration, out string hint)
+        public static bool HasSpecialTrivia(EnumDeclarationSyntax enumDeclaration, out string reason)
         {
-            hint = string.Empty;
+            reason = string.Empty;
 
             if ((enumDeclaration.HasLeadingTrivia && HasSpecialTrivia(enumDeclaration.GetLeadingTrivia())) ||
                 (enumDeclaration.HasTrailingTrivia && HasSpecialTrivia(enumDeclaration.GetTrailingTrivia())))
             {
-                hint = "Comment in enum declaration";
+                reason = "Comment in enum declaration";
                 return true;
             }
 
@@ -1340,12 +1340,12 @@ namespace SourceCodeSync
                 if ((token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia)) ||
                     (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia)))
                 {
-                    hint = "Comment in enum";
+                    reason = "Comment in enum";
                     return true;
                 }
             }
 
-            if (ShouldPreserveMember(enumDeclaration, out hint))
+            if (ShouldPreserveMember(enumDeclaration, out reason))
             {
                 return true;
             }
@@ -1758,9 +1758,9 @@ namespace SourceCodeSync
         /// <summary>
         /// Checks if a member has a preserve marker
         /// </summary>
-        public static bool ShouldPreserveMember(SyntaxNode member, out string hint)
+        public static bool ShouldPreserveMember(SyntaxNode member, out string reason)
         {
-            hint = string.Empty;
+            reason = string.Empty;
 
             // Check for attributes like [Preserve] or [DoNotSync]
             if (member is MemberDeclarationSyntax memberDecl)
@@ -1783,12 +1783,21 @@ namespace SourceCodeSync
                         return false;
                     }
 
-                    hint = GetAttributeStringProperty(preserveAttribute, _attributesHintProperty);
-                    if (string.IsNullOrEmpty(hint))
+                    string hint = GetAttributeStringProperty(preserveAttribute, _attributesHintProperty);
+                    if (!string.IsNullOrEmpty(hint))
                     {
-                        if (GetAttributeBoolProperty(preserveAttribute, _classRemovedProperty))
+                        reason = $"\"{hint}\"";
+                    }
+                    else
+                    {
+                        if (GetAttributeBoolProperty(preserveAttribute, _removedProperty))
                         {
-                            hint = "Class has been removed";
+                            reason = $"[{_removedProperty}]";
+                        }
+
+                        if (GetAttributeBoolProperty(preserveAttribute, _attributesModifiedProperty))
+                        {
+                            reason = $"[{_attributesModifiedProperty}]";
                         }
                     }
                     return true;
