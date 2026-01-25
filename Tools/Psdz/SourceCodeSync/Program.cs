@@ -1265,35 +1265,18 @@ namespace SourceCodeSync
         {
             hint = string.Empty;
 
-            // Check leading trivia (comments before the class)
-            if (classDeclaration.HasLeadingTrivia)
+            if ((classDeclaration.HasLeadingTrivia && HasSpecialTrivia(classDeclaration.GetLeadingTrivia())) ||
+                (classDeclaration.HasTrailingTrivia && HasSpecialTrivia(classDeclaration.GetTrailingTrivia())))
             {
-                if (HasSpecialTrivia(classDeclaration.GetLeadingTrivia()))
-                {
-                    hint = "Comment in class declaration";
-                    return true;
-                }
-            }
-
-            // Check trailing trivia (comments after the class declaration line)
-            if (classDeclaration.HasTrailingTrivia)
-            {
-                if (HasSpecialTrivia(classDeclaration.GetTrailingTrivia()))
-                {
-                    hint = "Comment in class declaration";
-                    return true;
-                }
+                hint = "Comment in class declaration";
+                return true;
             }
 
             // Check all descendant tokens (comments inside the class)
             foreach (SyntaxToken token in classDeclaration.DescendantTokens(descendIntoTrivia: true))
             {
-                if (token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia))
-                {
-                    hint = "Comment in class";
-                    return true;
-                }
-                if (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia))
+                if ((token.HasLeadingTrivia && HasSpecialTrivia(token.LeadingTrivia)) ||
+                    (token.HasTrailingTrivia && HasSpecialTrivia(token.TrailingTrivia)))
                 {
                     hint = "Comment in class";
                     return true;
