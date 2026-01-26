@@ -220,7 +220,7 @@ namespace BMW.Rheingold.Programming.API
         }
 
         [PreserveSource(Hint = "namespace modified")]
-        public ISvt Build(Psdz.Model.IPsdzStandardSvt svtInput)
+        public ISvt Build(IPsdzStandardSvt svtInput)
         {
             if (svtInput == null)
             {
