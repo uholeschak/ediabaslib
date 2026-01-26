@@ -244,7 +244,7 @@ namespace BMW.Rheingold.Programming.API
             return systemVerbauTabelle;
         }
 
-        [PreserveSource(Hint = "namespace modified")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public IVehicleProfileChecksum Build(Psdz.IPsdzReadVpcFromVcmCto vpcInput)
         {
             if (vpcInput == null)
