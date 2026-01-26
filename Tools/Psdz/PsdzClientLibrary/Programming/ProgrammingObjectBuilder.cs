@@ -109,7 +109,7 @@ namespace BMW.Rheingold.Programming.API
             return new VehicleProfileCriterion(criterion.Value, criterion.Name, criterion.NameEn);
         }
 
-        [PreserveSource(Hint = "baureiheReader added")]
+        [PreserveSource(Hint = "baureiheReader added", SignatureModified = true)]
         public BMW.Rheingold.CoreFramework.Contracts.Programming.IFa Build(BMW.Rheingold.CoreFramework.Contracts.Vehicle.IFa faInput, Psdz.BaureiheReader baureiheReader)
         {
             if (faInput == null)
@@ -117,7 +117,7 @@ namespace BMW.Rheingold.Programming.API
                 return null;
             }
 
-            BMW.Rheingold.Programming.API.VehicleOrder vehicleOrder = new BMW.Rheingold.Programming.API.VehicleOrder();
+            VehicleOrder vehicleOrder = new VehicleOrder();
             if (!string.IsNullOrWhiteSpace(faInput.VERSION) && Regex.IsMatch(faInput.VERSION.Trim(), "^\\d+$"))
             {
                 vehicleOrder.FaVersion = int.Parse(faInput.VERSION);
@@ -141,6 +141,7 @@ namespace BMW.Rheingold.Programming.API
             {
                 return null;
             }
+
             //[-] new BaureiheReader();
             FA fA = new FA();
             fA.VERSION = faInput.FaVersion.ToString(CultureInfo.InvariantCulture);
@@ -394,7 +395,7 @@ namespace BMW.Rheingold.Programming.API
                 //[+] IEcuIdentifier ecuIdentifier = eCU.EcuIdentifier;
                 IEcuIdentifier ecuIdentifier = eCU.EcuIdentifier;
                 //[+] PsdzDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int?(ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
-                PsdzDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int?(ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
+                PsdzDatabase.EcuVar ecuVar = database.FindEcuVariantFromBntn(bnTnName, (ecuIdentifier != null) ? new int? (ecuIdentifier.DiagAddrAsInt) : null, this.vehicle, this.ffmResolver);
                 //[+] if (ecuVar != null && !string.IsNullOrEmpty(ecuVar.Name))
                 if (ecuVar != null && !string.IsNullOrEmpty(ecuVar.Name))
                 //[+] {
@@ -411,8 +412,9 @@ namespace BMW.Rheingold.Programming.API
                     {
                         //[+] eCU.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
                         eCU.EcuGroup = ecuGroup.Name.ToUpper(CultureInfo.InvariantCulture);
-                        //[+] }
+                    //[+] }
                     }
+
                     //[+] PsdzDatabase.EcuReps ecuReps = database.FindEcuRep(ecuClique);
                     PsdzDatabase.EcuReps ecuReps = database.FindEcuRep(ecuClique);
                     //[+] if (ecuReps != null)
@@ -423,7 +425,7 @@ namespace BMW.Rheingold.Programming.API
                         eCU.EcuRep = ecuReps.EcuShortcut;
                     //[+] }
                     }
-                    //[+] }
+                //[+] }
                 }
                 //[+] else
                 else
@@ -431,10 +433,11 @@ namespace BMW.Rheingold.Programming.API
                 {
                     //[+] Log.Warning("ProgrammingObjectBuilder.Build", "No valid ECU variant found for \"{0}\".", ecuInput.BnTnName);
                     Log.Warning("ProgrammingObjectBuilder.Build", "No valid ECU variant found for \"{0}\".", ecuInput.BnTnName);
-                    //[+] }
-                }
                 //[+] }
+                }
+            //[+] }
             }
+
             if (eCU.IsSmartActuator)
             {
                 if (!(ecuInput is PsdzSmartActuatorEcu psdzSmartActuatorEcu))
