@@ -789,9 +789,9 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (HasSpecialTrivia(cls, out string reason))
+                    if (HasSpecialTrivia(cls, out string reason, out Options.VerbosityOption verbosity))
                     {
-                        if (_verbosity >= Options.VerbosityOption.Important)
+                        if (_verbosity >= verbosity)
                         {
                             Console.WriteLine("Skipping class {0} reason: {1}", classNameFull, reason);
                         }
@@ -854,7 +854,7 @@ namespace SourceCodeSync
                         }
 
                         // Check if destination class has any preserved members
-                        bool hasPreservedMembers = cls.Members.Any(m => ShouldPreserveMember(m, out string _) || GetAllCommentedCodeLines(m).Any());
+                        bool hasPreservedMembers = cls.Members.Any(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _) || GetAllCommentedCodeLines(m).Any());
                         ClassDeclarationSyntax mergedClass;
 
                         if (hasPreservedMembers)
@@ -863,7 +863,7 @@ namespace SourceCodeSync
                             mergedClass = MergeClassPreservingMarked(cls, sourceClassCopy);
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                int preservedCount = cls.Members.Count(m => ShouldPreserveMember(m, out string _));
+                                int preservedCount = cls.Members.Count(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _));
                                 Console.WriteLine($"Merging class {classNameFull} while preserving {preservedCount} marked member(s)");
                             }
                         }
@@ -916,9 +916,9 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (HasSpecialTrivia(interfaceDecl, out string reason))
+                    if (HasSpecialTrivia(interfaceDecl, out string reason, out Options.VerbosityOption verbosity))
                     {
-                        if (_verbosity >= Options.VerbosityOption.Warning)
+                        if (_verbosity >= verbosity)
                         {
                             Console.WriteLine("Skipping interface {0}, reason: {1}", interfaceNameFull, reason);
                         }
@@ -966,7 +966,7 @@ namespace SourceCodeSync
                         }
 
                         // Check for preserved members
-                        bool hasPreservedMembers = interfaceDecl.Members.Any(m => ShouldPreserveMember(m, out string _));
+                        bool hasPreservedMembers = interfaceDecl.Members.Any(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _));
                         InterfaceDeclarationSyntax mergedInterface;
 
                         if (hasPreservedMembers)
@@ -974,7 +974,7 @@ namespace SourceCodeSync
                             mergedInterface = MergeInterfacePreservingMarked(interfaceDecl, sourceInterfaceCopy);
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                int preservedCount = interfaceDecl.Members.Count(m => ShouldPreserveMember(m, out string _));
+                                int preservedCount = interfaceDecl.Members.Count(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _));
                                 Console.WriteLine($"Merging interface {interfaceNameFull} while preserving {preservedCount} marked member(s)");
                             }
                         }
@@ -1019,9 +1019,9 @@ namespace SourceCodeSync
                         Console.WriteLine(new string('-', 80));
                     }
 
-                    if (HasSpecialTrivia(enumDecl, out string reason))
+                    if (HasSpecialTrivia(enumDecl, out string reason, out Options.VerbosityOption verbosity))
                     {
-                        if (_verbosity >= Options.VerbosityOption.Warning)
+                        if (_verbosity >= verbosity)
                         {
                             Console.WriteLine("Skipping enum {0} reason: {1}", enumName, reason);
                         }
@@ -1262,11 +1262,12 @@ namespace SourceCodeSync
         /// <summary>
         /// Checks if a class declaration has any special trivia
         /// </summary>
-        public static bool HasSpecialTrivia(ClassDeclarationSyntax classDeclaration, out string reason)
+        public static bool HasSpecialTrivia(ClassDeclarationSyntax classDeclaration, out string reason, out Options.VerbosityOption verbosity)
         {
             reason = string.Empty;
+            verbosity = Options.VerbosityOption.Important;
 
-            if (ShouldPreserveMember(classDeclaration, out reason))
+            if (ShouldPreserveMember(classDeclaration, out reason, out verbosity))
             {
                 return true;
             }
@@ -1292,11 +1293,12 @@ namespace SourceCodeSync
             return false;
         }
 
-        public static bool HasSpecialTrivia(InterfaceDeclarationSyntax interfaceDeclaration, out string reason)
+        public static bool HasSpecialTrivia(InterfaceDeclarationSyntax interfaceDeclaration, out string reason, out Options.VerbosityOption verbosity)
         {
             reason = string.Empty;
+            verbosity = Options.VerbosityOption.Important;
 
-            if (ShouldPreserveMember(interfaceDeclaration, out reason))
+            if (ShouldPreserveMember(interfaceDeclaration, out reason, out verbosity))
             {
                 return true;
             }
@@ -1325,11 +1327,12 @@ namespace SourceCodeSync
         /// <summary>
         /// Same comment detection methods for enums
         /// </summary>
-        public static bool HasSpecialTrivia(EnumDeclarationSyntax enumDeclaration, out string reason)
+        public static bool HasSpecialTrivia(EnumDeclarationSyntax enumDeclaration, out string reason, out Options.VerbosityOption verbosity)
         {
             reason = string.Empty;
+            verbosity = Options.VerbosityOption.Important;
 
-            if (ShouldPreserveMember(enumDeclaration, out reason))
+            if (ShouldPreserveMember(enumDeclaration, out reason, out verbosity))
             {
                 return true;
             }
@@ -1607,7 +1610,7 @@ namespace SourceCodeSync
         {
             // Get all members from destination that should be preserved
             List<MemberDeclarationSyntax> preservedMembers = destClass.Members
-                .Where(m => ShouldPreserveMember(m, out string _))
+                .Where(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _))
                 .ToList();
 
             // Build a new member list, maintaining source order
@@ -1710,7 +1713,7 @@ namespace SourceCodeSync
             InterfaceDeclarationSyntax sourceInterface)
         {
             var preservedMembers = destInterface.Members
-                .Where(m => ShouldPreserveMember(m, out string _))
+                .Where(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _))
                 .ToList();
 
             if (!preservedMembers.Any())
@@ -1759,9 +1762,10 @@ namespace SourceCodeSync
         /// <summary>
         /// Checks if a member has a preserve marker
         /// </summary>
-        public static bool ShouldPreserveMember(SyntaxNode member, out string reason)
+        public static bool ShouldPreserveMember(SyntaxNode member, out string reason, out Options.VerbosityOption verbosity)
         {
             reason = string.Empty;
+            verbosity = Options.VerbosityOption.Important;
 
             // Check for attributes like [Preserve] or [DoNotSync]
             if (member is MemberDeclarationSyntax memberDecl)
@@ -1793,6 +1797,7 @@ namespace SourceCodeSync
 
                     if (GetAttributeBoolProperty(preserveAttribute, _removedProperty))
                     {
+                        verbosity = Options.VerbosityOption.Info;
                         if (sbReason.Length > 0)
                         {
                             sbReason.Append(" ");
