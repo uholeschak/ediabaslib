@@ -134,7 +134,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Certifiates for secure connection missing. ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Certificates for secure connection missing. ähnelt.
         /// </summary>
         internal static string CertificatesNotPresent {
             get {
@@ -406,7 +406,7 @@ namespace PsdzClientLibrary.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die NCD online calculation required.
-        ///Probably you have selected a chargable option. ähnelt.
+        ///Probably you have selected a chargeable option. ähnelt.
         /// </summary>
         internal static string NcdOnlineCalculation {
             get {
@@ -679,7 +679,7 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die Preparation has been finshied successfully.
+        ///   Sucht eine lokalisierte Zeichenfolge, die Preparation has been finished successfully.
         ///No liability in case of failure or problems after coding!
         ///Do you want to continue with TAL execution? ähnelt.
         /// </summary>
@@ -710,7 +710,7 @@ namespace PsdzClientLibrary.Resources {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Make sure that the ignition is switched on, the motor is stopped and a certified charger is connected to the vehicle.
-        ///Don&apos;t close or minimize this page, because this will interrupt vehicle communcation!
+        ///Don&apos;t close or minimize this page, because this will interrupt vehicle communication!
         ///Do you want to continue? ähnelt.
         /// </summary>
         internal static string TalExecutionHint {

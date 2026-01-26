@@ -121,7 +121,7 @@
     <value>Die Applikation muss neu gestartet werden.</value>
   </data>
   <data name="BackupDataRestored" xml:space="preserve">
-    <value>Backupdaten wiederhergestellt.</value>
+    <value>Backup-Daten wiederhergestellt.</value>
   </data>
   <data name="BatteryVoltage" xml:space="preserve">
     <value>Batteriespannung: {0:0.00}V</value>
@@ -149,7 +149,7 @@ Bitte schließen Sie ein zertifiziertes Ladegerät während des gesamten Kodierv
     <value>Kontext nicht gefunden.</value>
   </data>
   <data name="CreateBackupPathFailed" xml:space="preserve">
-    <value>Erzeugen des Backupverzeichnisses fehlgeschlagen.</value>
+    <value>Erzeugen des Backup-Verzeichnisses fehlgeschlagen.</value>
   </data>
   <data name="DbInfo" xml:space="preserve">
     <value>Datenbank Version: {0}, Datum: {1}</value>
@@ -191,10 +191,10 @@ Bitte schließen Sie ein zertifiziertes Ladegerät während des gesamten Kodierv
     <value>FA geschrieben.</value>
   </data>
   <data name="GenerateInfoFilesFailed" xml:space="preserve">
-    <value>Generieren der Fahrzeug Infodateien fehlgeschlagen.</value>
+    <value>Generieren der Fahrzeug-Infodateien fehlgeschlagen.</value>
   </data>
   <data name="GeneratingInfoFiles" xml:space="preserve">
-    <value>Fahrzeug Infodateien werden generiert.</value>
+    <value>Fahrzeug-Infodateien werden generiert.</value>
   </data>
   <data name="HostStarted" xml:space="preserve">
     <value>Service Host gestartet.</value>
@@ -232,7 +232,7 @@ Wollen Sie den letzten Hardwaretausch fortsetzen?</value>
   </data>
   <data name="NcdOnlineCalculation" xml:space="preserve">
     <value>NCD Online Berechnung notwendig.
-Vermutlich haben Sie eine kostenpflichtig Option ausgewählt.</value>
+Vermutlich haben Sie eine kostenpflichtige Option ausgewählt.</value>
   </data>
   <data name="NoNcdRequestFile" xml:space="preserve">
     <value>NCD Anfrage-Datei fehlt.</value>
@@ -241,7 +241,7 @@ Vermutlich haben Sie eine kostenpflichtig Option ausgewählt.</value>
     <value>Keine Ziel IStufe vorhanden.</value>
   </data>
   <data name="NoVehiceLicense" xml:space="preserve">
-    <value>Keine gültige Lizenz für dieses Fahrzeg vorhanden.</value>
+    <value>Keine gültige Lizenz für dieses Fahrzeug vorhanden.</value>
   </data>
   <data name="PiaMasterUpdated" xml:space="preserve">
     <value>PIA Master aktualisiert.</value>
@@ -299,7 +299,7 @@ Wollen Sie die Einstellungen vom letzten Backups wiederherstellen?</value>
     <value>Backup TAL Generierung fehlgeschlagen.</value>
   </data>
   <data name="TalDisableFlash" xml:space="preserve">
-    <value>Wollen Sie alle Flashoperationen in dieser Sitzung deaktivieren?</value>
+    <value>Wollen Sie alle Flash-Operationen in dieser Sitzung deaktivieren?</value>
   </data>
   <data name="TalExecuteAgain" xml:space="preserve">
     <value>Wollen Sie die Haupt-TAL nochmals ausführen (langsam)?</value>
@@ -308,7 +308,7 @@ Wollen Sie die Einstellungen vom letzten Backups wiederherstellen?</value>
     <value>TAL Ausführung mit Fehlern beendet.</value>
   </data>
   <data name="TalExecuteErrorContinue" xml:space="preserve">
-    <value>Es sind Probleme in der Vorbereitsungsphase auftegetreten.
+    <value>Es sind Probleme in der Vorbereitungsphase aufgetreten.
 Keine Haftung bei Schäden oder Problemen nach der Kodierung!
 Wollen Sie trotzdem die TAL ausführen?</value>
   </data>
@@ -331,20 +331,20 @@ Wollen Sie die TAL ausführen?</value>
   </data>
   <data name="TalExecutionFailMessage" xml:space="preserve">
     <value>Die Ausführung der TAL ist fehlgeschlagen.
-Wollen Sie die TAL Ausführung später mit den gleiche Einstellungen nochmals wiederholen?</value>
+Wollen Sie die TAL Ausführung später mit den gleichen Einstellungen nochmals wiederholen?</value>
   </data>
   <data name="TalExecutionHint" xml:space="preserve">
-    <value>Stellen Sie sicher, dass die Zündung eingeschaltet, der Motor gestoppt und ein zerifiziertes Ladegerät mit dem Fahrzeug verbunden ist.
+    <value>Stellen Sie sicher, dass die Zündung eingeschaltet, der Motor gestoppt und ein zertifiziertes Ladegerät mit dem Fahrzeug verbunden ist.
 Schließen oder minimieren Sie diese Seite nicht, weil dies die Verbindung zum Fahrzeug unterbricht!
 Wollen Sie Fortfahren?</value>
   </data>
   <data name="TalExecutionOkMessage" xml:space="preserve">
     <value>Die TAL wurde erfolgreich ausgeführt.
-Wollen Sie die Backupdaten behalten?</value>
+Wollen Sie die Backup-Daten behalten?</value>
   </data>
   <data name="TalFlashOperation" xml:space="preserve">
-    <value>Die TAL enthält Flashoperationen, aber flashen ist aus Sicherheitsgründen deaktiviert.
-Möglicherweise ist die Sofware in den Steuergeräten nicht konsitent.</value>
+    <value>Die TAL enthält Flash-Operationen, aber flashen ist aus Sicherheitsgründen deaktiviert.
+Möglicherweise ist die Software in den Steuergeräten nicht konsistent.</value>
   </data>
   <data name="TalGenerating" xml:space="preserve">
     <value>Generiere TAL ...</value>

@@ -232,7 +232,7 @@ Do you want to continue the last hardware replace operation?</value>
   </data>
   <data name="NcdOnlineCalculation" xml:space="preserve">
     <value>NCD online calculation required.
-Probably you have selected a chargable option.</value>
+Probably you have selected a chargeable option.</value>
   </data>
   <data name="NoNcdRequestFile" xml:space="preserve">
     <value>NCD request file missing.</value>
@@ -322,7 +322,7 @@ Do you still want to continue with TAL execution?</value>
     <value>TAL execution finished ok.</value>
   </data>
   <data name="TalExecuteOkContinue" xml:space="preserve">
-    <value>Preparation has been finshied successfully.
+    <value>Preparation has been finished successfully.
 No liability in case of failure or problems after coding!
 Do you want to continue with TAL execution?</value>
   </data>
@@ -335,7 +335,7 @@ Do you want to retry TAL execution with the same settings later?</value>
   </data>
   <data name="TalExecutionHint" xml:space="preserve">
     <value>Make sure that the ignition is switched on, the motor is stopped and a certified charger is connected to the vehicle.
-Don't close or minimize this page, because this will interrupt vehicle communcation!
+Don't close or minimize this page, because this will interrupt vehicle communication!
 Do you want to continue?</value>
   </data>
   <data name="TalExecutionOkMessage" xml:space="preserve">
@@ -438,7 +438,7 @@ Coding is available only for F series or higher.</value>
     <value>Requesting planned development failed.</value>
   </data>
   <data name="CertificatesNotPresent" xml:space="preserve">
-    <value>Certifiates for secure connection missing.</value>
+    <value>Certificates for secure connection missing.</value>
   </data>
   <data name="BatteryVoltageReadError" xml:space="preserve">
     <value>Battery voltage reading failed.</value>
