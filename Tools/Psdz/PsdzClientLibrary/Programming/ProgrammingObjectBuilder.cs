@@ -134,14 +134,14 @@ namespace BMW.Rheingold.Programming.API
             return vehicleOrder;
         }
 
-        [PreserveSource(Hint = "BaureiheReader removed")]
+        [PreserveSource(Hint = "BaureiheReader removed", SignatureModified = true)]
         public FA Build(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faInput)
         {
             if (faInput == null)
             {
                 return null;
             }
-
+            //[-] new BaureiheReader();
             FA fA = new FA();
             fA.VERSION = faInput.FaVersion.ToString(CultureInfo.InvariantCulture);
             fA.BR = faInput.Entwicklungsbaureihe;
