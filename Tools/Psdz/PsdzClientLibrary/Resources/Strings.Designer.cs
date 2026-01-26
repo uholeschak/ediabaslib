@@ -188,6 +188,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die The directory is missing: &apos;{0}&apos; ähnelt.
+        /// </summary>
+        internal static string DirectoryMissing {
+            get {
+                return ResourceManager.GetString("DirectoryMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die The directory is write protected: &apos;{0}&apos; ähnelt.
         /// </summary>
         internal static string DirectoryWriteProtected {

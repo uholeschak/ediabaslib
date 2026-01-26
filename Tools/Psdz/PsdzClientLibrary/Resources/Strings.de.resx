@@ -444,6 +444,9 @@ Kodieren ist nur verfügbar für F Modelle oder höher.</value>
     <value>Die Batteriespannung konnte nicht gelesen werden.</value>
   </data>
   <data name="DirectoryWriteProtected" xml:space="preserve">
-    <value>Das Verzeichnis ist schreibgeschützt: {0} </value>
+    <value>Das Verzeichnis ist schreibgeschützt: '{0}'</value>
+  </data>
+  <data name="DirectoryMissing" xml:space="preserve">
+    <value>Das Verzeichnis ist nicht vorhanden: '{0}'</value>
   </data>
 </root>
