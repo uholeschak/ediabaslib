@@ -1085,8 +1085,11 @@ namespace PsdzClient.Programming
                         return false;
                     }
 
-                    sbResult.AppendLine(string.Format(Strings.DirectoryMissing, PsdzContext.DetectVehicle.DoIpS29BasePath));
-                    UpdateStatus(sbResult.ToString());
+                    if (!hasVehicleQueue)
+                    {
+                        sbResult.AppendLine(string.Format(Strings.DirectoryMissing, PsdzContext.DetectVehicle.DoIpS29BasePath));
+                        UpdateStatus(sbResult.ToString());
+                    }
                 }
 
                 if (!EdiabasNet.IsDirectoryWritable(PsdzContext.DetectVehicle.DoIpS29CertPath))
@@ -1098,8 +1101,11 @@ namespace PsdzClient.Programming
                         return false;
                     }
 
-                    sbResult.AppendLine(string.Format(Strings.DirectoryMissing, PsdzContext.DetectVehicle.DoIpS29CertPath));
-                    UpdateStatus(sbResult.ToString());
+                    if (!hasVehicleQueue)
+                    {
+                        sbResult.AppendLine(string.Format(Strings.DirectoryMissing, PsdzContext.DetectVehicle.DoIpS29CertPath));
+                        UpdateStatus(sbResult.ToString());
+                    }
                 }
 
                 DetectVehicle.DetectResult detectResult = PsdzContext.DetectVehicle.DetectVehicleBmwFast(() =>
