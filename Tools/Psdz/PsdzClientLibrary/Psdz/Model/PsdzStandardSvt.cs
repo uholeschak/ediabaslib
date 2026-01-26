@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.Psdz.Model
 {
     [PreserveSource(AttributesModified = true)]
     [DataContract]

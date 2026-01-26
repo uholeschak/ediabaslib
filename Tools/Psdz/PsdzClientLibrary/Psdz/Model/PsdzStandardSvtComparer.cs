@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using BMW.Rheingold.Psdz.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.Psdz.Model
 {
     public sealed class PsdzStandardSvtComparer : IEqualityComparer<PsdzStandardSvt>
     {

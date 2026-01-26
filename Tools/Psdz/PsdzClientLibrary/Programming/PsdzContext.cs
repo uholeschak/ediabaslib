@@ -819,13 +819,13 @@ namespace PsdzClient.Programming
         }
 
         [PreserveSource(Hint = "From ProgrammingSession")]
-        public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.IPsdzStandardSvt standardSvt)
+        public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.Model.IPsdzStandardSvt standardSvt)
         {
             SetSvtCurrent(programmingService, standardSvt, VecInfo.VIN17);
         }
 
         [PreserveSource(Hint = "From ProgrammingSession")]
-        public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.IPsdzStandardSvt standardSvt, string vin17)
+        public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.Model.IPsdzStandardSvt standardSvt, string vin17)
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
             ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;

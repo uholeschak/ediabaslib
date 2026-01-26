@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using BMW.Rheingold.Psdz.Model.Ecu;
 
-namespace BMW.Rheingold.Psdz
+namespace BMW.Rheingold.Psdz.Model
 {
     public interface IPsdzStandardSvt
     {
