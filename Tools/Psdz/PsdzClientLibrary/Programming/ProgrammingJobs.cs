@@ -1085,6 +1085,7 @@ namespace PsdzClient.Programming
                         return false;
                     }
 
+                    log.WarnFormat(Strings.DirectoryMissing, PsdzContext.DetectVehicle.DoIpS29BasePath);
                     if (!hasVehicleQueue)
                     {
                         sbResult.AppendLine(string.Format(Strings.DirectoryMissing, PsdzContext.DetectVehicle.DoIpS29BasePath));
@@ -1101,6 +1102,7 @@ namespace PsdzClient.Programming
                         return false;
                     }
 
+                    log.WarnFormat(Strings.DirectoryMissing, PsdzContext.DetectVehicle.DoIpS29CertPath);
                     if (!hasVehicleQueue)
                     {
                         sbResult.AppendLine(string.Format(Strings.DirectoryMissing, PsdzContext.DetectVehicle.DoIpS29CertPath));
