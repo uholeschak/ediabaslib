@@ -219,7 +219,7 @@ namespace BMW.Rheingold.Programming.API
             return systemVerbauKennung;
         }
 
-        [PreserveSource(Hint = "namespace modified")]
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         public ISvt Build(IPsdzStandardSvt svtInput)
         {
             if (svtInput == null)
