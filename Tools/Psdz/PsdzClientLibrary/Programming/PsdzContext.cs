@@ -2,7 +2,6 @@
 using BMW.Rheingold.Programming.API;
 using BMW.Rheingold.Programming.Common;
 using BMW.Rheingold.Programming.Controller.SecureCoding.Model;
-using BMW.Rheingold.Psdz;
 using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Svb;
@@ -819,13 +818,13 @@ namespace PsdzClient.Programming
         }
 
         [PreserveSource(Hint = "From ProgrammingSession")]
-        public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.Model.IPsdzStandardSvt standardSvt)
+        public void SetSvtCurrent(ProgrammingService2 programmingService, IPsdzStandardSvt standardSvt)
         {
             SetSvtCurrent(programmingService, standardSvt, VecInfo.VIN17);
         }
 
         [PreserveSource(Hint = "From ProgrammingSession")]
-        public void SetSvtCurrent(ProgrammingService2 programmingService, global::BMW.Rheingold.Psdz.Model.IPsdzStandardSvt standardSvt, string vin17)
+        public void SetSvtCurrent(ProgrammingService2 programmingService, IPsdzStandardSvt standardSvt, string vin17)
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
             ProgrammingObjectBuilder programmingObjectBuilder = ecuProgrammingInfos?.ProgrammingObjectBuilder;
