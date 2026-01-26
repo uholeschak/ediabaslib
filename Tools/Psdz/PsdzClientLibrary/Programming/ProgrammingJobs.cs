@@ -1080,6 +1080,7 @@ namespace PsdzClient.Programming
                 {
                     if (Directory.Exists(PsdzContext.DetectVehicle.DoIpS29BasePath))
                     {
+                        log.ErrorFormat(Strings.DirectoryWriteProtected, PsdzContext.DetectVehicle.DoIpS29BasePath);
                         sbResult.AppendLine(string.Format(Strings.DirectoryWriteProtected, PsdzContext.DetectVehicle.DoIpS29BasePath));
                         UpdateStatus(sbResult.ToString());
                         return false;
@@ -1097,6 +1098,7 @@ namespace PsdzClient.Programming
                 {
                     if (Directory.Exists(PsdzContext.DetectVehicle.DoIpS29CertPath))
                     {
+                        log.ErrorFormat(Strings.DirectoryWriteProtected, PsdzContext.DetectVehicle.DoIpS29CertPath);
                         sbResult.AppendLine(string.Format(Strings.DirectoryWriteProtected, PsdzContext.DetectVehicle.DoIpS29CertPath));
                         UpdateStatus(sbResult.ToString());
                         return false;
