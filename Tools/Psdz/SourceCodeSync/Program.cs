@@ -1265,6 +1265,11 @@ namespace SourceCodeSync
         {
             reason = string.Empty;
 
+            if (ShouldPreserveMember(classDeclaration, out reason))
+            {
+                return true;
+            }
+
             if ((classDeclaration.HasLeadingTrivia && HasSpecialTrivia(classDeclaration.GetLeadingTrivia())) ||
                 (classDeclaration.HasTrailingTrivia && HasSpecialTrivia(classDeclaration.GetTrailingTrivia())))
             {
@@ -1283,17 +1288,17 @@ namespace SourceCodeSync
                 }
             }
 
-            if (ShouldPreserveMember(classDeclaration, out reason))
-            {
-                return true;
-            }
-
             return false;
         }
 
         public static bool HasSpecialTrivia(InterfaceDeclarationSyntax interfaceDeclaration, out string reason)
         {
             reason = string.Empty;
+
+            if (ShouldPreserveMember(interfaceDeclaration, out reason))
+            {
+                return true;
+            }
 
             if ((interfaceDeclaration.HasLeadingTrivia && HasSpecialTrivia(interfaceDeclaration.GetLeadingTrivia())) ||
                 (interfaceDeclaration.HasTrailingTrivia && HasSpecialTrivia(interfaceDeclaration.GetTrailingTrivia())))
@@ -1313,11 +1318,6 @@ namespace SourceCodeSync
                 }
             }
 
-            if (ShouldPreserveMember(interfaceDeclaration, out reason))
-            {
-                return true;
-            }
-
             return false;
         }
 
@@ -1327,6 +1327,11 @@ namespace SourceCodeSync
         public static bool HasSpecialTrivia(EnumDeclarationSyntax enumDeclaration, out string reason)
         {
             reason = string.Empty;
+
+            if (ShouldPreserveMember(enumDeclaration, out reason))
+            {
+                return true;
+            }
 
             if ((enumDeclaration.HasLeadingTrivia && HasSpecialTrivia(enumDeclaration.GetLeadingTrivia())) ||
                 (enumDeclaration.HasTrailingTrivia && HasSpecialTrivia(enumDeclaration.GetTrailingTrivia())))
@@ -1343,11 +1348,6 @@ namespace SourceCodeSync
                     reason = "Comment in enum";
                     return true;
                 }
-            }
-
-            if (ShouldPreserveMember(enumDeclaration, out reason))
-            {
-                return true;
             }
 
             return false;
