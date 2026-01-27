@@ -360,11 +360,6 @@ namespace SourceCodeSync
                 string[] sourceFiles = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in sourceFiles)
                 {
-                    if (file.EndsWith(".Designer.cs"))
-                    {
-                        continue;
-                    }
-
                     if (!GetFileSource(file))
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
@@ -377,6 +372,11 @@ namespace SourceCodeSync
                 string[] destFiles = Directory.GetFiles(destDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in destFiles)
                 {
+                    if (file.EndsWith(".Designer.cs", StringComparison.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }
+
                     string relPath = GetRelativePath(destDir, file);
                     string relDir = Path.GetDirectoryName(relPath);
                     if (string.IsNullOrEmpty(relDir))
