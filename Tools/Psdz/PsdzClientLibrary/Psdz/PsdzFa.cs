@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model
 {
-    [PreserveSource(Hint = "Added OLD_PSDZ_FA")]
+    [PreserveSource(Hint = "Added OLD_PSDZ_FA", SuppressWarning = true)]
     [DataContract]
     public class PsdzFa : PsdzStandardFa, IPsdzFa, IPsdzStandardFa
     {

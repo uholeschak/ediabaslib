@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using PsdzClient;
 
 namespace BMW.Rheingold.Psdz.Model
 {
-    [PreserveSource(Hint = "Added OLD_PSDZ_FA")]
+    [PreserveSource(Hint = "Added OLD_PSDZ_FA", SuppressWarning = true)]
     public interface IPsdzStandardFa
     {
         string AsString { get; }

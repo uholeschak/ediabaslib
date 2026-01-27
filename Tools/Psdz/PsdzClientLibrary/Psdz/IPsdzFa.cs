@@ -2,7 +2,7 @@
 
 namespace BMW.Rheingold.Psdz.Model
 {
-    [PreserveSource(Hint = "Added OLD_PSDZ_FA")]
+    [PreserveSource(Hint = "Added OLD_PSDZ_FA", SuppressWarning = true)]
     public interface IPsdzFa : IPsdzStandardFa
     {
         string AsXml { get; }
