@@ -2,7 +2,7 @@
 
 namespace PsdzClient.Core
 {
-    [PreserveSource(Hint = "Class cleaned")]
+    [PreserveSource(Hint = "Class cleaned", SuppressWarning = true)]
     public class Fasta2Service : IFasta2Service
     {
         public Fasta2Service()

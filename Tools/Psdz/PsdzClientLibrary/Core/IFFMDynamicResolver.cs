@@ -1,16 +1,6 @@
-﻿using net.sf.jni4net.jni;
-using PsdzClient.Programming;
-using PsdzClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PsdzClient.Core
+﻿namespace PsdzClient.Core
 {
-    [PreserveSource(Hint = "Class cleaned")]
+    [PreserveSource(Hint = "Class cleaned", SuppressWarning = true)]
     public interface IFFMDynamicResolver : IFFMDynamicResolverRuleEvaluation
     {
     }
