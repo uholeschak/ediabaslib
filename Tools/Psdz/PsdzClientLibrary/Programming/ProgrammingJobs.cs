@@ -38,7 +38,7 @@ using System.Xml.Serialization;
 
 namespace PsdzClient.Programming
 {
-    [PreserveSource(Hint = "Custom code")]
+    [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public class ProgrammingJobs : IDisposable
     {
         public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
@@ -64,7 +64,7 @@ namespace PsdzClient.Programming
         public const string GlobalMutexGenerateTestModules = "PsdzClient_GenerateTestModules";
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
 
-        [PreserveSource(Hint = "Custom code")]
+        [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
         public enum ExecutionMode
         {
             Normal,
@@ -73,7 +73,7 @@ namespace PsdzClient.Programming
             GenerateTestModules,
         }
 
-        [PreserveSource(Hint = "Custom code")]
+        [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
         public enum OperationType
         {
             CreateOptions,
@@ -82,7 +82,7 @@ namespace PsdzClient.Programming
             ExecuteTal,
         }
 
-        [PreserveSource(Hint = "Custom code")]
+        [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
         public enum CacheType
         {
             None,
@@ -90,7 +90,7 @@ namespace PsdzClient.Programming
             FuncAddress,
         }
 
-        [PreserveSource(Hint = "Custom code")]
+        [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
         public class OptionsItem
         {
             public OptionsItem(PsdzDatabase.SwiRegisterEnum swiRegisterEnum,PsdzDatabase.SwiAction swiAction, ClientContext clientContext)
@@ -163,7 +163,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Custom code")]
+        [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
         public class OptionType
         {
             public OptionType(string name, PsdzDatabase.SwiRegisterEnum swiRegisterEnum)
@@ -192,7 +192,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Custom code")]
+        [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
         [XmlType("SelectedOptionData")]
         public class SelectedOptionData
         {
@@ -211,14 +211,14 @@ namespace PsdzClient.Programming
         }
 
 
-        [PreserveSource(Hint = "Custom code")]
+        [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
         [XmlInclude(typeof(SelectedOptionData)), XmlInclude(typeof(VehicleStructsBmw.VersionInfo))]
         [XmlType("OperationStateData")]
         public class OperationStateData
         {
             public const int StructVersionCurrent = 1;
 
-            [PreserveSource(Hint = "Custom code")]
+            [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
             public enum OperationEnum
             {
                 Idle,
@@ -227,7 +227,7 @@ namespace PsdzClient.Programming
                 Modification,
             }
 
-            [PreserveSource(Hint = "Custom code")]
+            [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
             public enum TalExecutionStateEnum
             {
                 None,
@@ -243,7 +243,7 @@ namespace PsdzClient.Programming
                 Finished,
             }
 
-            [PreserveSource(Hint = "Custom code")]
+            [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
             public enum TalExecutionResultEnum
             {
                 None,

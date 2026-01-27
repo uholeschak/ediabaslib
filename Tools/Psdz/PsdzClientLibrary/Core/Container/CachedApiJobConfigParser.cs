@@ -1,13 +1,8 @@
-﻿using PsdzClient;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Xml.Linq;
+﻿using System.Collections.Generic;
 
 namespace PsdzClient.Core.Container
 {
-    [PreserveSource(Hint = "Class cleaned")]
+    [PreserveSource(Hint = "Class cleaned", SuppressWarning = true)]
     public class CachedApiJobConfigParser
     {
         public static List<string> Parse()

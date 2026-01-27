@@ -3,7 +3,7 @@ using System.IO;
 
 namespace PsdzClient.Utility
 {
-    [PreserveSource(Hint = "Custom code")]
+    [PreserveSource(Hint = "Custom code", SuppressWarning = true)]
     public static class FileUtilities
     {
         public static string NormalizePath(string path)

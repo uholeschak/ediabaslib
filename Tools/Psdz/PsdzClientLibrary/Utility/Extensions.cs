@@ -2,7 +2,7 @@
 
 namespace PsdzClient.Utility
 {
-    [PreserveSource(Hint = "Do not update, only used for logging")]
+    [PreserveSource(Hint = "Do not update, only used for logging", SuppressWarning = true)]
     public static class Extensions
     {
         public static string ToText<T>(this T value)
