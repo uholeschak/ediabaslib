@@ -865,7 +865,7 @@ namespace SourceCodeSync
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
                                 int preservedCount = cls.Members.Count(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _));
-                                Console.WriteLine($"Merging class {classNameFull} while preserving {preservedCount} marked member(s)");
+                                Console.WriteLine($"Merging class {namespaceName}:{classNameFull} while preserving {preservedCount} marked member(s)");
                             }
                         }
                         else
@@ -880,7 +880,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine($"Updating class: {classNameFull}");
+                                Console.WriteLine($"Updating class: {namespaceName}:{classNameFull}");
                             }
                             newRoot = newRoot.ReplaceNode(cls, mergedClass);
                             fileModified = true;
@@ -890,7 +890,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine("*** Warning: Class not found in source files: {0}", classNameFull);
+                            Console.WriteLine("*** Warning: Class not found in source files: {0}:{1}", namespaceName, classNameFull);
                         }
                     }
                 }
@@ -908,6 +908,7 @@ namespace SourceCodeSync
                     string interfaceNameFull = GetInterfaceName(interfaceDecl, includeModifiers: true);
                     string interfaceNameBare = GetInterfaceName(interfaceDecl);
                     string interfaceSource = interfaceDecl.NormalizeWhitespace().ToFullString();
+                    string namespaceName = GetNamespace(interfaceDecl);
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
@@ -921,7 +922,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= verbosity)
                         {
-                            Console.WriteLine("Skipping interface {0}, reason: {1}", interfaceNameFull, reason);
+                            Console.WriteLine("Skipping interface {0}:{1}, reason: {2}", namespaceName, interfaceNameFull, reason);
                         }
                         continue;
                     }
@@ -942,7 +943,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine("Interface {0} special attribute detected", interfaceNameFull);
+                                Console.WriteLine("Interface {0}:{1} special attribute detected", namespaceName, interfaceNameFull);
                             }
 
                             // Update modifiers and attributes from destination interface
@@ -961,7 +962,7 @@ namespace SourceCodeSync
 
                                 if (_verbosity >= Options.VerbosityOption.Info)
                                 {
-                                    Console.WriteLine("Interface {0} inheritance updated", interfaceNameFull);
+                                    Console.WriteLine("Interface {0}:{1} inheritance updated", namespaceName, interfaceNameFull);
                                 }
                             }
                         }
@@ -976,7 +977,7 @@ namespace SourceCodeSync
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
                                 int preservedCount = interfaceDecl.Members.Count(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _));
-                                Console.WriteLine($"Merging interface {interfaceNameFull} while preserving {preservedCount} marked member(s)");
+                                Console.WriteLine($"Merging interface {namespaceName}:{interfaceNameFull} while preserving {preservedCount} marked member(s)");
                             }
                         }
                         else
@@ -990,7 +991,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine($"Updating interface: {interfaceNameFull}");
+                                Console.WriteLine($"Updating interface: {namespaceName}:{interfaceNameFull}");
                             }
                             newRoot = newRoot.ReplaceNode(interfaceDecl, mergedInterface);
                             fileModified = true;
@@ -1000,7 +1001,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine("*** Warning: Interface not found in source files: {0}", interfaceNameFull);
+                            Console.WriteLine("*** Warning: Interface not found in source files: {0}:{1}", namespaceName, interfaceNameFull);
                         }
                     }
                 }
@@ -1011,6 +1012,7 @@ namespace SourceCodeSync
                 {
                     string enumName = GetEnumName(enumDecl, includeModifiers: true);
                     string enumSource = enumDecl.NormalizeWhitespace().ToFullString();
+                    string namespaceName = GetNamespace(enumDecl);
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
@@ -1024,7 +1026,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= verbosity)
                         {
-                            Console.WriteLine("Skipping enum {0} reason: {1}", enumName, reason);
+                            Console.WriteLine("Skipping enum {0}:{1} reason: {2}", namespaceName, enumName, reason);
                         }
                         continue;
                     }
@@ -1045,7 +1047,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine("Enum {0} special attribute detected", enumName);
+                                Console.WriteLine("Enum {0}:{1} special attribute detected", namespaceName, enumName);
                             }
                             // Update modifiers and attributes from destination enum
                             sourceEnumCopy = sourceEnumCopy
@@ -1059,7 +1061,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine($"Updating enum: {enumName}");
+                                Console.WriteLine($"Updating enum: {namespaceName}:{enumName}");
                             }
                             newRoot = newRoot.ReplaceNode(enumDecl, sourceEnumCopy);
                             fileModified = true;
@@ -1069,7 +1071,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            Console.WriteLine("*** Warning: Enum not found in source files: {0}", enumName);
+                            Console.WriteLine("*** Warning: Enum not found in source files: {0}:{1}", namespaceName, enumName);
                         }
                     }
                 }
