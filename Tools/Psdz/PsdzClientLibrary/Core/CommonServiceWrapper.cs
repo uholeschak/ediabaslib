@@ -2,7 +2,7 @@
 
 namespace PsdzClient.Core
 {
-    [PreserveSource(Hint = "Class simplified")]
+    [PreserveSource(Hint = "Class simplified", SuppressWarning = true)]
     public class CommonServiceWrapper
     {
         private static readonly object featureSwitchLockObj = new object();
