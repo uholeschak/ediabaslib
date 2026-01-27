@@ -780,6 +780,7 @@ namespace SourceCodeSync
                     string classNameFull = GetClassName(cls, includeModifiers: true);
                     string classNameBare = GetClassName(cls);
                     string classSource = cls.NormalizeWhitespace().ToFullString();
+                    string namespaceName = GetNamespace(cls);
 
                     if (_verbosity >= Options.VerbosityOption.Debug)
                     {
@@ -793,7 +794,7 @@ namespace SourceCodeSync
                     {
                         if (_verbosity >= verbosity)
                         {
-                            Console.WriteLine("Skipping class {0} reason: {1}", classNameFull, reason);
+                            Console.WriteLine("Skipping class {0}:{1} reason: {2}", namespaceName, classNameFull, reason);
                         }
                         continue;
                     }
@@ -818,7 +819,7 @@ namespace SourceCodeSync
                             {
                                 if (_verbosity >= Options.VerbosityOption.Important)
                                 {
-                                    Console.WriteLine("Skipping class {0} with removed Contract from file: {1}", classNameFull, Path.GetFileName(fileName));
+                                    Console.WriteLine("Skipping class {0}:{1} with removed Contract from file: {2}", namespaceName, classNameFull, Path.GetFileName(fileName));
                                 }
                                 continue;
                             }
@@ -829,7 +830,7 @@ namespace SourceCodeSync
                         {
                             if (_verbosity >= Options.VerbosityOption.Info)
                             {
-                                Console.WriteLine("Class {0} special attribute detected", classNameFull);
+                                Console.WriteLine("Class {0}:{1} special attribute detected", namespaceName, classNameFull);
                             }
 
                             // Update modifiers and attributes from destination class
@@ -848,7 +849,7 @@ namespace SourceCodeSync
 
                                 if (_verbosity >= Options.VerbosityOption.Info)
                                 {
-                                    Console.WriteLine("Class {0} inheritance updated", classNameFull);
+                                    Console.WriteLine("Class {0}:{1} inheritance updated", namespaceName, classNameFull);
                                 }
                             }
                         }
