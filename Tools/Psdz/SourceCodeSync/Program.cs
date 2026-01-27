@@ -36,7 +36,6 @@ namespace SourceCodeSync
 
         private static readonly string[] _ignoreNamespaces =
         [
-            @"^PsdzClientLibrary\.Resources$",
             @"^BMW\.ISPI\.TRIC\.ISTA\.Contracts\.Enums\.UserLogin$",
             @"^BMW\.Rheingold\.CoreFramework\.OSS$",
             @"^BMW\.Rheingold\.CoreFramework\.IndustrialCustomer\..*",
@@ -361,6 +360,11 @@ namespace SourceCodeSync
                 string[] sourceFiles = Directory.GetFiles(sourceDir, "*.cs", SearchOption.AllDirectories);
                 foreach (string file in sourceFiles)
                 {
+                    if (file.EndsWith(".Designer.cs"))
+                    {
+                        continue;
+                    }
+
                     if (!GetFileSource(file))
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
