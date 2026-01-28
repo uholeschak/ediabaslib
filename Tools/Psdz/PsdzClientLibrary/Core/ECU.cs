@@ -2000,7 +2000,7 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-        [PreserveSource(Hint = "Code removed", SignatureModified = true)]
+        [PreserveSource(Hint = "Removed unused assignments", SignatureModified = true)]
         public ECU()
         {
             subBUSField = new ObservableCollection<BusType>();

@@ -13,19 +13,19 @@ namespace PsdzClient.Utility
 {
     public class FormatConverter
     {
-        [PreserveSource(Hint = "Code removed")]
+        [PreserveSource(Cleaned = true)]
         public static string GetLocalizedREPS(string ecuVariant, string ecuGroup, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Code removed")]
+        [PreserveSource(Cleaned = true)]
         public static string GetLocalizedClique(string ecuVariant, string ecuGroup)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Code removed")]
+        [PreserveSource(Cleaned = true)]
         public static string GetLocalizedLongName(string ecuVariant, string ecuGroup, Vehicle vehicle, IFFMDynamicResolver ffmResolver)
         {
             throw new NotImplementedException();
