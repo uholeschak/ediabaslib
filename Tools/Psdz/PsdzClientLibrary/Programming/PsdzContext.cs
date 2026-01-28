@@ -1224,14 +1224,14 @@ namespace PsdzClient.Programming
             return sb.ToString();
         }
 
-        [PreserveSource(Hint = "IDisposable added")]
+        [PreserveSource(Hint = "IDisposable added", SuppressWarning = true)]
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        [PreserveSource(Hint = "IDisposable added")]
+        [PreserveSource(Hint = "IDisposable added", SuppressWarning = true)]
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
