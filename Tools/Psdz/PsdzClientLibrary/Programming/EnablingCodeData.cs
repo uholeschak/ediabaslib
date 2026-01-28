@@ -16,7 +16,7 @@ namespace PsdzClient.Programming
 
         public FscState FscState { get; set; }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public static string GetEnablingCodeName(int applicationId, int upgradeIndex, Vehicle vehicle, IFFMDynamicResolver dynamicResolver)
         {
             return string.Empty;

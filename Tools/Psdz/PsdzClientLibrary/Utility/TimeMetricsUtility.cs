@@ -47,139 +47,139 @@ namespace PsdzClient.Utility
             return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Diagnostics.VehicleTestMetricsEnabled", defaultValue);
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void DumpResults()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void ApiJobEnd(string ecu, string job, string args, int argsLength)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void ApiJobStart(string ecu, string job, string args, int argsLength)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void BackendCallEnd(BackendServiceType type)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void BackendCallStart(BackendServiceType type)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void DbQueryEnd()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void DbQueryStart()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void FastaEnd()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void FastaStart()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void InitializePsdzStart()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void InitializePsdzStop()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void PopupClosed(string description)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void PopupShown(string description)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void PsdzUsageStart()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void PsdzUsageStop()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void RuleEnd()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void RuleStart()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void Sleep(int milliseconds, string reason)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void TestModuleEnd(string name)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void TestModuleStart(string name)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void VehicleCommunicationEnd(object[] args)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void VehicleCommunicationStart(object[] args, string methodName)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void Start(TimeMetricsStage stage)
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void Stop()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public List<MetricApiJob> GetSlowFastaJobs()
         {
             return new List<MetricApiJob>();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public TimeSpan GetPopupDuration()
         {
             return TimeSpan.Zero;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public string GetCurrentlyRunningModuleName()
         {
             return "ISTA";

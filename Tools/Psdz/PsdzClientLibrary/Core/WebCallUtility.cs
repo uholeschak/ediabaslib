@@ -10,7 +10,7 @@ namespace PsdzClient.Core
         private const string GoogleDNSIp = "8.8.8.8";
         private const string BaiduDNSIp = "180.76.76.76";
         private const int PingRetryCount = 4;
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "626656F77045111B48E965A4C6CC6EB1")]
+        [PreserveSource(Cleaned = true, OriginalHash = "626656F77045111B48E965A4C6CC6EB1")]
         public static bool CheckForInternetConnection()
         {
             try
@@ -24,7 +24,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "B9DD57AC84443AFFC1870B85B4CA25D1")]
+        [PreserveSource(Cleaned = true, OriginalHash = "B9DD57AC84443AFFC1870B85B4CA25D1")]
         public static bool CheckForIntranetConnection()
         {
             try
@@ -48,13 +48,13 @@ namespace PsdzClient.Core
             return PingGoogleDNSToCheckForInternetConnection();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private static bool CheckTricResult()
         {
             return false;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private static bool CallTricEndpoint(string url)
         {
             return false;
@@ -104,7 +104,7 @@ namespace PsdzClient.Core
             return flag;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private static bool PingBMWConnectionCheck(bool isFallback = false)
         {
             return false;

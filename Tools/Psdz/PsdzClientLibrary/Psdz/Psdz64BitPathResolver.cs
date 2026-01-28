@@ -7,7 +7,7 @@ namespace PsdzClient.Programming
 {
     public static class Psdz64BitPathResolver
     {
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "7E1B3F17B11BE32638A1425A1E16CBCA")]
+        [PreserveSource(Cleaned = true, OriginalHash = "7E1B3F17B11BE32638A1425A1E16CBCA")]
         private static readonly Lazy<bool> force64Bit = new Lazy<bool>(delegate
         {
             return false;

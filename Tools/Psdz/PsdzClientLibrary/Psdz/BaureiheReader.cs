@@ -39,7 +39,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "017EC1F95167348AF627A728304BD3E0")]
+        [PreserveSource(Cleaned = true, OriginalHash = "017EC1F95167348AF627A728304BD3E0")]
         private IPsdz StartPsdzWebService()
         {
             return null;

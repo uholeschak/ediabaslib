@@ -51,7 +51,7 @@ namespace PsdzClient.Programming
             return $"ECU: 0x{DiagAddrAsInt:X2}, FeatureId: 0X{FeatureIdAsInt:X6}, Status: {Status.ToString()}";
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public static string GetSecureFeatureName(long featureIdAsInt)
         {
             return string.Empty;

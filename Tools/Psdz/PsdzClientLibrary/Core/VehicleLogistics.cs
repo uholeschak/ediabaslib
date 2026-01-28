@@ -937,7 +937,7 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private static void ValidateIfDiagnosticsHasValidLicense()
         {
         }

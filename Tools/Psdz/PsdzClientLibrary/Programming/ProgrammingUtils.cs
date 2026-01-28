@@ -63,19 +63,19 @@ namespace BMW.Rheingold.Programming.Common
             return false;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public static bool RequestClamp15State(IProgressMonitor monitor, IEcuKom ecuKom, IVehicle vehicle)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public static bool RequestClamp30State(IProgressMonitor monitor, IEcuKom ecuKom)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public static string RetrieveNewZbNr()
         {
             throw new NotImplementedException();
@@ -113,19 +113,19 @@ namespace BMW.Rheingold.Programming.Common
             return false;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal static IProgrammingAction AddProgrammingActionToEcu(EcuProgrammingInfo ecu)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public static FormatedData CreateProgrammingMessageClamp30(double? voltage, BatteryEnum vehicleBattery, double clampMinValue)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public static bool CheckClamp30ForProgramming(double voltage, BatteryEnum vehicleBattery)
         {
             throw new NotImplementedException();
@@ -143,13 +143,13 @@ namespace BMW.Rheingold.Programming.Common
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "7FC863B731110E8C4456F2073E8BE8F5")]
+        [PreserveSource(Cleaned = true, OriginalHash = "7FC863B731110E8C4456F2073E8BE8F5")]
         public static bool IsToyota()
         {
             return false;
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "C222EF38D34939CDBD98728578208800")]
+        [PreserveSource(Cleaned = true, OriginalHash = "C222EF38D34939CDBD98728578208800")]
         private static void CheckClamp30(Vehicle vehicle)
         {
             throw new NotImplementedException();
@@ -161,7 +161,7 @@ namespace BMW.Rheingold.Programming.Common
             return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.RheingoldSessionController.CircumventProgramingProhibition", defaultValue);
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "A4E9AB03DE103323608792E045FBE180")]
+        [PreserveSource(Cleaned = true, OriginalHash = "A4E9AB03DE103323608792E045FBE180")]
         private static void CheckBatteryStatus()
         {
             throw new NotImplementedException();
@@ -173,7 +173,7 @@ namespace BMW.Rheingold.Programming.Common
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "F7566E35F78D5A3BF71E9D0048964DF0")]
+        [PreserveSource(Cleaned = true, OriginalHash = "F7566E35F78D5A3BF71E9D0048964DF0")]
         [Obsolete("Use the method CheckConnectionWithResult instead")]
         protected static void CheckConnection(Vehicle vehicle)
         {

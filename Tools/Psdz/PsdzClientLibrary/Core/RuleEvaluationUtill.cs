@@ -140,7 +140,7 @@ namespace PsdzClient.Core
             rulesToEvaluate = new HashSet<decimal>(rulesToEvaluate.Except(hashSet));
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "DEE6195CE6ED98D2483D9642F990AB30")]
+        [PreserveSource(Cleaned = true, OriginalHash = "DEE6195CE6ED98D2483D9642F990AB30")]
         private void UpdateRuleSetsFromDB()
         {
         }

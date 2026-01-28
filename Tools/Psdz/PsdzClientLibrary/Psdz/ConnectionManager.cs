@@ -103,7 +103,7 @@ namespace PsdzClient.Psdz
             return VCI.VCIType == VCIDeviceType.ENET;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal IPsdzConnection ConnectToProject(string projectName, string vehicleInfo, int diagPort)
         {
             throw new NotImplementedException();
@@ -179,19 +179,19 @@ namespace PsdzClient.Psdz
             return array.Concat(rawCertData).Concat(array2).Concat(rawCertData2).Concat(array3).Concat(rawCertData3).ToArray();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal bool IsConnected(IPsdzConnection connection)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal bool IsConnected(IPsdzConnection connection, out string psdzMessage)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal IPsdzConnection ConnectToProject(string projectName, string vehicleInfo, bool restartHsfzOnError)
         {
             throw new NotImplementedException();
@@ -230,25 +230,25 @@ namespace PsdzClient.Psdz
             }
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal void SwitchFromEDIABASToPSdZIfConnectedViaPTTOrENET(PsdzContext context)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal void SwitchFromEDIABASToPSdZ(PsdzContext context)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal void SwitchFromPSdZToEDIABASIfConnectedViaPTTOrENET(PsdzContext context)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal void SwitchFromPSdZToEDIABAS(PsdzContext context, bool isDoIP)
         {
             throw new NotImplementedException();
@@ -260,13 +260,13 @@ namespace PsdzClient.Psdz
             return ConnectToPsdz(restartHsfzOnError);
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal void CloseEdiabasConnectionIfConnectedViaPTTOrENET()
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal void SwitchFromPSdZToEDIABASIfConnectedViaPTTOrENET(IPsdzConnection connection)
         {
             throw new NotImplementedException();
@@ -294,25 +294,25 @@ namespace PsdzClient.Psdz
             }
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private IPsdzConnection ConnectToCar(string projectName, string vehicleInfo, int defaultVehicleConnectionPort)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private IPsdzConnection ConnectToMotorcycle(string projectName, string vehicleInfo, int defaultMotorcycleConnectionPort, int fallbackMotorcycleConnectionPort)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private IPsdzConnection DoHsfzRestartAndConnectAgain(string projectName, string vehicleInfo, int port)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private bool DoIcomRestartAndConnectAgain(string projectName, string vehicleInfo, int port, out IPsdzConnection connection)
         {
             throw new NotImplementedException();
@@ -338,13 +338,13 @@ namespace PsdzClient.Psdz
             return false;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private void ReconnectToPsdz(PsdzContext context)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private IPsdzConnection ConnectToPsdz(bool restartHsfzOnError = false)
         {
             throw new NotImplementedException();

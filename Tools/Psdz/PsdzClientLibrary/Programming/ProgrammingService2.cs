@@ -122,7 +122,7 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private void FillAdditionalDataForPretestConfig()
         {
         }

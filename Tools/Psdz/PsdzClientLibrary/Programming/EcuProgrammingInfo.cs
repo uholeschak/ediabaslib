@@ -164,7 +164,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "4392CA5C87048D4D52044B87A7F3B795")]
+        [PreserveSource(Cleaned = true, OriginalHash = "4392CA5C87048D4D52044B87A7F3B795")]
         public ProgrammingActionState? State
         {
             get

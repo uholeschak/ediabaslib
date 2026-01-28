@@ -128,7 +128,7 @@ namespace PsdzClient.Utility
             return null;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         internal static bool GetISTACharacteristics(decimal id, out string value, long datavalueId)
         {
             throw new NotImplementedException();

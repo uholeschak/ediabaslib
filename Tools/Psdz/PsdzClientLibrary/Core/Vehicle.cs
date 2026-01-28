@@ -1093,7 +1093,7 @@ namespace PsdzClient.Core
             Reactor = new Reactor(this, new NugetLogger(), new DataHolder());
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public List<string> PermanentSAEFehlercodesInFaultList()
         {
             List<string> list = new List<string>();
@@ -1125,25 +1125,25 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public PlaceholderType GetEnrichedFaultList(IFFMDynamicResolver ffmDynamicResolver)
         {
             return PlaceholderType.Value;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public PlaceholderType ComputeResolveLabelsForAllFaultAsync(Vehicle vehicle, IFFMDynamicResolver ffmDynamicResolver)
         {
             return PlaceholderType.Value;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private PlaceholderType GetXepFaultModelLabelsByDtcFOrtEcuVariantAsync()
         {
             return PlaceholderType.Value;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private PlaceholderType GetXepFaultLabelsByDtcFOrtEcuVariantAsync()
         {
             return PlaceholderType.Value;
@@ -1390,19 +1390,19 @@ namespace PsdzClient.Core
             return true;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public ECU GetECUbyDTC(decimal id)
         {
             return null;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public PlaceholderType GetDTC(decimal id)
         {
             return PlaceholderType.Value;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void CalculateFaultProperties(IFFMDynamicResolver ffmResolver = null)
         {
         }
@@ -1815,19 +1815,19 @@ namespace PsdzClient.Core
             return num;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public PlaceholderType getCBSMeasurementValue(typeCBSMeaurementType mType)
         {
             return PlaceholderType.Value;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public bool addOrUpdateCBSMeasurementValue()
         {
             return false;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public bool addOrUpdateCBSMeasurementValues()
         {
             return false;
@@ -2215,7 +2215,7 @@ namespace PsdzClient.Core
             return default(T);
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void AddDiagCode(string diagCodeString, string diagCodeSuffixString, string originatingAblauf, IList<string> reparaturPaketList, bool teileClearingFlag)
         {
         }
@@ -2307,19 +2307,19 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private static PlaceholderType CalculateFaultList()
         {
             return PlaceholderType.Value;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private static int? CalculateFaultCodeSum()
         {
             return null;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public void AddCombinedDTC()
         {
         }
@@ -2409,7 +2409,7 @@ namespace PsdzClient.Core
             return num;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public int GetFaultListHashCode()
         {
             return 0;
