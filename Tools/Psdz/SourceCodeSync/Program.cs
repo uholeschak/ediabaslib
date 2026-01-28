@@ -868,10 +868,16 @@ namespace SourceCodeSync
                         {
                             // Merge with preserved members
                             mergedClass = MergeClassPreservingMarked(cls, sourceClassCopy);
-                            if (_verbosity >= Options.VerbosityOption.Info)
+                            foreach (MemberDeclarationSyntax member in cls.Members)
                             {
-                                int preservedCount = cls.Members.Count(m => ShouldPreserveMember(m, out string _, out Options.VerbosityOption _));
-                                Console.WriteLine($"Merging class {namespaceName}:{classNameFull} while preserving {preservedCount} marked member(s)");
+                                if (ShouldPreserveMember(member, out string _, out Options.VerbosityOption verbosityLocal))
+                                {
+                                    if (_verbosity >= verbosityLocal)
+                                    {
+                                        string memberName = GetMemberName(member);
+                                        Console.WriteLine($"Preserving member: {namespaceName}:{classNameFull}.{memberName}");
+                                    }
+                                }
                             }
                         }
                         else
