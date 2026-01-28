@@ -126,6 +126,8 @@ namespace SourceCodeSync
 
         private const string _attributesModifiedProperty = "AttributesModified";
 
+        private const string _keepAttributeProperty = "KeepAttribute";
+
         private const string _removedProperty = "Removed";
 
         private const string _suppressWarningProperty = "SuppressWarning";
@@ -1835,6 +1837,16 @@ namespace SourceCodeSync
                             sbReason.Append(" ");
                         }
                         sbReason.Append($"[{_suppressWarningProperty}]");
+                    }
+
+                    if (GetAttributeBoolProperty(preserveAttribute, _keepAttributeProperty))
+                    {
+                        verbosity = Options.VerbosityOption.Info;
+                        if (sbReason.Length > 0)
+                        {
+                            sbReason.Append(" ");
+                        }
+                        sbReason.Append($"[{_keepAttributeProperty}]");
                     }
 
                     if (GetAttributeBoolProperty(preserveAttribute, _attributesModifiedProperty))
