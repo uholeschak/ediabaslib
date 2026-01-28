@@ -9,7 +9,7 @@ namespace PsdzClient.Core
     public sealed class VehicleCharacteristicVCIDeviceHelper : VehicleCharacteristicAbstract
     {
         private BasicFeaturesVci basicFeatures;
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
         private PsdzDatabase.Characteristics characteristic;
         [PreserveSource(Hint = "Characteristics modified", SignatureModified = true)]
         public bool AssignBasicFeaturesVciCharacteristic(string vehicleCode, BasicFeaturesVci vehicle, PsdzDatabase.Characteristics characteristic)

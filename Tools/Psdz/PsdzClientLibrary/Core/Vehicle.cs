@@ -36,7 +36,7 @@ namespace PsdzClient.Core
         private double clamp30MinValue;
         private bool withLfpBattery;
         private bool withLfpNCarBattery;
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
         private BatteryEnum batteryType;
         private bool isClosingOperationActive;
         private string verkaufsBezeichnungField;
@@ -69,7 +69,7 @@ namespace PsdzClient.Core
         private string eSeriesLifeCycle;
         private string lifeCycle;
         private string sportausfuehrung;
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
         private PsdzDatabase.BordnetsData bordnetsData;
         private VehicleClassification classification;
         private IVehicleProfileChecksum vpc;
@@ -82,7 +82,7 @@ namespace PsdzClient.Core
         [XmlIgnore]
         public DateTime? LastProgramDate { get; set; }
 
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
         [XmlIgnore]
         public PsdzDatabase.BordnetsData BordnetsData
         {

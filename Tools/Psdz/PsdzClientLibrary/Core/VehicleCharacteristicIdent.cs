@@ -13,7 +13,7 @@ namespace PsdzClient.Core
     {
         public const string DefaultEmptyCharacteristicValue = "-";
         private IIdentVehicle vecInfo;
-        [PreserveSource(Hint = "Database modified")]
+        [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
         private PsdzDatabase.Characteristics characteristic;
         private ReactorEngine reactor;
         private readonly ILogger log;
