@@ -128,6 +128,8 @@ namespace SourceCodeSync
 
         private const string _keepAttributeProperty = "KeepAttribute";
 
+        private const string _placeholderProperty = "Placeholder";
+
         private const string _removedProperty = "Removed";
 
         private const string _suppressWarningProperty = "SuppressWarning";
@@ -1819,34 +1821,22 @@ namespace SourceCodeSync
                         sbReason.Append($"\"{hint}\"");
                     }
 
-                    if (GetAttributeBoolProperty(preserveAttribute, _removedProperty))
+                    List<string> infoProperties = new List<string>()
                     {
-                        verbosity = Options.VerbosityOption.Info;
-                        if (sbReason.Length > 0)
-                        {
-                            sbReason.Append(" ");
-                        }
-                        sbReason.Append($"[{_removedProperty}]");
-                    }
+                        _removedProperty, _suppressWarningProperty, _keepAttributeProperty, _placeholderProperty, _signatureModifiedProperty
+                    };
 
-                    if (GetAttributeBoolProperty(preserveAttribute, _suppressWarningProperty))
+                    foreach (string infoProperty in infoProperties)
                     {
-                        verbosity = Options.VerbosityOption.Info;
-                        if (sbReason.Length > 0)
+                        if (GetAttributeBoolProperty(preserveAttribute, infoProperty))
                         {
-                            sbReason.Append(" ");
+                            verbosity = Options.VerbosityOption.Info;
+                            if (sbReason.Length > 0)
+                            {
+                                sbReason.Append(" ");
+                            }
+                            sbReason.Append($"[{infoProperty}]");
                         }
-                        sbReason.Append($"[{_suppressWarningProperty}]");
-                    }
-
-                    if (GetAttributeBoolProperty(preserveAttribute, _keepAttributeProperty))
-                    {
-                        verbosity = Options.VerbosityOption.Info;
-                        if (sbReason.Length > 0)
-                        {
-                            sbReason.Append(" ");
-                        }
-                        sbReason.Append($"[{_keepAttributeProperty}]");
                     }
 
                     if (GetAttributeBoolProperty(preserveAttribute, _attributesModifiedProperty))
