@@ -22,16 +22,16 @@ namespace BMW.Rheingold.Psdz
     internal class PsdzObjectBuilder : IPsdzObjectBuilder
     {
         private readonly IObjectBuilderService objectBuilderService;
-        [PreserveSource(Hint = "Init in constructor")]
+        [PreserveSource(Hint = "Init in constructor", SuppressWarning = true)]
         private readonly BaureiheReader baureiheReader;
         private readonly SwtActionTypeEnumMapper swtActionTypeEnumMapper = new SwtActionTypeEnumMapper();
         private readonly FscCertificateStateEnumMapper fscCertificateStateEnumMapper = new FscCertificateStateEnumMapper();
-        [PreserveSource(Hint = "Namespace modified")]
+        [PreserveSource(Hint = "Namespace modified", SuppressWarning = true)]
         private readonly PsdzClient.Programming.FscStateEnumMapper fscStateEnumMapper = new PsdzClient.Programming.FscStateEnumMapper();
-        [PreserveSource(Hint = "Namespace modified")]
+        [PreserveSource(Hint = "Namespace modified", SuppressWarning = true)]
         private readonly PsdzClient.Programming.SwtTypeEnumMapper swtTypeEnumMapper = new PsdzClient.Programming.SwtTypeEnumMapper();
         private readonly RootCertificateStateEnumMapper rootCertificateStateEnumMapper = new RootCertificateStateEnumMapper();
-        [PreserveSource(Hint = "Namespace modified")]
+        [PreserveSource(Hint = "Namespace modified", SuppressWarning = true)]
         private readonly PsdzClient.Programming.SoftwareSigStateEnumMapper softwareSigStateEnumMapper = new PsdzClient.Programming.SoftwareSigStateEnumMapper();
         private readonly TaCategoriesEnumMapper taCategoriesEnumMapper = new TaCategoriesEnumMapper();
         [PreserveSource(Hint = "iPsdz added", SignatureModified = true)]
