@@ -875,7 +875,7 @@ namespace SourceCodeSync
                                     if (_verbosity >= verbosityLocal)
                                     {
                                         string memberName = GetMemberName(member);
-                                        Console.WriteLine($"Preserving member: {namespaceName}:{classNameFull}.{memberName}");
+                                        Console.WriteLine($"Merging class: {namespaceName}:{classNameFull}, while preserving member:{memberName}");
                                     }
                                 }
                             }
