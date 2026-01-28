@@ -821,10 +821,10 @@ namespace PsdzClient.Core
             return new TextLocator(list);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public IList<string> Langs => lang;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public IList<string> CreateTextItemIdList()
         {
             List<string> list = new List<string>();

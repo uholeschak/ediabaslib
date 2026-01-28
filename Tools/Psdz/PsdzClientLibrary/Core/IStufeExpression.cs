@@ -90,7 +90,7 @@ namespace PsdzClient.Core
             return "I-Stufe=" + IStufe + " [" + value + "]";
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();

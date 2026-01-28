@@ -317,13 +317,13 @@ namespace PsdzClient.Core
             return null;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool IsAvailable()
         {
             return false;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void Dispose()
         {
         }

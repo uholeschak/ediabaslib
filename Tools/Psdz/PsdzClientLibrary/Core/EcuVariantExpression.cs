@@ -125,7 +125,7 @@ namespace PsdzClient.Core
             return "EcuVariant=" + value.ToString(CultureInfo.InvariantCulture) + " (" + VariantName + ")";
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.EcuVar ecuVariantById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuVariantById(this.value.ToString(CultureInfo.InvariantCulture));

@@ -85,7 +85,7 @@ namespace PsdzClient.Core
             return "Country=" + CountryCode + " [" + value.ToString(CultureInfo.InvariantCulture) + "]";
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();

@@ -40,7 +40,7 @@ namespace BMW.Rheingold.Psdz
         [FaultContract(typeof(PsdzRuntimeException))]
         void UnsetRootDirectory();
         RootDirectorySetupResultModel GetRootDirectorySetupResult();
-        [PreserveSource(Hint = "Added", KeepAttribute = true)]
+        [PreserveSource(Added = true, KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         string GetExpectedPsdzVersion();

@@ -378,11 +378,11 @@ namespace PsdzClient.Programming
             TalFilterForIndividualDataTal = talFilterForIndividualDataTal;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private const string IdrBackupFileName = "_IDR_Files.backup";
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private bool _disposed;
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         internal BackupTalResult CheckBackupTal()
         {
             if (!IsValidBackupTal)
@@ -398,25 +398,25 @@ namespace PsdzClient.Programming
             return BackupTalResult.Undefined;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public DetectVehicle DetectVehicle { get; set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public Vehicle VecInfo { get; set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public ISvt SvtTarget { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public ISvt SvtCurrent { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string IstaFolder { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public BaseEcuCharacteristics EcuCharacteristics { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public ICombinedEcuHousingEntry GetEcuHousingEntry(int diagnosticAddress)
         {
             ICollection<ICombinedEcuHousingEntry> combinedEcuHousingTable = EcuCharacteristics?.GetCombinedEcuHousingTable();
@@ -443,7 +443,7 @@ namespace PsdzClient.Programming
             return null;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public IEcuLogisticsEntry GetEcuLogisticsEntry(int diagnosticAddress)
         {
             if (EcuCharacteristics == null)
@@ -462,7 +462,7 @@ namespace PsdzClient.Programming
             return null;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static string GetBackupBasePath(string istaFolder)
         {
             string pathConfig = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", "%ISPIDATA%\\BMW\\ISPI\\data\\TRIC\\ISTA\\Temp\\");
@@ -486,7 +486,7 @@ namespace PsdzClient.Programming
             return pathString;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool HasBackupDataDir()
         {
             if (!string.IsNullOrEmpty(PathToBackupData) && this.hasVinBackupDataFolder && Directory.Exists(PathToBackupData))
@@ -497,7 +497,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool HasBackupData()
         {
             if (!string.IsNullOrEmpty(PathToBackupData) && this.hasVinBackupDataFolder && Directory.Exists(PathToBackupData) && Directory.EnumerateFileSystemEntries(PathToBackupData).Any<string>())
@@ -594,7 +594,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool HasIndividualDataFilesInPuk()
         {
             try
@@ -648,7 +648,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool UpdateVehicle(ProgrammingService2 programmingService)
         {
             EcuCharacteristics = null;
@@ -834,7 +834,7 @@ namespace PsdzClient.Programming
             SetSvtActual(psdzSvt);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static bool AssignVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, Vehicle vehicle)
         {
             if (vehicle == null)
@@ -857,7 +857,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static bool UpdateAlpinaCharacteristics(PsdzDatabase database, Vehicle vehicle)
         {
             List<PsdzDatabase.Characteristics> list = new List<PsdzDatabase.Characteristics>();
@@ -870,7 +870,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static bool UpdateAllVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, PsdzDatabase database, Vehicle vehicle)
         {
             if (database == null || vehicle == null)
@@ -1045,7 +1045,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private void CalculateECUConfiguration()
         {
             if (VecInfo.BNType != BNType.BN2020_MOTORBIKE && VecInfo.BNType != BNType.BNK01X_MOTORBIKE && VecInfo.BNType != BNType.BN2000_MOTORBIKE)
@@ -1069,7 +1069,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public List<PsdzDatabase.EcuInfo> GetEcuList(bool individualOnly = false)
         {
             List<PsdzDatabase.EcuInfo> ecuList = new List<PsdzDatabase.EcuInfo>();
@@ -1098,7 +1098,7 @@ namespace PsdzClient.Programming
             return ecuList;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool SetFa(ProgrammingService2 programmingService)
         {
             try
@@ -1159,7 +1159,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool UpdateSALocalizedItems(ProgrammingService2 programmingService, ClientContext clientContext)
         {
             try
@@ -1189,7 +1189,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void FillSaLocalizedItems(ProgrammingService2 programmingService, string language, List<string> source, string prodArt)
         {
             foreach (string item in source)
@@ -1206,7 +1206,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string GetLocalizedSaString()
         {
             StringBuilder sb = new StringBuilder();

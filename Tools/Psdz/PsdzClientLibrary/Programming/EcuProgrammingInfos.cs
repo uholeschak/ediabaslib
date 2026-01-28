@@ -24,7 +24,7 @@ namespace PsdzClient.Programming
         protected readonly IList<EcuProgrammingInfo> ecuProgrammingInfos;
         protected IDictionary<IEcu, EcuProgrammingInfo> ecuProgrammingInfosMap;
         protected IVehicle vehicle;
-        [PreserveSource(Hint = "Added", Placeholder = true)]
+        [PreserveSource(Added = true, Placeholder = true)]
         private readonly PlaceholderType db;
         private readonly IFFMDynamicResolver ffmResolver;
         private readonly object threadLock = new object ();

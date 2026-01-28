@@ -48,7 +48,7 @@ namespace PsdzClient.Core
             return "ValidTo=" + DateTime.FromBinary(value).ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();

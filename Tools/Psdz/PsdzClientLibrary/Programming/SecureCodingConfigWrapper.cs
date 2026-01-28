@@ -151,7 +151,7 @@ namespace PsdzClient.Programming
             return string.Join(", ", list.ToArray());
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public const string NcdRoot = "ncd";
     }
 }

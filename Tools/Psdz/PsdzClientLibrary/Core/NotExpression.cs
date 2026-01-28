@@ -131,7 +131,7 @@ namespace PsdzClient.Core
             return "NOT " + operand;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             return "!(" + this.operand.ToFormula(formulaConfig) + ")";

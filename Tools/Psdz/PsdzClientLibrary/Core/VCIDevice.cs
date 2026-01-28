@@ -1861,7 +1861,7 @@ namespace PsdzClient.Core
             this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private ClientContext _clientContext;
     }
 }

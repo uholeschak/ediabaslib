@@ -942,7 +942,7 @@ namespace PsdzClient.Core
         {
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static BaseEcuCharacteristics GetCharacteristicsPublic(Vehicle vecInfo)
         {
             return GetCharacteristics(vecInfo);

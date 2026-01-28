@@ -40,16 +40,16 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Changed to Boolean")]
         bool StartPsdzService(IVehicle vehicle);
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         IPsdzStandardSvt GetVehicleSvtUsingPsdz();
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         bool ExecuteEarlyEcuValidationUsingPsdz();
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         bool ImportSecureTokenForSec4CnSp21();
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         ISvt GetCurrentSvtFromPsdzSvt();
     }
 }

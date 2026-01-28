@@ -350,7 +350,7 @@ namespace PsdzClient.Utility
             return string.Empty;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static string DecryptFile(string fileName)
         {
             try
@@ -374,7 +374,7 @@ namespace PsdzClient.Utility
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static bool EncryptFile(string contents, string fileName)
         {
             try
@@ -403,7 +403,7 @@ namespace PsdzClient.Utility
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static bool SetFileFullAccessControl(string fileName)
         {
             try
@@ -420,7 +420,7 @@ namespace PsdzClient.Utility
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static string ReadAllText(string path)
         {
             try

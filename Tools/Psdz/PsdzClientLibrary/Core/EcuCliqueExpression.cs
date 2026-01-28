@@ -167,7 +167,7 @@ namespace PsdzClient.Core
             return "EcuClique=" + value.ToString(CultureInfo.InvariantCulture);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.EcuClique ecuClique = ClientContext.GetDatabase(this.vecInfo)?.GetEcuClique(this.value.ToString(CultureInfo.InvariantCulture));

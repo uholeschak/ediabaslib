@@ -213,14 +213,14 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void SetLogLevel(PsdzLoglevel psdzLoglevel, ProdiasLoglevel prodiasLoglevel)
         {
             _psdzServiceHostWrapper?.SetLogLevel(psdzLoglevel, prodiasLoglevel);
             _psdzWebServiceWrapper?.SetLogLevel(psdzLoglevel, prodiasLoglevel);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void Shutdown()
         {
             _psdzServiceHostWrapper?.Shutdown();
@@ -232,11 +232,11 @@ namespace PsdzClient.Programming
             GC.SuppressFinalize(this);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private PsdzServiceWrapper _psdzServiceHostWrapper;
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private readonly Action _psdzServiceHostStarter;
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string PsdzServiceLogDir
         {
             get
@@ -250,7 +250,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private bool WaitForPsdzServiceHostInitialization()
         {
             if (_psdzServiceHostWrapper == null)

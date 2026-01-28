@@ -9,6 +9,8 @@ namespace PsdzClient
 
         public string OriginalHash;
 
+        public bool Added;
+
         public bool Removed;
 
         public bool Cleaned;

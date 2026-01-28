@@ -13,7 +13,7 @@ namespace PsdzClient.Programming
     [PreserveSource(Hint = "ProgrammingService renamed", InheritanceModified = true)]
     public class ProgrammingService2 : IProgrammingService2, IDisposable
     {
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private readonly PsdzServiceGateway psdzServiceGateway;
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
         private readonly PlaceholderType programmingWorker;
@@ -104,7 +104,7 @@ namespace PsdzClient.Programming
             psdzServiceGateway.SetLogLevel(PsdzLoglevel.TRACE, ProdiasLoglevel.INFO);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void SetLogLevelToNormal()
         {
             psdzServiceGateway.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
@@ -163,25 +163,25 @@ namespace PsdzClient.Programming
             return psdzServiceGateway.PsdzLogFilePath;
         }
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         public IPsdzStandardSvt GetVehicleSvtUsingPsdz()
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         public ISvt GetCurrentSvtFromPsdzSvt()
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         public bool ExecuteEarlyEcuValidationUsingPsdz()
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         public bool ImportSecureTokenForSec4CnSp21()
         {
             throw new NotImplementedException();
@@ -270,63 +270,63 @@ namespace PsdzClient.Programming
             return ExecuteBusinessServiceProgrames(businessVehicleAction, session);
         }
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         private bool ExecuteBusinessServiceProgrames(string businessVehicleAction, ProgrammingSession session)
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         private IPsdzTargetSelector GetTargetSelectorForMainSeries()
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Removed")]
+        [PreserveSource(Cleaned = true)]
         private void PrepareSvtForProgrammingSession()
         {
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private readonly PsdzConfig psdzConfig;
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public IPsdzProgressListener PsdzProgressListener { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public IPsdzEventListener VehicleProgrammingEventHandler { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         internal ProgrammingEventManager EventManager { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public EcuProgrammingInfos ProgrammingInfos { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public PsdzDatabase PsdzDatabase { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string BackupDataPath { get; private set; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string GetPsdzServiceHostLogDir()
         {
             return psdzServiceGateway.PsdzServiceLogDir;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool IsPsdzServiceHostInitialized()
         {
             return this.Psdz.IsPsdzInitialized;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void CreateEcuProgrammingInfos(IVehicle vehicle, IFFMDynamicResolver ffmResolver = null)
         {
             this.ProgrammingInfos = new EcuProgrammingInfos(vehicle, ffmResolver);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void AddListener(PsdzContext psdzContext)
         {
             RemoveListener();
@@ -336,7 +336,7 @@ namespace PsdzClient.Programming
             this.Psdz.AddPsdzEventListener(this.VehicleProgrammingEventHandler);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void RemoveListener()
         {
             if (PsdzProgressListener != null)
@@ -352,7 +352,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void Dispose()
         {
             RemoveListener();

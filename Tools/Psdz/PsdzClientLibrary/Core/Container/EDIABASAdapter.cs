@@ -308,28 +308,28 @@ namespace PsdzClient.Core.Container
             return new EDIABASAdapterDeviceResult(new ECUJob(), inParameters);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool BinModeReq => binModeReq;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public byte[] EcuData => ecuData;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string EcuGroup => ecuGroup;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string EcuJob => ecuJob;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string EcuParam => ecuParam;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string EcuResultFilter => ecuResultFilter;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool ParameterizationDone => parameterizationDone;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public bool IsBinModeRequired => CheckForBinModeRequired();
     }
 }

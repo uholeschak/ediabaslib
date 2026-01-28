@@ -91,7 +91,7 @@ namespace PsdzClient.Core
             ms.Write(BitConverter.GetBytes(value), 0, 8);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         protected Vehicle vecInfo;
     }
 }

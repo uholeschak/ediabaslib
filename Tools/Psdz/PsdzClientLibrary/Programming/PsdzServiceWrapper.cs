@@ -144,7 +144,7 @@ namespace BMW.Rheingold.Programming
 
         public IHttpConfigurationService HttpConfigurationService => psdzServiceClient.HttpConfigurationService;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string PsdzServiceLogDir => psdzServiceHostLogDir;
 
         public string PsdzServiceLogFilePath => psdzServiceHostLogFilePath;

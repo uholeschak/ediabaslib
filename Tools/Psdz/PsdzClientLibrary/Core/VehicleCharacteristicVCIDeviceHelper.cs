@@ -378,9 +378,9 @@ namespace PsdzClient.Core
             characteristic = (PsdzDatabase.Characteristics)parameters[1];
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private ClientContext _clientContext;
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public VehicleCharacteristicVCIDeviceHelper(ClientContext clientContext)
         {
             _clientContext = clientContext;

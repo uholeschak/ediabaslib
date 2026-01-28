@@ -207,9 +207,9 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private Vehicle vecInfo;
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             string istufeById = ClientContext.GetDatabase(vecInfo)?.GetIStufeById(this.iLevelId.ToString(CultureInfo.InvariantCulture));

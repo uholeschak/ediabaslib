@@ -149,7 +149,7 @@ namespace PsdzClient.Core
             return "Equipment=" + value.ToString(CultureInfo.InvariantCulture);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.Equipment equipmentById = ClientContext.GetDatabase(this.vecInfo)?.GetEquipmentById(this.value.ToString(CultureInfo.InvariantCulture));

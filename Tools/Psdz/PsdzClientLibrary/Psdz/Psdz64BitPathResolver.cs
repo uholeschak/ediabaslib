@@ -74,7 +74,7 @@ namespace PsdzClient.Programming
             return Path.Combine(istaFolder, defaultValue);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public static string GetPsdzPath(string istaFolder)
         {
             string psdzSubDir = Environment.Is64BitOperatingSystem ? @"PSdZ\binx64" : @"PSdZ\bin";

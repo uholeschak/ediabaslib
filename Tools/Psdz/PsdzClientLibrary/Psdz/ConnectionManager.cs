@@ -350,7 +350,7 @@ namespace PsdzClient.Psdz
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public void RegisterCallbackAndPassCertificatesToPsdzPublic(IPsdzConnection connection)
         {
             RegisterCallbackAndPassCertificatesToPsdz(connection);

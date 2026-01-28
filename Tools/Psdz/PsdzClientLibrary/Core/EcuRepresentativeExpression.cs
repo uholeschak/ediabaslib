@@ -100,7 +100,7 @@ namespace PsdzClient.Core
             return "EcuRepresentative=" + value.ToString(CultureInfo.InvariantCulture);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             PsdzDatabase.EcuReps ecuRepsById = ClientContext.GetDatabase(this.vecInfo)?.GetEcuRepsById(this.value.ToString(CultureInfo.InvariantCulture));

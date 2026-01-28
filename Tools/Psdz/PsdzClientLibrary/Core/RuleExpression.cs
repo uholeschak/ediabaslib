@@ -210,13 +210,13 @@ namespace PsdzClient.Core
             public string OperatorSeparator { get; private set; }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public virtual string ToFormula(FormulaConfig formulaConfig)
         {
             throw new Exception("ToFormula() missing for class: \"" + this.GetType().Name + "\"");
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public virtual string FormulaSeparator(FormulaConfig formulaConfig)
         {
             if (!string.IsNullOrEmpty(formulaConfig.OperatorSeparator))

@@ -665,7 +665,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private readonly string _istaFolder;
     }
 }

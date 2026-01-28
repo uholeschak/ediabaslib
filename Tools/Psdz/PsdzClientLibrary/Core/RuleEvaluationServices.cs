@@ -7,7 +7,7 @@
         [PreserveSource(Hint = "Initialized in constructor", OriginalHash = "8EB361A838945350E54E3512E44D57A0")]
         public IConfigSettingsRuleEvaluation ConfigSettings { get; }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public Vehicle Vec { get; }
 
         [PreserveSource(Hint = "Constructor added, store vec, using ClientContext")]

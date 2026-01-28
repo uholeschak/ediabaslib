@@ -22,7 +22,7 @@ namespace PsdzClient.Core
             value = accessSiFa;
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override bool Evaluate(Vehicle vec, IFFMDynamicResolver ffmResolver, IRuleEvaluationServices ruleEvaluationServices, ValidationRuleInternalResults internalResult)
         {
             if (vec == null)
@@ -66,7 +66,7 @@ namespace PsdzClient.Core
             return "SiFa=" + ((value != 0L) ? true : false);
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();

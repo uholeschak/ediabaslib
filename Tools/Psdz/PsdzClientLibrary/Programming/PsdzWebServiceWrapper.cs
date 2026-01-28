@@ -148,12 +148,12 @@ namespace BMW.Rheingold.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private readonly string _istaFolder;
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string PsdzServiceLogDir => _psdzConfig.PsdzWebApiLogDir;
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public string ExpectedPsdzVersion { get; private set; }
     }
 }

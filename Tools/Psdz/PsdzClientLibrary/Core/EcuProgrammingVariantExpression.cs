@@ -74,7 +74,7 @@ namespace PsdzClient.Core
             return $"EcuProgrammingVariant: ID= {value}";
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();

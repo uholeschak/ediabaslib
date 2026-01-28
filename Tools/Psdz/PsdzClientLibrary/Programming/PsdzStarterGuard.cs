@@ -79,9 +79,9 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private bool _isExecutable;
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private bool CheckIsExecutable()
         {
             try

@@ -130,6 +130,8 @@ namespace SourceCodeSync
 
         private const string _placeholderProperty = "Placeholder";
 
+        private const string _addedProperty = "Added";
+
         private const string _removedProperty = "Removed";
 
         private const string _cleanedProperty = "Cleaned";
@@ -1825,7 +1827,13 @@ namespace SourceCodeSync
 
                     List<string> infoProperties = new List<string>()
                     {
-                        _removedProperty, _cleanedProperty, _suppressWarningProperty, _keepAttributeProperty, _placeholderProperty, _signatureModifiedProperty
+                        _addedProperty,
+                        _removedProperty,
+                        _cleanedProperty,
+                        _suppressWarningProperty,
+                        _keepAttributeProperty,
+                        _placeholderProperty,
+                        _signatureModifiedProperty
                     };
 
                     foreach (string infoProperty in infoProperties)

@@ -260,7 +260,7 @@ namespace PsdzClient.Core
             return stringBuilder.ToString();
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         public override string ToFormula(FormulaConfig formulaConfig)
         {
             StringBuilder stringBuilder = new StringBuilder();

@@ -218,7 +218,7 @@ namespace PsdzClient.Core
             stopRuleMetrics?.Invoke();
         }
 
-        [PreserveSource(Hint = "Added")]
+        [PreserveSource(Added = true)]
         private readonly PsdzDatabase database;
     }
 }
