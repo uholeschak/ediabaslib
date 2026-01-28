@@ -15,6 +15,7 @@ namespace PsdzClient.Core.Container
         private bool fastaRelevant;
         private readonly decimal hashValue;
         private readonly IProtocolBasic fastaservice;
+        private bool ana09Protocolled;
         public bool FASTARelevant
         {
             get
@@ -1095,18 +1096,22 @@ namespace PsdzClient.Core.Container
 
         private void ProtocolGetResultError(Exception ex, string requestedType, string actualType, string resultName)
         {
-            try
+            if (!ana09Protocolled)
             {
-                if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service))
+                try
                 {
-                    string currentlyRunningModuleName = TimeMetricsUtility.Instance.GetCurrentlyRunningModuleName();
-                    string value = "Source: " + currentlyRunningModuleName + ", ecu: " + base.EcuName + ", job: " + base.JobName + ", args: " + base.JobParam + ", result name: " + resultName + ", requested type: " + requestedType + ", actual type: " + actualType + ". Error: " + ex.Message;
-                    service.AddServiceCode(ServiceCodes.ANA09_ResultSetFailed_nu_LF, value, LayoutGroup.D, allowMultipleEntries: true);
+                    if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service))
+                    {
+                        string currentlyRunningModuleName = TimeMetricsUtility.Instance.GetCurrentlyRunningModuleName();
+                        string value = "Source: " + currentlyRunningModuleName + ", ecu: " + base.EcuName + ", job: " + base.JobName + ", args: " + base.JobParam + ", result name: " + resultName + ", requested type: " + requestedType + ", actual type: " + actualType + ". Error: " + ex.Message;
+                        service.AddServiceCode(ServiceCodes.ANA09_ResultSetFailed_nu_LF, value, LayoutGroup.D, allowMultipleEntries: true);
+                        ana09Protocolled = true;
+                    }
                 }
-            }
-            catch (Exception ex2)
-            {
-                Log.Error(Log.CurrentMethod(), "Cannot protocol " + ServiceCodes.ANA09_ResultSetFailed_nu_LF + ", ex: " + ex2.Message);
+                catch (Exception ex2)
+                {
+                    Log.Error(Log.CurrentMethod(), "Cannot protocol " + ServiceCodes.ANA09_ResultSetFailed_nu_LF + ", ex: " + ex2.Message);
+                }
             }
 
             if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Diagnostics.ThrowOnJobRetrievalError", defaultValue: false))
