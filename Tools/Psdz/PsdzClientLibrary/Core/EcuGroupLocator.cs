@@ -8,7 +8,7 @@ namespace PsdzClient.Core
 {
     public class EcuGroupLocator : IEcuGroupLocator, ISPELocator
     {
-        [PreserveSource(Hint = "Database replaced")]
+        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
         private readonly PsdzDatabase.EcuGroup ecuGroup;
         private readonly Vehicle vecInfo;
         private readonly IFFMDynamicResolverRuleEvaluation ffmResolver;

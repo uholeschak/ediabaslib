@@ -15,13 +15,13 @@ namespace PsdzClient.Core
     {
         [PreserveSource(Hint = "Removed readonly", SignatureModified = true)]
         private IList<string> lang;
-        [PreserveSource(Hint = "Database replaced")]
+        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
         private readonly PsdzDatabase db;
         private readonly bool old;
         private XmlNamespaceManager namespaceManager;
         private readonly ITextLocator serviceProgramCollection;
         private IList<XElement> serviceProgramCollectionRoot;
-        [PreserveSource(Hint = "Database replaced")]
+        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
         private readonly PsdzDatabase.SwiInfoObj xepInfoObj;
         private const string DefaultParameterValue = "";
         private ITextLocator ServiceProgramCollection

@@ -16,7 +16,7 @@ namespace PsdzClient.Core
         private readonly long datavalueId;
         private string characteristicRoot;
         private string characteristicValue;
-        [PreserveSource(Hint = "dataProvider modified")]
+        [PreserveSource(Hint = "dataProvider modified", SuppressWarning = true)]
         private readonly PsdzDatabase dataProvider;
         private ILogger logger;
         public long DataClassId => dataclassId;

@@ -21,7 +21,7 @@ namespace PsdzClient.Core
             Ziel
         }
 
-        [PreserveSource(Hint = "Database replaced")]
+        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
         private readonly PsdzDatabase dataProvider;
         private readonly ECompareOperator compareOperator;
         private readonly long iLevelId;

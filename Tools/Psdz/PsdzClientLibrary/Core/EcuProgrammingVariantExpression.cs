@@ -10,10 +10,10 @@ namespace PsdzClient.Core
 {
     public class EcuProgrammingVariantExpression : SingleAssignmentExpression
     {
-        [PreserveSource(Hint = "Database replaced")]
+        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
         private PsdzDatabase.EcuPrgVar programmingVariant;
 
-        [PreserveSource(Hint = "Database replaced")]
+        [PreserveSource(Hint = "Database replaced", SuppressWarning = true)]
         private PsdzDatabase.EcuVar ecuVariant;
 
         [PreserveSource(Hint = "Database modified", SignatureModified = true)]
