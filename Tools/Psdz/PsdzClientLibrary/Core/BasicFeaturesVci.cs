@@ -3,7 +3,8 @@ using System.ComponentModel;
 
 namespace PsdzClient.Core
 {
-    [PreserveSource(Hint = "Class incorrectly decompiled")]
+    // ToDo: Check on update
+    [PreserveSource(Hint = "Class incorrectly decompiled", SuppressWarning = true)]
     public class BasicFeaturesVci : typeBasicFeatures, IBasicFeatures, INotifyPropertyChanged
     {
         string IBasicFeatures.Baureihe => base.Baureihe;
