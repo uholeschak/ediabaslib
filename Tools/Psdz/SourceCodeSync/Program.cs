@@ -871,23 +871,20 @@ namespace SourceCodeSync
                             StringBuilder sbMembers = new StringBuilder();
                             foreach (MemberDeclarationSyntax member in cls.Members)
                             {
-                                if (ShouldPreserveMember(member, out string _, out Options.VerbosityOption verbosityLocal))
+                                if (ShouldPreserveMember(member, out string reasonLocal, out Options.VerbosityOption verbosityLocal))
                                 {
                                     if (_verbosity >= verbosityLocal)
                                     {
                                         string memberName = GetMemberName(member);
-                                        if (sbMembers.Length > 0)
-                                        {
-                                            sbMembers.Append(", ");
-                                        }
-                                        sbMembers.Append(memberName);
+                                        sbMembers.AppendLine($"{memberName}, reason: {reasonLocal}");
                                     }
                                 }
                             }
 
                             if (sbMembers.Length > 0)
                             {
-                                Console.WriteLine($"Merging class {namespaceName}:{classNameFull} while preserving member(s): '{sbMembers}'");
+                                Console.WriteLine($"Merging class {namespaceName}:{classNameFull} while preserving member(s):");
+                                Console.WriteLine(sbMembers.ToString());
                             }
                         }
                         else
