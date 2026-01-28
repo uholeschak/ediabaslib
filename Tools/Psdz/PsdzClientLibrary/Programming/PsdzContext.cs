@@ -167,7 +167,7 @@ namespace PsdzClient.Programming
         public IPsdzTalFilter TalFilterForIndividualDataTal { get; private set; }
         public RequestJson NCDLastCalculationRequest { get; internal set; }
 
-        [PreserveSource(Hint = "Changed to property")]
+        [PreserveSource(Hint = "Changed to property", SuppressWarning = true)]
         public IPsdzConnection Connection { get; set; }
         internal IEnumerable<IPsdzEcuIdentifier> EcuListActual { get; set; }
         internal IDictionary<string, IList<string>> ExecutionOrderBottom { get; private set; }
@@ -508,7 +508,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        [PreserveSource(Hint = "Added, keep directory")]
+        [PreserveSource(Hint = "Added, keep directory", SuppressWarning = true)]
         public bool RemoveBackupData()
         {
             if (!string.IsNullOrEmpty(PathToBackupData) && this.hasVinBackupDataFolder)
@@ -891,7 +891,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        [PreserveSource(Hint = "Modified updates")]
+        [PreserveSource(Hint = "Modified updates", SuppressWarning = true)]
         private void PerformVecInfoAssignments()
         {
             try

@@ -193,7 +193,7 @@ namespace BMW.Rheingold.Psdz
             return text;
         }
 
-        [PreserveSource(Hint = "For backward compatibility")]
+        [PreserveSource(Added = true)]
         public string GetExpectedPsdzVersion()
         {
             return GetPsdzVersion();

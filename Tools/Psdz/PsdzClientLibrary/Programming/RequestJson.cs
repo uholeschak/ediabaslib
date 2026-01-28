@@ -59,7 +59,7 @@ namespace BMW.Rheingold.Programming.Controller.SecureCoding.Model
             return xDocument.ToString();
         }
 
-        [PreserveSource(Hint = "Added for backward compatibility")]
+        [PreserveSource(Added = true)]
         [DataMember(Name = "ecuData")]
         public readonly EcuData[] ecuData;
     }

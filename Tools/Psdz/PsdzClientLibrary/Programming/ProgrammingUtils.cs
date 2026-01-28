@@ -627,7 +627,7 @@ namespace BMW.Rheingold.Programming.Common
             };
         }
 
-        [PreserveSource(Hint = "Example call in: ABL_AUS_RETROFITPROTECTIONOFFOOTWEARACTIVATION, ABL_AUS_RETROFITSETOILINTERVALTOSA8KL: Change_FA")]
+        [PreserveSource(Hint = "Example call in: ABL_AUS_RETROFITPROTECTIONOFFOOTWEARACTIVATION, ABL_AUS_RETROFITSETOILINTERVALTOSA8KL: Change_FA", SuppressWarning = true)]
         public static bool ModifyFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa, List<string> faModList, bool addEntry)
         {
             if (fa == null)
@@ -680,7 +680,7 @@ namespace BMW.Rheingold.Programming.Common
             return true;
         }
 
-        [PreserveSource(Hint = "From BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa")]
+        [PreserveSource(Hint = "From BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa", SuppressWarning = true)]
         public static string CompareFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faCurrent, BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faTarget)
         {
             if (faCurrent != null && faTarget != null)
@@ -717,7 +717,7 @@ namespace BMW.Rheingold.Programming.Common
             return string.Empty;
         }
 
-        [PreserveSource(Hint = "From CheckSoftwareAvailabilityBase")]
+        [PreserveSource(Hint = "From CheckSoftwareAvailabilityBase", SuppressWarning = true)]
         public static IEnumerable<IPsdzSgbmId> RemoveCafdsCalculatedOnSCB(IEnumerable<string> cafdList, IEnumerable<IPsdzSgbmId> sweList)
         {
             List<string> list = cafdList.ToList();
@@ -729,7 +729,7 @@ namespace BMW.Rheingold.Programming.Common
             return enumerable2;
         }
 
-        [PreserveSource(Hint = "From SecureCodingLogic")]
+        [PreserveSource(Hint = "From SecureCodingLogic", SuppressWarning = true)]
         public static bool CheckIfThereAreAnyNcdInTheRequest(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
@@ -754,7 +754,7 @@ namespace BMW.Rheingold.Programming.Common
             return false;
         }
 
-        [PreserveSource(Hint = "From SecureCodingLogic.GetCafdCalculatedInSCB")]
+        [PreserveSource(Hint = "From SecureCodingLogic.GetCafdCalculatedInSCB", SuppressWarning = true)]
         public static IEnumerable<string> CafdCalculatedInSCB(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;

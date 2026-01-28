@@ -13,7 +13,7 @@ namespace PsdzClient.Programming
         private readonly PsdzWebServiceWrapper _psdzWebServiceWrapper;
         public static Type PsdzServiceType { get; set; }
 
-        [PreserveSource(Hint = "Added service host", OriginalHash = "C60FDDC78BCC55F8280E56E617864EA9")]
+        [PreserveSource(Hint = "Added service host", SuppressWarning = true, OriginalHash = "C60FDDC78BCC55F8280E56E617864EA9")]
         public IPsdz Psdz
         {
             get
@@ -28,7 +28,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added service host", OriginalHash = "FAEBB11719E72CAFA7CE7407E9C005F5")]
+        [PreserveSource(Hint = "Added service host", SuppressWarning = true, OriginalHash = "FAEBB11719E72CAFA7CE7407E9C005F5")]
         public string PsdzWebServiceLogFilePath
         {
             get
@@ -43,7 +43,7 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "Added service host", OriginalHash = "9FA19EABF011B967C0DB531E9CEA9906")]
+        [PreserveSource(Hint = "Added service host", SuppressWarning = true, OriginalHash = "9FA19EABF011B967C0DB531E9CEA9906")]
         public string PsdzLogFilePath
         {
             get
