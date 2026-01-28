@@ -132,6 +132,8 @@ namespace SourceCodeSync
 
         private const string _removedProperty = "Removed";
 
+        private const string _cleanedProperty = "Cleaned";
+
         private const string _suppressWarningProperty = "SuppressWarning";
 
         private const string _attributesOriginalHashProperty = "OriginalHash";
@@ -1823,7 +1825,7 @@ namespace SourceCodeSync
 
                     List<string> infoProperties = new List<string>()
                     {
-                        _removedProperty, _suppressWarningProperty, _keepAttributeProperty, _placeholderProperty, _signatureModifiedProperty
+                        _removedProperty, _cleanedProperty, _suppressWarningProperty, _keepAttributeProperty, _placeholderProperty, _signatureModifiedProperty
                     };
 
                     foreach (string infoProperty in infoProperties)

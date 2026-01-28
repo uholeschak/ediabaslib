@@ -624,12 +624,12 @@ namespace PsdzClient.Core
             return currentUiCulture;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private static void SetCurrentUICultureFromPortalConfig()
         {
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private static void SetCurrentUICultureFromDB()
         {
         }

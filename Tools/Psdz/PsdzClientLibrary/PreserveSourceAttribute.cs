@@ -11,6 +11,8 @@ namespace PsdzClient
 
         public bool Removed;
 
+        public bool Cleaned;
+
         public bool SuppressWarning;
 
         public bool Placeholder;

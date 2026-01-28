@@ -14,7 +14,7 @@ namespace PsdzClient.Core
         private readonly IFFMDynamicResolverRuleEvaluation ffmResolver;
         private readonly ISPELocator[] parents;
         private ISPELocator[] children;
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "23F7E4420C13B2429379BCD46C3EAADC")]
+        [PreserveSource(Cleaned = true, OriginalHash = "23F7E4420C13B2429379BCD46C3EAADC")]
         public ISPELocator[] Children
         {
             get
@@ -168,7 +168,7 @@ namespace PsdzClient.Core
             return children;
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         public T GetDataValue<T>(string name)
         {
             throw new NotImplementedException();

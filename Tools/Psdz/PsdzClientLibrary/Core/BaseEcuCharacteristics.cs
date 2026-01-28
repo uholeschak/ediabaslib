@@ -970,7 +970,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Cleaned")]
+        [PreserveSource(Cleaned = true)]
         private void ValidateIfDiagnosticsHasValidLicense()
         {
         }

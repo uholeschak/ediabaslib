@@ -1632,7 +1632,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "1AC651E019A894D50F8D62FD2BACECA2")]
+        [PreserveSource(Cleaned = true, OriginalHash = "1AC651E019A894D50F8D62FD2BACECA2")]
         public void ShowIsarPopup(IVehicle vecInfo, IFFMDynamicResolver fFMResolver, IInteractionService services)
         {
             throw new NotImplementedException();

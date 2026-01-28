@@ -18,7 +18,7 @@ namespace PsdzClient.Core
         private ISPELocator[] parents;
         private readonly Vehicle vecInfo;
         private readonly IFFMDynamicResolverRuleEvaluation ffmResolver;
-        [PreserveSource(Hint = "Cleaned", OriginalHash = "83D67209C35D5A5D9D545D1016A08CC0")]
+        [PreserveSource(Cleaned = true, OriginalHash = "83D67209C35D5A5D9D545D1016A08CC0")]
         public ISPELocator[] Children
         {
             get
