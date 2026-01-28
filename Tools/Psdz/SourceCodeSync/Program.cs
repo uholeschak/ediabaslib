@@ -868,6 +868,7 @@ namespace SourceCodeSync
                         {
                             // Merge with preserved members
                             mergedClass = MergeClassPreservingMarked(cls, sourceClassCopy);
+                            StringBuilder sbMembers = new StringBuilder();
                             foreach (MemberDeclarationSyntax member in cls.Members)
                             {
                                 if (ShouldPreserveMember(member, out string _, out Options.VerbosityOption verbosityLocal))
@@ -875,9 +876,18 @@ namespace SourceCodeSync
                                     if (_verbosity >= verbosityLocal)
                                     {
                                         string memberName = GetMemberName(member);
-                                        Console.WriteLine($"Merging class: {namespaceName}:{classNameFull}, while preserving member:{memberName}");
+                                        if (sbMembers.Length > 0)
+                                        {
+                                            sbMembers.Append(", ");
+                                        }
+                                        sbMembers.Append(memberName);
                                     }
                                 }
+                            }
+
+                            if (sbMembers.Length > 0)
+                            {
+                                Console.WriteLine($"Merging class {namespaceName}:{classNameFull} while preserving member(s): '{sbMembers}'");
                             }
                         }
                         else
