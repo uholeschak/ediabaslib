@@ -6,7 +6,7 @@ namespace PsdzClient.Core
 {
     public sealed class CoreFramework
     {
-        [PreserveSource(Hint = "Initialize with true")]
+        [PreserveSource(Hint = "Initialize with true", SuppressWarning = true)]
         private static bool ValidLicense = true;
         private static readonly DateTime? lastCompileTime;
         private static int debuglevel;

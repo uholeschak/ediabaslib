@@ -4,16 +4,16 @@
     {
         public ILogger Logger => LoggerRuleEvaluationFactory.Create();
 
-        [PreserveSource(Hint = "Initialized in constructor", OriginalHash = "8EB361A838945350E54E3512E44D57A0")]
+        [PreserveSource(Hint = "Initialized in constructor", SuppressWarning = true)]
         public IConfigSettingsRuleEvaluation ConfigSettings { get; }
 
         [PreserveSource(Added = true)]
         public Vehicle Vec { get; }
 
-        [PreserveSource(Hint = "Constructor added, store vec, using ClientContext")]
+        [PreserveSource(Hint = "Constructor added, store vec, using ClientContext", Added = true)]
         public RuleEvaluationServices(Vehicle vec)
         {
-            this.Vec = vec;
+            Vec = vec;
             ConfigSettings = new ConfigSettingsRuleEvaluation(ClientContext.GetBrand(vec));
         }
     }

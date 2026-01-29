@@ -422,7 +422,7 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "log variable added")]
+        [PreserveSource(Added = true)]
         private static readonly ILog log = LogManager.GetLogger(typeof(Log));
     }
 }
