@@ -627,7 +627,7 @@ namespace BMW.Rheingold.Programming.Common
             };
         }
 
-        [PreserveSource(Hint = "Example call in: ABL_AUS_RETROFITPROTECTIONOFFOOTWEARACTIVATION, ABL_AUS_RETROFITSETOILINTERVALTOSA8KL: Change_FA", SuppressWarning = true)]
+        [PreserveSource(Hint = "Example call in: ABL_AUS_RETROFITPROTECTIONOFFOOTWEARACTIVATION, ABL_AUS_RETROFITSETOILINTERVALTOSA8KL: Change_FA", Added = true)]
         public static bool ModifyFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa fa, List<string> faModList, bool addEntry)
         {
             if (fa == null)
@@ -680,7 +680,7 @@ namespace BMW.Rheingold.Programming.Common
             return true;
         }
 
-        [PreserveSource(Hint = "From BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa", SuppressWarning = true)]
+        [PreserveSource(Hint = "From BMW.Rheingold.Programming.TherapyPlan.TherapyPlanModel.CompareFa", Added = true)]
         public static string CompareFa(BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faCurrent, BMW.Rheingold.CoreFramework.Contracts.Programming.IFa faTarget)
         {
             if (faCurrent != null && faTarget != null)

@@ -298,7 +298,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [PreserveSource(Hint = "from App.ClearPsdzWebServiceSessionDataFile", SuppressWarning = true)]
+        [PreserveSource(Hint = "from App.ClearPsdzWebServiceSessionDataFile", Added = true)]
         public static void ClearPsdzWebServiceSessionDataFile()
         {
             try

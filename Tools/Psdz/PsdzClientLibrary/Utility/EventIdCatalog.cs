@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace PsdzClient.Utility
 {
-    [PreserveSource(Hint = "Simplified", SuppressWarning = true)]
+    [PreserveSource(Hint = "Class simplified", SuppressWarning = true)]
     internal class EventIdCatalog
     {
         private static ResourceManager resourceMan;
