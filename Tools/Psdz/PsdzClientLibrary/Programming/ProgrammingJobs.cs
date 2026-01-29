@@ -1581,7 +1581,7 @@ namespace PsdzClient.Programming
                         }
                         catch (Exception ex)
                         {
-                            log.ErrorFormat(CultureInfo.InvariantCulture, "RequestVpcFromVcm failure: {0}", ex.Message);
+                            log.WarnFormat(CultureInfo.InvariantCulture, "Warning: RequestVpcFromVcm failure: {0}", ex.Message);
                         }
 
                         secureCodingConfig.BackendNcdCalculationEtoEnum = PsdzBackendNcdCalculationEtoEnum.ALLOW;
