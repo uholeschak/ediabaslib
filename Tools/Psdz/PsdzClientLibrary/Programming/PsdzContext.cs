@@ -538,7 +538,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        [PreserveSource(Hint = "From ProgrammingSession.AddIdividualDataFilesToPuk", SuppressWarning = true)]
+        [PreserveSource(Hint = "From ProgrammingSession.AddIdividualDataFilesToPuk", Added = true)]
         public bool AddIdividualDataFilesToPuk()
         {
             try
@@ -566,7 +566,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        [PreserveSource(Hint = "From ProgrammingSession.DownloadIndividualDataFromPuk", SuppressWarning = true)]
+        [PreserveSource(Hint = "From ProgrammingSession.DownloadIndividualDataFromPuk", Added = true)]
         public bool DownloadIndividualDataFromPuk()
         {
             try
@@ -621,7 +621,7 @@ namespace PsdzClient.Programming
             return false;
         }
 
-        [PreserveSource(Hint = "From ProgrammingSession.DeleteIndividualDataFromPuk", SuppressWarning = true)]
+        [PreserveSource(Hint = "From ProgrammingSession.DeleteIndividualDataFromPuk", Added = true)]
         public bool DeleteIndividualDataFromPuk()
         {
             try
@@ -800,7 +800,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        [PreserveSource(Hint = "From ProgrammingSession", SuppressWarning = true)]
+        [PreserveSource(Hint = "From ProgrammingSession", Added = true)]
         public void SetSollverbauung(ProgrammingService2 programmingService, IPsdzSollverbauung sollverbauung, IDictionary<string, string> orderNumbers = null)
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;
@@ -817,13 +817,13 @@ namespace PsdzClient.Programming
             SetSollverbauung(sollverbauung);
         }
 
-        [PreserveSource(Hint = "From ProgrammingSession", SuppressWarning = true)]
+        [PreserveSource(Hint = "From ProgrammingSession", Added = true)]
         public void SetSvtCurrent(ProgrammingService2 programmingService, IPsdzStandardSvt standardSvt)
         {
             SetSvtCurrent(programmingService, standardSvt, VecInfo.VIN17);
         }
 
-        [PreserveSource(Hint = "From ProgrammingSession", SuppressWarning = true)]
+        [PreserveSource(Hint = "From ProgrammingSession", Added = true)]
         public void SetSvtCurrent(ProgrammingService2 programmingService, IPsdzStandardSvt standardSvt, string vin17)
         {
             EcuProgrammingInfos ecuProgrammingInfos = programmingService?.ProgrammingInfos;

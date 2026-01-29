@@ -717,7 +717,7 @@ namespace BMW.Rheingold.Programming.Common
             return string.Empty;
         }
 
-        [PreserveSource(Hint = "From CheckSoftwareAvailabilityBase", SuppressWarning = true)]
+        [PreserveSource(Hint = "From CheckSoftwareAvailabilityBase", Added = true)]
         public static IEnumerable<IPsdzSgbmId> RemoveCafdsCalculatedOnSCB(IEnumerable<string> cafdList, IEnumerable<IPsdzSgbmId> sweList)
         {
             List<string> list = cafdList.ToList();
@@ -729,7 +729,7 @@ namespace BMW.Rheingold.Programming.Common
             return enumerable2;
         }
 
-        [PreserveSource(Hint = "From SecureCodingLogic", SuppressWarning = true)]
+        [PreserveSource(Hint = "From SecureCodingLogic", Added = true)]
         public static bool CheckIfThereAreAnyNcdInTheRequest(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
@@ -754,7 +754,7 @@ namespace BMW.Rheingold.Programming.Common
             return false;
         }
 
-        [PreserveSource(Hint = "From SecureCodingLogic.GetCafdCalculatedInSCB", SuppressWarning = true)]
+        [PreserveSource(Hint = "From SecureCodingLogic.GetCafdCalculatedInSCB", Added = true)]
         public static IEnumerable<string> CafdCalculatedInSCB(RequestJson jsonContentObj)
         {
             EcuData[] ecuData = jsonContentObj?.calcEcuData?.ecuData;
