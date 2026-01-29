@@ -133,10 +133,12 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "force added")]
+        [PreserveSource(Hint = "force added", SignatureModified = true)]
         public void CloseConnectionsToPsdz(bool force = false)
         {
             Log.Info(Log.CurrentMethod(), "Start.");
+            //[-] psdzServiceGateway.CloseConnectionsToPsdz();
+            //[+] psdzServiceGateway.CloseConnectionsToPsdz(force);
             psdzServiceGateway.CloseConnectionsToPsdz(force);
             Log.Info(Log.CurrentMethod(), "End.");
         }
@@ -187,9 +189,15 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Added istaFolder")]
+        [PreserveSource(Hint = "Added istaFolder", SignatureModified = true)]
         private void PreparePsdzBackupDataPath(string istaFolder)
         {
+            //[-] if (!ConfigSettings.IsProgrammingEnabled())
+            //[-] {
+            //[-] return;
+            //[-] }
+            //[-] string pathString = ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzBackupDataPath", null);
+            //[+] string pathString = PsdzContext.GetBackupBasePath(istaFolder);
             string pathString = PsdzContext.GetBackupBasePath(istaFolder);
             if (string.IsNullOrEmpty(pathString))
             {
@@ -206,6 +214,7 @@ namespace PsdzClient.Programming
                 string path = Path.Combine(pathString, Guid.NewGuid().ToString());
                 File.WriteAllText(path, string.Empty);
                 File.Delete(path);
+                //[+] BackupDataPath = pathString;
                 BackupDataPath = pathString;
             }
             catch (Exception)
