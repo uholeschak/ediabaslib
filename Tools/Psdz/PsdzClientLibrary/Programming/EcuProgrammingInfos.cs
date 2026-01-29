@@ -218,7 +218,6 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "db removed")]
         internal void ResetProgrammingInfos(bool unregister = true, bool resetAll = true)
         {
             if (resetAll)
@@ -228,6 +227,8 @@ namespace PsdzClient.Programming
                     UnregisterEventHandler();
                 }
 
+                //[-] programmingObjectBuilder = new ProgrammingObjectBuilder(db, (Vehicle)vehicle, ffmResolver);
+                //[+] programmingObjectBuilder = new ProgrammingObjectBuilder((Vehicle)vehicle, ffmResolver);
                 programmingObjectBuilder = new ProgrammingObjectBuilder((Vehicle)vehicle, ffmResolver);
                 CreateEcuProgrammingInfos(vehicle.ECU);
                 ecuProgrammingInfosMap = new Dictionary<IEcu, EcuProgrammingInfo>();
@@ -238,7 +239,7 @@ namespace PsdzClient.Programming
                 return;
             }
 
-            foreach (IEcu item in (IEnumerable<IEcu>)new List<IEcu>(ecuProgrammingInfosMap.Keys.Where((IEcu ecu) => !vehicle.ECU.Contains(ecu))))
+            foreach (IEcu item in (IEnumerable<IEcu>)new List<IEcu>(ecuProgrammingInfosMap.Keys.Where((IEcu ecu) => !vehicle.ECU.Contains(ecu) && !ecu.IsSmartActuator)))
             {
                 EcuProgrammingInfo ecuProgrammingInfo = ecuProgrammingInfosMap[item];
                 ecuProgrammingInfos.Remove(ecuProgrammingInfo);
