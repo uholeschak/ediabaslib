@@ -891,7 +891,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        [PreserveSource(Hint = "Modified updates", SuppressWarning = true)]
+        [PreserveSource(Hint = "Modified updates", Added = true)]
         private void PerformVecInfoAssignments()
         {
             try
@@ -1224,14 +1224,14 @@ namespace PsdzClient.Programming
             return sb.ToString();
         }
 
-        [PreserveSource(Hint = "IDisposable added", SuppressWarning = true)]
+        [PreserveSource(Hint = "IDisposable added", Added = true)]
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        [PreserveSource(Hint = "IDisposable added", SuppressWarning = true)]
+        [PreserveSource(Hint = "IDisposable added", Added = true)]
         protected virtual void Dispose(bool disposing)
         {
             if (!_disposed)
