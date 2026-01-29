@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using BMW.Rheingold.Psdz;
+using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace PsdzClient.Programming
 {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BMW.Rheingold.Psdz.Model.Ecu;
 
 namespace BMW.Rheingold.Psdz.Model.SecureCoding
 {
