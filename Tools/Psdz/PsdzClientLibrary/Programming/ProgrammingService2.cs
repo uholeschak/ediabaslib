@@ -236,12 +236,14 @@ namespace PsdzClient.Programming
             throw new NotImplementedException();
         }
 
-        [PreserveSource(Hint = "Return bool")]
+        [PreserveSource(Hint = "Return bool", SignatureModified = true)]
         public bool StartPsdzService(IVehicle vehicle = null)
         {
             if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
             {
                 Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
+                //[-] return;
+                //[+] return true;
                 return true;
             }
 
@@ -249,19 +251,32 @@ namespace PsdzClient.Programming
             Log.Info(Log.CurrentMethod(), "Start.");
             try
             {
+                //[-] psdzServiceGateway.StartIfNotRunning(vehicle);
+                //[+] if (!psdzServiceGateway.StartIfNotRunning(vehicle))
                 if (!psdzServiceGateway.StartIfNotRunning(vehicle))
+                //[+] {
                 {
+                    //[+] return false;
                     return false;
+                //[+] }
                 }
             }
+            //[-] catch (AppException ex)
+            //[+] catch (Exception ex)
             catch (Exception ex)
             {
                 Log.ErrorException(Log.CurrentMethod(), ex);
+                //[-] services?.InteractionService?.RegisterMessage(ex.TitleLocalized, ex.MessageLocalized);
+                //[+] return false;
                 return false;
             }
-
+            //[-] if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service))
+            //[-] {
+            //[-] service.AddServiceCode("GFS01_State_PsdzWebservice_nu_LF", "", LayoutGroup.P, allowMultipleEntries: false, bufferIfSessionNotStarted: true);
+            //[-] }
             Log.Info(Log.CurrentMethod(), "End.");
             TimeMetricsUtility.Instance.InitializePsdzStop();
+            //[+] return true;
             return true;
         }
 
