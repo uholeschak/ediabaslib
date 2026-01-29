@@ -1,20 +1,16 @@
 ﻿using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static PsdzClient.Core.ValidationRuleInternalResult;
 
 namespace PsdzClient.Core
 {
     public class VehicleCharacteristicVehicleHelper : VehicleCharacteristicAbstract
     {
-        [PreserveSource(Hint = "Dataprovider changed")]
+        [PreserveSource(Hint = "Dataprovider changed", SuppressWarning = true)]
         PsdzDatabase dataProvider;
         private string characteristicValue;
-        [PreserveSource(Hint = "changed to string")]
+        [PreserveSource(Hint = "changed to string", SuppressWarning = true)]
         private string characteristicRootsNodeClass;
         private decimal characteristicId;
         private IVehicleRuleEvaluation vehicle;
