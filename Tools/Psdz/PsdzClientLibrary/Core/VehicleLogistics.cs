@@ -11,7 +11,7 @@ namespace PsdzClient.Core
     public class VehicleLogistics
     {
         private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
-        [PreserveSource(Hint = "Removed ProcessName")]
+        [PreserveSource(Hint = "Removed ProcessName, set to false", SuppressWarning = true)]
         private static Lazy<bool> isGui = new Lazy<bool>(false);
         public const string FallbackBordnetName = "BNT-XML-FALLBACK.xml";
         public static BaseEcuCharacteristics CallGetCharacteristics(Vehicle vecInfo)
