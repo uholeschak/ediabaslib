@@ -9,13 +9,6 @@ using System.ServiceModel;
 
 namespace BMW.Rheingold.Psdz
 {
-    public enum PsdzStatusRequestFeatureTypeEtoEnum
-    {
-        ALL_FEATURES,
-        SYSTEM_FEATURES,
-        APPLICATION_FEATURES
-    }
-
     [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
     [ServiceKnownType(typeof(PsdzVin))]
