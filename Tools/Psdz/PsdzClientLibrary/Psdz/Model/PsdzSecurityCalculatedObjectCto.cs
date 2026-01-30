@@ -4,44 +4,6 @@ using System.Runtime.Serialization;
 
 namespace BMW.Rheingold.Psdz.Model.Certificate
 {
-    public enum PsdzSecurityCalculationOverallStatus
-    {
-        Conflict,
-        Detailed,
-        Empty,
-        Error,
-        Malformed,
-        Ok,
-        UnknownVersion,
-        VinMalformed,
-        WrongFormat,
-        InvalidFatRequest,
-        RequestNotOnCertStore,
-        InvalidEcuTypeCerts,
-        InvalidSignature,
-        OTHER_ERROR
-    }
-
-    public enum PsdzCertCalculationDetailedStatus
-    {
-        CertDenied,
-        CnameDenied,
-        CnameMissing,
-        EcuNameDenied,
-        EcuNameMissing,
-        EcuUidDenied,
-        EcuUidFormat,
-        EcuUidMismatch,
-        EcuUidMissing,
-        Error,
-        Malformed,
-        Ok,
-        CaError,
-        EcuDenied,
-        KeyIdUnknown,
-        KeyIdDenied
-    }
-
     [PreserveSource(AttributesModified = true)]
     [DataContract]
     public class PsdzSecurityCalculatedObjectCto
