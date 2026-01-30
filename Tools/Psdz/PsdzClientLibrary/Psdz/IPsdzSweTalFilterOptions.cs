@@ -1,6 +1,7 @@
 ﻿using BMW.Rheingold.Psdz.Model.Tal;
 using BMW.Rheingold.Psdz;
 using System.Collections.Generic;
+using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 
 namespace BMW.Rheingold.Psdz
 {

@@ -14,15 +14,6 @@ using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz
 {
-    public enum PsdzTalFilterAction
-    {
-        AllowedToBeTreated,
-        Empty,
-        MustBeTreated,
-        MustNotBeTreated,
-        OnlyToBeTreatedAndBlockCategoryInAllEcu
-    }
-
     [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required)]
     [ServiceKnownType(typeof(PsdzTalFilter))]

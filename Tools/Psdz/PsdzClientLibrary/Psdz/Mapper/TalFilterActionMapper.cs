@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BMW.Rheingold.Psdz.Model.Tal.TalFilter;
 using PsdzClient.Psdz;
 
 namespace BMW.Rheingold.Psdz
