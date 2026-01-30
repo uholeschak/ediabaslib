@@ -1,4 +1,4 @@
-﻿namespace BMW.Rheingold.Psdz
+﻿namespace BMW.Rheingold.Psdz.Model.Sfa
 {
     public enum PsdzConditionTypeEtoEnum
     {
