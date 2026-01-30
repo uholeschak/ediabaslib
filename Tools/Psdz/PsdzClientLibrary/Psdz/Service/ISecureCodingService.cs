@@ -10,16 +10,6 @@ using System.ServiceModel;
 
 namespace BMW.Rheingold.Psdz
 {
-    public enum PsdzCodingTypeEnum
-    {
-        FA,
-        FDL,
-        NCD,
-        NCD_PROVIDED,
-        SHIPMENT,
-        FWL
-    }
-
     [PreserveSource(AttributesModified = true)]
     [ServiceContract(SessionMode = SessionMode.Required, CallbackContract = typeof(IPsdzProgressListener))]
     [ServiceKnownType(typeof(PsdzCheckNcdResultEto))]
