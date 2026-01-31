@@ -200,9 +200,13 @@ namespace BMW.Rheingold.Psdz
 
             PsdzFa fa2 = new PsdzFa
             {
-//[+] #if !OLD_PSDZ_FA
-#if !OLD_PSDZ_FA
+//[+] #if OLD_PSDZ_FA
+#if OLD_PSDZ_FA
+                Vin = vin17,
+//[+] #else
+#else
                 Vin = (string.IsNullOrEmpty(fa.Vin) ? vin17 : fa.Vin),
+
 //[+] #endif
 #endif
                 IsValid = fa.IsValid,
