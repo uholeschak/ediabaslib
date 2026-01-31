@@ -9,6 +9,7 @@ using PsdzClient.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using BMW.Rheingold.Psdz.Model.Communications;
 using RestSharp;
 
 namespace BMW.Rheingold.Psdz

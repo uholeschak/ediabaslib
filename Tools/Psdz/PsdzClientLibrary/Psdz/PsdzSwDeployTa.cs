@@ -1,16 +1,9 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model.Communications;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {
-    public enum PsdzProtocol
-    {
-        KWP2000,
-        UDS,
-        HTTP,
-        MIRROR
-    }
-
     [PreserveSource(AttributesModified = true)]
     [DataContract]
     [KnownType(typeof(PsdzProtocol))]

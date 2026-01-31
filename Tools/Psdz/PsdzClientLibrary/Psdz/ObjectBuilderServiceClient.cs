@@ -7,6 +7,7 @@ using PsdzClient;
 using System.Collections.Generic;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
+using BMW.Rheingold.Psdz.Model.Communications;
 
 namespace BMW.Rheingold.Psdz.Client
 {

@@ -1,5 +1,6 @@
 ﻿using PsdzClient;
 using System.Runtime.Serialization;
+using BMW.Rheingold.Psdz.Model.Communications;
 
 namespace BMW.Rheingold.Psdz.Model.Tal
 {

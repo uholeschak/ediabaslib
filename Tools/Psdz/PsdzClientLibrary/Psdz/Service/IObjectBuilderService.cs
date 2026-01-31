@@ -11,6 +11,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using BMW.Rheingold.Psdz.Model.Communications;
 
 namespace BMW.Rheingold.Psdz
 {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using BMW.Rheingold.Psdz.Model.Communications;
 using BMW.Rheingold.Psdz.Model.Tal;
 
 namespace BMW.Rheingold.Psdz
