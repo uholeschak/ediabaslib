@@ -202,11 +202,11 @@ namespace BMW.Rheingold.Psdz
             {
 //[+] #if OLD_PSDZ_FA
 #if OLD_PSDZ_FA
-                Vin = vin17,
+//[+] Vin = vin17,
+Vin = vin17,
 //[+] #else
 #else
                 Vin = (string.IsNullOrEmpty(fa.Vin) ? vin17 : fa.Vin),
-
 //[+] #endif
 #endif
                 IsValid = fa.IsValid,
