@@ -2132,7 +2132,7 @@ namespace PsdzClient.Programming
 
                         try
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Updating TSL");
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Updating TsL");
                             StartTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuting);
                             ProgrammingService.Psdz.ProgrammingService.TslUpdate(PsdzContext.Connection, true, PsdzContext.SvtActual, PsdzContext.Sollverbauung.Svt);
                             FinishTalExecutionState(cts);
@@ -2158,8 +2158,7 @@ namespace PsdzClient.Programming
                             {
                                 log.InfoFormat(CultureInfo.InvariantCulture, "Writing ILevels step: {0}", step);
                                 StartTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuting);
-                                ProgrammingService.Psdz.VcmService.WriteIStufen(PsdzContext.Connection,
-                                    PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
+                                ProgrammingService.Psdz.VcmService.WriteIStufen(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
                                 FinishTalExecutionState(cts);
                                 sbResult.AppendLine(Strings.ILevelUpdated);
                                 UpdateStatus(sbResult.ToString());
@@ -2171,12 +2170,10 @@ namespace PsdzClient.Programming
                                 log.WarnFormat(CultureInfo.InvariantCulture, "Write ILevel failure step {0}: {1}", step, ex.Message);
                             }
 
-                            if (!hasVehicleQueue)
+                            if (hasVehicleQueue)
                             {
-                                break;
+                                WaitForEmptyVehicleQueue();
                             }
-
-                            WaitForEmptyVehicleQueue();
                         }
 
                         if (!isILevelWritten)
