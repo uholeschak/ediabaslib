@@ -44,6 +44,7 @@ namespace PsdzClient
         private PsdzDatabase _pdszDatabase;
         private ClientContext _clientContext;
         private string _istaFolder;
+        private int _addTimeout;
         private string _doIpSslSecurityPath;
         private string _doIpS29BasePath;
         private string _doIpS29CertPath;
@@ -52,6 +53,7 @@ namespace PsdzClient
         private bool _abortRequest;
         private AbortDelegate _abortFunc;
 
+        public int AddTimeout => _addTimeout;
         public string DoIpS29BasePath => _doIpS29BasePath;
         public string DoIpS29CertPath => _doIpS29CertPath;
 
@@ -65,6 +67,7 @@ namespace PsdzClient
             _pdszDatabase = programmingJobs.ProgrammingService.PsdzDatabase;
             _clientContext = clientContext;
             _istaFolder = istaFolder;
+            _addTimeout = addTimeout;
 
             bool hasVehicleQueue = _programmingJobs.GetVehicleQueueSize() >= 0;
             string ecuPath = Path.Combine(istaFolder, @"Ecu");

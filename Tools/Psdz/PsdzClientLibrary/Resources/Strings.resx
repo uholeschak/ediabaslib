@@ -449,4 +449,7 @@ Coding is available only for F series or higher.</value>
   <data name="DirectoryMissing" xml:space="preserve">
     <value>The directory is missing: '{0}'</value>
   </data>
+  <data name="VehicleConnectionFailed" xml:space="preserve">
+    <value>Vehicle connection failed.</value>
+  </data>
 </root>

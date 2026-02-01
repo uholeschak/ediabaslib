@@ -904,6 +904,15 @@ namespace PsdzClientLibrary.Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle connection failed. ähnelt.
+        /// </summary>
+        internal static string VehicleConnectionFailed {
+            get {
+                return ResourceManager.GetString("VehicleConnectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Vehicle database invalid or too old. ähnelt.
         /// </summary>
         internal static string VehicleDatabaseInvalid {

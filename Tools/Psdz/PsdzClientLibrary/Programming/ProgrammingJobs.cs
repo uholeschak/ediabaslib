@@ -1214,7 +1214,6 @@ namespace PsdzClient.Programming
                 cts?.Token.ThrowIfCancellationRequested();
 
                 // From ConnectionManager.ConnectToProject
-                string bauIStufe = PsdzContext.DetectVehicle.ILevelShip;
                 bool isDoIp = PsdzContext.DetectVehicle.IsDoIp;
 
                 Vehicle vehicle = new Vehicle(ClientContext);
@@ -1227,57 +1226,11 @@ namespace PsdzClient.Programming
                 vehicle.VCI.IsDoIP = isDoIp;
                 vehicle.VIN17 = PsdzContext.DetectVehicle.Vin;
 
-                IPsdzConnection psdzConnection;
-                if (icomConnection)
+                if (!OpenPsdzConnection(sbResult, vehicle))
                 {
-                    int useDiagPort = isDoIp ? EdInterfaceEnet.IcomSslPortDefault : diagPort;
-                    string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, useDiagPort);
-
-                    if (isDoIp)
-                    {
-                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
-                            psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, addTimeout, series,
-                            bauIStufe, IcomConnectionType.Ip, false, true);
-                    }
-                    else
-                    {
-                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
-                            psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, addTimeout, series,
-                            bauIStufe, IcomConnectionType.Ip, false);
-                    }
-                }
-                else
-                {
-                    int useDiagPort = isDoIp ? 13400 : diagPort;
-                    string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, useDiagPort);
-
-                    if (isDoIp)
-                    {
-                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
-                            psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
-                            bauIStufe, true);
-                    }
-                    else
-                    {
-                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
-                            psdzTargetSelectorNewest.Project, psdzTargetSelectorNewest.VehicleInfo, url, series,
-                            bauIStufe);
-                    }
-                }
-
-                if (isDoIp)
-                {
-                    ISec4DiagHandler sec4DiagHandler = PsdzContext.DetectVehicle.GetSec4DiagHandler();
-                    if (sec4DiagHandler == null || sec4DiagHandler.Sec4DiagCertificates == null)
-                    {
-                        sbResult.AppendLine(Strings.CertificatesNotPresent);
-                        UpdateStatus(sbResult.ToString());
-                        return false;
-                    }
-
-                    ConnectionManager connectionManager = new ConnectionManager(ProgrammingService.Psdz, vehicle, null);
-                    connectionManager.RegisterCallbackAndPassCertificatesToPsdzPublic(psdzConnection);
-                    ProgrammingService.Psdz.SecureDiagnosticsService.UnlockGateway(psdzConnection);
+                    sbResult.AppendLine(Strings.VehicleConnectionFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
                 }
 
                 PsdzContext.VecInfo = vehicle;
@@ -1286,6 +1239,7 @@ namespace PsdzClient.Programming
                 {
                     sbResult.AppendLine(Strings.UpdateVehicleDataFailed);
                     UpdateStatus(sbResult.ToString());
+                    ClosePsdzConnection();
                     return false;
                 }
 
@@ -1317,14 +1271,12 @@ namespace PsdzClient.Programming
                 {
                     sbResult.AppendLine(Strings.BatteryVoltageReadError);
                     UpdateStatus(sbResult.ToString());
+                    ClosePsdzConnection();
                     return false;
                 }
 
-                PsdzContext.Connection = psdzConnection;
-
                 sbResult.AppendLine(Strings.VehicleConnected);
                 UpdateStatus(sbResult.ToString());
-                log.InfoFormat(CultureInfo.InvariantCulture, "Connection: Id={0}, Port={1}", psdzConnection.Id, psdzConnection.Port);
 
                 ProgrammingService.AddListener(PsdzContext);
                 return true;
@@ -1377,7 +1329,7 @@ namespace PsdzClient.Programming
                 }
 
                 ProgrammingService.RemoveListener();
-                CloseConnection();
+                ClosePsdzConnection();
                 PsdzContext?.CleanupBackupData();
 
                 ClearProgrammingObjects();
@@ -1407,14 +1359,119 @@ namespace PsdzClient.Programming
             }
         }
 
-        public bool CloseConnection()
+        public bool OpenPsdzConnection(StringBuilder sbResult, Vehicle vehicle = null)
         {
-            log.Info("CloseConnection Start");
+            log.Info("OpenPsdzConnection Start");
+            try
+            {
+                if (PsdzContext.Connection != null)
+                {
+                    ClosePsdzConnection();
+                }
+
+                Vehicle vehicleLocal = vehicle ?? PsdzContext.VecInfo;
+                if (vehicleLocal == null)
+                {
+                    log.Error("OpenPsdzConnection: Vehicle info is missing");
+                    return false;
+                }
+
+                bool icomConnection = vehicleLocal.VCI.VCIType == global::BMW.Rheingold.CoreFramework.Contracts.Vehicle.VCIDeviceType.ICOM;
+                string ipAddress = vehicleLocal.VCI.IPAddress;
+                if (string.IsNullOrEmpty(ipAddress))
+                {
+                    log.Error("OpenPsdzConnection: Vehicle IP address is missing");
+                    return false;
+                }
+
+                if (vehicleLocal.VCI.Port == null)
+                {
+                    log.Error("OpenPsdzConnection: Vehicle port is missing");
+                    return false;
+                }
+
+                int diagPort = vehicleLocal.VCI.Port.Value;
+
+                // From ConnectionManager.ConnectToProject
+                string bauIStufe = PsdzContext.DetectVehicle.ILevelShip;
+                string series = PsdzContext.DetectVehicle.Series;
+                bool isDoIp = PsdzContext.DetectVehicle.IsDoIp;
+                int addTimeout = PsdzContext.DetectVehicle.AddTimeout;
+
+                IPsdzConnection psdzConnection;
+                if (icomConnection)
+                {
+                    int useDiagPort = isDoIp ? EdInterfaceEnet.IcomSslPortDefault : diagPort;
+                    string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, useDiagPort);
+
+                    if (isDoIp)
+                    {
+                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
+                            PsdzContext.ProjectName, PsdzContext.VehicleInfo, url, addTimeout, series,
+                            bauIStufe, IcomConnectionType.Ip, false, true);
+                    }
+                    else
+                    {
+                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverIcom(
+                            PsdzContext.ProjectName, PsdzContext.VehicleInfo, url, addTimeout, series,
+                            bauIStufe, IcomConnectionType.Ip, false);
+                    }
+                }
+                else
+                {
+                    int useDiagPort = isDoIp ? 13400 : diagPort;
+                    string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, useDiagPort);
+
+                    if (isDoIp)
+                    {
+                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
+                            PsdzContext.ProjectName, PsdzContext.VehicleInfo, url, series,
+                            bauIStufe, true);
+                    }
+                    else
+                    {
+                        psdzConnection = ProgrammingService.Psdz.ConnectionManagerService.ConnectOverEthernet(
+                            PsdzContext.ProjectName, PsdzContext.VehicleInfo, url, series,
+                            bauIStufe);
+                    }
+                }
+
+                if (isDoIp)
+                {
+                    ISec4DiagHandler sec4DiagHandler = PsdzContext.DetectVehicle.GetSec4DiagHandler();
+                    if (sec4DiagHandler == null || sec4DiagHandler.Sec4DiagCertificates == null)
+                    {
+                        sbResult.AppendLine(Strings.CertificatesNotPresent);
+                        UpdateStatus(sbResult.ToString());
+                        return false;
+                    }
+
+                    ConnectionManager connectionManager = new ConnectionManager(ProgrammingService.Psdz, vehicleLocal, null);
+                    connectionManager.RegisterCallbackAndPassCertificatesToPsdzPublic(psdzConnection);
+                    ProgrammingService.Psdz.SecureDiagnosticsService.UnlockGateway(psdzConnection);
+                }
+
+                log.InfoFormat(CultureInfo.InvariantCulture, "Connection: Id={0}, Port={1}", psdzConnection.Id, psdzConnection.Port);
+                PsdzContext.Connection = psdzConnection;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "OpenPsdzConnection Exception: {0}", ex.Message);
+                sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.ExceptionMsg, ex.Message));
+                UpdateStatus(sbResult.ToString());
+                return false;
+            }
+        }
+
+        public bool ClosePsdzConnection()
+        {
+            log.Info("ClosePsdzConnection Start");
             try
             {
                 if (PsdzContext.Connection == null)
                 {
-                    log.Info("CloseConnection: Not connected");
+                    log.Info("ClosePsdzConnection: Not connected");
                     return true;
                 }
 
@@ -1424,7 +1481,7 @@ namespace PsdzClient.Programming
             }
             catch (Exception ex)
             {
-                log.ErrorFormat(CultureInfo.InvariantCulture, "CloseConnection Exception: {0}", ex.Message);
+                log.ErrorFormat(CultureInfo.InvariantCulture, "ClosePsdzConnection Exception: {0}", ex.Message);
                 return false;
             }
         }
