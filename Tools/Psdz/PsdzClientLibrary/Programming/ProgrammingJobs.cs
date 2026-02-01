@@ -3553,7 +3553,13 @@ namespace PsdzClient.Programming
 
             CacheType cacheTypeOld = CacheResponseType;
             bool icomAllocated = PsdzContext.DetectVehicle.IsIcomAllocated();
+            bool psdzConnected = PsdzContext.Connection != null;
+            if (psdzConnected)
+            {
+                ClosePsdzConnection();
+            }
 
+            bool result = true;
             try
             {
                 CacheResponseType = CacheType.NoResponse;
@@ -3653,11 +3659,22 @@ namespace PsdzClient.Programming
                     PsdzContext.DetectVehicle.Disconnect();
                 }
 
+                if (psdzConnected)
+                {
+                    if (!OpenPsdzConnection(sbResult))
+                    {
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage Reopen Psdz connection failed");
+                        sbResult.AppendLine(Strings.VehicleConnectionFailed);
+                        UpdateStatus(sbResult.ToString());
+                        result = false;
+                    }
+                }
+
                 CacheResponseType = cacheTypeOld;
             }
 
-            log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage OK");
-            return true;
+            log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage Result: {0}", result);
+            return result;
         }
 
         public bool IsOptionsItemEnabled(OptionsItem optionsItem)
