@@ -1477,6 +1477,7 @@ namespace PsdzClient.Programming
 
                 ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(PsdzContext.Connection);
                 PsdzContext.Connection = null;
+                log.Info("ClosePsdzConnection OK");
                 return true;
             }
             catch (Exception ex)
@@ -2211,7 +2212,7 @@ namespace PsdzClient.Programming
 
                         try
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Updating TsL");
+                            log.InfoFormat(CultureInfo.InvariantCulture, "Updating TSL");
                             StartTalExecutionState(OperationStateData.TalExecutionStateEnum.TslUpdateExecuting);
                             ProgrammingService.Psdz.ProgrammingService.TslUpdate(PsdzContext.Connection, true, PsdzContext.SvtActual, PsdzContext.Sollverbauung.Svt);
                             FinishTalExecutionState(cts);
@@ -2222,7 +2223,7 @@ namespace PsdzClient.Programming
                         {
                             FinishTalExecutionState(cts, true);
                             talExecutionFailed = true;
-                            log.ErrorFormat(CultureInfo.InvariantCulture, "Tsl update failure: {0}", ex.Message);
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "TSL update failure: {0}", ex.Message);
                             sbResult.AppendLine(Strings.TslUpdateFailed);
                             UpdateStatus(sbResult.ToString());
                         }
@@ -3545,18 +3546,24 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            if (PsdzContext.DetectVehicle.IsDoIp)
-            {   // Parallel connections in DoIp mode are unstable.
-                log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage Disabled voltage check in DoIP mode");
-                return true;
-            }
 
+            bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
             CacheType cacheTypeOld = CacheResponseType;
             bool icomAllocated = PsdzContext.DetectVehicle.IsIcomAllocated();
             bool psdzConnected = PsdzContext.Connection != null;
             if (psdzConnected)
             {
+                if (PsdzContext.DetectVehicle.IsDoIp & icomAllocated)
+                {   // Parallel connections in DoIp mode are unstable.
+                    log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage Disabled voltage check in DoIP mode");
+                    return true;
+                }
+
                 ClosePsdzConnection();
+                if (hasVehicleQueue)
+                {
+                    WaitForEmptyVehicleQueue();
+                }
             }
 
             bool result = true;
@@ -3661,6 +3668,11 @@ namespace PsdzClient.Programming
 
                 if (psdzConnected)
                 {
+                    if (hasVehicleQueue)
+                    {
+                        WaitForEmptyVehicleQueue();
+                    }
+
                     if (!OpenPsdzConnection(sbResult))
                     {
                         log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage Reopen Psdz connection failed");
