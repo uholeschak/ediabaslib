@@ -2151,20 +2151,39 @@ namespace PsdzClient.Programming
                         CacheClearRequired = true;
                         cts?.Token.ThrowIfCancellationRequested();
 
-                        try
+                        bool isILevelWritten = false;
+                        for (int step = 0; step < 2; step++)
                         {
-                            log.InfoFormat(CultureInfo.InvariantCulture, "Writing ILevels");
-                            StartTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuting);
-                            ProgrammingService.Psdz.VcmService.WriteIStufen(PsdzContext.Connection, PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
-                            FinishTalExecutionState(cts);
-                            sbResult.AppendLine(Strings.ILevelUpdated);
-                            UpdateStatus(sbResult.ToString());
+                            try
+                            {
+                                log.InfoFormat(CultureInfo.InvariantCulture, "Writing ILevels step: {0}", step);
+                                StartTalExecutionState(OperationStateData.TalExecutionStateEnum.WriteILevelExecuting);
+                                ProgrammingService.Psdz.VcmService.WriteIStufen(PsdzContext.Connection,
+                                    PsdzContext.IstufeShipment, PsdzContext.IstufeLast, PsdzContext.IstufeCurrent);
+                                FinishTalExecutionState(cts);
+                                sbResult.AppendLine(Strings.ILevelUpdated);
+                                UpdateStatus(sbResult.ToString());
+                                isILevelWritten = true;
+                                break;
+                            }
+                            catch (Exception ex)
+                            {
+                                log.WarnFormat(CultureInfo.InvariantCulture, "Write ILevel failure step {0}: {1}", step, ex.Message);
+                            }
+
+                            if (!hasVehicleQueue)
+                            {
+                                break;
+                            }
+
+                            WaitForEmptyVehicleQueue();
                         }
-                        catch (Exception ex)
+
+                        if (!isILevelWritten)
                         {
                             FinishTalExecutionState(cts, true);
                             talExecutionFailed = true;
-                            log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel failure: {0}", ex.Message);
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "Write ILevel failure");
                             sbResult.AppendLine(Strings.ILevelUpdateFailed);
                             UpdateStatus(sbResult.ToString());
                         }
