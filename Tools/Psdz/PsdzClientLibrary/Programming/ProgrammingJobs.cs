@@ -1364,11 +1364,7 @@ namespace PsdzClient.Programming
             log.Info("OpenPsdzConnection Start");
             try
             {
-                if (PsdzContext.Connection != null)
-                {
-                    ClosePsdzConnection();
-                }
-
+                ClosePsdzConnection();
                 Vehicle vehicleLocal = vehicle ?? PsdzContext.VecInfo;
                 if (vehicleLocal == null)
                 {
@@ -1469,7 +1465,7 @@ namespace PsdzClient.Programming
             log.Info("ClosePsdzConnection Start");
             try
             {
-                if (PsdzContext.Connection == null)
+                if (PsdzContext.Connection == null || PsdzContext.Connection.Id == Guid.Empty)
                 {
                     log.Info("ClosePsdzConnection: Not connected");
                     return true;
@@ -3546,20 +3542,25 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-
             bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
             CacheType cacheTypeOld = CacheResponseType;
             bool icomAllocated = PsdzContext.DetectVehicle.IsIcomAllocated();
             bool psdzConnected = PsdzContext.Connection != null;
             if (psdzConnected)
             {
-                if (PsdzContext.DetectVehicle.IsDoIp & icomAllocated)
+                if (PsdzContext.DetectVehicle.IsDoIp && icomAllocated)
                 {   // Parallel connections in DoIp mode are unstable.
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage Disabled voltage check in DoIP mode");
                     return true;
                 }
 
                 ClosePsdzConnection();
+                // create dummy connection to indicate connected state
+                PsdzContext.Connection = new PsdzConnection
+                {
+                    Id = Guid.Empty
+                };
+
                 if (hasVehicleQueue)
                 {
                     WaitForEmptyVehicleQueue();
