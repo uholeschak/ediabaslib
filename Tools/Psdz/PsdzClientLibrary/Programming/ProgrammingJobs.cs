@@ -1377,7 +1377,7 @@ namespace PsdzClient.Programming
                 }
 
                 ProgrammingService.RemoveListener();
-                ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(PsdzContext.Connection);
+                CloseConnection();
                 PsdzContext?.CleanupBackupData();
 
                 ClearProgrammingObjects();
@@ -1404,6 +1404,28 @@ namespace PsdzClient.Programming
                         ClearProgrammingObjects();
                     }
                 }
+            }
+        }
+
+        public bool CloseConnection()
+        {
+            log.Info("CloseConnection Start");
+            try
+            {
+                if (PsdzContext.Connection == null)
+                {
+                    log.Info("CloseConnection: Not connected");
+                    return true;
+                }
+
+                ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(PsdzContext.Connection);
+                PsdzContext.Connection = null;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat(CultureInfo.InvariantCulture, "CloseConnection Exception: {0}", ex.Message);
+                return false;
             }
         }
 
