@@ -1216,11 +1216,11 @@ namespace PsdzClient
             }
         }
 
-        public bool IsIcomAllocated()
+        public bool IsIcomAllocated(bool checkConnection = false)
         {
             try
             {
-                if (!IsConnected())
+                if (checkConnection && !IsConnected())
                 {
                     return false;
                 }

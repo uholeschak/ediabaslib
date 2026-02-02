@@ -1321,7 +1321,16 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
-                PsdzContext?.DetectVehicle?.Disconnect();
+                if (PsdzContext?.DetectVehicle != null)
+                {
+                    if (PsdzContext.DetectVehicle.IsIcomAllocated())
+                    {   // Connection required for ICOM deallocation
+                        PsdzContext.DetectVehicle.Connect();
+                    }
+
+                    PsdzContext.DetectVehicle.Disconnect();
+                }
+
                 if (PsdzContext?.Connection == null)
                 {
                     sbResult.AppendLine(Strings.VehicleNotConnected);
