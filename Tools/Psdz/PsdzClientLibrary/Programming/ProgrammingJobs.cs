@@ -3566,6 +3566,7 @@ namespace PsdzClient.Programming
                 CacheResponseType = CacheType.NoResponse;
                 for (; ; )
                 {
+                    PsdzContext.DetectVehicle.Disconnect(true);
                     double? voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage(() =>
                     {
                         if (cts != null)
@@ -3578,7 +3579,8 @@ namespace PsdzClient.Programming
                     if (voltage == null)
                     {
                         log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage error");
-                        return false;
+                        result = false;
+                        break;
                     }
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
@@ -3623,7 +3625,7 @@ namespace PsdzClient.Programming
                         break;
                     }
 
-                    if (voltage < 0 || ShowMessageEvent == null || result == false)
+                    if (voltage < 0 || ShowMessageEvent == null)
                     {
                         break;
                     }
@@ -3636,6 +3638,7 @@ namespace PsdzClient.Programming
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
                             result = false;
+                            break;
                         }
                     }
                     else
