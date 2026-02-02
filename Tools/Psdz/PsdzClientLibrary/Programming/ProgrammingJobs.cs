@@ -1468,7 +1468,6 @@ namespace PsdzClient.Programming
                 if (PsdzContext.Connection == null || PsdzContext.Connection.Id == Guid.Empty)
                 {
                     log.Info("ClosePsdzConnection: Not connected");
-                    PsdzContext.Connection = null;
                     return true;
                 }
 
