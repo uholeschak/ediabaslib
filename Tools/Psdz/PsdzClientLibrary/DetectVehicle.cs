@@ -1173,10 +1173,13 @@ namespace PsdzClient
                 if (keepIcomAllocation && _ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
                 {
                     bool icomAllocated = edInterfaceEnet.IcomAllocate;
-                    edInterfaceEnet.IcomAllocate = false;
-                    edInterfaceEnet.InterfaceDisconnect();
-                    edInterfaceEnet.IcomAllocate = icomAllocated;
-                    return true;
+                    if (icomAllocated)
+                    {
+                        edInterfaceEnet.IcomAllocate = false;
+                        edInterfaceEnet.InterfaceDisconnect();
+                        edInterfaceEnet.IcomAllocate = true;
+                        return true;
+                    }
                 }
 
                 return _ediabas.EdInterfaceClass.InterfaceDisconnect();

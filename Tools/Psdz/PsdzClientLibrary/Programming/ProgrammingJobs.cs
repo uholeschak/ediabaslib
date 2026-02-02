@@ -3544,7 +3544,6 @@ namespace PsdzClient.Programming
 
             bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
             CacheType cacheTypeOld = CacheResponseType;
-            bool icomAllocated = PsdzContext.DetectVehicle.IsIcomAllocated();
             bool psdzConnected = PsdzContext.Connection != null;
             if (psdzConnected)
             {
@@ -3656,7 +3655,7 @@ namespace PsdzClient.Programming
             }
             finally
             {
-                PsdzContext.DetectVehicle.Disconnect(icomAllocated);
+                PsdzContext.DetectVehicle.Disconnect(true);
 
                 if (psdzConnected)
                 {
