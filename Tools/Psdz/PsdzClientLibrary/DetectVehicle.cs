@@ -1164,10 +1164,21 @@ namespace PsdzClient
             }
         }
 
-        public bool Disconnect()
+        public bool Disconnect(bool keepIcomAllocation = false)
         {
+            log.InfoFormat(CultureInfo.InvariantCulture, "Disconnect keepIcomAllocation={0}", keepIcomAllocation);
+
             try
             {
+                if (keepIcomAllocation && _ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
+                {
+                    bool icomAllocated = edInterfaceEnet.IcomAllocate;
+                    edInterfaceEnet.IcomAllocate = false;
+                    edInterfaceEnet.InterfaceDisconnect();
+                    edInterfaceEnet.IcomAllocate = icomAllocated;
+                    return true;
+                }
+
                 return _ediabas.EdInterfaceClass.InterfaceDisconnect();
             }
             catch (Exception)

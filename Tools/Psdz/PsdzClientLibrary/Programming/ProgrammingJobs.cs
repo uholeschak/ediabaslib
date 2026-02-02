@@ -3548,12 +3548,6 @@ namespace PsdzClient.Programming
             bool psdzConnected = PsdzContext.Connection != null;
             if (psdzConnected)
             {
-                if (PsdzContext.DetectVehicle.IsDoIp && icomAllocated)
-                {   // Parallel connections in DoIp mode are unstable.
-                    log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage Disabled voltage check in DoIP mode");
-                    return true;
-                }
-
                 ClosePsdzConnection();
                 // create dummy connection to indicate connected state
                 PsdzContext.Connection = new PsdzConnection
@@ -3662,10 +3656,7 @@ namespace PsdzClient.Programming
             }
             finally
             {
-                if (!icomAllocated)
-                {
-                    PsdzContext.DetectVehicle.Disconnect();
-                }
+                PsdzContext.DetectVehicle.Disconnect(icomAllocated);
 
                 if (psdzConnected)
                 {
