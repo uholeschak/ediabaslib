@@ -1170,24 +1170,27 @@ namespace PsdzClient
 
             try
             {
-                if (keepIcomAllocation && _ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
+                if (_ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
                 {
-                    bool icomAllocated = edInterfaceEnet.IcomAllocate;
-                    log.InfoFormat(CultureInfo.InvariantCulture, "Disconnect IcomAllocated={0}", icomAllocated);
-
-                    if (icomAllocated)
+                    if (keepIcomAllocation)
                     {
-                        bool result;
-                        try
+                        bool icomAllocated = edInterfaceEnet.IcomAllocate;
+                        log.InfoFormat(CultureInfo.InvariantCulture, "Disconnect IcomAllocated={0}", icomAllocated);
+
+                        if (icomAllocated)
                         {
-                            edInterfaceEnet.IcomAllocate = false;
-                            result = edInterfaceEnet.InterfaceDisconnect();
+                            bool result;
+                            try
+                            {
+                                edInterfaceEnet.IcomAllocate = false;
+                                result = edInterfaceEnet.InterfaceDisconnect();
+                            }
+                            finally
+                            {
+                                edInterfaceEnet.IcomAllocate = true;
+                            }
+                            return result;
                         }
-                        finally
-                        {
-                            edInterfaceEnet.IcomAllocate = true;
-                        }
-                        return result;
                     }
 
                     return edInterfaceEnet.InterfaceDisconnect();

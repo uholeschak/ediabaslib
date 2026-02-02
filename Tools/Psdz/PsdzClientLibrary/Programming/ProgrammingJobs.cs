@@ -1321,6 +1321,7 @@ namespace PsdzClient.Programming
                     return false;
                 }
 
+                PsdzContext?.DetectVehicle?.Disconnect();
                 if (PsdzContext?.Connection == null)
                 {
                     sbResult.AppendLine(Strings.VehicleNotConnected);
