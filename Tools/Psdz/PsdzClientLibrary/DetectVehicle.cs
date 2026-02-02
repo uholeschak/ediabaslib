@@ -1175,10 +1175,17 @@ namespace PsdzClient
                     bool icomAllocated = edInterfaceEnet.IcomAllocate;
                     if (icomAllocated)
                     {
-                        edInterfaceEnet.IcomAllocate = false;
-                        edInterfaceEnet.InterfaceDisconnect();
-                        edInterfaceEnet.IcomAllocate = true;
-                        return true;
+                        bool result;
+                        try
+                        {
+                            edInterfaceEnet.IcomAllocate = false;
+                            result = edInterfaceEnet.InterfaceDisconnect();
+                        }
+                        finally
+                        {
+                            edInterfaceEnet.IcomAllocate = true;
+                        }
+                        return result;
                     }
                 }
 
