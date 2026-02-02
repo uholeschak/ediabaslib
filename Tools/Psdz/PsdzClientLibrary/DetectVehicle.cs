@@ -1173,6 +1173,8 @@ namespace PsdzClient
                 if (keepIcomAllocation && _ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
                 {
                     bool icomAllocated = edInterfaceEnet.IcomAllocate;
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Disconnect IcomAllocated={0}", icomAllocated);
+
                     if (icomAllocated)
                     {
                         bool result;
@@ -1187,6 +1189,8 @@ namespace PsdzClient
                         }
                         return result;
                     }
+
+                    return edInterfaceEnet.InterfaceDisconnect();
                 }
 
                 return _ediabas.EdInterfaceClass.InterfaceDisconnect();

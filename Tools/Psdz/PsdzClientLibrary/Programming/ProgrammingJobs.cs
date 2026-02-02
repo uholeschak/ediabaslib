@@ -1468,6 +1468,7 @@ namespace PsdzClient.Programming
                 if (PsdzContext.Connection == null || PsdzContext.Connection.Id == Guid.Empty)
                 {
                     log.Info("ClosePsdzConnection: Not connected");
+                    PsdzContext.Connection = null;
                     return true;
                 }
 
@@ -3604,7 +3605,7 @@ namespace PsdzClient.Programming
                             if (!ShowMessageEvent.Invoke(cts, message, true, true))
                             {
                                 log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageValid aborted");
-                                return false;
+                                result = false;
                             }
                         }
                         else
@@ -3623,7 +3624,7 @@ namespace PsdzClient.Programming
                         break;
                     }
 
-                    if (voltage < 0 || ShowMessageEvent == null)
+                    if (voltage < 0 || ShowMessageEvent == null || result == false)
                     {
                         break;
                     }
@@ -3635,7 +3636,7 @@ namespace PsdzClient.Programming
                         if (!ShowMessageEvent.Invoke(cts, message, false, true))
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
-                            return false;
+                            result = false;
                         }
                     }
                     else
@@ -3645,7 +3646,7 @@ namespace PsdzClient.Programming
                         if (!ShowMessageEvent.Invoke(cts, message, true, true))
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage BatteryVoltageOutOfRange aborted");
-                            return false;
+                            result = false;
                         }
                         break;
                     }
