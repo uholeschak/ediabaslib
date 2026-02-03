@@ -129,6 +129,11 @@ namespace PsdzClient
                 return DetectResult.NoResponse;
             }
 
+            if (_ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
+            {
+                LogInfoFormat("DetectVehicleBmwFast Host={0}, Protocol={1}", edInterfaceEnet.RemoteHost, edInterfaceEnet.VehicleProtocol);
+            }
+
             ResetValues();
             HashSet<string> invalidSgbdSet = new HashSet<string>();
 
