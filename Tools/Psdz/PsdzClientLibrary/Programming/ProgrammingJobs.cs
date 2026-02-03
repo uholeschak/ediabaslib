@@ -1476,9 +1476,9 @@ namespace PsdzClient.Programming
             }
         }
 
-        public bool ClosePsdzConnection()
+        public bool ClosePsdzConnection(bool markConnected = false)
         {
-            log.Info("ClosePsdzConnection Start");
+            log.InfoFormat("ClosePsdzConnection Start markConnected={0}", markConnected);
             try
             {
                 if (PsdzContext.Connection == null || PsdzContext.Connection.Id == Guid.Empty)
@@ -1488,7 +1488,19 @@ namespace PsdzClient.Programming
                 }
 
                 ProgrammingService.Psdz.ConnectionManagerService.CloseConnection(PsdzContext.Connection);
-                PsdzContext.Connection = null;
+                if (markConnected)
+                {
+                    // create dummy connection to indicate connected state
+                    PsdzContext.Connection = new PsdzConnection
+                    {
+                        Id = Guid.Empty
+                    };
+                }
+                else
+                {
+                    PsdzContext.Connection = null;
+                }
+
                 log.Info("ClosePsdzConnection OK");
                 return true;
             }
@@ -3563,12 +3575,7 @@ namespace PsdzClient.Programming
             bool psdzConnected = PsdzContext.Connection != null;
             if (psdzConnected)
             {
-                ClosePsdzConnection();
-                // create dummy connection to indicate connected state
-                PsdzContext.Connection = new PsdzConnection
-                {
-                    Id = Guid.Empty
-                };
+                ClosePsdzConnection(true);
 
                 if (hasVehicleQueue)
                 {
@@ -3582,6 +3589,7 @@ namespace PsdzClient.Programming
                 CacheResponseType = CacheType.NoResponse;
                 for (; ; )
                 {
+                    // force reconnect in ReadBatteryVoltage
                     PsdzContext.DetectVehicle.Disconnect();
                     double? voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage(() =>
                     {
