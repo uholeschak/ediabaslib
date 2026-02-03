@@ -110,6 +110,7 @@ namespace PsdzClient
             edInterfaceEnet.RemoteHost = hostAddress;
             edInterfaceEnet.VehicleProtocol = vehicleProtocol;
             edInterfaceEnet.IcomAllocate = icomAllocate;
+            edInterfaceEnet.KeepIcomAllocated = true;
             edInterfaceEnet.AddRecTimeoutIcom += addTimeout;
             edInterfaceEnet.DoIpSslSecurityPath = _doIpSslSecurityPath;
             edInterfaceEnet.DoIpS29Path = _doIpS29CertPath;
@@ -1164,35 +1165,15 @@ namespace PsdzClient
             }
         }
 
-        public bool Disconnect(bool keepIcomAllocation = false)
+        public bool Disconnect(bool icomDeallocate = false)
         {
-            log.InfoFormat(CultureInfo.InvariantCulture, "Disconnect keepIcomAllocation={0}", keepIcomAllocation);
+            log.InfoFormat(CultureInfo.InvariantCulture, "Disconnect icomDeallocate={0}", icomDeallocate);
 
             try
             {
                 if (_ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
                 {
-                    if (keepIcomAllocation)
-                    {
-                        bool icomAllocated = edInterfaceEnet.IcomAllocate;
-                        log.InfoFormat(CultureInfo.InvariantCulture, "Disconnect IcomAllocated={0}", icomAllocated);
-
-                        if (icomAllocated)
-                        {
-                            bool result;
-                            try
-                            {
-                                edInterfaceEnet.IcomAllocate = false;
-                                result = edInterfaceEnet.InterfaceDisconnect();
-                            }
-                            finally
-                            {
-                                edInterfaceEnet.IcomAllocate = true;
-                            }
-                            return result;
-                        }
-                    }
-
+                    edInterfaceEnet.KeepIcomAllocated = !icomDeallocate;
                     return edInterfaceEnet.InterfaceDisconnect();
                 }
 

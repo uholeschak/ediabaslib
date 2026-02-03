@@ -1226,6 +1226,7 @@ namespace PsdzClient.Programming
                 vehicle.VCI.IsDoIP = isDoIp;
                 vehicle.VIN17 = PsdzContext.DetectVehicle.Vin;
 
+                PsdzContext.DetectVehicle.Disconnect();
                 if (!OpenPsdzConnection(sbResult, vehicle))
                 {
                     sbResult.AppendLine(Strings.VehicleConnectionFailed);
@@ -1326,9 +1327,12 @@ namespace PsdzClient.Programming
                     if (PsdzContext.DetectVehicle.IsIcomAllocated())
                     {   // Connection required for ICOM deallocation
                         PsdzContext.DetectVehicle.Connect();
+                        PsdzContext.DetectVehicle.Disconnect(true);
                     }
-
-                    PsdzContext.DetectVehicle.Disconnect();
+                    else
+                    {
+                        PsdzContext.DetectVehicle.Disconnect();
+                    }
                 }
 
                 if (PsdzContext?.Connection == null)
@@ -3576,7 +3580,7 @@ namespace PsdzClient.Programming
                 CacheResponseType = CacheType.NoResponse;
                 for (; ; )
                 {
-                    PsdzContext.DetectVehicle.Disconnect(true);
+                    PsdzContext.DetectVehicle.Disconnect();
                     double? voltage = PsdzContext.DetectVehicle.ReadBatteryVoltage(() =>
                     {
                         if (cts != null)
@@ -3668,7 +3672,7 @@ namespace PsdzClient.Programming
             }
             finally
             {
-                PsdzContext.DetectVehicle.Disconnect(true);
+                PsdzContext.DetectVehicle.Disconnect();
 
                 if (psdzConnected)
                 {

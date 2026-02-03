@@ -806,6 +806,7 @@ namespace EdiabasLib
         protected int AddRecTimeoutProtected = 1000;
         protected int AddRecTimeoutIcomProtected = 2000;
         protected bool IcomAllocateProtected = false;
+        protected bool KeepIcomAllocatedProtected = false;
         protected bool RplusIcomEnetRedirectProtected = false;
         protected HttpClient IcomAllocateDeviceHttpClient;
 
@@ -2333,7 +2334,7 @@ namespace EdiabasLib
                 SharedDataActive.DisposeS29Certs();
             }
 
-            if (IcomAllocate && !reconnect && SharedDataActive.EnetHostConn != null &&
+            if (IcomAllocate && !KeepIcomAllocated && !reconnect && SharedDataActive.EnetHostConn != null &&
                 (SharedDataActive.DiagRplus || SharedDataActive.EnetHostConn.ConnectionType == EnetConnection.InterfaceType.Icom))
             {
                 EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Deallocate ICOM at: {0}", SharedDataActive.EnetHostConn.IpAddress);
@@ -2691,6 +2692,18 @@ namespace EdiabasLib
             }
         }
 
+        public bool KeepIcomAllocated
+        {
+            get
+            {
+                return KeepIcomAllocatedProtected;
+            }
+            set
+            {
+                KeepIcomAllocatedProtected = value;
+            }
+        }
+
         public bool RplusIcomEnetRedirect
         {
             get
@@ -2702,7 +2715,6 @@ namespace EdiabasLib
                 RplusIcomEnetRedirectProtected = value;
             }
         }
-
 
         public List<EnetConnection> DetectedVehicles(string remoteHostConfig, List<CommunicationMode> communicationModes = null)
         {
