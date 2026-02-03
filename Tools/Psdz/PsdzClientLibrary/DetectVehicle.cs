@@ -1197,15 +1197,10 @@ namespace PsdzClient
             }
         }
 
-        public bool IsIcomAllocated(bool checkConnection = false)
+        public bool IsIcomAllocated()
         {
             try
             {
-                if (checkConnection && !IsConnected())
-                {
-                    return false;
-                }
-
                 if (_ediabas.EdInterfaceClass is EdInterfaceEnet edInterfaceEnet)
                 {
                     return edInterfaceEnet.IcomAllocate;
