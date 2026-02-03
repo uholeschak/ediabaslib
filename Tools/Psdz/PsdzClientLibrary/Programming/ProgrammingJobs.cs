@@ -1413,6 +1413,7 @@ namespace PsdzClient.Programming
                 {
                     int useDiagPort = isDoIp ? EdInterfaceEnet.IcomSslPortDefault : diagPort;
                     string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, useDiagPort);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Connecting to ICOM: {0}", url);
 
                     if (isDoIp)
                     {
@@ -1431,6 +1432,7 @@ namespace PsdzClient.Programming
                 {
                     int useDiagPort = isDoIp ? 13400 : diagPort;
                     string url = string.Format(CultureInfo.InvariantCulture, "tcp://{0}:{1}", ipAddress, useDiagPort);
+                    log.InfoFormat(CultureInfo.InvariantCulture, "Connecting over Ethernet: {0}", url);
 
                     if (isDoIp)
                     {
