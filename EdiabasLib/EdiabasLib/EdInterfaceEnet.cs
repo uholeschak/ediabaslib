@@ -1110,10 +1110,17 @@ namespace EdiabasLib
                 IcomAllocate = false;
                 RplusIcomEnetRedirect = false;
 #endif
+                KeepIcomAllocated = false;
                 prop = EdiabasProtected?.GetConfigProperty("EnetIcomAllocate");
                 if (!string.IsNullOrEmpty(prop))
                 {
                     IcomAllocate = EdiabasNet.StringToValue(prop) != 0;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetKeepIcomAllocated");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    KeepIcomAllocated = EdiabasNet.StringToValue(prop) != 0;
                 }
 
                 if (string.IsNullOrEmpty(RplusSectionProtected) && !IsIpv4Address(RemoteHostProtected))
