@@ -267,6 +267,7 @@
     <Content Include="Content\bootstrap-grid.rtl.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Directory.Build.targets" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfileLocal.pubxml" />
     <None Include="Scripts\jquery-3.7.1.intellisense.js" />
@@ -585,18 +586,6 @@
   </Target>
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.4.1.0\build\net472\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.targets')" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.11\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3mc.2.1.11\buildTransitive\net461\SQLitePCLRaw.lib.e_sqlite3mc.targets')" />
-  <PropertyGroup>
-    <PreBuildEvent>SETLOCAL EnableDelayedExpansion
-set "CodegenCs=%25USERPROFILE%25\.dotnet\tools\dotnet-codegencs.exe"
-IF NOT EXIST !CodegenCs! (
-  echo install: dotnet tool install --global dotnet-codegencs
-  EXIT /b 1
-)
-set "OutputDir=$(ProjectDir)"
-IF "!OutputDir:~-1!"=="\" SET "OutputDir=!OutputDir:~0,-1!"
-echo Output dir: "!OutputDir!"
-!CodegenCs!  template run "$(ProjectDir)User" -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder "!OutputDir!"</PreBuildEvent>
-  </PropertyGroup>
   <Import Project="..\packages\Microsoft.TypeScript.MSBuild.5.9.3\build\Microsoft.TypeScript.MSBuild.targets" Condition="Exists('..\packages\Microsoft.TypeScript.MSBuild.5.9.3\build\Microsoft.TypeScript.MSBuild.targets')" />
   <Import Project="..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
