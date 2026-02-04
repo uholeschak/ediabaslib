@@ -1,0 +1,372 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="WebPsdzClient.SiteMaster" %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head runat="server">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%: Page.Title %></title>
+
+    <asp:PlaceHolder runat="server">
+        <%: Scripts.Render("~/bundles/modernizr") %>
+    </asp:PlaceHolder>
+
+    <webopt:bundlereference runat="server" path="~/Content/css" />
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+</head>
+<body>
+    <form runat="server">
+        <asp:ScriptManager runat="server">
+            <Scripts>
+                <%--To learn more about bundling scripts in ScriptManager see https://go.microsoft.com/fwlink/?LinkID=301884 --%>
+                <%--Framework Scripts--%>
+                <asp:ScriptReference Name="MsAjaxBundle" />
+                <asp:ScriptReference Name="jquery" />
+                <asp:ScriptReference Name="bootstrap" />
+                <asp:ScriptReference Name="WebForms.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebForms.js" />
+                <asp:ScriptReference Name="WebUIValidation.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebUIValidation.js" />
+                <asp:ScriptReference Name="MenuStandards.js" Assembly="System.Web" Path="~/Scripts/WebForms/MenuStandards.js" />
+                <asp:ScriptReference Name="GridView.js" Assembly="System.Web" Path="~/Scripts/WebForms/GridView.js" />
+                <asp:ScriptReference Name="DetailsView.js" Assembly="System.Web" Path="~/Scripts/WebForms/DetailsView.js" />
+                <asp:ScriptReference Name="TreeView.js" Assembly="System.Web" Path="~/Scripts/WebForms/TreeView.js" />
+                <asp:ScriptReference Name="WebParts.js" Assembly="System.Web" Path="~/Scripts/WebForms/WebParts.js" />
+                <asp:ScriptReference Name="Focus.js" Assembly="System.Web" Path="~/Scripts/WebForms/Focus.js" />
+                <asp:ScriptReference Name="WebFormsBundle" />
+                <%--Site Scripts--%>
+            </Scripts>
+        </asp:ScriptManager>
+        <asp:PlaceHolder runat="server">
+            <%: Scripts.RenderFormat("<script src='{0}' type='text/javascript'></script>", "~/bundles/SignalRScripts") %>
+            <%: Scripts.RenderFormat("<script src='{0}' type='text/javascript'></script>", "~/signalr/hubs") %>
+        </asp:PlaceHolder>
+        <script type="text/javascript">
+            var psdzVehicleHubProxy = $.connection.psdzVehicleHub;
+            var sessionID = "<%=Session.SessionID%>";
+
+            function sendVehicleResponse(id, response)
+            {
+                var logMessage = "Vehicle response: Id=" + id + ", Xml=" + response;
+                console.log(logMessage);
+                var errorMessage = "";
+                try
+                {
+                    psdzVehicleHubProxy.server.vehicleReceive(sessionID, id, response);
+                }
+                catch (e)
+                {
+                    errorMessage = e.message;
+                }
+                return errorMessage;
+            }
+
+            function sendRequest(url, id, formData)
+            {
+                var request = new XMLHttpRequest();
+                request.onload = function ()
+                {
+                    if (request.status === 200)
+                    {
+                        console.log("Vehicle response: Xml=" + request.responseText);
+                        psdzVehicleHubProxy.server.vehicleReceive(sessionID, id, request.responseText);
+                    }
+                    else
+                    {
+                        console.log("Vehicle response error: Code=" + request.status);
+                        psdzVehicleHubProxy.server.vehicleError(sessionID, id, request.statusText);
+                    }
+                };
+                request.onerror = function ()
+                {
+                    console.log("Vehicle error");
+                    psdzVehicleHubProxy.server.vehicleError(sessionID, id, "Error");
+                };
+                request.abort = function ()
+                {
+                    console.log("Vehicle abort");
+                    psdzVehicleHubProxy.server.vehicleError(sessionID, id, "Abort");
+                };
+                request.open("POST", url, true);
+                request.send(formData);
+            }
+
+            function sendConnectStatus()
+            {
+                if (isAppBound())
+                {
+                    var errorMessage = null;
+                    try
+                    {
+                        var connectTimeouts = app.GetConnectTimeouts();
+                        psdzVehicleHubProxy.server.connectStatus(sessionID, connectTimeouts);
+                    }
+                    catch (e)
+                    {
+                        errorMessage = e.message;
+                    }
+
+                    if (!!errorMessage)
+                    {
+                        console.log("sendConnectStatus Error: " + errorMessage);
+                    }
+                }
+            }
+
+            function isAppBound()
+            {
+                if (typeof app !== "undefined")
+                {
+                    console.log("App is bound");
+                    return true;
+                }
+
+                console.log("App not bound");
+                return false;
+            }
+
+            psdzVehicleHubProxy.client.vehicleConnect = function (url, id)
+            {
+                var logMessage = "Vehicle connect: Url=" + url + ", Id=" + id;
+                console.log(logMessage);
+                if (isAppBound())
+                {
+                    var errorMessage = null;
+                    try
+                    {
+                        errorMessage = app.VehicleConnect(sessionID, id);
+                    }
+                    catch (e)
+                    {
+                        errorMessage = e.message;
+                    }
+
+                    if (!!errorMessage)
+                    {
+                        console.log("VehicleConnect Error: " + errorMessage);
+                        psdzVehicleHubProxy.server.vehicleError(sessionID, id, errorMessage);
+                    }
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append('id', id);
+                formData.append('connect', '1');
+                sendRequest(url, id, formData);
+            }
+
+            psdzVehicleHubProxy.client.vehicleDisconnect = function (url, id)
+            {
+                var logMessage = "Vehicle disconnect: Url=" + url + ", Id=" + id;
+                console.log(logMessage);
+                if (isAppBound())
+                {
+                    var errorMessage = null;
+                    try
+                    {
+                        errorMessage = app.VehicleDisconnect(sessionID, id);
+                    }
+                    catch (e)
+                    {
+                        errorMessage = e.message;
+                    }
+
+                    if (!!errorMessage)
+                    {
+                        console.log("VehicleDisconnect Error: " + errorMessage);
+                        psdzVehicleHubProxy.server.vehicleError(sessionID, id, errorMessage);
+                    }
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append('id', id);
+                formData.append('disconnect', '1');
+                sendRequest(url, id, formData);
+            }
+
+            psdzVehicleHubProxy.client.vehicleSend = function (url, id, data)
+            {
+                var logMessage = "Vehicle send: Url=" + url + ", Id=" + id + ", Data=" + data;
+                console.log(logMessage);
+                if (isAppBound())
+                {
+                    var errorMessage = null;
+                    try
+                    {
+                        errorMessage = app.VehicleSend(sessionID, id, data);
+                    }
+                    catch (e)
+                    {
+                        errorMessage = e.message;
+                    }
+
+                    if (!!errorMessage)
+                    {
+                        console.log("VehicleSend Error: " + errorMessage);
+                        psdzVehicleHubProxy.server.vehicleError(sessionID, id, errorMessage);
+                    }
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append('id', id);
+                formData.append('data', data);
+                sendRequest(url, id, formData);
+            }
+
+            psdzVehicleHubProxy.client.reportError = function (msg)
+            {
+                var logMessage = "Report error: Msg=" + msg;
+                console.log(logMessage);
+
+                if (isAppBound())
+                {
+                    try
+                    {
+                        app.ReportError(sessionID, msg);
+                    }
+                    catch (e)
+                    {
+                    }
+                }
+            }
+
+            psdzVehicleHubProxy.client.updatePanels = function (status)
+            {
+                var logMessage = "Update Panels: Status=" + status;
+                console.log(logMessage);
+
+                if (status)
+                {
+                    if (typeof updatePanelStatus === "function")
+                    {
+                        updatePanelStatus();
+                    }
+                    else
+                    {
+                        console.log("updatePanelStatus not existing");
+                    }
+                }
+
+                if (isAppBound())
+                {
+                    try
+                    {
+                        app.UpdateStatus(status);
+                    }
+                    catch (e)
+                    {
+                    }
+                }
+            }
+
+            psdzVehicleHubProxy.client.showModalPopup = function (show)
+            {
+                var logMessage = "Show modal popup: Show=" + show;
+                console.log(logMessage);
+
+                if (typeof showPopupMsgModal === "function")
+                {
+                    showPopupMsgModal(show);
+                }
+                else
+                {
+                    console.log("showPopupMsgModal not existing");
+                }
+            }
+
+            psdzVehicleHubProxy.client.reloadPage = function ()
+            {
+                console.log("Reload Page");
+                if (isAppBound())
+                {
+                    try
+                    {
+                        app.ReloadPage();
+                    }
+                    catch (e)
+                    {
+                    }
+                }
+                else
+                {
+                    setTimeout(function reloadPage()
+                    {
+                        if (typeof isPostBack === "function")
+                        {
+                            if (isPostBack())
+                            {
+                                console.log("PostBack is active");
+                                setTimeout(reloadPage, 500);
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            console.log("isPostBack not existing");
+                        }
+
+                        console.log("Reloading page delayed");
+                        location.href = location.href;
+                    }, 500);
+                }
+            }
+
+            $.connection.hub.qs = { 'sessionId': sessionID };
+            $.connection.hub.start().done(function ()
+                {
+                    psdzVehicleHubProxy.server.sessionConnected(sessionID);
+                    sendConnectStatus();
+                }
+            );
+            $.connection.hub.disconnected(function ()
+                {
+                    console.log("Hub disconnected");
+                    setTimeout(function ()
+                    {
+                        console.log("Reconnecting hub");
+                        $.connection.hub.start().done(function ()
+                        {
+                            psdzVehicleHubProxy.server.sessionConnected(sessionID);
+                            sendConnectStatus();
+                        });
+                    }, 5000);
+                }
+            );
+        </script>
+<!--
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" runat="server" href="~/">PsdzClient</a><br />
+&nbsp;</div>
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li><a runat="server" href="~/">Startseite</a></li>
+                        <li><a runat="server" href="~/About">Informationen</a></li>
+                        <li><a runat="server" href="~/Contact">Kontakt</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+-->
+        <div class="container body-content">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server">
+            </asp:ContentPlaceHolder>
+<!--
+            <hr />
+            <footer>
+                <p>&copy; <%: DateTime.Now.Year %> - PsdzClient</p>
+            </footer>
+-->
+        </div>
+    </form>
+</body>
+</html>

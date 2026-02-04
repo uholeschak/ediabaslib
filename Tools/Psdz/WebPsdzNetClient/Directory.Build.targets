@@ -1,0 +1,24 @@
+<Project>
+    <!-- CodegenCS PreBuild Target - runs once for multi-targeting builds -->
+    <Target Name="CodegenCSPreBuild" 
+            BeforeTargets="Build">
+        <PropertyGroup>
+            <CodegenCsExe>$(USERPROFILE)\.dotnet\tools\dotnet-codegencs.exe</CodegenCsExe>
+            <CodegenOutputDir>$(MSBuildProjectDirectory)</CodegenOutputDir>
+            <CodegenOutputDir Condition="$(CodegenOutputDir.EndsWith('\'))">$(CodegenOutputDir.TrimEnd('\'))</CodegenOutputDir>
+        </PropertyGroup>
+
+        <Error Condition="!Exists('$(CodegenCsExe)')" 
+               Text="CodegenCS tool not found. Please install: dotnet tool install --global dotnet-codegencs" />
+
+        <Message Importance="High" Text="Running CodegenCS for project: $(MSBuildProjectName)" />
+        <Message Importance="High" Text="Output directory: $(CodegenOutputDir)" />
+
+        <Exec Command="&quot;$(CodegenCsExe)&quot; template run &quot;$(MSBuildProjectDirectory)\User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;$(CodegenOutputDir)&quot;" 
+              WorkingDirectory="$(MSBuildProjectDirectory)" />
+    </Target>
+    <Target Name="CopyCustomFiles" Condition=" '$(WPPAllFilesInSingleFolder)' != '' And '$(PublishURL)' != '' " AfterTargets="GatherAllFilesToPublish">
+        <Message Text="Copy custom files to publish temp folder: '$(WPPAllFilesInSingleFolder)'%0aFinal publish folder: '$(PublishURL)'%0aPublish profile: '$(WebPublishProfileFile)'" Importance="high" />
+        <Copy SourceFiles="User.config" DestinationFolder="$(WPPAllFilesInSingleFolder)" />
+    </Target>
+</Project>

@@ -1,0 +1,10 @@
+/bin/
+/obj/
+/WebPsdzClient.csproj.user
+/User.config
+/User.log
+/.vs/
+/ILLink/
+/Views/
+/Data/
+/publish/
