@@ -1407,6 +1407,7 @@ namespace PsdzClient.Programming
                 string series = PsdzContext.DetectVehicle.Series;
                 bool isDoIp = PsdzContext.DetectVehicle.IsDoIp;
                 int addTimeout = PsdzContext.DetectVehicle.AddTimeout;
+                log.InfoFormat("OpenPsdzConnection: bauIStufe={0}, series={1}, isDoIp={2}, addTimeout={3}", bauIStufe, series, isDoIp, addTimeout);
 
                 IPsdzConnection psdzConnection;
                 if (icomConnection)
