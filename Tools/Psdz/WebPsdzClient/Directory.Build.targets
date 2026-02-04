@@ -17,4 +17,8 @@
         <Exec Command="&quot;$(CodegenCsExe)&quot; template run &quot;$(MSBuildProjectDirectory)\User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;$(CodegenOutputDir)&quot;" 
               WorkingDirectory="$(MSBuildProjectDirectory)" />
     </Target>
+    <Target Name="CopyCustomFiles" Condition=" '$(WPPAllFilesInSingleFolder)' != '' And '$(PublishURL)' != '' " AfterTargets="GatherAllFilesToPublish">
+        <Message Text="Copy custom files to publish temp folder: '$(WPPAllFilesInSingleFolder)'%0aFinal publish folder: '$(PublishURL)'%0aPublish profile: '$(WebPublishProfileFile)'" Importance="high" />
+        <Copy SourceFiles="User.config" DestinationFolder="$(WPPAllFilesInSingleFolder)" />
+    </Target>
 </Project>
