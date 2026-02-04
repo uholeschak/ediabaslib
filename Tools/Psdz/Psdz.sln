@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32319.34
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EdiabasLib", "..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj", "{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}"
 EndProject
@@ -21,6 +21,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzClient", "PsdzClient\PsdzClient.csproj", "{EE741859-CB0F-4130-9F07-5CEC56A982C6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceCodeSync", "SourceCodeSync\SourceCodeSync.csproj", "{B2D67B1F-7DED-49E5-8076-10440C3184BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPsdzNetClient", "WebPsdzNetClient\WebPsdzNetClient.csproj", "{4F6139A0-CBD9-4661-A3D0-80E734D607C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -110,6 +112,14 @@ Global
 		{B2D67B1F-7DED-49E5-8076-10440C3184BA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B2D67B1F-7DED-49E5-8076-10440C3184BA}.Release|x86.ActiveCfg = Release|Any CPU
 		{B2D67B1F-7DED-49E5-8076-10440C3184BA}.Release|x86.Build.0 = Release|Any CPU
+		{4F6139A0-CBD9-4661-A3D0-80E734D607C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F6139A0-CBD9-4661-A3D0-80E734D607C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F6139A0-CBD9-4661-A3D0-80E734D607C0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4F6139A0-CBD9-4661-A3D0-80E734D607C0}.Debug|x86.Build.0 = Debug|Any CPU
+		{4F6139A0-CBD9-4661-A3D0-80E734D607C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F6139A0-CBD9-4661-A3D0-80E734D607C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F6139A0-CBD9-4661-A3D0-80E734D607C0}.Release|x86.ActiveCfg = Release|Any CPU
+		{4F6139A0-CBD9-4661-A3D0-80E734D607C0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
