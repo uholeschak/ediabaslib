@@ -14,7 +14,6 @@
     <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
     <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
     <OutputPath>bin\</OutputPath>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <RunCommand>$(MSBuildExtensionsPath64)\..\IIS Express\iisexpress.exe</RunCommand>
     <RunArguments>/path:"$(MSBuildProjectDirectory)" /port:28524</RunArguments>
   </PropertyGroup>
