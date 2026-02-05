@@ -10,8 +10,6 @@
     <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
     <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
-    <RunCommand>$(MSBuildExtensionsPath64)\..\IIS Express\iisexpress.exe</RunCommand>
-    <RunArguments>/path:"$(MSBuildProjectDirectory)" /port:28524</RunArguments>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="User.log" />
