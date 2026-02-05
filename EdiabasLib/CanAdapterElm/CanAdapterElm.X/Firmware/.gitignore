@@ -1,1 +1,5 @@
 /ELM327V15Org.X/
+*.txt
+*.hex
+/ELM327V15.bin
+/ELM327V15_.asm
