@@ -31,6 +31,11 @@
   <ItemGroup>
     <Content Include="Content\**\*.*" />
     <Content Include="Scripts\**\*.*" />
+    <Compile Remove="publish\**" />
+    <Content Remove="publish\**" />
+    <EmbeddedResource Remove="publish\**" />
+    <None Remove="publish\**" />
+    <TypeScriptCompile Remove="publish\**" />
     <Content Include="favicon.ico" />
     <Content Include="log4net_config.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
