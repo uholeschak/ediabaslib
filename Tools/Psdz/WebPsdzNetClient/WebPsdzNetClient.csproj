@@ -69,6 +69,22 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+    <Compile Update="About.aspx.designer.cs">
+        <AutoGen>True</AutoGen>
+        <DependentUpon>About.aspx</DependentUpon>
+    </Compile>
+    <Compile Update="AccessDenied.aspx.designer.cs">
+        <AutoGen>True</AutoGen>
+        <DependentUpon>AccessDenied.aspx</DependentUpon>
+    </Compile>
+    <Compile Update="Default.aspx.designer.cs">
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Update="Global.aspx.designer.cs">
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Global.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\EdiabasLib\ApiInternal\ApiInternal.csproj" />
