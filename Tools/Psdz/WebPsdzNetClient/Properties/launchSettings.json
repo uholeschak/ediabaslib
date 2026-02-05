@@ -8,5 +8,12 @@
       },
       "applicationUrl": "http://localhost:28524"
     }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": false,
+    "iisExpress": {
+      "sslPort": 44335
+    }
   }
 }
