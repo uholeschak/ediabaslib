@@ -24,6 +24,6 @@
 
     <Target Name="BuildAndPublish">
         <Message Importance="High" Text="Running BuildAndPublish" />
-        <MSBuild Projects="$(ProjectFile)" Targets="Package" Properties="Configuration=Release;PackageLocation=$(OutDir)\MSDeploy\Package.zip;_PackageTempDir=$(OutDir)\Temp" />
+        <MSBuild Projects="$(ProjectFile)" Targets="Package" Properties="Configuration=Release" />
     </Target>
 </Project>
