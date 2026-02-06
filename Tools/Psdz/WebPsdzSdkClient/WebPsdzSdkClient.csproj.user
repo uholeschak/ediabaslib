@@ -77,5 +77,8 @@
     <Compile Update="Site.Mobile.Master.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Update="ViewSwitcher.ascx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
   </ItemGroup>
 </Project>
