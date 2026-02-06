@@ -18,7 +18,7 @@
     </Target>
 
     <PropertyGroup>
-        <ProjectFile>$(MSBuildProjectDirectory)\WebPsdzSdkClient.csproj</ProjectFile >
+        <ProjectFile>$(MSBuildProjectDirectory)\$(MSBuildProjectFile)</ProjectFile >
         <OutDir>$(MSBuildProjectDirectory)\..\Publish\</OutDir>
     </PropertyGroup>
 
