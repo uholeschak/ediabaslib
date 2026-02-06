@@ -29,4 +29,8 @@
                  Targets="WebPublish"
                  Properties="WebPublishMethod=FileSystem;PublishUrl=$(PublishDir);DeleteExistingFiles=true" />
     </Target>
+    <!--
+    To update the .aspx.cs.designer files install: https://github.com/ulrichb/Roflcopter
+    and execute the ReSharper Menu "Update ASP.NET Designer File" in the .aspx file.
+    -->
 </Project>
