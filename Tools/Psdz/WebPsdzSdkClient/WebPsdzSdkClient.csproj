@@ -9,6 +9,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
     <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
+    <MicrosoftNetCompilersToolset_Version>5.0.0</MicrosoftNetCompilersToolset_Version>
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
   </PropertyGroup>
   <ItemGroup>
@@ -127,8 +128,5 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     <PackageReference Include="System.ValueTuple" Version="4.6.1" />
     <PackageReference Include="WebGrease" Version="1.6.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="5.0.0" />
   </ItemGroup>
 </Project>
