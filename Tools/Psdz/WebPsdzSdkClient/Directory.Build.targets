@@ -1,4 +1,4 @@
-<Project DefaultTargets="BuildAndPublish" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Target Name="CodegenCSPreBuild" 
             BeforeTargets="Build">
         <PropertyGroup>
@@ -18,12 +18,16 @@
     </Target>
 
     <PropertyGroup>
-        <ProjectFile>$(MSBuildProjectDirectory)\$(MSBuildProjectFile)</ProjectFile >
-        <OutDir>$(MSBuildProjectDirectory)\..\Publish\</OutDir>
+        <PublishDir>$(MSBuildProjectDirectory)\..\Publish\</PublishDir>
     </PropertyGroup>
 
-    <Target Name="BuildAndPublish">
-        <Message Importance="High" Text="Running BuildAndPublish" />
-        <MSBuild Projects="$(ProjectFile)" Targets="Package" Properties="Configuration=Release" />
+    <!-- Package läuft automatisch nach erfolgreichem Build -->
+    <Target Name="PackageAfterBuild"
+            AfterTargets="Build"
+            Condition="'$(Configuration)' == 'Release'">
+        <Message Importance="High" Text="Creating package for $(MSBuildProjectName) to $(PublishDir)..." />
+        <MSBuild Projects="$(MSBuildProjectFullPath)"
+                 Targets="WebPublish"
+                 Properties="WebPublishMethod=FileSystem;PublishUrl=$(PublishDir);DeleteExistingFiles=true" />
     </Target>
 </Project>
