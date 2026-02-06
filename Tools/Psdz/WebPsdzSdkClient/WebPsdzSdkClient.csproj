@@ -53,11 +53,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\Default.aspx.resx" />
+    <Content Include="User.config">
+        <DependentUpon>User.csx</DependentUpon>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="User.config">
-      <DependentUpon>User.csx</DependentUpon>
-    </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
