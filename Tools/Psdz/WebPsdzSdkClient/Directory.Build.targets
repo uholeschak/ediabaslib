@@ -21,7 +21,6 @@
         <PublishDir>$(MSBuildProjectDirectory)\..\Publish\</PublishDir>
     </PropertyGroup>
 
-    <!-- Package läuft automatisch nach erfolgreichem Build -->
     <Target Name="PackageAfterBuild"
             AfterTargets="Build"
             Condition="'$(Configuration)' == 'Release'">
