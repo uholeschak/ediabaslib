@@ -94,10 +94,8 @@
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.2" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
-    <PackageReference Include="Microsoft.Owin" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Cors" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="4.2.3" />
-    <PackageReference Include="Microsoft.Owin.Security" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.2.3" />
     <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.9.3" />
