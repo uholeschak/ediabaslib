@@ -12,6 +12,10 @@ namespace WebPsdzClient
         // Weitere Informationen zur Bündelung finden Sie unter https://go.microsoft.com/fwlink/?LinkID=303951
         public static void RegisterBundles(BundleCollection bundles)
         {
+            bundles.Add(new StyleBundle("~/Content/css").Include(
+                "~/Content/bootstrap.css",
+                "~/Content/Site.css"));
+
             bundles.Add(new ScriptBundle("~/bundles/WebFormsJs").Include(
                             "~/Scripts/WebForms/WebForms.js",
                             "~/Scripts/WebForms/WebUIValidation.js",
