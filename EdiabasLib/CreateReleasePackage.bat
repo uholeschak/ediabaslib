@@ -7,7 +7,7 @@ set "DATESTR=%date:~6,4%%date:~3,2%%date:~0,2%"
 echo !DATESTR!
 set "PACKAGEPATH=!BATPATH!Package\"
 set "EDIABASTESTPATH=!PACKAGEPATH!EdiabasTest\"
-set "EDIABASTESTSRCPATH=!BATPATH!EdiabasTest\bin\Release\net48\"
+set "EDIABASTESTSRCPATH=!BATPATH!EdiabasTest\bin\Release\net481\"
 set "TOOLPATH=!PACKAGEPATH!EdiabasLibConfigTool\"
 set "TOOLSRCPATH=!BATPATH!EdiabasLibConfigTool\artifacts\bin\EdiabasLibConfigTool\release\"
 set "S29CERTGENPATH=!PACKAGEPATH!S29CertGenerator\"
