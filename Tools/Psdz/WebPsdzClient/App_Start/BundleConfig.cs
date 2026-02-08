@@ -9,7 +9,7 @@ namespace WebPsdzClient
 {
     public class BundleConfig
     {
-        // Weitere Informationen zur Bündelung finden Sie unter https://go.microsoft.com/fwlink/?LinkID=303951
+        // Weitere Informationen zur Bündelung finden Sie unter https://learn.microsoft.com/en-us/aspnet/mvc/overview/performance/bundling-and-minification
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/WebFormsJs").Include(
