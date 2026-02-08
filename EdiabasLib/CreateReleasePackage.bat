@@ -57,7 +57,7 @@ xcopy /y /q "!LOGCONVSRCPATH!*.*" "!LOGCONVPATH!" > nul || EXIT /b 1
 
 echo Copying apiNET
 mkdir "!APINETPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!apiNET\bin\Release\net48\*.dll" "!APINETPATH!" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!apiNET\bin\Release\net481\*.dll" "!APINETPATH!" > nul || EXIT /b 1
 
 echo Copying CanAdapter
 forfiles /P !CANADAPTERSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
