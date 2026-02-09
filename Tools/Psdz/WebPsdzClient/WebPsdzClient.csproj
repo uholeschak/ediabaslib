@@ -66,6 +66,7 @@
     <ProjectReference Include="..\PsdzClientLibrary\PsdzClientLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Remove="obj\**" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
