@@ -7,7 +7,7 @@ set "DATESTR=%date:~6,4%%date:~3,2%%date:~0,2%"
 echo !DATESTR!
 set "PACKAGEPATH=!BATPATH!Package\"
 set "EDIABASTESTPATH=!PACKAGEPATH!EdiabasTest\"
-set "EDIABASTESTSRCPATH=!BATPATH!EdiabasTest\bin\Release\net48\"
+set "EDIABASTESTSRCPATH=!BATPATH!EdiabasTest\bin\Release\net481\"
 set "TOOLPATH=!PACKAGEPATH!EdiabasLibConfigTool\"
 set "TOOLSRCPATH=!BATPATH!EdiabasLibConfigTool\artifacts\bin\EdiabasLibConfigTool\release\"
 set "S29CERTGENPATH=!PACKAGEPATH!S29CertGenerator\"
@@ -57,7 +57,7 @@ xcopy /y /q "!LOGCONVSRCPATH!*.*" "!LOGCONVPATH!" > nul || EXIT /b 1
 
 echo Copying apiNET
 mkdir "!APINETPATH!" || EXIT /b 1
-xcopy /y /q "!BATPATH!apiNET\bin\Release\net48\*.dll" "!APINETPATH!" > nul || EXIT /b 1
+xcopy /y /q "!BATPATH!apiNET\bin\Release\net481\*.dll" "!APINETPATH!" > nul || EXIT /b 1
 
 echo Copying CanAdapter
 forfiles /P !CANADAPTERSRCPATH! /M *.exe /S /D -1 /C "cmd /c echo Old file found: @file @fdate" 2>nul
