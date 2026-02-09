@@ -88,8 +88,20 @@
     <PackageReference Include="Microsoft.AspNet.ScriptManager.WebForms" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNet.SignalR" Version="2.4.3" />
     <PackageReference Include="Microsoft.AspNet.SignalR.Core.de" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Core.es" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Core.fr" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Core.it" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.Core.ru" Version="2.4.3" />
     <PackageReference Include="Microsoft.AspNet.SignalR.de" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.es" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.fr" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.it" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNet.SignalR.ru" Version="2.4.3" />
     <PackageReference Include="Microsoft.AspNet.Web.Optimization.de" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNet.Web.Optimization.es" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNet.Web.Optimization.fr" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNet.Web.Optimization.it" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNet.Web.Optimization.ru" Version="1.1.3" />
     <PackageReference Include="Microsoft.AspNet.Web.Optimization.WebForms" Version="1.1.3" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Cors" Version="5.3.0" />
     <PackageReference Include="Microsoft.AspNet.WebApi.WebHost" Version="5.3.0" />
