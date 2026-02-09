@@ -1,12 +1,6 @@
 ﻿using PsdzClient;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Client
 {
@@ -14,10 +8,14 @@ namespace BMW.Rheingold.Psdz.Client
     internal abstract class PsdzDuplexClientBase<TChannel, TCallback> : PsdzClientBase<TChannel> where TChannel : class where TCallback : class
     {
         protected PsdzDuplexClientBase(TCallback callbackInstance, Binding binding, EndpointAddress remoteAddress)
+//[+]#if NET
 #if NET
+//[+]: base((ChannelFactory<TChannel>)new DuplexChannelFactory<TChannel>(new InstanceContext(callbackInstance), binding, remoteAddress))
             : base((ChannelFactory<TChannel>)new DuplexChannelFactory<TChannel>(new InstanceContext(callbackInstance), binding, remoteAddress))
+//[+]#else
 #else
             : base((ChannelFactory<TChannel>)new DuplexChannelFactory<TChannel>(callbackInstance, binding, remoteAddress))
+//[+]#endif
 #endif
         {
         }
