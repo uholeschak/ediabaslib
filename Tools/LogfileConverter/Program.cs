@@ -14,7 +14,7 @@ namespace LogfileConverter
     {
         private static bool _responseFile;
         private static bool _cFormat;
-        private static bool _ignoreCrcErrors = false;
+        private static bool _ignoreCrcErrors;
         private static bool _ds2Mode;
         private static bool _kwp2000sMode;
         private static bool _edicCanMode;
