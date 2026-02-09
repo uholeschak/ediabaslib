@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz.Client
 {
@@ -16,10 +14,14 @@ namespace BMW.Rheingold.Psdz.Client
         private sealed class PsdzEventListenerClient : DuplexClientBase<IEventManagerService>
         {
             public PsdzEventListenerClient(IPsdzEventListener eventListener, Binding binding, EndpointAddress endPointAddress)
+//[+]#if NET
 #if NET
+//[+]: base(new InstanceContext(eventListener), binding, endPointAddress)
                 : base(new InstanceContext(eventListener), binding, endPointAddress)
+//[+]#else
 #else
                 : base((object)eventListener, binding, endPointAddress)
+//[+]#endif
 #endif
             {
             }
