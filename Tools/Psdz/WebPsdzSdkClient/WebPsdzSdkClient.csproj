@@ -46,7 +46,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_LocalResources\Default.aspx.resx" />
+    <Content Include="App_LocalResources\**\*.resx" />
     <Content Include="User.config">
         <DependentUpon>User.csx</DependentUpon>
         <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
