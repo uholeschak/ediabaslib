@@ -1,5 +1,4 @@
-<Project>
-    <!-- CodegenCS PreBuild Target - runs once for multi-targeting builds -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <Target Name="CodegenCSPreBuild" 
             BeforeTargets="Build">
         <PropertyGroup>
@@ -17,8 +16,21 @@
         <Exec Command="&quot;$(CodegenCsExe)&quot; template run &quot;$(MSBuildProjectDirectory)\User&quot; -r:System.Xml.dll -r:System.Xml.ReaderWriter.dll -r:System.Private.Xml.dll --OutputFolder &quot;$(CodegenOutputDir)&quot;" 
               WorkingDirectory="$(MSBuildProjectDirectory)" />
     </Target>
-    <Target Name="CopyCustomFiles" Condition=" '$(WPPAllFilesInSingleFolder)' != '' And '$(PublishURL)' != '' " AfterTargets="GatherAllFilesToPublish">
-        <Message Text="Copy custom files to publish temp folder: '$(WPPAllFilesInSingleFolder)'%0aFinal publish folder: '$(PublishURL)'%0aPublish profile: '$(WebPublishProfileFile)'" Importance="high" />
-        <Copy SourceFiles="User.config" DestinationFolder="$(WPPAllFilesInSingleFolder)" />
+
+    <PropertyGroup>
+        <PublishDir>$(MSBuildProjectDirectory)\..\Publish\</PublishDir>
+    </PropertyGroup>
+
+    <Target Name="PackageAfterBuild"
+            AfterTargets="Build"
+            Condition="'$(Configuration)' == 'Release'">
+        <Message Importance="High" Text="Creating package for $(MSBuildProjectName) to $(PublishDir)..." />
+        <MSBuild Projects="$(MSBuildProjectFullPath)"
+                 Targets="WebPublish"
+                 Properties="WebPublishMethod=FileSystem;PublishUrl=$(PublishDir);DeleteExistingFiles=true" />
     </Target>
+    <!--
+    To update the .aspx.cs.designer files install: https://github.com/ulrichb/Roflcopter
+    and execute the ReSharper Menu "Update ASP.NET Designer File" in the .aspx file.
+    -->
 </Project>
