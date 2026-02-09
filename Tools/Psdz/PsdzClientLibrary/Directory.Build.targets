@@ -1,6 +1,6 @@
 ﻿<Project>
    <PropertyGroup>
-       <!-- Activating these compiler switches requires now more code adaptions -->
+       <!-- Activate these swithes for old Psdz hosts -->
        <DefineConstants>$(DefineConstants);_OLD_PSDZ_BUS;_OLD_PSDZ_FA</DefineConstants>
    </PropertyGroup>
 </Project>
