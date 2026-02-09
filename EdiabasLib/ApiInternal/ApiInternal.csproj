@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{F125B68A-1FA7-4E2B-A055-C4F6D8F5F0CF}</ProjectGuid>
-    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net48;net481</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net481</TargetFrameworks>
     <AssemblyTitle>EdiabasLib interface wrapper</AssemblyTitle>
     <Product>EdiabasLib</Product>
     <Description>EdiabasLib interface wrapper</Description>

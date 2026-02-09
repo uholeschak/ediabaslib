@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
     <ProjectGuid>{3C2E9AE9-8252-451F-9B8F-92EBB56D245D}</ProjectGuid>
-    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net48;net481</TargetFrameworks>
+    <TargetFrameworks>net10.0-windows10.0.26100.0;net8.0-windows10.0.26100.0;net481</TargetFrameworks>
     <AssemblyTitle>EDIABAS .NET Library</AssemblyTitle>
     <Product>EdiabasLib</Product>
     <Description>EDIABAS .NET Library</Description>
