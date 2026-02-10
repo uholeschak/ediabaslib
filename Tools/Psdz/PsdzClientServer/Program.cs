@@ -8,15 +8,16 @@ namespace PsdzClientServer
     {
         static async Task<int> Main(string[] args)
         {
-            CancellationTokenSource cts = new CancellationTokenSource();
+            using CancellationTokenSource cts = new CancellationTokenSource();
             PsdzJsonRpcServer server = new PsdzJsonRpcServer();
 
             try
             {
+                CancellationTokenSource ctsLocal = cts;
                 Console.CancelKeyPress += (_, e) =>
                 {
                     e.Cancel = true;
-                    cts.Cancel();
+                    ctsLocal.Cancel();
                 };
 
                 Console.WriteLine("Starting PsdzJsonRpcServer...");
