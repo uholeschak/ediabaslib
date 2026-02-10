@@ -9,11 +9,10 @@ namespace PsdzClientServer;
 public class PsdzJsonRpcServer
 {
     private const string PipeName = "PsdzJsonRpcPipe";
-    private readonly CancellationTokenSource _cts = new();
 
-    public async Task StartAsync()
+    public async Task StartAsync(CancellationToken ct)
     {
-        while (!_cts.Token.IsCancellationRequested)
+        while (!ct.IsCancellationRequested)
         {
             NamedPipeServerStream pipeServer = new NamedPipeServerStream(
                 PipeName,
@@ -25,7 +24,7 @@ public class PsdzJsonRpcServer
             try
             {
                 Console.WriteLine("Wait for client connection...");
-                await pipeServer.WaitForConnectionAsync(_cts.Token);
+                await pipeServer.WaitForConnectionAsync(ct);
                 Console.WriteLine("Client connected");
 
                 // JsonRpc for this connection
@@ -52,6 +51,4 @@ public class PsdzJsonRpcServer
             pipeServer.Dispose();
         }
     }
-
-    public void Stop() => _cts.Cancel();
 }
