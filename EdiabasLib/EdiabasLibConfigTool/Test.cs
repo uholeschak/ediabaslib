@@ -21,7 +21,6 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using static EdiabasLibConfigTool.FormMain;
 
 namespace EdiabasLibConfigTool
 {
@@ -261,7 +260,7 @@ namespace EdiabasLibConfigTool
                 return true;
             }
 
-            BluetoothItem devInfo = _form.GetSelectedBtDevice();
+            FormMain.BluetoothItem devInfo = _form.GetSelectedBtDevice();
             if (devInfo != null)
             {
                 string pin = _form.BluetoothPin;
@@ -753,7 +752,7 @@ namespace EdiabasLibConfigTool
             return true;
         }
 
-        private bool ConnectBtDevice(BluetoothItem devInfo, string pin, out string failureReason)
+        private bool ConnectBtDevice(FormMain.BluetoothItem devInfo, string pin, out string failureReason)
         {
             failureReason = string.Empty;
 
