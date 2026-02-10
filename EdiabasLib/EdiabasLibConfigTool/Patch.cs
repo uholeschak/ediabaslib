@@ -1,5 +1,4 @@
 ﻿using EdiabasLib;
-using InTheHand.Net.Sockets;
 using Microsoft.Win32;
 using SimpleWifi.Win32;
 using SimpleWifi.Win32.Interop;
@@ -14,7 +13,6 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Xml.Linq;
-using static EdiabasLibConfigTool.FormMain;
 
 namespace EdiabasLibConfigTool
 {
@@ -394,7 +392,7 @@ namespace EdiabasLibConfigTool
         }
 
         public static bool UpdateConfigFile(PatchType patchType, string configFile, string ediabasDir, string iniFile, int adapterType,
-            BluetoothItem devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
+            FormMain.BluetoothItem devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
         {
             try
             {
@@ -1232,7 +1230,7 @@ namespace EdiabasLibConfigTool
         }
 
         public static bool PatchEdiabas(StringBuilder sr, PatchType patchType, int adapterType, string dirName, string ediabasDir,
-            BluetoothItem devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
+            FormMain.BluetoothItem devInfo, WlanInterface wlanIface, EdInterfaceEnet.EnetConnection enetConnection, UsbInfo usbInfo, string pin)
         {
             if (string.IsNullOrEmpty(dirName))
             {
