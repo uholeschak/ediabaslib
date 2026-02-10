@@ -22,7 +22,7 @@ If you want to support the development you can donate a small amount.
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ)
 
 # Binary Compatibility
-A binary compatible `api32.dll` wrapper is included, it's possible to replace the existing EDIABAS `api32.dll` with the EdiabasLib `api32.dll` and the applications still work! (The DLL requires [.NET Framework 4.8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) or higher, [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) and [VS C++ Runtime 64 bit](https://aka.ms/vc14/vc_redist.x64.exe) or [VS C++ Runtime 32 bit](https://aka.ms/vc14/vc_redist.x86.exe) to be installed)  
+A binary compatible `api32.dll` wrapper is included, it's possible to replace the existing EDIABAS `api32.dll` with the EdiabasLib `api32.dll` and the applications still work! (The DLL requires [.NET Framework 4.8.1 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net481) or higher, [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) and [VS C++ Runtime 64 bit](https://aka.ms/vc14/vc_redist.x64.exe) or [VS C++ Runtime 32 bit](https://aka.ms/vc14/vc_redist.x86.exe) to be installed)  
 This has been tested with Tool32, INPA and Rheingold. Since EdiabasNet ignores the `EDIABAS.INI` file you have to put your own `EdiabasLib.config` file in the `api32.dll` directory.
 A compatible `apiNET32.dll` is also available, so it should be easy to port existing .NET applications that use the original EDIABAS library.
 
