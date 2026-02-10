@@ -1,8 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using PolyType;
+using StreamJsonRpc;
+using System.Threading.Tasks;
 
 namespace PsdzClientServer;
 
-public interface IPsdzClientServiceCallback
+[JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
+public partial interface IPsdzClientServiceCallback
 {
     Task OnProgressChangedAsync(int percent, string message);
     Task OnOperationCompletedAsync(bool success);
