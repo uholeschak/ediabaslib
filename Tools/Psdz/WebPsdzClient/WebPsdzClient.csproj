@@ -13,9 +13,6 @@
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="User.log" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0, Version=0.8.8.0, Culture=neutral, PublicKeyToken=134a23405600bab4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\PsdzClientLibrary\jni4net.n-0.8.8.0.dll</HintPath>
@@ -40,17 +37,15 @@
   <ItemGroup>
     <Content Include="Scripts\jquery-3.7.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.7.1.min.map" />
+    <Content Include="User.config">
+      <DependentUpon>User.csx</DependentUpon>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <None Update="User.csx">
-      <Generator>CodegenCS</Generator>
-      <LastGenOutput>User.log</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_LocalResources\**\*.resx" />
-    <Content Include="User.config">
-        <DependentUpon>User.csx</DependentUpon>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Web.Debug.config">
@@ -67,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Remove="obj\**" />
+    <None Remove="User.log" />
     <TypeScriptCompile Include="Scripts\index.d.ts" />
   </ItemGroup>
   <ItemGroup>
