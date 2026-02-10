@@ -4,6 +4,13 @@ namespace PsdzClientServer;
 
 public class PsdzClientService : IPsdzClientService
 {
+    private readonly IPsdzClientServiceCallback _callback;
+
+    public PsdzClientService(IPsdzClientServiceCallback callback)
+    {
+        _callback = callback;
+    }
+
     public Task<bool> Connect(string parameter)
     {
         // Implement connection logic here

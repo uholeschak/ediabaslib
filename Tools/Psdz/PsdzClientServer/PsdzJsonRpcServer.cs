@@ -42,8 +42,16 @@ public class PsdzJsonRpcServer
     {
         try
         {
-            using JsonRpc jsonRpc = JsonRpc.Attach(pipeServer, new PsdzClientService());
+            using var jsonRpc = new JsonRpc(pipeServer);
+
+            var callback = jsonRpc.Attach<IPsdzClientServiceCallback>();
+
+            var service = new PsdzClientService(callback);
+            jsonRpc.AddLocalRpcTarget(service);
+
+            jsonRpc.StartListening();
             await jsonRpc.Completion;
+
             Console.WriteLine("Client disconnected.");
         }
         finally
