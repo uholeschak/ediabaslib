@@ -45,7 +45,7 @@ You have to open the adapter and press the reset button after the adapter has bo
 
 ## Use the adapter with INPA, Tool32 or ISTA-D
 You could use the ENET WiFi adapter on a windows PC with INPA, Tool32 or ISTA-D as a replacement for an ENET adapter cable. The following steps are required to establish the connection:
-* Install [.NET Framework 4.8 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) or higher, [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0),  
+* Install [.NET Framework 4.8.1 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net481) or higher, [.NET 10.0 Desktop Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/10.0),  
 and [VS C++ Runtime 64 bit](https://aka.ms/vc14/vc_redist.x64.exe) or [VS C++ Runtime 32 bit](https://aka.ms/vc14/vc_redist.x86.exe).
 * For Windows 11: Allow location access for all apps in the system settings to enable WiFi access. ![Location Settings](Location_Settings_Win11.png)
 * Optionally connect the ENET adapter with the PC. The PC automatically gets an IP address from the adapter DHCP server.
