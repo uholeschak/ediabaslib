@@ -10,29 +10,76 @@ namespace PsdzRpcClient
         {
             using CancellationTokenSource cts = new CancellationTokenSource();
 
-            await using var client = new PsdzRpcClient();
-            client.CallbackHandler.ProgressChanged += (s, e) =>
+            try
             {
-                Console.WriteLine($"[{e.Percent}%] {e.Message}");
-            };
+                CancellationTokenSource ctsLocal = cts;
+                Console.CancelKeyPress += (_, e) =>
+                {
+                    e.Cancel = true;
+                    ctsLocal.Cancel();
+                };
 
-            client.CallbackHandler.OperationCompleted += (s, success) =>
+                await using var client = new PsdzRpcClient();
+                client.CallbackHandler.ProgressChanged += (s, e) =>
+                {
+                    Console.WriteLine($"[{e.Percent}%] {e.Message}");
+                };
+
+                client.CallbackHandler.OperationCompleted += (s, success) =>
+                {
+                    Console.WriteLine($"Operation finished: {(success ? "Success" : "Error")}");
+                };
+
+                Console.WriteLine("Starting PsdzJsonRpcClient...");
+                Task clientTask = client.ConnectAsync(cts.Token);
+                Task keyTask = WaitForEscapeKeyAsync(cts.Token);
+
+                await Task.WhenAny(clientTask, keyTask);
+
+                cts.Cancel();
+
+                await Task.WhenAll(
+                    clientTask.ContinueWith(_ => { }),
+                    keyTask.ContinueWith(_ => { }));
+
+                if (client.RpcService != null)
+                {
+                    bool resultConnect = await client.RpcService.Connect("Connect");
+                    Console.WriteLine($"Connect = {resultConnect}");
+
+                    bool resultDisconnect = await client.RpcService.Disconnect("Disconnect");
+                    Console.WriteLine($"Disconnect = {resultDisconnect}");
+                }
+            }
+            catch (OperationCanceledException)
             {
-                Console.WriteLine($"Operation finished: {(success ? "Success" : "Error")}");
-            };
-
-            await client.ConnectAsync(cts.Token);
-
-            if (client.RpcService != null)
+                // Erwartet bei Abbruch
+            }
+            catch (Exception ex)
             {
-                bool resultConnect = await client.RpcService.Connect("Connect");
-                Console.WriteLine($"Connect = {resultConnect}");
-
-                bool resultDisconnect = await client.RpcService.Disconnect("Disconnect");
-                Console.WriteLine($"Disconnect = {resultDisconnect}");
+                Console.WriteLine($"Error: {ex.Message}");
+                return 1;
             }
 
-            return  0;
+            Console.WriteLine("Client stopped.");
+            return 0;
+        }
+
+        private static async Task WaitForEscapeKeyAsync(CancellationToken ct)
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                if (Console.KeyAvailable)
+                {
+                    ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+                    if (key.Key == ConsoleKey.Escape)
+                    {
+                        Console.WriteLine("ESC pressed, stopping client...");
+                        return;
+                    }
+                }
+                await Task.Delay(100, ct);
+            }
         }
     }
 }
