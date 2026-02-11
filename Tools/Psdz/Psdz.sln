@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPsdzClient", "WebPsdzCli
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzRpcServer", "PsdzRpcServer\PsdzRpcServer.csproj", "{06936E7F-A21A-0B9E-5A5D-28CFE00B52BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzRpcClient", "PsdzRpcClient\PsdzRpcClient.csproj", "{D69DD784-F042-4087-96AB-C2E5AECC4090}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +169,18 @@ Global
 		{06936E7F-A21A-0B9E-5A5D-28CFE00B52BA}.Release|x64.Build.0 = Release|Any CPU
 		{06936E7F-A21A-0B9E-5A5D-28CFE00B52BA}.Release|x86.ActiveCfg = Release|Any CPU
 		{06936E7F-A21A-0B9E-5A5D-28CFE00B52BA}.Release|x86.Build.0 = Release|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Debug|x64.Build.0 = Debug|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Debug|x86.Build.0 = Debug|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Release|x64.ActiveCfg = Release|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Release|x64.Build.0 = Release|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Release|x86.ActiveCfg = Release|Any CPU
+		{D69DD784-F042-4087-96AB-C2E5AECC4090}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
