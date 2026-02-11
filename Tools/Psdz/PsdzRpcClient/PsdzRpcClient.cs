@@ -15,7 +15,7 @@ public class PsdzRpcClient : IAsyncDisposable
     public IPsdzRpcService RpcService { get; private set; }
     public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
 
-    public async Task ConnectAsync(CancellationToken ct = default)
+    public async Task ConnectAsync(CancellationToken ct)
     {
         _pipeClient = new NamedPipeClientStream(
             ".",

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PsdzRpcClient
@@ -7,8 +8,20 @@ namespace PsdzRpcClient
     {
         static async Task<int> Main(string[] args)
         {
+            using CancellationTokenSource cts = new CancellationTokenSource();
+
             await using var client = new PsdzRpcClient();
-            await client.ConnectAsync();
+            client.CallbackHandler.ProgressChanged += (s, e) =>
+            {
+                Console.WriteLine($"[{e.Percent}%] {e.Message}");
+            };
+
+            client.CallbackHandler.OperationCompleted += (s, success) =>
+            {
+                Console.WriteLine($"Operation finished: {(success ? "Success" : "Error")}");
+            };
+
+            await client.ConnectAsync(cts.Token);
 
             if (client.RpcService != null)
             {
