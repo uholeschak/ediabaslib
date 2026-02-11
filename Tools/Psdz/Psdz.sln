@@ -23,7 +23,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SourceCodeSync", "SourceCod
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebPsdzClient", "WebPsdzClient\WebPsdzClient.csproj", "{0F44781C-34A8-B3C0-CBBC-8B223A84FBCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzClientServer", "PsdzClientServer\PsdzClientServer.csproj", "{D88A93A2-1913-4A3A-8C4A-36CB91C143CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsdzRpcServer", "PsdzClientServer\PsdzRpcServer.csproj", "{D88A93A2-1913-4A3A-8C4A-36CB91C143CE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

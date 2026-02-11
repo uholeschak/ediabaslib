@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
-using PsdzClientServer.Shared;
+using PsdzRpcServer.Shared;
 
-namespace PsdzClientServer;
+namespace PsdzRpcServer;
 
-public class PsdzClientService : IPsdzClientService
+public class PsdzRpcService : IPsdzRpcService
 {
-    private readonly IPsdzClientServiceCallback _callback;
+    private readonly IPsdzRpcServiceCallback _callback;
 
-    public PsdzClientService(IPsdzClientServiceCallback callback)
+    public PsdzRpcService(IPsdzRpcServiceCallback callback)
     {
         _callback = callback;
     }

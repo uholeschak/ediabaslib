@@ -2,14 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PsdzClientServer
+namespace PsdzRpcServer
 {
     internal class Program
     {
         static async Task<int> Main(string[] args)
         {
             using CancellationTokenSource cts = new CancellationTokenSource();
-            PsdzJsonRpcServer server = new PsdzJsonRpcServer();
+            PsdzRpcServer server = new PsdzRpcServer();
 
             try
             {
