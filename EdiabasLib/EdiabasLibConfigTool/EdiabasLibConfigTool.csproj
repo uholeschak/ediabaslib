@@ -31,7 +31,7 @@
           <ExcludeAssets>all</ExcludeAssets>
       </PackageReference>
     <PackageReference Include="SimpleWifi.netstandard.Lsh" Version="2.1.1" />
-    <PackageReference Include="System.IO.Ports" Version="10.0.2" />
+    <PackageReference Include="System.IO.Ports" Version="10.0.3" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
