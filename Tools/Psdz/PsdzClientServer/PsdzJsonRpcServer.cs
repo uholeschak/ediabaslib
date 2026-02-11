@@ -1,9 +1,9 @@
-﻿using StreamJsonRpc;
+﻿using PsdzClientServer.Shared;
+using StreamJsonRpc;
 using System;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
-using PsdzClientServer.Shared;
 
 namespace PsdzClientServer;
 
@@ -29,7 +29,7 @@ public class PsdzJsonRpcServer
                 Console.WriteLine("Client connected");
 
                 // JsonRpc for this connection
-                Task task = HandleClientAsync(pipeServer);
+                _ = HandleClientAsync(pipeServer);
             }
             catch (OperationCanceledException)
             {
