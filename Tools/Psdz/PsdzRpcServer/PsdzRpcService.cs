@@ -12,16 +12,28 @@ public class PsdzRpcService : IPsdzRpcService
         _callback = callback;
     }
 
-    public Task<bool> Connect(string parameter)
+    public async Task<bool> Connect(string parameter)
     {
         // Implement connection logic here
-        return Task.FromResult(true);
+        for (int i = 0; i <= 100; i += 20)
+        {
+            await _callback.OnProgressChangedAsync(i, $"Connecting... {i}%");
+            await Task.Delay(500);
+        }
+        await _callback.OnOperationCompletedAsync(true);
+        return true;
     }
 
-    public Task<bool> Disconnect(string parameter)
+    public async Task<bool> Disconnect(string parameter)
     {
         // Implement disconnection logic here
-        return Task.FromResult(true);
+        for (int i = 0; i <= 100; i += 20)
+        {
+            await _callback.OnProgressChangedAsync(i, $"Disconnecting... {i}%");
+            await Task.Delay(500);
+        }
+        await _callback.OnOperationCompletedAsync(true);
+        return true;
     }
 
     public void Dispose()
