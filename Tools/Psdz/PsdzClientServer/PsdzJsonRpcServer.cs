@@ -9,14 +9,12 @@ namespace PsdzClientServer;
 
 public class PsdzJsonRpcServer
 {
-    private const string PipeName = "PsdzJsonRpcPipe";
-
     public async Task StartAsync(CancellationToken ct)
     {
         while (!ct.IsCancellationRequested)
         {
             NamedPipeServerStream pipeServer = new NamedPipeServerStream(
-                PipeName,
+                PsdzServiceConstants.PipeName,
                 PipeDirection.InOut,
                 NamedPipeServerStream.MaxAllowedServerInstances,
                 PipeTransmissionMode.Byte,
