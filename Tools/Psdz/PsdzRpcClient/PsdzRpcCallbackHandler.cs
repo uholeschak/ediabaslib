@@ -1,0 +1,23 @@
+﻿using PsdzRpcServer.Shared;
+using System;
+using System.Threading.Tasks;
+
+namespace PsdzRpcClient;
+
+public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
+{
+    public event EventHandler<ProgressEventArgs> ProgressChanged;
+    public event EventHandler<bool> OperationCompleted;
+
+    public Task OnProgressChangedAsync(int percent, string message)
+    {
+        ProgressChanged?.Invoke(this, new ProgressEventArgs(percent, message));
+        return Task.CompletedTask;
+    }
+
+    public Task OnOperationCompletedAsync(bool success)
+    {
+        OperationCompleted?.Invoke(this, success);
+        return Task.CompletedTask;
+    }
+}

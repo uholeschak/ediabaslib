@@ -9,17 +9,17 @@ namespace PsdzRpcClient;
 
 public class PsdzRpcClient : IAsyncDisposable
 {
-    private const string PipeName = "MyJsonRpcPipe";
     private NamedPipeClientStream _pipeClient;
     private JsonRpc _jsonRpc;
 
     public IPsdzRpcService RpcService { get; private set; }
+    public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
 
-    public async Task ConnectAsync(string serverName = ".", CancellationToken ct = default)
+    public async Task ConnectAsync(CancellationToken ct = default)
     {
         _pipeClient = new NamedPipeClientStream(
-            serverName,
-            PipeName,
+            ".",
+            PsdzRpcServiceConstants.PipeName,
             PipeDirection.InOut,
             PipeOptions.Asynchronous);
 
@@ -28,7 +28,11 @@ public class PsdzRpcClient : IAsyncDisposable
         Console.WriteLine("Connected!");
 
         _jsonRpc = JsonRpc.Attach(_pipeClient);
+        _jsonRpc.AddLocalRpcTarget(CallbackHandler);
+
         RpcService = _jsonRpc.Attach<IPsdzRpcService>();
+
+        _jsonRpc.StartListening();
     }
 
     public async ValueTask DisposeAsync()
