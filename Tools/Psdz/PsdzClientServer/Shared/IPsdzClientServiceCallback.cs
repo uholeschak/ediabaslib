@@ -1,8 +1,8 @@
-﻿using PolyType;
+﻿using System.Threading.Tasks;
+using PolyType;
 using StreamJsonRpc;
-using System.Threading.Tasks;
 
-namespace PsdzClientServer;
+namespace PsdzClientServer.Shared;
 
 [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
 public partial interface IPsdzClientServiceCallback
