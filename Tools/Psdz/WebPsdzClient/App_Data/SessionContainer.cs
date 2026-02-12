@@ -2963,6 +2963,13 @@ namespace WebPsdzClient.App_Data
 
                     if (ProgrammingJobs != null)
                     {
+                        ProgrammingJobs.UpdateStatusEvent -= UpdateStatus;
+                        ProgrammingJobs.ProgressEvent -= UpdateProgress;
+                        ProgrammingJobs.UpdateOptionsEvent -= UpdateOptions;
+                        ProgrammingJobs.UpdateOptionSelectionsEvent -= UpdateOptionSelections;
+                        ProgrammingJobs.ShowMessageEvent -= ShowMessageEvent;
+                        ProgrammingJobs.TelSendQueueSizeEvent -= TelSendQueueSizeEvent;
+                        ProgrammingJobs.ServiceInitializedEvent -= ServiceInitializedEvent;
                         ProgrammingJobs.Dispose();
                         ProgrammingJobs = null;
                     }
