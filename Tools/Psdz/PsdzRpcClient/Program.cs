@@ -62,6 +62,8 @@ namespace PsdzRpcClient
             }
 
             Console.WriteLine("Client stopped.");
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
             return 0;
         }
 
