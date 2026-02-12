@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "Server and Client",
+    "Projects": [
+      {
+        "Path": "PsdzRpcServer\\PsdzRpcServer.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "PsdzRpcClient\\PsdzRpcClient.csproj",
+        "Action": "Start",
+        "delayMilliseconds": 2000
+      }
+    ]
+  }
+]
