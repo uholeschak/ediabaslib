@@ -8,6 +8,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
 {
     public event EventHandler<ProgressEventArgs> ProgressChanged;
     public event EventHandler<bool> OperationCompleted;
+    public event EventHandler<string> UpdatedStatus;
 
     public Task OnProgressChangedAsync(int percent, string message)
     {
@@ -18,6 +19,12 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public Task OnOperationCompletedAsync(bool success)
     {
         OperationCompleted?.Invoke(this, success);
+        return Task.CompletedTask;
+    }
+
+    public Task OnUpdateStatus(string message)
+    {
+        UpdatedStatus?.Invoke(this, message);
         return Task.CompletedTask;
     }
 }

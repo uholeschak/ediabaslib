@@ -9,4 +9,5 @@ public partial interface IPsdzRpcServiceCallback
 {
     Task OnProgressChangedAsync(int percent, string message);
     Task OnOperationCompletedAsync(bool success);
+    Task OnUpdateStatus(string message);
 }

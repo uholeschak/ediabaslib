@@ -30,6 +30,11 @@ namespace PsdzRpcClient
                     Console.WriteLine($"Operation finished: {(success ? "Success" : "Error")}");
                 };
 
+                client.CallbackHandler.UpdatedStatus += (s, e) =>
+                {
+                    Console.WriteLine($"Status: {e}");
+                };
+
                 Console.WriteLine("Starting PsdzJsonRpcClient...");
                 Task clientTask = client.ConnectAsync(cts.Token);
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);

@@ -42,6 +42,7 @@ public class PsdzRpcService : IPsdzRpcService
 
     private void UpdateStatus(string message = null)
     {
+        _callback.OnUpdateStatus(message);
     }
 
     public void Dispose()
