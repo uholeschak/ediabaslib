@@ -681,6 +681,15 @@ namespace PsdzClient
         {
             UpdateDisplay();
             StoreSettings();
+
+            _programmingJobs.UpdateStatusEvent -= UpdateStatus;
+            _programmingJobs.ProgressEvent -= UpdateProgress;
+            _programmingJobs.UpdateOptionsEvent -= UpdateOptions;
+            _programmingJobs.UpdateOptionSelectionsEvent -= UpdateOptionSelections;
+            _programmingJobs.ShowMessageEvent -= ShowMessageEvent;
+            _programmingJobs.TelSendQueueSizeEvent -= TelSendQueueSizeEvent;
+            _programmingJobs.ServiceInitializedEvent -= ServiceInitializedEvent;
+            _programmingJobs.Dispose();
             timerUpdate.Enabled = false;
         }
 
