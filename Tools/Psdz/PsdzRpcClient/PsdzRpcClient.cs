@@ -27,7 +27,7 @@ public class PsdzRpcClient : IAsyncDisposable
         await _pipeClient.ConnectAsync(ct);
         Console.WriteLine("Connected!");
 
-        _jsonRpc = JsonRpc.Attach(_pipeClient);
+        _jsonRpc = new JsonRpc(_pipeClient);
         _jsonRpc.AddLocalRpcTarget(CallbackHandler);
 
         RpcService = _jsonRpc.Attach<IPsdzRpcService>();
