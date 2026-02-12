@@ -1,15 +1,19 @@
-﻿using System.Threading.Tasks;
+﻿using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
+using System.Threading.Tasks;
 
 namespace PsdzRpcServer;
 
 public class PsdzRpcService : IPsdzRpcService
 {
     private readonly IPsdzRpcServiceCallback _callback;
+    private  readonly ProgrammingJobs _programmingJobs;
 
     public PsdzRpcService(IPsdzRpcServiceCallback callback)
     {
         _callback = callback;
+        _programmingJobs = new ProgrammingJobs(PsdzRpcServiceConstants.DealerId);
+        _programmingJobs.UpdateStatusEvent += UpdateStatus;
     }
 
     public async Task<bool> Connect(string parameter)
@@ -36,11 +40,16 @@ public class PsdzRpcService : IPsdzRpcService
         return true;
     }
 
+    private void UpdateStatus(string message = null)
+    {
+    }
+
     public void Dispose()
     {
         // StreamJsonRpc recommends implementing Dispose to encourage developers
         // to dispose of the client RPC proxies generated from the interface.
         // // https://github.com/microsoft/vs-streamjsonrpc/blob/v2.19.27/doc/dynamicproxy.md#dispose-patterns
+        _programmingJobs.UpdateStatusEvent -= UpdateStatus;
+        _programmingJobs.Dispose();
     }
-
 }
