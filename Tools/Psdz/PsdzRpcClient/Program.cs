@@ -39,6 +39,15 @@ namespace PsdzRpcClient
                 {
                     Console.WriteLine($"[{tuple.percent}%] Marquee={tuple.marquee}: {tuple.message}");
                 };
+                
+                client.CallbackHandler.UpdateOptions += (sender, optionsDict) =>
+                {
+                    Console.WriteLine("Options updated:");
+                    foreach (var kvp in optionsDict)
+                    {
+                        Console.WriteLine($"Key: {kvp.Key}, Options Count: {kvp.Value.Count}");
+                    }
+                };
 
                 Console.WriteLine("Starting PsdzJsonRpcClient...");
                 Task clientTask = client.ConnectAsync(cts.Token);

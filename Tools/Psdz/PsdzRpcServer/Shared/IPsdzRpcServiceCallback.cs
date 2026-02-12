@@ -1,5 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using PolyType;
+using PsdzClient;
+using PsdzClient.Programming;
 using StreamJsonRpc;
 
 namespace PsdzRpcServer.Shared;
@@ -11,4 +14,5 @@ public partial interface IPsdzRpcServiceCallback
     Task OnOperationCompletedAsync(bool success);
     Task OnUpdateStatus(string message);
     Task OnUpdateProgress(int percent, bool marquee, string message);
+    Task OnUpdateOptionsAsync(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict);
 }
