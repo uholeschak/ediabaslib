@@ -1,5 +1,6 @@
 ﻿using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
+using System;
 using System.Threading.Tasks;
 
 namespace PsdzRpcServer;
@@ -14,6 +15,7 @@ public class PsdzRpcService : IPsdzRpcService
         _callback = callback;
         _programmingJobs = new ProgrammingJobs(PsdzRpcServiceConstants.DealerId);
         _programmingJobs.UpdateStatusEvent += UpdateStatus;
+        _programmingJobs.ProgressEvent += UpdateProgress;
     }
 
     public async Task<bool> Connect(string parameter)
@@ -43,6 +45,11 @@ public class PsdzRpcService : IPsdzRpcService
     private void UpdateStatus(string message = null)
     {
         _callback.OnUpdateStatus(message);
+    }
+
+    private void UpdateProgress(int percent, bool marquee, string message = null)
+    {
+        _callback.OnUpdateProgress(percent, marquee, message);
     }
 
     public void Dispose()

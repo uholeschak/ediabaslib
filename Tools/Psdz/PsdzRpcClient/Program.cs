@@ -35,6 +35,11 @@ namespace PsdzRpcClient
                     Console.WriteLine($"Status: {e}");
                 };
 
+                client.CallbackHandler.UpdateProgress += (sender, tuple) =>
+                {
+                    Console.WriteLine($"[{tuple.percent}%] Marquee={tuple.marquee}: {tuple.message}");
+                };
+
                 Console.WriteLine("Starting PsdzJsonRpcClient...");
                 Task clientTask = client.ConnectAsync(cts.Token);
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);
