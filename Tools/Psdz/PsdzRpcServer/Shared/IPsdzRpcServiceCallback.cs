@@ -14,5 +14,6 @@ public partial interface IPsdzRpcServiceCallback
     Task OnOperationCompletedAsync(bool success);
     Task OnUpdateStatus(string message);
     Task OnUpdateProgress(int percent, bool marquee, string message);
-    Task OnUpdateOptionsAsync(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict);
+    Task OnUpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict);
+    Task OnUpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum);
 }

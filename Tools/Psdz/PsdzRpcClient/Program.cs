@@ -39,7 +39,7 @@ namespace PsdzRpcClient
                 {
                     Console.WriteLine($"[{tuple.percent}%] Marquee={tuple.marquee}: {tuple.message}");
                 };
-                
+
                 client.CallbackHandler.UpdateOptions += (sender, optionsDict) =>
                 {
                     Console.WriteLine("Options updated:");
@@ -47,6 +47,11 @@ namespace PsdzRpcClient
                     {
                         Console.WriteLine($"Key: {kvp.Key}, Options Count: {kvp.Value.Count}");
                     }
+                };
+
+                client.CallbackHandler.UpdateOptionSelections += (sender, swiRegisterEnum) =>
+                {
+                    Console.WriteLine($"Option selections updated: {swiRegisterEnum}");
                 };
 
                 Console.WriteLine("Starting PsdzJsonRpcClient...");

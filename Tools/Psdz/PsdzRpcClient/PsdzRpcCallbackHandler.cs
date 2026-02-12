@@ -14,6 +14,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public event EventHandler<string> UpdatedStatus;
     public event EventHandler<(int percent, bool marquee, string message)> UpdateProgress;
     public event EventHandler<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> UpdateOptions;
+    public event EventHandler<PsdzDatabase.SwiRegisterEnum?> UpdateOptionSelections;
 
     public Task OnProgressChangedAsync(int percent, string message)
     {
@@ -39,9 +40,15 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
         return Task.CompletedTask;
     }
 
-    public Task OnUpdateOptionsAsync(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
+    public Task OnUpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
     {
         UpdateOptions?.Invoke(this, optionsDict);
+        return Task.CompletedTask;
+    }
+
+    public Task OnUpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+    {
+        UpdateOptionSelections?.Invoke(this, swiRegisterEnum);
         return Task.CompletedTask;
     }
 }

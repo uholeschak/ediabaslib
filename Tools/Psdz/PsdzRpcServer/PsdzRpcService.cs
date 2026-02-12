@@ -19,6 +19,7 @@ public class PsdzRpcService : IPsdzRpcService
         _programmingJobs.UpdateStatusEvent += UpdateStatus;
         _programmingJobs.ProgressEvent += UpdateProgress;
         _programmingJobs.UpdateOptionsEvent += UpdateOptions;
+        _programmingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
     }
 
     public async Task<bool> Connect(string parameter)
@@ -57,7 +58,12 @@ public class PsdzRpcService : IPsdzRpcService
 
     private void UpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
     {
-        _callback.OnUpdateOptionsAsync(optionsDict);
+        _callback.OnUpdateOptions(optionsDict);
+    }
+
+    private void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+    {
+        _callback.OnUpdateOptionSelections(swiRegisterEnum);
     }
 
     public void Dispose()
@@ -68,6 +74,7 @@ public class PsdzRpcService : IPsdzRpcService
         _programmingJobs.UpdateStatusEvent -= UpdateStatus;
         _programmingJobs.ProgressEvent -= UpdateProgress;
         _programmingJobs.UpdateOptionsEvent -= UpdateOptions;
+        _programmingJobs.UpdateOptionSelectionsEvent -= UpdateOptionSelections;
         _programmingJobs.Dispose();
     }
 }
