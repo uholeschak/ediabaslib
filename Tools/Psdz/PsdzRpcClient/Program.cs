@@ -54,9 +54,10 @@ namespace PsdzRpcClient
                     Console.WriteLine($"Option selections updated: {swiRegisterEnum}");
                 };
                 
-                client.CallbackHandler.ShowMessage += (sender, tuple) =>
+                client.CallbackHandler.ShowMessage += (sender, args) =>
                 {
-                    Console.WriteLine($"Message from server: {tuple.message} (OK Button: {tuple.okBtn}, Wait: {tuple.wait})");
+                    Console.WriteLine($"Message from server: {args.Message} (OK Button: {args.OkBtn}, Wait: {args.Wait})");
+                    args.Result = true; // Simulate user clicking OK
                 };
 
                 Console.WriteLine("Starting PsdzJsonRpcClient...");

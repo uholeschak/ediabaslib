@@ -15,7 +15,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public event EventHandler<(int percent, bool marquee, string message)> UpdateProgress;
     public event EventHandler<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> UpdateOptions;
     public event EventHandler<PsdzDatabase.SwiRegisterEnum?> UpdateOptionSelections;
-    public event EventHandler<(string message, bool okBtn, bool wait)> ShowMessage;
+    public event EventHandler<ShowMessageEventArgs> ShowMessage;
 
     public Task OnProgressChangedAsync(int percent, string message)
     {
@@ -55,7 +55,8 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
 
     public Task<bool> OnShowMessage(string message, bool okBtn, bool wait)
     {
-        ShowMessage?.Invoke(this, (message, okBtn, wait));
-        return Task.FromResult(true);
+        var args = new ShowMessageEventArgs(message, okBtn, wait);
+        ShowMessage?.Invoke(this, args);
+        return Task.FromResult(args.Result);
     }
 }
