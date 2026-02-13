@@ -6626,7 +6626,7 @@ namespace BmwDeepObd
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = publicCertificateEntries[0].Certificate;
-                X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(issuerCert, machinePublicKey, privateKeyResource, EdSec4Diag.S29BmwCnName, vin);
+                X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(issuerCert, machinePublicKey, privateKeyResource, EdSec4Diag.S29IstaCnName, vin);
                 if (s29Cert == null)
                 {
                     return null;
