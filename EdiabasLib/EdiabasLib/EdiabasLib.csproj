@@ -17,7 +17,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" GeneratePathProperty="true" />
-    <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.2" GeneratePathProperty="true" />
+    <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.3" GeneratePathProperty="true" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" GeneratePathProperty="true" />
   </ItemGroup>
   <ItemGroup Condition=" ('$(TargetFramework)' == 'net48') Or ('$(TargetFramework)' == 'net481')">
