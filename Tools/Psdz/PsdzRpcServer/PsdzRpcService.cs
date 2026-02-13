@@ -1,8 +1,8 @@
 ﻿using PsdzClient;
 using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
-using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PsdzRpcServer;
@@ -20,6 +20,7 @@ public class PsdzRpcService : IPsdzRpcService
         _programmingJobs.ProgressEvent += UpdateProgress;
         _programmingJobs.UpdateOptionsEvent += UpdateOptions;
         _programmingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
+        _programmingJobs.ShowMessageEvent += ShowMessageEvent;
     }
 
     public async Task<bool> Connect(string parameter)
@@ -64,6 +65,11 @@ public class PsdzRpcService : IPsdzRpcService
     private void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
     {
         _callback.OnUpdateOptionSelections(swiRegisterEnum);
+    }
+
+    private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool okBtn, bool wait)
+    {
+        return _callback.OnShowMessage(message, okBtn, wait).GetAwaiter().GetResult();
     }
 
     public void Dispose()

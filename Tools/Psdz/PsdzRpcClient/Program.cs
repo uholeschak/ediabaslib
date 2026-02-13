@@ -53,6 +53,11 @@ namespace PsdzRpcClient
                 {
                     Console.WriteLine($"Option selections updated: {swiRegisterEnum}");
                 };
+                
+                client.CallbackHandler.ShowMessage += (sender, tuple) =>
+                {
+                    Console.WriteLine($"Message from server: {tuple.message} (OK Button: {tuple.okBtn}, Wait: {tuple.wait})");
+                };
 
                 Console.WriteLine("Starting PsdzJsonRpcClient...");
                 Task clientTask = client.ConnectAsync(cts.Token);
