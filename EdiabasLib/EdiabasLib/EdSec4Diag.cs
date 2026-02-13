@@ -22,13 +22,13 @@ namespace EdiabasLib
     public static class EdSec4Diag
     {
         public const string S29ProofOfOwnershipData = "S29UNIPOO";
-        public const string S29BmwCnName = "Service29-BMW-S29";
+        public const string S29IstaSubCaCnName = "Service29-subCA-ISTA";
         public const string S29IstaCnName = "Service29-ISTA-S29";
         public const string S29ThumbprintCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca";
         public const string S29ThumbprintSubCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa";
         public const string S29MachinePublicName = "_public.pem";
         public const string IstaPkcs12KeyPwd = "G#8x!9sD2@qZ6&lF1";
-        public static byte[] RoleMask = new byte[] { 0, 0, 5, 75 };
+        public static byte[] RoleMask = new byte[] { 0x00, 0x00, 0x05, 0x4B };
 
         public class CertReqProfile
         {
@@ -195,14 +195,9 @@ namespace EdiabasLib
         }
 
         public static X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey,
-            string cnName, string vin, bool isSubCa = false)
+            string cnName, string vin)
         {
-            string subjectName = $"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={cnName}";
-            if (!string.IsNullOrEmpty(vin))
-            {
-                subjectName += $", GIVENNAME={vin}";
-            }
-
+            string subjectName = $"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={cnName}, GIVENNAME={vin}";
             X509Name subject = new X509Name(subjectName);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
@@ -212,9 +207,9 @@ namespace EdiabasLib
             x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddYears(1));
             x509V3CertificateGenerator.SetSubjectDN(subject);
             DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.30");
-            byte[] contents = new byte[2] { 14, 243 };
-            byte[] contents2 = new byte[2] { 14, 244 };
-            byte[] contents3 = new byte[2] { 14, 245 };
+            byte[] contents = new byte[2] { 0x0E, 0xF3 };
+            byte[] contents2 = new byte[2] { 0x0E, 0xF4 };
+            byte[] contents3 = new byte[2] { 0x0E, 0xF5 };
             DerOctetString element = new DerOctetString(contents);
             DerOctetString element2 = new DerOctetString(contents2);
             DerOctetString element3 = new DerOctetString(contents3);
@@ -222,10 +217,47 @@ namespace EdiabasLib
             x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
             DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.10");
             x509V3CertificateGenerator.AddExtension(oid2, critical: true, RoleMask);
-            KeyUsage keyUsage = isSubCa ? new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign) : new KeyUsage(KeyUsage.DigitalSignature);
+            KeyUsage keyUsage = new KeyUsage(KeyUsage.DigitalSignature);
             x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, keyUsage);
             x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, X509ExtensionUtilities.CreateSubjectKeyIdentifier(publicKey));
-            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: isSubCa));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: false));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, X509ExtensionUtilities.CreateAuthorityKeyIdentifier(issuerCert.GetPublicKey()));
+            ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", issuerPrivateKey);
+            byte[] encodedCert = x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded();
+#if NET9_0_OR_GREATER
+            return X509CertificateLoader.LoadCertificate(encodedCert);
+#else
+            return new X509Certificate2(encodedCert);
+#endif
+        }
+
+        public static X509Certificate2 GenerateSubCaCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey,
+            string cnName)
+        {
+            string subjectName = $"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={cnName}";
+            X509Name subject = new X509Name(subjectName);
+            X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
+            x509V3CertificateGenerator.SetPublicKey(publicKey);
+            x509V3CertificateGenerator.SetSerialNumber(BigInteger.ProbablePrime(120, new Random()));
+            x509V3CertificateGenerator.SetIssuerDN(issuerCert.SubjectDN);
+            x509V3CertificateGenerator.SetNotBefore(DateTime.UtcNow.AddMinutes(-5.0));
+            x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddYears(1));
+            x509V3CertificateGenerator.SetSubjectDN(subject);
+            DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.70");
+            byte[] contents = new byte[2] { 0x0E, 0xF3 };
+            byte[] contents2 = new byte[2] { 0x0E, 0xF4 };
+            byte[] contents3 = new byte[2] { 0x0E, 0xF5 };
+            DerOctetString element = new DerOctetString(contents);
+            DerOctetString element2 = new DerOctetString(contents2);
+            DerOctetString element3 = new DerOctetString(contents3);
+            DerSet extensionValue = new DerSet(new Asn1EncodableVector { element, element2, element3 });
+            x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
+            DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.30");
+            x509V3CertificateGenerator.AddExtension(oid2, critical: true, RoleMask);
+            KeyUsage keyUsage = new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign);
+            x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, keyUsage);
+            x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, X509ExtensionUtilities.CreateSubjectKeyIdentifier(publicKey));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: true));
             x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, X509ExtensionUtilities.CreateAuthorityKeyIdentifier(issuerCert.GetPublicKey()));
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", issuerPrivateKey);
             byte[] encodedCert = x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded();
