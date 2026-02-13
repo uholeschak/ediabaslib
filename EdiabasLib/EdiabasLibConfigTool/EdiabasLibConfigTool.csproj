@@ -27,7 +27,7 @@
       <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.44" GeneratePathProperty="true">
           <ExcludeAssets>all</ExcludeAssets>
       </PackageReference>
-      <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.2" GeneratePathProperty="true">
+      <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.2.3" GeneratePathProperty="true">
           <ExcludeAssets>all</ExcludeAssets>
       </PackageReference>
     <PackageReference Include="SimpleWifi.netstandard.Lsh" Version="2.1.1" />
