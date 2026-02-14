@@ -244,16 +244,18 @@ namespace EdiabasLib
             x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddYears(1));
             x509V3CertificateGenerator.SetSubjectDN(subject);
             DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.70");
-            byte[] contents = new byte[2] { 0x0E, 0xF3 };
-            byte[] contents2 = new byte[2] { 0x0E, 0xF4 };
-            byte[] contents3 = new byte[2] { 0x0E, 0xF5 };
-            DerOctetString element = new DerOctetString(contents);
-            DerOctetString element2 = new DerOctetString(contents2);
-            DerOctetString element3 = new DerOctetString(contents3);
-            DerSet extensionValue = new DerSet(new Asn1EncodableVector { element, element2, element3 });
+            DerOctetString element1 = new DerOctetString(new byte[] { 0x0E, 0xF3 });
+            DerOctetString element2 = new DerOctetString(new byte[] { 0x0E, 0xF4 });
+            DerOctetString element3 = new DerOctetString(new byte[] { 0x0E, 0xF5 });
+            DerSet extensionValue = new DerSet(new Asn1EncodableVector { element1, element2, element3 });
             x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
-            DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.30");
-            x509V3CertificateGenerator.AddExtension(oid2, critical: true, RoleMask);
+
+            DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.60");
+            x509V3CertificateGenerator.AddExtension(oid2, critical: true, new byte[] { 0x00 });
+
+            DerObjectIdentifier oid3 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.50");
+            x509V3CertificateGenerator.AddExtension(oid3, critical: true, RoleMask);
+
             KeyUsage keyUsage = new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign);
             x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, keyUsage);
             x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, X509ExtensionUtilities.CreateSubjectKeyIdentifier(publicKey));
