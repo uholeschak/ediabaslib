@@ -1126,7 +1126,7 @@ namespace S29CertGenerator
             }
         }
 
-        private Org.BouncyCastle.X509.X509Certificate LoadIstaSubCaCert(bool forceUpdate)
+        private List<Org.BouncyCastle.X509.X509Certificate> LoadIstaSubCaCerts(bool forceUpdate)
         {
             try
             {
@@ -1204,9 +1204,9 @@ namespace S29CertGenerator
                             certValid = false;
                         }
 
-                        List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
-                        x509CertChain.Add(x509SubCaCert);
-                        x509CertChain.Add(x509SubCaEmeaCert);
+                        List<Org.BouncyCastle.X509.X509Certificate> validateCertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                        validateCertChain.Add(x509SubCaCert);
+                        validateCertChain.Add(x509SubCaEmeaCert);
 
                         List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
                         foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
@@ -1220,7 +1220,7 @@ namespace S29CertGenerator
 
                         if (certValid)
                         {
-                            if (!EdBcTlsUtilities.ValidateCertChain(x509CertChain, rootCerts))
+                            if (!EdBcTlsUtilities.ValidateCertChain(validateCertChain, rootCerts))
                             {
                                 UpdateStatusText("SubCA certificate chain validation failed", true);
                                 certValid = false;
@@ -1238,10 +1238,18 @@ namespace S29CertGenerator
                 if (x509SubCaEmeaCert == null || x509SubCaCert == null)
                 {
                     UpdateStatusText("Creating new SubCA certificate", true);
-                    x509SubCaCert = CreateIstaSubCaCert();
+                    List<Org.BouncyCastle.X509.X509Certificate> istaSubCaCerts = CreateIstaSubCaCerts();
+                    if (istaSubCaCerts == null || istaSubCaCerts.Count != 2)
+                    {
+                        UpdateStatusText("Failed to create SubCA certificates", true);
+                        return null;
+                    }
+
+                    x509SubCaCert = istaSubCaCerts[0];
+                    x509SubCaEmeaCert = istaSubCaCerts[1];
                 }
 
-                if (x509SubCaCert == null)
+                if (x509SubCaEmeaCert == null || x509SubCaCert == null)
                 {
                     UpdateStatusText("Failed to create SubCA certificate", true);
                     return null;
@@ -1249,7 +1257,11 @@ namespace S29CertGenerator
 
                 UpdateStatusText($"SubCA certificate valid until: {x509SubCaCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
                 UpdateStatusText("SubCA certificates loaded", true);
-                return x509SubCaCert;
+
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                istaCertChain.Add(x509SubCaCert);
+                istaCertChain.Add(x509SubCaEmeaCert);
+                return istaCertChain;
             }
             catch (Exception e)
             {
@@ -1258,7 +1270,7 @@ namespace S29CertGenerator
             }
         }
 
-        private Org.BouncyCastle.X509.X509Certificate CreateIstaSubCaCert()
+        private List<Org.BouncyCastle.X509.X509Certificate> CreateIstaSubCaCerts()
         {
             try
             {
@@ -1325,8 +1337,8 @@ namespace S29CertGenerator
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
                 List<Org.BouncyCastle.X509.X509Certificate> installCerts = new List<Org.BouncyCastle.X509.X509Certificate>()
                 {
-                    x509SubCaEmeaCert,
                     x509SubCaCert,
+                    x509SubCaEmeaCert,
                 };
 
                 if (!EdSec4Diag.InstallCertificates(installCerts))
@@ -1345,7 +1357,7 @@ namespace S29CertGenerator
                 }
 
                 UpdateStatusText("CA thumbprints installed in ISTA config", true);
-                return x509SubCaCert;
+                return installCerts;
             }
             catch (Exception e)
             {
@@ -1354,7 +1366,7 @@ namespace S29CertGenerator
             }
         }
 
-        private bool ConvertJsonRequestFile(Org.BouncyCastle.X509.X509Certificate x509SubCaCert, string jsonRequestFile, string jsonResponseFolder, string certOutputFolder)
+        private bool ConvertJsonRequestFile(List<Org.BouncyCastle.X509.X509Certificate> istaCertChain, string jsonRequestFile, string jsonResponseFolder, string certOutputFolder)
         {
             try
             {
@@ -1411,7 +1423,7 @@ namespace S29CertGenerator
 
                 string jsonResponseFileName = $"ResponseContainer_service-29-{certReqProfile}-{vin17}.json";
                 string jsonResponseFile = Path.Combine(jsonResponseFolder, jsonResponseFileName);
-                if (!GenerateCertificate(x509SubCaCert, publicKeyParameter, vin17, certOutputFolder, jsonResponseFile))
+                if (!GenerateCertificate(istaCertChain, publicKeyParameter, vin17, certOutputFolder, jsonResponseFile))
                 {
                     return false;
                 }
@@ -1425,7 +1437,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool GenerateCertificate(Org.BouncyCastle.X509.X509Certificate x509SubCaCert, AsymmetricKeyParameter publicKeyParameter, string vehicleVin, string certOutputFolder, string jsonResponseFile = null)
+        protected bool GenerateCertificate(List<Org.BouncyCastle.X509.X509Certificate> istaCertChain, AsymmetricKeyParameter publicKeyParameter, string vehicleVin, string certOutputFolder, string jsonResponseFile = null)
         {
             try
             {
@@ -1455,9 +1467,22 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                if (_subCaPublicCertificates == null || _subCaPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("SubCA EMEA public certificate not loaded", true);
+                    return false;
+                }
+
+                AsymmetricKeyParameter subCaEmeaPublicKey = _subCaPublicCertificates[0].Certificate.GetPublicKey();
+                if (subCaEmeaPublicKey == null)
+                {
+                    UpdateStatusText("SubCA EMEA public key not found", true);
+                    return false;
+                }
+
                 if (_istaPublicCertificates == null || _istaPublicCertificates.Count < 1)
                 {
-                    UpdateStatusText($"ISTA public certificate is not loaded", true);
+                    UpdateStatusText("ISTA public certificate is not loaded", true);
                     return false;
                 }
 
@@ -1468,7 +1493,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(x509SubCaCert, publicKeyParameter, _istaKeyResource, vin17);
+                X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(istaCertChain[0], publicKeyParameter, _istaKeyResource, vin17);
                 if (s29Cert == null)
                 {
                     UpdateStatusText($"Failed to generate certificate for VIN: {vin17}", true);
@@ -1480,7 +1505,7 @@ namespace S29CertGenerator
 
                 List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
                 x509CertChain.Add(x509s29Cert);
-                x509CertChain.Add(x509SubCaCert);
+                x509CertChain.AddRange(istaCertChain);
 
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
                 foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
@@ -1488,7 +1513,6 @@ namespace S29CertGenerator
                     Org.BouncyCastle.X509.X509Certificate cert = caPublicCertificate.Certificate;
                     if (cert != null)
                     {
-                        x509CertChain.Add(cert);
                         rootCerts.Add(cert);
                     }
                 }
@@ -1507,14 +1531,9 @@ namespace S29CertGenerator
                 stringBuilder.AppendLine(EdBcTlsUtilities.EndCertificate);
 
                 List<string> certChain = new List<string>();
-                string subCaData = Convert.ToBase64String(x509SubCaCert.GetEncoded());
-                stringBuilder.AppendLine(EdBcTlsUtilities.BeginCertificate);
-                stringBuilder.AppendLine(subCaData);
-                stringBuilder.AppendLine(EdBcTlsUtilities.EndCertificate);
-
-                foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
+                foreach (Org.BouncyCastle.X509.X509Certificate x509caCert in istaCertChain)
                 {
-                    string certData = Convert.ToBase64String(caPublicCertificate.Certificate.GetEncoded());
+                    string certData = Convert.ToBase64String(x509caCert.GetEncoded());
 
                     stringBuilder.AppendLine(EdBcTlsUtilities.BeginCertificate);
                     stringBuilder.AppendLine(certData);
@@ -1571,10 +1590,10 @@ namespace S29CertGenerator
             {
                 UpdateStatusText(string.Empty);
 
-                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = LoadIstaSubCaCert(forceUpdate);
-                if (x509SubCaCert == null)
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(forceUpdate);
+                if (istaCertChain == null || istaCertChain.Count != 2)
                 {
-                    UpdateStatusText("Failed to create SubCA certificate", true);
+                    UpdateStatusText("Failed to create SubCA certificates", true);
                     return false;
                 }
 
@@ -1642,7 +1661,7 @@ namespace S29CertGenerator
                         }
 
                         UpdateStatusText(string.Empty, true);
-                        ConvertJsonRequestFile(x509SubCaCert, jsonFile, jsonResponseFolder, certOutputFolder);
+                        ConvertJsonRequestFile(istaCertChain, jsonFile, jsonResponseFolder, certOutputFolder);
                     }
                 }
                 else
@@ -1663,7 +1682,7 @@ namespace S29CertGenerator
                         return false;
                     }
 
-                    GenerateCertificate(x509SubCaCert, publicKeyParameter, vehicleVin, certOutputFolder);
+                    GenerateCertificate(istaCertChain, publicKeyParameter, vehicleVin, certOutputFolder);
                 }
 
                 return true;
