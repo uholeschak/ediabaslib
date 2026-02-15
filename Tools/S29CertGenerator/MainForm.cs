@@ -1,6 +1,7 @@
 using EdiabasLib;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
@@ -9,15 +10,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Security.Cryptography.X509Certificates;
-using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using System.Xml.XPath;
 
 namespace S29CertGenerator
 {
@@ -29,6 +27,8 @@ namespace S29CertGenerator
         private List<X509CertificateEntry> _caPublicCertificates;
         private AsymmetricKeyParameter _istaKeyResource;
         private List<X509CertificateEntry> _istaPublicCertificates;
+        private AsymmetricKeyParameter _subCaKeyResource;
+        private List<X509CertificateEntry> _subCaPublicCertificates;
         private string _clientConfigText;
         private volatile bool _taskActive = false;
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
@@ -37,6 +37,7 @@ namespace S29CertGenerator
         public const string EdiabasSecurityDirName = @"Security";
         public const string EdiabasS29DirName = @"S29";
         public const string EdiabasSllTrustDirName = @"SSL_Truststore";
+        public const string SubCaEmeaPkcs12KeyPwd = "F%YV#Db&WR8Nesm9!";
 
         public MainForm()
         {
@@ -89,7 +90,7 @@ namespace S29CertGenerator
         {
             try
             {
-                textBoxCaCeyFile.Text = Properties.Settings.Default.CaKeyFile;
+                textBoxCaKeyFile.Text = Properties.Settings.Default.CaKeyFile;
                 textBoxIstaKeyFile.Text = Properties.Settings.Default.IstaKeyFile;
                 textBoxCaCertsFile.Text = Properties.Settings.Default.CaCertsFile;
                 textBoxSecurityFolder.Text = Properties.Settings.Default.SecurityFolder;
@@ -110,7 +111,7 @@ namespace S29CertGenerator
         {
             try
             {
-                Properties.Settings.Default.CaKeyFile = textBoxCaCeyFile.Text;
+                Properties.Settings.Default.CaKeyFile = textBoxCaKeyFile.Text;
                 Properties.Settings.Default.IstaKeyFile = textBoxIstaKeyFile.Text;
                 Properties.Settings.Default.CaCertsFile = textBoxCaCertsFile.Text;
                 Properties.Settings.Default.SecurityFolder = textBoxSecurityFolder.Text;
@@ -133,8 +134,9 @@ namespace S29CertGenerator
             try
             {
                 bool active = _taskActive;
-                bool caKeyValid = LoadCaKey(textBoxCaCeyFile.Text);
+                bool caKeyValid = LoadCaKey(textBoxCaKeyFile.Text);
                 bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
+                bool subCaEmeaKeyValid = LoadSubCaEmeaKey(AppContext.BaseDirectory);
                 bool cacertsValid = LoadCaCerts(textBoxCaCertsFile.Text);
                 bool clientConfigValid = LoadClientConfiguration(textBoxClientConfigurationFile.Text);
                 bool isValid = IsSettingValid();
@@ -144,7 +146,7 @@ namespace S29CertGenerator
                     clientConfigValid = true;
                 }
 
-                if (caKeyValid && istaKeyValid && cacertsValid && clientConfigValid && isValid && !active)
+                if (caKeyValid && istaKeyValid && subCaEmeaKeyValid && cacertsValid && clientConfigValid && isValid && !active)
                 {
                     buttonInstall.Enabled = true;
                     buttonUninstall.Enabled = true;
@@ -213,7 +215,7 @@ namespace S29CertGenerator
                 }
             }
 
-            if (force || !LoadCaKey(textBoxCaCeyFile.Text))
+            if (force || !LoadCaKey(textBoxCaKeyFile.Text))
             {
                 if (!string.IsNullOrEmpty(_ediabasPath))
                 {
@@ -248,7 +250,7 @@ namespace S29CertGenerator
         {
             try
             {
-                string caKeyFile = textBoxCaCeyFile.Text.Trim();
+                string caKeyFile = textBoxCaKeyFile.Text.Trim();
                 string istaKeyFile = textBoxIstaKeyFile.Text.Trim();
                 string s29Folder = textBoxSecurityFolder.Text.Trim();
                 string jsonRequestFolder = textBoxJsonRequestFolder.Text.Trim();
@@ -473,7 +475,7 @@ namespace S29CertGenerator
                 caKeyFile = string.Empty;
             }
 
-            textBoxCaCeyFile.Text = caKeyFile;
+            textBoxCaKeyFile.Text = caKeyFile;
             return true;
         }
 
@@ -614,6 +616,83 @@ namespace S29CertGenerator
             {
                 return false;
             }
+        }
+
+        private bool LoadSubCaEmeaKey(string certPath)
+        {
+            _subCaKeyResource = null;
+            _subCaPublicCertificates = null;
+
+            string certName = "SubCaEmea";
+            string machinePrivateFile = Path.Combine(certPath, certName + ".p12");
+            string machinePublicFile = Path.Combine(certPath, certName + ".pem");
+
+            AsymmetricKeyParameter subCaAsymmetricKeyPar = null;
+            X509CertificateEntry[] subCaPublicChain = null;
+
+            for (int retry = 0; retry < 2; retry++)
+            {
+                subCaAsymmetricKeyPar = null;
+                subCaPublicChain = null;
+
+                if (File.Exists(machinePrivateFile))
+                {
+                    try
+                    {
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, SubCaEmeaPkcs12KeyPwd, out X509CertificateEntry[] publicChain);
+                        if (asymmetricKeyPar == null || publicChain == null)
+                        {
+                        }
+                        else
+                        {
+                            subCaAsymmetricKeyPar = asymmetricKeyPar;
+                            subCaPublicChain = publicChain;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // ignored
+                    }
+                }
+
+                if (File.Exists(machinePublicFile) && subCaPublicChain != null)
+                {
+                    try
+                    {
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
+                        if (asymmetricKeyPar == null)
+                        {
+                            subCaAsymmetricKeyPar = null;
+                        }
+                        else
+                        {
+                            if (subCaPublicChain.Length < 1 ||
+                                !subCaPublicChain[0].Certificate.GetPublicKey().Equals(asymmetricKeyPar))
+                            {
+                                subCaAsymmetricKeyPar = null;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // ignored
+                    }
+                }
+
+                if (subCaAsymmetricKeyPar != null && subCaPublicChain != null)
+                {
+                    _subCaKeyResource = subCaAsymmetricKeyPar;
+                    _subCaPublicCertificates = subCaPublicChain.ToList();
+                    return true;
+                }
+
+                if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, SecObjectIdentifiers.SecP384r1, SubCaEmeaPkcs12KeyPwd))
+                {
+                    break;
+                }
+            }
+
+            return false;
         }
 
         private bool LoadCaCerts(string caCertsFile)
@@ -1057,6 +1136,19 @@ namespace S29CertGenerator
                     return null;
                 }
 
+                if (_subCaPublicCertificates == null || _subCaPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("SubCA EMEA public certificate is not loaded", true);
+                    return null;
+                }
+
+                AsymmetricKeyParameter subCaEmeaPublicKey = _subCaPublicCertificates[0].Certificate.GetPublicKey();
+                if (subCaEmeaPublicKey == null)
+                {
+                    UpdateStatusText("SubCA EMEA public key is not found", true);
+                    return null;
+                }
+
                 if (_istaPublicCertificates == null || _istaPublicCertificates.Count < 1)
                 {
                     UpdateStatusText("ISTA public certificate is not loaded", true);
@@ -1179,6 +1271,25 @@ namespace S29CertGenerator
                     return null;
                 }
 
+                if (_subCaPublicCertificates == null || _subCaPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("SubCA EMEA public certificate is not loaded", true);
+                    return null;
+                }
+
+                if (_subCaKeyResource == null)
+                {
+                    UpdateStatusText("SubCA EMEA private key is not loaded", true);
+                    return null;
+                }
+
+                AsymmetricKeyParameter subCaEmeaPublicKey = _subCaPublicCertificates[0].Certificate.GetPublicKey();
+                if (subCaEmeaPublicKey == null)
+                {
+                    UpdateStatusText("SubCA EMEA public key is not found", true);
+                    return null;
+                }
+
                 if (_istaPublicCertificates == null || _istaPublicCertificates.Count < 1)
                 {
                     UpdateStatusText("ISTA public certificate is not loaded", true);
@@ -1188,12 +1299,20 @@ namespace S29CertGenerator
                 AsymmetricKeyParameter istaPublicKey = _istaPublicCertificates[0].Certificate.GetPublicKey();
                 if (istaPublicKey == null)
                 {
-                    UpdateStatusText($"ISTA public key is not found", true);
+                    UpdateStatusText("ISTA public key is not found", true);
                     return null;
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, istaPublicKey, _caKeyResource, EdSec4Diag.S29IstaSubCaSubjectName);
+                X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, _caKeyResource, EdSec4Diag.S29IstaSubCaEmeaSubjectName);
+                if (subCaEmeaCert == null)
+                {
+                    UpdateStatusText("Failed to generate SubCA EMEA certificate", true);
+                    return null;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
+                X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(x509SubCaEmeaCert, istaPublicKey, _subCaKeyResource, EdSec4Diag.S29IstaSubCaSubjectName);
                 if (subCaCert == null)
                 {
                     UpdateStatusText("Failed to generate SubCA certificate", true);
@@ -1203,7 +1322,7 @@ namespace S29CertGenerator
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
                 List<Org.BouncyCastle.X509.X509Certificate> installCerts = new List<Org.BouncyCastle.X509.X509Certificate>()
                 {
-                    issuerCert,
+                    x509SubCaEmeaCert,
                     x509SubCaCert,
                 };
 
@@ -1215,12 +1334,7 @@ namespace S29CertGenerator
                     return null;
                 }
 
-#if NET9_0_OR_GREATER
-                X509Certificate2 caCert = X509CertificateLoader.LoadCertificate(issuerCert.GetEncoded());
-#else
-                X509Certificate2 caCert = new X509Certificate2(issuerCert.GetEncoded());
-#endif
-                if (!EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa, caCert.Thumbprint) ||
+                if (!EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa, subCaEmeaCert.Thumbprint) ||
                     !EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa, subCaCert.Thumbprint))
                 {
                     UpdateStatusText("Failed to set CA thumbprints in ISTA config", true);
@@ -1677,7 +1791,7 @@ namespace S29CertGenerator
         private void buttonSelectCaKeyFile_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
-            string certFile = textBoxCaCeyFile.Text;
+            string certFile = textBoxCaKeyFile.Text;
             string fileName = string.Empty;
 
             if (File.Exists(certFile))
@@ -1691,7 +1805,7 @@ namespace S29CertGenerator
             DialogResult result = openCertFileDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                textBoxCaCeyFile.Text = openCertFileDialog.FileName;
+                textBoxCaKeyFile.Text = openCertFileDialog.FileName;
                 UpdateDisplay();
             }
         }

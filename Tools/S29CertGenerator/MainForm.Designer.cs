@@ -31,7 +31,7 @@
             folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             openCertFileDialog = new System.Windows.Forms.OpenFileDialog();
             buttonSelectCaKeyFile = new System.Windows.Forms.Button();
-            textBoxCaCeyFile = new System.Windows.Forms.TextBox();
+            textBoxCaKeyFile = new System.Windows.Forms.TextBox();
             buttonClose = new System.Windows.Forms.Button();
             buttonSelectJsonRequestFolder = new System.Windows.Forms.Button();
             textBoxJsonRequestFolder = new System.Windows.Forms.TextBox();
@@ -82,14 +82,14 @@
             buttonSelectCaKeyFile.UseVisualStyleBackColor = true;
             buttonSelectCaKeyFile.Click += buttonSelectCaKeyFile_Click;
             // 
-            // textBoxCaCeyFile
+            // textBoxCaKeyFile
             // 
-            textBoxCaCeyFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            textBoxCaCeyFile.Location = new System.Drawing.Point(197, 12);
-            textBoxCaCeyFile.Name = "textBoxCaCeyFile";
-            textBoxCaCeyFile.ReadOnly = true;
-            textBoxCaCeyFile.Size = new System.Drawing.Size(488, 23);
-            textBoxCaCeyFile.TabIndex = 1;
+            textBoxCaKeyFile.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxCaKeyFile.Location = new System.Drawing.Point(197, 12);
+            textBoxCaKeyFile.Name = "textBoxCaKeyFile";
+            textBoxCaKeyFile.ReadOnly = true;
+            textBoxCaKeyFile.Size = new System.Drawing.Size(488, 23);
+            textBoxCaKeyFile.TabIndex = 1;
             // 
             // buttonClose
             // 
@@ -378,7 +378,7 @@
             Controls.Add(textBoxJsonRequestFolder);
             Controls.Add(buttonSelectJsonRequestFolder);
             Controls.Add(buttonClose);
-            Controls.Add(textBoxCaCeyFile);
+            Controls.Add(textBoxCaKeyFile);
             Controls.Add(buttonSelectCaKeyFile);
             MaximizeBox = false;
             MinimumSize = new System.Drawing.Size(600, 400);
@@ -398,7 +398,7 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
         private System.Windows.Forms.OpenFileDialog openCertFileDialog;
         private System.Windows.Forms.Button buttonSelectCaKeyFile;
-        private System.Windows.Forms.TextBox textBoxCaCeyFile;
+        private System.Windows.Forms.TextBox textBoxCaKeyFile;
         private System.Windows.Forms.Button buttonClose;
         private System.Windows.Forms.Button buttonSelectJsonRequestFolder;
         private System.Windows.Forms.TextBox textBoxJsonRequestFolder;
