@@ -888,7 +888,12 @@ namespace EdiabasLib
                     return false;
                 }
 
-                if (result.TrustAnchor.TrustedCert == null || !result.TrustAnchor.TrustedCert.IsValid(validDate))
+                if (result.TrustAnchor.TrustedCert == null)
+                {
+                    return false;
+                }
+
+                if (!rootCerts.Contains(result.TrustAnchor.TrustedCert))
                 {
                     return false;
                 }
