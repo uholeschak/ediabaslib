@@ -1132,26 +1132,26 @@ namespace S29CertGenerator
             {
                 if (_caPublicCertificates == null || _caPublicCertificates.Count < 1)
                 {
-                    UpdateStatusText("CA public certificate is not loaded", true);
+                    UpdateStatusText("CA public certificate not loaded", true);
                     return null;
                 }
 
                 if (_subCaPublicCertificates == null || _subCaPublicCertificates.Count < 1)
                 {
-                    UpdateStatusText("SubCA EMEA public certificate is not loaded", true);
+                    UpdateStatusText("SubCA EMEA public certificate not loaded", true);
                     return null;
                 }
 
                 AsymmetricKeyParameter subCaEmeaPublicKey = _subCaPublicCertificates[0].Certificate.GetPublicKey();
                 if (subCaEmeaPublicKey == null)
                 {
-                    UpdateStatusText("SubCA EMEA public key is not found", true);
+                    UpdateStatusText("SubCA EMEA public key not found", true);
                     return null;
                 }
 
                 if (_istaPublicCertificates == null || _istaPublicCertificates.Count < 1)
                 {
-                    UpdateStatusText("ISTA public certificate is not loaded", true);
+                    UpdateStatusText("ISTA public certificate not loaded", true);
                     return null;
                 }
 
@@ -1162,13 +1162,14 @@ namespace S29CertGenerator
                     return null;
                 }
 
-                Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                UpdateStatusText($"CA certificate valid until: {issuerCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
+                Org.BouncyCastle.X509.X509Certificate caCert = _caPublicCertificates[0].Certificate;
+                UpdateStatusText($"CA certificate valid until: {caCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
 
-                X509Certificate2 caCert = null;
+                X509Certificate2 subCaEmeaCert = null;
                 X509Certificate2 subCaCert = null;
-                Org.BouncyCastle.X509.X509Certificate x509CaCert = null;
+                Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = null;
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = null;
+                Org.BouncyCastle.X509.X509Certificate x509CaCert = null;
 
                 if (!forceUpdate)
                 {
@@ -1176,19 +1177,20 @@ namespace S29CertGenerator
                     string thumbprintSubCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
                     if (!string.IsNullOrEmpty(thumbprintCa) && !string.IsNullOrEmpty(thumbprintSubCa))
                     {
-                        caCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintCa);
+                        subCaEmeaCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintCa);
                         subCaCert = EdSec4Diag.GetCertificateFromStoreByThumbprint(thumbprintSubCa);
                     }
 
-                    if (caCert != null && subCaCert != null)
+                    if (subCaEmeaCert != null && subCaCert != null)
                     {
                         bool certValid = true;
-                        x509CaCert = new X509CertificateParser().ReadCertificate(caCert.GetRawCertData());
+                        x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
                         x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
+                        x509CaCert = new X509CertificateParser().ReadCertificate(caCert.GetEncoded());
 
-                        if (!issuerCert.GetPublicKey().Equals(x509CaCert.GetPublicKey()))
+                        if (!x509SubCaEmeaCert.GetPublicKey().Equals(subCaEmeaPublicKey))
                         {
-                            UpdateStatusText("CA certificate public key does not match CA public certificate", true);
+                            UpdateStatusText("SubCA EMEA certificate public key does not match SubCA EMEA public certificate", true);
                             certValid = false;
                         }
 
@@ -1206,6 +1208,7 @@ namespace S29CertGenerator
 
                         List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
                         x509CertChain.Add(x509SubCaCert);
+                        x509CertChain.Add(x509SubCaEmeaCert);
                         x509CertChain.Add(x509CaCert);
 
                         List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
@@ -1218,21 +1221,24 @@ namespace S29CertGenerator
                             }
                         }
 
-                        if (!EdBcTlsUtilities.ValidateCertChain(x509CertChain, rootCerts))
+                        if (certValid)
                         {
-                            UpdateStatusText("SubCA certificate chain validation failed", true);
-                            certValid = false;
+                            if (!EdBcTlsUtilities.ValidateCertChain(x509CertChain, rootCerts))
+                            {
+                                UpdateStatusText("SubCA certificate chain validation failed", true);
+                                certValid = false;
+                            }
                         }
 
                         if (!certValid)
                         {
-                            x509CaCert = null;
+                            x509SubCaEmeaCert = null;
                             x509SubCaCert = null;
                         }
                     }
                 }
 
-                if (x509CaCert == null || x509SubCaCert == null)
+                if (x509SubCaEmeaCert == null || x509SubCaCert == null)
                 {
                     UpdateStatusText("Creating new SubCA certificate", true);
                     x509SubCaCert = CreateIstaSubCaCert();
