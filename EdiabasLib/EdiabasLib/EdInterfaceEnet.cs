@@ -4409,7 +4409,7 @@ namespace EdiabasLib
                     return false;
                 }
 
-                List<Org.BouncyCastle.X509.X509Certificate> x509CertList =  EdBcTlsUtilities.ConvertToX509CertList(certList);
+                List<Org.BouncyCastle.X509.X509Certificate> x509CertList = EdBcTlsUtilities.ConvertToX509CertList(certList);
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(sharedData.TrustedCaStructs);
                 if (!EdBcTlsUtilities.ValidateCertChain(x509CertList, rootCerts))
                 {

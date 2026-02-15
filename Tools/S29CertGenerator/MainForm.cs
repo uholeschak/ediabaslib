@@ -1209,7 +1209,6 @@ namespace S29CertGenerator
                         List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
                         x509CertChain.Add(x509SubCaCert);
                         x509CertChain.Add(x509SubCaEmeaCert);
-                        x509CertChain.Add(x509CaCert);
 
                         List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
                         foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
