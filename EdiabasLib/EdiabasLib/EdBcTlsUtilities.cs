@@ -863,20 +863,23 @@ namespace EdiabasLib
                 }
 
                 X509Certificate finalCert = certChain[0];
-                X509Certificate rootCert = certChain[certChain.Count - 1];
                 IStore<X509Certificate> x509CertStore = CollectionUtilities.CreateStore(rootCerts);
                 PkixCertPath cp = new PkixCertPath(certChain);
                 PkixCertPathValidator cpv = new PkixCertPathValidator();
                 HashSet<TrustAnchor> trust = new HashSet<TrustAnchor>();
-                trust.Add(new TrustAnchor(rootCert, null));
+                foreach (X509Certificate cert in rootCerts)
+                {
+                    trust.Add(new TrustAnchor(cert, null));
+                }
 
                 PkixParameters param = new PkixParameters(trust);
                 CertPathChecker checker = new CertPathChecker();
 
+                DateTime validDate = DateTime.UtcNow.AddHours(1.0);
                 param.AddCertPathChecker(checker);
                 param.AddStoreCert(x509CertStore);
                 param.IsRevocationEnabled = false;
-                param.Date = DateTime.UtcNow.AddHours(1.0);
+                param.Date = validDate;
                 PkixCertPathValidatorResult result = cpv.Validate(cp, param);
                 AsymmetricKeyParameter subjectPublicKey = result.SubjectPublicKey;
 
@@ -885,7 +888,12 @@ namespace EdiabasLib
                     return false;
                 }
 
-                if (!result.TrustAnchor.TrustedCert.Equals(rootCert))
+                if (result.TrustAnchor.TrustedCert == null)
+                {
+                    return false;
+                }
+
+                if (!rootCerts.Contains(result.TrustAnchor.TrustedCert))
                 {
                     return false;
                 }
