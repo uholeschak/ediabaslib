@@ -23,7 +23,7 @@ namespace EdiabasLib
     {
         public const string S29ProofOfOwnershipData = "S29UNIPOO";
         public const string S29IstaSubCaSubjectName = "ST=Production,O=BMW Group,OU=Service29-PKI-SubCA,CN=Service29-subCA-ISTA";
-        public const string S29IstaCaSubjectName = "C=DE,O=BMW Group,OU=Sec4Diag-PKI-CA,ST=Production,L=EMEA_RoW,CN=Service29-CA1-EMEA-2025";
+        public const string S29IstaSubCaEmeaSubjectName = "C=DE,O=BMW Group,OU=Sec4Diag-PKI-CA,ST=Production,L=EMEA_RoW,CN=Service29-CA1-EMEA-2025";
         public const string S29ThumbprintCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca";
         public const string S29ThumbprintSubCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa";
         public const string S29MachinePublicName = "_public.pem";
