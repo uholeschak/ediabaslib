@@ -1193,7 +1193,7 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, istaPublicKey, _caKeyResource, EdSec4Diag.S29IstaSubCaCnName);
+                X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, istaPublicKey, _caKeyResource, EdSec4Diag.S29IstaSubCaSubjectName);
                 if (subCaCert == null)
                 {
                     UpdateStatusText("Failed to generate SubCA certificate", true);
@@ -1351,7 +1351,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(x509SubCaCert, publicKeyParameter, _istaKeyResource, EdSec4Diag.S29IstaCnName, vin17);
+                X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(x509SubCaCert, publicKeyParameter, _istaKeyResource, vin17);
                 if (s29Cert == null)
                 {
                     UpdateStatusText($"Failed to generate certificate for VIN: {vin17}", true);

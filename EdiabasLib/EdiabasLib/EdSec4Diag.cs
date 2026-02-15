@@ -22,8 +22,8 @@ namespace EdiabasLib
     public static class EdSec4Diag
     {
         public const string S29ProofOfOwnershipData = "S29UNIPOO";
-        public const string S29IstaSubCaCnName = "Service29-subCA-ISTA";
-        public const string S29IstaCnName = "Service29-ISTA-S29";
+        public const string S29IstaSubCaSubjectName = "ST=Production,O=BMW Group,OU=Service29-PKI-SubCA,CN=Service29-subCA-ISTA";
+        public const string S29IstaCaSubjectName = "C=DE,O=BMW Group,OU=Sec4Diag-PKI-CA,ST=Production,L=EMEA_RoW,CN=Service29-CA1-EMEA-2025";
         public const string S29ThumbprintCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca";
         public const string S29ThumbprintSubCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa";
         public const string S29MachinePublicName = "_public.pem";
@@ -195,9 +195,9 @@ namespace EdiabasLib
         }
 
         public static X509Certificate2 GenerateCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey,
-            string cnName, string vin)
+            string vin)
         {
-            string subjectName = $"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={cnName}, GIVENNAME={vin}";
+            string subjectName = $"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN=Service29-ISTA-S29, GIVENNAME={vin}";
             X509Name subject = new X509Name(subjectName);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
@@ -232,9 +232,8 @@ namespace EdiabasLib
         }
 
         public static X509Certificate2 GenerateSubCaCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey,
-            string cnName)
+            string subjectName)
         {
-            string subjectName = $"ST=Production, O=BMW Group, OU=Service29-PKI-SubCA, CN={cnName}";
             X509Name subject = new X509Name(subjectName);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
