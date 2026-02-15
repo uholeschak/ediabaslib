@@ -649,7 +649,7 @@ namespace S29CertGenerator
                             subCaPublicChain = publicChain;
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // ignored
                     }
@@ -673,7 +673,7 @@ namespace S29CertGenerator
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         // ignored
                     }
@@ -1169,7 +1169,6 @@ namespace S29CertGenerator
                 X509Certificate2 subCaCert = null;
                 Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = null;
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = null;
-                Org.BouncyCastle.X509.X509Certificate x509CaCert = null;
 
                 if (!forceUpdate)
                 {
@@ -1186,7 +1185,6 @@ namespace S29CertGenerator
                         bool certValid = true;
                         x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
                         x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
-                        x509CaCert = new X509CertificateParser().ReadCertificate(caCert.GetEncoded());
 
                         if (!x509SubCaEmeaCert.GetPublicKey().Equals(subCaEmeaPublicKey))
                         {
