@@ -1295,6 +1295,8 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
+                subCaEmeaCert.Dispose();
+
                 X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(x509SubCaEmeaCert, istaPublicKey, _subCaKeyResource, EdSec4Diag.S29IstaSubCaSubjectName);
                 if (subCaCert == null)
                 {
@@ -1303,6 +1305,8 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
+                subCaCert.Dispose();
+
                 List<Org.BouncyCastle.X509.X509Certificate> installCerts = new List<Org.BouncyCastle.X509.X509Certificate>()
                 {
                     x509SubCaCert,
