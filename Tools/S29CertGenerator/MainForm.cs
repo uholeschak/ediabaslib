@@ -624,8 +624,8 @@ namespace S29CertGenerator
             _subCaPublicCertificates = null;
 
             string certName = "SubCaEmea";
-            string machinePrivateFile = Path.Combine(certPath, certName + ".p12");
-            string machinePublicFile = Path.Combine(certPath, certName + ".pem");
+            string subCaPrivateFile = Path.Combine(certPath, certName + ".p12");
+            string subCaPublicFile = Path.Combine(certPath, certName + ".pem");
 
             AsymmetricKeyParameter subCaAsymmetricKeyPar = null;
             X509CertificateEntry[] subCaPublicChain = null;
@@ -635,11 +635,11 @@ namespace S29CertGenerator
                 subCaAsymmetricKeyPar = null;
                 subCaPublicChain = null;
 
-                if (File.Exists(machinePrivateFile))
+                if (File.Exists(subCaPrivateFile))
                 {
                     try
                     {
-                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, SubCaEmeaPkcs12KeyPwd, out X509CertificateEntry[] publicChain);
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(subCaPrivateFile, SubCaEmeaPkcs12KeyPwd, out X509CertificateEntry[] publicChain);
                         if (asymmetricKeyPar == null || publicChain == null)
                         {
                         }
@@ -655,11 +655,11 @@ namespace S29CertGenerator
                     }
                 }
 
-                if (File.Exists(machinePublicFile) && subCaPublicChain != null)
+                if (File.Exists(subCaPublicFile) && subCaPublicChain != null)
                 {
                     try
                     {
-                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPemObject(subCaPublicFile) as AsymmetricKeyParameter;
                         if (asymmetricKeyPar == null)
                         {
                             subCaAsymmetricKeyPar = null;
@@ -686,7 +686,7 @@ namespace S29CertGenerator
                     return true;
                 }
 
-                if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, SecObjectIdentifiers.SecP384r1, SubCaEmeaPkcs12KeyPwd))
+                if (!EdBcTlsUtilities.GenerateEcKeyPair(subCaPrivateFile, subCaPublicFile, SecObjectIdentifiers.SecP384r1, SubCaEmeaPkcs12KeyPwd))
                 {
                     break;
                 }
