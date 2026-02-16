@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -434,7 +435,7 @@ namespace S29CertGenerator
                     return null;
                 }
 
-                string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+                string appName = Assembly.GetExecutingAssembly().GetName().Name;
                 if (string.IsNullOrEmpty(appName))
                 {
                     return null;
