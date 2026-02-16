@@ -137,7 +137,7 @@ namespace S29CertGenerator
                 bool active = _taskActive;
                 bool caKeyValid = LoadCaKey(textBoxCaKeyFile.Text);
                 bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
-                bool subCaEmeaKeyValid = LoadSubCaEmeaKey(_appUserDir);
+                bool subCaEmeaKeyValid = LoadSubCaEmeaKey(_appUserDir, "SubCaEmeaCert.pem");
                 bool cacertsValid = LoadCaCerts(textBoxCaCertsFile.Text);
                 bool clientConfigValid = LoadClientConfiguration(textBoxClientConfigurationFile.Text);
                 bool isValid = IsSettingValid();
@@ -644,18 +644,18 @@ namespace S29CertGenerator
             }
         }
 
-        private bool LoadSubCaEmeaKey(string fileName)
+        private bool LoadSubCaEmeaKey(string folderName, string fileName)
         {
-            if (string.IsNullOrEmpty(fileName))
+            if (string.IsNullOrEmpty(folderName) || string.IsNullOrEmpty(fileName))
             {
-                return false;
+                return false; 
             }
 
             _subCaKeyResource = null;
             _subCaPublicCertificates = null;
 
-            string subCaPrivateFile = Path.ChangeExtension(fileName, ".p12");
-            string subCaPublicFile = Path.ChangeExtension(fileName, ".pem");
+            string subCaPrivateFile = Path.Combine(folderName, Path.ChangeExtension(fileName, ".p12"));
+            string subCaPublicFile = Path.Combine(folderName, Path.ChangeExtension(fileName, ".pem"));
 
             AsymmetricKeyParameter subCaAsymmetricKeyPar = null;
             X509CertificateEntry[] subCaPublicChain = null;
