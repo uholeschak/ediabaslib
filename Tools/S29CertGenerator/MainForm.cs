@@ -32,6 +32,7 @@ namespace S29CertGenerator
         private List<X509CertificateEntry> _subCaPublicCertificates;
         private string _clientConfigText;
         private volatile bool _taskActive = false;
+        public const string SubCaEmeaBaseFileName = "SubCaEmeaCert";
         public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
         public const string RegValueIstaLocation = @"InstallLocation";
         public const string EdiabasDirName = @"Ediabas";
@@ -653,7 +654,7 @@ namespace S29CertGenerator
         private bool LoadSubCaEmeaKeyFile()
         {
             _subCaPublicCertificates = null;
-            _subCaKeyResource = EdBcTlsUtilities.LoadCachedKeyFile(_appUserDir, "SubCaEmeaCert.pem", string.Empty, out X509CertificateEntry[] publicChain);
+            _subCaKeyResource = EdBcTlsUtilities.LoadCachedKeyFile(_appUserDir, SubCaEmeaBaseFileName + ".pem", string.Empty, out X509CertificateEntry[] publicChain);
             if (_subCaKeyResource == null || publicChain == null || publicChain.Length < 1)
             {
                 return false;
@@ -1718,6 +1719,17 @@ namespace S29CertGenerator
                     {
                         UpdateStatusText("Uninstalling trusted CA certificate failed", true);
                         return false;
+                    }
+                }
+
+                if (Directory.Exists(_appUserDir))
+                {
+                    string[] subCaCertFiles = Directory.GetFiles(_appUserDir, SubCaEmeaBaseFileName + ".*", SearchOption.TopDirectoryOnly);
+                    foreach (string certFile in subCaCertFiles)
+                    {
+                        string baseFileName = Path.GetFileName(certFile);
+                        File.Delete(certFile);
+                        UpdateStatusText($"SubCA certificate file deleted: {baseFileName}", true);
                     }
                 }
 
