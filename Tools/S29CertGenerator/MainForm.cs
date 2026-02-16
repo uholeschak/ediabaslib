@@ -1287,7 +1287,7 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, _caKeyResource, EdSec4Diag.S29IstaSubCaEmeaSubjectName);
+                using X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, _caKeyResource, EdSec4Diag.S29IstaSubCaEmeaSubjectName);
                 if (subCaEmeaCert == null)
                 {
                     UpdateStatusText("Failed to generate SubCA EMEA certificate", true);
@@ -1295,9 +1295,8 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
-                subCaEmeaCert.Dispose();
 
-                X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(x509SubCaEmeaCert, istaPublicKey, _subCaKeyResource, EdSec4Diag.S29IstaSubCaSubjectName);
+                using X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(x509SubCaEmeaCert, istaPublicKey, _subCaKeyResource, EdSec4Diag.S29IstaSubCaSubjectName);
                 if (subCaCert == null)
                 {
                     UpdateStatusText("Failed to generate SubCA certificate", true);
@@ -1305,8 +1304,6 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
-                subCaCert.Dispose();
-
                 List<Org.BouncyCastle.X509.X509Certificate> installCerts = new List<Org.BouncyCastle.X509.X509Certificate>()
                 {
                     x509SubCaCert,
@@ -1465,7 +1462,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(istaCertChain[0], publicKeyParameter, _istaKeyResource, vin17);
+                using X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(istaCertChain[0], publicKeyParameter, _istaKeyResource, vin17);
                 if (s29Cert == null)
                 {
                     UpdateStatusText($"Failed to generate certificate for VIN: {vin17}", true);
@@ -1473,8 +1470,6 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509s29Cert = new X509CertificateParser().ReadCertificate(s29Cert.GetRawCertData());
-                s29Cert.Dispose();
-
                 List<Org.BouncyCastle.X509.X509Certificate> x509CertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
                 x509CertChain.Add(x509s29Cert);
                 x509CertChain.AddRange(istaCertChain);
