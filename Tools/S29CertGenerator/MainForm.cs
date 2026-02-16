@@ -434,7 +434,13 @@ namespace S29CertGenerator
                     return null;
                 }
 
-                userDir = Path.Combine(commonAppFolder, "S29CertGenerator");
+                string appName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+                if (string.IsNullOrEmpty(appName))
+                {
+                    return null;
+                }
+
+                userDir = Path.Combine(commonAppFolder, appName);
                 if (!Directory.Exists(userDir))
                 {
                     Directory.CreateDirectory(userDir);
