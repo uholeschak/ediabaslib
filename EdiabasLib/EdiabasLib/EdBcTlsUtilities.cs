@@ -699,6 +699,81 @@ namespace EdiabasLib
             }
         }
 
+        public static AsymmetricKeyParameter LoadCachedKeyFile(string folderName, string fileName, string password, out X509CertificateEntry[] publicChain)
+        {
+            publicChain = null;
+            if (string.IsNullOrEmpty(folderName) || string.IsNullOrEmpty(fileName))
+            {
+                return null;
+            }
+
+            string subCaPrivateFile = Path.Combine(folderName, Path.ChangeExtension(fileName, ".p12"));
+            string subCaPublicFile = Path.Combine(folderName, Path.ChangeExtension(fileName, ".pem"));
+            string passwordArg = password ?? string.Empty;
+
+            for (int retry = 0; retry < 2; retry++)
+            {
+                AsymmetricKeyParameter subCaAsymmetricKeyPar = null;
+                X509CertificateEntry[] subCaPublicChain = null;
+
+                if (File.Exists(subCaPrivateFile))
+                {
+                    try
+                    {
+                        AsymmetricKeyParameter asymmetricKeyPar = LoadPkcs12Key(subCaPrivateFile, passwordArg, out X509CertificateEntry[] localChain);
+                        if (asymmetricKeyPar != null && localChain != null)
+                        {
+                            subCaAsymmetricKeyPar = asymmetricKeyPar;
+                            subCaPublicChain = localChain;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                if (File.Exists(subCaPublicFile) && subCaPublicChain != null)
+                {
+                    try
+                    {
+                        AsymmetricKeyParameter asymmetricKeyPar = LoadPemObject(subCaPublicFile) as AsymmetricKeyParameter;
+                        if (asymmetricKeyPar == null)
+                        {
+                            subCaAsymmetricKeyPar = null;
+                            subCaPublicChain = null;
+                        }
+                        else
+                        {
+                            if (subCaPublicChain.Length < 1 ||
+                                !subCaPublicChain[0].Certificate.GetPublicKey().Equals(asymmetricKeyPar))
+                            {
+                                subCaAsymmetricKeyPar = null;
+                                subCaPublicChain = null;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                if (subCaAsymmetricKeyPar != null && subCaPublicChain != null)
+                {
+                    publicChain = subCaPublicChain;
+                    return subCaAsymmetricKeyPar;
+                }
+
+                if (!GenerateEcKeyPair(subCaPrivateFile, subCaPublicFile, SecObjectIdentifiers.SecP384r1, passwordArg))
+                {
+                    break;
+                }
+            }
+
+            return null;
+        }
+
         public static bool ExtractPkcs12Key(string pkcs12File, string password, string privateFile, string publicFile)
         {
             try
