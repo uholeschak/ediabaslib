@@ -138,7 +138,8 @@ namespace S29CertGenerator
                 bool active = _taskActive;
                 bool caKeyValid = LoadCaKey(textBoxCaKeyFile.Text);
                 bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
-                bool subCaEmeaKeyValid = LoadSubCaEmeaKey(_appUserDir, "SubCaEmeaCert.pem");
+                _subCaKeyResource = LoadKeyFile(_appUserDir, "SubCaEmeaCert.pem", string.Empty, out _subCaPublicCertificates);
+                bool subCaEmeaKeyValid = _subCaKeyResource != null && _subCaPublicCertificates != null;
                 bool cacertsValid = LoadCaCerts(textBoxCaCertsFile.Text);
                 bool clientConfigValid = LoadClientConfiguration(textBoxClientConfigurationFile.Text);
                 bool isValid = IsSettingValid();
@@ -651,18 +652,17 @@ namespace S29CertGenerator
             }
         }
 
-        private bool LoadSubCaEmeaKey(string folderName, string fileName)
+        private static AsymmetricKeyParameter LoadKeyFile(string folderName, string fileName, string password, out List<X509CertificateEntry> subCaPublicCertificates)
         {
+            subCaPublicCertificates = null;
             if (string.IsNullOrEmpty(folderName) || string.IsNullOrEmpty(fileName))
             {
-                return false; 
+                return null;
             }
-
-            _subCaKeyResource = null;
-            _subCaPublicCertificates = null;
 
             string subCaPrivateFile = Path.Combine(folderName, Path.ChangeExtension(fileName, ".p12"));
             string subCaPublicFile = Path.Combine(folderName, Path.ChangeExtension(fileName, ".pem"));
+            string passwordArg = password ?? string.Empty;
 
             AsymmetricKeyParameter subCaAsymmetricKeyPar = null;
             X509CertificateEntry[] subCaPublicChain = null;
@@ -676,7 +676,7 @@ namespace S29CertGenerator
                 {
                     try
                     {
-                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(subCaPrivateFile, string.Empty, out X509CertificateEntry[] publicChain);
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(subCaPrivateFile, passwordArg, out X509CertificateEntry[] publicChain);
                         if (asymmetricKeyPar != null && publicChain != null)
                         {
                             subCaAsymmetricKeyPar = asymmetricKeyPar;
@@ -717,18 +717,17 @@ namespace S29CertGenerator
 
                 if (subCaAsymmetricKeyPar != null && subCaPublicChain != null)
                 {
-                    _subCaKeyResource = subCaAsymmetricKeyPar;
-                    _subCaPublicCertificates = subCaPublicChain.ToList();
-                    return true;
+                    subCaPublicCertificates = subCaPublicChain.ToList();
+                    return subCaAsymmetricKeyPar;
                 }
 
-                if (!EdBcTlsUtilities.GenerateEcKeyPair(subCaPrivateFile, subCaPublicFile, SecObjectIdentifiers.SecP384r1, string.Empty))
+                if (!EdBcTlsUtilities.GenerateEcKeyPair(subCaPrivateFile, subCaPublicFile, SecObjectIdentifiers.SecP384r1, passwordArg))
                 {
                     break;
                 }
             }
 
-            return false;
+            return null;
         }
 
         private bool LoadCaCerts(string caCertsFile)
