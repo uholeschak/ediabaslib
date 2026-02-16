@@ -23,6 +23,7 @@ namespace S29CertGenerator
     {
         private string _appDir;
         private string _ediabasPath;
+        private string _appUserDir;
         private AsymmetricKeyParameter _caKeyResource;
         private List<X509CertificateEntry> _caPublicCertificates;
         private AsymmetricKeyParameter _istaKeyResource;
@@ -37,7 +38,6 @@ namespace S29CertGenerator
         public const string EdiabasSecurityDirName = @"Security";
         public const string EdiabasS29DirName = @"S29";
         public const string EdiabasSllTrustDirName = @"SSL_Truststore";
-        public const string SubCaEmeaPkcs12KeyPwd = "F%YV#Db&WR8Nesm9!";
 
         public MainForm()
         {
@@ -45,6 +45,7 @@ namespace S29CertGenerator
 
             _appDir = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             _ediabasPath = DetectEdiabasPath();
+            _appUserDir = GetAppUserDir();
         }
 
         private void MainForm_Load(object sender, System.EventArgs e)
@@ -136,7 +137,7 @@ namespace S29CertGenerator
                 bool active = _taskActive;
                 bool caKeyValid = LoadCaKey(textBoxCaKeyFile.Text);
                 bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
-                bool subCaEmeaKeyValid = LoadSubCaEmeaKey(AppContext.BaseDirectory);
+                bool subCaEmeaKeyValid = LoadSubCaEmeaKey(_appUserDir);
                 bool cacertsValid = LoadCaCerts(textBoxCaCertsFile.Text);
                 bool clientConfigValid = LoadClientConfiguration(textBoxClientConfigurationFile.Text);
                 bool isValid = IsSettingValid();
@@ -422,6 +423,31 @@ namespace S29CertGenerator
             return true;
         }
 
+        private string GetAppUserDir()
+        {
+            string userDir = null;
+            try
+            {
+                string commonAppFolder = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+                if (string.IsNullOrEmpty(commonAppFolder))
+                {
+                    return null;
+                }
+
+                userDir = Path.Combine(commonAppFolder, "S29CertGenerator");
+                if (!Directory.Exists(userDir))
+                {
+                    Directory.CreateDirectory(userDir);
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            return userDir;
+        }
+
         private bool SyncFolders(string securityFolder)
         {
             if (string.IsNullOrEmpty(securityFolder) || !Directory.Exists(securityFolder))
@@ -618,14 +644,18 @@ namespace S29CertGenerator
             }
         }
 
-        private bool LoadSubCaEmeaKey(string certPath)
+        private bool LoadSubCaEmeaKey(string fileName)
         {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+
             _subCaKeyResource = null;
             _subCaPublicCertificates = null;
 
-            string certName = "SubCaEmea";
-            string subCaPrivateFile = Path.Combine(certPath, certName + ".p12");
-            string subCaPublicFile = Path.Combine(certPath, certName + ".pem");
+            string subCaPrivateFile = Path.ChangeExtension(fileName, ".p12");
+            string subCaPublicFile = Path.ChangeExtension(fileName, ".pem");
 
             AsymmetricKeyParameter subCaAsymmetricKeyPar = null;
             X509CertificateEntry[] subCaPublicChain = null;
@@ -639,11 +669,8 @@ namespace S29CertGenerator
                 {
                     try
                     {
-                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(subCaPrivateFile, SubCaEmeaPkcs12KeyPwd, out X509CertificateEntry[] publicChain);
-                        if (asymmetricKeyPar == null || publicChain == null)
-                        {
-                        }
-                        else
+                        AsymmetricKeyParameter asymmetricKeyPar = EdBcTlsUtilities.LoadPkcs12Key(subCaPrivateFile, string.Empty, out X509CertificateEntry[] publicChain);
+                        if (asymmetricKeyPar != null && publicChain != null)
                         {
                             subCaAsymmetricKeyPar = asymmetricKeyPar;
                             subCaPublicChain = publicChain;
@@ -663,6 +690,7 @@ namespace S29CertGenerator
                         if (asymmetricKeyPar == null)
                         {
                             subCaAsymmetricKeyPar = null;
+                            subCaPublicChain = null;
                         }
                         else
                         {
@@ -670,6 +698,7 @@ namespace S29CertGenerator
                                 !subCaPublicChain[0].Certificate.GetPublicKey().Equals(asymmetricKeyPar))
                             {
                                 subCaAsymmetricKeyPar = null;
+                                subCaPublicChain = null;
                             }
                         }
                     }
@@ -686,7 +715,7 @@ namespace S29CertGenerator
                     return true;
                 }
 
-                if (!EdBcTlsUtilities.GenerateEcKeyPair(subCaPrivateFile, subCaPublicFile, SecObjectIdentifiers.SecP384r1, SubCaEmeaPkcs12KeyPwd))
+                if (!EdBcTlsUtilities.GenerateEcKeyPair(subCaPrivateFile, subCaPublicFile, SecObjectIdentifiers.SecP384r1, string.Empty))
                 {
                     break;
                 }
