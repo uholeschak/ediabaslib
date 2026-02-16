@@ -6589,7 +6589,7 @@ namespace BmwDeepObd
             return true;
         }
 
-        public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string vin)
+        public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin)
         {
             try
             {
@@ -6626,22 +6626,30 @@ namespace BmwDeepObd
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = publicCertificateEntries[0].Certificate;
-                X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(issuerCert, machinePublicKey, privateKeyResource, vin);
+                AsymmetricKeyParameter subCaKeyResource = EdBcTlsUtilities.LoadCachedKeyFile(certPath, "SubCaEmeaCert.pem", string.Empty, out X509CertificateEntry[] publicSubCaChain);
+                if (subCaKeyResource == null || publicSubCaChain == null || publicSubCaChain.Length < 1)
+                {
+                    return null;
+                }
+
+                AsymmetricKeyParameter subCaEmeaPublicKey = publicSubCaChain[0].Certificate.GetPublicKey();
+                using X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, privateKeyResource, EdSec4Diag.S29IstaSubCaEmeaSubjectName);
+                if (subCaEmeaCert == null)
+                {
+                    return null;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
+                using X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(x509SubCaEmeaCert, machinePublicKey, subCaKeyResource, vin);
                 if (s29Cert == null)
                 {
                     return null;
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509s29Cert = new X509CertificateParser().ReadCertificate(s29Cert.GetRawCertData());
-                s29Cert.Dispose();
-
                 List<X509CertificateStructure> certList = new List<X509CertificateStructure>();
                 certList.Add(x509s29Cert.CertificateStructure);
-
-                foreach (X509CertificateEntry certEntry in publicCertificateEntries)
-                {
-                    certList.Add(certEntry.Certificate.CertificateStructure);
-                }
+                certList.Add(x509SubCaEmeaCert.CertificateStructure);
 
                 List<Org.BouncyCastle.X509.X509Certificate> x509CertList = EdBcTlsUtilities.ConvertToX509CertList(certList);
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
