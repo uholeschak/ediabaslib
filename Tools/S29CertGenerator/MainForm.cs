@@ -1839,9 +1839,22 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                if (certificateEntries.Count < 2)
+                int certCount = certificateEntries.Count;
+                if (certCount < 2)
                 {
-                    UpdateStatusText($"Certificates count {certificateEntries.Count} too small", true);
+                    UpdateStatusText($"Certificates count {certCount} too small", true);
+                    return false;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = certificateEntries[certCount - 2].Certificate;
+                Org.BouncyCastle.X509.X509Certificate x509CaCert = certificateEntries[certCount - 1].Certificate;
+                using X509Certificate2 subCaCert = X509CertificateLoader.LoadCertificate(x509SubCaCert.GetEncoded());
+                using X509Certificate2 caCert = X509CertificateLoader.LoadCertificate(x509CaCert.GetEncoded());
+
+                if (!EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa, caCert.Thumbprint) ||
+                    !EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa, subCaCert.Thumbprint))
+                {
+                    UpdateStatusText("Failed to set CA thumbprints in ISTA config", true);
                     return false;
                 }
 
