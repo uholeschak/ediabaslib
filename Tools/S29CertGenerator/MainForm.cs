@@ -1226,7 +1226,11 @@ namespace S29CertGenerator
                         if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
                         {
                             UpdateStatusText("SubCA certificate public key does not match ISTA public key", true);
-                            if (!validate)
+                            if (validate)
+                            {
+                                UpdateStatusText($"Update ISTA key file first: {textBoxIstaKeyFile.Text}", true);
+                            }
+                            else
                             {
                                 certValid = false;
                             }
