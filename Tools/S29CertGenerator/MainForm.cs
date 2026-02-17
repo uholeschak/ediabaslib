@@ -1887,7 +1887,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ImportCertificates(string importFile, string trustStoreFolder)
+        protected bool ImportCertificates(string importFile, string trustStoreFolder, string clientConfigFile)
         {
             try
             {
@@ -1956,6 +1956,15 @@ namespace S29CertGenerator
                 {
                     UpdateStatusText("Failed to validate certificates", true);
                     return false;
+                }
+
+                if (!string.IsNullOrEmpty(clientConfigFile))
+                {
+                    if (!ModifyClientConfiguration(clientConfigFile))
+                    {
+                        UpdateStatusText("Modifying client configuration failed", true);
+                        return false;
+                    }
                 }
 
                 UpdateStatusText("Certificates imported successfully", true);
@@ -2270,7 +2279,7 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 string importFile = openImportCertDialog.FileName;
-                ImportCertificates(importFile, textBoxTrustStoreFolder.Text);
+                ImportCertificates(importFile, textBoxTrustStoreFolder.Text, textBoxClientConfigurationFile.Text);
                 _importCertFile = importFile;
             }
 
