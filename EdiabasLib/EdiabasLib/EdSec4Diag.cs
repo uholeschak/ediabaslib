@@ -230,10 +230,9 @@ namespace EdiabasLib
         }
 
         public static X509Certificate2 GenerateSubCaCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey,
-            string subjectName)
+            int caPathLength)
         {
-            bool isEmea = subjectName.Contains("EMEA");
-            int caPathLength = isEmea ? 1 : 0;
+            string subjectName = caPathLength > 0 ? S29IstaSubCaEmeaSubjectName : S29IstaSubCaSubjectName;
             X509Name subject = new X509Name(subjectName);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
@@ -245,7 +244,7 @@ namespace EdiabasLib
             DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.70");
 
             DerSet extensionValue;
-            if (isEmea)
+            if (caPathLength > 0)
             {
                 extensionValue = new DerSet(new Asn1EncodableVector {
                     new DerOctetString(new byte[] { 0x0E, 0xF2 }),

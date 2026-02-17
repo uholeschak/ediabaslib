@@ -1288,7 +1288,7 @@ namespace S29CertGenerator
                 }
 
                 Org.BouncyCastle.X509.X509Certificate issuerCert = _caPublicCertificates[0].Certificate;
-                using X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, _caKeyResource, EdSec4Diag.S29IstaSubCaEmeaSubjectName);
+                using X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, _caKeyResource, 1);
                 if (subCaEmeaCert == null)
                 {
                     UpdateStatusText("Failed to generate SubCA EMEA certificate", true);
@@ -1297,7 +1297,7 @@ namespace S29CertGenerator
 
                 Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
 
-                using X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(x509SubCaEmeaCert, istaPublicKey, _subCaKeyResource, EdSec4Diag.S29IstaSubCaSubjectName);
+                using X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(x509SubCaEmeaCert, istaPublicKey, _subCaKeyResource, 0);
                 if (subCaCert == null)
                 {
                     UpdateStatusText("Failed to generate SubCA certificate", true);
