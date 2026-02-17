@@ -25,6 +25,7 @@ namespace S29CertGenerator
         private string _appDir;
         private string _ediabasPath;
         private string _appUserDir;
+        private string _importCertFile;
         private AsymmetricKeyParameter _caKeyResource;
         private List<X509CertificateEntry> _caPublicCertificates;
         private AsymmetricKeyParameter _istaKeyResource;
@@ -102,6 +103,7 @@ namespace S29CertGenerator
                 textBoxCertOutputFolder.Text = Properties.Settings.Default.CertOutputFolder;
                 textBoxTrustStoreFolder.Text = Properties.Settings.Default.TrustStoreFolder;
                 textBoxClientConfigurationFile.Text = Properties.Settings.Default.ClientConfigurationFile;
+                _importCertFile = Properties.Settings.Default.ImportCertFile;
                 return true;
             }
             catch (Exception)
@@ -123,6 +125,7 @@ namespace S29CertGenerator
                 Properties.Settings.Default.CertOutputFolder = textBoxCertOutputFolder.Text;
                 Properties.Settings.Default.TrustStoreFolder = textBoxTrustStoreFolder.Text;
                 Properties.Settings.Default.ClientConfigurationFile = textBoxClientConfigurationFile.Text;
+                Properties.Settings.Default.ImportCertFile = _importCertFile;
                 Properties.Settings.Default.Save();
                 return true;
             }
@@ -2252,7 +2255,14 @@ namespace S29CertGenerator
         private void buttonImport_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
+            string certFile = _importCertFile;
             string fileName = string.Empty;
+
+            if (File.Exists(certFile))
+            {
+                fileName = Path.GetFileName(certFile);
+                initDir = Path.GetDirectoryName(certFile);
+            }
 
             openImportCertDialog.FileName = fileName;
             openImportCertDialog.InitialDirectory = initDir ?? string.Empty;
@@ -2261,6 +2271,7 @@ namespace S29CertGenerator
             {
                 string importFile = openImportCertDialog.FileName;
                 ImportCertificates(importFile, textBoxTrustStoreFolder.Text);
+                _importCertFile = importFile;
             }
 
             UpdateDisplay();

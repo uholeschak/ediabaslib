@@ -130,5 +130,17 @@ namespace S29CertGenerator.Properties {
                 this["ClientConfigurationFile"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ImportCertFile {
+            get {
+                return ((string)(this["ImportCertFile"]));
+            }
+            set {
+                this["ImportCertFile"] = value;
+            }
+        }
     }
 }
