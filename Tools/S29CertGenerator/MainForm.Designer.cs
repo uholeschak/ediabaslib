@@ -60,6 +60,8 @@
             buttonSelectClientConfigurationFile = new System.Windows.Forms.Button();
             openClientConfigFileDialog = new System.Windows.Forms.OpenFileDialog();
             buttonValidate = new System.Windows.Forms.Button();
+            buttonImport = new System.Windows.Forms.Button();
+            openImportCertDialog = new System.Windows.Forms.OpenFileDialog();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -359,6 +361,23 @@
             buttonValidate.UseVisualStyleBackColor = true;
             buttonValidate.Click += buttonValidate_Click;
             // 
+            // buttonImport
+            // 
+            buttonImport.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonImport.Location = new System.Drawing.Point(286, 570);
+            buttonImport.Name = "buttonImport";
+            buttonImport.Size = new System.Drawing.Size(75, 23);
+            buttonImport.TabIndex = 27;
+            buttonImport.Text = "Import";
+            buttonImport.UseVisualStyleBackColor = true;
+            buttonImport.Click += buttonImport_Click;
+            // 
+            // openImportCertDialog
+            // 
+            openImportCertDialog.DefaultExt = "pem";
+            openImportCertDialog.Filter = "PEM|*.pem|All files|*.*";
+            openImportCertDialog.Title = "Select import certificates";
+            // 
             // MainForm
             // 
             AcceptButton = buttonInstall;
@@ -366,6 +385,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(697, 605);
+            Controls.Add(buttonImport);
             Controls.Add(buttonValidate);
             Controls.Add(buttonSelectClientConfigurationFile);
             Controls.Add(textBoxClientConfigurationFile);
@@ -440,5 +460,7 @@
         private System.Windows.Forms.Button buttonSelectClientConfigurationFile;
         private System.Windows.Forms.OpenFileDialog openClientConfigFileDialog;
         private System.Windows.Forms.Button buttonValidate;
+        private System.Windows.Forms.Button buttonImport;
+        private System.Windows.Forms.OpenFileDialog openImportCertDialog;
     }
 }

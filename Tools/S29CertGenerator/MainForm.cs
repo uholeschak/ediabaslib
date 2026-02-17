@@ -1,6 +1,7 @@
 using EdiabasLib;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
+using static EdiabasLib.EdBcTlsClient;
 
 namespace S29CertGenerator
 {
@@ -1826,6 +1828,35 @@ namespace S29CertGenerator
             }
         }
 
+        protected bool ImportCertificates(string importFile)
+        {
+            try
+            {
+                UpdateStatusText(string.Empty);
+
+                List<X509CertificateEntry> certificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(importFile));
+                if (certificateEntries == null)
+                {
+                    UpdateStatusText("No certificates found in import file", true);
+                    return false;
+                }
+
+                if (certificateEntries.Count < 2)
+                {
+                    UpdateStatusText($"Certificates count {certificateEntries.Count} too small", true);
+                    return false;
+                }
+
+                UpdateStatusText("Certificates imported successfully", true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Import certificates exception: {ex.Message}", true);
+                return false;
+            }
+        }
+
         private void buttonSelectCaKeyFile_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
@@ -2107,6 +2138,23 @@ namespace S29CertGenerator
         private void buttonValidate_Click(object sender, EventArgs e)
         {
             ValidateCertificates();
+            UpdateDisplay();
+        }
+
+        private void buttonImport_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string fileName = string.Empty;
+
+            openImportCertDialog.FileName = fileName;
+            openImportCertDialog.InitialDirectory = initDir ?? string.Empty;
+            DialogResult result = openImportCertDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string importFile = openImportCertDialog.FileName;
+                ImportCertificates(importFile);
+            }
+
             UpdateDisplay();
         }
     }
