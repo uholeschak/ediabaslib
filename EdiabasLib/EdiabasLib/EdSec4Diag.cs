@@ -236,7 +236,7 @@ namespace EdiabasLib
             X509Name subject = new X509Name(subjectName);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
-            x509V3CertificateGenerator.SetSerialNumber(BigInteger.ProbablePrime(120, new Random()));
+            x509V3CertificateGenerator.SetSerialNumber(BigInteger.ProbablePrime(60, new Random()));
             x509V3CertificateGenerator.SetIssuerDN(issuerCert.SubjectDN);
             x509V3CertificateGenerator.SetNotBefore(DateTime.UtcNow.AddMinutes(-5.0));
             x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddYears(1));
