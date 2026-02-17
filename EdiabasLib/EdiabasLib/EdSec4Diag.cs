@@ -270,8 +270,8 @@ namespace EdiabasLib
             DerObjectIdentifier oid3 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.50");
             x509V3CertificateGenerator.AddExtension(oid3, critical: true, RoleMask);
 
-            KeyUsage keyUsage = new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign);
-            x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, keyUsage);
+            KeyUsage keyUsage = new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign | KeyUsage.CrlSign);
+            x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: true, keyUsage);
             x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, X509ExtensionUtilities.CreateSubjectKeyIdentifier(publicKey));
             x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: true));
             x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, X509ExtensionUtilities.CreateAuthorityKeyIdentifier(issuerCert.GetPublicKey()));
