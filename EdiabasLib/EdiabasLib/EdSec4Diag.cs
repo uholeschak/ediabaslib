@@ -233,6 +233,7 @@ namespace EdiabasLib
             string subjectName)
         {
             bool isEmea = subjectName.Contains("EMEA");
+            int caPathLength = isEmea ? 1 : 0;
             X509Name subject = new X509Name(subjectName);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
@@ -273,7 +274,7 @@ namespace EdiabasLib
             KeyUsage keyUsage = new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign | KeyUsage.CrlSign);
             x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: true, keyUsage);
             x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, X509ExtensionUtilities.CreateSubjectKeyIdentifier(publicKey));
-            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: true));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(pathLenConstraint: caPathLength));
             x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, X509ExtensionUtilities.CreateAuthorityKeyIdentifier(issuerCert.GetPublicKey()));
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", issuerPrivateKey);
             byte[] encodedCert = x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded();
