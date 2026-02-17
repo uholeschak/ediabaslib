@@ -1,6 +1,7 @@
 using EdiabasLib;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
@@ -613,6 +614,57 @@ namespace S29CertGenerator
             }
         }
 
+        private List<X509CertificateEntry> LoadTrustedCerts(string trustStoreFolder, List<X509CertificateEntry> additionalEntries = null)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(trustStoreFolder) || !Directory.Exists(trustStoreFolder))
+                {
+                    return null;
+                }
+
+                List<X509CertificateStructure> caStructList = new List<X509CertificateStructure>();
+                IEnumerable<string> certFiles = Directory.EnumerateFiles(trustStoreFolder, "*.*", SearchOption.AllDirectories);
+                foreach (string certFile in certFiles)
+                {
+                    try
+                    {
+                        string fileExt = Path.GetExtension(certFile);
+                        if (string.IsNullOrEmpty(fileExt) || fileExt.Length < 2)
+                        {
+                            continue;
+                        }
+
+                        if (!fileExt.Skip(1).All(char.IsDigit))
+                        {
+                            continue;
+                        }
+
+                        X509CertificateStructure certStruct = EdBcTlsUtilities.LoadBcCertificateResource(certFile);
+                        if (certStruct != null)
+                        {
+                            caStructList.Add(certStruct);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+
+                List<X509CertificateEntry> caEntries = EdBcTlsUtilities.GetCertificateEntries(caStructList);
+                if (additionalEntries != null)
+                {
+                    caEntries.AddRange(additionalEntries);
+                }
+                return caEntries;
+            }
+            catch (Exception)
+            {
+                return  null;
+            }
+        }
+
         private bool LoadIstaKey(string istaKeyFile)
         {
             _istaKeyResource = null;
@@ -1095,7 +1147,7 @@ namespace S29CertGenerator
             }
         }
 
-        private List<Org.BouncyCastle.X509.X509Certificate> LoadIstaSubCaCerts(bool forceUpdate, bool validate = false)
+        private List<Org.BouncyCastle.X509.X509Certificate> LoadIstaSubCaCerts(string trustStoreFolder, bool forceUpdate, bool validate = false)
         {
             try
             {
@@ -1185,10 +1237,11 @@ namespace S29CertGenerator
                         validateCertChain.Add(x509SubCaCert);
                         validateCertChain.Add(x509SubCaEmeaCert);
 
+                        List<X509CertificateEntry> caEntries = LoadTrustedCerts(trustStoreFolder, _caPublicCertificates);
                         List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
-                        foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
+                        foreach (X509CertificateEntry caEntry in caEntries)
                         {
-                            Org.BouncyCastle.X509.X509Certificate cert = caPublicCertificate.Certificate;
+                            Org.BouncyCastle.X509.X509Certificate cert = caEntry.Certificate;
                             if (cert != null)
                             {
                                 rootCerts.Add(cert);
@@ -1351,7 +1404,7 @@ namespace S29CertGenerator
             }
         }
 
-        private bool ConvertJsonRequestFile(List<Org.BouncyCastle.X509.X509Certificate> istaCertChain, string jsonRequestFile, string jsonResponseFolder, string certOutputFolder)
+        private bool ConvertJsonRequestFile(string trustStoreFolder, List<Org.BouncyCastle.X509.X509Certificate> istaCertChain, string jsonRequestFile, string jsonResponseFolder, string certOutputFolder)
         {
             try
             {
@@ -1408,7 +1461,7 @@ namespace S29CertGenerator
 
                 string jsonResponseFileName = $"ResponseContainer_service-29-{certReqProfile}-{vin17}.json";
                 string jsonResponseFile = Path.Combine(jsonResponseFolder, jsonResponseFileName);
-                if (!GenerateCertificate(istaCertChain, publicKeyParameter, vin17, certOutputFolder, jsonResponseFile))
+                if (!GenerateCertificate(trustStoreFolder, istaCertChain, publicKeyParameter, vin17, certOutputFolder, jsonResponseFile))
                 {
                     return false;
                 }
@@ -1422,7 +1475,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool GenerateCertificate(List<Org.BouncyCastle.X509.X509Certificate> istaCertChain, AsymmetricKeyParameter publicKeyParameter, string vehicleVin, string certOutputFolder, string jsonResponseFile = null)
+        protected bool GenerateCertificate(string trustStoreFolder, List<Org.BouncyCastle.X509.X509Certificate> istaCertChain, AsymmetricKeyParameter publicKeyParameter, string vehicleVin, string certOutputFolder, string jsonResponseFile = null)
         {
             try
             {
@@ -1490,10 +1543,11 @@ namespace S29CertGenerator
                 x509CertChain.Add(x509s29Cert);
                 x509CertChain.AddRange(istaCertChain);
 
+                List<X509CertificateEntry> caEntries = LoadTrustedCerts(trustStoreFolder, _caPublicCertificates);
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
-                foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
+                foreach (X509CertificateEntry caEntry in caEntries)
                 {
-                    Org.BouncyCastle.X509.X509Certificate cert = caPublicCertificate.Certificate;
+                    Org.BouncyCastle.X509.X509Certificate cert = caEntry.Certificate;
                     if (cert != null)
                     {
                         rootCerts.Add(cert);
@@ -1573,7 +1627,7 @@ namespace S29CertGenerator
             {
                 UpdateStatusText(string.Empty);
 
-                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(forceUpdate);
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, forceUpdate);
                 if (istaCertChain == null || istaCertChain.Count != 2)
                 {
                     UpdateStatusText("Failed to create SubCA certificates", true);
@@ -1644,7 +1698,7 @@ namespace S29CertGenerator
                         }
 
                         UpdateStatusText(string.Empty, true);
-                        ConvertJsonRequestFile(istaCertChain, jsonFile, jsonResponseFolder, certOutputFolder);
+                        ConvertJsonRequestFile(trustStoreFolder, istaCertChain, jsonFile, jsonResponseFolder, certOutputFolder);
                     }
                 }
                 else
@@ -1665,7 +1719,7 @@ namespace S29CertGenerator
                         return false;
                     }
 
-                    GenerateCertificate(istaCertChain, publicKeyParameter, vehicleVin, certOutputFolder);
+                    GenerateCertificate(trustStoreFolder, istaCertChain, publicKeyParameter, vehicleVin, certOutputFolder);
                 }
 
                 return true;
@@ -1810,7 +1864,7 @@ namespace S29CertGenerator
             {
                 UpdateStatusText(string.Empty);
 
-                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(false, true);
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(textBoxTrustStoreFolder.Text, false, true);
                 if (istaCertChain == null)
                 {
                     UpdateStatusText("Failed to validate certificates", true);
@@ -1827,17 +1881,11 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ImportCertificates(string importFile)
+        protected bool ImportCertificates(string importFile, string trustStoreFolder)
         {
             try
             {
                 UpdateStatusText(string.Empty);
-
-                if (_caPublicCertificates == null || _caPublicCertificates.Count < 1)
-                {
-                    UpdateStatusText("CA public certificate not loaded", true);
-                    return false;
-                }
 
                 List<X509CertificateEntry> certificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(importFile));
                 if (certificateEntries == null)
@@ -1862,10 +1910,11 @@ namespace S29CertGenerator
                     x509CaCert,
                 };
 
+                List<X509CertificateEntry> caEntries = LoadTrustedCerts(trustStoreFolder, _caPublicCertificates);
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
-                foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
+                foreach (X509CertificateEntry caEntry in caEntries)
                 {
-                    Org.BouncyCastle.X509.X509Certificate cert = caPublicCertificate.Certificate;
+                    Org.BouncyCastle.X509.X509Certificate cert = caEntry.Certificate;
                     if (cert != null)
                     {
                         rootCerts.Add(cert);
@@ -1875,7 +1924,7 @@ namespace S29CertGenerator
                 if (!EdBcTlsUtilities.ValidateCertChain(installCerts, rootCerts))
                 {
                     UpdateStatusText("Certificate chain validation failed", true);
-                    //return false;
+                    return false;
                 }
 
                 if (!EdSec4Diag.InstallCertificates(installCerts))
@@ -2201,7 +2250,7 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 string importFile = openImportCertDialog.FileName;
-                ImportCertificates(importFile);
+                ImportCertificates(importFile, textBoxTrustStoreFolder.Text);
             }
 
             UpdateDisplay();
