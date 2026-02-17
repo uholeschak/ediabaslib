@@ -1,7 +1,6 @@
 using EdiabasLib;
 using Microsoft.Win32;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.X509;
@@ -17,7 +16,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Linq;
-using static EdiabasLib.EdBcTlsClient;
 
 namespace S29CertGenerator
 {
