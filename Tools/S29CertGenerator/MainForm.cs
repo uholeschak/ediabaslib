@@ -1095,7 +1095,7 @@ namespace S29CertGenerator
             }
         }
 
-        private List<Org.BouncyCastle.X509.X509Certificate> LoadIstaSubCaCerts(bool forceUpdate)
+        private List<Org.BouncyCastle.X509.X509Certificate> LoadIstaSubCaCerts(bool forceUpdate, bool validate = false)
         {
             try
             {
@@ -1105,17 +1105,21 @@ namespace S29CertGenerator
                     return null;
                 }
 
-                if (_subCaPublicCertificates == null || _subCaPublicCertificates.Count < 1)
+                AsymmetricKeyParameter subCaEmeaPublicKey = null;
+                if (!validate)
                 {
-                    UpdateStatusText("SubCA EMEA public certificate not loaded", true);
-                    return null;
-                }
+                    if (_subCaPublicCertificates == null || _subCaPublicCertificates.Count < 1)
+                    {
+                        UpdateStatusText("SubCA EMEA public certificate not loaded", true);
+                        return null;
+                    }
 
-                AsymmetricKeyParameter subCaEmeaPublicKey = _subCaPublicCertificates[0].Certificate.GetPublicKey();
-                if (subCaEmeaPublicKey == null)
-                {
-                    UpdateStatusText("SubCA EMEA public key not found", true);
-                    return null;
+                    subCaEmeaPublicKey = _subCaPublicCertificates[0].Certificate.GetPublicKey();
+                    if (subCaEmeaPublicKey == null)
+                    {
+                        UpdateStatusText("SubCA EMEA public key not found", true);
+                        return null;
+                    }
                 }
 
                 if (_istaPublicCertificates == null || _istaPublicCertificates.Count < 1)
@@ -1139,7 +1143,7 @@ namespace S29CertGenerator
                 Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = null;
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = null;
 
-                if (!forceUpdate)
+                if (!forceUpdate || validate)
                 {
                     string thumbprintCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
                     string thumbprintSubCa = EdSec4Diag.GetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
@@ -1155,10 +1159,13 @@ namespace S29CertGenerator
                         x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
                         x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
 
-                        if (!x509SubCaEmeaCert.GetPublicKey().Equals(subCaEmeaPublicKey))
+                        if (subCaEmeaPublicKey != null)
                         {
-                            UpdateStatusText("SubCA EMEA certificate public key does not match SubCA EMEA public certificate", true);
-                            certValid = false;
+                            if (!x509SubCaEmeaCert.GetPublicKey().Equals(subCaEmeaPublicKey))
+                            {
+                                UpdateStatusText("SubCA EMEA certificate public key does not match SubCA EMEA public certificate", true);
+                                certValid = false;
+                            }
                         }
 
                         if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
@@ -1204,23 +1211,30 @@ namespace S29CertGenerator
                     }
                 }
 
-                if (x509SubCaEmeaCert == null || x509SubCaCert == null)
+                if (!validate)
                 {
-                    UpdateStatusText("Creating new SubCA certificate", true);
-                    List<Org.BouncyCastle.X509.X509Certificate> istaSubCaCerts = CreateIstaSubCaCerts();
-                    if (istaSubCaCerts == null || istaSubCaCerts.Count != 2)
+                    if (x509SubCaEmeaCert == null || x509SubCaCert == null)
                     {
-                        UpdateStatusText("Failed to create SubCA certificates", true);
-                        return null;
-                    }
+                        UpdateStatusText("Creating new SubCA certificate", true);
+                        List<Org.BouncyCastle.X509.X509Certificate> istaSubCaCerts = CreateIstaSubCaCerts();
+                        if (istaSubCaCerts == null || istaSubCaCerts.Count != 2)
+                        {
+                            UpdateStatusText("Failed to create SubCA certificates", true);
+                            return null;
+                        }
 
-                    x509SubCaCert = istaSubCaCerts[0];
-                    x509SubCaEmeaCert = istaSubCaCerts[1];
+                        x509SubCaCert = istaSubCaCerts[0];
+                        x509SubCaEmeaCert = istaSubCaCerts[1];
+                    }
                 }
 
                 if (x509SubCaEmeaCert == null || x509SubCaCert == null)
                 {
-                    UpdateStatusText("Failed to create SubCA certificate", true);
+                    if (!validate)
+                    {
+                        UpdateStatusText("Failed to create SubCA certificate", true);
+                    }
+
                     return null;
                 }
 
