@@ -1803,6 +1803,29 @@ namespace S29CertGenerator
             }
         }
 
+        protected bool ValidateCertificates()
+        {
+            try
+            {
+                UpdateStatusText(string.Empty);
+
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(false, true);
+                if (istaCertChain == null)
+                {
+                    UpdateStatusText("Failed to validate certificates", true);
+                    return false;
+                }
+
+                UpdateStatusText("Certificates validated successfully", true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Validate certificates exception: {ex.Message}", true);
+                return false;
+            }
+        }
+
         private void buttonSelectCaKeyFile_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
@@ -2083,6 +2106,7 @@ namespace S29CertGenerator
 
         private void buttonValidate_Click(object sender, EventArgs e)
         {
+            ValidateCertificates();
             UpdateDisplay();
         }
     }
