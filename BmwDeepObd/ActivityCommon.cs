@@ -6633,7 +6633,7 @@ namespace BmwDeepObd
                 }
 
                 AsymmetricKeyParameter subCaEmeaPublicKey = publicSubCaChain[0].Certificate.GetPublicKey();
-                using X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, privateKeyResource, EdSec4Diag.S29IstaSubCaEmeaSubjectName);
+                using X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, privateKeyResource, 1);
                 if (subCaEmeaCert == null)
                 {
                     return null;
