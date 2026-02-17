@@ -207,13 +207,11 @@ namespace EdiabasLib
             x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddYears(1));
             x509V3CertificateGenerator.SetSubjectDN(subject);
             DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.30");
-            byte[] contents = new byte[2] { 0x0E, 0xF3 };
-            byte[] contents2 = new byte[2] { 0x0E, 0xF4 };
-            byte[] contents3 = new byte[2] { 0x0E, 0xF5 };
-            DerOctetString element = new DerOctetString(contents);
-            DerOctetString element2 = new DerOctetString(contents2);
-            DerOctetString element3 = new DerOctetString(contents3);
-            DerSet extensionValue = new DerSet(new Asn1EncodableVector { element, element2, element3 });
+            DerSet extensionValue = new DerSet(new Asn1EncodableVector {
+                new DerOctetString(new byte[] { 0x0E, 0xF3 }),
+                new DerOctetString(new byte[] { 0x0E, 0xF4 }),
+                new DerOctetString(new byte[] { 0x0E, 0xF5 })
+            });
             x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
             DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.10");
             x509V3CertificateGenerator.AddExtension(oid2, critical: true, RoleMask);
@@ -232,8 +230,9 @@ namespace EdiabasLib
         }
 
         public static X509Certificate2 GenerateSubCaCertificate(Org.BouncyCastle.X509.X509Certificate issuerCert, AsymmetricKeyParameter publicKey, AsymmetricKeyParameter issuerPrivateKey,
-            string subjectName)
+            int caPathLength)
         {
+            string subjectName = caPathLength > 0 ? S29IstaSubCaEmeaSubjectName : S29IstaSubCaSubjectName;
             X509Name subject = new X509Name(subjectName);
             X509V3CertificateGenerator x509V3CertificateGenerator = new X509V3CertificateGenerator();
             x509V3CertificateGenerator.SetPublicKey(publicKey);
@@ -243,10 +242,26 @@ namespace EdiabasLib
             x509V3CertificateGenerator.SetNotAfter(DateTime.UtcNow.AddYears(1));
             x509V3CertificateGenerator.SetSubjectDN(subject);
             DerObjectIdentifier oid = new DerObjectIdentifier("1.3.6.1.4.1.513.29.70");
-            DerOctetString element1 = new DerOctetString(new byte[] { 0x0E, 0xF3 });
-            DerOctetString element2 = new DerOctetString(new byte[] { 0x0E, 0xF4 });
-            DerOctetString element3 = new DerOctetString(new byte[] { 0x0E, 0xF5 });
-            DerSet extensionValue = new DerSet(new Asn1EncodableVector { element1, element2, element3 });
+
+            DerSet extensionValue;
+            if (caPathLength > 0)
+            {
+                extensionValue = new DerSet(new Asn1EncodableVector {
+                    new DerOctetString(new byte[] { 0x0E, 0xF2 }),
+                    new DerOctetString(new byte[] { 0x0E, 0xF3 }),
+                    new DerOctetString(new byte[] { 0x0E, 0xF4 }),
+                    new DerOctetString(new byte[] { 0x0E, 0xF5 }),
+                    new DerOctetString(new byte[] { 0x0E, 0xFE })
+                });
+            }
+            else
+            {
+                extensionValue = new DerSet(new Asn1EncodableVector {
+                    new DerOctetString(new byte[] { 0x0E, 0xF3 }),
+                    new DerOctetString(new byte[] { 0x0E, 0xF4 }),
+                    new DerOctetString(new byte[] { 0x0E, 0xF5 })
+                });
+            }
             x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
 
             DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.60");
@@ -255,10 +270,10 @@ namespace EdiabasLib
             DerObjectIdentifier oid3 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.50");
             x509V3CertificateGenerator.AddExtension(oid3, critical: true, RoleMask);
 
-            KeyUsage keyUsage = new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign);
-            x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, keyUsage);
+            KeyUsage keyUsage = new KeyUsage(KeyUsage.DigitalSignature | KeyUsage.KeyCertSign | KeyUsage.CrlSign);
+            x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: true, keyUsage);
             x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, X509ExtensionUtilities.CreateSubjectKeyIdentifier(publicKey));
-            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: true));
+            x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(pathLenConstraint: caPathLength));
             x509V3CertificateGenerator.AddExtension(X509Extensions.AuthorityKeyIdentifier, critical: false, X509ExtensionUtilities.CreateAuthorityKeyIdentifier(issuerCert.GetPublicKey()));
             ISignatureFactory signatureFactory = new Asn1SignatureFactory("SHA512withECDSA", issuerPrivateKey);
             byte[] encodedCert = x509V3CertificateGenerator.Generate(signatureFactory).GetEncoded();
