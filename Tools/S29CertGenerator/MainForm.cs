@@ -1174,7 +1174,8 @@ namespace S29CertGenerator
                             certValid = false;
                         }
 
-                        if (DateTime.UtcNow > subCaCert.NotAfter.AddMonths(-1))
+                        DateTime validDate = validate ? subCaCert.NotAfter.AddHours(-12) : subCaCert.NotAfter.AddMonths(-1);
+                        if (DateTime.UtcNow > validDate)
                         {
                             UpdateStatusText($"SubCA certificate remaining time too short: {subCaCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
                             certValid = false;
@@ -1832,6 +1833,12 @@ namespace S29CertGenerator
             {
                 UpdateStatusText(string.Empty);
 
+                if (_caPublicCertificates == null || _caPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("CA public certificate not loaded", true);
+                    return false;
+                }
+
                 List<X509CertificateEntry> certificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(importFile));
                 if (certificateEntries == null)
                 {
@@ -1848,6 +1855,37 @@ namespace S29CertGenerator
 
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = certificateEntries[certCount - 2].Certificate;
                 Org.BouncyCastle.X509.X509Certificate x509CaCert = certificateEntries[certCount - 1].Certificate;
+
+                List<Org.BouncyCastle.X509.X509Certificate> installCerts = new List<Org.BouncyCastle.X509.X509Certificate>()
+                {
+                    x509SubCaCert,
+                    x509CaCert,
+                };
+
+                List<Org.BouncyCastle.X509.X509Certificate> rootCerts = new List<Org.BouncyCastle.X509.X509Certificate>();
+                foreach (X509CertificateEntry caPublicCertificate in _caPublicCertificates)
+                {
+                    Org.BouncyCastle.X509.X509Certificate cert = caPublicCertificate.Certificate;
+                    if (cert != null)
+                    {
+                        rootCerts.Add(cert);
+                    }
+                }
+
+                if (!EdBcTlsUtilities.ValidateCertChain(installCerts, rootCerts))
+                {
+                    UpdateStatusText("Certificate chain validation failed", true);
+                    //return false;
+                }
+
+                if (!EdSec4Diag.InstallCertificates(installCerts))
+                {
+                    UpdateStatusText("Failed to install certificates", true);
+                    EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintCa);
+                    EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa);
+                    return false;
+                }
+
                 using X509Certificate2 subCaCert = X509CertificateLoader.LoadCertificate(x509SubCaCert.GetEncoded());
                 using X509Certificate2 caCert = X509CertificateLoader.LoadCertificate(x509CaCert.GetEncoded());
 
