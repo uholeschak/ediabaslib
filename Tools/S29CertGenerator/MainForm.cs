@@ -1223,7 +1223,10 @@ namespace S29CertGenerator
                         if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
                         {
                             UpdateStatusText("SubCA certificate public key does not match ISTA public key", true);
-                            certValid = false;
+                            if (!validate)
+                            {
+                                certValid = false;
+                            }
                         }
 
                         DateTime validDate = validate ? subCaCert.NotAfter.AddHours(-12) : subCaCert.NotAfter.AddMonths(-1);
@@ -1858,13 +1861,13 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ValidateCertificates()
+        protected bool ValidateCertificates(string trustStoreFolder)
         {
             try
             {
                 UpdateStatusText(string.Empty);
 
-                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(textBoxTrustStoreFolder.Text, false, true);
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, false, true);
                 if (istaCertChain == null)
                 {
                     UpdateStatusText("Failed to validate certificates", true);
@@ -1942,6 +1945,13 @@ namespace S29CertGenerator
                     !EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa, subCaCert.Thumbprint))
                 {
                     UpdateStatusText("Failed to set CA thumbprints in ISTA config", true);
+                    return false;
+                }
+
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, false, true);
+                if (istaCertChain == null)
+                {
+                    UpdateStatusText("Failed to validate certificates", true);
                     return false;
                 }
 
@@ -2235,7 +2245,7 @@ namespace S29CertGenerator
 
         private void buttonValidate_Click(object sender, EventArgs e)
         {
-            ValidateCertificates();
+            ValidateCertificates(textBoxTrustStoreFolder.Text);
             UpdateDisplay();
         }
 
