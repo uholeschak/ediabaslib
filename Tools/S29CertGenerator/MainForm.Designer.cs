@@ -59,6 +59,7 @@
             textBoxClientConfigurationFile = new System.Windows.Forms.TextBox();
             buttonSelectClientConfigurationFile = new System.Windows.Forms.Button();
             openClientConfigFileDialog = new System.Windows.Forms.OpenFileDialog();
+            buttonValidate = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -347,6 +348,17 @@
             openClientConfigFileDialog.Filter = "Enc|*.enc|All files|*.*";
             openClientConfigFileDialog.Title = "Select Client Config file";
             // 
+            // buttonValidate
+            // 
+            buttonValidate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonValidate.Location = new System.Drawing.Point(367, 570);
+            buttonValidate.Name = "buttonValidate";
+            buttonValidate.Size = new System.Drawing.Size(75, 23);
+            buttonValidate.TabIndex = 26;
+            buttonValidate.Text = "Validate";
+            buttonValidate.UseVisualStyleBackColor = true;
+            buttonValidate.Click += buttonValidate_Click;
+            // 
             // MainForm
             // 
             AcceptButton = buttonInstall;
@@ -354,6 +366,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(697, 605);
+            Controls.Add(buttonValidate);
             Controls.Add(buttonSelectClientConfigurationFile);
             Controls.Add(textBoxClientConfigurationFile);
             Controls.Add(comboBoxVinList);
@@ -426,5 +439,6 @@
         private System.Windows.Forms.TextBox textBoxClientConfigurationFile;
         private System.Windows.Forms.Button buttonSelectClientConfigurationFile;
         private System.Windows.Forms.OpenFileDialog openClientConfigFileDialog;
+        private System.Windows.Forms.Button buttonValidate;
     }
 }

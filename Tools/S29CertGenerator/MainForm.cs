@@ -2066,5 +2066,10 @@ namespace S29CertGenerator
             ValidateSetting(true);
             UpdateDisplay();
         }
+
+        private void buttonValidate_Click(object sender, EventArgs e)
+        {
+            UpdateDisplay();
+        }
     }
 }
