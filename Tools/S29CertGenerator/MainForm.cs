@@ -143,7 +143,7 @@ namespace S29CertGenerator
                 bool caKeyValid = LoadCaKey(textBoxCaKeyFile.Text);
                 bool istaKeyValid = LoadIstaKey(textBoxIstaKeyFile.Text);
                 bool subCaEmeaKeyValid = LoadSubCaEmeaKeyFile();
-                bool cacertsValid = LoadCaCerts(textBoxCaCertsFile.Text);
+                bool caCertsValid = LoadCaCerts(textBoxCaCertsFile.Text);
                 bool clientConfigValid = LoadClientConfiguration(textBoxClientConfigurationFile.Text);
                 bool isValid = IsSettingValid();
 
@@ -152,21 +152,20 @@ namespace S29CertGenerator
                     clientConfigValid = true;
                 }
 
-                if (caKeyValid && istaKeyValid && subCaEmeaKeyValid && cacertsValid && clientConfigValid && isValid && !active)
+                bool enableActionButtons = false;
+                if (caKeyValid && istaKeyValid && subCaEmeaKeyValid && caCertsValid && clientConfigValid && isValid && !active)
                 {
-                    buttonInstall.Enabled = true;
-                    buttonUninstall.Enabled = true;
-                    buttonValidate.Enabled = true;
-                    buttonImport.Enabled = true;
-
-                    buttonInstall.Focus();
+                    enableActionButtons = true;
                 }
-                else
+
+                buttonInstall.Enabled = enableActionButtons;
+                buttonUninstall.Enabled = enableActionButtons;
+                buttonValidate.Enabled = enableActionButtons;
+                buttonImport.Enabled = enableActionButtons;
+
+                if (enableActionButtons)
                 {
-                    buttonInstall.Enabled = false;
-                    buttonUninstall.Enabled = false;
-                    buttonValidate.Enabled = false;
-                    buttonImport.Enabled = false;
+                    buttonInstall.Focus();
                 }
 
                 buttonSearchVehicles.Enabled = !active;
