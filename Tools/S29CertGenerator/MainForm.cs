@@ -1153,7 +1153,7 @@ namespace S29CertGenerator
             }
         }
 
-        private List<Org.BouncyCastle.X509.X509Certificate> LoadIstaSubCaCerts(string trustStoreFolder, bool forceUpdate, bool validate = false)
+        private List<Org.BouncyCastle.X509.X509Certificate> LoadIstaSubCaCerts(string trustStoreFolder, string istaKeyFile, bool forceUpdate, bool validate = false)
         {
             try
             {
@@ -1231,7 +1231,7 @@ namespace S29CertGenerator
                             UpdateStatusText("SubCA certificate public key does not match ISTA public key", true);
                             if (validate)
                             {
-                                UpdateStatusText($"Update ISTA key file first: {textBoxIstaKeyFile.Text}", true);
+                                UpdateStatusText($"Update ISTA key file first: {istaKeyFile}", true);
                             }
                             else
                             {
@@ -1634,13 +1634,13 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string clientConfigFile, string vehicleVin, bool forceUpdate = false)
+        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string istaKeyFile, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string clientConfigFile, string vehicleVin, bool forceUpdate = false)
         {
             try
             {
                 UpdateStatusText(string.Empty);
 
-                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, forceUpdate);
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, forceUpdate);
                 if (istaCertChain == null || istaCertChain.Count != 2)
                 {
                     UpdateStatusText("Failed to create SubCA certificates", true);
@@ -1871,13 +1871,13 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ValidateCertificates(string trustStoreFolder)
+        protected bool ValidateCertificates(string trustStoreFolder, string istaKeyFile)
         {
             try
             {
                 UpdateStatusText(string.Empty);
 
-                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, false, true);
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, false, true);
                 if (istaCertChain == null)
                 {
                     UpdateStatusText("Failed to validate certificates", true);
@@ -1894,7 +1894,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ImportCertificates(string importFile, string trustStoreFolder, string clientConfigFile)
+        protected bool ImportCertificates(string importFile, string trustStoreFolder, string istaKeyFile, string clientConfigFile)
         {
             try
             {
@@ -1958,7 +1958,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
-                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, false, true);
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, false, true);
                 if (istaCertChain == null)
                 {
                     UpdateStatusText("Failed to validate certificates", true);
@@ -2243,7 +2243,7 @@ namespace S29CertGenerator
         private void buttonInstall_Click(object sender, EventArgs e)
         {
             string vehicleVin = comboBoxVinList.SelectedItem as string;
-            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, textBoxClientConfigurationFile.Text, vehicleVin, checkBoxForceCreate.Checked))
+            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, textBoxClientConfigurationFile.Text, vehicleVin, checkBoxForceCreate.Checked))
             {
                 checkBoxForceCreate.Checked = false;
             }
@@ -2264,7 +2264,7 @@ namespace S29CertGenerator
 
         private void buttonValidate_Click(object sender, EventArgs e)
         {
-            ValidateCertificates(textBoxTrustStoreFolder.Text);
+            ValidateCertificates(textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text);
             UpdateDisplay();
         }
 
@@ -2286,7 +2286,7 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 string importFile = openImportCertDialog.FileName;
-                ImportCertificates(importFile, textBoxTrustStoreFolder.Text, textBoxClientConfigurationFile.Text);
+                ImportCertificates(importFile, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, textBoxClientConfigurationFile.Text);
                 _importCertFile = importFile;
             }
 
