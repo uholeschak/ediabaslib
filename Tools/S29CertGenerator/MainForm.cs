@@ -1938,15 +1938,12 @@ namespace S29CertGenerator
                 if (!string.IsNullOrEmpty(importDir) && !string.IsNullOrEmpty(istaKeyFile))
                 {
                     string keyFileName = Path.GetFileName(istaKeyFile);
-                    string keyFilePath = Path.Combine(importDir, keyFileName);
+                    string importKeyFile = Path.Combine(importDir, keyFileName);
 
-                    if (File.Exists(keyFilePath))
+                    if (File.Exists(importKeyFile))
                     {
-                        if (!File.Exists(istaKeyFile))
-                        {
-                            File.Copy(keyFilePath, istaKeyFile);
-                            UpdateStatusText($"ISTA key file imported: {keyFileName}", true);
-                        }
+                        File.Copy(importKeyFile, istaKeyFile, true);
+                        UpdateStatusText($"ISTA key file imported: {keyFileName}", true);
                     }
                 }
 
