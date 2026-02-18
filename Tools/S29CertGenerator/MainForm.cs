@@ -1934,6 +1934,22 @@ namespace S29CertGenerator
                     }
                 }
 
+                string importDir = Path.GetDirectoryName(importFile);
+                if (!string.IsNullOrEmpty(importDir) && !string.IsNullOrEmpty(istaKeyFile))
+                {
+                    string keyFileName = Path.GetFileName(istaKeyFile);
+                    string keyFilePath = Path.Combine(importDir, keyFileName);
+
+                    if (File.Exists(keyFilePath))
+                    {
+                        if (!File.Exists(istaKeyFile))
+                        {
+                            File.Copy(keyFilePath, istaKeyFile);
+                            UpdateStatusText($"ISTA key file imported: {keyFileName}", true);
+                        }
+                    }
+                }
+
                 if (!EdBcTlsUtilities.ValidateCertChain(installCerts, rootCerts))
                 {
                     UpdateStatusText("Certificate chain validation failed", true);
