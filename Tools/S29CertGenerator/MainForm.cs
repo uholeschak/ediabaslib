@@ -156,6 +156,8 @@ namespace S29CertGenerator
                 {
                     buttonInstall.Enabled = true;
                     buttonUninstall.Enabled = true;
+                    buttonValidate.Enabled = true;
+                    buttonImport.Enabled = true;
 
                     buttonInstall.Focus();
                 }
@@ -163,6 +165,8 @@ namespace S29CertGenerator
                 {
                     buttonInstall.Enabled = false;
                     buttonUninstall.Enabled = false;
+                    buttonValidate.Enabled = false;
+                    buttonImport.Enabled = false;
                 }
 
                 buttonSearchVehicles.Enabled = !active;
