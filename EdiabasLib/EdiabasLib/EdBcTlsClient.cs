@@ -65,8 +65,8 @@ namespace EdiabasLib
 
         private readonly EdiabasNet m_ediabasNet;
         private readonly List<CertInfo> m_privatePublicCertList;
-        private readonly IList<X509CertificateStructure> m_certificateAuthorities = null;
-        private readonly IList<X509Name> m_TrustedCaNames = null;
+        private readonly List<Org.BouncyCastle.X509.X509Certificate> m_certificateAuthorities;
+        private readonly List<X509Name> m_TrustedCaNames = null;
 
         public int HandshakeTimeout { get; set; } = 0;
 
@@ -75,7 +75,12 @@ namespace EdiabasLib
             m_ediabasNet = ediabasNet;
             m_privatePublicCertList = certInfoList;
 
-            m_certificateAuthorities = new List<X509CertificateStructure>();
+            m_certificateAuthorities = new List<Org.BouncyCastle.X509.X509Certificate>();
+            foreach (X509CertificateStructure certificateStructure in certificateAuthorities)
+            {
+                m_certificateAuthorities.Add(new Org.BouncyCastle.X509.X509Certificate(certificateStructure));
+            }
+
             m_TrustedCaNames = EdBcTlsUtilities.GetSubjectList(certificateAuthorities);
             if (m_TrustedCaNames.Count == 0)
             {
@@ -217,13 +222,15 @@ namespace EdiabasLib
                 }
 
                 m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client server chain length: {0}", chain.Length);
+                List<Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate>();
                 for (int i = 0; i < chain.Length; ++i)
                 {
                     X509CertificateStructure entry = X509CertificateStructure.GetInstance(chain[i].GetEncoded());
+                    certChain.Add(new Org.BouncyCastle.X509.X509Certificate(entry));
                     m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "fingerprint:SHA-256: {0} ({1})", EdBcTlsUtilities.Fingerprint(entry), entry.Subject);
                 }
 
-                if (!EdBcTlsUtilities.CheckCertificateChainCa(m_outer.Crypto, chain, m_outer.m_TrustedCaNames.ToArray()))
+                if (!EdBcTlsUtilities.ValidateCertChain(certChain, m_outer.m_certificateAuthorities))
                 {
                     throw new TlsFatalAlert(AlertDescription.unknown_ca);
                 }
