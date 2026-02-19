@@ -1151,7 +1151,10 @@ namespace CarSimulator
                                         X509CertificateStructure certStruct = EdBcTlsUtilities.LoadBcCertificateResource(trustedFile);
                                         if (certStruct != null)
                                         {
-                                            _serverCAs.Add(certStruct);
+                                            if (!_serverCAs.Contains(certStruct))
+                                            {
+                                                _serverCAs.Add(certStruct);
+                                            }
                                         }
                                     }
                                     catch (Exception)
