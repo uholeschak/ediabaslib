@@ -661,7 +661,13 @@ namespace S29CertGenerator
                 List<X509CertificateEntry> caEntries = EdBcTlsUtilities.GetCertificateEntries(caStructList);
                 if (additionalEntries != null)
                 {
-                    caEntries.AddRange(additionalEntries);
+                    foreach (X509CertificateEntry additionalEntry in additionalEntries)
+                    {
+                        if (!caEntries.Contains(additionalEntry))
+                        {
+                            caEntries.Add(additionalEntry);
+                        }
+                    }
                 }
                 return caEntries;
             }
