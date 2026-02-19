@@ -1242,7 +1242,7 @@ namespace S29CertGenerator
 
                         if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
                         {
-                            UpdateStatusText($"SubCA certificate public key does not match ISTA public key {istaKeyFile}", true);
+                            UpdateStatusText($"SubCA certificate public key does not match ISTA public key:\n{istaKeyFile}", true);
                             certValid = false;
                         }
 
@@ -1304,7 +1304,11 @@ namespace S29CertGenerator
 
                 if (x509SubCaEmeaCert == null || x509SubCaCert == null)
                 {
-                    if (!validate)
+                    if (validate)
+                    {
+                        UpdateStatusText("Failed to load SubCA certificate", true);
+                    }
+                    else
                     {
                         UpdateStatusText("Failed to create SubCA certificate", true);
                     }
@@ -1953,7 +1957,7 @@ namespace S29CertGenerator
                         AsymmetricKeyParameter istaImportPublicKey = istaKeyCertChain[0].Certificate.GetPublicKey();
                         if (!x509SubCaCert.GetPublicKey().Equals(istaImportPublicKey))
                         {
-                            UpdateStatusText("ISTA import public key does not match import SubCA certificate", true);
+                            UpdateStatusText("ISTA import public key does not match import SubCA certificate, not importing", true);
                         }
                         else
                         {
@@ -1984,7 +1988,7 @@ namespace S29CertGenerator
 
                 if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
                 {
-                    UpdateStatusText("ISTA public key does not match import SubCA certificate", true);
+                    UpdateStatusText($"ISTA public key does not match import SubCA certificate:\n{istaKeyFile}", true);
                     return false;
                 }
 
