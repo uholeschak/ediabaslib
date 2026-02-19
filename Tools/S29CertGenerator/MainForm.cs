@@ -676,36 +676,50 @@ namespace S29CertGenerator
             _istaKeyResource = null;
             _istaPublicCertificates = null;
 
+            AsymmetricKeyParameter privateKeyResource = LoadIstaKeyFile(istaKeyFile, out X509CertificateEntry[] publicCertificateEntries);
+            if (privateKeyResource == null)
+            {
+                return false; // Failed to load private key
+            }
+
+            _istaKeyResource = privateKeyResource;
+            _istaPublicCertificates = publicCertificateEntries.ToList();
+            return true;
+        }
+
+        private AsymmetricKeyParameter LoadIstaKeyFile(string istaKeyFile, out X509CertificateEntry[] publicChain)
+        {
+            publicChain = null;
+
             try
             {
                 if (string.IsNullOrWhiteSpace(istaKeyFile) || !File.Exists(istaKeyFile))
                 {
-                    return false;
+                    return null;
                 }
 
                 AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(istaKeyFile, EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
                 if (privateKeyResource == null)
                 {
-                    return false; // Failed to load private key
+                    return null; // Failed to load private key
                 }
 
                 if (publicCertificateEntries == null || publicCertificateEntries.Length < 1)
                 {
-                    return false; // Failed to load public certificates
+                    return null; // Failed to load public certificates
                 }
 
                 if (!publicCertificateEntries[0].Certificate.IsValid(DateTime.UtcNow.AddDays(1.0)))
                 {
-                    return false; // Public certificate is not valid in the future
+                    return null; // Public certificate is not valid in the future
                 }
 
-                _istaKeyResource = privateKeyResource;
-                _istaPublicCertificates = publicCertificateEntries.ToList();
-                return true;
+                publicChain = publicCertificateEntries;
+                return privateKeyResource;
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
         }
 
@@ -1940,10 +1954,19 @@ namespace S29CertGenerator
                     string keyFileName = Path.GetFileName(istaKeyFile);
                     string importKeyFile = Path.Combine(importDir, keyFileName);
 
-                    if (File.Exists(importKeyFile))
+                    AsymmetricKeyParameter privateKeyResource = LoadIstaKeyFile(importKeyFile, out X509CertificateEntry[] istaKeyCertChain);
+                    if (privateKeyResource != null && istaKeyCertChain != null && istaKeyCertChain.Length > 0)
                     {
-                        File.Copy(importKeyFile, istaKeyFile, true);
-                        UpdateStatusText($"ISTA key file imported: {keyFileName}", true);
+                        AsymmetricKeyParameter istaPublicKey = istaKeyCertChain[0].Certificate.GetPublicKey();
+                        if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
+                        {
+                            UpdateStatusText("ISTA import public key does not match import SubCA certificate", true);
+                        }
+                        else
+                        {
+                            File.Copy(importKeyFile, istaKeyFile, true);
+                            UpdateStatusText($"ISTA key file imported: {keyFileName}", true);
+                        }
                     }
                 }
 
