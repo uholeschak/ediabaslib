@@ -1242,15 +1242,8 @@ namespace S29CertGenerator
 
                         if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
                         {
-                            UpdateStatusText("SubCA certificate public key does not match ISTA public key", true);
-                            if (validate)
-                            {
-                                UpdateStatusText($"Update ISTA key file first: {istaKeyFile}", true);
-                            }
-                            else
-                            {
-                                certValid = false;
-                            }
+                            UpdateStatusText($"SubCA certificate public key does not match ISTA public key {istaKeyFile}", true);
+                            certValid = false;
                         }
 
                         DateTime validDate = validate ? subCaCert.NotAfter.AddHours(-12) : subCaCert.NotAfter.AddMonths(-1);
@@ -1957,8 +1950,8 @@ namespace S29CertGenerator
                     AsymmetricKeyParameter privateKeyResource = LoadIstaKeyFile(importKeyFile, out X509CertificateEntry[] istaKeyCertChain);
                     if (privateKeyResource != null && istaKeyCertChain != null && istaKeyCertChain.Length > 0)
                     {
-                        AsymmetricKeyParameter istaPublicKey = istaKeyCertChain[0].Certificate.GetPublicKey();
-                        if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
+                        AsymmetricKeyParameter istaImportPublicKey = istaKeyCertChain[0].Certificate.GetPublicKey();
+                        if (!x509SubCaCert.GetPublicKey().Equals(istaImportPublicKey))
                         {
                             UpdateStatusText("ISTA import public key does not match import SubCA certificate", true);
                         }
@@ -1966,8 +1959,33 @@ namespace S29CertGenerator
                         {
                             File.Copy(importKeyFile, istaKeyFile, true);
                             UpdateStatusText($"ISTA key file imported: {keyFileName}", true);
+
+                            if (!LoadIstaKey(istaKeyFile))
+                            {
+                                UpdateStatusText("Failed to load imported ISTA key file", true);
+                                return false;
+                            }
                         }
                     }
+                }
+
+                if (_istaPublicCertificates == null || _istaPublicCertificates.Count < 1)
+                {
+                    UpdateStatusText("ISTA public certificate not loaded", true);
+                    return false;
+                }
+
+                AsymmetricKeyParameter istaPublicKey = _istaPublicCertificates[0].Certificate.GetPublicKey();
+                if (istaPublicKey == null)
+                {
+                    UpdateStatusText("ISTA public key is not found", true);
+                    return false;
+                }
+
+                if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
+                {
+                    UpdateStatusText("ISTA public key does not match import SubCA certificate", true);
+                    return false;
                 }
 
                 if (!EdBcTlsUtilities.ValidateCertChain(installCerts, rootCerts))
@@ -1991,13 +2009,6 @@ namespace S29CertGenerator
                     !EdSec4Diag.SetIstaConfigString(EdSec4Diag.S29ThumbprintSubCa, subCaCert.Thumbprint))
                 {
                     UpdateStatusText("Failed to set CA thumbprints in ISTA config", true);
-                    return false;
-                }
-
-                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, false, true);
-                if (istaCertChain == null)
-                {
-                    UpdateStatusText("Failed to validate certificates", true);
                     return false;
                 }
 
