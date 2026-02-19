@@ -1135,21 +1135,28 @@ namespace CarSimulator
                                 string[] allTrustedFiles = Directory.GetFiles(certDir, "*.*", SearchOption.TopDirectoryOnly);
                                 foreach (string trustedFile in allTrustedFiles)
                                 {
-                                    string fileExt = Path.GetExtension(trustedFile);
-                                    if (string.IsNullOrEmpty(fileExt) || fileExt.Length < 2)
+                                    try
                                     {
-                                        continue;
-                                    }
+                                        string fileExt = Path.GetExtension(trustedFile);
+                                        if (string.IsNullOrEmpty(fileExt) || fileExt.Length < 2)
+                                        {
+                                            continue;
+                                        }
 
-                                    if (!fileExt.Skip(1).All(char.IsDigit))
-                                    {
-                                        continue;
-                                    }
+                                        if (!fileExt.Skip(1).All(char.IsDigit))
+                                        {
+                                            continue;
+                                        }
 
-                                    X509CertificateStructure certStruct = EdBcTlsUtilities.LoadBcCertificateResource(trustedFile);
-                                    if (certStruct != null)
+                                        X509CertificateStructure certStruct = EdBcTlsUtilities.LoadBcCertificateResource(trustedFile);
+                                        if (certStruct != null)
+                                        {
+                                            _serverCAs.Add(certStruct);
+                                        }
+                                    }
+                                    catch (Exception)
                                     {
-                                        _serverCAs.Add(certStruct);
+                                        // ignored
                                     }
                                 }
                             }
