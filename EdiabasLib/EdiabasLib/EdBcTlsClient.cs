@@ -183,7 +183,7 @@ namespace EdiabasLib
             private readonly EdBcTlsClient m_outer;
             private readonly TlsContext m_context;
             private EdiabasNet m_ediabasNet = null;
-            private IList<X509Name> m_certificateAuthorities = null;
+            private List<Org.BouncyCastle.X509.X509Certificate> m_certificateAuthorities;
 
             public EdBcTlsAuthentication(EdBcTlsClient outer, TlsContext context)
             {
@@ -194,6 +194,7 @@ namespace EdiabasLib
 
             public void NotifyServerCertificate(TlsServerCertificate serverCertificate)
             {
+                m_certificateAuthorities = null;
                 bool isEmpty = serverCertificate?.Certificate == null || serverCertificate.Certificate.IsEmpty;
 
                 if (isEmpty)
@@ -202,24 +203,6 @@ namespace EdiabasLib
                 }
 
                 TlsCertificate[] chain = serverCertificate.Certificate.GetCertificateList();
-
-                m_certificateAuthorities = new List<X509Name>();
-                BcTlsCrypto bcTlsCrypto = m_outer.Crypto as BcTlsCrypto;
-                if (bcTlsCrypto != null)
-                {
-                    for (int i = chain.Length - 1; i >= 0; i--)
-                    {
-                        TlsCertificate tlsCertificate = chain[i];
-                        X509Name issuer = BcTlsCertificate.Convert(bcTlsCrypto, tlsCertificate)?.X509CertificateStructure?.Issuer;
-                        if (issuer != null)
-                        {
-                            if (!m_certificateAuthorities.Contains(issuer))
-                            {
-                                m_certificateAuthorities.Add(issuer);
-                            }
-                        }
-                    }
-                }
 
                 m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "TLS client server chain length: {0}", chain.Length);
                 List<Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate>();
@@ -230,11 +213,13 @@ namespace EdiabasLib
                     m_ediabasNet?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "fingerprint:SHA-256: {0} ({1})", EdBcTlsUtilities.Fingerprint(entry), entry.Subject);
                 }
 
-                if (!EdBcTlsUtilities.ValidateCertChain(certChain, m_outer.m_certificateAuthorities))
+                Org.BouncyCastle.X509.X509Certificate caCert = EdBcTlsUtilities.GetCertChainCa(certChain, m_outer.m_certificateAuthorities);
+                if (caCert == null)
                 {
                     throw new TlsFatalAlert(AlertDescription.unknown_ca);
                 }
 
+                m_certificateAuthorities = new List<Org.BouncyCastle.X509.X509Certificate> { caCert };
                 TlsUtilities.CheckPeerSigAlgs(m_context, chain);
             }
 
@@ -254,8 +239,7 @@ namespace EdiabasLib
                     return null;
                 }
 
-                IList<X509Name> certificateAuthorities = m_certificateAuthorities;
-                if (certificateAuthorities == null || certificateAuthorities.Count == 0)
+                if (m_certificateAuthorities == null || m_certificateAuthorities.Count == 0)
                 {
                     throw new TlsFatalAlert(AlertDescription.unknown_ca);
                 }
@@ -295,8 +279,14 @@ namespace EdiabasLib
                         continue;
                     }
 
+                    List<Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                    foreach (X509CertificateStructure publicCertificate in publicCertificates)
+                    {
+                        certChain.Add(new Org.BouncyCastle.X509.X509Certificate(publicCertificate));
+                    }
+
                     bool acceptCert = false;
-                    if (EdBcTlsUtilities.CheckCertificateChainCa(publicCertificates.ToArray(), m_certificateAuthorities.ToArray()))
+                    if (EdBcTlsUtilities.ValidateCertChain(certChain, m_certificateAuthorities))
                     {
                         acceptCert = true;
                     }
