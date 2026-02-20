@@ -426,24 +426,17 @@ namespace EdiabasLib
             throw new NotSupportedException();
         }
 
-        public static bool CheckCertificateChainCa(TlsCrypto crypto, TlsCertificate[] chain, X509Name[] trustedIssuers)
+        public static bool CheckCertificateChainCa(X509CertificateStructure[] chain, X509Name[] trustedIssuers)
         {
             if (chain.Length < 1)
             {
                 return false;
             }
 
-            BcTlsCrypto bcTlsCrypto = crypto as BcTlsCrypto;
-            if (bcTlsCrypto == null)
-            {
-                return false;
-            }
-
             for (int i = chain.Length - 1; i >= 0; i--)
             {
-                TlsCertificate tlsCertificate = chain[i];
-                X509CertificateStructure tlsCertificateStructure = BcTlsCertificate.Convert(bcTlsCrypto, tlsCertificate)?.X509CertificateStructure;
-                X509Name issuer = tlsCertificateStructure?.Issuer;
+                X509CertificateStructure certificate = chain[i];
+                X509Name issuer = certificate?.Issuer;
                 if (issuer == null)
                 {
                     continue;
