@@ -16,7 +16,7 @@ namespace CarSimulator;
 
 public class BcTlsServer : DefaultTlsServer
 {
-    // These alogorithms are compatibe with Microsoft TLS 1.3 implementation
+    // These alogorithms are compatible with Microsoft TLS 1.3 implementation
     private static readonly SignatureAndHashAlgorithm[] RsaSignatureAndHashAlgorithms =
     {
         SignatureAndHashAlgorithm.rsa_pss_rsae_sha256,
