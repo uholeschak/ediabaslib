@@ -32,7 +32,7 @@ public class BcTlsServer : DefaultTlsServer
     private readonly string[] m_certResources;
     private readonly short m_supportedSignatureAlgorithm;
     private readonly SignatureAndHashAlgorithm[] m_supportedSigAndHashAlgs;
-    private readonly List<X509CertificateStructure> m_certificateAuthorities = null;
+    private readonly List<Org.BouncyCastle.X509.X509Certificate> m_certificateAuthorities = null;
     private IList<X509Name> m_TrustedCaNames = null;
     private IList<X509Name> m_clientTrustedIssuers = null;
 
@@ -49,14 +49,23 @@ public class BcTlsServer : DefaultTlsServer
         m_publicCert = Path.ChangeExtension(certBaseFile, ".pem");
         m_privateCert = Path.ChangeExtension(certBaseFile, ".key");
         m_certPassword = certPassword;
-        m_certificateAuthorities = certificateAuthorities;
 
         if (!File.Exists(m_publicCert) || !File.Exists(m_privateCert))
         {
             throw new FileNotFoundException("Certificate files not found", certBaseFile);
         }
 
-        m_TrustedCaNames = EdBcTlsUtilities.GetSubjectList(m_certificateAuthorities);
+        m_certificateAuthorities = new List<Org.BouncyCastle.X509.X509Certificate>();
+        foreach (X509CertificateStructure certificateStructure in certificateAuthorities)
+        {
+            m_certificateAuthorities.Add(new Org.BouncyCastle.X509.X509Certificate(certificateStructure));
+        }
+        if (m_certificateAuthorities.Count == 0)
+        {
+            throw new FileNotFoundException("No certificate authorities found", certBaseFile);
+        }
+
+        m_TrustedCaNames = EdBcTlsUtilities.GetSubjectList(certificateAuthorities);
         if (m_TrustedCaNames.Count == 0)
         {
             throw new FileNotFoundException("No trusted CA names found", certBaseFile);
@@ -199,16 +208,18 @@ public class BcTlsServer : DefaultTlsServer
         TlsCertificate[] chain = clientCertificate.GetCertificateList();
 
         Debug.WriteLine("TLS server received client certificate chain of length " + chain.Length);
+        List<Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate>();
         for (int i = 0; i < chain.Length; i++)
         {
             X509CertificateStructure entry = X509CertificateStructure.GetInstance(chain[i].GetEncoded());
+            certChain.Add(new Org.BouncyCastle.X509.X509Certificate(entry));
             // TODO Create fingerprint based on certificate signature algorithm digest
             Debug.WriteLine("    fingerprint:SHA-256 " + EdBcTlsUtilities.Fingerprint(entry) + " (" + entry.Subject + ")");
         }
 
-        if (chain.Length > 1)
+        if (certChain.Count > 0)
         {
-            if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, chain, m_TrustedCaNames.ToArray()))
+            if (!EdBcTlsUtilities.ValidateCertChain(certChain,m_certificateAuthorities))
             {
                 throw new TlsFatalAlert(AlertDescription.bad_certificate);
             }
