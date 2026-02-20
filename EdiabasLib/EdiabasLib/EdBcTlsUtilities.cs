@@ -928,13 +928,13 @@ namespace EdiabasLib
             }
         }
 
-        public static bool ValidateCertChain(List<X509Certificate> certChain, List<X509Certificate> rootCerts)
+        public static X509Certificate GetCertChainCa(List<X509Certificate> certChain, List<X509Certificate> rootCerts)
         {
             try
             {
-                if (certChain == null || certChain.Count < 2)
+                if (certChain == null || certChain.Count < 1)
                 {
-                    return false;
+                    return null;
                 }
 
                 X509Certificate finalCert = certChain[0];
@@ -960,25 +960,30 @@ namespace EdiabasLib
 
                 if (!subjectPublicKey.Equals(finalCert.GetPublicKey()))
                 {
-                    return false;
+                    return null;
                 }
 
                 if (result.TrustAnchor.TrustedCert == null)
                 {
-                    return false;
+                    return null;
                 }
 
                 if (!rootCerts.Contains(result.TrustAnchor.TrustedCert))
                 {
-                    return false;
+                    return null;
                 }
 
-                return true;
+                return result.TrustAnchor.TrustedCert;
             }
             catch (Exception)
             {
-                return false;
+                return null;
             }
+        }
+
+        public static bool ValidateCertChain(List<X509Certificate> certChain, List<X509Certificate> rootCerts)
+        {
+            return GetCertChainCa(certChain, rootCerts) != null;
         }
 
         public static string CreateSubjectHash(X509Certificate cert)
