@@ -1,7 +1,6 @@
 ﻿using EdiabasLib;
 using Org.BouncyCastle.Asn1.X509;
 using Org.BouncyCastle.Crypto;
-using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.Tls;
 using Org.BouncyCastle.Tls.Crypto;
@@ -208,7 +207,7 @@ public class BcTlsServer : DefaultTlsServer
 
         TlsCertificate[] chain = clientCertificate.GetCertificateList();
 
-        Debug.WriteLine("TLS server received client certificate chain of length " + chain.Length);
+        Debug.WriteLine("TLS server received client certificate chain of length {0}", chain.Length);
         List<Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate>();
         for (int i = 0; i < chain.Length; i++)
         {
@@ -239,6 +238,12 @@ public class BcTlsServer : DefaultTlsServer
 
         if (m_clientTrustedIssuers != null && m_clientTrustedIssuers.Count > 0)
         {
+            Debug.WriteLine("TLS server received client issuer length: {0}", m_clientTrustedIssuers.Count);
+            foreach (X509Name issuerName in m_clientTrustedIssuers)
+            {
+                Debug.WriteLine("    Issuer: {0}", issuerName);
+            }
+
             if (!EdBcTlsUtilities.CheckCertificateChainCa(m_publicCerts.ToArray(), m_clientTrustedIssuers.ToArray()))
             {
                 throw new TlsFatalAlert(AlertDescription.bad_certificate);
