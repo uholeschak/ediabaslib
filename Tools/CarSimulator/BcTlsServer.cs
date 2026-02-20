@@ -33,6 +33,7 @@ public class BcTlsServer : DefaultTlsServer
     private readonly short m_supportedSignatureAlgorithm;
     private readonly SignatureAndHashAlgorithm[] m_supportedSigAndHashAlgs;
     private readonly List<Org.BouncyCastle.X509.X509Certificate> m_certificateAuthorities = null;
+    private readonly List<X509CertificateStructure> m_publicCerts = null;
     private IList<X509Name> m_TrustedCaNames = null;
     private IList<X509Name> m_clientTrustedIssuers = null;
 
@@ -77,18 +78,18 @@ public class BcTlsServer : DefaultTlsServer
             throw new FileNotFoundException("Private key file not valid", m_privateCert);
         }
 
-        List<X509CertificateStructure> publicCerts = EdBcTlsUtilities.LoadBcCertificateResources(m_publicCert);
-        if (publicCerts == null || publicCerts.Count == 0)
+        m_publicCerts = EdBcTlsUtilities.LoadBcCertificateResources(m_publicCert);
+        if (m_publicCerts == null || m_publicCerts.Count == 0)
         {
             throw new FileNotFoundException("Public certificate file not valid", m_publicCert);
         }
 
-        if (publicCerts.Count < 2)
+        if (m_publicCerts.Count < 2)
         {
             throw new FileNotFoundException("Public certificate file does not contain CA certificate", m_publicCert);
         }
 
-        short? supportedSignatureAlgorithm = EdBcTlsUtilities.GetSupportedSignatureAlgorithms(publicCerts[0], out m_supportedSigAndHashAlgs);
+        short? supportedSignatureAlgorithm = EdBcTlsUtilities.GetSupportedSignatureAlgorithms(m_publicCerts[0], out m_supportedSigAndHashAlgs);
         if (supportedSignatureAlgorithm == null)
         {
             throw new FileNotFoundException("Public certificate does not contain supported signature algorithm", m_publicCert);
@@ -238,13 +239,7 @@ public class BcTlsServer : DefaultTlsServer
 
         if (m_clientTrustedIssuers != null && m_clientTrustedIssuers.Count > 0)
         {
-            List<TlsCertificate> publicCertChain = EdBcTlsUtilities.LoadCertificateResources(Crypto, m_publicCert);
-            if (publicCertChain == null || publicCertChain.Count == 0)
-            {
-                throw new TlsFatalAlert(AlertDescription.internal_error);
-            }
-
-            if (!EdBcTlsUtilities.CheckCertificateChainCa(Crypto, publicCertChain.ToArray(), m_clientTrustedIssuers.ToArray()))
+            if (!EdBcTlsUtilities.CheckCertificateChainCa(m_publicCerts.ToArray(), m_clientTrustedIssuers.ToArray()))
             {
                 throw new TlsFatalAlert(AlertDescription.bad_certificate);
             }
