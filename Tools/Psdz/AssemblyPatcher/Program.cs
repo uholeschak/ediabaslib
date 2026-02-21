@@ -375,6 +375,29 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.ISTAGUI.ViewModels",
+                                Class = "MainWindowViewModel",
+                                Method = "CheckExpirationDate",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("MainWindowViewModel.CheckExpirationDate found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                                Console.WriteLine("CheckExpirationDate patched");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** MainWindowViewModel.CheckExpirationDate Exception: {0}", ex.Message);
+                        }
+
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.Programming.States",
                                 Class = "TherapyPlanCalculated",
                                 Method = "IsConnectedViaENETAndBrandIsToyota",
