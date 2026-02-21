@@ -244,8 +244,10 @@ public class BcTlsServer : DefaultTlsServer
                 Debug.WriteLine("    Issuer: {0}", issuerName);
             }
 
-            if (!EdBcTlsUtilities.CheckCertificateChainCa(m_publicCerts.ToArray(), m_clientTrustedIssuers.ToArray()))
+            bool hasTrustedIssuer = m_clientTrustedIssuers.Any(issuer => m_publicCerts.Any(cert => cert.Subject.Equals(issuer)));
+            if (!hasTrustedIssuer)
             {
+                Debug.WriteLine("Issuer unknown, aborting");
                 throw new TlsFatalAlert(AlertDescription.bad_certificate);
             }
         }
