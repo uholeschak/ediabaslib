@@ -580,7 +580,7 @@ namespace EdiabasLib
             }
         }
 
-        public static AsymmetricKeyParameter LoadPkcs12Key(string pkcs12File, string password, out X509CertificateEntry[] publicChain)
+        public static AsymmetricKeyParameter LoadPkcs12Key(string pkcs12File, string password, out X509CertificateEntry[] publicChain, bool checkDate = false)
         {
             publicChain = null;
             try
@@ -591,38 +591,39 @@ namespace EdiabasLib
                     char[] passwordChars = password?.ToCharArray();
                     store.Load(fs, passwordChars);
 
-                    string keyAlisas = null;
+                    bool keyFound = false;
+                    AsymmetricKeyEntry keyEntry = null;
+                    X509CertificateEntry[] chain = null;
                     foreach (string alias in store.Aliases)
                     {
                         if (store.IsKeyEntry(alias))
                         {
-                            keyAlisas = alias;
-                            break;
+                            keyEntry = store.GetKey(alias);
+                            if (keyEntry != null)
+                            {
+                                chain = store.GetCertificateChain(alias);
+                                if (chain != null && chain.Length > 0)
+                                {
+                                    keyFound = true;
+                                    break;
+                                }
+                            }
                         }
                     }
 
-                    if (keyAlisas == null)
+                    if (!keyFound)
                     {
                         return null;
                     }
 
-                    AsymmetricKeyEntry keyEntry = store.GetKey(keyAlisas);
-                    if (keyEntry == null)
+                    if (checkDate)
                     {
-                        return null;
-                    }
-
-                    X509CertificateEntry[] chain = store.GetCertificateChain(keyAlisas);
-                    if (chain == null || chain.Length < 1)
-                    {
-                        return null;
-                    }
-
-                    foreach (X509CertificateEntry certEntry in chain)
-                    {
-                        if (!certEntry.Certificate.IsValid(DateTime.UtcNow.AddHours(12.0)))
+                        foreach (X509CertificateEntry certEntry in chain)
                         {
-                            return null;
+                            if (!certEntry.Certificate.IsValid(DateTime.UtcNow.AddHours(12.0)))
+                            {
+                                return null;
+                            }
                         }
                     }
 
@@ -636,7 +637,7 @@ namespace EdiabasLib
             }
         }
 
-        public static AsymmetricKeyParameter LoadCachedKeyFile(string folderName, string fileName, string password, out X509CertificateEntry[] publicChain)
+        public static AsymmetricKeyParameter LoadCachedKeyFile(string folderName, string fileName, string password, out X509CertificateEntry[] publicChain, bool checkDate = false)
         {
             publicChain = null;
             if (string.IsNullOrEmpty(folderName) || string.IsNullOrEmpty(fileName))
@@ -657,7 +658,7 @@ namespace EdiabasLib
                 {
                     try
                     {
-                        AsymmetricKeyParameter asymmetricKeyPar = LoadPkcs12Key(subCaPrivateFile, passwordArg, out X509CertificateEntry[] localChain);
+                        AsymmetricKeyParameter asymmetricKeyPar = LoadPkcs12Key(subCaPrivateFile, passwordArg, out X509CertificateEntry[] localChain, checkDate);
                         if (asymmetricKeyPar != null && localChain != null)
                         {
                             subCaAsymmetricKeyPar = asymmetricKeyPar;
