@@ -4167,6 +4167,12 @@ namespace EdiabasLib
                     }
                 }
 
+                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetTrustedCAs CA certs: {0}", caStructList.Count);
+                foreach (X509CertificateStructure caCert in caStructList)
+                {
+                    EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadS29Cert root cert: {0}", caCert.Subject.ToString());
+                }
+
                 sharedData.TrustedCAs = caList;
                 sharedData.TrustedCaStructs = caStructList;
                 return caList.Count > 0 | caStructList.Count > 0;
