@@ -2235,9 +2235,8 @@ namespace EdiabasLib
                                 !string.IsNullOrEmpty(AuthenticationProtected) &&
                                 string.Compare(AuthenticationProtected, AuthenticationS29, StringComparison.OrdinalIgnoreCase) == 0;
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Authenticate S29: {0}", authenticateS29);
-                            // check if authenticateS29 is enabled
 
-                            if (SharedDataActive.DiagDoIpSsl && !reconnect)
+                            if (authenticateS29 && !reconnect)
                             {
                                 EdiabasNet.ErrorCodes authResult = DoIpAuthenticate(SharedDataActive);
                                 if (authResult != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
