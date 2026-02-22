@@ -1100,7 +1100,7 @@ namespace AssemblyPatcher
                                     insertInstructions.Add(new Instruction(OpCodes.Ldstr, "RemoteHost="));
                                     insertInstructions.Add(instructions[templateIndex + 0].Clone());    // Ldarg_1
                                     insertInstructions.Add(instructions[templateIndex + 1].Clone());    // get_IPAddress()
-                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, ";DiagnosticPort=6801;ControlPort=6811"));
+                                    insertInstructions.Add(new Instruction(OpCodes.Ldstr, ";DiagnosticPort=6801;ControlPort=6811;Authentication=None;NetworkProtocol=TCP"));
                                     insertInstructions.Add(Instruction.Create(OpCodes.Call,
                                         patcher.BuildCall(typeof(System.String), "Concat", typeof(String), new[] { typeof(String), typeof(String), typeof(String) })));
 
