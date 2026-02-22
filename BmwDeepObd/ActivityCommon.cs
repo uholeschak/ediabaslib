@@ -816,6 +816,7 @@ namespace BmwDeepObd
         public const string SecuritySubDir = "Security";
         public const string CaCertsSubDir = "CaCerts";
         public const string CertsSubDir = "Certificates";
+        public const string CertsImportSubDir = "Certificates";
         public const string PackageAssembliesDir = "PackageAssemblies";
         public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
@@ -6666,6 +6667,36 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        public AsymmetricKeyParameter LoadExternalCaCertificate(string certPath, out X509CertificateEntry[] publicSubCaChain)
+        {
+            publicSubCaChain = null;
+            string parentDir1 = Directory.GetParent(certPath)?.Name;
+            if (parentDir1 == null)
+            {
+                return null;
+            }
+
+            string parentDir2 = Directory.GetParent(parentDir1)?.Name;
+            if (parentDir2 == null)
+            {
+                return null;
+            }
+
+            string importCertPath = Path.Combine(parentDir2, CertsImportSubDir);
+            if (!Directory.Exists(importCertPath))
+            {
+                return null;
+            }
+
+            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key("keyContainer.pfx", EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
+            if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
+            {
+                return null;
+            }
+
+            return null;
         }
 
         void VehicleConnected(bool connected, bool reconnect, string vin, bool isDoIp)
