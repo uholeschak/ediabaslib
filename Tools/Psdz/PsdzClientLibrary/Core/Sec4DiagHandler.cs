@@ -330,7 +330,7 @@ namespace PsdzClient.Core
 
             if (DateTime.Now < subCaCertificate[0].NotAfter.AddDays(-1.0) || DateTime.Now < caCertificate[0].NotAfter.AddDays(-1.0))
             {
-                if (DateTime.Now > subCaCertificate[0].NotAfter.AddDays(-7.0) || DateTime.Now > caCertificate[0].NotAfter.AddDays(-7.0))
+                if (DateTime.Now > subCaCertificate[0].NotAfter.AddDays(-2.0) || DateTime.Now > caCertificate[0].NotAfter.AddDays(-2.0))
                 {
                     Log.Info(method, "Certificte is over the 3 Weeks. We are requesting new Certificates but if this failes we are using the old one.");
                     return Sec4DiagCertificateState.NotYetExpired;

@@ -210,14 +210,14 @@ namespace PsdzClient.Core.Container
             ServiceLocator.Current.TryGetService<IFasta2Service>(out fasta2Service);
             try
             {
-                //[-] sc = new ServiceController("EDIABAS_MONITOR", Environment.MachineName);
-                //[-] scp = new ServiceControllerPermission(ServiceControllerPermissionAccess.Control, Environment.MachineName, "EDIABAS_MONITOR");
-                //[-] if (ServiceController.GetServices().Any((ServiceController x) => x.ServiceName.Equals("EDIABAS_MONITOR", StringComparison.OrdinalIgnoreCase)) && sc.Status == ServiceControllerStatus.Running)
-                //[-] {
-                //[-] scp.Assert();
-                //[-] sc.Refresh();
-                //[-] serviceIsRunning = true;
-                //[-] }
+            //[-] sc = new ServiceController("EDIABAS_MONITOR", Environment.MachineName);
+            //[-] scp = new ServiceControllerPermission(ServiceControllerPermissionAccess.Control, Environment.MachineName, "EDIABAS_MONITOR");
+            //[-] if (ServiceController.GetServices().Any((ServiceController x) => x.ServiceName.Equals("EDIABAS_MONITOR", StringComparison.OrdinalIgnoreCase)) && sc.Status == ServiceControllerStatus.Running)
+            //[-] {
+            //[-] scp.Assert();
+            //[-] sc.Refresh();
+            //[-] serviceIsRunning = true;
+            //[-] }
             }
             catch (Exception)
             {
@@ -827,6 +827,7 @@ namespace PsdzClient.Core.Container
                 string reserved = $"RemoteHost={device.IPAddress};selectCertificate={sec4DiagHandler.CertificateFilePathWithoutEnding};SSLPort={3496};Authentication=S29;NetworkProtocol=SSL";
                 return api.apiInitExt("ENET", "_", "Rheingold", reserved);
             }
+
             //[-] return api.apiInitExtForPTT("RPLUS:ICOM_P:Remotehost=127.0.0.1;Port=6408", "_", "Rheingold", string.Empty, logging);
             //[+] return false;
             return false;
@@ -843,12 +844,10 @@ namespace PsdzClient.Core.Container
             //[-] {
             //[-] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty, logging);
             //[-] }
-
             //[-] if (!isDoIP)
             //[-] {
             //[-] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty, logging);
             //[-] }
-
             //[-] return false;
             //[+] return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
             return api.apiInitExt("RPLUS:ICOM_P:Remotehost=" + device.IPAddress + ";Port=6801", "", "", string.Empty);
@@ -862,7 +861,7 @@ namespace PsdzClient.Core.Container
                 return api.apiInitExt("ENET", "_", "Rheingold", reserved);
             }
 
-            return api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=6801;ControlPort=6811");
+            return api.apiInitExt("ENET", "_", "Rheingold", "RemoteHost=" + device.IPAddress + ";DiagnosticPort=6801;ControlPort=6811;Authentication=None;NetworkProtocol=TCP");
         }
 
         private void LogDeviceInfo(bool logging)
@@ -1576,28 +1575,31 @@ namespace PsdzClient.Core.Container
                     {
                         try
                         {
-                            //[-] sc.ExecuteCommand(150);
+                        //[-] sc.ExecuteCommand(150);
                         }
                         catch
                         {
-                            //[-] Log.Error("ECUKom.apiJob()", $"Ediabas monitor executeCommand failed for Command {EdiabasMonitorTrigger.apijob}");
+                        //[-] Log.Error("ECUKom.apiJob()", $"Ediabas monitor executeCommand failed for Command {EdiabasMonitorTrigger.apijob}");
                         }
                     }
+
                     api.apiJob(ecu, jobName, param, resultFilter);
                     while (api.apiStateExt(1000) == 0)
                     {
                         SleepUtility.ThreadSleep(2, "ECUKom.apiJob - " + ecu + ", " + jobName + ", " + param);
                     }
+
                     if (serviceIsRunning)
                     {
                         try
                         {
-                            //[-] sc.ExecuteCommand(151);
+                        //[-] sc.ExecuteCommand(151);
                         }
                         catch
                         {
                         }
                     }
+
                     RemoveTraceLevel(callerMember);
                     if (api.apiStateExt(1000) == 3)
                     {
@@ -1612,12 +1614,13 @@ namespace PsdzClient.Core.Container
                     {
                         try
                         {
-                            //[-] sc.ExecuteCommand(152);
+                        //[-] sc.ExecuteCommand(152);
                         }
                         catch
                         {
                         }
                     }
+
                     eCUJob.JobResultSets = rsets;
                     if (rsets > 0)
                     {
