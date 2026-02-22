@@ -596,35 +596,46 @@ namespace EdiabasLib
                     X509CertificateEntry[] chain = null;
                     foreach (string alias in store.Aliases)
                     {
-                        if (store.IsKeyEntry(alias))
+                        if (!store.IsKeyEntry(alias))
                         {
-                            keyEntry = store.GetKey(alias);
-                            if (keyEntry != null)
+                            continue;
+                        }
+
+                        keyEntry = store.GetKey(alias);
+                        if (keyEntry == null)
+                        {
+                            continue;
+                        }
+
+                        chain = store.GetCertificateChain(alias);
+                        if (chain != null && chain.Length > 0)
+                        {
+                            if (checkDate)
                             {
-                                chain = store.GetCertificateChain(alias);
-                                if (chain != null && chain.Length > 0)
+                                bool dateValid = true;
+                                foreach (X509CertificateEntry certEntry in chain)
                                 {
-                                    keyFound = true;
-                                    break;
+                                    if (!certEntry.Certificate.IsValid(DateTime.UtcNow.AddHours(12.0)))
+                                    {
+                                        dateValid = false;
+                                        break;
+                                    }
+                                }
+
+                                if (!dateValid)
+                                {
+                                    continue;
                                 }
                             }
+
+                            keyFound = true;
+                            break;
                         }
                     }
 
                     if (!keyFound)
                     {
                         return null;
-                    }
-
-                    if (checkDate)
-                    {
-                        foreach (X509CertificateEntry certEntry in chain)
-                        {
-                            if (!certEntry.Certificate.IsValid(DateTime.UtcNow.AddHours(12.0)))
-                            {
-                                return null;
-                            }
-                        }
                     }
 
                     publicChain = chain;
