@@ -6570,10 +6570,12 @@ namespace BmwDeepObd
                 edInterfaceEnet.DoIpSslSecurityPath = caCertsDir;
                 edInterfaceEnet.DoIpS29Path = certsDir;
                 edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
+                edInterfaceEnet.Authentication = EdInterfaceEnet.AuthenticationS29;
                 return true;
             }
 
             edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolTcp;
+            edInterfaceEnet.Authentication = EdInterfaceEnet.AuthenticationNone;
             return false;
         }
 

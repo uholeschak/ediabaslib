@@ -115,6 +115,7 @@ namespace PsdzClient
             edInterfaceEnet.DoIpSslSecurityPath = _doIpSslSecurityPath;
             edInterfaceEnet.DoIpS29Path = _doIpS29CertPath;
             edInterfaceEnet.NetworkProtocol = EdInterfaceEnet.NetworkProtocolSsl;
+            edInterfaceEnet.Authentication = EdInterfaceEnet.AuthenticationS29;
             edInterfaceEnet.ConnectParameter = new EdInterfaceEnet.ConnectParameterType(GenS29Certificate, VehicleConnected);
 
             ResetValues();
