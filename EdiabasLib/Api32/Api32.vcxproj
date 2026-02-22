@@ -100,7 +100,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\net48\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\net481\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PreBuildEvent />
     <PreBuildEvent />
@@ -115,7 +115,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\net48\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\net481\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PreBuildEvent />
     <PreBuildEvent />
@@ -130,7 +130,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\net48\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\net481\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PreBuildEvent />
     <PreBuildEvent />
@@ -144,7 +144,7 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\net48\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
+      <EmbedManagedResourceFile>$(ProjectDir)..\ApiInternal\bin\$(Configuration)\net481\ApiInternal.dll;%(EmbedManagedResourceFile)</EmbedManagedResourceFile>
     </Link>
     <PreBuildEvent />
     <PreBuildEvent />
