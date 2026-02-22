@@ -756,6 +756,50 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.CoreFramework.Sec4Diag",
+                                Class = "Sec4DiagHandler",
+                                Method = "SearchForCertificatesInWindowsStore",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                // Hard coded "BMW.Rheingold.ISTAGUI.enableENETprogramming", not option required
+                                Console.WriteLine("Sec4DiagHandler.SearchForCertificatesInWindowsStore found");
+                                int patchCounter = 0;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldc_R8 && instruction.Operand is double value)
+                                    {
+                                        if (value > -7.01 && value < -6.99)
+                                        {
+                                            double newValue = -2;
+                                            instruction.Operand = newValue;
+                                            patchCounter++;
+                                        }
+                                    }
+                                }
+
+                                if (patchCounter > 0)
+                                {
+                                    Console.WriteLine("Sec4DiagHandler.SearchForCertificatesInWindowsStore patch count: {0}", patchCounter);
+                                    patched = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("*** Sec4DiagHandler.SearchForCertificatesInWindowsStore appears to have already been patched or is not existing");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** VoltageUtils.CheckVoltageForEthernetConnection Exception: {0}", ex.Message);
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.PresentationFramework.AuthenticationRefactored.Services",
                                 Class = "LoginEnabledOptionProvider",
                                 Method = "IsLoginEnabled",
