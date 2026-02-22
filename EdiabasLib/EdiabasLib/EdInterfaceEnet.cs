@@ -717,6 +717,8 @@ namespace EdiabasLib
         public const int IcomSslPortDefault = 50163;
         public const string NetworkProtocolTcp = "TCP";
         public const string NetworkProtocolSsl = "SSL";
+        public const string AuthenticationNone = "None";
+        public const string AuthenticationS29 = "S29";
         public const string AutoIp = "auto";
         public const string AutoIpAll = ":all";
         public const string AutoIpAllCombined = AutoIp + AutoIpAll;
@@ -778,6 +780,7 @@ namespace EdiabasLib
         protected AutoResetEvent IcomEvent;
 
         protected string NetworkProtocolProtected = NetworkProtocolTcp;
+        protected string AuthenticationProtected = AuthenticationNone;
         protected string RemoteHostProtected = AutoIp;
         protected string VehicleProtocolProtected = ProtocolHsfz + "," + ProtocolDoIp;
         protected int TesterAddress = 0xF4;
@@ -854,6 +857,18 @@ namespace EdiabasLib
                 if (!string.IsNullOrEmpty(prop))
                 {
                     NetworkProtocolProtected = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("EnetAuthentication");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    AuthenticationProtected = prop;
+                }
+
+                prop = EdiabasProtected?.GetConfigProperty("Authentication");
+                if (!string.IsNullOrEmpty(prop))
+                {
+                    AuthenticationProtected = prop;
                 }
 
                 if (string.IsNullOrEmpty(RplusSectionProtected))
@@ -2218,6 +2233,12 @@ namespace EdiabasLib
 
                             if (SharedDataActive.DiagDoIpSsl && !reconnect)
                             {
+                                bool authenticateS29 =
+                                    !string.IsNullOrEmpty(AuthenticationProtected) &&
+                                    string.Compare(AuthenticationProtected, AuthenticationS29, StringComparison.OrdinalIgnoreCase) == 0;
+
+                                EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Authenticate S29: {0}", authenticateS29);
+                                // check if authenticateS29 is enabled
                                 EdiabasNet.ErrorCodes authResult = DoIpAuthenticate(SharedDataActive);
                                 if (authResult != EdiabasNet.ErrorCodes.EDIABAS_ERR_NONE)
                                 {
@@ -2602,6 +2623,18 @@ namespace EdiabasLib
             set
             {
                 NetworkProtocolProtected = value;
+            }
+        }
+
+        public string Authentication
+        {
+            get
+            {
+                return AuthenticationProtected;
+            }
+            set
+            {
+                AuthenticationProtected = value;
             }
         }
 
