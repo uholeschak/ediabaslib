@@ -6715,18 +6715,21 @@ namespace BmwDeepObd
             string parentDir1 = Directory.GetParent(certPath)?.FullName;
             if (parentDir1 == null)
             {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Parent directory 1 of cert path missing");
                 return null;
             }
 
             string parentDir2 = Directory.GetParent(parentDir1)?.FullName;
             if (parentDir2 == null)
             {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Parent directory 2 of cert path missing");
                 return null;
             }
 
             string importCertPath = Path.Combine(parentDir2, CertsImportSubDir);
             if (!Directory.Exists(importCertPath))
             {
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Import certificate path not existing: {0}", importCertPath);
                 return null;
             }
 
@@ -6734,12 +6737,14 @@ namespace BmwDeepObd
             AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(keyFilePath, EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
             if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
             {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Failed to load external PKCS12 key");
                 return null;
             }
 
             AsymmetricKeyParameter externalPublicKey = publicCertificateEntries[0].Certificate.GetPublicKey();
             if (externalPublicKey == null)
             {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Failed to get external public key");
                 return null;
             }
 
@@ -6750,6 +6755,7 @@ namespace BmwDeepObd
                 List<X509CertificateEntry> certificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(certFile));
                 if (certificateEntries == null || certificateEntries.Count < 2)
                 {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Skipping invalid certificate: {0}", certFile);
                     continue;
                 }
 
@@ -6759,6 +6765,7 @@ namespace BmwDeepObd
 
                 if (!x509SubCaCert.GetPublicKey().Equals(externalPublicKey))
                 {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Public key mismatch for: {0}", certFile);
                     continue;
                 }
 
@@ -6770,9 +6777,11 @@ namespace BmwDeepObd
 
                 if (!EdBcTlsUtilities.ValidateCertChain(certChain, rootCerts))
                 {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Failed to validate certificate chain for: {0}", certFile);
                     continue;
                 }
 
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Successfully loaded certificate chain for: {0}", certFile);
                 publicSubCaChain = new List<X509CertificateEntry>
                 {
                     new X509CertificateEntry(x509SubCaCert),
@@ -6781,6 +6790,7 @@ namespace BmwDeepObd
                 return privateKeyResource;
             }
 
+            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: No valid public certificate found");
             return null;
         }
 
