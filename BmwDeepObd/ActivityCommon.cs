@@ -6713,7 +6713,7 @@ namespace BmwDeepObd
                 return null;
             }
 
-            string keyFilePath = Path.Combine(parentDir2, "keyContainer.pfx");
+            string keyFilePath = Path.Combine(importCertPath, "keyContainer.pfx");
             AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(keyFilePath, EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
             if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
             {
