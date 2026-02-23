@@ -816,6 +816,7 @@ namespace BmwDeepObd
         public const string SecuritySubDir = "Security";
         public const string CaCertsSubDir = "CaCerts";
         public const string CertsSubDir = "Certificates";
+        public const string CertsImportSubDir = "Certificates";
         public const string PackageAssembliesDir = "PackageAssemblies";
         public const string EnetSsidEmpty = "***";
         public const string AdapterSsidDeepObd = "Deep OBD BMW";
@@ -6666,6 +6667,81 @@ namespace BmwDeepObd
             {
                 return null;
             }
+        }
+
+        public AsymmetricKeyParameter LoadExternalCaCertificate(string certPath, List<X509CertificateStructure> trustedCaCerts, out X509CertificateEntry[] publicSubCaChain)
+        {
+            publicSubCaChain = null;
+            string parentDir1 = Directory.GetParent(certPath)?.Name;
+            if (parentDir1 == null)
+            {
+                return null;
+            }
+
+            string parentDir2 = Directory.GetParent(parentDir1)?.Name;
+            if (parentDir2 == null)
+            {
+                return null;
+            }
+
+            string importCertPath = Path.Combine(parentDir2, CertsImportSubDir);
+            if (!Directory.Exists(importCertPath))
+            {
+                return null;
+            }
+
+            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key("keyContainer.pfx", EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
+            if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
+            {
+                return null;
+            }
+
+            AsymmetricKeyParameter importPublicKey = publicCertificateEntries[0].Certificate.GetPublicKey();
+            if (importPublicKey == null)
+            {
+                return null;
+            }
+
+            List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
+            string[] certFiles = Directory.GetFiles(importCertPath, "*.pem", SearchOption.TopDirectoryOnly);
+            foreach (string certFile in certFiles)
+            {
+                List<X509CertificateEntry> certificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(certFile));
+                if (certificateEntries == null || certificateEntries.Count < 2)
+                {
+                    continue;
+                }
+
+                int certCount = certificateEntries.Count;
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = certificateEntries[certCount - 2].Certificate;
+                Org.BouncyCastle.X509.X509Certificate x509CaCert = certificateEntries[certCount - 1].Certificate;
+
+                if (!x509SubCaCert.GetPublicKey().Equals(importPublicKey))
+                {
+                    continue;
+                }
+
+                List<Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate>
+                {
+                    x509SubCaCert,
+                    x509CaCert,
+                };
+
+                if (!EdBcTlsUtilities.ValidateCertChain(certChain, rootCerts))
+                {
+                    continue;
+                }
+
+                publicSubCaChain =
+                [
+                    new X509CertificateEntry(x509SubCaCert),
+                    new X509CertificateEntry(x509CaCert)
+                ];
+
+                return privateKeyResource;
+            }
+
+            return null;
         }
 
         void VehicleConnected(bool connected, bool reconnect, string vin, bool isDoIp)
