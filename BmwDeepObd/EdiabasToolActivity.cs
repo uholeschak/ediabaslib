@@ -3252,6 +3252,16 @@ namespace BmwDeepObd
                         }
                     }
                     break;
+
+                case ActivityCommon.CertificateAction:
+                {
+                    string certStatus = intent.GetStringExtra(ActivityCommon.BroadcastCertStats);
+                    if (!string.IsNullOrEmpty(certStatus))
+                    {
+                        //ShowBallonMessage(certStatus);
+                    }
+                    break;
+                }
             }
         }
 
