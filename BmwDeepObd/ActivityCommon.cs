@@ -849,6 +849,8 @@ namespace BmwDeepObd
         public const string PackageNameAction = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
         public const string BroadcastXmlEditorClassName = "XmlEditorClassName";
+        public const string CertificateAction = AppNameSpace + ".Action.Certificate";
+        public const string BroadcastCertStats = "CertificateStatus";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
         public const string NotificationChannelCommunication = "NotificationCommunication";
         public const string NotificationChannelGroupCustom = "NotificationGroupCustom";

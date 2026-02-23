@@ -3380,6 +3380,7 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityCommon.PackageNameAction:
+                {
                     string packageName = intent.GetStringExtra(ActivityCommon.BroadcastXmlEditorPackageName);
                     string className = intent.GetStringExtra(ActivityCommon.BroadcastXmlEditorClassName);
                     if (!string.IsNullOrEmpty(packageName) && !string.IsNullOrEmpty(className))
@@ -3390,6 +3391,17 @@ namespace BmwDeepObd
                         UpdateOptionsMenu();
                     }
                     break;
+                }
+
+                case ActivityCommon.CertificateAction:
+                {
+                    string certStatus = intent.GetStringExtra(ActivityCommon.BroadcastCertStats);
+                    if (!string.IsNullOrEmpty(certStatus))
+                    {
+                        ShowBallonMessage(certStatus);
+                    }
+                    break;
+                }
             }
         }
 
