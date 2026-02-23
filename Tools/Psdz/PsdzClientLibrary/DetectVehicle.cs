@@ -889,7 +889,7 @@ namespace PsdzClient
             return sec4DiagHandler;
         }
 
-        public List<X509CertificateStructure> GenS29Certificate(AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin)
+        public List<X509CertificateStructure> GenS29Certificate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin)
         {
             try
             {
