@@ -6598,21 +6598,25 @@ namespace BmwDeepObd
             {
                 if (machinePublicKey == null)
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Machine public key missing");
                     return null;
                 }
 
                 if (string.IsNullOrEmpty(trustedKeyPath))
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Trusted key path missing");
                     return null;
                 }
 
                 if (!Directory.Exists(trustedKeyPath))
                 {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Trusted key path does not exist: {0}", trustedKeyPath);
                     return null;
                 }
 
                 if (string.IsNullOrEmpty(vin))
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: VIN missing");
                     return null;
                 }
 
@@ -6635,20 +6639,28 @@ namespace BmwDeepObd
                         List<Org.BouncyCastle.X509.X509Certificate> x509externalCertList = EdBcTlsUtilities.ConvertToX509CertList(externalCertList);
                         if (EdBcTlsUtilities.ValidateCertChain(x509externalCertList, rootCerts))
                         {
+                            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Using valid external certificate chain");
                             return externalCertList;
                         }
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: External certificate validation failed");
+                    }
+                    else
+                    {
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate external certificate failed");
                     }
                 }
 
                 string[] pfxFiles = Directory.GetFiles(trustedKeyPath, "*.pfx", SearchOption.TopDirectoryOnly);
                 if (pfxFiles.Length != 1)
                 {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Invalid PFX files count: {0}", pfxFiles.Length);
                     return null;
                 }
 
                 AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(pfxFiles[0], string.Empty, out X509CertificateEntry[] publicCertificateEntries);
                 if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Load PKCS12 key failed");
                     return null;
                 }
 
@@ -6656,6 +6668,7 @@ namespace BmwDeepObd
                 AsymmetricKeyParameter subCaKeyResource = EdBcTlsUtilities.LoadCachedKeyFile(certPath, "SubCaEmeaCert.pem", string.Empty, out X509CertificateEntry[] publicSubCaChain);
                 if (subCaKeyResource == null || publicSubCaChain == null || publicSubCaChain.Length < 1)
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Load cached SubCa key failed");
                     return null;
                 }
 
@@ -6663,6 +6676,7 @@ namespace BmwDeepObd
                 using X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, privateKeyResource, 1);
                 if (subCaEmeaCert == null)
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate SubCa certificate failed");
                     return null;
                 }
 
@@ -6670,6 +6684,7 @@ namespace BmwDeepObd
                 using X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(x509SubCaEmeaCert, machinePublicKey, subCaKeyResource, vin);
                 if (s29Cert == null)
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate S29 certificate failed");
                     return null;
                 }
 
@@ -6681,9 +6696,11 @@ namespace BmwDeepObd
                 List<Org.BouncyCastle.X509.X509Certificate> x509CertList = EdBcTlsUtilities.ConvertToX509CertList(certList);
                 if (!EdBcTlsUtilities.ValidateCertChain(x509CertList, rootCerts))
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Validate certificate chain failed");
                     return null;
                 }
 
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Successfully generated S29 certificate chain");
                 return certList;
             }
             catch (Exception)
