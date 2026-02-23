@@ -19,6 +19,7 @@ using BmwDeepObd.Dialogs;
 using BmwDeepObd.FilePicker;
 using BmwFileReader;
 using EdiabasLib;
+using Skydoves.BalloonLib;
 
 // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
 // ReSharper disable LoopCanBeConvertedToQuery
@@ -3256,10 +3257,21 @@ namespace BmwDeepObd
                 case ActivityCommon.CertificateAction:
                 {
                     string certStatus = intent.GetStringExtra(ActivityCommon.BroadcastCertStats);
-                    if (!string.IsNullOrEmpty(certStatus))
+                    if (string.IsNullOrEmpty(certStatus))
                     {
-                        //ShowBallonMessage(certStatus);
+                        break;
                     }
+
+                    View rootView = _contentView?.RootView;
+                    if (rootView == null)
+                    {
+                        break;
+                    }
+
+                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
+                    balloonBuilder.SetText(certStatus);
+                    Balloon balloon = balloonBuilder.Build();
+                    balloon.ShowAtCenter(rootView);
                     break;
                 }
             }
