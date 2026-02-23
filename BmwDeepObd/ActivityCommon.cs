@@ -6625,6 +6625,7 @@ namespace BmwDeepObd
                 AsymmetricKeyParameter externalPrivateKey = LoadExternalCaCertificate(ediabas, certPath, trustedCaCerts, out List<X509CertificateEntry> externalSubCaChain);
                 if (externalPrivateKey != null && externalSubCaChain != null && externalSubCaChain.Count >= 2)
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Loaded external SubCa certificate and private key");
                     Org.BouncyCastle.X509.X509Certificate x509externalSubCa = externalSubCaChain[0].Certificate;
                     Org.BouncyCastle.X509.X509Certificate x509externalCa = externalSubCaChain[1].Certificate;
                     using X509Certificate2 externalS29Cert = EdSec4Diag.GenerateCertificate(x509externalSubCa, machinePublicKey, externalPrivateKey, vin);
