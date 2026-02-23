@@ -6598,21 +6598,25 @@ namespace BmwDeepObd
             {
                 if (machinePublicKey == null)
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Machine public key missing");
                     return null;
                 }
 
                 if (string.IsNullOrEmpty(trustedKeyPath))
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Trusted key path missing");
                     return null;
                 }
 
                 if (!Directory.Exists(trustedKeyPath))
                 {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Trusted key path does not exist: {0}", trustedKeyPath);
                     return null;
                 }
 
                 if (string.IsNullOrEmpty(vin))
                 {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: VIN missing");
                     return null;
                 }
 
@@ -6635,8 +6639,14 @@ namespace BmwDeepObd
                         List<Org.BouncyCastle.X509.X509Certificate> x509externalCertList = EdBcTlsUtilities.ConvertToX509CertList(externalCertList);
                         if (EdBcTlsUtilities.ValidateCertChain(x509externalCertList, rootCerts))
                         {
+                            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Using valid external certificate found");
                             return externalCertList;
                         }
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: External certificate validation failed");
+                    }
+                    else
+                    {
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate external certificate failed");
                     }
                 }
 
