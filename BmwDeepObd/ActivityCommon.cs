@@ -6624,24 +6624,20 @@ namespace BmwDeepObd
                     Org.BouncyCastle.X509.X509Certificate x509externalSubCa = externalSubCaChain[0].Certificate;
                     Org.BouncyCastle.X509.X509Certificate x509externalCa = externalSubCaChain[1].Certificate;
                     using X509Certificate2 externalS29Cert = EdSec4Diag.GenerateCertificate(x509externalSubCa, machinePublicKey, externalPrivateKey, vin);
-                    if (externalS29Cert == null)
+                    if (externalS29Cert != null)
                     {
-                        return null;
+                        Org.BouncyCastle.X509.X509Certificate x509externalS29Cert = new X509CertificateParser().ReadCertificate(externalS29Cert.GetRawCertData());
+                        List<X509CertificateStructure> externalCertList = new List<X509CertificateStructure>();
+                        externalCertList.Add(x509externalS29Cert.CertificateStructure);
+                        externalCertList.Add(x509externalSubCa.CertificateStructure);
+                        externalCertList.Add(x509externalCa.CertificateStructure);
+
+                        List<Org.BouncyCastle.X509.X509Certificate> x509externalCertList = EdBcTlsUtilities.ConvertToX509CertList(externalCertList);
+                        if (EdBcTlsUtilities.ValidateCertChain(x509externalCertList, rootCerts))
+                        {
+                            return externalCertList;
+                        }
                     }
-
-                    Org.BouncyCastle.X509.X509Certificate x509externalS29Cert = new X509CertificateParser().ReadCertificate(externalS29Cert.GetRawCertData());
-                    List<X509CertificateStructure> externalCertList = new List<X509CertificateStructure>();
-                    externalCertList.Add(x509externalS29Cert.CertificateStructure);
-                    externalCertList.Add(x509externalSubCa.CertificateStructure);
-                    externalCertList.Add(x509externalCa.CertificateStructure);
-
-                    List<Org.BouncyCastle.X509.X509Certificate> x509externalCertList = EdBcTlsUtilities.ConvertToX509CertList(externalCertList);
-                    if (!EdBcTlsUtilities.ValidateCertChain(x509externalCertList, rootCerts))
-                    {
-                        return null;
-                    }
-
-                    return externalCertList;
                 }
 
                 string[] pfxFiles = Directory.GetFiles(trustedKeyPath, "*.pfx", SearchOption.TopDirectoryOnly);
@@ -6699,13 +6695,13 @@ namespace BmwDeepObd
         public AsymmetricKeyParameter LoadExternalCaCertificate(string certPath, List<X509CertificateStructure> trustedCaCerts, out List<X509CertificateEntry> publicSubCaChain)
         {
             publicSubCaChain = null;
-            string parentDir1 = Directory.GetParent(certPath)?.Name;
+            string parentDir1 = Directory.GetParent(certPath)?.FullName;
             if (parentDir1 == null)
             {
                 return null;
             }
 
-            string parentDir2 = Directory.GetParent(parentDir1)?.Name;
+            string parentDir2 = Directory.GetParent(parentDir1)?.FullName;
             if (parentDir2 == null)
             {
                 return null;
@@ -6717,7 +6713,8 @@ namespace BmwDeepObd
                 return null;
             }
 
-            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key("keyContainer.pfx", EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
+            string keyFilePath = Path.Combine(parentDir2, "keyContainer.pfx");
+            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(keyFilePath, EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
             if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
             {
                 return null;
