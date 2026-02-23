@@ -6669,7 +6669,7 @@ namespace BmwDeepObd
             }
         }
 
-        public AsymmetricKeyParameter LoadExternalCaCertificate(string certPath, out X509CertificateEntry[] publicSubCaChain)
+        public AsymmetricKeyParameter LoadExternalCaCertificate(string certPath, List<X509CertificateStructure> trustedCaCerts, out X509CertificateEntry[] publicSubCaChain)
         {
             publicSubCaChain = null;
             string parentDir1 = Directory.GetParent(certPath)?.Name;
@@ -6694,6 +6694,51 @@ namespace BmwDeepObd
             if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
             {
                 return null;
+            }
+
+            AsymmetricKeyParameter importPublicKey = publicCertificateEntries[0].Certificate.GetPublicKey();
+            if (importPublicKey == null)
+            {
+                return null;
+            }
+
+            List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
+            string[] certFiles = Directory.GetFiles(importCertPath, "*.pem", SearchOption.TopDirectoryOnly);
+            foreach (string certFile in certFiles)
+            {
+                List<X509CertificateEntry> certificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(certFile));
+                if (certificateEntries == null || certificateEntries.Count < 2)
+                {
+                    continue;
+                }
+
+                int certCount = certificateEntries.Count;
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = certificateEntries[certCount - 2].Certificate;
+                Org.BouncyCastle.X509.X509Certificate x509CaCert = certificateEntries[certCount - 1].Certificate;
+
+                if (!x509SubCaCert.GetPublicKey().Equals(importPublicKey))
+                {
+                    continue;
+                }
+
+                List<Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate>
+                {
+                    x509SubCaCert,
+                    x509CaCert,
+                };
+
+                if (!EdBcTlsUtilities.ValidateCertChain(certChain, rootCerts))
+                {
+                    continue;
+                }
+
+                publicSubCaChain =
+                [
+                    new X509CertificateEntry(x509SubCaCert),
+                    new X509CertificateEntry(x509CaCert)
+                ];
+
+                return privateKeyResource;
             }
 
             return null;
