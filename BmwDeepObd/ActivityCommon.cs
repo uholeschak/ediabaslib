@@ -6618,7 +6618,7 @@ namespace BmwDeepObd
 
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
 
-                AsymmetricKeyParameter externalPrivateKey = LoadExternalCaCertificate(certPath, trustedCaCerts, out List<X509CertificateEntry> externalSubCaChain);
+                AsymmetricKeyParameter externalPrivateKey = LoadExternalCaCertificate(ediabas, certPath, trustedCaCerts, out List<X509CertificateEntry> externalSubCaChain);
                 if (externalPrivateKey != null && externalSubCaChain != null && externalSubCaChain.Count >= 2)
                 {
                     Org.BouncyCastle.X509.X509Certificate x509externalSubCa = externalSubCaChain[0].Certificate;
@@ -6692,7 +6692,7 @@ namespace BmwDeepObd
             }
         }
 
-        public AsymmetricKeyParameter LoadExternalCaCertificate(string certPath, List<X509CertificateStructure> trustedCaCerts, out List<X509CertificateEntry> publicSubCaChain)
+        public AsymmetricKeyParameter LoadExternalCaCertificate(EdiabasNet ediabas, string certPath, List<X509CertificateStructure> trustedCaCerts, out List<X509CertificateEntry> publicSubCaChain)
         {
             publicSubCaChain = null;
             string parentDir1 = Directory.GetParent(certPath)?.FullName;
