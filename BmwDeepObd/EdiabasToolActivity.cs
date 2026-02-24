@@ -3255,25 +3255,12 @@ namespace BmwDeepObd
                     break;
 
                 case ActivityCommon.CertificateAction:
-                {
-                    string certStatus = intent.GetStringExtra(ActivityCommon.BroadcastCertStats);
-                    if (string.IsNullOrEmpty(certStatus))
+                    if (_activityActive)
                     {
-                        break;
+                        string certStatus = intent.GetStringExtra(ActivityCommon.BroadcastCertStats);
+                        _activityCommon?.ShowBallonMessage(_contentView, certStatus);
                     }
-
-                    View rootView = _contentView?.RootView;
-                    if (rootView == null)
-                    {
-                        break;
-                    }
-
-                    Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                    balloonBuilder.SetText(certStatus);
-                    Balloon balloon = balloonBuilder.Build();
-                    balloon.ShowAtCenter(rootView);
                     break;
-                }
             }
         }
 

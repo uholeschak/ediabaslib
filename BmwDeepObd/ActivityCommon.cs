@@ -846,11 +846,11 @@ namespace BmwDeepObd
         public const string WifiApStateChangedAction = "android.net.wifi.WIFI_AP_STATE_CHANGED";
         public const string AppFolderName = AppNameSpace;
         public const string UsbPermissionAction = AppNameSpace + ".USB_PERMISSION";
+        public const string CertificateAction = AppNameSpace + ".Action.Certificate";
+        public const string BroadcastCertStats = "CertificateStatus";
         public const string PackageNameAction = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
         public const string BroadcastXmlEditorClassName = "XmlEditorClassName";
-        public const string CertificateAction = AppNameSpace + ".Action.Certificate";
-        public const string BroadcastCertStats = "CertificateStatus";
         public const string SettingBluetoothHciLog = "bluetooth_hci_log";
         public const string NotificationChannelCommunication = "NotificationCommunication";
         public const string NotificationChannelGroupCustom = "NotificationGroupCustom";
@@ -870,6 +870,13 @@ namespace BmwDeepObd
         private const string DeeplTranslate = @"/v2/translate";
         public static Regex Ipv4RegEx = new Regex(@"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$");
         public static readonly long TickResolMs = Stopwatch.Frequency / 1000;
+
+        public enum BalloonAlligment
+        {
+            Center,
+            Top,
+            Bottom,
+        }
 
         public enum PermissionRequestCodes
         {
@@ -2867,6 +2874,51 @@ namespace BmwDeepObd
             }
 
             return false;
+        }
+
+        public void ShowBallonMessage(View contentView, string message, int dismissDuration = BalloonDismissDuration, BalloonAlligment alignment = BalloonAlligment.Center)
+        {
+            if (string.IsNullOrWhiteSpace(message))
+            {
+                return;
+            }
+
+            View rootView = contentView?.RootView;
+            if (rootView == null)
+            {
+                return;
+            }
+
+            Balloon.Builder balloonBuilder = GetBalloonBuilder(_context);
+            balloonBuilder.SetText(message);
+            balloonBuilder.SetAutoDismissDuration(dismissDuration);
+            balloonBuilder.SetDismissWhenClicked(true);
+            switch (alignment)
+            {
+                case BalloonAlligment.Top:
+                    balloonBuilder.SetArrowOrientation(ArrowOrientation.Top);
+                    break;
+
+                case BalloonAlligment.Bottom:
+                    balloonBuilder.SetArrowOrientation(ArrowOrientation.Bottom);
+                    break;
+            }
+
+            Balloon balloon = balloonBuilder.Build();
+            switch (alignment)
+            {
+                case BalloonAlligment.Top:
+                    balloon.ShowAlignTop(rootView);
+                    break;
+
+                case BalloonAlligment.Bottom:
+                    balloon.ShowAlignBottom(rootView);
+                    break;
+
+                default:
+                    balloon.ShowAtCenter(rootView);
+                    break;
+            }
         }
 
         public static bool IsBtReliable()
