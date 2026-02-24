@@ -98,6 +98,19 @@
   <string name="update_info">Информация по обновлению:</string>
   <string name="update_show">Показывать обновление?\nВы также можете пропустить эту версию приложения.</string>
 
+  <!-- DoIP certificate status -->
+  <!--Translate-->
+  <string name="doip_cert_status_external_valid">Установленный DoIP сертификат действителен.</string>
+  <string name="doip_cert_status_external_invalid">Установленный DoIP сертификат недействителен.</string>
+  <string name="doip_cert_status_internal_valid">Сгенерирован временный DoIP сертификат.</string>
+  <string name="doip_cert_status_internal_invalid">Не удалось сгенерировать временный DoIP сертификат.</string>
+
+  <!-- Error codes -->
+  <!--Translate-->
+  <string name="error_code_error_temporary">Временная ошибка</string>
+  <string name="error_code_error_present">Ошибка присутствует</string>
+  <string name="error_code_error_stored">Сохранённая ошибка</string>
+
   <!-- Alert titles -->
   <string name="alert_title_info">Информация</string>
   <string name="alert_title_warning">Предупреждение</string>

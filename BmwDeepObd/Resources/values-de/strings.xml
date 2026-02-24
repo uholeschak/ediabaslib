@@ -97,6 +97,17 @@
   <string name="update_info">Update Informationen:</string>
   <string name="update_show">Wollen Sie das Update anzeigen?\nSie können auch diese App-Version überspringen.</string>
 
+  <!-- DoIP certificate status -->
+  <string name="doip_cert_status_external_valid">Das installierte DoIP-Zertifikat ist gültig.</string>
+  <string name="doip_cert_status_external_invalid">Das installierte DoIP-Zertifikat ist ungültig</string>
+  <string name="doip_cert_status_internal_valid">Temporäres DoIP-Zertifikat erstellt.</string>
+  <string name="doip_cert_status_internal_invalid">Erstellung des temporären DoIP-Zertifikats fehlgeschlagen.</string>
+
+  <!-- Error codes -->
+  <string name="error_code_error_temporary">Fehler temporär</string>
+  <string name="error_code_error_present">Fehler vorhanden</string>
+  <string name="error_code_error_stored">Fehler gespeichert</string>
+
   <!-- Alert titles -->
   <string name="alert_title_info">Information</string>
   <string name="alert_title_warning">Warnung</string>

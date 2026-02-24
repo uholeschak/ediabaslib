@@ -96,8 +96,11 @@
   <string name="update_info">Update information:</string>
   <string name="update_show">Do you want to show the update?\nYou could also skip this app version.</string>
 
-  <!-- Downloader library (modfications) -->
-  <string name="state_failed_unlicensed">Download failed because the app may not be downloaded from Google Play</string>
+  <!-- DoIP certificate status -->
+  <string name="doip_cert_status_external_valid">The installed DoIP certificate is valid.</string>
+  <string name="doip_cert_status_external_invalid">The installed DoIP certificate is invalid.</string>
+  <string name="doip_cert_status_internal_valid">Generated temporary DoIP certificate.</string>
+  <string name="doip_cert_status_internal_invalid">Generating temporary DoIP certificate failed.</string>
 
   <!-- Error codes -->
   <string name="error_code_error_temporary">Error temporary</string>
