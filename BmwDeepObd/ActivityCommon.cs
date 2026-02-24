@@ -847,7 +847,7 @@ namespace BmwDeepObd
         public const string AppFolderName = AppNameSpace;
         public const string UsbPermissionAction = AppNameSpace + ".USB_PERMISSION";
         public const string CertificateAction = AppNameSpace + ".Action.Certificate";
-        public const string BroadcastCertStats = "CertificateStatus";
+        public const string BroadcastCertStatus = "CertificateStatus";
         public const string PackageNameAction = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
         public const string BroadcastXmlEditorClassName = "XmlEditorClassName";
@@ -1806,6 +1806,7 @@ namespace BmwDeepObd
 
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(ForegroundService.NotificationBroadcastAction));
                     InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(PackageNameAction));
+                    InternalBroadcastManager.InternalBroadcastManager.GetInstance(context).RegisterReceiver(_bcReceiver, new IntentFilter(CertificateAction));
                     if (UsbSupport)
                     {   // usb handling
                         context.RegisterReceiver(_bcReceiver, new IntentFilter(UsbManager.ActionUsbDeviceDetached));   // system broadcasts
@@ -6730,6 +6731,7 @@ namespace BmwDeepObd
                         if (EdBcTlsUtilities.ValidateCertChain(x509externalCertList, rootCerts))
                         {
                             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Using valid external certificate chain");
+                            SendDoIpCertStatus(DoIpCertificateStatus.ExternalCertValid);
                             return externalCertList;
                         }
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: External certificate validation failed");
@@ -6791,6 +6793,7 @@ namespace BmwDeepObd
                 }
 
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Successfully generated S29 certificate chain");
+                SendDoIpCertStatus(DoIpCertificateStatus.InternalCertValid);
                 return certList;
             }
             catch (Exception)
@@ -6882,6 +6885,20 @@ namespace BmwDeepObd
 
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: No valid public certificate found");
             return null;
+        }
+
+        public void SendDoIpCertStatus(DoIpCertificateStatus certStatus)
+        {
+            try
+            {
+                Intent broadcastIntent = new Intent(CertificateAction);
+                broadcastIntent.PutExtra(BroadcastCertStatus, (int)certStatus);
+                InternalBroadcastManager.InternalBroadcastManager.GetInstance(_context).SendBroadcast(broadcastIntent);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         void VehicleConnected(bool connected, bool reconnect, string vin, bool isDoIp)
