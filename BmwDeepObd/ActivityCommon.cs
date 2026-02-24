@@ -6684,8 +6684,10 @@ namespace BmwDeepObd
 
         public List<X509CertificateStructure> GenS29Certificate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin)
         {
+            DoIpCertificateStatus certStatus = DoIpCertificateStatus.Unknown;
             try
             {
+                certStatus = DoIpCertificateStatus.InternalCertInvalid;
                 if (machinePublicKey == null)
                 {
                     ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Machine public key missing");
@@ -6711,34 +6713,41 @@ namespace BmwDeepObd
                 }
 
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
-
                 AsymmetricKeyParameter externalPrivateKey = LoadExternalCaCertificate(ediabas, certPath, trustedCaCerts, out List<X509CertificateEntry> externalSubCaChain);
-                if (externalPrivateKey != null && externalSubCaChain != null && externalSubCaChain.Count >= 2)
-                {
-                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Loaded external SubCa certificate and private key");
-                    Org.BouncyCastle.X509.X509Certificate x509externalSubCa = externalSubCaChain[0].Certificate;
-                    Org.BouncyCastle.X509.X509Certificate x509externalCa = externalSubCaChain[1].Certificate;
-                    using X509Certificate2 externalS29Cert = EdSec4Diag.GenerateCertificate(x509externalSubCa, machinePublicKey, externalPrivateKey, vin);
-                    if (externalS29Cert != null)
-                    {
-                        Org.BouncyCastle.X509.X509Certificate x509externalS29Cert = new X509CertificateParser().ReadCertificate(externalS29Cert.GetRawCertData());
-                        List<X509CertificateStructure> externalCertList = new List<X509CertificateStructure>();
-                        externalCertList.Add(x509externalS29Cert.CertificateStructure);
-                        externalCertList.Add(x509externalSubCa.CertificateStructure);
-                        externalCertList.Add(x509externalCa.CertificateStructure);
 
-                        List<Org.BouncyCastle.X509.X509Certificate> x509externalCertList = EdBcTlsUtilities.ConvertToX509CertList(externalCertList);
-                        if (EdBcTlsUtilities.ValidateCertChain(x509externalCertList, rootCerts))
-                        {
-                            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Using valid external certificate chain");
-                            SendDoIpCertStatus(DoIpCertificateStatus.ExternalCertValid);
-                            return externalCertList;
-                        }
-                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: External certificate validation failed");
-                    }
-                    else
+                if (externalPrivateKey != null)
+                {
+                    certStatus = DoIpCertificateStatus.ExternalCertInvalid;
+
+                    if (externalSubCaChain != null && externalSubCaChain.Count >= 2)
                     {
-                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate external certificate failed");
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Loaded external SubCa certificate and private key");
+                        Org.BouncyCastle.X509.X509Certificate x509externalSubCa = externalSubCaChain[0].Certificate;
+                        Org.BouncyCastle.X509.X509Certificate x509externalCa = externalSubCaChain[1].Certificate;
+                        using X509Certificate2 externalS29Cert = EdSec4Diag.GenerateCertificate(x509externalSubCa,
+                            machinePublicKey, externalPrivateKey, vin);
+                        if (externalS29Cert != null)
+                        {
+                            Org.BouncyCastle.X509.X509Certificate x509externalS29Cert = new X509CertificateParser().ReadCertificate(externalS29Cert.GetRawCertData());
+                            List<X509CertificateStructure> externalCertList = new List<X509CertificateStructure>();
+                            externalCertList.Add(x509externalS29Cert.CertificateStructure);
+                            externalCertList.Add(x509externalSubCa.CertificateStructure);
+                            externalCertList.Add(x509externalCa.CertificateStructure);
+
+                            List<Org.BouncyCastle.X509.X509Certificate> x509externalCertList = EdBcTlsUtilities.ConvertToX509CertList(externalCertList);
+                            if (EdBcTlsUtilities.ValidateCertChain(x509externalCertList, rootCerts))
+                            {
+                                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Using valid external certificate chain");
+                                certStatus = DoIpCertificateStatus.ExternalCertValid;
+                                return externalCertList;
+                            }
+
+                            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: External certificate validation failed");
+                        }
+                        else
+                        {
+                            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate external certificate failed");
+                        }
                     }
                 }
 
@@ -6793,12 +6802,19 @@ namespace BmwDeepObd
                 }
 
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Successfully generated S29 certificate chain");
-                SendDoIpCertStatus(DoIpCertificateStatus.InternalCertValid);
+                certStatus = DoIpCertificateStatus.InternalCertValid;
                 return certList;
             }
             catch (Exception)
             {
                 return null;
+            }
+            finally
+            {
+                if (certStatus != DoIpCertificateStatus.Unknown)
+                {
+                    SendDoIpCertStatus(certStatus);
+                }
             }
         }
 
@@ -6884,7 +6900,7 @@ namespace BmwDeepObd
             }
 
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: No valid public certificate found");
-            return null;
+            return privateKeyResource;
         }
 
         public void SendDoIpCertStatus(DoIpCertificateStatus certStatus)
