@@ -2931,8 +2931,7 @@ namespace BmwDeepObd
             }
         }
 
-        public void ShowDoIpCertStatusBallonMessage(View contentView, DoIpCertificateStatus certStatus,
-            int dismissDuration = BalloonDismissDuration, BalloonAlligment alignment = BalloonAlligment.Center)
+        public void ShowDoIpCertStatusMessage(DoIpCertificateStatus certStatus)
         {
             string message = null;
             switch (certStatus)
@@ -2953,7 +2952,7 @@ namespace BmwDeepObd
 
             if (message != null)
             {
-                ShowBallonMessage(contentView, message, dismissDuration, alignment);
+                Toast.MakeText(_context, message, ToastLength.Long)?.Show();
             }
         }
 
