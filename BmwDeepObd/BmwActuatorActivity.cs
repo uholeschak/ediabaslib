@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using Android.Content;
+﻿using Android.Content;
 using Android.Hardware.Usb;
 using Android.OS;
 using Android.Text.Method;
@@ -13,6 +7,12 @@ using Android.Views.InputMethods;
 using Android.Widget;
 using BmwFileReader;
 using EdiabasLib;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading;
 
 namespace BmwDeepObd
 {
@@ -403,8 +403,8 @@ namespace BmwDeepObd
                 case ActivityCommon.CertificateAction:
                     if (_activityActive)
                     {
-                        string certStatus = intent.GetStringExtra(ActivityCommon.BroadcastCertStats);
-                        _activityCommon?.ShowBallonMessage(_contentView, certStatus);
+                        ActivityCommon.DoIpCertificateStatus certStatus = (ActivityCommon.DoIpCertificateStatus)intent.GetIntExtra(ActivityCommon.BroadcastCertStats, (int)ActivityCommon.DoIpCertificateStatus.Unknown);
+                        _activityCommon?.ShowDoIpCertStatusBallonMessage(_contentView, certStatus);
                     }
                     break;
             }
