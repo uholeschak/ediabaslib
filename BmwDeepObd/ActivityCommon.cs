@@ -878,6 +878,15 @@ namespace BmwDeepObd
             Bottom,
         }
 
+        public enum DoIpCertificateStatus
+        {
+            Unknown,
+            ExternalCertValid,
+            ExternalCertInvalid,
+            InternalCertValid,
+            InternalCertInvalid,
+        }
+
         public enum PermissionRequestCodes
         {
             RequestPermissionExternalStorage,
@@ -2918,6 +2927,32 @@ namespace BmwDeepObd
                 default:
                     balloon.ShowAtCenter(rootView);
                     break;
+            }
+        }
+
+        public void ShowDoIpCertStatusBallonMessage(View contentView, DoIpCertificateStatus certStatus,
+            int dismissDuration = BalloonDismissDuration, BalloonAlligment alignment = BalloonAlligment.Center)
+        {
+            string message = null;
+            switch (certStatus)
+            {
+                case DoIpCertificateStatus.ExternalCertValid:
+                    message = "External certificate is valid";
+                    break;
+                case DoIpCertificateStatus.ExternalCertInvalid:
+                    message = "External certificate is invalid";
+                    break;
+                case DoIpCertificateStatus.InternalCertValid:
+                    message = "Internal certificate is valid";
+                    break;
+                case DoIpCertificateStatus.InternalCertInvalid:
+                    message = "Internal certificate is invalid";
+                    break;
+            }
+
+            if (message != null)
+            {
+                ShowBallonMessage(contentView, message, dismissDuration, alignment);
             }
         }
 
