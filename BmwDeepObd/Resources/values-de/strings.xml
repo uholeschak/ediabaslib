@@ -100,7 +100,7 @@
   <!-- DoIP certificate status -->
   <string name="doip_cert_status_external_valid">Das installierte DoIP-Zertifikat ist gültig.</string>
   <string name="doip_cert_status_external_invalid">Das installierte DoIP-Zertifikat ist ungültig</string>
-  <string name="doip_cert_status_internal_valid">Temporäres DoIP-Zertifikat erstellt.</string>
+  <string name="doip_cert_status_internal_valid">Kein DoIP-Zertifikat installiert, temporäres Zertifikat erstellt.</string>
   <string name="doip_cert_status_internal_invalid">Erstellung des temporären DoIP-Zertifikats fehlgeschlagen.</string>
 
   <!-- Error codes -->

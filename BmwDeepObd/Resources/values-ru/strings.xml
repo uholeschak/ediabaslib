@@ -102,8 +102,8 @@
   <!--Translate-->
   <string name="doip_cert_status_external_valid">Установленный DoIP сертификат действителен.</string>
   <string name="doip_cert_status_external_invalid">Установленный DoIP сертификат недействителен.</string>
-  <string name="doip_cert_status_internal_valid">Сгенерирован временный DoIP сертификат.</string>
-  <string name="doip_cert_status_internal_invalid">Не удалось сгенерировать временный DoIP сертификат.</string>
+  <string name="doip_cert_status_internal_valid">Нет установленного DoIP сертификата, создается временный сертификат.</string>
+  <string name="doip_cert_status_internal_invalid">Не удалось создать временный DoIP сертификат.</string>
 
   <!-- Error codes -->
   <!--Translate-->
