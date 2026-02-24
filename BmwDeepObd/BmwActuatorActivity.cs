@@ -399,6 +399,14 @@ namespace BmwDeepObd
                         }
                     }
                     break;
+
+                case ActivityCommon.CertificateAction:
+                    if (_activityActive)
+                    {
+                        string certStatus = intent.GetStringExtra(ActivityCommon.BroadcastCertStats);
+                        _activityCommon?.ShowBallonMessage(_contentView, certStatus);
+                    }
+                    break;
             }
         }
 

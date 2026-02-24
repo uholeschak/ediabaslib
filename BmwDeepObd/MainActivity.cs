@@ -87,13 +87,6 @@ namespace BmwDeepObd
             RequestEditXml,
         }
 
-        private enum BalloonAlligment
-        {
-            Center,
-            Top,
-            Bottom,
-        }
-
         private class DownloadInfo
         {
             public DownloadInfo(string downloadDir, string targetDir, XElement infoXml = null)
@@ -3379,6 +3372,14 @@ namespace BmwDeepObd
                     }
                     break;
 
+                case ActivityCommon.CertificateAction:
+                    if (_activityActive)
+                    {
+                        string certStatus = intent.GetStringExtra(ActivityCommon.BroadcastCertStats);
+                        ShowBallonMessage(certStatus);
+                    }
+                    break;
+
                 case ActivityCommon.PackageNameAction:
                 {
                     string packageName = intent.GetStringExtra(ActivityCommon.BroadcastXmlEditorPackageName);
@@ -3390,18 +3391,6 @@ namespace BmwDeepObd
                         StoreSettings();
                         UpdateOptionsMenu();
                     }
-                    break;
-                }
-
-                case ActivityCommon.CertificateAction:
-                {
-                    string certStatus = intent.GetStringExtra(ActivityCommon.BroadcastCertStats);
-                    if (string.IsNullOrEmpty(certStatus))
-                    {
-                        break;
-                    }
-
-                    ShowBallonMessage(certStatus);
                     break;
                 }
             }
@@ -6962,45 +6951,12 @@ namespace BmwDeepObd
 
         private void OpenDonateLink()
         {
-            _activityCommon.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
+            _activityCommon?.OpenWebUrl("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VUFSVNBRQQBPJ");
         }
 
-        private void ShowBallonMessage(string message, int dismissDuration = ActivityCommon.BalloonDismissDuration, BalloonAlligment alignment = BalloonAlligment.Center)
+        private void ShowBallonMessage(string message, int dismissDuration = ActivityCommon.BalloonDismissDuration, ActivityCommon.BalloonAlligment alignment = ActivityCommon.BalloonAlligment.Center)
         {
-            View rootView = _contentView?.RootView;
-            if (rootView != null)
-            {
-                Balloon.Builder balloonBuilder = ActivityCommon.GetBalloonBuilder(this);
-                balloonBuilder.SetText(message);
-                balloonBuilder.SetAutoDismissDuration(dismissDuration);
-                balloonBuilder.SetDismissWhenClicked(true);
-                switch (alignment)
-                {
-                    case BalloonAlligment.Top:
-                        balloonBuilder.SetArrowOrientation(ArrowOrientation.Top);
-                        break;
-
-                    case BalloonAlligment.Bottom:
-                        balloonBuilder.SetArrowOrientation(ArrowOrientation.Bottom);
-                        break;
-                }
-
-                Balloon balloon = balloonBuilder.Build();
-                switch (alignment)
-                {
-                    case BalloonAlligment.Top:
-                        balloon.ShowAlignTop(rootView);
-                        break;
-
-                    case BalloonAlligment.Bottom:
-                        balloon.ShowAlignBottom(rootView);
-                        break;
-
-                    default:
-                        balloon.ShowAtCenter(rootView);
-                        break;
-                }
-            }
+            _activityCommon?.ShowBallonMessage(_contentView, message, dismissDuration, alignment);
         }
 
         private bool EditYandexKey()
