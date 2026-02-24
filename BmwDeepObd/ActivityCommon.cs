@@ -2937,16 +2937,16 @@ namespace BmwDeepObd
             switch (certStatus)
             {
                 case DoIpCertificateStatus.ExternalCertValid:
-                    message = "External certificate is valid";
+                    message = _context.Resources.GetString(Resource.String.doip_cert_status_external_valid);
                     break;
                 case DoIpCertificateStatus.ExternalCertInvalid:
-                    message = "External certificate is invalid";
+                    message = _context.Resources.GetString(Resource.String.doip_cert_status_external_invalid);
                     break;
                 case DoIpCertificateStatus.InternalCertValid:
-                    message = "Internal certificate is valid";
+                    message = _context.Resources.GetString(Resource.String.doip_cert_status_internal_valid);
                     break;
                 case DoIpCertificateStatus.InternalCertInvalid:
-                    message = "Internal certificate is invalid";
+                    message = _context.Resources.GetString(Resource.String.doip_cert_status_internal_invalid);
                     break;
             }
 
