@@ -128,6 +128,11 @@ If sending of the trace files fails, the backup trace files are stored in the su
 ## Background image
 It's possible to replace the background image. Simply store a custom `Background.jpg` file in the directory `de.holeschak.bmw_deep_obd\files\Images` (The `Images` subdirectory has to be created first).
 
+## DoIP certificate
+It's possible to copy a valid external DoIP certificate chain from ISTA to the directory `de.holeschak.bmw_deep_obd\files\Certificates`.  
+Required is the file `keyContainer.pfx` and a `.pem` file with the CA certificate chain from the ISTA users certificate store.  
+If the certificate is missing ot not valid, a temporary certificate chain will be generated, which has to be accepted by the vehicle.
+
 ## Android Auto
 Android Auto is now available in the release version of the _Deep OBD app_.
 
