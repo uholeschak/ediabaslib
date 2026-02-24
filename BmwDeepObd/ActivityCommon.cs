@@ -6749,6 +6749,10 @@ namespace BmwDeepObd
                             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate external certificate failed");
                         }
                     }
+                    else
+                    {
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Failed to load valid external certificate chain");
+                    }
                 }
 
                 string[] pfxFiles = Directory.GetFiles(trustedKeyPath, "*.pfx", SearchOption.TopDirectoryOnly);
