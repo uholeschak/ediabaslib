@@ -3375,8 +3375,7 @@ namespace BmwDeepObd
                 case ActivityCommon.CertificateAction:
                     if (_activityActive)
                     {
-                        ActivityCommon.DoIpCertificateStatus certStatus = (ActivityCommon.DoIpCertificateStatus)intent.GetIntExtra(ActivityCommon.BroadcastCertStatus, (int)ActivityCommon.DoIpCertificateStatus.Unknown);
-                        _activityCommon?.ShowDoIpCertStatusMessage(certStatus);
+                        _activityCommon?.ShowDoIpCertStatusMessage(intent);
                     }
                     break;
 

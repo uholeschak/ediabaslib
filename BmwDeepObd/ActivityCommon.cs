@@ -2931,28 +2931,45 @@ namespace BmwDeepObd
             }
         }
 
-        public void ShowDoIpCertStatusMessage(DoIpCertificateStatus certStatus)
+        public void ShowDoIpCertStatusMessage(Intent intent)
         {
-            string message = null;
-            switch (certStatus)
+            if (intent  == null)
             {
-                case DoIpCertificateStatus.ExternalCertValid:
-                    message = _context.Resources.GetString(Resource.String.doip_cert_status_external_valid);
-                    break;
-                case DoIpCertificateStatus.ExternalCertInvalid:
-                    message = _context.Resources.GetString(Resource.String.doip_cert_status_external_invalid);
-                    break;
-                case DoIpCertificateStatus.InternalCertValid:
-                    message = _context.Resources.GetString(Resource.String.doip_cert_status_internal_valid);
-                    break;
-                case DoIpCertificateStatus.InternalCertInvalid:
-                    message = _context.Resources.GetString(Resource.String.doip_cert_status_internal_invalid);
-                    break;
+                return;
             }
 
-            if (message != null)
+            try
             {
-                Toast.MakeText(_context, message, ToastLength.Long)?.Show();
+                DoIpCertificateStatus certStatus = (DoIpCertificateStatus)intent.GetIntExtra(BroadcastCertStatus, (int)DoIpCertificateStatus.Unknown);
+                string message = null;
+
+                switch (certStatus)
+                {
+                    case DoIpCertificateStatus.ExternalCertValid:
+                        message = _context.Resources.GetString(Resource.String.doip_cert_status_external_valid);
+                        break;
+
+                    case DoIpCertificateStatus.ExternalCertInvalid:
+                        message = _context.Resources.GetString(Resource.String.doip_cert_status_external_invalid);
+                        break;
+
+                    case DoIpCertificateStatus.InternalCertValid:
+                        message = _context.Resources.GetString(Resource.String.doip_cert_status_internal_valid);
+                        break;
+
+                    case DoIpCertificateStatus.InternalCertInvalid:
+                        message = _context.Resources.GetString(Resource.String.doip_cert_status_internal_invalid);
+                        break;
+                }
+
+                if (message != null)
+                {
+                    Toast.MakeText(_context, message, ToastLength.Long)?.Show();
+                }
+            }
+            catch (Exception)
+            {
+                // ignored
             }
         }
 
