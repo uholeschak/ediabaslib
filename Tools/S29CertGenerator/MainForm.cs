@@ -2045,6 +2045,57 @@ namespace S29CertGenerator
             }
         }
 
+        protected bool ExportCertificates(string exportFile, string trustStoreFolder, string istaKeyFile)
+        {
+            try
+            {
+                UpdateStatusText(string.Empty);
+
+                string exportDir = Path.GetDirectoryName(exportFile);
+                if (string.IsNullOrEmpty(exportDir) ) 
+                {
+                    UpdateStatusText("Export file directory is not valid", true);
+                    return false;
+                }
+
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, false, true);
+                if (istaCertChain == null)
+                {
+                    UpdateStatusText("Failed to load ISTA certificates", true);
+                    return false;
+                }
+
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (Org.BouncyCastle.X509.X509Certificate x509caCert in istaCertChain)
+                {
+                    string certData = Convert.ToBase64String(x509caCert.GetEncoded());
+
+                    stringBuilder.AppendLine(EdBcTlsUtilities.BeginCertificate);
+                    stringBuilder.AppendLine(certData);
+                    stringBuilder.AppendLine(EdBcTlsUtilities.EndCertificate);
+                }
+
+                string certContent = stringBuilder.ToString();
+                File.WriteAllText(exportFile, certContent);
+
+                if (File.Exists(istaKeyFile))
+                {
+                    string istaKeyFileName = Path.GetFileName(istaKeyFile);
+                    string exportKeyFile = Path.Combine(exportDir, istaKeyFileName);
+                    File.Copy(istaKeyFile, exportKeyFile, true);
+                    UpdateStatusText($"ISTA key file exported: {exportKeyFile}", true);
+                }
+
+                UpdateStatusText("Certificates exported successfully", true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Export certificates exception: {ex.Message}", true);
+                return false;
+            }
+        }
+
         private void buttonSelectCaKeyFile_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
@@ -2373,7 +2424,8 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 string exportFile = saveExportCertDialog.FileName;
-                //ExportCertificates(exportFile, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text);
+                ExportCertificates(exportFile, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text);
+                _exportCertFile = exportFile;
             }
         }
     }
