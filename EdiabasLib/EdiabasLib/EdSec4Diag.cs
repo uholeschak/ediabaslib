@@ -27,6 +27,7 @@ namespace EdiabasLib
         public const string S29ThumbprintCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.Ca";
         public const string S29ThumbprintSubCa = "BMW.Rheingold.CoreFramework.Ediabas.Thumbprint.SubCa";
         public const string S29MachinePublicName = "_public.pem";
+        public const string IstaPkcs12KeyFile = "keyContainer.pfx";
         public const string IstaPkcs12KeyPwd = "G#8x!9sD2@qZ6&lF1";
         public static byte[] RoleMask = new byte[] { 0x00, 0x00, 0x05, 0x4B };
 
