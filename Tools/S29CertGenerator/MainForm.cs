@@ -536,7 +536,7 @@ namespace S29CertGenerator
                 return false;
             }
 
-            string istaKeyFile = Path.Combine(istaFolder, "TesterGUI", "keyContainer.pfx");
+            string istaKeyFile = Path.Combine(istaFolder, "TesterGUI", EdSec4Diag.IstaPkcs12KeyFile);
             if (!File.Exists(istaKeyFile))
             {
                 istaKeyFile = string.Empty;
