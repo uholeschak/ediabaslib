@@ -62,6 +62,8 @@
             buttonValidate = new System.Windows.Forms.Button();
             buttonImport = new System.Windows.Forms.Button();
             openImportCertDialog = new System.Windows.Forms.OpenFileDialog();
+            buttonExport = new System.Windows.Forms.Button();
+            saveExportCertDialog = new System.Windows.Forms.SaveFileDialog();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -378,6 +380,23 @@
             openImportCertDialog.Filter = "PEM|*.pem|All files|*.*";
             openImportCertDialog.Title = "Select import certificates";
             // 
+            // buttonExport
+            // 
+            buttonExport.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonExport.Location = new System.Drawing.Point(205, 570);
+            buttonExport.Name = "buttonExport";
+            buttonExport.Size = new System.Drawing.Size(75, 23);
+            buttonExport.TabIndex = 28;
+            buttonExport.Text = "Export";
+            buttonExport.UseVisualStyleBackColor = true;
+            buttonExport.Click += buttonExport_Click;
+            // 
+            // saveExportCertDialog
+            // 
+            saveExportCertDialog.DefaultExt = "pem";
+            saveExportCertDialog.Filter = "PEM|*.pem|All files|*.*";
+            saveExportCertDialog.Title = "Export certificate";
+            // 
             // MainForm
             // 
             AcceptButton = buttonInstall;
@@ -385,6 +404,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(697, 605);
+            Controls.Add(buttonExport);
             Controls.Add(buttonImport);
             Controls.Add(buttonValidate);
             Controls.Add(buttonSelectClientConfigurationFile);
@@ -414,7 +434,7 @@
             Controls.Add(textBoxCaKeyFile);
             Controls.Add(buttonSelectCaKeyFile);
             MaximizeBox = false;
-            MinimumSize = new System.Drawing.Size(600, 400);
+            MinimumSize = new System.Drawing.Size(700, 400);
             Name = "MainForm";
             SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             Text = "S29CertGenerator";
@@ -462,5 +482,7 @@
         private System.Windows.Forms.Button buttonValidate;
         private System.Windows.Forms.Button buttonImport;
         private System.Windows.Forms.OpenFileDialog openImportCertDialog;
+        private System.Windows.Forms.Button buttonExport;
+        private System.Windows.Forms.SaveFileDialog saveExportCertDialog;
     }
 }

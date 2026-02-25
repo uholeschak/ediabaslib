@@ -26,6 +26,7 @@ namespace S29CertGenerator
         private string _ediabasPath;
         private string _appUserDir;
         private string _importCertFile;
+        private string _exportCertFile;
         private AsymmetricKeyParameter _caKeyResource;
         private List<X509CertificateEntry> _caPublicCertificates;
         private AsymmetricKeyParameter _istaKeyResource;
@@ -104,6 +105,7 @@ namespace S29CertGenerator
                 textBoxTrustStoreFolder.Text = Properties.Settings.Default.TrustStoreFolder;
                 textBoxClientConfigurationFile.Text = Properties.Settings.Default.ClientConfigurationFile;
                 _importCertFile = Properties.Settings.Default.ImportCertFile;
+                _exportCertFile = Properties.Settings.Default.ExportCertFile;
                 return true;
             }
             catch (Exception)
@@ -126,6 +128,7 @@ namespace S29CertGenerator
                 Properties.Settings.Default.TrustStoreFolder = textBoxTrustStoreFolder.Text;
                 Properties.Settings.Default.ClientConfigurationFile = textBoxClientConfigurationFile.Text;
                 Properties.Settings.Default.ImportCertFile = _importCertFile;
+                Properties.Settings.Default.ExportCertFile = _exportCertFile;
                 Properties.Settings.Default.Save();
                 return true;
             }
@@ -162,6 +165,7 @@ namespace S29CertGenerator
                 buttonUninstall.Enabled = enableActionButtons;
                 buttonValidate.Enabled = enableActionButtons;
                 buttonImport.Enabled = enableActionButtons;
+                buttonExport.Enabled = enableActionButtons;
 
                 if (enableActionButtons)
                 {
@@ -673,7 +677,7 @@ namespace S29CertGenerator
             }
             catch (Exception)
             {
-                return  null;
+                return null;
             }
         }
 
@@ -2348,6 +2352,29 @@ namespace S29CertGenerator
             }
 
             UpdateDisplay();
+        }
+
+        private void buttonExport_Click(object sender, EventArgs e)
+        {
+            string initDir = _appDir;
+            string certFile = _exportCertFile;
+            string fileName = string.Empty;
+
+            string exportDir = Path.GetDirectoryName(certFile);
+            if (Directory.Exists(exportDir))
+            {
+                fileName = Path.GetFileName(certFile);
+                initDir = exportDir;
+            }
+
+            saveExportCertDialog.FileName = fileName;
+            saveExportCertDialog.InitialDirectory = initDir ?? string.Empty;
+            DialogResult result = saveExportCertDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string exportFile = saveExportCertDialog.FileName;
+                //ExportCertificates(exportFile, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text);
+            }
         }
     }
 }
