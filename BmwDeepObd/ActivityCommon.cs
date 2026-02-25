@@ -883,6 +883,7 @@ namespace BmwDeepObd
         {
             Unknown,
             ExternalCertValid,
+            ExternalCertExpired,
             ExternalCertInvalid,
             InternalCertValid,
             InternalCertInvalid,
@@ -2949,6 +2950,10 @@ namespace BmwDeepObd
                 {
                     case DoIpCertificateStatus.ExternalCertValid:
                         message = _context.Resources.GetString(Resource.String.doip_cert_status_external_valid);
+                        break;
+
+                    case DoIpCertificateStatus.ExternalCertExpired:
+                        message = _context.Resources.GetString(Resource.String.doip_cert_status_external_expired);
                         break;
 
                     case DoIpCertificateStatus.ExternalCertInvalid:
@@ -6743,6 +6748,10 @@ namespace BmwDeepObd
                 if (externalPrivateKey != null)
                 {
                     certStatus = DoIpCertificateStatus.ExternalCertInvalid;
+                    if (certValidDate != null && certValidDate.Value < DateTime.UtcNow.AddHours(1.0))
+                    {
+                        certStatus = DoIpCertificateStatus.ExternalCertExpired;
+                    }
 
                     if (externalSubCaChain != null && externalSubCaChain.Count >= 2)
                     {
