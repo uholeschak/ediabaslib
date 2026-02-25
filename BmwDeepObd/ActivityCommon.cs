@@ -848,6 +848,7 @@ namespace BmwDeepObd
         public const string UsbPermissionAction = AppNameSpace + ".USB_PERMISSION";
         public const string CertificateAction = AppNameSpace + ".Action.Certificate";
         public const string BroadcastCertStatus = "CertificateStatus";
+        public const string BroadcastCertValidDate = "CertificateValidDate";
         public const string PackageNameAction = AppNameSpace + ".Action.PackageName";
         public const string BroadcastXmlEditorPackageName = "XmlEditorPackageName";
         public const string BroadcastXmlEditorClassName = "XmlEditorClassName";
@@ -2941,6 +2942,7 @@ namespace BmwDeepObd
             try
             {
                 DoIpCertificateStatus certStatus = (DoIpCertificateStatus)intent.GetIntExtra(BroadcastCertStatus, (int)DoIpCertificateStatus.Unknown);
+                string certValidDate = intent.GetStringExtra(BroadcastCertValidDate);
                 string message = null;
 
                 switch (certStatus)
@@ -2964,6 +2966,11 @@ namespace BmwDeepObd
 
                 if (message != null)
                 {
+                    if (!string.IsNullOrEmpty(certValidDate))
+                    {
+                        message += $" -> {certValidDate}";
+                    }
+
                     Toast.MakeText(_context, message, ToastLength.Long)?.Show();
                 }
             }
@@ -6701,6 +6708,8 @@ namespace BmwDeepObd
         public List<X509CertificateStructure> GenS29Certificate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin)
         {
             DoIpCertificateStatus certStatus = DoIpCertificateStatus.Unknown;
+            DateTime? certValidDate = null;
+
             try
             {
                 certStatus = DoIpCertificateStatus.InternalCertInvalid;
@@ -6729,7 +6738,7 @@ namespace BmwDeepObd
                 }
 
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
-                AsymmetricKeyParameter externalPrivateKey = LoadExternalCaCertificate(ediabas, certPath, trustedCaCerts, out List<X509CertificateEntry> externalSubCaChain);
+                AsymmetricKeyParameter externalPrivateKey = LoadExternalCaCertificate(ediabas, certPath, trustedCaCerts, ref certValidDate, out List<X509CertificateEntry> externalSubCaChain);
 
                 if (externalPrivateKey != null)
                 {
@@ -6833,12 +6842,12 @@ namespace BmwDeepObd
             {
                 if (certStatus != DoIpCertificateStatus.Unknown)
                 {
-                    SendDoIpCertStatus(certStatus);
+                    SendDoIpCertStatus(certStatus, certValidDate);
                 }
             }
         }
 
-        public AsymmetricKeyParameter LoadExternalCaCertificate(EdiabasNet ediabas, string certPath, List<X509CertificateStructure> trustedCaCerts, out List<X509CertificateEntry> publicSubCaChain)
+        public AsymmetricKeyParameter LoadExternalCaCertificate(EdiabasNet ediabas, string certPath, List<X509CertificateStructure> trustedCaCerts, ref DateTime? certValidDate, out List<X509CertificateEntry> publicSubCaChain)
         {
             publicSubCaChain = null;
             string parentDir1 = Directory.GetParent(certPath)?.FullName;
@@ -6904,6 +6913,7 @@ namespace BmwDeepObd
                     x509CaCert,
                 };
 
+                certValidDate = x509SubCaCert.NotAfter;
                 if (!EdBcTlsUtilities.ValidateCertChain(certChain, rootCerts))
                 {
                     ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalCaCertificate: Failed to validate certificate chain for: {0}", certFile);
@@ -6916,6 +6926,7 @@ namespace BmwDeepObd
                     new X509CertificateEntry(x509SubCaCert),
                     new X509CertificateEntry(x509CaCert)
                 };
+
                 return privateKeyResource;
             }
 
@@ -6923,12 +6934,17 @@ namespace BmwDeepObd
             return privateKeyResource;
         }
 
-        public void SendDoIpCertStatus(DoIpCertificateStatus certStatus)
+        public void SendDoIpCertStatus(DoIpCertificateStatus certStatus, DateTime? certValidDate)
         {
             try
             {
                 Intent broadcastIntent = new Intent(CertificateAction);
                 broadcastIntent.PutExtra(BroadcastCertStatus, (int)certStatus);
+                if (certValidDate.HasValue)
+                {
+                    string certValidDateStr = certValidDate.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+                    broadcastIntent.PutExtra(BroadcastCertValidDate, certValidDateStr);
+                }
                 InternalBroadcastManager.InternalBroadcastManager.GetInstance(_context).SendBroadcast(broadcastIntent);
             }
             catch (Exception)
