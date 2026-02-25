@@ -98,6 +98,7 @@
 
   <!-- DoIP certificate status -->
   <string name="doip_cert_status_external_valid">The installed DoIP certificate is valid.</string>
+  <string name="doip_cert_status_external_expired">The installed DoIP certificate has expired.</string>
   <string name="doip_cert_status_external_invalid">The installed DoIP certificate is invalid.</string>
   <string name="doip_cert_status_internal_valid">No DoIP certificate installed, generating temporary certificate.</string>
   <string name="doip_cert_status_internal_invalid">Generating temporary DoIP certificate failed.</string>

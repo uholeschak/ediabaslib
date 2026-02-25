@@ -101,6 +101,7 @@
   <!-- DoIP certificate status -->
   <!--Translate-->
   <string name="doip_cert_status_external_valid">Установленный DoIP сертификат действителен.</string>
+  <string name="doip_cert_status_external_expired">Установленный DoIP сертификат истёк.</string>
   <string name="doip_cert_status_external_invalid">Установленный DoIP сертификат недействителен.</string>
   <string name="doip_cert_status_internal_valid">Нет установленного DoIP сертификата, создается временный сертификат.</string>
   <string name="doip_cert_status_internal_invalid">Не удалось создать временный DoIP сертификат.</string>
