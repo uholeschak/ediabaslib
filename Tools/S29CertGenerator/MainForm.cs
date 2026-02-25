@@ -2077,6 +2077,7 @@ namespace S29CertGenerator
 
                 string certContent = stringBuilder.ToString();
                 File.WriteAllText(exportFile, certContent);
+                UpdateStatusText($"Certificates exported: {exportFile}", true);
 
                 if (File.Exists(istaKeyFile))
                 {
