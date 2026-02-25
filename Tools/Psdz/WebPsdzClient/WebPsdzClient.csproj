@@ -74,7 +74,7 @@
         <ExcludeAssets>contentFiles</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="jQuery" Version="3.7.1" />
-    <PackageReference Include="log4net" Version="3.2.0" />
+    <PackageReference Include="log4net" Version="3.3.0" />
     <PackageReference Include="Microsoft.AspNet.Cors" Version="5.3.0" />
     <PackageReference Include="Microsoft.AspNet.FriendlyUrls" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNet.FriendlyUrls.Core.de" Version="1.0.2" />
