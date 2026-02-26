@@ -1217,9 +1217,6 @@ namespace S29CertGenerator
                     return null;
                 }
 
-                Org.BouncyCastle.X509.X509Certificate caCert = _caPublicCertificates[0].Certificate;
-                UpdateStatusText($"CA certificate valid until: {caCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
-
                 X509Certificate2 subCaEmeaCert = null;
                 X509Certificate2 subCaCert = null;
                 Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = null;
@@ -1240,6 +1237,13 @@ namespace S29CertGenerator
                         bool certValid = true;
                         x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
                         x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
+
+                        Org.BouncyCastle.X509.X509Certificate caCert = _caPublicCertificates[0].Certificate;
+                        AsymmetricKeyParameter caPublicKey = caCert.GetPublicKey();
+                        if (x509SubCaEmeaCert.IsSignatureValid(caPublicKey))
+                        {
+                            UpdateStatusText($"Fake CA certificate valid until: {caCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
+                        }
 
                         if (subCaEmeaPublicKey != null)
                         {
