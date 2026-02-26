@@ -64,6 +64,7 @@
             openImportCertDialog = new System.Windows.Forms.OpenFileDialog();
             buttonExport = new System.Windows.Forms.Button();
             saveExportCertDialog = new System.Windows.Forms.SaveFileDialog();
+            buttonGenerateEdiabasFiles = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -148,7 +149,7 @@
             // buttonGenerate
             // 
             buttonGenerate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonGenerate.Location = new System.Drawing.Point(448, 570);
+            buttonGenerate.Location = new System.Drawing.Point(265, 570);
             buttonGenerate.Name = "buttonGenerate";
             buttonGenerate.Size = new System.Drawing.Size(75, 23);
             buttonGenerate.TabIndex = 23;
@@ -235,7 +236,7 @@
             // 
             checkBoxForceCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             checkBoxForceCreate.AutoSize = true;
-            checkBoxForceCreate.Location = new System.Drawing.Point(12, 573);
+            checkBoxForceCreate.Location = new System.Drawing.Point(12, 543);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
             checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
             checkBoxForceCreate.TabIndex = 22;
@@ -355,7 +356,7 @@
             // buttonValidate
             // 
             buttonValidate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonValidate.Location = new System.Drawing.Point(367, 570);
+            buttonValidate.Location = new System.Drawing.Point(346, 570);
             buttonValidate.Name = "buttonValidate";
             buttonValidate.Size = new System.Drawing.Size(75, 23);
             buttonValidate.TabIndex = 26;
@@ -366,7 +367,7 @@
             // buttonImport
             // 
             buttonImport.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonImport.Location = new System.Drawing.Point(286, 570);
+            buttonImport.Location = new System.Drawing.Point(184, 570);
             buttonImport.Name = "buttonImport";
             buttonImport.Size = new System.Drawing.Size(75, 23);
             buttonImport.TabIndex = 27;
@@ -383,7 +384,7 @@
             // buttonExport
             // 
             buttonExport.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonExport.Location = new System.Drawing.Point(205, 570);
+            buttonExport.Location = new System.Drawing.Point(103, 570);
             buttonExport.Name = "buttonExport";
             buttonExport.Size = new System.Drawing.Size(75, 23);
             buttonExport.TabIndex = 28;
@@ -397,6 +398,17 @@
             saveExportCertDialog.Filter = "PEM|*.pem|All files|*.*";
             saveExportCertDialog.Title = "Export certificate";
             // 
+            // buttonGenerateEdiabasFiles
+            // 
+            buttonGenerateEdiabasFiles.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonGenerateEdiabasFiles.Location = new System.Drawing.Point(427, 570);
+            buttonGenerateEdiabasFiles.Name = "buttonGenerateEdiabasFiles";
+            buttonGenerateEdiabasFiles.Size = new System.Drawing.Size(96, 23);
+            buttonGenerateEdiabasFiles.TabIndex = 29;
+            buttonGenerateEdiabasFiles.Text = "Ediabas files";
+            buttonGenerateEdiabasFiles.UseVisualStyleBackColor = true;
+            buttonGenerateEdiabasFiles.Click += buttonGenerateEdiabasFiles_Click;
+            // 
             // MainForm
             // 
             AcceptButton = buttonGenerate;
@@ -404,6 +416,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
             ClientSize = new System.Drawing.Size(697, 605);
+            Controls.Add(buttonGenerateEdiabasFiles);
             Controls.Add(buttonExport);
             Controls.Add(buttonImport);
             Controls.Add(buttonValidate);
@@ -484,5 +497,6 @@
         private System.Windows.Forms.OpenFileDialog openImportCertDialog;
         private System.Windows.Forms.Button buttonExport;
         private System.Windows.Forms.SaveFileDialog saveExportCertDialog;
+        private System.Windows.Forms.Button buttonGenerateEdiabasFiles;
     }
 }

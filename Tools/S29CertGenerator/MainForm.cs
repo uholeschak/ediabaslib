@@ -161,11 +161,12 @@ namespace S29CertGenerator
                     enableActionButtons = true;
                 }
 
-                buttonGenerate.Enabled = enableActionButtons;
-                buttonUninstall.Enabled = enableActionButtons;
-                buttonValidate.Enabled = enableActionButtons;
                 buttonImport.Enabled = enableActionButtons;
                 buttonExport.Enabled = enableActionButtons;
+                buttonValidate.Enabled = enableActionButtons;
+                buttonGenerate.Enabled = enableActionButtons;
+                buttonGenerateEdiabasFiles.Enabled = enableActionButtons;
+                buttonUninstall.Enabled = enableActionButtons;
 
                 if (enableActionButtons)
                 {
@@ -1501,7 +1502,7 @@ namespace S29CertGenerator
 
                 string jsonResponseFileName = $"ResponseContainer_service-29-{certReqProfile}-{vin17}.json";
                 string jsonResponseFile = Path.Combine(jsonResponseFolder, jsonResponseFileName);
-                if (!GenerateCertificate(trustStoreFolder, istaCertChain, publicKeyParameter, vin17, certOutputFolder, jsonResponseFile))
+                if (!GenerateVehicleCertificate(trustStoreFolder, istaCertChain, publicKeyParameter, vin17, certOutputFolder, jsonResponseFile))
                 {
                     return false;
                 }
@@ -1515,7 +1516,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool GenerateCertificate(string trustStoreFolder, List<Org.BouncyCastle.X509.X509Certificate> istaCertChain, AsymmetricKeyParameter publicKeyParameter, string vehicleVin, string certOutputFolder, string jsonResponseFile = null)
+        protected bool GenerateVehicleCertificate(string trustStoreFolder, List<Org.BouncyCastle.X509.X509Certificate> istaCertChain, AsymmetricKeyParameter publicKeyParameter, string vehicleVin, string certOutputFolder, string jsonResponseFile = null)
         {
             try
             {
@@ -1661,13 +1662,36 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string istaKeyFile, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string clientConfigFile, string vehicleVin, bool forceUpdate = false)
+        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string istaKeyFile, bool forceUpdate = false)
         {
             try
             {
                 UpdateStatusText(string.Empty);
 
                 List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, forceUpdate, false, out bool _);
+                if (istaCertChain == null || istaCertChain.Count != 2)
+                {
+                    UpdateStatusText("Failed to create SubCA certificates", true);
+                    return false;
+                }
+
+                UpdateStatusText("SubCA certificates installed", true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Convert request files exception: {ex.Message}", true);
+                return false;
+            }
+        }
+
+        protected bool CreateEdiabasFiles(string caCertsFile, string trustStoreFolder, string istaKeyFile, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string clientConfigFile, string vehicleVin, bool forceUpdate = false)
+        {
+            try
+            {
+                UpdateStatusText(string.Empty);
+
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, forceUpdate, true, out bool _);
                 if (istaCertChain == null || istaCertChain.Count != 2)
                 {
                     UpdateStatusText("Failed to create SubCA certificates", true);
@@ -1759,7 +1783,7 @@ namespace S29CertGenerator
                         return false;
                     }
 
-                    GenerateCertificate(trustStoreFolder, istaCertChain, publicKeyParameter, vehicleVin, certOutputFolder);
+                    GenerateVehicleCertificate(trustStoreFolder, istaCertChain, publicKeyParameter, vehicleVin, certOutputFolder);
                 }
 
                 return true;
@@ -2369,8 +2393,18 @@ namespace S29CertGenerator
 
         private void buttonGenerate_Click(object sender, EventArgs e)
         {
+            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, checkBoxForceCreate.Checked))
+            {
+                checkBoxForceCreate.Checked = false;
+            }
+            UpdateDisplay();
+        }
+
+
+        private void buttonGenerateEdiabasFiles_Click(object sender, EventArgs e)
+        {
             string vehicleVin = comboBoxVinList.SelectedItem as string;
-            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, textBoxClientConfigurationFile.Text, vehicleVin, checkBoxForceCreate.Checked))
+            if (CreateEdiabasFiles(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, textBoxClientConfigurationFile.Text, vehicleVin))
             {
                 checkBoxForceCreate.Checked = false;
             }
