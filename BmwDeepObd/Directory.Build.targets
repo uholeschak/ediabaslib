@@ -3,6 +3,6 @@
      <DefineConstants>$(DefineConstants);ANDROID_AUTO</DefineConstants>
    </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <AndroidUseAssemblyStore>True</AndroidUseAssemblyStore>
+    <AndroidUseAssemblyStore>False</AndroidUseAssemblyStore>
   </PropertyGroup>
 </Project>
