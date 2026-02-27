@@ -12,3 +12,4 @@
 /UpgradeLog.htm
 /Libraries/
 /VehicleInfo/
+*.local.props
