@@ -238,9 +238,9 @@
             checkBoxForceCreate.AutoSize = true;
             checkBoxForceCreate.Location = new System.Drawing.Point(12, 543);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
-            checkBoxForceCreate.Size = new System.Drawing.Size(113, 19);
+            checkBoxForceCreate.Size = new System.Drawing.Size(212, 19);
             checkBoxForceCreate.TabIndex = 22;
-            checkBoxForceCreate.Text = "Force create cert";
+            checkBoxForceCreate.Text = "Generate: Force create cert creation";
             checkBoxForceCreate.UseVisualStyleBackColor = true;
             // 
             // textBoxCaCertsFile
