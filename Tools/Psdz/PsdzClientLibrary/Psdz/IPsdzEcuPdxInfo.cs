@@ -51,5 +51,7 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
         bool LcsIukCluster { get; }
 
         int ServicePack { get; }
+
+        bool IsLcsObiMaster { get; }
     }
 }
