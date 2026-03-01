@@ -69,5 +69,8 @@ namespace BMW.Rheingold.Psdz
 
         [JsonProperty("updateSmartActuatorConfigurationSupported", NullValueHandling = NullValueHandling.Ignore)]
         public bool UpdateSmartActuatorConfigurationSupported { get; set; }
+
+        [JsonProperty("isLcsObiMaster", NullValueHandling = NullValueHandling.Ignore)]
+        public bool IsLcsObiMaster { get; set; }
     }
 }
