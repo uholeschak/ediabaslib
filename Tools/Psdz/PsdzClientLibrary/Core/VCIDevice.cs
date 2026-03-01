@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,7 +23,8 @@ namespace PsdzClient.Core
             DeviceState.Free,
             DeviceState.Found,
             DeviceState.Unregistered,
-            DeviceState.Unsupported
+            DeviceState.Unsupported,
+            DeviceState.BlockedDueAPIPA
         };
         private string receivingIP;
         private bool isMarkedToDefault;
@@ -268,6 +271,12 @@ namespace PsdzClient.Core
         }
 
         [XmlIgnore]
+        public bool IsApipa => IPAddress.StartsWith("169.254");
+
+        [XmlIgnore]
+        public bool IsLocalMachine => GetAllLocalIPAddresses().Contains(IPAddress);
+
+        [XmlIgnore]
         IBasicFeatures IVciDevice.BasicFeatures => BasicFeatures;
 
         [XmlIgnore]
@@ -432,12 +441,14 @@ namespace PsdzClient.Core
                     {
                         stateField = value;
                         OnPropertyChanged("State");
+                        OnPropertyChanged("DeviceState");
                     }
                 }
                 else
                 {
                     stateField = value;
                     OnPropertyChanged("State");
+                    OnPropertyChanged("DeviceState");
                 }
             }
         }
@@ -918,12 +929,14 @@ namespace PsdzClient.Core
                     {
                         iPAddressField = value;
                         OnPropertyChanged("IPAddress");
+                        OnPropertyChanged("IsApipa");
                     }
                 }
                 else
                 {
                     iPAddressField = value;
                     OnPropertyChanged("IPAddress");
+                    OnPropertyChanged("IsApipa");
                 }
             }
         }
@@ -1653,6 +1666,17 @@ namespace PsdzClient.Core
         public double? GetClamp15()
         {
             return GetVoltageForString(Kl15Voltage);
+        }
+
+        private static string[] GetAllLocalIPAddresses()
+        {
+            return (
+                from a in (
+                    from n in NetworkInterface.GetAllNetworkInterfaces()
+                    where n.OperationalStatus == OperationalStatus.Up
+                    select n).SelectMany((NetworkInterface n) => n.GetIPProperties().UnicastAddresses)
+                where a.Address.AddressFamily == AddressFamily.InterNetwork
+                select a.Address.ToString()).ToArray();
         }
 
         private double? GetVoltageForString(string voltage)
