@@ -34,7 +34,8 @@ namespace BMW.Rheingold.Psdz
                 LcsIukCluster = ecuPdxInfoModel.LcsIukCluster,
                 IsMACsecEnabled = ecuPdxInfoModel.MacsecEnabled,
                 ServicePack = ecuPdxInfoModel.ServicePack,
-                AclEnabled = ecuPdxInfoModel.AclEnabled
+                AclEnabled = ecuPdxInfoModel.AclEnabled,
+                IsLcsObiMaster = ecuPdxInfoModel.IsLcsObiMaster
             };
         }
 
@@ -68,7 +69,8 @@ namespace BMW.Rheingold.Psdz
                 ProgrammingProtectionLevel = ecuPdxInfo.ProgrammingProtectionLevel,
                 SmartActuatorMaster = ecuPdxInfo.IsSmartActuatorMaster,
                 UpdateSmartActuatorConfigurationSupported = ecuPdxInfo.UpdateSmartActuatorConfigurationSupported,
-                ServicePack = ecuPdxInfo.ServicePack
+                ServicePack = ecuPdxInfo.ServicePack,
+                IsLcsObiMaster = ecuPdxInfo.IsSecOcMaster
             };
         }
     }
