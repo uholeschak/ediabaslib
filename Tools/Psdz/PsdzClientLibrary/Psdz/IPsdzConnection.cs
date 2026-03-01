@@ -9,5 +9,7 @@ namespace BMW.Rheingold.Psdz.Model
         IPsdzTargetSelector TargetSelector { get; }
 
         int Port { get; }
+
+        bool IsTlsAllowed { get; }
     }
 }
