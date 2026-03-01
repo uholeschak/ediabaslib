@@ -18,16 +18,19 @@ namespace BMW.Rheingold.Psdz
             {
                 throw new ArgumentException("Param 'minPort' must be less or equal than 'maxPort'!");
             }
+
             if (fallbackPort.HasValue && fallbackPort <= 0)
             {
                 throw new ArgumentException("Param 'fallbackPort' must be positive.");
             }
+
             IPEndPoint[] activeTcpListeners = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners();
             List<int> list = Enumerable.Range(minPort, maxPort - minPort + 1).ToList();
             if (fallbackPort.HasValue)
             {
                 list.Add(fallbackPort.GetValueOrDefault());
             }
+
             foreach (int currPort in list)
             {
                 if (!activeTcpListeners.Any((IPEndPoint e) => e.Port == currPort))
@@ -36,6 +39,7 @@ namespace BMW.Rheingold.Psdz
                     return currPort;
                 }
             }
+
             Log.Warning(Log.CurrentMethod(), "No free port available!");
             return -1;
         }
@@ -47,6 +51,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return list;
             }
+
             foreach (string ipAddress in ipAddresses)
             {
                 IPAddress item = Convert(ipAddress);
@@ -55,6 +60,7 @@ namespace BMW.Rheingold.Psdz
                     list.Add(item);
                 }
             }
+
             return list;
         }
 
@@ -68,6 +74,7 @@ namespace BMW.Rheingold.Psdz
             {
                 Log.Error("NetUtils.Convert()", "Ip address '{0}' could not be parsed.", ipAddress);
             }
+
             return null;
         }
 
@@ -82,6 +89,7 @@ namespace BMW.Rheingold.Psdz
             {
                 Log.Error("NetUtils.GetWlanSignalStrength()", "WLAN signal strength could not be read");
             }
+
             return "WLAN signal strength could not be read";
         }
 
@@ -97,6 +105,7 @@ namespace BMW.Rheingold.Psdz
                 set.Add(IPAddress.Loopback);
                 set.Add(IPAddress.IPv6Loopback);
             }
+
             return set;
         }
 
@@ -119,6 +128,7 @@ namespace BMW.Rheingold.Psdz
             {
                 address = null;
             }
+
             return false;
         }
 
@@ -130,11 +140,13 @@ namespace BMW.Rheingold.Psdz
             {
                 throw new ArgumentException("Lengths of IP address and subnet mask do not match.");
             }
+
             byte[] array = new byte[addressBytes.Length];
             for (int i = 0; i < array.Length; i++)
             {
                 array[i] = (byte)(addressBytes[i] & addressBytes2[i]);
             }
+
             return new IPAddress(array);
         }
 
@@ -171,6 +183,53 @@ namespace BMW.Rheingold.Psdz
                 Arguments = "/renew"
             };
             process.Start();
+        }
+
+        public static bool CanBindTcpPort(int port)
+        {
+            if (port <= 0 || port > 65535)
+            {
+                Log.Warning(Log.CurrentMethod(), "Invalid port number: {0}", port);
+                return false;
+            }
+
+            TcpListener tcpListener = null;
+            try
+            {
+                tcpListener = new TcpListener(IPAddress.Loopback, port);
+                try
+                {
+                    tcpListener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, optionValue: true);
+                }
+                catch (Exception ex)
+                {
+                    Log.Debug(Log.CurrentMethod(), "Could not set ExclusiveAddressUse for port {0}: {1}", port, ex.Message);
+                }
+
+                tcpListener.Start();
+                Log.Debug(Log.CurrentMethod(), "Port {0} is bindable.", port);
+                return true;
+            }
+            catch (SocketException ex2)
+            {
+                Log.Info(Log.CurrentMethod(), "Port {0} cannot be bound. SocketException: {1} (ErrorCode={2})", port, ex2.Message, ex2.ErrorCode);
+                return false;
+            }
+            catch (Exception exception)
+            {
+                Log.WarningException(Log.CurrentMethod(), exception);
+                return false;
+            }
+            finally
+            {
+                try
+                {
+                    tcpListener?.Stop();
+                }
+                catch
+                {
+                }
+            }
         }
     }
 }
