@@ -17,7 +17,6 @@ namespace PsdzClient.Programming
     {
         private ProgrammingActionData data;
         private string assemblyNumberSetPoint;
-        private string pn;
         private IList<ISgbmIdChange> sgbmIds;
         private typeDiagObjectState stateDiag;
         protected string titleTextId;
