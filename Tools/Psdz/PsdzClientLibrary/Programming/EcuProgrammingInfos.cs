@@ -331,7 +331,9 @@ namespace PsdzClient.Programming
                         foreach (string item2 in list)
                         {
                             PsdzDiagAddress psdzDiagAddress = talLineHelper.CalculateSmacDiagAddress(item.EcuIdentifier.DiagnosisAddress, item2);
-                            GetItemFromProgrammingInfos(psdzDiagAddress.Offset).UpdateSingleProgrammingAction(ProgrammingActionType.Programming, MapState(ta.ExecutionState), executed: false);
+                            EcuProgrammingInfo itemFromProgrammingInfos = GetItemFromProgrammingInfos(psdzDiagAddress.Offset);
+                            ProgrammingActionState state = MapState(ta.ExecutionState);
+                            itemFromProgrammingInfos?.UpdateSingleProgrammingAction(ProgrammingActionType.Programming, state, executed: false);
                         }
                     }
                 }
