@@ -27,7 +27,7 @@ namespace PsdzClient.Core.Container
             Log.Info("VehicleCommunication.VehicleCommunication()", "ctor called.");
             try
             {
-                //[-] BMW.Rheingold.CoreFramework.LicenseManager.VerifyLicense();
+                //[-] LicenseManager.VerifyLicense();
                 Log.Info(string.Empty, "ISTA Activation succeeded");
                 _validLicense = true;
             }
