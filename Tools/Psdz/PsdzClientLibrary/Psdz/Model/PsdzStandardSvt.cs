@@ -13,7 +13,6 @@ namespace BMW.Rheingold.Psdz.Model
     [KnownType(typeof(PsdzSmartActuatorEcu))]
     public class PsdzStandardSvt : IPsdzStandardSvt
     {
-        private readonly List<IPsdzEcu> ecus = new List<IPsdzEcu>();
         private static readonly IEqualityComparer<PsdzStandardSvt> PsdzStandardSvtComparerInstance = new PsdzStandardSvtComparer();
         [PreserveSource(KeepAttribute = true)]
         [DataMember]
