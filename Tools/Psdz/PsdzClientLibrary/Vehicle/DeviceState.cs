@@ -17,6 +17,7 @@
         Blocked,
         FreeNvm,
         FirmwareOutdated,
-        Unsupported
+        Unsupported,
+        BlockedDueAPIPA
     }
 }
