@@ -12,19 +12,12 @@ namespace PsdzClient.Contracts
             Context = "",
             ErrorCodeInt = 0
         };
-
         public string ErrorCode { get; set; }
-
         public int ErrorCodeInt { get; set; }
-
         public string ErrorMessage { get; set; } = string.Empty;
-
         public bool Result { get; set; }
-
         public string Context { get; set; }
-
         public DateTime Time { get; set; }
-
         public int StatusCode { get; set; }
 
         public static BoolResultObject FailResult(string message)
@@ -42,6 +35,7 @@ namespace PsdzClient.Contracts
             {
                 return Result.ToString();
             }
+
             return $"{Result} [({ErrorCode}) {ErrorMessage}]";
         }
 
@@ -75,8 +69,28 @@ namespace PsdzClient.Contracts
             };
         }
 
+        public static BoolResultObject<T> Fail(T ResultObject, string ErrorMessage)
+        {
+            return new BoolResultObject<T>
+            {
+                Result = false,
+                ErrorMessage = ErrorMessage,
+                ResultObject = ResultObject
+            };
+        }
+
         public BoolResultObject()
         {
+        }
+
+        public BoolResultObject(bool result)
+        {
+            base.Result = result;
+        }
+
+        public BoolResultObject(IBoolResultObject tempBoolResult)
+        {
+            CopyBoolObjectResultValues(tempBoolResult);
         }
 
         public BoolResultObject(IBoolResultObject boolResultObject, T result)
