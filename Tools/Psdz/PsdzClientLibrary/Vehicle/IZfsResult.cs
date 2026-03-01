@@ -76,5 +76,51 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         string STAT_ZFS_KOMPLEX { get; }
 
         short? STAT_DM_MESSAGE_TYPE { get; }
+
+        string JOB_STATUS { get; }
+
+        byte STAT_DM_ACTIVE_STATE { get; }
+
+        byte STAT_DM_MAPPING_ID { get; }
+
+        string STAT_DM_MESSAGE_TYPE_TEXT { get; }
+
+        string STAT_DM_TS_1AS { get; }
+
+        string STAT_DM_TS_1AS_MS { get; }
+
+        byte STAT_SYSKONTEXT_BASIS_TN_WERT { get; }
+
+        ulong STAT_SYSKONTEXT_FUNKT_TN_WERT { get; }
+
+        int STAT_SYSKONTEXT_KUNDENZEIT_JAHR_WERT { get; }
+
+        byte STAT_SYSKONTEXT_KUNDENZEIT_MONAT_WERT { get; }
+
+        byte STAT_SYSKONTEXT_KUNDENZEIT_TAG_WERT { get; }
+
+        byte STAT_SYSKONTEXT_KUNDENZEIT_STUNDE_WERT { get; }
+
+        byte STAT_SYSKONTEXT_KUNDENZEIT_MINUTE_WERT { get; }
+
+        byte STAT_SYSKONTEXT_KUNDENZEIT_SEKUNDE_WERT { get; }
+
+        double STAT_SYSKONTEXT_LAENGSBESCHLEUNIGUNG_WERT { get; }
+
+        byte STAT_SYSKONTEXT_PWF_BEI_FEHLER_WERT { get; }
+
+        byte STAT_SYSKONTEXT_PWF_VOR_PWF_BEI_FEHLER_WERT { get; }
+
+        byte STAT_SYSKONTEXT_SCHLSLPRFL_AKT_WERT { get; }
+
+        double STAT_SYSKONTEXT_SPANNUNG2_MAX_WERT { get; }
+
+        double STAT_SYSKONTEXT_SPANNUNG2_MIN_WERT { get; }
+
+        double STAT_SYSKONTEXT_SPANNUNG_HV_SYSTEM_WERT { get; }
+
+        byte STAT_SYSKONTEXT_WEGSTRECKE_INSYNC_WERT { get; }
+
+        long STAT_SYSKONTEXT_ZEIT_LETZTER_PWF_WECHSEL_WERT { get; }
     }
 }
