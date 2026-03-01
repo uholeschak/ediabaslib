@@ -111,7 +111,7 @@ namespace SourceCodeSync
             { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.NetworkType", "BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType"},
             { "BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic", "MultisourceLogic"},
             { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"},
-            { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"}
+            { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.BusType", "BusType"}
         };
 
         private const string _commentedRemoveCodeMarker = "//[-]";
