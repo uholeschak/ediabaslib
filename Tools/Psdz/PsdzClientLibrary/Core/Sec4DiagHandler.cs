@@ -51,9 +51,9 @@ namespace PsdzClient.Core
             if (!string.IsNullOrEmpty(istaFolder))
             //[+] {
             {
-                //[+] _ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
+                //[+] ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
                 ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
-                //[+] _istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
+                //[+] istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
                 istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
             //[+] }
             }
