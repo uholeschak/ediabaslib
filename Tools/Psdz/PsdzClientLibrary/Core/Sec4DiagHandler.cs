@@ -26,7 +26,7 @@ namespace PsdzClient.Core
 {
     public sealed class Sec4DiagHandler : ISec4DiagHandler
     {
-        private readonly byte[] roleMask = new byte[4]
+        private readonly byte[] _roleMask = new byte[4]
         {
             0,
             0,
@@ -39,10 +39,10 @@ namespace PsdzClient.Core
         public ISec4DiagCertificates Sec4DiagCertificatesForPSdZInAos { get; set; }
         public AsymmetricKeyParameter EdiabasPublicKey { get; set; }
         public string CertificateFilePathWithoutEnding { get; set; }
-        public int RoleMaskAsInt => BitConverter.ToInt32(roleMask.Reverse().ToArray(), 0);
-        private string _ediabaasS29Path { get; } = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.S29Path", "..\\..\\..\\Ediabas\\Security\\S29\\Certificates");
-        private string _istaKeyPairPath { get; } = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ista.KeyPair.Path", "..\\..\\..\\TesterGui\\keyContainer.pfx");
-        private string _certificateFileNameWithoutEnding { get; } = $"certificates_{Process.GetCurrentProcess().Id}";
+        public int RoleMaskAsInt => BitConverter.ToInt32(_roleMask.Reverse().ToArray(), 0);
+        private string ediabaasS29Path { get; } = string.Empty;
+        private string istaKeyPairPath { get; } = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ista.KeyPair.Path", "..\\..\\..\\TesterGui\\keyContainer.pfx");
+        private string certificateFileNameWithoutEnding { get; } = $"certificates_{Process.GetCurrentProcess().Id}";
 
         [PreserveSource(Hint = "istaFolder added", SignatureModified = true)]
         public Sec4DiagHandler(string istaFolder = null)
@@ -52,14 +52,30 @@ namespace PsdzClient.Core
             //[+] {
             {
                 //[+] _ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
-                _ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
+                ediabaasS29Path = Path.Combine(istaFolder, "EDIABAS", "Security", "S29", "Certificates");
                 //[+] _istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
-                _istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
+                istaKeyPairPath = Path.Combine(istaFolder, "TesterGui", "keyContainer.pfx");
             //[+] }
             }
-
-            IstaKeyPair = LoadKeyPairFromFile(_istaKeyPairPath, "G#8x!9sD2@qZ6&lF1");
+            IstaKeyPair = LoadKeyPairFromFile(istaKeyPairPath, "G#8x!9sD2@qZ6&lF1");
             Service29KeyPair = GenerateKeyPair();
+            bool flag = false;
+            using (IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient())
+            {
+                if (istaIcsServiceClient.IsAvailable())
+                {
+                    flag = istaIcsServiceClient.GetFeatureEnabledStatus("SpecialEdiabasVersionForNcar").IsActive;
+                }
+            }
+
+            if (flag)
+            {
+                ediabaasS29Path = Path.Combine("C:\\", "EC-Apps-ISTA", "EDIABAS", "Security", "S29", "Certificates");
+            }
+            else
+            {
+                ediabaasS29Path = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.S29Path", "..\\..\\..\\Ediabas\\Security\\S29\\Certificates");
+            }
         }
 
         public AsymmetricCipherKeyPair LoadKeyPairFromFile(string filePath, string password)
@@ -189,7 +205,7 @@ namespace PsdzClient.Core
             DerSet extensionValue = new DerSet(new Asn1EncodableVector { element, element2, element3 });
             x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
             DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.10");
-            x509V3CertificateGenerator.AddExtension(oid2, critical: true, roleMask);
+            x509V3CertificateGenerator.AddExtension(oid2, critical: true, _roleMask);
             x509V3CertificateGenerator.AddExtension(X509Extensions.KeyUsage, critical: false, new KeyUsage(128));
             x509V3CertificateGenerator.AddExtension(X509Extensions.SubjectKeyIdentifier, critical: false, new SubjectKeyIdentifierStructure(publicKey));
             x509V3CertificateGenerator.AddExtension(X509Extensions.BasicConstraints, critical: true, new BasicConstraints(cA: false));
@@ -221,8 +237,8 @@ namespace PsdzClient.Core
             stringBuilder.AppendLine(Convert.ToBase64String(rawCertData3));
             stringBuilder.AppendLine("-----END CERTIFICATE-----");
             string contents = stringBuilder.ToString();
-            CertificateFilePathWithoutEnding = _certificateFileNameWithoutEnding;
-            File.WriteAllText(Path.Combine(_ediabaasS29Path ?? "", _certificateFileNameWithoutEnding + ".pem"), contents);
+            CertificateFilePathWithoutEnding = certificateFileNameWithoutEnding;
+            File.WriteAllText(Path.Combine(ediabaasS29Path ?? "", certificateFileNameWithoutEnding + ".pem"), contents);
         }
 
         public byte[] CalculateProofOfOwnership(byte[] server_challenge)
@@ -286,7 +302,7 @@ namespace PsdzClient.Core
 
         public void DeleteCertificateFile()
         {
-            string path = Path.Combine(_ediabaasS29Path, _certificateFileNameWithoutEnding + ".pem");
+            string path = Path.Combine(ediabaasS29Path, certificateFileNameWithoutEnding + ".pem");
             if (File.Exists(path))
             {
                 File.Delete(path);
@@ -300,7 +316,7 @@ namespace PsdzClient.Core
 
         public AsymmetricKeyParameter GetPublicKeyFromEdiabas()
         {
-            using (StreamReader reader = File.OpenText(Path.Combine(_ediabaasS29Path, Environment.MachineName + "_public.pem")))
+            using (StreamReader reader = File.OpenText(Path.Combine(ediabaasS29Path, Environment.MachineName + "_public.pem")))
             {
                 using (PemReader pemReader = new PemReader(reader))
                 {
@@ -311,7 +327,7 @@ namespace PsdzClient.Core
 
         public bool CheckIfEdiabasPublicKeyExists()
         {
-            return File.Exists(Path.Combine(_ediabaasS29Path, Environment.MachineName + "_public.pem"));
+            return File.Exists(Path.Combine(ediabaasS29Path, Environment.MachineName + "_public.pem"));
         }
 
         public Sec4DiagCertificateState SearchForCertificatesInWindowsStore(string caThumbPrint, string subCaThumbPrint, out X509Certificate2Collection subCaCertificate, out X509Certificate2Collection caCertificate)
@@ -328,9 +344,9 @@ namespace PsdzClient.Core
                 return Sec4DiagCertificateState.NotFound;
             }
 
-            if (DateTime.Now < subCaCertificate[0].NotAfter.AddDays(-1.0) || DateTime.Now < caCertificate[0].NotAfter.AddDays(-1.0))
+            if (DateTime.Now < subCaCertificate[0].NotAfter.AddDays(-1.0))
             {
-                if (DateTime.Now > subCaCertificate[0].NotAfter.AddDays(-2.0) || DateTime.Now > caCertificate[0].NotAfter.AddDays(-2.0))
+                if (DateTime.Now > subCaCertificate[0].NotAfter.AddDays(-2.0))
                 {
                     Log.Info(method, "Certificte is over the 3 Weeks. We are requesting new Certificates but if this failes we are using the old one.");
                     return Sec4DiagCertificateState.NotYetExpired;
