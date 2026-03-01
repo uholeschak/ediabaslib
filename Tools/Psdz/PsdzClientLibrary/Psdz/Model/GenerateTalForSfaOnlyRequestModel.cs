@@ -34,5 +34,8 @@ namespace BMW.Rheingold.Psdz
 
         [JsonProperty("svt", NullValueHandling = NullValueHandling.Ignore)]
         public SvtModel Svt { get; set; }
+
+        [JsonProperty("talFilter", NullValueHandling = NullValueHandling.Ignore)]
+        public TalFilterModel TalFilter { get; set; }
     }
 }
