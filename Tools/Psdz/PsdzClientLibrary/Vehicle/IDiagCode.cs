@@ -16,7 +16,5 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         string DiagnoseCodeSuffix { get; }
 
         IEnumerable<string> ReparaturPaket { get; }
-
-        bool TeileClearing { get; }
     }
 }
