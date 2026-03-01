@@ -21,6 +21,7 @@ namespace BMW.Rheingold.Psdz.Model
         [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public int Port { get; set; }
+        public bool IsTlsAllowed { get; set; }
 
         public override string ToString()
         {
