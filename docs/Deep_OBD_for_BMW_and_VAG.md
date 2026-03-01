@@ -130,7 +130,7 @@ It's possible to replace the background image. Simply store a custom `Background
 
 ## DoIP certificate
 It's possible to copy a valid external DoIP certificate chain from ISTA to the directory `de.holeschak.bmw_deep_obd\files\Certificates`.  
-Required is the file `keyContainer.pfx` and a `.pem` file with the CA certificate chain from the ISTA users certificate store.  
+You could use the _Export_ function of the _S29CertificateGenerator_ for this.  
 If the certificate is missing ot not valid, a temporary certificate chain will be generated, which has to be accepted by the vehicle.
 
 ## Android Auto
