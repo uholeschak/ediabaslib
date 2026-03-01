@@ -17,6 +17,7 @@ namespace BMW.Rheingold.Psdz
             {
                 Id = connectionModel.Id,
                 Port = connectionModel.Port,
+                IsTlsAllowed = connectionModel.IsTlsAllowed,
                 TargetSelector = TargetSelectorMapper.Map(connectionModel.TargetSelector)
             };
         }
