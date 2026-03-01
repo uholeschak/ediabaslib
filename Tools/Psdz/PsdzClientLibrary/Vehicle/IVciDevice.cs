@@ -49,6 +49,10 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         string IPAddress { get; set; }
 
+        bool IsApipa { get; }
+
+        bool IsLocalMachine { get; }
+
         string ImageVersionApplication { get; set; }
 
         string ImageVersionBoot { get; set; }
@@ -140,23 +144,15 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         bool IsMarkedToDefault { get; set; }
 
         bool IsSimulation { get; set; }
-
         new VCIDeviceType VCIType { get; set; }
 
         bool CheckChannel(string channelId);
-
         double? GetClamp15();
-
         double? GetClamp30();
-
         string ToAttrList();
-
         string ToAttrList(bool addLineFeed);
-
         string getVCIDescription(VCIDeviceType devType);
-
         void SetAlive();
-
         bool IsSupportedImibOrICOM(string[] acceptedImibDevices);
     }
 }
