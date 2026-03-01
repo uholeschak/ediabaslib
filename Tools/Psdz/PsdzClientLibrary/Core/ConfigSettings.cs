@@ -13,7 +13,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.Win32;
 
-#pragma warning disable CS0618
+#pragma warning disable CS0618, CS0169
 namespace PsdzClient.Core
 {
     public class ConfigSettings
@@ -220,20 +220,6 @@ namespace PsdzClient.Core
             set
             {
                 runIstaRsuRepairMode = value;
-            }
-        }
-
-        public static bool IsConwoyDataProviderConigured
-        {
-            get
-            {
-                if (!isConwoyDataProviderConigured.HasValue)
-                {
-                    string configString = getConfigString("BMW.Rheingold.DatabaseProvider.DatabaseProviderFactory.DatabaseProvider", "DatabaseProviderSQLite");
-                    isConwoyDataProviderConigured = configString == "ConWoyDataProvider";
-                }
-
-                return isConwoyDataProviderConigured.Value;
             }
         }
 
@@ -608,7 +594,7 @@ namespace PsdzClient.Core
                     //[+] if (false)
                     if (false)
                     {
-                        //[-] SetCurrentUICultureFromDB(instance);
+                    //[-] SetCurrentUICultureFromDB(instance);
                     }
                     else
                     {
@@ -621,6 +607,7 @@ namespace PsdzClient.Core
                 Log.WarningException("ConfigSettings.InitCulture()", exception);
                 CurrentUICulture = getConfigString("TesterGUI.Language", "en-GB");
             }
+
             return currentUiCulture;
         }
 
@@ -1412,7 +1399,7 @@ namespace PsdzClient.Core
             }
             catch (Exception ex)
             {
-                Log.Warning("GlobalSettingsObject.GetPrintingFormat()", string.Format("Unable to parse {0} read from key '{0}' of type '{1}'. Setting default: '{2}'.", text, "BMW.Rheingold.Print.Formats", typeof(PrintFormat), printFormat), ex);
+                Log.Warning("GlobalSettingsObject.GetPrintingFormat()", string.Format("Unable to parse {0} read from key '{1}' of type '{2}'. Setting default: '{3}'.", text, "BMW.Rheingold.Print.Formats", typeof(PrintFormat), printFormat), ex);
                 return printFormat;
             }
         }
