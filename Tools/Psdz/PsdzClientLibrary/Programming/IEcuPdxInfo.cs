@@ -49,5 +49,7 @@ namespace PsdzClient.Programming
         int ServicePack { get; }
 
         bool IsAclEnabled { get; }
+
+        bool IsLcsObiMaster { get; }
     }
 }
