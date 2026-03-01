@@ -92,6 +92,9 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
         [DataMember]
         public bool LcsIukCluster { get; set; }
 
+        [DataMember]
+        public bool IsLcsObiMaster { get; set; }
+
         [PreserveSource(KeepAttribute = true)]
         [DataMember]
         public int ServicePack { get; set; }
@@ -124,6 +127,7 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
             LcsIntegrityProtectionOCSupported = model.LcsIntegrityProtectionOCSupported;
             LcsIukCluster = model.LcsIukCluster;
             ServicePack = model.ServicePack;
+            IsLcsObiMaster = model.IsLcsObiMaster;
         }
 
         public override bool Equals(object obj)
@@ -139,9 +143,9 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
             }
 
             PsdzEcuPdxInfo psdzEcuPdxInfo = (PsdzEcuPdxInfo)obj;
-            if (CertVersion == psdzEcuPdxInfo.CertVersion && IsCert2018 == psdzEcuPdxInfo.IsCert2018 && IsCert2021 == psdzEcuPdxInfo.IsCert2021 && IsCert2025 == psdzEcuPdxInfo.IsCert2025 && IsCertEnabled == psdzEcuPdxInfo.IsCertEnabled && IsSecOcEnabled == psdzEcuPdxInfo.IsSecOcEnabled && IsSecOcMaster == psdzEcuPdxInfo.IsSecOcMaster && IsSfaEnabled == psdzEcuPdxInfo.IsSfaEnabled && IsIPSecEnabled == psdzEcuPdxInfo.IsIPSecEnabled && IsLcsServicePackSupported == psdzEcuPdxInfo.IsLcsServicePackSupported && IsLcsSystemTimeSwitchSupported == psdzEcuPdxInfo.IsLcsSystemTimeSwitchSupported && IsMirrorProtocolSupported == psdzEcuPdxInfo.IsMirrorProtocolSupported && IsEcuAuthEnabled == psdzEcuPdxInfo.IsEcuAuthEnabled && IsIPsecBitmaskSupported == psdzEcuPdxInfo.IsIPsecBitmaskSupported && ProgrammingProtectionLevel == psdzEcuPdxInfo.ProgrammingProtectionLevel && IsMACsecEnabled == psdzEcuPdxInfo.IsMACsecEnabled && AclEnabled == psdzEcuPdxInfo.AclEnabled && IsSmartActuatorMaster == psdzEcuPdxInfo.IsSmartActuatorMaster && UpdateSmartActuatorConfigurationSupported == psdzEcuPdxInfo.UpdateSmartActuatorConfigurationSupported && LcsIntegrityProtectionOCSupported == psdzEcuPdxInfo.LcsIntegrityProtectionOCSupported && LcsIukCluster == psdzEcuPdxInfo.LcsIukCluster)
+            if (CertVersion == psdzEcuPdxInfo.CertVersion && IsCert2018 == psdzEcuPdxInfo.IsCert2018 && IsCert2021 == psdzEcuPdxInfo.IsCert2021 && IsCert2025 == psdzEcuPdxInfo.IsCert2025 && IsCertEnabled == psdzEcuPdxInfo.IsCertEnabled && IsSecOcEnabled == psdzEcuPdxInfo.IsSecOcEnabled && IsSecOcMaster == psdzEcuPdxInfo.IsSecOcMaster && IsSfaEnabled == psdzEcuPdxInfo.IsSfaEnabled && IsIPSecEnabled == psdzEcuPdxInfo.IsIPSecEnabled && IsLcsServicePackSupported == psdzEcuPdxInfo.IsLcsServicePackSupported && IsLcsSystemTimeSwitchSupported == psdzEcuPdxInfo.IsLcsSystemTimeSwitchSupported && IsMirrorProtocolSupported == psdzEcuPdxInfo.IsMirrorProtocolSupported && IsEcuAuthEnabled == psdzEcuPdxInfo.IsEcuAuthEnabled && IsIPsecBitmaskSupported == psdzEcuPdxInfo.IsIPsecBitmaskSupported && ProgrammingProtectionLevel == psdzEcuPdxInfo.ProgrammingProtectionLevel && IsMACsecEnabled == psdzEcuPdxInfo.IsMACsecEnabled && AclEnabled == psdzEcuPdxInfo.AclEnabled && IsSmartActuatorMaster == psdzEcuPdxInfo.IsSmartActuatorMaster && UpdateSmartActuatorConfigurationSupported == psdzEcuPdxInfo.UpdateSmartActuatorConfigurationSupported && LcsIntegrityProtectionOCSupported == psdzEcuPdxInfo.LcsIntegrityProtectionOCSupported && LcsIukCluster == psdzEcuPdxInfo.LcsIukCluster && ServicePack == psdzEcuPdxInfo.ServicePack)
             {
-                return ServicePack == psdzEcuPdxInfo.ServicePack;
+                return IsLcsObiMaster == psdzEcuPdxInfo.IsLcsObiMaster;
             }
 
             return false;
@@ -149,12 +153,12 @@ namespace BMW.Rheingold.Psdz.Model.Ecu
 
         public override int GetHashCode()
         {
-            return (CertVersion, IsCert2018, IsCert2021, IsCert2025, IsCertEnabled, IsSecOcEnabled, IsSecOcMaster, IsSfaEnabled, IsIPSecEnabled, IsLcsServicePackSupported, IsLcsSystemTimeSwitchSupported, IsMirrorProtocolSupported, IsEcuAuthEnabled, IsIPsecBitmaskSupported, ProgrammingProtectionLevel, IsMACsecEnabled, AclEnabled, IsSmartActuatorMaster, UpdateSmartActuatorConfigurationSupported, LcsIntegrityProtectionOCSupported, LcsIukCluster, ServicePack).GetHashCode();
+            return (CertVersion, IsCert2018, IsCert2021, IsCert2025, IsCertEnabled, IsSecOcEnabled, IsSecOcMaster, IsSfaEnabled, IsIPSecEnabled, IsLcsServicePackSupported, IsLcsSystemTimeSwitchSupported, IsMirrorProtocolSupported, IsEcuAuthEnabled, IsIPsecBitmaskSupported, ProgrammingProtectionLevel, IsMACsecEnabled, AclEnabled, IsSmartActuatorMaster, UpdateSmartActuatorConfigurationSupported, LcsIntegrityProtectionOCSupported, LcsIukCluster, ServicePack, IsLcsObiMaster).GetHashCode();
         }
 
         public override string ToString()
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}:{1}:{2}:{3}:{4}:{5}:{6}:{7}:{8}:{9}:{10}:{11}:{12}:{13}:{14}:{15}:{16}:{17}:{18}:{19}:{20}:{21}", CertVersion, IsCert2018, IsCert2021, IsCert2025, IsCertEnabled, IsSecOcEnabled, IsSecOcMaster, IsSfaEnabled, IsIPSecEnabled, IsLcsServicePackSupported, IsLcsSystemTimeSwitchSupported, IsMirrorProtocolSupported, IsEcuAuthEnabled, IsIPsecBitmaskSupported, ProgrammingProtectionLevel, IsMACsecEnabled, AclEnabled, IsSmartActuatorMaster, UpdateSmartActuatorConfigurationSupported, LcsIntegrityProtectionOCSupported, LcsIukCluster, ServicePack);
+            return string.Format(CultureInfo.InvariantCulture, "{0}:{1}:{2}:{3}:{4}:{5}:{6}:{7}:{8}:{9}:{10}:{11}:{12}:{13}:{14}:{15}:{16}:{17}:{18}:{19}:{20}:{21}", CertVersion, IsCert2018, IsCert2021, IsCert2025, IsCertEnabled, IsSecOcEnabled, IsSecOcMaster, IsSfaEnabled, IsIPSecEnabled, IsLcsServicePackSupported, IsLcsSystemTimeSwitchSupported, IsMirrorProtocolSupported, IsEcuAuthEnabled, IsIPsecBitmaskSupported, ProgrammingProtectionLevel, IsMACsecEnabled, AclEnabled, IsSmartActuatorMaster, UpdateSmartActuatorConfigurationSupported, LcsIntegrityProtectionOCSupported, LcsIukCluster, ServicePack, IsLcsObiMaster);
         }
     }
 }
