@@ -54,7 +54,6 @@ namespace PsdzClient.Core
         SCCPostVehicleSession,
         SCCGetVehicleSession,
         OrderData,
-        AIRTeileClearingRelevant,
         KAISendMaintenanceEntry,
         KAIGetServiceHistory,
         KAIServiceForecast,
@@ -62,15 +61,17 @@ namespace PsdzClient.Core
         BatteryService,
         FBMUpload,
         Sec4DiagCertReqProfil,
-        TCM,
         PortalIntegrationGetVersions,
+        SeamLM2DemandByCategory,
         ConWoyVinRangesByProductionDate,
         ConWoyVinRangesByVin17_4_7,
         ConWoyVinRangesByBand,
         ConWoyLocalizedSA,
         ConWoySwiRegisterByParentId,
         ConWoyServiceProgramByIdentifier,
-        ConWoyCharacteristicsByTypeKey
+        ConWoyCharacteristicsByTypeKey,
+        HighVoltageBatteryPass,
+        TCMv2
     }
 
     public interface IBackendCallsWatchDog
