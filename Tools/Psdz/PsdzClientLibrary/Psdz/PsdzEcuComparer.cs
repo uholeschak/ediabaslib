@@ -118,11 +118,6 @@ namespace BMW.Rheingold.Psdz.Model.Comparer
                 return false;
             }
 
-            if (x.GetType() != y.GetType())
-            {
-                return false;
-            }
-
             return x.OrderBy((PsdzBus bus) => bus).SequenceEqual(y.OrderBy((PsdzBus bus) => bus));
         }
 
