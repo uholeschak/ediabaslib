@@ -18,9 +18,9 @@ namespace PsdzClient.Core
         private string serialEngineField;
         private BrandName? brandNameField;
         private ObservableCollection<ECU> eCUField;
-        private List<CEMResult> cemField;
         [PreserveSource(Hint = "ObservableCollection<ZFSResult>", Placeholder = true)]
         private PlaceholderType zFSField;
+        private List<CEMResult> cemField;
         private bool zFS_SUCCESSFULLYField;
         private ECU selectedECUField;
         [PreserveSource(Hint = "private ObservableCollection<typeCBSInfo>", Placeholder = true)]
@@ -377,12 +377,15 @@ namespace PsdzClient.Core
             }
         }
 
+        [PreserveSource(Hint = "public ObservableCollection<ZFSResult>", Placeholder = true)]
+        public PlaceholderType ZFS;
         public List<CEMResult> CEM
         {
             get
             {
                 return cemField;
             }
+
             set
             {
                 if (cemField != null)
@@ -399,8 +402,6 @@ namespace PsdzClient.Core
             }
         }
 
-        [PreserveSource(Hint = "public ObservableCollection<ZFSResult>", Placeholder = true)]
-        public PlaceholderType ZFS;
         public bool ZFS_SUCCESSFULLY
         {
             get
@@ -449,6 +450,7 @@ namespace PsdzClient.Core
         {
             get
             {
+                AddServiceCodeAndLogsForTypeKeys(typField, "Typ");
                 return typField;
             }
 
@@ -2410,7 +2412,7 @@ namespace PsdzClient.Core
             refSchemaField = "http://www.bmw.com/Rheingold/Vehicle.xsd";
             versionField = "3.42.20.10700";
             dealerSessionProperties = new List<DealerSessionProperty>();
-            //[-] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
+        //[-] backendsAvailabilityIndicator = new BackendsAvailabilityIndicator();
         }
 
         protected void AddServiceCodeAndLogsForTypeKeys(string currentValue, string propertyName)
@@ -2419,13 +2421,13 @@ namespace PsdzClient.Core
             {
                 return;
             }
-            //[-]IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
-            //[-]if (service != null)
-            //[-]{
-            //[-]string text = "Used typeKey: " + propertyName + ",  value: " + currentValue + ". Values returned by VinValidator. TypeKey: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKey)) + ", TypeKeyBasic: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyBasic)) + ", TypeKeyLead: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyLead));
-            //[-]service.AddServiceCode(ServiceCodes.IDE12_UsageOfAllTypeKeys_nu_LF, text, LayoutGroup.D);
-            //[-]Log.Info(Log.CurrentMethod(), text + Environment.NewLine + Environment.StackTrace);
-            //[-]}
+        //[-]IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
+        //[-]if (service != null)
+        //[-]{
+        //[-]string text = "Used typeKey: " + propertyName + ",  value: " + currentValue + ". Values returned by VinValidator. TypeKey: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKey)) + ", TypeKeyBasic: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyBasic)) + ", TypeKeyLead: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyLead));
+        //[-]service.AddServiceCode(ServiceCodes.IDE12_UsageOfAllTypeKeys_nu_LF, text, LayoutGroup.D);
+        //[-]Log.Info(Log.CurrentMethod(), text + Environment.NewLine + Environment.StackTrace);
+        //[-]}
         }
 
         public virtual void OnPropertyChanged(string propertyName)

@@ -404,6 +404,7 @@ namespace PsdzClient.Core
             {
                 return VARIANTE;
             }
+
             set
             {
                 VARIANTE = value;
@@ -458,6 +459,23 @@ namespace PsdzClient.Core
 
         [PreserveSource(Hint = "ObservableCollection<JOB>", Placeholder = true)]
         public PlaceholderType JOBS;
+        [XmlIgnore]
+        BusType IEcuTreeEcu.BUS
+        {
+            get
+            {
+                return (BusType)BUS;
+            }
+
+            set
+            {
+                if (BUS != (BusType)value)
+                {
+                    BUS = (BusType)value;
+                }
+            }
+        }
+
         public BusType BUS
         {
             get
@@ -1785,7 +1803,6 @@ namespace PsdzClient.Core
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
         [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
         protected ECU(ECU ecu) : this()
         {
