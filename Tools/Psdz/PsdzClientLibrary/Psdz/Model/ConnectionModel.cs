@@ -14,5 +14,8 @@ namespace BMW.Rheingold.Psdz
 
         [JsonProperty("targetSelector", NullValueHandling = NullValueHandling.Ignore)]
         public TargetSelectorModel TargetSelector { get; set; }
+
+        [JsonProperty("tlsAllowed", NullValueHandling = NullValueHandling.Ignore)]
+        public bool IsTlsAllowed { get; set; }
     }
 }
