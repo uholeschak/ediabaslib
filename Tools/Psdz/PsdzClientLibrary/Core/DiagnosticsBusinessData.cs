@@ -2389,53 +2389,5 @@ namespace PsdzClient.Core
 
             return null;
         }
-
-        [PreserveSource(SignatureModified = true)]
-        List<string> IDiagnosticsBusinessData.ProductLinesEpmBlacklist
-        {
-            get => base.ProductLinesEpmBlacklist;
-        }
-
-        [PreserveSource(SignatureModified = true)]
-        DateTime IDiagnosticsBusinessData.DTimeF01Lci
-        {
-            get => base.DTimeF01Lci;
-        }
-
-        [PreserveSource(SignatureModified = true)]
-        DateTime IDiagnosticsBusinessData.DTimeRR_S2
-        {
-            get => base.DTimeRR_S2;
-        }
-
-        [PreserveSource(SignatureModified = true)]
-        DateTime IDiagnosticsBusinessData.DTimeF25Lci
-        {
-            get => base.DTimeF25Lci;
-        }
-
-        [PreserveSource(SignatureModified = true)]
-        DateTime IDiagnosticsBusinessData.DTimeF01BN2020MostDomain
-        {
-            get => base.DTimeF01BN2020MostDomain;
-        }
-
-        [PreserveSource(SignatureModified = true)]
-        DateTime IDiagnosticsBusinessData.DTime2022_07
-        {
-            get => base.DTime2022_07;
-        }
-
-        [PreserveSource(SignatureModified = true)]
-        DateTime IDiagnosticsBusinessData.DTime2023_03
-        {
-            get => base.DTime2023_03;
-        }
-
-        [PreserveSource(SignatureModified = true)]
-        DateTime IDiagnosticsBusinessData.DTime2023_07
-        {
-            get => base.DTime2023_07;
-        }
     }
 }
