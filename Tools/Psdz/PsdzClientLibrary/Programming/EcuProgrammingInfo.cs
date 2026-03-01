@@ -711,7 +711,7 @@ namespace PsdzClient.Programming
             Scheduled |= EcuScheduledState.ProgrammingScheduledByLogistic;
         }
 
-        internal bool UpdateSingleProgrammingAction(ProgrammingActionType type, ProgrammingActionState state)
+        public bool UpdateSingleProgrammingAction(ProgrammingActionType type, ProgrammingActionState state)
         {
             foreach (ProgrammingAction programmingAction in programmingActionList)
             {
