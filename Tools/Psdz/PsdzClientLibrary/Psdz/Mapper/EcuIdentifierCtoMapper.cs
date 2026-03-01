@@ -2,7 +2,7 @@
 
 namespace BMW.Rheingold.Psdz
 {
-    internal static class EcuIdentifierCtoMapper
+    public static class EcuIdentifierCtoMapper
     {
         public static IPsdzEcuIdentifier Map(EcuIdentifierCtoModel model)
         {
