@@ -15,15 +15,12 @@ namespace PsdzClient.Core
             public const string DumpStackOverflowException = "DumpStackOverflowException";
             public const string EarlyStartPsdzWebService = "EarlyStartPsdzWebService";
             public const string ExecuteServiceCallCertreqprofiles = "ExecuteServiceCallCertreqprofiles";
-            public const string ExpSgbmIdVal = "ExpSgbmIdVal";
-            public const string ExpSgbmIdValSmacTrnStrt = "ExpSgbmIdValSmacTrnStrt";
             public const string FastaSlowApiJobsSerivceCode = "FastaSlowApiJobsSerivceCode";
             public const string FdlGateOverTricCloud = "FdlGateOverTricCloud";
             public const string FillFunctionalJobsInFstdatIsActive = "FillFunctionalJobsInFstdatIsActive";
-            public const string FixedWebView2Runtime = "FixedWebView2Runtime";
-            public const string FixedWebView2RuntimeForLogin = "FixedWebView2RuntimeForLogin";
             public const string ForceUsingJava64Bit = "ForceUsingJava64Bit";
             public const string FscOverTricCloud = "FscOverTricCloud";
+            public const string FsLesenExpertOldCode = "FsLesenExpertOldCode";
             public const string KaiServiceHistory = "KaiServiceHistory";
             public const string Login = "Login";
             public const string LogTracingMaximum = "LogTracingMaximum";
@@ -35,9 +32,17 @@ namespace PsdzClient.Core
             public const string SccOverTricCloud = "SccOverTricCloud";
             public const string ScheduleLoginUserHousekeepingJob = "ScheduleLoginUserHousekeepingJob";
             public const string SdpOnlinePatchAndMultisession = "SdpOnlinePatchAndMultisession";
+            public const string SeamLM2OverTricCloud = "SeamLM2OverTricCloud";
+            public const string SendAmpToAssistant = "SendAmpToAssistant";
+            public const string SessionStateDialog = "SessionStateDialog";
             public const string SFAOverTricCloud = "SFAOverTricCloud";
+            public const string ShowCCMTab = "ShowCCMTab";
+            public const string ShowNewSessionEnterTab = "ShowNewSessionEnterTab";
+            public const string ShowTabFluids = "ShowTabFluids";
+            public const string SpecialEdiabasVersionForNcar = "SpecialEdiabasVersionForNcar";
             public const string SynchronizeLoginDatabasesJob = "SynchronizeLoginDatabasesJob";
-            public const string UseMirrorProtocol = "UseMirrorProtocol";
+            public const string TCMOverTricCloud = "TCMOverTricCloud";
+            public const string UseAlphaRealm = "UseAlphaRealm";
             public const string UsePsdzSeriesFormatter = "UsePsdzSeriesFormatter";
             public const string UseQaBackendForSfaAndFsc = "UseQaBackendForSfaAndFsc";
             public const string UseReducedPortRangeForMirror = "UseReducedPortRangeForMirror";
@@ -45,6 +50,7 @@ namespace PsdzClient.Core
             public const string UseSweParallelDownloader = "UseSweParallelDownloader";
             public const string VcmComparison = "VcmComparison";
             public const string VinRangesOverConWoy = "VinRangesOverConWoy";
+            public const string VinRangeUsagesLogging = "VinRangeUsagesLogging";
             public const string Vps25OverTricCloud = "Vps25OverTricCloud";
             public const string VpsOverTricCloud = "VpsOverTricCloud";
             public static bool DefaultValue(string featureName, IstaMode mode)
@@ -71,14 +77,13 @@ namespace PsdzClient.Core
                     case "ExecuteServiceCallCertreqprofiles":
                     case "FastaSlowApiJobsSerivceCode":
                     case "EarlyStartPsdzWebService":
-                    case "FixedWebView2Runtime":
                     case "KaiServiceHistory":
                     case "Login":
                     case "RenewConnectionAfterEcuReset":
                     case "ScheduleLoginUserHousekeepingJob":
                     case "SdpOnlinePatchAndMultisession":
+                    case "ShowTabFluids":
                     case "SynchronizeLoginDatabasesJob":
-                    case "UseMirrorProtocol":
                     case "UseQaBackendForSfaAndFsc":
                     case "UseReducedPortRangeForMirror":
                     case "VcmComparison":
@@ -95,11 +100,10 @@ namespace PsdzClient.Core
                     case "ConwoyStorage":
                     case "ExecuteServiceCallCertreqprofiles":
                     case "FastaSlowApiJobsSerivceCode":
-                    case "FixedWebView2Runtime":
                     case "KaiServiceHistory":
                     case "RenewConnectionAfterEcuReset":
                     case "SdpOnlinePatchAndMultisession":
-                    case "UseMirrorProtocol":
+                    case "ShowTabFluids":
                     case "UseQaBackendForSfaAndFsc":
                     case "UseReducedPortRangeForMirror":
                     case "VcmComparison":
@@ -116,12 +120,10 @@ namespace PsdzClient.Core
                     case "ConwoyStorage":
                     case "ExecuteServiceCallCertreqprofiles":
                     case "FastaSlowApiJobsSerivceCode":
-                    case "FixedWebView2Runtime":
                     case "RenewConnectionAfterEcuReset":
                     case "SdpOnlinePatchAndMultisession":
-                    case "UseMirrorProtocol":
+                    case "ShowTabFluids":
                     case "UseQaBackendForSfaAndFsc":
-                    case "VcmComparison":
                         return true;
                     default:
                         return false;
