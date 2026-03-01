@@ -17,6 +17,8 @@ namespace PsdzClient.Core
         private int dialogWidth;
         private int dialogHeight;
         private int dialogOffset;
+        internal bool IsTriggeredSynchronously { get; set; }
+
         [DataMember]
         public Guid Guid { get; private set; }
         public bool IsDisposing { get; set; }
