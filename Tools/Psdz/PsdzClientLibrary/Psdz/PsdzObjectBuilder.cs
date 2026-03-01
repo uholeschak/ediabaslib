@@ -157,7 +157,8 @@ namespace BMW.Rheingold.Psdz
                 ProgrammingProtectionLevel = ecuPdxInfo.ProgrammingProtectionLevel,
                 IsSmartActuatorMaster = ecuPdxInfo.IsSmartActuatorMaster,
                 ServicePack = ecuPdxInfo.ServicePack,
-                AclEnabled = ecuPdxInfo.IsAclEnabled
+                AclEnabled = ecuPdxInfo.IsAclEnabled,
+                IsLcsObiMaster = ecuPdxInfo.IsLcsObiMaster
             };
         }
 
@@ -200,14 +201,14 @@ namespace BMW.Rheingold.Psdz
 
             PsdzFa fa2 = new PsdzFa
             {
-//[+] #if OLD_PSDZ_FA
+                //[+] #if OLD_PSDZ_FA
 #if OLD_PSDZ_FA
 //[+] Vin = vin17,
 Vin = vin17,
 //[+] #else
 #else
                 Vin = (string.IsNullOrEmpty(fa.Vin) ? vin17 : fa.Vin),
-//[+] #endif
+                //[+] #endif
 #endif
                 IsValid = fa.IsValid,
                 FaVersion = fa.FaVersion,
@@ -267,10 +268,10 @@ Vin = vin17,
                     psdzStandardFa.Zeitkriterium = vehicleContext.FA.C_DATE;
                     psdzStandardFa.Lackcode = vehicleContext.FA.LACK;
                     psdzStandardFa.Polstercode = vehicleContext.FA.POLSTER;
-//[+] #if !OLD_PSDZ_FA
+                    //[+] #if !OLD_PSDZ_FA
 #if !OLD_PSDZ_FA
                     psdzStandardFa.Vin = vehicleContext.VIN17;
-//[+] #endif
+                    //[+] #endif
 #endif
                     IList<string> list = new List<string>();
                     foreach (string item in vehicleContext.FA.E_WORT)
