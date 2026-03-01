@@ -6,6 +6,8 @@
         RequestApplicationNumberAndUpgrade,
         ServiceHistoryAction,
         RsuStop,
-        RsuStart
+        RsuStart,
+        ClampSwitch,
+        CcmIdToDtcId
     }
 }
