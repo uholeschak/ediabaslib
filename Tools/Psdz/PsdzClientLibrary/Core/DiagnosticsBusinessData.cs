@@ -208,8 +208,6 @@ namespace PsdzClient.Core
         }
 
         private const string ILevelBN2020RegexPattern = "([A-Z0-9]{4}|[A-Z0-9]{3})-[0-9]{2}[-_](0[1-9]|1[0-2])[-_][0-9]{3}";
-        private static readonly DateTime LciDateE36 = DateTime.Parse("1998-03-01", CultureInfo.InvariantCulture);
-        private static readonly DateTime LciDateE60 = DateTime.Parse("2005-09-01", CultureInfo.InvariantCulture);
         private string ServiceCodeValuePattern = "{0}_{1}";
         private LayoutGroup layoutGroup = LayoutGroup.D;
         private readonly List<string> fsLesenExpertVariants = new List<string>
@@ -230,7 +228,18 @@ namespace PsdzClient.Core
             "CCU_P1",
             "HVS_02",
             "GSMA02PL",
-            "GSZF04GA"
+            "GSZF04GA",
+            "SCR051",
+            "IB_CT03X",
+            "HVS_06",
+            "GSZF04GJ",
+            "GSZF04GN",
+            "CCU_04",
+            "IPF1_DAF",
+            "IPB_APP1",
+            "IPB_APP2",
+            "ZIM_H",
+            "EVSV_V01"
         };
         private readonly List<string> specificModelsNoPopUp = new List<string>
         {
@@ -571,6 +580,8 @@ namespace PsdzClient.Core
         private const string CheckVoltageModuleName = "ABL-LIF-FAHRZEUGDATEN__BATTERIE";
         private const string RequestApplicationNumberAndUpgradeModuleName = "ABL-GEN-DETERMINE_REFURBISH_SWID";
         private const string ServiceHistoryActionModuleName = "ABL-WAR-AS6100_SERVICEHISTORIE_AIR";
+        private const string ClampSwitchModuleName = "ABL-LIF-KLEMMENSTEUERUNG";
+        private const string CcmIdToDtcIdModuleName = "ABL-LIF-CCM_ANALYZER";
         private static IDictionary<string, string> Mapping = new Dictionary<string, string>
         {
             {
@@ -598,29 +609,6 @@ namespace PsdzClient.Core
                 "STATUS_CBS_INFO"
             }
         };
-        public List<string> ProductLinesEpmBlacklist => new List<string>
-        {
-            "PL0",
-            "PL2",
-            "PL3",
-            "PL3-ALT",
-            "PL4",
-            "PL5",
-            "PL5-ALT",
-            "PL6",
-            "PL6-ALT",
-            "PL7"
-        };
-        public DateTime DTimeF25Lci => DateTime.ParseExact("01.04.2014", "dd.MM.yyyy", new CultureInfo("de-DE"));
-        public DateTime DTimeF01BN2020MostDomain => DateTime.ParseExact("30.06.2010", "dd.MM.yyyy", new CultureInfo("de-DE"));
-        public DateTime DTime2022_07 => DateTime.ParseExact("01.07.2022", "dd.MM.yyyy", new CultureInfo("de-DE"));
-        public DateTime DTime2023_03 => DateTime.ParseExact("01.03.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
-        public DateTime DTime2023_07 => DateTime.ParseExact("01.07.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
-
-        DateTime IDiagnosticsBusinessData.DTimeRR_S2 => DiagnosticsBusinessDataCore.DTimeRR_S2;
-
-        DateTime IDiagnosticsBusinessData.DTimeF01Lci => DiagnosticsBusinessDataCore.DTimeF01Lci;
-
         public decimal? ReadGwszForGroupCars(IVehicle vecInfo, IEcuKom ecuKom)
         {
             Dictionary<string, EcuKomConfig> dictionary = new Dictionary<string, EcuKomConfig>();
@@ -1208,7 +1196,7 @@ namespace PsdzClient.Core
                                     list.Add(16);
                                     list.Add(64);
                                 }
-                                else if (vecInfo.C_DATETIME >= DTime2022_07)
+                                else if (vecInfo.C_DATETIME >= base.DTime2022_07)
                                 {
                                     list.Add(16);
                                 }
@@ -1226,7 +1214,7 @@ namespace PsdzClient.Core
                                     list.Add(16);
                                     list.Add(64);
                                 }
-                                else if (vecInfo.C_DATETIME >= DTime2023_03)
+                                else if (vecInfo.C_DATETIME >= base.DTime2023_03)
                                 {
                                     list.Add(16);
                                 }
@@ -1244,7 +1232,7 @@ namespace PsdzClient.Core
                                     list.Add(16);
                                     list.Add(64);
                                 }
-                                else if (vecInfo.C_DATETIME >= DTime2023_07)
+                                else if (vecInfo.C_DATETIME >= base.DTime2023_07)
                                 {
                                     list.Add(16);
                                 }
@@ -1341,6 +1329,16 @@ namespace PsdzClient.Core
         public BNType GetBNType(IVehicle vehicle)
         {
             return (BNType)GetBordnetType(vehicle.Baureihenverbund, vehicle.Prodart, vehicle.Ereihe, new NugetLogger());
+        }
+
+        public bool IsVehicleInNewGeneration(IVehicle vecInfo)
+        {
+            if (!vecInfo.Classification.IsSp2021 && !vecInfo.Classification.IsSp2025)
+            {
+                return newFaultMemoryEnabledESeriesLifeCycles.Any((string eslc) => eslc.Equals(vecInfo.ESeriesLifeCycle, StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            return true;
         }
 
         public void BN2000HandleKMMFixes(IVehicle vecInfo, IEcuKom ecuKom, bool resetMOSTDone, IProgressMonitor monitor, int retryCount, DoECUIdentDelegate doECUIdentDelegate)
@@ -1501,7 +1499,7 @@ namespace PsdzClient.Core
 
             if (vehicle.BrandName != BrandName.BMWMOTORRAD)
             {
-                return !ProductLinesEpmBlacklist.Contains(vehicle.Produktlinie);
+                return !base.ProductLinesEpmBlacklist.Contains(vehicle.Produktlinie);
             }
 
             return false;
@@ -1659,7 +1657,7 @@ namespace PsdzClient.Core
 
                 if ("E36".Equals(ereihe))
                 {
-                    return c_DateTime < LciDateE36;
+                    return c_DateTime < DiagnosticsBusinessDataCore.LciDateE36;
                 }
             }
 
@@ -1681,7 +1679,7 @@ namespace PsdzClient.Core
             switch (productLine.ToUpper())
             {
                 case "PL6-ALT":
-                    if (fa != null && fa != null && c_DateTime > LciDateE60)
+                    if (fa != null && fa != null && c_DateTime > DiagnosticsBusinessDataCore.LciDateE60)
                     {
                         return true;
                     }
@@ -1719,6 +1717,10 @@ namespace PsdzClient.Core
                     return "ABL-GEN-DETERMINE_REFURBISH_SWID";
                 case TestModuleName.ServiceHistoryAction:
                     return "ABL-WAR-AS6100_SERVICEHISTORIE_AIR";
+                case TestModuleName.ClampSwitch:
+                    return "ABL-LIF-KLEMMENSTEUERUNG";
+                case TestModuleName.CcmIdToDtcId:
+                    return "ABL-LIF-CCM_ANALYZER";
                 default:
                     return null;
             }
@@ -2386,6 +2388,46 @@ namespace PsdzClient.Core
             }
 
             return null;
+        }
+
+        List<string> IDiagnosticsBusinessData.ProductLinesEpmBlacklist
+        {
+            get => base.ProductLinesEpmBlacklist;
+        }
+
+        DateTime IDiagnosticsBusinessData.DTimeF01Lci
+        {
+            get => base.DTimeF01Lci;
+        }
+
+        DateTime IDiagnosticsBusinessData.DTimeRR_S2
+        {
+            get => base.DTimeRR_S2;
+        }
+
+        DateTime IDiagnosticsBusinessData.DTimeF25Lci
+        {
+            get => base.DTimeF25Lci;
+        }
+
+        DateTime IDiagnosticsBusinessData.DTimeF01BN2020MostDomain
+        {
+            get => base.DTimeF01BN2020MostDomain;
+        }
+
+        DateTime IDiagnosticsBusinessData.DTime2022_07
+        {
+            get => base.DTime2022_07;
+        }
+
+        DateTime IDiagnosticsBusinessData.DTime2023_03
+        {
+            get => base.DTime2023_03;
+        }
+
+        DateTime IDiagnosticsBusinessData.DTime2023_07
+        {
+            get => base.DTime2023_07;
         }
     }
 }

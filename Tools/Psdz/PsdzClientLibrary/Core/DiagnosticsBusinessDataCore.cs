@@ -8,6 +8,8 @@ namespace PsdzClient.Core
 {
     public class DiagnosticsBusinessDataCore
     {
+        protected static readonly DateTime LciDateE36 = DateTime.Parse("1998-03-01", CultureInfo.InvariantCulture);
+        protected static readonly DateTime LciDateE60 = DateTime.Parse("2005-09-01", CultureInfo.InvariantCulture);
         private static readonly HashSet<string> IBusPkw = new HashSet<string>
         {
             "R050",
@@ -159,8 +161,26 @@ namespace PsdzClient.Core
                 "X_KS01"
             }
         };
-        protected static DateTime DTimeRR_S2 => DateTime.ParseExact("01.06.2012", "dd.MM.yyyy", new CultureInfo("de-DE"));
-        protected static DateTime DTimeF01Lci => DateTime.ParseExact("01.07.2013", "dd.MM.yyyy", new CultureInfo("de-DE"));
+        public DateTime DTimeRR_S2 => DateTime.ParseExact("01.06.2012", "dd.MM.yyyy", new CultureInfo("de-DE"));
+        public DateTime DTimeF01Lci => DateTime.ParseExact("01.07.2013", "dd.MM.yyyy", new CultureInfo("de-DE"));
+        public List<string> ProductLinesEpmBlacklist => new List<string>
+        {
+            "PL0",
+            "PL2",
+            "PL3",
+            "PL3-ALT",
+            "PL4",
+            "PL5",
+            "PL5-ALT",
+            "PL6",
+            "PL6-ALT",
+            "PL7"
+        };
+        public DateTime DTimeF25Lci => DateTime.ParseExact("01.04.2014", "dd.MM.yyyy", new CultureInfo("de-DE"));
+        public DateTime DTimeF01BN2020MostDomain => DateTime.ParseExact("30.06.2010", "dd.MM.yyyy", new CultureInfo("de-DE"));
+        public DateTime DTime2022_07 => DateTime.ParseExact("01.07.2022", "dd.MM.yyyy", new CultureInfo("de-DE"));
+        public DateTime DTime2023_03 => DateTime.ParseExact("01.03.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
+        public DateTime DTime2023_07 => DateTime.ParseExact("01.07.2023", "dd.MM.yyyy", new CultureInfo("de-DE"));
 
         public BordnetType GetBordnetType(string baureihenverbund, string prodart, string ereihe, ILogger logger)
         {
@@ -230,37 +250,42 @@ namespace PsdzClient.Core
 
         public string GetMainSeriesSgbd(IIdentVehicle vecInfo)
         {
-            switch (vecInfo.BordnetType)
+            return GetMainSeriesSgbd(((IReactorVehicle)vecInfo).Prodart, vecInfo.BordnetType, ((IReactorVehicle)vecInfo).Produktlinie, ((IReactorVehicle)vecInfo).Ereihe, ((IReactorVehicle)vecInfo).Baureihenverbund);
+        }
+
+        public string GetMainSeriesSgbd(string prodArt, BordnetType bordnetType, string produktLinie, string ereihe, string baureihenverbund)
+        {
+            switch (bordnetType)
             {
                 case BordnetType.BEV2010:
                     return "E89X";
                 case BordnetType.IBUS:
                     return "-";
                 default:
-                    if (string.Equals(((IReactorVehicle)vecInfo).Prodart, "P", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(prodArt, "P", StringComparison.OrdinalIgnoreCase))
                     {
-                        return GetMainSeriesSgbdPkw(vecInfo, vecInfo);
+                        return GetMainSeriesSgbdPkw(produktLinie, ereihe);
                     }
 
-                    if (string.Equals(((IReactorVehicle)vecInfo).Prodart, "M", StringComparison.OrdinalIgnoreCase))
+                    if (string.Equals(prodArt, "M", StringComparison.OrdinalIgnoreCase))
                     {
-                        return GetMainSeriesSgbdMotorrad(vecInfo, vecInfo);
+                        return GetMainSeriesSgbdMotorrad(bordnetType, baureihenverbund);
                     }
 
                     return "";
             }
         }
 
-        private string GetMainSeriesSgbdMotorrad(IReactorVehicle reactorVehicle, IIdentVehicle vecInfo)
+        private string GetMainSeriesSgbdMotorrad(BordnetType bordnetType, string baureihenverbund)
         {
-            switch (vecInfo.BordnetType)
+            switch (bordnetType)
             {
                 case BordnetType.BN2000_MOTORBIKE:
                 case BordnetType.BNK01X_MOTORBIKE:
                     return "MRK24";
                 case BordnetType.BN2020_MOTORBIKE:
                 {
-                    if (MotorradBaureihenverbundMap.TryGetValue(reactorVehicle.Baureihenverbund, out var value))
+                    if (MotorradBaureihenverbundMap.TryGetValue(baureihenverbund, out var value))
                     {
                         return value;
                     }
@@ -273,9 +298,9 @@ namespace PsdzClient.Core
             }
         }
 
-        private string GetMainSeriesSgbdPkw(IReactorVehicle reactorVehicle, IIdentVehicle vecInfo)
+        private string GetMainSeriesSgbdPkw(string produktLinie, string ereihe)
         {
-            string text = reactorVehicle.Produktlinie?.ToUpperInvariant();
+            string text = produktLinie?.ToUpperInvariant();
             if (string.IsNullOrEmpty(text))
             {
                 return "-";
@@ -283,12 +308,12 @@ namespace PsdzClient.Core
 
             if (text == "PL0")
             {
-                if (ZcsAllEreihe.Contains(reactorVehicle.Ereihe))
+                if (ZcsAllEreihe.Contains(ereihe))
                 {
                     return "ZCS_ALL";
                 }
 
-                if (E65Ereihe.Contains(reactorVehicle.Ereihe))
+                if (E65Ereihe.Contains(ereihe))
                 {
                     return "E65";
                 }
