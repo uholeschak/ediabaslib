@@ -155,4 +155,13 @@
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="SETLOCAL EnableDelayedExpansion&#xD;&#xA;copy /y &quot;$(ProjectDir)Xml\BmwDeepObd.xsd&quot; &quot;$(ProjectDir)Xml\E61R\&quot;&#xD;&#xA;" />
   </Target>
+  <Target Name="PrintSigningProps" BeforeTargets="Build">
+    <Message Importance="high" Text="=== Signing Properties ===" />
+    <Message Importance="high" Text="AndroidKeyStore: $(AndroidKeyStore)" />
+    <Message Importance="high" Text="AndroidSigningKeyStore: $(AndroidSigningKeyStore)" />
+    <Message Importance="high" Text="AndroidSigningKeyAlias: $(AndroidSigningKeyAlias)" />
+    <Message Importance="high" Text="AndroidSigningStorePass: $(AndroidSigningStorePass)" />
+    <Message Importance="high" Text="AndroidSigningKeyPass: $(AndroidSigningKeyPass)" />
+  </Target>
+  <Import Project="BmwDeepObd.local.props" Condition="Exists('BmwDeepObd.local.props')" />
 </Project>

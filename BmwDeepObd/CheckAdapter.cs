@@ -3,7 +3,6 @@ using System.Globalization;
 using System.IO;
 using System.Net.Sockets;
 using System.Threading;
-using Android.Bluetooth;
 using Android.Content;
 using Android.Text.Method;
 using Android.Views;
