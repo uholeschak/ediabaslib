@@ -498,7 +498,8 @@ namespace BMW.Rheingold.Programming.API
                     IsLcsIukCluster = psdzEcuPdxInfo.LcsIukCluster,
                     IsMACsecEnabled = psdzEcuPdxInfo.IsMACsecEnabled,
                     ServicePack = psdzEcuPdxInfo.ServicePack,
-                    IsAclEnabled = psdzEcuPdxInfo.AclEnabled
+                    IsAclEnabled = psdzEcuPdxInfo.AclEnabled,
+                    IsLcsObiMaster = psdzEcuPdxInfo.IsLcsObiMaster
                 };
             }
 
