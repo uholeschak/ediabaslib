@@ -69,5 +69,8 @@ namespace PsdzClient.Programming
 
         [DataMember]
         public bool IsAclEnabled { get; internal set; }
+
+        [DataMember]
+        public bool IsLcsObiMaster { get; set; }
     }
 }
