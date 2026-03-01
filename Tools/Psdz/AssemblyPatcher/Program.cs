@@ -1070,7 +1070,12 @@ namespace AssemblyPatcher
                                         {
                                             continue;
                                         }
-                                        if (instructions[index + 3].OpCode != OpCodes.Ldstr || string.Compare(instructions[index + 3].Operand.ToString(), "", StringComparison.OrdinalIgnoreCase) != 0)
+                                        if (instructions[index + 3].OpCode != OpCodes.Ldstr)
+                                        {
+                                            continue;
+                                        }
+                                        if ((string.Compare(instructions[index + 3].Operand.ToString(), "", StringComparison.OrdinalIgnoreCase) != 0) &&
+                                            (string.Compare(instructions[index + 3].Operand.ToString(), "Authentication=None;NetworkProtocol=TCP", StringComparison.OrdinalIgnoreCase) != 0))
                                         {
                                             continue;
                                         }
