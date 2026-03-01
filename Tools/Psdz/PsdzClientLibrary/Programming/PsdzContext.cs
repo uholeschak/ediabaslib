@@ -85,6 +85,8 @@ namespace PsdzClient.Programming
         public string IstufeShipment { get; private set; }
         public bool IsValidBackupTal => IndividualDataBackupTal != null;
         public IVehicleProfileChecksum VpcFromVcm { get; set; }
+        public string VpcFromBackend { get; set; }
+        public IPsdzFp FpFromBackend { get; set; }
 
         public bool IsValidEcuListActual
         {
@@ -199,7 +201,7 @@ namespace PsdzClient.Programming
             ExecutionOrderTop = new Dictionary<string, IList<string>>();
             ExecutionOrderBottom = new Dictionary<string, IList<string>>();
             SFASessionData = new SFASessionData();
-            //[-] ServiceLocator.Current.TryGetService<IPsdzCentralConnectionService>(out service);
+        //[-] ServiceLocator.Current.TryGetService<IPsdzCentralConnectionService>(out service);
         }
 
         public string GetBaseVariant(int diagnosticAddress)
