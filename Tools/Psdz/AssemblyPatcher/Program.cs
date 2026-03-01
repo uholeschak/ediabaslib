@@ -371,6 +371,7 @@ namespace AssemblyPatcher
                             Console.WriteLine("*** patchMethod2Class:patchMethod2 Exception: {0}", ex.Message);
                         }
 
+                        // Old location of CheckExpirationDate (4.57.X)
                         try
                         {
                             Target target = new Target
@@ -382,7 +383,7 @@ namespace AssemblyPatcher
                             IList<Instruction> instructions = patcher.GetInstructionList(target);
                             if (instructions != null)
                             {
-                                Console.WriteLine("MainWindowViewModel.CheckExpirationDate found");
+                                Console.WriteLine("MainWindowViewModel.CheckExpirationDate 4.57 found");
                                 instructions.Insert(0, Instruction.Create(OpCodes.Ret));
                                 patched = true;
                                 Console.WriteLine("CheckExpirationDate patched");
@@ -393,6 +394,28 @@ namespace AssemblyPatcher
                             Console.WriteLine("*** MainWindowViewModel.CheckExpirationDate Exception: {0}", ex.Message);
                         }
 
+                        // New location of CheckExpirationDate (4.58.X)
+                        try
+                        {
+                            Target target = new Target
+                            {
+                                Namespace = "BMW.Rheingold.ISTAGUI.Services",
+                                Class = "MainWindowViewModelService",
+                                Method = "CheckExpirationDate",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                Console.WriteLine("MainWindowViewModelService.CheckExpirationDate 4.58 found");
+                                instructions.Insert(0, Instruction.Create(OpCodes.Ret));
+                                patched = true;
+                                Console.WriteLine("CheckExpirationDate patched");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** MainWindowViewModelService.CheckExpirationDate Exception: {0}", ex.Message);
+                        }
 
                         try
                         {
