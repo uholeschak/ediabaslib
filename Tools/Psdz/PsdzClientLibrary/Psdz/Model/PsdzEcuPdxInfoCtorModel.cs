@@ -23,5 +23,6 @@
         public bool LcsIntegrityProtectionOCSupported { get; set; }
         public bool LcsIukCluster { get; set; }
         public int ServicePack { get; set; }
+        public bool IsLcsObiMaster { get; set; }
     }
 }
