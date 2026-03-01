@@ -76,11 +76,6 @@ namespace BMW.Rheingold.Psdz.Model
                 return false;
             }
 
-            if (x.GetType() != y.GetType())
-            {
-                return false;
-            }
-
             return x.OrderBy(keySelector).SequenceEqual(y.OrderBy(keySelector));
         }
     }
