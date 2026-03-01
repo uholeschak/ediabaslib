@@ -18,6 +18,7 @@ namespace PsdzClient.Contracts
         IFetchEcuCertCheckingResult GetFetchEcuCertCheckingResult();
         IBoolResultObject<IFetchEcuCertCheckingResult> AreEcuValidationCertificatesValidWithFetchResult();
         IBoolResultObject AutomaticRenewEcuValidationResult();
+        IBoolResultObject AutomaticRenewEcuValidationSpecial();
         IBoolResultObject IsEcuValidationServerOnlineResult();
         IBoolResultObject ManualRenewEcuValidation();
         IBoolResultObject ManualRequestEcuValidation();
