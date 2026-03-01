@@ -101,6 +101,7 @@ namespace PsdzClient.Core
                 service?.AddServiceCode("SUC01_NoInternetConnection_nu_LF", "The client probably has no internet connection.", LayoutGroup.D);
             }
 
+            //[-]SessionInfoAccessor.SessionInfo.SessionState.InternetAccessable = flag;
             return flag;
         }
 
