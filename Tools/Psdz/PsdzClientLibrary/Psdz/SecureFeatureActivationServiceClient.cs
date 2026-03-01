@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using BMW.Rheingold.Psdz.Model;
+﻿using BMW.Rheingold.Psdz.Model;
 using BMW.Rheingold.Psdz.Model.Ecu;
 using BMW.Rheingold.Psdz.Model.Sfa;
 using PsdzClient;
+using PsdzClient.Core;
+using System;
+using System.Collections.Generic;
+using System.ServiceModel;
+using System.ServiceModel.Channels;
 
 namespace BMW.Rheingold.Psdz.Client
 {
@@ -112,6 +113,12 @@ namespace BMW.Rheingold.Psdz.Client
         public IEnumerable<IPsdzSecurityBackendRequestFailureCto> RequestTokenDirectForVehicleOffline(string requestFilePath, string client, string system, IPsdzVin vin, IPsdzSvt svtIst, IPsdzSecureTokenRequestCto secureTokenRequest)
         {
             return CallFunction((ISecureFeatureActivationService service) => service.RequestTokenDirectForVehicleOffline(requestFilePath, client, system, vin, svtIst, secureTokenRequest));
+        }
+
+        [PreserveSource(Hint = "Dummy")]
+        public IEnumerable<IPsdzEcuFailureResponseCto> PerformEcuSwitchResetWithFlashMode(IPsdzConnection connection, IPsdzSvt svt, List<EcuResetMapping> ecusToBeReset, bool performWithFlashMode)
+        {
+            return CallFunction((ISecureFeatureActivationService service) => service.PerformEcuSwitchResetWithFlashMode(connection, svt, ecusToBeReset, performWithFlashMode));
         }
     }
 }

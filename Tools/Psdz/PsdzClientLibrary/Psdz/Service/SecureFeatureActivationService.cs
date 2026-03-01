@@ -335,6 +335,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
+        [Obsolete]
         public IEnumerable<IPsdzEcuFailureResponseCto> ResetEcusFlashMode(IPsdzConnection connection, IPsdzSvt svt, IEnumerable<IPsdzEcuIdentifier> ecusToBeReset, bool performWithFlashMode)
         {
             try
@@ -387,6 +388,25 @@ namespace BMW.Rheingold.Psdz
                     Ecus = ecus?.Select(EcuIdentifierMapper.Map).ToList()
                 };
                 return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"writesecuretokentoecus/{pConnection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException(Log.CurrentMethod(), exception);
+                return null;
+            }
+        }
+
+        public IEnumerable<IPsdzEcuFailureResponseCto> PerformEcuSwitchResetWithFlashMode(IPsdzConnection connection, IPsdzSvt svt, List<EcuResetMapping> ecusToBeReset, bool performWithFlashMode)
+        {
+            try
+            {
+                PerformEcuSwitchResetWithFlashModeRequestModel requestBodyObject = new PerformEcuSwitchResetWithFlashModeRequestModel
+                {
+                    Svt = SvtMapper.Map(svt),
+                    EcusToBeReset = ecusToBeReset,
+                    PerformWithFlashMode = performWithFlashMode
+                };
+                return _webCallHandler.ExecuteRequest<IList<EcuFailureResponseCtoModel>>(endpointService, $"performecuswitchresetwithflashmode/{connection.Id}", HttpMethod.Post, requestBodyObject).Data?.Select(EcuFailureResponseCtoMapper.MapCto).ToList();
             }
             catch (Exception exception)
             {
