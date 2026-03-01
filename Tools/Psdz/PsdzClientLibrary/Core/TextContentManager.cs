@@ -30,7 +30,7 @@ namespace PsdzClient.Core
             {
                 if (serviceProgramCollection == null)
                 {
-                    throw new ArgumentException($"No text collection available.");
+                    throw new ArgumentException("No text collection available.");
                 }
 
                 return serviceProgramCollection;
@@ -96,7 +96,7 @@ namespace PsdzClient.Core
             this.lang = lang;
             old = false;
             this.xepInfoObj = xepInfoObj;
-            if (ConfigSettings.IsConwoyDataProviderConigured)
+            if (ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.ConWoy.UseServiceProgramsOverConWoy", defaultValue: false))
             {
                 //[-] serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId.Value);
                 //[+] serviceProgramCollection = ReadTextCollection(xepInfoObj.ControlId);
@@ -588,7 +588,7 @@ namespace PsdzClient.Core
         private ITextLocator CreateText(string xmlText, __TextParameter[] paramArray)
         {
             if (old)
-            {   
+            {
                 if (!Regex.IsMatch(xmlText.Trim(), "^\\d+$"))
                 {
                     string tmp = string.Format(CultureInfo.CurrentCulture, "<TextItem>{0}</TextItem>", xmlText);
