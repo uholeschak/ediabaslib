@@ -109,7 +109,9 @@ namespace SourceCodeSync
             { "BMW.Rheingold.DiagnosticsBusinessDataCore.DiagnosticsBusinessDataCore", "DiagnosticsBusinessDataCore" },
             { "BMW.Rheingold.CoreFramework.Extensions", "Extensions" },
             { "BMW.ISPI.TRIC.ISTA.Contracts.Enums.NetworkType", "BMW.Rheingold.CoreFramework.Contracts.Vehicle.NetworkType"},
-            { "BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic", "MultisourceLogic"}
+            { "BMW.ISPI.TRIC.ISTA.MultisourceLogic.MultisourceLogic", "MultisourceLogic"},
+            { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"},
+            { "BMW.Rheingold.CoreFramework.DatabaseProvider.BusType", "BusType"}
         };
 
         private const string _commentedRemoveCodeMarker = "//[-]";
