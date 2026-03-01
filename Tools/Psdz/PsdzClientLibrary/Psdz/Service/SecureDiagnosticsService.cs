@@ -61,5 +61,25 @@ namespace BMW.Rheingold.Psdz
                 throw;
             }
         }
+
+        public void CheckAndPerformAuthService29IfNeeded(IPsdzConnection connection)
+        {
+            Log.Info(Log.CurrentMethod(), $"Called. Connection: {connection}");
+            try
+            {
+                if (connection == null)
+                {
+                    throw new ArgumentNullException("connection");
+                }
+
+                ApiResult apiResult = _webCallHandler.ExecuteRequest(endpointService, $"checkAndPerformAuthService29IfNeeded/{connection.Id}", HttpMethod.Post);
+                Log.Info(Log.CurrentMethod(), $"Finished. ResultIsSuccessful: {apiResult.IsSuccessful}");
+            }
+            catch (Exception exception)
+            {
+                Log.ErrorException(Log.CurrentMethod(), exception);
+                throw;
+            }
+        }
     }
 }
