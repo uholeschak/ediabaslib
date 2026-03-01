@@ -183,6 +183,8 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         [PreserveSource(Hint = "IEnumerable<IZfsEntry>", Placeholder = true)]
         PlaceholderType ZFS { get; }
 
+        IEnumerable<ICemResult> CEM { get; }
+
         bool ZFS_SUCCESSFULLY { get; }
 
         string RefSchema { get; }

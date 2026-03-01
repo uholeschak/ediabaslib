@@ -10,7 +10,7 @@ using BMW.Rheingold.CoreFramework.Contracts.Vehicle;
 
 namespace PsdzClient.Core
 {
-    public class SVK : ISvk, INotifyPropertyChanged
+    public class SVK : ISvk, INotifyPropertyChanged, IEcuTreeSvk
     {
         private ObservableCollection<string> xWE_SGBMIDField;
         private string pROG_DATUMField;
@@ -20,6 +20,8 @@ namespace PsdzClient.Core
         private ICollection<int> prozessklasseWert;
         [XmlIgnore]
         IEnumerable<string> ISvk.XWE_SGBMID => XWE_SGBMID;
+        [XmlIgnore]
+        IEnumerable<string> IEcuTreeSvk.XWE_SGBMID => XWE_SGBMID;
 
         public ObservableCollection<string> XWE_SGBMID
         {

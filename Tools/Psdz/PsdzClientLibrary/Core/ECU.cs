@@ -18,7 +18,7 @@ using System.Xml.Serialization;
 #pragma warning disable CS0169
 namespace PsdzClient.Core
 {
-    public class ECU : ICloneable, IEcu, INotifyPropertyChanged, IIdentEcu, IEcuObj
+    public class ECU : ICloneable, IEcu, INotifyPropertyChanged, IIdentEcu, IEcuTreeEcu, IEcuObj
     {
         private string bntn;
         private int stillProgrammable;
@@ -394,6 +394,24 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         public bool IsSmartActuator { get; set; }
+
+        [XmlIgnore]
+        IEnumerable<BusType> IEcuTreeEcu.SubBUS => SubBUS.Select((BusType b) => (BusType)b);
+
+        string IEcuTreeEcu.VARIANT
+        {
+            get
+            {
+                return VARIANTE;
+            }
+            set
+            {
+                VARIANTE = value;
+            }
+        }
+
+        [XmlIgnore]
+        public IEcuTreeSvk Svk => SVK;
 
         [XmlIgnore]
         public IEcuStatusInfo StatusInfo

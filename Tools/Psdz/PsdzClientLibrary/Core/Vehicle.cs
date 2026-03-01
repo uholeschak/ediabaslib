@@ -12,12 +12,13 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Serialization;
 using BMW.Rheingold.Programming.Common;
+using PsdzClient.Contracts;
 using PsdzClient.Programming;
 
 #pragma warning disable CS0169, CS0649, CS0618
 namespace PsdzClient.Core
 {
-    public class Vehicle : typeVehicle, IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle
+    public class Vehicle : typeVehicle, IVehicle, INotifyPropertyChanged, IVehicleRuleEvaluation, IVinValidatorVehicle, IIdentVehicle, IReactorVehicle, IEcuTreeVehicle
     {
         public const string BnProgramming = "BN2020,BN2020_MOTORBIKE";
         [PreserveSource(Hint = "ObservableCollectionEx<Fault>", Placeholder = true)]
@@ -38,6 +39,7 @@ namespace PsdzClient.Core
         private bool withLfpNCarBattery;
         [PreserveSource(Hint = "Database modified", SuppressWarning = true)]
         private BatteryEnum batteryType;
+        private CentralErrorMemoryStatus centralErrorMemoryStatus;
         private bool isClosingOperationActive;
         private string verkaufsBezeichnungField;
         private bool powerSafeModeByOldEcus;
@@ -73,6 +75,7 @@ namespace PsdzClient.Core
         private PsdzDatabase.BordnetsData bordnetsData;
         private VehicleClassification classification;
         private IVehicleProfileChecksum vpc;
+        private CcmReadoutState ccmReadoutState;
         [XmlIgnore]
         public List<IEcu> SvtECU { get; set; } = new List<IEcu>();
 
@@ -244,6 +247,7 @@ namespace PsdzClient.Core
         {
             get
             {
+                AddServiceCodeAndLogsForTypeKeys(vinRangeType, "VINRangeType");
                 return vinRangeType;
             }
 
@@ -273,6 +277,24 @@ namespace PsdzClient.Core
 
         [XmlIgnore]
         public ParameterContainer SessionDataStore => sessionDataStore;
+
+        [XmlIgnore]
+        public CcmReadoutState CcmReadoutState
+        {
+            get
+            {
+                return ccmReadoutState;
+            }
+
+            set
+            {
+                if (ccmReadoutState != value)
+                {
+                    ccmReadoutState = value;
+                    OnPropertyChanged("CcmReadoutState");
+                }
+            }
+        }
 
         public string VIN10Prefix
         {
@@ -338,6 +360,7 @@ namespace PsdzClient.Core
                 {
                     if (base.FA != null && !string.IsNullOrEmpty(base.FA.TYPE) && base.FA.TYPE.Length == 4)
                     {
+                        AddServiceCodeAndLogsForTypeKeys(base.FA.TYPE, "GMType.FA.TYPE");
                         return base.FA.TYPE;
                     }
 
@@ -348,6 +371,7 @@ namespace PsdzClient.Core
 
                     if (!string.IsNullOrEmpty(VINRangeType))
                     {
+                        AddServiceCodeAndLogsForTypeKeys(VINRangeType, "GMType.VINRangeType");
                         return VINRangeType;
                     }
 
@@ -384,9 +408,11 @@ namespace PsdzClient.Core
                                 text += "9";
                                 break;
                             default:
+                                AddServiceCodeAndLogsForTypeKeys(base.FA.TYPE, "GMType.VINType");
                                 return VINType;
                         }
 
+                        AddServiceCodeAndLogsForTypeKeys(base.FA.TYPE, "GMType.VINType");
                         return text;
                     }
                 }
@@ -410,6 +436,7 @@ namespace PsdzClient.Core
                         return null;
                     }
 
+                    AddServiceCodeAndLogsForTypeKeys(base.VIN17.Substring(3, 4), "VINType");
                     return base.VIN17.Substring(3, 4);
                 }
                 catch (Exception exception)
@@ -829,6 +856,26 @@ namespace PsdzClient.Core
         PlaceholderType IVehicle.ZFS => base.ZFS;
 
         [XmlIgnore]
+        IEnumerable<ICemResult> IVehicle.CEM => base.CEM;
+
+        [XmlIgnore]
+        public CentralErrorMemoryStatus CentralErrorMemoryStatus
+        {
+            get
+            {
+                return centralErrorMemoryStatus;
+            }
+
+            set
+            {
+                if (centralErrorMemoryStatus != value)
+                {
+                    centralErrorMemoryStatus = value;
+                }
+            }
+        }
+
+        [XmlIgnore]
         public double Clamp15MinValue
         {
             get
@@ -1071,6 +1118,9 @@ namespace PsdzClient.Core
         public string VehicleModelRecognition { get; set; }
         public string TempTypeKeyLeadFromDb { get; set; }
         public string TempTypeKeyBasicFromFbm { get; set; }
+
+        [XmlIgnore]
+        IList<IEcuTreeEcu> IEcuTreeVehicle.ECU => base.ECU.Cast<IEcuTreeEcu>().ToList();
 
         [PreserveSource(Hint = "clientContext added", SignatureModified = true)]
         public Vehicle(ClientContext clientContext) : base(clientContext)
@@ -1882,7 +1932,6 @@ namespace PsdzClient.Core
             //[-] eCU.XepEcuVariant = new XEP_ECUVARIANTS(ecu.XepEcuVariant);
             //[-] }
             //[-] }
-
             base.ECU.AddIfNotContains(eCU);
         }
 
@@ -2438,6 +2487,16 @@ namespace PsdzClient.Core
         private List<IIdentEcu> GetEcusAsIIdentEcu()
         {
             return base.ECU.Cast<IIdentEcu>().ToList();
+        }
+
+        IEcuTreeEcu IEcuTreeVehicle.getECU(long? sgAdr)
+        {
+            return getECU(sgAdr);
+        }
+
+        IEcuTreeEcu IEcuTreeVehicle.getECU(long? sgAdr, long? subAddress)
+        {
+            return getECU(sgAdr, subAddress);
         }
 
         [PreserveSource(Hint = "SessionStart", Placeholder = true)]
