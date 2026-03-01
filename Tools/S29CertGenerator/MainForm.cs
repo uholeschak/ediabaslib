@@ -1662,36 +1662,13 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string istaKeyFile, bool forceUpdate = false)
+        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string istaKeyFile, string clientConfigFile, bool forceUpdate = false)
         {
             try
             {
                 UpdateStatusText(string.Empty);
 
                 List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, forceUpdate, false, out bool _);
-                if (istaCertChain == null || istaCertChain.Count != 2)
-                {
-                    UpdateStatusText("Failed to create SubCA certificates", true);
-                    return false;
-                }
-
-                UpdateStatusText("SubCA certificates installed", true);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                UpdateStatusText($"Convert request files exception: {ex.Message}", true);
-                return false;
-            }
-        }
-
-        protected bool CreateEdiabasFiles(string caCertsFile, string trustStoreFolder, string istaKeyFile, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string clientConfigFile, string vehicleVin, bool forceUpdate = false)
-        {
-            try
-            {
-                UpdateStatusText(string.Empty);
-
-                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, forceUpdate, true, out bool _);
                 if (istaCertChain == null || istaCertChain.Count != 2)
                 {
                     UpdateStatusText("Failed to create SubCA certificates", true);
@@ -1723,6 +1700,29 @@ namespace S29CertGenerator
                         UpdateStatusText("Modifying client configuration failed", true);
                         return false;
                     }
+                }
+
+                UpdateStatusText("SubCA certificates installed", true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Convert request files exception: {ex.Message}", true);
+                return false;
+            }
+        }
+
+        protected bool CreateEdiabasFiles(string caCertsFile, string trustStoreFolder, string istaKeyFile, string jsonRequestFolder, string jsonResponseFolder, string certOutputFolder, string vehicleVin, bool forceUpdate = false)
+        {
+            try
+            {
+                UpdateStatusText(string.Empty);
+
+                List<Org.BouncyCastle.X509.X509Certificate> istaCertChain = LoadIstaSubCaCerts(trustStoreFolder, istaKeyFile, forceUpdate, true, out bool _);
+                if (istaCertChain == null || istaCertChain.Count != 2)
+                {
+                    UpdateStatusText("Failed to create SubCA certificates", true);
+                    return false;
                 }
 
                 if (string.IsNullOrEmpty(jsonRequestFolder) || !Directory.Exists(jsonRequestFolder))
@@ -2393,7 +2393,7 @@ namespace S29CertGenerator
 
         private void buttonGenerate_Click(object sender, EventArgs e)
         {
-            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, checkBoxForceCreate.Checked))
+            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, textBoxClientConfigurationFile.Text, checkBoxForceCreate.Checked))
             {
                 checkBoxForceCreate.Checked = false;
             }
@@ -2404,7 +2404,7 @@ namespace S29CertGenerator
         private void buttonGenerateEdiabasFiles_Click(object sender, EventArgs e)
         {
             string vehicleVin = comboBoxVinList.SelectedItem as string;
-            if (CreateEdiabasFiles(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, textBoxClientConfigurationFile.Text, vehicleVin))
+            if (CreateEdiabasFiles(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, textBoxJsonRequestFolder.Text, textBoxJsonResponseFolder.Text, textBoxCertOutputFolder.Text, vehicleVin))
             {
                 checkBoxForceCreate.Checked = false;
             }
