@@ -14,7 +14,8 @@ namespace PsdzClient.Programming
     [PreserveSource(Hint = "ProgrammingService renamed", InheritanceModified = true)]
     public class ProgrammingService2 : IProgrammingService2, IDisposable
     {
-        private readonly PsdzWebServiceWrapper psdzService;
+        [PreserveSource(Hint = "PsdzWebServiceWrapper", Placeholder = true)]
+        private readonly PlaceholderType psdzService;
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
         private readonly PlaceholderType programmingWorker;
         private readonly IOperationServices services;
