@@ -1,7 +1,5 @@
 ﻿using PsdzClient.Utility;
 using System;
-using System.Collections.Generic;
-using static PsdzClient.PsdzDatabase;
 
 namespace PsdzClient.Core
 {
