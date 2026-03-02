@@ -6,6 +6,7 @@ using PsdzClient.Core.Container;
 using PsdzClient.Utility;
 using System;
 using System.IO;
+using BMW.Rheingold.Programming;
 
 #pragma warning disable CS0169
 namespace PsdzClient.Programming
@@ -13,11 +14,11 @@ namespace PsdzClient.Programming
     [PreserveSource(Hint = "ProgrammingService renamed", InheritanceModified = true)]
     public class ProgrammingService2 : IProgrammingService2, IDisposable
     {
-        [PreserveSource(Added = true)]
-        private readonly PsdzServiceGateway psdzServiceGateway;
+        private readonly PsdzWebServiceWrapper psdzService;
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
         private readonly PlaceholderType programmingWorker;
         private readonly IOperationServices services;
+        [PreserveSource(Hint = "Changed to psdzServiceGateway.Psdz")]
         public IPsdz Psdz => psdzServiceGateway.Psdz;
 
         [PreserveSource(Hint = "Modified, create services", SignatureModified = true)]
@@ -49,15 +50,16 @@ namespace PsdzClient.Programming
                 ServiceLocator.Current.TryAddService((IFasta2Service)new Fasta2Service());
             //[+] }
             }
+
             //[+] IDiagnosticsBusinessData diagnosticsBusiness = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             IDiagnosticsBusinessData diagnosticsBusiness = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             //[+] if (diagnosticsBusiness == null)
             if (diagnosticsBusiness == null)
-                //[+] {
+            //[+] {
             {
                 //[+] ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData());
                 ServiceLocator.Current.TryAddService((IDiagnosticsBusinessData)new DiagnosticsBusinessData());
-                //[+] }
+            //[+] }
             }
         }
 
@@ -160,11 +162,15 @@ namespace PsdzClient.Programming
 
         public string GetPsdzWebServiceLogFilePath()
         {
+            //[-]return psdzService.PsdzServiceLogFilePath;
+            //[+]return psdzServiceGateway.PsdzWebServiceLogFilePath;
             return psdzServiceGateway.PsdzWebServiceLogFilePath;
         }
 
         public string GetPsdzLogFilePath()
         {
+            //[-]return psdzService.PsdzLogFilePath;
+            //[+]return psdzServiceGateway.PsdzLogFilePath;
             return psdzServiceGateway.PsdzLogFilePath;
         }
 
@@ -227,12 +233,6 @@ namespace PsdzClient.Programming
             }
         }
 
-        [PreserveSource(Hint = "IFscValidationService", Placeholder = true)]
-        private PlaceholderType InitializeFscValidationService()
-        {
-            throw new NotImplementedException();
-        }
-
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
         private PlaceholderType CreateProgrammingWorker()
         {
@@ -245,14 +245,14 @@ namespace PsdzClient.Programming
             string method = Log.CurrentMethod();
             if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
             {
-                Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
+                Log.Debug(method, "There has already been an attempt to open PsdzService in the past. Returning...");
                 //[-] return;
                 //[+] return true;
                 return true;
             }
 
             TimeMetricsUtility.Instance.InitializePsdzStart();
-            Log.Info(Log.CurrentMethod(), "Start.");
+            Log.Info(method, "Start.");
             try
             {
                 //[-] psdzService.StartIfNotRunning();
@@ -274,6 +274,7 @@ namespace PsdzClient.Programming
                 //[+] return false;
                 return false;
             }
+
             //[-] if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service))
             //[-] {
             //[-] service.AddServiceCode("GFS01_State_PsdzWebservice_nu_LF", "", LayoutGroup.P, allowMultipleEntries: false, bufferIfSessionNotStarted: true);
@@ -315,6 +316,9 @@ namespace PsdzClient.Programming
         {
             throw new NotImplementedException();
         }
+
+        [PreserveSource(Added = true)]
+        private readonly PsdzServiceGateway psdzServiceGateway;
 
         [PreserveSource(Added = true)]
         private readonly PsdzConfig psdzConfig;
