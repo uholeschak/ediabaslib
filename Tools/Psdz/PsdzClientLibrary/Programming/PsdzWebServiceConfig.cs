@@ -114,8 +114,20 @@ namespace BMW.Rheingold.Programming
         {
             //[-]string defaultValue = "..\\..\\..\\PSdZ\\WebService\\OpenJREx64";
             //[-]return Path.GetFullPath(ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzJrePath.WebService", defaultValue));
-            //[+]return Path.Combine(_istaFolder, "WebService", "OpenJREx64");
-            return Path.Combine(_istaFolder, "WebService", "OpenJREx64");
+            //[+]string jrePath = Path.Combine(_istaFolder, "WebService", "OpenJREx64");
+            string jrePath = Path.Combine(_istaFolder, "WebService", "OpenJREx64");
+            //[+]string javaPath = Path.Combine(jrePath, "bin", "java.exe");
+            string javaPath = Path.Combine(jrePath, "bin", "java.exe");
+            //[+]if (!File.Exists(javaPath))
+            if (!File.Exists(javaPath))
+            //[+]{
+            {
+                //[+]jrePath = Path.Combine(_istaFolder, "PSdZ", "WebService", "OpenJREx64");
+                jrePath = Path.Combine(_istaFolder, "PSdZ", "WebService", "OpenJREx64");
+                //[+]}
+            }
+            //[+]return jrePath;
+            return jrePath;
         }
 
         private string[] GetPsdzJvmOptions()
