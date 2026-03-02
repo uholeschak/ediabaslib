@@ -73,15 +73,14 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
     }
 
     [AuthorAPI(SelectableTypeDeclaration = true)]
-    public interface IEcu : INotifyPropertyChanged, IIdentEcu
+    public interface IEcu : INotifyPropertyChanged, IIdentEcu, IEcuTreeEcu
     {
         GenerationType Generation { get; }
 
         IEnumerable<IAif> AIF { get; }
 
         bool AIF_SUCCESSFULLY { get; }
-
-        BusType BUS { get; }
+        new BusType BUS { get; }
 
         uint BUSID { get; }
 
@@ -93,18 +92,14 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
 
         typeDiagProtocoll DiagProtocoll { get; }
         new string ECUTreeColor { get; set; }
-
-        int ECUTreeColumn { get; }
-
-        int ECUTreeRow { get; }
+        new int ECUTreeColumn { get; }
+        new int ECUTreeRow { get; }
         new string ECU_ADR { get; }
 
         bool ECU_ASSEMBLY_CONFIRMED { get; }
-
-        string ECU_GROBNAME { get; set; }
+        new string ECU_GROBNAME { get; set; }
         new string ECU_GRUPPE { get; set; }
-
-        bool ECU_HAS_CONFIG_OVERRIDE { get; }
+        new bool ECU_HAS_CONFIG_OVERRIDE { get; }
 
         string ECU_NAME { get; }
         new string ECU_SGBD { get; }
@@ -123,8 +118,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         bool HWREF_SUCCESSFULLY { get; }
 
         int? HW_REF_STATUS { get; }
-
-        bool IDENT_SUCCESSFULLY { get; }
+        new bool IDENT_SUCCESSFULLY { get; }
 
         string ID_BMW_NR { get; }
 
@@ -151,8 +145,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         short? ID_LIEF_NR { get; }
 
         string ID_LIEF_TEXT { get; }
-
-        long? ID_LIN_SLAVE_ADR { get; set; }
+        new long? ID_LIN_SLAVE_ADR { get; set; }
 
         long? ID_SGBD_INDEX { get; }
         new long ID_SG_ADR { get; set; }
@@ -193,8 +186,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         IEnumerable<ISwtStatus> SWTStatus { get; }
 
         int StillProgrammable { get; }
-
-        IEnumerable<BusType> SubBUS { get; }
+        new IEnumerable<BusType> SubBUS { get; }
 
         IEnumerable<IEcuTransaction> TAL { get; }
         new string TITLE_ECUTREE { get; set; }
@@ -215,7 +207,7 @@ namespace BMW.Rheingold.CoreFramework.Contracts.Vehicle
         [PreserveSource(Hint = "IDtc", Placeholder = true)]
         PlaceholderType GetDTCById(decimal id);
         string GetNewestZusbauNoFromAif();
-        bool IsRoot();
+        new bool IsRoot();
         bool IsSet(long fOrt);
         bool IsVirtual();
         bool IsVirtualOrVirtualBusCheck();
