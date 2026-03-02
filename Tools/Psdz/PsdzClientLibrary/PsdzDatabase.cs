@@ -3165,7 +3165,7 @@ namespace PsdzClient
         }
 
         // ToDo: Check on update
-        public static BatteryEnum ResolveBatteryType(Vehicle vecInfo)
+        public static BatteryEnum ResolveBatteryType(IVehicle vecInfo)
         {
             if (new List<string>
                 {
