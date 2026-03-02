@@ -96,13 +96,13 @@ namespace BMW.Rheingold.Programming
         public string PsdzLogFilePath => _psdzConfig.PsdzLogFilePath;
         public string ProdiasDriverLogFilePath => _psdzConfig.ProdiasDriverLogFilePath;
 
-        [PreserveSource(Hint = "istaFolder added", SignatureModified = true)]
-        public PsdzWebServiceWrapper(PsdzWebServiceConfig psdzConfig, string istaFolder)
+        [PreserveSource(Hint = "istaFolder, dealerId added", SignatureModified = true)]
+        public PsdzWebServiceWrapper(PsdzWebServiceConfig psdzConfig, string istaFolder, string dealerId)
         {
             //[-]_psdzConfig = psdzConfig ?? new PsdzWebServiceConfig();
             //[-]PsdzWebservice = psdzWebService;
             //[+]_psdzConfig = psdzConfig ?? new PsdzWebServiceConfig(istaFolder);
-            _psdzConfig = psdzConfig ?? new PsdzWebServiceConfig(istaFolder);
+            _psdzConfig = psdzConfig ?? new PsdzWebServiceConfig(istaFolder, dealerId);
             //[+] _istaFolder = istaFolder;
             _istaFolder = istaFolder;
             //[+]PsdzWebservice = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);

@@ -69,8 +69,8 @@ namespace PsdzClient.Programming
             if (ClientContext.EnablePsdzWebService())
             //[+] {
             {
-                //[+] _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
-                _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder);
+                //[+] _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder, dealerId);
+                _psdzWebServiceWrapper = new PsdzWebServiceWrapper(new PsdzWebServiceConfig(istaFolder, dealerId), istaFolder, dealerId);
             //[+] }
             }
             //[+] else

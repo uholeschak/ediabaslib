@@ -28,7 +28,7 @@ namespace BMW.Rheingold.Programming
         public string[] JarArguments { get; }
 
         [PreserveSource(Hint = "istaFolder added, modified directories", SignatureModified = true)]
-        public PsdzWebServiceConfig(string istaFolder, string dealerId = null)
+        public PsdzWebServiceConfig(string istaFolder, string dealerId)
         {
             if (dealerId == null)
             {
