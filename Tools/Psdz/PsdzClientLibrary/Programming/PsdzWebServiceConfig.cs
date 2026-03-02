@@ -14,35 +14,27 @@ namespace BMW.Rheingold.Programming
     public class PsdzWebServiceConfig
     {
         private const string DEFAULT_DEALER_ID = "1234";
-
+        private const int LENGTH_OF_DEALER_NR = 5;
         public string PsdzDataPath { get; }
-
         public string EdiabasBinPath { get; }
-
         public string DealerId { get; }
-
         public string PsdzWebApiLogDir { get; }
-
         public string PsdzWebServiceLogFilePath { get; }
-
         public string PsdzLogFilePath { get; }
-
         public string PsdzWebServiceTomcatLogFilePath { get; }
-
         public string PsdzWebServiceSpringbootLogFilePath { get; }
-
         public string ProdiasDriverLogFilePath { get; set; }
-
         public string[] JvmOptions { get; }
-
         public string[] JarArguments { get; }
-
-        [PreserveSource(Added = true)]
-        private string _istaFolder;
 
         [PreserveSource(Hint = "istaFolder added, modified directories", SignatureModified = true)]
         public PsdzWebServiceConfig(string istaFolder, string dealerId = null)
         {
+            if (dealerId == null)
+            {
+                //[-]dealerId = LicenseHelper.DealerInstance.GetDistributionPartnerNumber(5);
+            }
+
             //[-] PsdzWebApiLogDir = Path.Combine(Path.GetFullPath(ConfigSettings.getPathString(ConfigSettings.GetActivateSdpOnlinePatch() ? "BMW.Rheingold.Logging.Directory.Current" : "BMW.Rheingold.Logging.Directory", "..\\..\\..\\logs")), "PsdzWebservice");
             //[+] _istaFolder = istaFolder;
             _istaFolder = istaFolder;
@@ -54,6 +46,7 @@ namespace BMW.Rheingold.Programming
             {
                 Directory.CreateDirectory(PsdzWebApiLogDir);
             }
+
             PsdzWebServiceLogFilePath = Path.Combine(PsdzWebApiLogDir, "PsdzWebservice.log");
             PsdzLogFilePath = Path.Combine(PsdzWebApiLogDir, "psdz.log");
             PsdzWebServiceTomcatLogFilePath = Path.Combine(PsdzWebApiLogDir, "tomcat.log");
@@ -63,18 +56,22 @@ namespace BMW.Rheingold.Programming
             {
                 File.Create(PsdzWebServiceLogFilePath).Close();
             }
+
             if (!File.Exists(PsdzLogFilePath))
             {
                 File.Create(PsdzLogFilePath).Close();
             }
+
             if (!File.Exists(PsdzWebServiceSpringbootLogFilePath))
             {
                 File.Create(PsdzWebServiceSpringbootLogFilePath).Close();
             }
+
             if (!File.Exists(ProdiasDriverLogFilePath))
             {
                 File.Create(ProdiasDriverLogFilePath).Close();
             }
+
             //[-] PsdzDataPath = ((psdzDataPath != null) ? psdzDataPath : Path.GetFullPath(ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzDataPath", "..\\..\\..\\PSdZ\\data")));
             //[-] EdiabasBinPath = GetEdiabasBinPath();
             //[+] PsdzDataPath = Path.Combine(istaFolder, @"PSdZ\data_swi");
@@ -86,10 +83,22 @@ namespace BMW.Rheingold.Programming
                 EdiabasBinPath = "none";
                 Log.Warning(Log.CurrentMethod(), "Ediabas Bin Path was null!");
             }
+
             DealerId = convertDealerIdToHex(dealerId);
             string text = "EC25F6127D1D02E37827F68A0DC41F3341A9F8C63C96EB970BCDCDEA70E619A8";
             JvmOptions = GetPsdzJvmOptions();
-            JarArguments = new string[9] { PsdzDataPath, EdiabasBinPath, DealerId, PsdzWebServiceLogFilePath, PsdzLogFilePath, PsdzWebServiceTomcatLogFilePath, text, PsdzWebServiceSpringbootLogFilePath, ProdiasDriverLogFilePath };
+            JarArguments = new string[9]
+            {
+                PsdzDataPath,
+                EdiabasBinPath,
+                DealerId,
+                PsdzWebServiceLogFilePath,
+                PsdzLogFilePath,
+                PsdzWebServiceTomcatLogFilePath,
+                text,
+                PsdzWebServiceSpringbootLogFilePath,
+                ProdiasDriverLogFilePath
+            };
             Log.Info(Log.CurrentMethod(), "Psdz Webservice log file:".PadRight(40) + "{0}", PsdzWebServiceLogFilePath);
             Log.Info(Log.CurrentMethod(), "Psdz log file:".PadRight(40) + "{0}", PsdzLogFilePath);
             Log.Info(Log.CurrentMethod(), "Psdz Webservice tomcat log file:".PadRight(40) + "{0}", PsdzWebServiceTomcatLogFilePath);
@@ -125,8 +134,9 @@ namespace BMW.Rheingold.Programming
             {
                 //[+]jrePath = Path.Combine(_istaFolder, "PSdZ", "WebService", "OpenJREx64");
                 jrePath = Path.Combine(_istaFolder, "PSdZ", "WebService", "OpenJREx64");
-                //[+]}
+            //[+]}
             }
+
             //[+]return jrePath;
             return jrePath;
         }
@@ -150,6 +160,7 @@ namespace BMW.Rheingold.Programming
                     Log.Warning(Log.CurrentMethod(), "ICS was not available. Could not read JVM_MaxHeapspace");
                 }
             }
+
             //[-] if (!ConfigSettings.GetActivateSdpOnlinePatch())
             //[+] if (Environment.Is64BitOperatingSystem)
             if (Environment.Is64BitOperatingSystem)
@@ -158,8 +169,7 @@ namespace BMW.Rheingold.Programming
                 int configint = ConfigSettings.getConfigint("BMW.Rheingold.CoreFramework.ParallelOperationsLimit", -1);
                 num = ((totalPhysicalMemoryInGb <= 8 || configint <= 3) ? ((int)((double)num * 2.5)) : (512 + 512 * configint));
             }
-            //[-] string item = ((Psdz64BitPathResolver.Force64Bit || (Environment.Is64BitOperatingSystem && !ConfigSettings.IsOssModeActive && !IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))) ? string.Format(CultureInfo.InvariantCulture, "-Xmx{0}m", num) : string.Format(CultureInfo.InvariantCulture, "-Xms{0}m", 1024));
-            //[+] string item = string.Format(CultureInfo.InvariantCulture, "-Xmx{0}m", num);
+
             string item = string.Format(CultureInfo.InvariantCulture, "-Xmx{0}m", num);
             List<string> values = new List<string>
             {
@@ -180,6 +190,7 @@ namespace BMW.Rheingold.Programming
             {
                 Log.Error(Log.CurrentMethod(), "Truststore File '" + configString + "' does not exist. You can check BMW.Rheingold.Programming.Truststore.Path registry key.");
             }
+
             string configString2 = ConfigSettings.getConfigString("BMW.Rheingold.Programming.Truststore.Type", "jks");
             source = source.Append("-Djavax.net.ssl.trustStore=\"" + configString + "\"").ToArray();
             source = source.Append("-Djavax.net.ssl.trustStoreType=" + configString2).ToArray();
@@ -203,6 +214,7 @@ namespace BMW.Rheingold.Programming
             {
                 Log.ErrorException(Log.CurrentMethod(), exception);
             }
+
             return 0;
         }
 
@@ -224,6 +236,7 @@ namespace BMW.Rheingold.Programming
                 Log.Error(Log.CurrentMethod(), "Directory " + webServiceDir + " does not exists.");
             //[+] }
             }
+
             //[+] string path = (ShouldDebugSpringboot(webServiceDir) ? "psdz-log4j2-spring-debug-config.xml" : "psdz-log4j2-config.xml");
             string path = (ShouldDebugSpringboot(webServiceDir) ? "psdz-log4j2-spring-debug-config.xml" : "psdz-log4j2-config.xml");
             //[+] string text = Path.Combine(webServiceDir, path);
@@ -232,6 +245,7 @@ namespace BMW.Rheingold.Programming
             {
                 Log.Error(Log.CurrentMethod(), text + " does not exist");
             }
+
             Log.Info(Log.CurrentMethod(), "returning " + text);
             return text;
         }
@@ -242,6 +256,7 @@ namespace BMW.Rheingold.Programming
             {
                 return ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Springboot.Logging.Level.Debug.Enabled", defaultValue: false);
             }
+
             return false;
         }
 
@@ -256,6 +271,7 @@ namespace BMW.Rheingold.Programming
                     return text;
                 }
             }
+
             return null;
         }
 
@@ -272,7 +288,11 @@ namespace BMW.Rheingold.Programming
                 text = "1234";
                 Log.Info(Log.CurrentMethod(), "dealerId " + dealerId + " cannot be converted to a Hex value. The default value (1234) is used.");
             }
+
             return text;
         }
+
+        [PreserveSource(Added = true)]
+        private string _istaFolder;
     }
 }
