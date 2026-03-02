@@ -1054,7 +1054,7 @@ namespace PsdzClient.Programming
             {
                 if (VecInfo.BNType == BNType.IBUS)
                 {
-                    VehicleLogistics.CalculateECUConfiguration(VecInfo, null);
+                    VehicleLogistics.CalculateECUConfiguration(VecInfo);
                     if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
                     {
                         VecInfo.VehicleIdentAlreadyDone = true;
@@ -1064,7 +1064,7 @@ namespace PsdzClient.Programming
                 return;
             }
 
-            VehicleLogistics.CalculateECUConfiguration(VecInfo, null);
+            VehicleLogistics.CalculateECUConfiguration(VecInfo);
             if (VecInfo.ECU != null && VecInfo.ECU.Count > 1)
             {
                 VecInfo.VehicleIdentAlreadyDone = true;

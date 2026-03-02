@@ -13,66 +13,61 @@ namespace PsdzClient.Core
         private static ConcurrentDictionary<object, BaseEcuCharacteristics> ecuCharacteristics = new ConcurrentDictionary<object, BaseEcuCharacteristics>();
         [PreserveSource(Hint = "Removed ProcessName, set to false", SuppressWarning = true)]
         private static Lazy<bool> isGui = new Lazy<bool>(false);
+        private static Action<string> logMissingBordnetAction;
         public const string FallbackBordnetName = "BNT-XML-FALLBACK.xml";
-        public static BaseEcuCharacteristics CallGetCharacteristics(Vehicle vecInfo)
+        [PreserveSource(Hint = "BordnetsData modified")]
+        public static Func<IEcuTreeVehicle, ICollection<PsdzDatabase.BordnetsData>> getBordnetFromDatabaseFunction;
+        [PreserveSource(Hint = "BordnetsData modified", SignatureModified = true)]
+        internal static void Initialize(Func<IEcuTreeVehicle, ICollection<PsdzDatabase.BordnetsData>> getBordnetFromDatabase, Action<string> logMissingBordnet = null)
+        {
+            getBordnetFromDatabaseFunction = getBordnetFromDatabase;
+            logMissingBordnetAction = logMissingBordnet;
+        }
+
+        public static BaseEcuCharacteristics CallGetCharacteristics(IEcuTreeVehicle vecInfo)
         {
             return GetCharacteristics(vecInfo);
         }
 
-        public static void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public static void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
             if (vecInfo == null)
             {
-                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
+                EcuTreeLogger.Instance.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
                 return;
             }
 
-            if (vecInfo.BNType == BNType.UNKNOWN)
+            if (vecInfo.BordnetType == BordnetType.UNKNOWN)
             {
-                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
+                EcuTreeLogger.Instance.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
                 return;
             }
 
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
             {
-                characteristics.CalculateECUConfiguration(vecInfo, ffmResolver);
+                characteristics.CalculateECUConfiguration(vecInfo);
             }
             else
             {
-                Log.Warning("vehicleLogistics.CaCalculateECUConfiguration()", "no fitting BaseEcuCharacteristics found");
+                EcuTreeLogger.Instance.Warning("vehicleLogistics.CaCalculateECUConfiguration()", "no fitting BaseEcuCharacteristics found");
             }
         }
 
-        public static void ShapeECUConfiguration(Vehicle vecInfo)
+        public static void ShapeECUConfiguration(IEcuTreeVehicle vecInfo)
         {
             if ("E36,E38,E46,E53,E83,E85,R50".Contains(vecInfo.Ereihe))
             {
-                ValidateIfDiagnosticsHasValidLicense();
                 GetCharacteristics(vecInfo)?.ShapeECUConfiguration(vecInfo);
             }
         }
 
-        [PreserveSource(Hint = "XEP_SALAPAS replaced", SignatureModified = true)]
-        public static ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
-        {
-            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
-            if (characteristics != null)
-            {
-                return characteristics.GetAvailableSALAPAs(vecInfo);
-            }
-
-            //[-] return new ObservableCollectionEx<XEP_SALAPAS>();
-            //[+] return new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
-            return new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
-        }
-
-        public static ICollection<IBusLogisticsEntry> GetBusTable(Vehicle vecInfo)
+        public static ICollection<IBusLogisticsEntry> GetBusTable(IEcuTreeVehicle vecInfo)
         {
             return GetCharacteristics(vecInfo)?.GetBusTable();
         }
 
-        public static string GetBusAlias(Vehicle vecInfo, BusType bus)
+        public static string GetBusAlias(IEcuTreeVehicle vecInfo, BusType bus)
         {
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
@@ -83,17 +78,17 @@ namespace PsdzClient.Core
             return bus.ToString();
         }
 
-        public static ICollection<ICombinedEcuHousingEntry> GetCombinedEcuHousingTable(Vehicle vecInfo)
+        public static ICollection<ICombinedEcuHousingEntry> GetCombinedEcuHousingTable(IEcuTreeVehicle vecInfo)
         {
             return GetCharacteristics(vecInfo)?.GetCombinedEcuHousingTable();
         }
 
-        public static double? GetRootHorizontalBusStep(Vehicle vecInfo)
+        public static double? GetRootHorizontalBusStep(IEcuTreeVehicle vecInfo)
         {
             return GetCharacteristics(vecInfo)?.rootHorizontalBusStep;
         }
 
-        public static bool CasNeedsZgmRepair(Vehicle vecInfo)
+        public static bool CasNeedsZgmRepair(IEcuTreeVehicle vecInfo)
         {
             string baureihenverbund = vecInfo.Baureihenverbund;
             string[] source = new string[3]
@@ -103,32 +98,32 @@ namespace PsdzClient.Core
                 "F025"
             };
             bool flag = !string.IsNullOrEmpty(baureihenverbund) && source.Contains(baureihenverbund);
-            Log.Info("VehicleLogistics.CasNeedsZgmRepair()", "Return {0} for BRV=\"{1}\".", flag, baureihenverbund);
+            EcuTreeLogger.Instance.Info("VehicleLogistics.CasNeedsZgmRepair()", "Return {0} for BRV=\"{1}\".", flag, baureihenverbund);
             return flag;
         }
 
-        public static IEcuLogisticsEntry GetEcuLogisticsEntry(Vehicle vecInfo, IEcu ecu)
+        public static IEcuLogisticsEntry GetEcuLogisticsEntry(IEcuTreeVehicle vecInfo, IEcuTreeEcu ecu)
         {
             return GetCharacteristics(vecInfo)?.GetEcuLogisticsEntry(vecInfo, ecu);
         }
 
-        public static ICollection<IBusInterConnectionEntry> GetInterConnectionTable(Vehicle vecInfo)
+        public static ICollection<IBusInterConnectionEntry> GetInterConnectionTable(IEcuTreeVehicle vecInfo)
         {
             return GetCharacteristics(vecInfo)?.GetInterConnectionTable();
         }
 
-        public static bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        public static bool HasBus(BusType busType, IEcuTreeVehicle vecInfo, IEcuTreeEcu ecu)
         {
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (vecInfo == null)
             {
-                Log.Warning("VehicleLogistics.HasBus()", "vecInfo was null");
+                EcuTreeLogger.Instance.Warning("VehicleLogistics.HasBus()", "vecInfo was null");
                 return false;
             }
 
             if (ecu == null)
             {
-                Log.Warning("VehicleLogistics.HasBus()", "ecu was null");
+                EcuTreeLogger.Instance.Warning("VehicleLogistics.HasBus()", "ecu was null");
                 return false;
             }
 
@@ -140,11 +135,10 @@ namespace PsdzClient.Core
             return characteristics?.HasBus(busType, vecInfo, ecu) ?? false;
         }
 
-        public static string getBrSgbd(Vehicle vecInfo)
+        public static string getBrSgbd(IEcuTreeVehicle vecInfo)
         {
-            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
-            ValidateIfDiagnosticsHasValidLicense();
-            string text = service.GetMainSeriesSgbd(vecInfo);
+            DiagnosticsBusinessDataCore diagnosticsBusinessDataCore = new DiagnosticsBusinessDataCore();
+            string text = diagnosticsBusinessDataCore.GetMainSeriesSgbd(vecInfo.Prodart, vecInfo.BordnetType, vecInfo.Produktlinie, vecInfo.Ereihe, vecInfo.Baureihenverbund);
             if (string.IsNullOrEmpty(text))
             {
                 text = GetCharacteristics(vecInfo)?.brSgbd;
@@ -153,15 +147,13 @@ namespace PsdzClient.Core
             return text;
         }
 
-        public static BusType getECUBus(Vehicle vecInfo, long? iD_SG_ADR, string ecuGroup = null)
+        public static BusType getECUBus(IEcuTreeVehicle vecInfo, long? iD_SG_ADR, string ecuGroup = null)
         {
-            ValidateIfDiagnosticsHasValidLicense();
-            return GetCharacteristics(vecInfo)?.GetBus(iD_SG_ADR, vecInfo.VCI?.VCIType, ecuGroup) ?? BusType.UNKNOWN;
+            return GetCharacteristics(vecInfo)?.GetBus(iD_SG_ADR, ecuGroup) ?? BusType.UNKNOWN;
         }
 
-        public static bool getECUTreeCoordinates(Vehicle vecInfo, ECU ecu, out int column, out int row)
+        public static bool getECUTreeCoordinates(IEcuTreeVehicle vecInfo, IEcuTreeEcu ecu, out int column, out int row)
         {
-            ValidateIfDiagnosticsHasValidLicense();
             column = -1;
             row = -1;
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
@@ -174,9 +166,8 @@ namespace PsdzClient.Core
             return false;
         }
 
-        public static string getECU_GROBNAME(Vehicle vecInfo, long? sgAdr)
+        public static string getECU_GROBNAME(IEcuTreeVehicle vecInfo, long? sgAdr)
         {
-            ValidateIfDiagnosticsHasValidLicense();
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
             {
@@ -186,9 +177,8 @@ namespace PsdzClient.Core
             return string.Empty;
         }
 
-        public static string getECU_GROBNAMEByEcuGroup(Vehicle vecInfo, string ecuGroup)
+        public static string getECU_GROBNAMEByEcuGroup(IEcuTreeVehicle vecInfo, string ecuGroup)
         {
-            ValidateIfDiagnosticsHasValidLicense();
             BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
             if (characteristics != null)
             {
@@ -200,16 +190,16 @@ namespace PsdzClient.Core
 
         public static string getFASTAConfig(string produktart)
         {
-            ValidateIfDiagnosticsHasValidLicense();
             if (string.IsNullOrEmpty(produktart))
             {
                 return string.Empty;
             }
 
             string text = produktart.ToUpper();
-            if (!(text == "M"))
+            string text2 = text;
+            if (!(text2 == "M"))
             {
-                if (text == "P")
+                if (text2 == "P")
                 {
                     return "fasta6_pkw.cfg";
                 }
@@ -220,7 +210,7 @@ namespace PsdzClient.Core
             return "fasta6_ux.cfg";
         }
 
-        private static BaseEcuCharacteristics GetCharacteristics(Vehicle vecInfo)
+        private static BaseEcuCharacteristics GetCharacteristics(IEcuTreeVehicle vecInfo)
         {
             int customHashCode = vecInfo.GetCustomHashCode();
             if (ecuCharacteristics.TryGetValue(customHashCode, out var value))
@@ -244,9 +234,9 @@ namespace PsdzClient.Core
                 }
             }
 
-            IDiagnosticsBusinessData service = ServiceLocator.Current.GetService<IDiagnosticsBusinessData>();
             if (!string.IsNullOrEmpty(vecInfo.Ereihe))
             {
+                DiagnosticsBusinessDataCore diagnosticsBusinessDataCore = new DiagnosticsBusinessDataCore();
                 switch (vecInfo.Ereihe.ToUpper())
                 {
                     case "F01":
@@ -260,14 +250,14 @@ namespace PsdzClient.Core
                     case "F12":
                     case "F13":
                     case "F18":
-                        if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < service.DTimeF01Lci)
+                        if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < diagnosticsBusinessDataCore.DTimeF01Lci)
                         {
                             return GetEcuCharacteristics<F01EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
 
                         if (vecInfo.ECU != null)
                         {
-                            ECU eCU = vecInfo.getECU(16L);
+                            IEcuTreeEcu eCU = vecInfo.getECU(16L);
                             if (eCU != null && eCU.SubBUS != null && eCU.SubBUS.Contains(BusType.MOST))
                             {
                                 return GetEcuCharacteristics<F01EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
@@ -282,7 +272,7 @@ namespace PsdzClient.Core
                     case "F86":
                         return GetEcuCharacteristics<F15EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "F25":
-                        if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < service.DTimeF25Lci)
+                        if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < diagnosticsBusinessDataCore.DTimeF25Lci)
                         {
                             return GetEcuCharacteristics<F25EcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
@@ -452,7 +442,7 @@ namespace PsdzClient.Core
                     case "RR1":
                     case "RR2":
                     case "RR3":
-                        if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < service.DTimeRR_S2)
+                        if (!vecInfo.C_DATETIME.HasValue || vecInfo.C_DATETIME < diagnosticsBusinessDataCore.DTimeRR_S2)
                         {
                             return GetEcuCharacteristics<RREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
@@ -487,7 +477,7 @@ namespace PsdzClient.Core
                     case "K18":
                     case "K19":
                     case "K21":
-                        if (service.GetBNType(vecInfo) == BNType.BN2000_MOTORBIKE)
+                        if (diagnosticsBusinessDataCore.GetBordnetType(vecInfo.Baureihenverbund, vecInfo.Prodart, vecInfo.Ereihe, EcuTreeLogger.Instance) == BordnetType.BN2000_MOTORBIKE)
                         {
                             return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
@@ -512,7 +502,7 @@ namespace PsdzClient.Core
                     case "V98":
                         return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                     case "K46":
-                        if (service.GetBNType(vecInfo) == BNType.BN2020_MOTORBIKE)
+                        if (diagnosticsBusinessDataCore.GetBordnetType(vecInfo.Baureihenverbund, vecInfo.Prodart, vecInfo.Ereihe, EcuTreeLogger.Instance) == BordnetType.BN2020_MOTORBIKE)
                         {
                             return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
                         }
@@ -587,18 +577,18 @@ namespace PsdzClient.Core
                         return GetEcuCharacteristicsFromFallback("iBusEcuCharacteristics.xml", vecInfo);
                 }
 
-                Log.Info("VehicleLogistics.GetCharacteristics()", "cannot retrieve bordnet configuration using ereihe");
+                EcuTreeLogger.Instance.Info("VehicleLogistics.GetCharacteristics()", "cannot retrieve bordnet configuration using ereihe");
             }
 
-            switch (vecInfo.BNType)
+            switch (vecInfo.BordnetType)
             {
-                case BNType.BN2000_MOTORBIKE:
+                case BordnetType.BN2000_MOTORBIKE:
                     return GetEcuCharacteristics<MREcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                case BNType.BNK01X_MOTORBIKE:
+                case BordnetType.BNK01X_MOTORBIKE:
                     return GetEcuCharacteristics("BNT-XML-FALLBACK.xml", vecInfo);
-                case BNType.BN2020_MOTORBIKE:
+                case BordnetType.BN2020_MOTORBIKE:
                     return GetEcuCharacteristics<MRXEcuCharacteristics>("BNT-XML-FALLBACK.xml", vecInfo);
-                case BNType.IBUS:
+                case BordnetType.IBUS:
                     return GetEcuCharacteristics("iBusEcuCharacteristics.xml", vecInfo);
                 default:
                 {
@@ -608,35 +598,193 @@ namespace PsdzClient.Core
                         return baseEcuCharacteristics;
                     }
 
-                    Log.Warning("VehicleLogistics.GetCharacteristics()", $"No configuration found for vehicle with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}");
+                    EcuTreeLogger.Instance.Warning("VehicleLogistics.GetCharacteristics()", $"No configuration found for vehicle with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BordnetType}");
                     return null;
                 }
             }
         }
 
-        public static void CalculateMaxAssembledECUList(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
+        private static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
+            return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
+        }
+
+        [PreserveSource(Hint = "Database replaced", SignatureModified = true)]
+        public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, IEcuTreeVehicle vecInfo)
+            where T : BaseEcuCharacteristics
+        {
+            EcuTreeLogger.Instance.Info(EcuTreeLogger.Instance.CurrentMethod(), $"Reading bordnet configuration with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BordnetType}, target type: {typeof(T).Name}. The fallback xml file is: {storedXmlFileName}");
+            //[+] PsdzDatabase database = ClientContext.GetDatabase(vecInfo as Vehicle);
+            PsdzDatabase database = ClientContext.GetDatabase(vecInfo as Vehicle);
+            //[+] if (database == null)
+            if (database == null)
+            //[+] {
             {
-                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "vecInfo was null");
-                return;
+                //[+] return null;
+                return null;
+            //[+] }
             }
 
-            if (vecInfo.BNType == BNType.UNKNOWN)
+            try
             {
-                Log.Warning("VehicleLogistics.CalculateECUConfiguration()", "BNType was unknown");
-                return;
+                //[-] BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
+                //[-] if (bordnetsData != null)
+                //[+] PsdzDatabase.BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
+                PsdzDatabase.BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
+                //[+] if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
+                if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
+                {
+                    //[-] BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<T>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjectIdentifier);
+                    //[+] BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
+                    BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
+                    if (baseEcuCharacteristics != null)
+                    {
+                        vecInfo.BordnetsData = bordnetsData;
+                        return baseEcuCharacteristics;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogMissingDatabaseBordnet(vecInfo, ex.Message);
             }
 
-            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
-            if (characteristics != null)
+            //[-] if (!string.IsNullOrEmpty(storedXmlFileName))
+            //[+] string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
+            string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
+            //[+] if (!string.IsNullOrEmpty(storedXmlFileName) && !string.IsNullOrWhiteSpace(xml))
+            if (!string.IsNullOrEmpty(storedXmlFileName) && !string.IsNullOrWhiteSpace(xml))
             {
-                characteristics.CalculateMaxAssembledECUList(vecInfo, ffmResolver);
+                BaseEcuCharacteristics ecuCharacteristicsFromFallback = GetEcuCharacteristicsFromFallback<T>(storedXmlFileName, vecInfo);
+                if (ecuCharacteristicsFromFallback != null)
+                {
+                    return ecuCharacteristicsFromFallback;
+                }
+            }
+
+            EcuTreeLogger.Instance.Error(EcuTreeLogger.Instance.CurrentMethod(), "No bordnet could be loaded.");
+            return null;
+        }
+
+        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback(string storedXmlFileName, IEcuTreeVehicle vecInfo)
+        {
+            EcuTreeLogger.Instance.Info(EcuTreeLogger.Instance.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
+            return CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, storedXmlFileName, storedXmlFileName);
+        }
+
+        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback<T>(string storedXmlFileName, IEcuTreeVehicle vecInfo)
+            where T : BaseEcuCharacteristics
+        {
+            EcuTreeLogger.Instance.Info(EcuTreeLogger.Instance.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
+            return CreateCharacteristicsInstance<T>(vecInfo, storedXmlFileName, storedXmlFileName);
+        }
+
+        [PreserveSource(Hint = "Changed to public", SignatureModified = true)]
+        public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(IEcuTreeVehicle vehicle, string xml, string name)
+            where T : BaseEcuCharacteristics
+        {
+            try
+            {
+                Type typeFromHandle = typeof(T);
+                object[] args = new string[1]
+                {
+                    xml
+                };
+                T val = (T)Activator.CreateInstance(typeFromHandle, args);
+                if (val != null)
+                {
+                    ecuCharacteristics.TryAdd(vehicle.GetCustomHashCode(), val);
+                    val.BordnetName = name;
+                    EcuTreeLogger.Instance.Info(EcuTreeLogger.Instance.CurrentMethod(), "Found characteristics with group sgdb: " + val.brSgbd);
+                }
+
+                return val;
+            }
+            catch (Exception exception)
+            {
+                EcuTreeLogger.Instance.ErrorException(EcuTreeLogger.Instance.CurrentMethod(), exception);
+                return null;
+            }
+        }
+
+        private static void LogMissingDatabaseBordnet(IEcuTreeVehicle vec, string error)
+        {
+            string text = "BRV: " + vec.Baureihenverbund + ", E-Reihe: " + vec.Ereihe + ", Error: " + error;
+            EcuTreeLogger.Instance.Info(EcuTreeLogger.Instance.CurrentMethod(), "Logging service code for missing bordnet: " + text);
+            if (logMissingBordnetAction == null)
+            {
+                EcuTreeLogger.Instance.Info(EcuTreeLogger.Instance.CurrentMethod(), "No logging method provided");
             }
             else
             {
-                Log.Warning("VehicleLogistics.CalculateMaxAssembledECUList()", "no fitting BaseEcuCharacteristics found");
+                logMissingBordnetAction(text);
             }
+        }
+
+        [PreserveSource(Hint = "Database replaced", SignatureModified = true)]
+        private static PsdzDatabase.BordnetsData GetBordnetXmlFromDatabase(IEcuTreeVehicle vecInfo)
+        {
+            EcuTreeLogger.Instance.Info(EcuTreeLogger.Instance.CurrentMethod(), "Reading bordnet configuration from the database");
+            string text = "Es gibt zu viele gültige Bordnetze: ";
+            try
+            {
+                //[-]ICollection<BordnetsData> collection = getBordnetFromDatabaseFunction(vecInfo);
+                //[+] PsdzDatabase database = ClientContext.GetDatabase(vecInfo as Vehicle);
+                PsdzDatabase database = ClientContext.GetDatabase(vecInfo as Vehicle);
+                //[+] if (database == null)
+                if (database == null)
+                //[+] {
+                {
+                    //[+] return null;
+                    return null;
+                //[+] }
+                }
+
+                //[+] List<PsdzDatabase.BordnetsData> collection = database.LoadBordnetsData(vecInfo as Vehicle);
+                List<PsdzDatabase.BordnetsData> collection = database.LoadBordnetsData(vecInfo as Vehicle);
+                if (collection != null && collection.Count == 1)
+                {
+                    return collection.First();
+                }
+
+                if (collection != null && collection.Count > 1)
+                {
+                    //[-] foreach (BordnetsData item in collection)
+                    //[+] foreach (PsdzDatabase.BordnetsData item in collection)
+                    foreach (PsdzDatabase.BordnetsData item in collection)
+                    {
+                        //[-] text = text + item.InfoObjectIdentifier + " ";
+                        //[+] text = text + item.InfoObjIdent + " ";
+                        text = text + item.InfoObjIdent + " ";
+                    }
+
+                    throw new Exception(text);
+                }
+            }
+            catch (Exception ex)
+            {
+                EcuTreeLogger.Instance.Error(EcuTreeLogger.Instance.CurrentMethod(), $"Reading bordnet configuration from the database failed: {ex}");
+                //[-] throw ex;
+                //[+] throw;
+                throw;
+            }
+
+            return null;
+        }
+
+        [PreserveSource(Hint = "XEP_SALAPAS replaced", SignatureModified = true)]
+        public static ObservableCollectionEx<PsdzDatabase.SaLaPa> GetAvailableSALAPAs(Vehicle vecInfo)
+        {
+            BaseEcuCharacteristics characteristics = GetCharacteristics(vecInfo);
+            if (characteristics != null)
+            {
+                return characteristics.GetAvailableSALAPAs(vecInfo);
+            }
+
+            //[-] return new ObservableCollectionEx<XEP_SALAPAS>();
+            //[+] return new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
+            return new ObservableCollectionEx<PsdzDatabase.SaLaPa>();
         }
 
         [PreserveSource(Hint = "vehicle added", SignatureModified = true)]
@@ -764,177 +912,6 @@ namespace PsdzClient.Core
             //[-] Reactor.Instance.SetFA(fA, DataSource.Vehicle);
             //[+] vehicle.FA = fA;
             vehicle.FA = fA;
-        }
-
-        [PreserveSource(Hint = "Unchanged", SignatureModified = true)]
-        private static BaseEcuCharacteristics GetEcuCharacteristics(string storedXmlFileName, Vehicle vecInfo)
-        {
-            return GetEcuCharacteristics<GenericEcuCharacteristics>(storedXmlFileName, vecInfo);
-        }
-
-        [PreserveSource(Hint = "Database replaced", SignatureModified = true)]
-        public static BaseEcuCharacteristics GetEcuCharacteristics<T>(string storedXmlFileName, Vehicle vecInfo)
-            where T : BaseEcuCharacteristics
-        {
-            Log.Info(Log.CurrentMethod(), $"Reading bordnet configuration with ereihe: {vecInfo.Ereihe}, bn type: {vecInfo.BNType}, target type: {typeof(T).Name}. The fallback xml file is: {storedXmlFileName}");
-            //[+] PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
-            PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
-            //[+] if (database == null)
-            if (database == null)
-            //[+] {
-            {
-                //[+] return null;
-                return null;
-            //[+] }
-            }
-
-            try
-            {
-                //[-] BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
-                //[-] if (bordnetsData != null)
-                //[+] PsdzDatabase.BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
-                PsdzDatabase.BordnetsData bordnetsData = ((!isGui.Value || vecInfo.BordnetsData == null) ? GetBordnetXmlFromDatabase(vecInfo) : vecInfo.BordnetsData);
-                //[+] if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
-                if (bordnetsData != null && !string.IsNullOrWhiteSpace(bordnetsData.DocData))
-                {
-                    //[-] BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<T>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjectIdentifier);
-                    //[+] BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
-                    BaseEcuCharacteristics baseEcuCharacteristics = CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, bordnetsData.DocData, bordnetsData.InfoObjIdent);
-                    if (baseEcuCharacteristics != null)
-                    {
-                        vecInfo.BordnetsData = bordnetsData;
-                        return baseEcuCharacteristics;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogMissingDatabaseBordnet(vecInfo, ex.Message);
-            }
-
-            //[-] if (!string.IsNullOrEmpty(storedXmlFileName))
-            //[+] string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
-            string xml = database.GetEcuCharacteristicsXml(storedXmlFileName);
-            //[+] if (!string.IsNullOrEmpty(storedXmlFileName) && !string.IsNullOrWhiteSpace(xml))
-            if (!string.IsNullOrEmpty(storedXmlFileName) && !string.IsNullOrWhiteSpace(xml))
-            {
-                BaseEcuCharacteristics ecuCharacteristicsFromFallback = GetEcuCharacteristicsFromFallback<T>(storedXmlFileName, vecInfo);
-                if (ecuCharacteristicsFromFallback != null)
-                {
-                    return ecuCharacteristicsFromFallback;
-                }
-            }
-
-            Log.Error(Log.CurrentMethod(), "No bordnet could be loaded.");
-            return null;
-        }
-
-        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback(string storedXmlFileName, Vehicle vecInfo)
-        {
-            Log.Info(Log.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
-            return CreateCharacteristicsInstance<GenericEcuCharacteristics>(vecInfo, storedXmlFileName, storedXmlFileName);
-        }
-
-        private static BaseEcuCharacteristics GetEcuCharacteristicsFromFallback<T>(string storedXmlFileName, Vehicle vecInfo)
-            where T : BaseEcuCharacteristics
-        {
-            Log.Info(Log.CurrentMethod(), "Using fallback xml file: " + storedXmlFileName);
-            return CreateCharacteristicsInstance<T>(vecInfo, storedXmlFileName, storedXmlFileName);
-        }
-
-        [PreserveSource(Hint = "Changed to public", SignatureModified = true)]
-        public static BaseEcuCharacteristics CreateCharacteristicsInstance<T>(Vehicle vehicle, string xml, string name)
-            where T : BaseEcuCharacteristics
-        {
-            try
-            {
-                Type typeFromHandle = typeof(T);
-                object[] args = new string[1]
-                {
-                    xml
-                };
-                T val = (T)Activator.CreateInstance(typeFromHandle, args);
-                if (val != null)
-                {
-                    ecuCharacteristics.TryAdd(vehicle.GetCustomHashCode(), val);
-                    val.BordnetName = name;
-                    Log.Info(Log.CurrentMethod(), "Found characteristics with group sgdb: " + val.brSgbd);
-                }
-
-                return val;
-            }
-            catch (Exception exception)
-            {
-                Log.ErrorException(Log.CurrentMethod(), exception);
-                return null;
-            }
-        }
-
-        private static void LogMissingDatabaseBordnet(Vehicle vec, string error)
-        {
-            string text = (ConfigSettings.IsOssModeActive ? "JA" : "NEIN");
-            string text2 = "BRV: " + vec.Baureihenverbund + ", E-Reihe: " + vec.Ereihe + ", Error: " + error + ", AOS: " + text;
-            string bNT01_BnTopologieNotFound_nu_LF = ServiceCodes.BNT01_BnTopologieNotFound_nu_LF;
-            Log.Info(Log.CurrentMethod(), bNT01_BnTopologieNotFound_nu_LF + ": " + text2);
-            IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
-            if (service != null)
-            {
-                service.AddServiceCode(bNT01_BnTopologieNotFound_nu_LF, text2, LayoutGroup.X);
-            }
-            else
-            {
-                Log.Error(Log.CurrentMethod(), "IFasta2Service could not be fetched from the ServiceLocator");
-            }
-        }
-
-        [PreserveSource(Hint = "Database replaced", SignatureModified = true)]
-        private static PsdzDatabase.BordnetsData GetBordnetXmlFromDatabase(Vehicle vecInfo)
-        {
-            Log.Info(Log.CurrentMethod(), "Reading bordnet configuration from the database");
-            string text = "Es gibt zu viele gültige Bordnetze: ";
-            try
-            {
-                //[-] ICollection<BordnetsData> collection = DatabaseProviderFactory.Instance.LoadBordnetsData(vecInfo);
-                //[+] PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
-                PsdzDatabase database = ClientContext.GetDatabase(vecInfo);
-                //[+] if (database == null)
-                if (database == null)
-                //[+] {
-                {
-                    //[+] return null;
-                    return null;
-                //[+] }
-                }
-                //[+] List<PsdzDatabase.BordnetsData> collection = database.LoadBordnetsData(vecInfo);
-                List<PsdzDatabase.BordnetsData> collection = database.LoadBordnetsData(vecInfo);
-                if (collection != null && collection.Count == 1)
-                {
-                    return collection.First();
-                }
-
-                if (collection != null && collection.Count > 1)
-                {
-                    //[-] foreach (BordnetsData item in collection)
-                    //[+] foreach (PsdzDatabase.BordnetsData item in collection)
-                    foreach (PsdzDatabase.BordnetsData item in collection)
-                    {
-                        //[-] text = text + item.InfoObjectIdentifier + " ";
-                        //[+] text = text + item.InfoObjIdent + " ";
-                        text = text + item.InfoObjIdent + " ";
-                    }
-
-                    throw new Exception(text);
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Error(Log.CurrentMethod(), $"Reading bordnet configuration from the database failed: {ex}");
-                //[-] throw ex;
-                //[+] throw;
-                throw;
-            }
-
-            return null;
         }
 
         [PreserveSource(Cleaned = true)]
