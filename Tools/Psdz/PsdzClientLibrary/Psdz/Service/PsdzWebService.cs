@@ -164,10 +164,10 @@ namespace BMW.Rheingold.Psdz
                 service.AddServiceCode("PWS04_PsdzWebServiceSetRootDirectoryFailed_nu_LF", "Setting up root directory for PSDZ web service failed", LayoutGroup.P);
             }
 
-            //[-]if (ServiceLocator.Current.TryGetService<IInteractionService>(out var service2))
-            //[-]{
-            //[-]service2.RegisterAsync(new InteractionMessageModel { Title = new FormatedData("#NotificationMessageTitle.Error").Localize(), MessageText = new FormatedData("#SetRootDirectoryFailed").Localize(), IsDetailButtonVisible = false, IsCloseButtonEnabled = false });
-            //[-]}
+            if (ServiceLocator.Current.TryGetService<IInteractionService>(out var service2))
+            {
+                service2.RegisterAsync(new InteractionMessageModel { Title = new FormatedData("#NotificationMessageTitle.Error").Localize(), MessageText = new FormatedData("#SetRootDirectoryFailed").Localize(), IsDetailButtonVisible = false, IsCloseButtonEnabled = false });
+            }
 
             PsdzWebserviceHelper.TryKillTree(psdzWebserviceProcess);
             return false;
