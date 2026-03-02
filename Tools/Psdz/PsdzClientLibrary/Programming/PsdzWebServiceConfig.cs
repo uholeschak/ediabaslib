@@ -37,6 +37,7 @@ namespace BMW.Rheingold.Programming
 
         public string[] JarArguments { get; }
 
+        [PreserveSource(Added = true)]
         private string _istaFolder;
 
         [PreserveSource(Hint = "istaFolder added, modified directories", SignatureModified = true)]
