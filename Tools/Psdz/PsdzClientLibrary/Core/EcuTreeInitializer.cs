@@ -15,5 +15,11 @@ namespace PsdzClient.Core
             //[+]VehicleLogistics.Initialize(logMissingBordnet);
             VehicleLogistics.Initialize(logMissingBordnet);
         }
+
+        [PreserveSource(Added = true)]
+        static EcuTreeInitializer()
+        {
+            Initialize(new NugetLogger());
+        }
     }
 }
