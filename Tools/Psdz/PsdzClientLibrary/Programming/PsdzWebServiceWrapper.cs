@@ -11,37 +11,53 @@ namespace BMW.Rheingold.Programming
     public class PsdzWebServiceWrapper : IPsdz, IPsdzService, IPsdzInfo
     {
         private readonly PsdzWebServiceConfig _psdzConfig;
-        private ProdiasLoglevel? _prodiasLoglevel = ProdiasLoglevel.ERROR;
-        private PsdzLoglevel? _psdzLoglevel = PsdzLoglevel.FINE;
         private IPsdzObjectBuilder _objectBuilder;
-        private IPsdzWebService _psdzWebService { get; }
-        public IBaureiheUtilityService BaureiheUtilityService => _psdzWebService.BaureiheUtilityService;
-        public ICertificateManagementService CertificateManagementService => _psdzWebService.CertificateManagementService;
-        public IConfigurationService ConfigurationService => _psdzWebService.ConfigurationService;
-        public IConnectionFactoryService ConnectionFactoryService => _psdzWebService.ConnectionFactoryService;
-        public IConnectionManagerService ConnectionManagerService => _psdzWebService.ConnectionManagerService;
-        public IEcuService EcuService => _psdzWebService.EcuService;
-        public IEventManagerService EventManagerService => _psdzWebService.EventManagerService;
-        public IHttpConfigurationService HttpConfigurationService => _psdzWebService.HttpConfigurationService;
-        public IHttpServerService HttpServerService => _psdzWebService.HttpServerService;
-        public IIndividualDataRestoreService IndividualDataRestoreService => _psdzWebService.IndividualDataRestoreService;
-        public IKdsService KdsService => _psdzWebService.KdsService;
-        public ILogicService LogicService => _psdzWebService.LogicService;
-        public ILogService LogService => _psdzWebService.LogService;
-        public IMacrosService MacrosService => _psdzWebService.MacrosService;
-        public IObjectBuilderService ObjectBuilderService => _psdzWebService.ObjectBuilderService;
-        public IProgrammingService ProgrammingService => _psdzWebService.ProgrammingService;
-        public ISecureCodingService SecureCodingService => _psdzWebService.SecureCodingService;
-        public ISecureFeatureActivationService SecureFeatureActivationService => _psdzWebService.SecureFeatureActivationService;
-        public ISecurityManagementService SecurityManagementService => _psdzWebService.SecurityManagementService;
-        public ITalExecutionService TalExecutionService => _psdzWebService.TalExecutionService;
-        public IVcmService VcmService => _psdzWebService.VcmService;
-        public ISecureDiagnosticsService SecureDiagnosticsService => _psdzWebService.SecureDiagnosticsService;
-        public IProgrammingTokenService ProgrammingTokenService => _psdzWebService.ProgrammingTokenService;
-        public IFpService FpService => _psdzWebService.FpService;
+        private IPsdzWebService _psdzWebservice;
+        public IPsdzWebService PsdzWebservice
+        {
+            get
+            {
+                if (_psdzWebservice == null)
+                {
+                    return ServiceLocator.Current.GetService<IPsdzWebService>();
+                }
+
+                return _psdzWebservice;
+            }
+
+            set
+            {
+                _psdzWebservice = value;
+            }
+        }
+
+        public IBaureiheUtilityService BaureiheUtilityService => PsdzWebservice.BaureiheUtilityService;
+        public ICertificateManagementService CertificateManagementService => PsdzWebservice.CertificateManagementService;
+        public IConfigurationService ConfigurationService => PsdzWebservice.ConfigurationService;
+        public IConnectionFactoryService ConnectionFactoryService => PsdzWebservice.ConnectionFactoryService;
+        public IConnectionManagerService ConnectionManagerService => PsdzWebservice.ConnectionManagerService;
+        public IEcuService EcuService => PsdzWebservice.EcuService;
+        public IEventManagerService EventManagerService => PsdzWebservice.EventManagerService;
+        public IHttpConfigurationService HttpConfigurationService => PsdzWebservice.HttpConfigurationService;
+        public IHttpServerService HttpServerService => PsdzWebservice.HttpServerService;
+        public IIndividualDataRestoreService IndividualDataRestoreService => PsdzWebservice.IndividualDataRestoreService;
+        public IKdsService KdsService => PsdzWebservice.KdsService;
+        public ILogicService LogicService => PsdzWebservice.LogicService;
+        public ILogService LogService => PsdzWebservice.LogService;
+        public IMacrosService MacrosService => PsdzWebservice.MacrosService;
+        public IObjectBuilderService ObjectBuilderService => PsdzWebservice.ObjectBuilderService;
+        public IProgrammingService ProgrammingService => PsdzWebservice.ProgrammingService;
+        public ISecureCodingService SecureCodingService => PsdzWebservice.SecureCodingService;
+        public ISecureFeatureActivationService SecureFeatureActivationService => PsdzWebservice.SecureFeatureActivationService;
+        public ISecurityManagementService SecurityManagementService => PsdzWebservice.SecurityManagementService;
+        public ITalExecutionService TalExecutionService => PsdzWebservice.TalExecutionService;
+        public IVcmService VcmService => PsdzWebservice.VcmService;
+        public ISecureDiagnosticsService SecureDiagnosticsService => PsdzWebservice.SecureDiagnosticsService;
+        public IProgrammingTokenService ProgrammingTokenService => PsdzWebservice.ProgrammingTokenService;
+        public IFpService FpService => PsdzWebservice.FpService;
         public bool IsValidPsdzVersion => true;
-        public string PsdzDataPath => _psdzWebService.ConfigurationService.GetRootDirectory();
-        public string PsdzVersion => _psdzWebService.ConfigurationService.GetPsdzVersion();
+        public string PsdzDataPath => PsdzWebservice.ConfigurationService.GetRootDirectory();
+        public string PsdzVersion => PsdzWebservice.ConfigurationService.GetPsdzVersion();
 
         public IPsdzObjectBuilder ObjectBuilder
         {
@@ -62,12 +78,17 @@ namespace BMW.Rheingold.Programming
         {
             get
             {
+                if (PsdzWebservice == null)
+                {
+                    return false;
+                }
+
                 if (!PsdzStarterGuard.Instance.CanCheckAvailability())
                 {
                     return false;
                 }
 
-                return _psdzWebService.IsReady();
+                return PsdzWebservice.IsReady();
             }
         }
 
@@ -78,27 +99,25 @@ namespace BMW.Rheingold.Programming
         [PreserveSource(Hint = "istaFolder added", SignatureModified = true)]
         public PsdzWebServiceWrapper(PsdzWebServiceConfig psdzConfig, string istaFolder)
         {
-            _psdzConfig = psdzConfig ?? throw new ArgumentNullException("psdzConfig");
+            //[-]_psdzConfig = psdzConfig ?? new PsdzWebServiceConfig();
+            //[-]PsdzWebservice = psdzWebService;
+            //[+]_psdzConfig = psdzConfig ?? new PsdzWebServiceConfig(istaFolder);
+            _psdzConfig = psdzConfig ?? new PsdzWebServiceConfig(istaFolder);
             //[+] _istaFolder = istaFolder;
             _istaFolder = istaFolder;
-            //[-] _psdzWebService = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability());
-            //[+] _psdzWebService = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);
-            _psdzWebService = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);
+            PsdzWebservice = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);
         }
 
         public void StartIfNotRunning()
         {
             try
             {
-                //[-] _psdzWebService.StartIfNotRunning(Psdz64BitPathResolver.GetJrePath(), _psdzConfig.GetJvmOptionsAsOneString(), _psdzConfig.GetJarArgumentsAsOneString());
-                //[+] _psdzWebService.StartIfNotRunning(Psdz64BitPathResolver.GetJrePath(_istaFolder, true), _psdzConfig.GetJvmOptionsAsOneString(), _psdzConfig.GetJarArgumentsAsOneString());
-                _psdzWebService.StartIfNotRunning(Psdz64BitPathResolver.GetJrePath(_istaFolder, true), _psdzConfig.GetJvmOptionsAsOneString(), _psdzConfig.GetJarArgumentsAsOneString());
+                PsdzWebservice.StartIfNotRunning(_psdzConfig.GetJrePath(), _psdzConfig.GetJvmOptionsAsOneString(), _psdzConfig.GetJarArgumentsAsOneString());
             }
-            catch (JavaInstallationException exception)
+            catch (PsdzWebserviceStartException exception)
             {
                 Log.ErrorException(Log.CurrentMethod(), "PSdZ could not be initialized: {0}", exception);
-            //[-] ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
-            //[-] service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation").Localize());
+                DisplayJavaFaultyInstallationPopUp();
             }
             catch (Exception ex)
             {
@@ -109,39 +128,43 @@ namespace BMW.Rheingold.Programming
             }
         }
 
+        private static void DisplayJavaFaultyInstallationPopUp()
+        {
+            ServiceLocator.Current.TryGetService<IInteractionService>(out var service);
+            service.RegisterMessage(new FormatedData("#Warning").Localize(), new FormatedData("#FaultJavaInstalation").Localize());
+        }
+
         public void Shutdown()
         {
             if (IsPsdzInitialized)
             {
                 Log.Info(Log.CurrentMethod(), "Shutting down Psdz Webservice...");
-                _psdzWebService.Shutdown();
+                PsdzWebservice.Shutdown();
             }
         }
 
         public void AddPsdzEventListener(IPsdzEventListener psdzEventListener)
         {
-            _psdzWebService.SetPsdzEventListener(psdzEventListener);
+            PsdzWebservice.SetPsdzEventListener(psdzEventListener);
         }
 
         public void AddPsdzProgressListener(IPsdzProgressListener progressListener)
         {
-            _psdzWebService.SetPsdzProgressListener(progressListener);
+            PsdzWebservice.SetPsdzProgressListener(progressListener);
         }
 
         public void RemovePsdzEventListener(IPsdzEventListener psdzEventListener)
         {
-            _psdzWebService.RemovePsdzEventListener(psdzEventListener);
+            PsdzWebservice.RemovePsdzEventListener(psdzEventListener);
         }
 
         public void RemovePsdzProgressListener(IPsdzProgressListener progressListener)
         {
-            _psdzWebService.RemovePsdzProgressListener(progressListener);
+            PsdzWebservice.RemovePsdzProgressListener(progressListener);
         }
 
         public void SetLogLevel(PsdzLoglevel psdzLoglevel, ProdiasLoglevel prodiasLoglevel)
         {
-            _psdzLoglevel = psdzLoglevel;
-            _prodiasLoglevel = prodiasLoglevel;
             if (IsPsdzInitialized)
             {
                 LogService.SetLogLevel(psdzLoglevel);

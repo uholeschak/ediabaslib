@@ -37,10 +37,14 @@ namespace BMW.Rheingold.Programming
 
         public string[] JarArguments { get; }
 
+        private string _istaFolder;
+
         [PreserveSource(Hint = "istaFolder added, modified directories", SignatureModified = true)]
         public PsdzWebServiceConfig(string istaFolder, string dealerId = null)
         {
             //[-] PsdzWebApiLogDir = Path.Combine(Path.GetFullPath(ConfigSettings.getPathString(ConfigSettings.GetActivateSdpOnlinePatch() ? "BMW.Rheingold.Logging.Directory.Current" : "BMW.Rheingold.Logging.Directory", "..\\..\\..\\logs")), "PsdzWebservice");
+            //[+] _istaFolder = istaFolder;
+            _istaFolder = istaFolder;
             //[+] string logsDir = Path.Combine(istaFolder, "logs");
             string logsDir = Path.Combine(istaFolder, "logs");
             //[+] PsdzWebApiLogDir = Path.Combine(logsDir, "webclient");
@@ -104,6 +108,14 @@ namespace BMW.Rheingold.Programming
         public string GetJarArgumentsAsOneString()
         {
             return "\"" + string.Join("\" \"", JarArguments) + "\"";
+        }
+
+        public string GetJrePath()
+        {
+            //[-]string defaultValue = "..\\..\\..\\PSdZ\\WebService\\OpenJREx64";
+            //[-]return Path.GetFullPath(ConfigSettings.getPathString("BMW.Rheingold.Programming.PsdzJrePath.WebService", defaultValue));
+            //[+]return Path.Combine(_istaFolder, "WebService", "OpenJREx64");
+            return Path.Combine(_istaFolder, "WebService", "OpenJREx64");
         }
 
         private string[] GetPsdzJvmOptions()
