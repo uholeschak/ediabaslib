@@ -8,6 +8,7 @@ using PsdzClient.Core;
 
 namespace PsdzClient.Programming
 {
+    [PreserveSource(Removed = true)]
     public class PsdzServiceGateway : IPsdzServiceGateway, IDisposable
     {
         private readonly PsdzWebServiceWrapper _psdzWebServiceWrapper;
