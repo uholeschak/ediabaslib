@@ -905,7 +905,7 @@ namespace PsdzClient.Programming
 
                 if (VecInfo.ECU != null && VecInfo.ECU.Count > 0)
                 { // [UH] [IGNORE] ECU check added
-                    GearboxUtility.PerformGearboxAssignments(VecInfo);
+                    GearboxUtility.PerformGearboxAssignments(VecInfo, new NugetLogger(), VecInfo.Reactor, null);
                 }
 
                 if (VecInfo.BNType == BNType.UNKNOWN && !string.IsNullOrEmpty(VecInfo.Ereihe))
