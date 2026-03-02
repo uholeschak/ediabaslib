@@ -32,6 +32,9 @@ namespace BMW.Rheingold.Programming
         [PreserveSource(Hint = "Dummy")]
         public IBaureiheUtilityService BaureiheUtilityService => psdzServiceClient.BaureiheUtilityService;
 
+        [PreserveSource(Hint = "Dummy")]
+        public IFpService FpService => psdzServiceClient.FpService;
+
         public IConfigurationService ConfigurationService => psdzServiceClient.ConfigurationService;
 
         public IConnectionFactoryService ConnectionFactoryService => psdzServiceClient.ConnectionFactoryService;

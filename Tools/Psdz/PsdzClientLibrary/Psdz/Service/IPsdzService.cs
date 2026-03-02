@@ -50,5 +50,7 @@ namespace BMW.Rheingold.Psdz
         ISecureCodingService SecureCodingService { get; }
 
         IKdsService KdsService { get; }
+
+        IFpService FpService { get; }
     }
 }

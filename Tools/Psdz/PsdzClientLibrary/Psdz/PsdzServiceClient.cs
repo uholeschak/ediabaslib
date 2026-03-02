@@ -57,6 +57,9 @@ namespace BMW.Rheingold.Psdz.Client
         [PreserveSource(Hint = "Dummy")]
         public IBaureiheUtilityService BaureiheUtilityService { get; private set; }
 
+        [PreserveSource(Hint = "Dummy")]
+        public IFpService FpService { get; private set; }
+
         public IConfigurationService ConfigurationService => configurationService;
 
         public IConnectionFactoryService ConnectionFactoryService => connectionFactoryService;

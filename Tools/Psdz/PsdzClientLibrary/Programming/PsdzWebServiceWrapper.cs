@@ -38,6 +38,7 @@ namespace BMW.Rheingold.Programming
         public IVcmService VcmService => _psdzWebService.VcmService;
         public ISecureDiagnosticsService SecureDiagnosticsService => _psdzWebService.SecureDiagnosticsService;
         public IProgrammingTokenService ProgrammingTokenService => _psdzWebService.ProgrammingTokenService;
+        public IFpService FpService => _psdzWebService.FpService;
         public bool IsValidPsdzVersion => true;
         public string PsdzDataPath => _psdzWebService.ConfigurationService.GetRootDirectory();
         public string PsdzVersion => _psdzWebService.ConfigurationService.GetPsdzVersion();

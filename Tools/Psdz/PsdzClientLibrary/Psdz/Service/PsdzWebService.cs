@@ -50,6 +50,7 @@ namespace BMW.Rheingold.Psdz
         public ITalExecutionService TalExecutionService { get; private set; }
         public IVcmService VcmService { get; private set; }
         public IProgrammingTokenService ProgrammingTokenService { get; private set; }
+        public IFpService FpService { get; private set; }
 
         [PreserveSource(Hint = "istaFolder added", SignatureModified = true)]
         public PsdzWebService(string psdzWebAPILogDir, Func<bool> isPsdzInitialized, string istaFolder)

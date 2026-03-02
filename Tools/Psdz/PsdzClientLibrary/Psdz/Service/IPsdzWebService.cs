@@ -58,6 +58,8 @@ namespace BMW.Rheingold.Psdz
 
         IProgrammingTokenService ProgrammingTokenService { get; }
 
+        IFpService FpService { get; }
+
         void StartIfNotRunning(string jrePath, string jvmOptions, string jarArguments);
         void Shutdown();
         void SetPsdzEventListener(IPsdzEventListener eventListener);
