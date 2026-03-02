@@ -7,10 +7,13 @@ namespace PsdzClient.Core
 {
     public static class EcuTreeInitializer
     {
-        public static void Initialize(Func<IEcuTreeVehicle, ICollection<BordnetsData>> getBordnetFromDatabase, ILogger logger, Action<string> logMissingBordnet = null)
+        [PreserveSource(Hint = "getBordnetFromDatabase removed", SignatureModified = true)]
+        public static void Initialize(ILogger logger, Action<string> logMissingBordnet = null)
         {
             EcuTreeLogger.Initialize(logger);
-            VehicleLogistics.Initialize(getBordnetFromDatabase, logMissingBordnet);
+            //[-]VehicleLogistics.Initialize(getBordnetFromDatabase, logMissingBordnet);
+            //[+]VehicleLogistics.Initialize(logMissingBordnet);
+            VehicleLogistics.Initialize(logMissingBordnet);
         }
     }
 }

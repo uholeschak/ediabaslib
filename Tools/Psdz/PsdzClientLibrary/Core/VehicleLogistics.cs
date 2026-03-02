@@ -15,12 +15,12 @@ namespace PsdzClient.Core
         private static Lazy<bool> isGui = new Lazy<bool>(false);
         private static Action<string> logMissingBordnetAction;
         public const string FallbackBordnetName = "BNT-XML-FALLBACK.xml";
-        [PreserveSource(Hint = "BordnetsData modified")]
-        public static Func<IEcuTreeVehicle, ICollection<PsdzDatabase.BordnetsData>> getBordnetFromDatabaseFunction;
-        [PreserveSource(Hint = "BordnetsData modified", SignatureModified = true)]
-        internal static void Initialize(Func<IEcuTreeVehicle, ICollection<PsdzDatabase.BordnetsData>> getBordnetFromDatabase, Action<string> logMissingBordnet = null)
+        [PreserveSource(Hint = "Func<IEcuTreeVehicle, ICollection<PsdzDatabase>>", Placeholder = true)]
+        public static PlaceholderType getBordnetFromDatabaseFunction;
+        [PreserveSource(Hint = "getBordnetFromDatabase removed", SignatureModified = true)]
+        internal static void Initialize(Action<string> logMissingBordnet = null)
         {
-            getBordnetFromDatabaseFunction = getBordnetFromDatabase;
+            //[-]getBordnetFromDatabaseFunction = getBordnetFromDatabase;
             logMissingBordnetAction = logMissingBordnet;
         }
 
