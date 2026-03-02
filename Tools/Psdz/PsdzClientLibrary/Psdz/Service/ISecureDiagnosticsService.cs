@@ -16,10 +16,10 @@ namespace BMW.Rheingold.Psdz
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void RegisterAuthService29Callback(byte[] s29CertificateChainByteArray, byte[] serializedPrivateKey, IPsdzConnection connection);
-
         [PreserveSource(KeepAttribute = true)]
         [OperationContract]
         [FaultContract(typeof(PsdzRuntimeException))]
         void UnlockGateway(IPsdzConnection connection);
+        void CheckAndPerformAuthService29IfNeeded(IPsdzConnection connection);
     }
 }

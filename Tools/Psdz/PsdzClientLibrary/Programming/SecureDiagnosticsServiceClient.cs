@@ -28,5 +28,14 @@ namespace BMW.Rheingold.Psdz.Client
                 service.UnlockGateway(connection);
             });
         }
+
+        [PreserveSource(Hint = "Dummy")]
+        public void CheckAndPerformAuthService29IfNeeded(IPsdzConnection connection)
+        {
+            CallMethod(delegate (ISecureDiagnosticsService service)
+            {
+                service.CheckAndPerformAuthService29IfNeeded(connection);
+            });
+        }
     }
 }
