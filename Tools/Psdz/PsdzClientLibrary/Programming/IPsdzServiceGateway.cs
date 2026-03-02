@@ -3,6 +3,7 @@ using BMW.Rheingold.Psdz;
 
 namespace PsdzClient.Programming
 {
+    [PreserveSource(Removed = true)]
     public interface IPsdzServiceGateway
     {
         string PsdzWebServiceLogFilePath { get; }
