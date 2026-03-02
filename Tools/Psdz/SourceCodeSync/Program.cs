@@ -542,6 +542,7 @@ namespace SourceCodeSync
                         }
                         else
                         {
+                            classCopy = RemoveGetMethods(classCopy);
                             if (!dict.TryAdd(name, classCopy))
                             {
                                 if (_verbosity >= Options.VerbosityOption.Error)
@@ -1789,6 +1790,25 @@ namespace SourceCodeSync
             }
 
             return sourceInterface.WithMembers(SyntaxFactory.List(newMembers));
+        }
+
+        /// <summary>
+        /// Removes all methods starting with "get_" from a class declaration
+        /// </summary>
+        private static ClassDeclarationSyntax RemoveGetMethods(ClassDeclarationSyntax classDeclaration)
+        {
+            var filteredMembers = classDeclaration.Members
+                .Where(member =>
+                {
+                    if (member is MethodDeclarationSyntax method)
+                    {
+                        return !method.Identifier.Text.StartsWith("get_", StringComparison.Ordinal);
+                    }
+                    return true; // Keep all non-method members
+                })
+                .ToList();
+
+            return classDeclaration.WithMembers(SyntaxFactory.List(filteredMembers));
         }
 
         /// <summary>
