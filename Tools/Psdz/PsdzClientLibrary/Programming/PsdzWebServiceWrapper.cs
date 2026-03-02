@@ -105,6 +105,7 @@ namespace BMW.Rheingold.Programming
             _psdzConfig = psdzConfig ?? new PsdzWebServiceConfig(istaFolder);
             //[+] _istaFolder = istaFolder;
             _istaFolder = istaFolder;
+            //[+]PsdzWebservice = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);
             PsdzWebservice = new PsdzWebService(_psdzConfig.PsdzWebApiLogDir, () => PsdzStarterGuard.Instance.CanCheckAvailability(), _istaFolder);
         }
 
