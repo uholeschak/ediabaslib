@@ -8,22 +8,22 @@ namespace PsdzClient.Utility
     {
         public static bool HasHuMgu(this IEcuTreeVehicle vec)
         {
-            return HasEcu(vec, "HU_MGU");
+            return vec.HasEcu("HU_MGU");
         }
 
         public static bool HasNbtevo(this IEcuTreeVehicle vec)
         {
-            return HasEcu(vec, "NBTEVO");
+            return vec.HasEcu("NBTEVO");
         }
 
         public static bool HasAmpt70(this IEcuTreeVehicle vec)
         {
-            return HasEcu(vec, "AMPT70");
+            return vec.HasEcu("AMPT70");
         }
 
         public static bool HasAmph70(this IEcuTreeVehicle vec)
         {
-            return HasEcu(vec, "AMPH70");
+            return vec.HasEcu("AMPH70");
         }
 
         private static bool HasEcu(this IEcuTreeVehicle vec, string sgbd)
@@ -32,12 +32,13 @@ namespace PsdzClient.Utility
             {
                 return false;
             }
+
             return vec.ECU.Any((IEcuTreeEcu ecu) => ecu.ECU_SGBD?.Equals(sgbd, StringComparison.InvariantCultureIgnoreCase) ?? false);
         }
 
         public static bool IsBev(this IEcuTreeVehicle vec)
         {
-            return HasHybridMark(vec, "BEVE");
+            return vec.HasHybridMark("BEVE");
         }
 
         private static bool HasHybridMark(this IEcuTreeVehicle vec, string mark)
