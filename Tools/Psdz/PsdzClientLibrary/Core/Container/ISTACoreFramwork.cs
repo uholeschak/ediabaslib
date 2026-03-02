@@ -6,15 +6,14 @@ namespace PsdzClient.Core.Container
     public class ISTACoreFramwork
     {
         private static bool _validLicense;
-
         private static int _debuglevel;
-
         public static int DebugLevel
         {
             get
             {
                 return _debuglevel;
             }
+
             set
             {
                 _debuglevel = value;
@@ -27,6 +26,7 @@ namespace PsdzClient.Core.Container
             {
                 return _validLicense;
             }
+
             set
             {
                 Log.Error("ISTACoreFramework.validLicense", "is not accessible for writing...");
@@ -39,7 +39,7 @@ namespace PsdzClient.Core.Container
             Log.Info("ISTACoreFramework.ISTACoreFramework()", "ctor called.");
             try
             {
-                //[-] BMW.Rheingold.CoreFramework.LicenseManager.VerifyLicense();
+                //[-] LicenseManager.VerifyLicense();
                 Log.Info(string.Empty, "ISTA Activation succeded");
                 _validLicense = true;
             }
@@ -48,6 +48,7 @@ namespace PsdzClient.Core.Container
                 Log.Info(string.Empty, "ISTA Activation failed");
                 _validLicense = false;
             }
+
             _debuglevel = ConfigSettings.getConfigint("DebugLevel", 0);
             _debuglevel = ConfigSettings.getConfigint("BMW.Rheingold.ISTA.CoreFramework.DebugLevel", _debuglevel);
         }

@@ -124,6 +124,12 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Cleaned = true)]
+        public string GetWebEamNextAlphaBaseUrl()
+        {
+            return string.Empty;
+        }
+
+        [PreserveSource(Cleaned = true)]
         public string GetSecureFeatureActivationUrl()
         {
             return string.Empty;
@@ -232,12 +238,6 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Cleaned = true)]
-        public bool GetAirTeileClearingEnabled()
-        {
-            return false;
-        }
-
-        [PreserveSource(Cleaned = true)]
         public string GetWebEAMNextStage()
         {
             return string.Empty;
@@ -263,6 +263,7 @@ namespace PsdzClient.Core
                 return (IsActive: result, Message: "REGISTRY KEY");
             //[+] }
             }
+
             //[+] bool flag = LBPFeatureSwitches.Features.DefaultValue(feature, IstaMode.HO);
             bool flag = LBPFeatureSwitches.Features.DefaultValue(feature, IstaMode.HO);
             //[+] return (IsActive: flag, Message: "DEFAULT VALUE");
@@ -315,6 +316,18 @@ namespace PsdzClient.Core
         public int? GetTimeoutLengthWebserviceStart()
         {
             return null;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public int? GetTricRegionalCloudUrlMtlsPort()
+        {
+            return null;
+        }
+
+        [PreserveSource(Cleaned = true)]
+        public bool GetAirTeileClearingEnabled()
+        {
+            return false;
         }
 
         [PreserveSource(Added = true)]
