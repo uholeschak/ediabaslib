@@ -62,7 +62,7 @@ namespace SourceCodeSync
             {"BMW.Rheingold.Programming.Common.SecureCodingService", null },
             {"BMW.Rheingold.Programming.ProgrammingService", "ProgrammingService2"},
             {"BMW.iLean.CommonServices.Logging.Extensions", null},
-            //{"BMW.ISPI.TRIC.ISTA.VehicleIdentification.Utility.GearboxUtility", null}
+            {"BMW.ISPI.TRIC.ISTA.EcuTree.Extensions", null}
         };
 
         private static readonly Dictionary<string, string> _modifyInterfaceNames = new()
