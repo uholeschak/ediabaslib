@@ -2,6 +2,7 @@
 using PsdzClient.Contracts;
 using PsdzClient.Core;
 using System;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -14,19 +15,26 @@ namespace BMW.Rheingold.Psdz
 {
     public class PsdzWebService : IPsdzWebService
     {
-        private const string JavaInstalationErrorMessage = "{0} Validation - {1}";
-        private readonly Version _expectedJREVersion = new Version(17, 0, 10);
+        private enum DataType
+        {
+            Output,
+            Error
+        }
+
         private readonly string _psdzWebApiLogDir;
         private readonly int _waitTimeOutSeconds = 180;
         private readonly PsdzProgressListenerDispatcher progressListenerDispatcher = new PsdzProgressListenerDispatcher();
         private readonly ManualResetEvent _terminationSignal = new ManualResetEvent(initialState: false);
         private readonly Func<bool> _isPsdzInitialized;
+        private volatile PsdzWebserviceStartFailureReason _detectedStartFailureReason;
+        private readonly ConcurrentQueue<string> _startupLogBuffer = new ConcurrentQueue<string>();
         private const int DEFAULT_HTTP_SERVER_PORT_MIN = 12300;
         private const int DEFAULT_HTTP_SERVER_PORT_MAX = 12400;
         private const int HTTP_SERVER_FALLBACK_PORT = 8888;
         private IWebCallHandler webCallHandler;
         private PsdzWebApiLifeCycleController lifeCycleController;
         private Process psdzWebserviceProcess;
+        private readonly IPsdzWebservicePreflightChecker _preflightChecker;
         public IBaureiheUtilityService BaureiheUtilityService { get; private set; }
         public ICertificateManagementService CertificateManagementService { get; private set; }
         public IConfigurationService ConfigurationService { get; private set; }
@@ -59,6 +67,7 @@ namespace BMW.Rheingold.Psdz
             _isPsdzInitialized = isPsdzInitialized;
             //[+] _istaFolder = istaFolder;
             _istaFolder = istaFolder;
+            _preflightChecker = new PsdzWebservicePreflightChecker(_psdzWebApiLogDir, CreateBaseProcess, CreateMonitoredProcess);
         }
 
         public void StartIfNotRunning(string jrePath, string jvmOptions, string jarArguments)
@@ -77,10 +86,13 @@ namespace BMW.Rheingold.Psdz
                 int num = PsdzWebserviceRegistrar.RegisterCurrentProcess();
                 webCallHandler = new WebCallHandler($"https://localhost:{num}/", Prepare, _isPsdzInitialized);
                 InitServices();
+                string jarPath = GetJarPath();
+                string javaExePath = Path.Combine(jrePath, "bin", "java.exe");
+                _preflightChecker.Execute(num, jarPath, javaExePath);
                 switch (PsdzWebserviceRegistrar.GetWebserviceStatus())
                 {
                     case WebserviceSessionStatus.Created:
-                        TrySetupPsdzWebserviceProcess(jrePath, jvmOptions, jarArguments, num);
+                        TrySetupPsdzWebserviceProcess(javaExePath, jvmOptions, jarArguments, num);
                         StartPsdzWebserviceProcess();
                         break;
                     case WebserviceSessionStatus.ProcessStarted:
@@ -98,6 +110,11 @@ namespace BMW.Rheingold.Psdz
                 stopwatch.Stop();
                 AddServiceCodeToFastaProtocol("PWS01_DurationWebserviceStart_nu_LF", $"Duration={stopwatch.Elapsed.TotalSeconds} seconds");
             }
+            catch (PsdzWebserviceStartException ex)
+            {
+                AddServiceCodeToFastaProtocol(ex.ServiceCode, ex.Message);
+                throw;
+            }
             catch (Exception exception)
             {
                 Log.ErrorException(Log.CurrentMethod(), exception);
@@ -113,6 +130,8 @@ namespace BMW.Rheingold.Psdz
                 lifeCycleController.RequestShutdown();
                 Log.Info(Log.CurrentMethod(), "Shutdown has been requested. Waiting for the shutdown.");
                 _terminationSignal.WaitOne();
+                PsdzWebserviceHelper.TryKillTree(psdzWebserviceProcess);
+                Log.Info(Log.CurrentMethod(), "Shutdown is complete.");
             }
         }
 
@@ -138,76 +157,20 @@ namespace BMW.Rheingold.Psdz
             {
                 return true;
             }
+
             Log.Error(Log.CurrentMethod(), "PSDZ WebService could not set root directory " + rootDirectorySetupResult?.Message);
-            //[-] if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service))
-            //[-] {
-            //[-] service.AddServiceCode("PWS04_PsdzWebServiceSetRootDirectoryFailed_nu_LF", "Setting up root directory for PSDZ web service failed", LayoutGroup.P);
-            //[-] }
-            //[-] if (ServiceLocator.Current.TryGetService<IInteractionService>(out var service2))
-            //[-] {
-            //[-] service2.RegisterAsync(new InteractionMessageModel
-            //[-] {
-            //[-] Title = new FormatedData("#NotificationMessageTitle.Error").Localize(),
-            //[-] MessageText = new FormatedData("#SetRootDirectoryFailed").Localize(),
-            //[-] IsDetailButtonVisible = false,
-            //[-] IsCloseButtonEnabled = false
-            //[-] });
-            //[-] }
-            TryKillTree(psdzWebserviceProcess);
+            if (ServiceLocator.Current.TryGetService<IFasta2Service>(out var service))
+            {
+                service.AddServiceCode("PWS04_PsdzWebServiceSetRootDirectoryFailed_nu_LF", "Setting up root directory for PSDZ web service failed", LayoutGroup.P);
+            }
+
+            //[-]if (ServiceLocator.Current.TryGetService<IInteractionService>(out var service2))
+            //[-]{
+            //[-]service2.RegisterAsync(new InteractionMessageModel { Title = new FormatedData("#NotificationMessageTitle.Error").Localize(), MessageText = new FormatedData("#SetRootDirectoryFailed").Localize(), IsDetailButtonVisible = false, IsCloseButtonEnabled = false });
+            //[-]}
+
+            PsdzWebserviceHelper.TryKillTree(psdzWebserviceProcess);
             return false;
-        }
-
-        private static bool TryKillTree(Process proc, int timeoutMs = 10000)
-        {
-            if (proc == null)
-            {
-                return true;
-            }
-
-            try
-            {
-                proc.Refresh();
-                if (proc.HasExited)
-                {
-                    return true;
-                }
-
-                using (Process process = Process.Start(new ProcessStartInfo { FileName = "taskkill", Arguments = $"/PID {proc.Id} /T /F", UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true }))
-                {
-                    process?.WaitForExit(timeoutMs);
-                }
-
-                proc.Refresh();
-                if (proc.HasExited)
-                {
-                    return true;
-                }
-
-                proc.Kill();
-                return proc.WaitForExit(Math.Max(3000, timeoutMs / 3));
-            }
-            catch
-            {
-                try
-                {
-                    proc.Refresh();
-                    return proc.HasExited;
-                }
-                catch
-                {
-                    return false;
-                }
-            }
-            finally
-            {
-                try
-                {
-                    proc.Close();
-                }
-                catch
-                {
-                }
-            }
         }
 
         public void SetPsdzEventListener(IPsdzEventListener eventListener)
@@ -230,137 +193,29 @@ namespace BMW.Rheingold.Psdz
             progressListenerDispatcher.RemovePsdzProgressListener(progressListener);
         }
 
-        private void TrySetupPsdzWebserviceProcess(string jrePath, string jvmOptions, string jarArguments, int sessionWebservicePort)
+        private void TrySetupPsdzWebserviceProcess(string javaExePath, string jvmOptions, string jarArguments, int sessionWebservicePort)
         {
             Log.Info(Log.CurrentMethod(), "Creating a new PSdZ Webservice process...");
             try
             {
-                string javaExePath = Path.Combine(jrePath, "bin", "java.exe");
-                BoolResultObject boolResultObject = EnsureJavaIsCorrectlyInstalled(javaExePath);
+                BoolResultObject<Process> boolResultObject = ConfigureWebserviceProcess(jvmOptions, jarArguments, sessionWebservicePort, javaExePath);
                 if (!boolResultObject.Result)
                 {
-                    throw new JavaInstallationException(boolResultObject.ErrorMessage);
+                    throw PsdzWebserviceStartException.Create(PsdzWebserviceStartFailureReason.Unknown);
                 }
 
-                BoolResultObject<Process> boolResultObject2 = ConfigureWebserviceProcess(jvmOptions, jarArguments, sessionWebservicePort, javaExePath);
-                if (!boolResultObject2.Result)
-                {
-                    throw new InvalidOperationException(boolResultObject2.ErrorMessage);
-                }
-
-                psdzWebserviceProcess = boolResultObject2.ResultObject;
+                psdzWebserviceProcess = boolResultObject.ResultObject;
             }
-            catch (Exception ex)
+            catch (PsdzWebserviceStartException)
             {
-                Log.ErrorException(Log.CurrentMethod(), ex);
-                AddServiceCodeToFastaProtocol("PWS05_WebserviceStartRuntimeError_nu_LF", string.Format(ex.Message + " - " + ex.InnerException?.Message));
                 throw;
             }
-        }
-
-        private BoolResultObject EnsureJavaIsCorrectlyInstalled(string javaExePath)
-        {
-            if (!TryValidateJavaExecutable(javaExePath, out var error))
+            catch (Exception ex2)
             {
-                return Fail("PWS02_JavaInstalationValidationError_nu_LF", error);
+                Log.ErrorException(Log.CurrentMethod(), ex2);
+                AddServiceCodeToFastaProtocol("PWS05_WebserviceStartRuntimeError_nu_LF", ex2.Message + " - " + ex2.InnerException?.Message);
+                throw;
             }
-
-            BoolResultObject<string> boolResultObject = TryValidateJavaInitialization(javaExePath, out error);
-            if (!boolResultObject.Result)
-            {
-                return Fail("PWS03_JavaInitializationValidationError_nu_LF", error);
-            }
-
-            if (!TryValidateJavaVersion(boolResultObject.ResultObject, out error))
-            {
-                return Fail("PWS02_JavaInstalationValidationError_nu_LF", error);
-            }
-
-            if (!TryValidateJar(GetJarPath(), out error))
-            {
-                return Fail("PWS02_JavaInstalationValidationError_nu_LF", error);
-            }
-
-            return BoolResultObject.SuccessResult;
-        }
-
-        private bool TryValidateJar(string jarPath, out string error)
-        {
-            if (jarPath == null || !File.Exists(jarPath))
-            {
-                error = string.Format("{0} Validation - {1}", "Jar Path", "Path " + jarPath + " for the .jar file not found!");
-                Log.Error(Log.CurrentMethod(), error);
-                return false;
-            }
-
-            error = null;
-            return true;
-        }
-
-        private BoolResultObject<string> TryValidateJavaInitialization(string javaExePath, out string error)
-        {
-            string text;
-            try
-            {
-                string arguments = "-version";
-                Process process = CreateBaseProcess(javaExePath, arguments);
-                process.Start();
-                text = process.StandardError.ReadToEnd();
-                process.WaitForExit();
-                Log.Info(Log.CurrentMethod(), "JDK Version Info: \n{0}", text);
-            }
-            catch (Exception ex)
-            {
-                error = string.Format(ex.Message);
-                Log.ErrorException(Log.CurrentMethod(), error, ex);
-                return BoolResultObject<string>.Fail(error);
-            }
-
-            error = null;
-            return BoolResultObject<string>.Success(text);
-        }
-
-        private bool TryValidateJavaVersion(string checkVersionProcessOutput, out string error)
-        {
-            Match match = Regex.Match(checkVersionProcessOutput, "\\d+\\.\\d+\\.\\d+");
-            try
-            {
-                if (match.Success && Version.Parse(match.Value) < _expectedJREVersion)
-                {
-                    error = string.Format("{0} Validation - {1}", "Java Version", $"Installed Java version is too low: {match.Value} - Expected {_expectedJREVersion}.");
-                    Log.Error(Log.CurrentMethod(), error);
-                    return false;
-                }
-
-                error = null;
-                return true;
-            }
-            catch (Exception ex)
-            {
-                error = string.Format("{0} Validation - {1}", "Java Version", "Could not parse Java version from string '" + match.Value + "'. Exception: " + ex.Message);
-                Log.ErrorException(Log.CurrentMethod(), error, ex);
-                return false;
-            }
-        }
-
-        private bool TryValidateJavaExecutable(string javaExePath, out string error)
-        {
-            Log.Info(Log.CurrentMethod(), $"JDK {_expectedJREVersion} Java.exe path: {javaExePath}");
-            if (!File.Exists(javaExePath))
-            {
-                error = string.Format("{0} Validation - {1}", "Java Executable", $"java.exe not found at {javaExePath}. JDK {_expectedJREVersion} is required for the PSdZ Webservice.");
-                Log.Error(Log.CurrentMethod(), error);
-                return false;
-            }
-
-            error = null;
-            return true;
-        }
-
-        private BoolResultObject Fail(string serviceCode, string message)
-        {
-            AddServiceCodeToFastaProtocol(serviceCode, message);
-            return BoolResultObject.FailResult(message);
         }
 
         private static void AddServiceCodeToFastaProtocol(string serviceCode, string message)
@@ -377,8 +232,7 @@ namespace BMW.Rheingold.Psdz
             try
             {
                 string arguments = $"{jvmOptions} -jar \"{GetJarPath()}\" {jarArguments} --server.port={sessionWebservicePort}";
-                process = CreateBaseProcess(javaExePath, arguments);
-                process.Exited += LogProcessOutputAfterExit;
+                process = CreateMonitoredProcess(javaExePath, arguments);
             }
             catch (Exception ex)
             {
@@ -389,10 +243,10 @@ namespace BMW.Rheingold.Psdz
             return BoolResultObject<Process>.Success(process);
         }
 
-        private Process CreateBaseProcess(string javaExePath, string arguments)
+        internal Process CreateBaseProcess(string exePath, string arguments)
         {
             Process process = new Process();
-            process.StartInfo.FileName = javaExePath;
+            process.StartInfo.FileName = exePath;
             process.StartInfo.Arguments = arguments;
             Log.Info(Log.CurrentMethod(), "Process Arguments: " + process.StartInfo.Arguments);
             process.StartInfo.UseShellExecute = false;
@@ -402,6 +256,80 @@ namespace BMW.Rheingold.Psdz
             process.StartInfo.RedirectStandardError = true;
             process.EnableRaisingEvents = true;
             return process;
+        }
+
+        internal Process CreateMonitoredProcess(string javaExePath, string arguments)
+        {
+            Process process = CreateBaseProcess(javaExePath, arguments);
+            process.OutputDataReceived += delegate (object s, DataReceivedEventArgs a)
+            {
+                HandleProcessStartupLine(a.Data, DataType.Output);
+            };
+            process.ErrorDataReceived += delegate (object s, DataReceivedEventArgs a)
+            {
+                HandleProcessStartupLine(a.Data, DataType.Error);
+            };
+            process.Exited += LogProcessOutputAfterExit;
+            return process;
+        }
+
+        private void HandleProcessStartupLine(string line, DataType dataType)
+        {
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                return;
+            }
+
+            Log.Error(Log.CurrentMethod(), $"Received {dataType} data: {line}");
+            _startupLogBuffer.Enqueue(line);
+            string result;
+            while (_startupLogBuffer.Count > 200 && _startupLogBuffer.TryDequeue(out result))
+            {
+            }
+
+            if (_detectedStartFailureReason != PsdzWebserviceStartFailureReason.None)
+            {
+                return;
+            }
+
+            (Regex, PsdzWebserviceStartFailureReason)[] patterns = PsdzWebserviceErrorPatterns.Patterns;
+            for (int i = 0; i < patterns.Length; i++)
+            {
+                var(regex, psdzWebserviceStartFailureReason) = patterns[i];
+                if (regex.IsMatch(line))
+                {
+                    _detectedStartFailureReason = psdzWebserviceStartFailureReason;
+                    Log.Error(Log.CurrentMethod(), $"Detected startup failure reason={psdzWebserviceStartFailureReason} via line: {line}");
+                    break;
+                }
+            }
+        }
+
+        private void LogProcessOutputAfterExit(object sender, EventArgs e)
+        {
+            (sender as Process).Exited -= LogProcessOutputAfterExit;
+            string text = psdzWebserviceProcess?.StandardOutput?.ReadToEnd();
+            string text2 = psdzWebserviceProcess?.StandardError?.ReadToEnd();
+            if (psdzWebserviceProcess.ExitCode == 0)
+            {
+                return;
+            }
+
+            string text3 = (text2 + "\n" + text).Trim();
+            Log.Error(Log.CurrentMethod(), "Launch probe failed (exit={0}). Output:\n{1}", psdzWebserviceProcess.ExitCode, text3);
+            (Regex, PsdzWebserviceStartFailureReason)[] patterns = PsdzWebserviceErrorPatterns.Patterns;
+            for (int i = 0; i < patterns.Length; i++)
+            {
+                var(regex, psdzWebserviceStartFailureReason) = patterns[i];
+                if (regex.IsMatch(text3))
+                {
+                    Log.Error(Log.CurrentMethod(), $"Launch probe failed. Reason={psdzWebserviceStartFailureReason}. Snippet={PsdzWebserviceHelper.Truncate(text3, 400)}");
+                    throw PsdzWebserviceStartException.Create(psdzWebserviceStartFailureReason);
+                }
+            }
+
+            Log.Error(Log.CurrentMethod(), $"Launch probe non-zero exit ({psdzWebserviceProcess.ExitCode}).");
+            throw PsdzWebserviceStartException.Create(PsdzWebserviceStartFailureReason.JavaRuntimeFaulty);
         }
 
         [PreserveSource(Hint = "fullPath modified", SignatureModified = true)]
@@ -420,27 +348,33 @@ namespace BMW.Rheingold.Psdz
             return text;
         }
 
-        private void LogProcessOutputAfterExit(object sender, EventArgs e)
-        {
-            string text = psdzWebserviceProcess.StandardOutput.ReadToEnd();
-            string text2 = psdzWebserviceProcess.StandardError.ReadToEnd();
-            if (!string.IsNullOrEmpty(text2))
-            {
-                Log.Error(Log.CurrentMethod(), "Output from PSdZ Webservice Process (StandardError): \n" + text2);
-            }
-            else
-            {
-                Log.Info(Log.CurrentMethod(), "Output from PSdZ Webservice Process (StandardOutput): \n" + text);
-            }
-        }
-
         private void StartPsdzWebserviceProcess()
         {
             try
             {
                 if (PsdzWebserviceRegistrar.StartAndRegisterWebserviceProcess(psdzWebserviceProcess))
                 {
-                    WaitForWebserviceInitialization(IsReady);
+                    try
+                    {
+                        WaitForWebserviceInitialization(IsReady);
+                    }
+                    catch (TimeoutException)
+                    {
+                        if (_detectedStartFailureReason == PsdzWebserviceStartFailureReason.None)
+                        {
+                            _detectedStartFailureReason = PsdzWebserviceStartFailureReason.Timeout;
+                        }
+
+                        Log.Error(Log.CurrentMethod(), $"PSdZ Webservice failed to become ready. Reason={_detectedStartFailureReason}");
+                        throw PsdzWebserviceStartException.Create(_detectedStartFailureReason);
+                    }
+
+                    if (_detectedStartFailureReason != PsdzWebserviceStartFailureReason.None)
+                    {
+                        Log.Error(Log.CurrentMethod(), $"Detected startup failure reason={_detectedStartFailureReason}");
+                        throw PsdzWebserviceStartException.Create(_detectedStartFailureReason);
+                    }
+
                     Log.Debug(Log.CurrentMethod(), "Psdz Webservice started and is responsive.");
                     InitLifeCycleController();
                     DoInitSettings();
@@ -451,9 +385,14 @@ namespace BMW.Rheingold.Psdz
                     HandleOngoingInitializationByAnotherThread();
                 }
             }
-            catch (Exception)
+            catch
             {
                 PsdzWebserviceRegistrar.DeregisterCurrentProcess();
+                if (!_startupLogBuffer.IsEmpty)
+                {
+                    Log.Error(Log.CurrentMethod(), "Startup log excerpt:\n" + string.Join("\n", _startupLogBuffer));
+                }
+
                 throw;
             }
         }
@@ -484,6 +423,7 @@ namespace BMW.Rheingold.Psdz
             ProgrammingTokenService = new ProgrammingTokenService(webCallHandler);
             TalExecutionService = new TalExecutionService(webCallHandler, ProgrammingService, ObjectBuilderService, EventManagerService, progressListenerDispatcher);
             VcmService = new VcmService(webCallHandler);
+            FpService = new FpService(webCallHandler);
         }
 
         private void InitLifeCycleController()
