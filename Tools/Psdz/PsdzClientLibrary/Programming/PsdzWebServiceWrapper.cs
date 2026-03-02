@@ -101,7 +101,7 @@ namespace BMW.Rheingold.Programming
         {
             //[-]_psdzConfig = psdzConfig ?? new PsdzWebServiceConfig();
             //[-]PsdzWebservice = psdzWebService;
-            //[+]_psdzConfig = psdzConfig ?? new PsdzWebServiceConfig(istaFolder);
+            //[+]_psdzConfig = psdzConfig ?? new PsdzWebServiceConfig(istaFolder, dealerId);
             _psdzConfig = psdzConfig ?? new PsdzWebServiceConfig(istaFolder, dealerId);
             //[+] _istaFolder = istaFolder;
             _istaFolder = istaFolder;
