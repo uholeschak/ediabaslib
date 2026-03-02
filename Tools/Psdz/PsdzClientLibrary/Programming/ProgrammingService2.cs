@@ -19,7 +19,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "IProgrammingWorker", Placeholder = true)]
         private readonly PlaceholderType programmingWorker;
         private readonly IOperationServices services;
-        [PreserveSource(Hint = "Changed to psdzServiceGateway.Psdz")]
+        [PreserveSource(Hint = "Changed to psdzServiceGateway.Psdz", SuppressWarning = true)]
         public IPsdz Psdz => psdzServiceGateway.Psdz;
 
         [PreserveSource(Hint = "Modified, create services", SignatureModified = true)]

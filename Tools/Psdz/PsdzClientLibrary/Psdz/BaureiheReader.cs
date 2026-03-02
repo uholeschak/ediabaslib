@@ -30,7 +30,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        [PreserveSource(Hint = "psdz added")]
+        [PreserveSource(Hint = "psdz added", SuppressWarning = true)]
         private readonly IPsdz psdz;
         [PreserveSource(Hint = "iPsdz added", SignatureModified = true)]
         public BaureiheReader(IPsdz iPsdz)
