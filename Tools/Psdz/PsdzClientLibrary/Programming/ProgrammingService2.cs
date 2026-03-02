@@ -242,6 +242,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Hint = "Return bool", SignatureModified = true)]
         public bool StartPsdzService(IVehicle vehicle = null)
         {
+            string method = Log.CurrentMethod();
             if (PsdzStarterGuard.Instance.IsInitializationAlreadyAttempted())
             {
                 Log.Debug(Log.CurrentMethod(), "There has already been an attempt to open PsdzService in the past. Returning...");
@@ -254,7 +255,7 @@ namespace PsdzClient.Programming
             Log.Info(Log.CurrentMethod(), "Start.");
             try
             {
-                //[-] psdzServiceGateway.StartIfNotRunning(vehicle);
+                //[-] psdzService.StartIfNotRunning();
                 //[+] if (!psdzServiceGateway.StartIfNotRunning(vehicle))
                 if (!psdzServiceGateway.StartIfNotRunning(vehicle))
                 //[+] {
@@ -268,7 +269,7 @@ namespace PsdzClient.Programming
             //[+] catch (Exception ex)
             catch (Exception ex)
             {
-                Log.ErrorException(Log.CurrentMethod(), ex);
+                Log.ErrorException(method, ex);
                 //[-] services?.InteractionService?.RegisterMessage(ex.TitleLocalized, ex.MessageLocalized);
                 //[+] return false;
                 return false;
@@ -277,7 +278,7 @@ namespace PsdzClient.Programming
             //[-] {
             //[-] service.AddServiceCode("GFS01_State_PsdzWebservice_nu_LF", "", LayoutGroup.P, allowMultipleEntries: false, bufferIfSessionNotStarted: true);
             //[-] }
-            Log.Info(Log.CurrentMethod(), "End.");
+            Log.Info(method, "End.");
             TimeMetricsUtility.Instance.InitializePsdzStop();
             //[+] return true;
             return true;
