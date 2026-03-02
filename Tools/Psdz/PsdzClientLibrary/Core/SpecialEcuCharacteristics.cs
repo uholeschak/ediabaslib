@@ -12,22 +12,15 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -37,45 +30,37 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
 
-        public override bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        public override bool HasBus(BusType busType, IEcuTreeVehicle vecInfo, IEcuTreeEcu ecu)
         {
-            if (ecu != null && ecu.SVK != null && ecu.SVK.XWE_SGBMID != null && xgbdTable != null && ecu.ID_SG_ADR == 96 && busType == BusType.MOST)
+            if (ecu != null && ecu.Svk != null && ecu.Svk.XWE_SGBMID != null && xgbdTable != null)
             {
-                foreach (string item in ecu.SVK.XWE_SGBMID)
+                long iD_SG_ADR = ecu.ID_SG_ADR;
+                long num = iD_SG_ADR;
+                if (num == 96 && busType == BusType.MOST)
                 {
-                    foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
+                    foreach (string item in ecu.Svk.XWE_SGBMID)
                     {
-                        if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
+                        foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
                         {
-                            if (item2.Bus.Contains(busType))
+                            if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
                             {
-                                return true;
+                                return item2.Bus.Contains(busType);
                             }
-
-                            return false;
                         }
                     }
                 }
             }
-
             return base.HasBus(busType, vecInfo, ecu);
         }
     }
@@ -86,45 +71,37 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
 
-        public override bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        public override bool HasBus(BusType busType, IEcuTreeVehicle vecInfo, IEcuTreeEcu ecu)
         {
-            if (ecu != null && ecu.SVK != null && ecu.SVK.XWE_SGBMID != null && xgbdTable != null && ecu.ID_SG_ADR == 96 && busType == BusType.MOST)
+            if (ecu != null && ecu.Svk != null && ecu.Svk.XWE_SGBMID != null && xgbdTable != null)
             {
-                foreach (string item in ecu.SVK.XWE_SGBMID)
+                long iD_SG_ADR = ecu.ID_SG_ADR;
+                long num = iD_SG_ADR;
+                if (num == 96 && busType == BusType.MOST)
                 {
-                    foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
+                    foreach (string item in ecu.Svk.XWE_SGBMID)
                     {
-                        if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
+                        foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
                         {
-                            if (item2.Bus.Contains(busType))
+                            if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
                             {
-                                return true;
+                                return item2.Bus.Contains(busType);
                             }
-
-                            return false;
                         }
                     }
                 }
             }
-
             return base.HasBus(busType, vecInfo, ecu);
         }
     }
@@ -135,32 +112,24 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-
-            ObservableCollection<ECU> eCU = vecInfo.ECU;
+            IList<IEcuTreeEcu> eCU = vecInfo.ECU;
             if (eCU != null)
             {
-                foreach (ECU item in eCU)
+                foreach (IEcuTreeEcu item in eCU)
                 {
                     if (item.ECU_GROBNAME.Equals("EMA_LI"))
                     {
                         hashSet.AddIfNotContains(78);
                         break;
                     }
-
                     if (item.ECU_GROBNAME.Equals("EMA_RE"))
                     {
                         hashSet.AddIfNotContains(77);
@@ -168,8 +137,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -179,41 +147,27 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
             if (vecInfo != null && "R57".Equals(vecInfo.Ereihe))
             {
                 hashSet.Add(36);
             }
-
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
 
-        public override void ShapeECUConfiguration(Vehicle vecInfo)
+        public override void ShapeECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             base.ShapeECUConfiguration(vecInfo);
-            ECU eCU = vecInfo.getECU(99L);
-            if (eCU != null && "CHAMP2R".Equals(eCU.VARIANTE))
+            IEcuTreeEcu eCU = vecInfo.getECU(99L);
+            if (eCU != null && "CHAMP2R".Equals(eCU.VARIANT))
             {
-                ECU eCU2 = vecInfo.getECU(84L);
+                IEcuTreeEcu eCU2 = vecInfo.getECU(84L);
                 if (eCU2 != null && !eCU2.IDENT_SUCCESSFULLY)
                 {
                     vecInfo.ECU.Remove(eCU2);
@@ -228,27 +182,19 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
             if ("RR2".Equals(vecInfo.Ereihe))
             {
                 hashSet.Add(36);
                 hashSet.Add(158);
             }
-
             if ("AUT".Equals(vecInfo.Getriebe))
             {
                 hashSet.Add(24);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -258,27 +204,19 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
             if ("RR2".Equals(vecInfo.Ereihe))
             {
                 hashSet.Add(36);
                 hashSet.Add(158);
             }
-
             if ("AUT".Equals(vecInfo.Getriebe))
             {
                 hashSet.Add(24);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -288,32 +226,24 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-
-            ObservableCollection<ECU> eCU = vecInfo.ECU;
+            IList<IEcuTreeEcu> eCU = vecInfo.ECU;
             if (eCU != null)
             {
-                foreach (ECU item in eCU)
+                foreach (IEcuTreeEcu item in eCU)
                 {
                     if (item.ECU_GROBNAME.Equals("EMA_LI"))
                     {
                         hashSet.AddIfNotContains(78);
                         break;
                     }
-
                     if (item.ECU_GROBNAME.Equals("EMA_RE"))
                     {
                         hashSet.AddIfNotContains(77);
@@ -321,8 +251,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -332,32 +261,19 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
-            if (vecInfo.ECU == null)
-            {
-                vecInfo.ECU = new ObservableCollection<ECU>();
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
             if (vecInfo.HasSA("369"))
             {
                 hashSet.Add(92);
             }
-
             if (vecInfo.Ereihe != "K60")
             {
                 hashSet.Add(96);
             }
-
             brSgbd = ((vecInfo.Ereihe == "K60" || vecInfo.Ereihe == "K02" || vecInfo.Ereihe == "K03" || vecInfo.Ereihe == "K08" || vecInfo.Ereihe == "K09") ? "X_KS01" : "X_K001");
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -367,22 +283,15 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfigurationConfigured()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> sgList = new HashSet<int>();
             HashSet<int> hashSet = new HashSet<int>();
             if ("A67".Equals(vecInfo.Ereihe) || "V98".Equals(vecInfo.Ereihe))
             {
                 hashSet.Add(96);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, sgList, hashSet);
+            CalculateECUConfiguration(vecInfo, sgList, hashSet);
         }
     }
 
@@ -392,21 +301,14 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -416,21 +318,14 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -440,21 +335,14 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -464,26 +352,18 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
             if ("E64".Equals(vecInfo.Ereihe))
             {
                 hashSet.Add(36);
             }
-
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -493,22 +373,15 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -518,22 +391,15 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -543,32 +409,24 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-
-            ObservableCollection<ECU> eCU = vecInfo.ECU;
+            IList<IEcuTreeEcu> eCU = vecInfo.ECU;
             if (eCU != null)
             {
-                foreach (ECU item in eCU)
+                foreach (IEcuTreeEcu item in eCU)
                 {
                     if (item.ECU_GROBNAME.Equals("EMA_LI"))
                     {
                         hashSet.AddIfNotContains(78);
                         break;
                     }
-
                     if (item.ECU_GROBNAME.Equals("EMA_RE"))
                     {
                         hashSet.AddIfNotContains(77);
@@ -576,8 +434,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -587,21 +444,14 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, null);
+            CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
 
@@ -611,27 +461,26 @@ namespace PsdzClient.Core
         {
         }
 
-        public override bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        public override bool HasBus(BusType busType, IEcuTreeVehicle vecInfo, IEcuTreeEcu ecu)
         {
-            if (ecu != null && ecu.SVK != null && ecu.SVK.XWE_SGBMID != null && xgbdTable != null && ecu.ID_SG_ADR == 96 && busType == BusType.MOST)
+            if (ecu != null && ecu.Svk != null && ecu.Svk.XWE_SGBMID != null && xgbdTable != null)
             {
-                foreach (string item in ecu.SVK.XWE_SGBMID)
+                long iD_SG_ADR = ecu.ID_SG_ADR;
+                long num = iD_SG_ADR;
+                if (num == 96 && busType == BusType.MOST)
                 {
-                    foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
+                    foreach (string item in ecu.Svk.XWE_SGBMID)
                     {
-                        if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
+                        foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
                         {
-                            if (item2.Bus.Contains(busType))
+                            if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
                             {
-                                return true;
+                                return item2.Bus.Contains(busType);
                             }
-
-                            return false;
                         }
                     }
                 }
             }
-
             return base.HasBus(busType, vecInfo, ecu);
         }
     }
@@ -642,46 +491,38 @@ namespace PsdzClient.Core
         {
         }
 
-        public override void CalculateECUConfiguration(Vehicle vecInfo, IFFMDynamicResolver ffmResolver)
+        public override void CalculateECUConfiguration(IEcuTreeVehicle vecInfo)
         {
-            if (vecInfo == null)
-            {
-                Log.Warning(GetType().Name + ".CalculateECUConfiguration()", "vecInfo was null");
-                return;
-            }
-
             HashSet<int> hashSet = new HashSet<int>();
             HashSet<int> removeList = new HashSet<int>();
-            if (GearboxUtility.HasVehicleGearboxECU(vecInfo))
+            if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-
-            CalculateECUConfiguration(vecInfo, ffmResolver, hashSet, removeList);
+            CalculateECUConfiguration(vecInfo, hashSet, removeList);
         }
 
-        public override bool HasBus(BusType busType, Vehicle vecInfo, ECU ecu)
+        public override bool HasBus(BusType busType, IEcuTreeVehicle vecInfo, IEcuTreeEcu ecu)
         {
-            if (ecu != null && ecu.SVK != null && ecu.SVK.XWE_SGBMID != null && xgbdTable != null && ecu.ID_SG_ADR == 96 && busType == BusType.MOST)
+            if (ecu != null && ecu.Svk != null && ecu.Svk.XWE_SGBMID != null && xgbdTable != null)
             {
-                foreach (string item in ecu.SVK.XWE_SGBMID)
+                long iD_SG_ADR = ecu.ID_SG_ADR;
+                long num = iD_SG_ADR;
+                if (num == 96 && busType == BusType.MOST)
                 {
-                    foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
+                    foreach (string item in ecu.Svk.XWE_SGBMID)
                     {
-                        if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
+                        foreach (IXGBMBusLogisticsEntry item2 in xgbdTable)
                         {
-                            if (item2.Bus.Contains(busType))
+                            if (item.StartsWith(item2.XgbmPrefix, StringComparison.OrdinalIgnoreCase))
                             {
-                                return true;
+                                return item2.Bus.Contains(busType);
                             }
-
-                            return false;
                         }
                     }
                 }
             }
-
             return base.HasBus(busType, vecInfo, ecu);
         }
     }
