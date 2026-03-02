@@ -18,7 +18,7 @@ namespace PsdzClient.Core
     public class EcuTreeConfiguration : IEcuTreeConfiguration
     {
         public const double DefaultRootHorizontalBusStep = 0.125;
-        private const string RESOURCE_ECUTREECONFIGURATION_XSD = "BMW.Rheingold.Diagnostics.EcuCharacteristics.EcuTreeConfiguration.xsd";
+        private const string RESOURCE_ECUTREECONFIGURATION_XSD = "BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics.EcuTreeConfiguration.xsd";
         private static MemoryStream xsdEcuTreeConfigurationStream;
         private static XmlSerializer xmlSerializer;
         [XmlAttribute("SchemaVersion")]
@@ -209,36 +209,6 @@ namespace PsdzClient.Core
             }
         }
 
-        private static MemoryStream XsdEcuTreeConfigurationStream
-        {
-            get
-            {
-                if (xsdEcuTreeConfigurationStream == null)
-                {
-                    try
-                    {
-                        using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BMW.Rheingold.Diagnostics.EcuCharacteristics.EcuTreeConfiguration.xsd"))
-                        {
-                            if (stream == null)
-                            {
-                                throw new IOException(string.Format("('{0}') could not be found!", "BMW.Rheingold.Diagnostics.EcuCharacteristics.EcuTreeConfiguration.xsd"));
-                            }
-
-                            xsdEcuTreeConfigurationStream = new MemoryStream();
-                            stream.CopyTo(xsdEcuTreeConfigurationStream);
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        Log.ErrorException("EcuTreeConfiguration.XsdEcuTreeConfigurationStream", exception);
-                    }
-                }
-
-                xsdEcuTreeConfigurationStream.Position = 0L;
-                return xsdEcuTreeConfigurationStream;
-            }
-        }
-
         private static XmlSerializer XmlSerializer
         {
             get
@@ -360,7 +330,34 @@ namespace PsdzClient.Core
             }
         }
 
-        public static bool ValidateFile(Stream xmlFileStream, ValidationEventHandler validationEventHandler = null)
+        private static MemoryStream GetXsdEcuTreeConfigurationStream(ILogger logger = null)
+        {
+            if (xsdEcuTreeConfigurationStream == null)
+            {
+                try
+                {
+                    using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics.EcuTreeConfiguration.xsd"))
+                    {
+                        if (stream == null)
+                        {
+                            throw new IOException(string.Format("('{0}') could not be found!", "BMW.ISPI.TRIC.ISTA.EcuTree.Bordnet.EcuCharacteristics.EcuTreeConfiguration.xsd"));
+                        }
+
+                        xsdEcuTreeConfigurationStream = new MemoryStream();
+                        stream.CopyTo(xsdEcuTreeConfigurationStream);
+                    }
+                }
+                catch (Exception exception)
+                {
+                    logger?.ErrorException("EcuTreeConfiguration.XsdEcuTreeConfigurationStream", exception);
+                }
+            }
+
+            xsdEcuTreeConfigurationStream.Position = 0L;
+            return xsdEcuTreeConfigurationStream;
+        }
+
+        public static bool ValidateFile(Stream xmlFileStream, ValidationEventHandler validationEventHandler = null, ILogger logger = null)
         {
             XmlReader xmlReader = null;
             XmlReader xmlReader2 = null;
@@ -379,7 +376,7 @@ namespace PsdzClient.Core
                 }
 
                 xmlReaderSettings.ValidationEventHandler += xmlSettings_ValidationEventHandler;
-                xmlReader2 = XmlReader.Create(XsdEcuTreeConfigurationStream);
+                xmlReader2 = XmlReader.Create(GetXsdEcuTreeConfigurationStream(logger));
                 xmlReaderSettings.Schemas.Add("http://bmw.com/Rheingold/EcuTreeConfiguration", xmlReader2);
                 xmlReaderSettings.ValidationType = ValidationType.Schema;
                 xmlReaderSettings.ValidationFlags |= XmlSchemaValidationFlags.ProcessInlineSchema;
@@ -406,7 +403,7 @@ namespace PsdzClient.Core
 
         private static void xmlSettings_ValidationEventHandler(object sender, ValidationEventArgs e)
         {
-            _ = e.Message;
+            string message = e.Message;
         }
 
         public virtual string Serialize()
