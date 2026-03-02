@@ -24,7 +24,7 @@ namespace PsdzClient.Programming
         public ProgrammingService2(string istaFolder, string dealerId)
         {
             //[-] this.services = services;
-            //[-] psdzServiceGateway = new PsdzServiceGateway();
+            //[-] psdzService = new PsdzWebServiceWrapper();
             //[-] PreparePsdzBackupDataPath();
             //[-] programmingWorker = CreateProgrammingWorker();
             //[+] psdzConfig = new PsdzConfig(istaFolder, dealerId);
@@ -101,12 +101,15 @@ namespace PsdzClient.Programming
 
         public void SetLogLevelToMax()
         {
+            //[-]psdzService.SetLogLevel(PsdzLoglevel.TRACE, ProdiasLoglevel.INFO);
+            //[+]psdzServiceGateway.SetLogLevel(PsdzLoglevel.TRACE, ProdiasLoglevel.INFO);
             psdzServiceGateway.SetLogLevel(PsdzLoglevel.TRACE, ProdiasLoglevel.INFO);
         }
 
-        [PreserveSource(Added = true)]
         public void SetLogLevelToNormal()
         {
+            //[-]psdzService.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
+            //[+]psdzServiceGateway.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
             psdzServiceGateway.SetLogLevel(PsdzLoglevel.FINE, ProdiasLoglevel.ERROR);
         }
 
@@ -137,7 +140,7 @@ namespace PsdzClient.Programming
         public void CloseConnectionsToPsdz(bool force = false)
         {
             Log.Info(Log.CurrentMethod(), "Start.");
-            //[-] psdzServiceGateway.CloseConnectionsToPsdz();
+            //[-]psdzService.Shutdown();
             //[+] psdzServiceGateway.CloseConnectionsToPsdz(force);
             psdzServiceGateway.CloseConnectionsToPsdz(force);
             Log.Info(Log.CurrentMethod(), "End.");
