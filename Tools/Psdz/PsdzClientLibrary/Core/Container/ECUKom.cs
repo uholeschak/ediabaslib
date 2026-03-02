@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using PsdzClient.Psdz;
 
 #pragma warning disable CS0169, CS0649
 namespace PsdzClient.Core.Container
@@ -573,61 +574,78 @@ namespace PsdzClient.Core.Container
             string pathString = ConfigSettings.getPathString("BMW.Rheingold.Logging.Directory.Current", "..\\..\\..\\logs");
             try
             {
-                detectedSpecialSecurityCase = SpecialSecurityCases.None;
-                CreateEdiabasPublicKeyIfNotExist(device);
-                if (isDoIP2 || isDoIP)
+                IstaIcsServiceClient ics = new IstaIcsServiceClient();
+                bool flag = false;
+                if (ConfigSettings.IsILeanActive && ics.IsAvailable())
                 {
-                    //[-] int id = Process.GetCurrentProcess().Id;
-                    //[-] if (interactionService.RegisterAsync(new InteractionDoIpCheckModel(id)).Result.Action == InteractionButton.Yes)
-                    //[-] {
-                    //[-]     boolResultObject.SetValues(result: false, ConnectToVehicleErrorCodes.IstaIsOffline.ToString(), "ISTA is offline");
-                    //[-]     boolResultObject.ErrorCodeInt = 7;
-                    //[-]     boolResultObject.ErrorMessage = "Only one NCAR session is possible at a time.";
-                    //[-]     boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.DoIpIsUsedByOtherOperationError.ToString();
-                    //[-]     return boolResultObject;
-                    //[-] }
-                    if (!device.IsSimulation)
+                    flag = ics.GetFeatureEnabledStatus("SpecialEdiabasVersionForNcar").IsActive;
+                }
+
+                detectedSpecialSecurityCase = SpecialSecurityCases.None;
+                if (ConfigSettings.SelectedBrand != UiBrand.BMWMotorrad)
+                {
+                    CreateEdiabasPublicKeyIfNotExist(device);
+                    if (isDoIP2 || isDoIP)
                     {
-                        boolResultObject2 = HandleS29Authentication(device);
+                        //[-]int id = Process.GetCurrentProcess().Id;
+                        //[-]if (!flag && interactionService.RegisterAsync(new InteractionDoIpCheckModel(id)).Result.Action == InteractionButton.Yes)
+                        //[-]{
+                        //[-]boolResultObject.ErrorCodeInt = 7;
+                        //[-]boolResultObject.ErrorMessage = "Only one NCAR session is possible at a time.";
+                        //[-]boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.DoIpIsUsedByOtherOperationError.ToString();
+                        //[-]return boolResultObject;
+                        //[-]}
+
+                        if (!device.IsSimulation)
+                        {
+                            boolResultObject2 = HandleS29Authentication(device);
+                        }
+                        else
+                        {
+                            boolResultObject2.Result = true;
+                        }
+
+                        if (!boolResultObject2.Result)
+                        {
+                            return boolResultObject2;
+                        }
                     }
                     else
                     {
-                        boolResultObject2.Result = true;
-                    }
-
-                    if (!boolResultObject2.Result)
-                    {
-                        return boolResultObject2;
-                    }
-                }
-                else
-                {
-                    IstaIcsServiceClient ics = new IstaIcsServiceClient();
-                    if (ConfigSettings.IsILeanActive && ics.IsAvailable())
-                    {
-                        if (!ics.GetSec4DiagEnabledInBackground())
+                        if (flag)
                         {
-                            Log.Warning(Log.CurrentMethod(), "Sec4DiagEnbaledInBackground is false");
+                            boolResultObject.ErrorCodeInt = 8;
+                            boolResultObject.ErrorMessage = "Only NCAR Vehicles are allowed with the new EDIABAS Version.";
+                            boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.NewEdiabasVersionWithoutNcarVehicle.ToString();
+                            return boolResultObject;
                         }
-                        else
+
+                        if (ConfigSettings.IsILeanActive && ics.IsAvailable())
+                        {
+                            if (!ics.GetSec4DiagEnabledInBackground())
+                            {
+                                Log.Warning(Log.CurrentMethod(), "Sec4DiagEnbaledInBackground is false");
+                            }
+                            else
+                            {
+                                Task.Run(delegate
+                                {
+                                    TestSubCACall(device);
+                                    if (!isTestCertReqCallExecuted && IsActiveLBPFeatureSwitchForCallCertreqProfiles(ics))
+                                    {
+                                        TestCertReqCall();
+                                        isTestCertReqCallExecuted = true;
+                                    }
+                                });
+                            }
+                        }
+                        else if (ConfigSettings.IsOssModeActive)
                         {
                             Task.Run(delegate
                             {
                                 TestSubCACall(device);
-                                if (!isTestCertReqCallExecuted && IsActiveLBPFeatureSwitchForCallCertreqProfiles(ics))
-                                {
-                                    TestCertReqCall();
-                                    isTestCertReqCallExecuted = true;
-                                }
                             });
                         }
-                    }
-                    else if (ConfigSettings.IsOssModeActive)
-                    {
-                        Task.Run(delegate
-                        {
-                            TestSubCACall(device);
-                        });
                     }
                 }
 
@@ -656,7 +674,7 @@ namespace PsdzClient.Core.Container
                     return boolResultObject;
                 }
 
-                if (!device.IsSimulation && tuple.Item2 == Sec4CNVehicleGen.NCAR && boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState(device))
+                if (ConfigSettings.SelectedBrand != UiBrand.BMWMotorrad && !device.IsSimulation && tuple.Item2 == Sec4CNVehicleGen.NCAR && boolResultObject.Result && boolResultObject2.Result && (isDoIP2 || isDoIP) && !CheckAuthentificationState(device))
                 {
                     if (detectedSpecialSecurityCase == SpecialSecurityCases.IpbCertificatesRequired)
                     {
