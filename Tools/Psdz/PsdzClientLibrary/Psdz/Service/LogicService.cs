@@ -262,7 +262,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzTal GenerateTalForSfa(IPsdzTal tal, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA)
+        public IPsdzTal GenerateTalForSfa(IPsdzTal tal, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA, IPsdzTalFilter talFilter)
         {
             try
             {
@@ -276,7 +276,8 @@ namespace BMW.Rheingold.Psdz
                     DiagAdresses = diagAddressCtos?.Select(DiagAddressMapper.Map).ToList(),
                     FeatureIdWhiteList = featureIdWhiteList?.Select(FeatureIdCtoMapper.Map).ToList(),
                     FeatureIdBlackList = featureIdBlackList?.Select(FeatureIdCtoMapper.Map).ToList(),
-                    SupressCreationOfSfaWriteTA = suppressCreationOfSfaWriteTA
+                    SupressCreationOfSfaWriteTA = suppressCreationOfSfaWriteTA,
+                    TalFilter = TalFilterMapper.Map(talFilter)
                 };
                 return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "generatetalforsfa", HttpMethod.Post, requestBodyObject).Data);
             }
@@ -287,7 +288,7 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        public IPsdzTal GenerateTalForSfa(IPsdzSvt svt, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA)
+        public IPsdzTal GenerateTalForSfa(IPsdzSvt svt, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA, IPsdzTalFilter talFilter)
         {
             try
             {
@@ -301,7 +302,8 @@ namespace BMW.Rheingold.Psdz
                     DiagAdresses = diagAddressCtos?.Select(DiagAddressMapper.Map).ToList(),
                     FeatureIdWhiteList = featureIdWhiteList?.Select(FeatureIdCtoMapper.Map).ToList(),
                     FeatureIdBlackList = featureIdBlackList?.Select(FeatureIdCtoMapper.Map).ToList(),
-                    SuppressCreationOfSfaWriteTA = suppressCreationOfSfaWriteTA
+                    SuppressCreationOfSfaWriteTA = suppressCreationOfSfaWriteTA,
+                    TalFilter = TalFilterMapper.Map(talFilter)
                 };
                 return TalMapper.Map(_webCallHandler.ExecuteRequest<TalModel>(endpointService, "generatetalforsfaonly", HttpMethod.Post, requestBodyObject).Data);
             }

@@ -21,14 +21,14 @@ namespace BMW.Rheingold.Psdz.Client
         {
         }
 
-        public IPsdzTal GenerateTalForSfa(IPsdzTal tal, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA)
+        public IPsdzTal GenerateTalForSfa(IPsdzTal tal, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA, IPsdzTalFilter talFilter)
         {
-            return CallFunction((ILogicService m) => m.GenerateTalForSfa(tal, istSfa, sollSfa, calculationStrategy, featureActivationTokens, diagAddressCtos, featureIdWhiteList, featureIdBlackList, suppressCreationOfSfaWriteTA));
+            return CallFunction((ILogicService m) => m.GenerateTalForSfa(tal, istSfa, sollSfa, calculationStrategy, featureActivationTokens, diagAddressCtos, featureIdWhiteList, featureIdBlackList, suppressCreationOfSfaWriteTA, talFilter));
         }
 
-        public IPsdzTal GenerateTalForSfa(IPsdzSvt svt, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA)
+        public IPsdzTal GenerateTalForSfa(IPsdzSvt svt, IEnumerable<IPsdzFeatureLongStatusCto> istSfa, IEnumerable<IPsdzEcuFeatureTokenRelationCto> sollSfa, PsdzCalculationStrategyEtoEnum calculationStrategy, IEnumerable<IPsdzSecureTokenEto> featureActivationTokens, IEnumerable<IPsdzDiagAddress> diagAddressCtos, IEnumerable<IPsdzFeatureIdCto> featureIdWhiteList, IEnumerable<IPsdzFeatureIdCto> featureIdBlackList, bool suppressCreationOfSfaWriteTA, IPsdzTalFilter talFilter)
         {
-            return CallFunction((ILogicService m) => m.GenerateTalForSfa(svt, istSfa, sollSfa, calculationStrategy, featureActivationTokens, diagAddressCtos, featureIdWhiteList, featureIdBlackList, suppressCreationOfSfaWriteTA));
+            return CallFunction((ILogicService m) => m.GenerateTalForSfa(svt, istSfa, sollSfa, calculationStrategy, featureActivationTokens, diagAddressCtos, featureIdWhiteList, featureIdBlackList, suppressCreationOfSfaWriteTA, talFilter));
         }
 
         public IPsdzSollSfaCto GenerateSfaSollStand(IPsdzSvt svt, IEnumerable<IPsdzSecureTokenEto> tokenPack)
