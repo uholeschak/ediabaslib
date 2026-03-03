@@ -68,14 +68,14 @@ namespace PsdzClient.Core
                 }
             }
 
-            if (flag)
-            {
-                ediabaasS29Path = Path.Combine("C:\\", "EC-Apps-ISTA", "EDIABAS", "Security", "S29", "Certificates");
-            }
-            else
-            {
-                ediabaasS29Path = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.S29Path", "..\\..\\..\\Ediabas\\Security\\S29\\Certificates");
-            }
+            //[-]if (flag)
+            //[-]{
+            //[-]ediabaasS29Path = Path.Combine("C:\\", "EC-Apps-ISTA", "EDIABAS", "Security", "S29", "Certificates");
+            //[-]}
+            //[-]else
+            //[-]{
+            //[-]ediabaasS29Path = ConfigSettings.getConfigString("BMW.Rheingold.CoreFramework.Ediabas.S29Path", "..\\..\\..\\Ediabas\\Security\\S29\\Certificates");
+            //[-]}
         }
 
         public AsymmetricCipherKeyPair LoadKeyPairFromFile(string filePath, string password)
