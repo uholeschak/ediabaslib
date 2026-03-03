@@ -2789,6 +2789,13 @@ namespace PsdzClient
                     return null;
                 }
 
+                Type istaModuleBaseType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.IstaModuleBase");
+                if (istaModuleBaseType == null)
+                {
+                    log.ErrorFormat("ReadTestModule IstaModuleBase not found");
+                    return null;
+                }
+
                 // __IndirectDocument with 2 arguments calls __IndirectDocument with 3 arguments
                 MethodInfo methodIstaModuleIndirectDocument3 = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                     null, new Type[] { typeof(string), typeof(string), typeof(string) }, null);
