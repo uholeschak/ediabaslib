@@ -856,7 +856,7 @@ namespace PsdzClient.Programming
                     List<PsdzDatabase.CharacteristicRoots> characteristicRootsByNodeClassId = database.GetCharacteristicRootsByNodeClassId(characteristic.RootNodeClass);
                     if (!characteristicRootsByNodeClassId.Any())
                     {
-                        return false;
+                        Log.Warning("VehicleIdent.UpdateVehicleCharacteristics()", "No entry found in CharacteristicRoots for nodeclassId: {0}!", characteristic.RootNodeClass);
                     }
                 }
             }
