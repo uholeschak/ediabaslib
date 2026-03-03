@@ -837,6 +837,7 @@ namespace PsdzClient.Programming
             SetSvtActual(psdzSvt);
         }
 
+        // ToDo: Check on update
         [PreserveSource(Added = true)]
         public static bool AssignVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, PsdzDatabase database, Vehicle vehicle)
         {
@@ -863,6 +864,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        // ToDo: Check on update
         [PreserveSource(Added = true)]
         public static void HandleSpecialTreatmentOfCharacteristicForISTA(PsdzDatabase.Characteristics characteristic, Vehicle vecInfo)
         {
