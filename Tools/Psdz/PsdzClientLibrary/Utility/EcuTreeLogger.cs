@@ -12,5 +12,11 @@ namespace PsdzClient.Utility
         {
             instance = logger;
         }
+
+        [PreserveSource(Added = true)]
+        static EcuTreeLogger()
+        {
+            Initialize(new NugetLogger());
+        }
     }
 }

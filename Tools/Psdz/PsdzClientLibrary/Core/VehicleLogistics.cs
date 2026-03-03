@@ -17,7 +17,7 @@ namespace PsdzClient.Core
         public const string FallbackBordnetName = "BNT-XML-FALLBACK.xml";
         [PreserveSource(Hint = "Func<IEcuTreeVehicle, ICollection<PsdzDatabase>>", Placeholder = true)]
         public static PlaceholderType getBordnetFromDatabaseFunction;
-        [PreserveSource(Hint = "getBordnetFromDatabase removed", SignatureModified = true)]
+        [PreserveSource(Hint = "getBordnetFromDatabase removed, method not used", SignatureModified = true)]
         internal static void Initialize(Action<string> logMissingBordnet = null)
         {
             //[-]getBordnetFromDatabaseFunction = getBordnetFromDatabase;
