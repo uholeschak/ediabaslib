@@ -329,7 +329,7 @@ namespace BMW.Rheingold.Psdz
             }
 
             Log.Error(Log.CurrentMethod(), $"Launch probe non-zero exit ({psdzWebserviceProcess.ExitCode}).");
-            throw PsdzWebserviceStartException.Create(PsdzWebserviceStartFailureReason.JavaRuntimeFaulty);
+            //[-]throw PsdzWebserviceStartException.Create(PsdzWebserviceStartFailureReason.JavaRuntimeFaulty);
         }
 
         [PreserveSource(Hint = "fullPath modified", SignatureModified = true)]
