@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using BmwFileReader;
 
 #pragma warning disable CS0169
 namespace PsdzClient.Programming
@@ -853,10 +854,61 @@ namespace PsdzClient.Programming
                     {
                         return false;
                     }
+                    HandleSpecialTreatmentOfCharacteristicForISTA(characteristic, vehicle);
                 }
             }
 
             return true;
+        }
+
+        [PreserveSource(Added = true)]
+        public static void HandleSpecialTreatmentOfCharacteristicForISTA(PsdzDatabase.Characteristics characteristic, Vehicle vecInfo)
+        {
+            if (characteristic.RootNodeClass == "40140802")
+            {
+                long istaVisible = characteristic.IstaVisible.ConvertToInt();
+                if (istaVisible != 0)
+                {
+                    vecInfo.EBezeichnungUIText = characteristic.Name;
+                }
+                else
+                {
+                    vecInfo.EBezeichnungUIText = "-";
+                }
+            }
+            else if (characteristic.RootNodeClass == "99999999880")
+            {
+                if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || vecInfo.GenericMotor.Engine2 == "-")
+                {
+                    vecInfo.GenericMotor.Engine2 = characteristic.Name;
+                }
+            }
+            else if (characteristic.RootNodeClass == "99999999870")
+            {
+                if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || vecInfo.GenericMotor.EngineLabel2 == "-")
+                {
+                    vecInfo.GenericMotor.EngineLabel2 = characteristic.Name;
+                }
+            }
+            else if (characteristic.RootNodeClass == "99999999702")
+            {
+                if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.Engine2) || characteristic.Name != "-")
+                {
+                    vecInfo.GenericMotor.Engine2 = string.Join(",", vecInfo.HeatMotors.Select((HeatMotor v) => v.HeatMOTBaureihe));
+                }
+            }
+            else
+            {
+                if (!(characteristic.RootNodeClass == "99999999701"))
+                {
+                    return;
+                }
+                vecInfo.Reactor?.AddInfoToDataholderAboutHeatMotors(vecInfo.HeatMotors, DataSource.Database);
+                if (string.IsNullOrWhiteSpace(vecInfo.GenericMotor.EngineLabel2) || characteristic.Name != "-")
+                {
+                    vecInfo.GenericMotor.EngineLabel2 = string.Join(",", vecInfo.HeatMotors.Select((HeatMotor v) => v.HeatMOTBezeichnung));
+                }
+            }
         }
 
         [PreserveSource(Added = true)]
