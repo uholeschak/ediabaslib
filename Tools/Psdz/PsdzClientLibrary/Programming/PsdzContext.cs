@@ -838,7 +838,7 @@ namespace PsdzClient.Programming
         }
 
         [PreserveSource(Added = true)]
-        public static bool AssignVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, Vehicle vehicle)
+        public static bool AssignVehicleCharacteristics(List<PsdzDatabase.Characteristics> characteristics, PsdzDatabase database, Vehicle vehicle)
         {
             if (vehicle == null)
             {
@@ -850,11 +850,13 @@ namespace PsdzClient.Programming
             {
                 if (string.IsNullOrEmpty(vehicle.VerkaufsBezeichnung) || !(characteristic.RootNodeClass == "40143490"))
                 {
-                    if (!vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristic.RootNodeClass, vehicle, characteristic))
+                    vehicleCharacteristicIdent.AssignVehicleCharacteristic(characteristic.RootNodeClass, vehicle, characteristic);
+                    HandleSpecialTreatmentOfCharacteristicForISTA(characteristic, vehicle);
+                    List<PsdzDatabase.CharacteristicRoots> characteristicRootsByNodeClassId = database.GetCharacteristicRootsByNodeClassId(characteristic.RootNodeClass);
+                    if (!characteristicRootsByNodeClassId.Any())
                     {
                         return false;
                     }
-                    HandleSpecialTreatmentOfCharacteristicForISTA(characteristic, vehicle);
                 }
             }
 
@@ -918,7 +920,7 @@ namespace PsdzClient.Programming
             database.GetAlpinaCharacteristics(vehicle, list);
             if (list.Any())
             {
-                return AssignVehicleCharacteristics(list, vehicle);
+                return AssignVehicleCharacteristics(list, database, vehicle);
             }
 
             return true;
@@ -932,7 +934,7 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            if (!AssignVehicleCharacteristics(characteristics, vehicle))
+            if (!AssignVehicleCharacteristics(characteristics, database, vehicle))
             {
                 return false;
             }

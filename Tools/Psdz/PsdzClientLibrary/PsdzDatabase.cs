@@ -2822,14 +2822,14 @@ namespace PsdzClient
             return characteristicRoots;
         }
 
-        public CharacteristicRoots GetCharacteristicRootsByNodeClassId(string nodeClassId)
+        public List<CharacteristicRoots> GetCharacteristicRootsByNodeClassId(string nodeClassId)
         {
             if (string.IsNullOrEmpty(nodeClassId))
             {
                 return null;
             }
 
-            CharacteristicRoots characteristicRoots = null;
+            List<CharacteristicRoots> characteristicRoots = new List<CharacteristicRoots>();
             try
             {
                 string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NODECLASS, " + DatabaseFunctions.SqlTitleItems + ", MOTORCYCLESEQUENCE, VEHICLESEQUENCE FROM XEP_CHARACTERISTICROOTS WHERE (XEP_CHARACTERISTICROOTS.NODECLASS = {0})", nodeClassId);
@@ -2840,7 +2840,7 @@ namespace PsdzClient
                     {
                         while (reader.Read())
                         {
-                            characteristicRoots = ReadXepCharacteristicRoots(reader);
+                            characteristicRoots.Add(ReadXepCharacteristicRoots(reader));
                         }
                     }
                 }
