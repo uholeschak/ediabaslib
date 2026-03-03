@@ -2790,7 +2790,7 @@ namespace PsdzClient
                 }
 
                 // __IndirectDocument with 2 arguments calls __IndirectDocument with 3 arguments
-                MethodInfo methodIstaModuleIndirectDocument3 = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.NonPublic,
+                MethodInfo methodIstaModuleIndirectDocument3 = istaModuleType.GetMethod("__IndirectDocument", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
                     null, new Type[] { typeof(string), typeof(string), typeof(string) }, null);
                 if (methodIstaModuleIndirectDocument3 == null)
                 {
@@ -2946,7 +2946,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodIstaModuleClearErrorInfoMemory = istaModuleType.GetMethod("ClearErrorInfoMemory", BindingFlags.Instance | BindingFlags.NonPublic);
+                MethodInfo methodIstaModuleClearErrorInfoMemory = istaModuleType.GetMethod("ClearErrorInfoMemory", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (methodIstaModuleClearErrorInfoMemory == null)
                 {
                     log.ErrorFormat("ReadTestModule ISTAModule ClearErrorInfoMemory not found");
@@ -2960,7 +2960,7 @@ namespace PsdzClient
                     return null;
                 }
 
-                MethodInfo methodIstaModuleReadErrorInfoMemory = istaModuleType.GetMethod("ReadErrorInfoMemory", BindingFlags.Instance | BindingFlags.NonPublic);
+                MethodInfo methodIstaModuleReadErrorInfoMemory = istaModuleType.GetMethod("ReadErrorInfoMemory", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (methodIstaModuleReadErrorInfoMemory == null)
                 {
                     log.ErrorFormat("ReadTestModule ISTAModule ReadErrorInfoMemory not found");
