@@ -2822,6 +2822,38 @@ namespace PsdzClient
             return characteristicRoots;
         }
 
+        public CharacteristicRoots GetCharacteristicRootsByNodeClassId(string nodeClassId)
+        {
+            if (string.IsNullOrEmpty(nodeClassId))
+            {
+                return null;
+            }
+
+            CharacteristicRoots characteristicRoots = null;
+            try
+            {
+                string sql = string.Format(CultureInfo.InvariantCulture, @"SELECT ID, NODECLASS, " + DatabaseFunctions.SqlTitleItems + ", MOTORCYCLESEQUENCE, VEHICLESEQUENCE FROM XEP_CHARACTERISTICROOTS WHERE (XEP_CHARACTERISTICROOTS.NODECLASS = {0})", nodeClassId);
+                using (SqliteCommand command = _mDbConnection.CreateCommand())
+                {
+                    command.CommandText = sql;
+                    using (SqliteDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            characteristicRoots = ReadXepCharacteristicRoots(reader);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("GetCharacteristicRootsByNodeClassId Exception: '{0}'", e.Message);
+                return null;
+            }
+
+            return characteristicRoots;
+        }
+
         public List<Characteristics> GetCharacteristicsByTypeKeyId(string typeKeyId)
         {
             log.InfoFormat("GetCharacteristicsByTypeKeyId TypeKey: {0}", typeKeyId);
