@@ -6,7 +6,11 @@ using EdiabasLib;
 namespace BmwDeepObd
 {
 #if false
-    [BroadcastReceiver(Enabled = true, Exported = true, ActivityCommon.AppNameSpace + "." + nameof(GlobalBroadcastReceiver))]
+    [BroadcastReceiver(
+        Enabled = true,
+        Exported = true,
+        DirectBootAware = true,
+        Name = ActivityCommon.AppNameSpace + "." + nameof(GlobalBroadcastReceiver))]
     [Android.App.IntentFilter(new[] {
         MtcBtSmallon,
         MtcBtSmalloff,

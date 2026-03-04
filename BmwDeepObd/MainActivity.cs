@@ -52,6 +52,7 @@ namespace BmwDeepObd
     [Android.App.Activity(Label = "@string/app_name",
         MainLauncher = true,
         Exported = true,
+        DirectBootAware = true,
         Name = ActivityCommon.AppNameSpace + "." + nameof(ActivityMain),
         LaunchMode = LaunchMode.SingleTask,
         UiOptions = UiOptions.SplitActionBarWhenNarrow,
