@@ -1759,9 +1759,9 @@ namespace PsdzClient
                     return null;
                 }
 
-                if (!PrepareCommonMethods())
+                if (!InitializeCommonModules())
                 {
-                    log.ErrorFormat("ReadTestModule PrepareCommonMethods failed");
+                    log.ErrorFormat("ReadTestModule InitializeCommonModules failed");
                     return null;
                 }
 
@@ -1969,14 +1969,14 @@ namespace PsdzClient
             }
         }
 
-        private bool PrepareCommonMethods()
+        private bool InitializeCommonModules()
         {
             try
             {
                 string istaCommonFile = Path.Combine(_frameworkPath, "BMW.ISPI.TRIC.ISTA.Common.dll");
                 if (!File.Exists(istaCommonFile))
                 {
-                    log.ErrorFormat("PrepareCommonMethods ISTA common not found: {0}", istaCommonFile);
+                    log.ErrorFormat("InitializeCommonModules ISTA common not found: {0}", istaCommonFile);
                     return false;
                 }
                 Assembly istaCommonAssembly = Assembly.LoadFrom(istaCommonFile);
@@ -1984,14 +1984,14 @@ namespace PsdzClient
                 Type sessionInfoAccessorType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfoAccessor");
                 if (sessionInfoAccessorType == null)
                 {
-                    log.WarnFormat("PrepareCommonMethods SessionInfoAccessor not found, ignoring");
+                    log.WarnFormat("InitializeCommonModules SessionInfoAccessor not found, ignoring");
                 }
                 else
                 {
                     Type sessionInfoType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfo");
                     if (sessionInfoType == null)
                     {
-                        log.ErrorFormat("PrepareCommonMethods SessionInfo not found");
+                        log.ErrorFormat("InitializeCommonModules SessionInfo not found");
                         return false;
                     }
 
@@ -2000,7 +2000,7 @@ namespace PsdzClient
                         null, new Type[] { sessionInfoType }, null);
                     if (methodAccessorInitialize == null)
                     {
-                        log.ErrorFormat("PrepareCommonMethods SessionInfoAccessor.Initialize not found");
+                        log.ErrorFormat("InitializeCommonModules SessionInfoAccessor.Initialize not found");
                         return false;
                     }
 
@@ -2011,7 +2011,7 @@ namespace PsdzClient
             }
             catch (Exception e)
             {
-                log.ErrorFormat("PrepareCommonMethods Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
+                log.ErrorFormat("InitializeCommonModules Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return false;
             }
         }
@@ -2801,9 +2801,9 @@ namespace PsdzClient
 
                 ConstructorInfo ecuKomStatementConstructor = ecuKomStatementConstructors[0];
 
-                if (!PrepareCommonMethods())
+                if (!InitializeCommonModules())
                 {
-                    log.ErrorFormat("ReadServiceModule PrepareCommonMethods failed");
+                    log.ErrorFormat("ReadServiceModule InitializeCommonModules failed");
                     return null;
                 }
 
