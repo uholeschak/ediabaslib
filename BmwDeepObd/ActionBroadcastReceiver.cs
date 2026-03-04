@@ -7,6 +7,7 @@ namespace BmwDeepObd;
 
 [BroadcastReceiver(
     Exported = true,
+    DirectBootAware = true,
     Enabled = true,
     Name = ActivityCommon.AppNameSpace + "." + nameof(ActionBroadcastReceiver)
 )]

@@ -21,6 +21,7 @@ namespace BmwDeepObd
         Label = "@string/app_name",
         Icon = "@drawable/icon",
         Exported = true,
+        DirectBootAware = true,
         Name = ActivityCommon.AppNameSpace + "." + nameof(CarService)
     )]
     [Android.App.IntentFilter(new[]

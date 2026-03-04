@@ -14,6 +14,7 @@ namespace BmwDeepObd
 {
     [Android.App.Service(
         Label = "@string/app_name",
+        DirectBootAware = true,
         Name = ActivityCommon.AppNameSpace + "." + nameof(ForegroundService),
         ForegroundServiceType = Android.Content.PM.ForegroundService.TypeConnectedDevice
     )]
