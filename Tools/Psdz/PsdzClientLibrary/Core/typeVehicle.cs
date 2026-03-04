@@ -2417,7 +2417,7 @@ namespace PsdzClient.Core
 
         protected void AddServiceCodeAndLogsForTypeKeys(string currentValue, string propertyName)
         {
-            if (!ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive && (Environment.StackTrace.Contains("System.Runtime.Serialization") || Environment.StackTrace.Contains("BMW.Rheingold.ISTAGUI") || Environment.StackTrace.Contains("PropertyChangedEventHandler")))
+            if (!ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive || Environment.StackTrace.Contains("System.Runtime.Serialization") || Environment.StackTrace.Contains("BMW.Rheingold.ISTAGUI") || Environment.StackTrace.Contains("PropertyChangedEventHandler"))
             {
                 return;
             }

@@ -1104,7 +1104,11 @@ namespace PsdzClient.Core.Container
                     {
                         string currentlyRunningModuleName = TimeMetricsUtility.Instance.GetCurrentlyRunningModuleName();
                         string value = "Source: " + currentlyRunningModuleName + ", ecu: " + base.EcuName + ", job: " + base.JobName + ", args: " + base.JobParam + ", result name: " + resultName + ", requested type: " + requestedType + ", actual type: " + actualType + ". Error: " + ex.Message;
-                        service.AddServiceCode(ServiceCodes.ANA09_ResultSetFailed_nu_LF, value, LayoutGroup.D, allowMultipleEntries: true);
+                        //[-]if (!IndustrialCustomerManager.Instance.IsIndustrialCustomerBrand("TOYOTA"))
+                        {
+                            service.AddServiceCode(ServiceCodes.ANA09_ResultSetFailed_nu_LF, value, LayoutGroup.D, allowMultipleEntries: true);
+                        }
+
                         ana09Protocolled = true;
                     }
                 }

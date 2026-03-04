@@ -21,6 +21,7 @@ namespace PsdzClient.Core
             public const string ForceUsingJava64Bit = "ForceUsingJava64Bit";
             public const string FscOverTricCloud = "FscOverTricCloud";
             public const string FsLesenExpertOldCode = "FsLesenExpertOldCode";
+            public const string JumpAirInAwp = "JumpAirInAwp";
             public const string KaiServiceHistory = "KaiServiceHistory";
             public const string Login = "Login";
             public const string LogTracingMaximum = "LogTracingMaximum";

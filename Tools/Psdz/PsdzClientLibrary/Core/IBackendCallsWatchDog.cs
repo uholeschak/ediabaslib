@@ -71,7 +71,8 @@ namespace PsdzClient.Core
         ConWoyServiceProgramByIdentifier,
         ConWoyCharacteristicsByTypeKey,
         HighVoltageBatteryPass,
-        TCMv2
+        TCMv2,
+        AWPForkService
     }
 
     public interface IBackendCallsWatchDog

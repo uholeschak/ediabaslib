@@ -3,6 +3,7 @@
     public static class ServiceCodes
     {
         public static string ANA09_ResultSetFailed_nu_LF = "ANA09_ResultSetFailed_nu_LF";
+        public static string ANA10_NonUniqueEFuseIdDetected_nu_LF = "ANA10_NonUniqueEFuseIdDetected_nu_LF";
         public static readonly string ESL01_FaultPatternDetectedId_nu_ST = "ESL01_FaultPatternDetectedId_nu_ST";
         public static readonly string ESL02_FaultPatternDisplayedId_nu_ST = "ESL02_FaultPatternDisplayedId_nu_ST";
         public const string SUC01_NoInternetConnection_nu_LF = "SUC01_NoInternetConnection_nu_LF";

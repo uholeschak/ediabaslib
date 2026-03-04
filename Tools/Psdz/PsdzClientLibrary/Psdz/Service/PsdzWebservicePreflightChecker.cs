@@ -10,22 +10,14 @@ namespace BMW.Rheingold.Psdz
     public class PsdzWebservicePreflightChecker : IPsdzWebservicePreflightChecker
     {
         private const string JavaInstallationErrorMessage = "{0} Validation - {1}";
-
         private const int JavaMajorVersion = 17;
-
         private const int JavaLaunchProbeTimeoutSeconds = 10;
-
         private readonly string _logDir;
-
         private readonly Func<string, string, Process> _createBaseProcess;
-
-        private readonly Func<string, string, Process> _createMonitoredProcess;
-
-        public PsdzWebservicePreflightChecker(string logDir, Func<string, string, Process> createBaseProcess, Func<string, string, Process> createMonitoredProcess)
+        public PsdzWebservicePreflightChecker(string logDir, Func<string, string, Process> createBaseProcess)
         {
             _logDir = logDir;
             _createBaseProcess = createBaseProcess;
-            _createMonitoredProcess = createMonitoredProcess;
         }
 
         public void Execute(int sessionWebservicePort, string jarPath, string javaExePath)
@@ -94,6 +86,7 @@ namespace BMW.Rheingold.Psdz
                     return false;
                 }
             }
+
             error = null;
             return true;
         }
@@ -106,6 +99,7 @@ namespace BMW.Rheingold.Psdz
                 Log.Error(Log.CurrentMethod(), msg);
                 throw PsdzWebserviceStartException.Create(PsdzWebserviceStartFailureReason.JarMissingOrCorrupt);
             }
+
             FileInfo fileInfo = new FileInfo(jarPath);
             if (fileInfo.Length < 1024)
             {
@@ -118,7 +112,7 @@ namespace BMW.Rheingold.Psdz
         private void ProbeJarLaunch(string javaExePath, string jarPath)
         {
             string arg = "-jar \"" + jarPath + "\" --spring.main.web-application-type=none --spring.main.lazy-initialization=true --probe.launch=true";
-            Process process = _createMonitoredProcess(javaExePath, arg);
+            Process process = _createBaseProcess(javaExePath, arg);
             process.EnableRaisingEvents = false;
             try
             {
@@ -196,6 +190,7 @@ namespace BMW.Rheingold.Psdz
             {
                 return true;
             }
+
             try
             {
                 proc.Refresh();
@@ -203,23 +198,18 @@ namespace BMW.Rheingold.Psdz
                 {
                     return true;
                 }
-                using (Process process = Process.Start(new ProcessStartInfo
-                {
-                    FileName = "taskkill",
-                    Arguments = $"/PID {proc.Id} /T /F",
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true
-                }))
+
+                using (Process process = Process.Start(new ProcessStartInfo { FileName = "taskkill", Arguments = $"/PID {proc.Id} /T /F", UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true, RedirectStandardError = true }))
                 {
                     process?.WaitForExit(timeoutMs);
                 }
+
                 proc.Refresh();
                 if (proc.HasExited)
                 {
                     return true;
                 }
+
                 proc.Kill();
                 return proc.WaitForExit(Math.Max(3000, timeoutMs / 3));
             }

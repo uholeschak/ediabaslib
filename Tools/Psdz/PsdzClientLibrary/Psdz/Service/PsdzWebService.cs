@@ -67,7 +67,7 @@ namespace BMW.Rheingold.Psdz
             _isPsdzInitialized = isPsdzInitialized;
             //[+] _istaFolder = istaFolder;
             _istaFolder = istaFolder;
-            _preflightChecker = new PsdzWebservicePreflightChecker(_psdzWebApiLogDir, CreateBaseProcess, CreateMonitoredProcess);
+            _preflightChecker = new PsdzWebservicePreflightChecker(_psdzWebApiLogDir, CreateBaseProcess);
         }
 
         public void StartIfNotRunning(string jrePath, string jvmOptions, string jarArguments)
@@ -305,31 +305,28 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
-        private void LogProcessOutputAfterExit(object sender, EventArgs e)
+        private static void LogProcessOutputAfterExit(object sender, EventArgs eventArgs)
         {
-            (sender as Process).Exited -= LogProcessOutputAfterExit;
-            string text = psdzWebserviceProcess?.StandardOutput?.ReadToEnd();
-            string text2 = psdzWebserviceProcess?.StandardError?.ReadToEnd();
-            if (psdzWebserviceProcess.ExitCode == 0)
+            Process process = sender as Process;
+            process.Exited -= LogProcessOutputAfterExit;
+            string text = process?.StandardOutput?.ReadToEnd();
+            string text2 = process?.StandardError?.ReadToEnd();
+            if (process.ExitCode == 0)
             {
                 return;
             }
 
             string text3 = (text2 + "\n" + text).Trim();
-            Log.Error(Log.CurrentMethod(), "Launch probe failed (exit={0}). Output:\n{1}", psdzWebserviceProcess.ExitCode, text3);
+            Log.Error(Log.CurrentMethod(), "Process failed (exit={0}). Output:\n{1}", process.ExitCode, text3);
             (Regex, PsdzWebserviceStartFailureReason)[] patterns = PsdzWebserviceErrorPatterns.Patterns;
             for (int i = 0; i < patterns.Length; i++)
             {
                 var(regex, psdzWebserviceStartFailureReason) = patterns[i];
                 if (regex.IsMatch(text3))
                 {
-                    Log.Error(Log.CurrentMethod(), $"Launch probe failed. Reason={psdzWebserviceStartFailureReason}. Snippet={PsdzWebserviceHelper.Truncate(text3, 400)}");
-                    throw PsdzWebserviceStartException.Create(psdzWebserviceStartFailureReason);
+                    Log.Error(Log.CurrentMethod(), $"Process failed. Reason={psdzWebserviceStartFailureReason}. Snippet={PsdzWebserviceHelper.Truncate(text3, 400)}");
                 }
             }
-
-            Log.Error(Log.CurrentMethod(), $"Launch probe non-zero exit ({psdzWebserviceProcess.ExitCode}).");
-            //[-]throw PsdzWebserviceStartException.Create(PsdzWebserviceStartFailureReason.JavaRuntimeFaulty);
         }
 
         [PreserveSource(Hint = "fullPath modified", SignatureModified = true)]

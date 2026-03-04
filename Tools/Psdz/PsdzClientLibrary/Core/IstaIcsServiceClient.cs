@@ -325,6 +325,12 @@ namespace PsdzClient.Core
         }
 
         [PreserveSource(Cleaned = true)]
+        public string GetCallAirInAwpUrl()
+        {
+            return null;
+        }
+
+        [PreserveSource(Cleaned = true)]
         public bool GetAirTeileClearingEnabled()
         {
             return false;
