@@ -1759,38 +1759,10 @@ namespace PsdzClient
                     return null;
                 }
 
-                string istaCommonFile = Path.Combine(_frameworkPath, "BMW.ISPI.TRIC.ISTA.Common.dll");
-                if (!File.Exists(istaCommonFile))
+                if (!PrepareCommonMethods())
                 {
-                    log.ErrorFormat("ReadTestModule ISTA common not found: {0}", istaCommonFile);
+                    log.ErrorFormat("ReadTestModule PrepareCommonMethods failed");
                     return null;
-                }
-                Assembly istaCommonAssembly = Assembly.LoadFrom(istaCommonFile);
-
-                Type sessionInfoAccessorType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfoAccessor");
-                if (sessionInfoAccessorType == null)
-                {
-                    log.WarnFormat("PatchCommonMethods SessionInfoAccessor not found, ignoring");
-                }
-                else
-                {
-                    Type sessionInfoType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfo");
-                    if (sessionInfoType == null)
-                    {
-                        log.ErrorFormat("PatchCommonMethods SessionInfo not found");
-                        return null;
-                    }
-
-                    object sessionInfoModule = Activator.CreateInstance(sessionInfoType);
-                    MethodInfo methodAccessorInitialize = sessionInfoAccessorType.GetMethod("Initialize", BindingFlags.Public | BindingFlags.Static,
-                        null, new Type[] { sessionInfoType }, null);
-                    if (methodAccessorInitialize == null)
-                    {
-                        log.ErrorFormat("ReadTestModule SessionInfoAccessor.Initialize not found");
-                        return null;
-                    }
-
-                    methodAccessorInitialize.Invoke(null, new object[] { sessionInfoModule });
                 }
 
                 MethodInfo methodWriteFaPrefix = typeof(PsdzDatabase).GetMethod("CallWriteFaPrefix", BindingFlags.NonPublic | BindingFlags.Static);
@@ -1993,6 +1965,53 @@ namespace PsdzClient
             catch (Exception e)
             {
                 log.ErrorFormat("PatchCommonMethods Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
+                return false;
+            }
+        }
+
+        private bool PrepareCommonMethods()
+        {
+            try
+            {
+                string istaCommonFile = Path.Combine(_frameworkPath, "BMW.ISPI.TRIC.ISTA.Common.dll");
+                if (!File.Exists(istaCommonFile))
+                {
+                    log.ErrorFormat("PrepareCommonMethods ISTA common not found: {0}", istaCommonFile);
+                    return false;
+                }
+                Assembly istaCommonAssembly = Assembly.LoadFrom(istaCommonFile);
+
+                Type sessionInfoAccessorType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfoAccessor");
+                if (sessionInfoAccessorType == null)
+                {
+                    log.WarnFormat("PrepareCommonMethods SessionInfoAccessor not found, ignoring");
+                }
+                else
+                {
+                    Type sessionInfoType = istaCommonAssembly.GetType("BMW.ISPI.TRIC.ISTA.Common.Session.SessionInfo");
+                    if (sessionInfoType == null)
+                    {
+                        log.ErrorFormat("PrepareCommonMethods SessionInfo not found");
+                        return false;
+                    }
+
+                    object sessionInfoModule = Activator.CreateInstance(sessionInfoType);
+                    MethodInfo methodAccessorInitialize = sessionInfoAccessorType.GetMethod("Initialize", BindingFlags.Public | BindingFlags.Static,
+                        null, new Type[] { sessionInfoType }, null);
+                    if (methodAccessorInitialize == null)
+                    {
+                        log.ErrorFormat("PrepareCommonMethods SessionInfoAccessor.Initialize not found");
+                        return false;
+                    }
+
+                    methodAccessorInitialize.Invoke(null, new object[] { sessionInfoModule });
+                }
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                log.ErrorFormat("PrepareCommonMethods Exception: '{0}'", EdiabasLib.EdiabasNet.GetExceptionText(e));
                 return false;
             }
         }
@@ -2782,17 +2801,23 @@ namespace PsdzClient
 
                 ConstructorInfo ecuKomStatementConstructor = ecuKomStatementConstructors[0];
 
+                if (!PrepareCommonMethods())
+                {
+                    log.ErrorFormat("ReadServiceModule PrepareCommonMethods failed");
+                    return null;
+                }
+
                 Type istaModuleType = istaCoreFrameworkAssembly.GetType("BMW.Rheingold.Module.ISTA.ISTAModule");
                 if (istaModuleType == null)
                 {
-                    log.ErrorFormat("ReadTestModule ISTAModule not found");
+                    log.ErrorFormat("ReadServiceModule ISTAModule not found");
                     return null;
                 }
 
                 Type istaModuleBaseType = coreFrameworkAssembly.GetType("BMW.Rheingold.CoreFramework.IstaModuleBase");
                 if (istaModuleBaseType == null)
                 {
-                    log.ErrorFormat("ReadTestModule IstaModuleBase not found");
+                    log.ErrorFormat("ReadServiceModule IstaModuleBase not found");
                     return null;
                 }
 
@@ -2807,7 +2832,7 @@ namespace PsdzClient
 
                 if (methodIstaModuleIndirectDocument3 == null)
                 {
-                    log.ErrorFormat("ReadTestModule ISTAModule __IndirectDocument 3 not found");
+                    log.ErrorFormat("ReadServiceModule ISTAModule __IndirectDocument 3 not found");
                     return null;
                 }
 
@@ -2828,7 +2853,7 @@ namespace PsdzClient
 
                 if (methodIstaModuleCharacteristics == null)
                 {
-                    log.ErrorFormat("ReadTestModule ISTAModule __Characteristics not found");
+                    log.ErrorFormat("ReadServiceModule ISTAModule __Characteristics not found");
                     return null;
                 }
 
@@ -2889,7 +2914,7 @@ namespace PsdzClient
 
                 if (methodModuleParameterGetParameter == null)
                 {
-                    log.ErrorFormat("ReadTestModule ModuleParameter getParameter not found");
+                    log.ErrorFormat("ReadServiceModule ModuleParameter getParameter not found");
                     return null;
                 }
 
