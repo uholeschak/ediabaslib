@@ -2075,6 +2075,26 @@ namespace PsdzClient.Core
             eCU_SGBDField = string.Empty;
         }
 
+        public ECU(IEcuTreeEcu ecu) : this()
+        {
+            ID_SG_ADR = ecu.ID_SG_ADR;
+            ID_LIN_SLAVE_ADR = ecu.ID_LIN_SLAVE_ADR;
+            VARIANTE = ecu.VARIANT;
+            ECU_SGBD = ecu.ECU_SGBD;
+            ECU_GRUPPE = ecu.ECU_GRUPPE;
+            ECU_GROBNAME = ecu.ECU_GROBNAME;
+            IDENT_SUCCESSFULLY = ecu.IDENT_SUCCESSFULLY;
+            BUS = (BusType)ecu.BUS;
+            SubBUS = ((ecu.SubBUS == null) ? new ObservableCollection<BusType>() : new ObservableCollection<BusType>(ecu.SubBUS.Select((BusType bus) => (BusType)bus)));
+            SVK = new SVK
+            {
+                XWE_SGBMID = ((ecu.Svk == null) ? new ObservableCollection<string>() : new ObservableCollection<string>(ecu.Svk.XWE_SGBMID))
+            };
+            ECUTreeColumn = ecu.ECUTreeColumn;
+            ECUTreeRow = ecu.ECUTreeRow;
+            ECU_HAS_CONFIG_OVERRIDE = ecu.ECU_HAS_CONFIG_OVERRIDE;
+        }
+
         [PreserveSource(Cleaned = true, OriginalHash = "798C0814C72C55C6E9E0D1F8AC2D1F11")]
         private void FEHLER_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
