@@ -24,6 +24,6 @@
     <PackageReference Include="Xamarin.AndroidX.Activity" Version="1.12.2.1" />
     <PackageReference Include="Xamarin.AndroidX.AppCompat" Version="1.7.1.2" />
     <PackageReference Include="Xamarin.AndroidX.Compose.Runtime.Annotation.Jvm" Version="1.10.0.1" ExcludeAssets="all" />
-    <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="8.13.2.1" />
+    <PackageReference Include="Xamarin.AndroidX.DataBinding.ViewBinding" Version="9.0.1" />
   </ItemGroup>
 </Project>
