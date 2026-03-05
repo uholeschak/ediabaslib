@@ -20,6 +20,7 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -38,6 +39,7 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
 
@@ -61,6 +63,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             return base.HasBus(busType, vecInfo, ecu);
         }
     }
@@ -79,6 +82,7 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
 
@@ -102,6 +106,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             return base.HasBus(busType, vecInfo, ecu);
         }
     }
@@ -120,7 +125,8 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-            IList<IEcuTreeEcu> eCU = vecInfo.ECU;
+
+            IEnumerable<IEcuTreeEcu> eCU = vecInfo.ECU;
             if (eCU != null)
             {
                 foreach (IEcuTreeEcu item in eCU)
@@ -130,6 +136,7 @@ namespace PsdzClient.Core
                         hashSet.AddIfNotContains(78);
                         break;
                     }
+
                     if (item.ECU_GROBNAME.Equals("EMA_RE"))
                     {
                         hashSet.AddIfNotContains(77);
@@ -137,6 +144,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -154,10 +162,12 @@ namespace PsdzClient.Core
             {
                 hashSet.Add(36);
             }
+
             if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
 
@@ -170,7 +180,7 @@ namespace PsdzClient.Core
                 IEcuTreeEcu eCU2 = vecInfo.getECU(84L);
                 if (eCU2 != null && !eCU2.IDENT_SUCCESSFULLY)
                 {
-                    vecInfo.ECU.Remove(eCU2);
+                    vecInfo.RemoveEcu(eCU2);
                 }
             }
         }
@@ -190,10 +200,12 @@ namespace PsdzClient.Core
                 hashSet.Add(36);
                 hashSet.Add(158);
             }
+
             if ("AUT".Equals(vecInfo.Getriebe))
             {
                 hashSet.Add(24);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -212,10 +224,12 @@ namespace PsdzClient.Core
                 hashSet.Add(36);
                 hashSet.Add(158);
             }
+
             if ("AUT".Equals(vecInfo.Getriebe))
             {
                 hashSet.Add(24);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -234,7 +248,8 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-            IList<IEcuTreeEcu> eCU = vecInfo.ECU;
+
+            IEnumerable<IEcuTreeEcu> eCU = vecInfo.ECU;
             if (eCU != null)
             {
                 foreach (IEcuTreeEcu item in eCU)
@@ -244,6 +259,7 @@ namespace PsdzClient.Core
                         hashSet.AddIfNotContains(78);
                         break;
                     }
+
                     if (item.ECU_GROBNAME.Equals("EMA_RE"))
                     {
                         hashSet.AddIfNotContains(77);
@@ -251,6 +267,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -268,10 +285,12 @@ namespace PsdzClient.Core
             {
                 hashSet.Add(92);
             }
+
             if (vecInfo.Ereihe != "K60")
             {
                 hashSet.Add(96);
             }
+
             brSgbd = ((vecInfo.Ereihe == "K60" || vecInfo.Ereihe == "K02" || vecInfo.Ereihe == "K03" || vecInfo.Ereihe == "K08" || vecInfo.Ereihe == "K09") ? "X_KS01" : "X_K001");
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
@@ -291,6 +310,7 @@ namespace PsdzClient.Core
             {
                 hashSet.Add(96);
             }
+
             CalculateECUConfiguration(vecInfo, sgList, hashSet);
         }
     }
@@ -308,6 +328,7 @@ namespace PsdzClient.Core
             {
                 hashSet.Add(24);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -325,6 +346,7 @@ namespace PsdzClient.Core
             {
                 hashSet.Add(24);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -342,6 +364,7 @@ namespace PsdzClient.Core
             {
                 hashSet.Add(24);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -359,10 +382,12 @@ namespace PsdzClient.Core
             {
                 hashSet.Add(36);
             }
+
             if (GearboxHelper.HasVehicleGearboxECU(vecInfo.Motor, vecInfo.Getriebe, vecInfo.HasSA))
             {
                 hashSet.Add(24);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -381,6 +406,7 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -399,6 +425,7 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -417,7 +444,8 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
-            IList<IEcuTreeEcu> eCU = vecInfo.ECU;
+
+            IEnumerable<IEcuTreeEcu> eCU = vecInfo.ECU;
             if (eCU != null)
             {
                 foreach (IEcuTreeEcu item in eCU)
@@ -427,6 +455,7 @@ namespace PsdzClient.Core
                         hashSet.AddIfNotContains(78);
                         break;
                     }
+
                     if (item.ECU_GROBNAME.Equals("EMA_RE"))
                     {
                         hashSet.AddIfNotContains(77);
@@ -434,6 +463,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -451,6 +481,7 @@ namespace PsdzClient.Core
             {
                 hashSet.Add(24);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, null);
         }
     }
@@ -481,6 +512,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             return base.HasBus(busType, vecInfo, ecu);
         }
     }
@@ -500,6 +532,7 @@ namespace PsdzClient.Core
                 hashSet.Add(24);
                 hashSet.Add(94);
             }
+
             CalculateECUConfiguration(vecInfo, hashSet, removeList);
         }
 
@@ -523,6 +556,7 @@ namespace PsdzClient.Core
                     }
                 }
             }
+
             return base.HasBus(busType, vecInfo, ecu);
         }
     }

@@ -7,7 +7,7 @@ namespace PsdzClient.Core
 {
     public interface IEcuTreeVehicle
     {
-        IList<IEcuTreeEcu> ECU { get; }
+        IEnumerable<IEcuTreeEcu> ECU { get; }
 
         string VINRangeType { get; }
 
@@ -39,12 +39,11 @@ namespace PsdzClient.Core
 
         BordnetsData BordnetsData { get; set; }
 
+        bool AddEcu(IEcuTreeEcu ecu);
+        bool RemoveEcu(IEcuTreeEcu ecu);
         IEcuTreeEcu getECU(long? sgAdr);
-
         IEcuTreeEcu getECU(long? sgAdr, long? subAddress);
-
         bool HasSA(string sa);
-
         int GetCustomHashCode();
     }
 }

@@ -208,7 +208,7 @@ namespace PsdzClient.Core
                         IEcuTreeEcu eCU2 = vecInfo.getECU(item2);
                         if (eCU2 != null && !eCU2.IDENT_SUCCESSFULLY)
                         {
-                            vecInfo.ECU.Remove(eCU2);
+                            vecInfo.RemoveEcu(eCU2);
                         }
                     }
                 }
@@ -565,8 +565,8 @@ namespace PsdzClient.Core
             {
                 foreach (int sg in sgList)
                 {
-                    IEcuTreeEcu item = CreateECU(sg);
-                    vecInfo.ECU.AddIfNotContains(item);
+                    IEcuTreeEcu ecu = CreateECU(sg);
+                    vecInfo.AddEcu(ecu);
                 }
             }
 
@@ -582,7 +582,7 @@ namespace PsdzClient.Core
                 if (eCU != null)
                 {
                     EcuTreeLogger.Instance.Info(GetType().Name + ".CalculateECUConfiguration()", "Removing ECU: {0}", eCU);
-                    vecInfo.ECU.Remove(eCU);
+                    vecInfo.RemoveEcu(eCU);
                 }
             }
         }
@@ -610,7 +610,7 @@ namespace PsdzClient.Core
                         IEcuTreeEcu eCU = vecInfo.getECU(item);
                         if (eCU != null)
                         {
-                            vecInfo.ECU.Remove(eCU);
+                            vecInfo.RemoveEcu(eCU);
                         }
                     }
                 }
@@ -700,8 +700,8 @@ namespace PsdzClient.Core
 
                     if (flag)
                     {
-                        IEcuTreeEcu item = CreateECU(result, text2);
-                        vecInfo.ECU.AddIfNotContains(item);
+                        IEcuTreeEcu ecu = CreateECU(result, text2);
+                        vecInfo.AddEcu(ecu);
                     }
 
                     goto end_IL_003f;
@@ -749,7 +749,7 @@ namespace PsdzClient.Core
                         ecuTreeEcu.IDENT_SUCCESSFULLY = false;
                         ecuTreeEcu.ECU_GRUPPE = GetECU_GRUPPE(item);
                         ecuTreeEcu.BUS = GetBus(item, ecuTreeEcu.ECU_GRUPPE);
-                        vecInfo.ECU.AddIfNotContains(ecuTreeEcu);
+                        vecInfo.AddEcu(ecuTreeEcu);
                     }
                 }
             }

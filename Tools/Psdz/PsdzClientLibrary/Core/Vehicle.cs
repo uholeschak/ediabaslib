@@ -1120,7 +1120,7 @@ namespace PsdzClient.Core
         public string TempTypeKeyBasicFromFbm { get; set; }
 
         [XmlIgnore]
-        IList<IEcuTreeEcu> IEcuTreeVehicle.ECU => base.ECU.Cast<IEcuTreeEcu>().ToList();
+        IEnumerable<IEcuTreeEcu> IEcuTreeVehicle.ECU => base.ECU.Cast<IEcuTreeEcu>();
 
         [PreserveSource(Hint = "clientContext added", SignatureModified = true)]
         public Vehicle(ClientContext clientContext) : base(clientContext)
@@ -2497,6 +2497,38 @@ namespace PsdzClient.Core
         IEcuTreeEcu IEcuTreeVehicle.getECU(long? sgAdr, long? subAddress)
         {
             return getECU(sgAdr, subAddress);
+        }
+
+        bool IEcuTreeVehicle.AddEcu(IEcuTreeEcu ecu)
+        {
+            if (ecu == null)
+            {
+                return false;
+            }
+
+            if (ecu is ECU item)
+            {
+                return base.ECU.AddIfNotContains(item);
+            }
+
+            ECU item2 = new ECU(ecu);
+            return base.ECU.AddIfNotContains(item2);
+        }
+
+        bool IEcuTreeVehicle.RemoveEcu(IEcuTreeEcu ecu)
+        {
+            if (ecu == null)
+            {
+                return false;
+            }
+
+            if (ecu is ECU item)
+            {
+                return base.ECU.Remove(item);
+            }
+
+            ECU item2 = new ECU(ecu);
+            return base.ECU.Remove(item2);
         }
 
         [PreserveSource(Hint = "SessionStart", Placeholder = true)]
