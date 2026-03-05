@@ -60,6 +60,7 @@ namespace PsdzClient.Core.Container
         private PlaceholderType scp;
         private bool serviceIsRunning;
         private bool isTestCertReqCallExecuted;
+        private bool useSpecialEdiabasVersion;
         private SpecialSecurityCases detectedSpecialSecurityCase;
         private readonly IInteractionService interactionService;
         private readonly IBackendCallsWatchDog backendCallsWatchDog;
@@ -209,6 +210,19 @@ namespace PsdzClient.Core.Container
             ServiceLocator.Current.TryGetService<IBackendCallsWatchDog>(out backendCallsWatchDog);
             ServiceLocator.Current.TryGetService<ISec4DiagHandler>(out sec4DiagHandler);
             ServiceLocator.Current.TryGetService<IFasta2Service>(out fasta2Service);
+            IstaIcsServiceClient istaIcsServiceClient = new IstaIcsServiceClient();
+            try
+            {
+                if (istaIcsServiceClient.IsAvailable())
+                {
+                    useSpecialEdiabasVersion = istaIcsServiceClient.GetFeatureEnabledStatus("SpecialEdiabasVersionForNcar").IsActive;
+                }
+            }
+            finally
+            {
+                ((IDisposable)istaIcsServiceClient)?.Dispose();
+            }
+
             try
             {
             //[-] sc = new ServiceController("EDIABAS_MONITOR", Environment.MachineName);
@@ -595,7 +609,6 @@ namespace PsdzClient.Core.Container
                         //[-]boolResultObject.ErrorCode = ConnectToVehicleErrorCodes.DoIpIsUsedByOtherOperationError.ToString();
                         //[-]return boolResultObject;
                         //[-]}
-
                         if (!device.IsSimulation)
                         {
                             boolResultObject2 = HandleS29Authentication(device);
@@ -1474,7 +1487,7 @@ namespace PsdzClient.Core.Container
                 }
                 else
                 {
-                    ecuJob = apiJob(ecu, job, param, resultFilter, cacheAdding: true, fastaprotocoller, callerMember);
+                    ecuJob = apiJob(ecu, job, param, resultFilter, cacheAdding: true, isRetry: false, fastaprotocoller, callerMember);
                 }
 
                 if (ecuJob != null && VehicleCommunication.DebugLevel > 2)
@@ -1507,7 +1520,7 @@ namespace PsdzClient.Core.Container
         }
 
         [PreserveSource(Hint = "serviceIsRunning removed", SignatureModified = true)]
-        public IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, IProtocolBasic fastaprotocoller = null, string callerMember = "")
+        public IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, bool isRetry = false, IProtocolBasic fastaprotocoller = null, string callerMember = "")
         {
             TimeMetricsUtility.Instance.ApiJobStart(ecu, jobName, param, -1);
             try
@@ -1785,7 +1798,7 @@ namespace PsdzClient.Core.Container
                 eCUJob.ExecutionEndTime = dateTimePrecise.Now;
                 AddJobInCache(eCUJob, cacheAdding);
                 string stringResult = eCUJob.getStringResult(1, "JOB_STATUS");
-                (bool, ECUJob) tuple = HandleEcuAuthorizationRejection(ecu, jobName, param, resultFilter, (stringResult == null) ? string.Empty : stringResult);
+                (bool, ECUJob) tuple = HandleEcuAuthorizationRejection(ecu, jobName, param, resultFilter, (stringResult == null) ? string.Empty : stringResult, isRetry);
                 if (tuple.Item1)
                 {
                     eCUJob = tuple.Item2;
@@ -1799,13 +1812,15 @@ namespace PsdzClient.Core.Container
             }
         }
 
-        private (bool, ECUJob) HandleEcuAuthorizationRejection(string ecu, string jobName, string param, string resultFilter, string jobStatus)
+        private (bool, ECUJob) HandleEcuAuthorizationRejection(string ecu, string jobName, string param, string resultFilter, string jobStatus, bool isRetry)
         {
             string method = Log.CurrentMethod();
             IEcuJob ecuJob = null;
             bool item = false;
             bool flag = false;
-            if (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase))
+            int num = 158;
+            int num2 = api.apiErrorCode();
+            if (!isRetry && (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase) || (useSpecialEdiabasVersion && num2 == num)))
             {
                 if (!CheckAuthentificationState(VCI))
                 {
@@ -1817,10 +1832,15 @@ namespace PsdzClient.Core.Container
                     Log.Info(method, "Ediabas is reinitialized with status {0}", flag);
                 }
 
+                if (num2 == num)
+                {
+                    flag = true;
+                }
+
                 if (flag && CheckAuthentificationState(VCI))
                 {
                     Log.Info(method, "Ediabas reinitialized and AuthenticationState are succesfull. DiagnoseJob will be resend.");
-                    ecuJob = apiJob(ecu, jobName, param, resultFilter, cacheAdding: true);
+                    ecuJob = apiJob(ecu, jobName, param, resultFilter, cacheAdding: true, isRetry: true);
                 }
                 else
                 {

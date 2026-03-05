@@ -36,7 +36,7 @@ namespace PsdzClient.Core.Container
         IEcuJob apiJob(string variant, string job, string param, string resultFilter, int retries, string sgbd = "", IProtocolBasic fastaprotocoller = null, [CallerMemberName] string callerMember = "");
         IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, int retries, int millisecondsTimeout, IProtocolBasic fastaprotocoller = null, string callerMember = "");
         IEcuJob apiJob(string ecu, string job, string param, string resultFilter, IProtocolBasic fastaprotocoller = null, string callerMember = "");
-        IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, IProtocolBasic fastaprotocoller = null, string callerMember = "");
+        IEcuJob apiJob(string ecu, string jobName, string param, string resultFilter, bool cacheAdding, bool isRetry = false, IProtocolBasic fastaprotocoller = null, string callerMember = "");
         IEcuJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter, int retries);
         IEcuJob apiJobData(string ecu, string job, byte[] param, int paramlen, string resultFilter, string callerMember);
         void End();
