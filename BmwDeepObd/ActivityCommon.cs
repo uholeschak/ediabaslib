@@ -6822,12 +6822,21 @@ namespace BmwDeepObd
                 using X509Certificate2 subCaEmeaCert = EdSec4Diag.GenerateSubCaCertificate(issuerCert, subCaEmeaPublicKey, privateKeyResource, 1);
                 if (subCaEmeaCert == null)
                 {
-                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate SubCa certificate failed");
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate SubCaEmea certificate failed");
                     return null;
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509SubCaEmeaCert = new X509CertificateParser().ReadCertificate(subCaEmeaCert.GetRawCertData());
-                using X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(x509SubCaEmeaCert, machinePublicKey, subCaEmeaKeyResource, vin);
+                AsymmetricKeyParameter subCaPublicKey = publicSubCaChain[0].Certificate.GetPublicKey();
+                using X509Certificate2 subCaCert = EdSec4Diag.GenerateSubCaCertificate(x509SubCaEmeaCert, subCaPublicKey, subCaEmeaKeyResource, 0);
+                if (subCaCert == null)
+                {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate SubCa certificate failed");
+                    return null;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = new X509CertificateParser().ReadCertificate(subCaCert.GetRawCertData());
+                using X509Certificate2 s29Cert = EdSec4Diag.GenerateCertificate(x509SubCaCert, machinePublicKey, subCaKeyResource, vin);
                 if (s29Cert == null)
                 {
                     ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Generate S29 certificate failed");
