@@ -6803,6 +6803,12 @@ namespace BmwDeepObd
                     return null;
                 }
 
+                if (!publicCertificateEntries[0].Certificate.IsValid(DateTime.UtcNow.AddDays(1.0)))
+                {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Public certificate is not valid in the future");
+                    return null;
+                }
+
                 Org.BouncyCastle.X509.X509Certificate issuerCert = publicCertificateEntries[0].Certificate;
                 AsymmetricKeyParameter subCaEmeaKeyResource = EdBcTlsUtilities.LoadCachedKeyFile(certPath, "SubCaEmeaCert.pem", string.Empty, out X509CertificateEntry[] publicSubCaEmeaChain);
                 if (subCaEmeaKeyResource == null || publicSubCaEmeaChain == null || publicSubCaEmeaChain.Length < 1)
