@@ -961,9 +961,7 @@ namespace BmwDeepObd
                 }
                 catch (Exception ex)
                 {
-#if DEBUG
-                    Android.Util.Log.Error(Tag, $"ShowMainActivity Exception: {ex.Message}");
-#endif
+                    CarSession.LogFormat("ShowMainActivity: Exception '{0}'", EdiabasNet.GetExceptionText(ex));
                     return false;
                 }
             }
