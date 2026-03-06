@@ -6846,6 +6846,7 @@ namespace BmwDeepObd
                 Org.BouncyCastle.X509.X509Certificate x509s29Cert = new X509CertificateParser().ReadCertificate(s29Cert.GetRawCertData());
                 List<X509CertificateStructure> certList = new List<X509CertificateStructure>();
                 certList.Add(x509s29Cert.CertificateStructure);
+                certList.Add(x509SubCaCert.CertificateStructure);
                 certList.Add(x509SubCaEmeaCert.CertificateStructure);
 
                 List<Org.BouncyCastle.X509.X509Certificate> x509CertList = EdBcTlsUtilities.ConvertToX509CertList(certList);
