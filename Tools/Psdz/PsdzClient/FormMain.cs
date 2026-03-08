@@ -279,15 +279,20 @@ namespace PsdzClient
             labelProgressEvent.Text = message ?? string.Empty;
         }
 
-        private void ServiceInitializedEvent(ProgrammingService2 programmingService)
+        private void ServiceInitializedEvent(string hostLogDir)
         {
+            if (string.IsNullOrEmpty(hostLogDir))
+            {
+                return;
+            }
+
             string logFileName = "PsdzClient.log";
             if (_programmingJobs.IsModuleGenerationMode())
             {
                 logFileName = "PsdzClientGenerate.log";
             }
 
-            string logFile = Path.Combine(programmingService.GetPsdzServiceHostLogDir(), logFileName);
+            string logFile = Path.Combine(hostLogDir, logFileName);
             ProgrammingJobs.SetupLog4Net(logFile);
             PsdzStarterGuard.Instance.ResetInitialization();
             PsdzServiceStarter.ClearIstaPIDsFile();

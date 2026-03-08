@@ -297,7 +297,7 @@ namespace PsdzClient.Programming
         public delegate int TelSendQueueSizeDelegate();
         public event TelSendQueueSizeDelegate TelSendQueueSizeEvent;
 
-        public delegate void ServiceInitialized(ProgrammingService2 programmingService);
+        public delegate void ServiceInitialized(string hostLogDir);
         public event ServiceInitialized ServiceInitializedEvent;
 
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgrammingJobs));
@@ -519,7 +519,7 @@ namespace PsdzClient.Programming
                     ClientContext.Database = ProgrammingService.PsdzDatabase;
                     if (ServiceInitializedEvent != null)
                     {
-                        ServiceInitializedEvent.Invoke(ProgrammingService);
+                        ServiceInitializedEvent.Invoke(ProgrammingService.GetPsdzServiceHostLogDir());
                     }
 
                     ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>

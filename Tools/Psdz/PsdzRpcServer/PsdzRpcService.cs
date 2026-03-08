@@ -22,6 +22,7 @@ public class PsdzRpcService : IPsdzRpcService
         _programmingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
         _programmingJobs.ShowMessageEvent += ShowMessageEvent;
         _programmingJobs.TelSendQueueSizeEvent += TelSendQueueSizeEvent;
+        _programmingJobs.ServiceInitializedEvent += ServiceInitializedEvent;
     }
 
     public async Task<bool> Connect(string parameter)
@@ -76,6 +77,11 @@ public class PsdzRpcService : IPsdzRpcService
     private int TelSendQueueSizeEvent()
     {
         return _callback.OnTelSendQueueSize().GetAwaiter().GetResult();
+    }
+
+    private void ServiceInitializedEvent(string hostLogDir)
+    {
+        _callback.OnServiceInitialized(hostLogDir);
     }
 
     public void Dispose()

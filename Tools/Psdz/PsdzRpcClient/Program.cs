@@ -65,6 +65,11 @@ namespace PsdzRpcClient
                     Console.WriteLine($"Tel send queue size: {size}");
                 };
 
+                client.CallbackHandler.ServiceInitialized += (sender, hostLogDir) =>
+                {
+                    Console.WriteLine($"Service initialized. Host log directory: {hostLogDir}");
+                };
+
                 Console.WriteLine("Starting PsdzJsonRpcClient...");
                 Task clientTask = client.ConnectAsync(cts.Token);
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);

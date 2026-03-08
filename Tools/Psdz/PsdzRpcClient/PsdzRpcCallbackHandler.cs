@@ -17,6 +17,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public event EventHandler<PsdzDatabase.SwiRegisterEnum?> UpdateOptionSelections;
     public event EventHandler<ShowMessageEventArgs> ShowMessage;
     public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
+    public event EventHandler<string> ServiceInitialized;
 
     public Task OnProgressChangedAsync(int percent, string message)
     {
@@ -66,5 +67,11 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
         TelSendQueueSizeEventArgs args = new TelSendQueueSizeEventArgs();
         TelSendQueueSize?.Invoke(this, args);
         return Task.FromResult(args.Result);
+    }
+
+    public Task OnServiceInitialized(string hostLogDir)
+    {
+        ServiceInitialized?.Invoke(this, hostLogDir);
+        return Task.CompletedTask;
     }
 }

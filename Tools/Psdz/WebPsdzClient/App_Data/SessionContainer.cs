@@ -2602,7 +2602,7 @@ namespace WebPsdzClient.App_Data
             return queueSize;
         }
 
-        private void ServiceInitializedEvent(ProgrammingService2 programmingService)
+        private void ServiceInitializedEvent(string hostLogDir)
         {
         }
 
