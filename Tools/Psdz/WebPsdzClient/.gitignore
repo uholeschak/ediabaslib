@@ -9,3 +9,4 @@
 /Data/
 /publish/
 *.csproj.user
+/Web.BindingRedirects.config
