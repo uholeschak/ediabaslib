@@ -3603,9 +3603,10 @@ namespace PsdzClient.Programming
 
                     if (voltage == null)
                     {
-                        log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage error");
+                        log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage error, retry={0}", retry);
                         if (retry >= 2)
                         {
+                            result = false;
                             break;
                         }
 
