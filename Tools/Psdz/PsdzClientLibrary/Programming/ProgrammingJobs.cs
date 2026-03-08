@@ -314,7 +314,6 @@ namespace PsdzClient.Programming
         public OptionType[] OptionTypes => _optionTypes;
 
         public const int CodingConnectionTimeout = 10000;
-        public const int MaxVoltageReadRetry = 2;
 
         public const double MinBatteryVoltageErrorPb = VoltageThreshold.minErrorPbNewDefault;
         public const double MinBatteryVoltageErrorLfp = VoltageThreshold.minErrorLFPDefault;
@@ -3589,7 +3588,9 @@ namespace PsdzClient.Programming
             try
             {
                 CacheResponseType = CacheType.NoResponse;
-                for (int retry = 0; ; retry++)
+                int failCount = 0;
+
+                for (;;)
                 {
                     // force reconnect in ReadBatteryVoltage
                     PsdzContext.DetectVehicle.Disconnect();
@@ -3604,17 +3605,19 @@ namespace PsdzClient.Programming
 
                     if (voltage == null)
                     {
-                        if (retry >= MaxVoltageReadRetry)
+                        failCount++;
+                        if (failCount > 2)
                         {
-                            log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage error, retry={0}", retry);
+                            log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage error, failures={0}", failCount);
                             result = false;
                             break;
                         }
 
-                        log.WarnFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage warning, retry={0}", retry);
+                        log.WarnFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage warning, failures={0}", failCount);
                         continue;
                     }
 
+                    failCount = 0;
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
 
                     bool lfpBattery = PsdzContext.VecInfo.WithLfpBattery;
