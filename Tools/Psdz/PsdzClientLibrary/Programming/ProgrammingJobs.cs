@@ -314,6 +314,7 @@ namespace PsdzClient.Programming
         public OptionType[] OptionTypes => _optionTypes;
 
         public const int CodingConnectionTimeout = 10000;
+        public const int MaxVoltageReadRetry = 2;
 
         public const double MinBatteryVoltageErrorPb = VoltageThreshold.minErrorPbNewDefault;
         public const double MinBatteryVoltageErrorLfp = VoltageThreshold.minErrorLFPDefault;
@@ -3603,7 +3604,7 @@ namespace PsdzClient.Programming
 
                     if (voltage == null)
                     {
-                        if (retry >= 2)
+                        if (retry >= MaxVoltageReadRetry)
                         {
                             log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage error, retry={0}", retry);
                             result = false;
