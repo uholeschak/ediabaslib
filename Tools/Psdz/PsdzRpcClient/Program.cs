@@ -53,11 +53,16 @@ namespace PsdzRpcClient
                 {
                     Console.WriteLine($"Option selections updated: {swiRegisterEnum}");
                 };
-                
+
                 client.CallbackHandler.ShowMessage += (sender, args) =>
                 {
                     Console.WriteLine($"Message from server: {args.Message} (OK Button: {args.OkBtn}, Wait: {args.Wait})");
                     args.Result = true; // Simulate user clicking OK
+                };
+
+                client.CallbackHandler.TelSendQueueSize += (sender, size) =>
+                {
+                    Console.WriteLine($"Tel send queue size: {size}");
                 };
 
                 Console.WriteLine("Starting PsdzJsonRpcClient...");

@@ -56,14 +56,14 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
 
     public Task<bool> OnShowMessage(string message, bool okBtn, bool wait)
     {
-        var args = new ShowMessageEventArgs(message, okBtn, wait);
+        ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn, wait);
         ShowMessage?.Invoke(this, args);
         return Task.FromResult(args.Result);
     }
 
     public Task<int> OnTelSendQueueSize()
     {
-        var args = new TelSendQueueSizeEventArgs();
+        TelSendQueueSizeEventArgs args = new TelSendQueueSizeEventArgs();
         TelSendQueueSize?.Invoke(this, args);
         return Task.FromResult(args.Result);
     }
