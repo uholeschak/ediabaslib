@@ -7,7 +7,7 @@
     <TargetFramework>net481</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GeneratedBindingRedirectsAction>Preview</GeneratedBindingRedirectsAction>
+    <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
     <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
     <MicrosoftNetCompilersToolset_Version>5.0.0</MicrosoftNetCompilersToolset_Version>
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
