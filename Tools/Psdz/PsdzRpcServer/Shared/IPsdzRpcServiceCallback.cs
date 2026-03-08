@@ -17,4 +17,5 @@ public partial interface IPsdzRpcServiceCallback
     Task OnUpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict);
     Task OnUpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum);
     Task<bool> OnShowMessage(string message, bool okBtn, bool wait);
+    Task<int> OnTelSendQueueSize();
 }

@@ -16,6 +16,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public event EventHandler<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> UpdateOptions;
     public event EventHandler<PsdzDatabase.SwiRegisterEnum?> UpdateOptionSelections;
     public event EventHandler<ShowMessageEventArgs> ShowMessage;
+    public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
 
     public Task OnProgressChangedAsync(int percent, string message)
     {
@@ -57,6 +58,13 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     {
         var args = new ShowMessageEventArgs(message, okBtn, wait);
         ShowMessage?.Invoke(this, args);
+        return Task.FromResult(args.Result);
+    }
+
+    public Task<int> OnTelSendQueueSize()
+    {
+        var args = new TelSendQueueSizeEventArgs();
+        TelSendQueueSize?.Invoke(this, args);
         return Task.FromResult(args.Result);
     }
 }

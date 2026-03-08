@@ -21,6 +21,7 @@ public class PsdzRpcService : IPsdzRpcService
         _programmingJobs.UpdateOptionsEvent += UpdateOptions;
         _programmingJobs.UpdateOptionSelectionsEvent += UpdateOptionSelections;
         _programmingJobs.ShowMessageEvent += ShowMessageEvent;
+        _programmingJobs.TelSendQueueSizeEvent += TelSendQueueSizeEvent;
     }
 
     public async Task<bool> Connect(string parameter)
@@ -72,6 +73,11 @@ public class PsdzRpcService : IPsdzRpcService
         return _callback.OnShowMessage(message, okBtn, wait).GetAwaiter().GetResult();
     }
 
+    private int TelSendQueueSizeEvent()
+    {
+        return _callback.OnTelSendQueueSize().GetAwaiter().GetResult();
+    }
+
     public void Dispose()
     {
         // StreamJsonRpc recommends implementing Dispose to encourage developers
@@ -81,6 +87,8 @@ public class PsdzRpcService : IPsdzRpcService
         _programmingJobs.ProgressEvent -= UpdateProgress;
         _programmingJobs.UpdateOptionsEvent -= UpdateOptions;
         _programmingJobs.UpdateOptionSelectionsEvent -= UpdateOptionSelections;
+        _programmingJobs.ShowMessageEvent -= ShowMessageEvent;
+        _programmingJobs.TelSendQueueSizeEvent -= TelSendQueueSizeEvent;
         _programmingJobs.Dispose();
     }
 }
