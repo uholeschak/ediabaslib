@@ -3588,7 +3588,7 @@ namespace PsdzClient.Programming
             try
             {
                 CacheResponseType = CacheType.NoResponse;
-                for (; ; )
+                for (int retry = 0; ; retry++)
                 {
                     // force reconnect in ReadBatteryVoltage
                     PsdzContext.DetectVehicle.Disconnect();
@@ -3604,8 +3604,12 @@ namespace PsdzClient.Programming
                     if (voltage == null)
                     {
                         log.ErrorFormat(CultureInfo.InvariantCulture, "CheckVoltage read voltage error");
-                        result = false;
-                        break;
+                        if (retry >= 2)
+                        {
+                            break;
+                        }
+
+                        continue;
                     }
 
                     log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Battery voltage={0}", voltage);
