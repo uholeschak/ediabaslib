@@ -20,6 +20,8 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> SetLanguage(string language);
     Task<bool> GetLicenseValid();
     Task<bool> SetLicenseValid(bool licenseValid);
+    Task<bool> GetCacheClearRequired();
+    Task<bool> SetCacheClearRequired(bool cacheClearRequired);
     Task<bool> IsPsdzInitialized();
     Task<bool> IsVehicleConnected();
     Task<bool> IsTalPresent();

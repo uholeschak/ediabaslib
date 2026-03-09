@@ -130,6 +130,18 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(true);
     }
 
+    public Task<bool> GetCacheClearRequired()
+    {
+        bool cacheClearRequired = _programmingJobs.CacheClearRequired;
+        return Task.FromResult(cacheClearRequired);
+    }
+
+    public Task<bool> SetCacheClearRequired(bool cacheClearRequired)
+    {
+        _programmingJobs.CacheClearRequired = cacheClearRequired;
+        return Task.FromResult(true);
+    }
+
     public Task<bool> IsPsdzInitialized()
     {
         bool isInitialized = _programmingJobs.ProgrammingService?.Psdz?.IsPsdzInitialized ?? false;
