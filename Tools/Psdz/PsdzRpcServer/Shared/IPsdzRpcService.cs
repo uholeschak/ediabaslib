@@ -1,9 +1,10 @@
 ﻿using PolyType;
+using PsdzClient;
+using PsdzClient.Programming;
 using StreamJsonRpc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using static PsdzClient.Programming.ProgrammingJobs;
 
 namespace PsdzRpcServer.Shared;
 
@@ -15,7 +16,7 @@ public partial interface IPsdzRpcService : IDisposable
     Task CancelOperation();
     Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000);
     Task<bool> DisconnectVehicle();
-    Task<bool> VehicleFunctions(OperationType operationType);
+    Task<bool> VehicleFunctions(ProgrammingJobs.OperationType operationType);
     Task<string> GetLanguage();
     Task<bool> SetLanguage(string language);
     Task<bool> GetLicenseValid();
@@ -27,5 +28,7 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> IsTalPresent();
     Task<string> GetVehicleVin();
     Task<string> GetPsdzServiceHostLogDir();
-    Task<List<OptionsItem>> GetSelectedOptions();
+    Task<List<ProgrammingJobs.OptionsItem>> GetSelectedOptions();
+    Task<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> GetOptionsDict();
+    Task<bool> ClearOptionsDict();
 }

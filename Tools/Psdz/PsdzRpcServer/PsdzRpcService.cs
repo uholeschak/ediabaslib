@@ -171,10 +171,22 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(hostLogDir);
     }
 
-    public Task<List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> GetSelectedOptions()
+    public Task<List<ProgrammingJobs.OptionsItem>> GetSelectedOptions()
     {
-        List<PsdzClient.Programming.ProgrammingJobs.OptionsItem> options = _programmingJobs.SelectedOptions;
+        List<ProgrammingJobs.OptionsItem> options = _programmingJobs.SelectedOptions;
         return Task.FromResult(options);
+    }
+
+    public Task<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> GetOptionsDict()
+    {
+        Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+        return Task.FromResult(optionsDict);
+    }
+
+    public Task<bool> ClearOptionsDict()
+    {
+        _programmingJobs.OptionsDict = null;
+        return Task.FromResult(true);
     }
 
     private CancellationTokenSource CreateCancellationToken()
