@@ -171,6 +171,12 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(true);
     }
 
+    public Task<ProgrammingJobs.CacheType> GetCacheResponseType()
+    {
+        ProgrammingJobs.CacheType cacheResponseType = _programmingJobs.CacheResponseType;
+        return Task.FromResult(cacheResponseType);
+    }
+
     public Task<bool> IsPsdzInitialized()
     {
         bool isInitialized = _programmingJobs.ProgrammingService?.Psdz?.IsPsdzInitialized ?? false;
