@@ -106,6 +106,24 @@ public class PsdzRpcService : IPsdzRpcService
         }
     }
 
+    public Task<string> GetLanguage()
+    {
+        string language = _programmingJobs.ClientContext.Language;
+        return Task.FromResult(language);
+    }
+
+    public Task<bool> SetLanguage(string language)
+    {
+        _programmingJobs.ClientContext.Language = language;
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> GetLicenseValid()
+    {
+        bool licenseValid = _programmingJobs.LicenseValid;
+        return Task.FromResult(licenseValid);
+    }
+
     public Task<bool> SetLicenseValid(bool licenseValid)
     {
         _programmingJobs.LicenseValid = licenseValid;
@@ -134,6 +152,12 @@ public class PsdzRpcService : IPsdzRpcService
     {
         string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
         return Task.FromResult(vin);
+    }
+
+    public Task<List<OptionsItem>> GetSelectedOptions()
+    {
+        List<OptionsItem> options = _programmingJobs.SelectedOptions;
+        return Task.FromResult(options);
     }
 
     private CancellationTokenSource CreateCancellationToken()
