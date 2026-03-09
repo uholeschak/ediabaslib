@@ -71,15 +71,7 @@ public class PsdzRpcService : IPsdzRpcService
         }
         finally
         {
-            lock (_ctsLock)
-            {
-                if (_cts == cts)
-                {
-                    _cts = null;
-                }
-            }
-
-            cts.Dispose();
+            DisposeCancellationToken(cts);
         }
     }
 
@@ -94,14 +86,7 @@ public class PsdzRpcService : IPsdzRpcService
         }
         finally
         {
-            lock (_ctsLock)
-            {
-                if (_cts == cts)
-                {
-                    _cts = null;
-                }
-            }
-            cts.Dispose();
+            DisposeCancellationToken(cts);
         }
     }
 
@@ -114,6 +99,18 @@ public class PsdzRpcService : IPsdzRpcService
             _cts = cts;
         }
         return cts;
+    }
+
+    private void DisposeCancellationToken(CancellationTokenSource cts)
+    {
+        lock (_ctsLock)
+        {
+            if (_cts == cts)
+            {
+                _cts = null;
+            }
+        }
+        cts.Dispose();
     }
 
     private void UpdateStatus(string message = null)
