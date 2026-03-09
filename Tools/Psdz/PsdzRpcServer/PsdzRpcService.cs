@@ -60,6 +60,36 @@ public class PsdzRpcService : IPsdzRpcService
         }
     }
 
+    public async Task<bool> StartProgrammingService(string istaFolder)
+    {
+        CancellationTokenSource cts = CreateCancellationToken();
+
+        try
+        {
+            bool result = await Task.Run(() => _programmingJobs.StartProgrammingService(cts, istaFolder));
+            return result;
+        }
+        finally
+        {
+            DisposeCancellationToken(cts);
+        }
+    }
+
+    public async Task<bool> StopProgrammingService(string istaFolder, bool force = false)
+    {
+        CancellationTokenSource cts = CreateCancellationToken();
+
+        try
+        {
+            bool result = await Task.Run(() => _programmingJobs.StopProgrammingService(cts, istaFolder, force));
+            return result;
+        }
+        finally
+        {
+            DisposeCancellationToken(cts);
+        }
+    }
+
     public async Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
     {
         CancellationTokenSource cts = CreateCancellationToken();

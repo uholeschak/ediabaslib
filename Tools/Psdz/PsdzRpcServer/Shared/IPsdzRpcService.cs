@@ -14,6 +14,8 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> Connect(string parameter);
     Task<bool> Disconnect(string parameter);
     Task CancelOperation();
+    Task<bool> StartProgrammingService(string istaFolder);
+    Task<bool> StopProgrammingService(string istaFolder, bool force = false);
     Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000);
     Task<bool> DisconnectVehicle();
     Task<bool> VehicleFunctions(ProgrammingJobs.OperationType operationType);
