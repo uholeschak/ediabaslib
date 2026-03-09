@@ -106,6 +106,12 @@ public class PsdzRpcService : IPsdzRpcService
         }
     }
 
+    public Task<bool> SetLicenseValid(bool licenseValid)
+    {
+        _programmingJobs.LicenseValid = licenseValid;
+        return Task.FromResult(true);
+    }
+
     private CancellationTokenSource CreateCancellationToken()
     {
         CancellationTokenSource cts = new CancellationTokenSource();
