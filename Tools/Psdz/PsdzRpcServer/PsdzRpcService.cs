@@ -189,6 +189,12 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(true);
     }
 
+    public Task<bool> UpdateTargetFa()
+    {
+        _programmingJobs.UpdateTargetFa();
+        return Task.FromResult(true);
+    }
+
     private CancellationTokenSource CreateCancellationToken()
     {
         CancellationTokenSource cts = new CancellationTokenSource();
