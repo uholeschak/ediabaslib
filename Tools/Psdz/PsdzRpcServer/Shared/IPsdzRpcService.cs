@@ -10,4 +10,6 @@ public partial interface IPsdzRpcService : IDisposable
 {
     Task<bool> Connect(string parameter);
     Task<bool> Disconnect(string parameter);
+    Task CancelOperation();
+    Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000);
 }

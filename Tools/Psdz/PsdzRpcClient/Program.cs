@@ -89,6 +89,8 @@ namespace PsdzRpcClient
 
                     bool resultDisconnect = await client.RpcService.Disconnect("Disconnect");
                     Console.WriteLine($"Disconnect = {resultDisconnect}");
+
+                    await client.RpcService.CancelOperation();
                 }
             }
             catch (OperationCanceledException)

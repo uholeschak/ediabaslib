@@ -10,7 +10,9 @@ namespace PsdzRpcServer;
 public class PsdzRpcService : IPsdzRpcService
 {
     private readonly IPsdzRpcServiceCallback _callback;
-    private  readonly ProgrammingJobs _programmingJobs;
+    private readonly ProgrammingJobs _programmingJobs;
+    private CancellationTokenSource _cts;
+    private readonly object _ctsLock = new object();
 
     public PsdzRpcService(IPsdzRpcServiceCallback callback)
     {
@@ -27,7 +29,6 @@ public class PsdzRpcService : IPsdzRpcService
 
     public async Task<bool> Connect(string parameter)
     {
-        // Implement connection logic here
         for (int i = 0; i <= 100; i += 20)
         {
             await _callback.OnProgressChangedAsync(i, $"Connecting... {i}%");
@@ -47,6 +48,44 @@ public class PsdzRpcService : IPsdzRpcService
         }
         await _callback.OnOperationCompletedAsync(true);
         return true;
+    }
+
+    public async Task CancelOperation()
+    {
+        await _callback.OnUpdateStatus("Cancelling operation...");
+
+        lock (_ctsLock)
+        {
+            _cts?.Cancel();
+        }
+    }
+
+    public async Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
+    {
+        CancellationTokenSource cts = new CancellationTokenSource();
+        lock (_ctsLock)
+        {
+            _cts?.Dispose();
+            _cts = cts;
+        }
+
+        try
+        {
+            bool result = await Task.Run(() => _programmingJobs.ConnectVehicle(cts, istaFolder, remoteHost, useIcom, addTimeout));
+            return result;
+        }
+        finally
+        {
+            lock (_ctsLock)
+            {
+                if (_cts == cts)
+                {
+                    _cts = null;
+                }
+            }
+
+            cts.Dispose();
+        }
     }
 
     private void UpdateStatus(string message = null)
@@ -86,9 +125,13 @@ public class PsdzRpcService : IPsdzRpcService
 
     public void Dispose()
     {
-        // StreamJsonRpc recommends implementing Dispose to encourage developers
-        // to dispose of the client RPC proxies generated from the interface.
-        // // https://github.com/microsoft/vs-streamjsonrpc/blob/v2.19.27/doc/dynamicproxy.md#dispose-patterns
+        lock (_ctsLock)
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+        }
+
         _programmingJobs.UpdateStatusEvent -= UpdateStatus;
         _programmingJobs.ProgressEvent -= UpdateProgress;
         _programmingJobs.UpdateOptionsEvent -= UpdateOptions;
