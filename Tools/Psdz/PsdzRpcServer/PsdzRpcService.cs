@@ -4,6 +4,7 @@ using PsdzRpcServer.Shared;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using static PsdzClient.Programming.ProgrammingJobs;
 
 namespace PsdzRpcServer;
 
@@ -82,6 +83,21 @@ public class PsdzRpcService : IPsdzRpcService
         try
         {
             bool result = await Task.Run(() => _programmingJobs.DisconnectVehicle(cts));
+            return result;
+        }
+        finally
+        {
+            DisposeCancellationToken(cts);
+        }
+    }
+
+    public async Task<bool> VehicleFunctions(OperationType operationType)
+    {
+        CancellationTokenSource cts = CreateCancellationToken();
+
+        try
+        {
+            bool result = await Task.Run(() => _programmingJobs.VehicleFunctions(cts, operationType));
             return result;
         }
         finally

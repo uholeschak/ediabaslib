@@ -1,7 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using PolyType;
+﻿using PolyType;
 using StreamJsonRpc;
+using System;
+using System.Threading.Tasks;
+using static PsdzClient.Programming.ProgrammingJobs;
 
 namespace PsdzRpcServer.Shared;
 
@@ -13,4 +14,5 @@ public partial interface IPsdzRpcService : IDisposable
     Task CancelOperation();
     Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000);
     Task<bool> DisconnectVehicle();
+    Task<bool> VehicleFunctions(OperationType operationType);
 }
