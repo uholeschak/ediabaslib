@@ -16,4 +16,8 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> DisconnectVehicle();
     Task<bool> VehicleFunctions(OperationType operationType);
     Task<bool> SetLicenseValid(bool licenseValid);
+    Task<bool> IsPsdzInitialized();
+    Task<bool> IsVehicleConnected();
+    Task<bool> IsTalPresent();
+    Task<string> GetVehicleVin();
 }

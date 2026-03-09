@@ -112,6 +112,30 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(true);
     }
 
+    public Task<bool> IsPsdzInitialized()
+    {
+        bool isInitialized = _programmingJobs.ProgrammingService?.Psdz?.IsPsdzInitialized ?? false;
+        return Task.FromResult(isInitialized);
+    }
+
+    public Task<bool> IsVehicleConnected()
+    {
+        bool isConnected = _programmingJobs.PsdzContext?.Connection != null;
+        return Task.FromResult(isConnected);
+    }
+
+    public Task<bool> IsTalPresent()
+    {
+        bool hasTal = _programmingJobs.PsdzContext?.Tal != null;
+        return Task.FromResult(hasTal);
+    }
+
+    public Task<string> GetVehicleVin()
+    {
+        string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
+        return Task.FromResult(vin);
+    }
+
     private CancellationTokenSource CreateCancellationToken()
     {
         CancellationTokenSource cts = new CancellationTokenSource();
