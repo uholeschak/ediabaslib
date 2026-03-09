@@ -62,12 +62,7 @@ public class PsdzRpcService : IPsdzRpcService
 
     public async Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
     {
-        CancellationTokenSource cts = new CancellationTokenSource();
-        lock (_ctsLock)
-        {
-            _cts?.Dispose();
-            _cts = cts;
-        }
+        CancellationTokenSource cts = CreateCancellationToken();
 
         try
         {
@@ -86,6 +81,39 @@ public class PsdzRpcService : IPsdzRpcService
 
             cts.Dispose();
         }
+    }
+
+    public async Task<bool> DisconnectVehicle()
+    {
+        CancellationTokenSource cts = CreateCancellationToken();
+
+        try
+        {
+            bool result = await Task.Run(() => _programmingJobs.DisconnectVehicle(cts));
+            return result;
+        }
+        finally
+        {
+            lock (_ctsLock)
+            {
+                if (_cts == cts)
+                {
+                    _cts = null;
+                }
+            }
+            cts.Dispose();
+        }
+    }
+
+    private CancellationTokenSource CreateCancellationToken()
+    {
+        CancellationTokenSource cts = new CancellationTokenSource();
+        lock (_ctsLock)
+        {
+            cts.Cancel();
+            _cts = cts;
+        }
+        return cts;
     }
 
     private void UpdateStatus(string message = null)
