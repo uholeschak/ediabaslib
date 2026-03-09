@@ -4,7 +4,6 @@ using PsdzRpcServer.Shared;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using static PsdzClient.Programming.ProgrammingJobs;
 
 namespace PsdzRpcServer;
 
@@ -91,7 +90,7 @@ public class PsdzRpcService : IPsdzRpcService
         }
     }
 
-    public async Task<bool> VehicleFunctions(OperationType operationType)
+    public async Task<bool> VehicleFunctions(PsdzClient.Programming.ProgrammingJobs.OperationType operationType)
     {
         CancellationTokenSource cts = CreateCancellationToken();
 
@@ -172,9 +171,9 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(hostLogDir);
     }
 
-    public Task<List<OptionsItem>> GetSelectedOptions()
+    public Task<List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> GetSelectedOptions()
     {
-        List<OptionsItem> options = _programmingJobs.SelectedOptions;
+        List<PsdzClient.Programming.ProgrammingJobs.OptionsItem> options = _programmingJobs.SelectedOptions;
         return Task.FromResult(options);
     }
 
