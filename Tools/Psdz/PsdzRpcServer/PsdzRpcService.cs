@@ -166,6 +166,12 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(vin);
     }
 
+    public Task<string> GetPsdzServiceHostLogDir()
+    {
+        string hostLogDir = _programmingJobs.ProgrammingService?.GetPsdzServiceHostLogDir();
+        return Task.FromResult(hostLogDir);
+    }
+
     public Task<List<OptionsItem>> GetSelectedOptions()
     {
         List<OptionsItem> options = _programmingJobs.SelectedOptions;

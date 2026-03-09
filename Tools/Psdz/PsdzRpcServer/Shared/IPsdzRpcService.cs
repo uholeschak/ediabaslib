@@ -26,5 +26,6 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> IsVehicleConnected();
     Task<bool> IsTalPresent();
     Task<string> GetVehicleVin();
+    Task<string> GetPsdzServiceHostLogDir();
     Task<List<OptionsItem>> GetSelectedOptions();
 }
