@@ -13,6 +13,7 @@ public partial interface IPsdzRpcService : IDisposable
 {
     Task<bool> Connect(string parameter);
     Task<bool> Disconnect(string parameter);
+    Task<bool> OperationActive();
     Task CancelOperation();
     Task<bool> StartProgrammingService(string istaFolder);
     Task<bool> StopProgrammingService(string istaFolder, bool force = false);

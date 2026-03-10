@@ -51,6 +51,16 @@ public class PsdzRpcService : IPsdzRpcService
         return true;
     }
 
+    public async Task<bool> OperationActive()
+    {
+        bool isActive;
+        lock (_ctsLock)
+        {
+            isActive = _cts != null;
+        }
+        return await Task.FromResult(isActive);
+    }
+
     public async Task CancelOperation()
     {
         await _callback.OnUpdateStatus("Cancelling operation...");
