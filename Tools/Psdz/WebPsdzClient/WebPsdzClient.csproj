@@ -9,7 +9,7 @@
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
     <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
-    <MicrosoftNetCompilersToolset_Version>5.0.0</MicrosoftNetCompilersToolset_Version>
+    <MicrosoftNetCompilersToolset_Version>5.3.0</MicrosoftNetCompilersToolset_Version>
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
   </PropertyGroup>
   <ItemGroup>
