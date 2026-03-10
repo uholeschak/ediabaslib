@@ -66,24 +66,20 @@ public class PsdzRpcService : IPsdzRpcService
         // neuen CTS anlegen und als "aktuellen" merken
         CancellationTokenSource cts = CreateCancellationToken();
 
-        _ = Task.Run(async () =>
+        StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
         {
-            try
+            if (task.IsCompletedSuccessfully)
             {
-                bool result = _programmingJobs.StartProgrammingService(cts, istaFolder);
-                await _callback.OnStartProgrammingServiceCompleted(result);
+                _callback.OnStartProgrammingServiceCompleted(task.Result).GetAwaiter().GetResult();
             }
-            catch (Exception)
+            else
             {
-                await _callback.OnStartProgrammingServiceCompleted(false);
+                _callback.OnStartProgrammingServiceCompleted(false).GetAwaiter().GetResult();
             }
-            finally
-            {
-                DisposeCancellationToken(cts);
-            }
-        });
 
-        // RPC-Aufruf endet sofort; hier ggf. „Job angenommen“ zurückgeben
+            DisposeCancellationToken(cts);
+        }, cts.Token);
+
         return Task.FromResult(true);
     }
     public async Task<bool> StopProgrammingService(string istaFolder, bool force = false)
@@ -263,6 +259,12 @@ public class PsdzRpcService : IPsdzRpcService
             }
         }
         cts.Dispose();
+    }
+
+    private async Task<bool> StartProgrammingServiceTask(string istaFolder)
+    {
+        // ReSharper disable once ConvertClosureToMethodGroup
+        return await Task.Run(() => _programmingJobs.StartProgrammingService(_cts, istaFolder)).ConfigureAwait(false);
     }
 
     private void UpdateStatus(string message = null)
