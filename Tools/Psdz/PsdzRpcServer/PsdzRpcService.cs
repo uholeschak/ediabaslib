@@ -63,8 +63,6 @@ public class PsdzRpcService : IPsdzRpcService
 
     public async Task CancelOperation()
     {
-        await _callback.OnUpdateStatus("Cancelling operation...");
-
         lock (_ctsLock)
         {
             _cts?.Cancel();
