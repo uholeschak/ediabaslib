@@ -1,6 +1,7 @@
 ﻿using PsdzClient;
 using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,22 +61,31 @@ public class PsdzRpcService : IPsdzRpcService
         }
     }
 
-    public async Task<bool> StartProgrammingService(string istaFolder)
+    public Task<bool> StartProgrammingService(string istaFolder)
     {
+        // neuen CTS anlegen und als "aktuellen" merken
         CancellationTokenSource cts = CreateCancellationToken();
 
-        try
+        _ = Task.Run(async () =>
         {
-            bool result = await Task.Run(() => _programmingJobs.StartProgrammingService(cts, istaFolder));
-            await _callback.OnStartProgrammingServiceCompleted(result);
-            return result;
-        }
-        finally
-        {
-            DisposeCancellationToken(cts);
-        }
-    }
+            try
+            {
+                bool result = _programmingJobs.StartProgrammingService(cts, istaFolder);
+                await _callback.OnStartProgrammingServiceCompleted(result);
+            }
+            catch (Exception)
+            {
+                await _callback.OnStartProgrammingServiceCompleted(false);
+            }
+            finally
+            {
+                DisposeCancellationToken(cts);
+            }
+        });
 
+        // RPC-Aufruf endet sofort; hier ggf. „Job angenommen“ zurückgeben
+        return Task.FromResult(true);
+    }
     public async Task<bool> StopProgrammingService(string istaFolder, bool force = false)
     {
         CancellationTokenSource cts = CreateCancellationToken();
