@@ -20,6 +20,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public event EventHandler<string> ServiceInitialized;
     public event EventHandler<bool> StartProgrammingServiceCompleted;
     public event EventHandler<bool> StopProgrammingServiceCompleted;
+    public event EventHandler<bool> ConnectVehicleCompleted;
 
     public Task OnProgressChangedAsync(int percent, string message)
     {
@@ -86,6 +87,12 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public Task OnStopProgrammingServiceCompleted(bool success)
     {
         StopProgrammingServiceCompleted?.Invoke(this, success);
+        return Task.CompletedTask;
+    }
+
+    public Task OnConnectVehicleCompleted(bool success)
+    {
+        ConnectVehicleCompleted?.Invoke(this, success);
         return Task.CompletedTask;
     }
 }

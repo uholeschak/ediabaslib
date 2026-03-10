@@ -21,4 +21,5 @@ public partial interface IPsdzRpcServiceCallback
     Task OnServiceInitialized(string hostLogDir);
     Task OnStartProgrammingServiceCompleted(bool success);
     Task OnStopProgrammingServiceCompleted(bool success);
+    Task OnConnectVehicleCompleted(bool success);
 }

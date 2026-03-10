@@ -75,15 +75,8 @@ public class PsdzRpcService : IPsdzRpcService
 
         StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
         {
-            if (task.IsCompletedSuccessfully)
-            {
-                _callback.OnStartProgrammingServiceCompleted(task.Result).GetAwaiter().GetResult();
-            }
-            else
-            {
-                _callback.OnStartProgrammingServiceCompleted(false).GetAwaiter().GetResult();
-            }
-
+            bool result = task.IsCompletedSuccessfully && task.Result;
+            _callback.OnStartProgrammingServiceCompleted(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 
@@ -95,34 +88,25 @@ public class PsdzRpcService : IPsdzRpcService
 
         StopProgrammingServiceTask(istaFolder, force).ContinueWith(task =>
         {
-            if (task.IsCompletedSuccessfully)
-            {
-                _callback.OnStopProgrammingServiceCompleted(task.Result).GetAwaiter().GetResult();
-            }
-            else
-            {
-                _callback.OnStopProgrammingServiceCompleted(false).GetAwaiter().GetResult();
-            }
-
+            bool result = task.IsCompletedSuccessfully && task.Result;
+            _callback.OnStopProgrammingServiceCompleted(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 
         return Task.FromResult(true);
     }
 
-    public async Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
+    public Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
     {
         CancellationTokenSource cts = CreateCancellationToken();
-
-        try
+        ConnectVehicleTask(istaFolder, remoteHost, useIcom, addTimeout).ContinueWith(task =>
         {
-            bool result = await Task.Run(() => _programmingJobs.ConnectVehicle(cts, istaFolder, remoteHost, useIcom, addTimeout));
-            return result;
-        }
-        finally
-        {
+            bool result = task.IsCompletedSuccessfully && task.Result;
+            _callback.OnConnectVehicleCompleted(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
-        }
+        }, cts.Token);
+
+        return Task.FromResult(true);
     }
 
     public async Task<bool> DisconnectVehicle()
@@ -282,6 +266,12 @@ public class PsdzRpcService : IPsdzRpcService
     public async Task<bool> StopProgrammingServiceTask(string istaFolder, bool force)
     {
         return await Task.Run(() => _programmingJobs.StopProgrammingService(_cts, istaFolder, force)).ConfigureAwait(false);
+    }
+
+    public async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom, int addTimeout)
+    {
+        // ReSharper disable once ConvertClosureToMethodGroup
+        return await Task.Run(() => _programmingJobs.ConnectVehicle(_cts, istaFolder, remoteHost, useIcom, addTimeout)).ConfigureAwait(false);
     }
 
     private void UpdateStatus(string message = null)
