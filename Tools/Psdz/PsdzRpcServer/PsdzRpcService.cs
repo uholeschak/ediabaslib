@@ -1,7 +1,6 @@
 ﻿using PsdzClient;
 using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -90,19 +89,25 @@ public class PsdzRpcService : IPsdzRpcService
 
         return Task.FromResult(true);
     }
-    public async Task<bool> StopProgrammingService(string istaFolder, bool force = false)
+    public Task<bool> StopProgrammingService(string istaFolder, bool force = false)
     {
         CancellationTokenSource cts = CreateCancellationToken();
 
-        try
+        StopProgrammingServiceTask(istaFolder, force).ContinueWith(task =>
         {
-            bool result = await Task.Run(() => _programmingJobs.StopProgrammingService(cts, istaFolder, force));
-            return result;
-        }
-        finally
-        {
+            if (task.IsCompletedSuccessfully)
+            {
+                _callback.OnStopProgrammingServiceCompleted(task.Result).GetAwaiter().GetResult();
+            }
+            else
+            {
+                _callback.OnStopProgrammingServiceCompleted(false).GetAwaiter().GetResult();
+            }
+
             DisposeCancellationToken(cts);
-        }
+        }, cts.Token);
+
+        return Task.FromResult(true);
     }
 
     public async Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
@@ -271,8 +276,12 @@ public class PsdzRpcService : IPsdzRpcService
 
     private async Task<bool> StartProgrammingServiceTask(string istaFolder)
     {
-        // ReSharper disable once ConvertClosureToMethodGroup
         return await Task.Run(() => _programmingJobs.StartProgrammingService(_cts, istaFolder)).ConfigureAwait(false);
+    }
+
+    public async Task<bool> StopProgrammingServiceTask(string istaFolder, bool force)
+    {
+        return await Task.Run(() => _programmingJobs.StopProgrammingService(_cts, istaFolder, force)).ConfigureAwait(false);
     }
 
     private void UpdateStatus(string message = null)
