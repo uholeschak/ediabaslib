@@ -67,6 +67,7 @@ public class PsdzRpcService : IPsdzRpcService
         try
         {
             bool result = await Task.Run(() => _programmingJobs.StartProgrammingService(cts, istaFolder));
+            await _callback.OnStartProgrammingServiceCompleted(result);
             return result;
         }
         finally
@@ -236,7 +237,7 @@ public class PsdzRpcService : IPsdzRpcService
         CancellationTokenSource cts = new CancellationTokenSource();
         lock (_ctsLock)
         {
-            cts.Cancel();
+            _cts?.Dispose();
             _cts = cts;
         }
         return cts;

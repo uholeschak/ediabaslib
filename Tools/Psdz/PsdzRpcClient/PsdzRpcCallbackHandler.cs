@@ -18,6 +18,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public event EventHandler<ShowMessageEventArgs> ShowMessage;
     public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
     public event EventHandler<string> ServiceInitialized;
+    public event EventHandler<bool> StartProgrammingServiceCompleted;
 
     public Task OnProgressChangedAsync(int percent, string message)
     {
@@ -72,6 +73,12 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public Task OnServiceInitialized(string hostLogDir)
     {
         ServiceInitialized?.Invoke(this, hostLogDir);
+        return Task.CompletedTask;
+    }
+
+    public Task OnStartProgrammingServiceCompleted(bool success)
+    {
+        StartProgrammingServiceCompleted?.Invoke(this, success);
         return Task.CompletedTask;
     }
 }
