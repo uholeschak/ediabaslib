@@ -106,16 +106,28 @@ namespace PsdzRpcClient
                             switch (key.Key)
                             {
                                 case ConsoleKey.C:
+                                {
                                     Console.WriteLine($"Connecting vehicle: {remoteHost}...");
                                     bool resultConnect = await client.RpcService.ConnectVehicle(istaFolder, remoteHost, false);
                                     Console.WriteLine($"Connect = {resultConnect}");
                                     break;
+                                }
 
                                 case ConsoleKey.D:
+                                {
                                     Console.WriteLine($"Disconnecting vehicle: {remoteHost}...");
                                     bool resultDisconnect = await client.RpcService.DisconnectVehicle();
                                     Console.WriteLine($"Disconnect = {resultDisconnect}");
                                     break;
+                                }
+
+                                case ConsoleKey.S:
+                                {
+                                    Console.WriteLine($"Stopping programming service...");
+                                    bool resultStop = await client.RpcService.StopProgrammingService(istaFolder);
+                                    Console.WriteLine($"Stop Programming Service = {resultStop}");
+                                    break;
+                                }
 
                                 case ConsoleKey.Escape:
                                     Console.WriteLine("ESC pressed, stopping client...");
