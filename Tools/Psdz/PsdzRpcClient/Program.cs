@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PsdzClient.Programming;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -84,6 +85,7 @@ namespace PsdzRpcClient
 
                 if (client.RpcService != null)
                 {
+#if false
                     bool resultConnect = await client.RpcService.Connect("Connect");
                     Console.WriteLine($"Connect = {resultConnect}");
 
@@ -91,6 +93,42 @@ namespace PsdzRpcClient
                     Console.WriteLine($"Disconnect = {resultDisconnect}");
 
                     await client.RpcService.CancelOperation();
+#else
+                    string istaFolder = ProgrammingJobs.GetIstaInstallLocation();
+                    string remoteHost = "127.0.0.1";
+                    for (;;)
+                    {
+                        bool exitLoop = false;
+                        if (Console.KeyAvailable)
+                        {
+                            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+                            switch (key.Key)
+                            {
+                                case ConsoleKey.C:
+                                    Console.WriteLine($"Connecting vehicle: {remoteHost}...");
+                                    bool resultConnect = await client.RpcService.ConnectVehicle(istaFolder, remoteHost, false);
+                                    Console.WriteLine($"Connect = {resultConnect}");
+                                    break;
+
+                                case ConsoleKey.D:
+                                    Console.WriteLine($"Disconnecting vehicle: {remoteHost}...");
+                                    bool resultDisconnect = await client.RpcService.DisconnectVehicle();
+                                    Console.WriteLine($"Disconnect = {resultDisconnect}");
+                                    break;
+
+                                case ConsoleKey.Escape:
+                                    Console.WriteLine("ESC pressed, stopping client...");
+                                    exitLoop = true;
+                                    break;
+                            }
+                        }
+
+                        if (exitLoop)
+                        {
+                            break;
+                        }
+                    }
+#endif
                 }
             }
             catch (OperationCanceledException)
