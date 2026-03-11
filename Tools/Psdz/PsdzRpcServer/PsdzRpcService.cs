@@ -25,6 +25,7 @@ public class PsdzRpcService : IPsdzRpcService
         _programmingJobs.ShowMessageEvent += ShowMessageEvent;
         _programmingJobs.TelSendQueueSizeEvent += TelSendQueueSizeEvent;
         _programmingJobs.ServiceInitializedEvent += ServiceInitializedEvent;
+        _programmingJobs.GenServiceModules = false;
     }
 
     public async Task<bool> Connect(string parameter)
