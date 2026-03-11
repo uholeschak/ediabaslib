@@ -137,6 +137,14 @@ namespace PsdzRpcClient
                                     break;
                                 }
 
+                                case ConsoleKey.T:
+                                {
+                                    Console.WriteLine("Building TAL...");
+                                    bool result = await client.RpcService.VehicleFunctions(ProgrammingJobs.OperationType.BuildTalModFa);
+                                    Console.WriteLine($"Build TAL = {result}");
+                                    break;
+                                }
+
                                 case ConsoleKey.Escape:
                                     Console.WriteLine("ESC pressed, stopping client...");
                                     exitLoop = true;
