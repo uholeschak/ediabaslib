@@ -50,46 +50,52 @@ public class PsdzRpcService : IPsdzRpcService
         return true;
     }
 
-    public async Task<bool> OperationActive()
+    public Task<bool> OperationActive()
     {
-        bool isActive;
-        lock (_ctsLock)
-        {
-            isActive = _cts != null;
-        }
-        return await Task.FromResult(isActive);
+        bool isActive = IsOperationActive();
+        return Task.FromResult(isActive);
     }
 
-    public async Task CancelOperation()
+    public Task CancelOperation()
     {
         lock (_ctsLock)
         {
             _cts?.Cancel();
         }
+
+        return Task.CompletedTask;
     }
 
     public Task<bool> StartProgrammingService(string istaFolder)
     {
-        // neuen CTS anlegen und als "aktuellen" merken
-        CancellationTokenSource cts = CreateCancellationToken();
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
 
+        CancellationTokenSource cts = CreateCancellationToken();
         StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
         {
             bool result = task.IsCompletedSuccessfully && task.Result;
-            _callback.OnStartProgrammingServiceCompleted(result).GetAwaiter().GetResult();
+            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 
         return Task.FromResult(true);
     }
+
     public Task<bool> StopProgrammingService(string istaFolder, bool force = false)
     {
-        CancellationTokenSource cts = CreateCancellationToken();
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
 
+        CancellationTokenSource cts = CreateCancellationToken();
         StopProgrammingServiceTask(istaFolder, force).ContinueWith(task =>
         {
             bool result = task.IsCompletedSuccessfully && task.Result;
-            _callback.OnStopProgrammingServiceCompleted(result).GetAwaiter().GetResult();
+            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 
@@ -98,45 +104,56 @@ public class PsdzRpcService : IPsdzRpcService
 
     public Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
     {
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
+
         CancellationTokenSource cts = CreateCancellationToken();
         ConnectVehicleTask(istaFolder, remoteHost, useIcom, addTimeout).ContinueWith(task =>
         {
             bool result = task.IsCompletedSuccessfully && task.Result;
-            _callback.OnConnectVehicleCompleted(result).GetAwaiter().GetResult();
+            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 
         return Task.FromResult(true);
     }
 
-    public async Task<bool> DisconnectVehicle()
+    public Task<bool> DisconnectVehicle()
     {
-        CancellationTokenSource cts = CreateCancellationToken();
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false); 
+        }
 
-        try
+        CancellationTokenSource cts = CreateCancellationToken();
+        DisconnectVehicleTask().ContinueWith(task =>
         {
-            bool result = await Task.Run(() => _programmingJobs.DisconnectVehicle(cts));
-            return result;
-        }
-        finally
-        {
+            bool result = task.IsCompletedSuccessfully && task.Result;
+            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
-        }
+        }, cts.Token);
+
+        return Task.FromResult(true);
     }
 
-    public async Task<bool> VehicleFunctions(PsdzClient.Programming.ProgrammingJobs.OperationType operationType)
+    public Task<bool> VehicleFunctions(ProgrammingJobs.OperationType operationType)
     {
-        CancellationTokenSource cts = CreateCancellationToken();
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
 
-        try
+        CancellationTokenSource cts = CreateCancellationToken();
+        VehicleFunctionsTask(operationType).ContinueWith(task =>
         {
-            bool result = await Task.Run(() => _programmingJobs.VehicleFunctions(cts, operationType));
-            return result;
-        }
-        finally
-        {
+            bool result = task.IsCompletedSuccessfully && task.Result;
+            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
-        }
+        }, cts.Token);
+
+        return Task.FromResult(true);
     }
 
     public Task<string> GetLanguage()
@@ -258,6 +275,16 @@ public class PsdzRpcService : IPsdzRpcService
         cts.Dispose();
     }
 
+    private bool IsOperationActive()
+    {
+        bool isActive;
+        lock (_ctsLock)
+        {
+            isActive = _cts != null;
+        }
+        return isActive;
+    }
+
     private async Task<bool> StartProgrammingServiceTask(string istaFolder)
     {
         return await Task.Run(() => _programmingJobs.StartProgrammingService(_cts, istaFolder)).ConfigureAwait(false);
@@ -270,8 +297,17 @@ public class PsdzRpcService : IPsdzRpcService
 
     public async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom, int addTimeout)
     {
-        // ReSharper disable once ConvertClosureToMethodGroup
         return await Task.Run(() => _programmingJobs.ConnectVehicle(_cts, istaFolder, remoteHost, useIcom, addTimeout)).ConfigureAwait(false);
+    }
+
+    public async Task<bool> DisconnectVehicleTask()
+    {
+        return await Task.Run(() => _programmingJobs.DisconnectVehicle(_cts)).ConfigureAwait(false);
+    }
+
+    public async Task<bool> VehicleFunctionsTask(ProgrammingJobs.OperationType operationType)
+    {
+        return await Task.Run(() => _programmingJobs.VehicleFunctions(_cts, operationType)).ConfigureAwait(false);
     }
 
     private void UpdateStatus(string message = null)

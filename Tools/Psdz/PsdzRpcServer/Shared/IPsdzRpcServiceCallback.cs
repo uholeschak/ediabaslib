@@ -19,7 +19,4 @@ public partial interface IPsdzRpcServiceCallback
     Task<bool> OnShowMessage(string message, bool okBtn, bool wait);
     Task<int> OnTelSendQueueSize();
     Task OnServiceInitialized(string hostLogDir);
-    Task OnStartProgrammingServiceCompleted(bool success);
-    Task OnStopProgrammingServiceCompleted(bool success);
-    Task OnConnectVehicleCompleted(bool success);
 }
