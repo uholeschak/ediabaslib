@@ -123,7 +123,7 @@ namespace PsdzRpcClient
 
                                 case ConsoleKey.D:
                                 {
-                                    Console.WriteLine($"Disconnecting vehicle: {remoteHost}...");
+                                    Console.WriteLine("Disconnecting vehicle...");
                                     bool result = await client.RpcService.DisconnectVehicle();
                                     Console.WriteLine($"Disconnect = {result}");
                                     break;
