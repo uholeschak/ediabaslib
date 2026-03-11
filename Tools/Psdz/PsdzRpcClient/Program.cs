@@ -108,24 +108,32 @@ namespace PsdzRpcClient
                                 case ConsoleKey.C:
                                 {
                                     Console.WriteLine($"Connecting vehicle: {remoteHost}...");
-                                    bool resultConnect = await client.RpcService.ConnectVehicle(istaFolder, remoteHost, false);
-                                    Console.WriteLine($"Connect = {resultConnect}");
+                                    bool result = await client.RpcService.ConnectVehicle(istaFolder, remoteHost, false);
+                                    Console.WriteLine($"Connect = {result}");
                                     break;
                                 }
 
                                 case ConsoleKey.D:
                                 {
                                     Console.WriteLine($"Disconnecting vehicle: {remoteHost}...");
-                                    bool resultDisconnect = await client.RpcService.DisconnectVehicle();
-                                    Console.WriteLine($"Disconnect = {resultDisconnect}");
+                                    bool result = await client.RpcService.DisconnectVehicle();
+                                    Console.WriteLine($"Disconnect = {result}");
                                     break;
                                 }
 
                                 case ConsoleKey.S:
                                 {
-                                    Console.WriteLine($"Stopping programming service...");
-                                    bool resultStop = await client.RpcService.StopProgrammingService(istaFolder);
-                                    Console.WriteLine($"Stop Programming Service = {resultStop}");
+                                    Console.WriteLine("Stopping programming service...");
+                                    bool result = await client.RpcService.StopProgrammingService(istaFolder);
+                                    Console.WriteLine($"Stop Programming Service = {result}");
+                                    break;
+                                }
+
+                                case ConsoleKey.O:
+                                {
+                                    Console.WriteLine("Creating options...");
+                                    bool result = await client.RpcService.VehicleFunctions(ProgrammingJobs.OperationType.CreateOptions);
+                                    Console.WriteLine($"Create Options = {result}");
                                     break;
                                 }
 
