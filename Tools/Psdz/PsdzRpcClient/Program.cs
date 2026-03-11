@@ -94,7 +94,15 @@ namespace PsdzRpcClient
 
                     await client.RpcService.CancelOperation();
 #else
-                    Console.WriteLine("Press 'C' to connect vehicle, 'D' to disconnect, or ESC to exit...");
+                    Console.WriteLine("Press keys to perform actions:");
+                    Console.WriteLine("C = Connect Vehicle");
+                    Console.WriteLine("D = Disconnect Vehicle");
+                    Console.WriteLine("S = Stop Programming Service");
+                    Console.WriteLine("O = Create Options");
+                    Console.WriteLine("T = Build TAL");
+                    Console.WriteLine("E = Execute TAL");
+                    Console.WriteLine("ESC = Exit");
+
                     string istaFolder = ProgrammingJobs.GetIstaInstallLocation();
                     string remoteHost = "127.0.0.1";
                     for (;;)
@@ -142,6 +150,14 @@ namespace PsdzRpcClient
                                     Console.WriteLine("Building TAL...");
                                     bool result = await client.RpcService.VehicleFunctions(ProgrammingJobs.OperationType.BuildTalModFa);
                                     Console.WriteLine($"Build TAL = {result}");
+                                    break;
+                                }
+
+                                case ConsoleKey.E:
+                                {
+                                    Console.WriteLine("Executing TAL...");
+                                    bool result = await client.RpcService.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
+                                    Console.WriteLine($"Execute TAL = {result}");
                                     break;
                                 }
 
