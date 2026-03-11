@@ -110,6 +110,13 @@ namespace PsdzRpcClient
                         bool exitLoop = false;
                         if (Console.KeyAvailable)
                         {
+                            bool active = await client.RpcService.OperationActive();
+                            if (active)
+                            {
+                                Console.WriteLine("An operation is currently active. Please wait...");
+                                continue;
+                            }
+
                             ConsoleKeyInfo key = Console.ReadKey(intercept: true);
                             switch (key.Key)
                             {
