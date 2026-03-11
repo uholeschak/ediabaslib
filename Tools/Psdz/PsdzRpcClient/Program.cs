@@ -94,6 +94,7 @@ namespace PsdzRpcClient
 
                     await client.RpcService.CancelOperation();
 #else
+                    Console.WriteLine("Press 'C' to connect vehicle, 'D' to disconnect, or ESC to exit...");
                     string istaFolder = ProgrammingJobs.GetIstaInstallLocation();
                     string remoteHost = "127.0.0.1";
                     for (;;)
