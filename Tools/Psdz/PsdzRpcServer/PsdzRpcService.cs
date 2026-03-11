@@ -192,6 +192,17 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(true);
     }
 
+    public Task<bool> GetGenServiceModules()
+    {
+        bool genServiceModules = _programmingJobs.GenServiceModules;
+        return Task.FromResult(genServiceModules);
+    }
+    public Task<bool> SetGenServiceModules(bool genServiceModules)
+    {
+        _programmingJobs.GenServiceModules = genServiceModules;
+        return Task.FromResult(true);
+    }
+
     public Task<ProgrammingJobs.CacheType> GetCacheResponseType()
     {
         ProgrammingJobs.CacheType cacheResponseType = _programmingJobs.CacheResponseType;

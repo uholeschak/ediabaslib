@@ -26,6 +26,8 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> SetLicenseValid(bool licenseValid);
     Task<bool> GetCacheClearRequired();
     Task<bool> SetCacheClearRequired(bool cacheClearRequired);
+    Task<bool> GetGenServiceModules();
+    Task<bool> SetGenServiceModules(bool genServiceModules);
     Task<ProgrammingJobs.CacheType> GetCacheResponseType();
     Task<bool> IsPsdzInitialized();
     Task<bool> IsVehicleConnected();
