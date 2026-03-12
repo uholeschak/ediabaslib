@@ -266,7 +266,7 @@ namespace EdiabasLib
             x509V3CertificateGenerator.AddExtension(oid, critical: true, extensionValue);
 
             DerObjectIdentifier oid2 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.60");
-            x509V3CertificateGenerator.AddExtension(oid2, critical: true, new byte[] { 0x00 });
+            x509V3CertificateGenerator.AddExtension(oid2, critical: true, new byte[] { (byte)caPathLength });
 
             DerObjectIdentifier oid3 = new DerObjectIdentifier("1.3.6.1.4.1.513.29.50");
             x509V3CertificateGenerator.AddExtension(oid3, critical: true, RoleMask);
