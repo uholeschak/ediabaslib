@@ -6966,6 +6966,93 @@ namespace BmwDeepObd
             return privateKeyResource;
         }
 
+        public AsymmetricKeyParameter LoadExternalVehicleCertificate(EdiabasNet ediabas, string certPath, List<X509CertificateStructure> trustedCaCerts, string vin, ref DateTime? certValidDate, out List<X509CertificateEntry> publicCertChain)
+        {
+            publicCertChain = null;
+
+            if (string.IsNullOrEmpty(vin))
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: VIN missing");
+                return null;
+            }
+
+            string parentDir1 = Directory.GetParent(certPath)?.FullName;
+            if (parentDir1 == null)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Parent directory 1 of cert path missing");
+                return null;
+            }
+
+            string parentDir2 = Directory.GetParent(parentDir1)?.FullName;
+            if (parentDir2 == null)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Parent directory 2 of cert path missing");
+                return null;
+            }
+
+            string importCertPath = Path.Combine(parentDir2, CertsImportSubDir, vin.ToUpperInvariant());
+            if (!Directory.Exists(importCertPath))
+            {
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Import certificate path not existing: {0}", importCertPath);
+                return null;
+            }
+
+            string keyFilePath = Path.Combine(importCertPath, EdSec4Diag.IstaPkcs12KeyFile);
+            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(keyFilePath, EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
+            if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to load external PKCS12 key");
+                return null;
+            }
+
+            AsymmetricKeyParameter externalPublicKey = publicCertificateEntries[0].Certificate.GetPublicKey();
+            if (externalPublicKey == null)
+            {
+                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to get external public key");
+                return null;
+            }
+
+            List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
+            string[] certFiles = Directory.GetFiles(importCertPath, "*.pem", SearchOption.TopDirectoryOnly);
+            foreach (string certFile in certFiles)
+            {
+                List<X509CertificateEntry> certificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(certFile));
+                if (certificateEntries == null || certificateEntries.Count < 3)
+                {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Skipping invalid certificate: {0}", certFile);
+                    continue;
+                }
+
+                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = certificateEntries[1].Certificate;
+
+                if (!x509SubCaCert.GetPublicKey().Equals(externalPublicKey))
+                {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Public key mismatch for: {0}", certFile);
+                    continue;
+                }
+
+                List<Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate>();
+                foreach (X509CertificateEntry certificateEntry in certificateEntries)
+                {
+                    certChain.Add(certificateEntry.Certificate);
+                }
+
+                certValidDate = x509SubCaCert.NotAfter;
+                if (!EdBcTlsUtilities.ValidateCertChain(certChain, rootCerts))
+                {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to validate certificate chain for: {0}", certFile);
+                    continue;
+                }
+
+                ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Successfully loaded certificate chain for: {0}", certFile);
+                publicCertChain = certificateEntries;
+                return privateKeyResource;
+            }
+
+            ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: No valid public certificate found");
+            return privateKeyResource;
+        }
+
         public void SendDoIpCertStatus(DoIpCertificateStatus certStatus, DateTime? certValidDate)
         {
             try
