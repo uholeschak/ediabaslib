@@ -7015,7 +7015,8 @@ namespace BmwDeepObd
                 return null;
             }
 
-            string importCertPath = Path.Combine(parentDir2, CertsImportSubDir, vin.ToUpperInvariant());
+            string vinDirName = vin.Trim().ToUpperInvariant();
+            string importCertPath = Path.Combine(parentDir2, CertsImportSubDir, vinDirName);
             if (!Directory.Exists(importCertPath))
             {
                 ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Import certificate path not existing: {0}", importCertPath);
