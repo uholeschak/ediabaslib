@@ -6762,6 +6762,7 @@ namespace BmwDeepObd
                         }
 
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Using valid external vehicle certificate chain");
+                        certStatus = DoIpCertificateStatus.ExternalCertValid;
                         externalKeyPair = vehicleKeyPair;
                         return vehicleCertList;
                     }
@@ -7048,9 +7049,7 @@ namespace BmwDeepObd
                 }
 
                 Org.BouncyCastle.X509.X509Certificate x509VehicleCert = certificateEntries[0].Certificate;
-                Org.BouncyCastle.X509.X509Certificate x509SubCaCert = certificateEntries[1].Certificate;
-
-                if (!x509SubCaCert.GetPublicKey().Equals(externalPublicKey))
+                if (!x509VehicleCert.GetPublicKey().Equals(externalPublicKey))
                 {
                     ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Public key mismatch for: {0}", certFile);
                     continue;
