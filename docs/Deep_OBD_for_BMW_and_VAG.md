@@ -129,8 +129,9 @@ If sending of the trace files fails, the backup trace files are stored in the su
 It's possible to replace the background image. Simply store a custom `Background.jpg` file in the directory `de.holeschak.bmw_deep_obd\files\Images` (The `Images` subdirectory has to be created first).
 
 ## DoIP certificate
-It's possible to copy a valid external DoIP certificate chain from ISTA to the directory `de.holeschak.bmw_deep_obd\files\Certificates`.  
+It's possible to copy a valid external DoIP SubCA certificate chain including the `keyContainer.pfx` containing the key, from ISTA to the directory `de.holeschak.bmw_deep_obd\files\Certificates`.  
 You could use the _Export_ function of the _S29CertificateGenerator_ for this.  
+If you have only a full certificate chain for a specific vehicle VIN from AOS mode you could copy it together with the `keyContainer.pfx` containing the key in a subdirectory with the VIN name.  
 If the certificate is missing ot not valid, a temporary certificate chain will be generated, which has to be accepted by the vehicle.
 
 ## Android Auto
