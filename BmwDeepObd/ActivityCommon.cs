@@ -7023,6 +7023,7 @@ namespace BmwDeepObd
                     continue;
                 }
 
+                Org.BouncyCastle.X509.X509Certificate x509VehicleCert = certificateEntries[0].Certificate;
                 Org.BouncyCastle.X509.X509Certificate x509SubCaCert = certificateEntries[1].Certificate;
 
                 if (!x509SubCaCert.GetPublicKey().Equals(externalPublicKey))
@@ -7037,7 +7038,7 @@ namespace BmwDeepObd
                     certChain.Add(certificateEntry.Certificate);
                 }
 
-                certValidDate = x509SubCaCert.NotAfter;
+                certValidDate = x509VehicleCert.NotAfter;
                 if (!EdBcTlsUtilities.ValidateCertChain(certChain, rootCerts))
                 {
                     ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to validate certificate chain for: {0}", certFile);
