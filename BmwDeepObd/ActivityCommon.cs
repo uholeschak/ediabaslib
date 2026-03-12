@@ -7056,6 +7056,21 @@ namespace BmwDeepObd
                     continue;
                 }
 
+                IList<string> givenNameValues = x509VehicleCert.SubjectDN.GetValueList(X509Name.GivenName);
+                if (givenNameValues == null || givenNameValues.Count < 1)
+                {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: GivenName field missing in certificate subject for: {0}", certFile);
+                    continue;
+                }
+
+                string certVin = givenNameValues[0].Trim();
+                bool vinMatch = string.Compare(certVin, vin.Trim(), StringComparison.OrdinalIgnoreCase) == 0;
+                if (!vinMatch)
+                {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: VIN mismatch in GivenName field for: {0}, {1} != {2}", certFile, certVin, vin);
+                    //continue;
+                }
+
                 List<Org.BouncyCastle.X509.X509Certificate> certChain = new List<Org.BouncyCastle.X509.X509Certificate>();
                 foreach (X509CertificateEntry certificateEntry in certificateEntries)
                 {
