@@ -6710,8 +6710,9 @@ namespace BmwDeepObd
             return true;
         }
 
-        public List<X509CertificateStructure> GenS29Certificate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin)
+        public List<X509CertificateStructure> GenS29Certificate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin, out AsymmetricCipherKeyPair externalKeyPair)
         {
+            externalKeyPair = null;
             DoIpCertificateStatus certStatus = DoIpCertificateStatus.Unknown;
             DateTime? certValidDate = null;
 
@@ -6761,6 +6762,7 @@ namespace BmwDeepObd
                         }
 
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Using valid external vehicle certificate chain");
+                        externalKeyPair = vehicleKeyPair;
                         return vehicleCertList;
                     }
                 }
