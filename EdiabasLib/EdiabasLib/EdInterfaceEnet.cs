@@ -530,6 +530,7 @@ namespace EdiabasLib
                 S29Certs = null;
                 S29CertFiles = null;
                 MachineKeyPair = null;
+                ExternalKeyPair = null;
                 S29SelectCert = null;
                 TcpControlTimerLock = new object();
                 TcpDiagBuffer = new byte[TransBufferSize];
@@ -610,6 +611,7 @@ namespace EdiabasLib
                 }
 
                 S29SelectCert = null;
+                ExternalKeyPair = null;
             }
 
             public void Dispose()
@@ -681,6 +683,7 @@ namespace EdiabasLib
             public List<X509Certificate2> S29Certs;
             public List<EdBcTlsClient.CertInfo> S29CertFiles;
             public AsymmetricCipherKeyPair MachineKeyPair;
+            public AsymmetricCipherKeyPair ExternalKeyPair;
             public List<X509CertificateStructure> S29SelectCert;
             public bool TcpControlTimerEnabled;
             public object TcpDiagStreamSendLock;
@@ -2030,6 +2033,7 @@ namespace EdiabasLib
 
                             string selectCert = DoIpS29SelectCert;
                             SharedDataActive.S29SelectCert = null;
+                            SharedDataActive.ExternalKeyPair = null;
                             if (string.IsNullOrEmpty(selectCert) && SharedDataActive.GenS29CertHandler != null)
                             {
                                 string vin = SharedDataActive.EnetHostConn?.Vin;
@@ -2039,6 +2043,7 @@ namespace EdiabasLib
                                 if (certList != null && certList.Count > 1)
                                 {
                                     SharedDataActive.S29SelectCert = certList;
+                                    SharedDataActive.ExternalKeyPair = externalKeyPair;
                                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "S29 certificates generated: {0}", certList.Count);
                                 }
                                 else
@@ -4409,6 +4414,7 @@ namespace EdiabasLib
                     sharedData.S29Certs = certList;
                     sharedData.S29CertFiles = certKeyList;
                     sharedData.MachineKeyPair = machineKeyPair;
+                    sharedData.ExternalKeyPair = null;
                 }
 
                 return true;
@@ -4458,6 +4464,7 @@ namespace EdiabasLib
                 }
 
                 sharedData.S29SelectCert = certList;
+                sharedData.ExternalKeyPair = null;
                 return true;
             }
             catch (Exception ex)
