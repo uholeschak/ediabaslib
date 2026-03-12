@@ -45,7 +45,7 @@ namespace EdiabasLib
             Rejected
         }
 
-        public delegate List<X509CertificateStructure> GenS29CertDelegate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin);
+        public delegate List<X509CertificateStructure> GenS29CertDelegate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin, out AsymmetricCipherKeyPair externalKeyPair);
 
         public delegate void VehicleConnectedDelegate(bool connected, bool reconnect, string vin, bool isDoIp);
 
@@ -2035,7 +2035,7 @@ namespace EdiabasLib
                                 string vin = SharedDataActive.EnetHostConn?.Vin;
                                 List<X509CertificateStructure> certList =
                                     SharedDataActive.GenS29CertHandler(EdiabasProtected, SharedDataActive.MachineKeyPair.Public, SharedDataActive.TrustedCaStructs,
-                                        DoIpSslSecurityPathProtected, DoIpS29PathProtected, vin);
+                                        DoIpSslSecurityPathProtected, DoIpS29PathProtected, vin, out AsymmetricCipherKeyPair externalKeyPair);
                                 if (certList != null && certList.Count > 1)
                                 {
                                     SharedDataActive.S29SelectCert = certList;

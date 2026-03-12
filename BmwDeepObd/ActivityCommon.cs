@@ -6710,8 +6710,9 @@ namespace BmwDeepObd
             return true;
         }
 
-        public List<X509CertificateStructure> GenS29Certificate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin)
+        public List<X509CertificateStructure> GenS29Certificate(EdiabasNet ediabas, AsymmetricKeyParameter machinePublicKey, List<X509CertificateStructure> trustedCaCerts, string trustedKeyPath, string certPath, string vin, out AsymmetricCipherKeyPair externalKeyPair)
         {
+            externalKeyPair = null;
             DoIpCertificateStatus certStatus = DoIpCertificateStatus.Unknown;
             DateTime? certValidDate = null;
 
@@ -6743,8 +6744,8 @@ namespace BmwDeepObd
                 }
 
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
-                AsymmetricKeyParameter vehiclePrivateKey = LoadExternalVehicleCertificate(ediabas, certPath, trustedCaCerts, vin, ref certValidDate, out List<X509CertificateEntry> vehicleCertChain);
-                if (vehiclePrivateKey != null)
+                AsymmetricCipherKeyPair vehicleKeyPair = LoadExternalVehicleCertificate(ediabas, certPath, trustedCaCerts, vin, ref certValidDate, out List<X509CertificateEntry> vehicleCertChain);
+                if (vehicleKeyPair != null)
                 {
                     certStatus = DoIpCertificateStatus.ExternalCertInvalid;
                     if (certValidDate != null && certValidDate.Value < DateTime.UtcNow.AddHours(1.0))
@@ -6761,6 +6762,7 @@ namespace BmwDeepObd
                         }
 
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Using valid external vehicle certificate chain");
+                        externalKeyPair = vehicleKeyPair;
                         return vehicleCertList;
                     }
                 }
@@ -6988,7 +6990,7 @@ namespace BmwDeepObd
             return privateKeyResource;
         }
 
-        public AsymmetricKeyParameter LoadExternalVehicleCertificate(EdiabasNet ediabas, string certPath, List<X509CertificateStructure> trustedCaCerts, string vin, ref DateTime? certValidDate, out List<X509CertificateEntry> publicCertChain)
+        public AsymmetricCipherKeyPair LoadExternalVehicleCertificate(EdiabasNet ediabas, string certPath, List<X509CertificateStructure> trustedCaCerts, string vin, ref DateTime? certValidDate, out List<X509CertificateEntry> publicCertChain)
         {
             publicCertChain = null;
 
@@ -7069,11 +7071,11 @@ namespace BmwDeepObd
 
                 ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Successfully loaded certificate chain for: {0}", certFile);
                 publicCertChain = certificateEntries;
-                return privateKeyResource;
+                return new AsymmetricCipherKeyPair(externalPublicKey, privateKeyResource);
             }
 
             ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: No valid public certificate found");
-            return privateKeyResource;
+            return null;
         }
 
         public void SendDoIpCertStatus(DoIpCertificateStatus certStatus, DateTime? certValidDate)
