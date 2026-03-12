@@ -4536,14 +4536,21 @@ namespace EdiabasLib
                     };
                 }
 
-                string publicKey = EdBcTlsUtilities.ConvertPublicKeyToPEM(sharedData.MachineKeyPair.Public);
-                if (string.IsNullOrEmpty(publicKey))
+                ECPrivateKeyParameters privateKey = sharedData.MachineKeyPair.Private as ECPrivateKeyParameters;
+                ECPublicKeyParameters publicKey = sharedData.MachineKeyPair?.Public as ECPublicKeyParameters;
+                if (sharedData.ExternalKeyPair != null)
+                {
+                    privateKey = sharedData.ExternalKeyPair.Private as ECPrivateKeyParameters;
+                    publicKey = sharedData.ExternalKeyPair.Public as ECPublicKeyParameters;
+                }
+
+                string publicKeyPem = EdBcTlsUtilities.ConvertPublicKeyToPEM(publicKey);
+                if (string.IsNullOrEmpty(publicKeyPem))
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson Convert public key failed");
                     return false;
                 }
 
-                ECPrivateKeyParameters privateKey = sharedData.MachineKeyPair.Private as ECPrivateKeyParameters;
                 if (privateKey == null)
                 {
                     EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "CreateRequestJson Private key is not ECPrivateKeyParameters");
@@ -4552,7 +4559,7 @@ namespace EdiabasLib
 
                 string vin17 = vin.ToUpperInvariant().Trim();
                 requestData.Vin17 = vin17;
-                requestData.PublicKey = publicKey;
+                requestData.PublicKey = publicKeyPem;
                 requestData.ProofOfPossession = new EdSec4Diag.ProofOfPossession
                 {
                     SignatureType = "SHA512withECDSA"
@@ -5968,6 +5975,12 @@ namespace EdiabasLib
 
             ECPrivateKeyParameters privateKey = sharedData.MachineKeyPair?.Private as ECPrivateKeyParameters;
             ECPublicKeyParameters publicKey = sharedData.MachineKeyPair?.Public as ECPublicKeyParameters;
+            if (sharedData.ExternalKeyPair != null)
+            {
+                privateKey = sharedData.ExternalKeyPair.Private as ECPrivateKeyParameters;
+                publicKey = sharedData.ExternalKeyPair.Public as ECPublicKeyParameters;
+            }
+
             byte[] proofData = EdSec4Diag.CalculateProofOfOwnership(serverChallenge, privateKey);
             if (proofData == null)
             {
