@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "PsdzRpcServer": {
+      "commandName": "Project",
+      "remoteDebugEnabled": false
+    },
+    "VM-WIN11": {
+      "commandName": "Project",
+      "remoteDebugEnabled": true,
+      "remoteDebugMachine": "VM-WIN11",
+      "authenticationMode": "Windows",
+      "nativeDebugging": false
+    }
+  }
+}
