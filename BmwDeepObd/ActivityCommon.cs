@@ -6743,13 +6743,35 @@ namespace BmwDeepObd
                 }
 
                 List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
-                AsymmetricKeyParameter externalPrivateKey = LoadExternalCaCertificate(ediabas, certPath, trustedCaCerts, ref certValidDate, out List<X509CertificateEntry> externalSubCaChain);
+                AsymmetricKeyParameter vehiclePrivateKey = LoadExternalVehicleCertificate(ediabas, certPath, trustedCaCerts, vin, ref certValidDate, out List<X509CertificateEntry> vehicleCertChain);
+                if (vehiclePrivateKey != null)
+                {
+                    certStatus = DoIpCertificateStatus.ExternalCertInvalid;
+                    if (certValidDate != null && certValidDate.Value < DateTime.UtcNow.AddHours(1.0))
+                    {
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: External vehicle certificate expired");
+                        certStatus = DoIpCertificateStatus.ExternalCertExpired;
+                    }
+                    else
+                    {
+                        List<X509CertificateStructure> vehicleCertList = new List<X509CertificateStructure>();
+                        foreach (X509CertificateEntry certEntry in vehicleCertChain)
+                        {
+                            vehicleCertList.Add(certEntry.Certificate.CertificateStructure);
+                        }
 
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Using valid external vehicle certificate chain");
+                        return vehicleCertList;
+                    }
+                }
+
+                AsymmetricKeyParameter externalPrivateKey = LoadExternalCaCertificate(ediabas, certPath, trustedCaCerts, ref certValidDate, out List<X509CertificateEntry> externalSubCaChain);
                 if (externalPrivateKey != null)
                 {
                     certStatus = DoIpCertificateStatus.ExternalCertInvalid;
                     if (certValidDate != null && certValidDate.Value < DateTime.UtcNow.AddHours(1.0))
                     {
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: External certificate expired");
                         certStatus = DoIpCertificateStatus.ExternalCertExpired;
                     }
 
