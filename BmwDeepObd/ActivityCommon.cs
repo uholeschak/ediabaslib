@@ -7024,7 +7024,23 @@ namespace BmwDeepObd
             }
 
             string keyFilePath = Path.Combine(importCertPath, EdSec4Diag.IstaPkcs12KeyFile);
-            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(keyFilePath, EdSec4Diag.IstaPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
+            string keyPwdFile = Path.ChangeExtension(keyFilePath, ".txt");
+            string keyPwd = EdSec4Diag.IstaPkcs12KeyPwd;
+
+            if (File.Exists(keyPwdFile))
+            {
+                try
+                {
+                    keyPwd = File.ReadLines(keyPwdFile).FirstOrDefault()?.Trim();
+                }
+                catch (Exception)
+                {
+                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to read key password file: {0}", keyPwdFile);
+                    return null;
+                }
+            }
+
+            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(keyFilePath, keyPwd, out X509CertificateEntry[] publicCertificateEntries);
             if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
             {
                 ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to load external PKCS12 key");
