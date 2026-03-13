@@ -1257,17 +1257,20 @@ namespace S29CertGenerator
                             }
                         }
 
-                        if (!x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
+                        if (certValid && !x509SubCaCert.GetPublicKey().Equals(istaPublicKey))
                         {
                             UpdateStatusText($"SubCA certificate public key does not match ISTA public key:\n{istaKeyFile}", true);
                             certValid = false;
                         }
 
-                        DateTime validDate = validate ? subCaCert.NotAfter.AddHours(-12) : subCaCert.NotAfter.AddMonths(-1);
-                        if (DateTime.UtcNow > validDate)
+                        if (certValid && !x509SubCaCert.IsValid(DateTime.UtcNow))
                         {
-                            UpdateStatusText($"SubCA certificate remaining time too short: {subCaCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
-                            certValid = false;
+                            DateTime validDate = validate ? subCaCert.NotAfter.AddHours(-12) : subCaCert.NotAfter.AddMonths(-1);
+                            if (DateTime.UtcNow > validDate)
+                            {
+                                UpdateStatusText($"SubCA certificate remaining time too short: {subCaCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
+                                certValid = false;
+                            }
                         }
 
                         List<Org.BouncyCastle.X509.X509Certificate> validateCertChain = new List<Org.BouncyCastle.X509.X509Certificate>();
