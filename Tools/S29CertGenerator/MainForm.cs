@@ -2032,6 +2032,7 @@ namespace S29CertGenerator
                     return false;
                 }
 
+                UpdateStatusText($"SubCA certificate valid until: {x509SubCaCert.NotAfter.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}", true);
                 if (!EdBcTlsUtilities.ValidateCertChain(installCerts, rootCerts))
                 {
                     UpdateStatusText("Certificate chain validation failed", true);
