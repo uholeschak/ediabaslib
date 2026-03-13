@@ -132,7 +132,8 @@ It's possible to replace the background image. Simply store a custom `Background
 It's possible to copy a valid external DoIP SubCA certificate chain including the `keyContainer.pfx` containing the key, from ISTA to the directory `de.holeschak.bmw_deep_obd\files\Certificates`.  
 You could use the _Export_ function of the _S29CertificateGenerator_ for this.  
 If you have only a full certificate chain for a specific vehicle VIN from AOS mode you could copy it together with the `keyContainer.pfx` containing the key in a subdirectory with the VIN name.  
-If the certificate is missing ot not valid, a temporary certificate chain will be generated, which has to be accepted by the vehicle.
+Optionally the password for the `keyContainer.pfx` could be specified in the file `keyContainer.txt` in the same directory. If the file is missing, the default ISTA password will be used.  
+If the certificate is missing or not valid, a temporary certificate chain will be generated, which has to be accepted by the vehicle.
 
 ## Android Auto
 Android Auto is now available in the release version of the _Deep OBD app_.
