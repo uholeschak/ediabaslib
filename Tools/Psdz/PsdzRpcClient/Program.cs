@@ -1,5 +1,6 @@
 ﻿using PsdzClient.Programming;
 using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,6 +10,9 @@ namespace PsdzRpcClient
     {
         static async Task<int> Main(string[] args)
         {
+#if NET
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+#endif
             using CancellationTokenSource cts = new CancellationTokenSource();
 
             try
