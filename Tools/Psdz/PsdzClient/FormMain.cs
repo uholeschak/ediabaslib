@@ -153,7 +153,7 @@ namespace PsdzClient
 
             if (!vehicleConnected)
             {
-                UpdateOptions(null);
+                UpdateOptions();
             }
             comboBoxOptionType.Enabled = optionsDict != null && optionsDict.Count > 0;
         }
@@ -365,13 +365,13 @@ namespace PsdzClient
             }
         }
 
-        private void UpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
+        private void UpdateOptions()
         {
             if (InvokeRequired)
             {
                 BeginInvoke((Action)(() =>
                 {
-                    UpdateOptions(optionsDict);
+                    UpdateOptions();
                 }));
                 return;
             }

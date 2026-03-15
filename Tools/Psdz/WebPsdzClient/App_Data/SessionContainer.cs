@@ -2511,7 +2511,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public void UpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
+        public void UpdateOptions()
         {
             ProgrammingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
             UpdateCurrentOptions();

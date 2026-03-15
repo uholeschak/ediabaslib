@@ -285,7 +285,7 @@ namespace PsdzClient.Programming
         public delegate void ProgressDelegate(int percent, bool marquee, string message = null);
         public event ProgressDelegate ProgressEvent;
 
-        public delegate void UpdateOptionsDelegate(Dictionary<PsdzDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict);
+        public delegate void UpdateOptionsDelegate();
         public event UpdateOptionsDelegate UpdateOptionsEvent;
 
         public delegate void UpdateOptionSelectionsDelegate(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum);
@@ -4211,7 +4211,7 @@ namespace PsdzClient.Programming
         private void UpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<OptionsItem>> optionsDict)
         {
             OptionsDict = optionsDict;
-            UpdateOptionsEvent?.Invoke(optionsDict);
+            UpdateOptionsEvent?.Invoke();
         }
 
         private void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)

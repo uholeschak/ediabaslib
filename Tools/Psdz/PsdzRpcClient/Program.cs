@@ -1,5 +1,7 @@
 ﻿using PsdzClient.Programming;
+using PsdzRpcServer.Shared;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -46,12 +48,20 @@ namespace PsdzRpcClient
                     Console.WriteLine($"[{tuple.percent}%] Marquee={tuple.marquee}: {tuple.message}");
                 };
 
-                client.CallbackHandler.UpdateOptions += (sender, optionsDict) =>
+                client.CallbackHandler.UpdateOptions += async (sender, optionsDict) =>
                 {
-                    Console.WriteLine("Options updated:");
-                    foreach (var kvp in optionsDict)
+                    Console.WriteLine("Options updated");
+                    if (client.RpcService != null)
                     {
-                        Console.WriteLine($"Key: {kvp.Key}, Options Count: {kvp.Value.Count}");
+                        List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
+                        if (optionTypes != null)
+                        {
+                            Console.WriteLine("Available option types:");
+                            foreach (var option in optionTypes)
+                            {
+                                Console.WriteLine($"- {option.Caption} ({option.SwiRegisterEnum.ToString()})");
+                            }
+                        }
                     }
                 };
 

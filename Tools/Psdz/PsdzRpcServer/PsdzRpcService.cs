@@ -333,11 +333,10 @@ public class PsdzRpcService : IPsdzRpcService
         _callback.OnUpdateProgress(percent, marquee, message);
     }
 
-    private void UpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
+    private void UpdateOptions()
     {
-        UpdateStatus("UpdateOptions called");
         _programmingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
-        //_callback.OnUpdateOptions(optionsDict);
+        _callback.OnUpdateOptions();
     }
 
     private void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
