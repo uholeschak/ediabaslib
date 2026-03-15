@@ -103,7 +103,7 @@ namespace PsdzRpcClient
                     Console.WriteLine("E = Execute TAL");
                     Console.WriteLine("ESC = Exit");
 
-                    string istaFolder = ProgrammingJobs.GetIstaInstallLocation();
+                    string istaFolder = await client.RpcService.GetIstaInstallLocation();
                     string remoteHost = "127.0.0.1";
                     for (;;)
                     {

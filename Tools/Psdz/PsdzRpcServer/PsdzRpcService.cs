@@ -67,6 +67,12 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.CompletedTask;
     }
 
+    public Task<string> GetIstaInstallLocation()
+    {
+        string istaFolder = ProgrammingJobs.GetIstaInstallLocation();
+        return Task.FromResult(istaFolder);
+    }
+
     public Task<bool> StartProgrammingService(string istaFolder)
     {
         if (IsOperationActive())
