@@ -108,6 +108,7 @@ namespace PsdzRpcClient
                     Console.WriteLine("O = Create Options");
                     Console.WriteLine("T = Build TAL");
                     Console.WriteLine("E = Execute TAL");
+                    Console.WriteLine("A = Abort Operation");
                     Console.WriteLine("ESC = Exit");
 
                     for (;;)
@@ -170,6 +171,13 @@ namespace PsdzRpcClient
                                     Console.WriteLine("Executing TAL...");
                                     bool result = await client.RpcService.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
                                     Console.WriteLine($"Execute TAL = {result}");
+                                    break;
+                                }
+
+                                case ConsoleKey.A:
+                                {
+                                    Console.WriteLine("Aborting operation...");
+                                    await client.RpcService.CancelOperation();
                                     break;
                                 }
 
