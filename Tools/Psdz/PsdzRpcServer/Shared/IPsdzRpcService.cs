@@ -34,6 +34,7 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> IsTalPresent();
     Task<string> GetVehicleVin();
     Task<string> GetPsdzServiceHostLogDir();
+    Task<List<PsdzRpcOptionType>> GetOptionTypes();
     Task<List<ProgrammingJobs.OptionsItem>> GetSelectedOptions();
     Task<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> GetOptionsDict();
     Task<bool> ClearOptionsDict();

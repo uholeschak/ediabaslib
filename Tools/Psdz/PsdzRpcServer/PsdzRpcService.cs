@@ -229,6 +229,18 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(hostLogDir);
     }
 
+    public Task<List<PsdzRpcOptionType>> GetOptionTypes()
+    {
+        List<PsdzRpcOptionType> optionTypes = new List<PsdzRpcOptionType>();
+        foreach (ProgrammingJobs.OptionType optionTypeUpdate in _programmingJobs.OptionTypes)
+        {
+            PsdzRpcOptionType optionType = new PsdzRpcOptionType(optionTypeUpdate.SwiRegisterEnum, optionTypeUpdate.ToString());
+            optionTypes.Add(optionType);
+        }
+
+        return Task.FromResult(optionTypes);
+    }
+
     public Task<List<ProgrammingJobs.OptionsItem>> GetSelectedOptions()
     {
         List<ProgrammingJobs.OptionsItem> options = _programmingJobs.SelectedOptions;
