@@ -85,7 +85,9 @@ namespace PsdzRpcClient
 
                 if (client.RpcService != null)
                 {
-#if true
+                    string istaFolder = await client.RpcService.GetIstaInstallLocation();
+                    Console.WriteLine($"ISTA Install location: {istaFolder}");
+#if false
                     bool resultConnect = await client.RpcService.Connect("Connect");
                     Console.WriteLine($"Connect = {resultConnect}");
 
@@ -94,8 +96,6 @@ namespace PsdzRpcClient
 
                     await client.RpcService.CancelOperation();
 #else
-                    string istaFolder = await client.RpcService.GetIstaInstallLocation();
-                    Console.WriteLine($"ISTA Install location: {istaFolder}");
                     string remoteHost = "127.0.0.1";
 
                     Console.WriteLine("Press keys to perform actions:");
