@@ -2277,7 +2277,7 @@ namespace PsdzClient.Programming
 
                             if (hasVehicleQueue)
                             {
-                                WaitForEmptyVehicleQueue();
+                                WaitForEmptyVehicleQueue(cts);
                             }
                         }
 
@@ -2693,7 +2693,7 @@ namespace PsdzClient.Programming
                         log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Svt failed step: {0}", step);
                     }
 
-                    WaitForEmptyVehicleQueue();
+                    WaitForEmptyVehicleQueue(cts);
                 }
 
                 if (psdzStandardSvt == null)
@@ -3091,7 +3091,7 @@ namespace PsdzClient.Programming
                         log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed step: {0}", step);
                     }
 
-                    WaitForEmptyVehicleQueue();
+                    WaitForEmptyVehicleQueue(cts);
                 }
 
                 if (psdzEcuContextInfos == null)
@@ -3134,7 +3134,7 @@ namespace PsdzClient.Programming
                         log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Swt action failed step: {0}", step);
                     }
 
-                    WaitForEmptyVehicleQueue();
+                    WaitForEmptyVehicleQueue(cts);
                 }
 
                 if (psdzSwtAction == null)
@@ -3197,7 +3197,7 @@ namespace PsdzClient.Programming
                         log.WarnFormat(CultureInfo.InvariantCulture, "Generating TAL failed step: {0}", step);
                     }
 
-                    WaitForEmptyVehicleQueue();
+                    WaitForEmptyVehicleQueue(cts);
                 }
 
                 if (psdzTal == null)
@@ -3580,7 +3580,7 @@ namespace PsdzClient.Programming
 
                 if (hasVehicleQueue)
                 {
-                    WaitForEmptyVehicleQueue();
+                    WaitForEmptyVehicleQueue(cts);
                 }
             }
 
@@ -3699,7 +3699,7 @@ namespace PsdzClient.Programming
                 {
                     if (hasVehicleQueue)
                     {
-                        WaitForEmptyVehicleQueue();
+                        WaitForEmptyVehicleQueue(cts);
                     }
 
                     if (!OpenPsdzConnection(sbResult))
@@ -4232,7 +4232,7 @@ namespace PsdzClient.Programming
             return queueSize;
         }
 
-        public bool WaitForEmptyVehicleQueue(int timeout = 20000)
+        public bool WaitForEmptyVehicleQueue(CancellationTokenSource cts, int timeout = 20000)
         {
             log.InfoFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Timeout: {0}", timeout);
 
@@ -4251,6 +4251,11 @@ namespace PsdzClient.Programming
                 {
                     log.ErrorFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Timeout, continuing");
                     break;
+                }
+
+                if (cts != null)
+                {
+                    return cts.Token.IsCancellationRequested;
                 }
 
                 Thread.Sleep(1000);
