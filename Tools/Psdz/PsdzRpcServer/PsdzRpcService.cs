@@ -28,31 +28,6 @@ public class PsdzRpcService : IPsdzRpcService
         _programmingJobs.GenServiceModules = false;
     }
 
-    public async Task<bool> Connect(string parameter)
-    {
-        for (int i = 0; i <= 100; i += 20)
-        {
-            await _callback.OnUpdateStatus($"Connecting... {i}%");
-            await _callback.OnProgressChanged(i, $"Connecting... {i}%");
-            await Task.Delay(500);
-        }
-        await _callback.OnOperationCompleted(true);
-        return true;
-    }
-
-    public async Task<bool> Disconnect(string parameter)
-    {
-        // Implement disconnection logic here
-        for (int i = 0; i <= 100; i += 20)
-        {
-            await _callback.OnUpdateStatus($"Disconnecting... {i}%");
-            await _callback.OnProgressChanged(i, $"Disconnecting... {i}%");
-            await Task.Delay(500);
-        }
-        await _callback.OnOperationCompleted(true);
-        return true;
-    }
-
     public Task<bool> OperationActive()
     {
         bool isActive = IsOperationActive();

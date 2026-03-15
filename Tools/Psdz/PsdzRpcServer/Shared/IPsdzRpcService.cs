@@ -11,8 +11,6 @@ namespace PsdzRpcServer.Shared;
 [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
 public partial interface IPsdzRpcService : IDisposable
 {
-    Task<bool> Connect(string parameter);
-    Task<bool> Disconnect(string parameter);
     Task<bool> OperationActive();
     Task CancelOperation();
     Task<bool> SetupLog4Net(string logFile);

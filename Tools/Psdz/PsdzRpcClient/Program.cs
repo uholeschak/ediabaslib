@@ -99,15 +99,6 @@ namespace PsdzRpcClient
                 {
                     string istaFolder = await client.RpcService.GetIstaInstallLocation();
                     Console.WriteLine($"ISTA Install location: {istaFolder}");
-#if false
-                    bool resultConnect = await client.RpcService.Connect("Connect");
-                    Console.WriteLine($"Connect = {resultConnect}");
-
-                    bool resultDisconnect = await client.RpcService.Disconnect("Disconnect");
-                    Console.WriteLine($"Disconnect = {resultDisconnect}");
-
-                    await client.RpcService.CancelOperation();
-#else
                     string remoteHost = "127.0.0.1";
 
                     Console.WriteLine("Press keys to perform actions:");
@@ -194,7 +185,6 @@ namespace PsdzRpcClient
                             break;
                         }
                     }
-#endif
                 }
             }
             catch (OperationCanceledException)
