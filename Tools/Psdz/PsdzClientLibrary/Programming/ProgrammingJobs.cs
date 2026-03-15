@@ -2459,7 +2459,7 @@ namespace PsdzClient.Programming
                 bool bModifyFa = operationType == OperationType.BuildTalModFa;
                 List<int> diagAddrList = new List<int>();
                 RegisterGroup = PsdzDatabase.SwiRegisterGroup.Modification;
-                if (bModifyFa)
+                if (bModifyFa && SelectedOptions != null)
                 {
                     foreach (OptionsItem optionsItem in SelectedOptions)
                     {
@@ -3892,7 +3892,7 @@ namespace PsdzClient.Programming
                     break;
             }
 
-            if (operation != OperationStateData.OperationEnum.Idle)
+            if (operation != OperationStateData.OperationEnum.Idle && SelectedOptions != null)
             {
                 diagAddrList = new List<int>();
                 foreach (OptionsItem optionItem in SelectedOptions)
@@ -3962,15 +3962,18 @@ namespace PsdzClient.Programming
                 }
 
                 List<SelectedOptionData> selectedOptionList = new List<SelectedOptionData>();
-                foreach (OptionsItem optionsItem in SelectedOptions)
+                if (SelectedOptions != null)
                 {
-                    string swiActionId = optionsItem.SwiAction.Id;
-                    if (string.IsNullOrEmpty(swiActionId))
+                    foreach (OptionsItem optionsItem in SelectedOptions)
                     {
-                        continue;
-                    }
+                        string swiActionId = optionsItem.SwiAction.Id;
+                        if (string.IsNullOrEmpty(swiActionId))
+                        {
+                            continue;
+                        }
 
-                    selectedOptionList.Add(new SelectedOptionData(swiActionId, optionsItem.SwiRegisterEnum));
+                        selectedOptionList.Add(new SelectedOptionData(swiActionId, optionsItem.SwiRegisterEnum));
+                    }
                 }
 
                 OperationState.SelectedOptionList = selectedOptionList;
@@ -4049,7 +4052,7 @@ namespace PsdzClient.Programming
             }
 
             PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null;
-            SelectedOptions.Clear();
+            SelectedOptions?.Clear();
             if (OptionsDict != null && OperationState.SelectedOptionList != null)
             {
                 foreach (SelectedOptionData optionData in OperationState.SelectedOptionList)
@@ -4077,7 +4080,7 @@ namespace PsdzClient.Programming
                         {
                             itemFound = true;
                             swiRegisterEnum = optionData.SwiRegister;
-                            SelectedOptions.Add(optionsItem);
+                            SelectedOptions?.Add(optionsItem);
                             break;
                         }
                     }
@@ -4137,7 +4140,7 @@ namespace PsdzClient.Programming
                 }
             }
 
-            SelectedOptions.Clear();
+            SelectedOptions?.Clear();
             if (optionsReplacement != null && OperationState.DiagAddrList != null)
             {
                 foreach (int address in OperationState.DiagAddrList)
@@ -4148,7 +4151,7 @@ namespace PsdzClient.Programming
                         if (optionsItem.EcuInfo != null && optionsItem.EcuInfo.Address == address)
                         {
                             itemFound = true;
-                            SelectedOptions.Add(optionsItem);
+                            SelectedOptions?.Add(optionsItem);
                             break;
                         }
                     }

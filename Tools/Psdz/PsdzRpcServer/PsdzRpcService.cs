@@ -349,6 +349,7 @@ public class PsdzRpcService : IPsdzRpcService
     private void UpdateOptions(Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict)
     {
         UpdateStatus("UpdateOptions called");
+        _programmingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
         //_callback.OnUpdateOptions(optionsDict);
     }
 
