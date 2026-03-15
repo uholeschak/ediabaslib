@@ -6,6 +6,9 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="..\PsdzClient\log4net_config.xml" Link="log4net_config.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="StreamJsonRpc" Version="2.24.84" />
   </ItemGroup>
   <ItemGroup>
