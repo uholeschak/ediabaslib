@@ -11,7 +11,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
 {
     public event EventHandler<ProgressEventArgs> ProgressChanged;
     public event EventHandler<bool> OperationCompleted;
-    public event EventHandler<string> UpdatedStatus;
+    public event EventHandler<string> UpdateStatus;
     public event EventHandler<(int percent, bool marquee, string message)> UpdateProgress;
     public event EventHandler<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> UpdateOptions;
     public event EventHandler<PsdzDatabase.SwiRegisterEnum?> UpdateOptionSelections;
@@ -33,7 +33,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
 
     public Task OnUpdateStatus(string message)
     {
-        UpdatedStatus?.Invoke(this, message);
+        UpdateStatus?.Invoke(this, message);
         return Task.CompletedTask;
     }
 

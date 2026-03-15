@@ -31,7 +31,7 @@ namespace PsdzRpcClient
                     Console.WriteLine($"Operation finished: {(success ? "Success" : "Error")}");
                 };
 
-                client.CallbackHandler.UpdatedStatus += (s, e) =>
+                client.CallbackHandler.UpdateStatus += (s, e) =>
                 {
                     Console.WriteLine($"Status: {e}");
                 };
