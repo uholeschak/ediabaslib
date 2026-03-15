@@ -32,10 +32,11 @@ public class PsdzRpcService : IPsdzRpcService
     {
         for (int i = 0; i <= 100; i += 20)
         {
-            await _callback.OnProgressChangedAsync(i, $"Connecting... {i}%");
+            await _callback.OnUpdateStatus($"Connecting... {i}%");
+            await _callback.OnProgressChanged(i, $"Connecting... {i}%");
             await Task.Delay(500);
         }
-        await _callback.OnOperationCompletedAsync(true);
+        await _callback.OnOperationCompleted(true);
         return true;
     }
 
@@ -44,10 +45,11 @@ public class PsdzRpcService : IPsdzRpcService
         // Implement disconnection logic here
         for (int i = 0; i <= 100; i += 20)
         {
-            await _callback.OnProgressChangedAsync(i, $"Disconnecting... {i}%");
+            await _callback.OnUpdateStatus($"Disconnecting... {i}%");
+            await _callback.OnProgressChanged(i, $"Disconnecting... {i}%");
             await Task.Delay(500);
         }
-        await _callback.OnOperationCompletedAsync(true);
+        await _callback.OnOperationCompleted(true);
         return true;
     }
 
@@ -84,7 +86,7 @@ public class PsdzRpcService : IPsdzRpcService
         StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
         {
             bool result = task.IsCompletedSuccessfully && task.Result;
-            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
+            _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 
@@ -102,7 +104,7 @@ public class PsdzRpcService : IPsdzRpcService
         StopProgrammingServiceTask(istaFolder, force).ContinueWith(task =>
         {
             bool result = task.IsCompletedSuccessfully && task.Result;
-            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
+            _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 
@@ -120,7 +122,7 @@ public class PsdzRpcService : IPsdzRpcService
         ConnectVehicleTask(istaFolder, remoteHost, useIcom, addTimeout).ContinueWith(task =>
         {
             bool result = task.IsCompletedSuccessfully && task.Result;
-            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
+            _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 
@@ -138,7 +140,7 @@ public class PsdzRpcService : IPsdzRpcService
         DisconnectVehicleTask().ContinueWith(task =>
         {
             bool result = task.IsCompletedSuccessfully && task.Result;
-            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
+            _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 
@@ -156,7 +158,7 @@ public class PsdzRpcService : IPsdzRpcService
         VehicleFunctionsTask(operationType).ContinueWith(task =>
         {
             bool result = task.IsCompletedSuccessfully && task.Result;
-            _callback.OnOperationCompletedAsync(result).GetAwaiter().GetResult();
+            _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
             DisposeCancellationToken(cts);
         }, cts.Token);
 

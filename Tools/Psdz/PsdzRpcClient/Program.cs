@@ -85,7 +85,7 @@ namespace PsdzRpcClient
 
                 if (client.RpcService != null)
                 {
-#if false
+#if true
                     bool resultConnect = await client.RpcService.Connect("Connect");
                     Console.WriteLine($"Connect = {resultConnect}");
 
