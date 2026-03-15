@@ -4,12 +4,13 @@
     "Projects": [
       {
         "Path": "PsdzRpcServer\\PsdzRpcServer.csproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "PsdzRpcServer"
       },
       {
         "Path": "PsdzRpcClient\\PsdzRpcClient.csproj",
         "Action": "Start",
-        "delayMilliseconds": 2000
+        "DebugTarget": "PsdzRpcClient"
       }
     ]
   }
