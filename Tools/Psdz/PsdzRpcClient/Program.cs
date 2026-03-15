@@ -71,14 +71,15 @@ namespace PsdzRpcClient
                     args.Result = -1; // Simulate no queue
                 };
 
-                client.CallbackHandler.ServiceInitialized += (sender, hostLogDir) =>
+                client.CallbackHandler.ServiceInitialized += async (sender, hostLogDir) =>
                 {
                     Console.WriteLine($"Service initialized. Host log directory: {hostLogDir}");
                     if (client.RpcService != null)
                     {
                         string logFile = Path.Combine(hostLogDir, "PsdzClient.log");
                         Console.WriteLine($"SetupLog4Net with log file: {logFile}");
-                        client.RpcService.SetupLog4Net(logFile);
+                        bool result = await client.RpcService.SetupLog4Net(logFile);
+                        Console.WriteLine($"SetupLog4Net result: {result}");
                     }
                 };
 

@@ -71,8 +71,8 @@ public class PsdzRpcService : IPsdzRpcService
 
     public Task<bool> SetupLog4Net(string logFile)
     {
-        ProgrammingJobs.SetupLog4Net(logFile);
-        return Task.FromResult(true);
+        bool result = ProgrammingJobs.SetupLog4Net(logFile);
+        return Task.FromResult(result);
     }
 
     public Task<string> GetIstaInstallLocation()

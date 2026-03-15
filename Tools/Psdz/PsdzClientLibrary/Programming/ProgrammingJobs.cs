@@ -4274,7 +4274,7 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public static void SetupLog4Net(string logFile)
+        public static bool SetupLog4Net(string logFile)
         {
             try
             {
@@ -4286,12 +4286,15 @@ namespace PsdzClient.Programming
                     {
                         log4net.GlobalContext.Properties["LogFileName"] = logFile;
                         XmlConfigurator.Configure(new FileInfo(log4NetConfig));
+                        return true;
                     }
                 }
+
+                return false;
             }
             catch (Exception)
             {
-                // ignored
+                return false;
             }
         }
 
