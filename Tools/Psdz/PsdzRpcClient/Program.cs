@@ -94,6 +94,10 @@ namespace PsdzRpcClient
 
                     await client.RpcService.CancelOperation();
 #else
+                    string istaFolder = await client.RpcService.GetIstaInstallLocation();
+                    Console.WriteLine($"ISTA Install location: {istaFolder}");
+                    string remoteHost = "127.0.0.1";
+
                     Console.WriteLine("Press keys to perform actions:");
                     Console.WriteLine("C = Connect Vehicle");
                     Console.WriteLine("D = Disconnect Vehicle");
@@ -103,8 +107,6 @@ namespace PsdzRpcClient
                     Console.WriteLine("E = Execute TAL");
                     Console.WriteLine("ESC = Exit");
 
-                    string istaFolder = await client.RpcService.GetIstaInstallLocation();
-                    string remoteHost = "127.0.0.1";
                     for (;;)
                     {
                         bool exitLoop = false;
