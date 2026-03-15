@@ -1,5 +1,6 @@
 ﻿using PsdzClient.Programming;
 using System;
+using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -73,6 +74,12 @@ namespace PsdzRpcClient
                 client.CallbackHandler.ServiceInitialized += (sender, hostLogDir) =>
                 {
                     Console.WriteLine($"Service initialized. Host log directory: {hostLogDir}");
+                    if (client.RpcService != null)
+                    {
+                        string logFile = Path.Combine(hostLogDir, "PsdzClient.log");
+                        Console.WriteLine($"SetupLog4Net with log file: {logFile}");
+                        client.RpcService.SetupLog4Net(logFile);
+                    }
                 };
 
                 Console.WriteLine("Starting PsdzJsonRpcClient...");

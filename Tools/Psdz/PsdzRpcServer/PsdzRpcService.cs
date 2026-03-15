@@ -69,6 +69,12 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.CompletedTask;
     }
 
+    public Task<bool> SetupLog4Net(string logFile)
+    {
+        ProgrammingJobs.SetupLog4Net(logFile);
+        return Task.FromResult(true);
+    }
+
     public Task<string> GetIstaInstallLocation()
     {
         string istaFolder = ProgrammingJobs.GetIstaInstallLocation();

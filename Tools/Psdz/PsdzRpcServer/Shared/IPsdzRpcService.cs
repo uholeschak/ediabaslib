@@ -15,6 +15,7 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> Disconnect(string parameter);
     Task<bool> OperationActive();
     Task CancelOperation();
+    Task<bool> SetupLog4Net(string logFile);
     Task<string> GetIstaInstallLocation();
     Task<bool> StartProgrammingService(string istaFolder);
     Task<bool> StopProgrammingService(string istaFolder, bool force = false);
