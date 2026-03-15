@@ -67,7 +67,7 @@ namespace PsdzRpcClient
 
                 client.CallbackHandler.TelSendQueueSize += (sender, args) =>
                 {
-                    Console.WriteLine($"Tel send queue size: {args.Result}");
+                    args.Result = -1; // Simulate no queue
                 };
 
                 client.CallbackHandler.ServiceInitialized += (sender, hostLogDir) =>
