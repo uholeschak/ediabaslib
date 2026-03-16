@@ -1773,9 +1773,9 @@ namespace S29CertGenerator
                     string machineName = EdSec4Diag.GetMachineName();
                     string machinePrivateFile = Path.Combine(certOutputFolder, machineName + ".p12");
                     string machinePublicFile = Path.Combine(certOutputFolder, machineName + EdSec4Diag.S29MachinePublicName);
-                    if (!File.Exists(machinePublicFile))
+                    if (!File.Exists(machinePrivateFile) || !File.Exists(machinePublicFile))
                     {
-                        UpdateStatusText($"Machine public key file does not existing: {machinePublicFile}", true);
+                        UpdateStatusText($"Machine key {machinePrivateFile} or public {machinePublicFile} file does not exist.", true);
                         UpdateStatusText("Execute EDIABAS or EdiabasLib in SSL mode first to generate the key files.", true);
                         return false;
                     }
