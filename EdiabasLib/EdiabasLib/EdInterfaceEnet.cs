@@ -4280,7 +4280,8 @@ namespace EdiabasLib
                         break;
                     }
 
-                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, SecObjectIdentifiers.SecP384r1, p12Password))
+                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, SecObjectIdentifiers.SecP384r1, p12Password,
+                            "C=DE, O=BMW, CN=EDIABAS-Tester", "SHA256swithECDSA"))
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Generate private key file failed: {0}", machinePrivateFile);
                         break;
