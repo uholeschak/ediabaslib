@@ -4,9 +4,10 @@ using System.Threading;
 
 namespace PsdzRpcClient;
 
-public class SingleThreadSynchronizationContext : SynchronizationContext
+public sealed class SingleThreadSynchronizationContext : SynchronizationContext
 {
     private readonly BlockingCollection<(SendOrPostCallback Callback, object State)> _queue = new();
+    private readonly int _mainThreadId = Environment.CurrentManagedThreadId;
 
     public override void Post(SendOrPostCallback d, object state)
     {
@@ -15,13 +16,31 @@ public class SingleThreadSynchronizationContext : SynchronizationContext
 
     public override void Send(SendOrPostCallback d, object state)
     {
-        // Für Einfachheit als Post behandeln; bei Bedarf synchron warten
-        Post(d, state);
+        if (Environment.CurrentManagedThreadId == _mainThreadId)
+        {
+            d(state);
+        }
+        else
+        {
+            using ManualResetEventSlim mre = new(false);
+            Post(_ =>
+            {
+                try
+                {
+                    d(state);
+                }
+                finally
+                {
+                    mre.Set();
+                }
+            }, null);
+            mre.Wait();
+        }
     }
 
     /// <summary>
     /// Verarbeitet die Warteschlange auf dem aufrufenden Thread.
-    /// Blockiert, bis <paramref name="ct"/> abgebrochen wird.
+    /// Blockiert, bis <see cref="Complete"/> aufgerufen wird oder <paramref name="ct"/> abgebrochen wird.
     /// </summary>
     public void RunOnCurrentThread(CancellationToken ct)
     {
