@@ -6714,6 +6714,7 @@ namespace BmwDeepObd
         {
             externalKeyPair = null;
             DoIpCertificateStatus certStatus = DoIpCertificateStatus.Unknown;
+            DateTime expireDate = DateTime.UtcNow.AddHours(1.0);
             DateTime? certValidDate = null;
 
             try
@@ -6748,7 +6749,7 @@ namespace BmwDeepObd
                 if (vehicleKeyPair != null)
                 {
                     certStatus = DoIpCertificateStatus.ExternalCertInvalid;
-                    if (certValidDate != null && certValidDate.Value < DateTime.UtcNow.AddHours(1.0))
+                    if (certValidDate != null && certValidDate.Value < expireDate)
                     {
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: External vehicle certificate expired");
                         certStatus = DoIpCertificateStatus.ExternalCertExpired;
@@ -6772,7 +6773,7 @@ namespace BmwDeepObd
                 if (externalPrivateKey != null)
                 {
                     certStatus = DoIpCertificateStatus.ExternalCertInvalid;
-                    if (certValidDate != null && certValidDate.Value < DateTime.UtcNow.AddHours(1.0))
+                    if (certValidDate != null && certValidDate.Value < expireDate)
                     {
                         ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: External certificate expired");
                         certStatus = DoIpCertificateStatus.ExternalCertExpired;
@@ -6899,6 +6900,12 @@ namespace BmwDeepObd
             {
                 if (certStatus != DoIpCertificateStatus.Unknown)
                 {
+                    if (certStatus == DoIpCertificateStatus.InternalCertValid && certValidDate != null && certValidDate.Value < expireDate)
+                    {
+                        ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "GenS29Certificate: Certificate expired");
+                        certStatus = DoIpCertificateStatus.ExternalCertExpired;
+                    }
+
                     SendDoIpCertStatus(certStatus, certValidDate);
                 }
             }
@@ -7041,7 +7048,7 @@ namespace BmwDeepObd
 
             string keyFilePath = Path.Combine(importCertPath, EdSec4Diag.IstaPkcs12KeyFile);
             string keyPwdFile = Path.ChangeExtension(keyFilePath, ".txt");
-            string keyPwd = EdSec4Diag.IstaPkcs12KeyPwd;
+            string keyPwd = EdSec4Diag.EdiabasPkcs12KeyPwd;
 
             if (File.Exists(keyPwdFile))
             {
