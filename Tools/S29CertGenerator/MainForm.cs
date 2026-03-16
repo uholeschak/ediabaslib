@@ -1785,7 +1785,7 @@ namespace S29CertGenerator
                     }
 
                     AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, EdSec4Diag.EdiabasPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
-                    if (privateKeyResource == null)
+                    if (privateKeyResource == null || publicCertificateEntries.Length < 1)
                     {
                         UpdateStatusText($"Failed to load private key from file: {machinePrivateFile}", true);
                         return false;
@@ -1795,6 +1795,13 @@ namespace S29CertGenerator
                     if (publicKeyParameter == null)
                     {
                         UpdateStatusText($"Failed to load public key from file: {machinePublicFile}", true);
+                        return false;
+                    }
+
+                    AsymmetricKeyParameter certPublicKey = publicCertificateEntries[0].Certificate.GetPublicKey();
+                    if (!certPublicKey.Equals(publicKeyParameter))
+                    {
+                        UpdateStatusText($"Public key in certificate does not match public key file: {machinePublicFile}", true);
                         return false;
                     }
 
