@@ -4211,12 +4211,7 @@ namespace EdiabasLib
                 string machineName = EdSec4Diag.GetMachineName();
                 string machinePrivateFile = Path.Combine(certPath, machineName + ".p12");
                 string machinePublicFile = Path.Combine(certPath, machineName + EdSec4Diag.S29MachinePublicName);
-
-                string p12Password;
-                using (SHA256 algorithm = SHA256.Create())
-                {
-                    p12Password = Convert.ToBase64String(algorithm.ComputeHash(Encoding.UTF8.GetBytes(machineName.ToUpperInvariant())));
-                }
+                string p12Password = EdSec4Diag.EdiabasPkcs12KeyPwd;
 
                 AsymmetricKeyParameter machineAsymmetricKeyPar = null;
                 X509CertificateEntry[] machinePublicChain = null;
@@ -4285,7 +4280,8 @@ namespace EdiabasLib
                         break;
                     }
 
-                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, SecObjectIdentifiers.SecP384r1, p12Password))
+                    if (!EdBcTlsUtilities.GenerateEcKeyPair(machinePrivateFile, machinePublicFile, SecObjectIdentifiers.SecP384r1, p12Password,
+                            "C=DE, O=BMW, CN=EDIABAS-Tester", "SHA256swithECDSA"))
                     {
                         EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs Generate private key file failed: {0}", machinePrivateFile);
                         break;
