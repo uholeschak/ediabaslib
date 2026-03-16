@@ -95,7 +95,7 @@ namespace PsdzRpcClient
 
                 SingleThreadSynchronizationContext synchronizationContext = new SingleThreadSynchronizationContext();
                 Console.WriteLine("Starting PsdzJsonRpcClient...");
-                Task clientTask = client.ConnectAsync(synchronizationContext, cts.Token);
+                Task clientTask = client.ConnectAsync(null, cts.Token);
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);
 
                 await Task.WhenAny(clientTask, keyTask);
@@ -118,6 +118,7 @@ namespace PsdzRpcClient
                         bool exitLoop = false;
                         if (Console.KeyAvailable)
                         {
+                            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
                             bool active = await client.RpcService.OperationActive();
                             if (active)
                             {
@@ -125,7 +126,6 @@ namespace PsdzRpcClient
                                 continue;
                             }
 
-                            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
                             switch (key.Key)
                             {
                                 case ConsoleKey.C:
