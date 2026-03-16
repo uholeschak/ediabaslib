@@ -1784,28 +1784,51 @@ namespace S29CertGenerator
                         }
                     }
 
-                    AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, EdSec4Diag.EdiabasPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
-                    if (privateKeyResource == null || publicCertificateEntries.Length < 1)
+                    bool deleteFiles = false;
+                    try
                     {
-                        UpdateStatusText($"Failed to load private key from file: {machinePrivateFile}", true);
-                        return false;
-                    }
+                        AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, EdSec4Diag.EdiabasPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
+                        if (privateKeyResource == null || publicCertificateEntries.Length < 1)
+                        {
+                            UpdateStatusText($"Failed to load private key from file: {machinePrivateFile}", true);
+                            deleteFiles = true;
+                            return false;
+                        }
 
-                    AsymmetricKeyParameter publicKeyParameter = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
-                    if (publicKeyParameter == null)
+                        AsymmetricKeyParameter publicKeyParameter = EdBcTlsUtilities.LoadPemObject(machinePublicFile) as AsymmetricKeyParameter;
+                        if (publicKeyParameter == null)
+                        {
+                            UpdateStatusText($"Failed to load public key from file: {machinePublicFile}", true);
+                            deleteFiles = true;
+                            return false;
+                        }
+
+                        AsymmetricKeyParameter certPublicKey = publicCertificateEntries[0].Certificate.GetPublicKey();
+                        if (!certPublicKey.Equals(publicKeyParameter))
+                        {
+                            UpdateStatusText($"Public key in certificate does not match public key file: {machinePublicFile}", true);
+                            deleteFiles = true;
+                            return false;
+                        }
+
+                        GenerateVehicleCertificate(trustStoreFolder, istaCertChain, publicKeyParameter, vehicleVin, certOutputFolder);
+                    }
+                    finally
                     {
-                        UpdateStatusText($"Failed to load public key from file: {machinePublicFile}", true);
-                        return false;
-                    }
+                        if (deleteFiles)
+                        {
+                            UpdateStatusText("Deleting invalid EDIABAS key files", true);
 
-                    AsymmetricKeyParameter certPublicKey = publicCertificateEntries[0].Certificate.GetPublicKey();
-                    if (!certPublicKey.Equals(publicKeyParameter))
-                    {
-                        UpdateStatusText($"Public key in certificate does not match public key file: {machinePublicFile}", true);
-                        return false;
+                            if (File.Exists(machinePrivateFile))
+                            {
+                                File.Delete(machinePrivateFile);
+                            }
+                            if (File.Exists(machinePublicFile))
+                            {
+                                File.Delete(machinePublicFile);
+                            }
+                        }
                     }
-
-                    GenerateVehicleCertificate(trustStoreFolder, istaCertChain, publicKeyParameter, vehicleVin, certOutputFolder);
                 }
 
                 return true;
