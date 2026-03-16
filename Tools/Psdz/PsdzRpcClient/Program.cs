@@ -57,7 +57,7 @@ namespace PsdzRpcClient
                         if (optionTypes != null)
                         {
                             Console.WriteLine("Available option types:");
-                            foreach (var option in optionTypes)
+                            foreach (PsdzRpcOptionType option in optionTypes)
                             {
                                 Console.WriteLine($"- {option.Caption} ({option.SwiRegisterEnum.ToString()})");
                             }
@@ -110,16 +110,7 @@ namespace PsdzRpcClient
                     string istaFolder = await client.RpcService.GetIstaInstallLocation();
                     Console.WriteLine($"ISTA Install location: {istaFolder}");
                     string remoteHost = "127.0.0.1";
-
-                    Console.WriteLine("Press keys to perform actions:");
-                    Console.WriteLine("C = Connect Vehicle");
-                    Console.WriteLine("D = Disconnect Vehicle");
-                    Console.WriteLine("S = Stop Programming Service");
-                    Console.WriteLine("O = Create Options");
-                    Console.WriteLine("T = Build TAL");
-                    Console.WriteLine("E = Execute TAL");
-                    Console.WriteLine("A = Abort Operation");
-                    Console.WriteLine("ESC = Exit");
+                    PrintOptions();
 
                     for (;;)
                     {
@@ -196,6 +187,11 @@ namespace PsdzRpcClient
                                     exitLoop = true;
                                     break;
                             }
+
+                            if (!exitLoop)
+                            {
+                                PrintOptions();
+                            }
                         }
 
                         if (exitLoop)
@@ -219,6 +215,20 @@ namespace PsdzRpcClient
             Console.WriteLine("Press any key to exit...");
             Console.ReadKey();
             return 0;
+        }
+
+        private static void PrintOptions()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Available commands:");
+            Console.WriteLine("C - Connect Vehicle");
+            Console.WriteLine("D - Disconnect Vehicle");
+            Console.WriteLine("S - Stop Programming Service");
+            Console.WriteLine("O - Create Options");
+            Console.WriteLine("T - Build TAL");
+            Console.WriteLine("E - Execute TAL");
+            Console.WriteLine("A - Abort Operation");
+            Console.WriteLine("ESC - Exit Client");
         }
 
         private static async Task WaitForEscapeKeyAsync(CancellationToken ct)
