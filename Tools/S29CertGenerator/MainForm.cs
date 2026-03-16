@@ -1771,11 +1771,19 @@ namespace S29CertGenerator
                 else
                 {
                     string machineName = EdSec4Diag.GetMachineName();
+                    string machinePrivateFile = Path.Combine(certOutputFolder, machineName + ".p12");
                     string machinePublicFile = Path.Combine(certOutputFolder, machineName + EdSec4Diag.S29MachinePublicName);
                     if (!File.Exists(machinePublicFile))
                     {
                         UpdateStatusText($"Machine public key file does not existing: {machinePublicFile}", true);
                         UpdateStatusText("Execute EDIABAS or EdiabasLib in SSL mode first to generate the key files.", true);
+                        return false;
+                    }
+
+                    AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, EdSec4Diag.EdiabasPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
+                    if (privateKeyResource == null)
+                    {
+                        UpdateStatusText($"Failed to load private key from file: {machinePrivateFile}", true);
                         return false;
                     }
 
