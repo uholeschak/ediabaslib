@@ -4279,6 +4279,10 @@ namespace EdiabasLib
                             EdiabasProtected?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "GetS29Certs File {0}, Exception: {1}", machinePublicFile, EdiabasNet.GetExceptionText(ex));
                         }
                     }
+                    else
+                    {
+                        machinePublicChain = null;
+                    }
 
                     if (machineAsymmetricKeyPar != null && machinePublicChain != null)
                     {
