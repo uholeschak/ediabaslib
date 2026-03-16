@@ -27,73 +27,101 @@ namespace PsdzRpcClient
                     ctsLocal.Cancel();
                 };
 
+                SingleThreadSynchronizationContext syncContext = new();
+
                 await using var client = new PsdzRpcClient();
                 client.CallbackHandler.ProgressChanged += (s, e) =>
                 {
-                    Console.WriteLine($"[{e.Percent}%] {e.Message}");
+                    syncContext.BeginInvoke(() =>
+                    {
+                        Console.WriteLine($"[{e.Percent}%] {e.Message}");
+                    });
                 };
 
                 client.CallbackHandler.OperationCompleted += (s, success) =>
                 {
-                    Console.WriteLine($"Operation finished: {(success ? "Success" : "Error")}");
+                    syncContext.BeginInvoke(() =>
+                    {
+                        Console.WriteLine($"Operation finished: {(success ? "Success" : "Error")}");
+                    });
                 };
 
                 client.CallbackHandler.UpdateStatus += (s, e) =>
                 {
-                    Console.WriteLine($"Status: {e}");
+                    syncContext.BeginInvoke(() =>
+                    {
+                        Console.WriteLine($"Status: {e}");
+                    });
                 };
 
                 client.CallbackHandler.UpdateProgress += (sender, tuple) =>
                 {
-                    Console.WriteLine($"[{tuple.percent}%] Marquee={tuple.marquee}: {tuple.message}");
+                    syncContext.BeginInvoke(() =>
+                    {
+                        Console.WriteLine($"[{tuple.percent}%] Marquee={tuple.marquee}: {tuple.message}");
+                    });
                 };
 
-                client.CallbackHandler.UpdateOptions += async (sender, optionsDict) =>
+                client.CallbackHandler.UpdateOptions += (sender, optionsDict) =>
                 {
-                    Console.WriteLine("Options updated");
-                    if (client.RpcService != null)
+                    syncContext.BeginInvoke(async () =>
                     {
-                        List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
-                        if (optionTypes != null)
+                        Console.WriteLine("Options updated");
+                        if (client.RpcService != null)
                         {
-                            Console.WriteLine("Available option types:");
-                            foreach (PsdzRpcOptionType option in optionTypes)
+                            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
+                            if (optionTypes != null)
                             {
-                                Console.WriteLine($"- {option.Caption} ({option.SwiRegisterEnum.ToString()})");
+                                Console.WriteLine("Available option types:");
+                                foreach (PsdzRpcOptionType option in optionTypes)
+                                {
+                                    Console.WriteLine($"- {option.Caption} ({option.SwiRegisterEnum.ToString()})");
+                                }
                             }
                         }
-                    }
+                    });
                 };
 
                 client.CallbackHandler.UpdateOptionSelections += (sender, swiRegisterEnum) =>
                 {
-                    Console.WriteLine($"Option selections updated: {swiRegisterEnum}");
-                };
-
-                client.CallbackHandler.ShowMessage += (sender, args) =>
-                {
-                    Console.WriteLine($"Message from server: {args.Message} (OK Button: {args.OkBtn}, Wait: {args.Wait}) -> OK");
-                    args.Result = true; // Simulate user clicking OK
-                };
-
-                client.CallbackHandler.TelSendQueueSize += (sender, args) =>
-                {
-                    args.Result = -1; // Simulate no queue
-                };
-
-                client.CallbackHandler.ServiceInitialized += async (sender, hostLogDir) =>
-                {
-                    Console.WriteLine($"Service initialized. Host log directory: {hostLogDir}");
-                    if (client.RpcService != null)
+                    syncContext.BeginInvoke(() =>
                     {
-                        string logFile = Path.Combine(hostLogDir, "PsdzClient.log");
-                        Console.WriteLine($"SetupLog4Net with log file: {logFile}");
-                        bool result = await client.RpcService.SetupLog4Net(logFile);
-                        Console.WriteLine($"SetupLog4Net result: {result}");
-                    }
+                        Console.WriteLine($"Option selections updated: {swiRegisterEnum}");
+                    });
                 };
 
-                SingleThreadSynchronizationContext synchronizationContext = new SingleThreadSynchronizationContext();
+                client.CallbackHandler.ShowMessage += (sender, msgArgs) =>
+                {
+                    syncContext.BeginInvoke(() =>
+                    {
+                        Console.WriteLine($"Message from server: {msgArgs.Message} (OK Button: {msgArgs.OkBtn}, Wait: {msgArgs.Wait}) -> OK");
+                        msgArgs.Result = true; // Simulate user clicking OK
+                    });
+                };
+
+                client.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
+                {
+                    syncContext.BeginInvoke(() =>
+                    {
+                        queueArgs.Result = -1; // Simulate no queue
+                    });
+                };
+
+                client.CallbackHandler.ServiceInitialized += (sender, hostLogDir) =>
+                {
+                    syncContext.BeginInvoke(async () =>
+                    {
+                        Console.WriteLine($"Service initialized. Host log directory: {hostLogDir}");
+                        if (client.RpcService != null)
+                        {
+                            string logFile = Path.Combine(hostLogDir, "PsdzClient.log");
+                            Console.WriteLine($"SetupLog4Net with log file: {logFile}");
+                            bool result = await client.RpcService.SetupLog4Net(logFile);
+                            Console.WriteLine($"SetupLog4Net result: {result}");
+                        }
+                    });
+                };
+
                 Console.WriteLine("Starting PsdzJsonRpcClient...");
                 Task clientTask = client.ConnectAsync(null, cts.Token);
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);
@@ -116,6 +144,10 @@ namespace PsdzRpcClient
                     for (;;)
                     {
                         bool exitLoop = false;
+
+                        // Ausstehende Callbacks auf dem Main-Thread verarbeiten
+                        syncContext.ProcessPendingCallbacks();
+
                         if (Console.KeyAvailable)
                         {
                             ConsoleKeyInfo key = Console.ReadKey(intercept: true);
@@ -193,6 +225,11 @@ namespace PsdzRpcClient
                             {
                                 PrintOptions();
                             }
+                        }
+                        else
+                        {
+                            // Kurze Pause um CPU-Last zu vermeiden
+                            Thread.Sleep(50);
                         }
 
                         if (exitLoop)

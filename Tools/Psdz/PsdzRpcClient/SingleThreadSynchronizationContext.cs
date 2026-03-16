@@ -1,62 +1,60 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace PsdzRpcClient;
 
 public sealed class SingleThreadSynchronizationContext : SynchronizationContext
 {
-    private readonly BlockingCollection<(SendOrPostCallback Callback, object State)> _queue = new();
-    private readonly int _mainThreadId = Environment.CurrentManagedThreadId;
+    private readonly ConcurrentQueue<(SendOrPostCallback Callback, object State)> _queue = new();
 
     public override void Post(SendOrPostCallback d, object state)
     {
-        _queue.Add((d, state));
+        _queue.Enqueue((d, state));
     }
 
     public override void Send(SendOrPostCallback d, object state)
     {
-        if (Environment.CurrentManagedThreadId == _mainThreadId)
-        {
-            d(state);
-        }
-        else
-        {
-            using ManualResetEventSlim mre = new(false);
-            Post(_ =>
-            {
-                try
-                {
-                    d(state);
-                }
-                finally
-                {
-                    mre.Set();
-                }
-            }, null);
-            mre.Wait();
-        }
+        // Auf dem aufrufenden Thread direkt ausführen
+        d(state);
     }
 
     /// <summary>
-    /// Verarbeitet die Warteschlange auf dem aufrufenden Thread.
-    /// Blockiert, bis <see cref="Complete"/> aufgerufen wird oder <paramref name="ct"/> abgebrochen wird.
+    /// Führt eine Aktion auf dem Main-Thread aus (analog zu Control.BeginInvoke).
     /// </summary>
-    public void RunOnCurrentThread(CancellationToken ct)
+    public void BeginInvoke(Action action)
     {
+        Post(_ => action(), null);
+    }
+
+    /// <summary>
+    /// Führt eine async-Aktion auf dem Main-Thread aus.
+    /// await-Continuations kehren ebenfalls auf den Main-Thread zurück.
+    /// </summary>
+    public void BeginInvoke(Func<Task> asyncAction)
+    {
+        Post(async _ => await asyncAction(), null);
+    }
+
+    /// <summary>
+    /// Verarbeitet alle ausstehenden Callbacks auf dem aufrufenden Thread.
+    /// Nicht-blockierend: kehrt sofort zurück wenn die Queue leer ist.
+    /// </summary>
+    public void ProcessPendingCallbacks()
+    {
+        SynchronizationContext previous = Current;
         SetSynchronizationContext(this);
         try
         {
-            foreach (var (callback, state) in _queue.GetConsumingEnumerable(ct))
+            while (_queue.TryDequeue(out var item))
             {
-                callback(state);
+                item.Callback(item.State);
             }
         }
-        catch (OperationCanceledException)
+        finally
         {
-            // Erwartet bei Abbruch
+            SetSynchronizationContext(previous);
         }
     }
-
-    public void Complete() => _queue.CompleteAdding();
 }
