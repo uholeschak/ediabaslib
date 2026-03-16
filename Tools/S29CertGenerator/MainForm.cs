@@ -1775,9 +1775,13 @@ namespace S29CertGenerator
                     string machinePublicFile = Path.Combine(certOutputFolder, machineName + EdSec4Diag.S29MachinePublicName);
                     if (!File.Exists(machinePrivateFile) || !File.Exists(machinePublicFile))
                     {
-                        UpdateStatusText($"Machine key {machinePrivateFile} or public {machinePublicFile} file does not exist.", true);
-                        UpdateStatusText("Execute EDIABAS or EdiabasLib in SSL mode first to generate the key files.", true);
-                        return false;
+                        UpdateStatusText($"EDIABAS key file {machinePrivateFile} missing, generating", true);
+                        using EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet();
+                        if (!edInterfaceEnet.GenerateS29Cert(certOutputFolder))
+                        {
+                            UpdateStatusText("Failed to generate EDIABAS key files", true);
+                            return false;
+                        }
                     }
 
                     AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(machinePrivateFile, EdSec4Diag.EdiabasPkcs12KeyPwd, out X509CertificateEntry[] publicCertificateEntries);
