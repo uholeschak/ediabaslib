@@ -93,8 +93,9 @@ namespace PsdzRpcClient
                     }
                 };
 
+                SingleThreadSynchronizationContext synchronizationContext = new SingleThreadSynchronizationContext();
                 Console.WriteLine("Starting PsdzJsonRpcClient...");
-                Task clientTask = client.ConnectAsync(cts.Token);
+                Task clientTask = client.ConnectAsync(synchronizationContext, cts.Token);
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);
 
                 await Task.WhenAny(clientTask, keyTask);

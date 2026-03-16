@@ -15,7 +15,7 @@ public class PsdzRpcClient : IAsyncDisposable
     public IPsdzRpcService RpcService { get; private set; }
     public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
 
-    public async Task ConnectAsync(CancellationToken ct)
+    public async Task ConnectAsync(SynchronizationContext synchronizationContext, CancellationToken ct)
     {
         _pipeClient = new NamedPipeClientStream(
             ".",
@@ -29,6 +29,11 @@ public class PsdzRpcClient : IAsyncDisposable
 
         _jsonRpc = new JsonRpc(_pipeClient);
         _jsonRpc.AddLocalRpcTarget(CallbackHandler);
+
+        if (synchronizationContext != null)
+        {
+            _jsonRpc.SynchronizationContext = synchronizationContext;
+        }
 
         RpcService = _jsonRpc.Attach<IPsdzRpcService>();
 
