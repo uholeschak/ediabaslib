@@ -2762,6 +2762,11 @@ namespace EdiabasLib
             }
         }
 
+        public bool GenerateS29Cert(string certPath)
+        {
+            return CreateS29Certs(null, certPath);
+        }
+
         public List<EnetConnection> DetectedVehicles(string remoteHostConfig, List<CommunicationMode> communicationModes = null)
         {
             if (IsSimulationMode())
