@@ -265,9 +265,9 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(true);
     }
 
-    public Task<bool> UpdateTargetFa()
+    public Task<bool> UpdateTargetFa(bool reset)
     {
-        _programmingJobs.UpdateTargetFa();
+        _programmingJobs.UpdateTargetFa(reset);
         return Task.FromResult(true);
     }
 
