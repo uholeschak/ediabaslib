@@ -7046,41 +7046,41 @@ namespace BmwDeepObd
                 return null;
             }
 
-            string keyFilePath = Path.Combine(importCertPath, EdSec4Diag.IstaPkcs12KeyFile);
-            string keyPwdFile = Path.ChangeExtension(keyFilePath, ".txt");
-            string keyPwd = EdSec4Diag.EdiabasPkcs12KeyPwd;
-
-            if (File.Exists(keyPwdFile))
-            {
-                try
-                {
-                    keyPwd = File.ReadLines(keyPwdFile).FirstOrDefault()?.Trim();
-                }
-                catch (Exception)
-                {
-                    ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to read key password file: {0}", keyPwdFile);
-                    return null;
-                }
-            }
-
-            AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(keyFilePath, keyPwd, out X509CertificateEntry[] publicCertificateEntries);
-            if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
-            {
-                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to load external PKCS12 key");
-                return null;
-            }
-
-            AsymmetricKeyParameter externalPublicKey = publicCertificateEntries[0].Certificate.GetPublicKey();
-            if (externalPublicKey == null)
-            {
-                ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to get external public key");
-                return null;
-            }
-
             List<Org.BouncyCastle.X509.X509Certificate> rootCerts = EdBcTlsUtilities.ConvertToX509CertList(trustedCaCerts);
             string[] certFiles = Directory.GetFiles(importCertPath, "*.pem", SearchOption.TopDirectoryOnly);
             foreach (string certFile in certFiles)
             {
+                string keyFile = Path.ChangeExtension(certFile, ".p12");
+                string keyPwdFile = Path.ChangeExtension(keyFile, ".txt");
+                string keyPwd = EdSec4Diag.EdiabasPkcs12KeyPwd;
+
+                if (File.Exists(keyPwdFile))
+                {
+                    try
+                    {
+                        keyPwd = File.ReadLines(keyPwdFile).FirstOrDefault()?.Trim();
+                    }
+                    catch (Exception)
+                    {
+                        ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to read key password file: {0}", keyPwdFile);
+                        continue;
+                    }
+                }
+
+                AsymmetricKeyParameter privateKeyResource = EdBcTlsUtilities.LoadPkcs12Key(keyFile, keyPwd, out X509CertificateEntry[] publicCertificateEntries);
+                if (privateKeyResource == null || publicCertificateEntries == null || publicCertificateEntries.Length < 1)
+                {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to load external PKCS12 key");
+                    continue;
+                }
+
+                AsymmetricKeyParameter externalPublicKey = publicCertificateEntries[0].Certificate.GetPublicKey();
+                if (externalPublicKey == null)
+                {
+                    ediabas?.LogString(EdiabasNet.EdLogLevel.Ifh, "LoadExternalVehicleCertificate: Failed to get external public key");
+                    continue;
+                }
+
                 List<X509CertificateEntry> certificateEntries = EdBcTlsUtilities.GetCertificateEntries(EdBcTlsUtilities.LoadBcCertificateResources(certFile));
                 if (certificateEntries == null || certificateEntries.Count < 3)
                 {
