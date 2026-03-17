@@ -65,6 +65,7 @@
             buttonExport = new System.Windows.Forms.Button();
             saveExportCertDialog = new System.Windows.Forms.SaveFileDialog();
             buttonGenerateEdiabasFiles = new System.Windows.Forms.Button();
+            buttonModClientConfig = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // folderBrowserDialog
@@ -94,13 +95,13 @@
             textBoxCaKeyFile.Location = new System.Drawing.Point(197, 12);
             textBoxCaKeyFile.Name = "textBoxCaKeyFile";
             textBoxCaKeyFile.ReadOnly = true;
-            textBoxCaKeyFile.Size = new System.Drawing.Size(488, 23);
+            textBoxCaKeyFile.Size = new System.Drawing.Size(575, 23);
             textBoxCaKeyFile.TabIndex = 1;
             // 
             // buttonClose
             // 
             buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.Location = new System.Drawing.Point(610, 570);
+            buttonClose.Location = new System.Drawing.Point(697, 550);
             buttonClose.Name = "buttonClose";
             buttonClose.Size = new System.Drawing.Size(75, 23);
             buttonClose.TabIndex = 25;
@@ -124,7 +125,7 @@
             textBoxJsonRequestFolder.Location = new System.Drawing.Point(197, 128);
             textBoxJsonRequestFolder.Name = "textBoxJsonRequestFolder";
             textBoxJsonRequestFolder.ReadOnly = true;
-            textBoxJsonRequestFolder.Size = new System.Drawing.Size(488, 23);
+            textBoxJsonRequestFolder.Size = new System.Drawing.Size(575, 23);
             textBoxJsonRequestFolder.TabIndex = 9;
             // 
             // buttonSelectCertOutputFolder
@@ -143,13 +144,13 @@
             textBoxCertOutputFolder.Location = new System.Drawing.Point(197, 186);
             textBoxCertOutputFolder.Name = "textBoxCertOutputFolder";
             textBoxCertOutputFolder.ReadOnly = true;
-            textBoxCertOutputFolder.Size = new System.Drawing.Size(488, 23);
+            textBoxCertOutputFolder.Size = new System.Drawing.Size(575, 23);
             textBoxCertOutputFolder.TabIndex = 13;
             // 
             // buttonGenerate
             // 
             buttonGenerate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonGenerate.Location = new System.Drawing.Point(265, 570);
+            buttonGenerate.Location = new System.Drawing.Point(227, 550);
             buttonGenerate.Name = "buttonGenerate";
             buttonGenerate.Size = new System.Drawing.Size(75, 23);
             buttonGenerate.TabIndex = 23;
@@ -165,7 +166,7 @@
             richTextBoxStatus.Name = "richTextBoxStatus";
             richTextBoxStatus.ReadOnly = true;
             richTextBoxStatus.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            richTextBoxStatus.Size = new System.Drawing.Size(673, 232);
+            richTextBoxStatus.Size = new System.Drawing.Size(760, 212);
             richTextBoxStatus.TabIndex = 20;
             richTextBoxStatus.Text = "";
             // 
@@ -185,7 +186,7 @@
             textBoxJsonResponseFolder.Location = new System.Drawing.Point(197, 157);
             textBoxJsonResponseFolder.Name = "textBoxJsonResponseFolder";
             textBoxJsonResponseFolder.ReadOnly = true;
-            textBoxJsonResponseFolder.Size = new System.Drawing.Size(488, 23);
+            textBoxJsonResponseFolder.Size = new System.Drawing.Size(575, 23);
             textBoxJsonResponseFolder.TabIndex = 11;
             // 
             // buttonSelectSecurityFolder
@@ -204,7 +205,7 @@
             textBoxSecurityFolder.Location = new System.Drawing.Point(197, 99);
             textBoxSecurityFolder.Name = "textBoxSecurityFolder";
             textBoxSecurityFolder.ReadOnly = true;
-            textBoxSecurityFolder.Size = new System.Drawing.Size(488, 23);
+            textBoxSecurityFolder.Size = new System.Drawing.Size(575, 23);
             textBoxSecurityFolder.TabIndex = 7;
             // 
             // buttonSelectIstaKeyFile
@@ -223,7 +224,7 @@
             textBoxIstaKeyFile.Location = new System.Drawing.Point(197, 41);
             textBoxIstaKeyFile.Name = "textBoxIstaKeyFile";
             textBoxIstaKeyFile.ReadOnly = true;
-            textBoxIstaKeyFile.Size = new System.Drawing.Size(488, 23);
+            textBoxIstaKeyFile.Size = new System.Drawing.Size(575, 23);
             textBoxIstaKeyFile.TabIndex = 3;
             // 
             // openIstaKeyFileDialog
@@ -236,11 +237,11 @@
             // 
             checkBoxForceCreate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             checkBoxForceCreate.AutoSize = true;
-            checkBoxForceCreate.Location = new System.Drawing.Point(12, 543);
+            checkBoxForceCreate.Location = new System.Drawing.Point(12, 523);
             checkBoxForceCreate.Name = "checkBoxForceCreate";
-            checkBoxForceCreate.Size = new System.Drawing.Size(212, 19);
+            checkBoxForceCreate.Size = new System.Drawing.Size(177, 19);
             checkBoxForceCreate.TabIndex = 22;
-            checkBoxForceCreate.Text = "Generate: Force create cert creation";
+            checkBoxForceCreate.Text = "Generate: Force cert creation";
             checkBoxForceCreate.UseVisualStyleBackColor = true;
             // 
             // textBoxCaCertsFile
@@ -249,7 +250,7 @@
             textBoxCaCertsFile.Location = new System.Drawing.Point(197, 70);
             textBoxCaCertsFile.Name = "textBoxCaCertsFile";
             textBoxCaCertsFile.ReadOnly = true;
-            textBoxCaCertsFile.Size = new System.Drawing.Size(488, 23);
+            textBoxCaCertsFile.Size = new System.Drawing.Size(575, 23);
             textBoxCaCertsFile.TabIndex = 5;
             // 
             // buttonSelectCaCertsFile
@@ -268,7 +269,7 @@
             textBoxTrustStoreFolder.Location = new System.Drawing.Point(197, 215);
             textBoxTrustStoreFolder.Name = "textBoxTrustStoreFolder";
             textBoxTrustStoreFolder.ReadOnly = true;
-            textBoxTrustStoreFolder.Size = new System.Drawing.Size(488, 23);
+            textBoxTrustStoreFolder.Size = new System.Drawing.Size(575, 23);
             textBoxTrustStoreFolder.TabIndex = 15;
             // 
             // buttonSelectTrustStoreFolder
@@ -284,7 +285,7 @@
             // buttonUninstall
             // 
             buttonUninstall.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonUninstall.Location = new System.Drawing.Point(529, 570);
+            buttonUninstall.Location = new System.Drawing.Point(616, 550);
             buttonUninstall.Name = "buttonUninstall";
             buttonUninstall.Size = new System.Drawing.Size(75, 23);
             buttonUninstall.TabIndex = 24;
@@ -300,7 +301,7 @@
             // buttonResetSettings
             // 
             buttonResetSettings.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonResetSettings.Location = new System.Drawing.Point(529, 540);
+            buttonResetSettings.Location = new System.Drawing.Point(616, 520);
             buttonResetSettings.Name = "buttonResetSettings";
             buttonResetSettings.Size = new System.Drawing.Size(156, 23);
             buttonResetSettings.TabIndex = 21;
@@ -325,7 +326,7 @@
             comboBoxVinList.FormattingEnabled = true;
             comboBoxVinList.Location = new System.Drawing.Point(197, 273);
             comboBoxVinList.Name = "comboBoxVinList";
-            comboBoxVinList.Size = new System.Drawing.Size(488, 23);
+            comboBoxVinList.Size = new System.Drawing.Size(575, 23);
             comboBoxVinList.TabIndex = 19;
             // 
             // textBoxClientConfigurationFile
@@ -334,7 +335,7 @@
             textBoxClientConfigurationFile.Location = new System.Drawing.Point(197, 244);
             textBoxClientConfigurationFile.Name = "textBoxClientConfigurationFile";
             textBoxClientConfigurationFile.ReadOnly = true;
-            textBoxClientConfigurationFile.Size = new System.Drawing.Size(488, 23);
+            textBoxClientConfigurationFile.Size = new System.Drawing.Size(575, 23);
             textBoxClientConfigurationFile.TabIndex = 17;
             // 
             // buttonSelectClientConfigurationFile
@@ -356,7 +357,7 @@
             // buttonValidate
             // 
             buttonValidate.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonValidate.Location = new System.Drawing.Point(346, 570);
+            buttonValidate.Location = new System.Drawing.Point(433, 550);
             buttonValidate.Name = "buttonValidate";
             buttonValidate.Size = new System.Drawing.Size(75, 23);
             buttonValidate.TabIndex = 26;
@@ -367,7 +368,7 @@
             // buttonImport
             // 
             buttonImport.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonImport.Location = new System.Drawing.Point(184, 570);
+            buttonImport.Location = new System.Drawing.Point(146, 550);
             buttonImport.Name = "buttonImport";
             buttonImport.Size = new System.Drawing.Size(75, 23);
             buttonImport.TabIndex = 27;
@@ -384,7 +385,7 @@
             // buttonExport
             // 
             buttonExport.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonExport.Location = new System.Drawing.Point(103, 570);
+            buttonExport.Location = new System.Drawing.Point(65, 550);
             buttonExport.Name = "buttonExport";
             buttonExport.Size = new System.Drawing.Size(75, 23);
             buttonExport.TabIndex = 28;
@@ -401,7 +402,7 @@
             // buttonGenerateEdiabasFiles
             // 
             buttonGenerateEdiabasFiles.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonGenerateEdiabasFiles.Location = new System.Drawing.Point(427, 570);
+            buttonGenerateEdiabasFiles.Location = new System.Drawing.Point(514, 550);
             buttonGenerateEdiabasFiles.Name = "buttonGenerateEdiabasFiles";
             buttonGenerateEdiabasFiles.Size = new System.Drawing.Size(96, 23);
             buttonGenerateEdiabasFiles.TabIndex = 29;
@@ -409,13 +410,25 @@
             buttonGenerateEdiabasFiles.UseVisualStyleBackColor = true;
             buttonGenerateEdiabasFiles.Click += buttonGenerateEdiabasFiles_Click;
             // 
+            // buttonModClientConfig
+            // 
+            buttonModClientConfig.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonModClientConfig.Location = new System.Drawing.Point(308, 550);
+            buttonModClientConfig.Name = "buttonModClientConfig";
+            buttonModClientConfig.Size = new System.Drawing.Size(119, 23);
+            buttonModClientConfig.TabIndex = 30;
+            buttonModClientConfig.Text = "Mod. Client config";
+            buttonModClientConfig.UseVisualStyleBackColor = true;
+            buttonModClientConfig.Click += buttonModClientConfig_Click;
+            // 
             // MainForm
             // 
             AcceptButton = buttonGenerate;
             AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             CancelButton = buttonClose;
-            ClientSize = new System.Drawing.Size(697, 605);
+            ClientSize = new System.Drawing.Size(784, 585);
+            Controls.Add(buttonModClientConfig);
             Controls.Add(buttonGenerateEdiabasFiles);
             Controls.Add(buttonExport);
             Controls.Add(buttonImport);
@@ -447,7 +460,7 @@
             Controls.Add(textBoxCaKeyFile);
             Controls.Add(buttonSelectCaKeyFile);
             MaximizeBox = false;
-            MinimumSize = new System.Drawing.Size(700, 400);
+            MinimumSize = new System.Drawing.Size(800, 600);
             Name = "MainForm";
             SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             Text = "S29CertGenerator";
@@ -498,5 +511,6 @@
         private System.Windows.Forms.Button buttonExport;
         private System.Windows.Forms.SaveFileDialog saveExportCertDialog;
         private System.Windows.Forms.Button buttonGenerateEdiabasFiles;
+        private System.Windows.Forms.Button buttonModClientConfig;
     }
 }

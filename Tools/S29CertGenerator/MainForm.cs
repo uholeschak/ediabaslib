@@ -165,6 +165,7 @@ namespace S29CertGenerator
                 buttonExport.Enabled = enableActionButtons;
                 buttonValidate.Enabled = enableActionButtons;
                 buttonGenerate.Enabled = enableActionButtons;
+                buttonModClientConfig.Enabled = enableActionButtons;
                 buttonGenerateEdiabasFiles.Enabled = enableActionButtons;
                 buttonUninstall.Enabled = enableActionButtons;
 
@@ -1665,7 +1666,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string istaKeyFile, string clientConfigFile, bool forceUpdate = false)
+        protected bool InstallCertificates(string caCertsFile, string trustStoreFolder, string istaKeyFile, string clientConfigFile = null, bool forceUpdate = false)
         {
             try
             {
@@ -1990,7 +1991,7 @@ namespace S29CertGenerator
             }
         }
 
-        protected bool ImportCertificates(string importFile, string trustStoreFolder, string istaKeyFile, string clientConfigFile)
+        protected bool ImportCertificates(string importFile, string trustStoreFolder, string istaKeyFile, string clientConfigFile = null)
         {
             try
             {
@@ -2439,13 +2440,12 @@ namespace S29CertGenerator
 
         private void buttonGenerate_Click(object sender, EventArgs e)
         {
-            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, textBoxClientConfigurationFile.Text, checkBoxForceCreate.Checked))
+            if (InstallCertificates(textBoxCaCertsFile.Text, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, null, checkBoxForceCreate.Checked))
             {
                 checkBoxForceCreate.Checked = false;
             }
             UpdateDisplay();
         }
-
 
         private void buttonGenerateEdiabasFiles_Click(object sender, EventArgs e)
         {
@@ -2493,7 +2493,7 @@ namespace S29CertGenerator
             if (result == DialogResult.OK)
             {
                 string importFile = openImportCertDialog.FileName;
-                ImportCertificates(importFile, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text, textBoxClientConfigurationFile.Text);
+                ImportCertificates(importFile, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text);
                 _importCertFile = importFile;
             }
 
@@ -2522,6 +2522,16 @@ namespace S29CertGenerator
                 ExportCertificates(exportFile, textBoxTrustStoreFolder.Text, textBoxIstaKeyFile.Text);
                 _exportCertFile = exportFile;
             }
+        }
+
+        private void buttonModClientConfig_Click(object sender, EventArgs e)
+        {
+            if (!ModifyClientConfiguration(textBoxClientConfigurationFile.Text))
+            {
+                UpdateStatusText("Modifying client configuration failed", true);
+            }
+
+            UpdateDisplay();
         }
     }
 }
