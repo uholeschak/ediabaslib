@@ -2182,6 +2182,27 @@ namespace S29CertGenerator
             }
         }
 
+        protected bool ModifyClientConfig(string clientConfigFile)
+        {
+            try
+            {
+                UpdateStatusText(string.Empty);
+
+                if (!ModifyClientConfiguration(clientConfigFile))
+                {
+                    UpdateStatusText("Modifying client configuration failed", true);
+                }
+
+                UpdateStatusText("Client configuration modified successfully", true);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                UpdateStatusText($"Modify client configuration exception: {ex.Message}", true);
+                return false;
+            }
+        }
+
         private void buttonSelectCaKeyFile_Click(object sender, EventArgs e)
         {
             string initDir = _appDir;
@@ -2526,11 +2547,7 @@ namespace S29CertGenerator
 
         private void buttonModClientConfig_Click(object sender, EventArgs e)
         {
-            if (!ModifyClientConfiguration(textBoxClientConfigurationFile.Text))
-            {
-                UpdateStatusText("Modifying client configuration failed", true);
-            }
-
+            ModifyClientConfig(textBoxClientConfigurationFile.Text);
             UpdateDisplay();
         }
     }
