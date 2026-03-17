@@ -15,6 +15,8 @@ public partial interface IPsdzRpcService : IDisposable
     Task CancelOperation();
     Task<bool> SetupLog4Net(string logFile);
     Task<string> GetIstaInstallLocation();
+    Task<PsdzDatabase.SwiRegisterGroup> GetSwiRegisterGroup(PsdzDatabase.SwiRegisterEnum swiRegisterEnum);
+
     Task<bool> StartProgrammingService(string istaFolder);
     Task<bool> StopProgrammingService(string istaFolder, bool force = false);
     Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000);

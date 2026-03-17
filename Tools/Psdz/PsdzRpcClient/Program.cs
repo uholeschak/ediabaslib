@@ -228,8 +228,8 @@ namespace PsdzRpcClient
                         }
                         else
                         {
-                            // Kurze Pause um CPU-Last zu vermeiden
-                            Thread.Sleep(50);
+                            // reduce CPU load when idle
+                            Thread.Sleep(10);
                         }
 
                         if (exitLoop)
