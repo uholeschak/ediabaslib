@@ -46,6 +46,9 @@ namespace AssemblyPatcher
 
             [Option('c', "no_icom_check", Required = false, HelpText = "Disable ICOM version check")]
             public bool NoIcomCheck { get; set; }
+
+            [Option('b', "disable_backend", Required = false, HelpText = "Disable backend access")]
+            public bool DisableBackend { get; set; }
         }
 
         static int Main(string[] args)
@@ -56,6 +59,7 @@ namespace AssemblyPatcher
                 Options.DebugOption debugOpt = Options.DebugOption.None;
                 bool overwriteConfig = false;
                 bool noIcomVerCheck = true;
+                bool disableBackend = false;
                 bool hasErrors = false;
                 Parser parser = new Parser(with =>
                 {
@@ -72,6 +76,7 @@ namespace AssemblyPatcher
                         debugOpt = o.DebugOpt;
                         overwriteConfig = o.OverwriteConfig;
                         noIcomVerCheck = o.NoIcomCheck;
+                        disableBackend = o.DisableBackend;
                     })
                     .WithNotParsed(errs =>
                     {
@@ -100,6 +105,7 @@ namespace AssemblyPatcher
                 Console.WriteLine("Debug option: '{0}'", debugOpt.ToString());
                 Console.WriteLine("Overwrite config: '{0}'", overwriteConfig.ToString());
                 Console.WriteLine("Disable ICOM version check: '{0}'", noIcomVerCheck.ToString());
+                Console.WriteLine("Disable backend access: '{0}'", disableBackend.ToString());
 
                 string patchCtorNamespace = ConfigurationManager.AppSettings["PatchCtorNamespace"];
                 if (string.IsNullOrEmpty(patchCtorNamespace))
@@ -1704,6 +1710,32 @@ namespace AssemblyPatcher
                             catch (Exception ex)
                             {
                                 Console.WriteLine("*** IsIcomUnsupported Exception: {0}", ex.Message);
+                            }
+                        }
+
+                        if (disableBackend)
+                        {
+                            try
+                            {
+                                Target target = new Target
+                                {
+                                    Namespace = "BMW.iLean.CommonServices.Models",
+                                    Class = "WebService",
+                                    Method = "GetServerBaseAddress",
+                                };
+                                IList<Instruction> instructions = patcher.GetInstructionList(target);
+                                if (instructions != null)
+                                {
+                                    Console.WriteLine("WebService.GetServerBaseAddress found");
+                                    instructions.Insert(0, instructions[0].Clone());
+                                    instructions.Insert(1, Instruction.Create(OpCodes.Ret));
+                                    patched = true;
+                                    Console.WriteLine("WebService.GetServerBaseAddress patched");
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine("*** WebService.GetServerBaseAddress Exception: {0}", ex.Message);
                             }
                         }
 
