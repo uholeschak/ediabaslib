@@ -255,12 +255,6 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(options);
     }
 
-    public Task<List<ProgrammingJobs.OptionsItem>> GetSelectedOptions()
-    {
-        List<ProgrammingJobs.OptionsItem> options = _programmingJobs.SelectedOptions;
-        return Task.FromResult(options);
-    }
-
     public Task<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> GetOptionsDict()
     {
         Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
