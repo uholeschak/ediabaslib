@@ -80,13 +80,13 @@ namespace PsdzRpcClient
                                 }
                             }
 
-                            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(PsdzDatabase.SwiRegisterEnum.VehicleModification);
+                            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
                             if (selectedOptions != null)
                             {
-                                Console.WriteLine("Selected options for VehicleModification:");
+                                Console.WriteLine("Selected options for CodingConversion:");
                                 foreach (PsdzRpcOptionItem item in selectedOptions)
                                 {
-                                    Console.WriteLine($"Selected option: {item.Caption} ({item.SwiRegisterEnum.ToString()}) - Enabled: {item.Enabled}, Selected: {item.Selected}");
+                                    Console.WriteLine($"- {item.Caption} ({item.SwiRegisterEnum.ToString()}) - Enabled: {item.Enabled}, Selected: {item.Selected}");
                                 }
                             }
                         }
