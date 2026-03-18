@@ -4,15 +4,18 @@ namespace PsdzRpcServer.Shared
 {
     public class PsdzRpcOptionItem
     {
-        public PsdzRpcOptionItem(PsdzDatabase.SwiRegisterEnum swiRegisterEnum, string caption, bool enabled, bool selected = false)
+        public PsdzRpcOptionItem(PsdzDatabase.SwiRegisterEnum swiRegisterEnum, string id, string caption, bool enabled, bool selected = false)
         {
             SwiRegisterEnum = swiRegisterEnum;
+            Id = id;
             Caption = caption;
             Enabled = enabled;
             Selected = selected;
         }
 
         public PsdzDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
+
+        public string Id { get; private set; }
 
         public string Caption { get; private set; }
 

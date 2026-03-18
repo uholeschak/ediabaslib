@@ -406,7 +406,7 @@ public class PsdzRpcService : IPsdzRpcService
 
                     if (addItem)
                     {
-                        options.Add(new PsdzRpcOptionItem(optionsItem.SwiRegisterEnum, optionsItem.ToString(), enabled, selected));
+                        options.Add(new PsdzRpcOptionItem(optionsItem.SwiRegisterEnum, optionsItem.Id, optionsItem.ToString(), enabled, selected));
                     }
                 }
             }
