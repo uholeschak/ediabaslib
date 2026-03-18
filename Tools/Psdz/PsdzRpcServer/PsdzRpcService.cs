@@ -1,7 +1,9 @@
-﻿using PsdzClient;
+﻿using System;
+using PsdzClient;
 using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -332,6 +334,83 @@ public class PsdzRpcService : IPsdzRpcService
 
         List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
         List<PsdzDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(_programmingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
+        Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+        if (optionsDict != null && _programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
+        {
+            if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+            {
+                foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
+                {
+                    bool enabled = true;
+                    bool selected = false;
+                    bool addItem = true;
+                    int selectIndex = _programmingJobs.SelectedOptions.IndexOf(optionsItem);
+                    if (selectIndex >= 0)
+                    {
+                        if (replacement)
+                        {
+                            selected = true;
+                        }
+                        else
+                        {
+                            if (selectIndex == _programmingJobs.SelectedOptions.Count - 1)
+                            {
+                                selected = true;
+                            }
+                            else
+                            {
+                                enabled = false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (replacement)
+                        {
+                            if (optionsItem.EcuInfo == null)
+                            {
+                                addItem = false;
+                            }
+                        }
+                        else
+                        {
+                            if (optionsItem.SwiAction != null)
+                            {
+                                if (linkedSwiActions != null &&
+                                    linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
+                                {
+                                    addItem = false;
+                                }
+                                else
+                                {
+                                    if (!_programmingJobs.ProgrammingService.PsdzDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext?.VecInfo, null))
+                                    {
+                                        addItem = false;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (!_programmingJobs.IsOptionsItemEnabled(optionsItem))
+                    {
+                        if (selected)
+                        {
+                            enabled = false;
+                        }
+                        else
+                        {
+                            addItem = false;
+                        }
+                    }
+
+                    if (addItem)
+                    {
+                        options.Add(new PsdzRpcOptionItem(optionsItem.SwiRegisterEnum, optionsItem.ToString(), enabled, selected));
+                    }
+                }
+            }
+        }
 
         return options;
     }
