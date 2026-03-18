@@ -30,7 +30,7 @@ namespace PsdzRpcClient
 
                 SingleThreadSynchronizationContext syncContext = new();
 
-                await using var client = new PsdzRpcClient();
+                await using PsdzRpcClient client = new PsdzRpcClient();
                 client.CallbackHandler.ProgressChanged += (s, e) =>
                 {
                     syncContext.BeginInvoke(() =>
@@ -77,18 +77,6 @@ namespace PsdzRpcClient
                                 foreach (PsdzRpcOptionType option in optionTypes)
                                 {
                                     Console.WriteLine($"- {option.Caption} ({option.SwiRegisterEnum.ToString()})");
-                                }
-                            }
-
-                            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
-                            if (selectedOptions != null)
-                            {
-                                Console.WriteLine("Selected options for CodingConversion:");
-                                int index = 0;
-                                foreach (PsdzRpcOptionItem item in selectedOptions)
-                                {
-                                    Console.WriteLine($"- {index}: {item.Caption} ({item.SwiRegisterEnum.ToString()}) - Enabled: {item.Enabled}, Selected: {item.Selected}");
-                                    index++;
                                 }
                             }
                         }
@@ -205,6 +193,12 @@ namespace PsdzRpcClient
                                     break;
                                 }
 
+                                case ConsoleKey.P:
+                                {
+                                    await PrintSelectedOptions(client);
+                                    break;
+                                }
+
                                 case ConsoleKey.T:
                                 {
                                     Console.WriteLine("Building TAL...");
@@ -276,10 +270,26 @@ namespace PsdzRpcClient
             Console.WriteLine("D - Disconnect Vehicle");
             Console.WriteLine("S - Stop Programming Service");
             Console.WriteLine("O - Create Options");
+            Console.WriteLine("P - Print Selected Options");
             Console.WriteLine("T - Build TAL");
             Console.WriteLine("E - Execute TAL");
             Console.WriteLine("A - Abort Operation");
             Console.WriteLine("ESC - Exit Client");
+        }
+
+        private static async Task PrintSelectedOptions(PsdzRpcClient client)
+        {
+            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
+            if (selectedOptions != null)
+            {
+                Console.WriteLine("Selected options for CodingConversion:");
+                int index = 0;
+                foreach (PsdzRpcOptionItem item in selectedOptions)
+                {
+                    Console.WriteLine($"- {index}: {item.Caption} ({item.SwiRegisterEnum.ToString()}) - Enabled: {item.Enabled}, Selected: {item.Selected}");
+                    index++;
+                }
+            }
         }
 
         private static async Task WaitForEscapeKeyAsync(CancellationToken ct)
