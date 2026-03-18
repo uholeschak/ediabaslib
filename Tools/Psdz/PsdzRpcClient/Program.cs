@@ -84,9 +84,11 @@ namespace PsdzRpcClient
                             if (selectedOptions != null)
                             {
                                 Console.WriteLine("Selected options for CodingConversion:");
+                                int index = 0;
                                 foreach (PsdzRpcOptionItem item in selectedOptions)
                                 {
-                                    Console.WriteLine($"- {item.Caption} ({item.SwiRegisterEnum.ToString()}) - Enabled: {item.Enabled}, Selected: {item.Selected}");
+                                    Console.WriteLine($"- {index}: {item.Caption} ({item.SwiRegisterEnum.ToString()}) - Enabled: {item.Enabled}, Selected: {item.Selected}");
+                                    index++;
                                 }
                             }
                         }
