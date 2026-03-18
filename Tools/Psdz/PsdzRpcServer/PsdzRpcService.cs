@@ -249,8 +249,7 @@ public class PsdzRpcService : IPsdzRpcService
 
     public Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
     {
-        List<PsdzRpcOptionItem> options = new List<PsdzRpcOptionItem>();
-
+        List<PsdzRpcOptionItem> options = GenerateSelectedOptions(swiRegisterEnum);
         return Task.FromResult(options);
     }
 
@@ -309,6 +308,51 @@ public class PsdzRpcService : IPsdzRpcService
             isActive = _cts != null;
         }
         return isActive;
+    }
+
+    private List<PsdzRpcOptionItem> GenerateSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+    {
+        List<PsdzRpcOptionItem> options = new List<PsdzRpcOptionItem>();
+        if (_programmingJobs.ProgrammingService == null || _programmingJobs.PsdzContext?.Connection == null)
+        {
+            return options;
+        }
+
+        bool replacement = false;
+        if (swiRegisterEnum.HasValue)
+        {
+            switch (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
+            {
+                case PsdzDatabase.SwiRegisterGroup.HwDeinstall:
+                case PsdzDatabase.SwiRegisterGroup.HwInstall:
+                    replacement = true;
+                    break;
+            }
+        }
+
+        List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
+        List<PsdzDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(_programmingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
+
+        return options;
+    }
+
+    private List<PsdzDatabase.SwiAction> GetSelectedSwiActions()
+    {
+        if (_programmingJobs.PsdzContext?.Connection == null || _programmingJobs.SelectedOptions == null)
+        {
+            return null;
+        }
+
+        List<PsdzDatabase.SwiAction> selectedSwiActions = new List<PsdzDatabase.SwiAction>();
+        foreach (ProgrammingJobs.OptionsItem optionsItem in _programmingJobs.SelectedOptions)
+        {
+            if (optionsItem.SwiAction != null)
+            {
+                selectedSwiActions.Add(optionsItem.SwiAction);
+            }
+        }
+
+        return selectedSwiActions;
     }
 
     private async Task<bool> StartProgrammingServiceTask(string istaFolder)
