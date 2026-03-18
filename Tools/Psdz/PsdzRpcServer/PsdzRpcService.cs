@@ -449,6 +449,7 @@ public class PsdzRpcService : IPsdzRpcService
             return false;
         }
 
+        bool modified = false;
         if (_programmingJobs.SelectedOptions != null)
         {
             List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, optionsItems);
@@ -482,6 +483,19 @@ public class PsdzRpcService : IPsdzRpcService
                     }
                 }
             }
+
+            modified = true;
+        }
+
+        if (modified)
+        {
+            PsdzContext psdzContext = _programmingJobs.PsdzContext;
+            if (psdzContext?.Connection != null)
+            {
+                psdzContext.Tal = null;
+            }
+
+            _programmingJobs.UpdateTargetFa();
         }
 
         return true;

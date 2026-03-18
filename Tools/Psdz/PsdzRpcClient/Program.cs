@@ -199,6 +199,21 @@ namespace PsdzRpcClient
                                     break;
                                 }
 
+                                case ConsoleKey.M:
+                                {
+                                    Console.WriteLine("Enter option index:");
+                                    string line = Console.ReadLine();
+                                    if (int.TryParse(line, out int index))
+                                    {
+                                        await ModifyOption(client, index);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Invalid index.");
+                                    }
+                                    break;
+                                }
+
                                 case ConsoleKey.T:
                                 {
                                     Console.WriteLine("Building TAL...");
@@ -290,6 +305,41 @@ namespace PsdzRpcClient
                     index++;
                 }
             }
+        }
+
+        private static async Task<bool> ModifyOption(PsdzRpcClient client, int index)
+        {
+            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
+            if (selectedOptions == null)
+            {
+                Console.WriteLine("No options available.");
+                return false;
+            }
+
+            if (index < 0 || index >= selectedOptions.Count)
+            {
+                Console.WriteLine($"Invalid option index: {index}");
+                return false;
+            }
+
+            PsdzRpcOptionItem option = selectedOptions[index];
+            if (!option.Enabled)
+            {
+                Console.WriteLine($"Option '{option.Caption}' is not enabled and cannot be selected.");
+                return false;
+            }
+
+            bool select = !option.Selected;
+            Console.WriteLine($"{(select ? "Selecting" : "Deselecting")} option: {option.Caption}...");
+            bool result =await client.RpcService.SelectOption(option, select);
+            if (!result)
+            {
+                Console.WriteLine($"Failed to configure option: {option.Caption}");
+                return false;
+            }
+
+            Console.WriteLine($"Option successfully configured: '{option.Caption}'.");
+            return true;
         }
 
         private static async Task WaitForEscapeKeyAsync(CancellationToken ct)
