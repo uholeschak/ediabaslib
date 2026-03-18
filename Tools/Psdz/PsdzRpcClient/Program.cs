@@ -1,4 +1,5 @@
-﻿using PsdzClient.Programming;
+﻿using PsdzClient;
+using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
@@ -62,7 +63,7 @@ namespace PsdzRpcClient
                     });
                 };
 
-                client.CallbackHandler.UpdateOptions += (sender, optionsDict) =>
+                client.CallbackHandler.UpdateOptions += (sender, optionArgs) =>
                 {
                     syncContext.BeginInvoke(async () =>
                     {
@@ -76,6 +77,16 @@ namespace PsdzRpcClient
                                 foreach (PsdzRpcOptionType option in optionTypes)
                                 {
                                     Console.WriteLine($"- {option.Caption} ({option.SwiRegisterEnum.ToString()})");
+                                }
+                            }
+
+                            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(PsdzDatabase.SwiRegisterEnum.VehicleModification);
+                            if (selectedOptions != null)
+                            {
+                                Console.WriteLine("Selected options for VehicleModification:");
+                                foreach (PsdzRpcOptionItem item in selectedOptions)
+                                {
+                                    Console.WriteLine($"Selected option: {item.Caption} ({item.SwiRegisterEnum.ToString()}) - Enabled: {item.Enabled}, Selected: {item.Selected}");
                                 }
                             }
                         }
