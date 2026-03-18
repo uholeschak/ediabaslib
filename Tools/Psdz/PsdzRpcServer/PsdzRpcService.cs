@@ -247,6 +247,13 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(optionTypes);
     }
 
+    public Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+    {
+        List<PsdzRpcOptionItem> options = new List<PsdzRpcOptionItem>();
+
+        return Task.FromResult(options);
+    }
+
     public Task<List<ProgrammingJobs.OptionsItem>> GetSelectedOptions()
     {
         List<ProgrammingJobs.OptionsItem> options = _programmingJobs.SelectedOptions;
