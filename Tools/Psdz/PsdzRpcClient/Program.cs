@@ -70,20 +70,7 @@ namespace PsdzRpcClient
                     syncContext.BeginInvoke(async () =>
                     {
                         Console.WriteLine("Options updated");
-                        if (client.RpcService != null)
-                        {
-                            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
-                            if (optionTypes != null)
-                            {
-                                Console.WriteLine("Available option types:");
-                                foreach (PsdzRpcOptionType option in optionTypes)
-                                {
-                                    bool selected = option.SwiRegisterEnum == selectedRegisterEnum;
-                                    string selectedMarker = selected ? "*" : string.Empty;
-                                    Console.WriteLine($"- {selectedMarker} {option.Caption} ({option.SwiRegisterEnum.ToString()})");
-                                }
-                            }
-                        }
+                        await PrintOptionTypes(client);
                     });
                 };
 
@@ -296,6 +283,21 @@ namespace PsdzRpcClient
             Console.WriteLine("E - Execute TAL");
             Console.WriteLine("A - Abort Operation");
             Console.WriteLine("ESC - Exit Client");
+        }
+
+        private static async Task PrintOptionTypes(PsdzRpcClient client)
+        {
+            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
+            if (optionTypes != null)
+            {
+                Console.WriteLine("Available option types:");
+                foreach (PsdzRpcOptionType option in optionTypes)
+                {
+                    bool selected = option.SwiRegisterEnum == selectedRegisterEnum;
+                    string selectedMarker = selected ? "*" : string.Empty;
+                    Console.WriteLine($"- {selectedMarker} {option.Caption} ({option.SwiRegisterEnum.ToString()})");
+                }
+            }
         }
 
         private static async Task PrintSelectedOptions(PsdzRpcClient client)
