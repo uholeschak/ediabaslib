@@ -184,6 +184,27 @@ namespace PsdzRpcClient
                                     break;
                                 }
 
+                                case ConsoleKey.Y:
+                                {
+                                    await PrintOptionTypes(client);
+                                    Console.WriteLine("Enter option index:");
+                                    string line = Console.ReadLine();
+                                    if (int.TryParse(line, out int index))
+                                    {
+                                        bool result = await SelectOptionType(client, index);
+                                        Console.WriteLine($"Select Option = {result}");
+                                        if (result)
+                                        {
+                                            await PrintOptionTypes(client);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Invalid index.");
+                                    }
+                                    break;
+                                }
+
                                 case ConsoleKey.P:
                                 {
                                     await PrintSelectedOptions(client);
@@ -307,6 +328,40 @@ namespace PsdzRpcClient
             }
         }
 
+        private static async Task<bool> SelectOptionType(PsdzRpcClient client, int index)
+        {
+            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
+            if (optionTypes == null)
+            {
+                Console.WriteLine("No option types available.");
+                return false;
+            }
+
+            if (index < 0 || index >= optionTypes.Count)
+            {
+                Console.WriteLine($"Invalid option type index: {index}");
+                return false;
+            }
+
+            PsdzRpcOptionType selectedOption = optionTypes[index];
+            if (selectedOption.SwiRegisterEnum == selectedRegisterEnum)
+            {
+                Console.WriteLine($"Option type '{selectedOption.Caption}' is already selected.");
+                return true;
+            }
+
+            selectedRegisterEnum = selectedOption.SwiRegisterEnum;
+            bool result = await client.RpcService.SelectOption(null, false);
+            if (!result)
+            {
+                Console.WriteLine($"Failed to update option: {selectedOption.Caption}");
+                return false;
+            }
+
+            Console.WriteLine($"Selected option type: {selectedOption.Caption} ({selectedRegisterEnum})");
+            return true;
+        }
+
         private static async Task PrintSelectedOptions(PsdzRpcClient client)
         {
             List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(selectedRegisterEnum);
@@ -346,7 +401,7 @@ namespace PsdzRpcClient
 
             bool select = !option.Selected;
             Console.WriteLine($"{(select ? "Selecting" : "Deselecting")} option: {option.Caption}...");
-            bool result =await client.RpcService.SelectOption(option, select);
+            bool result = await client.RpcService.SelectOption(option, select);
             if (!result)
             {
                 Console.WriteLine($"Failed to configure option: {option.Caption}");
