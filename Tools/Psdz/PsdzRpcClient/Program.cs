@@ -12,6 +12,8 @@ namespace PsdzRpcClient
 {
     internal class Program
     {
+        static PsdzDatabase.SwiRegisterEnum selectedRegisterEnum = PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion;
+
         static async Task<int> Main(string[] args)
         {
 #if NET
@@ -76,7 +78,9 @@ namespace PsdzRpcClient
                                 Console.WriteLine("Available option types:");
                                 foreach (PsdzRpcOptionType option in optionTypes)
                                 {
-                                    Console.WriteLine($"- {option.Caption} ({option.SwiRegisterEnum.ToString()})");
+                                    bool selected = option.SwiRegisterEnum == selectedRegisterEnum;
+                                    string selectedMarker = selected ? "*" : string.Empty;
+                                    Console.WriteLine($"- {selectedMarker} {option.Caption} ({option.SwiRegisterEnum.ToString()})");
                                 }
                             }
                         }
@@ -201,11 +205,13 @@ namespace PsdzRpcClient
 
                                 case ConsoleKey.M:
                                 {
+                                    await PrintSelectedOptions(client);
                                     Console.WriteLine("Enter option index:");
                                     string line = Console.ReadLine();
                                     if (int.TryParse(line, out int index))
                                     {
-                                        await ModifyOption(client, index);
+                                        bool result = await ModifyOption(client, index);
+                                        Console.WriteLine($"Modify Option = {result}");
                                     }
                                     else
                                     {
@@ -294,7 +300,7 @@ namespace PsdzRpcClient
 
         private static async Task PrintSelectedOptions(PsdzRpcClient client)
         {
-            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
+            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(selectedRegisterEnum);
             if (selectedOptions != null)
             {
                 Console.WriteLine("Selected options for CodingConversion:");
@@ -309,7 +315,7 @@ namespace PsdzRpcClient
 
         private static async Task<bool> ModifyOption(PsdzRpcClient client, int index)
         {
-            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion);
+            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(selectedRegisterEnum);
             if (selectedOptions == null)
             {
                 Console.WriteLine("No options available.");
