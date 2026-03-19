@@ -261,12 +261,6 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(result);
     }
 
-    public Task<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> GetOptionsDict()
-    {
-        Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
-        return Task.FromResult(optionsDict);
-    }
-
     public Task<bool> ClearOptionsDict()
     {
         _programmingJobs.OptionsDict = null;

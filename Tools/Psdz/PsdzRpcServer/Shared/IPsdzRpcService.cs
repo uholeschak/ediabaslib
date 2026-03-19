@@ -39,7 +39,6 @@ public partial interface IPsdzRpcService : IDisposable
     Task<List<PsdzRpcOptionType>> GetOptionTypes();
     Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum);
     Task<bool> SelectOption(PsdzRpcOptionItem optionItem, bool select);
-    Task<Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>>> GetOptionsDict();
     Task<bool> ClearOptionsDict();
     Task<bool> UpdateTargetFa(bool reset);
 }
