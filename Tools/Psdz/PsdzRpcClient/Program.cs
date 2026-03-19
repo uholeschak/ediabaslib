@@ -303,6 +303,7 @@ namespace PsdzRpcClient
             Console.WriteLine("D - Disconnect Vehicle");
             Console.WriteLine("S - Stop Programming Service");
             Console.WriteLine("O - Create Options");
+            Console.WriteLine("Y - Select Option Type");
             Console.WriteLine("P - Print Selected Options");
             Console.WriteLine("M - Modify Option");
             Console.WriteLine("T - Build TAL");
@@ -344,20 +345,7 @@ namespace PsdzRpcClient
             }
 
             PsdzRpcOptionType selectedOption = optionTypes[index];
-            if (selectedOption.SwiRegisterEnum == selectedRegisterEnum)
-            {
-                Console.WriteLine($"Option type '{selectedOption.Caption}' is already selected.");
-                return true;
-            }
-
             selectedRegisterEnum = selectedOption.SwiRegisterEnum;
-            bool result = await client.RpcService.SelectOption(null, false);
-            if (!result)
-            {
-                Console.WriteLine($"Failed to update option: {selectedOption.Caption}");
-                return false;
-            }
-
             Console.WriteLine($"Selected option type: {selectedOption.Caption} ({selectedRegisterEnum})");
             return true;
         }
