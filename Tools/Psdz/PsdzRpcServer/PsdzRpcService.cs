@@ -272,7 +272,7 @@ public class PsdzRpcService : IPsdzRpcService
 
     public Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
     {
-        List<PsdzRpcOptionItem> options = SelectedOptionsInternal(swiRegisterEnum);
+        List<PsdzRpcOptionItem> options = GetSelectedOptionsInternal(swiRegisterEnum);
         return Task.FromResult(options);
     }
 
@@ -342,7 +342,7 @@ public class PsdzRpcService : IPsdzRpcService
         return isActive;
     }
 
-    private List<PsdzRpcOptionItem> SelectedOptionsInternal(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+    private List<PsdzRpcOptionItem> GetSelectedOptionsInternal(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
     {
         List<PsdzRpcOptionItem> options = new List<PsdzRpcOptionItem>();
         if (_programmingJobs.ProgrammingService == null || _programmingJobs.PsdzContext?.Connection == null)
@@ -450,6 +450,12 @@ public class PsdzRpcService : IPsdzRpcService
         if (_programmingJobs?.SelectedOptions == null)
         {
             return false;
+        }
+
+        if (optionItem == null)
+        {
+            _programmingJobs.SelectedOptions.Clear();
+            return true;
         }
 
         Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
