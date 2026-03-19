@@ -279,6 +279,7 @@ namespace PsdzRpcClient
             Console.WriteLine("S - Stop Programming Service");
             Console.WriteLine("O - Create Options");
             Console.WriteLine("P - Print Selected Options");
+            Console.WriteLine("M - Modify Option");
             Console.WriteLine("T - Build TAL");
             Console.WriteLine("E - Execute TAL");
             Console.WriteLine("A - Abort Operation");
