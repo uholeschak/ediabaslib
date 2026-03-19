@@ -291,11 +291,13 @@ namespace PsdzRpcClient
             if (optionTypes != null)
             {
                 Console.WriteLine("Available option types:");
+                int index = 0;
                 foreach (PsdzRpcOptionType option in optionTypes)
                 {
                     bool selected = option.SwiRegisterEnum == selectedRegisterEnum;
                     string selectedMarker = selected ? "*" : string.Empty;
-                    Console.WriteLine($"- {selectedMarker} {option.Caption} ({option.SwiRegisterEnum.ToString()})");
+                    Console.WriteLine($"- {index}: {selectedMarker} {option.Caption} ({option.SwiRegisterEnum.ToString()})");
+                    index++;
                 }
             }
         }
