@@ -199,6 +199,10 @@ namespace PsdzRpcClient
                                     {
                                         bool result = await ModifyOption(client, index);
                                         Console.WriteLine($"Modify Option = {result}");
+                                        if (result)
+                                        {
+                                            await PrintSelectedOptions(client);
+                                        }
                                     }
                                     else
                                     {
