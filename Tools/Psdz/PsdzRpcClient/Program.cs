@@ -86,8 +86,8 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        Console.WriteLine($"Message from server: {msgArgs.Message} (OK Button: {msgArgs.OkBtn}, Wait: {msgArgs.Wait}) -> OK");
-                        msgArgs.Result = true; // Simulate user clicking OK
+                        Console.WriteLine($"Message from server: {msgArgs.Message} (OK Button: {msgArgs.OkBtn}, Wait: {msgArgs.Wait})");
+                        msgArgs.Result = true;
                     });
                 };
 
