@@ -84,45 +84,51 @@ namespace PsdzRpcClient
 
                 client.CallbackHandler.ShowMessage += (sender, msgArgs) =>
                 {
-                    Console.WriteLine($"Message: {msgArgs.Message}");
+                    syncContext.BeginInvoke(() =>
+                    {
+                        Console.WriteLine($"Message: {msgArgs.Message}");
+                    });
+
+                    msgArgs.Result = true;
+                    if (!msgArgs.Wait)
+                    {
+                        return;
+                    }
 
                     bool result = true;
-                    if (msgArgs.Wait)
+                    for (;;)
                     {
-                        for (;;)
+                        if (msgArgs.OkBtn)
                         {
-                            if (msgArgs.OkBtn)
-                            {
-                                Console.WriteLine("Press Enter to continue...");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Select Yes or No to continue...");
-                            }
+                            Console.WriteLine("Press Enter to continue...");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Select Yes or No to continue...");
+                        }
 
-                            bool exitLoop = true;
-                            ConsoleKeyInfo key = Console.ReadKey(intercept: false);
-                            switch (key.Key)
-                            {
-                                case ConsoleKey.Y:
-                                    break;
-
-                                case ConsoleKey.N:
-                                    result = false;
-                                    break;
-
-                                case ConsoleKey.Enter:
-                                    break;
-
-                                default:
-                                    exitLoop = false;
-                                    break;
-                            }
-
-                            if (exitLoop)
-                            {
+                        bool exitLoop = true;
+                        ConsoleKeyInfo key = Console.ReadKey(intercept: false);
+                        switch (key.Key)
+                        {
+                            case ConsoleKey.Y:
                                 break;
-                            }
+
+                            case ConsoleKey.N:
+                                result = false;
+                                break;
+
+                            case ConsoleKey.Enter:
+                                break;
+
+                            default:
+                                exitLoop = false;
+                                break;
+                        }
+
+                        if (exitLoop)
+                        {
+                            break;
                         }
                     }
 
