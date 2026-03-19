@@ -16,12 +16,11 @@ public sealed class SingleThreadSynchronizationContext : SynchronizationContext
 
     public override void Send(SendOrPostCallback d, object state)
     {
-        // Auf dem aufrufenden Thread direkt ausführen
         d(state);
     }
 
     /// <summary>
-    /// Führt eine Aktion auf dem Main-Thread aus (analog zu Control.BeginInvoke).
+    /// Führt eine Aktion auf dem Main-Thread aus (Fire-and-Forget).
     /// </summary>
     public void BeginInvoke(Action action)
     {
@@ -29,8 +28,7 @@ public sealed class SingleThreadSynchronizationContext : SynchronizationContext
     }
 
     /// <summary>
-    /// Führt eine async-Aktion auf dem Main-Thread aus.
-    /// await-Continuations kehren ebenfalls auf den Main-Thread zurück.
+    /// Führt eine async-Aktion auf dem Main-Thread aus (Fire-and-Forget).
     /// </summary>
     public void BeginInvoke(Func<Task> asyncAction)
     {
@@ -38,8 +36,28 @@ public sealed class SingleThreadSynchronizationContext : SynchronizationContext
     }
 
     /// <summary>
+    /// Führt eine Funktion auf dem Main-Thread aus und gibt das Ergebnis zurück.
+    /// Nicht-blockierend: Der aufrufende Thread kann await verwenden.
+    /// </summary>
+    public Task<T> InvokeAsync<T>(Func<T> func)
+    {
+        TaskCompletionSource<T> tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        Post(_ =>
+        {
+            try
+            {
+                tcs.SetResult(func());
+            }
+            catch (Exception ex)
+            {
+                tcs.SetException(ex);
+            }
+        }, null);
+        return tcs.Task;
+    }
+
+    /// <summary>
     /// Verarbeitet alle ausstehenden Callbacks auf dem aufrufenden Thread.
-    /// Nicht-blockierend: kehrt sofort zurück wenn die Queue leer ist.
     /// </summary>
     public void ProcessPendingCallbacks()
     {
