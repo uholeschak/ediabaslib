@@ -162,6 +162,11 @@ public class PsdzRpcService : IPsdzRpcService
 
     public Task<bool> SetLanguage(string language)
     {
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
+
         _programmingJobs.ClientContext.Language = language;
         return Task.FromResult(true);
     }
@@ -174,6 +179,11 @@ public class PsdzRpcService : IPsdzRpcService
 
     public Task<bool> SetLicenseValid(bool licenseValid)
     {
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
+
         _programmingJobs.LicenseValid = licenseValid;
         return Task.FromResult(true);
     }
@@ -186,6 +196,11 @@ public class PsdzRpcService : IPsdzRpcService
 
     public Task<bool> SetCacheClearRequired(bool cacheClearRequired)
     {
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
+        
         _programmingJobs.CacheClearRequired = cacheClearRequired;
         return Task.FromResult(true);
     }
@@ -195,8 +210,14 @@ public class PsdzRpcService : IPsdzRpcService
         bool genServiceModules = _programmingJobs.GenServiceModules;
         return Task.FromResult(genServiceModules);
     }
+
     public Task<bool> SetGenServiceModules(bool genServiceModules)
     {
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
+
         _programmingJobs.GenServiceModules = genServiceModules;
         return Task.FromResult(true);
     }
@@ -257,18 +278,33 @@ public class PsdzRpcService : IPsdzRpcService
 
     public Task<bool> SelectOption(PsdzRpcOptionItem optionItem, bool select)
     {
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
+
         bool result = SelectOptionInternal(optionItem, select);
         return Task.FromResult(result);
     }
 
     public Task<bool> ClearOptionsDict()
     {
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
+
         _programmingJobs.OptionsDict = null;
         return Task.FromResult(true);
     }
 
     public Task<bool> UpdateTargetFa(bool reset)
     {
+        if (IsOperationActive())
+        {
+            return Task.FromResult(false);
+        }
+
         _programmingJobs.UpdateTargetFa(reset);
         return Task.FromResult(true);
     }
