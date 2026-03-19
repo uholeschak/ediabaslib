@@ -295,8 +295,8 @@ namespace PsdzRpcClient
                 foreach (PsdzRpcOptionType option in optionTypes)
                 {
                     bool selected = option.SwiRegisterEnum == selectedRegisterEnum;
-                    string selectedMarker = selected ? "*" : string.Empty;
-                    Console.WriteLine($"- {index}: {selectedMarker} {option.Caption} ({option.SwiRegisterEnum.ToString()})");
+                    string selectedMarker = selected ? "* " : " ";
+                    Console.WriteLine($"- {selectedMarker}{index}: {option.Caption} ({option.SwiRegisterEnum.ToString()})");
                     index++;
                 }
             }
