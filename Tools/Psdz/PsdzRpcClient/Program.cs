@@ -19,6 +19,7 @@ namespace PsdzRpcClient
 #if NET
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 #endif
+            ShowMessageEventArgs pendingMessage = null;
             using CancellationTokenSource cts = new CancellationTokenSource();
 
             try
@@ -97,46 +98,17 @@ namespace PsdzRpcClient
                     syncContext.BeginInvoke(() =>
                     {
                         Console.WriteLine($"Message: {msgArgs.Message}");
-                    });
-
-                    bool result = true;
-                    for (; ; )
-                    {
                         if (msgArgs.OkBtn)
                         {
                             Console.WriteLine("Press Enter to continue...");
                         }
                         else
                         {
-                            Console.WriteLine("Select Yes or No to continue...");
+                            Console.WriteLine("Press Y (Yes) or N (No)...");
                         }
 
-                        bool exitLoop = true;
-                        ConsoleKeyInfo key = Console.ReadKey(intercept: false);
-                        switch (key.Key)
-                        {
-                            case ConsoleKey.Y:
-                                break;
-
-                            case ConsoleKey.N:
-                                result = false;
-                                break;
-
-                            case ConsoleKey.Enter:
-                                break;
-
-                            default:
-                                exitLoop = false;
-                                break;
-                        }
-
-                        if (exitLoop)
-                        {
-                            break;
-                        }
-                    }
-
-                    msgArgs.Result = result;
+                        pendingMessage = msgArgs;
+                    });
                 };
 
                 client.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
@@ -190,7 +162,48 @@ namespace PsdzRpcClient
 
                         if (Console.KeyAvailable)
                         {
-                            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+                            // Zuerst prüfen ob eine Nachricht auf Eingabe wartet
+                            if (pendingMessage != null)
+                            {
+                                bool? result = null;
+                                ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+                                if (pendingMessage.OkBtn)
+                                {
+                                    switch (key.Key)
+                                    {
+                                        case ConsoleKey.Enter:
+                                            result = true;
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    switch (key.Key)
+                                    {
+                                        case ConsoleKey.Y:
+                                            result = true;
+                                            break;
+                                        case ConsoleKey.N:
+                                            result = false;
+                                            break;
+                                    }
+                                }
+
+                                if (result != null)
+                                {
+                                    pendingMessage.SetResult(result.Value);
+                                    pendingMessage = null;
+                                    PrintOptions();
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Invalid key for message response. Please try again.");
+                                }
+
+                                continue;
+                            }
+
+                            ConsoleKeyInfo cmdKey = Console.ReadKey(intercept: true);
                             bool active = await client.RpcService.OperationActive();
                             if (active)
                             {
@@ -198,7 +211,7 @@ namespace PsdzRpcClient
                                 continue;
                             }
 
-                            switch (key.Key)
+                            switch (cmdKey.Key)
                             {
                                 case ConsoleKey.C:
                                 {

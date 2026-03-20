@@ -58,16 +58,19 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
 
     public Task<bool> OnShowMessage(string message, bool okBtn, bool wait)
     {
-        ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn);
         if (wait)
         {
+            TaskCompletionSource<bool> tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn, tcs);
             ShowMessageWait?.Invoke(this, args);
+            return tcs.Task; // Wartet asynchron bis SetResult() aufgerufen wird
         }
         else
         {
+            ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn);
             ShowMessage?.Invoke(this, args);
+            return Task.FromResult(args.Result);
         }
-        return Task.FromResult(args.Result);
     }
 
     public Task<int> OnTelSendQueueSize()
