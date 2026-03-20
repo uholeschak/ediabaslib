@@ -90,13 +90,17 @@ namespace PsdzRpcClient
                     });
 
                     msgArgs.Result = true;
-                    if (!msgArgs.Wait)
+                };
+
+                client.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
+                {
+                    syncContext.BeginInvoke(() =>
                     {
-                        return;
-                    }
+                        Console.WriteLine($"Message: {msgArgs.Message}");
+                    });
 
                     bool result = true;
-                    for (;;)
+                    for (; ; )
                     {
                         if (msgArgs.OkBtn)
                         {

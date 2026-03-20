@@ -16,6 +16,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public event EventHandler UpdateOptions;
     public event EventHandler<PsdzDatabase.SwiRegisterEnum?> UpdateOptionSelections;
     public event EventHandler<ShowMessageEventArgs> ShowMessage;
+    public event EventHandler<ShowMessageEventArgs> ShowMessageWait;
     public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
     public event EventHandler<string> ServiceInitialized;
 
@@ -57,8 +58,15 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
 
     public Task<bool> OnShowMessage(string message, bool okBtn, bool wait)
     {
-        ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn, wait);
-        ShowMessage?.Invoke(this, args);
+        ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn);
+        if (wait)
+        {
+            ShowMessageWait?.Invoke(this, args);
+        }
+        else
+        {
+            ShowMessage?.Invoke(this, args);
+        }
         return Task.FromResult(args.Result);
     }
 
