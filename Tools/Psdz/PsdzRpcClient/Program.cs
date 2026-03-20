@@ -98,15 +98,7 @@ namespace PsdzRpcClient
                     syncContext.BeginInvoke(() =>
                     {
                         Console.WriteLine($"Message: {msgArgs.Message}");
-                        if (msgArgs.OkBtn)
-                        {
-                            Console.WriteLine("Press Enter to continue...");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Press Y (Yes) or N (No)...");
-                        }
-
+                        PrintMessageAction(msgArgs);
                         pendingMessage = msgArgs;
                     });
                 };
@@ -197,7 +189,7 @@ namespace PsdzRpcClient
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Invalid key for message response. Please try again.");
+                                    PrintMessageAction(pendingMessage);
                                 }
 
                                 continue;
@@ -371,6 +363,24 @@ namespace PsdzRpcClient
             Console.WriteLine("E - Execute TAL");
             Console.WriteLine("A - Abort Operation");
             Console.WriteLine("ESC - Exit Client");
+        }
+
+        private static void PrintMessageAction(ShowMessageEventArgs pendingMessage)
+        {
+            if (pendingMessage == null)
+            {
+                return;
+            }
+
+            if (pendingMessage.OkBtn)
+            {
+                Console.WriteLine("Press Enter to continue...");
+            }
+            else
+            {
+                Console.WriteLine("Press Y (Yes) or N (No)...");
+            }
+
         }
 
         private static async Task PrintOptionTypes(PsdzRpcClient client)
