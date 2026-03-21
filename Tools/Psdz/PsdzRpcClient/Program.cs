@@ -141,6 +141,13 @@ namespace PsdzRpcClient
                 if (client.RpcService != null)
                 {
                     string istaFolder = await client.RpcService.GetIstaInstallLocation();
+                    if (string.IsNullOrEmpty(istaFolder))
+                    {
+                        Console.WriteLine("Failed to get ISTA install location.");
+                        return 1;
+                    }
+
+                    Console.WriteLine($"ISTA Install location: {istaFolder}");
                     bool licenseResult = await client.RpcService.SetLicenseValid(true);
                     if (!licenseResult)
                     {
@@ -148,7 +155,7 @@ namespace PsdzRpcClient
                         return 1;
                     }
 
-                    Console.WriteLine($"ISTA Install location: {istaFolder}");
+                    Console.WriteLine("License set to valid.");
                     string remoteHost = "127.0.0.1";
                     PrintOptions();
 
