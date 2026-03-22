@@ -57,7 +57,7 @@ namespace PsdzRpcClient
         {
             if (wait)
             {
-                TaskCompletionSource<bool> tcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+                TaskCompletionSource<bool> tcs = new (TaskCreationOptions.RunContinuationsAsynchronously);
                 ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn, tcs);
                 ShowMessageWait?.Invoke(this, args);
                 return tcs.Task; // Wartet asynchron bis SetResult() aufgerufen wird

@@ -7,7 +7,7 @@ namespace PsdzRpcClient
 {
     public sealed class SingleThreadSynchronizationContext : SynchronizationContext
     {
-        private readonly ConcurrentQueue<(SendOrPostCallback Callback, object State)> _queue = new ConcurrentQueue<(SendOrPostCallback Callback, object State)>();
+        private readonly ConcurrentQueue<(SendOrPostCallback Callback, object State)> _queue = new ();
 
         public override void Post(SendOrPostCallback d, object state)
         {
