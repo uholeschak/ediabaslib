@@ -216,9 +216,9 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(true);
     }
 
-    public Task<ProgrammingJobs.CacheType> GetCacheResponseType()
+    public Task<PsdzRpcCacheType> GetCacheResponseType()
     {
-        ProgrammingJobs.CacheType cacheResponseType = _programmingJobs.CacheResponseType;
+        PsdzRpcCacheType cacheResponseType = ToPsdzRpcCacheType(_programmingJobs.CacheResponseType);
         return Task.FromResult(cacheResponseType);
     }
 
@@ -627,5 +627,16 @@ public class PsdzRpcService : IPsdzRpcService
         _programmingJobs.ShowMessageEvent -= ShowMessageEvent;
         _programmingJobs.TelSendQueueSizeEvent -= TelSendQueueSizeEvent;
         _programmingJobs.Dispose();
+    }
+
+    private static PsdzRpcCacheType ToPsdzRpcCacheType(ProgrammingJobs.CacheType cacheType)
+    {
+        return cacheType switch
+        {
+            ProgrammingJobs.CacheType.None => PsdzRpcCacheType.None,
+            ProgrammingJobs.CacheType.NoResponse => PsdzRpcCacheType.NoResponse,
+            ProgrammingJobs.CacheType.FuncAddress => PsdzRpcCacheType.FuncAddress,
+            _ => throw new ArgumentOutOfRangeException(nameof(cacheType), cacheType, "Unknown CacheType value")
+        };
     }
 }

@@ -15,7 +15,6 @@ public partial interface IPsdzRpcService : IDisposable
     Task CancelOperation();
     Task<bool> SetupLog4Net(string logFile);
     Task<string> GetIstaInstallLocation();
-
     Task<bool> StartProgrammingService(string istaFolder);
     Task<bool> StopProgrammingService(string istaFolder, bool force = false);
     Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000);
@@ -29,7 +28,7 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> SetCacheClearRequired(bool cacheClearRequired);
     Task<bool> GetGenServiceModules();
     Task<bool> SetGenServiceModules(bool genServiceModules);
-    Task<ProgrammingJobs.CacheType> GetCacheResponseType();
+    Task<PsdzRpcCacheType> GetCacheResponseType();
     Task<bool> IsPsdzInitialized();
     Task<bool> IsVehicleConnected();
     Task<bool> IsTalPresent();
