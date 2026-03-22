@@ -5,50 +5,56 @@ using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PsdzRpcClient;
-
-public class PsdzRpcClient : IAsyncDisposable
+namespace PsdzRpcClient
 {
-    private NamedPipeClientStream _pipeClient;
-    private JsonRpc _jsonRpc;
-
-    public IPsdzRpcService RpcService { get; private set; }
-    public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
-
-    public async Task ConnectAsync(SynchronizationContext synchronizationContext, CancellationToken ct)
+    public class PsdzRpcClient : IAsyncDisposable
     {
-        _pipeClient = new NamedPipeClientStream(
-            ".",
-            PsdzRpcServiceConstants.PipeName,
-            PipeDirection.InOut,
-            PipeOptions.Asynchronous);
+        private NamedPipeClientStream _pipeClient;
+        private JsonRpc _jsonRpc;
 
-        Console.WriteLine($"Connecting with server...");
-        await _pipeClient.ConnectAsync(ct);
-        Console.WriteLine("Connected!");
+        public IPsdzRpcService RpcService { get; private set; }
+        public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
 
-        _jsonRpc = new JsonRpc(_pipeClient);
-        _jsonRpc.AddLocalRpcTarget(CallbackHandler);
-
-        if (synchronizationContext != null)
+        public async Task ConnectAsync(SynchronizationContext synchronizationContext, CancellationToken ct)
         {
-            _jsonRpc.SynchronizationContext = synchronizationContext;
+            _pipeClient = new NamedPipeClientStream(
+                ".",
+                PsdzRpcServiceConstants.PipeName,
+                PipeDirection.InOut,
+                PipeOptions.Asynchronous);
+
+            Console.WriteLine($"Connecting with server...");
+            await _pipeClient.ConnectAsync(ct);
+            Console.WriteLine("Connected!");
+
+            _jsonRpc = new JsonRpc(_pipeClient);
+            _jsonRpc.AddLocalRpcTarget(CallbackHandler);
+
+            if (synchronizationContext != null)
+            {
+                _jsonRpc.SynchronizationContext = synchronizationContext;
+            }
+
+            RpcService = _jsonRpc.Attach<IPsdzRpcService>();
+
+            _jsonRpc.StartListening();
         }
 
-        RpcService = _jsonRpc.Attach<IPsdzRpcService>();
-
-        _jsonRpc.StartListening();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_jsonRpc != null)
+        public async ValueTask DisposeAsync()
         {
-            _jsonRpc.Dispose();
-        }
-        if (_pipeClient != null)
-        {
-            await _pipeClient.DisposeAsync();
+            if (_jsonRpc != null)
+            {
+                _jsonRpc.Dispose();
+            }
+            if (_pipeClient != null)
+            {
+#if NET
+                await _pipeClient.DisposeAsync();
+#else
+                _pipeClient.Dispose();
+                await Task.CompletedTask;
+#endif
+            }
         }
     }
 }

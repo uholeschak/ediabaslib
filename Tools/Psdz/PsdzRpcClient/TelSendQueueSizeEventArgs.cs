@@ -1,6 +1,7 @@
-﻿namespace PsdzRpcClient;
-
-public class TelSendQueueSizeEventArgs
+﻿namespace PsdzRpcClient
 {
-    public int Result { get; set; }
+    public class TelSendQueueSizeEventArgs
+    {
+        public int Result { get; set; }
+    }
 }

@@ -1,14 +1,15 @@
 ﻿using System;
 
-namespace PsdzRpcClient;
-
-public class ProgressEventArgs : EventArgs
+namespace PsdzRpcClient
 {
-    public int Percent { get; }
-    public string Message { get; }
-    public ProgressEventArgs(int percent, string message)
+    public class ProgressEventArgs : EventArgs
     {
-        Percent = percent;
-        Message = message;
+        public int Percent { get; }
+        public string Message { get; }
+        public ProgressEventArgs(int percent, string message)
+        {
+            Percent = percent;
+            Message = message;
+        }
     }
 }

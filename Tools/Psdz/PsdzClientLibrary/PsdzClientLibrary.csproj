@@ -7,6 +7,7 @@
     <Product>PsdzClientLibrary</Product>
     <Copyright>Copyright ©  2021</Copyright>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>12.0</LangVersion>
   </PropertyGroup>
     <ItemGroup Condition=" ('$(TargetFramework)' == 'net48') Or ('$(TargetFramework)' == 'net481') ">
         <Reference Include="System.ComponentModel.DataAnnotations" />

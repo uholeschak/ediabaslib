@@ -1,7 +1,8 @@
-namespace PsdzRpcServer.Shared;
-
-public static class PsdzRpcServiceConstants
+namespace PsdzRpcServer.Shared
 {
-    public const string PipeName = "PsdzJsonRpcPipe";
-    public const string DealerId = "32395";
+    public static class PsdzRpcServiceConstants
+    {
+        public const string PipeName = "PsdzJsonRpcPipe";
+        public const string DealerId = "32395";
+    }
 }

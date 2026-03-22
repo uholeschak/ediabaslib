@@ -11,6 +11,7 @@
     <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
     <MicrosoftNetCompilersToolset_Version>5.3.0</MicrosoftNetCompilersToolset_Version>
     <ScriptyContinueOnError>false</ScriptyContinueOnError>
+    <LangVersion>12.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="jni4net.n-0.8.8.0, Version=0.8.8.0, Culture=neutral, PublicKeyToken=134a23405600bab4, processorArchitecture=MSIL">

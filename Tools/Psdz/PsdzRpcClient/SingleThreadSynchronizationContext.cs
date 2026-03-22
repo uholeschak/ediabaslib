@@ -3,58 +3,59 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace PsdzRpcClient;
-
-public sealed class SingleThreadSynchronizationContext : SynchronizationContext
+namespace PsdzRpcClient
 {
-    private readonly ConcurrentQueue<(SendOrPostCallback Callback, object State)> _queue = new();
-
-    public override void Post(SendOrPostCallback d, object state)
+    public sealed class SingleThreadSynchronizationContext : SynchronizationContext
     {
-        _queue.Enqueue((d, state));
-    }
+        private readonly ConcurrentQueue<(SendOrPostCallback Callback, object State)> _queue = new ConcurrentQueue<(SendOrPostCallback Callback, object State)>();
 
-    public override void Send(SendOrPostCallback d, object state)
-    {
-        // Auf dem aufrufenden Thread direkt ausführen
-        d(state);
-    }
-
-    /// <summary>
-    /// Führt eine Aktion auf dem Main-Thread aus (analog zu Control.BeginInvoke).
-    /// </summary>
-    public void BeginInvoke(Action action)
-    {
-        Post(_ => action(), null);
-    }
-
-    /// <summary>
-    /// Führt eine async-Aktion auf dem Main-Thread aus.
-    /// await-Continuations kehren ebenfalls auf den Main-Thread zurück.
-    /// </summary>
-    public void BeginInvoke(Func<Task> asyncAction)
-    {
-        Post(async _ => await asyncAction(), null);
-    }
-
-    /// <summary>
-    /// Verarbeitet alle ausstehenden Callbacks auf dem aufrufenden Thread.
-    /// Nicht-blockierend: kehrt sofort zurück wenn die Queue leer ist.
-    /// </summary>
-    public void ProcessPendingCallbacks()
-    {
-        SynchronizationContext previous = Current;
-        SetSynchronizationContext(this);
-        try
+        public override void Post(SendOrPostCallback d, object state)
         {
-            while (_queue.TryDequeue(out var item))
-            {
-                item.Callback(item.State);
-            }
+            _queue.Enqueue((d, state));
         }
-        finally
+
+        public override void Send(SendOrPostCallback d, object state)
         {
-            SetSynchronizationContext(previous);
+            // Auf dem aufrufenden Thread direkt ausführen
+            d(state);
+        }
+
+        /// <summary>
+        /// Führt eine Aktion auf dem Main-Thread aus (analog zu Control.BeginInvoke).
+        /// </summary>
+        public void BeginInvoke(Action action)
+        {
+            Post(_ => action(), null);
+        }
+
+        /// <summary>
+        /// Führt eine async-Aktion auf dem Main-Thread aus.
+        /// await-Continuations kehren ebenfalls auf den Main-Thread zurück.
+        /// </summary>
+        public void BeginInvoke(Func<Task> asyncAction)
+        {
+            Post(async _ => await asyncAction(), null);
+        }
+
+        /// <summary>
+        /// Verarbeitet alle ausstehenden Callbacks auf dem aufrufenden Thread.
+        /// Nicht-blockierend: kehrt sofort zurück wenn die Queue leer ist.
+        /// </summary>
+        public void ProcessPendingCallbacks()
+        {
+            SynchronizationContext previous = Current;
+            SetSynchronizationContext(this);
+            try
+            {
+                while (_queue.TryDequeue(out var item))
+                {
+                    item.Callback(item.State);
+                }
+            }
+            finally
+            {
+                SetSynchronizationContext(previous);
+            }
         }
     }
 }
