@@ -130,15 +130,16 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(true);
     }
 
-    public Task<bool> VehicleFunctions(ProgrammingJobs.OperationType operationType)
+    public Task<bool> VehicleFunctions(PsdzOperationType operationType)
     {
         if (IsOperationActive())
         {
             return Task.FromResult(false);
         }
 
+        ProgrammingJobs.OperationType OperationTypeValue = MapOperationType(operationType);
         CancellationTokenSource cts = CreateCancellationToken();
-        VehicleFunctionsTask(operationType).ContinueWith(task =>
+        VehicleFunctionsTask(OperationTypeValue).ContinueWith(task =>
         {
             bool result = task.IsCompletedSuccessfully && task.Result;
             _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
@@ -638,6 +639,24 @@ public class PsdzRpcService : IPsdzRpcService
         }
 
         throw new ArgumentOutOfRangeException(nameof(cacheType), cacheType, "Unknown CacheType");
+    }
+
+    private static PsdzOperationType MapOperationType(ProgrammingJobs.OperationType operationType)
+    {
+        if (Enum.TryParse(operationType.ToString(), out PsdzOperationType result))
+        {
+            return result;
+        }
+        throw new ArgumentOutOfRangeException(nameof(operationType), operationType, "Unknown OperationType");
+    }
+
+    private static ProgrammingJobs.OperationType MapOperationType(PsdzOperationType operationType)
+    {
+        if (Enum.TryParse(operationType.ToString(), out ProgrammingJobs.OperationType result))
+        {
+            return result;
+        }
+        throw new ArgumentOutOfRangeException(nameof(operationType), operationType, "Unknown OperationType");
     }
 
     private static PsdzRpcSwiRegisterEnum MapSwiRegisterEnum(PsdzDatabase.SwiRegisterEnum swiRegisterEnum)

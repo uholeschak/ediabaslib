@@ -19,7 +19,7 @@ public partial interface IPsdzRpcService : IDisposable
     Task<bool> StopProgrammingService(string istaFolder, bool force = false);
     Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000);
     Task<bool> DisconnectVehicle();
-    Task<bool> VehicleFunctions(ProgrammingJobs.OperationType operationType);
+    Task<bool> VehicleFunctions(PsdzOperationType operationType);
     Task<string> GetLanguage();
     Task<bool> SetLanguage(string language);
     Task<bool> GetLicenseValid();

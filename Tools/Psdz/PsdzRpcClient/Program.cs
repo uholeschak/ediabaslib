@@ -246,7 +246,7 @@ namespace PsdzRpcClient
                                 case ConsoleKey.O:
                                 {
                                     Console.WriteLine("Creating options...");
-                                    bool result = await client.RpcService.VehicleFunctions(ProgrammingJobs.OperationType.CreateOptions);
+                                    bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.CreateOptions);
                                     Console.WriteLine($"Create Options = {result}");
                                     break;
                                 }
@@ -302,7 +302,7 @@ namespace PsdzRpcClient
                                 case ConsoleKey.T:
                                 {
                                     Console.WriteLine("Building TAL...");
-                                    bool result = await client.RpcService.VehicleFunctions(ProgrammingJobs.OperationType.BuildTalModFa);
+                                    bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.BuildTalModFa);
                                     Console.WriteLine($"Build TAL = {result}");
                                     break;
                                 }
@@ -310,7 +310,7 @@ namespace PsdzRpcClient
                                 case ConsoleKey.E:
                                 {
                                     Console.WriteLine("Executing TAL...");
-                                    bool result = await client.RpcService.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
+                                    bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.ExecuteTal);
                                     Console.WriteLine($"Execute TAL = {result}");
                                     break;
                                 }
