@@ -2,10 +2,12 @@
   "profiles": {
     "PsdzRpcClient": {
       "commandName": "Project",
+      "commandLineArgs": "-i \"127.0.0.1\"",
       "remoteDebugEnabled": false
     },
     "VM-WIN11": {
       "commandName": "Project",
+      "commandLineArgs": "-i \"192.168.150.10\"",
       "remoteDebugEnabled": true,
       "remoteDebugMachine": "VM-WIN11",
       "authenticationMode": "Windows",

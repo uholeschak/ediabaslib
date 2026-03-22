@@ -30,7 +30,7 @@ namespace PsdzRpcClient
                 Debug
             }
 
-            [Option('v', "vehicleip", Required = false, HelpText = "Vehicle IP address.")]
+            [Option('i', "vehicleip", Required = false, HelpText = "Vehicle IP address.")]
             public string VehicleIp { get; set; }
 
             [Option('s', "serverexe", Required = false, HelpText = "Server executable path.")]
