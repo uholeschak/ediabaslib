@@ -12,6 +12,7 @@
       <Compile Include="..\PsdzRpcServer\Shared\**\*.cs" LinkBase="Shared" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="StreamJsonRpc" Version="2.24.84" />
   </ItemGroup>
 </Project>

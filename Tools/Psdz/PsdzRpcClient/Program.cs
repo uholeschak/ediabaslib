@@ -1,7 +1,9 @@
-﻿using PsdzRpcServer.Shared;
+﻿using CommandLine;
+using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,13 +11,79 @@ namespace PsdzRpcClient
 {
     internal class Program
     {
+        public class Options
+        {
+            public Options()
+            {
+                VehicleIp = string.Empty;
+                ServerExe = string.Empty;
+                Verbosity = VerbosityOption.Error;
+            }
+
+            public enum VerbosityOption
+            {
+                None,
+                Error,
+                Important,
+                Warning,
+                Info,
+                Debug
+            }
+
+            [Option('v', "vehicleip", Required = false, HelpText = "Vehicle IP address.")]
+            public string VehicleIp { get; set; }
+
+            [Option('s', "serverexe", Required = false, HelpText = "Server executable path.")]
+            public string ServerExe { get; set; }
+
+            [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
+            public VerbosityOption Verbosity { get; set; }
+        }
+
         static PsdzRpcSwiRegisterEnum selectedRegisterEnum = PsdzRpcSwiRegisterEnum.VehicleModificationCodingConversion;
+        static Options.VerbosityOption _verbosity = Options.VerbosityOption.Important;
 
         static async Task<int> Main(string[] args)
         {
 #if NET
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
+            string vehicleIp = string.Empty;
+            string serverExe = string.Empty;
+            bool hasErrors = false;
+
+            Parser parser = new Parser(with =>
+            {
+                //ignore case for enum values
+                with.CaseInsensitiveEnumValues = true;
+                with.EnableDashDash = true;
+                with.HelpWriter = Console.Out;
+            });
+
+            parser.ParseArguments<Options>(args)
+                .WithParsed<Options>(o =>
+                {
+                    vehicleIp = o.VehicleIp;
+                    serverExe = o.ServerExe;
+                    _verbosity = o.Verbosity;
+                })
+                .WithNotParsed(errs =>
+                {
+                    string errors = string.Join("\n", errs);
+                    Console.WriteLine("Option parsing errors:\n{0}", string.Join("\n", errors));
+                    if (errors.IndexOf("BadFormatConversion", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        Console.WriteLine("Valid verbosity options are: {0}", string.Join(", ", Enum.GetNames(typeof(Options.VerbosityOption)).ToList()));
+                    }
+
+                    hasErrors = true;
+                });
+
+            if (hasErrors)
+            {
+                return 1;
+            }
+
             ShowMessageEventArgs pendingMessage = null;
             using CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -153,7 +221,13 @@ namespace PsdzRpcClient
                     }
 
                     Console.WriteLine("License set to valid.");
+
                     string remoteHost = "127.0.0.1";
+                    if (!string.IsNullOrEmpty(vehicleIp))
+                    {
+                        remoteHost = vehicleIp;
+                    }
+                    Console.WriteLine($"Using vehicle IP: {remoteHost}");
                     PrintOptions();
 
                     for (;;)
