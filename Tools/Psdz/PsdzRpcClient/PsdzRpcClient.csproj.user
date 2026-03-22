@@ -5,5 +5,6 @@
   </PropertyGroup>
   <PropertyGroup>
     <ActiveDebugProfile>PsdzRpcClient</ActiveDebugProfile>
+    <ActiveDebugFramework>net10.0-windows10.0.26100.0</ActiveDebugFramework>
   </PropertyGroup>
 </Project>
