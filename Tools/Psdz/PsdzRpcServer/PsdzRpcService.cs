@@ -257,16 +257,17 @@ public class PsdzRpcService : IPsdzRpcService
         List<PsdzRpcOptionType> optionTypes = new List<PsdzRpcOptionType>();
         foreach (ProgrammingJobs.OptionType optionTypeUpdate in _programmingJobs.OptionTypes)
         {
-            PsdzRpcOptionType optionType = new PsdzRpcOptionType(optionTypeUpdate.SwiRegisterEnum, optionTypeUpdate.ToString());
+            PsdzRpcOptionType optionType = new PsdzRpcOptionType(MapSwiRegisterEnum(optionTypeUpdate.SwiRegisterEnum), optionTypeUpdate.ToString());
             optionTypes.Add(optionType);
         }
 
         return Task.FromResult(optionTypes);
     }
 
-    public Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+    public Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzRpcSwiRegisterEnum? swiRegisterEnum)
     {
-        List<PsdzRpcOptionItem> options = GetSelectedOptionsInternal(swiRegisterEnum);
+        PsdzDatabase.SwiRegisterEnum? swiRegisterEnumValue = swiRegisterEnum.HasValue ? MapSwiRegisterEnum(swiRegisterEnum.Value) : null;
+        List<PsdzRpcOptionItem> options = GetSelectedOptionsInternal(swiRegisterEnumValue);
         return Task.FromResult(options);
     }
 
@@ -430,7 +431,7 @@ public class PsdzRpcService : IPsdzRpcService
 
                     if (addItem)
                     {
-                        options.Add(new PsdzRpcOptionItem(optionsItem.SwiRegisterEnum, optionsItem.Id, optionsItem.ToString(), enabled, selected));
+                        options.Add(new PsdzRpcOptionItem(MapSwiRegisterEnum(optionsItem.SwiRegisterEnum), optionsItem.Id, optionsItem.ToString(), enabled, selected));
                     }
                 }
             }
@@ -453,7 +454,7 @@ public class PsdzRpcService : IPsdzRpcService
         }
 
         Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
-        PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionItem.SwiRegisterEnum;
+        PsdzDatabase.SwiRegisterEnum swiRegisterEnum = MapSwiRegisterEnum(optionItem.SwiRegisterEnum);
         if (_programmingJobs.SelectedOptions.Count > 0)
         {
             PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
@@ -637,5 +638,23 @@ public class PsdzRpcService : IPsdzRpcService
         }
 
         throw new ArgumentOutOfRangeException(nameof(cacheType), cacheType, "Unknown CacheType");
+    }
+
+    private static PsdzRpcSwiRegisterEnum MapSwiRegisterEnum(PsdzDatabase.SwiRegisterEnum swiRegisterEnum)
+    {
+        if (Enum.TryParse(swiRegisterEnum.ToString(), out PsdzRpcSwiRegisterEnum result))
+        {
+            return result;
+        }
+        throw new ArgumentOutOfRangeException(nameof(swiRegisterEnum), swiRegisterEnum, "Unknown SwiRegisterEnum");
+    }
+
+    private static PsdzDatabase.SwiRegisterEnum MapSwiRegisterEnum(PsdzRpcSwiRegisterEnum swiRegisterEnum)
+    {
+        if (Enum.TryParse(swiRegisterEnum.ToString(), out PsdzDatabase.SwiRegisterEnum result))
+        {
+            return result;
+        }
+        throw new ArgumentOutOfRangeException(nameof(swiRegisterEnum), swiRegisterEnum, "Unknown SwiRegisterEnum");
     }
 }

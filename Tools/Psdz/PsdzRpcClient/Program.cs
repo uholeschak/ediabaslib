@@ -12,7 +12,7 @@ namespace PsdzRpcClient
 {
     internal class Program
     {
-        static PsdzDatabase.SwiRegisterEnum selectedRegisterEnum = PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion;
+        static PsdzRpcSwiRegisterEnum selectedRegisterEnum = PsdzRpcSwiRegisterEnum.VehicleModificationCodingConversion;
 
         static async Task<int> Main(string[] args)
         {

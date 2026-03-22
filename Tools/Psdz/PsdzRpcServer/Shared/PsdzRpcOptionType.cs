@@ -4,13 +4,13 @@ namespace PsdzRpcServer.Shared
 {
     public class PsdzRpcOptionType
     {
-        public PsdzRpcOptionType(PsdzDatabase.SwiRegisterEnum swiRegisterEnum, string caption)
+        public PsdzRpcOptionType(PsdzRpcSwiRegisterEnum swiRegisterEnum, string caption)
         {
             SwiRegisterEnum = swiRegisterEnum;
             Caption = caption;
         }
 
-        public PsdzDatabase.SwiRegisterEnum SwiRegisterEnum { get; private set; }
+        public PsdzRpcSwiRegisterEnum SwiRegisterEnum { get; private set; }
 
         public string Caption { get; private set; }
     }
