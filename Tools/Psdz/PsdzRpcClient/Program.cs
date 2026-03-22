@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +14,7 @@ namespace PsdzRpcClient
         static async Task<int> Main(string[] args)
         {
 #if NET
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
             ShowMessageEventArgs pendingMessage = null;
             using CancellationTokenSource cts = new CancellationTokenSource();
