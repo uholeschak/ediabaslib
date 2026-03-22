@@ -58,12 +58,6 @@ public class PsdzRpcService : IPsdzRpcService
         return Task.FromResult(istaFolder);
     }
 
-    public Task<PsdzDatabase.SwiRegisterGroup> GetSwiRegisterGroup(PsdzDatabase.SwiRegisterEnum swiRegisterEnum)
-    {
-        PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum);
-        return Task.FromResult(swiRegisterGroup);
-    }
-
     public Task<bool> StartProgrammingService(string istaFolder)
     {
         if (IsOperationActive())

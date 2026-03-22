@@ -1,9 +1,7 @@
 ﻿using PsdzRpcServer.Shared;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using PsdzClient;
-using PsdzClient.Programming;
 
 namespace PsdzRpcClient;
 
