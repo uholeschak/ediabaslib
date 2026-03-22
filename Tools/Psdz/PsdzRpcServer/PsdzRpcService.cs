@@ -595,7 +595,8 @@ public class PsdzRpcService : IPsdzRpcService
 
     private void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
     {
-        _callback.OnUpdateOptionSelections(swiRegisterEnum);
+        PsdzRpcSwiRegisterEnum ? swiRegisterEnumValue = swiRegisterEnum.HasValue ? MapSwiRegisterEnum(swiRegisterEnum.Value) : null;
+        _callback.OnUpdateOptionSelections(swiRegisterEnumValue);
     }
 
     private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool okBtn, bool wait)

@@ -1,6 +1,4 @@
-﻿using PsdzClient;
-
-namespace PsdzRpcServer.Shared
+﻿namespace PsdzRpcServer.Shared
 {
     public class PsdzRpcOptionType
     {

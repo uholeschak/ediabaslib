@@ -1,6 +1,4 @@
-﻿using PsdzClient;
-using PsdzClient.Programming;
-using PsdzRpcServer.Shared;
+﻿using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
 using System.IO;

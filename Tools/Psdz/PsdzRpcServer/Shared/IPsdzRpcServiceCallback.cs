@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using PolyType;
-using PsdzClient;
-using PsdzClient.Programming;
 using StreamJsonRpc;
 
 namespace PsdzRpcServer.Shared;
@@ -15,7 +13,7 @@ public partial interface IPsdzRpcServiceCallback
     Task OnUpdateStatus(string message);
     Task OnUpdateProgress(int percent, bool marquee, string message);
     Task OnUpdateOptions();
-    Task OnUpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum);
+    Task OnUpdateOptionSelections(PsdzRpcSwiRegisterEnum? swiRegisterEnum);
     Task<bool> OnShowMessage(string message, bool okBtn, bool wait);
     Task<int> OnTelSendQueueSize();
     Task OnServiceInitialized(string hostLogDir);

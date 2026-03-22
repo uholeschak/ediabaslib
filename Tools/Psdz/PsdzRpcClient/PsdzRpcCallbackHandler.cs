@@ -1,7 +1,6 @@
 ﻿using PsdzRpcServer.Shared;
 using System;
 using System.Threading.Tasks;
-using PsdzClient;
 
 namespace PsdzRpcClient;
 
@@ -12,7 +11,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     public event EventHandler<string> UpdateStatus;
     public event EventHandler<(int percent, bool marquee, string message)> UpdateProgress;
     public event EventHandler UpdateOptions;
-    public event EventHandler<PsdzDatabase.SwiRegisterEnum?> UpdateOptionSelections;
+    public event EventHandler<PsdzRpcSwiRegisterEnum?> UpdateOptionSelections;
     public event EventHandler<ShowMessageEventArgs> ShowMessage;
     public event EventHandler<ShowMessageEventArgs> ShowMessageWait;
     public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
@@ -48,7 +47,7 @@ public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
         return Task.CompletedTask;
     }
 
-    public Task OnUpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+    public Task OnUpdateOptionSelections(PsdzRpcSwiRegisterEnum? swiRegisterEnum)
     {
         UpdateOptionSelections?.Invoke(this, swiRegisterEnum);
         return Task.CompletedTask;
