@@ -158,7 +158,7 @@ namespace PsdzRpcClient
                             {
                                 if (string.IsNullOrEmpty(tuple.message))
                                 {
-                                    Console.Write(".");
+                                    Console.Write("Processing ...");
                                 }
                                 else
                                 {
