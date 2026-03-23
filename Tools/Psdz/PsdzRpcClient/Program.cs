@@ -109,7 +109,10 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        Console.WriteLine($"[{e.Percent}%] {e.Message}");
+                        if (_verbosity <= Options.VerbosityOption.Important)
+                        {
+                            Console.WriteLine($"[{e.Percent}%] {e.Message}");
+                        }
                     });
                 };
 
@@ -119,14 +122,14 @@ namespace PsdzRpcClient
                     {
                         if (success)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Info)
+                            if (_verbosity <= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine("Operation completed successfully.");
                             }
                         }
                         else
                         {
-                            if (_verbosity >= Options.VerbosityOption.Error)
+                            if (_verbosity <= Options.VerbosityOption.Error)
                             {
                                 Console.WriteLine("Operation failed.");
                             }
@@ -138,7 +141,10 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        Console.WriteLine($"Status: {e}");
+                        if (_verbosity <= Options.VerbosityOption.Important)
+                        {
+                            Console.WriteLine($"Status: {e}");
+                        }
                     });
                 };
 
@@ -148,14 +154,21 @@ namespace PsdzRpcClient
                     {
                         if (tuple.marquee)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Info)
+                            if (_verbosity <= Options.VerbosityOption.Important)
                             {
-                                Console.WriteLine($"Progress: {tuple.message}");
+                                if (string.IsNullOrEmpty(tuple.message))
+                                {
+                                    Console.Write(".");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Progress: {tuple.message}");
+                                }
                             }
                         }
                         else
                         {
-                            if (_verbosity >= Options.VerbosityOption.Important)
+                            if (_verbosity <= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"[{tuple.percent}%]: {tuple.message}");
                             }
