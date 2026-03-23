@@ -18,7 +18,7 @@ namespace PsdzRpcClient
             {
                 VehicleIp = string.Empty;
                 ServerExe = string.Empty;
-                Verbosity = VerbosityOption.Error;
+                Verbosity = VerbosityOption.Important;
             }
 
             public enum VerbosityOption
