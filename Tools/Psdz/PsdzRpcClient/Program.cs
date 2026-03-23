@@ -507,7 +507,9 @@ namespace PsdzRpcClient
                 return false;
             }
 
-            string serverExeFullPath = Path.GetFullPath(serverExe);
+            string serverExeFullPath = Path.IsPathRooted(serverExe)
+                ? serverExe
+                : Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, serverExe));
             if (!File.Exists(serverExeFullPath))
             {
                 Console.WriteLine($"Server executable not found: {serverExeFullPath}");
