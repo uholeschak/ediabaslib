@@ -231,13 +231,24 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(async () =>
                     {
-                        Console.WriteLine($"Service initialized. Host log directory: {hostLogDir}");
+                        if (_verbosity <= Options.VerbosityOption.Important)
+                        {
+                            Console.WriteLine($"Service initialized. Host log directory: {hostLogDir}");
+                        }
                         if (client.RpcService != null)
                         {
                             string logFile = Path.Combine(hostLogDir, "PsdzClient.log");
-                            Console.WriteLine($"SetupLog4Net with log file: {logFile}");
+                            if (_verbosity <= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine($"SetupLog4Net with log file: {logFile}");
+                            }
+
                             bool result = await client.RpcService.SetupLog4Net(logFile);
-                            Console.WriteLine($"SetupLog4Net result: {result}");
+
+                            if (_verbosity <= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine($"SetupLog4Net result: {result}");
+                            }
                         }
                     });
                 };
@@ -259,7 +270,10 @@ namespace PsdzRpcClient
                     string istaFolder = await client.RpcService.GetIstaInstallLocation();
                     if (string.IsNullOrEmpty(istaFolder))
                     {
-                        Console.WriteLine("Failed to get ISTA install location.");
+                        if (_verbosity <= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("Failed to get ISTA install location.");
+                        }
                         return 1;
                     }
 
@@ -267,7 +281,10 @@ namespace PsdzRpcClient
                     bool licenseResult = await client.RpcService.SetLicenseValid(true);
                     if (!licenseResult)
                     {
-                        Console.WriteLine("Failed to set license valid.");
+                        if (_verbosity <= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("Failed to set license valid.");
+                        }
                         return 1;
                     }
 
@@ -278,7 +295,11 @@ namespace PsdzRpcClient
                     {
                         remoteHost = vehicleIp;
                     }
-                    Console.WriteLine($"Using vehicle IP: {remoteHost}");
+
+                    if (_verbosity <= Options.VerbosityOption.Important)
+                    {
+                        Console.WriteLine($"Using vehicle IP: {remoteHost}");
+                    }
                     PrintOptions();
 
                     for (;;)
@@ -483,8 +504,6 @@ namespace PsdzRpcClient
             }
 
             Console.WriteLine("Client stopped.");
-            //Console.WriteLine("Press any key to exit...");
-            //Console.ReadKey();
             return 0;
         }
 
