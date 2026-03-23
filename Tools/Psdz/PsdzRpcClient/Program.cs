@@ -117,7 +117,20 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        Console.WriteLine($"Operation finished: {(success ? "Success" : "Error")}");
+                        if (success)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                Console.WriteLine("Operation completed successfully.");
+                            }
+                        }
+                        else
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Operation failed.");
+                            }
+                        }
                     });
                 };
 
@@ -133,7 +146,20 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        Console.WriteLine($"[{tuple.percent}%] Marquee={tuple.marquee}: {tuple.message}");
+                        if (tuple.marquee)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Info)
+                            {
+                                Console.WriteLine($"Progress: {tuple.message}");
+                            }
+                        }
+                        else
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine($"[{tuple.percent}%]: {tuple.message}");
+                            }
+                        }
                     });
                 };
 
