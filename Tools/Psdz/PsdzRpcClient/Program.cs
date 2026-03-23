@@ -2,6 +2,7 @@
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -84,6 +85,7 @@ namespace PsdzRpcClient
                 return 1;
             }
 
+            Process serverProcess = null;
             ShowMessageEventArgs pendingMessage = null;
             using CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -95,6 +97,8 @@ namespace PsdzRpcClient
                     e.Cancel = true;
                     ctsLocal.Cancel();
                 };
+
+                serverProcess = EnsureServerRunning(serverExe);
 
                 SingleThreadSynchronizationContext syncContext = new();
 
@@ -426,11 +430,113 @@ namespace PsdzRpcClient
                 Console.WriteLine($"Error: {ex.Message}");
                 return 1;
             }
+            finally
+            {
+                StopServerProcess(serverProcess);
+            }
 
             Console.WriteLine("Client stopped.");
             //Console.WriteLine("Press any key to exit...");
             //Console.ReadKey();
             return 0;
+        }
+
+        /// <summary>
+        /// Prüft ob der Server bereits läuft (Named Pipe existiert).
+        /// Falls nicht und <paramref name="serverExe"/> angegeben ist, wird der Server-Prozess gestartet.
+        /// </summary>
+        private static Process EnsureServerRunning(string serverExe)
+        {
+            if (string.IsNullOrEmpty(serverExe))
+            {
+                Console.WriteLine("Server is not running and no server executable specified.");
+                return null;
+            }
+
+            string serverExeFullPath = Path.GetFullPath(serverExe);
+            if (!File.Exists(serverExeFullPath))
+            {
+                Console.WriteLine($"Server executable not found: {serverExeFullPath}");
+                return null;
+            }
+
+            if (IsPipeAvailable())
+            {
+                Console.WriteLine("Server is already running.");
+                return null;
+            }
+
+            Console.WriteLine($"Starting server: {serverExeFullPath}");
+            Process process = Process.Start(new ProcessStartInfo
+            {
+                FileName = serverExeFullPath,
+                WorkingDirectory = Path.GetDirectoryName(serverExeFullPath),
+                UseShellExecute = true,
+            });
+
+            if (process == null)
+            {
+                Console.WriteLine("Failed to start server process.");
+                return null;
+            }
+
+            Console.WriteLine($"Server process started (PID: {process.Id}). Waiting for pipe...");
+
+            // Warten bis die Pipe verfügbar ist oder der Prozess beendet wurde
+            for (int i = 0; i < 60; i++) // max 30 Sekunden
+            {
+                if (process.HasExited)
+                {
+                    Console.WriteLine($"Server process exited with code: {process.ExitCode}");
+                    return null;
+                }
+
+                if (IsPipeAvailable())
+                {
+                    Console.WriteLine("Server pipe is available.");
+                    return process;
+                }
+
+                Thread.Sleep(500);
+            }
+
+            Console.WriteLine("Timeout waiting for server pipe.");
+            return process;
+        }
+
+        /// <summary>
+        /// Prüft ob die Named Pipe des Servers existiert.
+        /// </summary>
+        private static bool IsPipeAvailable()
+        {
+            return File.Exists($@"\\.\pipe\{PsdzRpcServiceConstants.PipeName}");
+        }
+
+        /// <summary>
+        /// Beendet den Server-Prozess wenn er vom Client gestartet wurde.
+        /// </summary>
+        private static void StopServerProcess(Process serverProcess)
+        {
+            if (serverProcess == null || serverProcess.HasExited)
+            {
+                return;
+            }
+
+            try
+            {
+                Console.WriteLine("Stopping server process...");
+                serverProcess.Kill();
+                serverProcess.WaitForExit(5000);
+                Console.WriteLine("Server process stopped.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to stop server process: {ex.Message}");
+            }
+            finally
+            {
+                serverProcess.Dispose();
+            }
         }
 
         private static void PrintOptions()
