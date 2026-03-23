@@ -98,10 +98,12 @@ namespace PsdzRpcClient
                     ctsLocal.Cancel();
                 };
 
-                serverProcess = EnsureServerRunning(serverExe);
+                if (!EnsureServerRunning(serverExe, out serverProcess))
+                {
+                    return 1;
+                }
 
                 SingleThreadSynchronizationContext syncContext = new();
-
                 await using PsdzRpcClient client = new PsdzRpcClient();
                 client.CallbackHandler.ProgressChanged += (s, e) =>
                 {
@@ -445,39 +447,40 @@ namespace PsdzRpcClient
         /// Prüft ob der Server bereits läuft (Named Pipe existiert).
         /// Falls nicht und <paramref name="serverExe"/> angegeben ist, wird der Server-Prozess gestartet.
         /// </summary>
-        private static Process EnsureServerRunning(string serverExe)
+        private static bool EnsureServerRunning(string serverExe, out Process serverProcess)
         {
+            serverProcess = null;
+            if (IsPipeAvailable())
+            {
+                Console.WriteLine("Server is already running.");
+                return true;
+            }
+
             if (string.IsNullOrEmpty(serverExe))
             {
                 Console.WriteLine("Server is not running and no server executable specified.");
-                return null;
+                return false;
             }
 
             string serverExeFullPath = Path.GetFullPath(serverExe);
             if (!File.Exists(serverExeFullPath))
             {
                 Console.WriteLine($"Server executable not found: {serverExeFullPath}");
-                return null;
-            }
-
-            if (IsPipeAvailable())
-            {
-                Console.WriteLine("Server is already running.");
-                return null;
+                return false;
             }
 
             Console.WriteLine($"Starting server: {serverExeFullPath}");
             Process process = Process.Start(new ProcessStartInfo
             {
                 FileName = serverExeFullPath,
-                WorkingDirectory = Path.GetDirectoryName(serverExeFullPath),
+                WorkingDirectory = Path.GetDirectoryName(serverExeFullPath) ?? Environment.CurrentDirectory,
                 UseShellExecute = true,
             });
 
             if (process == null)
             {
                 Console.WriteLine("Failed to start server process.");
-                return null;
+                return false;
             }
 
             Console.WriteLine($"Server process started (PID: {process.Id}). Waiting for pipe...");
@@ -488,20 +491,22 @@ namespace PsdzRpcClient
                 if (process.HasExited)
                 {
                     Console.WriteLine($"Server process exited with code: {process.ExitCode}");
-                    return null;
+                    return false;
                 }
 
                 if (IsPipeAvailable())
                 {
                     Console.WriteLine("Server pipe is available.");
-                    return process;
+                    serverProcess = process;
+                    return true;
                 }
 
                 Thread.Sleep(500);
             }
 
             Console.WriteLine("Timeout waiting for server pipe.");
-            return process;
+            StopServerProcess(serverProcess);
+            return false;
         }
 
         /// <summary>
