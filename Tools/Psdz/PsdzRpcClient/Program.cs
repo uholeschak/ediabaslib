@@ -189,7 +189,10 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        Console.WriteLine($"Option selections updated: {swiRegisterEnum}");
+                        if (_verbosity <= Options.VerbosityOption.Important)
+                        {
+                            Console.WriteLine($"Option selections updated: {swiRegisterEnum}");
+                        }
                     });
                 };
 
@@ -197,7 +200,10 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        Console.WriteLine($"Message: {msgArgs.Message}");
+                        if (_verbosity <= Options.VerbosityOption.Important)
+                        {
+                            Console.WriteLine($"Message: {msgArgs.Message}");
+                        }
                     });
 
                     msgArgs.Result = true;
