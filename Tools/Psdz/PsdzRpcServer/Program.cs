@@ -25,10 +25,17 @@ namespace PsdzRpcServer
                 };
 
                 Console.WriteLine("Starting PsdzJsonRpcServer...");
+                Console.WriteLine("Server will stop when the last client disconnects or ESC is pressed.");
                 Task serverTask = server.StartAsync(cts.Token);
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);
 
-                await Task.WhenAny(serverTask, keyTask);
+                // Beenden bei: ESC, Ctrl+C oder letzter Client getrennt
+                await Task.WhenAny(serverTask, keyTask, server.AllClientsDisconnected);
+
+                if (server.AllClientsDisconnected.IsCompleted)
+                {
+                    Console.WriteLine("Last client disconnected. Shutting down...");
+                }
 
                 cts.Cancel();
 

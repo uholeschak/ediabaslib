@@ -479,7 +479,7 @@ namespace PsdzRpcClient
             }
             finally
             {
-                StopServerProcess(serverProcess);
+                //StopServerProcess(serverProcess);
             }
 
             Console.WriteLine("Client stopped.");

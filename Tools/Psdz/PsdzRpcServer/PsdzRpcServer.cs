@@ -9,6 +9,15 @@ namespace PsdzRpcServer
 {
     public class PsdzRpcServer
     {
+        private int _clientCount;
+        private bool _hadClients;
+        private readonly TaskCompletionSource<bool> _allClientsDisconnected = new TaskCompletionSource<bool>();
+
+        /// <summary>
+        /// Wird ausgelöst wenn der letzte Client die Verbindung trennt.
+        /// </summary>
+        public Task AllClientsDisconnected => _allClientsDisconnected.Task;
+
         public async Task StartAsync(CancellationToken ct)
         {
             while (!ct.IsCancellationRequested)
@@ -24,7 +33,10 @@ namespace PsdzRpcServer
                 {
                     Console.WriteLine("Wait for client connection...");
                     await pipeServer.WaitForConnectionAsync(ct);
-                    Console.WriteLine("Client connected");
+
+                    int count = Interlocked.Increment(ref _clientCount);
+                    _hadClients = true;
+                    Console.WriteLine($"Client connected. Active clients: {count}");
 
                     // JsonRpc for this connection
                     _ = HandleClientAsync(pipeServer);
@@ -56,6 +68,14 @@ namespace PsdzRpcServer
             finally
             {
                 pipeServer.Dispose();
+
+                int count = Interlocked.Decrement(ref _clientCount);
+                Console.WriteLine($"Active clients: {count}");
+
+                if (count == 0 && _hadClients)
+                {
+                    _allClientsDisconnected.TrySetResult(true);
+                }
             }
         }
     }
