@@ -125,7 +125,10 @@ namespace PsdzRpcServer
                 return 1;
             }
 
-            Console.WriteLine("PsdzJsonRpcServer stopped.");
+            if (_verbosity <= Options.VerbosityOption.Important)
+            {
+                Console.WriteLine("PsdzJsonRpcServer stopped.");
+            }
             return 0;
         }
 
