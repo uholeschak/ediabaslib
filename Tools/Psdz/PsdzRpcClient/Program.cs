@@ -249,48 +249,13 @@ namespace PsdzRpcClient
                 };
 
                 PsdzRpcServerStarter serverStarter = new(Console.Out);
-                if (!serverStarter.StartServerIfNeeded(serverExe, out serverProcess))
+                bool connected = await serverStarter.ConnectClient(serverExe, client, cts);
+                if (!connected)
                 {
                     if (_verbosity <= Options.VerbosityOption.Error)
                     {
-                        Console.WriteLine("No server available. Exiting.");
+                        Console.WriteLine("Failed to connect to RPC server.");
                     }
-                    return 1;
-                }
-
-                if (_verbosity <= Options.VerbosityOption.Important)
-                {
-                    Console.WriteLine("Starting PsdzJsonRpcClient...");
-                }
-                Task clientTask = client.ConnectAsync(null, cts.Token);
-
-                for (int i = 0; i < 3; i++)
-                {
-                    Task delayTask = Task.Delay(2000, cts.Token);
-                    await Task.WhenAny(clientTask, delayTask);
-                    if (clientTask.IsCompleted)
-                    {
-                        break;
-                    }
-
-                    if (_verbosity <= Options.VerbosityOption.Important)
-                    {
-                        Console.WriteLine("Try to restart server...");
-                    }
-
-                    if (!serverStarter.StartServerIfNeeded(serverExe, out serverProcess))
-                    {
-                        if (_verbosity <= Options.VerbosityOption.Error)
-                        {
-                            Console.WriteLine("No server available. Exiting.");
-                        }
-                        return 1;
-                    }
-                }
-
-                if (!clientTask.IsCompleted)
-                {
-                    Console.WriteLine("Failed to connect to server after multiple attempts. Exiting.");
                     return 1;
                 }
 

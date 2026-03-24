@@ -2,6 +2,8 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace PsdzRpcClient;
 
@@ -12,6 +14,44 @@ public class PsdzRpcServerStarter
     public PsdzRpcServerStarter(TextWriter output)
     {
         _output = output;
+    }
+
+    public async Task<bool> ConnectClient(string serverExe, PsdzRpcClient client, CancellationTokenSource cts)
+    {
+        Process serverProcess = null;
+        if (!StartServerIfNeeded(serverExe, out serverProcess))
+        {
+            _output?.WriteLine("No server available. Exiting.");
+            return false;
+        }
+
+        _output?.WriteLine("Starting PsdzJsonRpcClient...");
+        Task clientTask = client.ConnectAsync(null, cts.Token);
+
+        for (int i = 0; i < 3; i++)
+        {
+            Task delayTask = Task.Delay(2000, cts.Token);
+            await Task.WhenAny(clientTask, delayTask);
+            if (clientTask.IsCompleted)
+            {
+                break;
+            }
+
+            _output?.WriteLine("Try to restart server...");
+            if (!StartServerIfNeeded(serverExe, out serverProcess))
+            {
+                _output?.WriteLine("No server available. Exiting.");
+                return false;
+            }
+        }
+
+        if (!clientTask.IsCompleted)
+        {
+            _output?.WriteLine("Failed to connect to server after multiple attempts. Exiting.");
+            return false;
+        }
+
+        return true;
     }
 
     /// <summary>
