@@ -250,10 +250,17 @@ namespace PsdzRpcClient
 
                 if (!PsdzRpcServerStarter.StartServerIfNeeded(serverExe, out serverProcess))
                 {
+                    if (_verbosity <= Options.VerbosityOption.Error)
+                    {
+                        Console.WriteLine("No server available. Exiting.");
+                    }
                     return 1;
                 }
 
-                Console.WriteLine("Starting PsdzJsonRpcClient...");
+                if (_verbosity <= Options.VerbosityOption.Important)
+                {
+                    Console.WriteLine("Starting PsdzJsonRpcClient...");
+                }
                 Task clientTask = client.ConnectAsync(null, cts.Token);
 
                 for (int i = 0; i < 3; i++)
@@ -265,10 +272,17 @@ namespace PsdzRpcClient
                         break;
                     }
 
-                    Console.WriteLine("Try to restart server...");
+                    if (_verbosity <= Options.VerbosityOption.Important)
+                    {
+                        Console.WriteLine("Try to restart server...");
+                    }
+
                     if (!PsdzRpcServerStarter.StartServerIfNeeded(serverExe, out serverProcess))
                     {
-                        Console.WriteLine("No server available. Exiting.");
+                        if (_verbosity <= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("No server available. Exiting.");
+                        }
                         return 1;
                     }
                 }
@@ -291,7 +305,11 @@ namespace PsdzRpcClient
                         return 1;
                     }
 
-                    Console.WriteLine($"ISTA Install location: {istaFolder}");
+                    if (_verbosity <= Options.VerbosityOption.Important)
+                    {
+                        Console.WriteLine($"ISTA Install location: {istaFolder}");
+                    }
+
                     bool licenseResult = await client.RpcService.SetLicenseValid(true);
                     if (!licenseResult)
                     {

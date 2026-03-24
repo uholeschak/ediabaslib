@@ -93,11 +93,20 @@ namespace PsdzRpcServer
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);
 
                 // Beenden bei: ESC, Ctrl+C oder letzter Client getrennt
-                await Task.WhenAny(serverTask, keyTask, server.AllClientsDisconnected);
-
-                if (server.AllClientsDisconnected.IsCompleted && !keepRunning)
+                if (keepRunning)
                 {
-                    Console.WriteLine("Last client disconnected. Shutting down...");
+                    await Task.WhenAny(serverTask, keyTask);
+                }
+                else
+                {
+                    await Task.WhenAny(serverTask, keyTask, server.AllClientsDisconnected);
+                    if (server.AllClientsDisconnected.IsCompleted)
+                    {
+                        if (_verbosity <= Options.VerbosityOption.Important)
+                        {
+                            Console.WriteLine("Last client disconnected. Shutting down...");
+                        }
+                    }
                 }
 
                 cts.Cancel();
