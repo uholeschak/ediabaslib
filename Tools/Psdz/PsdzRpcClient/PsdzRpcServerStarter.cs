@@ -5,12 +5,19 @@ using System.IO;
 
 namespace PsdzRpcClient;
 
-public static class PsdzRpcServerStarter
+public class PsdzRpcServerStarter
 {
+    private readonly TextWriter _output;
+
+    public PsdzRpcServerStarter(TextWriter output)
+    {
+        _output = output;
+    }
+
     /// <summary>
     /// Prüft ob die Named Pipe des Servers existiert.
     /// </summary>
-    public static bool IsPipeAvailable()
+    public bool IsPipeAvailable()
     {
         return File.Exists($@"\\.\pipe\{PsdzRpcServiceConstants.PipeName}");
     }
@@ -19,20 +26,20 @@ public static class PsdzRpcServerStarter
     /// Startet den Server-Prozess falls ein Pfad angegeben ist.
     /// Wartet nur bis der Prozess gestartet ist, nicht bis die Pipe verfügbar ist.
     /// </summary>
-    public static bool StartServerIfNeeded(string serverExe, out Process serverProcess)
+    public bool StartServerIfNeeded(string serverExe, out Process serverProcess)
     {
         serverProcess = null;
 
         // Prüfen ob der Server eventuell schon läuft (Pipe könnte noch nicht bereit sein)
         if (IsPipeAvailable())
         {
-            Console.WriteLine("Server pipe detected, server is already running.");
+            _output?.WriteLine("Server pipe detected, server is already running.");
             return true;
         }
 
         if (string.IsNullOrEmpty(serverExe))
         {
-            Console.WriteLine("No server executable specified.");
+            _output?.WriteLine("No server executable specified.");
             return false;
         }
 
@@ -42,11 +49,11 @@ public static class PsdzRpcServerStarter
 
         if (!File.Exists(serverExeFullPath))
         {
-            Console.WriteLine($"Server executable not found: {serverExeFullPath}");
+            _output?.WriteLine($"Server executable not found: {serverExeFullPath}");
             return false;
         }
 
-        Console.WriteLine($"Starting server: {serverExeFullPath}");
+        _output?.WriteLine($"Starting server: {serverExeFullPath}");
         Process process = Process.Start(new ProcessStartInfo
         {
             FileName = serverExeFullPath,
@@ -56,11 +63,11 @@ public static class PsdzRpcServerStarter
 
         if (process == null || process.HasExited)
         {
-            Console.WriteLine("Failed to start server process.");
+            _output?.WriteLine("Failed to start server process.");
             return false;
         }
 
-        Console.WriteLine($"Server process started (PID: {process.Id}).");
+        _output?.WriteLine($"Server process started (PID: {process.Id}).");
         serverProcess = process;
         return true;
     }

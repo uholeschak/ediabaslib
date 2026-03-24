@@ -248,7 +248,8 @@ namespace PsdzRpcClient
                     });
                 };
 
-                if (!PsdzRpcServerStarter.StartServerIfNeeded(serverExe, out serverProcess))
+                PsdzRpcServerStarter serverStarter = new(Console.Out);
+                if (!serverStarter.StartServerIfNeeded(serverExe, out serverProcess))
                 {
                     if (_verbosity <= Options.VerbosityOption.Error)
                     {
@@ -277,7 +278,7 @@ namespace PsdzRpcClient
                         Console.WriteLine("Try to restart server...");
                     }
 
-                    if (!PsdzRpcServerStarter.StartServerIfNeeded(serverExe, out serverProcess))
+                    if (!serverStarter.StartServerIfNeeded(serverExe, out serverProcess))
                     {
                         if (_verbosity <= Options.VerbosityOption.Error)
                         {
