@@ -248,7 +248,7 @@ namespace PsdzRpcClient
                     });
                 };
 
-                if (!StartServerIfNeeded(serverExe, out serverProcess))
+                if (!PsdzRpcServerStarter.StartServerIfNeeded(serverExe, out serverProcess))
                 {
                     return 1;
                 }
@@ -256,20 +256,28 @@ namespace PsdzRpcClient
                 Console.WriteLine("Starting PsdzJsonRpcClient...");
                 Task clientTask = client.ConnectAsync(null, cts.Token);
 
-                // Kurz warten ob ein Server bereits läuft
-                Task delayTask = Task.Delay(2000, cts.Token);
-                Task firstDone = await Task.WhenAny(clientTask, delayTask);
-
-                if (firstDone != clientTask)
+                for (int i = 0; i < 3; i++)
                 {
-                    if (!StartServerIfNeeded(serverExe, out serverProcess))
+                    Task delayTask = Task.Delay(2000, cts.Token);
+                    await Task.WhenAny(clientTask, delayTask);
+                    if (clientTask.IsCompleted)
+                    {
+                        break;
+                    }
+
+                    Console.WriteLine("Try to restart server...");
+                    if (!PsdzRpcServerStarter.StartServerIfNeeded(serverExe, out serverProcess))
                     {
                         Console.WriteLine("No server available. Exiting.");
                         return 1;
                     }
                 }
 
-                await clientTask;
+                if (!clientTask.IsCompleted)
+                {
+                    Console.WriteLine("Failed to connect to server after multiple attempts. Exiting.");
+                    return 1;
+                }
 
                 if (client.RpcService != null)
                 {
@@ -507,64 +515,6 @@ namespace PsdzRpcClient
 
             Console.WriteLine("Client stopped.");
             return 0;
-        }
-
-        /// <summary>
-        /// Prüft ob die Named Pipe des Servers existiert.
-        /// </summary>
-        private static bool IsPipeAvailable()
-        {
-            return File.Exists($@"\\.\pipe\{PsdzRpcServiceConstants.PipeName}");
-        }
-
-        /// <summary>
-        /// Startet den Server-Prozess falls ein Pfad angegeben ist.
-        /// Wartet nur bis der Prozess gestartet ist, nicht bis die Pipe verfügbar ist.
-        /// </summary>
-        private static bool StartServerIfNeeded(string serverExe, out Process serverProcess)
-        {
-            serverProcess = null;
-
-            // Prüfen ob der Server eventuell schon läuft (Pipe könnte noch nicht bereit sein)
-            if (IsPipeAvailable())
-            {
-                Console.WriteLine("Server pipe detected, server is already running.");
-                return true;
-            }
-
-            if (string.IsNullOrEmpty(serverExe))
-            {
-                Console.WriteLine("No server executable specified.");
-                return false;
-            }
-
-            string serverExeFullPath = Path.IsPathRooted(serverExe)
-                ? serverExe
-                : Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, serverExe));
-
-            if (!File.Exists(serverExeFullPath))
-            {
-                Console.WriteLine($"Server executable not found: {serverExeFullPath}");
-                return false;
-            }
-
-            Console.WriteLine($"Starting server: {serverExeFullPath}");
-            Process process = Process.Start(new ProcessStartInfo
-            {
-                FileName = serverExeFullPath,
-                WorkingDirectory = Path.GetDirectoryName(serverExeFullPath) ?? Environment.CurrentDirectory,
-                UseShellExecute = true,
-            });
-
-            if (process == null || process.HasExited)
-            {
-                Console.WriteLine("Failed to start server process.");
-                return false;
-            }
-
-            Console.WriteLine($"Server process started (PID: {process.Id}).");
-            serverProcess = process;
-            return true;
         }
 
         private static void PrintOptions()
