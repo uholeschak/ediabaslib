@@ -100,7 +100,11 @@ namespace WebPsdzClient.App_Data
 
         public delegate bool VehicleResponseDelegate();
         public string SessionId { get; }
+#if USE_RPC_CLIENT
+        public PsdzRpcClient.PsdzRpcClient RpcClient { get; private set; }
+#else
         public ProgrammingJobs ProgrammingJobs { get; private set; }
+#endif
         public bool RefreshOptions { get; set; }
         public AutoResetEvent MessageWaitEvent { get; private set; } = new AutoResetEvent(false);
 
@@ -481,9 +485,27 @@ namespace WebPsdzClient.App_Data
             {
                 if (language.StartsWith(lang, StringComparison.OrdinalIgnoreCase))
                 {
+#if USE_RPC_CLIENT
+                    bool result = false;
+                    if (RpcClient.RpcService != null)
+                    {
+                        result = RpcClient.RpcService.SetLanguage(lang).GetAwaiter().GetResult();
+                    }
+
+                    if (result)
+                    {
+                        matched = true;
+                        log.InfoFormat("SetLanguage matched: {0}", lang);
+                    }
+                    else
+                    {
+                        log.ErrorFormat("SetLanguage RpcService SetLanguage failed: {0}", lang);
+                    }
+#else
                     ProgrammingJobs.ClientContext.Language = lang;
                     matched = true;
                     log.InfoFormat("SetLanguage matched: {0}", lang);
+#endif
                     break;
                 }
             }
