@@ -1,0 +1,9 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <UseRpcClient>false</UseRpcClient>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(UseRpcClient)' == 'true'">
+        <DefineConstants>$(DefineConstants);USE_RPC_CLIENT</DefineConstants>
+    </PropertyGroup>
+</Project>
