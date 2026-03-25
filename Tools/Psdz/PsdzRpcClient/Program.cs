@@ -85,7 +85,6 @@ namespace PsdzRpcClient
                 return 1;
             }
 
-            Process serverProcess = null;
             ShowMessageEventArgs pendingMessage = null;
             using CancellationTokenSource cts = new CancellationTokenSource();
 
@@ -99,7 +98,7 @@ namespace PsdzRpcClient
                 };
 
                 SingleThreadSynchronizationContext syncContext = new();
-                await using PsdzRpcClient client = new PsdzRpcClient();
+                await using PsdzRpcClient client = new PsdzRpcClient(Console.Out);
                 client.CallbackHandler.ProgressChanged += (s, e) =>
                 {
                     syncContext.BeginInvoke(() =>

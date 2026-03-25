@@ -11,7 +11,7 @@ public class PsdzRpcServerStarter
 {
     private readonly TextWriter _output;
 
-    public PsdzRpcServerStarter(TextWriter output)
+    public PsdzRpcServerStarter(TextWriter output = null)
     {
         _output = output;
     }

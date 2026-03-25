@@ -20,7 +20,7 @@ namespace PsdzRpcServer
         /// </summary>
         public Task AllClientsDisconnected => _allClientsDisconnected.Task;
 
-        public PsdzRpcServer(TextWriter output)
+        public PsdzRpcServer(TextWriter output = null)
         {
             _output = output;
             _clientCount = 0;

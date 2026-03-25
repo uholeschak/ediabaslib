@@ -1,6 +1,7 @@
 ﻿using PsdzRpcServer.Shared;
 using StreamJsonRpc;
 using System;
+using System.IO;
 using System.IO.Pipes;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,11 +10,17 @@ namespace PsdzRpcClient
 {
     public class PsdzRpcClient : IAsyncDisposable
     {
+        private readonly TextWriter _output;
         private NamedPipeClientStream _pipeClient;
         private JsonRpc _jsonRpc;
 
         public IPsdzRpcService RpcService { get; private set; }
         public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
+
+        public PsdzRpcClient(TextWriter output = null)
+        {
+            _output = output;
+        }
 
         public async Task ConnectAsync(SynchronizationContext synchronizationContext, CancellationToken ct)
         {
@@ -23,9 +30,9 @@ namespace PsdzRpcClient
                 PipeDirection.InOut,
                 PipeOptions.Asynchronous);
 
-            Console.WriteLine($"Connecting with server...");
+            _output?.WriteLine("Connecting with server...");
             await _pipeClient.ConnectAsync(ct);
-            Console.WriteLine("Connected!");
+            _output?.WriteLine("Connected!");
 
             _jsonRpc = new JsonRpc(_pipeClient);
             _jsonRpc.AddLocalRpcTarget(CallbackHandler);
