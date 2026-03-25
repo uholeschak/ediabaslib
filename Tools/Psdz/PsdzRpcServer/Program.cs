@@ -141,7 +141,10 @@ namespace PsdzRpcServer
                     ConsoleKeyInfo key = Console.ReadKey(intercept: true);
                     if (key.Key == ConsoleKey.Escape)
                     {
-                        Console.WriteLine("ESC pressed, stopping server...");
+                        if (_verbosity <= Options.VerbosityOption.Important)
+                        {
+                            Console.WriteLine("ESC pressed, stopping server...");
+                        }
                         return;
                     }
                 }

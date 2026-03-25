@@ -1,13 +1,9 @@
 ﻿using Microsoft.Owin;
 using Owin;
-using System;
-using System.Configuration;
 using System.Threading.Tasks;
 using System.Web.Cors;
-using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin.Cors;
-using Microsoft.Owin.Security.Cookies;
 
 [assembly: OwinStartup(typeof(WebPsdzClient.Startup))]
 
