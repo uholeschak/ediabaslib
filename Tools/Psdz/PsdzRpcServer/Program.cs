@@ -76,7 +76,7 @@ namespace PsdzRpcServer
             }
 
             using CancellationTokenSource cts = new CancellationTokenSource();
-            PsdzRpcServer server = new PsdzRpcServer();
+            PsdzRpcServer server = new PsdzRpcServer(Console.Out);
 
             try
             {
