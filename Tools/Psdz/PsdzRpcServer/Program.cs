@@ -1,7 +1,7 @@
 ﻿using CommandLine;
+using PsdzRpcServer.Shared;
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -39,7 +39,7 @@ namespace PsdzRpcServer
         static async Task<int> Main(string[] args)
         {
 #if NET
-            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
             bool keepRunning = false;
             bool hasErrors = false;
@@ -76,7 +76,7 @@ namespace PsdzRpcServer
             }
 
             using CancellationTokenSource cts = new CancellationTokenSource();
-            PsdzRpcServer server = new PsdzRpcServer(Console.Out);
+            PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out);
 
             try
             {

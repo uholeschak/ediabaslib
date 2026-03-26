@@ -16,10 +16,10 @@ namespace PsdzRpcServer
         private CancellationTokenSource _cts;
         private readonly object _ctsLock = new object();
 
-        public PsdzRpcService(IPsdzRpcServiceCallback callback)
+        public PsdzRpcService(IPsdzRpcServiceCallback callback, string dealerId)
         {
             _callback = callback;
-            _programmingJobs = new ProgrammingJobs(PsdzRpcServiceConstants.DealerId);
+            _programmingJobs = new ProgrammingJobs(dealerId);
             _programmingJobs.UpdateStatusEvent += UpdateStatus;
             _programmingJobs.ProgressEvent += UpdateProgress;
             _programmingJobs.UpdateOptionsEvent += UpdateOptions;

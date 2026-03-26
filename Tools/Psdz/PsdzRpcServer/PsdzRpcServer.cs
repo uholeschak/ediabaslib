@@ -10,6 +10,7 @@ namespace PsdzRpcServer
 {
     public class PsdzRpcServer
     {
+        private readonly string _dealerId;
         private readonly TextWriter _output;
         private int _clientCount;
         private bool _hadClients;
@@ -20,8 +21,9 @@ namespace PsdzRpcServer
         /// </summary>
         public Task AllClientsDisconnected => _allClientsDisconnected.Task;
 
-        public PsdzRpcServer(TextWriter output = null)
+        public PsdzRpcServer(string dealerId, TextWriter output = null)
         {
+            _dealerId = dealerId;
             _output = output;
             _clientCount = 0;
             _hadClients = false;
@@ -66,7 +68,7 @@ namespace PsdzRpcServer
 
                 var callback = jsonRpc.Attach<IPsdzRpcServiceCallback>();
 
-                var service = new PsdzRpcService(callback);
+                var service = new PsdzRpcService(callback, _dealerId);
                 jsonRpc.AddLocalRpcTarget(service);
 
                 jsonRpc.StartListening();
