@@ -522,7 +522,16 @@ namespace WebPsdzClient.App_Data
 
         public string GetLanguage()
         {
+#if USE_RPC_CLIENT
+            if (RpcClient.RpcService == null)
+            {
+                return null;
+            }
+
+            return RpcClient.RpcService.GetLanguage().GetAwaiter().GetResult();
+#else
             return ProgrammingJobs.ClientContext.Language;
+#endif
         }
 
         public string GetActiveVin()
@@ -532,11 +541,18 @@ namespace WebPsdzClient.App_Data
             {
                 if (_taskActive)
                 {
+#if USE_RPC_CLIENT
+                    if (RpcClient.RpcService != null)
+                    {
+                        vin = RpcClient.RpcService.GetVehicleVin().GetAwaiter().GetResult();
+                    }
+#else
                     PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
                     if (psdzContext?.Connection != null)
                     {
                         vin = psdzContext.DetectVehicle?.Vin;
                     }
+#endif
                 }
             }
 
@@ -604,6 +620,12 @@ namespace WebPsdzClient.App_Data
         public SessionContainer(string sessionId, string dealerId)
         {
             SessionId = sessionId;
+#if USE_RPC_CLIENT
+            RpcClient = new PsdzRpcClient.PsdzRpcClient();
+            RpcClient.CallbackHandler.UpdateStatus += (s, e) =>
+            {
+            };
+#else
             ProgrammingJobs = new ProgrammingJobs(dealerId);
             ProgrammingJobs.UpdateStatusEvent += UpdateStatus;
             ProgrammingJobs.ProgressEvent += UpdateProgress;
@@ -613,6 +635,7 @@ namespace WebPsdzClient.App_Data
             ProgrammingJobs.TelSendQueueSizeEvent += TelSendQueueSizeEvent;
             ProgrammingJobs.ServiceInitializedEvent += ServiceInitializedEvent;
             ProgrammingJobs.GenServiceModules = false;
+#endif
             StatusText = string.Empty;
             ProgressText = string.Empty;
 
@@ -1580,8 +1603,17 @@ namespace WebPsdzClient.App_Data
                                             string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
                                             if (funcAddress)
                                             {
+#if USE_RPC_CLIENT
+                                                PsdzRpcServer.Shared.PsdzRpcCacheType cacheType = PsdzRpcServer.Shared.PsdzRpcCacheType.None;
+                                                if (RpcClient.RpcService != null)
+                                                {
+                                                     cacheType = RpcClient.RpcService.GetCacheResponseType().GetAwaiter().GetResult();
+                                                }
+                                                if (cacheType == PsdzRpcServer.Shared.PsdzRpcCacheType.None)
+#else
                                                 ProgrammingJobs.CacheType cacheType = ProgrammingJobs.CacheResponseType;
                                                 if (cacheType == ProgrammingJobs.CacheType.None)
+#endif
                                                 {
                                                     log.InfoFormat("TcpThread Caching disabled");
                                                 }
@@ -1592,7 +1624,12 @@ namespace WebPsdzClient.App_Data
                                                         _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
                                                     }
 
-                                                    if (cachedResponseList != null && cacheType == ProgrammingJobs.CacheType.NoResponse)
+                                                    if (cachedResponseList != null &&
+#if USE_RPC_CLIENT
+                                                        cacheType == PsdzRpcServer.Shared.PsdzRpcCacheType.NoResponse)
+#else
+                                                        cacheType == ProgrammingJobs.CacheType.NoResponse)
+#endif
                                                     {
                                                         if (cachedResponseList.Count > 0)
                                                         {
@@ -2983,6 +3020,13 @@ namespace WebPsdzClient.App_Data
 
                     CloseVehicleLog();
 
+#if USE_RPC_CLIENT
+                    if (RpcClient.RpcService != null)
+                    {
+                        RpcClient.RpcService.Dispose();
+                    }
+                    RpcClient = null;
+#else
                     if (ProgrammingJobs != null)
                     {
                         ProgrammingJobs.UpdateStatusEvent -= UpdateStatus;
@@ -2995,7 +3039,7 @@ namespace WebPsdzClient.App_Data
                         ProgrammingJobs.Dispose();
                         ProgrammingJobs = null;
                     }
-
+#endif
                     StopTcpListener();
 
 #if EDIABAS_CONNECTION
