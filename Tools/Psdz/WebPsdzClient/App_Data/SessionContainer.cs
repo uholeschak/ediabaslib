@@ -2599,6 +2599,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+#if !USE_RPC_CLIENT
         public void UpdateOptions()
         {
             ProgrammingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
@@ -2747,7 +2748,7 @@ namespace WebPsdzClient.App_Data
                 UpdateDisplay();
             }
         }
-
+#endif
         public string GetLicenseText()
         {
             StringBuilder sb = new StringBuilder();
