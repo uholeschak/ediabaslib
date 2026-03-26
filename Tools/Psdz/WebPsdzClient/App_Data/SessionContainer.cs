@@ -124,7 +124,7 @@ namespace WebPsdzClient.App_Data
                 {
                     _taskActive = value;
                 }
-
+#if !USE_RPC_CLIENT
                 if (value)
                 {
                     UpdateProgress(0, true);
@@ -133,6 +133,7 @@ namespace WebPsdzClient.App_Data
                 {
                     UpdateProgress(0, false);
                 }
+#endif
             }
         }
 
@@ -2812,6 +2813,7 @@ namespace WebPsdzClient.App_Data
             return false;
         }
 
+#if !USE_RPC_CLIENT
         public void StartProgrammingService(string istaFolder)
         {
             if (TaskActive)
@@ -3021,7 +3023,7 @@ namespace WebPsdzClient.App_Data
         {
             return await Task.Run(() => ProgrammingJobs.VehicleFunctions(Cts, operationType)).ConfigureAwait(false);
         }
-
+#endif
         public void Dispose()
         {
             Dispose(true);
