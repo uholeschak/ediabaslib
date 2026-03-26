@@ -1918,16 +1918,17 @@ namespace WebPsdzClient.App_Data
                         string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
                         string fileName = string.Format(CultureInfo.InvariantCulture, "Vehicle-{0}-[{1}].txt", dateString, SessionId);
 #if USE_RPC_CLIENT
-                        string logFile = null;
+                        string hostLogDir = null;
                         if (RpcClient.RpcService != null)
                         {
-                            logFile = RpcClient.RpcService.GetPsdzServiceHostLogDir().GetAwaiter().GetResult();
+                            hostLogDir = RpcClient.RpcService.GetPsdzServiceHostLogDir().GetAwaiter().GetResult();
                         }
 #else
-                        string logFile = Path.Combine(ProgrammingJobs.ProgrammingService.GetPsdzServiceHostLogDir(), fileName);
+                        string hostLogDir = ProgrammingJobs.ProgrammingService.GetPsdzServiceHostLogDir();
 #endif
-                        if (!string.IsNullOrEmpty(logFile))
+                        if (!string.IsNullOrEmpty(hostLogDir))
                         {
+                            string logFile = Path.Combine(hostLogDir, fileName);
                             _swVehicleLog = new StreamWriter(logFile, true, Encoding.ASCII);
                         }
                     }
