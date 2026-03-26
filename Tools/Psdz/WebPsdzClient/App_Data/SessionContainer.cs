@@ -2104,12 +2104,29 @@ namespace WebPsdzClient.App_Data
                                 string sendString = BitConverter.ToString(sendData).Replace("-", " ");
                                 log.InfoFormat("VehicleThread Transmit Data={0}", sendString);
 
+#if USE_RPC_CLIENT
+                                if (RpcClient.RpcService != null)
+                                {
+                                    bool cacheClearRequired = RpcClient.RpcService.GetCacheClearRequired().GetAwaiter().GetResult();
+                                    if (cacheClearRequired)
+                                    {
+                                        log.InfoFormat("VehicleThread Clearing response cache");
+                                        VehicleResponseDictClear();
+                                        bool clearResult = RpcClient.RpcService.SetCacheClearRequired(false).GetAwaiter().GetResult();
+                                        if (!clearResult)
+                                        {
+                                            log.ErrorFormat("VehicleThread Failed to reset cache clear required flag");
+                                        }
+                                    }
+                                }
+#else
                                 if (ProgrammingJobs.CacheClearRequired)
                                 {
                                     log.InfoFormat("VehicleThread Clearing response cache");
                                     VehicleResponseDictClear();
                                     ProgrammingJobs.CacheClearRequired = false;
                                 }
+#endif
 #if !EDIABAS_CONNECTION
                                 if (hubContext != null)
                                 {
