@@ -628,10 +628,6 @@ namespace WebPsdzClient.App_Data
 #if USE_RPC_CLIENT
             RpcClient = new PsdzRpcClient.PsdzRpcClient();
 
-            RpcClient.CallbackHandler.ProgressChanged += (s, e) =>
-            {
-            };
-
             RpcClient.CallbackHandler.OperationCompleted += (s, success) =>
             {
             };
@@ -641,9 +637,9 @@ namespace WebPsdzClient.App_Data
                 UpdateStatus(message);
             };
 
-            RpcClient.CallbackHandler.UpdateProgress += (sender, tuple) =>
+            RpcClient.CallbackHandler.UpdateProgress += (sender, progressArgs) =>
             {
-                UpdateProgress(tuple.percent, tuple.marquee, tuple.message);
+                UpdateProgress(progressArgs.Percent, progressArgs.Marquee, progressArgs.Message);
             };
 
             RpcClient.CallbackHandler.UpdateOptions += (sender, optionArgs) =>
