@@ -124,7 +124,7 @@ namespace WebPsdzClient.App_Data
                 {
                     _taskActive = value;
                 }
-#if !USE_RPC_CLIENT
+
                 if (value)
                 {
                     UpdateProgress(0, true);
@@ -133,7 +133,6 @@ namespace WebPsdzClient.App_Data
                 {
                     UpdateProgress(0, false);
                 }
-#endif
             }
         }
 
@@ -637,12 +636,14 @@ namespace WebPsdzClient.App_Data
             {
             };
 
-            RpcClient.CallbackHandler.UpdateStatus += (s, e) =>
+            RpcClient.CallbackHandler.UpdateStatus += (s, message) =>
             {
+                UpdateStatus(message);
             };
 
             RpcClient.CallbackHandler.UpdateProgress += (sender, tuple) =>
             {
+                UpdateProgress(tuple.percent, tuple.marquee, tuple.message);
             };
 
             RpcClient.CallbackHandler.UpdateOptions += (sender, optionArgs) =>
@@ -2819,7 +2820,7 @@ namespace WebPsdzClient.App_Data
             RefreshOptions = true;
             UpdateDisplay();
         }
-
+#endif
         private void UpdateProgress(int percent, bool marquee, string message = null)
         {
             string text = string.Empty;
@@ -2842,7 +2843,7 @@ namespace WebPsdzClient.App_Data
                 UpdateDisplay();
             }
         }
-#endif
+
         public string GetLicenseText()
         {
             StringBuilder sb = new StringBuilder();
