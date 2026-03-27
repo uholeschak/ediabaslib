@@ -623,7 +623,46 @@ namespace WebPsdzClient.App_Data
             SessionId = sessionId;
 #if USE_RPC_CLIENT
             RpcClient = new PsdzRpcClient.PsdzRpcClient();
+
+            RpcClient.CallbackHandler.ProgressChanged += (s, e) =>
+            {
+            };
+
+            RpcClient.CallbackHandler.OperationCompleted += (s, success) =>
+            {
+            };
+
             RpcClient.CallbackHandler.UpdateStatus += (s, e) =>
+            {
+            };
+
+            RpcClient.CallbackHandler.UpdateProgress += (sender, tuple) =>
+            {
+            };
+
+            RpcClient.CallbackHandler.UpdateOptions += (sender, optionArgs) =>
+            {
+            };
+
+            RpcClient.CallbackHandler.UpdateOptionSelections += (sender, swiRegisterEnum) =>
+            {
+            };
+
+            RpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
+            {
+                msgArgs.Result = true;
+            };
+
+            RpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
+            {
+            };
+
+            RpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
+            {
+                queueArgs.Result = -1;
+            };
+
+            RpcClient.CallbackHandler.ServiceInitialized += (sender, hostLogDir) =>
             {
             };
 #else

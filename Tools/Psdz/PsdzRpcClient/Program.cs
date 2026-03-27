@@ -215,10 +215,7 @@ namespace PsdzRpcClient
 
                 client.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
                 {
-                    syncContext.BeginInvoke(() =>
-                    {
-                        queueArgs.Result = -1; // Simulate no queue
-                    });
+                    queueArgs.Result = -1; // Simulate no queue
                 };
 
                 client.CallbackHandler.ServiceInitialized += (sender, hostLogDir) =>
