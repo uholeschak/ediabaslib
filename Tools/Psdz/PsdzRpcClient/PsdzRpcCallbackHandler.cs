@@ -6,22 +6,15 @@ namespace PsdzRpcClient
 {
     public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     {
-        public event EventHandler<ProgressEventArgs> ProgressChanged;
         public event EventHandler<bool> OperationCompleted;
         public event EventHandler<string> UpdateStatus;
-        public event EventHandler<(int percent, bool marquee, string message)> UpdateProgress;
+        public event EventHandler<ProgressEventArgs> UpdateProgress;
         public event EventHandler UpdateOptions;
         public event EventHandler<PsdzRpcSwiRegisterEnum?> UpdateOptionSelections;
         public event EventHandler<ShowMessageEventArgs> ShowMessage;
         public event EventHandler<ShowMessageEventArgs> ShowMessageWait;
         public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
         public event EventHandler<string> ServiceInitialized;
-
-        public Task OnProgressChanged(int percent, string message)
-        {
-            ProgressChanged?.Invoke(this, new ProgressEventArgs(percent, message));
-            return Task.CompletedTask;
-        }
 
         public Task OnOperationCompleted(bool success)
         {
@@ -37,7 +30,8 @@ namespace PsdzRpcClient
 
         public Task OnUpdateProgress(int percent, bool marquee, string message)
         {
-            UpdateProgress?.Invoke(this, (percent, marquee, message));
+            ProgressEventArgs args = new ProgressEventArgs(percent, marquee, message);
+            UpdateProgress?.Invoke(this, args);
             return Task.CompletedTask;
         }
 

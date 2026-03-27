@@ -99,17 +99,6 @@ namespace PsdzRpcClient
 
                 SingleThreadSynchronizationContext syncContext = new();
                 await using PsdzRpcClient client = new PsdzRpcClient(Console.Out);
-                client.CallbackHandler.ProgressChanged += (s, e) =>
-                {
-                    syncContext.BeginInvoke(() =>
-                    {
-                        if (_verbosity <= Options.VerbosityOption.Important)
-                        {
-                            Console.WriteLine($"[{e.Percent}%] {e.Message}");
-                        }
-                    });
-                };
-
                 client.CallbackHandler.OperationCompleted += (s, success) =>
                 {
                     syncContext.BeginInvoke(() =>
@@ -142,21 +131,21 @@ namespace PsdzRpcClient
                     });
                 };
 
-                client.CallbackHandler.UpdateProgress += (sender, tuple) =>
+                client.CallbackHandler.UpdateProgress += (sender, progressArgs) =>
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        if (tuple.marquee)
+                        if (progressArgs.Marquee)
                         {
                             if (_verbosity <= Options.VerbosityOption.Important)
                             {
-                                if (string.IsNullOrEmpty(tuple.message))
+                                if (string.IsNullOrEmpty(progressArgs.Message))
                                 {
                                     Console.Write("Processing ...");
                                 }
                                 else
                                 {
-                                    Console.WriteLine($"Progress: {tuple.message}");
+                                    Console.WriteLine($"Progress: {progressArgs.Message}");
                                 }
                             }
                         }
@@ -164,7 +153,7 @@ namespace PsdzRpcClient
                         {
                             if (_verbosity <= Options.VerbosityOption.Important)
                             {
-                                Console.WriteLine($"[{tuple.percent}%]: {tuple.message}");
+                                Console.WriteLine($"[{progressArgs.Percent}%]: {progressArgs.Message}");
                             }
                         }
                     });

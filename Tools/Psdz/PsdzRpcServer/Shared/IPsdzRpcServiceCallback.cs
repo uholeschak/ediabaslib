@@ -7,7 +7,6 @@ namespace PsdzRpcServer.Shared
     [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
     public partial interface IPsdzRpcServiceCallback
     {
-        Task OnProgressChanged(int percent, string message);
         Task OnOperationCompleted(bool success);
         Task OnUpdateStatus(string message);
         Task OnUpdateProgress(int percent, bool marquee, string message);
