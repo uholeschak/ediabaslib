@@ -659,11 +659,12 @@ namespace WebPsdzClient.App_Data
 
             RpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
             {
-                queueArgs.Result = -1;
+                queueArgs.Result = TelSendQueueSizeEvent();
             };
 
             RpcClient.CallbackHandler.ServiceInitialized += (sender, hostLogDir) =>
             {
+                ServiceInitializedEvent(hostLogDir);
             };
 #else
             ProgrammingJobs = new ProgrammingJobs(dealerId);
@@ -2690,7 +2691,7 @@ namespace WebPsdzClient.App_Data
 
             return ShowMessageModalResult;
         }
-
+#endif
         private int TelSendQueueSizeEvent()
         {
             if (_enetTcpChannels.Count == 0)
@@ -2734,7 +2735,7 @@ namespace WebPsdzClient.App_Data
         private void ServiceInitializedEvent(string hostLogDir)
         {
         }
-
+#if !USE_RPC_CLIENT
         private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
         {
             try
