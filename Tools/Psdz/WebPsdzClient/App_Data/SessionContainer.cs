@@ -663,11 +663,14 @@ namespace WebPsdzClient.App_Data
 
             RpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
             {
-                msgArgs.Result = true;
+                bool result = ShowMessageEvent(null, msgArgs.Message, msgArgs.OkBtn, false);
+                msgArgs.Result = result;
             };
 
             RpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
             {
+                bool result = ShowMessageEvent(null, msgArgs.Message, msgArgs.OkBtn, true);
+                msgArgs.Result = result;
             };
 
             RpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
@@ -2664,7 +2667,7 @@ namespace WebPsdzClient.App_Data
         {
             UpdateCurrentOptions(swiRegisterEnum);
         }
-
+#endif
         private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool okBtn, bool wait)
         {
             log.InfoFormat("ShowMessageEvent OKButton={0}, Wait={1}, Message='{2}'", okBtn, wait, message);
@@ -2704,7 +2707,7 @@ namespace WebPsdzClient.App_Data
 
             return ShowMessageModalResult;
         }
-#endif
+
         private int TelSendQueueSizeEvent()
         {
             if (_enetTcpChannels.Count == 0)
