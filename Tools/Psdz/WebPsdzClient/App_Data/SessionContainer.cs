@@ -647,43 +647,21 @@ namespace WebPsdzClient.App_Data
 
             RpcClient.CallbackHandler.UpdateOptions += (sender, optionArgs) =>
             {
+                if (RpcClient.RpcService != null)
+                {
+                    bool result = RpcClient.RpcService.SelectOption(null, false).GetAwaiter().GetResult();
+                    if (!result)
+                    {
+                        log.ErrorFormat("UpdateOptions RpcService SelectOption failed");
+                    }
+                }
+
+                UpdateCurrentOptions();
             };
 
             RpcClient.CallbackHandler.UpdateOptionSelections += (sender, swiRegisterEnum) =>
             {
-                try
-                {
-                    if (RpcClient.RpcService == null)
-                    {
-                        return;
-                    }
-
-                    bool vehicleConnected = RpcClient.RpcService.IsVehicleConnected().GetAwaiter().GetResult();
-                    if (!vehicleConnected)
-                    {
-                        bool cleared = RpcClient.RpcService.ClearOptionsDict().GetAwaiter().GetResult();
-                        if (!cleared)
-                        {
-                            log.ErrorFormat("UpdateCurrentOptions ClearOptionsDict failed");
-                        }
-
-                        SelectedSwiRegister = null;
-                    }
-                    else
-                    {
-                        if (swiRegisterEnum != null)
-                        {
-                            SelectedSwiRegister = swiRegisterEnum.Value;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    log.ErrorFormat("UpdateCurrentOptions Exception: {0}", ex.Message);
-                }
-
-                RefreshOptions = true;
-                UpdateDisplay();
+                UpdateCurrentOptions(swiRegisterEnum);
             };
 
             RpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
@@ -2773,7 +2751,44 @@ namespace WebPsdzClient.App_Data
         private void ServiceInitializedEvent(string hostLogDir)
         {
         }
-#if !USE_RPC_CLIENT
+#if USE_RPC_CLIENT
+        private void UpdateCurrentOptions(PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum = null)
+        {
+            try
+            {
+                if (RpcClient.RpcService == null)
+                {
+                    return;
+                }
+
+                bool vehicleConnected = RpcClient.RpcService.IsVehicleConnected().GetAwaiter().GetResult();
+                if (!vehicleConnected)
+                {
+                    bool cleared = RpcClient.RpcService.ClearOptionsDict().GetAwaiter().GetResult();
+                    if (!cleared)
+                    {
+                        log.ErrorFormat("UpdateCurrentOptions ClearOptionsDict failed");
+                    }
+
+                    SelectedSwiRegister = null;
+                }
+                else
+                {
+                    if (swiRegisterEnum != null)
+                    {
+                        SelectedSwiRegister = swiRegisterEnum.Value;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("UpdateCurrentOptions Exception: {0}", ex.Message);
+            }
+
+            RefreshOptions = true;
+            UpdateDisplay();
+        }
+#else
         private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
         {
             try
