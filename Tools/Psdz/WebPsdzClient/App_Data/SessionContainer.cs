@@ -630,6 +630,10 @@ namespace WebPsdzClient.App_Data
 
             RpcClient.CallbackHandler.OperationCompleted += (s, success) =>
             {
+                TaskActive = false;
+                Cts = null;
+                UpdateCurrentOptions();
+                UpdateDisplay();
             };
 
             RpcClient.CallbackHandler.UpdateStatus += (s, message) =>
