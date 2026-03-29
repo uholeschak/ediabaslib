@@ -631,7 +631,6 @@ namespace WebPsdzClient.App_Data
             RpcClient.CallbackHandler.OperationCompleted += (s, success) =>
             {
                 TaskActive = false;
-                Cts = null;
                 UpdateCurrentOptions();
                 UpdateDisplay();
             };
@@ -651,6 +650,21 @@ namespace WebPsdzClient.App_Data
                 }
 
                 TaskActive = false;
+                UpdateCurrentOptions();
+                UpdateDisplay();
+            };
+
+            RpcClient.CallbackHandler.DisconnectVehicleCompleted += (s, success) =>
+            {
+                if (!success)
+                {
+                    ReportError("DisconnectVehicle failed");
+                }
+
+                TaskActive = false;
+                StopTcpListener();
+                UpdateCurrentOptions();
+                UpdateDisplay();
             };
 
             RpcClient.CallbackHandler.UpdateStatus += (s, message) =>

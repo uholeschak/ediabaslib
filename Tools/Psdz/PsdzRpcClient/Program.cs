@@ -141,6 +141,27 @@ namespace PsdzRpcClient
                     });
                 };
 
+                client.CallbackHandler.DisconnectVehicleCompleted += (sender, success) =>
+                {
+                    syncContext.BeginInvoke(() =>
+                    {
+                        if (success)
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine("Disconnect vehicle completed successfully.");
+                            }
+                        }
+                        else
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Disconnect vehicle operation failed.");
+                            }
+                        }
+                    });
+                };
+
                 client.CallbackHandler.UpdateStatus += (s, e) =>
                 {
                     syncContext.BeginInvoke(() =>

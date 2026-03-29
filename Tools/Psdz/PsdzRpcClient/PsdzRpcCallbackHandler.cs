@@ -8,6 +8,7 @@ namespace PsdzRpcClient
     {
         public event EventHandler<bool> OperationCompleted;
         public event EventHandler<ConnectVehicleEventArgs> ConnectVehicleCompleted;
+        public event EventHandler<bool> DisconnectVehicleCompleted;
         public event EventHandler<string> UpdateStatus;
         public event EventHandler<ProgressEventArgs> UpdateProgress;
         public event EventHandler UpdateOptions;
@@ -26,6 +27,12 @@ namespace PsdzRpcClient
         public Task OnConnectVehicleCompleted(bool success, string vin)
         {
             ConnectVehicleCompleted?.Invoke(this, new ConnectVehicleEventArgs(success, vin));
+            return Task.CompletedTask;
+        }
+
+        public Task OnDisconnectVehicleCompleted(bool success)
+        {
+            DisconnectVehicleCompleted?.Invoke(this, success);
             return Task.CompletedTask;
         }
 

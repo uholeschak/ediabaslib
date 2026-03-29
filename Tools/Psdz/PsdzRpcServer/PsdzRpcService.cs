@@ -124,7 +124,7 @@ namespace PsdzRpcServer
             DisconnectVehicleTask().ContinueWith(task =>
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
-                _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
+                _callback.OnDisconnectVehicleCompleted(result).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 
