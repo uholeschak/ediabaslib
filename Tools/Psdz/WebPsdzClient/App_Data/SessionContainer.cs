@@ -628,13 +628,6 @@ namespace WebPsdzClient.App_Data
 #if USE_RPC_CLIENT
             RpcClient = new PsdzRpcClient.PsdzRpcClient();
 
-            RpcClient.CallbackHandler.OperationCompleted += (s, success) =>
-            {
-                TaskActive = false;
-                UpdateCurrentOptions();
-                UpdateDisplay();
-            };
-
             RpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
             {
                 if (!success)
@@ -688,6 +681,13 @@ namespace WebPsdzClient.App_Data
 
                 TaskActive = false;
                 StopTcpListener();
+                UpdateCurrentOptions();
+                UpdateDisplay();
+            };
+
+            RpcClient.CallbackHandler.VehicleFunctionsCompleted += (s, vehicleArgs) =>
+            {
+                TaskActive = false;
                 UpdateCurrentOptions();
                 UpdateDisplay();
             };
