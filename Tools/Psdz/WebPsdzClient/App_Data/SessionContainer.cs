@@ -667,13 +667,17 @@ namespace WebPsdzClient.App_Data
 
             RpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
             {
-                bool result = ShowMessageEvent(null, msgArgs.Message, msgArgs.OkBtn, false);
+                Cts = new CancellationTokenSource();
+                bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, false);
+                Cts = null;
                 msgArgs.Result = result;
             };
 
             RpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
             {
-                bool result = ShowMessageEvent(null, msgArgs.Message, msgArgs.OkBtn, true);
+                Cts = new CancellationTokenSource();
+                bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, true);
+                Cts = null;
                 msgArgs.Result = result;
             };
 
