@@ -99,26 +99,6 @@ namespace PsdzRpcClient
 
                 SingleThreadSynchronizationContext syncContext = new();
                 await using PsdzRpcClient client = new PsdzRpcClient(Console.Out);
-                client.CallbackHandler.OperationCompleted += (s, success) =>
-                {
-                    syncContext.BeginInvoke(() =>
-                    {
-                        if (success)
-                        {
-                            if (_verbosity <= Options.VerbosityOption.Important)
-                            {
-                                Console.WriteLine("Operation completed successfully.");
-                            }
-                        }
-                        else
-                        {
-                            if (_verbosity <= Options.VerbosityOption.Error)
-                            {
-                                Console.WriteLine("Operation failed.");
-                            }
-                        }
-                    });
-                };
 
                 client.CallbackHandler.StartProgrammingCompleted += (s, success) =>
                 {
@@ -203,6 +183,28 @@ namespace PsdzRpcClient
                         }
                     });
                 };
+
+                client.CallbackHandler.VehicleFunctionsCompleted += (s, vehicleArgs) =>
+                {
+                    syncContext.BeginInvoke(() =>
+                    {
+                        if (vehicleArgs.Success)
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine($"Vehicle function {vehicleArgs.OperationType} completed successfully.");
+                            }
+                        }
+                        else
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine($"Vehicle function {vehicleArgs.OperationType} failed.");
+                            }
+                        }
+                    });
+                };
+
 
                 client.CallbackHandler.UpdateStatus += (s, e) =>
                 {

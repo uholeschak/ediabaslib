@@ -143,7 +143,7 @@ namespace PsdzRpcServer
             VehicleFunctionsTask(OperationTypeValue).ContinueWith(task =>
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
-                _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
+                _callback.OnVehicleFunctionsCompleted(result, operationType).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 

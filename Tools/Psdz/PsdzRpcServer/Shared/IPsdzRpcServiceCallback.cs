@@ -9,9 +9,9 @@ namespace PsdzRpcServer.Shared
     {
         Task OnStartProgrammingCompleted(bool success);
         Task OnStopProgrammingCompleted(bool success);
-        Task OnOperationCompleted(bool success);
         Task OnConnectVehicleCompleted(bool success, string vin);
         Task OnDisconnectVehicleCompleted(bool success);
+        Task OnVehicleFunctionsCompleted(bool success, PsdzOperationType operationType);
         Task OnUpdateStatus(string message);
         Task OnUpdateProgress(int percent, bool marquee, string message);
         Task OnUpdateOptions();

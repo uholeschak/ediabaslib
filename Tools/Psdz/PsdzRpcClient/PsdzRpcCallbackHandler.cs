@@ -6,11 +6,11 @@ namespace PsdzRpcClient
 {
     public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     {
-        public event EventHandler<bool> OperationCompleted;
         public event EventHandler<bool> StartProgrammingCompleted;
         public event EventHandler<bool> StopProgrammingCompleted;
         public event EventHandler<ConnectVehicleEventArgs> ConnectVehicleCompleted;
         public event EventHandler<bool> DisconnectVehicleCompleted;
+        public event EventHandler<VehicleFunctionsEventArgs> VehicleFunctionsCompleted;
         public event EventHandler<string> UpdateStatus;
         public event EventHandler<ProgressEventArgs> UpdateProgress;
         public event EventHandler UpdateOptions;
@@ -19,12 +19,6 @@ namespace PsdzRpcClient
         public event EventHandler<ShowMessageEventArgs> ShowMessageWait;
         public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
         public event EventHandler<string> ServiceInitialized;
-
-        public Task OnOperationCompleted(bool success)
-        {
-            OperationCompleted?.Invoke(this, success);
-            return Task.CompletedTask;
-        }
 
         public Task OnStartProgrammingCompleted(bool success)
         {
@@ -47,6 +41,12 @@ namespace PsdzRpcClient
         public Task OnDisconnectVehicleCompleted(bool success)
         {
             DisconnectVehicleCompleted?.Invoke(this, success);
+            return Task.CompletedTask;
+        }
+
+        public Task OnVehicleFunctionsCompleted(bool success, PsdzOperationType operationType)
+        {
+            VehicleFunctionsCompleted?.Invoke(this, new VehicleFunctionsEventArgs(success, operationType));
             return Task.CompletedTask;
         }
 
