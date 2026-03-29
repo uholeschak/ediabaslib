@@ -2976,6 +2976,33 @@ namespace WebPsdzClient.App_Data
                 UpdateDisplay();
             }
         }
+
+        public void DisconnectVehicle()
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            if (RpcClient.RpcService == null)
+            {
+                return;
+            }
+
+            bool result = RpcClient.RpcService.DisconnectVehicle().GetAwaiter().GetResult();
+            if (!result)
+            {
+                ReportError("DisconnectVehicle failed");
+            }
+            else
+            {
+                TaskActive = true;
+                UpdateDisplay();
+            }
+
+            TaskActive = true;
+            UpdateDisplay();
+        }
 #else
         public void StartProgrammingService(string istaFolder)
         {
