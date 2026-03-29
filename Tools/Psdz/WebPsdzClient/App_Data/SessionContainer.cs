@@ -636,6 +636,23 @@ namespace WebPsdzClient.App_Data
                 UpdateDisplay();
             };
 
+            RpcClient.CallbackHandler.ConnectVehicleCompleted += (s, connectArgs) =>
+            {
+                if (connectArgs.Success)
+                {
+                    DetectedVin = connectArgs.Vin;
+                    ProcessLicense();
+                    AppendStatusTextLine(GetLicenseText());
+                }
+                else
+                {
+                    ReportError("ConnectVehicle failed");
+                    StopTcpListener();
+                }
+
+                TaskActive = false;
+            };
+
             RpcClient.CallbackHandler.UpdateStatus += (s, message) =>
             {
                 UpdateStatus(message);
