@@ -2914,7 +2914,52 @@ namespace WebPsdzClient.App_Data
             return false;
         }
 
-#if !USE_RPC_CLIENT
+#if USE_RPC_CLIENT
+        public void ConnectVehicle(string istaFolder)
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            if (RpcClient.RpcService == null)
+            {
+                return;
+            }
+
+            if (!StartTcpListener())
+            {
+                return;
+            }
+
+            int diagPort = 0;
+            int controlPort = 0;
+            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            {
+                if (enetTcpChannel.Control)
+                {
+                    controlPort = enetTcpChannel.ServerPort;
+                }
+                else
+                {
+                    diagPort = enetTcpChannel.ServerPort;
+                }
+            }
+
+            string remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
+            bool result = RpcClient.RpcService.ConnectVehicle(istaFolder, remoteHost, false).GetAwaiter().GetResult();
+            if (!result)
+            {
+                ReportError("ConnectVehicle failed");
+                StopTcpListener();
+            }
+            else
+            {
+                TaskActive = true;
+                UpdateDisplay();
+            }
+        }
+#else
         public void StartProgrammingService(string istaFolder)
         {
             if (TaskActive)
