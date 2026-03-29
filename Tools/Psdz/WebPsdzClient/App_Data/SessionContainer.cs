@@ -5,6 +5,7 @@ using Microsoft.AspNet.SignalR;
 using MySqlConnector;
 using PsdzClient;
 using PsdzClient.Programming;
+using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -3085,6 +3086,49 @@ namespace WebPsdzClient.App_Data
             {
                 TaskActive = true;
                 UpdateDisplay();
+            }
+        }
+
+        public void VehicleFunctions(PsdzOperationType operationType)
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            if (RpcClient.RpcService == null)
+            {
+                return;
+            }
+
+            string vin = null;
+            if (RpcClient.RpcService != null)
+            {
+                vin = RpcClient.RpcService.GetVehicleVin().GetAwaiter().GetResult();
+            }
+
+            if (!string.IsNullOrEmpty(vin))
+            {
+                if (IsVinActive(vin, this))
+                {
+                    StatusText = HttpContext.GetGlobalResourceObject("Global", "VinInstanceActive") as string ?? string.Empty;
+                    UpdateDisplay();
+                    return;
+                }
+            }
+
+            bool licenseValid = RpcClient.RpcService.SetLicenseValid(true).GetAwaiter().GetResult();
+            if (!licenseValid)
+            {
+                ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} SetLicense valid failed", operationType));
+                return;
+            }
+
+            bool result = RpcClient.RpcService.VehicleFunctions(operationType).GetAwaiter().GetResult();
+            if (!result)
+            {
+                ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} failed", operationType));
+                return;
             }
 
             TaskActive = true;
