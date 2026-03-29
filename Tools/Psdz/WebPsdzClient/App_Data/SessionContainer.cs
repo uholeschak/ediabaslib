@@ -635,6 +635,31 @@ namespace WebPsdzClient.App_Data
                 UpdateDisplay();
             };
 
+            RpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
+            {
+                if (!success)
+                {
+                    ReportError("StartProgramming failed");
+                }
+
+                TaskActive = false;
+                UpdateCurrentOptions();
+                UpdateDisplay();
+            };
+
+            RpcClient.CallbackHandler.StopProgrammingCompleted += (s, success) =>
+            {
+                if (!success)
+                {
+                    ReportError("StopProgramming failed");
+                }
+
+                TaskActive = false;
+                StopTcpListener();
+                UpdateCurrentOptions();
+                UpdateDisplay();
+            };
+
             RpcClient.CallbackHandler.ConnectVehicleCompleted += (s, connectArgs) =>
             {
                 if (connectArgs.Success)
@@ -2946,6 +2971,54 @@ namespace WebPsdzClient.App_Data
         }
 
 #if USE_RPC_CLIENT
+        public void StartProgrammingService(string istaFolder)
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            if (RpcClient.RpcService == null)
+            {
+                return;
+            }
+
+            bool result = RpcClient.RpcService.StartProgrammingService(istaFolder).GetAwaiter().GetResult();
+            if (!result)
+            {
+                ReportError("StartProgrammingService failed");
+            }
+            else
+            {
+                TaskActive = true;
+                UpdateDisplay();
+            }
+        }
+
+        public void StopProgrammingService(string istaFolder)
+        {
+            if (TaskActive)
+            {
+                return;
+            }
+
+            if (RpcClient.RpcService == null)
+            {
+                return;
+            }
+
+            bool result = RpcClient.RpcService.StopProgrammingService(istaFolder).GetAwaiter().GetResult();
+            if (!result)
+            {
+                ReportError("StopProgrammingService failed");
+            }
+            else
+            {
+                TaskActive = true;
+                UpdateDisplay();
+            }
+        }
+
         public void ConnectVehicle(string istaFolder)
         {
             if (TaskActive)

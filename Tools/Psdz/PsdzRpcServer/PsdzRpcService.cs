@@ -69,7 +69,7 @@ namespace PsdzRpcServer
             StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
-                _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
+                _callback.OnStartProgrammingCompleted(result).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 
@@ -87,7 +87,7 @@ namespace PsdzRpcServer
             StopProgrammingServiceTask(istaFolder, force).ContinueWith(task =>
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
-                _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
+                _callback.OnStopProgrammingCompleted(result).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 

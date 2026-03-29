@@ -120,6 +120,48 @@ namespace PsdzRpcClient
                     });
                 };
 
+                client.CallbackHandler.StartProgrammingCompleted += (s, success) =>
+                {
+                    syncContext.BeginInvoke(() =>
+                    {
+                        if (success)
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine("Start programming operation completed successfully.");
+                            }
+                        }
+                        else
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Start programming operation failed.");
+                            }
+                        }
+                    });
+                };
+
+                client.CallbackHandler.StopProgrammingCompleted += (s, success) =>
+                {
+                    syncContext.BeginInvoke(() =>
+                    {
+                        if (success)
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine("Stop programming operation completed successfully.");
+                            }
+                        }
+                        else
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Stop programming operation failed.");
+                            }
+                        }
+                    });
+                };
+
                 client.CallbackHandler.ConnectVehicleCompleted += (o, connectArgs) =>
                 {
                     syncContext.BeginInvoke(() =>

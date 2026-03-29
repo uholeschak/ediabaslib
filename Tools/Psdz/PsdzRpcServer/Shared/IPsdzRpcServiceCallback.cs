@@ -7,6 +7,8 @@ namespace PsdzRpcServer.Shared
     [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
     public partial interface IPsdzRpcServiceCallback
     {
+        Task OnStartProgrammingCompleted(bool success);
+        Task OnStopProgrammingCompleted(bool success);
         Task OnOperationCompleted(bool success);
         Task OnConnectVehicleCompleted(bool success, string vin);
         Task OnDisconnectVehicleCompleted(bool success);
