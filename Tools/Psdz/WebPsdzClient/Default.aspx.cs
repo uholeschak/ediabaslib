@@ -122,7 +122,11 @@ namespace WebPsdzClient
                 return;
             }
 
+#if USE_RPC_CLIENT
+            sessionContainer.VehicleFunctions(PsdzRpcServer.Shared.PsdzOperationType.CreateOptions);
+#else
             sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.CreateOptions);
+#endif
         }
 
         protected void ButtonModifyFa_OnClick(object sender, EventArgs e)
@@ -139,7 +143,11 @@ namespace WebPsdzClient
             }
 
             sessionContainer.ProgrammingJobs.UpdateTargetFa();
+#if USE_RPC_CLIENT
+            sessionContainer.VehicleFunctions(PsdzRpcServer.Shared.PsdzOperationType.BuildTalModFa);
+#else
             sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.BuildTalModFa);
+#endif
         }
 
         protected void ButtonExecuteTal_OnClick(object sender, EventArgs e)
@@ -160,7 +168,11 @@ namespace WebPsdzClient
                 return;
             }
 
+#if USE_RPC_CLIENT
+            sessionContainer.VehicleFunctions(PsdzRpcServer.Shared.PsdzOperationType.ExecuteTal);
+#else
             sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
+#endif
         }
 
         protected void ButtonAbort_OnClick(object sender, EventArgs e)
