@@ -5,7 +5,6 @@ using Microsoft.AspNet.SignalR;
 using MySqlConnector;
 using PsdzClient;
 using PsdzClient.Programming;
-using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -3089,7 +3088,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public void VehicleFunctions(PsdzOperationType operationType)
+        public void VehicleFunctions(PsdzRpcServer.Shared.PsdzOperationType operationType)
         {
             if (TaskActive)
             {
