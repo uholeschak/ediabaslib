@@ -8,6 +8,7 @@ namespace PsdzRpcServer.Shared
     public partial interface IPsdzRpcServiceCallback
     {
         Task OnOperationCompleted(bool success);
+        Task OnConnectVehicleCompleted(bool success, string vin);
         Task OnUpdateStatus(string message);
         Task OnUpdateProgress(int percent, bool marquee, string message);
         Task OnUpdateOptions();

@@ -105,7 +105,8 @@ namespace PsdzRpcServer
             ConnectVehicleTask(istaFolder, remoteHost, useIcom, addTimeout).ContinueWith(task =>
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
-                _callback.OnOperationCompleted(result).GetAwaiter().GetResult();
+                string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
+                _callback.OnConnectVehicleCompleted(result, vin).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 

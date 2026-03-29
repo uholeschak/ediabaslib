@@ -7,6 +7,7 @@ namespace PsdzRpcClient
     public class PsdzRpcCallbackHandler : IPsdzRpcServiceCallback
     {
         public event EventHandler<bool> OperationCompleted;
+        public event EventHandler<ConnectVehicleEventArgs> ConnectVehicleCompleted;
         public event EventHandler<string> UpdateStatus;
         public event EventHandler<ProgressEventArgs> UpdateProgress;
         public event EventHandler UpdateOptions;
@@ -19,6 +20,12 @@ namespace PsdzRpcClient
         public Task OnOperationCompleted(bool success)
         {
             OperationCompleted?.Invoke(this, success);
+            return Task.CompletedTask;
+        }
+
+        public Task OnConnectVehicleCompleted(bool success, string vin)
+        {
+            ConnectVehicleCompleted?.Invoke(this, new ConnectVehicleEventArgs(success, vin));
             return Task.CompletedTask;
         }
 

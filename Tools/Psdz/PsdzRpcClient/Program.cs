@@ -120,6 +120,27 @@ namespace PsdzRpcClient
                     });
                 };
 
+                client.CallbackHandler.ConnectVehicleCompleted += (o, connectArgs) =>
+                {
+                    syncContext.BeginInvoke(() =>
+                    {
+                        if (connectArgs.Success)
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine($"Vehicle connected, Vin: {connectArgs.Vin}");
+                            }
+                        }
+                        else
+                        {
+                            if (_verbosity <= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Failed to connect vehicle.");
+                            }
+                        }
+                    });
+                };
+
                 client.CallbackHandler.UpdateStatus += (s, e) =>
                 {
                     syncContext.BeginInvoke(() =>
