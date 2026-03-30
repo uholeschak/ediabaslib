@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI.WebControls;
+using static PsdzClient.Programming.ProgrammingJobs;
 
 namespace WebPsdzClient.App_Data
 {
@@ -2744,8 +2745,31 @@ namespace WebPsdzClient.App_Data
         }
 #endif
 
-#if !USE_RPC_CLIENT
+#if USE_RPC_CLIENT
+        public List<ListItem> GetSelectedOptions(PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum)
+        {
+            if (RpcClient.RpcService == null)
+            {
+                return null;
+            }
 
+            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = RpcClient.RpcService.GetSelectedOptions(swiRegisterEnum).GetAwaiter().GetResult();
+            if (rpcListItems == null)
+            {
+                return null;
+            }
+
+            List<ListItem> listItems = new List<ListItem>();
+            foreach (PsdzRpcServer.Shared.PsdzRpcOptionItem rpcListItem in rpcListItems)
+            {
+                ListItem listItem = new ListItem(rpcListItem.Caption, rpcListItem.Id);
+                listItem.Selected = rpcListItem.Selected;
+                listItem.Enabled = rpcListItem.Enabled;
+                listItems.Add(listItem);
+            }
+            return listItems;
+        }
+#else
         public List<ListItem> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             try
