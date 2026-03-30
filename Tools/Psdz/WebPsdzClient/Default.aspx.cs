@@ -381,19 +381,15 @@ namespace WebPsdzClient
                 bool talPresent = false;
 
                 ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-                PsdzClient.Programming.PsdzContext psdzContext = programmingJobs.PsdzContext;
                 if (!active)
                 {
-                    if (programmingJobs.ProgrammingService?.Psdz != null)
-                    {
-                        hostRunning = programmingJobs.ProgrammingService.Psdz.IsPsdzInitialized;
-                    }
+                    hostRunning = sessionContainer.IsPsdzInitialized();
                 }
 
-                if (psdzContext?.Connection != null)
+                if (sessionContainer.IsVehicleConnected())
                 {
                     vehicleConnected = true;
-                    talPresent = psdzContext.Tal != null;
+                    talPresent = sessionContainer.IsTalPresent();
                 }
 
                 Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;

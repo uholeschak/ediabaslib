@@ -2722,6 +2722,44 @@ namespace WebPsdzClient.App_Data
         }
 
 #if USE_RPC_CLIENT
+        public bool IsPsdzInitialized()
+        {
+            if (TaskActive)
+            {
+                return false;
+            }
+
+            if (RpcClient.RpcService == null)
+            {
+                return false;
+            }
+
+            bool psdzInitialized = RpcClient.RpcService.IsPsdzInitialized().GetAwaiter().GetResult();
+            return psdzInitialized;
+        }
+
+        public bool IsVehicleConnected()
+        {
+            if (RpcClient.RpcService == null)
+            {
+                return false;
+            }
+
+            bool connected = RpcClient.RpcService.IsVehicleConnected().GetAwaiter().GetResult();
+            return connected;
+        }
+
+        public bool IsTalPresent()
+        {
+            if (RpcClient.RpcService == null)
+            {
+                return false;
+            }
+
+            bool talPresent = RpcClient.RpcService.IsTalPresent().GetAwaiter().GetResult(); ;
+            return talPresent;
+        }
+
         public bool UpdateTargetFa(bool reset = false)
         {
             if (RpcClient.RpcService == null)
@@ -2737,6 +2775,34 @@ namespace WebPsdzClient.App_Data
             return result;
         }
 #else
+        public bool IsPsdzInitialized()
+        {
+            if (TaskActive)
+            {
+                return false;
+            }
+
+            bool psdzInitialized = false;
+            if (ProgrammingJobs.ProgrammingService?.Psdz != null)
+            {
+                psdzInitialized = ProgrammingJobs.ProgrammingService.Psdz.IsPsdzInitialized;
+            }
+
+            return psdzInitialized;
+        }
+
+        public bool IsVehicleConnected()
+        {
+            bool connected = ProgrammingJobs.PsdzContext?.Connection != null;
+            return connected;
+        }
+
+        public bool IsTalPresent()
+        {
+            bool talPresent = ProgrammingJobs.PsdzContext.Tal != null;
+            return talPresent;
+        }
+
         public bool UpdateTargetFa(bool reset = false)
         {
             ProgrammingJobs.UpdateTargetFa(reset);
