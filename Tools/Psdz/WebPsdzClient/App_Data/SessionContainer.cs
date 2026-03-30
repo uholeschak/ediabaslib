@@ -2729,6 +2729,10 @@ namespace WebPsdzClient.App_Data
             }
 
             bool result = RpcClient.RpcService.UpdateTargetFa(reset).GetAwaiter().GetResult();
+            if (!result)
+            {
+                log.ErrorFormat("UpdateTargetFa failed");
+            }
             return result;
         }
 #else
