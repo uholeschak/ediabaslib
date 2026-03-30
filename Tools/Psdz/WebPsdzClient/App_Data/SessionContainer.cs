@@ -2724,11 +2724,6 @@ namespace WebPsdzClient.App_Data
 #if USE_RPC_CLIENT
         public bool IsPsdzInitialized()
         {
-            if (TaskActive)
-            {
-                return false;
-            }
-
             if (RpcClient.RpcService == null)
             {
                 return false;
@@ -2777,11 +2772,6 @@ namespace WebPsdzClient.App_Data
 #else
         public bool IsPsdzInitialized()
         {
-            if (TaskActive)
-            {
-                return false;
-            }
-
             bool psdzInitialized = false;
             if (ProgrammingJobs.ProgrammingService?.Psdz != null)
             {
