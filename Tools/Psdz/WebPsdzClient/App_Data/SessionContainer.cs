@@ -18,7 +18,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI.WebControls;
-using static PsdzClient.Programming.ProgrammingJobs;
 
 namespace WebPsdzClient.App_Data
 {
@@ -2768,6 +2767,47 @@ namespace WebPsdzClient.App_Data
                 listItems.Add(listItem);
             }
             return listItems;
+        }
+
+        public bool SelectOptionId(string optionId, bool select)
+        {
+            if (RpcClient.RpcService == null)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(optionId))
+            {
+                log.ErrorFormat("SelectOptionId Missing option ID");
+                return false;
+            }
+
+            bool modified = false;
+            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = RpcClient.RpcService.GetSelectedOptions(SelectedSwiRegister).GetAwaiter().GetResult();
+            if (rpcListItems == null)
+            {
+                log.ErrorFormat("SelectOptionId Failed to get options for register: {0}", SelectedSwiRegister);
+                return false;
+            }
+
+            foreach (PsdzRpcServer.Shared.PsdzRpcOptionItem rpcListItem in rpcListItems)
+            {
+                if (string.Compare(rpcListItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    bool result = RpcClient.RpcService.SelectOption(rpcListItem, select).GetAwaiter().GetResult();
+                    if (result)
+                    {
+                        modified = true;
+                    }
+                    else
+                    {
+                        log.ErrorFormat("SelectOptionId Failed to select option: {0}", optionId);
+                    }
+                    break;
+                }
+            }
+
+            return modified;
         }
 #else
         public List<ListItem> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
