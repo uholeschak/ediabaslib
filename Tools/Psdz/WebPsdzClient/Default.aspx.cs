@@ -142,7 +142,7 @@ namespace WebPsdzClient
                 return;
             }
 
-            sessionContainer.ProgrammingJobs.UpdateTargetFa();
+            sessionContainer.UpdateTargetFa();
 #if USE_RPC_CLIENT
             sessionContainer.VehicleFunctions(PsdzRpcServer.Shared.PsdzOperationType.BuildTalModFa);
 #else
@@ -398,7 +398,7 @@ namespace WebPsdzClient
                         psdzContext.Tal = null;
                     }
 
-                    sessionContainer.ProgrammingJobs.UpdateTargetFa();
+                    sessionContainer.UpdateTargetFa();
                     UpdateOptions();
                 }
             }

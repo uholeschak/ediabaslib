@@ -2720,6 +2720,25 @@ namespace WebPsdzClient.App_Data
             }
         }
 
+#if USE_RPC_CLIENT
+        public bool UpdateTargetFa(bool reset = false)
+        {
+            if (RpcClient.RpcService == null)
+            {
+                return false;
+            }
+
+            bool result = RpcClient.RpcService.UpdateTargetFa(reset).GetAwaiter().GetResult();
+            return result;
+        }
+#else
+        public bool UpdateTargetFa(bool reset = false)
+        {
+            ProgrammingJobs.UpdateTargetFa(reset);
+            return true;
+        }
+#endif
+
 #if !USE_RPC_CLIENT
         public void UpdateOptions()
         {
