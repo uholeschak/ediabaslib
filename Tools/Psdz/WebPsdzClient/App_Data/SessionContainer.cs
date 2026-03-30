@@ -2878,7 +2878,42 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public bool SelectOption(ProgrammingJobs.OptionsItem optionItem, bool select)
+        public bool SelectOptionId(string optionId, bool select)
+        {
+            if (string.IsNullOrEmpty(optionId))
+            {
+                log.ErrorFormat("SelectOptionId Missing option ID");
+                return false;
+            }
+
+            bool modified = false;
+            Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+            if (optionsDict != null && SelectedSwiRegister.HasValue)
+            {
+                if (optionsDict.TryGetValue(SelectedSwiRegister.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                {
+                    foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
+                    {
+                        if (string.Compare(optionsItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
+                        {
+                            if (SelectOption(optionsItem, select))
+                            {
+                                modified = true;
+                            }
+                            else
+                            {
+                                log.ErrorFormat("SelectOptionId Failed to select option: {0}", optionId);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return modified;
+        }
+
+        private bool SelectOption(ProgrammingJobs.OptionsItem optionItem, bool select)
         {
             if (ProgrammingJobs?.SelectedOptions == null)
             {

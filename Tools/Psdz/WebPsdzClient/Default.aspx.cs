@@ -325,37 +325,16 @@ namespace WebPsdzClient
                     return;
                 }
 
-                string optionId = listItem.Value;
-                if (string.IsNullOrEmpty(optionId))
-                {
-                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged No ID for: {0}", listItem.Text);
-                    return;
-                }
-
                 log.InfoFormat("CheckBoxListOptions_OnSelectedIndexChanged Selected: {0}", listItem.Text);
-                ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
+                string optionId = listItem.Value;
                 bool modified = false;
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
-                if (optionsDict != null && sessionContainer.SelectedSwiRegister.HasValue)
+                if (sessionContainer.SelectOptionId(optionId, listItem.Selected))
                 {
-                    if (optionsDict.TryGetValue(sessionContainer.SelectedSwiRegister.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
-                    {
-                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
-                        {
-                            if (string.Compare(optionsItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
-                            {
-                                if (sessionContainer.SelectOption(optionsItem, listItem.Selected))
-                                {
-                                    modified = true;
-                                }
-                                else
-                                {
-                                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged Failed to select option: {0}", listItem.Text);
-                                }
-                                break;
-                            }
-                        }
-                    }
+                    modified = true;
+                }
+                else
+                {
+                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged Failed to select option: {0}", listItem.Text);
                 }
 
                 if (modified)
