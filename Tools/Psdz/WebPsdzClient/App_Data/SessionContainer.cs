@@ -2746,7 +2746,7 @@ namespace WebPsdzClient.App_Data
 
 #if !USE_RPC_CLIENT
 
-        private List<ListItem> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        public List<ListItem> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             try
             {
@@ -2854,7 +2854,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public List<PsdzDatabase.SwiAction> GetSelectedSwiActions(ProgrammingJobs programmingJobs)
+        private List<PsdzDatabase.SwiAction> GetSelectedSwiActions(ProgrammingJobs programmingJobs)
         {
             if (programmingJobs.PsdzContext?.Connection == null || programmingJobs.SelectedOptions == null)
             {

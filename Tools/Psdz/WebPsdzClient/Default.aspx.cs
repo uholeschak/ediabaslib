@@ -640,100 +640,10 @@ namespace WebPsdzClient
                 }
 
                 CheckBoxListOptions.Items.Clear();
-
-                ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-                if (programmingJobs.ProgrammingService == null || programmingJobs.PsdzContext?.Connection == null)
+                List<ListItem> listItems = sessionContainer.GetSelectedOptions(swiRegisterEnum);
+                if (listItems != null)
                 {
-                    return;
-                }
-
-                bool replacement = false;
-                if (swiRegisterEnum.HasValue)
-                {
-                    switch (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
-                    {
-                        case PsdzDatabase.SwiRegisterGroup.HwDeinstall:
-                        case PsdzDatabase.SwiRegisterGroup.HwInstall:
-                            replacement = true;
-                            break;
-                    }
-                }
-
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
-                List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(programmingJobs);
-                List<PsdzDatabase.SwiAction> linkedSwiActions = programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(programmingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
-
-                if (optionsDict != null && programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
-                {
-                    if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
-                    {
-                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
-                        {
-                            bool itemSelected = false;
-                            bool itemEnabled = true;
-                            bool addItem = true;
-                            int selectIndex = programmingJobs.SelectedOptions.IndexOf(optionsItem);
-                            if (selectIndex >= 0)
-                            {
-                                if (replacement)
-                                {
-                                    itemSelected = true;
-                                }
-                                else
-                                {
-                                    if (selectIndex == programmingJobs.SelectedOptions.Count - 1)
-                                    {
-                                        itemSelected = true;
-                                    }
-                                    else
-                                    {
-                                        itemSelected = true;
-                                        itemEnabled = false;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (replacement)
-                                {
-                                    if (optionsItem.EcuInfo == null)
-                                    {
-                                        addItem = false;
-                                    }
-                                }
-                                else
-                                {
-                                    if (linkedSwiActions != null &&
-                                        linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
-                                    {
-                                        addItem = false;
-                                    }
-                                    else
-                                    {
-                                        if (!programmingJobs.ProgrammingService.PsdzDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, programmingJobs.PsdzContext?.VecInfo, null))
-                                        {
-                                            addItem = false;
-                                        }
-                                    }
-                                }
-                            }
-
-                            if (addItem)
-                            {
-                                if (!programmingJobs.IsOptionsItemEnabled(optionsItem))
-                                {
-                                    itemEnabled = false;
-                                }
-
-                                ListItem listItem = new ListItem(optionsItem.ToString(), optionsItem.Id);
-                                listItem.Selected = itemSelected;
-                                listItem.Enabled = itemEnabled;
-                                CheckBoxListOptions.Items.Add(listItem);
-
-                                log.InfoFormat("SelectOptions Added: Text={0}, Selected={1}, Enabled={2}", listItem.Text, listItem.Selected, listItem.Enabled);
-                            }
-                        }
-                    }
+                    CheckBoxListOptions.Items.AddRange(listItems.ToArray());
                 }
 
                 UpdatePanels();
@@ -742,28 +652,6 @@ namespace WebPsdzClient
             {
                 log.ErrorFormat("SelectOptions Exception: {0}", ex.Message);
             }
-        }
-
-        private List<PsdzDatabase.SwiAction> GetSelectedSwiActions(ProgrammingJobs programmingJobs)
-        {
-            if (programmingJobs.PsdzContext?.Connection == null || programmingJobs.SelectedOptions == null)
-            {
-                return null;
-            }
-
-            List<PsdzDatabase.SwiAction> selectedSwiActions = new List<PsdzDatabase.SwiAction>();
-            foreach (ProgrammingJobs.OptionsItem optionsItem in programmingJobs.SelectedOptions)
-            {
-                if (optionsItem.SwiAction != null)
-                {
-                    log.InfoFormat("GetSelectedSwiActions Selected: {0}", optionsItem.SwiAction);
-                    selectedSwiActions.Add(optionsItem.SwiAction);
-                }
-            }
-
-            log.InfoFormat("GetSelectedSwiActions Count: {0}", selectedSwiActions.Count);
-
-            return selectedSwiActions;
         }
     }
 }
