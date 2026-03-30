@@ -255,6 +255,17 @@ namespace WebPsdzClient
                 return;
             }
 
+#if USE_RPC_CLIENT
+            PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum ? selectedSwiRegister = null;
+            ListItem listItemSelect = DropDownListOptionType.SelectedItem;
+            if (listItemSelect != null)
+            {
+                if (Enum.TryParse(listItemSelect.Value, true, out PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum swiRegister))
+                {
+                    selectedSwiRegister = swiRegister;
+                }
+            }
+#else
             PsdzDatabase.SwiRegisterEnum? selectedSwiRegister = null;
             ListItem listItemSelect = DropDownListOptionType.SelectedItem;
             if (listItemSelect != null)
@@ -264,7 +275,7 @@ namespace WebPsdzClient
                     selectedSwiRegister = swiRegister;
                 }
             }
-
+#endif
             if (sessionContainer.SelectedSwiRegister != selectedSwiRegister)
             {
                 sessionContainer.SelectedSwiRegister = selectedSwiRegister;
@@ -629,7 +640,11 @@ namespace WebPsdzClient
             }
         }
 
+#if USE_RPC_CLIENT
+        private void SelectOptions(PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum)
+#else
         private void SelectOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+#endif
         {
             try
             {
