@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using BMW.Rheingold.Psdz.Client;
-using log4net;
+﻿using log4net;
 using PsdzClient;
 using PsdzClient.Programming;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 using WebPsdzClient.App_Data;
 
 namespace WebPsdzClient
@@ -348,52 +344,14 @@ namespace WebPsdzClient
                         {
                             if (string.Compare(optionsItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
                             {
-                                PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionsItem.SwiRegisterEnum;
-                                if (programmingJobs.SelectedOptions.Count > 0)
+                                if (sessionContainer.SelectOption(optionsItem, listItem.Selected))
                                 {
-                                    PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = programmingJobs.SelectedOptions[0].SwiRegisterEnum;
-                                    if (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
-                                    {
-                                        programmingJobs.SelectedOptions.Clear();
-                                    }
+                                    modified = true;
                                 }
-
-                                if (programmingJobs.SelectedOptions != null)
+                                else
                                 {
-                                    List<ProgrammingJobs.OptionsItem> combinedOptionsItems = programmingJobs.GetCombinedOptionsItems(optionsItem, optionsItems);
-                                    if (listItem.Selected)
-                                    {
-                                        if (!programmingJobs.SelectedOptions.Contains(optionsItem))
-                                        {
-                                            programmingJobs.SelectedOptions.Add(optionsItem);
-                                        }
-
-                                        if (combinedOptionsItems != null)
-                                        {
-                                            foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
-                                            {
-                                                if (!programmingJobs.SelectedOptions.Contains(combinedItem))
-                                                {
-                                                    programmingJobs.SelectedOptions.Add(combinedItem);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        programmingJobs.SelectedOptions.Remove(optionsItem);
-
-                                        if (combinedOptionsItems != null)
-                                        {
-                                            foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
-                                            {
-                                                programmingJobs.SelectedOptions.Remove(combinedItem);
-                                            }
-                                        }
-                                    }
+                                    log.ErrorFormat("CheckBoxListOptions_OnSelectedIndexChanged Failed to select option: {0}", listItem.Text);
                                 }
-
-                                modified = true;
                                 break;
                             }
                         }
@@ -402,14 +360,6 @@ namespace WebPsdzClient
 
                 if (modified)
                 {
-                    log.InfoFormat("CheckBoxListOptions_OnSelectedIndexChanged Modified, Updating FA");
-                    PsdzClient.Programming.PsdzContext psdzContext = sessionContainer.ProgrammingJobs.PsdzContext;
-                    if (psdzContext?.Connection != null)
-                    {
-                        psdzContext.Tal = null;
-                    }
-
-                    sessionContainer.UpdateTargetFa();
                     UpdateOptions();
                 }
             }
