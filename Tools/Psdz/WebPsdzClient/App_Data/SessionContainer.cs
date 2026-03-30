@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.UI.WebControls;
 
 namespace WebPsdzClient.App_Data
 {
@@ -2740,6 +2741,139 @@ namespace WebPsdzClient.App_Data
         {
             ProgrammingJobs.UpdateTargetFa(reset);
             return true;
+        }
+#endif
+
+#if !USE_RPC_CLIENT
+
+        private List<ListItem> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        {
+            try
+            {
+                if (ProgrammingJobs.ProgrammingService == null || ProgrammingJobs.PsdzContext?.Connection == null)
+                {
+                    return null;
+                }
+
+                List<ListItem> listItems = new List<ListItem>();
+                bool replacement = false;
+                if (swiRegisterEnum.HasValue)
+                {
+                    switch (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
+                    {
+                        case PsdzDatabase.SwiRegisterGroup.HwDeinstall:
+                        case PsdzDatabase.SwiRegisterGroup.HwInstall:
+                            replacement = true;
+                            break;
+                    }
+                }
+
+                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+                List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(ProgrammingJobs);
+                List<PsdzDatabase.SwiAction> linkedSwiActions = ProgrammingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(ProgrammingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
+
+                if (optionsDict != null && ProgrammingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
+                {
+                    if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                    {
+                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
+                        {
+                            bool itemSelected = false;
+                            bool itemEnabled = true;
+                            bool addItem = true;
+                            int selectIndex = ProgrammingJobs.SelectedOptions.IndexOf(optionsItem);
+                            if (selectIndex >= 0)
+                            {
+                                if (replacement)
+                                {
+                                    itemSelected = true;
+                                }
+                                else
+                                {
+                                    if (selectIndex == ProgrammingJobs.SelectedOptions.Count - 1)
+                                    {
+                                        itemSelected = true;
+                                    }
+                                    else
+                                    {
+                                        itemSelected = true;
+                                        itemEnabled = false;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (replacement)
+                                {
+                                    if (optionsItem.EcuInfo == null)
+                                    {
+                                        addItem = false;
+                                    }
+                                }
+                                else
+                                {
+                                    if (linkedSwiActions != null &&
+                                        linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
+                                    {
+                                        addItem = false;
+                                    }
+                                    else
+                                    {
+                                        if (!ProgrammingJobs.ProgrammingService.PsdzDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, ProgrammingJobs.PsdzContext?.VecInfo, null))
+                                        {
+                                            addItem = false;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (addItem)
+                            {
+                                if (!ProgrammingJobs.IsOptionsItemEnabled(optionsItem))
+                                {
+                                    itemEnabled = false;
+                                }
+
+                                ListItem listItem = new ListItem(optionsItem.ToString(), optionsItem.Id);
+                                listItem.Selected = itemSelected;
+                                listItem.Enabled = itemEnabled;
+                                listItems.Add(listItem);
+
+                                log.InfoFormat("SelectOptions Added: Text={0}, Selected={1}, Enabled={2}", listItem.Text, listItem.Selected, listItem.Enabled);
+                            }
+                        }
+                    }
+                }
+
+                return listItems;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("SelectOptions Exception: {0}", ex.Message);
+                return null;
+            }
+        }
+
+        public List<PsdzDatabase.SwiAction> GetSelectedSwiActions(ProgrammingJobs programmingJobs)
+        {
+            if (programmingJobs.PsdzContext?.Connection == null || programmingJobs.SelectedOptions == null)
+            {
+                return null;
+            }
+
+            List<PsdzDatabase.SwiAction> selectedSwiActions = new List<PsdzDatabase.SwiAction>();
+            foreach (ProgrammingJobs.OptionsItem optionsItem in programmingJobs.SelectedOptions)
+            {
+                if (optionsItem.SwiAction != null)
+                {
+                    log.InfoFormat("GetSelectedSwiActions Selected: {0}", optionsItem.SwiAction);
+                    selectedSwiActions.Add(optionsItem.SwiAction);
+                }
+            }
+
+            log.InfoFormat("GetSelectedSwiActions Count: {0}", selectedSwiActions.Count);
+
+            return selectedSwiActions;
         }
 #endif
 
