@@ -2755,6 +2755,17 @@ namespace WebPsdzClient.App_Data
             return talPresent;
         }
 
+        public bool HasOptionsDict()
+        {
+            if (RpcClient.RpcService == null)
+            {
+                return false;
+            }
+
+            bool hasOptionsDict = RpcClient.RpcService.HasOptionsDict().GetAwaiter().GetResult();
+            return hasOptionsDict;
+        }
+
         public bool UpdateTargetFa(bool reset = false)
         {
             if (RpcClient.RpcService == null)
@@ -2791,6 +2802,12 @@ namespace WebPsdzClient.App_Data
         {
             bool talPresent = ProgrammingJobs.PsdzContext.Tal != null;
             return talPresent;
+        }
+
+        public bool HasOptionsDict()
+        {
+            bool hasOptionsDict = ProgrammingJobs.OptionsDict != null;
+            return hasOptionsDict;
         }
 
         public bool UpdateTargetFa(bool reset = false)

@@ -36,6 +36,7 @@ namespace PsdzRpcServer.Shared
         Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzRpcSwiRegisterEnum? swiRegisterEnum);
         Task<bool> SelectOption(PsdzRpcOptionItem optionItem, bool select);
         Task<bool> ClearOptionsDict();
+        Task<bool> HasOptionsDict();
         Task<bool> UpdateTargetFa(bool reset);
     }
 }

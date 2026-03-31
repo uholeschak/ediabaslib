@@ -295,6 +295,17 @@ namespace PsdzRpcServer
             return Task.FromResult(true);
         }
 
+        public Task<bool> HasOptionsDict()
+        {
+            if (IsOperationActive())
+            {
+                return Task.FromResult(false);
+            }
+
+            bool hasOptionsDict = _programmingJobs.OptionsDict != null;
+            return Task.FromResult(hasOptionsDict);
+        }
+
         public Task<bool> UpdateTargetFa(bool reset)
         {
             if (IsOperationActive())

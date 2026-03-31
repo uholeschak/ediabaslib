@@ -380,7 +380,6 @@ namespace WebPsdzClient
                 bool vehicleConnected = false;
                 bool talPresent = false;
 
-                ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
                 if (!active)
                 {
                     hostRunning = sessionContainer.IsPsdzInitialized();
@@ -392,13 +391,13 @@ namespace WebPsdzClient
                     talPresent = sessionContainer.IsTalPresent();
                 }
 
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = programmingJobs.OptionsDict;
-                bool modifyTal = !active && hostRunning && vehicleConnected && optionsDict != null;
+                bool hasOptionsDict = sessionContainer.HasOptionsDict();
+                bool modifyTal = !active && hostRunning && vehicleConnected && hasOptionsDict;
                 ButtonStopHost.Enabled = !active && hostRunning;
                 ButtonStopHost.Visible = sessionContainer.DeepObdVersion <= 0;
                 ButtonConnect.Enabled = !active && !vehicleConnected;
                 ButtonDisconnect.Enabled = !active && hostRunning && vehicleConnected;
-                ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && optionsDict == null;
+                ButtonCreateOptions.Enabled = !active && hostRunning && vehicleConnected && !hasOptionsDict;
                 ButtonModifyFa.Enabled = modifyTal;
                 ButtonExecuteTal.Enabled = modifyTal && talPresent;
                 ButtonAbort.Enabled = active && abortPossible;
