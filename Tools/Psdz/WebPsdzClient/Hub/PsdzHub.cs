@@ -9,7 +9,7 @@ using log4net;
 using Microsoft.AspNet.SignalR.Hubs;
 using WebPsdzClient.App_Data;
 
-namespace PsdzClient
+namespace WebPsdzClient
 {
     [HubName("psdzVehicleHub")]
     public class PsdzVehicleHub : Hub<IPsdzClient>
