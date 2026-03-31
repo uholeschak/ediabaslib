@@ -273,6 +273,14 @@ namespace PsdzRpcServer
             return Task.FromResult(options);
         }
 
+        public Task<PsdzSwiRegisterGroupEnum> GetSwiRegisterGroup(PsdzRpcSwiRegisterEnum swiRegisterEnum)
+        {
+            PsdzDatabase.SwiRegisterEnum swiRegisterEnumValue = MapSwiRegisterEnum(swiRegisterEnum);
+            PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumValue);
+            PsdzSwiRegisterGroupEnum rpcSwiRegisterGroup = MapSwiRegisterGroupEnum(swiRegisterGroup);
+            return Task.FromResult(rpcSwiRegisterGroup);
+        }
+
         public Task<bool> SelectOption(PsdzRpcOptionItem optionItem, bool select)
         {
             if (IsOperationActive())
@@ -697,6 +705,24 @@ namespace PsdzRpcServer
                 return result;
             }
             throw new ArgumentOutOfRangeException(nameof(swiRegisterEnum), swiRegisterEnum, "Unknown SwiRegisterEnum");
+        }
+
+        private static PsdzSwiRegisterGroupEnum MapSwiRegisterGroupEnum(PsdzDatabase.SwiRegisterGroup swiRegisterGroup)
+        {
+            if (Enum.TryParse(swiRegisterGroup.ToString(), out PsdzSwiRegisterGroupEnum result))
+            {
+                return result;
+            }
+            throw new ArgumentOutOfRangeException(nameof(swiRegisterGroup), swiRegisterGroup, "Unknown SwiRegisterGroup");
+        }
+
+        private static PsdzDatabase.SwiRegisterGroup MapSwiRegisterGroupEnum(PsdzSwiRegisterGroupEnum swiRegisterGroupEnum)
+        {
+            if (Enum.TryParse(swiRegisterGroupEnum.ToString(), out PsdzDatabase.SwiRegisterGroup result))
+            {
+                return result;
+            }
+            throw new ArgumentOutOfRangeException(nameof(swiRegisterGroupEnum), swiRegisterGroupEnum, "Unknown SwiRegisterGroupEnum");
         }
     }
 }

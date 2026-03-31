@@ -14,6 +14,7 @@ namespace PsdzRpcServer
             AssertEnumCount<ProgrammingJobs.CacheType, PsdzRpcCacheType>();
             AssertEnumCount<ProgrammingJobs.OperationType, PsdzOperationType>();
             AssertEnumCount<PsdzDatabase.SwiRegisterEnum, PsdzRpcSwiRegisterEnum>();
+            AssertEnumCount<PsdzDatabase.SwiRegisterGroup, PsdzSwiRegisterGroupEnum>();
         }
 
         private static void AssertEnumCount<TSource, TTarget>()

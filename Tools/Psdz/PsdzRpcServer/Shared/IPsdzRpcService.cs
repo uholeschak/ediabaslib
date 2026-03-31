@@ -34,6 +34,7 @@ namespace PsdzRpcServer.Shared
         Task<string> GetPsdzServiceHostLogDir();
         Task<List<PsdzRpcOptionType>> GetOptionTypes();
         Task<List<PsdzRpcOptionItem>> GetSelectedOptions(PsdzRpcSwiRegisterEnum? swiRegisterEnum);
+        Task<PsdzSwiRegisterGroupEnum> GetSwiRegisterGroup(PsdzRpcSwiRegisterEnum swiRegisterEnum);
         Task<bool> SelectOption(PsdzRpcOptionItem optionItem, bool select);
         Task<bool> ClearOptionsDict();
         Task<bool> HasOptionsDict();
