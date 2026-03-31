@@ -4,7 +4,6 @@ using log4net;
 using Microsoft.AspNet.SignalR;
 using MySqlConnector;
 using PsdzClient;
-using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -104,7 +103,7 @@ namespace WebPsdzClient.App_Data
 #if USE_RPC_CLIENT
         public PsdzRpcClient.PsdzRpcClient RpcClient { get; private set; }
 #else
-        public ProgrammingJobs ProgrammingJobs { get; private set; }
+        public PsdzClient.Programming.ProgrammingJobs ProgrammingJobs { get; private set; }
 #endif
         public bool RefreshOptions { get; set; }
         public AutoResetEvent MessageWaitEvent { get; private set; } = new AutoResetEvent(false);
@@ -215,8 +214,8 @@ namespace WebPsdzClient.App_Data
         private PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? _selectedSwiRegister;
         public PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? SelectedSwiRegister
 #else
-        private PsdzDatabase.SwiRegisterEnum? _selectedSwiRegister;
-        public PsdzDatabase.SwiRegisterEnum? SelectedSwiRegister
+        private PsdzClient.PsdzDatabase.SwiRegisterEnum? _selectedSwiRegister;
+        public PsdzClient.PsdzDatabase.SwiRegisterEnum? SelectedSwiRegister
 #endif
         {
             get
@@ -484,7 +483,7 @@ namespace WebPsdzClient.App_Data
 
         public void SetLanguage(string language)
         {
-            List<string> langList = PsdzDatabase.EcuTranslation.GetLanguages();
+            List<string> langList = PsdzClient.PsdzDatabase.EcuTranslation.GetLanguages();
             bool matched = false;
 
             foreach (string lang in langList)
@@ -553,7 +552,7 @@ namespace WebPsdzClient.App_Data
                         vin = RpcClient.RpcService.GetVehicleVin().GetAwaiter().GetResult();
                     }
 #else
-                    PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
+                    PsdzClient.Programming.PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
                     if (psdzContext?.Connection != null)
                     {
                         vin = psdzContext.DetectVehicle?.Vin;
@@ -749,7 +748,7 @@ namespace WebPsdzClient.App_Data
                 ServiceInitializedEvent(hostLogDir);
             };
 #else
-            ProgrammingJobs = new ProgrammingJobs(dealerId);
+            ProgrammingJobs = new PsdzClient.Programming.ProgrammingJobs(dealerId);
             ProgrammingJobs.UpdateStatusEvent += UpdateStatus;
             ProgrammingJobs.ProgressEvent += UpdateProgress;
             ProgrammingJobs.UpdateOptionsEvent += UpdateOptions;
@@ -1734,8 +1733,8 @@ namespace WebPsdzClient.App_Data
                                                 }
                                                 if (cacheType == PsdzRpcServer.Shared.PsdzRpcCacheType.None)
 #else
-                                                ProgrammingJobs.CacheType cacheType = ProgrammingJobs.CacheResponseType;
-                                                if (cacheType == ProgrammingJobs.CacheType.None)
+                                                PsdzClient.Programming.ProgrammingJobs.CacheType cacheType = ProgrammingJobs.CacheResponseType;
+                                                if (cacheType == PsdzClient.Programming.ProgrammingJobs.CacheType.None)
 #endif
                                                 {
                                                     log.InfoFormat("TcpThread Caching disabled");
@@ -1751,7 +1750,7 @@ namespace WebPsdzClient.App_Data
 #if USE_RPC_CLIENT
                                                         cacheType == PsdzRpcServer.Shared.PsdzRpcCacheType.NoResponse)
 #else
-                                                        cacheType == ProgrammingJobs.CacheType.NoResponse)
+                                                        cacheType == PsdzClient.Programming.ProgrammingJobs.CacheType.NoResponse)
 #endif
                                                     {
                                                         if (cachedResponseList.Count > 0)
@@ -2959,7 +2958,7 @@ namespace WebPsdzClient.App_Data
             try
             {
                 List<ListItem> listItems = new List<ListItem>();
-                foreach (ProgrammingJobs.OptionType optionType in ProgrammingJobs.OptionTypes)
+                foreach (PsdzClient.Programming.ProgrammingJobs.OptionType optionType in ProgrammingJobs.OptionTypes)
                 {
                     PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionType.SwiRegisterEnum);
                     if (swiRegisterGroup != PsdzDatabase.SwiRegisterGroup.Modification)
@@ -3009,15 +3008,15 @@ namespace WebPsdzClient.App_Data
                     }
                 }
 
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+                Dictionary<PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
                 List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(ProgrammingJobs);
                 List<PsdzDatabase.SwiAction> linkedSwiActions = ProgrammingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(ProgrammingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
 
                 if (optionsDict != null && ProgrammingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
                 {
-                    if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                    if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<PsdzClient.Programming.ProgrammingJobs.OptionsItem> optionsItems))
                     {
-                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
+                        foreach (PsdzClient.Programming.ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
                         {
                             bool itemSelected = false;
                             bool itemEnabled = true;
@@ -3104,12 +3103,12 @@ namespace WebPsdzClient.App_Data
             }
 
             bool modified = false;
-            Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+            Dictionary<PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
             if (optionsDict != null && SelectedSwiRegister.HasValue)
             {
-                if (optionsDict.TryGetValue(SelectedSwiRegister.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                if (optionsDict.TryGetValue(SelectedSwiRegister.Value, out List<PsdzClient.Programming.ProgrammingJobs.OptionsItem> optionsItems))
                 {
-                    foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems)
+                    foreach (PsdzClient.Programming.ProgrammingJobs.OptionsItem optionsItem in optionsItems)
                     {
                         if (string.Compare(optionsItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
                         {
@@ -3130,7 +3129,7 @@ namespace WebPsdzClient.App_Data
             return modified;
         }
 
-        private bool SelectOption(ProgrammingJobs.OptionsItem optionItem, bool select)
+        private bool SelectOption(PsdzClient.Programming.ProgrammingJobs.OptionsItem optionItem, bool select)
         {
             if (ProgrammingJobs?.SelectedOptions == null)
             {
@@ -3143,7 +3142,7 @@ namespace WebPsdzClient.App_Data
                 return true;
             }
 
-            Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+            Dictionary<PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
             PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionItem.SwiRegisterEnum;
             if (ProgrammingJobs.SelectedOptions.Count > 0)
             {
@@ -3154,12 +3153,12 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
-            if (!optionsDict.TryGetValue(swiRegisterEnum, out List<ProgrammingJobs.OptionsItem> optionsItems))
+            if (!optionsDict.TryGetValue(swiRegisterEnum, out List<PsdzClient.Programming.ProgrammingJobs.OptionsItem> optionsItems))
             {
                 return false;
             }
 
-            ProgrammingJobs.OptionsItem optionsItem = optionsItems.FirstOrDefault(x => string.Compare(x.Id, optionItem.Id, StringComparison.OrdinalIgnoreCase) == 0);
+            PsdzClient.Programming.ProgrammingJobs.OptionsItem optionsItem = optionsItems.FirstOrDefault(x => string.Compare(x.Id, optionItem.Id, StringComparison.OrdinalIgnoreCase) == 0);
             if (optionsItem == null)
             {
                 return false;
@@ -3168,7 +3167,7 @@ namespace WebPsdzClient.App_Data
             bool modified = false;
             if (ProgrammingJobs.SelectedOptions != null)
             {
-                List<ProgrammingJobs.OptionsItem> combinedOptionsItems = ProgrammingJobs.GetCombinedOptionsItems(optionsItem, optionsItems);
+                List<PsdzClient.Programming.ProgrammingJobs.OptionsItem> combinedOptionsItems = ProgrammingJobs.GetCombinedOptionsItems(optionsItem, optionsItems);
                 if (select)
                 {
                     if (!ProgrammingJobs.SelectedOptions.Contains(optionsItem))
@@ -3178,7 +3177,7 @@ namespace WebPsdzClient.App_Data
 
                     if (combinedOptionsItems != null)
                     {
-                        foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                        foreach (PsdzClient.Programming.ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
                         {
                             if (!ProgrammingJobs.SelectedOptions.Contains(combinedItem))
                             {
@@ -3193,7 +3192,7 @@ namespace WebPsdzClient.App_Data
 
                     if (combinedOptionsItems != null)
                     {
-                        foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                        foreach (PsdzClient.Programming.ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
                         {
                             ProgrammingJobs.SelectedOptions.Remove(combinedItem);
                         }
@@ -3205,7 +3204,7 @@ namespace WebPsdzClient.App_Data
 
             if (modified)
             {
-                PsdzContext psdzContext = ProgrammingJobs.PsdzContext;
+                PsdzClient.Programming.PsdzContext psdzContext = ProgrammingJobs.PsdzContext;
                 if (psdzContext?.Connection != null)
                 {
                     psdzContext.Tal = null;
@@ -3217,7 +3216,7 @@ namespace WebPsdzClient.App_Data
             return true;
         }
 
-        private List<PsdzDatabase.SwiAction> GetSelectedSwiActions(ProgrammingJobs programmingJobs)
+        private List<PsdzDatabase.SwiAction> GetSelectedSwiActions(PsdzClient.Programming.ProgrammingJobs programmingJobs)
         {
             if (programmingJobs.PsdzContext?.Connection == null || programmingJobs.SelectedOptions == null)
             {
@@ -3225,7 +3224,7 @@ namespace WebPsdzClient.App_Data
             }
 
             List<PsdzDatabase.SwiAction> selectedSwiActions = new List<PsdzDatabase.SwiAction>();
-            foreach (ProgrammingJobs.OptionsItem optionsItem in programmingJobs.SelectedOptions)
+            foreach (PsdzClient.Programming.ProgrammingJobs.OptionsItem optionsItem in programmingJobs.SelectedOptions)
             {
                 if (optionsItem.SwiAction != null)
                 {
@@ -3243,11 +3242,11 @@ namespace WebPsdzClient.App_Data
 #if !USE_RPC_CLIENT
         public void UpdateOptions()
         {
-            ProgrammingJobs.SelectedOptions = new List<ProgrammingJobs.OptionsItem>();
+            ProgrammingJobs.SelectedOptions = new List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>();
             UpdateCurrentOptions();
         }
 
-        public void UpdateOptionSelections(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        public void UpdateOptionSelections(PsdzClient.PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             UpdateCurrentOptions(swiRegisterEnum);
         }
@@ -3373,7 +3372,7 @@ namespace WebPsdzClient.App_Data
             UpdateDisplay();
         }
 #else
-        private void UpdateCurrentOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
+        private void UpdateCurrentOptions(PsdzClient.PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
         {
             try
             {
@@ -3746,7 +3745,7 @@ namespace WebPsdzClient.App_Data
                 }
                 else
                 {
-                    PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
+                    PsdzClient.Programming.PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
                     if (psdzContext?.Connection != null)
                     {
                         DetectedVin = psdzContext?.DetectVehicle?.Vin;
@@ -3807,7 +3806,7 @@ namespace WebPsdzClient.App_Data
             return await Task.Run(() => ProgrammingJobs.DisconnectVehicle(Cts)).ConfigureAwait(false);
         }
 
-        public void VehicleFunctions(ProgrammingJobs.OperationType operationType)
+        public void VehicleFunctions(PsdzClient.Programming.ProgrammingJobs.OperationType operationType)
         {
             if (TaskActive)
             {
@@ -3820,7 +3819,7 @@ namespace WebPsdzClient.App_Data
             }
 
             string vin = null;
-            PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
+            PsdzClient.Programming.PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;
             if (psdzContext?.Connection != null)
             {
                 vin = psdzContext?.DetectVehicle?.Vin;
@@ -3859,7 +3858,7 @@ namespace WebPsdzClient.App_Data
             UpdateDisplay();
         }
 
-        public async Task<bool> VehicleFunctionsTask(ProgrammingJobs.OperationType operationType)
+        public async Task<bool> VehicleFunctionsTask(PsdzClient.Programming.ProgrammingJobs.OperationType operationType)
         {
             return await Task.Run(() => ProgrammingJobs.VehicleFunctions(Cts, operationType)).ConfigureAwait(false);
         }

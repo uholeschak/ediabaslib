@@ -1,6 +1,4 @@
 ﻿using log4net;
-using PsdzClient;
-using PsdzClient.Programming;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -121,7 +119,7 @@ namespace WebPsdzClient
 #if USE_RPC_CLIENT
             sessionContainer.VehicleFunctions(PsdzRpcServer.Shared.PsdzOperationType.CreateOptions);
 #else
-            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.CreateOptions);
+            sessionContainer.VehicleFunctions(PsdzClient.Programming.ProgrammingJobs.OperationType.CreateOptions);
 #endif
         }
 
@@ -142,7 +140,7 @@ namespace WebPsdzClient
 #if USE_RPC_CLIENT
             sessionContainer.VehicleFunctions(PsdzRpcServer.Shared.PsdzOperationType.BuildTalModFa);
 #else
-            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.BuildTalModFa);
+            sessionContainer.VehicleFunctions(PsdzClient.Programming.ProgrammingJobs.OperationType.BuildTalModFa);
 #endif
         }
 
@@ -167,7 +165,7 @@ namespace WebPsdzClient
 #if USE_RPC_CLIENT
             sessionContainer.VehicleFunctions(PsdzRpcServer.Shared.PsdzOperationType.ExecuteTal);
 #else
-            sessionContainer.VehicleFunctions(ProgrammingJobs.OperationType.ExecuteTal);
+            sessionContainer.VehicleFunctions(PsdzClient.Programming.ProgrammingJobs.OperationType.ExecuteTal);
 #endif
         }
 
@@ -262,11 +260,11 @@ namespace WebPsdzClient
                 }
             }
 #else
-            PsdzDatabase.SwiRegisterEnum? selectedSwiRegister = null;
+            PsdzClient.PsdzDatabase.SwiRegisterEnum? selectedSwiRegister = null;
             ListItem listItemSelect = DropDownListOptionType.SelectedItem;
             if (listItemSelect != null)
             {
-                if (Enum.TryParse(listItemSelect.Value, true, out PsdzDatabase.SwiRegisterEnum swiRegister))
+                if (Enum.TryParse(listItemSelect.Value, true, out PsdzClient.PsdzDatabase.SwiRegisterEnum swiRegister))
                 {
                     selectedSwiRegister = swiRegister;
                 }
@@ -554,7 +552,7 @@ namespace WebPsdzClient
 #if USE_RPC_CLIENT
         private void SelectOptions(PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum)
 #else
-        private void SelectOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        private void SelectOptions(PsdzClient.PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
 #endif
         {
             try
