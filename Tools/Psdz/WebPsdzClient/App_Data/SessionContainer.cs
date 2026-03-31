@@ -2893,6 +2893,31 @@ namespace WebPsdzClient.App_Data
             return modified;
         }
 #else
+        public List<ListItem> GetOptionTypes()
+        {
+            List<ListItem> listItems = new List<ListItem>();
+            foreach (ProgrammingJobs.OptionType optionTypeUpdate in ProgrammingJobs.OptionTypes)
+            {
+                PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionTypeUpdate.SwiRegisterEnum);
+                if (swiRegisterGroup != PsdzDatabase.SwiRegisterGroup.Modification)
+                {
+                    if (!HasDisplayOption("Hardware"))
+                    {
+                        continue;
+                    }
+                }
+
+                ListItem listItem = new ListItem(optionTypeUpdate.ToString(), optionTypeUpdate.SwiRegisterEnum.ToString());
+                if (SelectedSwiRegister == optionTypeUpdate.SwiRegisterEnum)
+                {
+                    listItem.Selected = true;
+                }
+                listItems.Add(listItem);
+            }
+
+            return listItems;
+        }
+
         public List<ListItem> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             try
