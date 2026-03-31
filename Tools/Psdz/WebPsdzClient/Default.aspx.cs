@@ -518,8 +518,8 @@ namespace WebPsdzClient
 
                 DropDownListOptionType.Items.Clear();
 
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = sessionContainer.ProgrammingJobs.OptionsDict;
-                if (optionsDict != null)
+                bool hasOptionsDict = sessionContainer.HasOptionsDict();
+                if (hasOptionsDict)
                 {
                     ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
                     if (sessionContainer.SelectedSwiRegister == null)
