@@ -526,24 +526,10 @@ namespace WebPsdzClient
                         sessionContainer.SetDefaultSelectedSwiRegister();
                     }
 
-                    ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
-                    foreach (ProgrammingJobs.OptionType optionTypeUpdate in programmingJobs.OptionTypes)
+                    List<ListItem> listItems = sessionContainer.GetOptionTypes();
+                    if (listItems != null)
                     {
-                        PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionTypeUpdate.SwiRegisterEnum);
-                        if (swiRegisterGroup != PsdzDatabase.SwiRegisterGroup.Modification)
-                        {
-                            if (!sessionContainer.HasDisplayOption("Hardware"))
-                            {
-                                continue;
-                            }
-                        }
-
-                        ListItem listItem = new ListItem(optionTypeUpdate.ToString(), optionTypeUpdate.SwiRegisterEnum.ToString());
-                        if (sessionContainer.SelectedSwiRegister == optionTypeUpdate.SwiRegisterEnum)
-                        {
-                            listItem.Selected = true;
-                        }
-                        DropDownListOptionType.Items.Add(listItem);
+                        DropDownListOptionType.Items.AddRange(listItems.ToArray());
                     }
                 }
                 else

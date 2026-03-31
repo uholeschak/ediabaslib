@@ -2828,6 +2828,50 @@ namespace WebPsdzClient.App_Data
 #endif
 
 #if USE_RPC_CLIENT
+        public List<ListItem> GetOptionTypes()
+        {
+            try
+            {
+                if (RpcClient.RpcService == null)
+                {
+                    return null;
+                }
+
+                List<PsdzRpcServer.Shared.PsdzRpcOptionType> rpcOptionTypes = RpcClient.RpcService.GetOptionTypes().GetAwaiter().GetResult();
+                if (rpcOptionTypes == null)
+                {
+                    return null;
+                }
+
+                List<ListItem> listItems = new List<ListItem>();
+                foreach (PsdzRpcServer.Shared.PsdzRpcOptionType optionType in rpcOptionTypes)
+                {
+                    if (optionType.SwiRegisterGroupEnum != PsdzRpcServer.Shared.PsdzSwiRegisterGroupEnum.Modification)
+                    {
+                        if (!HasDisplayOption("Hardware"))
+                        {
+                            continue;
+                        }
+                    }
+
+                    ListItem listItem = new ListItem(optionType.Caption, optionType.SwiRegisterEnum.ToString());
+                    if (SelectedSwiRegister == optionType.SwiRegisterEnum)
+                    {
+                        listItem.Selected = true;
+                    }
+
+                    listItems.Add(listItem);
+                }
+
+                return listItems;
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("GetOptionTypes Exception: {0}", ex.Message);
+                return null;
+            }
+        }
+
         public List<ListItem> GetSelectedOptions(PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum)
         {
             if (RpcClient.RpcService == null)
@@ -2895,27 +2939,35 @@ namespace WebPsdzClient.App_Data
 #else
         public List<ListItem> GetOptionTypes()
         {
-            List<ListItem> listItems = new List<ListItem>();
-            foreach (ProgrammingJobs.OptionType optionTypeUpdate in ProgrammingJobs.OptionTypes)
+            try
             {
-                PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionTypeUpdate.SwiRegisterEnum);
-                if (swiRegisterGroup != PsdzDatabase.SwiRegisterGroup.Modification)
+                List<ListItem> listItems = new List<ListItem>();
+                foreach (ProgrammingJobs.OptionType optionType in ProgrammingJobs.OptionTypes)
                 {
-                    if (!HasDisplayOption("Hardware"))
+                    PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionType.SwiRegisterEnum);
+                    if (swiRegisterGroup != PsdzDatabase.SwiRegisterGroup.Modification)
                     {
-                        continue;
+                        if (!HasDisplayOption("Hardware"))
+                        {
+                            continue;
+                        }
                     }
+
+                    ListItem listItem = new ListItem(optionType.ToString(), optionType.SwiRegisterEnum.ToString());
+                    if (SelectedSwiRegister == optionType.SwiRegisterEnum)
+                    {
+                        listItem.Selected = true;
+                    }
+                    listItems.Add(listItem);
                 }
 
-                ListItem listItem = new ListItem(optionTypeUpdate.ToString(), optionTypeUpdate.SwiRegisterEnum.ToString());
-                if (SelectedSwiRegister == optionTypeUpdate.SwiRegisterEnum)
-                {
-                    listItem.Selected = true;
-                }
-                listItems.Add(listItem);
+                return listItems;
             }
-
-            return listItems;
+            catch (Exception ex)
+            {
+                log.ErrorFormat("GetOptionTypes Exception: {0}", ex.Message);
+                return null;
+            }
         }
 
         public List<ListItem> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
