@@ -3,7 +3,6 @@ using EdiabasLib;
 using log4net;
 using Microsoft.AspNet.SignalR;
 using MySqlConnector;
-using PsdzClient;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -2799,7 +2798,7 @@ namespace WebPsdzClient.App_Data
 #else
         public void SetDefaultSelectedSwiRegister()
         {
-            SelectedSwiRegister = PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion;
+            SelectedSwiRegister = PsdzClient.PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion;
         }
 
         public bool IsPsdzInitialized()
@@ -2960,8 +2959,8 @@ namespace WebPsdzClient.App_Data
                 List<ListItem> listItems = new List<ListItem>();
                 foreach (PsdzClient.Programming.ProgrammingJobs.OptionType optionType in ProgrammingJobs.OptionTypes)
                 {
-                    PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionType.SwiRegisterEnum);
-                    if (swiRegisterGroup != PsdzDatabase.SwiRegisterGroup.Modification)
+                    PsdzClient.PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzClient.PsdzDatabase.GetSwiRegisterGroup(optionType.SwiRegisterEnum);
+                    if (swiRegisterGroup != PsdzClient.PsdzDatabase.SwiRegisterGroup.Modification)
                     {
                         if (!HasDisplayOption(DisplayOptionHardware))
                         {
@@ -2986,7 +2985,7 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public List<ListItem> GetSelectedOptions(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
+        public List<ListItem> GetSelectedOptions(PsdzClient.PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             try
             {
@@ -2999,18 +2998,18 @@ namespace WebPsdzClient.App_Data
                 bool replacement = false;
                 if (swiRegisterEnum.HasValue)
                 {
-                    switch (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
+                    switch (PsdzClient.PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
                     {
-                        case PsdzDatabase.SwiRegisterGroup.HwDeinstall:
-                        case PsdzDatabase.SwiRegisterGroup.HwInstall:
+                        case PsdzClient.PsdzDatabase.SwiRegisterGroup.HwDeinstall:
+                        case PsdzClient.PsdzDatabase.SwiRegisterGroup.HwInstall:
                             replacement = true;
                             break;
                     }
                 }
 
-                Dictionary<PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
-                List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(ProgrammingJobs);
-                List<PsdzDatabase.SwiAction> linkedSwiActions = ProgrammingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(ProgrammingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
+                Dictionary<PsdzClient.PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+                List<PsdzClient.PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions(ProgrammingJobs);
+                List<PsdzClient.PsdzDatabase.SwiAction> linkedSwiActions = ProgrammingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(ProgrammingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
 
                 if (optionsDict != null && ProgrammingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
                 {
@@ -3103,7 +3102,7 @@ namespace WebPsdzClient.App_Data
             }
 
             bool modified = false;
-            Dictionary<PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+            Dictionary<PsdzClient.PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
             if (optionsDict != null && SelectedSwiRegister.HasValue)
             {
                 if (optionsDict.TryGetValue(SelectedSwiRegister.Value, out List<PsdzClient.Programming.ProgrammingJobs.OptionsItem> optionsItems))
@@ -3142,12 +3141,12 @@ namespace WebPsdzClient.App_Data
                 return true;
             }
 
-            Dictionary<PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
-            PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionItem.SwiRegisterEnum;
+            Dictionary<PsdzClient.PsdzDatabase.SwiRegisterEnum, List<PsdzClient.Programming.ProgrammingJobs.OptionsItem>> optionsDict = ProgrammingJobs.OptionsDict;
+            PsdzClient.PsdzDatabase.SwiRegisterEnum swiRegisterEnum = optionItem.SwiRegisterEnum;
             if (ProgrammingJobs.SelectedOptions.Count > 0)
             {
-                PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = ProgrammingJobs.SelectedOptions[0].SwiRegisterEnum;
-                if (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
+                PsdzClient.PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = ProgrammingJobs.SelectedOptions[0].SwiRegisterEnum;
+                if (PsdzClient.PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PsdzClient.PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
                 {
                     ProgrammingJobs.SelectedOptions.Clear();
                 }
@@ -3216,14 +3215,14 @@ namespace WebPsdzClient.App_Data
             return true;
         }
 
-        private List<PsdzDatabase.SwiAction> GetSelectedSwiActions(PsdzClient.Programming.ProgrammingJobs programmingJobs)
+        private List<PsdzClient.PsdzDatabase.SwiAction> GetSelectedSwiActions(PsdzClient.Programming.ProgrammingJobs programmingJobs)
         {
             if (programmingJobs.PsdzContext?.Connection == null || programmingJobs.SelectedOptions == null)
             {
                 return null;
             }
 
-            List<PsdzDatabase.SwiAction> selectedSwiActions = new List<PsdzDatabase.SwiAction>();
+            List<PsdzClient.PsdzDatabase.SwiAction> selectedSwiActions = new List<PsdzClient.PsdzDatabase.SwiAction>();
             foreach (PsdzClient.Programming.ProgrammingJobs.OptionsItem optionsItem in programmingJobs.SelectedOptions)
             {
                 if (optionsItem.SwiAction != null)
