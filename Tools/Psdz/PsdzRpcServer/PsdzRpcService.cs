@@ -259,7 +259,9 @@ namespace PsdzRpcServer
             List<PsdzRpcOptionType> optionTypes = new List<PsdzRpcOptionType>();
             foreach (ProgrammingJobs.OptionType optionTypeUpdate in _programmingJobs.OptionTypes)
             {
-                PsdzRpcOptionType optionType = new PsdzRpcOptionType(MapSwiRegisterEnum(optionTypeUpdate.SwiRegisterEnum), optionTypeUpdate.ToString());
+                PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionTypeUpdate.SwiRegisterEnum);
+                PsdzRpcOptionType optionType = new PsdzRpcOptionType(MapSwiRegisterEnum(optionTypeUpdate.SwiRegisterEnum),
+                    MapSwiRegisterGroupEnum(swiRegisterGroup), optionTypeUpdate.ToString());
                 optionTypes.Add(optionType);
             }
 
