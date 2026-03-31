@@ -19,6 +19,7 @@ namespace PsdzRpcServer.Shared
         Task<bool> ConnectVehicle(string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000);
         Task<bool> DisconnectVehicle();
         Task<bool> VehicleFunctions(PsdzOperationType operationType);
+        Task<List<string>> GetLanguages();
         Task<string> GetLanguage();
         Task<bool> SetLanguage(string language);
         Task<bool> GetLicenseValid();

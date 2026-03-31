@@ -161,6 +161,12 @@ namespace PsdzRpcServer
             return Task.FromResult(true);
         }
 
+        public Task<List<string>> GetLanguages()
+        {
+            List<string> langList = PsdzDatabase.EcuTranslation.GetLanguages();
+            return Task.FromResult(langList);
+        }
+
         public Task<string> GetLanguage()
         {
             string language = _programmingJobs.ClientContext.Language;
