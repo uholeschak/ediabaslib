@@ -173,15 +173,34 @@ namespace PsdzRpcServer
             return Task.FromResult(language);
         }
 
-        public Task<bool> SetLanguage(string language)
+        public Task<bool> SetLanguage(string language, bool matchLanguage)
         {
             if (IsOperationActive())
             {
                 return Task.FromResult(false);
             }
 
-            _programmingJobs.ClientContext.Language = language;
-            return Task.FromResult(true);
+            bool matched = false;
+            if (matchLanguage)
+            {
+                List<string> langList = PsdzDatabase.EcuTranslation.GetLanguages();
+                foreach (string lang in langList)
+                {
+                    if (language.StartsWith(lang, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _programmingJobs.ClientContext.Language = lang;
+                        matched = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                _programmingJobs.ClientContext.Language = language;
+                matched = true;
+            }
+
+            return Task.FromResult(matched);
         }
 
         public Task<bool> GetLicenseValid()

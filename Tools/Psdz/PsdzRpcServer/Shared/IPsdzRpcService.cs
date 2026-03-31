@@ -21,7 +21,7 @@ namespace PsdzRpcServer.Shared
         Task<bool> VehicleFunctions(PsdzOperationType operationType);
         Task<List<string>> GetLanguages();
         Task<string> GetLanguage();
-        Task<bool> SetLanguage(string language);
+        Task<bool> SetLanguage(string language, bool matchLanguage = false);
         Task<bool> GetLicenseValid();
         Task<bool> SetLicenseValid(bool licenseValid);
         Task<bool> GetCacheClearRequired();

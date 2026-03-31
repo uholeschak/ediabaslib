@@ -480,7 +480,37 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        public void SetLanguage(string language)
+#if USE_RPC_CLIENT
+        public bool SetLanguage(string language)
+        {
+            if (RpcClient.RpcService == null)
+            {
+                return false;
+            }
+
+            bool matched = RpcClient.RpcService.SetLanguage(language, true).GetAwaiter().GetResult();
+            if (matched)
+            {
+                log.InfoFormat("SetLanguage matched: {0}", language);
+            }
+            else
+            {
+                log.ErrorFormat("SetLanguage RpcService SetLanguage failed: {0}", language);
+            }
+
+            if (matched)
+            {
+                LanguageSet = true;
+            }
+            else
+            {
+                log.ErrorFormat("SetLanguage Language not found: {0}", language);
+            }
+
+            return matched;
+        }
+#else
+        public bool SetLanguage(string language)
         {
             List<string> langList = PsdzClient.PsdzDatabase.EcuTranslation.GetLanguages();
             bool matched = false;
@@ -489,27 +519,9 @@ namespace WebPsdzClient.App_Data
             {
                 if (language.StartsWith(lang, StringComparison.OrdinalIgnoreCase))
                 {
-#if USE_RPC_CLIENT
-                    bool result = false;
-                    if (RpcClient.RpcService != null)
-                    {
-                        result = RpcClient.RpcService.SetLanguage(lang).GetAwaiter().GetResult();
-                    }
-
-                    if (result)
-                    {
-                        matched = true;
-                        log.InfoFormat("SetLanguage matched: {0}", lang);
-                    }
-                    else
-                    {
-                        log.ErrorFormat("SetLanguage RpcService SetLanguage failed: {0}", lang);
-                    }
-#else
                     ProgrammingJobs.ClientContext.Language = lang;
                     matched = true;
                     log.InfoFormat("SetLanguage matched: {0}", lang);
-#endif
                     break;
                 }
             }
@@ -522,7 +534,10 @@ namespace WebPsdzClient.App_Data
             {
                 log.ErrorFormat("SetLanguage Language not found: {0}", language);
             }
+
+            return matched;
         }
+#endif
 
         public string GetLanguage()
         {
