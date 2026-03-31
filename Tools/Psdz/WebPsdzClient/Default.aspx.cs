@@ -551,7 +551,7 @@ namespace WebPsdzClient
                 }
 
                 SelectOptions(sessionContainer.SelectedSwiRegister);
-                PanelOptions.Visible = optionsDict != null;
+                PanelOptions.Visible = hasOptionsDict;
 
                 if (updatePanel)
                 {
