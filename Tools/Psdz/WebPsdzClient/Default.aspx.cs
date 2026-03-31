@@ -521,11 +521,12 @@ namespace WebPsdzClient
                 bool hasOptionsDict = sessionContainer.HasOptionsDict();
                 if (hasOptionsDict)
                 {
-                    ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
                     if (sessionContainer.SelectedSwiRegister == null)
                     {
-                        sessionContainer.SelectedSwiRegister = programmingJobs.OptionTypes[0].SwiRegisterEnum;
+                        sessionContainer.SetDefaultSelectedSwiRegister();
                     }
+
+                    ProgrammingJobs programmingJobs = sessionContainer.ProgrammingJobs;
                     foreach (ProgrammingJobs.OptionType optionTypeUpdate in programmingJobs.OptionTypes)
                     {
                         PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionTypeUpdate.SwiRegisterEnum);

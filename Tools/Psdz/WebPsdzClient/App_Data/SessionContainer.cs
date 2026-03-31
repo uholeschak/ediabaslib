@@ -2722,6 +2722,11 @@ namespace WebPsdzClient.App_Data
         }
 
 #if USE_RPC_CLIENT
+        public void SetDefaultSelectedSwiRegister()
+        {
+            SelectedSwiRegister = PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum.VehicleModificationCodingConversion;
+        }
+
         public bool IsPsdzInitialized()
         {
             if (RpcClient.RpcService == null)
@@ -2781,6 +2786,11 @@ namespace WebPsdzClient.App_Data
             return result;
         }
 #else
+        public void SetDefaultSelectedSwiRegister()
+        {
+            SelectedSwiRegister = PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion;
+        }
+
         public bool IsPsdzInitialized()
         {
             bool psdzInitialized = false;
