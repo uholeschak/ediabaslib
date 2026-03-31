@@ -375,7 +375,7 @@ namespace WebPsdzClient
                 }
 
                 bool active = sessionContainer.TaskActive;
-                bool abortPossible = sessionContainer.Cts != null;
+                bool abortPossible = sessionContainer.IsCancelPossible();
                 bool hostRunning = false;
                 bool vehicleConnected = false;
                 bool talPresent = false;

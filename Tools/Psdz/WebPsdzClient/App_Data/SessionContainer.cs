@@ -2772,6 +2772,17 @@ namespace WebPsdzClient.App_Data
             return hasOptionsDict;
         }
 
+        public bool IsCancelPossible()
+        {
+            if (RpcClient.RpcService == null)
+            {
+                return false;
+            }
+
+            bool cancelPossible = RpcClient.RpcService.IsCancelPossible().GetAwaiter().GetResult();
+            return cancelPossible;
+        }
+
         public bool UpdateTargetFa(bool reset = false)
         {
             if (RpcClient.RpcService == null)
@@ -2819,6 +2830,11 @@ namespace WebPsdzClient.App_Data
         {
             bool hasOptionsDict = ProgrammingJobs.OptionsDict != null;
             return hasOptionsDict;
+        }
+
+        public bool IsCancelPossible()
+        {
+            return Cts != null;
         }
 
         public bool UpdateTargetFa(bool reset = false)

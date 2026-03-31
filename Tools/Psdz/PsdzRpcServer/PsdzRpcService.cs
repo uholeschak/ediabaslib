@@ -36,6 +36,17 @@ namespace PsdzRpcServer
             return Task.FromResult(isActive);
         }
 
+        public Task<bool> IsCancelPossible()
+        {
+            bool cancelPossible = false;
+            lock (_ctsLock)
+            {
+                cancelPossible = _cts != null;
+            }
+
+            return Task.FromResult(cancelPossible);
+        }
+
         public Task CancelOperation()
         {
             lock (_ctsLock)

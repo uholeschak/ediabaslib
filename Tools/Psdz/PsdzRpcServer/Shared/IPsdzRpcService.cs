@@ -10,6 +10,7 @@ namespace PsdzRpcServer.Shared
     public partial interface IPsdzRpcService : IDisposable
     {
         Task<bool> OperationActive();
+        Task<bool> IsCancelPossible();
         Task CancelOperation();
         Task<bool> SetupLog4Net(string logFile);
         Task<string> GetIstaInstallLocation();
