@@ -621,6 +621,7 @@ namespace WebPsdzClient.App_Data
         private const long Nr78RetryMax = VehicleReceiveTimeout / Nr78Delay;
         private const int EnetTcpMutexTimeout = 30000;
         private const int ThreadFinishTimeout = VehicleReceiveTimeout + 5000;
+        private const string DisplayOptionHardware = "Hardware";
         private const string SqlDataBase = ";Database=bmw_coding";
 
         public SessionContainer(string sessionId, string dealerId)
@@ -2848,7 +2849,7 @@ namespace WebPsdzClient.App_Data
                 {
                     if (optionType.SwiRegisterGroupEnum != PsdzRpcServer.Shared.PsdzSwiRegisterGroupEnum.Modification)
                     {
-                        if (!HasDisplayOption("Hardware"))
+                        if (!HasDisplayOption(DisplayOptionHardware))
                         {
                             continue;
                         }
@@ -2947,7 +2948,7 @@ namespace WebPsdzClient.App_Data
                     PsdzDatabase.SwiRegisterGroup swiRegisterGroup = PsdzDatabase.GetSwiRegisterGroup(optionType.SwiRegisterEnum);
                     if (swiRegisterGroup != PsdzDatabase.SwiRegisterGroup.Modification)
                     {
-                        if (!HasDisplayOption("Hardware"))
+                        if (!HasDisplayOption(DisplayOptionHardware))
                         {
                             continue;
                         }
