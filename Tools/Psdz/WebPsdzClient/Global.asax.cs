@@ -1,5 +1,4 @@
-﻿using BMW.Rheingold.Psdz.Client;
-using log4net;
+﻿using log4net;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -42,6 +41,7 @@ namespace WebPsdzClient
             TestLicenses = ConfigurationManager.AppSettings["TestLicenses"];
             DisplayOptions = ConfigurationManager.AppSettings["DisplayOptions"];
 
+#if !USE_RPC_CLIENT
             if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
             {
                 IstaFolder = PsdzClient.Programming.ProgrammingJobs.GetIstaInstallLocation();
@@ -51,7 +51,8 @@ namespace WebPsdzClient
             log.InfoFormat("Application_Start");
             log.InfoFormat("Ista folder: {0}", IstaFolder);
             PsdzClient.Programming.PsdzStarterGuard.Instance.ResetInitialization();
-            PsdzServiceStarter.ClearIstaPIDsFile();
+            BMW.Rheingold.Psdz.Client.PsdzServiceStarter.ClearIstaPIDsFile();
+#endif
 
             GlobalConfiguration.Configure(WebApiConfig.Register);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
@@ -264,6 +265,8 @@ namespace WebPsdzClient
 
             return false;
         }
+
+#if !USE_RPC_CLIENT
         private void SetupLog4Net()
         {
             if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
@@ -277,5 +280,6 @@ namespace WebPsdzClient
             string logFile = Path.Combine(logDir, fileName);
             PsdzClient.Programming.ProgrammingJobs.SetupLog4Net(logFile);
         }
+#endif
     }
 }
