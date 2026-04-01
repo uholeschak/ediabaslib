@@ -18,6 +18,6 @@ namespace PsdzRpcServer.Shared
         Task OnUpdateOptionSelections(PsdzRpcSwiRegisterEnum? swiRegisterEnum);
         Task<bool> OnShowMessage(string message, bool okBtn, bool wait);
         Task<int> OnTelSendQueueSize();
-        Task OnServiceInitialized(string hostLogDir);
+        Task OnServiceInitialized(string hostLogDir, bool loggingInitialized);
     }
 }

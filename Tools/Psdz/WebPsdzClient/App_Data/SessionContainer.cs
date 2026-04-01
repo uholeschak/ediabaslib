@@ -3345,7 +3345,7 @@ namespace WebPsdzClient.App_Data
             return queueSize;
         }
 
-        private void ServiceInitializedEvent(string hostLogDir)
+        private void ServiceInitializedEvent(string hostLogDir, bool loggingInitialized)
         {
         }
 #if USE_RPC_CLIENT

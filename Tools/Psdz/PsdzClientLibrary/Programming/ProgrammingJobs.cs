@@ -297,10 +297,12 @@ namespace PsdzClient.Programming
         public delegate int TelSendQueueSizeDelegate();
         public event TelSendQueueSizeDelegate TelSendQueueSizeEvent;
 
-        public delegate void ServiceInitialized(string hostLogDir);
+        public delegate void ServiceInitialized(string hostLogDir, bool loggingInitialized);
         public event ServiceInitialized ServiceInitializedEvent;
 
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgrammingJobs));
+        public static bool LoggingInitialized { get; private set; }
+
         private OptionType[] _optionTypes =
         {
             new OptionType("Coding", PsdzDatabase.SwiRegisterEnum.VehicleModificationCodingConversion),
@@ -519,7 +521,7 @@ namespace PsdzClient.Programming
                     ClientContext.Database = ProgrammingService.PsdzDatabase;
                     if (ServiceInitializedEvent != null)
                     {
-                        ServiceInitializedEvent.Invoke(ProgrammingService.GetPsdzServiceHostLogDir());
+                        ServiceInitializedEvent.Invoke(ProgrammingService.GetPsdzServiceHostLogDir(), LoggingInitialized);
                     }
 
                     ProgrammingService.EventManager.ProgrammingEventRaised += (sender, args) =>
@@ -4289,16 +4291,18 @@ namespace PsdzClient.Programming
                     {
                         log4net.GlobalContext.Properties["LogFileName"] = logFile;
                         XmlConfigurator.Configure(new FileInfo(log4NetConfig));
+                        LoggingInitialized = true;
                         return true;
                     }
                 }
-
-                return false;
             }
             catch (Exception)
             {
-                return false;
+                // ignored
             }
+
+            LoggingInitialized = false;
+            return false;
         }
 
         public static string GetIstaInstallLocation()

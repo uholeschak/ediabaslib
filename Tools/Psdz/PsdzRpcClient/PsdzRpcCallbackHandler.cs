@@ -99,7 +99,7 @@ namespace PsdzRpcClient
             return Task.FromResult(args.Result);
         }
 
-        public Task OnServiceInitialized(string hostLogDir)
+        public Task OnServiceInitialized(string hostLogDir, bool loggingInitialized)
         {
             ServiceInitialized?.Invoke(this, hostLogDir);
             return Task.CompletedTask;

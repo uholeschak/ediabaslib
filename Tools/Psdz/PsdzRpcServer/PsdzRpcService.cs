@@ -675,9 +675,9 @@ namespace PsdzRpcServer
             return _callback.OnTelSendQueueSize().GetAwaiter().GetResult();
         }
 
-        private void ServiceInitializedEvent(string hostLogDir)
+        private void ServiceInitializedEvent(string hostLogDir, bool loggingInitialized)
         {
-            _callback.OnServiceInitialized(hostLogDir);
+            _callback.OnServiceInitialized(hostLogDir, loggingInitialized);
         }
 
         public void Dispose()

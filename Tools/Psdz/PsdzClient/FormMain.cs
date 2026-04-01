@@ -279,9 +279,14 @@ namespace PsdzClient
             labelProgressEvent.Text = message ?? string.Empty;
         }
 
-        private void ServiceInitializedEvent(string hostLogDir)
+        private void ServiceInitializedEvent(string hostLogDir, bool loggingInitialized)
         {
             if (string.IsNullOrEmpty(hostLogDir))
+            {
+                return;
+            }
+
+            if (loggingInitialized)
             {
                 return;
             }
