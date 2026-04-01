@@ -64,11 +64,10 @@ namespace PsdzRpcServer
         {
             try
             {
-                using var jsonRpc = new JsonRpc(pipeServer);
+                using JsonRpc jsonRpc = new JsonRpc(pipeServer);
 
-                var callback = jsonRpc.Attach<IPsdzRpcServiceCallback>();
-
-                var service = new PsdzRpcService(callback, _dealerId);
+                IPsdzRpcServiceCallback callback = jsonRpc.Attach<IPsdzRpcServiceCallback>();
+                PsdzRpcService service = new PsdzRpcService(callback, _dealerId);
                 jsonRpc.AddLocalRpcTarget(service);
 
                 jsonRpc.StartListening();

@@ -315,6 +315,12 @@ namespace PsdzRpcClient
                             {
                                 Console.WriteLine($"SetupLog4Net result: {result}");
                             }
+
+                            bool resetResult = await client.RpcService.ResetStarterGuard();
+                            if (_verbosity <= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine($"ResetStarterGuard result: {resetResult}");
+                            }
                         }
                     });
                 };

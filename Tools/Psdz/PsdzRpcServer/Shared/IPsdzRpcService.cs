@@ -13,6 +13,7 @@ namespace PsdzRpcServer.Shared
         Task<bool> IsCancelPossible();
         Task CancelOperation();
         Task<bool> SetupLog4Net(string logFile);
+        Task<bool> ResetStarterGuard();
         Task<string> GetIstaInstallLocation();
         Task<bool> StartProgrammingService(string istaFolder);
         Task<bool> StopProgrammingService(string istaFolder, bool force = false);

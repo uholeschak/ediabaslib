@@ -1,4 +1,5 @@
-﻿using PsdzClient;
+﻿using BMW.Rheingold.Psdz.Client;
+using PsdzClient;
 using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
@@ -61,6 +62,13 @@ namespace PsdzRpcServer
         {
             bool result = ProgrammingJobs.SetupLog4Net(logFile);
             return Task.FromResult(result);
+        }
+
+        public Task<bool> ResetStarterGuard()
+        {
+            PsdzStarterGuard.Instance.ResetInitialization();
+            PsdzServiceStarter.ClearIstaPIDsFile();
+            return Task.FromResult(true);
         }
 
         public Task<string> GetIstaInstallLocation()
