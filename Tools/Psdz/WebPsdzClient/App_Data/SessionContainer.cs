@@ -642,6 +642,22 @@ namespace WebPsdzClient.App_Data
             SessionId = sessionId;
 #if USE_RPC_CLIENT
             RpcClient = new PsdzRpcClient.PsdzRpcClient();
+            PsdzRpcClient.PsdzRpcServerStarter serverStarter = new();
+
+            try
+            {
+                Cts = new CancellationTokenSource();
+                bool connected = serverStarter.ConnectClient(null, RpcClient, Cts).GetAwaiter().GetResult();
+                if (!connected)
+                {
+                    log.Error("Failed to connect to RPC client");
+                    throw new Exception("Failed to connect to RPC client");
+                }
+            }
+            finally
+            {
+                Cts = null;
+            }
 
             RpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
             {
@@ -738,18 +754,30 @@ namespace WebPsdzClient.App_Data
 
             RpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
             {
-                Cts = new CancellationTokenSource();
-                bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, false);
-                Cts = null;
-                msgArgs.Result = result;
+                try
+                {
+                    Cts = new CancellationTokenSource();
+                    bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, false);
+                    msgArgs.Result = result;
+                }
+                finally
+                {
+                    Cts = null;
+                }
             };
 
             RpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
             {
-                Cts = new CancellationTokenSource();
-                bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, true);
-                Cts = null;
-                msgArgs.Result = result;
+                try
+                {
+                    Cts = new CancellationTokenSource();
+                    bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, true);
+                    msgArgs.Result = result;
+                }
+                finally
+                {
+                    Cts = null;
+                }
             };
 
             RpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
