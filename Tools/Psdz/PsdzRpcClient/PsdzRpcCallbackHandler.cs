@@ -18,7 +18,7 @@ namespace PsdzRpcClient
         public event EventHandler<ShowMessageEventArgs> ShowMessage;
         public event EventHandler<ShowMessageEventArgs> ShowMessageWait;
         public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
-        public event EventHandler<string> ServiceInitialized;
+        public event EventHandler<ServiceInitializedEventArgs> ServiceInitialized;
 
         public Task OnStartProgrammingCompleted(bool success)
         {
@@ -101,7 +101,8 @@ namespace PsdzRpcClient
 
         public Task OnServiceInitialized(string hostLogDir, bool loggingInitialized)
         {
-            ServiceInitialized?.Invoke(this, hostLogDir);
+            ServiceInitializedEventArgs args = new ServiceInitializedEventArgs(hostLogDir, loggingInitialized);
+            ServiceInitialized?.Invoke(this, args);
             return Task.CompletedTask;
         }
     }
