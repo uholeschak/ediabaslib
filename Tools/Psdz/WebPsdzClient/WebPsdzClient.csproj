@@ -111,7 +111,10 @@
     <PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Security.Cookies" Version="4.2.3" />
     <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.2.3" />
-    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.9.3" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="6.0.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Web.Infrastructure" Version="2.0.0" />
     <PackageReference Include="Modernizr" Version="2.8.3" />
     <PackageReference Include="MySqlConnector" Version="2.5.0" />
@@ -132,8 +135,5 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.6.3" />
     <PackageReference Include="System.ValueTuple" Version="4.6.2" />
     <PackageReference Include="WebGrease" Version="1.6.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Update="Microsoft.Net.Compilers.Toolset" Version="5.3.0" />
   </ItemGroup>
 </Project>
