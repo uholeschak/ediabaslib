@@ -227,7 +227,7 @@ namespace PsdzRpcClient
                             {
                                 if (string.IsNullOrEmpty(progressArgs.Message))
                                 {
-                                    Console.Write("Processing ...");
+                                    Console.WriteLine("Processing ...");
                                 }
                                 else
                                 {
@@ -310,7 +310,6 @@ namespace PsdzRpcClient
                             }
 
                             bool result = await client.RpcService.SetupLog4Net(logFile);
-
                             if (_verbosity <= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"SetupLog4Net result: {result}");
