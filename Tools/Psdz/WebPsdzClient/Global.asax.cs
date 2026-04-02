@@ -41,7 +41,6 @@ namespace WebPsdzClient
             TestLicenses = ConfigurationManager.AppSettings["TestLicenses"];
             DisplayOptions = ConfigurationManager.AppSettings["DisplayOptions"];
 
-#if !USE_RPC_CLIENT
             if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
             {
                 IstaFolder = PsdzClient.Programming.ProgrammingJobs.GetIstaInstallLocation();
@@ -50,6 +49,7 @@ namespace WebPsdzClient
             SetupLog4Net();
             log.InfoFormat("Application_Start");
             log.InfoFormat("Ista folder: {0}", IstaFolder);
+#if !USE_RPC_CLIENT
             PsdzClient.Programming.PsdzStarterGuard.Instance.ResetInitialization();
             BMW.Rheingold.Psdz.Client.PsdzServiceStarter.ClearIstaPIDsFile();
 #endif
@@ -266,7 +266,31 @@ namespace WebPsdzClient
             return false;
         }
 
-#if !USE_RPC_CLIENT
+#if USE_RPC_CLIENT
+        private void SetupLog4Net()
+        {
+            if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
+            {
+                return;
+            }
+
+            string logDir = Path.Combine(IstaFolder, @"logs\client");
+            string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+            string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzRpcClient-{0}.log", dateString);
+            string logFile = Path.Combine(logDir, fileName);
+
+            string appDir = EdiabasLib.EdiabasNet.AssemblyDirectory;
+            if (!string.IsNullOrEmpty(appDir))
+            {
+                string log4NetConfig = Path.Combine(appDir, "log4net_config.xml");
+                if (File.Exists(log4NetConfig))
+                {
+                    log4net.GlobalContext.Properties["LogFileName"] = logFile;
+                    log4net.Config.XmlConfigurator.Configure(new FileInfo(log4NetConfig));
+                }
+            }
+        }
+#else
         private void SetupLog4Net()
         {
             if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
