@@ -28,6 +28,7 @@ namespace WebPsdzClient
         public static string DealerId { get; private set; }
         public static string IstaFolder { get; private set; }
         public static string SqlServer { get; private set; }
+        public static string RpcServer { get; private set; }
         public static string TestLicenses { get; private set; }
         public static string DisplayOptions { get; private set; }
 
@@ -39,6 +40,7 @@ namespace WebPsdzClient
             DealerId = ConfigurationManager.AppSettings["DealerId"];
             IstaFolder = ConfigurationManager.AppSettings["IstaFolder"];
             SqlServer = ConfigurationManager.AppSettings["SqlServer"];
+            RpcServer = ConfigurationManager.AppSettings["RpcServer"];
             TestLicenses = ConfigurationManager.AppSettings["TestLicenses"];
             DisplayOptions = ConfigurationManager.AppSettings["DisplayOptions"];
 
