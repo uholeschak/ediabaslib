@@ -267,7 +267,6 @@ namespace WebPsdzClient
             return false;
         }
 
-#if USE_RPC_CLIENT
         private void SetupLog4Net()
         {
             if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
@@ -277,6 +276,7 @@ namespace WebPsdzClient
 
             string logDir = Path.Combine(IstaFolder, @"logs\client");
             string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+#if USE_RPC_CLIENT
             string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzRpcClient-{0}.log", dateString);
             string logFile = Path.Combine(logDir, fileName);
 
@@ -290,21 +290,11 @@ namespace WebPsdzClient
                     log4net.Config.XmlConfigurator.Configure(new FileInfo(log4NetConfig));
                 }
             }
-        }
 #else
-        private void SetupLog4Net()
-        {
-            if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
-            {
-                return;
-            }
-
-            string logDir = Path.Combine(IstaFolder, @"logs\client");
-            string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
             string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzClient-{0}.log", dateString);
             string logFile = Path.Combine(logDir, fileName);
             PsdzClient.Programming.ProgrammingJobs.SetupLog4Net(logFile);
-        }
 #endif
+        }
     }
 }
