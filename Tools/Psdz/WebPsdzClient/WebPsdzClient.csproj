@@ -60,7 +60,7 @@
     <ProjectReference Include="..\..\..\EdiabasLib\ApiInternal\ApiInternal.csproj" />
     <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
     <ProjectReference Include="..\PsdzClientLibrary\PsdzClientLibrary.csproj" Condition="'$(UseRpcClient)' != 'true'" />
-    <ProjectReference Include="..\PsdzRpcClient\PsdzRpcClient.csproj" Condition="'$(UseRpcClient)' == 'true'" />
+    <ProjectReference Include="..\PsdzRpcClient\PsdzRpcClientLibrary.csproj" Condition="'$(UseRpcClient)' == 'true'" />
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Remove="obj\**" />
