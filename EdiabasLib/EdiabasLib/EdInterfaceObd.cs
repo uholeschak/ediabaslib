@@ -274,6 +274,10 @@ namespace EdiabasLib
             }
             set
             {
+                if (CommThread != null)
+                {   //Ensure no previous communication thread is still running.
+                    StopCommThread();
+                }
                 base.Ediabas = value;
                 ValidKlineResponse = false;
                 ValidCanResponse = false;
@@ -1184,6 +1188,10 @@ namespace EdiabasLib
                         EdiabasProtected.LogString(EdiabasNet.EdLogLevel.Ifh, "Status not present");
                         ignitionOn = true;
                     }
+                }
+                else
+                {   // Unexpected ignition status data received -> log for debugging.
+                    Ediabas.LogData(EdiabasNet.EdLogLevel.Ifh, receiveData, 0, receiveData.Length, "Ignition RxData");
                 }
                 voltage = ignitionOn ? IgnitionVoltageValue : 0;
                 EdiabasProtected.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ignition voltage: {0}", voltage);
