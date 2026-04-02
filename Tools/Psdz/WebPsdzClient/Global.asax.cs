@@ -15,6 +15,7 @@ using System.Web.Routing;
 using System.Web.Security;
 using System.Web.SessionState;
 using System.Web.UI;
+using EdiabasLib;
 using WebPsdzClient.App_Data;
 
 namespace WebPsdzClient
@@ -43,7 +44,7 @@ namespace WebPsdzClient
 
             if (string.IsNullOrEmpty(IstaFolder) || !Directory.Exists(IstaFolder))
             {
-                IstaFolder = PsdzClient.Programming.ProgrammingJobs.GetIstaInstallLocation();
+                IstaFolder = EdSec4Diag.GetIstaInstallLocation();
             }
 
             SetupLog4Net();
@@ -279,7 +280,7 @@ namespace WebPsdzClient
             string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzRpcClient-{0}.log", dateString);
             string logFile = Path.Combine(logDir, fileName);
 
-            string appDir = EdiabasLib.EdiabasNet.AssemblyDirectory;
+            string appDir = EdiabasNet.AssemblyDirectory;
             if (!string.IsNullOrEmpty(appDir))
             {
                 string log4NetConfig = Path.Combine(appDir, "log4net_config.xml");

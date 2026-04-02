@@ -179,7 +179,7 @@ namespace PsdzClient
 
                 if (string.IsNullOrEmpty(istaFolder) || !Directory.Exists(istaFolder))
                 {
-                    istaFolder = ProgrammingJobs.GetIstaInstallLocation();
+                    istaFolder = EdSec4Diag.GetIstaInstallLocation();
                 }
                 textBoxIstaFolder.Text = istaFolder;
 

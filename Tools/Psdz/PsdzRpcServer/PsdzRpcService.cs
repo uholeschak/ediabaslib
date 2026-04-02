@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EdiabasLib;
 
 namespace PsdzRpcServer
 {
@@ -73,7 +74,7 @@ namespace PsdzRpcServer
 
         public Task<string> GetIstaInstallLocation()
         {
-            string istaFolder = ProgrammingJobs.GetIstaInstallLocation();
+            string istaFolder = EdSec4Diag.GetIstaInstallLocation();
             return Task.FromResult(istaFolder);
         }
 
