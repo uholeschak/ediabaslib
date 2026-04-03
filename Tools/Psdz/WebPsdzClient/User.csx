@@ -55,7 +55,7 @@ public class UserTemplate
     async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger)
     {
         string istaLocation = string.Empty; // auto detect
-        string rpcServerLocation = string.Empty;
+        string rpcServerLocation = string.Empty; // auto detect
         string sqlUrl = "url";
         string sqlUser = "user";
         string sqlPassword = "password";
