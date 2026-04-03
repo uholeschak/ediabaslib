@@ -115,7 +115,7 @@ public class PsdzRpcServerStarter
         return true;
     }
 
-    public static string DetectServerLocation()
+    public static string DetectServerLocation(bool preferNet481 = false)
     {
         string assemblyDir = AssemblyDirectory;
         if (string.IsNullOrEmpty(assemblyDir))
@@ -129,18 +129,34 @@ public class PsdzRpcServerStarter
 #else
         string prefix = "release";
 #endif
-        string serverDir = Path.Combine(rootDir, prefix + "net10.0-windows10.0.26100.0");
-        string serverExe = Path.Combine(serverDir, ServerExeName);
-        if (File.Exists(serverExe))
-        {
-            return serverExe;
-        }
+        string serverDirNet10 = Path.Combine(rootDir, prefix + "net10.0-windows10.0.26100.0");
+        string serverDirNet481 = Path.Combine(rootDir, prefix + "debug_net481");
+        string serverExeNet10 = Path.Combine(serverDirNet10, ServerExeName);
+        string serverExeNet481 = Path.Combine(serverDirNet481, ServerExeName);
 
-        serverDir = Path.Combine(rootDir, prefix + "debug_net481");
-        serverExe = Path.Combine(serverDir, ServerExeName);
-        if (File.Exists(serverExe))
+        if (preferNet481)
         {
-            return serverExe;
+            if (File.Exists(serverExeNet481))
+            {
+                return serverExeNet481;
+            }
+
+            if (File.Exists(serverExeNet10))
+            {
+                return serverExeNet10;
+            }
+        }
+        else
+        {
+            if (File.Exists(serverExeNet10))
+            {
+                return serverExeNet10;
+            }
+
+            if (File.Exists(serverExeNet481))
+            {
+                return serverExeNet481;
+            }
         }
 
         return null;
