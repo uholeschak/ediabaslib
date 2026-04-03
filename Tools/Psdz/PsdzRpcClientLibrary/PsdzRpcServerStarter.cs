@@ -124,13 +124,17 @@ public class PsdzRpcServerStarter
         }
 
         string rootDir = Path.Combine(assemblyDir, "..", "..", "..", "..","..", "PsdzRpcServer", "artifacts", "bin", "PsdzRpcServer");
+        if (!Directory.Exists(rootDir))
+        {
+            return null;
+        }
 #if DEBUG
         string prefix = "debug";
 #else
         string prefix = "release";
 #endif
-        string serverDirNet10 = Path.Combine(rootDir, prefix + "net10.0-windows10.0.26100.0");
-        string serverDirNet481 = Path.Combine(rootDir, prefix + "debug_net481");
+        string serverDirNet10 = Path.Combine(rootDir, prefix + "_net10.0-windows10.0.26100.0");
+        string serverDirNet481 = Path.Combine(rootDir, prefix + "_net481");
         string serverExeNet10 = Path.Combine(serverDirNet10, ServerExeName);
         string serverExeNet481 = Path.Combine(serverDirNet481, ServerExeName);
 
