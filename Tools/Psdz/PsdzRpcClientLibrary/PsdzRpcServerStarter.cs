@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,6 +10,8 @@ namespace PsdzRpcClient;
 
 public class PsdzRpcServerStarter
 {
+    public const string ServerExeName = "PsdzRpcServer.exe";
+
     private readonly TextWriter _output;
 
     public PsdzRpcServerStarter(TextWriter output = null)
@@ -121,7 +124,20 @@ public class PsdzRpcServerStarter
         }
 
         string rootDir = Path.Combine(assemblyDir, "..", "..", "..", "..","..", "PsdzRpcServer", "artifacts", "bin", "PsdzRpcServer");
-        string serverExe = Path.Combine(rootDir, "PsdzRpcServer.exe");
+#if DEBUG
+        string prefix = "debug";
+#else
+        string prefix = "release";
+#endif
+        string serverDir = Path.Combine(rootDir, prefix + "net10.0-windows10.0.26100.0");
+        string serverExe = Path.Combine(serverDir, ServerExeName);
+        if (File.Exists(serverExe))
+        {
+            return serverExe;
+        }
+
+        serverDir = Path.Combine(rootDir, prefix + "debug_net481");
+        serverExe = Path.Combine(serverDir, ServerExeName);
         if (File.Exists(serverExe))
         {
             return serverExe;

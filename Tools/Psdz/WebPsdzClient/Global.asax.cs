@@ -49,6 +49,12 @@ namespace WebPsdzClient
                 IstaFolder = EdSec4Diag.GetIstaInstallLocation();
             }
 
+#if USE_RPC_CLIENT
+            if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))
+            {
+                RpcServer = PsdzRpcClient.PsdzRpcServerStarter.DetectServerLocation();
+            }
+#endif
             SetupLog4Net();
             log.InfoFormat("Application_Start");
             log.InfoFormat("Ista folder: {0}", IstaFolder);
