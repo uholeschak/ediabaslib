@@ -106,14 +106,14 @@ namespace PsdzRpcClient
                     {
                         if (success)
                         {
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine("Start programming operation completed successfully.");
                             }
                         }
                         else
                         {
-                            if (_verbosity <= Options.VerbosityOption.Error)
+                            if (_verbosity >= Options.VerbosityOption.Error)
                             {
                                 Console.WriteLine("Start programming operation failed.");
                             }
@@ -127,14 +127,14 @@ namespace PsdzRpcClient
                     {
                         if (success)
                         {
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine("Stop programming operation completed successfully.");
                             }
                         }
                         else
                         {
-                            if (_verbosity <= Options.VerbosityOption.Error)
+                            if (_verbosity >= Options.VerbosityOption.Error)
                             {
                                 Console.WriteLine("Stop programming operation failed.");
                             }
@@ -148,14 +148,14 @@ namespace PsdzRpcClient
                     {
                         if (connectArgs.Success)
                         {
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"Vehicle connected, Vin: {connectArgs.Vin}");
                             }
                         }
                         else
                         {
-                            if (_verbosity <= Options.VerbosityOption.Error)
+                            if (_verbosity >= Options.VerbosityOption.Error)
                             {
                                 Console.WriteLine("Failed to connect vehicle.");
                             }
@@ -169,14 +169,14 @@ namespace PsdzRpcClient
                     {
                         if (success)
                         {
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine("Disconnect vehicle completed successfully.");
                             }
                         }
                         else
                         {
-                            if (_verbosity <= Options.VerbosityOption.Error)
+                            if (_verbosity >= Options.VerbosityOption.Error)
                             {
                                 Console.WriteLine("Disconnect vehicle operation failed.");
                             }
@@ -190,14 +190,14 @@ namespace PsdzRpcClient
                     {
                         if (vehicleArgs.Success)
                         {
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"Vehicle function {vehicleArgs.OperationType} completed successfully.");
                             }
                         }
                         else
                         {
-                            if (_verbosity <= Options.VerbosityOption.Error)
+                            if (_verbosity >= Options.VerbosityOption.Error)
                             {
                                 Console.WriteLine($"Vehicle function {vehicleArgs.OperationType} failed.");
                             }
@@ -210,7 +210,7 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        if (_verbosity <= Options.VerbosityOption.Important)
+                        if (_verbosity >= Options.VerbosityOption.Important)
                         {
                             Console.WriteLine($"Status: {e}");
                         }
@@ -223,7 +223,7 @@ namespace PsdzRpcClient
                     {
                         if (progressArgs.Marquee)
                         {
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 if (string.IsNullOrEmpty(progressArgs.Message))
                                 {
@@ -237,7 +237,7 @@ namespace PsdzRpcClient
                         }
                         else
                         {
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"[{progressArgs.Percent}%]: {progressArgs.Message}");
                             }
@@ -258,7 +258,7 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        if (_verbosity <= Options.VerbosityOption.Important)
+                        if (_verbosity >= Options.VerbosityOption.Important)
                         {
                             Console.WriteLine($"Option selections updated: {swiRegisterEnum}");
                         }
@@ -269,7 +269,7 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(() =>
                     {
-                        if (_verbosity <= Options.VerbosityOption.Important)
+                        if (_verbosity >= Options.VerbosityOption.Important)
                         {
                             Console.WriteLine($"Message: {msgArgs.Message}");
                         }
@@ -297,26 +297,26 @@ namespace PsdzRpcClient
                 {
                     syncContext.BeginInvoke(async () =>
                     {
-                        if (_verbosity <= Options.VerbosityOption.Important)
+                        if (_verbosity >= Options.VerbosityOption.Important)
                         {
                             Console.WriteLine($"Service initialized. Host log directory: {serviceArgs.HostLogDir}, Logging initialized: {serviceArgs.LoggingInitialized}");
                         }
                         if (client.RpcService != null && !serviceArgs.LoggingInitialized)
                         {
                             string logFile = Path.Combine(serviceArgs.HostLogDir, "PsdzClient.log");
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"SetupLog4Net with log file: {logFile}");
                             }
 
                             bool result = await client.RpcService.SetupLog4Net(logFile);
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"SetupLog4Net result: {result}");
                             }
 
                             bool resetResult = await client.RpcService.ResetStarterGuard();
-                            if (_verbosity <= Options.VerbosityOption.Important)
+                            if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"ResetStarterGuard result: {resetResult}");
                             }
@@ -324,11 +324,31 @@ namespace PsdzRpcClient
                     });
                 };
 
+                if (string.IsNullOrEmpty(serverExe) || !File.Exists(serverExe))
+                {
+                    serverExe = PsdzRpcServerStarter.DetectServerLocation();
+                }
+
+                if (string.IsNullOrEmpty(serverExe))
+                {
+                    if (_verbosity >= Options.VerbosityOption.Error)
+                    {
+                        Console.WriteLine("Server executable not found.");
+                    }
+
+                    return 1;
+                }
+
+                if (_verbosity >= Options.VerbosityOption.Important)
+                {
+                    Console.WriteLine($"Using server executable: {serverExe}");
+                }
+
                 PsdzRpcServerStarter serverStarter = new(Console.Out);
                 bool connected = await serverStarter.ConnectClient(serverExe, client, cts);
                 if (!connected)
                 {
-                    if (_verbosity <= Options.VerbosityOption.Error)
+                    if (_verbosity >= Options.VerbosityOption.Error)
                     {
                         Console.WriteLine("Failed to connect to RPC server.");
                     }
@@ -340,14 +360,14 @@ namespace PsdzRpcClient
                     string istaFolder = await client.RpcService.GetIstaInstallLocation();
                     if (string.IsNullOrEmpty(istaFolder))
                     {
-                        if (_verbosity <= Options.VerbosityOption.Error)
+                        if (_verbosity >= Options.VerbosityOption.Error)
                         {
                             Console.WriteLine("Failed to get ISTA install location.");
                         }
                         return 1;
                     }
 
-                    if (_verbosity <= Options.VerbosityOption.Important)
+                    if (_verbosity >= Options.VerbosityOption.Important)
                     {
                         Console.WriteLine($"ISTA Install location: {istaFolder}");
                     }
@@ -355,7 +375,7 @@ namespace PsdzRpcClient
                     bool licenseResult = await client.RpcService.SetLicenseValid(true);
                     if (!licenseResult)
                     {
-                        if (_verbosity <= Options.VerbosityOption.Error)
+                        if (_verbosity >= Options.VerbosityOption.Error)
                         {
                             Console.WriteLine("Failed to set license valid.");
                         }
@@ -370,7 +390,7 @@ namespace PsdzRpcClient
                         remoteHost = vehicleIp;
                     }
 
-                    if (_verbosity <= Options.VerbosityOption.Important)
+                    if (_verbosity >= Options.VerbosityOption.Important)
                     {
                         Console.WriteLine($"Using vehicle IP: {remoteHost}");
                     }

@@ -2,7 +2,7 @@
   "profiles": {
     "PsdzRpcClient": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"127.0.0.1\" -s \"..\\..\\..\\..\\..\\PsdzRpcServer\\artifacts\\bin\\PsdzRpcServer\\debug_net10.0-windows10.0.26100.0\\PsdzRpcServer.exe\"",
+      "commandLineArgs": "-i \"127.0.0.1\"",
       "remoteDebugEnabled": false
     },
     "VM-WIN11": {
