@@ -112,4 +112,45 @@ public class PsdzRpcServerStarter
         return true;
     }
 
+    public static string DetectServerLocation()
+    {
+        string assemblyDir = AssemblyDirectory;
+        if (string.IsNullOrEmpty(assemblyDir))
+        {
+            return null;
+        }
+
+        string rootDir = Path.Combine(assemblyDir, "..", "..", "..", "..","..", "PsdzRpcServer", "artifacts", "bin", "PsdzRpcServer");
+        string serverExe = Path.Combine(rootDir, "PsdzRpcServer.exe");
+        if (File.Exists(serverExe))
+        {
+            return serverExe;
+        }
+
+        return null;
+    }
+
+    public static string AssemblyDirectory
+    {
+        get
+        {
+#if NET
+            string location = Assembly.GetExecutingAssembly().Location;
+            if (string.IsNullOrEmpty(location) || !File.Exists(location))
+            {
+                return null;
+            }
+            return Path.GetDirectoryName(location);
+#else
+            string codeBase = Assembly.GetExecutingAssembly().CodeBase;
+            UriBuilder uri = new UriBuilder(codeBase);
+            string path = Uri.UnescapeDataString(uri.Path);
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            {
+                return null;
+            }
+            return Path.GetDirectoryName(path);
+#endif
+        }
+    }
 }
