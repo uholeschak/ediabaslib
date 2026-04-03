@@ -55,6 +55,7 @@ public class UserTemplate
     async Task<bool> GenerateConfig(ICodegenTextWriter writer, ILogger logger)
     {
         string istaLocation = string.Empty; // auto detect
+        string rpcServerLocation = string.Empty;
         string sqlUrl = "url";
         string sqlUser = "user";
         string sqlPassword = "password";
@@ -68,7 +69,6 @@ public class UserTemplate
             {
                 XmlDocument doc = new XmlDocument();
                 doc.Load(fileName);
-                XmlNode nodeSqlServer = doc.SelectSingleNode("/credentials_info/sqlserver");
                 XmlNode nodeIsta = doc.SelectSingleNode("/credentials_info/ista");
                 if (nodeIsta != null)
                 {
@@ -80,6 +80,18 @@ public class UserTemplate
                     }
                 }
 
+                XmlNode nodeRpcServer = doc.SelectSingleNode("/credentials_info/rpcserver");
+                if (nodeRpcServer != null)
+                {
+                    XmlAttribute attribLocation = nodeRpcServer.Attributes["location"];
+                    if (attribLocation != null)
+                    {
+                        rpcServerLocation = attribLocation.Value;
+                        await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}");
+                    }
+                }
+
+                XmlNode nodeSqlServer = doc.SelectSingleNode("/credentials_info/sqlserver");
                 if (nodeSqlServer != null)
                 {
                     XmlAttribute attribUrl = nodeSqlServer.Attributes["url"];
@@ -157,6 +169,12 @@ public class UserTemplate
                             await logger.WriteLineAsync($"Ista: Location={istaLocation}");
                         }
 
+                        if (infoDict.CredentialsInfo.TryGetValue("RpcServer", out Info rpcServerInfo))
+                        {
+                            rpcServerLocation = rpcServerInfo.Location;
+                            await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}");
+                        }
+
                         if (infoDict.CredentialsInfo.TryGetValue("SqlServer", out Info sqlInfo))
                         {
                             sqlUrl = sqlInfo.Url;
@@ -195,6 +213,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
 <appSettings>
     <add key=""DealerId"" value=""32395""/>
     <add key=""IstaFolder"" value=""{istaLocation}""/>
+    <add key=""RpcServer"" value=""{rpcServerLocation}""/>
     <add key=""SqlServer"" value=""Server={sqlUrl};User ID={sqlUser};Password={sqlPassword}""/>
     <add key=""AccessPwd"" value=""{accessPassword}""/>
     <add key=""TestLicenses"" value=""{testLic}""/>
