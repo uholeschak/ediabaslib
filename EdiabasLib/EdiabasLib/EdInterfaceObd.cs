@@ -274,10 +274,7 @@ namespace EdiabasLib
             }
             set
             {
-                if (CommThread != null)
-                {   //Ensure no previous communication thread is still running.
-                    StopCommThread();
-                }
+                StopCommThread();
                 base.Ediabas = value;
                 ValidKlineResponse = false;
                 ValidCanResponse = false;

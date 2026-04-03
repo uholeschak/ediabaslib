@@ -29,6 +29,8 @@ namespace EdiabasLib
         public const string S29MachinePublicName = "_public.pem";
         public const string IstaPkcs12KeyFile = "keyContainer.pfx";
         public const string IstaPkcs12KeyPwd = "G#8x!9sD2@qZ6&lF1";
+        public const string RegKeyIsta = @"SOFTWARE\BMWGroup\ISPI\ISTA";
+        public const string RegValueIstaLocation = @"InstallLocation";
 
         public static byte[] EdiabasPkcs12KeyPwdBytes =
         {
@@ -524,6 +526,41 @@ namespace EdiabasLib
             {
                 return false;
             }
+        }
+
+        public static string GetIstaInstallLocation()
+        {
+            using (Microsoft.Win32.RegistryKey localMachine64 = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry64))
+            {
+                using (Microsoft.Win32.RegistryKey key = localMachine64.OpenSubKey(RegKeyIsta))
+                {
+                    string path = key?.GetValue(RegValueIstaLocation, null) as string;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        if (System.IO.Directory.Exists(path))
+                        {
+                            return path;
+                        }
+                    }
+                }
+            }
+
+            using (Microsoft.Win32.RegistryKey localMachine32 = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry32))
+            {
+                using (Microsoft.Win32.RegistryKey key = localMachine32.OpenSubKey(RegKeyIsta))
+                {
+                    string path = key?.GetValue(RegValueIstaLocation, null) as string;
+                    if (!string.IsNullOrEmpty(path))
+                    {
+                        if (System.IO.Directory.Exists(path))
+                        {
+                            return path;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 #endif
     }
