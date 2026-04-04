@@ -58,7 +58,9 @@ namespace WebPsdzClient
             SetupLog4Net();
             log.InfoFormat("Application_Start");
             log.InfoFormat("Ista folder: {0}", IstaFolder);
-#if !USE_RPC_CLIENT
+#if USE_RPC_CLIENT
+            log.InfoFormat("Rpc server: {0}", RpcServer);
+#else
             PsdzClient.Programming.PsdzStarterGuard.Instance.ResetInitialization();
             BMW.Rheingold.Psdz.Client.PsdzServiceStarter.ClearIstaPIDsFile();
 #endif
