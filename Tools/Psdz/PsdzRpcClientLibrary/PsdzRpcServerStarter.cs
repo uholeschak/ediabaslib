@@ -102,6 +102,7 @@ public class PsdzRpcServerStarter
             FileName = serverExeFullPath,
             WorkingDirectory = Path.GetDirectoryName(serverExeFullPath) ?? Environment.CurrentDirectory,
             UseShellExecute = true,
+            WindowStyle = ProcessWindowStyle.Minimized
         });
 
         if (process == null || process.HasExited)
