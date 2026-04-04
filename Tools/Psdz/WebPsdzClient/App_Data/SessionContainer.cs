@@ -2841,6 +2841,11 @@ namespace WebPsdzClient.App_Data
 
         public bool IsCancelPossible()
         {
+            if (Cts != null)
+            {
+                return true;
+            }
+
             if (RpcClient.RpcService == null)
             {
                 return false;
