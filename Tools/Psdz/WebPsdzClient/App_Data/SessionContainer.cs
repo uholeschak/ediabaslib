@@ -647,7 +647,7 @@ namespace WebPsdzClient.App_Data
             try
             {
                 Cts = new CancellationTokenSource();
-                bool connected = serverStarter.ConnectClient(Global.RpcServer, RpcClient, Cts).GetAwaiter().GetResult();
+                bool connected = serverStarter.ConnectClient(Global.RpcServer, ProcessWindowStyle.Minimized, RpcClient, Cts).GetAwaiter().GetResult();
                 if (!connected)
                 {
                     log.Error("Failed to connect to RPC client");

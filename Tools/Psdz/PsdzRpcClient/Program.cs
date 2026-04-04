@@ -345,7 +345,7 @@ namespace PsdzRpcClient
                 }
 
                 PsdzRpcServerStarter serverStarter = new(Console.Out);
-                bool connected = await serverStarter.ConnectClient(serverExe, client, cts);
+                bool connected = await serverStarter.ConnectClient(serverExe, ProcessWindowStyle.Minimized, client, cts);
                 if (!connected)
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
