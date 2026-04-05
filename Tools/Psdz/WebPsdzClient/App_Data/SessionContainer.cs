@@ -785,7 +785,7 @@ namespace WebPsdzClient.App_Data
                 queueArgs.Result = TelSendQueueSizeEvent();
             };
 
-            RpcClient.CallbackHandler.ServiceInitialized += (sender, serviceArgs) =>
+            RpcClient.CallbackHandler.ServiceInitialized += async (sender, serviceArgs) =>
             {
                 ServiceInitializedEvent(serviceArgs.HostLogDir, serviceArgs.LoggingInitialized);
 
@@ -803,13 +803,13 @@ namespace WebPsdzClient.App_Data
                 string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
                 string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzClient-{0}.log", dateString);
                 string logFile = Path.Combine(logDir, fileName);
-                bool result = RpcClient.RpcService.SetupLog4Net(logFile).GetAwaiter().GetResult();
+                bool result = await RpcClient.RpcService.SetupLog4Net(logFile);
                 if (!result)
                 {
                     log.ErrorFormat("ServiceInitialized SetupLog4Net failed: {0}", logFile);
                 }
 
-                bool resetResult = RpcClient.RpcService.ResetStarterGuard().GetAwaiter().GetResult();
+                bool resetResult = await RpcClient.RpcService.ResetStarterGuard();
                 if (!resetResult)
                 {
                     log.ErrorFormat("ServiceInitialized ResetStarterGuard failed");
