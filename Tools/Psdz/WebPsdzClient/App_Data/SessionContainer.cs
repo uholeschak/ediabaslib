@@ -733,11 +733,11 @@ namespace WebPsdzClient.App_Data
                 UpdateProgress(progressArgs.Percent, progressArgs.Marquee, progressArgs.Message);
             };
 
-            RpcClient.CallbackHandler.UpdateOptions += (sender, optionArgs) =>
+            RpcClient.CallbackHandler.UpdateOptions += async (sender, optionArgs) =>
             {
                 if (RpcClient.RpcService != null)
                 {
-                    bool result = RpcClient.RpcService.SelectOption(null, false).GetAwaiter().GetResult();
+                    bool result = await RpcClient.RpcService.SelectOption(null, false);
                     if (!result)
                     {
                         log.ErrorFormat("UpdateOptions RpcService SelectOption failed");
