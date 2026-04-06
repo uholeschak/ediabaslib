@@ -2805,7 +2805,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool psdzInitialized = RpcClient.RpcService.IsPsdzInitialized().GetAwaiter().GetResult();
+            bool psdzInitialized = Task.Run(() => RpcClient.RpcService.IsPsdzInitialized()).GetAwaiter().GetResult();
             return psdzInitialized;
         }
 
@@ -2816,7 +2816,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool connected = RpcClient.RpcService.IsVehicleConnected().GetAwaiter().GetResult();
+            bool connected = Task.Run(() => RpcClient.RpcService.IsVehicleConnected()).GetAwaiter().GetResult();
             return connected;
         }
 
@@ -2827,7 +2827,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool talPresent = RpcClient.RpcService.IsTalPresent().GetAwaiter().GetResult(); ;
+            bool talPresent = Task.Run(() => RpcClient.RpcService.IsTalPresent()).GetAwaiter().GetResult();
             return talPresent;
         }
 
@@ -2838,7 +2838,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool hasOptionsDict = RpcClient.RpcService.HasOptionsDict().GetAwaiter().GetResult();
+            bool hasOptionsDict = Task.Run(() => RpcClient.RpcService.HasOptionsDict()).GetAwaiter().GetResult();
             return hasOptionsDict;
         }
 
@@ -2854,7 +2854,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool cancelPossible = RpcClient.RpcService.IsCancelPossible().GetAwaiter().GetResult();
+            bool cancelPossible = Task.Run(() => RpcClient.RpcService.IsCancelPossible()).GetAwaiter().GetResult();
             return cancelPossible;
         }
 
@@ -2865,7 +2865,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool result = RpcClient.RpcService.UpdateTargetFa(reset).GetAwaiter().GetResult();
+            bool result = Task.Run(() => RpcClient.RpcService.UpdateTargetFa(reset)).GetAwaiter().GetResult();
             if (!result)
             {
                 log.ErrorFormat("UpdateTargetFa failed");
@@ -2929,7 +2929,7 @@ namespace WebPsdzClient.App_Data
                     return null;
                 }
 
-                List<PsdzRpcServer.Shared.PsdzRpcOptionType> rpcOptionTypes = RpcClient.RpcService.GetOptionTypes().GetAwaiter().GetResult();
+                List<PsdzRpcServer.Shared.PsdzRpcOptionType> rpcOptionTypes = Task.Run(() => RpcClient.RpcService.GetOptionTypes()).GetAwaiter().GetResult();
                 if (rpcOptionTypes == null)
                 {
                     return null;
@@ -2971,7 +2971,7 @@ namespace WebPsdzClient.App_Data
                 return null;
             }
 
-            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = RpcClient.RpcService.GetSelectedOptions(swiRegisterEnum).GetAwaiter().GetResult();
+            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = Task.Run(() => RpcClient.RpcService.GetSelectedOptions(swiRegisterEnum)).GetAwaiter().GetResult();
             if (rpcListItems == null)
             {
                 return null;
@@ -3002,7 +3002,7 @@ namespace WebPsdzClient.App_Data
             }
 
             bool modified = false;
-            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = RpcClient.RpcService.GetSelectedOptions(SelectedSwiRegister).GetAwaiter().GetResult();
+            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = Task.Run(() => RpcClient.RpcService.GetSelectedOptions(SelectedSwiRegister)).GetAwaiter().GetResult();
             if (rpcListItems == null)
             {
                 log.ErrorFormat("SelectOptionId Failed to get options for register: {0}", SelectedSwiRegister);
@@ -3013,7 +3013,7 @@ namespace WebPsdzClient.App_Data
             {
                 if (string.Compare(rpcListItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    bool result = RpcClient.RpcService.SelectOption(rpcListItem, select).GetAwaiter().GetResult();
+                    bool result = Task.Run(() => RpcClient.RpcService.SelectOption(rpcListItem, select)).GetAwaiter().GetResult();
                     if (result)
                     {
                         modified = true;
@@ -3421,10 +3421,10 @@ namespace WebPsdzClient.App_Data
                     return;
                 }
 
-                bool vehicleConnected = RpcClient.RpcService.IsVehicleConnected().GetAwaiter().GetResult();
+                bool vehicleConnected = Task.Run(() => RpcClient.RpcService.IsVehicleConnected()).GetAwaiter().GetResult();
                 if (!vehicleConnected)
                 {
-                    bool cleared = RpcClient.RpcService.ClearOptionsDict().GetAwaiter().GetResult();
+                    bool cleared = Task.Run(() => RpcClient.RpcService.ClearOptionsDict()).GetAwaiter().GetResult();
                     if (!cleared)
                     {
                         log.ErrorFormat("UpdateCurrentOptions ClearOptionsDict failed");
