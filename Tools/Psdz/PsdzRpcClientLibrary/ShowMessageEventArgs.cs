@@ -3,13 +3,13 @@ using System.Threading;
 
 namespace PsdzRpcClient
 {
-    public class ShowMessageEventArgs : EventArgs
+    public class ShowMessageEventArgs : EventArgs, IDisposable
     {
         public string Message { get; }
         public bool OkBtn { get; }
         public bool Result { get; set; }
 
-        private readonly ManualResetEventSlim _completionEvent;
+        private ManualResetEventSlim _completionEvent;
 
         public ShowMessageEventArgs(string message, bool okBtn, bool waitForResult = false)
         {
@@ -37,8 +37,18 @@ namespace PsdzRpcClient
             {
                 _completionEvent.Wait();
                 _completionEvent.Dispose();
+                _completionEvent = null;
             }
             return Result;
+        }
+
+        public void Dispose()
+        {
+            if (_completionEvent != null)
+            {
+                _completionEvent.Dispose();
+                _completionEvent = null;
+            }
         }
     }
 }

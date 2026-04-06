@@ -90,12 +90,15 @@ namespace PsdzRpcClient
                     {
                         args.SetResult(false);
                     }
-                    return args.WaitForResult();
+
+                    bool result = args.WaitForResult();
+                    args.Dispose();
+                    return result;
                 }).ConfigureAwait(false);
             }
             else
             {
-                ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn);
+                using ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn);
                 ShowMessage?.Invoke(this, args);
                 return args.Result;
             }
