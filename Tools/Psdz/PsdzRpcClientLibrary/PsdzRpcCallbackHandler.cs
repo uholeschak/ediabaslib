@@ -75,20 +75,29 @@ namespace PsdzRpcClient
             return Task.CompletedTask;
         }
 
-        public Task<bool> OnShowMessage(string message, bool okBtn, bool wait)
+        public async Task<bool> OnShowMessage(string message, bool okBtn, bool wait)
         {
             if (wait)
             {
-                TaskCompletionSource<bool> tcs = new (TaskCreationOptions.RunContinuationsAsynchronously);
-                ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn, tcs);
-                ShowMessageWait?.Invoke(this, args);
-                return tcs.Task; // Wartet asynchron bis SetResult() aufgerufen wird
+                ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn, waitForResult: true);
+                return await Task.Run(() =>
+                {
+                    try
+                    {
+                        ShowMessageWait?.Invoke(this, args);
+                    }
+                    catch (Exception)
+                    {
+                        args.SetResult(false);
+                    }
+                    return args.WaitForResult();
+                }).ConfigureAwait(false);
             }
             else
             {
                 ShowMessageEventArgs args = new ShowMessageEventArgs(message, okBtn);
                 ShowMessage?.Invoke(this, args);
-                return Task.FromResult(args.Result);
+                return args.Result;
             }
         }
 

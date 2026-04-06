@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace PsdzRpcClient
 {
@@ -9,27 +9,36 @@ namespace PsdzRpcClient
         public bool OkBtn { get; }
         public bool Result { get; set; }
 
-        /// <summary>
-        /// Wird bei wait=true verwendet. Der Event-Handler ruft <see cref="SetResult"/> auf,
-        /// wenn die Benutzereingabe vorliegt.
-        /// </summary>
-        public TaskCompletionSource<bool> Completion { get; }
+        private readonly ManualResetEventSlim _completionEvent;
 
-        public ShowMessageEventArgs(string message, bool okBtn, TaskCompletionSource<bool> completion = null)
+        public ShowMessageEventArgs(string message, bool okBtn, bool waitForResult = false)
         {
             Message = message;
             OkBtn = okBtn;
             Result = true;
-            Completion = completion;
+            _completionEvent = waitForResult ? new ManualResetEventSlim(false) : null;
         }
 
         /// <summary>
-        /// Setzt das Ergebnis und signalisiert dem wartenden Task die Fertigstellung.
+        /// Setzt das Ergebnis und signalisiert dem wartenden Thread die Fertigstellung.
         /// </summary>
         public void SetResult(bool result)
         {
             Result = result;
-            Completion?.TrySetResult(result);
+            _completionEvent?.Set();
+        }
+
+        /// <summary>
+        /// Blockiert bis <see cref="SetResult"/> aufgerufen wird.
+        /// </summary>
+        internal bool WaitForResult()
+        {
+            if (_completionEvent != null)
+            {
+                _completionEvent.Wait();
+                _completionEvent.Dispose();
+            }
+            return Result;
         }
     }
 }

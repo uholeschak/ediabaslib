@@ -754,45 +754,34 @@ namespace WebPsdzClient.App_Data
 
             RpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
             {
-                Task.Run(() =>
+                try
                 {
-                    try
-                    {
-                        Cts = new CancellationTokenSource();
-                        ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, false);
-                    }
-                    catch (Exception ex)
-                    {
-                        log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
-                    }
-                    finally
-                    {
-                        Cts = null;
-                    }
-                });
+                    ShowMessageEvent(null, msgArgs.Message, msgArgs.OkBtn, false);
+                }
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
+                }
                 msgArgs.Result = true;
             };
 
             RpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
             {
-                Task.Run(() =>
+                try
                 {
-                    try
-                    {
-                        Cts = new CancellationTokenSource();
-                        bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, true);
-                        msgArgs.SetResult(result);
-                    }
-                    catch (Exception ex)
-                    {
-                        msgArgs.SetResult(false);
-                        log.ErrorFormat("ShowMessageWait Exception: {0}", ex.Message);
-                    }
-                    finally
-                    {
-                        Cts = null;
-                    }
-                });
+                    Cts = new CancellationTokenSource();
+                    bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, true);
+                    msgArgs.SetResult(result);
+                }
+                catch (Exception ex)
+                {
+                    msgArgs.SetResult(false);
+                    log.ErrorFormat("ShowMessageWait Exception: {0}", ex.Message);
+                }
+                finally
+                {
+                    Cts = null;
+                }
             };
 
             RpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
