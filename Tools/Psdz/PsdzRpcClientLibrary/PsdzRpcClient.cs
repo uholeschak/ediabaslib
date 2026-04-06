@@ -31,7 +31,7 @@ namespace PsdzRpcClient
                 PipeOptions.Asynchronous);
 
             _output?.WriteLine("Connecting with server...");
-            await _pipeClient.ConnectAsync(ct);
+            await _pipeClient.ConnectAsync(ct).ConfigureAwait(false);
             _output?.WriteLine("Connected!");
 
             _jsonRpc = new JsonRpc(_pipeClient);
@@ -56,10 +56,10 @@ namespace PsdzRpcClient
             if (_pipeClient != null)
             {
 #if NET
-                await _pipeClient.DisposeAsync();
+                await _pipeClient.DisposeAsync().ConfigureAwait(false);
 #else
                 _pipeClient.Dispose();
-                await Task.CompletedTask;
+                await Task.CompletedTask.ConfigureAwait(false);
 #endif
             }
         }

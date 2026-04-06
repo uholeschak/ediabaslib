@@ -488,7 +488,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool matched = RpcClient.RpcService.SetLanguage(language, true).GetAwaiter().GetResult();
+            bool matched = Task.Run(() => RpcClient.RpcService.SetLanguage(language, true)).GetAwaiter().GetResult();
             if (matched)
             {
                 log.InfoFormat("SetLanguage matched: {0}", language);
@@ -547,7 +547,7 @@ namespace WebPsdzClient.App_Data
                 return null;
             }
 
-            return RpcClient.RpcService.GetLanguage().GetAwaiter().GetResult();
+            return Task.Run(() => RpcClient.RpcService.GetLanguage()).GetAwaiter().GetResult();
 #else
             return ProgrammingJobs.ClientContext.Language;
 #endif
@@ -563,7 +563,7 @@ namespace WebPsdzClient.App_Data
 #if USE_RPC_CLIENT
                     if (RpcClient.RpcService != null)
                     {
-                        vin = RpcClient.RpcService.GetVehicleVin().GetAwaiter().GetResult();
+                        vin = Task.Run(() => RpcClient.RpcService.GetVehicleVin()).GetAwaiter().GetResult();
                     }
 #else
                     PsdzClient.Programming.PsdzContext psdzContext = ProgrammingJobs?.PsdzContext;

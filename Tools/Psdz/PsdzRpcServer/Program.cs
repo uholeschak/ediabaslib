@@ -95,11 +95,11 @@ namespace PsdzRpcServer
                 // Beenden bei: ESC, Ctrl+C oder letzter Client getrennt
                 if (keepRunning)
                 {
-                    await Task.WhenAny(serverTask, keyTask);
+                    await Task.WhenAny(serverTask, keyTask).ConfigureAwait(false);
                 }
                 else
                 {
-                    await Task.WhenAny(serverTask, keyTask, server.AllClientsDisconnected);
+                    await Task.WhenAny(serverTask, keyTask, server.AllClientsDisconnected).ConfigureAwait(false);
                     if (server.AllClientsDisconnected.IsCompleted)
                     {
                         if (_verbosity <= Options.VerbosityOption.Important)
@@ -111,9 +111,7 @@ namespace PsdzRpcServer
 
                 cts.Cancel();
 
-                await Task.WhenAll(
-                    serverTask.ContinueWith(_ => { }),
-                    keyTask.ContinueWith(_ => { }));
+                await Task.WhenAll(serverTask.ContinueWith(_ => { }), keyTask.ContinueWith(_ => { })).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -148,7 +146,7 @@ namespace PsdzRpcServer
                         return;
                     }
                 }
-                await Task.Delay(100, ct);
+                await Task.Delay(100, ct).ConfigureAwait(false);
             }
         }
     }
