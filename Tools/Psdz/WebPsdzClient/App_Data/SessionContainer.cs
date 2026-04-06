@@ -768,16 +768,19 @@ namespace WebPsdzClient.App_Data
 
             RpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
             {
-                try
+                Task.Run(() =>
                 {
-                    Cts = new CancellationTokenSource();
-                    bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, true);
-                    msgArgs.Result = result;
-                }
-                finally
-                {
-                    Cts = null;
-                }
+                    try
+                    {
+                        Cts = new CancellationTokenSource();
+                        bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, true);
+                        msgArgs.SetResult(result);
+                    }
+                    finally
+                    {
+                        Cts = null;
+                    }
+                });
             };
 
             RpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
