@@ -3549,6 +3549,19 @@ namespace WebPsdzClient.App_Data
 
         public bool Cancel()
         {
+#if USE_RPC_CLIENT
+            try
+            {
+                if (RpcClient.RpcService != null)
+                {
+                    RpcClient.RpcService.CancelOperation();
+                }
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("CancelOperation Exception: {0}", ex.Message);
+            }
+#endif
             try
             {
                 CancellationTokenSource cts = Cts;
@@ -3558,9 +3571,9 @@ namespace WebPsdzClient.App_Data
                     return true;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                // ignored
+                log.ErrorFormat("Cancel Exception: {0}", ex.Message);
             }
 
             return false;
