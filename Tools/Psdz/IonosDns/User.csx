@@ -29,9 +29,9 @@ public class UserTemplate
         try
         {
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
-            await logger.WriteLineAsync($"Assembly path: {assemblyPath}");
+            await logger.WriteLineAsync($"Assembly path: {assemblyPath}").ConfigureAwait(false);
             string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
-            await logger.WriteLineAsync($"Template name: {templateName}");
+            await logger.WriteLineAsync($"Template name: {templateName}").ConfigureAwait(false);
 
             logWriter = context[templateName + ".log"];
             logWriter.WriteLine($"Template name: {templateName}");

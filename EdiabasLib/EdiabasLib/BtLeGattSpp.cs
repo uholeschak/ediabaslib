@@ -158,7 +158,7 @@ namespace EdiabasLib
             try
             {
                 // Connect to GATT server
-                BluetoothDevice bluetoothDevice = await BluetoothDevice.FromIdAsync(deviceId);
+                BluetoothDevice bluetoothDevice = await BluetoothDevice.FromIdAsync(deviceId).ConfigureAwait(false);
                 if (bluetoothDevice == null)
                 {
 #if DEBUG
@@ -197,7 +197,7 @@ namespace EdiabasLib
                 }
 
                 // Get services
-                List<GattService> services = await _bluetoothGatt.GetPrimaryServicesAsync();
+                List<GattService> services = await _bluetoothGatt.GetPrimaryServicesAsync().ConfigureAwait(false);
                 if (services == null || !services.Any())
                 {
 #if DEBUG
@@ -213,7 +213,7 @@ namespace EdiabasLib
                     Debug.WriteLine($"GATT service: UUID={gattService.Uuid}");
                     try
                     {
-                        IReadOnlyList<GattCharacteristic> characteristics = await gattService.GetCharacteristicsAsync();
+                        IReadOnlyList<GattCharacteristic> characteristics = await gattService.GetCharacteristicsAsync().ConfigureAwait(false);
                         foreach (GattCharacteristic gattCharacteristic in characteristics)
                         {
                             Debug.WriteLine($"GATT characteristic: {gattCharacteristic.Uuid}");
@@ -238,7 +238,7 @@ namespace EdiabasLib
                     {
                         try
                         {
-                            IReadOnlyList<GattCharacteristic> characteristics = await gattServiceSpp.GetCharacteristicsAsync();
+                            IReadOnlyList<GattCharacteristic> characteristics = await gattServiceSpp.GetCharacteristicsAsync().ConfigureAwait(false);
                             GattCharacteristic gattCharacteristicSppRead = characteristics.FirstOrDefault(c => c.Uuid == gattSppInfo.CharacteristicReadUuid);
                             GattCharacteristic gattCharacteristicSppWrite = characteristics.FirstOrDefault(c => c.Uuid == gattSppInfo.CharacteristicWriteUuid);
 
@@ -286,7 +286,7 @@ namespace EdiabasLib
                             GattCharacteristic gattCharacteristicSppWrite = null;
                             bool sppValid = true;
 
-                            IReadOnlyList<GattCharacteristic> characteristics = await gattService.GetCharacteristicsAsync();
+                            IReadOnlyList<GattCharacteristic> characteristics = await gattService.GetCharacteristicsAsync().ConfigureAwait(false);
                             foreach (GattCharacteristic gattCharacteristic in characteristics)
                             {
                                 LogString($"GATT properties: {gattCharacteristic.Properties}");
@@ -353,7 +353,7 @@ namespace EdiabasLib
 
                 // Enable notifications for read characteristic
                 _gattCharacteristicSppRead.CharacteristicValueChanged += OnCharacteristicValueChanged;
-                await _gattCharacteristicSppRead.StartNotificationsAsync();
+                await _gattCharacteristicSppRead.StartNotificationsAsync().ConfigureAwait(false);
 #if false
                 byte[] sendData = { 0x82, 0xF1, 0xF1, 0xFD, 0xFD, 0x5E };
                 _btGattSppOutStream.Write(sendData, 0, sendData.Length);
@@ -420,7 +420,7 @@ namespace EdiabasLib
                     try
                     {
                         _gattCharacteristicSppRead.CharacteristicValueChanged -= OnCharacteristicValueChanged;
-                        Task.Run(async () => await _gattCharacteristicSppRead.StopNotificationsAsync()).Wait(1000);
+                        Task.Run(async () => await _gattCharacteristicSppRead.StopNotificationsAsync().ConfigureAwait(false)).Wait(1000);
                     }
                     catch (Exception)
                     {
@@ -492,7 +492,7 @@ namespace EdiabasLib
                     throw new IOException("GATT disconnected");
                 }
 
-                Task.Run(async () => await WriteAsync()).Wait(2000);
+                Task.Run(async () => await WriteAsync().ConfigureAwait(false)).Wait(2000);
             }
 
             private async Task WriteAsync()
@@ -519,7 +519,7 @@ namespace EdiabasLib
 #endif
                     try
                     {
-                        await _btLeGattSpp._gattCharacteristicSppWrite.WriteValueWithResponseAsync(sendData);
+                        await _btLeGattSpp._gattCharacteristicSppWrite.WriteValueWithResponseAsync(sendData).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
