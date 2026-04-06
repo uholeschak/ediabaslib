@@ -1797,7 +1797,7 @@ namespace WebPsdzClient.App_Data
                                                 PsdzRpcServer.Shared.PsdzRpcCacheType cacheType = PsdzRpcServer.Shared.PsdzRpcCacheType.None;
                                                 if (RpcClient.RpcService != null)
                                                 {
-                                                     cacheType = RpcClient.RpcService.GetCacheResponseType().GetAwaiter().GetResult();
+                                                     cacheType = Task.Run(() => RpcClient.RpcService.GetCacheResponseType()).GetAwaiter().GetResult();
                                                 }
                                                 if (cacheType == PsdzRpcServer.Shared.PsdzRpcCacheType.None)
 #else
@@ -2111,7 +2111,7 @@ namespace WebPsdzClient.App_Data
                         string hostLogDir = null;
                         if (RpcClient.RpcService != null)
                         {
-                            hostLogDir = RpcClient.RpcService.GetPsdzServiceHostLogDir().GetAwaiter().GetResult();
+                            hostLogDir = Task.Run(() => RpcClient.RpcService.GetPsdzServiceHostLogDir()).GetAwaiter().GetResult();
                         }
 #else
                         string hostLogDir = ProgrammingJobs.ProgrammingService.GetPsdzServiceHostLogDir();

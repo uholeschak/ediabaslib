@@ -89,7 +89,7 @@ namespace PsdzRpcServer
             StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
-                _callback.OnStartProgrammingCompleted(result).GetAwaiter().GetResult();
+                Task.Run(() => _callback.OnStartProgrammingCompleted(result)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 
@@ -107,7 +107,7 @@ namespace PsdzRpcServer
             StopProgrammingServiceTask(istaFolder, force).ContinueWith(task =>
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
-                _callback.OnStopProgrammingCompleted(result).GetAwaiter().GetResult();
+                Task.Run(() => _callback.OnStopProgrammingCompleted(result)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 
@@ -126,7 +126,7 @@ namespace PsdzRpcServer
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
                 string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
-                _callback.OnConnectVehicleCompleted(result, vin).GetAwaiter().GetResult();
+                Task.Run(() => _callback.OnConnectVehicleCompleted(result, vin)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 
@@ -144,7 +144,7 @@ namespace PsdzRpcServer
             DisconnectVehicleTask().ContinueWith(task =>
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
-                _callback.OnDisconnectVehicleCompleted(result).GetAwaiter().GetResult();
+                Task.Run(() => _callback.OnDisconnectVehicleCompleted(result)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 
@@ -163,7 +163,7 @@ namespace PsdzRpcServer
             VehicleFunctionsTask(OperationTypeValue).ContinueWith(task =>
             {
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
-                _callback.OnVehicleFunctionsCompleted(result, operationType).GetAwaiter().GetResult();
+                Task.Run(() => _callback.OnVehicleFunctionsCompleted(result, operationType)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
             }, cts.Token);
 
@@ -668,12 +668,12 @@ namespace PsdzRpcServer
 
         private bool ShowMessageEvent(CancellationTokenSource cts, string message, bool okBtn, bool wait)
         {
-            return _callback.OnShowMessage(message, okBtn, wait).GetAwaiter().GetResult();
+            return Task.Run(() => _callback.OnShowMessage(message, okBtn, wait)).GetAwaiter().GetResult();
         }
 
         private int TelSendQueueSizeEvent()
         {
-            return _callback.OnTelSendQueueSize().GetAwaiter().GetResult();
+            return Task.Run(() => _callback.OnTelSendQueueSize()).GetAwaiter().GetResult();
         }
 
         private void ServiceInitializedEvent(string hostLogDir, bool loggingInitialized)
