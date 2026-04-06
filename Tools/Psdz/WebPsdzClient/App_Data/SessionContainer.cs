@@ -785,6 +785,7 @@ namespace WebPsdzClient.App_Data
                     }
                     catch (Exception ex)
                     {
+                        msgArgs.SetResult(false);
                         log.ErrorFormat("ShowMessageWait Exception: {0}", ex.Message);
                     }
                     finally
