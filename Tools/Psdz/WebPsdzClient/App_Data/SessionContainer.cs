@@ -3971,7 +3971,7 @@ namespace WebPsdzClient.App_Data
                 if (disposing)
                 {
                     // Dispose managed resources.
-                    Cts = null;
+                    Cancel();
                     while (TaskActive)
                     {
                         Thread.Sleep(100);
