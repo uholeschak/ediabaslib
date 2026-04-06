@@ -34,7 +34,7 @@ public class PsdzRpcServerStarter
         for (int i = 0; i < 3; i++)
         {
             Task delayTask = Task.Delay(2000, cts.Token);
-            await Task.WhenAny(clientTask, delayTask);
+            await Task.WhenAny(clientTask, delayTask).ConfigureAwait(false);
             if (clientTask.IsCompleted)
             {
                 break;
