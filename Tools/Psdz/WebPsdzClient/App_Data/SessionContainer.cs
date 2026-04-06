@@ -4014,6 +4014,7 @@ namespace WebPsdzClient.App_Data
                         _enetTcpMutex = null;
                     }
 
+                    Cts = null;
                     lock (SessionContainers)
                     {
                         SessionContainers.Remove(this);
