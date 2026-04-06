@@ -799,10 +799,9 @@ namespace WebPsdzClient.App_Data
                     return;
                 }
 
-                string logDir = Path.Combine(serviceArgs.HostLogDir, @"client");
                 string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
                 string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzClient-{0}.log", dateString);
-                string logFile = Path.Combine(logDir, fileName);
+                string logFile = Path.Combine(serviceArgs.HostLogDir, fileName);
                 bool result = await RpcClient.RpcService.SetupLog4Net(logFile);
                 if (!result)
                 {
