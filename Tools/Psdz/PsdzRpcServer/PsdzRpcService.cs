@@ -91,7 +91,7 @@ namespace PsdzRpcServer
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
                 Task.Run(() => _callback.OnStartProgrammingCompleted(result)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
-            }, cts.Token);
+            });
 
             return Task.FromResult(true);
         }
@@ -109,7 +109,7 @@ namespace PsdzRpcServer
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
                 Task.Run(() => _callback.OnStopProgrammingCompleted(result)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
-            }, cts.Token);
+            });
 
             return Task.FromResult(true);
         }
@@ -128,7 +128,7 @@ namespace PsdzRpcServer
                 string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
                 Task.Run(() => _callback.OnConnectVehicleCompleted(result, vin)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
-            }, cts.Token);
+            });
 
             return Task.FromResult(true);
         }
@@ -146,7 +146,7 @@ namespace PsdzRpcServer
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
                 Task.Run(() => _callback.OnDisconnectVehicleCompleted(result)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
-            }, cts.Token);
+            });
 
             return Task.FromResult(true);
         }
@@ -165,7 +165,7 @@ namespace PsdzRpcServer
                 bool result = TaskCompletedSuccessfully(task) && task.Result;
                 Task.Run(() => _callback.OnVehicleFunctionsCompleted(result, operationType)).GetAwaiter().GetResult();
                 DisposeCancellationToken(cts);
-            }, cts.Token);
+            });
 
             return Task.FromResult(true);
         }
