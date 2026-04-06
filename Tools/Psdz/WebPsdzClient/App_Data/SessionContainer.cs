@@ -754,16 +754,19 @@ namespace WebPsdzClient.App_Data
 
             RpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
             {
-                try
+                Task.Run(() =>
                 {
-                    Cts = new CancellationTokenSource();
-                    bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, false);
-                    msgArgs.Result = result;
-                }
-                finally
-                {
-                    Cts = null;
-                }
+                    try
+                    {
+                        Cts = new CancellationTokenSource();
+                        ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, false);
+                    }
+                    finally
+                    {
+                        Cts = null;
+                    }
+                });
+                msgArgs.Result = true;
             };
 
             RpcClient.CallbackHandler.ShowMessageWait += (sender, msgArgs) =>
