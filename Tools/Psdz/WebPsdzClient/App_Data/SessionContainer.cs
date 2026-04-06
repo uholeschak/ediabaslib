@@ -737,7 +737,7 @@ namespace WebPsdzClient.App_Data
             {
                 if (RpcClient.RpcService != null)
                 {
-                    bool result = await RpcClient.RpcService.SelectOption(null, false);
+                    bool result = await RpcClient.RpcService.SelectOption(null, false).ConfigureAwait(false);
                     if (!result)
                     {
                         log.ErrorFormat("UpdateOptions RpcService SelectOption failed");
@@ -806,13 +806,13 @@ namespace WebPsdzClient.App_Data
                 string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
                 string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzClient-{0}.log", dateString);
                 string logFile = Path.Combine(serviceArgs.HostLogDir, fileName);
-                bool result = await RpcClient.RpcService.SetupLog4Net(logFile);
+                bool result = await RpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
                 if (!result)
                 {
                     log.ErrorFormat("ServiceInitialized SetupLog4Net failed: {0}", logFile);
                 }
 
-                bool resetResult = await RpcClient.RpcService.ResetStarterGuard();
+                bool resetResult = await RpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
                 if (!resetResult)
                 {
                     log.ErrorFormat("ServiceInitialized ResetStarterGuard failed");
@@ -2865,7 +2865,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool result = RpcClient.RpcService.UpdateTargetFa(reset).GetAwaiter().GetResult();
+            bool result = Task.Run(() => RpcClient.RpcService.UpdateTargetFa(reset)).GetAwaiter().GetResult();
             if (!result)
             {
                 log.ErrorFormat("UpdateTargetFa failed");
@@ -2929,7 +2929,7 @@ namespace WebPsdzClient.App_Data
                     return null;
                 }
 
-                List<PsdzRpcServer.Shared.PsdzRpcOptionType> rpcOptionTypes = RpcClient.RpcService.GetOptionTypes().GetAwaiter().GetResult();
+                List<PsdzRpcServer.Shared.PsdzRpcOptionType> rpcOptionTypes = Task.Run(() => RpcClient.RpcService.GetOptionTypes()).GetAwaiter().GetResult();
                 if (rpcOptionTypes == null)
                 {
                     return null;
@@ -2971,7 +2971,7 @@ namespace WebPsdzClient.App_Data
                 return null;
             }
 
-            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = RpcClient.RpcService.GetSelectedOptions(swiRegisterEnum).GetAwaiter().GetResult();
+            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = Task.Run(() => RpcClient.RpcService.GetSelectedOptions(swiRegisterEnum)).GetAwaiter().GetResult();
             if (rpcListItems == null)
             {
                 return null;
@@ -3002,7 +3002,7 @@ namespace WebPsdzClient.App_Data
             }
 
             bool modified = false;
-            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = RpcClient.RpcService.GetSelectedOptions(SelectedSwiRegister).GetAwaiter().GetResult();
+            List<PsdzRpcServer.Shared.PsdzRpcOptionItem> rpcListItems = Task.Run(() => RpcClient.RpcService.GetSelectedOptions(SelectedSwiRegister)).GetAwaiter().GetResult();
             if (rpcListItems == null)
             {
                 log.ErrorFormat("SelectOptionId Failed to get options for register: {0}", SelectedSwiRegister);
@@ -3013,7 +3013,7 @@ namespace WebPsdzClient.App_Data
             {
                 if (string.Compare(rpcListItem.Id, optionId, StringComparison.OrdinalIgnoreCase) == 0)
                 {
-                    bool result = RpcClient.RpcService.SelectOption(rpcListItem, select).GetAwaiter().GetResult();
+                    bool result = Task.Run(() => RpcClient.RpcService.SelectOption(rpcListItem, select)).GetAwaiter().GetResult();
                     if (result)
                     {
                         modified = true;
@@ -3421,10 +3421,10 @@ namespace WebPsdzClient.App_Data
                     return;
                 }
 
-                bool vehicleConnected = RpcClient.RpcService.IsVehicleConnected().GetAwaiter().GetResult();
+                bool vehicleConnected = Task.Run(() => RpcClient.RpcService.IsVehicleConnected()).GetAwaiter().GetResult();
                 if (!vehicleConnected)
                 {
-                    bool cleared = RpcClient.RpcService.ClearOptionsDict().GetAwaiter().GetResult();
+                    bool cleared = Task.Run(() => RpcClient.RpcService.ClearOptionsDict()).GetAwaiter().GetResult();
                     if (!cleared)
                     {
                         log.ErrorFormat("UpdateCurrentOptions ClearOptionsDict failed");
