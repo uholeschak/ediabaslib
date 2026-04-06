@@ -3579,7 +3579,7 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            bool result = RpcClient.RpcService.StartProgrammingService(istaFolder).GetAwaiter().GetResult();
+            bool result = Task.Run(() => RpcClient.RpcService.StartProgrammingService(istaFolder)).GetAwaiter().GetResult();
             if (!result)
             {
                 ReportError("StartProgrammingService failed");
@@ -3603,7 +3603,7 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            bool result = RpcClient.RpcService.StopProgrammingService(istaFolder).GetAwaiter().GetResult();
+            bool result = Task.Run(() => RpcClient.RpcService.StopProgrammingService(istaFolder)).GetAwaiter().GetResult();
             if (!result)
             {
                 ReportError("StopProgrammingService failed");
@@ -3647,7 +3647,7 @@ namespace WebPsdzClient.App_Data
             }
 
             string remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
-            bool result = RpcClient.RpcService.ConnectVehicle(istaFolder, remoteHost, false).GetAwaiter().GetResult();
+            bool result = Task.Run(() => RpcClient.RpcService.ConnectVehicle(istaFolder, remoteHost, false)).GetAwaiter().GetResult();
             if (!result)
             {
                 ReportError("ConnectVehicle failed");
@@ -3672,7 +3672,7 @@ namespace WebPsdzClient.App_Data
                 return;
             }
 
-            bool result = RpcClient.RpcService.DisconnectVehicle().GetAwaiter().GetResult();
+            bool result = Task.Run(() => RpcClient.RpcService.DisconnectVehicle()).GetAwaiter().GetResult();
             if (!result)
             {
                 ReportError("DisconnectVehicle failed");
@@ -3699,7 +3699,7 @@ namespace WebPsdzClient.App_Data
             string vin = null;
             if (RpcClient.RpcService != null)
             {
-                vin = RpcClient.RpcService.GetVehicleVin().GetAwaiter().GetResult();
+                vin = Task.Run(() => RpcClient.RpcService.GetVehicleVin()).GetAwaiter().GetResult();
             }
 
             if (!string.IsNullOrEmpty(vin))
@@ -3712,14 +3712,14 @@ namespace WebPsdzClient.App_Data
                 }
             }
 
-            bool licenseValid = RpcClient.RpcService.SetLicenseValid(true).GetAwaiter().GetResult();
+            bool licenseValid = Task.Run(() => RpcClient.RpcService.SetLicenseValid(true)).GetAwaiter().GetResult();
             if (!licenseValid)
             {
                 ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} SetLicense valid failed", operationType));
                 return;
             }
 
-            bool result = RpcClient.RpcService.VehicleFunctions(operationType).GetAwaiter().GetResult();
+            bool result = Task.Run(() => RpcClient.RpcService.VehicleFunctions(operationType)).GetAwaiter().GetResult();
             if (!result)
             {
                 ReportError(string.Format(CultureInfo.InvariantCulture, "VehicleFunctions: {0} failed", operationType));
