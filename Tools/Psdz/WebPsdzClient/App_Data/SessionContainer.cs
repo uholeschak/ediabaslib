@@ -761,6 +761,10 @@ namespace WebPsdzClient.App_Data
                         Cts = new CancellationTokenSource();
                         ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, false);
                     }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
+                    }
                     finally
                     {
                         Cts = null;
@@ -778,6 +782,10 @@ namespace WebPsdzClient.App_Data
                         Cts = new CancellationTokenSource();
                         bool result = ShowMessageEvent(Cts, msgArgs.Message, msgArgs.OkBtn, true);
                         msgArgs.SetResult(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("ShowMessageWait Exception: {0}", ex.Message);
                     }
                     finally
                     {
@@ -3963,6 +3971,7 @@ namespace WebPsdzClient.App_Data
                 if (disposing)
                 {
                     // Dispose managed resources.
+                    Cts = null;
                     while (TaskActive)
                     {
                         Thread.Sleep(100);
