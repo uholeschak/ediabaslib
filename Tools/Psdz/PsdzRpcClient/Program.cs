@@ -260,7 +260,7 @@ namespace PsdzRpcClient
                     syncContext.BeginInvoke(async () =>
                     {
                         Console.WriteLine("Options updated");
-                        await PrintOptionTypes(client);
+                        await PrintOptionTypes(client).ConfigureAwait(false);
                     });
                 };
 
@@ -319,13 +319,13 @@ namespace PsdzRpcClient
                                 Console.WriteLine($"SetupLog4Net with log file: {logFile}");
                             }
 
-                            bool result = await client.RpcService.SetupLog4Net(logFile);
+                            bool result = await client.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
                             if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"SetupLog4Net result: {result}");
                             }
 
-                            bool resetResult = await client.RpcService.ResetStarterGuard();
+                            bool resetResult = await client.RpcService.ResetStarterGuard().ConfigureAwait(false);
                             if (_verbosity >= Options.VerbosityOption.Important)
                             {
                                 Console.WriteLine($"ResetStarterGuard result: {resetResult}");
@@ -355,7 +355,7 @@ namespace PsdzRpcClient
                 }
 
                 PsdzRpcServerStarter serverStarter = new(Console.Out);
-                bool connected = await serverStarter.ConnectClient(serverExe, ProcessWindowStyle.Minimized, client, cts, userName, password);
+                bool connected = await serverStarter.ConnectClient(serverExe, ProcessWindowStyle.Minimized, client, cts, userName, password).ConfigureAwait(false);
                 if (!connected)
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
@@ -367,7 +367,7 @@ namespace PsdzRpcClient
 
                 if (client.RpcService != null)
                 {
-                    string istaFolder = await client.RpcService.GetIstaInstallLocation();
+                    string istaFolder = await client.RpcService.GetIstaInstallLocation().ConfigureAwait(false);
                     if (string.IsNullOrEmpty(istaFolder))
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
@@ -382,7 +382,7 @@ namespace PsdzRpcClient
                         Console.WriteLine($"ISTA Install location: {istaFolder}");
                     }
 
-                    bool licenseResult = await client.RpcService.SetLicenseValid(true);
+                    bool licenseResult = await client.RpcService.SetLicenseValid(true).ConfigureAwait(false);
                     if (!licenseResult)
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
@@ -457,7 +457,7 @@ namespace PsdzRpcClient
                             }
 
                             ConsoleKeyInfo cmdKey = Console.ReadKey(intercept: true);
-                            bool active = await client.RpcService.OperationActive();
+                            bool active = await client.RpcService.OperationActive().ConfigureAwait(false);
                             if (active)
                             {
                                 Console.WriteLine("An operation is currently active. Please wait...");
@@ -469,7 +469,7 @@ namespace PsdzRpcClient
                                 case ConsoleKey.C:
                                 {
                                     Console.WriteLine($"Connecting vehicle: {remoteHost}...");
-                                    bool result = await client.RpcService.ConnectVehicle(istaFolder, remoteHost, false);
+                                    bool result = await client.RpcService.ConnectVehicle(istaFolder, remoteHost, false).ConfigureAwait(false);
                                     Console.WriteLine($"Connect = {result}");
                                     break;
                                 }
@@ -477,7 +477,7 @@ namespace PsdzRpcClient
                                 case ConsoleKey.D:
                                 {
                                     Console.WriteLine("Disconnecting vehicle...");
-                                    bool result = await client.RpcService.DisconnectVehicle();
+                                    bool result = await client.RpcService.DisconnectVehicle().ConfigureAwait(false);
                                     Console.WriteLine($"Disconnect = {result}");
                                     break;
                                 }
@@ -485,7 +485,7 @@ namespace PsdzRpcClient
                                 case ConsoleKey.S:
                                 {
                                     Console.WriteLine("Stopping programming service...");
-                                    bool result = await client.RpcService.StopProgrammingService(istaFolder);
+                                    bool result = await client.RpcService.StopProgrammingService(istaFolder).ConfigureAwait(false);
                                     Console.WriteLine($"Stop Programming Service = {result}");
                                     break;
                                 }
@@ -493,23 +493,23 @@ namespace PsdzRpcClient
                                 case ConsoleKey.O:
                                 {
                                     Console.WriteLine("Creating options...");
-                                    bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.CreateOptions);
+                                    bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.CreateOptions).ConfigureAwait(false);
                                     Console.WriteLine($"Create Options = {result}");
                                     break;
                                 }
 
                                 case ConsoleKey.Y:
                                 {
-                                    await PrintOptionTypes(client);
+                                    await PrintOptionTypes(client).ConfigureAwait(false);
                                     Console.WriteLine("Enter option index:");
                                     string line = Console.ReadLine();
                                     if (int.TryParse(line, out int index))
                                     {
-                                        bool result = await SelectOptionType(client, index);
+                                        bool result = await SelectOptionType(client, index).ConfigureAwait(false);
                                         Console.WriteLine($"Select Option = {result}");
                                         if (result)
                                         {
-                                            await PrintOptionTypes(client);
+                                            await PrintOptionTypes(client).ConfigureAwait(false);
                                         }
                                     }
                                     else
@@ -521,22 +521,22 @@ namespace PsdzRpcClient
 
                                 case ConsoleKey.P:
                                 {
-                                    await PrintSelectedOptions(client);
+                                    await PrintSelectedOptions(client).ConfigureAwait(false);
                                     break;
                                 }
 
                                 case ConsoleKey.M:
                                 {
-                                    await PrintSelectedOptions(client);
+                                    await PrintSelectedOptions(client).ConfigureAwait(false);
                                     Console.WriteLine("Enter option index:");
                                     string line = Console.ReadLine();
                                     if (int.TryParse(line, out int index))
                                     {
-                                        bool result = await ModifyOption(client, index);
+                                        bool result = await ModifyOption(client, index).ConfigureAwait(false);
                                         Console.WriteLine($"Modify Option = {result}");
                                         if (result)
                                         {
-                                            await PrintSelectedOptions(client);
+                                            await PrintSelectedOptions(client).ConfigureAwait(false);
                                         }
                                     }
                                     else
@@ -549,7 +549,7 @@ namespace PsdzRpcClient
                                 case ConsoleKey.T:
                                 {
                                     Console.WriteLine("Building TAL...");
-                                    bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.BuildTalModFa);
+                                    bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.BuildTalModFa).ConfigureAwait(false);
                                     Console.WriteLine($"Build TAL = {result}");
                                     break;
                                 }
@@ -557,7 +557,7 @@ namespace PsdzRpcClient
                                 case ConsoleKey.E:
                                 {
                                     Console.WriteLine("Executing TAL...");
-                                    bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.ExecuteTal);
+                                    bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.ExecuteTal).ConfigureAwait(false);
                                     Console.WriteLine($"Execute TAL = {result}");
                                     break;
                                 }
@@ -565,7 +565,7 @@ namespace PsdzRpcClient
                                 case ConsoleKey.A:
                                 {
                                     Console.WriteLine("Aborting operation...");
-                                    await client.RpcService.CancelOperation();
+                                    await client.RpcService.CancelOperation().ConfigureAwait(false);
                                     break;
                                 }
 
@@ -644,7 +644,7 @@ namespace PsdzRpcClient
 
         private static async Task PrintOptionTypes(PsdzRpcClient client)
         {
-            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
+            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes().ConfigureAwait(false);
             if (optionTypes != null)
             {
                 Console.WriteLine("Available option types:");
@@ -661,7 +661,7 @@ namespace PsdzRpcClient
 
         private static async Task<bool> SelectOptionType(PsdzRpcClient client, int index)
         {
-            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
+            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes().ConfigureAwait(false);
             if (optionTypes == null)
             {
                 Console.WriteLine("No option types available.");
@@ -682,7 +682,7 @@ namespace PsdzRpcClient
 
         private static async Task PrintSelectedOptions(PsdzRpcClient client)
         {
-            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(selectedRegisterEnum);
+            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(selectedRegisterEnum).ConfigureAwait(false);
             if (selectedOptions != null)
             {
                 Console.WriteLine("Selected options for CodingConversion:");
@@ -697,7 +697,7 @@ namespace PsdzRpcClient
 
         private static async Task<bool> ModifyOption(PsdzRpcClient client, int index)
         {
-            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(selectedRegisterEnum);
+            List<PsdzRpcOptionItem> selectedOptions = await client.RpcService.GetSelectedOptions(selectedRegisterEnum).ConfigureAwait(false);
             if (selectedOptions == null)
             {
                 Console.WriteLine("No options available.");
@@ -743,7 +743,7 @@ namespace PsdzRpcClient
                         return;
                     }
                 }
-                await Task.Delay(100, ct);
+                await Task.Delay(100, ct).ConfigureAwait(false);
             }
         }
     }
