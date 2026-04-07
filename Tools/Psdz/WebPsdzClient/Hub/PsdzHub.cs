@@ -81,7 +81,7 @@ namespace WebPsdzClient
                     VehicleResponse vehicleResponse = ParseVehiceResponse(id, data);
                     sessionContainer.VehicleResponseReceived(vehicleResponse);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         [HubMethodName("connectStatus")]
@@ -101,7 +101,7 @@ namespace WebPsdzClient
                 {
                     sessionContainer.ConnectTimeouts = connectTimeouts;
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         [HubMethodName("vehicleError")]
@@ -125,7 +125,7 @@ namespace WebPsdzClient
                     };
                     sessionContainer.VehicleResponseReceived(vehicleResponse);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         [HubMethodName("sessionConnected")]
@@ -137,7 +137,7 @@ namespace WebPsdzClient
             {
                 log.InfoFormat("Session connected: SessionId={0}, ConnectionId={1}, Transport={2}",
                     sessionId ?? string.Empty, Context.ConnectionId ?? string.Empty, transport ?? string.Empty);
-            });
+            }).ConfigureAwait(false);
         }
 
         public override Task OnConnected()

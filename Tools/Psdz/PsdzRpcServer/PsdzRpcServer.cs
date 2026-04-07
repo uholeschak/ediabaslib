@@ -43,7 +43,7 @@ namespace PsdzRpcServer
                 try
                 {
                     _output?.WriteLine("Wait for client connection...");
-                    await pipeServer.WaitForConnectionAsync(ct);
+                    await pipeServer.WaitForConnectionAsync(ct).ConfigureAwait(false);
 
                     int count = Interlocked.Increment(ref _clientCount);
                     _hadClients = true;
@@ -71,7 +71,7 @@ namespace PsdzRpcServer
                 jsonRpc.AddLocalRpcTarget(service);
 
                 jsonRpc.StartListening();
-                await jsonRpc.Completion;
+                await jsonRpc.Completion.ConfigureAwait(false);
 
                 _output?.WriteLine("Client disconnected.");
             }

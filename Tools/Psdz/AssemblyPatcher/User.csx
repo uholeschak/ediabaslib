@@ -39,7 +39,7 @@ public class UserTemplate
             logWriter = context[templateName + ".log"];
             logWriter.WriteLine($"Template name: {templateName}");
 
-            bool result = await GenerateConfig(context[templateName + ".config"], logWriter);
+            bool result = await GenerateConfig(context[templateName + ".config"], logWriter).ConfigureAwait(false);
             if (!result)
             {
                 logWriter.WriteLine("GenerateConfig failed");
