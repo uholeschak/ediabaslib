@@ -20,9 +20,10 @@ public class PsdzRpcServerStarter
         _output = output;
     }
 
-    public async Task<bool> ConnectClient(string serverExe, ProcessWindowStyle windowStyle, PsdzRpcClient client, CancellationTokenSource cts)
+    public async Task<bool> ConnectClient(string serverExe, ProcessWindowStyle windowStyle, PsdzRpcClient client, CancellationTokenSource cts,
+            string userName = null, string password = null)
     {
-        if (!StartServerIfNeeded(serverExe, windowStyle))
+        if (!StartServerIfNeeded(serverExe, windowStyle, userName, password))
         {
             _output?.WriteLine("No server available. Exiting.");
             return false;
@@ -41,7 +42,7 @@ public class PsdzRpcServerStarter
             }
 
             _output?.WriteLine("Try to restart server...");
-            if (!StartServerIfNeeded(serverExe, windowStyle))
+            if (!StartServerIfNeeded(serverExe, windowStyle, userName, password))
             {
                 _output?.WriteLine("No server available. Exiting.");
                 return false;
@@ -66,10 +67,10 @@ public class PsdzRpcServerStarter
     }
 
     /// <summary>
-    /// Startet den Server-Prozess falls ein Pfad angegeben ist.
+    /// Startet den Server-Prozess, falls ein Pfad angegeben ist.
     /// Wartet nur bis der Prozess gestartet ist, nicht bis die Pipe verfügbar ist.
     /// </summary>
-    public bool StartServerIfNeeded(string serverExe, ProcessWindowStyle windowStyle, string userName = null, string password = null)
+    public bool StartServerIfNeeded(string serverExe, ProcessWindowStyle windowStyle, string userName, string password)
     {
         // Prüfen ob der Server eventuell schon läuft (Pipe könnte noch nicht bereit sein)
         if (IsPipeAvailable())
