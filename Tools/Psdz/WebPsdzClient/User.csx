@@ -33,19 +33,19 @@ public class UserTemplate
         try
         {
             string assemblyPath = Assembly.GetExecutingAssembly().Location;
-            await logger.WriteLineAsync($"Assembly path: {assemblyPath}");
+            await logger.WriteLineAsync($"Assembly path: {assemblyPath}").ConfigureAwait(false);
             string templateName = Path.GetFileNameWithoutExtension(assemblyPath);
-            await logger.WriteLineAsync($"Template name: {templateName}");
-            bool result = await GenerateConfig(context[templateName + ".config"], logger);
+            await logger.WriteLineAsync($"Template name: {templateName}").ConfigureAwait(false);
+            bool result = await GenerateConfig(context[templateName + ".config"], logger).ConfigureAwait(false);
             if (!result)
             {
-                await logger.WriteLineAsync("GenerateConfig failed");
+                await logger.WriteLineAsync("GenerateConfig failed").ConfigureAwait(false);
                 return 1;
             }
         }
         catch (Exception ex)
         {
-            await logger.WriteLineAsync($"Exception: {ex.Message}");
+            await logger.WriteLineAsync($"Exception: {ex.Message}").ConfigureAwait(false);
             return 1;
         }
 
@@ -78,7 +78,7 @@ public class UserTemplate
                     if (attribLocation != null)
                     {
                         istaLocation = attribLocation.Value;
-                        await logger.WriteLineAsync($"Ista: Location={istaLocation}");
+                        await logger.WriteLineAsync($"Ista: Location={istaLocation}").ConfigureAwait(false);
                     }
                 }
 
@@ -89,21 +89,21 @@ public class UserTemplate
                     if (attribLocation != null)
                     {
                         rpcServerLocation = attribLocation.Value;
-                        await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}");
+                        await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}").ConfigureAwait(false);
                     }
 
                     XmlAttribute attribUser = nodeRpcServer.Attributes["user"];
                     if (attribUser != null)
                     {
                         rpcServerUser = attribUser.Value;
-                        await logger.WriteLineAsync($"RpcServer: User={rpcServerUser}");
+                        await logger.WriteLineAsync($"RpcServer: User={rpcServerUser}").ConfigureAwait(false);
                     }
 
                     XmlAttribute attribPassword = nodeRpcServer.Attributes["password"];
                     if (attribPassword != null)
                     {
                         rpcServerPassword = attribPassword.Value;
-                        await logger.WriteLineAsync($"RpcServer: Password Length={rpcServerPassword.Length}");
+                        await logger.WriteLineAsync($"RpcServer: Password Length={rpcServerPassword.Length}").ConfigureAwait(false);
                     }
                 }
 
@@ -114,21 +114,21 @@ public class UserTemplate
                     if (attribUrl != null)
                     {
                         sqlUrl = attribUrl.Value;
-                        await logger.WriteLineAsync($"SqlServer: Url={sqlUrl}");
+                        await logger.WriteLineAsync($"SqlServer: Url={sqlUrl}").ConfigureAwait(false);
                     }
 
                     XmlAttribute attribName = nodeSqlServer.Attributes["name"];
                     if (attribName != null)
                     {
                         sqlUser = attribName.Value;
-                        await logger.WriteLineAsync($"SqlServer: Name={sqlUser}");
+                        await logger.WriteLineAsync($"SqlServer: Name={sqlUser}").ConfigureAwait(false);
                     }
 
                     XmlAttribute attribPassword = nodeSqlServer.Attributes["password"];
                     if (attribPassword != null)
                     {
                         sqlPassword = attribPassword.Value;
-                        await logger.WriteLineAsync($"SqlServer: Password={sqlPassword}");
+                        await logger.WriteLineAsync($"SqlServer: Password={sqlPassword}").ConfigureAwait(false);
                     }
                 }
 
@@ -139,7 +139,7 @@ public class UserTemplate
                     if (attribPassword != null)
                     {
                         accessPassword = attribPassword.Value;
-                        await logger.WriteLineAsync($"Authentication: Password={accessPassword}");
+                        await logger.WriteLineAsync($"Authentication: Password={accessPassword}").ConfigureAwait(false);
                     }
                 }
 
@@ -150,18 +150,18 @@ public class UserTemplate
                     if (attribTest != null)
                     {
                         testLic = attribTest.Value;
-                        await logger.WriteLineAsync($"Licenses: Test={testLic}");
+                        await logger.WriteLineAsync($"Licenses: Test={testLic}").ConfigureAwait(false);
                     }
                 }
             }
             else
             {
-                await logger.WriteLineAsync($"Configuration file not found: {fileName}");
+                await logger.WriteLineAsync($"Configuration file not found: {fileName}").ConfigureAwait(false);
             }
         }
         catch (Exception ex)
         {
-            await logger.WriteLineAsync($"Exception: {ex.Message}");
+            await logger.WriteLineAsync($"Exception: {ex.Message}").ConfigureAwait(false);
             return false;
         }
 
@@ -182,13 +182,13 @@ public class UserTemplate
                         if (infoDict.CredentialsInfo.TryGetValue("Ista", out Info istaInfo))
                         {
                             istaLocation = istaInfo.Location;
-                            await logger.WriteLineAsync($"Ista: Location={istaLocation}");
+                            await logger.WriteLineAsync($"Ista: Location={istaLocation}").ConfigureAwait(false);
                         }
 
                         if (infoDict.CredentialsInfo.TryGetValue("RpcServer", out Info rpcServerInfo))
                         {
                             rpcServerLocation = rpcServerInfo.Location;
-                            await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}");
+                            await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}").ConfigureAwait(false);
                         }
 
                         if (infoDict.CredentialsInfo.TryGetValue("SqlServer", out Info sqlInfo))
@@ -196,30 +196,30 @@ public class UserTemplate
                             sqlUrl = sqlInfo.Url;
                             sqlUser = sqlInfo.Name;
                             sqlPassword = sqlInfo.Password;
-                            await logger.WriteLineAsync($"SqlServer: Url={sqlUrl}, Name={sqlUser}, Password={sqlPassword}");
+                            await logger.WriteLineAsync($"SqlServer: Url={sqlUrl}, Name={sqlUser}, Password={sqlPassword}").ConfigureAwait(false);
                         }
 
                         if (infoDict.CredentialsInfo.TryGetValue("Authentication", out Info authInfo))
                         {
                             accessPassword = authInfo.Password;
-                            await logger.WriteLineAsync($"Authentication: Password={accessPassword}");
+                            await logger.WriteLineAsync($"Authentication: Password={accessPassword}").ConfigureAwait(false);
                         }
 
                         if (infoDict.CredentialsInfo.TryGetValue("Licenses", out Info licensesInfo))
                         {
                             testLic = licensesInfo.Test;
-                            await logger.WriteLineAsync($"Licenses: Test={testLic}");
+                            await logger.WriteLineAsync($"Licenses: Test={testLic}").ConfigureAwait(false);
                         }
                     }
                 }
                 else
                 {
-                    await logger.WriteLineAsync($"Configuration file not found: {fileName}");
+                    await logger.WriteLineAsync($"Configuration file not found: {fileName}").ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
             {
-                await logger.WriteLineAsync($"Exception: {ex.Message}");
+                await logger.WriteLineAsync($"Exception: {ex.Message}").ConfigureAwait(false);
                 return false;
             }
         }
