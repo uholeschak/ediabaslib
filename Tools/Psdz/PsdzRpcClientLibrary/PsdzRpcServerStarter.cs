@@ -21,8 +21,7 @@ public class PsdzRpcServerStarter
 
     public async Task<bool> ConnectClient(string serverExe, ProcessWindowStyle windowStyle, PsdzRpcClient client, CancellationTokenSource cts)
     {
-        Process serverProcess = null;
-        if (!StartServerIfNeeded(serverExe, windowStyle, out serverProcess))
+        if (!StartServerIfNeeded(serverExe, windowStyle))
         {
             _output?.WriteLine("No server available. Exiting.");
             return false;
@@ -41,7 +40,7 @@ public class PsdzRpcServerStarter
             }
 
             _output?.WriteLine("Try to restart server...");
-            if (!StartServerIfNeeded(serverExe, windowStyle, out serverProcess))
+            if (!StartServerIfNeeded(serverExe, windowStyle))
             {
                 _output?.WriteLine("No server available. Exiting.");
                 return false;
@@ -69,10 +68,8 @@ public class PsdzRpcServerStarter
     /// Startet den Server-Prozess falls ein Pfad angegeben ist.
     /// Wartet nur bis der Prozess gestartet ist, nicht bis die Pipe verfügbar ist.
     /// </summary>
-    public bool StartServerIfNeeded(string serverExe, ProcessWindowStyle windowStyle, out Process serverProcess)
+    public bool StartServerIfNeeded(string serverExe, ProcessWindowStyle windowStyle)
     {
-        serverProcess = null;
-
         // Prüfen ob der Server eventuell schon läuft (Pipe könnte noch nicht bereit sein)
         if (IsPipeAvailable())
         {
@@ -97,14 +94,17 @@ public class PsdzRpcServerStarter
         }
 
         _output?.WriteLine($"Starting server: {serverExeFullPath}");
-        Process process = Process.Start(new ProcessStartInfo
+        bool hasCredentials = false;
+        ProcessStartInfo processStartInfo = new ProcessStartInfo
         {
             FileName = serverExeFullPath,
             WorkingDirectory = Path.GetDirectoryName(serverExeFullPath) ?? Environment.CurrentDirectory,
-            WindowStyle = windowStyle,
-            UseShellExecute = true
-        });
+            UseShellExecute = !hasCredentials,
+            WindowStyle = hasCredentials ? ProcessWindowStyle.Normal : windowStyle,
+            CreateNoWindow = hasCredentials && windowStyle == ProcessWindowStyle.Hidden,
+        };
 
+        Process process = Process.Start(processStartInfo);
         if (process == null || process.HasExited)
         {
             _output?.WriteLine("Failed to start server process.");
@@ -112,7 +112,6 @@ public class PsdzRpcServerStarter
         }
 
         _output?.WriteLine($"Server process started (PID: {process.Id}).");
-        serverProcess = process;
         return true;
     }
 
