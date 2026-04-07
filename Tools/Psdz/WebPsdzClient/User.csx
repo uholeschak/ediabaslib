@@ -92,7 +92,7 @@ public class UserTemplate
                         await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}").ConfigureAwait(false);
                     }
 
-                    XmlAttribute attribUser = nodeRpcServer.Attributes["user"];
+                    XmlAttribute attribUser = nodeRpcServer.Attributes["name"];
                     if (attribUser != null)
                     {
                         rpcServerUser = attribUser.Value;
@@ -189,6 +189,10 @@ public class UserTemplate
                         {
                             rpcServerLocation = rpcServerInfo.Location;
                             await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}").ConfigureAwait(false);
+                            rpcServerUser = rpcServerInfo.Name;
+                            await logger.WriteLineAsync($"RpcServer: User={rpcServerUser}").ConfigureAwait(false);
+                            rpcServerPassword = rpcServerInfo.Password;
+                            await logger.WriteLineAsync($"RpcServer: Password Length={rpcServerPassword.Length}").ConfigureAwait(false);
                         }
 
                         if (infoDict.CredentialsInfo.TryGetValue("SqlServer", out Info sqlInfo))
