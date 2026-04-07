@@ -68,7 +68,7 @@ public class PsdzRpcServerStarter
     /// Startet den Server-Prozess falls ein Pfad angegeben ist.
     /// Wartet nur bis der Prozess gestartet ist, nicht bis die Pipe verfügbar ist.
     /// </summary>
-    public bool StartServerIfNeeded(string serverExe, ProcessWindowStyle windowStyle)
+    public bool StartServerIfNeeded(string serverExe, ProcessWindowStyle windowStyle, string userName = null, string password = null)
     {
         // Prüfen ob der Server eventuell schon läuft (Pipe könnte noch nicht bereit sein)
         if (IsPipeAvailable())
@@ -94,15 +94,25 @@ public class PsdzRpcServerStarter
         }
 
         _output?.WriteLine($"Starting server: {serverExeFullPath}");
-        bool hasCredentials = false;
+        bool hasCredentials = !string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password);
         ProcessStartInfo processStartInfo = new ProcessStartInfo
         {
             FileName = serverExeFullPath,
             WorkingDirectory = Path.GetDirectoryName(serverExeFullPath) ?? Environment.CurrentDirectory,
-            UseShellExecute = !hasCredentials,
-            WindowStyle = hasCredentials ? ProcessWindowStyle.Normal : windowStyle,
-            CreateNoWindow = hasCredentials && windowStyle == ProcessWindowStyle.Hidden,
         };
+
+        if (hasCredentials)
+        {
+            processStartInfo.UseShellExecute = false;
+            processStartInfo.CreateNoWindow = windowStyle == ProcessWindowStyle.Hidden;
+            processStartInfo.UserName = userName;
+            processStartInfo.PasswordInClearText = password;
+        }
+        else
+        {
+            processStartInfo.UseShellExecute = true;
+            processStartInfo.WindowStyle = windowStyle;
+        }
 
         Process process = Process.Start(processStartInfo);
         if (process == null || process.HasExited)
