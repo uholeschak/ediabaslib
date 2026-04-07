@@ -56,6 +56,8 @@ public class UserTemplate
     {
         string istaLocation = string.Empty; // auto detect
         string rpcServerLocation = string.Empty; // auto detect
+        string rpcServerUser = string.Empty;
+        string rpcServerPassword = string.Empty;
         string sqlUrl = "url";
         string sqlUser = "user";
         string sqlPassword = "password";
@@ -88,6 +90,20 @@ public class UserTemplate
                     {
                         rpcServerLocation = attribLocation.Value;
                         await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}");
+                    }
+
+                    XmlAttribute attribUser = nodeRpcServer.Attributes["user"];
+                    if (attribUser != null)
+                    {
+                        rpcServerUser = attribUser.Value;
+                        await logger.WriteLineAsync($"RpcServer: User={rpcServerUser}");
+                    }
+
+                    XmlAttribute attribPassword = nodeRpcServer.Attributes["password"];
+                    if (attribPassword != null)
+                    {
+                        rpcServerPassword = attribPassword.Value;
+                        await logger.WriteLineAsync($"RpcServer: Password Length={rpcServerPassword.Length}");
                     }
                 }
 
@@ -214,6 +230,8 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
     <add key=""DealerId"" value=""32395""/>
     <add key=""IstaFolder"" value=""{istaLocation}""/>
     <add key=""RpcServer"" value=""{rpcServerLocation}""/>
+    <add key=""RpcServerUser"" value=""{rpcServerUser}""/>
+    <add key=""RpcServerPassword"" value=""{rpcServerPassword}""/>
     <add key=""SqlServer"" value=""Server={sqlUrl};User ID={sqlUser};Password={sqlPassword}""/>
     <add key=""AccessPwd"" value=""{accessPassword}""/>
     <add key=""TestLicenses"" value=""{testLic}""/>
