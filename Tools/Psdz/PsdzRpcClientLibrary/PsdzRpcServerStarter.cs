@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Security;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -106,7 +107,7 @@ public class PsdzRpcServerStarter
             processStartInfo.UseShellExecute = false;
             processStartInfo.CreateNoWindow = windowStyle == ProcessWindowStyle.Hidden;
             processStartInfo.UserName = userName;
-            processStartInfo.PasswordInClearText = password;
+            processStartInfo.Password = CreateSecureString(password);
         }
         else
         {
@@ -191,6 +192,17 @@ public class PsdzRpcServerStarter
         }
 
         return null;
+    }
+
+    public static SecureString CreateSecureString(string plainText)
+    {
+        SecureString secure = new SecureString();
+        foreach (char c in plainText)
+        {
+            secure.AppendChar(c);
+        }
+        secure.MakeReadOnly();
+        return secure;
     }
 
     public static string AssemblyDirectory
