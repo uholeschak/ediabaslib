@@ -106,7 +106,7 @@ public class PsdzRpcServerStarter
         if (hasCredentials)
         {
             processStartInfo.UseShellExecute = false;
-            processStartInfo.CreateNoWindow = windowStyle == ProcessWindowStyle.Hidden;
+            processStartInfo.CreateNoWindow = windowStyle == ProcessWindowStyle.Hidden || windowStyle == ProcessWindowStyle.Minimized;
             processStartInfo.UserName = userName;
             processStartInfo.Password = CreateSecureString(password);
         }
