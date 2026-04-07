@@ -6,5 +6,6 @@
   <PropertyGroup>
     <ActiveDebugProfile>PsdzRpcServer</ActiveDebugProfile>
     <ActiveDebugFramework>net10.0-windows10.0.26100.0</ActiveDebugFramework>
+    <_LastSelectedProfileId>D:\Projects\EdiabasLib\Tools\Psdz\PsdzRpcServer\Properties\PublishProfiles\FolderProfile.pubxml</_LastSelectedProfileId>
   </PropertyGroup>
 </Project>
