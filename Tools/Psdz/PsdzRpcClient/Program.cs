@@ -36,6 +36,12 @@ namespace PsdzRpcClient
 
             [Option('s', "serverexe", Required = false, HelpText = "Server executable path.")]
             public string ServerExe { get; set; }
+            
+            [Option('u', "username", Required = false, HelpText = "Username for server authentication.")]
+            public string UserName { get; set; }
+
+            [Option('p', "password", Required = false, HelpText = "Password for server authentication.")]
+            public string Password { get; set; }
 
             [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
             public VerbosityOption Verbosity { get; set; }
@@ -51,6 +57,8 @@ namespace PsdzRpcClient
 #endif
             string vehicleIp = string.Empty;
             string serverExe = string.Empty;
+            string userName = string.Empty;
+            string password = string.Empty;
             bool hasErrors = false;
 
             Parser parser = new Parser(with =>
@@ -66,6 +74,8 @@ namespace PsdzRpcClient
                 {
                     vehicleIp = o.VehicleIp;
                     serverExe = o.ServerExe;
+                    userName = o.UserName;
+                    password = o.Password;
                     _verbosity = o.Verbosity;
                 })
                 .WithNotParsed(errs =>
@@ -345,7 +355,7 @@ namespace PsdzRpcClient
                 }
 
                 PsdzRpcServerStarter serverStarter = new(Console.Out);
-                bool connected = await serverStarter.ConnectClient(serverExe, ProcessWindowStyle.Minimized, client, cts);
+                bool connected = await serverStarter.ConnectClient(serverExe, ProcessWindowStyle.Minimized, client, cts, userName, password);
                 if (!connected)
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
