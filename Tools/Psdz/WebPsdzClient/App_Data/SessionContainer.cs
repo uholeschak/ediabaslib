@@ -2300,12 +2300,12 @@ namespace WebPsdzClient.App_Data
 #if USE_RPC_CLIENT
                                 if (RpcClient.RpcService != null)
                                 {
-                                    bool cacheClearRequired = RpcClient.RpcService.GetCacheClearRequired().GetAwaiter().GetResult();
+                                    bool cacheClearRequired = Task.Run(() => RpcClient.RpcService.GetCacheClearRequired()).GetAwaiter().GetResult();
                                     if (cacheClearRequired)
                                     {
                                         log.InfoFormat("VehicleThread Clearing response cache");
                                         VehicleResponseDictClear();
-                                        bool clearResult = RpcClient.RpcService.SetCacheClearRequired(false).GetAwaiter().GetResult();
+                                        bool clearResult = Task.Run(() => RpcClient.RpcService.SetCacheClearRequired(false)).GetAwaiter().GetResult();
                                         if (!clearResult)
                                         {
                                             log.ErrorFormat("VehicleThread Failed to reset cache clear required flag");
@@ -2805,7 +2805,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool psdzInitialized = RpcClient.RpcService.IsPsdzInitialized().GetAwaiter().GetResult();
+            bool psdzInitialized = Task.Run(() => RpcClient.RpcService.IsPsdzInitialized()).GetAwaiter().GetResult();
             return psdzInitialized;
         }
 
@@ -2816,7 +2816,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool connected = RpcClient.RpcService.IsVehicleConnected().GetAwaiter().GetResult();
+            bool connected = Task.Run(() => RpcClient.RpcService.IsVehicleConnected()).GetAwaiter().GetResult();
             return connected;
         }
 
@@ -2827,7 +2827,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool talPresent = RpcClient.RpcService.IsTalPresent().GetAwaiter().GetResult(); ;
+            bool talPresent = Task.Run(() => RpcClient.RpcService.IsTalPresent()).GetAwaiter().GetResult();
             return talPresent;
         }
 
@@ -2838,7 +2838,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool hasOptionsDict = RpcClient.RpcService.HasOptionsDict().GetAwaiter().GetResult();
+            bool hasOptionsDict = Task.Run(() => RpcClient.RpcService.HasOptionsDict()).GetAwaiter().GetResult();
             return hasOptionsDict;
         }
 
@@ -2854,7 +2854,7 @@ namespace WebPsdzClient.App_Data
                 return false;
             }
 
-            bool cancelPossible = RpcClient.RpcService.IsCancelPossible().GetAwaiter().GetResult();
+            bool cancelPossible = Task.Run(() => RpcClient.RpcService.IsCancelPossible()).GetAwaiter().GetResult();
             return cancelPossible;
         }
 
