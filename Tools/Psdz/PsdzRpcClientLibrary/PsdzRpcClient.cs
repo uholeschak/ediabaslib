@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PsdzRpcClient
 {
-    public class PsdzRpcClient : IAsyncDisposable
+    public class PsdzRpcClient : IDisposable
     {
         private readonly TextWriter _output;
         private NamedPipeClientStream _pipeClient;
@@ -47,21 +47,16 @@ namespace PsdzRpcClient
             _jsonRpc.StartListening();
         }
 
-        public async ValueTask DisposeAsync()
+        public void Dispose()
         {
-            if (_jsonRpc != null)
-            {
-                _jsonRpc.Dispose();
-            }
-            if (_pipeClient != null)
-            {
-#if NET
-                await _pipeClient.DisposeAsync().ConfigureAwait(false);
-#else
-                _pipeClient.Dispose();
-                await Task.CompletedTask.ConfigureAwait(false);
-#endif
-            }
+            _jsonRpc?.Dispose();
+            _jsonRpc = null;
+
+            _pipeClient?.Dispose();
+            _pipeClient = null;
+
+            RpcService?.Dispose();
+            RpcService = null;
         }
     }
 }

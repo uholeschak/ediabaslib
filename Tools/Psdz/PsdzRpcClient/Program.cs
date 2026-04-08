@@ -108,7 +108,7 @@ namespace PsdzRpcClient
                 };
 
                 SingleThreadSynchronizationContext syncContext = new();
-                await using PsdzRpcClient client = new PsdzRpcClient(Console.Out);
+                using PsdzRpcClient client = new PsdzRpcClient(Console.Out);
 
                 client.CallbackHandler.StartProgrammingCompleted += (s, success) =>
                 {

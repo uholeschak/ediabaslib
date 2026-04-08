@@ -3983,10 +3983,7 @@ namespace WebPsdzClient.App_Data
                     CloseVehicleLog();
 
 #if USE_RPC_CLIENT
-                    if (RpcClient.RpcService != null)
-                    {
-                        RpcClient.RpcService.Dispose();
-                    }
+                    RpcClient?.Dispose();
                     RpcClient = null;
 #else
                     if (ProgrammingJobs != null)
