@@ -165,27 +165,36 @@ namespace WebPsdzClient
                     return;
                 }
 
-                SessionContainer sessionContainer = new SessionContainer(Session.SessionID, DealerId);
-                Int64 appVersion = 0;
-                if (!string.IsNullOrEmpty(deepObdVersion))
+                try
                 {
-                    if (Int64.TryParse(deepObdVersion, out Int64 version))
+                    SessionContainer sessionContainer = new SessionContainer(Session.SessionID, DealerId);
+                    Int64 appVersion = 0;
+                    if (!string.IsNullOrEmpty(deepObdVersion))
                     {
-                        appVersion = version;
-                        if (appVersion < MinAppVer)
+                        if (Int64.TryParse(deepObdVersion, out Int64 version))
                         {
-                            log.InfoFormat("Session_Start: Invalid app version");
-                            Response.Redirect("AppUpdate.aspx", false);
-                            return;
+                            appVersion = version;
+                            if (appVersion < MinAppVer)
+                            {
+                                log.InfoFormat("Session_Start: Invalid app version");
+                                Response.Redirect("AppUpdate.aspx", false);
+                                return;
+                            }
                         }
+
+                        log.InfoFormat("Session_Start Storing App: Ver={0}, Lang={1}", appVersion, deepObdLanguage);
+                        sessionContainer.DeepObdVersion = appVersion;
+                        sessionContainer.SetLanguage(deepObdLanguage);
                     }
 
-                    log.InfoFormat("Session_Start Storing App: Ver={0}, Lang={1}", appVersion, deepObdLanguage);
-                    sessionContainer.DeepObdVersion = appVersion;
-                    sessionContainer.SetLanguage(deepObdLanguage);
+                    Session.Contents.Add(SessionContainerName, sessionContainer);
                 }
-
-                Session.Contents.Add(SessionContainerName, sessionContainer);
+                catch (Exception ex)
+                {
+                    log.ErrorFormat("Session_Start SessionContainer Exception: {0}", ex.Message);
+                    Response.Redirect("SessionsExceeded.aspx", false);
+                    return;
+                }
             }
         }
 
