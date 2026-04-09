@@ -35,7 +35,8 @@ namespace BMW.Rheingold.Programming
                 //[-]dealerId = LicenseHelper.DealerInstance.GetDistributionPartnerNumber(5);
             }
 
-            //[-] PsdzWebApiLogDir = Path.Combine(Path.GetFullPath(ConfigSettings.getPathString(ConfigSettings.GetActivateSdpOnlinePatch() ? "BMW.Rheingold.Logging.Directory.Current" : "BMW.Rheingold.Logging.Directory", "..\\..\\..\\logs")), "PsdzWebservice");
+            //[-] string key = "BMW.Rheingold.Logging.Directory.Current";
+            //[-] PsdzWebApiLogDir = Path.Combine(Path.GetFullPath(ConfigSettings.getPathString(key, "..\\..\\..\\logs")), "PsdzWebservice");
             //[+] _istaFolder = istaFolder;
             _istaFolder = istaFolder;
             //[+] string logsDir = Path.Combine(istaFolder, "logs");
