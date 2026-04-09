@@ -1818,11 +1818,13 @@ namespace PsdzClient.Core.Container
             IEcuJob ecuJob = null;
             bool item = false;
             bool flag = false;
-            int num = 158;
+            int num = 399;
             int num2 = api.apiErrorCode();
-            if (!isRetry && (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase) || (useSpecialEdiabasVersion && num2 == num)))
+            bool flag2 = useSpecialEdiabasVersion && num2 == num;
+            if (!isRetry && (jobStatus.Equals("ERROR_ECU_ZDF_REJECT", StringComparison.InvariantCultureIgnoreCase) || flag2))
             {
-                if (!CheckAuthentificationState(VCI))
+                bool flag3 = CheckAuthentificationState(VCI);
+                if (!flag3)
                 {
                     Log.Info(method, "ERROR_ECU_ZDF_REJECT where sent by the ZDF");
                     item = true;
@@ -1832,12 +1834,13 @@ namespace PsdzClient.Core.Container
                     Log.Info(method, "Ediabas is reinitialized with status {0}", flag);
                 }
 
-                if (num2 == num)
+                if (flag3 && flag2)
                 {
+                    item = true;
                     flag = true;
                 }
 
-                if (flag && CheckAuthentificationState(VCI))
+                if (flag && flag3)
                 {
                     Log.Info(method, "Ediabas reinitialized and AuthenticationState are succesfull. DiagnoseJob will be resend.");
                     ecuJob = apiJob(ecu, jobName, param, resultFilter, cacheAdding: true, isRetry: true);

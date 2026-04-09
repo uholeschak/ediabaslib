@@ -2,7 +2,7 @@
   "profiles": {
     "SourceCodeSync": {
       "commandName": "Project",
-      "commandLineArgs": "-v Important -a \"E:\\ISTA-D-4.58.20\\TesterGUI\\bin\\ReleaseMod\" -s \"..\\Source\" -d \"D:\\Projects\\EdiabasLib\\Tools\\Psdz\\PsdzClientLibrary\""
+      "commandLineArgs": "-v Important -a \"E:\\ISTA-D-4.58.40\\TesterGUI\\bin\\ReleaseMod\" -s \"..\\Source\" -d \"D:\\Projects\\EdiabasLib\\Tools\\Psdz\\PsdzClientLibrary\""
     }
   }
 }

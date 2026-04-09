@@ -2417,17 +2417,21 @@ namespace PsdzClient.Core
 
         protected void AddServiceCodeAndLogsForTypeKeys(string currentValue, string propertyName)
         {
-            if (!ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive || Environment.StackTrace.Contains("System.Runtime.Serialization") || Environment.StackTrace.Contains("BMW.Rheingold.ISTAGUI") || Environment.StackTrace.Contains("PropertyChangedEventHandler"))
+            if (Environment.StackTrace.Contains("System.Runtime.Serialization") || Environment.StackTrace.Contains("BMW.Rheingold.ISTAGUI") || Environment.StackTrace.Contains("PropertyChangedEventHandler"))
             {
                 return;
             }
-        //[-]IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
-        //[-]if (service != null)
-        //[-]{
-        //[-]string text = "Used typeKey: " + propertyName + ",  value: " + currentValue + ". Values returned by VinValidator. TypeKey: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKey)) + ", TypeKeyBasic: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyBasic)) + ", TypeKeyLead: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyLead));
-        //[-]service.AddServiceCode(ServiceCodes.IDE12_UsageOfAllTypeKeys_nu_LF, text, LayoutGroup.D);
-        //[-]Log.Info(Log.CurrentMethod(), text + Environment.NewLine + Environment.StackTrace);
-        //[-]}
+
+            //[-]IFasta2Service service = ServiceLocator.Current.GetService<IFasta2Service>();
+            //[-]if (service != null)
+            //[-]{
+            //[-]string text = "Used typeKey: " + propertyName + ",  value: " + currentValue + ". Values returned by VinValidator. TypeKey: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKey)) + ", TypeKeyBasic: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyBasic)) + ", TypeKeyLead: " + string.Join(",", Validator.TypeKeys.Select((TypeKeys t) => t.TypeKeyLead));
+            //[-]service.AddServiceCode(ServiceCodes.IDE12_UsageOfAllTypeKeys_nu_LF, text, LayoutGroup.D);
+            if (ConfigSettings.GetFeatureEnabledStatus("VinRangeUsagesLogging").IsActive)
+            {
+            //[-]Log.Info(Log.CurrentMethod(), text + Environment.NewLine + Environment.StackTrace);
+            //[-]}
+            }
         }
 
         public virtual void OnPropertyChanged(string propertyName)
