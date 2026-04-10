@@ -9,7 +9,8 @@ namespace WebPsdzClient
         {
             base.Page_Load(sender, e);
 
-            if (Global.InternalFailure)
+            string reason = Request.QueryString["reason"];
+            if (string.Compare(reason, "internal_failure", StringComparison.OrdinalIgnoreCase) == 0)
             {
                 Title = Resources.Global.InternalServerFailureTitle;
                 LiteralSessionsExceeded.Text = Resources.Global.InternalServerFailure;
