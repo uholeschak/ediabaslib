@@ -33,6 +33,7 @@ namespace WebPsdzClient
         public static string SqlServer { get; private set; }
         public static string TestLicenses { get; private set; }
         public static string DisplayOptions { get; private set; }
+        public static bool InternalFailure { get; private set; }
 
         private static readonly ILog log = LogManager.GetLogger(typeof(Global));
 
@@ -191,6 +192,7 @@ namespace WebPsdzClient
                 }
                 catch (Exception ex)
                 {
+                    InternalFailure = true;
                     log.ErrorFormat("Session_Start SessionContainer Exception: {0}", ex.Message);
                     Response.Redirect("SessionsExceeded.aspx", false);
                     return;
