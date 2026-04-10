@@ -97,6 +97,15 @@ namespace Resources {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die An internal server failure occured. ähnelt.
+        /// </summary>
+        internal static string InternalServerFailure {
+            get {
+                return ResourceManager.GetString("InternalServerFailure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Internet timeouts: {0} ähnelt.
         /// </summary>
         internal static string InternetTimeouts {

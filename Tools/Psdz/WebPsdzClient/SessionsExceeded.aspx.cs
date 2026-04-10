@@ -14,7 +14,10 @@ namespace WebPsdzClient
         {
             base.Page_Load(sender, e);
 
-            LiteralSessionsExceeded.Visible = !Global.InternalFailure;
+            if (Global.InternalFailure)
+            {
+                LiteralSessionsExceeded.Text = Resources.Global.InternalServerFailure;
+            }
         }
 
         protected void Page_Unload(object sender, EventArgs e)
