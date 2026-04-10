@@ -108,6 +108,7 @@ namespace WebPsdzClient
                 if (sessions > MaxSessions)
                 {
                     log.InfoFormat("Session_Start: SessionCount exceeded={0}", sessions);
+                    InternalFailure = false;
                     Response.Redirect("SessionsExceeded.aspx", false);
                     return;
                 }
@@ -192,8 +193,8 @@ namespace WebPsdzClient
                 }
                 catch (Exception ex)
                 {
-                    InternalFailure = true;
                     log.ErrorFormat("Session_Start SessionContainer Exception: {0}", ex.Message);
+                    InternalFailure = true;
                     Response.Redirect("SessionsExceeded.aspx", false);
                     return;
                 }
