@@ -41,7 +41,9 @@ namespace WebPsdzClient
             // Code, der beim Anwendungsstart ausgeführt wird
             DealerId = ConfigurationManager.AppSettings["DealerId"];
             IstaFolder = ConfigurationManager.AppSettings["IstaFolder"];
+#if !DEBUG
             RpcServer = ConfigurationManager.AppSettings["RpcServer"];
+#endif
             RpcServerUser = ConfigurationManager.AppSettings["RpcServerUser"];
             RpcServerPassword = ConfigurationManager.AppSettings["RpcServerPassword"];
             SqlServer = ConfigurationManager.AppSettings["SqlServer"];
