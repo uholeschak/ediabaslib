@@ -138,6 +138,9 @@
   <data name="Processing" xml:space="preserve">
     <value>Verarbeiten ...</value>
   </data>
+  <data name="InternalServerFailureTitle" xml:space="preserve">
+    <value>Serverfehler</value>
+  </data>
   <data name="SessionsExceeded" xml:space="preserve">
     <value>Die maximale Anzahl an Sitzungen wurde überschritten.</value>
   </data>

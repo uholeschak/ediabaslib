@@ -11,7 +11,7 @@ namespace WebPsdzClient
 
             if (Global.InternalFailure)
             {
-                Title = Resources.Global.InternalServerFailure;
+                Title = Resources.Global.InternalServerFailureTitle;
                 LiteralSessionsExceeded.Text = Resources.Global.InternalServerFailure;
             }
         }
