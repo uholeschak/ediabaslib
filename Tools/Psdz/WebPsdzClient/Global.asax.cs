@@ -192,7 +192,7 @@ namespace WebPsdzClient
                 catch (Exception ex)
                 {
                     log.ErrorFormat("Session_Start SessionContainer Exception: {0}", ex.Message);
-                    Response.Redirect("SessionsExceeded.aspx?reason=internal_failure", false);
+                    Response.Redirect("SessionsExceeded.aspx?reason=" + SessionsExceeded.ReasonInternalFailure, false);
                     return;
                 }
             }
