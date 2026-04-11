@@ -2,7 +2,7 @@
   "profiles": {
     "AssemblyPatcher": {
       "commandName": "Project",
-      "commandLineArgs": "-i E:\\ISTA-D-4.58.40\\TesterGUI\\bin\\ReleaseMod -o -b --debug break"
+      "commandLineArgs": "-i E:\\ISTA-D-4.58.40\\TesterGUI\\bin\\ReleaseMod -o -v -b --debug break"
     }
   }
 }

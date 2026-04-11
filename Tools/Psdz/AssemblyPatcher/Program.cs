@@ -47,6 +47,9 @@ namespace AssemblyPatcher
             [Option('c', "no_icom_check", Required = false, HelpText = "Disable ICOM version check")]
             public bool NoIcomCheck { get; set; }
 
+            [Option('v', "verification_mode", Required = false, HelpText = "Enable verification mode")]
+            public bool VerificationMode { get; set; }
+
             [Option('b', "disable_backend", Required = false, HelpText = "Disable backend access")]
             public bool DisableBackend { get; set; }
         }
@@ -59,6 +62,7 @@ namespace AssemblyPatcher
                 Options.DebugOption debugOpt = Options.DebugOption.None;
                 bool overwriteConfig = false;
                 bool noIcomVerCheck = true;
+                bool verificationMode = false;
                 bool disableBackend = false;
                 bool hasErrors = false;
                 Parser parser = new Parser(with =>
@@ -76,6 +80,7 @@ namespace AssemblyPatcher
                         debugOpt = o.DebugOpt;
                         overwriteConfig = o.OverwriteConfig;
                         noIcomVerCheck = o.NoIcomCheck;
+                        verificationMode = o.VerificationMode;
                         disableBackend = o.DisableBackend;
                     })
                     .WithNotParsed(errs =>
@@ -105,6 +110,7 @@ namespace AssemblyPatcher
                 Console.WriteLine("Debug option: '{0}'", debugOpt.ToString());
                 Console.WriteLine("Overwrite config: '{0}'", overwriteConfig.ToString());
                 Console.WriteLine("Disable ICOM version check: '{0}'", noIcomVerCheck.ToString());
+                Console.WriteLine("Verification mode: '{0}'", verificationMode.ToString());
                 Console.WriteLine("Disable backend access: '{0}'", disableBackend.ToString());
 
                 string patchCtorNamespace = ConfigurationManager.AppSettings["PatchCtorNamespace"];
@@ -200,7 +206,7 @@ namespace AssemblyPatcher
                 }
 
                 string exeFile = Path.Combine(inputDir, "ISTAGUI.exe");
-                if (!UpdateExeConfig(exeFile, noIcomVerCheck, overwriteConfig))
+                if (!UpdateExeConfig(exeFile, noIcomVerCheck, verificationMode, overwriteConfig))
                 {
                     Console.WriteLine("*** Update config file failed for: {0}", exeFile);
                     return 1;
@@ -1886,7 +1892,7 @@ namespace AssemblyPatcher
             return 0;
         }
 
-        static bool UpdateExeConfig(string exeFileName, bool noIcomVerCheck, bool overwriteConfig)
+        static bool UpdateExeConfig(string exeFileName, bool noIcomVerCheck, bool verificationMode, bool overwriteConfig)
         {
             try
             {
@@ -1937,6 +1943,8 @@ namespace AssemblyPatcher
                 }
 
                 string dirtyFlagValue = noIcomVerCheck ? "false" : "true";
+                string verificationModeValue = verificationMode ? "true" : "false";
+
                 var patchList = new List<(string Match, string Replace)>()
                 {
                     ("\"DebugLevel\"", "    <add key=\"DebugLevel\" value=\"5\" />"),
@@ -1961,6 +1969,7 @@ namespace AssemblyPatcher
                     ("\"BMW.Rheingold.Developer.guidebug\"", "    <add key=\"BMW.Rheingold.Developer.guidebug\" value=\"true\" />"),
                     ("\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\"", "    <add key=\"BMW.Rheingold.ISTAGUI.App.MultipleInstancesAllowed\" value=\"false\" />"),
                     ("\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\"", $"    <add key=\"BMW.Rheingold.xVM.ICOM.Dirtyflag.Detection\" value=\"{dirtyFlagValue}\" />"),
+                    ("\"BMW.Rheingold.VerificationMode\"", $"    <add key=\"BMW.Rheingold.VerificationMode\" value=\"{verificationModeValue}\" />"),
                 };
 
                 if (fileVersion.Value < FileVersion450)
