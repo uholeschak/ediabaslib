@@ -152,7 +152,7 @@ public class PsdzRpcServerStarter
                 break;
             }
 
-            string serverExe = Path.Combine(rootDir, "PsdzRpcServer", "bin", ServerExeName);
+            string serverExe = Path.Combine(rootDir, "PsdzRpcServer", ServerExeName);
             if (File.Exists(serverExe))
             {
                 return serverExe;
