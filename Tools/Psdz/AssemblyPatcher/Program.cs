@@ -829,6 +829,54 @@ namespace AssemblyPatcher
                         {
                             Target target = new Target
                             {
+                                Namespace = "BMW.Rheingold.CoreFramework.DatabaseProvider",
+                                Class = "DatabaseProviderFactory",
+                                Method = "get_Instance",
+                            };
+                            IList<Instruction> instructions = patcher.GetInstructionList(target);
+                            if (instructions != null)
+                            {
+                                // Hard coded "BMW.Rheingold.ISTAGUI.enableENETprogramming", not option required
+                                Console.WriteLine("DatabaseProviderFactory.get_Instance found");
+                                int patchIndex = -1;
+                                for (int index = 0; index < instructions.Count; index++)
+                                {
+                                    Instruction instruction = instructions[index];
+                                    if (instruction.OpCode == OpCodes.Ldstr &&
+                                        string.Compare(instruction.Operand.ToString(), "DatabaseProviderOracle", StringComparison.OrdinalIgnoreCase) == 0)
+                                    {
+                                        if (instructions[index + 1].OpCode != OpCodes.Stloc_1)
+                                        {
+                                            continue;
+                                        }
+
+                                        patchIndex = index;
+                                        Console.WriteLine("DatabaseProviderOracle found at index: {0}", index);
+                                        break;
+                                    }
+                                }
+
+                                if (patchIndex >= 0)
+                                {
+                                    instructions.RemoveAt(patchIndex);
+                                    instructions.RemoveAt(patchIndex);
+                                    patched = true;
+                                }
+                                else
+                                {
+                                    Console.WriteLine("*** DatabaseProviderFactory.get_Instance appears to have already been patched or is not existing");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("*** VoltageUtils.CheckVoltageForEthernetConnection Exception: {0}", ex.Message);
+                        }
+
+                        try
+                        {
+                            Target target = new Target
+                            {
                                 Namespace = "BMW.Rheingold.PresentationFramework.AuthenticationRefactored.Services",
                                 Class = "LoginEnabledOptionProvider",
                                 Method = "IsLoginEnabled",
