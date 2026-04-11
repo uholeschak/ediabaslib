@@ -21,7 +21,7 @@ namespace PsdzClient
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(FormMain));
 
-        private const string DealerId = "32395";
+        private const string DealerId = "40626";
         private const string DefaultIp = @"127.0.0.1";
 
         private readonly ProgrammingJobs _programmingJobs;

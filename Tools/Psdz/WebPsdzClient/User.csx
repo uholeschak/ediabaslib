@@ -231,7 +231,7 @@ public class UserTemplate
         writer.WriteLine(
 $@"<?xml version=""1.0"" encoding=""utf-8""?>
 <appSettings>
-    <add key=""DealerId"" value=""32395""/>
+    <add key=""DealerId"" value=""40626""/>
     <add key=""IstaFolder"" value=""{istaLocation}""/>
     <add key=""RpcServer"" value=""{rpcServerLocation}""/>
     <add key=""RpcServerUser"" value=""{rpcServerUser}""/>
