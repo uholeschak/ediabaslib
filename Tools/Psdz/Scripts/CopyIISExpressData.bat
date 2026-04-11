@@ -4,8 +4,8 @@ SETLOCAL EnableDelayedExpansion
 set "BATPATH=%~dp0"
 set "WEBCLIENT_SRC_PATH=!BATPATH!..\WebPsdzClient\"
 set "WEBCLIENT_DST_PATH=%USERPROFILE%\Documents\My Web Sites\WebPsdzClient\"
-set "RPC_SERVER_SRC_PATH=!BATPATH!..\PsdzRpcServer\artifacts\bin\"
-set "RPC_SERVER_DST_PATH=%USERPROFILE%\Documents\PsdzRpcServer\artifacts\bin\"
+set "RPC_SERVER_SRC_PATH=!BATPATH!..\PsdzRpcServer\artifacts\bin\PsdzRpcServer\"
+set "RPC_SERVER_DST_PATH=%USERPROFILE%\Documents\PsdzRpcServer\bin\"
 
 set "CONFIG_SRC_FILE=!BATPATH!applicationhost.config"
 set "CONFIG_DST_PATH=%USERPROFILE%\Documents\IISExpress\config\"
