@@ -1442,8 +1442,7 @@ namespace PsdzClient
         public TestModules TestModuleStorage { get; private set; }
         public EcuCharacteristicsData EcuCharacteristicsStorage { get; private set; }
         public bool UseIsAtLeastOnePathToRootValid { get; set; }
-        public bool IsExecutable { get; private set; }
-        public bool AllowDbGeneration { get; private set; }
+        public bool AllowDbGeneration { get; set; }
         public static bool RestartRequired { get; private set; }
 
         public PsdzDatabase(string istaFolder)
@@ -1563,12 +1562,6 @@ namespace PsdzClient
 
             _rootENameClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"RootEBezeichnung");
             _typeKeyClassId = DatabaseFunctions.GetNodeClassId(_mDbConnection, @"Typschluessel");
-            IsExecutable = CheckIsExecutable();
-#if NET
-            AllowDbGeneration = false;
-#else
-            AllowDbGeneration = IsExecutable;
-#endif
             _xepRuleDict = null;
             _diagObjRootNodes = null;
             _diagObjRootNodeIdSet = null;
@@ -2113,26 +2106,6 @@ namespace PsdzClient
             }
 
             return string.Empty;
-        }
-
-        private bool CheckIsExecutable()
-        {
-            try
-            {
-                Assembly entryAssembly = Assembly.GetEntryAssembly();
-                if (entryAssembly != null)
-                {
-                    Log.Info(Log.CurrentMethod(), "IsExecutable true");
-                    return true;
-                }
-            }
-            catch (Exception e)
-            {
-                Log.ErrorException(Log.CurrentMethod(), "IsExecutable", e);
-            }
-
-            Log.Info(Log.CurrentMethod(), "IsExecutable false");
-            return false;
         }
 
         public string GetFlowForInfoObj(SwiInfoObj swiInfoObj)

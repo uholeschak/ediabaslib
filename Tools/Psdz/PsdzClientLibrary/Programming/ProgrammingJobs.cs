@@ -340,6 +340,7 @@ namespace PsdzClient.Programming
         public bool DisableTalFlash { get; set; }
         public PsdzDatabase.SwiRegisterGroup RegisterGroup { get; set; }
         public IntPtr ParentWindowHandle { get; set; }
+        public bool AllowDbGeneration { get; set; }
         public bool GenServiceModules { get; set; }
 
         private PsdzContext _psdzContext;
@@ -509,6 +510,7 @@ namespace PsdzClient.Programming
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Starting programming service MultiSession={0}", ConfigSettings.GetActivateSdpOnlinePatch());
                     ProgrammingService = new ProgrammingService2(istaFolder, _dealerId);
+                    ProgrammingService.PsdzDatabase.AllowDbGeneration = AllowDbGeneration;
                     if (!EdiabasNet.IsDirectoryWritable(ProgrammingService.BackupDataPath))
                     {
                         sbResult.AppendLine(string.Format(CultureInfo.InvariantCulture, Strings.DirectoryWriteProtected, ProgrammingService.BackupDataPath));
@@ -540,7 +542,7 @@ namespace PsdzClient.Programming
                     };
 
                     bool executeDirect = _executionMode == ExecutionMode.GenerateModulesDirect;
-                    if (ProgrammingService.PsdzDatabase.AllowDbGeneration)
+                    if (AllowDbGeneration)
                     {
                         if (!ProgrammingService.PsdzDatabase.SaveVehicleSeriesInfo(ClientContext,
                                 (startConvert, progress, failures) =>
@@ -766,7 +768,7 @@ namespace PsdzClient.Programming
                             return false;
                         }, checkOnlyTest && !executeDirect);
 
-                        if (!resultTest && !ProgrammingService.PsdzDatabase.AllowDbGeneration)
+                        if (!resultTest && !AllowDbGeneration)
                         {
                             log.ErrorFormat("No test module data present");
                             sbResult.AppendLine(Strings.TestModuleDataMissing);
@@ -837,7 +839,7 @@ namespace PsdzClient.Programming
 
                     if (!resultEcuCharacteristics)
                     {
-                        if (!ProgrammingService.PsdzDatabase.AllowDbGeneration)
+                        if (!AllowDbGeneration)
                         {
                             log.ErrorFormat("No test module data present");
                             sbResult.AppendLine(Strings.TestModuleDataMissing);

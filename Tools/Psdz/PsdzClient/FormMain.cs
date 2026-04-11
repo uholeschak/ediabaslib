@@ -103,6 +103,9 @@ namespace PsdzClient
             _programmingJobs.ShowMessageEvent += ShowMessageEvent;
             _programmingJobs.TelSendQueueSizeEvent += TelSendQueueSizeEvent;
             _programmingJobs.ServiceInitializedEvent += ServiceInitializedEvent;
+#if !NET
+            _programmingJobs.AllowDbGeneration = true;
+#endif
         }
 
         private void UpdateDisplay()
