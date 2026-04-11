@@ -145,17 +145,16 @@ public class PsdzRpcServerStarter
                 break;
             }
 
+            string serverExe = Path.Combine(rootDir, "PsdzRpcServer", "bin", ServerExeName);
+            if (File.Exists(serverExe))
+            {
+                return serverExe;
+            }
+
             string artifactsBinDir = Path.Combine(rootDir, "PsdzRpcServer", "artifacts", "bin", "PsdzRpcServer");
             if (Directory.Exists(artifactsBinDir))
             {
                 serverRootDir = artifactsBinDir;
-                break;
-            }
-
-            string binDir = Path.Combine(rootDir, "PsdzRpcServer", "bin");
-            if (Directory.Exists(binDir))
-            {
-                serverRootDir = binDir;
                 break;
             }
         }
