@@ -803,9 +803,15 @@ namespace WebPsdzClient.App_Data
                     return;
                 }
 
+                string logDir = Global.LogDir;
+                if (string.IsNullOrEmpty(logDir))
+                {
+                    return;
+                }
+
                 string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
-                string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzClient-{0}.log", dateString);
-                string logFile = Path.Combine(serviceArgs.HostLogDir, fileName);
+                string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzWebClient-{0}.log", dateString);
+                string logFile = Path.Combine(logDir, fileName);
                 bool result = await RpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
                 if (!result)
                 {
