@@ -33,7 +33,7 @@ namespace WebPsdzClient
         public static string SqlServer { get; private set; }
         public static string TestLicenses { get; private set; }
         public static string DisplayOptions { get; private set; }
-        public static string LogDir { get; private set; }
+        public static string ServerLogFile { get; private set; }
 
         private static readonly ILog log = LogManager.GetLogger(typeof(Global));
 
@@ -300,12 +300,14 @@ namespace WebPsdzClient
                 return;
             }
 
-            LogDir = Path.Combine(IstaFolder, "logs", "client");
+            string logDir = Path.Combine(IstaFolder, "logs", "client");
             string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
 #if USE_RPC_CLIENT
-            string fileName = string.Format(CultureInfo.InvariantCulture, "PsdzWebRpcClient-{0}.log", dateString);
-            string logFile = Path.Combine(LogDir, fileName);
+            string serverFileName = string.Format(CultureInfo.InvariantCulture, "PsdzWebRpcServer-{0}.log", dateString);
+            ServerLogFile = Path.Combine(logDir, serverFileName);
 
+            string clientFileName = string.Format(CultureInfo.InvariantCulture, "PsdzWebRpcClient-{0}.log", dateString);
+            string logFile = Path.Combine(logDir, clientFileName);
             string appDir = EdiabasNet.AssemblyDirectory;
             if (!string.IsNullOrEmpty(appDir))
             {
