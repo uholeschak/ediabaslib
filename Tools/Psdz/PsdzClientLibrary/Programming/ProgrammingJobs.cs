@@ -2284,6 +2284,11 @@ namespace PsdzClient.Programming
 
                             if (hasVehicleQueue)
                             {
+                                if (step > 1 && IsVehicleQueueEmpty())
+                                {
+                                    break;
+                                }
+
                                 WaitForEmptyVehicleQueue(cts);
                             }
                         }
@@ -2690,14 +2695,20 @@ namespace PsdzClient.Programming
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Svt: {0}", step);
                     psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifierList);
+                    if (psdzStandardSvt != null)
+                    {
+                        break;
+                    }
+
+                    log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Svt failed step: {0}", step);
                     if (!hasVehicleQueue)
                     {
                         break;
                     }
 
-                    if (psdzStandardSvt == null)
+                    if (step > 1 && IsVehicleQueueEmpty())
                     {
-                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Svt failed step: {0}", step);
+                        break;
                     }
 
                     WaitForEmptyVehicleQueue(cts);
@@ -3088,14 +3099,20 @@ namespace PsdzClient.Programming
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context step: {0}", step);
                     psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifierList);
+                    if (psdzEcuContextInfos != null)
+                    {
+                        break;
+                    }
+
+                    log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed step: {0}", step);
                     if (!hasVehicleQueue)
                     {
                         break;
                     }
 
-                    if (psdzEcuContextInfos == null)
+                    if (step > 1 && IsVehicleQueueEmpty())
                     {
-                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Ecu context failed step: {0}", step);
+                        break;
                     }
 
                     WaitForEmptyVehicleQueue(cts);
@@ -3131,14 +3148,20 @@ namespace PsdzClient.Programming
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Swt action step: {0}", step);
                     psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, true);
+                    if (psdzSwtAction != null)
+                    {
+                        break;
+                    }
+
+                    log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Swt action failed step: {0}", step);
                     if (!hasVehicleQueue)
                     {
                         break;
                     }
 
-                    if (psdzSwtAction == null)
+                    if (step > 1 && IsVehicleQueueEmpty())
                     {
-                        log.WarnFormat(CultureInfo.InvariantCulture, "Requesting Swt action failed step: {0}", step);
+                        break;
                     }
 
                     WaitForEmptyVehicleQueue(cts);
@@ -3194,14 +3217,20 @@ namespace PsdzClient.Programming
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Generating TAL step: {0}", step);
                     psdzTal = ProgrammingService.Psdz.LogicService.GenerateTal(PsdzContext.Connection, PsdzContext.SvtActual, psdzSollverbauung, PsdzContext.SwtAction, PsdzContext.TalFilter, PsdzContext.FaActual.Vin);
+                    if (psdzTal != null)
+                    {
+                        break;
+                    }
+
+                    log.WarnFormat(CultureInfo.InvariantCulture, "Generating TAL failed step: {0}", step);
                     if (!hasVehicleQueue)
                     {
                         break;
                     }
 
-                    if (psdzTal == null)
+                    if (step > 1 && IsVehicleQueueEmpty())
                     {
-                        log.WarnFormat(CultureInfo.InvariantCulture, "Generating TAL failed step: {0}", step);
+                        break;
                     }
 
                     WaitForEmptyVehicleQueue(cts);
@@ -4286,6 +4315,13 @@ namespace PsdzClient.Programming
 
             log.InfoFormat(CultureInfo.InvariantCulture, "WaitForEmptyVehicleQueue Final queue: {0}", queueSize);
             return true;
+        }
+
+        public bool IsVehicleQueueEmpty()
+        {
+            int queueSize = GetVehicleQueueSize();
+            log.InfoFormat(CultureInfo.InvariantCulture, "IsVehicleQueueEmpty Queue size: {0}", queueSize);
+            return queueSize < 1;
         }
 
         public static bool SetupLog4Net(string logFile)
