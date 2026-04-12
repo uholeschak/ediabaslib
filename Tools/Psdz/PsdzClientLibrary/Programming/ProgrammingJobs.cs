@@ -314,6 +314,7 @@ namespace PsdzClient.Programming
         public OptionType[] OptionTypes => _optionTypes;
 
         public const int CodingConnectionTimeout = 10000;
+        public const int MaxOpRetries = 3;
 
         public const double MinBatteryVoltageErrorPb = VoltageThreshold.minErrorPbNewDefault;
         public const double MinBatteryVoltageErrorLfp = VoltageThreshold.minErrorLFPDefault;
@@ -1024,7 +1025,9 @@ namespace PsdzClient.Programming
                 UpdateStatus(sbResult.ToString());
 
                 bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
+                log.InfoFormat(CultureInfo.InvariantCulture, "Has vehicle queue: {0}", hasVehicleQueue);
                 CacheResponseType = CacheType.NoResponse;
+
                 bool icomConnection = useIcom;
                 if (hostParts.Length > 1)
                 {
@@ -1557,6 +1560,8 @@ namespace PsdzClient.Programming
                 UpdateStatus(sbResult.ToString());
 
                 bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
+                log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions: Has vehicle queue={0}", hasVehicleQueue);
+
                 CacheResponseType = CacheType.FuncAddress;
                 if (ProgrammingService == null)
                 {
@@ -2259,7 +2264,7 @@ namespace PsdzClient.Programming
                         cts?.Token.ThrowIfCancellationRequested();
 
                         bool isILevelWritten = false;
-                        for (int step = 0; step < 2; step++)
+                        for (int step = 0; step < MaxOpRetries; step++)
                         {
                             try
                             {
@@ -2681,7 +2686,7 @@ namespace PsdzClient.Programming
                 // From GetVehicleSvtUsingPsdz
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Svt");
                 IPsdzStandardSvt psdzStandardSvt = null;
-                for (int step = 0; step < 2; step++)
+                for (int step = 0; step < MaxOpRetries; step++)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Svt: {0}", step);
                     psdzStandardSvt = ProgrammingService.Psdz.EcuService.RequestSvt(PsdzContext.Connection, psdzEcuIdentifierList);
@@ -3079,7 +3084,7 @@ namespace PsdzClient.Programming
                 UpdateStatus(sbResult.ToString());
 
                 IEnumerable<IPsdzEcuContextInfo> psdzEcuContextInfos = null;
-                for (int step = 0; step < 2; step++)
+                for (int step = 0; step < MaxOpRetries; step++)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Ecu context step: {0}", step);
                     psdzEcuContextInfos = ProgrammingService.Psdz.EcuService.RequestEcuContextInfos(PsdzContext.Connection, psdzEcuIdentifierList);
@@ -3122,7 +3127,7 @@ namespace PsdzClient.Programming
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Swt action");
                 IPsdzSwtAction psdzSwtAction = null;
-                for (int step = 0; step < 2; step++)
+                for (int step = 0; step < MaxOpRetries; step++)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Requesting Swt action step: {0}", step);
                     psdzSwtAction = ProgrammingService.Psdz.ProgrammingService.RequestSwtAction(PsdzContext.Connection, true);
@@ -3185,7 +3190,7 @@ namespace PsdzClient.Programming
                 UpdateStatus(sbResult.ToString());
                 log.InfoFormat(CultureInfo.InvariantCulture, "Generating TAL");
                 IPsdzTal psdzTal = null;
-                for (int step = 0; step < 2; step++)
+                for (int step = 0; step < MaxOpRetries; step++)
                 {
                     log.InfoFormat(CultureInfo.InvariantCulture, "Generating TAL step: {0}", step);
                     psdzTal = ProgrammingService.Psdz.LogicService.GenerateTal(PsdzContext.Connection, PsdzContext.SvtActual, psdzSollverbauung, PsdzContext.SwtAction, PsdzContext.TalFilter, PsdzContext.FaActual.Vin);
@@ -3574,7 +3579,9 @@ namespace PsdzClient.Programming
             }
 
             bool hasVehicleQueue = GetVehicleQueueSize() >= 0;
+            log.InfoFormat(CultureInfo.InvariantCulture, "CheckVoltage: Has vehicle queue={0}", hasVehicleQueue);
             CacheType cacheTypeOld = CacheResponseType;
+
             bool psdzConnected = PsdzContext.Connection != null;
             if (psdzConnected)
             {
@@ -4230,10 +4237,12 @@ namespace PsdzClient.Programming
         {
             if (TelSendQueueSizeEvent == null)
             {
+                log.InfoFormat(CultureInfo.InvariantCulture, "GetVehicleQueueSize event not bound");
                 return -1;
             }
 
             int queueSize = TelSendQueueSizeEvent.Invoke();
+            log.InfoFormat(CultureInfo.InvariantCulture, "GetVehicleQueueSize Size: {0}", queueSize);
             return queueSize;
         }
 
