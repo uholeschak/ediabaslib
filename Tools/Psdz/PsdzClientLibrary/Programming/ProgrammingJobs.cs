@@ -2284,7 +2284,7 @@ namespace PsdzClient.Programming
 
                             if (hasVehicleQueue)
                             {
-                                if (step > 1 && IsVehicleQueueEmpty())
+                                if (!RetryVehicleQueue(step))
                                 {
                                     break;
                                 }
@@ -2706,7 +2706,7 @@ namespace PsdzClient.Programming
                         break;
                     }
 
-                    if (step > 1 && IsVehicleQueueEmpty())
+                    if (!RetryVehicleQueue(step))
                     {
                         break;
                     }
@@ -3110,7 +3110,7 @@ namespace PsdzClient.Programming
                         break;
                     }
 
-                    if (step > 1 && IsVehicleQueueEmpty())
+                    if (!RetryVehicleQueue(step))
                     {
                         break;
                     }
@@ -3159,7 +3159,7 @@ namespace PsdzClient.Programming
                         break;
                     }
 
-                    if (step > 1 && IsVehicleQueueEmpty())
+                    if (!RetryVehicleQueue(step))
                     {
                         break;
                     }
@@ -3228,7 +3228,7 @@ namespace PsdzClient.Programming
                         break;
                     }
 
-                    if (step > 1 && IsVehicleQueueEmpty())
+                    if (!RetryVehicleQueue(step))
                     {
                         break;
                     }
@@ -4317,11 +4317,33 @@ namespace PsdzClient.Programming
             return true;
         }
 
-        public bool IsVehicleQueueEmpty()
+        public bool RetryVehicleQueue(int retryStep)
         {
+            log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Step: {0}", retryStep);
+
             int queueSize = GetVehicleQueueSize();
-            log.InfoFormat(CultureInfo.InvariantCulture, "IsVehicleQueueEmpty Queue size: {0}", queueSize);
-            return queueSize < 1;
+            log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Queue size: {0}", queueSize);
+
+            if (queueSize < 0)
+            {
+                log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue No queue");
+                return false;
+            }
+
+            if (retryStep < 2)
+            {
+                log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue More retries required");
+                return true;
+            }
+
+            if (queueSize > 0)
+            {
+                log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Queue not empty");
+                return true;
+            }
+
+            log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Queue is empty");
+            return false;
         }
 
         public static bool SetupLog4Net(string logFile)
