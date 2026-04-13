@@ -315,6 +315,7 @@ namespace PsdzClient.Programming
 
         public const int CodingConnectionTimeout = 10000;
         public const int MaxOpRetries = 3;
+        public const int MaxOpEmptyQueueRetries = 2;
 
         public const double MinBatteryVoltageErrorPb = VoltageThreshold.minErrorPbNewDefault;
         public const double MinBatteryVoltageErrorLfp = VoltageThreshold.minErrorLFPDefault;
@@ -4328,7 +4329,7 @@ namespace PsdzClient.Programming
                 return false;
             }
 
-            if (retryStep < 2)
+            if (retryStep < MaxOpEmptyQueueRetries)
             {
                 log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Continue, max steps not reached: {0}", retryStep);
                 return true;
