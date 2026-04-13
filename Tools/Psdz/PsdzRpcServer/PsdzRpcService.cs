@@ -244,11 +244,6 @@ namespace PsdzRpcServer
 
         public Task<bool> SetGenServiceModules(bool genServiceModules)
         {
-            if (IsOperationActive())
-            {
-                return Task.FromResult(false);
-            }
-
             _programmingJobs.GenServiceModules = genServiceModules;
             return Task.FromResult(true);
         }
