@@ -220,11 +220,6 @@ namespace PsdzRpcServer
 
         public Task<bool> SetLicenseValid(bool licenseValid)
         {
-            if (IsOperationActive())
-            {
-                return Task.FromResult(false);
-            }
-
             _programmingJobs.LicenseValid = licenseValid;
             return Task.FromResult(true);
         }
@@ -237,11 +232,6 @@ namespace PsdzRpcServer
 
         public Task<bool> SetCacheClearRequired(bool cacheClearRequired)
         {
-            if (IsOperationActive())
-            {
-                return Task.FromResult(false);
-            }
-
             _programmingJobs.CacheClearRequired = cacheClearRequired;
             return Task.FromResult(true);
         }
