@@ -4319,30 +4319,28 @@ namespace PsdzClient.Programming
 
         public bool RetryVehicleQueue(int retryStep)
         {
-            log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Step: {0}", retryStep);
-
             int queueSize = GetVehicleQueueSize();
             log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Queue size: {0}", queueSize);
 
             if (queueSize < 0)
             {
-                log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue No queue");
+                log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Aborting, no queue");
                 return false;
             }
 
             if (retryStep < 2)
             {
-                log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue More retries required");
+                log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Continue, max steps not reached: {0}", retryStep);
                 return true;
             }
 
             if (queueSize > 0)
             {
-                log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Queue not empty");
+                log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Continue, queue not empty");
                 return true;
             }
 
-            log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Queue is empty");
+            log.InfoFormat(CultureInfo.InvariantCulture, "RetryVehicleQueue Aborting, queue is empty");
             return false;
         }
 
