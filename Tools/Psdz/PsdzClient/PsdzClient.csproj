@@ -81,7 +81,7 @@
     </ItemGroup>
   <ItemGroup>
     <PackageReference Include="log4net" Version="3.3.0" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.6" />
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3mc" Version="2.1.11" />
     <PackageReference Include="SQLitePCLRaw.core" Version="3.0.2" />
     <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="3.0.2" />
