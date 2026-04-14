@@ -326,22 +326,12 @@ namespace PsdzRpcServer
 
         public Task<bool> ClearOptionsDict()
         {
-            if (IsOperationActive())
-            {
-                return Task.FromResult(false);
-            }
-
             _programmingJobs.OptionsDict = null;
             return Task.FromResult(true);
         }
 
         public Task<bool> HasOptionsDict()
         {
-            if (IsOperationActive())
-            {
-                return Task.FromResult(false);
-            }
-
             bool hasOptionsDict = _programmingJobs.OptionsDict != null;
             return Task.FromResult(hasOptionsDict);
         }
