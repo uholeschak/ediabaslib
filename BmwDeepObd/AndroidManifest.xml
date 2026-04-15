@@ -16,8 +16,8 @@
 		<package android:name="com.microntek.bluetooth" />
 		<package android:name="OCTech.Mobile.Applications.OBDLink" />
 	</queries>
-	<uses-permission android:name="android.permission.BLUETOOTH" />
-	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+	<uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
