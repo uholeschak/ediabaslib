@@ -184,11 +184,6 @@ namespace PsdzRpcServer
 
         public Task<bool> SetLanguage(string language, bool matchLanguage)
         {
-            if (IsOperationActive())
-            {
-                return Task.FromResult(false);
-            }
-
             bool matched = false;
             if (matchLanguage)
             {
@@ -220,11 +215,6 @@ namespace PsdzRpcServer
 
         public Task<bool> SetLicenseValid(bool licenseValid)
         {
-            if (IsOperationActive())
-            {
-                return Task.FromResult(false);
-            }
-
             _programmingJobs.LicenseValid = licenseValid;
             return Task.FromResult(true);
         }
@@ -331,11 +321,6 @@ namespace PsdzRpcServer
 
         public Task<bool> ClearOptionsDict()
         {
-            if (IsOperationActive())
-            {
-                return Task.FromResult(false);
-            }
-
             _programmingJobs.OptionsDict = null;
             return Task.FromResult(true);
         }
