@@ -6204,7 +6204,7 @@ namespace BmwDeepObd
                 }
 
                 string[] requestPermissions;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                 {
 #pragma warning disable CA1416
                     requestPermissions = PermissionsNearbyWifi;
