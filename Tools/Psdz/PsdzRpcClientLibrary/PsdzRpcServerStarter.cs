@@ -12,6 +12,7 @@ namespace PsdzRpcClient;
 public class PsdzRpcServerStarter
 {
     public const string ServerExeName = "PsdzRpcServer.exe";
+    public const string ServerDirName = "PsdzRpcServer";
 
     private readonly TextWriter _output;
 
@@ -145,14 +146,14 @@ public class PsdzRpcServerStarter
                 break;
             }
 
-            string artifactsBinDir = Path.Combine(rootDir, "PsdzRpcServer", "artifacts", "bin", "PsdzRpcServer");
+            string artifactsBinDir = Path.Combine(rootDir, ServerDirName, "artifacts", "bin", ServerDirName);
             if (Directory.Exists(artifactsBinDir))
             {
                 serverRootDir = artifactsBinDir;
                 break;
             }
 
-            string serverExe = Path.Combine(rootDir, "PsdzRpcServer", ServerExeName);
+            string serverExe = Path.Combine(rootDir, ServerDirName, ServerExeName);
             if (File.Exists(serverExe))
             {
                 return serverExe;
@@ -221,7 +222,7 @@ public class PsdzRpcServerStarter
             return null;
         }
 
-        string serverExe = Path.Combine(programsDir, "PsdzRpcServer", ServerExeName);
+        string serverExe = Path.Combine(programsDir, ServerDirName, ServerExeName);
         if (File.Exists(serverExe))
         {
             return serverExe;
