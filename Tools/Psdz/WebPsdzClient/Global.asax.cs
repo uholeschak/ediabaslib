@@ -57,6 +57,12 @@ namespace WebPsdzClient
             }
 
 #if USE_RPC_CLIENT
+#if !DEBUG
+            if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))
+            {
+                RpcServer = PsdzRpcClient.PsdzRpcServerStarter.GetUserServerLocation(RpcServerUser);
+            }
+#endif
             if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))
             {
                 RpcServer = PsdzRpcClient.PsdzRpcServerStarter.DetectServerLocation();
