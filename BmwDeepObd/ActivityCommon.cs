@@ -920,10 +920,9 @@ namespace BmwDeepObd
             Android.Manifest.Permission.AccessFineLocation,
         };
 
-        public static readonly string[] PermissionsCombinedLocation =
+        public static readonly string[] PermissionsCoarseLocation =
         {
-            Android.Manifest.Permission.AccessCoarseLocation,
-            Android.Manifest.Permission.AccessFineLocation,
+            Android.Manifest.Permission.AccessCoarseLocation
         };
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
@@ -6212,7 +6211,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? PermissionsFineLocation : PermissionsCombinedLocation;
+                    requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? PermissionsFineLocation : PermissionsCoarseLocation;
                 }
 
                 if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
