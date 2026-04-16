@@ -920,9 +920,10 @@ namespace BmwDeepObd
             Android.Manifest.Permission.AccessFineLocation,
         };
 
-        public static readonly string[] PermissionsCoarseLocation =
+        public static readonly string[] PermissionsCombinedLocation =
         {
-            Android.Manifest.Permission.AccessCoarseLocation
+            Android.Manifest.Permission.AccessCoarseLocation,
+            Android.Manifest.Permission.AccessFineLocation,
         };
 #if DEBUG
         private static readonly string Tag = typeof(ActivityCommon).FullName;
@@ -6203,7 +6204,7 @@ namespace BmwDeepObd
                 }
 
                 string[] requestPermissions;
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.Baklava)
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
                 {
 #pragma warning disable CA1416
                     requestPermissions = PermissionsNearbyWifi;
@@ -6211,7 +6212,7 @@ namespace BmwDeepObd
                 }
                 else
                 {
-                    requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? PermissionsFineLocation : PermissionsCoarseLocation;
+                    requestPermissions = Build.VERSION.SdkInt < BuildVersionCodes.S ? PermissionsFineLocation : PermissionsCombinedLocation;
                 }
 
                 if (requestPermissions.All(permission => ContextCompat.CheckSelfPermission(_activity, permission) == Permission.Granted))
