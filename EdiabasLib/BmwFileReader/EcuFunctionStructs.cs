@@ -629,7 +629,7 @@ namespace BmwFileReader
             [XmlElement("Pre"), DefaultValue(null)] public EcuTranslation PrepOp { get; set; }
             [XmlElement("Proc"), DefaultValue(null)] public EcuTranslation ProcOp { get; set; }
             [XmlElement("Post"), DefaultValue(null)] public EcuTranslation PostOp { get; set; }
-            [XmlElement("EFRel"), DefaultValue("")] public string EcuFuncRelevant { get; set; }
+            [XmlElement("FRel"), DefaultValue("")] public string EcuFuncRelevant { get; set; }
             [XmlElement("TSRel"), DefaultValue("")] public string TeleSrvRelevant { get; set; }
             [XmlElement("SOrd"), DefaultValue("")] public string SortOrder { get; set; }
             [XmlElement("Act"), DefaultValue("")] public string Activation { get; set; }
