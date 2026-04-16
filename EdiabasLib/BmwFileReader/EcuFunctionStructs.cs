@@ -480,6 +480,7 @@ namespace BmwFileReader
                 ProcOp = null;
                 PostOp = null;
                 EcuFuncRelevant = string.Empty;
+                TeleSrvRelevant = string.Empty;
                 SortOrder = string.Empty;
                 Activation = string.Empty;
                 ActivationDurationMs = string.Empty;
@@ -487,7 +488,8 @@ namespace BmwFileReader
 
             public EcuFixedFuncStruct(string id, string nodeClass, string nodeClassName,
                 EcuTranslation title, EcuTranslation preOp, EcuTranslation procOp, EcuTranslation postOp,
-                string ecuFuncRelevant, string sortOrder, string activation, string activationDuringMs)
+                string ecuFuncRelevant, string teleSrvRelevant,
+                string sortOrder, string activation, string activationDuringMs)
             {
                 Id = id;
                 NodeClass = nodeClass;
@@ -497,6 +499,7 @@ namespace BmwFileReader
                 ProcOp = procOp;
                 PostOp = postOp;
                 EcuFuncRelevant = ecuFuncRelevant;
+                TeleSrvRelevant = teleSrvRelevant;
                 SortOrder = sortOrder;
                 Activation = activation;
                 ActivationDurationMs = activationDuringMs;
@@ -627,6 +630,7 @@ namespace BmwFileReader
             [XmlElement("Proc"), DefaultValue(null)] public EcuTranslation ProcOp { get; set; }
             [XmlElement("Post"), DefaultValue(null)] public EcuTranslation PostOp { get; set; }
             [XmlElement("EFRel"), DefaultValue("")] public string EcuFuncRelevant { get; set; }
+            [XmlElement("TSRel"), DefaultValue("")] public string TeleSrvRelevant { get; set; }
             [XmlElement("SOrd"), DefaultValue("")] public string SortOrder { get; set; }
             [XmlElement("Act"), DefaultValue("")] public string Activation { get; set; }
             [XmlElement("ActDur"), DefaultValue("")] public string ActivationDurationMs { get; set; }

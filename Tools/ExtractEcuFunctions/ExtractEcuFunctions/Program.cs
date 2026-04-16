@@ -1319,7 +1319,8 @@ namespace ExtractEcuFunctions
             List<EcuFunctionStructs.EcuFixedFuncStruct> ecuFixedFuncStructList = new List<EcuFunctionStructs.EcuFixedFuncStruct>();
             string sql = string.Format(@"SELECT ID, NODECLASS, " + DatabaseFunctions.SqlTitleItems + ", " +
                                        SqlPreOpItems + ", " + SqlProcItems + ", " + SqlPostOpItems + ", " +
-                                       "STEUERGERAETEFUNKTIONENRELEVAN, SORT_ORDER, ACTIVATION, ACTIVATION_DURATION_MS " +
+                                       "STEUERGERAETEFUNKTIONENRELEVAN, TELESERVICERELEVANT, " +
+                                       "SORT_ORDER, ACTIVATION, ACTIVATION_DURATION_MS " +
                                        "FROM XEP_ECUFIXEDFUNCTIONS WHERE (PARENTID = {0})", parentId);
             using (SqliteCommand command = mDbConnection.CreateCommand())
             {
@@ -1337,6 +1338,7 @@ namespace ExtractEcuFunctions
                             GetTranslation(reader, "PROCESSINGOPERATORTEXT"),
                             GetTranslation(reader, "POSTOPERATORTEXT"),
                             reader["STEUERGERAETEFUNKTIONENRELEVAN"].ToString(),
+                            reader["TELESERVICERELEVANT"].ToString(),
                             reader["SORT_ORDER"].ToString(),
                             reader["ACTIVATION"].ToString(),
                             reader["ACTIVATION_DURATION_MS"].ToString());
