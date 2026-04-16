@@ -2594,6 +2594,10 @@ namespace BmwDeepObd
                 }
             }
 
+#if DEBUG
+            string ecuName = Path.GetFileNameWithoutExtension(ediabas.SgbdFileName) ?? string.Empty;
+            Log.Info(Tag, string.Format("ExecuteEcuJob Ecu: {0}, Job: {1}, Params: {2}", ecuName, ecuJob.Name, sbParameter));
+#endif
             ediabas.ArgString = sbParameter.ToString();
             ediabas.ArgBinaryStd = null;
             ediabas.ResultsRequests = string.Empty;
@@ -2622,6 +2626,9 @@ namespace BmwDeepObd
                 }
             }
 
+#if DEBUG
+            Log.Info(Tag, string.Format("ExecuteEcuJob Status: {0}", jobOk));
+#endif
             List<EcuFunctionResult> ecuFunctionResultList = null;
             if (jobOk)
             {
