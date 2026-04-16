@@ -2595,8 +2595,9 @@ namespace BmwDeepObd
             }
 
 #if DEBUG
+            Log.Info(Tag, string.Format("ExecuteEcuJob EcuJob: {0}", ecuJob));
             string ecuName = Path.GetFileNameWithoutExtension(ediabas.SgbdFileName) ?? string.Empty;
-            Log.Info(Tag, string.Format("ExecuteEcuJob Ecu: {0}, Job: {1}, Params: {2}", ecuName, ecuJob.Name, sbParameter));
+            Log.Info(Tag, string.Format("ExecuteEcuJob Ecu: {0}, Name: {1}, Params: {2}", ecuName, ecuJob.Name, sbParameter));
 #endif
             ediabas.ArgString = sbParameter.ToString();
             ediabas.ArgBinaryStd = null;
