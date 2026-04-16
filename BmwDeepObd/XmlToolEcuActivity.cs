@@ -1260,7 +1260,8 @@ namespace BmwDeepObd
                 foreach (JobInfo jobInfo in ecuInfo.JobList)
                 {
                     if (jobInfo.EcuFixedFuncStruct != null &&
-                        jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator)
+                        jobInfo.EcuFixedFuncStruct.GetNodeClassType() == EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator &&
+                        jobInfo.EcuFixedFuncStruct.EcuFuncRelevant.ConvertToInt() > 0)
                     {
                         count++;
                     }
