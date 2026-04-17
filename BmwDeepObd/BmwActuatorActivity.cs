@@ -440,11 +440,6 @@ namespace BmwDeepObd
                     continue;
                 }
 
-                if (jobInfo.EcuFixedFuncStruct.EcuFuncRelevant.ConvertToInt() <= 0)
-                {
-                    continue;
-                }
-
                 switch (jobInfo.EcuFixedFuncStruct.GetNodeClassType())
                 {
                     case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
