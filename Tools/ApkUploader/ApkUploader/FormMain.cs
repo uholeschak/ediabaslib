@@ -404,7 +404,7 @@ namespace ApkUploader
             {
                 HttpClientInitializer = credential,
                 ApplicationName = PackageName,
-                HttpClientTimeout = new TimeSpan(0, 2, 0) // 2 minutes
+                HttpClientTimeout = new TimeSpan(0, 3, 0) // 3 minutes
             };
         }
 
