@@ -6129,6 +6129,11 @@ namespace BmwDeepObd
                         continue;
                     }
 
+                    if (ecuFixedFuncStruct.EcuFuncRelevant.ConvertToInt() <= 0)
+                    {
+                        continue;
+                    }
+
                     switch (nodeClassType)
                     {
                         case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.Identification:

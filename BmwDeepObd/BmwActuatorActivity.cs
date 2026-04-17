@@ -444,11 +444,6 @@ namespace BmwDeepObd
                 {
                     case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
                     {
-                        if (jobInfo.EcuFixedFuncStruct.EcuFuncRelevant.ConvertToInt() <= 0)
-                        {
-                            break;
-                        }
-
                         string displayText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language);
                         if (!string.IsNullOrWhiteSpace(displayText))
                         {
