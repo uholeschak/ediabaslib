@@ -403,7 +403,8 @@ namespace ApkUploader
             return new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
-                ApplicationName = PackageName
+                ApplicationName = PackageName,
+                HttpClientTimeout = new TimeSpan(0, 2, 0) // 2 minutes
             };
         }
 
