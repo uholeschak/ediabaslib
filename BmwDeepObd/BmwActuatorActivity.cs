@@ -440,15 +440,15 @@ namespace BmwDeepObd
                     continue;
                 }
 
+                if (jobInfo.EcuFixedFuncStruct.EcuFuncRelevant.ConvertToInt() <= 0)
+                {
+                    continue;
+                }
+
                 switch (jobInfo.EcuFixedFuncStruct.GetNodeClassType())
                 {
                     case EcuFunctionStructs.EcuFixedFuncStruct.NodeClassType.ControlActuator:
                     {
-                        if (jobInfo.EcuFixedFuncStruct.EcuFuncRelevant.ConvertToInt() <= 0)
-                        {
-                            break;
-                        }
-
                         string displayText = jobInfo.EcuFixedFuncStruct.Title?.GetTitle(language);
                         if (!string.IsNullOrWhiteSpace(displayText))
                         {
