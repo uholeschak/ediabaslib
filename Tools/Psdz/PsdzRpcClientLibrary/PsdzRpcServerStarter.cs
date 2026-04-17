@@ -136,8 +136,13 @@ public class PsdzRpcServerStarter
             return null;
         }
 
+#if DEBUG
+        string prefix = "debug";
+#else
+        string prefix = "release";
+#endif
+
         string rootDir = assemblyDir;
-        string serverRootDir = null;
         for (int i = 0; i < 5; i++)
         {
             rootDir = Directory.GetParent(rootDir)?.FullName;
@@ -149,54 +154,41 @@ public class PsdzRpcServerStarter
             string artifactsBinDir = Path.Combine(rootDir, ServerDirName, "artifacts", "bin", ServerDirName);
             if (Directory.Exists(artifactsBinDir))
             {
-                serverRootDir = artifactsBinDir;
-                break;
+                string serverDirNet10 = Path.Combine(artifactsBinDir, prefix + "_net10.0-windows10.0.26100.0");
+                string serverDirNet481 = Path.Combine(artifactsBinDir, prefix + "_net481");
+                string serverExeNet10 = Path.Combine(serverDirNet10, ServerExeName);
+                string serverExeNet481 = Path.Combine(serverDirNet481, ServerExeName);
+
+                if (preferNet481)
+                {
+                    if (File.Exists(serverExeNet481))
+                    {
+                        return serverExeNet481;
+                    }
+
+                    if (File.Exists(serverExeNet10))
+                    {
+                        return serverExeNet10;
+                    }
+                }
+                else
+                {
+                    if (File.Exists(serverExeNet10))
+                    {
+                        return serverExeNet10;
+                    }
+
+                    if (File.Exists(serverExeNet481))
+                    {
+                        return serverExeNet481;
+                    }
+                }
             }
 
             string serverExe = Path.Combine(rootDir, ServerDirName, ServerExeName);
             if (File.Exists(serverExe))
             {
                 return serverExe;
-            }
-        }
-
-        if (!Directory.Exists(serverRootDir))
-        {
-            return null;
-        }
-
-#if DEBUG
-        string prefix = "debug";
-#else
-        string prefix = "release";
-#endif
-        string serverDirNet10 = Path.Combine(serverRootDir, prefix + "_net10.0-windows10.0.26100.0");
-        string serverDirNet481 = Path.Combine(serverRootDir, prefix + "_net481");
-        string serverExeNet10 = Path.Combine(serverDirNet10, ServerExeName);
-        string serverExeNet481 = Path.Combine(serverDirNet481, ServerExeName);
-
-        if (preferNet481)
-        {
-            if (File.Exists(serverExeNet481))
-            {
-                return serverExeNet481;
-            }
-
-            if (File.Exists(serverExeNet10))
-            {
-                return serverExeNet10;
-            }
-        }
-        else
-        {
-            if (File.Exists(serverExeNet10))
-            {
-                return serverExeNet10;
-            }
-
-            if (File.Exists(serverExeNet481))
-            {
-                return serverExeNet481;
             }
         }
 
