@@ -223,6 +223,23 @@ public class PsdzRpcServerStarter
         return null;
     }
 
+    public static string GetAllUserServerLocation()
+    {
+        string publicFolder = Environment.GetEnvironmentVariable("PUBLIC");
+        if (string.IsNullOrEmpty(publicFolder))
+        {
+            return null;
+        }
+
+        string serverExe = Path.Combine(publicFolder, ServerDirName, ServerExeName);
+        if (File.Exists(serverExe))
+        {
+            return serverExe;
+        }
+
+        return null;
+    }
+
     public static SecureString CreateSecureString(string plainText)
     {
         SecureString secure = new SecureString();
