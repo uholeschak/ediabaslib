@@ -3976,6 +3976,7 @@ namespace WebPsdzClient.App_Data
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    log.InfoFormat("Disposing SessionContainer: SessionId={0}", SessionId);
                     // Dispose managed resources.
                     Cancel();
                     while (TaskActive)
