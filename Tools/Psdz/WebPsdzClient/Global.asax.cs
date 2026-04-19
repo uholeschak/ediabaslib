@@ -67,7 +67,7 @@ namespace WebPsdzClient
 
             if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))
             {
-                RpcServer = PsdzRpcClient.PsdzRpcServerStarter.GetAllUserServerLocation();
+                RpcServer = PsdzRpcClient.PsdzRpcServerStarter.GetCommonProgramsServerLocation();
             }
 #endif
             if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))

@@ -223,15 +223,15 @@ public class PsdzRpcServerStarter
         return null;
     }
 
-    public static string GetAllUserServerLocation()
+    public static string GetCommonProgramsServerLocation()
     {
-        string publicFolder = Environment.GetEnvironmentVariable("PUBLIC");
-        if (string.IsNullOrEmpty(publicFolder))
+        string commonProgramFiles = Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles));
+        if (string.IsNullOrEmpty(commonProgramFiles))
         {
             return null;
         }
 
-        string serverExe = Path.Combine(publicFolder, ServerDirName, ServerExeName);
+        string serverExe = Path.Combine(commonProgramFiles, ServerDirName, ServerExeName);
         if (File.Exists(serverExe))
         {
             return serverExe;
