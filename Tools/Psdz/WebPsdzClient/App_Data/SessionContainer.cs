@@ -789,38 +789,7 @@ namespace WebPsdzClient.App_Data
                 queueArgs.Result = TelSendQueueSizeEvent();
             };
 
-            RpcClient.CallbackHandler.ServiceInitialized += async (sender, serviceArgs) =>
-            {
-                ServiceInitializedEvent(serviceArgs.HostLogDir, serviceArgs.LoggingInitialized);
-
-                if (serviceArgs.LoggingInitialized)
-                {
-                    return;
-                }
-
-                if (RpcClient.RpcService == null)
-                {
-                    return;
-                }
-
-                string logFile = Global.ServerLogFile;
-                if (string.IsNullOrEmpty(logFile))
-                {
-                    return;
-                }
-
-                bool result = await RpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
-                if (!result)
-                {
-                    log.ErrorFormat("ServiceInitialized SetupLog4Net failed: {0}", logFile);
-                }
-
-                bool resetResult = await RpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
-                if (!resetResult)
-                {
-                    log.ErrorFormat("ServiceInitialized ResetStarterGuard failed");
-                }
-            };
+            RpcClient.CallbackHandler.ServiceInitialized += RpcServiceInitialized;
 #else
             ProgrammingJobs = new PsdzClient.Programming.ProgrammingJobs(dealerId);
             ProgrammingJobs.UpdateStatusEvent += UpdateStatus;
@@ -3410,9 +3379,42 @@ namespace WebPsdzClient.App_Data
             return queueSize;
         }
 
+#if USE_RPC_CLIENT
+        private async void RpcServiceInitialized(object sender, PsdzRpcClient.ServiceInitializedEventArgs serviceArgs)
+        {
+            if (serviceArgs.LoggingInitialized)
+            {
+                return;
+            }
+
+            if (RpcClient.RpcService == null)
+            {
+                return;
+            }
+
+            string logFile = Global.ServerLogFile;
+            if (string.IsNullOrEmpty(logFile))
+            {
+                return;
+            }
+
+            bool result = await RpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
+            if (!result)
+            {
+                log.ErrorFormat("ServiceInitialized SetupLog4Net failed: {0}", logFile);
+            }
+
+            bool resetResult = await RpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
+            if (!resetResult)
+            {
+                log.ErrorFormat("ServiceInitialized ResetStarterGuard failed");
+            }
+        }
+#else
         private void ServiceInitializedEvent(string hostLogDir, bool loggingInitialized)
         {
         }
+#endif
 
 #if USE_RPC_CLIENT
         private void UpdateCurrentOptions(PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum = null)
@@ -3987,8 +3989,16 @@ namespace WebPsdzClient.App_Data
                     CloseVehicleLog();
 
 #if USE_RPC_CLIENT
-                    RpcClient?.Dispose();
-                    RpcClient = null;
+                    if (RpcClient != null)
+                    {
+                        if (RpcClient.CallbackHandler != null)
+                        {
+                            RpcClient.CallbackHandler.ServiceInitialized -= RpcServiceInitialized;
+                        }
+
+                        RpcClient.Dispose();
+                        RpcClient = null;
+                    }
 #else
                     if (ProgrammingJobs != null)
                     {
