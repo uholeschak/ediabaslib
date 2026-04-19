@@ -46,8 +46,8 @@ namespace WebPsdzClient
             IstaFolder = ConfigurationManager.AppSettings["IstaFolder"];
 #if USE_RPC_CLIENT
             RpcServer = ConfigurationManager.AppSettings["RpcServer"];
-            RpcServerUser = ConfigurationManager.AppSettings["RpcServerUser"];
-            RpcServerPassword = ConfigurationManager.AppSettings["RpcServerPassword"];
+            //RpcServerUser = ConfigurationManager.AppSettings["RpcServerUser"];
+            //RpcServerPassword = ConfigurationManager.AppSettings["RpcServerPassword"];
 #endif
             SqlServer = ConfigurationManager.AppSettings["SqlServer"];
             TestLicenses = ConfigurationManager.AppSettings["TestLicenses"];
@@ -80,8 +80,15 @@ namespace WebPsdzClient
             log.InfoFormat("Ista folder: {0}", IstaFolder);
 #if USE_RPC_CLIENT
             log.InfoFormat("Rpc server: {0}", RpcServer);
-            log.InfoFormat("Rpc server user: {0}", RpcServerUser);
-            log.InfoFormat("Rpc server password length: {0}", RpcServerPassword.Length);
+            if (string.IsNullOrEmpty(RpcServerUser))
+            {
+                log.InfoFormat("For the directory C:\\Program Files\\PsdzRpcServer add the user 'IIS AppPool\\DefaultAppPool' and allow all access rights");
+            }
+            else
+            {
+                log.InfoFormat("Rpc server user: {0}", RpcServerUser);
+                log.InfoFormat("Rpc server password length: {0}", RpcServerPassword.Length);
+            }
 #else
             PsdzClient.Programming.PsdzStarterGuard.Instance.ResetInitialization();
             BMW.Rheingold.Psdz.Client.PsdzServiceStarter.ClearIstaPIDsFile();
