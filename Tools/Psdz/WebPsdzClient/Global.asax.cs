@@ -75,6 +75,8 @@ namespace WebPsdzClient
             log.InfoFormat("Ista folder: {0}", IstaFolder);
 #if USE_RPC_CLIENT
             log.InfoFormat("Rpc server: {0}", RpcServer);
+            log.InfoFormat("Rpc server user: {0}", RpcServerUser);
+            log.InfoFormat("Rpc server password length: {0}", RpcServerPassword.Length);
 #else
             PsdzClient.Programming.PsdzStarterGuard.Instance.ResetInitialization();
             BMW.Rheingold.Psdz.Client.PsdzServiceStarter.ClearIstaPIDsFile();
