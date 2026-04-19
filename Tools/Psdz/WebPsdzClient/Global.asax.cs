@@ -27,9 +27,11 @@ namespace WebPsdzClient
         public const int MinAppVer = 371;
         public static string DealerId { get; private set; }
         public static string IstaFolder { get; private set; }
+#if USE_RPC_CLIENT
         public static string RpcServer { get; private set; }
         public static string RpcServerUser { get; private set; }
         public static string RpcServerPassword { get; private set; }
+#endif
         public static string SqlServer { get; private set; }
         public static string TestLicenses { get; private set; }
         public static string DisplayOptions { get; private set; }
@@ -42,11 +44,11 @@ namespace WebPsdzClient
             // Code, der beim Anwendungsstart ausgeführt wird
             DealerId = ConfigurationManager.AppSettings["DealerId"];
             IstaFolder = ConfigurationManager.AppSettings["IstaFolder"];
-#if !DEBUG
+#if USE_RPC_CLIENT
             RpcServer = ConfigurationManager.AppSettings["RpcServer"];
-#endif
             RpcServerUser = ConfigurationManager.AppSettings["RpcServerUser"];
             RpcServerPassword = ConfigurationManager.AppSettings["RpcServerPassword"];
+#endif
             SqlServer = ConfigurationManager.AppSettings["SqlServer"];
             TestLicenses = ConfigurationManager.AppSettings["TestLicenses"];
             DisplayOptions = ConfigurationManager.AppSettings["DisplayOptions"];
