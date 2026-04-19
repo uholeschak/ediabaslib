@@ -56,8 +56,6 @@ public class UserTemplate
     {
         string istaLocation = string.Empty; // auto detect
         string rpcServerLocation = string.Empty; // auto detect
-        string rpcServerUser = string.Empty;
-        string rpcServerPassword = string.Empty;
         string sqlUrl = "url";
         string sqlUser = "user";
         string sqlPassword = "password";
@@ -90,20 +88,6 @@ public class UserTemplate
                     {
                         rpcServerLocation = attribLocation.Value;
                         await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}").ConfigureAwait(false);
-                    }
-
-                    XmlAttribute attribUser = nodeRpcServer.Attributes["name"];
-                    if (attribUser != null)
-                    {
-                        rpcServerUser = attribUser.Value;
-                        await logger.WriteLineAsync($"RpcServer: User={rpcServerUser}").ConfigureAwait(false);
-                    }
-
-                    XmlAttribute attribPassword = nodeRpcServer.Attributes["password"];
-                    if (attribPassword != null)
-                    {
-                        rpcServerPassword = attribPassword.Value;
-                        await logger.WriteLineAsync($"RpcServer: Password Length={rpcServerPassword.Length}").ConfigureAwait(false);
                     }
                 }
 
@@ -189,10 +173,6 @@ public class UserTemplate
                         {
                             rpcServerLocation = rpcServerInfo.Location;
                             await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}").ConfigureAwait(false);
-                            rpcServerUser = rpcServerInfo.Name;
-                            await logger.WriteLineAsync($"RpcServer: User={rpcServerUser}").ConfigureAwait(false);
-                            rpcServerPassword = rpcServerInfo.Password;
-                            await logger.WriteLineAsync($"RpcServer: Password Length={rpcServerPassword.Length}").ConfigureAwait(false);
                         }
 
                         if (infoDict.CredentialsInfo.TryGetValue("SqlServer", out Info sqlInfo))
@@ -234,8 +214,6 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
     <add key=""DealerId"" value=""40626""/>
     <add key=""IstaFolder"" value=""{istaLocation}""/>
     <add key=""RpcServer"" value=""{rpcServerLocation}""/>
-    <add key=""RpcServerUser"" value=""{rpcServerUser}""/>
-    <add key=""RpcServerPassword"" value=""{rpcServerPassword}""/>
     <add key=""SqlServer"" value=""Server={sqlUrl};User ID={sqlUser};Password={sqlPassword}""/>
     <add key=""AccessPwd"" value=""{accessPassword}""/>
     <add key=""TestLicenses"" value=""{testLic}""/>
