@@ -642,6 +642,7 @@ namespace WebPsdzClient.App_Data
             SessionId = sessionId;
 #if USE_RPC_CLIENT
             RpcClient = new PsdzRpcClient.PsdzRpcClient();
+            RpcClient.ClientConnected += RpcClientConnected;
             PsdzRpcClient.PsdzRpcServerStarter serverStarter = new();
 
             try
@@ -3380,6 +3381,11 @@ namespace WebPsdzClient.App_Data
         }
 
 #if USE_RPC_CLIENT
+        private async void RpcClientConnected(object sender, bool connected)
+        {
+            log.InfoFormat("RpcClientConnected: {0}", connected);
+        }
+
         private async void RpcServiceInitialized(object sender, PsdzRpcClient.ServiceInitializedEventArgs serviceArgs)
         {
             if (serviceArgs.LoggingInitialized)
@@ -3991,6 +3997,7 @@ namespace WebPsdzClient.App_Data
 #if USE_RPC_CLIENT
                     if (RpcClient != null)
                     {
+                        RpcClient.ClientConnected -= RpcClientConnected;
                         if (RpcClient.CallbackHandler != null)
                         {
                             RpcClient.CallbackHandler.ServiceInitialized -= RpcServiceInitialized;

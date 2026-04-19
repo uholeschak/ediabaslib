@@ -15,6 +15,7 @@ namespace PsdzRpcClient
         private JsonRpc _jsonRpc;
 
         public IPsdzRpcService RpcService { get; private set; }
+        public event EventHandler<bool> ClientConnected;
         public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
 
         public PsdzRpcClient(TextWriter output = null)
@@ -45,6 +46,7 @@ namespace PsdzRpcClient
             RpcService = _jsonRpc.Attach<IPsdzRpcService>();
 
             _jsonRpc.StartListening();
+            ClientConnected?.Invoke(this, true);
         }
 
         public void Dispose()
