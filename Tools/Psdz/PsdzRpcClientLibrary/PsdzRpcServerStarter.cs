@@ -195,34 +195,6 @@ public class PsdzRpcServerStarter
         return null;
     }
 
-    public static string GetUserServerLocation(string userName)
-    {
-        if (string.IsNullOrEmpty(userName))
-        {
-            return null;
-        }
-
-        string usersRoot = Path.GetDirectoryName(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
-        if (string.IsNullOrEmpty(usersRoot))
-        {
-            return null;
-        }
-
-        string programsDir = Path.Combine(usersRoot, userName, "AppData", "Local", "Programs");
-        if (!Directory.Exists(programsDir))
-        {
-            return null;
-        }
-
-        string serverExe = Path.Combine(programsDir, ServerDirName, ServerExeName);
-        if (File.Exists(serverExe))
-        {
-            return serverExe;
-        }
-
-        return null;
-    }
-
     public static string GetProgramsServerLocation()
     {
         string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);

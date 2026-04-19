@@ -29,8 +29,6 @@ namespace WebPsdzClient
         public static string IstaFolder { get; private set; }
 #if USE_RPC_CLIENT
         public static string RpcServer { get; private set; }
-        public static string RpcServerUser { get; private set; }
-        public static string RpcServerPassword { get; private set; }
 #endif
         public static string SqlServer { get; private set; }
         public static string TestLicenses { get; private set; }
@@ -46,8 +44,6 @@ namespace WebPsdzClient
             IstaFolder = ConfigurationManager.AppSettings["IstaFolder"];
 #if USE_RPC_CLIENT
             RpcServer = ConfigurationManager.AppSettings["RpcServer"];
-            //RpcServerUser = ConfigurationManager.AppSettings["RpcServerUser"];
-            //RpcServerPassword = ConfigurationManager.AppSettings["RpcServerPassword"];
 #endif
             SqlServer = ConfigurationManager.AppSettings["SqlServer"];
             TestLicenses = ConfigurationManager.AppSettings["TestLicenses"];
@@ -60,11 +56,6 @@ namespace WebPsdzClient
 
 #if USE_RPC_CLIENT
 #if !DEBUG
-            if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))
-            {
-                RpcServer = PsdzRpcClient.PsdzRpcServerStarter.GetUserServerLocation(RpcServerUser);
-            }
-
             if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))
             {
                 RpcServer = PsdzRpcClient.PsdzRpcServerStarter.GetProgramsServerLocation();
@@ -80,15 +71,7 @@ namespace WebPsdzClient
             log.InfoFormat("Ista folder: {0}", IstaFolder);
 #if USE_RPC_CLIENT
             log.InfoFormat("Rpc server: {0}", RpcServer);
-            if (string.IsNullOrEmpty(RpcServerUser))
-            {
-                log.InfoFormat("For the directory C:\\Program Files\\PsdzRpcServer add the user 'IIS AppPool\\DefaultAppPool' and allow all access rights");
-            }
-            else
-            {
-                log.InfoFormat("Rpc server user: {0}", RpcServerUser);
-                log.InfoFormat("Rpc server password length: {0}", RpcServerPassword.Length);
-            }
+            log.InfoFormat("For the directory C:\\Program Files\\PsdzRpcServer add the user 'IIS AppPool\\DefaultAppPool' and allow all access rights");
 #else
             PsdzClient.Programming.PsdzStarterGuard.Instance.ResetInitialization();
             BMW.Rheingold.Psdz.Client.PsdzServiceStarter.ClearIstaPIDsFile();
