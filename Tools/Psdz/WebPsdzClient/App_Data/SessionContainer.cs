@@ -748,11 +748,7 @@ namespace WebPsdzClient.App_Data
                 UpdateCurrentOptions();
             };
 
-            RpcClient.CallbackHandler.UpdateOptionSelections += (sender, swiRegisterEnum) =>
-            {
-                UpdateCurrentOptions(swiRegisterEnum);
-            };
-
+            RpcClient.CallbackHandler.UpdateOptionSelections += RpcUpdateOptionSelections;
             RpcClient.CallbackHandler.ShowMessage += RpcShowMessage;
             RpcClient.CallbackHandler.ShowMessageWait += RpcShowMessageWait;
             RpcClient.CallbackHandler.TelSendQueueSize += RpcTelSendQueueSize;
@@ -3352,6 +3348,11 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("RpcClientConnected: {0}", connected);
         }
 
+        private void RpcUpdateOptionSelections(object sender, PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum)
+        {
+            UpdateCurrentOptions(swiRegisterEnum);
+        }
+
         private void RpcShowMessage(object sender, PsdzRpcClient.ShowMessageEventArgs msgArgs)
         {
             try
@@ -4003,6 +4004,7 @@ namespace WebPsdzClient.App_Data
                         RpcClient.ClientConnected -= RpcClientConnected;
                         if (RpcClient.CallbackHandler != null)
                         {
+                            RpcClient.CallbackHandler.UpdateOptionSelections -= RpcUpdateOptionSelections;
                             RpcClient.CallbackHandler.ShowMessage -= RpcShowMessage;
                             RpcClient.CallbackHandler.ShowMessageWait -= RpcShowMessageWait;
                             RpcClient.CallbackHandler.TelSendQueueSize -= RpcTelSendQueueSize;
