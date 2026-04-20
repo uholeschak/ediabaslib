@@ -74,8 +74,8 @@ namespace BMW.Rheingold.Psdz
             //[-]Log.Info(Log.CurrentMethod(), "Starting the process: \n{0} {1}\nISTA process: {2} ({3})", webserviceProcess.StartInfo.FileName, webserviceProcess.StartInfo.Arguments, istaProcess.ProcessName, istaProcess.Id);
             //[+]int processId = GetProcessId();
             int processId = GetProcessId();
-            //[+]Log.Info(Log.CurrentMethod(), "Starting the process: \n{0} {1}\nISTA process: {2} ({3})", webserviceProcess.StartInfo.FileName, webserviceProcess.StartInfo.Arguments, processId);
-            Log.Info(Log.CurrentMethod(), "Starting the process: \n{0} {1}\nISTA process: {2} ({3})", webserviceProcess.StartInfo.FileName, webserviceProcess.StartInfo.Arguments, processId);
+            //[+]Log.Info(Log.CurrentMethod(), "Starting the process: \n{0} {1}\nISTA process: {2}", webserviceProcess.StartInfo.FileName, webserviceProcess.StartInfo.Arguments, processId);
+            Log.Info(Log.CurrentMethod(), "Starting the process: \n{0} {1}\nISTA process: {2}", webserviceProcess.StartInfo.FileName, webserviceProcess.StartInfo.Arguments, processId);
             bool configStringAsBoolean = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.PsdzWebservice.SkipProcessStart");
             using (FileStream lockFileStream = GetReadWriteFileLock())
             {
