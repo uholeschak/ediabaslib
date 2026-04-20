@@ -729,11 +729,7 @@ namespace WebPsdzClient.App_Data
                 UpdateStatus(message);
             };
 
-            RpcClient.CallbackHandler.UpdateProgress += (sender, progressArgs) =>
-            {
-                UpdateProgress(progressArgs.Percent, progressArgs.Marquee, progressArgs.Message);
-            };
-
+            RpcClient.CallbackHandler.UpdateProgress += RpcUpdateProgress;
             RpcClient.CallbackHandler.UpdateOptions += RpcUpdateOptions;
             RpcClient.CallbackHandler.UpdateOptionSelections += RpcUpdateOptionSelections;
             RpcClient.CallbackHandler.ShowMessage += RpcShowMessage;
@@ -3330,23 +3326,35 @@ namespace WebPsdzClient.App_Data
         }
 
 #if USE_RPC_CLIENT
-        private async void RpcClientConnected(object sender, bool connected)
+        private void RpcClientConnected(object sender, bool connected)
         {
             log.InfoFormat("RpcClientConnected: {0}", connected);
         }
 
+        private void RpcUpdateProgress(object sender, PsdzRpcClient.ProgressEventArgs progressArgs)
+        {
+            UpdateProgress(progressArgs.Percent, progressArgs.Marquee, progressArgs.Message);
+        }
+
         private async void RpcUpdateOptions(object sender, EventArgs args)
         {
-            if (RpcClient.RpcService != null)
+            try
             {
-                bool result = await RpcClient.RpcService.SelectOption(null, false).ConfigureAwait(false);
-                if (!result)
+                if (RpcClient.RpcService != null)
                 {
-                    log.ErrorFormat("UpdateOptions RpcService SelectOption failed");
+                    bool result = await RpcClient.RpcService.SelectOption(null, false).ConfigureAwait(false);
+                    if (!result)
+                    {
+                        log.ErrorFormat("UpdateOptions RpcService SelectOption failed");
+                    }
                 }
-            }
 
-            UpdateCurrentOptions();
+                UpdateCurrentOptions();
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("UpdateOptions Exception: {0}", ex.Message);
+            }
         }
 
         private void RpcUpdateOptionSelections(object sender, PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum)
@@ -3393,32 +3401,39 @@ namespace WebPsdzClient.App_Data
 
         private async void RpcServiceInitialized(object sender, PsdzRpcClient.ServiceInitializedEventArgs serviceArgs)
         {
-            if (serviceArgs.LoggingInitialized)
+            try
             {
-                return;
-            }
+                if (serviceArgs.LoggingInitialized)
+                {
+                    return;
+                }
 
-            if (RpcClient.RpcService == null)
-            {
-                return;
-            }
+                if (RpcClient.RpcService == null)
+                {
+                    return;
+                }
 
-            string logFile = Global.ServerLogFile;
-            if (string.IsNullOrEmpty(logFile))
-            {
-                return;
-            }
+                string logFile = Global.ServerLogFile;
+                if (string.IsNullOrEmpty(logFile))
+                {
+                    return;
+                }
 
-            bool result = await RpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
-            if (!result)
-            {
-                log.ErrorFormat("ServiceInitialized SetupLog4Net failed: {0}", logFile);
-            }
+                bool result = await RpcClient.RpcService.SetupLog4Net(logFile).ConfigureAwait(false);
+                if (!result)
+                {
+                    log.ErrorFormat("ServiceInitialized SetupLog4Net failed: {0}", logFile);
+                }
 
-            bool resetResult = await RpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
-            if (!resetResult)
+                bool resetResult = await RpcClient.RpcService.ResetStarterGuard().ConfigureAwait(false);
+                if (!resetResult)
+                {
+                    log.ErrorFormat("ServiceInitialized ResetStarterGuard failed");
+                }
+            }
+            catch (Exception ex)
             {
-                log.ErrorFormat("ServiceInitialized ResetStarterGuard failed");
+                log.ErrorFormat("ServiceInitialized Exception: {0}", ex.Message);
             }
         }
 #else
@@ -4005,6 +4020,7 @@ namespace WebPsdzClient.App_Data
                         RpcClient.ClientConnected -= RpcClientConnected;
                         if (RpcClient.CallbackHandler != null)
                         {
+                            RpcClient.CallbackHandler.UpdateProgress -= RpcUpdateProgress;
                             RpcClient.CallbackHandler.UpdateOptions -= RpcUpdateOptions;
                             RpcClient.CallbackHandler.UpdateOptionSelections -= RpcUpdateOptionSelections;
                             RpcClient.CallbackHandler.ShowMessage -= RpcShowMessage;
