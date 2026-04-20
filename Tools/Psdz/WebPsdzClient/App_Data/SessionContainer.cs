@@ -785,11 +785,7 @@ namespace WebPsdzClient.App_Data
                 }
             };
 
-            RpcClient.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
-            {
-                queueArgs.Result = TelSendQueueSizeEvent();
-            };
-
+            RpcClient.CallbackHandler.TelSendQueueSize += RpcTelSendQueueSize;
             RpcClient.CallbackHandler.ServiceInitialized += RpcServiceInitialized;
 #else
             ProgrammingJobs = new PsdzClient.Programming.ProgrammingJobs(dealerId);
@@ -3386,6 +3382,11 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("RpcClientConnected: {0}", connected);
         }
 
+        private void RpcTelSendQueueSize(object sender, PsdzRpcClient.TelSendQueueSizeEventArgs queueArgs)
+        {
+            queueArgs.Result = TelSendQueueSizeEvent();
+        }
+
         private async void RpcServiceInitialized(object sender, PsdzRpcClient.ServiceInitializedEventArgs serviceArgs)
         {
             if (serviceArgs.LoggingInitialized)
@@ -4000,6 +4001,7 @@ namespace WebPsdzClient.App_Data
                         RpcClient.ClientConnected -= RpcClientConnected;
                         if (RpcClient.CallbackHandler != null)
                         {
+                            RpcClient.CallbackHandler.TelSendQueueSize -= RpcTelSendQueueSize;
                             RpcClient.CallbackHandler.ServiceInitialized -= RpcServiceInitialized;
                         }
 
