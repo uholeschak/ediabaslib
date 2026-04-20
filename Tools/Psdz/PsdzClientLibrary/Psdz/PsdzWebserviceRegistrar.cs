@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace BMW.Rheingold.Psdz
@@ -211,6 +212,7 @@ namespace BMW.Rheingold.Psdz
                 basePath = Path.GetTempPath();
             //[+] }
             }
+
             //[+] sessionDataFilePath = Path.Combine(basePath, "ISTA", "PsdzWebserviceSessions.json");
             sessionDataFilePath = Path.Combine(basePath, "ISTA", "PsdzWebserviceSessions.json");
             //[+] lockFilePath = Path.Combine(basePath, "ISTA", "PsdzWebserviceSessions.lck");
@@ -298,6 +300,8 @@ namespace BMW.Rheingold.Psdz
             }
         }
 
+        [PreserveSource(Added = true)]
+        private static readonly LocalDataStoreSlot localSlot = Thread.AllocateDataSlot();
         [PreserveSource(Hint = "from App.ClearPsdzWebServiceSessionDataFile", Added = true)]
         public static void ClearPsdzWebServiceSessionDataFile()
         {
@@ -315,6 +319,24 @@ namespace BMW.Rheingold.Psdz
             {
                 Log.ErrorException(Log.CurrentMethod(), "Failed to clear PSdZ Webservice Session Data file! {0}", ex);
             }
+        }
+
+        [PreserveSource(Added = true)]
+        public static void SetThreadData(int processId)
+        {
+            Thread.SetData(localSlot, processId);
+        }
+
+        [PreserveSource(Added = true)]
+        public static int GetProcessId()
+        {
+            object threadData = Thread.GetData(localSlot);
+            if (threadData is int processId)
+            {
+                return processId;
+            }
+
+            return Process.GetCurrentProcess().Id;
         }
     }
 }
