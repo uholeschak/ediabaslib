@@ -140,14 +140,20 @@ namespace BMW.Rheingold.Psdz
 
         public static bool DeregisterCurrentProcess()
         {
-            Process process = Process.GetCurrentProcess();
+            //[-]Process process = Process.GetCurrentProcess();
+            //[+]int processId = GetProcessId();
+            int processId = GetProcessId();
             using (FileStream lockFileStream = GetReadWriteFileLock())
             {
                 List<SessionData> list = ReadSessionsFromFile(lockFileStream);
-                IEnumerable<SessionData> source = list.Where((SessionData s) => s.IstaProcessIds.Contains(process.Id));
+                //[-]IEnumerable<SessionData> source = list.Where((SessionData s) => s.IstaProcessIds.Contains(process.Id));
+                //[+]IEnumerable<SessionData> source = list.Where((SessionData s) => s.IstaProcessIds.Contains(processId));
+                IEnumerable<SessionData> source = list.Where((SessionData s) => s.IstaProcessIds.Contains(processId));
                 if (!source.Any())
                 {
-                    Log.Warning(Log.CurrentMethod(), $"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}). We were going to deregister anyway, but this may be a sign of some problem.");
+                    //[-]Log.Warning(Log.CurrentMethod(), $"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}). We were going to deregister anyway, but this may be a sign of some problem.");
+                    //[+]Log.Warning(Log.CurrentMethod(), $"No webservice session was registered for ISTA process ({processId}). We were going to deregister anyway, but this may be a sign of some problem.");
+                    Log.Warning(Log.CurrentMethod(), $"No webservice session was registered for ISTA process ({processId}). We were going to deregister anyway, but this may be a sign of some problem.");
                     return false;
                 }
 
@@ -160,7 +166,9 @@ namespace BMW.Rheingold.Psdz
                     }
                     else if (sessionData.PsdzWebserviceProcessId == 0)
                     {
-                        Log.Warning(Log.CurrentMethod(), $"No webservice process was registered for the session corresponding to ISTA process {process.ProcessName} ({process.Id}), so there's nothing to kill. However, this could be indicative of some problem. Session status: {sessionData.Status}");
+                        //[-]Log.Warning(Log.CurrentMethod(), $"No webservice process was registered for the session corresponding to ISTA process {process.ProcessName} ({process.Id}), so there's nothing to kill. However, this could be indicative of some problem. Session status: {sessionData.Status}");
+                        //[+]Log.Warning(Log.CurrentMethod(), $"No webservice process was registered for the session corresponding to ISTA process ({processId}), so there's nothing to kill. However, this could be indicative of some problem. Session status: {sessionData.Status}");
+                        Log.Warning(Log.CurrentMethod(), $"No webservice process was registered for the session corresponding to ISTA process ({processId}), so there's nothing to kill. However, this could be indicative of some problem. Session status: {sessionData.Status}");
                     }
                     else
                     {
@@ -181,7 +189,9 @@ namespace BMW.Rheingold.Psdz
                 }
 
                 Log.Info(Log.CurrentMethod(), "Shutdown has been requested, but other ISTA processes also use this session. Shutdown will not be executed yet.");
-                sessionData.IstaProcessIds.Remove(process.Id);
+                //[-]sessionData.IstaProcessIds.Remove(process.Id);
+                //[+]sessionData.IstaProcessIds.Remove(processId);
+                sessionData.IstaProcessIds.Remove(processId);
                 WriteSessionsToFile(lockFileStream, list);
                 return false;
             }
