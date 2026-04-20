@@ -146,6 +146,8 @@ namespace PsdzClient.Programming
             //[-]psdzService.Shutdown();
             //[+] psdzServiceGateway.CloseConnectionsToPsdz(force);
             psdzServiceGateway.CloseConnectionsToPsdz(force);
+            //[+]PsdzStarterGuard.Instance.ResetInitialization();
+            PsdzStarterGuard.Instance.ResetInitialization();
             Log.Info(Log.CurrentMethod(), "End.");
         }
 
