@@ -734,20 +734,7 @@ namespace WebPsdzClient.App_Data
                 UpdateProgress(progressArgs.Percent, progressArgs.Marquee, progressArgs.Message);
             };
 
-            RpcClient.CallbackHandler.UpdateOptions += async (sender, optionArgs) =>
-            {
-                if (RpcClient.RpcService != null)
-                {
-                    bool result = await RpcClient.RpcService.SelectOption(null, false).ConfigureAwait(false);
-                    if (!result)
-                    {
-                        log.ErrorFormat("UpdateOptions RpcService SelectOption failed");
-                    }
-                }
-
-                UpdateCurrentOptions();
-            };
-
+            RpcClient.CallbackHandler.UpdateOptions += RpcUpdateOptions;
             RpcClient.CallbackHandler.UpdateOptionSelections += RpcUpdateOptionSelections;
             RpcClient.CallbackHandler.ShowMessage += RpcShowMessage;
             RpcClient.CallbackHandler.ShowMessageWait += RpcShowMessageWait;
@@ -3348,6 +3335,20 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("RpcClientConnected: {0}", connected);
         }
 
+        private async void RpcUpdateOptions(object sender, EventArgs args)
+        {
+            if (RpcClient.RpcService != null)
+            {
+                bool result = await RpcClient.RpcService.SelectOption(null, false).ConfigureAwait(false);
+                if (!result)
+                {
+                    log.ErrorFormat("UpdateOptions RpcService SelectOption failed");
+                }
+            }
+
+            UpdateCurrentOptions();
+        }
+
         private void RpcUpdateOptionSelections(object sender, PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum)
         {
             UpdateCurrentOptions(swiRegisterEnum);
@@ -4004,6 +4005,7 @@ namespace WebPsdzClient.App_Data
                         RpcClient.ClientConnected -= RpcClientConnected;
                         if (RpcClient.CallbackHandler != null)
                         {
+                            RpcClient.CallbackHandler.UpdateOptions -= RpcUpdateOptions;
                             RpcClient.CallbackHandler.UpdateOptionSelections -= RpcUpdateOptionSelections;
                             RpcClient.CallbackHandler.ShowMessage -= RpcShowMessage;
                             RpcClient.CallbackHandler.ShowMessageWait -= RpcShowMessageWait;
