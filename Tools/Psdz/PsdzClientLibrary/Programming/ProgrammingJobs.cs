@@ -924,7 +924,12 @@ namespace PsdzClient.Programming
 
                 if (ProgrammingService != null && ProgrammingService.Psdz.IsPsdzInitialized)
                 {
-                    ProgrammingService.CloseConnectionsToPsdz(force);
+                    if (force)
+                    {
+                        ProgrammingService.CloseConnectionsToPsdz(true);
+                        // Dispose calls CloseConnectionsToPsdz without force.
+                    }
+
                     ProgrammingService.Dispose();
                     ProgrammingService = null;
                     ClientContext.Database = null;

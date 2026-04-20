@@ -390,6 +390,7 @@ namespace PsdzClient.Programming
         [PreserveSource(Added = true)]
         public void Dispose()
         {
+            CloseConnectionsToPsdz();
             RemoveListener();
             this.psdzServiceGateway.Dispose();
             if (this.PsdzDatabase != null)
