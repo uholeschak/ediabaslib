@@ -113,21 +113,29 @@ namespace BMW.Rheingold.Psdz
 
         public static void SignalWebserviceInitializationCompleted()
         {
-            Process process = Process.GetCurrentProcess();
+            //[-]Process process = Process.GetCurrentProcess();
+            //[+]int processId = GetProcessId();
+            int processId = GetProcessId();
             using (FileStream lockFileStream = GetReadWriteFileLock())
             {
                 List<SessionData> list = ReadSessionsFromFile(lockFileStream);
-                IEnumerable<SessionData> source = list.Where((SessionData s) => s.IstaProcessIds.Contains(process.Id));
+                //[-]IEnumerable<SessionData> source = list.Where((SessionData s) => s.IstaProcessIds.Contains(process.Id));
+                //[+]IEnumerable<SessionData> source = list.Where((SessionData s) => s.IstaProcessIds.Contains(processId));
+                IEnumerable<SessionData> source = list.Where((SessionData s) => s.IstaProcessIds.Contains(processId));
                 if (!source.Any())
                 {
-                    throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
+                    //[-]throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
+                    //[+]throw new InvalidOperationException($"No webservice session was registered for ISTA process {processId}.");
+                    throw new InvalidOperationException($"No webservice session was registered for ISTA process {processId}.");
                 }
 
                 source.Single().Status = WebserviceSessionStatus.Running;
                 WriteSessionsToFile(lockFileStream, list);
             }
 
-            Log.Info(Log.CurrentMethod(), $"The webservice session for ISTA process {process.ProcessName} ({process.Id}) is now marked as running, so other threads can use it.");
+            //[-]Log.Info(Log.CurrentMethod(), $"The webservice session for ISTA process {process.ProcessName} ({process.Id}) is now marked as running, so other threads can use it.");
+            //[+]Log.Info(Log.CurrentMethod(), $"The webservice session for ISTA process ({processId}) is now marked as running, so other threads can use it.");
+            Log.Info(Log.CurrentMethod(), $"The webservice session for ISTA process ({processId}) is now marked as running, so other threads can use it.");
         }
 
         public static bool DeregisterCurrentProcess()
