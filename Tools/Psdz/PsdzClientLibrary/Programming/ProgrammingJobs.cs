@@ -493,6 +493,7 @@ namespace PsdzClient.Programming
 
         public bool StartProgrammingService(CancellationTokenSource cts, string istaFolder)
         {
+            SetThreadContextId();
             StringBuilder sbResult = new StringBuilder();
             try
             {
@@ -914,6 +915,7 @@ namespace PsdzClient.Programming
 
         public bool StopProgrammingService(CancellationTokenSource cts, string istaFolder, bool force = false)
         {
+            SetThreadContextId();
             StringBuilder sbResult = new StringBuilder();
             try
             {
@@ -960,6 +962,7 @@ namespace PsdzClient.Programming
 
         public bool ConnectVehicle(CancellationTokenSource cts, string istaFolder, string remoteHost, bool useIcom, int addTimeout = 1000)
         {
+            SetThreadContextId();
             log.InfoFormat(CultureInfo.InvariantCulture, "ConnectVehicle Start - IstaFolder: {0}, Ip: {1}, ICOM: {2}, Timeout: {3}", istaFolder, remoteHost, useIcom, addTimeout);
             StringBuilder sbResult = new StringBuilder();
 
@@ -1319,6 +1322,7 @@ namespace PsdzClient.Programming
         public bool DisconnectVehicle(CancellationTokenSource cts)
         {
             log.Info("DisconnectVehicle Start");
+            SetThreadContextId();
             StringBuilder sbResult = new StringBuilder();
 
             try
@@ -1526,6 +1530,7 @@ namespace PsdzClient.Programming
 
         public string ExecuteContainerXml(CancellationTokenSource cts, string configurationContainerXml, Dictionary<string, string> runOverrideDict)
         {
+            SetThreadContextId();
             string result;
             try
             {
@@ -1558,6 +1563,7 @@ namespace PsdzClient.Programming
 
         public bool VehicleFunctions(CancellationTokenSource cts, OperationType operationType)
         {
+            SetThreadContextId();
             log.InfoFormat(CultureInfo.InvariantCulture, "VehicleFunctions Start - Type: {0}", operationType);
             StringBuilder sbResult = new StringBuilder();
 
@@ -3427,6 +3433,7 @@ namespace PsdzClient.Programming
 
         public List<OptionsItem> GetCombinedOptionsItems(OptionsItem optionsItemSelect, List<OptionsItem> optionItemsList)
         {
+            SetThreadContextId();
             if (PsdzContext == null || optionsItemSelect == null || optionsItemSelect.EcuInfo == null || optionItemsList == null)
             {
                 return null;
@@ -3470,6 +3477,7 @@ namespace PsdzClient.Programming
 
         public void UpdateTargetFa(bool reset = false)
         {
+            SetThreadContextId();
             if (PsdzContext == null || SelectedOptions == null)
             {
                 return;
@@ -4240,6 +4248,7 @@ namespace PsdzClient.Programming
 
         public void ClearProgrammingObjects()
         {
+            SetThreadContextId();
             PsdzContext psdzContext = PsdzContext;
             if (psdzContext != null)
             {
@@ -4511,6 +4520,11 @@ namespace PsdzClient.Programming
             return true;
         }
 
+        public void SetThreadContextId()
+        {
+            PsdzWebserviceRegistrar.SetThreadData(ThreadContextId);
+        }
+
         public void Dispose()
         {
             Dispose(true);
@@ -4531,6 +4545,7 @@ namespace PsdzClient.Programming
                 // and unmanaged resources.
                 if (disposing)
                 {
+                    SetThreadContextId();
                     // Dispose managed resources.
                     if (ProgrammingService != null)
                     {
