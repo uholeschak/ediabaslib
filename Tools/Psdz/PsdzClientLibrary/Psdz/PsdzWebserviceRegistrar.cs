@@ -324,6 +324,7 @@ namespace BMW.Rheingold.Psdz
         [PreserveSource(Added = true)]
         public static void SetThreadData(int processId)
         {
+            Log.Info(Log.CurrentMethod(), $"Setting thread-specific process ID: {processId}");
             Thread.SetData(localSlot, processId);
         }
 
@@ -331,12 +332,15 @@ namespace BMW.Rheingold.Psdz
         public static int GetProcessId()
         {
             object threadData = Thread.GetData(localSlot);
-            if (threadData is int processId)
+            if (threadData is int processDataValue)
             {
-                return processId;
+                Log.Info(Log.CurrentMethod(), $"Using thread-specific process ID: {processDataValue}");
+                return processDataValue;
             }
 
-            return Process.GetCurrentProcess().Id;
+            int processId = Process.GetCurrentProcess().Id;
+            Log.Info(Log.CurrentMethod(), $"Using default process ID: {processId}");
+            return processId;
         }
     }
 }
