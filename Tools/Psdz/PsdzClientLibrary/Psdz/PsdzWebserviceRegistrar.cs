@@ -27,12 +27,18 @@ namespace BMW.Rheingold.Psdz
         private static readonly string lockFilePath;
         public static int RegisterCurrentProcess()
         {
-            Process process = Process.GetCurrentProcess();
-            Log.Info(Log.CurrentMethod(), $"Registering ISTA process {process.ProcessName} ({process.Id}).");
+            //[-]Process process = Process.GetCurrentProcess();
+            //[+]int processId = GetProcessId();
+            int processId = GetProcessId();
+            //[-]Log.Info(Log.CurrentMethod(), $"Registering ISTA process {process.ProcessName} ({process.Id}).");
+            //[+]Log.Info(Log.CurrentMethod(), $"Registering ISTA process {processId} ({processId}).");
+            Log.Info(Log.CurrentMethod(), $"Registering ISTA process {processId} ({processId}).");
             using (FileStream lockFileStream = GetReadWriteFileLock())
             {
                 List<SessionData> list = ReadSessionsFromFile(lockFileStream);
-                SessionData sessionData = (ConfigSettings.GetActivateSdpOnlinePatch() ? list.FirstOrDefault((SessionData session) => session.IstaProcessIds.Contains(process.Id)) : list.FirstOrDefault());
+                //[-]SessionData sessionData = (ConfigSettings.GetActivateSdpOnlinePatch() ? list.FirstOrDefault((SessionData session) => session.IstaProcessIds.Contains(process.Id)) : list.FirstOrDefault());
+                //[+]SessionData sessionData = (ConfigSettings.GetActivateSdpOnlinePatch() ? list.FirstOrDefault((SessionData session) => session.IstaProcessIds.Contains(processId)) : list.FirstOrDefault());
+                SessionData sessionData = (ConfigSettings.GetActivateSdpOnlinePatch() ? list.FirstOrDefault((SessionData session) => session.IstaProcessIds.Contains(processId)) : list.FirstOrDefault());
                 if (sessionData == null)
                 {
                     Log.Debug(Log.CurrentMethod(), "No appropriate session was found, so creating a new one.");
@@ -53,7 +59,9 @@ namespace BMW.Rheingold.Psdz
                 }
                 else
                 {
-                    sessionData.IstaProcessIds.AddIfNotContains(process.Id);
+                    //[-]sessionData.IstaProcessIds.AddIfNotContains(process.Id);
+                    //[+]sessionData.IstaProcessIds.AddIfNotContains(processId);
+                    sessionData.IstaProcessIds.AddIfNotContains(processId);
                 }
 
                 WriteSessionsToFile(lockFileStream, list);
