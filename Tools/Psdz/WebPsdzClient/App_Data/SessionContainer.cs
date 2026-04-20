@@ -660,75 +660,12 @@ namespace WebPsdzClient.App_Data
                 Cts = null;
             }
 
-            RpcClient.CallbackHandler.StartProgrammingCompleted += (s, success) =>
-            {
-                if (!success)
-                {
-                    ReportError("StartProgramming failed");
-                }
-
-                TaskActive = false;
-                UpdateCurrentOptions();
-                UpdateDisplay();
-            };
-
-            RpcClient.CallbackHandler.StopProgrammingCompleted += (s, success) =>
-            {
-                if (!success)
-                {
-                    ReportError("StopProgramming failed");
-                }
-
-                TaskActive = false;
-                StopTcpListener();
-                UpdateCurrentOptions();
-                UpdateDisplay();
-            };
-
-            RpcClient.CallbackHandler.ConnectVehicleCompleted += (s, connectArgs) =>
-            {
-                if (connectArgs.Success)
-                {
-                    DetectedVin = connectArgs.Vin;
-                    ProcessLicense();
-                    AppendStatusTextLine(GetLicenseText());
-                }
-                else
-                {
-                    ReportError("ConnectVehicle failed");
-                    StopTcpListener();
-                }
-
-                TaskActive = false;
-                UpdateCurrentOptions();
-                UpdateDisplay();
-            };
-
-            RpcClient.CallbackHandler.DisconnectVehicleCompleted += (s, success) =>
-            {
-                if (!success)
-                {
-                    ReportError("DisconnectVehicle failed");
-                }
-
-                TaskActive = false;
-                StopTcpListener();
-                UpdateCurrentOptions();
-                UpdateDisplay();
-            };
-
-            RpcClient.CallbackHandler.VehicleFunctionsCompleted += (s, vehicleArgs) =>
-            {
-                TaskActive = false;
-                UpdateCurrentOptions();
-                UpdateDisplay();
-            };
-
-            RpcClient.CallbackHandler.UpdateStatus += (s, message) =>
-            {
-                UpdateStatus(message);
-            };
-
+            RpcClient.CallbackHandler.StartProgrammingCompleted += RpcStartProgrammingCompleted;
+            RpcClient.CallbackHandler.StopProgrammingCompleted += RpcStopProgrammingCompleted;
+            RpcClient.CallbackHandler.ConnectVehicleCompleted += RpcConnectVehicleCompleted;
+            RpcClient.CallbackHandler.DisconnectVehicleCompleted += RpcDisconnectVehicleCompleted;
+            RpcClient.CallbackHandler.VehicleFunctionsCompleted += RpcVehicleFunctionsCompleted;
+            RpcClient.CallbackHandler.UpdateStatus += RpcUpdateStatus;
             RpcClient.CallbackHandler.UpdateProgress += RpcUpdateProgress;
             RpcClient.CallbackHandler.UpdateOptions += RpcUpdateOptions;
             RpcClient.CallbackHandler.UpdateOptionSelections += RpcUpdateOptionSelections;
@@ -3331,6 +3268,75 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("RpcClientConnected: {0}", connected);
         }
 
+        private void RpcStartProgrammingCompleted(object sender, bool success)
+        {
+            if (!success)
+            {
+                ReportError("StartProgramming failed");
+            }
+
+            TaskActive = false;
+            UpdateCurrentOptions();
+            UpdateDisplay();
+        }
+
+        private void RpcStopProgrammingCompleted(object sender, bool success)
+        {
+            if (!success)
+            {
+                ReportError("StopProgramming failed");
+            }
+
+            TaskActive = false;
+            StopTcpListener();
+            UpdateCurrentOptions();
+            UpdateDisplay();
+        }
+
+        private void RpcConnectVehicleCompleted(object sender, PsdzRpcClient.ConnectVehicleEventArgs connectArgs)
+        {
+            if (connectArgs.Success)
+            {
+                DetectedVin = connectArgs.Vin;
+                ProcessLicense();
+                AppendStatusTextLine(GetLicenseText());
+            }
+            else
+            {
+                ReportError("ConnectVehicle failed");
+                StopTcpListener();
+            }
+
+            TaskActive = false;
+            UpdateCurrentOptions();
+            UpdateDisplay();
+        }
+
+        private void RpcDisconnectVehicleCompleted(object sender, bool success)
+        {
+            if (!success)
+            {
+                ReportError("DisconnectVehicle failed");
+            }
+
+            TaskActive = false;
+            StopTcpListener();
+            UpdateCurrentOptions();
+            UpdateDisplay();
+        }
+
+        private void RpcVehicleFunctionsCompleted(object sender, PsdzRpcClient.VehicleFunctionsEventArgs vehicleArgs)
+        {
+            TaskActive = false;
+            UpdateCurrentOptions();
+            UpdateDisplay();
+        }
+
+        private void RpcUpdateStatus(object sender, string message)
+        {
+            UpdateStatus(message);
+        }
+
         private void RpcUpdateProgress(object sender, PsdzRpcClient.ProgressEventArgs progressArgs)
         {
             UpdateProgress(progressArgs.Percent, progressArgs.Marquee, progressArgs.Message);
@@ -4020,6 +4026,12 @@ namespace WebPsdzClient.App_Data
                         RpcClient.ClientConnected -= RpcClientConnected;
                         if (RpcClient.CallbackHandler != null)
                         {
+                            RpcClient.CallbackHandler.StartProgrammingCompleted -= RpcStartProgrammingCompleted;
+                            RpcClient.CallbackHandler.StopProgrammingCompleted -= RpcStopProgrammingCompleted;
+                            RpcClient.CallbackHandler.ConnectVehicleCompleted -= RpcConnectVehicleCompleted;
+                            RpcClient.CallbackHandler.DisconnectVehicleCompleted -= RpcDisconnectVehicleCompleted;
+                            RpcClient.CallbackHandler.VehicleFunctionsCompleted -= RpcVehicleFunctionsCompleted;
+                            RpcClient.CallbackHandler.UpdateStatus -= RpcUpdateStatus;
                             RpcClient.CallbackHandler.UpdateProgress -= RpcUpdateProgress;
                             RpcClient.CallbackHandler.UpdateOptions -= RpcUpdateOptions;
                             RpcClient.CallbackHandler.UpdateOptionSelections -= RpcUpdateOptionSelections;
