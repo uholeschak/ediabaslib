@@ -44,12 +44,9 @@ namespace BMW.Rheingold.Psdz
                     Log.Debug(Log.CurrentMethod(), "No appropriate session was found, so creating a new one.");
                     sessionData = new SessionData
                     {
-                        IstaProcessIds = new List<int>
-                        {
-                            //[-]process.Id
-                            //[+]processId
-                            processId
-                        },
+                        //[-]IstaProcessIds = new List<int>{process.Id},
+                        //[+]IstaProcessIds = new List<int>{processId},
+                        IstaProcessIds = new List<int> { processId },
                         PsdzWebServicePort = ConfigSettings.getConfigint("BMW.Rheingold.Programming.PsdzWebservice.Port", -1)
                     };
                     if (sessionData.PsdzWebServicePort == -1)
