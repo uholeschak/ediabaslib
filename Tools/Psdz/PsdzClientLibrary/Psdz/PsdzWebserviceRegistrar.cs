@@ -46,7 +46,9 @@ namespace BMW.Rheingold.Psdz
                     {
                         IstaProcessIds = new List<int>
                         {
-                            process.Id
+                            //[-]process.Id
+                            //[+]processId
+                            processId
                         },
                         PsdzWebServicePort = ConfigSettings.getConfigint("BMW.Rheingold.Programming.PsdzWebservice.Port", -1)
                     };
@@ -71,13 +73,19 @@ namespace BMW.Rheingold.Psdz
 
         public static bool StartAndRegisterWebserviceProcess(Process webserviceProcess)
         {
-            Process istaProcess = Process.GetCurrentProcess();
-            Log.Info(Log.CurrentMethod(), "Starting the process: \n{0} {1}\nISTA process: {2} ({3})", webserviceProcess.StartInfo.FileName, webserviceProcess.StartInfo.Arguments, istaProcess.ProcessName, istaProcess.Id);
+            //[-]Process istaProcess = Process.GetCurrentProcess();
+            //[-]Log.Info(Log.CurrentMethod(), "Starting the process: \n{0} {1}\nISTA process: {2} ({3})", webserviceProcess.StartInfo.FileName, webserviceProcess.StartInfo.Arguments, istaProcess.ProcessName, istaProcess.Id);
+            //[+]int processId = GetProcessId();
+            int processId = GetProcessId();
+            //[+]Log.Info(Log.CurrentMethod(), "Starting the process: \n{0} {1}\nISTA process: {2} ({3})", webserviceProcess.StartInfo.FileName, webserviceProcess.StartInfo.Arguments, processId);
+            Log.Info(Log.CurrentMethod(), "Starting the process: \n{0} {1}\nISTA process: {2} ({3})", webserviceProcess.StartInfo.FileName, webserviceProcess.StartInfo.Arguments, processId);
             bool configStringAsBoolean = ConfigSettings.getConfigStringAsBoolean("BMW.Rheingold.Programming.PsdzWebservice.SkipProcessStart");
             using (FileStream lockFileStream = GetReadWriteFileLock())
             {
                 List<SessionData> list = ReadSessionsFromFile(lockFileStream);
-                SessionData sessionData = list.First((SessionData session) => session.IstaProcessIds.Contains(istaProcess.Id));
+                //[-]SessionData sessionData = list.First((SessionData session) => session.IstaProcessIds.Contains(istaProcess.Id));
+                //[+]SessionData sessionData = list.First((SessionData session) => session.IstaProcessIds.Contains(processId));
+                SessionData sessionData = list.First((SessionData session) => session.IstaProcessIds.Contains(processId));
                 if (sessionData.Status != WebserviceSessionStatus.Created)
                 {
                     Log.Info(Log.CurrentMethod(), $"A webservice process has already been started, no need to start another. Webservice process: {sessionData.PsdzWebserviceProcessId}");
