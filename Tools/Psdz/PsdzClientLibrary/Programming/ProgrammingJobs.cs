@@ -300,6 +300,7 @@ namespace PsdzClient.Programming
 
         private static readonly ILog log = LogManager.GetLogger(typeof(ProgrammingJobs));
         public static bool LoggingInitialized { get; private set; }
+        public static int GlobalThreadContextId = 1;
 
         private OptionType[] _optionTypes =
         {
@@ -337,6 +338,7 @@ namespace PsdzClient.Programming
         private object _cacheLock = new object();
         private object _operationLock = new object();
         private object _optionsLock = new object();
+        public int ThreadContextId { get; private set; }
         public ProgrammingService2 ProgrammingService { get; private set; }
         public List<OptionsItem> SelectedOptions { get; set; }
         public bool DisableTalFlash { get; set; }
@@ -470,6 +472,10 @@ namespace PsdzClient.Programming
             ClientContext = new ClientContext();
             _dealerId = dealerId;
             _executionMode = executionMode;
+            lock (_contextLock)
+            {
+                ThreadContextId = GlobalThreadContextId++;
+            }
             ProgrammingService = null;
         }
 
