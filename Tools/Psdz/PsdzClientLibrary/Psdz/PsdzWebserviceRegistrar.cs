@@ -199,17 +199,23 @@ namespace BMW.Rheingold.Psdz
 
         public static WebserviceSessionStatus GetWebserviceStatus()
         {
-            Process process = Process.GetCurrentProcess();
+            //[-]Process process = Process.GetCurrentProcess();
+            //[+]int processId = GetProcessId();
+            int processId = GetProcessId();
             List<SessionData> source;
             using (FileStream lockFileStream = GetReadonlyFileLock())
             {
                 source = ReadSessionsFromFile(lockFileStream);
             }
 
-            IEnumerable<SessionData> source2 = source.Where((SessionData s) => s.IstaProcessIds.Contains(process.Id));
+            //[-]IEnumerable<SessionData> source2 = source.Where((SessionData s) => s.IstaProcessIds.Contains(process.Id));
+            //[+]IEnumerable<SessionData> source2 = source.Where((SessionData s) => s.IstaProcessIds.Contains(processId));
+            IEnumerable<SessionData> source2 = source.Where((SessionData s) => s.IstaProcessIds.Contains(processId));
             if (!source2.Any())
             {
-                throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
+                //[-]throw new InvalidOperationException($"No webservice session was registered for ISTA process {process.ProcessName} ({process.Id}).");
+                //[+]throw new InvalidOperationException($"No webservice session was registered for ISTA process ({processId}).");
+                throw new InvalidOperationException($"No webservice session was registered for ISTA process ({processId}).");
             }
 
             return source2.Single().Status;
