@@ -753,19 +753,7 @@ namespace WebPsdzClient.App_Data
                 UpdateCurrentOptions(swiRegisterEnum);
             };
 
-            RpcClient.CallbackHandler.ShowMessage += (sender, msgArgs) =>
-            {
-                try
-                {
-                    ShowMessageEvent(null, msgArgs.Message, msgArgs.OkBtn, false);
-                }
-                catch (Exception ex)
-                {
-                    log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
-                }
-                msgArgs.Result = true;
-            };
-
+            RpcClient.CallbackHandler.ShowMessage += RpcShowMessage;
             RpcClient.CallbackHandler.ShowMessageWait += RpcShowMessageWait;
             RpcClient.CallbackHandler.TelSendQueueSize += RpcTelSendQueueSize;
             RpcClient.CallbackHandler.ServiceInitialized += RpcServiceInitialized;
@@ -3364,6 +3352,19 @@ namespace WebPsdzClient.App_Data
             log.InfoFormat("RpcClientConnected: {0}", connected);
         }
 
+        private void RpcShowMessage(object sender, PsdzRpcClient.ShowMessageEventArgs msgArgs)
+        {
+            try
+            {
+                ShowMessageEvent(null, msgArgs.Message, msgArgs.OkBtn, false);
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
+            }
+            msgArgs.Result = true;
+        }
+
         private void RpcShowMessageWait(object sender, PsdzRpcClient.ShowMessageEventArgs msgArgs)
         {
             try
@@ -4002,6 +4003,7 @@ namespace WebPsdzClient.App_Data
                         RpcClient.ClientConnected -= RpcClientConnected;
                         if (RpcClient.CallbackHandler != null)
                         {
+                            RpcClient.CallbackHandler.ShowMessage -= RpcShowMessage;
                             RpcClient.CallbackHandler.ShowMessageWait -= RpcShowMessageWait;
                             RpcClient.CallbackHandler.TelSendQueueSize -= RpcTelSendQueueSize;
                             RpcClient.CallbackHandler.ServiceInitialized -= RpcServiceInitialized;
