@@ -47,7 +47,7 @@ namespace BMW.Rheingold.Psdz.Client
 
         static PsdzServiceStarter()
         {
-            string basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string basePath = PsdzWebserviceRegistrar.GetWritableBasePath();
             if (string.IsNullOrEmpty(basePath))
             {
                 basePath = Path.GetTempPath();
