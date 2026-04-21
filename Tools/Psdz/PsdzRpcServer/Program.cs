@@ -102,6 +102,15 @@ namespace PsdzRpcServer
                 }
 
                 Task serverTask = server.StartAsync(cts.Token);
+                serverTask.ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        Console.WriteLine($"Server error: {t.Exception?.GetBaseException().Message}");
+                        cts.Cancel();
+                    }
+                });
+
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);
 
                 // Beenden bei: ESC, Ctrl+C oder letzter Client getrennt
