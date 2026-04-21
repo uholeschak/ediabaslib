@@ -3283,8 +3283,11 @@ namespace WebPsdzClient.App_Data
             }
             catch (Exception ex)
             {
-                TaskActive = false;
                 log.ErrorFormat("RpcStartProgrammingCompleted Exception: {0}", ex.Message);
+            }
+            finally
+            {
+                TaskActive = false;
             }
         }
 
@@ -3304,8 +3307,11 @@ namespace WebPsdzClient.App_Data
             }
             catch (Exception ex)
             {
-                TaskActive = false;
                 log.ErrorFormat("RpcStopProgrammingCompleted Exception: {0}", ex.Message);
+            }
+            finally
+            {
+                TaskActive = false;
             }
         }
 
@@ -3331,8 +3337,11 @@ namespace WebPsdzClient.App_Data
             }
             catch (Exception ex)
             {
-                TaskActive = false;
                 log.ErrorFormat("RpcConnectVehicleCompleted Exception: {0}", ex.Message);
+            }
+            finally
+            {
+                TaskActive = false;
             }
         }
 
@@ -3352,8 +3361,11 @@ namespace WebPsdzClient.App_Data
             }
             catch (Exception ex)
             {
-                TaskActive = false;
                 log.ErrorFormat("RpcDisconnectVehicleCompleted Exception: {0}", ex.Message);
+            }
+            finally
+            {
+                TaskActive = false;
             }
         }
 
@@ -3367,8 +3379,11 @@ namespace WebPsdzClient.App_Data
             }
             catch (Exception ex)
             {
-                TaskActive = false;
                 log.ErrorFormat("RpcVehicleFunctionsCompleted Exception: {0}", ex.Message);
+            }
+            finally
+            {
+                TaskActive = false;
             }
         }
 
@@ -3439,6 +3454,7 @@ namespace WebPsdzClient.App_Data
             {
                 log.ErrorFormat("ShowMessage Exception: {0}", ex.Message);
             }
+
             msgArgs.Result = true;
         }
 
@@ -3527,7 +3543,8 @@ namespace WebPsdzClient.App_Data
                     return;
                 }
 
-                bool vehicleConnected = Task.Run(() => RpcClient.RpcService.IsVehicleConnected()).GetAwaiter().GetResult();
+                bool vehicleConnected =
+                    Task.Run(() => RpcClient.RpcService.IsVehicleConnected()).GetAwaiter().GetResult();
                 if (!vehicleConnected)
                 {
                     bool cleared = Task.Run(() => RpcClient.RpcService.ClearOptionsDict()).GetAwaiter().GetResult();
@@ -3545,14 +3562,14 @@ namespace WebPsdzClient.App_Data
                         SelectedSwiRegister = swiRegisterEnum.Value;
                     }
                 }
+
+                RefreshOptions = true;
+                UpdateDisplay();
             }
             catch (Exception ex)
             {
                 log.ErrorFormat("UpdateCurrentOptions Exception: {0}", ex.Message);
             }
-
-            RefreshOptions = true;
-            UpdateDisplay();
         }
 #else
         private void UpdateCurrentOptions(PsdzClient.PsdzDatabase.SwiRegisterEnum? swiRegisterEnum = null)
@@ -3576,15 +3593,15 @@ namespace WebPsdzClient.App_Data
                         SelectedSwiRegister = swiRegisterEnum.Value;
                     }
                 }
+
+                RefreshOptions = true;
+                UpdateDisplay();
             }
             catch (Exception ex)
             {
                 log.ErrorFormat("UpdateCurrentOptions Exception: {0}", ex.Message);
             }
-
-            RefreshOptions = true;
-            UpdateDisplay();
-        }
+}
 #endif
         private void UpdateProgress(int percent, bool marquee, string message = null)
         {
@@ -3611,46 +3628,54 @@ namespace WebPsdzClient.App_Data
 
         public string GetLicenseText()
         {
-            StringBuilder sb = new StringBuilder();
-            if (DeepObdVersion > 0)
+            try
             {
-                string adapterText;
-                if (!string.IsNullOrEmpty(AdapterSerial) && AdapterSerialValid)
+                StringBuilder sb = new StringBuilder();
+                if (DeepObdVersion > 0)
                 {
-                    adapterText = HttpContext.GetGlobalResourceObject("Global", "AdapterLicensed") as string ?? string.Empty;
+                    string adapterText;
+                    if (!string.IsNullOrEmpty(AdapterSerial) && AdapterSerialValid)
+                    {
+                        adapterText = HttpContext.GetGlobalResourceObject("Global", "AdapterLicensed") as string ?? string.Empty;
+                    }
+                    else
+                    {
+                        adapterText = HttpContext.GetGlobalResourceObject("Global", "AdapterNotLicensed") as string ?? string.Empty;
+                    }
+
+                    if (!string.IsNullOrEmpty(adapterText))
+                    {
+                        sb.Append(adapterText);
+                    }
+                }
+
+                string vehicleText;
+                if (LicenseValid)
+                {
+                    vehicleText = HttpContext.GetGlobalResourceObject("Global", "VehicleLicensed") as string ?? string.Empty;
                 }
                 else
                 {
-                    adapterText = HttpContext.GetGlobalResourceObject("Global", "AdapterNotLicensed") as string ?? string.Empty;
+                    vehicleText = HttpContext.GetGlobalResourceObject("Global", "VehicleNotLicensed") as string ?? string.Empty;
                 }
 
-                if (!string.IsNullOrEmpty(adapterText))
+                if (!string.IsNullOrEmpty(vehicleText))
                 {
-                    sb.Append(adapterText);
+                    if (sb.Length > 0)
+                    {
+                        sb.AppendLine();
+                    }
+                    sb.Append(vehicleText);
                 }
-            }
 
-            string vehicleText;
-            if (LicenseValid)
-            {
-                vehicleText = HttpContext.GetGlobalResourceObject("Global", "VehicleLicensed") as string ?? string.Empty;
+                log.InfoFormat("GetLicenseText: '{0}'", sb);
+                return sb.ToString();
             }
-            else
+            catch (Exception e)
             {
-                vehicleText = HttpContext.GetGlobalResourceObject("Global", "VehicleNotLicensed") as string ?? string.Empty;
+                log.ErrorFormat("GetLicenseText Exception: {0}", e.Message);
+                return string.Empty;
             }
-
-            if (!string.IsNullOrEmpty(vehicleText))
-            {
-                if (sb.Length > 0)
-                {
-                    sb.AppendLine();
-                }
-                sb.Append(vehicleText);
-            }
-
-            log.InfoFormat("GetLicenseText: '{0}'", sb);
-            return sb.ToString();
         }
 
         public bool Cancel()
