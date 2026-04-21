@@ -79,16 +79,6 @@ namespace PsdzRpcServer
                 PipeAccessRights.ReadWrite,
                 AccessControlType.Allow));
 
-            pipeSecurity.AddAccessRule(new PipeAccessRule(
-                new SecurityIdentifier(WellKnownSidType.LocalServiceSid, null),
-                PipeAccessRights.ReadWrite,
-                AccessControlType.Allow));
-
-            pipeSecurity.AddAccessRule(new PipeAccessRule(
-                new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null),
-                PipeAccessRights.ReadWrite,
-                AccessControlType.Allow));
-
 #if NET
             return NamedPipeServerStreamAcl.Create(
                 PsdzRpcServiceConstants.PipeName,
