@@ -88,7 +88,15 @@ namespace PsdzRpcServer
                 };
 
                 Console.WriteLine("Starting PsdzJsonRpcServer...");
-                Console.WriteLine("Server will stop when the last client disconnects or ESC is pressed.");
+                if (keepRunning)
+                {
+                    Console.WriteLine("Server will keep running until ESC is pressed.");
+                }
+                else
+                {
+                    Console.WriteLine("Server will stop when the last client disconnects or ESC is pressed.");
+                }
+
                 Task serverTask = server.StartAsync(cts.Token);
                 Task keyTask = WaitForEscapeKeyAsync(cts.Token);
 
@@ -132,21 +140,47 @@ namespace PsdzRpcServer
 
         private static async Task WaitForEscapeKeyAsync(CancellationToken ct)
         {
+            bool consoleAvailable = IsConsoleAvailable();
+
             while (!ct.IsCancellationRequested)
             {
-                if (Console.KeyAvailable)
+                if (consoleAvailable)
                 {
-                    ConsoleKeyInfo key = Console.ReadKey(intercept: true);
-                    if (key.Key == ConsoleKey.Escape)
+                    try
                     {
-                        if (_verbosity <= Options.VerbosityOption.Important)
+                        if (Console.KeyAvailable)
                         {
-                            Console.WriteLine("ESC pressed, stopping server...");
+                            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+                            if (key.Key == ConsoleKey.Escape)
+                            {
+                                if (_verbosity <= Options.VerbosityOption.Important)
+                                {
+                                    Console.WriteLine("ESC pressed, stopping server...");
+                                }
+                                return;
+                            }
                         }
-                        return;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error reading console input: {ex.Message}");
                     }
                 }
+
                 await Task.Delay(100, ct).ConfigureAwait(false);
+            }
+        }
+
+        private static bool IsConsoleAvailable()
+        {
+            try
+            {
+                _ = Console.KeyAvailable;
+                return true;
+            }
+            catch (InvalidOperationException)
+            {
+                return false;
             }
         }
     }
