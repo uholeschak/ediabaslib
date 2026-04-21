@@ -3374,12 +3374,26 @@ namespace WebPsdzClient.App_Data
 
         private void RpcUpdateStatus(object sender, string message)
         {
-            UpdateStatus(message);
+            try
+            {
+                UpdateStatus(message);
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("RpcUpdateStatus Exception: {0}", ex.Message);
+            }
         }
 
         private void RpcUpdateProgress(object sender, PsdzRpcClient.ProgressEventArgs progressArgs)
         {
-            UpdateProgress(progressArgs.Percent, progressArgs.Marquee, progressArgs.Message);
+            try
+            {
+                UpdateProgress(progressArgs.Percent, progressArgs.Marquee, progressArgs.Message);
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("RpcUpdateProgress Exception: {0}", ex.Message);
+            }
         }
 
         private async void RpcUpdateOptions(object sender, EventArgs args)
@@ -3405,7 +3419,14 @@ namespace WebPsdzClient.App_Data
 
         private void RpcUpdateOptionSelections(object sender, PsdzRpcServer.Shared.PsdzRpcSwiRegisterEnum? swiRegisterEnum)
         {
-            UpdateCurrentOptions(swiRegisterEnum);
+            try
+            {
+                UpdateCurrentOptions(swiRegisterEnum);
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("UpdateOptionSelections Exception: {0}", ex.Message);
+            }
         }
 
         private void RpcShowMessage(object sender, PsdzRpcClient.ShowMessageEventArgs msgArgs)
@@ -3442,7 +3463,15 @@ namespace WebPsdzClient.App_Data
 
         private void RpcTelSendQueueSize(object sender, PsdzRpcClient.TelSendQueueSizeEventArgs queueArgs)
         {
-            queueArgs.Result = TelSendQueueSizeEvent();
+            try
+            {
+                queueArgs.Result = TelSendQueueSizeEvent();
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("RpcTelSendQueueSize Exception: {0}", ex.Message);
+                queueArgs.Result = -1;
+            }
         }
 
         private async void RpcServiceInitialized(object sender, PsdzRpcClient.ServiceInitializedEventArgs serviceArgs)
