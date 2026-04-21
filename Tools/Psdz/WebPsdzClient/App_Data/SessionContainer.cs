@@ -3270,59 +3270,91 @@ namespace WebPsdzClient.App_Data
 
         private void RpcStartProgrammingCompleted(object sender, bool success)
         {
-            if (!success)
+            try
             {
-                ReportError("StartProgramming failed");
-            }
+                if (!success)
+                {
+                    ReportError("StartProgramming failed");
+                }
 
-            TaskActive = false;
-            UpdateCurrentOptions();
-            UpdateDisplay();
+                TaskActive = false;
+                UpdateCurrentOptions();
+                UpdateDisplay();
+            }
+            catch (Exception ex)
+            {
+                TaskActive = false;
+                log.ErrorFormat("RpcStartProgrammingCompleted Exception: {0}", ex.Message);
+            }
         }
 
         private void RpcStopProgrammingCompleted(object sender, bool success)
         {
-            if (!success)
+            try
             {
-                ReportError("StopProgramming failed");
-            }
+                if (!success)
+                {
+                    ReportError("StopProgramming failed");
+                }
 
-            TaskActive = false;
-            StopTcpListener();
-            UpdateCurrentOptions();
-            UpdateDisplay();
+                TaskActive = false;
+                StopTcpListener();
+                UpdateCurrentOptions();
+                UpdateDisplay();
+            }
+            catch (Exception ex)
+            {
+                TaskActive = false;
+                log.ErrorFormat("RpcStopProgrammingCompleted Exception: {0}", ex.Message);
+            }
         }
 
         private void RpcConnectVehicleCompleted(object sender, PsdzRpcClient.ConnectVehicleEventArgs connectArgs)
         {
-            if (connectArgs.Success)
+            try
             {
-                DetectedVin = connectArgs.Vin;
-                ProcessLicense();
-                AppendStatusTextLine(GetLicenseText());
-            }
-            else
-            {
-                ReportError("ConnectVehicle failed");
-                StopTcpListener();
-            }
+                if (connectArgs.Success)
+                {
+                    DetectedVin = connectArgs.Vin;
+                    ProcessLicense();
+                    AppendStatusTextLine(GetLicenseText());
+                }
+                else
+                {
+                    ReportError("ConnectVehicle failed");
+                    StopTcpListener();
+                }
 
-            TaskActive = false;
-            UpdateCurrentOptions();
-            UpdateDisplay();
+                TaskActive = false;
+                UpdateCurrentOptions();
+                UpdateDisplay();
+            }
+            catch (Exception ex)
+            {
+                TaskActive = false;
+                log.ErrorFormat("RpcConnectVehicleCompleted Exception: {0}", ex.Message);
+            }
         }
 
         private void RpcDisconnectVehicleCompleted(object sender, bool success)
         {
-            if (!success)
+            try
             {
-                ReportError("DisconnectVehicle failed");
-            }
+                if (!success)
+                {
+                    ReportError("DisconnectVehicle failed");
+                }
 
-            TaskActive = false;
-            StopTcpListener();
-            UpdateCurrentOptions();
-            UpdateDisplay();
+                TaskActive = false;
+                StopTcpListener();
+                UpdateCurrentOptions();
+                UpdateDisplay();
+            }
+            catch (Exception ex)
+            {
+                TaskActive = false;
+                log.ErrorFormat("RpcDisconnectVehicleCompleted Exception: {0}", ex.Message);
+            }
         }
 
         private void RpcVehicleFunctionsCompleted(object sender, PsdzRpcClient.VehicleFunctionsEventArgs vehicleArgs)
