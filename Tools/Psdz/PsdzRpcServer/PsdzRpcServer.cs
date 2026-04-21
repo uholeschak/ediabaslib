@@ -71,6 +71,24 @@ namespace PsdzRpcServer
                 new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null),
                 PipeAccessRights.ReadWrite,
                 AccessControlType.Allow));
+
+            // IIS App Pool Identitäten sind NICHT in AuthenticatedUsers enthalten
+            // → Everyone (World) hinzufügen für lokale IPC
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                new SecurityIdentifier(WellKnownSidType.WorldSid, null),
+                PipeAccessRights.ReadWrite,
+                AccessControlType.Allow));
+
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                new SecurityIdentifier(WellKnownSidType.LocalServiceSid, null),
+                PipeAccessRights.ReadWrite,
+                AccessControlType.Allow));
+
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null),
+                PipeAccessRights.ReadWrite,
+                AccessControlType.Allow));
+
 #if NET
             return NamedPipeServerStreamAcl.Create(
                 PsdzRpcServiceConstants.PipeName,
