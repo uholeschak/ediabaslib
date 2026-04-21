@@ -102,7 +102,7 @@ namespace PsdzRpcServer
                 }
 
                 Task serverTask = server.StartAsync(cts.Token);
-                serverTask.ContinueWith(t =>
+                _ = serverTask.ContinueWith(t =>
                 {
                     if (t.IsFaulted)
                     {
