@@ -35,6 +35,7 @@ namespace PsdzRpcServer
         }
 
         static Options.VerbosityOption _verbosity = Options.VerbosityOption.Important;
+        static bool consoleAvailable = true;
 
         static async Task<int> Main(string[] args)
         {
@@ -74,6 +75,9 @@ namespace PsdzRpcServer
             {
                 return 1;
             }
+
+            consoleAvailable = IsConsoleAvailable();
+            Console.WriteLine($"Console available: {consoleAvailable}");
 
             using CancellationTokenSource cts = new CancellationTokenSource();
             PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out);
@@ -140,8 +144,6 @@ namespace PsdzRpcServer
 
         private static async Task WaitForEscapeKeyAsync(CancellationToken ct)
         {
-            bool consoleAvailable = IsConsoleAvailable();
-
             while (!ct.IsCancellationRequested)
             {
                 if (consoleAvailable)
