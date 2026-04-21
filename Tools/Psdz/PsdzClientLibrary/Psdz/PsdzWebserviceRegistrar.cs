@@ -239,8 +239,8 @@ namespace BMW.Rheingold.Psdz
         {
             //[-] sessionDataFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ISTA", "PsdzWebserviceSessions.json");
             //[-] lockFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ISTA", "PsdzWebserviceSessions.lck");
-            //[+] string basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            string basePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            //[+] string basePath = GetWritableBasePath();
+            string basePath = GetWritableBasePath();
             //[+] if (string.IsNullOrEmpty(basePath))
             if (string.IsNullOrEmpty(basePath))
             //[+] {
@@ -355,6 +355,46 @@ namespace BMW.Rheingold.Psdz
             catch (Exception ex)
             {
                 Log.ErrorException(Log.CurrentMethod(), "Failed to clear PSdZ Webservice Session Data file! {0}", ex);
+            }
+        }
+
+        [PreserveSource(Added = true)]
+        public static string GetWritableBasePath()
+        {
+            // Zuerst ApplicationData versuchen und auf Schreibbarkeit prüfen
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            if (!string.IsNullOrEmpty(appData) && IsDirectoryWritable(appData))
+            {
+                return appData;
+            }
+
+            // CommonApplicationData (C:\ProgramData) - IIS App Pools haben i.d.R. Zugriff
+            string commonAppData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+            if (!string.IsNullOrEmpty(commonAppData) && IsDirectoryWritable(commonAppData))
+            {
+                Log.Info(Log.CurrentMethod(), "Using CommonApplicationData as base path: {0}", commonAppData);
+                return commonAppData;
+            }
+
+            // Letzter Fallback: Temp-Verzeichnis
+            string tempPath = Path.GetTempPath();
+            Log.Info(Log.CurrentMethod(), "Using TempPath as base path: {0}", tempPath);
+            return tempPath;
+        }
+
+        [PreserveSource(Added = true)]
+        public static bool IsDirectoryWritable(string dirPath)
+        {
+            try
+            {
+                string testFile = Path.Combine(dirPath, Path.GetRandomFileName());
+                File.WriteAllText(testFile, string.Empty);
+                File.Delete(testFile);
+                return true;
+            }
+            catch
+            {
+                return false;
             }
         }
 
