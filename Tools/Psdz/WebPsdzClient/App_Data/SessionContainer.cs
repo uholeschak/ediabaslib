@@ -3496,19 +3496,24 @@ namespace WebPsdzClient.App_Data
         {
             try
             {
+                log.InfoFormat("ServiceInitialized");
+
                 if (serviceArgs.LoggingInitialized)
                 {
+                    log.ErrorFormat("ServiceInitialized Logging is already initialized");
                     return;
                 }
 
                 if (RpcClient.RpcService == null)
                 {
+                    log.ErrorFormat("ServiceInitialized RpcService is null");
                     return;
                 }
 
                 string logFile = Global.ServerLogFile;
                 if (string.IsNullOrEmpty(logFile))
                 {
+                    log.ErrorFormat("ServiceInitialized logFile is null or empty");
                     return;
                 }
 
