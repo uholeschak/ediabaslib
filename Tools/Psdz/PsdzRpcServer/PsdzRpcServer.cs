@@ -3,6 +3,8 @@ using StreamJsonRpc;
 using System;
 using System.IO;
 using System.IO.Pipes;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,12 +35,7 @@ namespace PsdzRpcServer
         {
             while (!ct.IsCancellationRequested)
             {
-                NamedPipeServerStream pipeServer = new NamedPipeServerStream(
-                    PsdzRpcServiceConstants.PipeName,
-                    PipeDirection.InOut,
-                    NamedPipeServerStream.MaxAllowedServerInstances,
-                    PipeTransmissionMode.Byte,
-                    PipeOptions.Asynchronous);
+                NamedPipeServerStream pipeServer = CreatePipeServer();
 
                 try
                 {
@@ -58,6 +55,68 @@ namespace PsdzRpcServer
                     break;
                 }
             }
+        }
+
+        private NamedPipeServerStream CreatePipeServer()
+        {
+#if NET
+            PipeSecurity pipeSecurity = new PipeSecurity();
+
+            // Aktueller Benutzer (Server-Prozess) darf alles
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                WindowsIdentity.GetCurrent().User,
+                PipeAccessRights.FullControl,
+                AccessControlType.Allow));
+
+            // Alle authentifizierten Benutzer (inkl. IIS App Pool) dürfen lesen/schreiben
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null),
+                PipeAccessRights.ReadWrite,
+                AccessControlType.Allow));
+
+            // Optional: Lokaler Dienst und Netzwerkdienst
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                new SecurityIdentifier(WellKnownSidType.LocalServiceSid, null),
+                PipeAccessRights.ReadWrite,
+                AccessControlType.Allow));
+
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null),
+                PipeAccessRights.ReadWrite,
+                AccessControlType.Allow));
+
+            return NamedPipeServerStreamAcl.Create(
+                PsdzRpcServiceConstants.PipeName,
+                PipeDirection.InOut,
+                NamedPipeServerStream.MaxAllowedServerInstances,
+                PipeTransmissionMode.Byte,
+                PipeOptions.Asynchronous,
+                inBufferSize: 0,
+                outBufferSize: 0,
+                pipeSecurity);
+#else
+            PipeSecurity pipeSecurity = new PipeSecurity();
+
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                WindowsIdentity.GetCurrent().User,
+                PipeAccessRights.FullControl,
+                AccessControlType.Allow));
+
+            pipeSecurity.AddAccessRule(new PipeAccessRule(
+                new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null),
+                PipeAccessRights.ReadWrite,
+                AccessControlType.Allow));
+
+            return new NamedPipeServerStream(
+                PsdzRpcServiceConstants.PipeName,
+                PipeDirection.InOut,
+                NamedPipeServerStream.MaxAllowedServerInstances,
+                PipeTransmissionMode.Byte,
+                PipeOptions.Asynchronous,
+                inBufferSize: 0,
+                outBufferSize: 0,
+                pipeSecurity);
+#endif
         }
 
         private async Task HandleClientAsync(NamedPipeServerStream pipeServer)
