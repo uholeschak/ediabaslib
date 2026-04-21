@@ -59,7 +59,6 @@ namespace PsdzRpcServer
 
         private NamedPipeServerStream CreatePipeServer()
         {
-#if NET
             PipeSecurity pipeSecurity = new PipeSecurity();
 
             // Aktueller Benutzer (Server-Prozess) darf alles
@@ -68,23 +67,11 @@ namespace PsdzRpcServer
                 PipeAccessRights.FullControl,
                 AccessControlType.Allow));
 
-            // Alle authentifizierten Benutzer (inkl. IIS App Pool) dürfen lesen/schreiben
             pipeSecurity.AddAccessRule(new PipeAccessRule(
                 new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null),
                 PipeAccessRights.ReadWrite,
                 AccessControlType.Allow));
-
-            // Optional: Lokaler Dienst und Netzwerkdienst
-            pipeSecurity.AddAccessRule(new PipeAccessRule(
-                new SecurityIdentifier(WellKnownSidType.LocalServiceSid, null),
-                PipeAccessRights.ReadWrite,
-                AccessControlType.Allow));
-
-            pipeSecurity.AddAccessRule(new PipeAccessRule(
-                new SecurityIdentifier(WellKnownSidType.NetworkServiceSid, null),
-                PipeAccessRights.ReadWrite,
-                AccessControlType.Allow));
-
+#if NET
             return NamedPipeServerStreamAcl.Create(
                 PsdzRpcServiceConstants.PipeName,
                 PipeDirection.InOut,
@@ -95,18 +82,6 @@ namespace PsdzRpcServer
                 outBufferSize: 0,
                 pipeSecurity);
 #else
-            PipeSecurity pipeSecurity = new PipeSecurity();
-
-            pipeSecurity.AddAccessRule(new PipeAccessRule(
-                WindowsIdentity.GetCurrent().User,
-                PipeAccessRights.FullControl,
-                AccessControlType.Allow));
-
-            pipeSecurity.AddAccessRule(new PipeAccessRule(
-                new SecurityIdentifier(WellKnownSidType.AuthenticatedUserSid, null),
-                PipeAccessRights.ReadWrite,
-                AccessControlType.Allow));
-
             return new NamedPipeServerStream(
                 PsdzRpcServiceConstants.PipeName,
                 PipeDirection.InOut,
