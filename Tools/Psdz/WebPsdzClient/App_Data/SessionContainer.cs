@@ -3359,9 +3359,17 @@ namespace WebPsdzClient.App_Data
 
         private void RpcVehicleFunctionsCompleted(object sender, PsdzRpcClient.VehicleFunctionsEventArgs vehicleArgs)
         {
-            TaskActive = false;
-            UpdateCurrentOptions();
-            UpdateDisplay();
+            try
+            {
+                TaskActive = false;
+                UpdateCurrentOptions();
+                UpdateDisplay();
+            }
+            catch (Exception ex)
+            {
+                TaskActive = false;
+                log.ErrorFormat("RpcVehicleFunctionsCompleted Exception: {0}", ex.Message);
+            }
         }
 
         private void RpcUpdateStatus(object sender, string message)
