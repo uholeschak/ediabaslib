@@ -104,17 +104,14 @@ public class PsdzRpcServerStarter
             WorkingDirectory = Path.GetDirectoryName(serverExeFullPath) ?? Environment.CurrentDirectory,
         };
 
+        processStartInfo.UseShellExecute = false;
+        processStartInfo.CreateNoWindow = windowStyle == ProcessWindowStyle.Hidden || windowStyle == ProcessWindowStyle.Minimized;
+        processStartInfo.LoadUserProfile = true;
+
         if (hasCredentials)
         {
-            processStartInfo.UseShellExecute = false;
-            processStartInfo.CreateNoWindow = windowStyle == ProcessWindowStyle.Hidden || windowStyle == ProcessWindowStyle.Minimized;
             processStartInfo.UserName = userName;
             processStartInfo.Password = CreateSecureString(password);
-        }
-        else
-        {
-            processStartInfo.UseShellExecute = true;
-            processStartInfo.WindowStyle = windowStyle;
         }
 
         Process process = Process.Start(processStartInfo);
