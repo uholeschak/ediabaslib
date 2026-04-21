@@ -377,197 +377,211 @@ namespace PsdzRpcServer
 
         private List<PsdzRpcOptionItem> GetSelectedOptionsInternal(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
-            List<PsdzRpcOptionItem> options = new List<PsdzRpcOptionItem>();
-            if (_programmingJobs.ProgrammingService == null || _programmingJobs.PsdzContext?.Connection == null)
+            try
             {
-                return options;
-            }
-
-            bool replacement = false;
-            if (swiRegisterEnum.HasValue)
-            {
-                switch (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
+                List<PsdzRpcOptionItem> options = new List<PsdzRpcOptionItem>();
+                if (_programmingJobs.ProgrammingService == null || _programmingJobs.PsdzContext?.Connection == null)
                 {
-                    case PsdzDatabase.SwiRegisterGroup.HwDeinstall:
-                    case PsdzDatabase.SwiRegisterGroup.HwInstall:
-                        replacement = true;
-                        break;
+                    return options;
                 }
-            }
 
-            List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
-            List<PsdzDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(_programmingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
-            Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
-            if (optionsDict != null && _programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
-            {
-                if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                bool replacement = false;
+                if (swiRegisterEnum.HasValue)
                 {
-                    foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
+                    switch (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum.Value))
                     {
-                        bool enabled = true;
-                        bool selected = false;
-                        bool addItem = true;
-                        int selectIndex = _programmingJobs.SelectedOptions.IndexOf(optionsItem);
-                        if (selectIndex >= 0)
+                        case PsdzDatabase.SwiRegisterGroup.HwDeinstall:
+                        case PsdzDatabase.SwiRegisterGroup.HwInstall:
+                            replacement = true;
+                            break;
+                    }
+                }
+
+                List<PsdzDatabase.SwiAction> selectedSwiActions = GetSelectedSwiActions();
+                List<PsdzDatabase.SwiAction> linkedSwiActions = _programmingJobs.ProgrammingService.PsdzDatabase.ReadLinkedSwiActions(_programmingJobs.PsdzContext?.VecInfo, selectedSwiActions, null);
+                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+                if (optionsDict != null && _programmingJobs.SelectedOptions != null && swiRegisterEnum.HasValue)
+                {
+                    if (optionsDict.TryGetValue(swiRegisterEnum.Value, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                    {
+                        foreach (ProgrammingJobs.OptionsItem optionsItem in optionsItems.OrderBy(x => x.ToString()))
                         {
-                            if (replacement)
+                            bool enabled = true;
+                            bool selected = false;
+                            bool addItem = true;
+                            int selectIndex = _programmingJobs.SelectedOptions.IndexOf(optionsItem);
+                            if (selectIndex >= 0)
                             {
-                                selected = true;
-                            }
-                            else
-                            {
-                                if (selectIndex == _programmingJobs.SelectedOptions.Count - 1)
+                                if (replacement)
                                 {
                                     selected = true;
                                 }
                                 else
                                 {
-                                    enabled = false;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (replacement)
-                            {
-                                if (optionsItem.EcuInfo == null)
-                                {
-                                    addItem = false;
+                                    if (selectIndex == _programmingJobs.SelectedOptions.Count - 1)
+                                    {
+                                        selected = true;
+                                    }
+                                    else
+                                    {
+                                        enabled = false;
+                                    }
                                 }
                             }
                             else
                             {
-                                if (optionsItem.SwiAction != null)
+                                if (replacement)
                                 {
-                                    if (linkedSwiActions != null &&
-                                        linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
+                                    if (optionsItem.EcuInfo == null)
                                     {
                                         addItem = false;
                                     }
-                                    else
+                                }
+                                else
+                                {
+                                    if (optionsItem.SwiAction != null)
                                     {
-                                        if (!_programmingJobs.ProgrammingService.PsdzDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext?.VecInfo, null))
+                                        if (linkedSwiActions != null &&
+                                            linkedSwiActions.Any(x => string.Compare(x.Id, optionsItem.SwiAction.Id, StringComparison.OrdinalIgnoreCase) == 0))
                                         {
                                             addItem = false;
+                                        }
+                                        else
+                                        {
+                                            if (!_programmingJobs.ProgrammingService.PsdzDatabase.EvaluateXepRulesById(optionsItem.SwiAction.Id, _programmingJobs.PsdzContext?.VecInfo, null))
+                                            {
+                                                addItem = false;
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        if (!_programmingJobs.IsOptionsItemEnabled(optionsItem))
-                        {
-                            if (selected)
+                            if (!_programmingJobs.IsOptionsItemEnabled(optionsItem))
                             {
-                                enabled = false;
+                                if (selected)
+                                {
+                                    enabled = false;
+                                }
+                                else
+                                {
+                                    addItem = false;
+                                }
                             }
-                            else
-                            {
-                                addItem = false;
-                            }
-                        }
 
-                        if (addItem)
-                        {
-                            options.Add(new PsdzRpcOptionItem(MapSwiRegisterEnum(optionsItem.SwiRegisterEnum), optionsItem.Id, optionsItem.ToString(), enabled, selected));
+                            if (addItem)
+                            {
+                                options.Add(new PsdzRpcOptionItem(MapSwiRegisterEnum(optionsItem.SwiRegisterEnum), optionsItem.Id, optionsItem.ToString(), enabled, selected));
+                            }
                         }
                     }
                 }
-            }
 
-            return options;
+                return options;
+            }
+            catch (Exception)
+            {
+                return new List<PsdzRpcOptionItem>();
+            }
         }
 
         private bool SelectOptionInternal(PsdzRpcOptionItem optionItem, bool select)
         {
-            if (_programmingJobs?.SelectedOptions == null)
+            try
             {
-                return false;
-            }
+                if (_programmingJobs?.SelectedOptions == null)
+                {
+                    return false;
+                }
 
-            if (optionItem == null)
-            {
-                _programmingJobs.SelectedOptions.Clear();
-                return true;
-            }
-
-            Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
-            PsdzDatabase.SwiRegisterEnum swiRegisterEnum = MapSwiRegisterEnum(optionItem.SwiRegisterEnum);
-            if (_programmingJobs.SelectedOptions.Count > 0)
-            {
-                PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
-                if (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
+                if (optionItem == null)
                 {
                     _programmingJobs.SelectedOptions.Clear();
+                    return true;
                 }
-            }
 
-            if (!optionsDict.TryGetValue(swiRegisterEnum, out List<ProgrammingJobs.OptionsItem> optionsItems))
-            {
-                return false;
-            }
-
-            ProgrammingJobs.OptionsItem optionsItem = optionsItems.FirstOrDefault(x => string.Compare(x.Id, optionItem.Id, StringComparison.OrdinalIgnoreCase) == 0);
-            if (optionsItem == null)
-            {
-                return false;
-            }
-
-            if (!optionItem.Enabled)
-            {
-                return false;
-            }
-
-            bool modified = false;
-            if (_programmingJobs.SelectedOptions != null)
-            {
-                List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, optionsItems);
-                if (select)
+                Dictionary<PsdzDatabase.SwiRegisterEnum, List<ProgrammingJobs.OptionsItem>> optionsDict = _programmingJobs.OptionsDict;
+                PsdzDatabase.SwiRegisterEnum swiRegisterEnum = MapSwiRegisterEnum(optionItem.SwiRegisterEnum);
+                if (_programmingJobs.SelectedOptions.Count > 0)
                 {
-                    if (!_programmingJobs.SelectedOptions.Contains(optionsItem))
+                    PsdzDatabase.SwiRegisterEnum swiRegisterEnumCurrent = _programmingJobs.SelectedOptions[0].SwiRegisterEnum;
+                    if (PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnum) != PsdzDatabase.GetSwiRegisterGroup(swiRegisterEnumCurrent))
                     {
-                        _programmingJobs.SelectedOptions.Add(optionsItem);
+                        _programmingJobs.SelectedOptions.Clear();
                     }
+                }
 
-                    if (combinedOptionsItems != null)
+                if (!optionsDict.TryGetValue(swiRegisterEnum, out List<ProgrammingJobs.OptionsItem> optionsItems))
+                {
+                    return false;
+                }
+
+                ProgrammingJobs.OptionsItem optionsItem = optionsItems.FirstOrDefault(x => string.Compare(x.Id, optionItem.Id, StringComparison.OrdinalIgnoreCase) == 0);
+                if (optionsItem == null)
+                {
+                    return false;
+                }
+
+                if (!optionItem.Enabled)
+                {
+                    return false;
+                }
+
+                bool modified = false;
+                if (_programmingJobs.SelectedOptions != null)
+                {
+                    List<ProgrammingJobs.OptionsItem> combinedOptionsItems = _programmingJobs.GetCombinedOptionsItems(optionsItem, optionsItems);
+                    if (select)
                     {
-                        foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                        if (!_programmingJobs.SelectedOptions.Contains(optionsItem))
                         {
-                            if (!_programmingJobs.SelectedOptions.Contains(combinedItem))
+                            _programmingJobs.SelectedOptions.Add(optionsItem);
+                        }
+
+                        if (combinedOptionsItems != null)
+                        {
+                            foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
                             {
-                                _programmingJobs.SelectedOptions.Add(combinedItem);
+                                if (!_programmingJobs.SelectedOptions.Contains(combinedItem))
+                                {
+                                    _programmingJobs.SelectedOptions.Add(combinedItem);
+                                }
                             }
                         }
                     }
-                }
-                else
-                {
-                    _programmingJobs.SelectedOptions.Remove(optionsItem);
-
-                    if (combinedOptionsItems != null)
+                    else
                     {
-                        foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                        _programmingJobs.SelectedOptions.Remove(optionsItem);
+
+                        if (combinedOptionsItems != null)
                         {
-                            _programmingJobs.SelectedOptions.Remove(combinedItem);
+                            foreach (ProgrammingJobs.OptionsItem combinedItem in combinedOptionsItems)
+                            {
+                                _programmingJobs.SelectedOptions.Remove(combinedItem);
+                            }
                         }
                     }
+
+                    modified = true;
                 }
 
-                modified = true;
-            }
-
-            if (modified)
-            {
-                PsdzContext psdzContext = _programmingJobs.PsdzContext;
-                if (psdzContext?.Connection != null)
+                if (modified)
                 {
-                    psdzContext.Tal = null;
+                    PsdzContext psdzContext = _programmingJobs.PsdzContext;
+                    if (psdzContext?.Connection != null)
+                    {
+                        psdzContext.Tal = null;
+                    }
+
+                    _programmingJobs.UpdateTargetFa();
                 }
 
-                _programmingJobs.UpdateTargetFa();
+                return true;
             }
-
-            return true;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         private List<PsdzDatabase.SwiAction> GetSelectedSwiActions()
