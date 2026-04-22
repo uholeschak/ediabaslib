@@ -139,6 +139,7 @@ if ($seServiceLogon) {
 }
 Remove-Item $tempFile -ErrorAction SilentlyContinue
 Remove-Item "secedit.sdb" -ErrorAction SilentlyContinue
+Remove-Item "secedit.jfm" -ErrorAction SilentlyContinue
 
 Write-Host ""
 Write-Host "Service '$ServiceName' registered successfully." -ForegroundColor Green
