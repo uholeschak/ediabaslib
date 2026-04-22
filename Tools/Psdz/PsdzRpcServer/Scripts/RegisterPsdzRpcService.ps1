@@ -14,7 +14,10 @@ param(
     [string]$ServerExe = "C:\Program Files\PsdzRpcServer\PsdzRpcServer.exe",
 
     [Parameter(Mandatory = $false)]
-    [string]$NssmExe = "nssm.exe"
+    [string]$NssmExe = "nssm.exe",
+
+    [Parameter(Mandatory = $false)]
+    [switch]$KeepRunning
 )
 
 $ServiceName = "PsdzRpcServer"
@@ -77,35 +80,13 @@ if ($existing) {
 
 # --- Register with NSSM ---
 Write-Host "Registering service '$ServiceName' with NSSM..."
-Write-Host "  Exe  : $ServerExe"
-Write-Host "  User : $UserName"
-Write-Host "  Start: Demand (manual)"
+Write-Host "  Exe        : $ServerExe"
+Write-Host "  User       : $UserName"
+Write-Host "  Start      : Demand (manual)"
+Write-Host "  KeepRunning: $KeepRunning"
 
-# --- Create log directory ---
-$logDir = "$env:ProgramData\ISTA\logs"
-Write-Host "Creating log directory: $logDir"
-New-Item -ItemType Directory -Force -Path $logDir | Out-Null
-
-# ".\user" in "COMPUTERNAME\user" umwandeln für FileSystemAccessRule
-$resolvedUser = $UserName -replace '^\.[\\\/]', "$env:COMPUTERNAME\"
-Write-Host "  Setting permissions for: $resolvedUser"
-
-try
-{
-    $acl = Get-Acl $logDir
-    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
-        $resolvedUser, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
-    $acl.SetAccessRule($rule)
-    Set-Acl $logDir $acl
-    Write-Host "  Log directory permissions set."
-}
-catch
-{
-    Write-Warning "Could not set permissions for '$resolvedUser': $_"
-    Write-Warning "Please set permissions manually on: $logDir"
-}
-
-& $NssmExe install $ServiceName $ServerExe "--keeprunning"
+$appArgs = if ($KeepRunning) { "--keeprunning" } else { "" }
+& $NssmExe install $ServiceName $ServerExe $appArgs
 & $NssmExe set $ServiceName AppDirectory (Split-Path $ServerExe)
 & $NssmExe set $ServiceName DisplayName $DisplayName
 & $NssmExe set $ServiceName Description $Description
