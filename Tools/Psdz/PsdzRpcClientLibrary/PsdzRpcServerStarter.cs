@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Security;
+using System.ServiceProcess;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -73,13 +74,70 @@ public class PsdzRpcServerStarter
     /// </summary>
     public bool StartServerIfNeeded(string serverExe, ProcessWindowStyle windowStyle, string userName, string password)
     {
-        // Prüfen ob der Server eventuell schon läuft (Pipe könnte noch nicht bereit sein)
         if (IsPipeAvailable())
         {
             _output?.WriteLine("Server pipe detected, server is already running.");
             return true;
         }
 
+        // Zuerst versuchen den Windows-Dienst zu starten
+        if (TryStartWindowsService("PsdzRpcServer"))
+        {
+            return true;
+        }
+
+        // Fallback: Prozess direkt starten
+        return StartServerProcess(serverExe, windowStyle, userName, password);
+    }
+
+    private bool TryStartWindowsService(string serviceName)
+    {
+        try
+        {
+            using ServiceController sc = new ServiceController(serviceName);
+            ServiceControllerStatus status = sc.Status;
+
+            if (status == ServiceControllerStatus.Running)
+            {
+                _output?.WriteLine($"Service '{serviceName}' is already running.");
+                return true;
+            }
+
+            if (status == ServiceControllerStatus.Stopped ||
+                status == ServiceControllerStatus.Paused)
+            {
+                _output?.WriteLine($"Starting service '{serviceName}'...");
+                sc.Start();
+                sc.WaitForStatus(
+                    ServiceControllerStatus.Running,
+                    TimeSpan.FromSeconds(30));
+                _output?.WriteLine($"Service '{serviceName}' started.");
+                return true;
+            }
+
+            _output?.WriteLine($"Service '{serviceName}' status: {status}");
+            return false;
+        }
+        catch (System.ServiceProcess.TimeoutException)
+        {
+            _output?.WriteLine($"Timeout waiting for service '{serviceName}' to start.");
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            // Dienst nicht installiert → Fallback auf direkten Prozessstart
+            _output?.WriteLine($"Service '{serviceName}' not installed, falling back to direct start.");
+            return false;
+        }
+        catch (Exception ex)
+        {
+            _output?.WriteLine($"TryStartWindowsService Exception: {ex.Message}");
+            return false;
+        }
+    }
+
+    private bool StartServerProcess(string serverExe, ProcessWindowStyle windowStyle, string userName, string password)
+    {
         if (string.IsNullOrEmpty(serverExe))
         {
             _output?.WriteLine("No server executable specified.");
