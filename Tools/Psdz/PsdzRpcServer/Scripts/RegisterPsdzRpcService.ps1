@@ -83,7 +83,19 @@ Write-Host "  Exe  : $ServerExe"
 Write-Host "  User : $UserName"
 Write-Host "  Start: Demand (manual)"
 
-New-Item -ItemType Directory -Force -Path "$env:ProgramData\ISTA\logs"
+# --- Create log directory ---
+$logDir = "$env:ProgramData\ISTA\logs"
+Write-Host "Creating log directory: $logDir"
+New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+
+# Benutzer braucht Schreibrecht auf Log-Verzeichnis
+$acl = Get-Acl $logDir
+$rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+    $UserName, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
+$acl.SetAccessRule($rule)
+Set-Acl $logDir $acl
+Write-Host "  Log directory permissions set for '$UserName'."
+
 
 & $NssmExe install $ServiceName $ServerExe "--keeprunning"
 & $NssmExe set $ServiceName AppDirectory (Split-Path $ServerExe)
@@ -91,8 +103,8 @@ New-Item -ItemType Directory -Force -Path "$env:ProgramData\ISTA\logs"
 & $NssmExe set $ServiceName Description $Description
 & $NssmExe set $ServiceName ObjectName $UserName $Password
 & $NssmExe set $ServiceName Start SERVICE_DEMAND_START
-& $NssmExe set $ServiceName AppStdout "$env:ProgramData\ISTA\logs\PsdzRpcServer.log"
-& $NssmExe set $ServiceName AppStderr "$env:ProgramData\ISTA\logs\PsdzRpcServer-error.log"
+& $NssmExe set $ServiceName AppStdout "$logDir\PsdzRpcServer.log"
+& $NssmExe set $ServiceName AppStderr "$logDir\PsdzRpcServer-error.log"
 & $NssmExe set $ServiceName AppRotateFiles 1
 & $NssmExe set $ServiceName AppRotateBytes 10485760
 
