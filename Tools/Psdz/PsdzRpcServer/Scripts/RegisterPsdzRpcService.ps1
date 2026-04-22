@@ -1,18 +1,6 @@
 <#
 .SYNOPSIS
-    Registers PsdzRpcServer.exe as a Windows Service (start on demand).
-
-.PARAMETER UserName
-    The user account to run the service (e.g. ".\serviceUser" or "DOMAIN\user").
-
-.PARAMETER Password
-    The password for the user account.
-
-.PARAMETER ServerExe
-    Full path to PsdzRpcServer.exe.
-
-.EXAMPLE
-    .\RegisterPsdzRpcService.ps1 -UserName ".\serviceUser" -Password "secret" -ServerExe "C:\Program Files\PsdzRpcServer\PsdzRpcServer.exe"
+    Registers PsdzRpcServer.exe as a Windows Service using NSSM.
 #>
 
 param(
@@ -23,12 +11,15 @@ param(
     [string]$Password,
 
     [Parameter(Mandatory = $false)]
-    [string]$ServerExe = "C:\Program Files\PsdzRpcServer\PsdzRpcServer.exe"
+    [string]$ServerExe = "C:\Program Files\PsdzRpcServer\PsdzRpcServer.exe",
+
+    [Parameter(Mandatory = $false)]
+    [string]$NssmExe = "nssm.exe"
 )
 
-$ServiceName    = "PsdzRpcServer"
-$DisplayName    = "PsdzRpc Server"
-$Description    = "PsdzRpc JSON-RPC Named Pipe Server"
+$ServiceName = "PsdzRpcServer"
+$DisplayName = "PsdzRpc Server"
+$Description = "PsdzRpc JSON-RPC Named Pipe Server"
 
 # --- Admin check ---
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
@@ -43,6 +34,19 @@ if (-not (Test-Path $ServerExe)) {
     exit 1
 }
 
+# --- Validate NSSM ---
+$nssmPath = Get-Command $NssmExe -ErrorAction SilentlyContinue
+if (-not $nssmPath) {
+    $nssmPath = "C:\ProgramData\chocolatey\bin\nssm.exe"
+    if (-not (Test-Path $nssmPath)) {
+        Write-Error "NSSM not found. Install with: winget install NSSM.NSSM"
+        exit 1
+    }
+    $NssmExe = $nssmPath
+}
+
+Write-Host "Using NSSM: $NssmExe"
+
 # --- Unregister if already exists ---
 $existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
 if ($existing) {
@@ -50,41 +54,47 @@ if ($existing) {
 
     if ($existing.Status -eq 'Running') {
         Write-Host "Stopping service..."
-        Stop-Service -Name $ServiceName -Force
-        $existing.WaitForStatus('Stopped', [TimeSpan]::FromSeconds(30))
+        & $NssmExe stop $ServiceName confirm | Out-Null
     }
 
-    sc.exe delete $ServiceName | Out-Null
-    # Wait until service is fully removed
+    & $NssmExe remove $ServiceName confirm | Out-Null
+
+    Write-Host "Waiting for service to be fully removed..." -NoNewline
     $retries = 0
-    while ((Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) -and $retries -lt 10) {
-        Start-Sleep -Milliseconds 500
+    while ($retries -lt 30) {
+        Start-Sleep -Milliseconds 1000
+        if (-not (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue)) { break }
+        Write-Host "." -NoNewline
         $retries++
+    }
+    Write-Host ""
+
+    if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
+        Write-Error "Service could not be fully removed. Close Services.msc and try again."
+        exit 1
     }
 
     Write-Host "Service '$ServiceName' removed."
 }
 
-# --- Register service ---
-Write-Host "Registering service '$ServiceName'..."
+# --- Register with NSSM ---
+Write-Host "Registering service '$ServiceName' with NSSM..."
 Write-Host "  Exe  : $ServerExe"
 Write-Host "  User : $UserName"
 Write-Host "  Start: Demand (manual)"
 
-$result = sc.exe create $ServiceName `
-    binPath= `"$ServerExe`" `
-    obj= $UserName `
-    password= $Password `
-    start= demand `
-    DisplayName= $DisplayName
+New-Item -ItemType Directory -Force -Path "$env:ProgramData\ISTA\logs"
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Failed to create service: $result"
-    exit 1
-}
-
-# --- Set description ---
-sc.exe description $ServiceName $Description | Out-Null
+& $NssmExe install $ServiceName $ServerExe "--keeprunning"
+& $NssmExe set $ServiceName AppDirectory (Split-Path $ServerExe)
+& $NssmExe set $ServiceName DisplayName $DisplayName
+& $NssmExe set $ServiceName Description $Description
+& $NssmExe set $ServiceName ObjectName $UserName $Password
+& $NssmExe set $ServiceName Start SERVICE_DEMAND_START
+& $NssmExe set $ServiceName AppStdout "$env:ProgramData\ISTA\logs\PsdzRpcServer.log"
+& $NssmExe set $ServiceName AppStderr "$env:ProgramData\ISTA\logs\PsdzRpcServer-error.log"
+& $NssmExe set $ServiceName AppRotateFiles 1
+& $NssmExe set $ServiceName AppRotateBytes 10485760
 
 # --- Grant "Log on as a service" right ---
 Write-Host "Granting 'Log on as a service' right to '$UserName'..."
