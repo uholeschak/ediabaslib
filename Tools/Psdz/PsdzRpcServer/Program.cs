@@ -111,7 +111,7 @@ namespace PsdzRpcServer
                     }
                 });
 
-                Task keyTask = WaitForEscapeKeyAsync(cts.Token);
+                Task keyTask = WaitForEscapeKeyAsync(cts.Token, server);
 
                 // Beenden bei: ESC, Ctrl+C oder letzter Client getrennt
                 if (keepRunning)
@@ -151,20 +151,33 @@ namespace PsdzRpcServer
             return 0;
         }
 
-        private static async Task WaitForEscapeKeyAsync(CancellationToken ct)
+        private static async Task WaitForEscapeKeyAsync(CancellationToken ct, PsdzRpcServer server)
         {
+            if (!IsConsoleAvailable())
+            {
+                await Task.Delay(Timeout.Infinite, ct).ConfigureAwait(false);
+                return;
+            }
+
             while (!ct.IsCancellationRequested)
             {
-                if (consoleAvailable)
+                try
                 {
-                    try
+                    if (Console.KeyAvailable)
                     {
-                        if (Console.KeyAvailable)
+                        ConsoleKeyInfo key = Console.ReadKey(intercept: true);
+                        if (key.Key == ConsoleKey.Escape)
                         {
-                            ConsoleKeyInfo key = Console.ReadKey(intercept: true);
-                            if (key.Key == ConsoleKey.Escape)
+                            if (server.ClientCount > 0)
                             {
-                                if (_verbosity <= Options.VerbosityOption.Important)
+                                if (_verbosity >= Options.VerbosityOption.Error)
+                                {
+                                    Console.WriteLine($"ESC ignored: {server.ClientCount} client(s) still connected.");
+                                }
+                            }
+                            else
+                            {
+                                if (_verbosity >= Options.VerbosityOption.Important)
                                 {
                                     Console.WriteLine("ESC pressed, stopping server...");
                                 }
@@ -172,10 +185,11 @@ namespace PsdzRpcServer
                             }
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Error reading console input: {ex.Message}");
-                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    await Task.Delay(Timeout.Infinite, ct).ConfigureAwait(false);
+                    return;
                 }
 
                 await Task.Delay(100, ct).ConfigureAwait(false);

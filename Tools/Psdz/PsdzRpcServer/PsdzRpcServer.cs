@@ -40,7 +40,7 @@ namespace PsdzRpcServer
                 try
                 {
                     _output?.WriteLine("Wait for client connection...");
-                    await pipeServer.WaitForConnectionAsync(ct).ConfigureAwait(false);
+                            await pipeServer.WaitForConnectionAsync(ct).ConfigureAwait(false);
 
                     int count = Interlocked.Increment(ref _clientCount);
                     _hadClients = true;
@@ -130,5 +130,7 @@ namespace PsdzRpcServer
                 }
             }
         }
+
+        public int ClientCount => _clientCount;
     }
 }
