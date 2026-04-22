@@ -35,16 +35,14 @@ if (-not (Test-Path $ServerExe)) {
 }
 
 # --- Validate NSSM ---
-$nssmPath = Get-Command $NssmExe -ErrorAction SilentlyContinue
-if (-not $nssmPath) {
-    $nssmPath = "C:\ProgramData\chocolatey\bin\nssm.exe"
-    if (-not (Test-Path $nssmPath)) {
-        Write-Error "NSSM not found. Install with: winget install NSSM.NSSM"
-        exit 1
-    }
-    $NssmExe = $nssmPath
+$resolvedNssm = Get-Command $NssmExe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+
+if (-not $resolvedNssm) {
+    Write-Error "NSSM not found. Install with: winget install NSSM.NSSM"
+    exit 1
 }
 
+$NssmExe = $resolvedNssm
 Write-Host "Using NSSM: $NssmExe"
 
 # --- Unregister if already exists ---
