@@ -123,14 +123,25 @@ $appArgs = if ($KeepRunning) { "--keeprunning" } else { "" }
 & $NssmExe set $ServiceName AppExit Default Exit
 
 # --- Grant "Log on as a service" right ---
-Write-Host "Granting 'Log on as a service' right to '$UserName'..."
+Write-Host "Granting 'Log on as a service' right to '$resolvedUser'..."
 $tempFile = [System.IO.Path]::GetTempFileName()
 secedit /export /cfg $tempFile /quiet
 $content = Get-Content $tempFile
 $seServiceLogon = $content | Where-Object { $_ -match "SeServiceLogonRight" }
+
 if ($seServiceLogon) {
-    if ($seServiceLogon -notmatch [regex]::Escape($UserName)) {
-        $content = $content -replace "SeServiceLogonRight\s*=\s*(.*)", "SeServiceLogonRight = `$1,$UserName"
+    Write-Host "  Current value: $seServiceLogon"
+
+    # secedit kann Benutzer in verschiedenen Formaten speichern:
+    # "Ulrich", "*COMPUTERNAME\ulrich", "*S-1-5-..."
+    $shortUser = $resolvedUser -replace '^.*[\\\/]', ''   # nur "ulrich"
+    $seceditUser = "*$resolvedUser"
+
+    $alreadyGranted = ($seServiceLogon -match [regex]::Escape($seceditUser)) -or
+                      ($seServiceLogon -match "(?i)(^|,)\*?$([regex]::Escape($shortUser))(,|$)")
+
+    if (-not $alreadyGranted) {
+        $content = $content -replace "(SeServiceLogonRight\s*=\s*.*)", "`$1,$seceditUser"
         Set-Content $tempFile $content
         secedit /import /cfg $tempFile /db secedit.sdb /quiet
         secedit /configure /db secedit.sdb /quiet
