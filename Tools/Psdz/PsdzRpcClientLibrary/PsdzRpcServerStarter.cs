@@ -94,7 +94,7 @@ public class PsdzRpcServerStarter
     {
         try
         {
-            if (String.IsNullOrEmpty(serviceName))
+            if (string.IsNullOrEmpty(serviceName))
             {
                 return false;
             }
@@ -128,15 +128,23 @@ public class PsdzRpcServerStarter
             _output?.WriteLine($"Timeout waiting for service '{serviceName}' to start.");
             return false;
         }
-        catch (InvalidOperationException)
+        catch (System.ComponentModel.Win32Exception ex)
         {
-            // Dienst nicht installiert → Fallback auf direkten Prozessstart
-            _output?.WriteLine($"Service '{serviceName}' not installed, falling back to direct start.");
+            // Access denied (5) → IIS App Pool hat keine Rechte zum Starten von Diensten
+            _output?.WriteLine($"Service '{serviceName}' access denied (Win32 error {ex.NativeErrorCode}): {ex.Message}");
+            _output?.WriteLine($"Falling back to direct process start.");
+            return false;
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Dienst nicht installiert oder Zugriff verweigert
+            _output?.WriteLine($"Service '{serviceName}' not available: {ex.Message}");
+            _output?.WriteLine($"Falling back to direct process start.");
             return false;
         }
         catch (Exception ex)
         {
-            _output?.WriteLine($"TryStartWindowsService Exception: {ex.Message}");
+            _output?.WriteLine($"TryStartWindowsService Exception: {ex.GetType().Name}: {ex.Message}");
             return false;
         }
     }
