@@ -94,6 +94,21 @@ New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $resolvedUser = $UserName -replace '^\.[\\\/]', "$env:COMPUTERNAME\"
 Write-Host "  Setting permissions for: $resolvedUser"
 
+try
+{
+    $acl = Get-Acl $logDir
+    $rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+        $resolvedUser, "FullControl", "ContainerInherit,ObjectInherit", "None", "Allow")
+    $acl.SetAccessRule($rule)
+    Set-Acl $logDir $acl
+    Write-Host "  Log directory permissions set."
+}
+catch
+{
+    Write-Warning "Could not set permissions for '$resolvedUser': $_"
+    Write-Warning "Please set permissions manually on: $logDir"
+}
+
 $appArgs = if ($KeepRunning) { "--keeprunning" } else { "" }
 & $NssmExe install $ServiceName "$ServerExe" $appArgs
 & $NssmExe set $ServiceName AppDirectory (Split-Path $ServerExe)
