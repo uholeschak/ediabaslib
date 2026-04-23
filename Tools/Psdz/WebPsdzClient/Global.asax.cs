@@ -57,15 +57,15 @@ namespace WebPsdzClient
             }
 
 #if USE_RPC_CLIENT
-#if !DEBUG
-            if (string.IsNullOrEmpty(RpcServiceName))
-            {
-                RpcServiceName = "PsdzRpcServer";
-            }
-#endif
+#if DEBUG
             if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))
             {
                 RpcServer = PsdzRpcClient.PsdzRpcServerStarter.DetectServerLocation();
+            }
+#else
+            if (string.IsNullOrEmpty(RpcServiceName))
+            {
+                RpcServiceName = "PsdzRpcServer";
             }
 #endif
             SetupLog4Net();
