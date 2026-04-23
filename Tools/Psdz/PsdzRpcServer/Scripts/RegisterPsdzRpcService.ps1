@@ -17,7 +17,10 @@ param(
     [string]$NssmExe = "nssm.exe",
 
     [Parameter(Mandatory = $false)]
-    [switch]$KeepRunning
+    [switch]$KeepRunning,
+
+    [Parameter(Mandatory = $false)]
+    [string]$IisAppPool = "Coding"
 )
 
 $ServiceName = "PsdzRpcServer"
@@ -168,7 +171,7 @@ Remove-Item "secedit.jfm" -ErrorAction SilentlyContinue
 function Grant-ServiceStartPermission {
     param(
         [string]$ServiceName,
-        [string]$AppPoolName = "Coding"
+        [string]$AppPoolName
     )
 
     Write-Host "Granting service start permission to IIS APPPOOL\$AppPoolName..."
