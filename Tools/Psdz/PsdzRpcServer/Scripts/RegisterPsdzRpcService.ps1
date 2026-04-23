@@ -21,8 +21,8 @@ param(
 )
 
 $ServiceName = "PsdzRpcServer"
-$DisplayName = "PsdzRpc Server"
-$Description = "PsdzRpc JSON-RPC Named Pipe Server"
+$DisplayName = "Psdz RPC pipe server"
+$Description = "Psdz JSON-RPC named pipe server"
 
 # --- Admin check ---
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
