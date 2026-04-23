@@ -164,6 +164,55 @@ Remove-Item $tempFile -ErrorAction SilentlyContinue
 Remove-Item "secedit.sdb" -ErrorAction SilentlyContinue
 Remove-Item "secedit.jfm" -ErrorAction SilentlyContinue
 
+# --- Grant IIS App Pool permission to start/stop service ---
+function Grant-ServiceStartPermission {
+    param(
+        [string]$ServiceName,
+        [string]$AppPoolName = "Coding"
+    )
+
+    Write-Host "Granting service start permission to IIS APPPOOL\$AppPoolName..."
+
+    # SID des App Pools ermitteln
+    $appPoolSid = (New-Object System.Security.Principal.NTAccount("IIS APPPOOL\$AppPoolName")).Translate(
+        [System.Security.Principal.SecurityIdentifier]).Value
+
+    # Aktuellen Security Descriptor des Dienstes lesen
+    $sdResult = sc.exe sdshow $ServiceName
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning "Could not read service security descriptor."
+        return
+    }
+
+    $sd = $sdResult | Where-Object { $_ -match "^D:" }
+    if (-not $sd) {
+        Write-Warning "Could not parse security descriptor."
+        return
+    }
+
+    # ACE für App Pool hinzufügen: Start (RP), Stop (WP), Query Status (LC)
+    # A;;RPWPLC = Allow: Start, Stop, QueryStatus
+    $newAce = "(A;;RPWPLC;;;$appPoolSid)"
+
+    if ($sd -match [regex]::Escape($appPoolSid)) {
+        Write-Host "  Permission already granted."
+        return
+    }
+
+    # ACE in DACL einfügen
+    $newSd = $sd -replace "(D:[^(]*)", "`$1$newAce"
+    $result = sc.exe sdset $ServiceName $newSd
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  Permission granted."
+    } else {
+        Write-Warning "Could not set service security descriptor: $result"
+    }
+}
+
+# --- Grant IIS App Pool service start permission ---
+$appPoolName = "Coding"   # Optional als Parameter übergeben
+Grant-ServiceStartPermission -ServiceName $ServiceName -AppPoolName $appPoolName
+
 Write-Host ""
 Write-Host "Service '$ServiceName' registered successfully." -ForegroundColor Green
 Write-Host "Start with: Start-Service -Name $ServiceName"
