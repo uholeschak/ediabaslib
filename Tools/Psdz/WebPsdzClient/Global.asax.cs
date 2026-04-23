@@ -29,6 +29,7 @@ namespace WebPsdzClient
         public static string IstaFolder { get; private set; }
 #if USE_RPC_CLIENT
         public static string RpcServer { get; private set; }
+        public static string RpcServiceName { get; private set; }
 #endif
         public static string SqlServer { get; private set; }
         public static string TestLicenses { get; private set; }
@@ -44,6 +45,7 @@ namespace WebPsdzClient
             IstaFolder = ConfigurationManager.AppSettings["IstaFolder"];
 #if USE_RPC_CLIENT
             RpcServer = ConfigurationManager.AppSettings["RpcServer"];
+            RpcServiceName = ConfigurationManager.AppSettings["RpcServiceName"];
 #endif
             SqlServer = ConfigurationManager.AppSettings["SqlServer"];
             TestLicenses = ConfigurationManager.AppSettings["TestLicenses"];
@@ -56,9 +58,9 @@ namespace WebPsdzClient
 
 #if USE_RPC_CLIENT
 #if !DEBUG
-            if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))
+            if (string.IsNullOrEmpty(RpcServiceName))
             {
-                RpcServer = PsdzRpcClient.PsdzRpcServerStarter.GetProgramsServerLocation();
+                RpcServiceName = "PsdzRpcServer";
             }
 #endif
             if (string.IsNullOrEmpty(RpcServer) || !File.Exists(RpcServer))

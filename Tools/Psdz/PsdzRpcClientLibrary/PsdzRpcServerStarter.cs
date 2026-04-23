@@ -22,10 +22,10 @@ public class PsdzRpcServerStarter
         _output = output;
     }
 
-    public async Task<bool> ConnectClient(string serverExe, ProcessWindowStyle windowStyle, PsdzRpcClient client, CancellationTokenSource cts,
+    public async Task<bool> ConnectClient(string serverExe, string serviceName, ProcessWindowStyle windowStyle, PsdzRpcClient client, CancellationTokenSource cts,
             string userName = null, string password = null)
     {
-        if (!StartServerIfNeeded(serverExe, windowStyle, userName, password))
+        if (!StartServerIfNeeded(serverExe, serviceName, windowStyle, userName, password))
         {
             _output?.WriteLine("No server available. Exiting.");
             return false;
@@ -44,7 +44,7 @@ public class PsdzRpcServerStarter
             }
 
             _output?.WriteLine("Try to restart server...");
-            if (!StartServerIfNeeded(serverExe, windowStyle, userName, password))
+            if (!StartServerIfNeeded(serverExe, serviceName, windowStyle, userName, password))
             {
                 _output?.WriteLine("No server available. Exiting.");
                 return false;
@@ -72,7 +72,7 @@ public class PsdzRpcServerStarter
     /// Startet den Server-Prozess, falls ein Pfad angegeben ist.
     /// Wartet nur bis der Prozess gestartet ist, nicht bis die Pipe verfügbar ist.
     /// </summary>
-    public bool StartServerIfNeeded(string serverExe, ProcessWindowStyle windowStyle, string userName, string password)
+    public bool StartServerIfNeeded(string serverExe, string serviceName, ProcessWindowStyle windowStyle, string userName, string password)
     {
         if (IsPipeAvailable())
         {
@@ -81,7 +81,7 @@ public class PsdzRpcServerStarter
         }
 
         // Zuerst versuchen den Windows-Dienst zu starten
-        if (TryStartWindowsService("PsdzRpcServer"))
+        if (TryStartWindowsService(serviceName))
         {
             return true;
         }
@@ -94,6 +94,11 @@ public class PsdzRpcServerStarter
     {
         try
         {
+            if (String.IsNullOrEmpty(serviceName))
+            {
+                return false;
+            }
+
             using ServiceController sc = new ServiceController(serviceName);
             ServiceControllerStatus status = sc.Status;
 
