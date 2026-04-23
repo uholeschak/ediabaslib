@@ -198,6 +198,7 @@ function Grant-ServiceStartPermission {
     $newAce = "(A;;RPWPLC;;;$appPoolSid)"
 
     if ($sd -match [regex]::Escape($appPoolSid)) {
+        # will be overwritten by nssm, but still check if already present
         Write-Host "  Permission already granted."
         return
     }
