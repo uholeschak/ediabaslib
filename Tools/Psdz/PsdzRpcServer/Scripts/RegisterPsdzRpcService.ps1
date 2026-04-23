@@ -85,8 +85,17 @@ Write-Host "  User       : $UserName"
 Write-Host "  Start      : Demand (manual)"
 Write-Host "  KeepRunning: $KeepRunning"
 
+# --- Create log directory ---
+$logDir = "$env:ProgramData\ISTA\logs"
+Write-Host "Creating log directory: $logDir"
+New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+
+# ".\user" in "COMPUTERNAME\user" umwandeln für FileSystemAccessRule
+$resolvedUser = $UserName -replace '^\.[\\\/]', "$env:COMPUTERNAME\"
+Write-Host "  Setting permissions for: $resolvedUser"
+
 $appArgs = if ($KeepRunning) { "--keeprunning" } else { "" }
-& $NssmExe install $ServiceName $ServerExe $appArgs
+& $NssmExe install $ServiceName "$ServerExe" $appArgs
 & $NssmExe set $ServiceName AppDirectory (Split-Path $ServerExe)
 & $NssmExe set $ServiceName DisplayName $DisplayName
 & $NssmExe set $ServiceName Description $Description
