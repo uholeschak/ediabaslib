@@ -130,7 +130,7 @@ $content = Get-Content $tempFile
 $seServiceLogon = $content | Where-Object { $_ -match "SeServiceLogonRight" }
 
 if ($seServiceLogon) {
-    Write-Host "  Current value: $seServiceLogon"
+    #Write-Host "  Current value: $seServiceLogon"
 
     # secedit kann Benutzer in verschiedenen Formaten speichern:
     # "Ulrich", "*COMPUTERNAME\ulrich", "*S-1-5-..."
