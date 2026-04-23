@@ -56,6 +56,7 @@ public class UserTemplate
     {
         string istaLocation = string.Empty; // auto detect
         string rpcServerLocation = string.Empty; // auto detect
+        string rpcServiceName = string.Empty; // auto detect
         string sqlUrl = "url";
         string sqlUser = "user";
         string sqlPassword = "password";
@@ -88,6 +89,17 @@ public class UserTemplate
                     {
                         rpcServerLocation = attribLocation.Value;
                         await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}").ConfigureAwait(false);
+                    }
+                }
+
+                XmlNode nodeRpcService = doc.SelectSingleNode("/credentials_info/rpcservice");
+                if (nodeRpcService != null)
+                {
+                    XmlAttribute attribName = nodeRpcService.Attributes["name"];
+                    if (attribName != null)
+                    {
+                        rpcServiceName = attribName.Value;
+                        await logger.WriteLineAsync($"RpcService: Name={rpcServiceName}").ConfigureAwait(false);
                     }
                 }
 
@@ -175,6 +187,12 @@ public class UserTemplate
                             await logger.WriteLineAsync($"RpcServer: Location={rpcServerLocation}").ConfigureAwait(false);
                         }
 
+                        if (infoDict.CredentialsInfo.TryGetValue("RpcService", out Info rpcServiceInfo))
+                        {
+                            rpcServiceName = rpcServiceInfo.Name;
+                            await logger.WriteLineAsync($"RpcService: Name={rpcServiceName}").ConfigureAwait(false);
+                        }
+
                         if (infoDict.CredentialsInfo.TryGetValue("SqlServer", out Info sqlInfo))
                         {
                             sqlUrl = sqlInfo.Url;
@@ -214,6 +232,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
     <add key=""DealerId"" value=""40626""/>
     <add key=""IstaFolder"" value=""{istaLocation}""/>
     <add key=""RpcServer"" value=""{rpcServerLocation}""/>
+    <add key=""RpcServiceName"" value=""{rpcServiceName}""/>
     <add key=""SqlServer"" value=""Server={sqlUrl};User ID={sqlUser};Password={sqlPassword}""/>
     <add key=""AccessPwd"" value=""{accessPassword}""/>
     <add key=""TestLicenses"" value=""{testLic}""/>
