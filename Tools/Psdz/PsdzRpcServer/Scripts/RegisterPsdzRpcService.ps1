@@ -120,6 +120,7 @@ $appArgs = if ($KeepRunning) { "--keeprunning" } else { "" }
 & $NssmExe set $ServiceName AppStderr "$logDir\PsdzRpcServer-error.log"
 & $NssmExe set $ServiceName AppRotateFiles 1
 & $NssmExe set $ServiceName AppRotateBytes 10485760
+& $NssmExe set $ServiceName AppExit Default Exit
 
 # --- Grant "Log on as a service" right ---
 Write-Host "Granting 'Log on as a service' right to '$UserName'..."
