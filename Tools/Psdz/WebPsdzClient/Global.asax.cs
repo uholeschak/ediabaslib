@@ -74,7 +74,12 @@ namespace WebPsdzClient
             log.InfoFormat("Ista folder: {0}", IstaFolder);
 #if USE_RPC_CLIENT
             log.InfoFormat("Rpc server: {0}", RpcServer);
-            log.InfoFormat("For the directory C:\\Program Files\\PsdzRpcServer add the user 'IIS AppPool\\DefaultAppPool' and allow all access rights");
+            if (!string.IsNullOrEmpty(RpcServer))
+            {
+                log.InfoFormat("For the directory C:\\Program Files\\PsdzRpcServer add the user 'IIS AppPool\\DefaultAppPool' and allow all access rights");
+            }
+
+            log.InfoFormat("Rpc service name: {0}", RpcServiceName);
 #else
             PsdzClient.Programming.PsdzStarterGuard.Instance.ResetInitialization();
             BMW.Rheingold.Psdz.Client.PsdzServiceStarter.ClearIstaPIDsFile();
