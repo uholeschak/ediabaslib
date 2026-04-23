@@ -48,6 +48,14 @@ if (-not $resolvedNssm) {
 $NssmExe = $resolvedNssm
 Write-Host "Using NSSM: $NssmExe"
 
+# --- Normalize UserName ---
+# Akzeptiert: "ulrich", ".\ulrich", "DOMAIN\ulrich"
+if ($UserName -notmatch '\\') {
+    # Kein Backslash → lokaler Benutzer, ".\" voranstellen für sc.exe/NSSM
+    $UserName = ".\$UserName"
+}
+Write-Host "Using UserName: $UserName"
+
 # --- Unregister if already exists ---
 $existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
 if ($existing) {
