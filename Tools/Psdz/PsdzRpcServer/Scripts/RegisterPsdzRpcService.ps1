@@ -4,10 +4,10 @@
 #>
 
 param(
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [string]$UserName,
 
-    [Parameter(Mandatory = $true)]
+    [Parameter(Mandatory = $false)]
     [string]$Password,
 
     [Parameter(Mandatory = $false)]
@@ -20,7 +20,10 @@ param(
     [switch]$KeepRunning,
 
     [Parameter(Mandatory = $false)]
-    [string]$IisAppPool = "Coding"
+    [string]$IisAppPool = "Coding",
+
+    [Parameter(Mandatory = $false)]
+    [switch]$Uninstall
 )
 
 $ServiceName = "PsdzRpcServer"
@@ -34,36 +37,14 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit 1
 }
 
-# --- Validate exe ---
-if (-not (Test-Path $ServerExe)) {
-    Write-Error "Server executable not found: $ServerExe"
-    exit 1
-}
+function Remove-PsdzService {
+    $existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
+    if (-not $existing) {
+        Write-Host "Service '$ServiceName' is not installed."
+        return $true
+    }
 
-# --- Validate NSSM ---
-$resolvedNssm = Get-Command $NssmExe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
-
-if (-not $resolvedNssm) {
-    Write-Error "NSSM not found. Install with: winget install NSSM.NSSM"
-    exit 1
-}
-
-$NssmExe = $resolvedNssm
-Write-Host "Using NSSM: $NssmExe"
-
-# --- Normalize UserName ---
-# Akzeptiert: "ulrich", ".\ulrich", "DOMAIN\ulrich"
-if ($UserName -notmatch '\\') {
-    # Kein Backslash → lokaler Benutzer, ".\" voranstellen für sc.exe/NSSM
-    $UserName = ".\$UserName"
-}
-Write-Host "Using UserName: $UserName"
-
-# --- Unregister if already exists ---
-$existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
-if ($existing) {
-    Write-Host "Service '$ServiceName' already registered. Removing..."
-
+    Write-Host "Removing service '$ServiceName'..."
     if ($existing.Status -eq 'Running') {
         Write-Host "Stopping service..."
         & $NssmExe stop $ServiceName confirm | Out-Null
@@ -83,25 +64,108 @@ if ($existing) {
 
     if (Get-Service -Name $ServiceName -ErrorAction SilentlyContinue) {
         Write-Error "Service could not be fully removed. Close Services.msc and try again."
-        exit 1
+        return $false
     }
 
     Write-Host "Service '$ServiceName' removed."
+    return $true
 }
 
-# --- Register with NSSM ---
-Write-Host "Registering service '$ServiceName' with NSSM..."
-Write-Host "  Exe        : $ServerExe"
-Write-Host "  User       : $UserName"
-Write-Host "  Start      : Demand (manual)"
-Write-Host "  KeepRunning: $KeepRunning"
+function Grant-ServiceStartPermission {
+    param(
+        [string]$ServiceName,
+        [string]$AppPoolName = "Coding"
+    )
+
+    Write-Host "Granting service start permission to IIS APPPOOL\$AppPoolName..."
+
+    try
+    {
+        $appPoolSid = (New-Object System.Security.Principal.NTAccount("IIS APPPOOL\$AppPoolName")).Translate(
+            [System.Security.Principal.SecurityIdentifier]).Value
+    }
+    catch
+    {
+        Write-Warning "Could not resolve SID for 'IIS APPPOOL\$AppPoolName': $_"
+        return
+    }
+
+    $sdResult = sc.exe sdshow $ServiceName 2>&1
+    $sdLine = $sdResult | Where-Object { $_ -match "D:" } | Select-Object -First 1
+    $sd = if ($sdLine) { $sdLine.Trim() } else { $null }
+
+    if (-not $sd) {
+        $sdAll = ($sdResult -join "")
+        if ($sdAll -match "(D:.+)") { $sd = $Matches[1].Trim() }
+    }
+
+    if (-not $sd) {
+        Write-Warning "Could not parse security descriptor."
+        return
+    }
+
+    if ($sd.Contains($appPoolSid)) {
+        Write-Host "  Permission already granted."
+        return
+    }
+
+    $newAce = "(A;;RPWPLC;;;$appPoolSid)"
+    $newSd = $sd -replace "(D:[^(]*)", "`$1$newAce"
+
+    $result = sc.exe sdset $ServiceName $newSd
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  Permission granted."
+    } else {
+        Write-Warning "Could not set service security descriptor: $result"
+    }
+}
+
+# --- Validate NSSM ---
+$resolvedNssm = Get-Command $NssmExe -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Source
+if (-not $resolvedNssm) {
+    Write-Error "NSSM not found. Install with: winget install NSSM.NSSM"
+    exit 1
+}
+$NssmExe = $resolvedNssm
+Write-Host "Using NSSM: $NssmExe"
+
+# --- Uninstall only ---
+if ($Uninstall) {
+    if (-not (Remove-PsdzService)) { exit 1 }
+    Write-Host "Service '$ServiceName' uninstalled successfully." -ForegroundColor Green
+    exit 0
+}
+
+# --- Validate required parameters for install ---
+if ([string]::IsNullOrEmpty($UserName)) {
+    Write-Error "Parameter -UserName is required for installation."
+    exit 1
+}
+if ([string]::IsNullOrEmpty($Password)) {
+    Write-Error "Parameter -Password is required for installation."
+    exit 1
+}
+
+# --- Validate exe ---
+if (-not (Test-Path $ServerExe)) {
+    Write-Error "Server executable not found: $ServerExe"
+    exit 1
+}
+
+# --- Normalize UserName ---
+if ($UserName -notmatch '\\') {
+    $UserName = ".\$UserName"
+}
+Write-Host "Using UserName: $UserName"
+
+# --- Unregister if already exists ---
+if (-not (Remove-PsdzService)) { exit 1 }
 
 # --- Create log directory ---
 $logDir = "$env:ProgramData\ISTA\logs"
 Write-Host "Creating log directory: $logDir"
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 
-# ".\user" in "COMPUTERNAME\user" umwandeln für FileSystemAccessRule
 $resolvedUser = $UserName -replace '^\.[\\\/]', "$env:COMPUTERNAME\"
 Write-Host "  Setting permissions for: $resolvedUser"
 
@@ -120,6 +184,13 @@ catch
     Write-Warning "Please set permissions manually on: $logDir"
 }
 
+# --- Register with NSSM ---
+Write-Host "Registering service '$ServiceName' with NSSM..."
+Write-Host "  Exe        : $ServerExe"
+Write-Host "  User       : $UserName"
+Write-Host "  Start      : Demand (manual)"
+Write-Host "  KeepRunning: $KeepRunning"
+
 $appArgs = if ($KeepRunning) { "--keeprunning" } else { "" }
 & $NssmExe install $ServiceName "$ServerExe" $appArgs
 & $NssmExe set $ServiceName AppDirectory (Split-Path $ServerExe)
@@ -127,11 +198,18 @@ $appArgs = if ($KeepRunning) { "--keeprunning" } else { "" }
 & $NssmExe set $ServiceName Description $Description
 & $NssmExe set $ServiceName ObjectName $UserName $Password
 & $NssmExe set $ServiceName Start SERVICE_DEMAND_START
+& $NssmExe set $ServiceName AppExit Default Exit
 & $NssmExe set $ServiceName AppStdout "$logDir\PsdzRpcServer.log"
 & $NssmExe set $ServiceName AppStderr "$logDir\PsdzRpcServer-error.log"
 & $NssmExe set $ServiceName AppRotateFiles 1
-& $NssmExe set $ServiceName AppRotateBytes 10485760
-& $NssmExe set $ServiceName AppExit Default Exit
+& $NssmExe set $ServiceName AppRotateOnline 1
+& $NssmExe set $ServiceName AppRotateBytes 0
+& $NssmExe set $ServiceName AppRotateBytesHigh 0
+
+# --- Grant IIS App Pool service start permission ---
+if (-not [string]::IsNullOrEmpty($IisAppPool)) {
+    Grant-ServiceStartPermission -ServiceName $ServiceName -AppPoolName $IisAppPool
+}
 
 # --- Grant "Log on as a service" right ---
 Write-Host "Granting 'Log on as a service' right to '$resolvedUser'..."
@@ -141,16 +219,10 @@ $content = Get-Content $tempFile
 $seServiceLogon = $content | Where-Object { $_ -match "SeServiceLogonRight" }
 
 if ($seServiceLogon) {
-    #Write-Host "  Current value: $seServiceLogon"
-
-    # secedit kann Benutzer in verschiedenen Formaten speichern:
-    # "Ulrich", "*COMPUTERNAME\ulrich", "*S-1-5-..."
-    $shortUser = $resolvedUser -replace '^.*[\\\/]', ''   # nur "ulrich"
+    $shortUser = $resolvedUser -replace '^.*[\\\/]', ''
     $seceditUser = "*$resolvedUser"
-
     $alreadyGranted = ($seServiceLogon -match [regex]::Escape($seceditUser)) -or
                       ($seServiceLogon -match "(?i)(^|,)\*?$([regex]::Escape($shortUser))(,|$)")
-
     if (-not $alreadyGranted) {
         $content = $content -replace "(SeServiceLogonRight\s*=\s*.*)", "`$1,$seceditUser"
         Set-Content $tempFile $content
@@ -166,56 +238,6 @@ if ($seServiceLogon) {
 Remove-Item $tempFile -ErrorAction SilentlyContinue
 Remove-Item "secedit.sdb" -ErrorAction SilentlyContinue
 Remove-Item "secedit.jfm" -ErrorAction SilentlyContinue
-
-# --- Grant IIS App Pool permission to start/stop service ---
-function Grant-ServiceStartPermission {
-    param(
-        [string]$ServiceName,
-        [string]$AppPoolName
-    )
-
-    Write-Host "Granting service start permission to IIS APPPOOL\$AppPoolName..."
-
-    # SID des App Pools ermitteln
-    $appPoolSid = (New-Object System.Security.Principal.NTAccount("IIS APPPOOL\$AppPoolName")).Translate(
-        [System.Security.Principal.SecurityIdentifier]).Value
-
-    # Aktuellen Security Descriptor des Dienstes lesen
-    $sdResult = sc.exe sdshow $ServiceName
-    if ($LASTEXITCODE -ne 0) {
-        Write-Warning "Could not read service security descriptor."
-        return
-    }
-
-    $sd = $sdResult | Where-Object { $_ -match "^D:" }
-    if (-not $sd) {
-        Write-Warning "Could not parse security descriptor."
-        return
-    }
-
-    # ACE für App Pool hinzufügen: Start (RP), Stop (WP), Query Status (LC)
-    # A;;RPWPLC = Allow: Start, Stop, QueryStatus
-    $newAce = "(A;;RPWPLC;;;$appPoolSid)"
-
-    if ($sd -match [regex]::Escape($appPoolSid)) {
-        # will be overwritten by nssm, but still check if already present
-        Write-Host "  Permission already granted."
-        return
-    }
-
-    # ACE in DACL einfügen
-    $newSd = $sd -replace "(D:[^(]*)", "`$1$newAce"
-    $result = sc.exe sdset $ServiceName $newSd
-    if ($LASTEXITCODE -eq 0) {
-        Write-Host "  Permission granted."
-    } else {
-        Write-Warning "Could not set service security descriptor: $result"
-    }
-}
-
-# --- Grant IIS App Pool service start permission ---
-$appPoolName = "Coding"   # Optional als Parameter übergeben
-Grant-ServiceStartPermission -ServiceName $ServiceName -AppPoolName $appPoolName
 
 Write-Host ""
 Write-Host "Service '$ServiceName' registered successfully." -ForegroundColor Green
