@@ -215,8 +215,7 @@ $appArgs = if ($KeepRunning) { "--keeprunning" } else { "" }
 & $NssmExe set $ServiceName AppStderr "$logDir\PsdzRpcServer-error.log"
 & $NssmExe set $ServiceName AppRotateFiles 1
 & $NssmExe set $ServiceName AppRotateOnline 1
-& $NssmExe set $ServiceName AppRotateBytes 0
-& $NssmExe set $ServiceName AppRotateBytesHigh 0
+& $NssmExe set $ServiceName AppRotateBytes 10485760   # 10 MB
 
 # --- Grant IIS App Pool service start permission ---
 if (-not [string]::IsNullOrEmpty($IisAppPool)) {
