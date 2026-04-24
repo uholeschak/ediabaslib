@@ -2,7 +2,7 @@
 .SYNOPSIS
     Registers PsdzRpcServer.exe as a Windows Service using NSSM.
     Required execution policy:
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned
 #>
 
 param(
