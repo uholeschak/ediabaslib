@@ -39,6 +39,16 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     exit 1
 }
 
+# --- ExecutionPolicy check ---
+$effectivePolicy = Get-ExecutionPolicy
+Write-Host "Effective ExecutionPolicy: $effectivePolicy"
+
+if ($effectivePolicy -eq 'Restricted') {
+    Write-Error "Script execution is disabled. Run the following command first:"
+    Write-Error "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
+    exit 1
+}
+
 function Remove-PsdzService {
     $existing = Get-Service -Name $ServiceName -ErrorAction SilentlyContinue
     if (-not $existing) {
