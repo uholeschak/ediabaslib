@@ -224,7 +224,7 @@ if (-not [string]::IsNullOrEmpty($IisAppPool)) {
 
 # --- Grant "Log on as a service" right ---
 Write-Host "Granting 'Log on as a service' right to '$resolvedUser'..."
-$tempDir = Join-Path ([System.IO.Path]::GetTempPath()) "PsdzRpcService"
+$tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
 New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
 $seceditCfg = Join-Path $tempDir "secedit.cfg"
 $seceditSdb = Join-Path $tempDir "secedit.sdb"
