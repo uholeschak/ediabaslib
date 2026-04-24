@@ -224,9 +224,16 @@ if (-not [string]::IsNullOrEmpty($IisAppPool)) {
 
 # --- Grant "Log on as a service" right ---
 Write-Host "Granting 'Log on as a service' right to '$resolvedUser'..."
-$tempFile = [System.IO.Path]::GetTempFileName()
-secedit /export /cfg $tempFile /quiet
-$content = Get-Content $tempFile
+$tempDir = Join-Path ([System.IO.Path]::GetTempPath()) "PsdzRpcService"
+New-Item -ItemType Directory -Force -Path $tempDir | Out-Null
+$seceditCfg = Join-Path $tempDir "secedit.cfg"
+$seceditSdb = Join-Path $tempDir "secedit.sdb"
+
+#Write-Host "  Cfg: $seceditCfg"
+#Write-Host "  Sdb: $seceditSdb"
+
+secedit /export /cfg $seceditCfg /quiet
+$content = Get-Content $seceditCfg
 $seServiceLogon = $content | Where-Object { $_ -match "SeServiceLogonRight" }
 
 if ($seServiceLogon) {
@@ -236,9 +243,9 @@ if ($seServiceLogon) {
                       ($seServiceLogon -match "(?i)(^|,)\*?$([regex]::Escape($shortUser))(,|$)")
     if (-not $alreadyGranted) {
         $content = $content -replace "(SeServiceLogonRight\s*=\s*.*)", "`$1,$seceditUser"
-        Set-Content $tempFile $content
-        secedit /import /cfg $tempFile /db secedit.sdb /quiet
-        secedit /configure /db secedit.sdb /quiet
+        Set-Content $seceditCfg $content
+        secedit /import /cfg $seceditCfg /db $seceditSdb /quiet
+        secedit /configure /db $seceditSdb /quiet
         Write-Host "  Right granted."
     } else {
         Write-Host "  Right already granted."
@@ -246,9 +253,8 @@ if ($seServiceLogon) {
 } else {
     Write-Warning "Could not find SeServiceLogonRight in security policy."
 }
-Remove-Item $tempFile -ErrorAction SilentlyContinue
-Remove-Item "secedit.sdb" -ErrorAction SilentlyContinue
-Remove-Item "secedit.jfm" -ErrorAction SilentlyContinue
+
+Remove-Item $tempDir -Recurse -Force -ErrorAction SilentlyContinue
 
 Write-Host ""
 Write-Host "Service '$ServiceName' registered successfully." -ForegroundColor Green
