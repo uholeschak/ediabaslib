@@ -13,7 +13,7 @@ param(
     [string]$Password,
 
     [Parameter(Mandatory = $false)]
-    [string]$ServerExe = "C:\Program Files\PsdzRpcServer\PsdzRpcServer.exe",
+    [string]$ServerExe = "$($env:ProgramFiles)\PsdzRpcServer\PsdzRpcServer.exe",
 
     [Parameter(Mandatory = $false)]
     [string]$NssmExe = "nssm.exe",
