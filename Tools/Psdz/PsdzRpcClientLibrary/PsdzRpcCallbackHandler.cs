@@ -21,6 +21,8 @@ namespace PsdzRpcClient
         public event EventHandler<ServiceInitializedEventArgs> ServiceInitialized;
         public event EventHandler<ulong> VehicleConnect;
         public event EventHandler<ulong> VehicleDisconnect;
+        public event EventHandler<VehicleSendEventArgs> VehicleSend;
+
 
         public Task OnStartProgrammingCompleted(bool success)
         {
@@ -129,6 +131,12 @@ namespace PsdzRpcClient
         public Task OnVehicleDisconnect(ulong id)
         {
             VehicleDisconnect?.Invoke(this, id);
+            return Task.CompletedTask;
+        }
+
+        public Task OnVehicleSend(ulong id, byte[] data)
+        {
+            VehicleSend?.Invoke(this, new VehicleSendEventArgs(id, data));
             return Task.CompletedTask;
         }
     }

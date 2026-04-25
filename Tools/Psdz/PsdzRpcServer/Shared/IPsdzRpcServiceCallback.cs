@@ -21,5 +21,6 @@ namespace PsdzRpcServer.Shared
         Task OnServiceInitialized(string hostLogDir, bool loggingInitialized);
         Task OnVehicleConnect(ulong id);
         Task OnVehicleDisconnect(ulong id);
+        Task OnVehicleSend(ulong id, byte[] data);
     }
 }
