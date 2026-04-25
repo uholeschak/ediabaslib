@@ -19,5 +19,7 @@ namespace PsdzRpcServer.Shared
         Task<bool> OnShowMessage(string message, bool okBtn, bool wait);
         Task<int> OnTelSendQueueSize();
         Task OnServiceInitialized(string hostLogDir, bool loggingInitialized);
+        Task OnVehicleConnect(ulong id);
+        Task OnVehicleDisconnect(ulong id);
     }
 }

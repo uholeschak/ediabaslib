@@ -19,6 +19,8 @@ namespace PsdzRpcClient
         public event EventHandler<ShowMessageEventArgs> ShowMessageWait;
         public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
         public event EventHandler<ServiceInitializedEventArgs> ServiceInitialized;
+        public event EventHandler<ulong> VehicleConnect;
+        public event EventHandler<ulong> VehicleDisconnect;
 
         public Task OnStartProgrammingCompleted(bool success)
         {
@@ -115,6 +117,18 @@ namespace PsdzRpcClient
         {
             ServiceInitializedEventArgs args = new ServiceInitializedEventArgs(hostLogDir, loggingInitialized);
             ServiceInitialized?.Invoke(this, args);
+            return Task.CompletedTask;
+        }
+
+        public Task OnVehicleConnect(ulong id)
+        {
+            VehicleConnect?.Invoke(this, id);
+            return Task.CompletedTask;
+        }
+
+        public Task OnVehicleDisconnect(ulong id)
+        {
+            VehicleDisconnect?.Invoke(this, id);
             return Task.CompletedTask;
         }
     }
