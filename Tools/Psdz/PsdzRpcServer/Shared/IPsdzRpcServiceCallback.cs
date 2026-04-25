@@ -5,7 +5,7 @@ using StreamJsonRpc;
 namespace PsdzRpcServer.Shared
 {
     [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
-    public partial interface IPsdzRpcServiceCallback
+    public partial interface IPsdzRpcServiceCallback : IPsdzRpcVehicleCallback
     {
         Task OnStartProgrammingCompleted(bool success);
         Task OnStopProgrammingCompleted(bool success);
@@ -19,8 +19,5 @@ namespace PsdzRpcServer.Shared
         Task<bool> OnShowMessage(string message, bool okBtn, bool wait);
         Task<int> OnTelSendQueueSize();
         Task OnServiceInitialized(string hostLogDir, bool loggingInitialized);
-        Task OnVehicleConnect(ulong id);
-        Task OnVehicleDisconnect(ulong id);
-        Task OnVehicleSend(ulong id, byte[] data);
     }
 }
