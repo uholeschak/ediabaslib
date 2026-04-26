@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -152,6 +153,93 @@ public class PsdzVehicleProxy : IDisposable
             _packetId++;
             return _packetId;
         }
+    }
+
+    private bool StartTcpListener()
+    {
+        try
+        {
+            StopTcpListener();
+
+            if (_enetTcpMutex != null && !_enetTcpMutex.WaitOne(EnetTcpMutexTimeout))
+            {
+                log.ErrorFormat("StartTcpListener Aquire mutex failed");
+                return false;
+            }
+
+            try
+            {
+                if (_enetTcpChannels.Count == 0)
+                {
+                    _enetTcpChannels.Add(new EnetTcpChannel(false));
+                    _enetTcpChannels.Add(new EnetTcpChannel(true));
+                }
+
+                foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+                {
+                    if (enetTcpChannel.TcpServer == null)
+                    {
+                        enetTcpChannel.ServerPort = 0;
+                        enetTcpChannel.TcpServer = new TcpListener(IPAddress.Loopback, 0);
+                        enetTcpChannel.TcpServer.Start();
+                        IPEndPoint ipEndPoint = enetTcpChannel.TcpServer.LocalEndpoint as IPEndPoint;
+                        if (ipEndPoint != null)
+                        {
+                            enetTcpChannel.ServerPort = ipEndPoint.Port;
+                        }
+
+                        log.InfoFormat("StartTcpListener Port: {0}, Control: {1}", enetTcpChannel.ServerPort,
+                            enetTcpChannel.Control);
+                    }
+                }
+
+                if (_vehicleThread != null)
+                {
+                    if (!_vehicleThread.IsAlive)
+                    {
+                        _vehicleThread = null;
+                    }
+                }
+
+                if (_vehicleThread == null)
+                {
+                    _stopThread = false;
+                    _vehicleThreadWakeEvent.Reset();
+                    _vehicleThread = new Thread(VehicleThread);
+                    _vehicleThread.Priority = ThreadPriority.Normal;
+                    _vehicleThread.Start();
+                }
+
+                if (_tcpThread != null)
+                {
+                    if (!_tcpThread.IsAlive)
+                    {
+                        _tcpThread = null;
+                    }
+                }
+
+                if (_tcpThread == null)
+                {
+                    _stopThread = false;
+                    _tcpThreadWakeEvent.Reset();
+                    _tcpThread = new Thread(TcpThread);
+                    _tcpThread.Priority = ThreadPriority.Normal;
+                    _tcpThread.Start();
+                }
+            }
+            finally
+            {
+                _enetTcpMutex?.ReleaseMutex();
+            }
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("StartTcpListener Exception: {0}", ex.Message);
+        }
+
+        return false;
     }
 
     private bool StopTcpListener()
@@ -814,6 +902,11 @@ public class PsdzVehicleProxy : IDisposable
         return (bmwFastTel[0] & 0xC0) == 0xC0;
     }
 
+    private void TcpThread()
+    {
+        //ToDo: implement TCP thread
+    }
+
     public void VehicleResponseDictClear()
     {
         lock (_lockObject)
@@ -1022,6 +1115,11 @@ public class PsdzVehicleProxy : IDisposable
                 log.ErrorFormat("CloseVehicleLog Exception: {0}", ex.Message);
             }
         }
+    }
+
+    private void VehicleThread()
+    {
+        //ToDo: implement vehicle thread
     }
 
     public void Dispose()
