@@ -209,15 +209,24 @@ public class PsdzRpcServerStarter
         {
             string serverSignature = await client.RpcService.GetInterfaceSignature().ConfigureAwait(false);
             string clientSignature = PsdzRpcServiceConstants.ServiceInterfaceSignature;
-
             if (string.Compare(serverSignature, clientSignature, StringComparison.OrdinalIgnoreCase) != 0)
             {
-                _output?.WriteLine($"Interface signature mismatch: client={clientSignature}, server={serverSignature}.");
+                _output?.WriteLine($"Service interface signature mismatch: client={clientSignature}, server={serverSignature}.");
                 _output?.WriteLine("Please update client and server to the same version.");
                 return false;
             }
+            _output?.WriteLine($"Service interface signature: {clientSignature} OK.");
 
-            _output?.WriteLine($"Interface signature: {clientSignature} OK.");
+            string serverCallbackSignature = await client.RpcService.GetCallbackInterfaceSignature().ConfigureAwait(false);
+            string clientCallbackSignature = PsdzRpcServiceConstants.CallbackInterfaceSignature;
+            if (string.Compare(serverCallbackSignature, clientCallbackSignature, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                _output?.WriteLine($"Callback interface signature mismatch: client={clientCallbackSignature}, server={serverCallbackSignature}.");
+                _output?.WriteLine("Please update client and server to the same version.");
+                return false;
+            }
+            _output?.WriteLine($"Callback interface signature: {clientCallbackSignature} OK.");
+
             return true;
         }
         catch (Exception ex)

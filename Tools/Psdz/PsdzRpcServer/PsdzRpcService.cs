@@ -37,6 +37,11 @@ namespace PsdzRpcServer
             return Task.FromResult(PsdzRpcServiceConstants.ServiceInterfaceSignature);
         }
 
+        public Task<string> GetCallbackInterfaceSignature()
+        {
+            return Task.FromResult(PsdzRpcServiceConstants.CallbackInterfaceSignature);
+        }
+
         public Task<bool> OperationActive()
         {
             bool isActive = IsOperationActive();

@@ -10,6 +10,7 @@ namespace PsdzRpcServer.Shared
     public partial interface IPsdzRpcService : IPsdzRpcVehicleService, IDisposable
     {
         Task<string> GetInterfaceSignature();
+        Task<string> GetCallbackInterfaceSignature();
         Task<bool> OperationActive();
         Task<bool> IsCancelPossible();
         Task CancelOperation();
