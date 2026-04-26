@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace PsdzRpcServer.Shared
 {
     [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
-    public partial interface IPsdzRpcService : IDisposable
+    public partial interface IPsdzRpcService : IPsdzRpcVehicleService, IDisposable
     {
         Task<bool> OperationActive();
         Task<bool> IsCancelPossible();
@@ -42,6 +42,5 @@ namespace PsdzRpcServer.Shared
         Task<bool> ClearOptionsDict();
         Task<bool> HasOptionsDict();
         Task<bool> UpdateTargetFa(bool reset);
-        Task<bool> SetVehicleResponse(PsdzVehicleResponse response);
     }
 }
