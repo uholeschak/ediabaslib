@@ -17,12 +17,12 @@ namespace PsdzRpcClient
         public event EventHandler<PsdzRpcSwiRegisterEnum?> UpdateOptionSelections;
         public event EventHandler<ShowMessageEventArgs> ShowMessage;
         public event EventHandler<ShowMessageEventArgs> ShowMessageWait;
+        public event EventHandler<string> ReportError;
         public event EventHandler<TelSendQueueSizeEventArgs> TelSendQueueSize;
         public event EventHandler<ServiceInitializedEventArgs> ServiceInitialized;
         public event EventHandler<ulong> VehicleConnect;
         public event EventHandler<ulong> VehicleDisconnect;
         public event EventHandler<VehicleSendEventArgs> VehicleSend;
-
 
         public Task OnStartProgrammingCompleted(bool success)
         {
@@ -106,6 +106,12 @@ namespace PsdzRpcClient
                 ShowMessage?.Invoke(this, args);
                 return args.Result;
             }
+        }
+
+        public Task OnReportError(string message)
+        {
+            ReportError?.Invoke(this, message);
+            return Task.CompletedTask;
         }
 
         public Task<int> OnTelSendQueueSize()
