@@ -57,6 +57,13 @@ public class PsdzRpcServerStarter
             return false;
         }
 
+        // Interface-Version prüfen
+        if (!await CheckInterfaceVersion(client).ConfigureAwait(false))
+        {
+            _output?.WriteLine("Interface version mismatch. Exiting.");
+            return false;
+        }
+
         return true;
     }
 
@@ -196,6 +203,30 @@ public class PsdzRpcServerStarter
         return true;
     }
 
+    private async Task<bool> CheckInterfaceVersion(PsdzRpcClient client)
+    {
+        try
+        {
+            string serverSignature = await client.RpcService.GetInterfaceSignature().ConfigureAwait(false);
+            string clientSignature = PsdzRpcServiceConstants.ServiceInterfaceSignature;
+
+            if (string.Compare(serverSignature, clientSignature, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                _output?.WriteLine($"Interface signature mismatch: client={clientSignature}, server={serverSignature}.");
+                _output?.WriteLine("Please update client and server to the same version.");
+                return false;
+            }
+
+            _output?.WriteLine($"Interface signature: {clientSignature} OK.");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _output?.WriteLine($"Interface signature check failed: {ex.Message}");
+            return false;
+        }
+    }
+
     public static string DetectServerLocation(bool preferNet481 = false)
     {
         string assemblyDir = AssemblyDirectory;
@@ -313,5 +344,6 @@ public class PsdzRpcServerStarter
             return Path.GetDirectoryName(path);
 #endif
         }
+
     }
 }

@@ -32,6 +32,11 @@ namespace PsdzRpcServer
             _programmingJobs.GenServiceModules = false;
         }
 
+        public Task<string> GetInterfaceSignature()
+        {
+            return Task.FromResult(PsdzRpcServiceConstants.ServiceInterfaceSignature);
+        }
+
         public Task<bool> OperationActive()
         {
             bool isActive = IsOperationActive();
