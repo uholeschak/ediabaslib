@@ -39,12 +39,8 @@ namespace PsdzRpcServer.Shared
 
             string signature = sb.ToString();
 
-#if NET
-            byte[] hash = SHA256.HashData(Encoding.UTF8.GetBytes(signature));
-#else
             using SHA256 sha256 = SHA256.Create();
             byte[] hash = sha256.ComputeHash(Encoding.UTF8.GetBytes(signature));
-#endif
             return BitConverter.ToString(hash, 0, 8).Replace("-", string.Empty).ToLowerInvariant();
         }
 
