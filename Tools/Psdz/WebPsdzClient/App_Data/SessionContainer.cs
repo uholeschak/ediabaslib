@@ -1911,7 +1911,6 @@ namespace WebPsdzClient.App_Data
                 PsdzVehicleHub.VehicleResponse vehicleResponse = VehicleResponseGet();
                 if (vehicleResponse != null)
                 {
-                    GetPacketId();
                     if (string.Compare(vehicleResponse.Id, packetId, StringComparison.OrdinalIgnoreCase) == 0)
                     {
                         if (vehicleResponse.Valid || vehicleResponse.Error)
@@ -2011,7 +2010,7 @@ namespace WebPsdzClient.App_Data
                         index++;
                     }
 
-                    _swVehicleLog.WriteLine(sb.ToString());
+                    _swVehicleLog?.WriteLine(sb.ToString());
                 }
                 catch (Exception ex)
                 {
