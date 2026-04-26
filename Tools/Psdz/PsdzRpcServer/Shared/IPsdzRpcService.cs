@@ -42,5 +42,6 @@ namespace PsdzRpcServer.Shared
         Task<bool> ClearOptionsDict();
         Task<bool> HasOptionsDict();
         Task<bool> UpdateTargetFa(bool reset);
+        Task<bool> SetVehicleResponse(PsdzVehicleResponse response);
     }
 }

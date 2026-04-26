@@ -342,6 +342,11 @@ namespace PsdzRpcServer
             return Task.FromResult(true);
         }
 
+        public Task<bool> SetVehicleResponse(PsdzVehicleResponse response)
+        {
+            return Task.FromResult(true);
+        }
+
         private CancellationTokenSource CreateCancellationToken()
         {
             CancellationTokenSource cts = new CancellationTokenSource();
