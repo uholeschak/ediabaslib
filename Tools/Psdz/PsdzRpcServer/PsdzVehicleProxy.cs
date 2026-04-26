@@ -1,13 +1,17 @@
-﻿using log4net;
+﻿using EdiabasLib;
+using log4net;
+using PsdzClient.Programming;
 using PsdzRpcServer.Shared;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
-using EdiabasLib;
+using System.Threading.Tasks;
 
 namespace PsdzRpcServer;
 
@@ -89,6 +93,8 @@ public class PsdzVehicleProxy : IDisposable
         public AutoResetEvent SendEvent;
     }
 
+    public delegate bool VehicleResponseDelegate();
+
     private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
     private const int TcpSendBufferSize = 1400;
     private const int TcpSendTimeout = 5000;
@@ -103,6 +109,7 @@ public class PsdzVehicleProxy : IDisposable
     private static readonly ILog log = LogManager.GetLogger(typeof(PsdzVehicleProxy));
 
     private bool _disposed;
+    private readonly ProgrammingJobs _programmingJobs;
     private readonly object _lockObject = new object();
     private readonly object _vehicleLogLockObject = new object();
     private Mutex _enetTcpMutex = new Mutex(false);
@@ -115,6 +122,37 @@ public class PsdzVehicleProxy : IDisposable
     private readonly AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
     private readonly Queue<PsdzVehicleResponse> _vehicleResponses = new Queue<PsdzVehicleResponse>();
     private readonly Dictionary<string, List<string>> _vehicleResponseDict = new Dictionary<string, List<string>>();
+
+    public PsdzVehicleProxy(ProgrammingJobs programmingJobs)
+    {
+        _programmingJobs = programmingJobs;
+    }
+
+    private UInt64 _packetId;
+    private void ResetPacketId()
+    {
+        lock (_lockObject)
+        {
+            _packetId = 0;
+        }
+    }
+
+    private ulong GetPacketId()
+    {
+        lock (_lockObject)
+        {
+            return _packetId;
+        }
+    }
+
+    private ulong GetNextPacketId()
+    {
+        lock (_lockObject)
+        {
+            _packetId++;
+            return _packetId;
+        }
+    }
 
     private bool StopTcpListener()
     {
@@ -789,6 +827,180 @@ public class PsdzVehicleProxy : IDisposable
         lock (_lockObject)
         {
             _vehicleResponses.Clear();
+        }
+    }
+
+    public void VehicleResponseReceived(PsdzVehicleResponse vehicleResponse)
+    {
+        lock (_lockObject)
+        {
+            _vehicleResponses.Enqueue(vehicleResponse);
+        }
+
+        _vehicleThreadWakeEvent.Set();
+    }
+
+    public PsdzVehicleResponse VehicleResponseGet()
+    {
+        lock (_lockObject)
+        {
+            if (_vehicleResponses.Count == 0)
+            {
+                return null;
+            }
+            return _vehicleResponses.Dequeue();
+        }
+    }
+
+    public PsdzVehicleResponse WaitForVehicleResponse(VehicleResponseDelegate vehicleResponseDelegate = null, int timeout = VehicleReceiveTimeout)
+    {
+        log.InfoFormat("WaitForVehicleResponse Timeout={0}", timeout);
+        ulong packetId = GetPacketId();
+        long startTime = Stopwatch.GetTimestamp();
+        for (; ; )
+        {
+            PsdzVehicleResponse vehicleResponse = VehicleResponseGet();
+            if (vehicleResponse != null)
+            {
+                if (vehicleResponse.Id == packetId)
+                {
+                    if (vehicleResponse.Valid || vehicleResponse.Error)
+                    {
+                        log.InfoFormat("WaitForVehicleResponse Valid={0}, Error={1}", vehicleResponse.Valid, vehicleResponse.Error);
+                        return vehicleResponse;
+                    }
+                }
+            }
+
+            if (vehicleResponseDelegate != null)
+            {
+                if (vehicleResponseDelegate.Invoke())
+                {
+                    log.InfoFormat("WaitForVehicleResponse Wait aborted");
+                    return null;
+                }
+            }
+
+            if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
+            {
+                log.InfoFormat("WaitForVehicleResponse No Response");
+                return null;
+            }
+
+            _vehicleThreadWakeEvent.WaitOne(100);
+        }
+    }
+
+    private void LogVehicleResponse(PsdzVehicleResponse vehicleResponse)
+    {
+        if (vehicleResponse == null)
+        {
+            return;
+        }
+        if (string.IsNullOrEmpty(vehicleResponse.Request) || vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
+        {
+            log.ErrorFormat("LogVehicleResponse No Data");
+            return;
+        }
+
+        lock (_vehicleLogLockObject)
+        {
+            try
+            {
+                if (_swVehicleLog == null)
+                {
+                    string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
+                    string fileName = string.Format(CultureInfo.InvariantCulture, "Vehicle-{0}.txt", dateString);
+                    string hostLogDir = null;
+                    hostLogDir = _programmingJobs?.ProgrammingService?.GetPsdzServiceHostLogDir();
+                    if (!string.IsNullOrEmpty(hostLogDir))
+                    {
+                        string logFile = Path.Combine(hostLogDir, fileName);
+                        _swVehicleLog = new StreamWriter(logFile, true, Encoding.ASCII);
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder();
+                byte[] requestData = EdiabasNet.HexToByteArray(vehicleResponse.Request);
+                string requestString = BitConverter.ToString(requestData).Replace("-", " ");
+                sb.Append(requestString);
+
+                byte requestChecksum = EdCustomAdapterCommon.CalcChecksumBmwFast(requestData, 0, requestData.Length);
+                sb.Append(string.Format(CultureInfo.InvariantCulture, " {0:X2}", requestChecksum));
+                sb.Append(" : ");
+
+                int index = 0;
+                foreach (string response in vehicleResponse.ResponseList)
+                {
+                    byte[] responseData = EdiabasNet.HexToByteArray(response);
+                    string responseString = BitConverter.ToString(responseData).Replace("-", " ");
+
+                    if (index > 0)
+                    {
+                        sb.Append("  ");
+                    }
+
+                    sb.Append(responseString);
+
+                    byte responseChecksum = EdCustomAdapterCommon.CalcChecksumBmwFast(responseData, 0, responseData.Length);
+                    sb.Append(string.Format(CultureInfo.InvariantCulture, " {0:X2}", responseChecksum));
+                    index++;
+                }
+
+                _swVehicleLog?.WriteLine(sb.ToString());
+            }
+            catch (Exception ex)
+            {
+                log.ErrorFormat("LogVehicleResponse Exception: {0}", ex.Message);
+            }
+        }
+    }
+
+    private void PatchVehicleResponse(PsdzVehicleResponse vehicleResponse)
+    {
+        if (vehicleResponse == null)
+        {
+            return;
+        }
+
+        if (string.IsNullOrEmpty(vehicleResponse.Request) || vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
+        {
+            log.ErrorFormat("PatchVehicleResponse No Data");
+            return;
+        }
+
+        byte[] requestData = EdiabasNet.HexToByteArray(vehicleResponse.Request);
+        int dataOffsetRequest = CalculateDataOffset(requestData);
+        if (dataOffsetRequest >= 0)
+        {
+            byte serviceRequest = requestData[dataOffsetRequest];
+            if (serviceRequest == 0x10 && vehicleResponse.ResponseList.Count == 1)
+            {
+                log.InfoFormat("PatchVehicleResponse Service={0:X02}", serviceRequest);
+
+                string response = vehicleResponse.ResponseList[0];
+                byte[] responseData = EdiabasNet.HexToByteArray(response);
+                int dataOffsetResponse = CalculateDataOffset(responseData);
+                if (dataOffsetResponse >= 0)
+                {
+                    byte serviceResponse = responseData[dataOffsetResponse];
+                    if (serviceResponse == (0x10 | 0x40) && responseData.Length == dataOffsetResponse + 6)
+                    {
+                        string responseOrgString = BitConverter.ToString(responseData).Replace("-", " ");
+
+                        uint p2Max = 5000;
+                        uint p2Start = 10000;
+                        responseData[dataOffsetResponse + 2] = (byte)((p2Max >> 8) & 0xFF);
+                        responseData[dataOffsetResponse + 3] = (byte)(p2Max & 0xFF);
+                        responseData[dataOffsetResponse + 4] = (byte)((p2Start >> 8) & 0xFF);
+                        responseData[dataOffsetResponse + 5] = (byte)(p2Start & 0xFF);
+
+                        string responsePatchString = BitConverter.ToString(responseData).Replace("-", " ");
+                        log.InfoFormat("PatchVehicleResponse Patching From={0} To={1}", responseOrgString, responsePatchString);
+                        vehicleResponse.ResponseList[0] = responsePatchString.Replace(" ", "");
+                    }
+                }
+            }
         }
     }
 
