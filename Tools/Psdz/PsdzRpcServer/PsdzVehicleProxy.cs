@@ -12,7 +12,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace PsdzRpcServer;
 
@@ -95,6 +94,13 @@ public class PsdzVehicleProxy : IDisposable
     }
 
     public delegate bool VehicleResponseDelegate();
+    public delegate bool VehicleConnectDelegate(ulong id);
+    public delegate bool VehicleDisconnectDelegate(ulong id);
+    public delegate bool VehicleSendDelegate(ulong id, byte[] data);
+
+    public event VehicleConnectDelegate VehicleConnectEvent;
+    public event VehicleDisconnectDelegate VehicleDisconnectEvent;
+    public event VehicleSendDelegate VehicleSendEvent;
 
     private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
     private const int TcpSendBufferSize = 1400;
@@ -154,6 +160,82 @@ public class PsdzVehicleProxy : IDisposable
         {
             _packetId++;
             return _packetId;
+        }
+    }
+
+    private string _appId;
+    public string AppId
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return _appId;
+            }
+        }
+        set
+        {
+            lock (_lockObject)
+            {
+                _appId = value;
+            }
+        }
+    }
+
+    private int? _connectTimeouts;
+    public int? ConnectTimeouts
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return _connectTimeouts;
+            }
+        }
+        set
+        {
+            lock (_lockObject)
+            {
+                _connectTimeouts = value;
+            }
+        }
+    }
+
+    private string _adapterSerial;
+    public string AdapterSerial
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return _adapterSerial;
+            }
+        }
+        set
+        {
+            lock (_lockObject)
+            {
+                _adapterSerial = value;
+            }
+        }
+    }
+
+    private bool _adapterSerialValid;
+    public bool AdapterSerialValid
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return _adapterSerialValid;
+            }
+        }
+        set
+        {
+            lock (_lockObject)
+            {
+                _adapterSerialValid = value;
+            }
         }
     }
 
@@ -1193,6 +1275,60 @@ public class PsdzVehicleProxy : IDisposable
         }
     }
 
+    public bool VehicleConnect()
+    {
+        ConnectTimeouts = null;
+
+        if (VehicleConnectEvent == null)
+        {
+            log.ErrorFormat("VehicleConnectEvent is null");
+            return false;
+        }
+
+        VehicleConnectEvent.Invoke(GetNextPacketId());
+
+        PsdzVehicleResponse vehicleResponse = WaitForVehicleResponse();
+        if (vehicleResponse != null)
+        {
+            if (vehicleResponse.ConnectTimeouts.HasValue)
+            {
+                ConnectTimeouts = vehicleResponse.ConnectTimeouts;
+            }
+
+            AppId = vehicleResponse.AppId;
+            AdapterSerial = vehicleResponse.AdapterSerial;
+            AdapterSerialValid = vehicleResponse.SerialValid;
+            log.InfoFormat("VehicleConnect AppId={0}, AdapterSerial={1}, Valid={2}", AppId ?? string.Empty, AdapterSerial ?? string.Empty, AdapterSerialValid);
+        }
+
+        if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid || !vehicleResponse.Connected)
+        {
+            log.ErrorFormat("VehicleConnect Vehicle connect failed");
+            return false;
+        }
+
+        return true;
+    }
+
+    public bool VehicleDisconnect()
+    {
+        if (VehicleDisconnectEvent == null)
+        {
+            log.ErrorFormat("VehicleDisconnect VehicleDisconnectEvent is null");
+            return false;
+        }
+
+        VehicleDisconnectEvent.Invoke(GetNextPacketId());
+        PsdzVehicleResponse vehicleResponse = WaitForVehicleResponse();
+        if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
+        {
+            log.ErrorFormat("VehicleDisconnect Vehicle disconnect failed");
+            return false;
+        }
+
+        return true;
+    }
+
     public PsdzVehicleResponse WaitForVehicleResponse(VehicleResponseDelegate vehicleResponseDelegate = null, int timeout = VehicleReceiveTimeout)
     {
         log.InfoFormat("WaitForVehicleResponse Timeout={0}", timeout);
@@ -1367,7 +1503,182 @@ public class PsdzVehicleProxy : IDisposable
 
     private void VehicleThread()
     {
-        //ToDo: implement vehicle thread
+        log.InfoFormat("VehicleThread started");
+
+        VehicleResponseDictClear();
+        VehicleResponseClear();
+        ResetPacketId();
+
+        if (!VehicleConnect())
+        {
+            log.ErrorFormat("VehicleThread Vehicle connect failed");
+        }
+
+        for (; ; )
+        {
+            _vehicleThreadWakeEvent.WaitOne(100, false);
+            if (_stopThread)
+            {
+                break;
+            }
+
+            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            {
+                if (enetTcpChannel.Control)
+                {
+                    continue;
+                }
+
+                foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
+                {
+                    try
+                    {
+                        if (enetTcpClientData.TcpClientStream == null)
+                        {
+                            continue;
+                        }
+
+                        byte[] bmwFastTel = null;
+                        lock (enetTcpClientData.RecPacketQueue)
+                        {
+                            if (enetTcpClientData.RecPacketQueue.Count > 0)
+                            {
+                                // keep the packet until processed
+                                bmwFastTel = enetTcpClientData.RecPacketQueue.Peek();
+                            }
+                        }
+
+                        if (bmwFastTel != null)
+                        {
+                            byte[] sendData = bmwFastTel;
+                            bool funcAddress = IsFunctionalAddress(bmwFastTel);
+
+                            string sendString = BitConverter.ToString(sendData).Replace("-", " ");
+                            log.InfoFormat("VehicleThread Transmit Data={0}", sendString);
+
+                            if (_programmingJobs.CacheClearRequired)
+                            {
+                                log.InfoFormat("VehicleThread Clearing response cache");
+                                VehicleResponseDictClear();
+                                _programmingJobs.CacheClearRequired = false;
+                            }
+
+                            if (VehicleSendEvent != null)
+                            {
+                                string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
+
+                                for (int retry = 0; retry < 3; retry++)
+                                {
+                                    if (!VehicleSendEvent.Invoke(GetNextPacketId(), bmwFastTel))
+                                    {
+                                        log.ErrorFormat("VehicleThread Vehicle send failed");
+                                    }
+
+                                    PsdzVehicleResponse vehicleResponse = WaitForVehicleResponse(() =>
+                                    {
+                                        if (_stopThread)
+                                        {
+                                            return true;
+                                        }
+
+                                        return false;
+                                    });
+
+                                    byte sourceAddr = bmwFastTel[1];
+                                    bool nr78Removed;
+                                    lock (enetTcpClientData.Nr78Dict)
+                                    {
+                                        nr78Removed = enetTcpClientData.Nr78Dict.Remove(sourceAddr);
+                                    }
+
+                                    if (nr78Removed)
+                                    {
+                                        log.InfoFormat("VehicleThread NR78 removed: Addr={0:X02}", sourceAddr);
+                                    }
+
+                                    if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
+                                    {
+                                        log.ErrorFormat("VehicleThread Vehicle transmit failed");
+                                    }
+                                    else
+                                    {
+                                        if (!vehicleResponse.Connected)
+                                        {
+                                            log.ErrorFormat("VehicleThread Vehicle disconnected, reconnecting");
+                                            if (!VehicleConnect())
+                                            {
+                                                log.ErrorFormat("VehicleThread Vehicle reconnect failed");
+                                            }
+                                            else
+                                            {
+                                                log.ErrorFormat("VehicleThread Vehicle reconnected, retrying: {0}", retry);
+                                                continue;
+                                            }
+                                        }
+                                        else if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
+                                        {
+                                            log.ErrorFormat("VehicleThread Vehicle transmit no response for Request={0}", sendDataString);
+
+                                            if (funcAddress)
+                                            {
+                                                log.InfoFormat("VehicleThread Cache disable Request={0}", sendDataString);
+                                                lock (_lockObject)
+                                                {
+                                                    _vehicleResponseDict[sendDataString] = new List<string>();
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            LogVehicleResponse(vehicleResponse);
+                                            PatchVehicleResponse(vehicleResponse);
+                                            if (vehicleResponse.ConnectTimeouts.HasValue)
+                                            {
+                                                ConnectTimeouts = vehicleResponse.ConnectTimeouts;
+                                            }
+
+                                            if (funcAddress)
+                                            {
+                                                log.InfoFormat("VehicleThread Caching Request={0}", sendDataString);
+                                                lock (_lockObject)
+                                                {
+                                                    _vehicleResponseDict[sendDataString] = vehicleResponse.ResponseList;
+                                                }
+                                            }
+
+                                            SendEnetResponses(enetTcpClientData, vehicleResponse.ResponseList);
+                                        }
+                                    }
+
+                                    break;
+                                }
+                            }
+                            lock (enetTcpClientData.RecPacketQueue)
+                            {
+                                if (enetTcpClientData.RecPacketQueue.Count > 0)
+                                {
+                                    enetTcpClientData.RecPacketQueue.Dequeue();
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("VehicleThread Exception: {0}", ex.Message);
+                    }
+                }
+            }
+        }
+
+        if (!VehicleDisconnect())
+        {
+            log.ErrorFormat("VehicleThread Vehicle disconnect failed");
+        }
+
+        ConnectTimeouts = null;
+        VehicleResponseDictClear();
+        CloseVehicleLog();
+        log.InfoFormat("VehicleThread stopped");
     }
 
     public void Dispose()
