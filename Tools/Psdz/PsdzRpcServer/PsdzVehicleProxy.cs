@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace PsdzRpcServer;
 
@@ -97,10 +98,12 @@ public class PsdzVehicleProxy : IDisposable
     public delegate bool VehicleConnectDelegate(ulong id);
     public delegate bool VehicleDisconnectDelegate(ulong id);
     public delegate bool VehicleSendDelegate(ulong id, byte[] data);
+    public delegate bool ReportErrorDelegate(string msg);
 
     public event VehicleConnectDelegate VehicleConnectEvent;
     public event VehicleDisconnectDelegate VehicleDisconnectEvent;
     public event VehicleSendDelegate VehicleSendEvent;
+    public event ReportErrorDelegate ReportErrorEvent;
 
     private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
     private const int TcpSendBufferSize = 1400;
@@ -237,6 +240,50 @@ public class PsdzVehicleProxy : IDisposable
                 _adapterSerialValid = value;
             }
         }
+    }
+
+    private string _detectedVin;
+    public string DetectedVin
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return _detectedVin;
+            }
+        }
+        set
+        {
+            lock (_lockObject)
+            {
+                _detectedVin = value;
+            }
+        }
+    }
+
+    private CancellationTokenSource _cts;
+    public CancellationTokenSource Cts
+    {
+        get
+        {
+            lock (_lockObject)
+            {
+                return _cts;
+            }
+        }
+
+        private set
+        {
+            lock (_lockObject)
+            {
+                if (_cts != null)
+                {
+                    _cts.Dispose();
+                }
+                _cts = value;
+            }
+        }
+
     }
 
     private bool StartTcpListener()
@@ -1672,6 +1719,83 @@ public class PsdzVehicleProxy : IDisposable
         VehicleResponseDictClear();
         CloseVehicleLog();
         log.InfoFormat("VehicleThread stopped");
+    }
+
+    public void ConnectVehicle(string istaFolder)
+    {
+        if (Cts != null)
+        {
+            return;
+        }
+
+        if (_programmingJobs.PsdzContext?.Connection != null)
+        {
+            return;
+        }
+
+        if (!StartTcpListener())
+        {
+            return;
+        }
+
+        int diagPort = 0;
+        int controlPort = 0;
+        foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+        {
+            if (enetTcpChannel.Control)
+            {
+                controlPort = enetTcpChannel.ServerPort;
+            }
+            else
+            {
+                diagPort = enetTcpChannel.ServerPort;
+            }
+        }
+
+        string remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
+        Cts = new CancellationTokenSource();
+        ConnectVehicleTask(istaFolder, remoteHost, false, AdditionalConnectTimeout).ContinueWith(task =>
+        {
+            if (!task.Result)
+            {
+                ReportError("ConnectVehicle failed");
+                StopTcpListener();
+            }
+            else
+            {
+                PsdzContext psdzContext = _programmingJobs?.PsdzContext;
+                if (psdzContext?.Connection != null)
+                {
+                    DetectedVin = psdzContext?.DetectVehicle?.Vin;
+                }
+            }
+
+            Cts = null;
+            return true;
+        });
+    }
+
+    public async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom, int addTimeout)
+    {
+        return await Task.Run(() => _programmingJobs.ConnectVehicle(Cts, istaFolder, remoteHost, useIcom, addTimeout)).ConfigureAwait(false);
+    }
+
+    public void ReportError(string msg)
+    {
+        try
+        {
+            if (ReportErrorEvent == null)
+            {
+                log.ErrorFormat("ReportError Event is null");
+                return;
+            }
+
+            ReportErrorEvent.Invoke(msg);
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("ReportError Exception: {0}", ex.Message);
+        }
     }
 
     public void Dispose()
