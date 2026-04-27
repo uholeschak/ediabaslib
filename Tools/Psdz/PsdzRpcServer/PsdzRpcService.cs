@@ -365,20 +365,41 @@ namespace PsdzRpcServer
                 _vehicleProxy = new PsdzVehicleProxy(_programmingJobs);
                 _vehicleProxy.VehicleConnectEvent += (id) =>
                 {
-                    Task.Run(() => _callback.OnVehicleConnect(id)).GetAwaiter().GetResult();
-                    return true;
+                    try
+                    {
+                        Task.Run(() => _callback.OnVehicleConnect(id)).GetAwaiter().GetResult();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                 };
 
                 _vehicleProxy.VehicleDisconnectEvent += (id) =>
                 {
-                    Task.Run(() => _callback.OnVehicleDisconnect(id)).GetAwaiter().GetResult();
-                    return true;
+                    try
+                    {
+                        Task.Run(() => _callback.OnVehicleDisconnect(id)).GetAwaiter().GetResult();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                 };
 
                 _vehicleProxy.VehicleSendEvent += (id, data) =>
                 {
-                    Task.Run(() => _callback.OnVehicleSend(id, data)).GetAwaiter().GetResult();
-                    return true;
+                    try
+                    {
+                        Task.Run(() => _callback.OnVehicleSend(id, data)).GetAwaiter().GetResult();
+                        return true;
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
                 };
             }
 
