@@ -111,6 +111,7 @@ public class PsdzVehicleProxy : IDisposable
 
     private bool _disposed;
     private readonly ProgrammingJobs _programmingJobs;
+    private int _contextId;
     private readonly object _lockObject = new object();
     private readonly object _vehicleLogLockObject = new object();
     private Mutex _enetTcpMutex = new Mutex(false);
@@ -127,6 +128,7 @@ public class PsdzVehicleProxy : IDisposable
     public PsdzVehicleProxy(ProgrammingJobs programmingJobs)
     {
         _programmingJobs = programmingJobs;
+        _contextId = programmingJobs.ThreadContextId;
     }
 
     private UInt64 _packetId;
@@ -1003,7 +1005,7 @@ public class PsdzVehicleProxy : IDisposable
                 if (_swVehicleLog == null)
                 {
                     string dateString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss", CultureInfo.InvariantCulture);
-                    string fileName = string.Format(CultureInfo.InvariantCulture, "Vehicle-{0}.txt", dateString);
+                    string fileName = string.Format(CultureInfo.InvariantCulture, "Vehicle-{0}-[{1}].txt", dateString, _contextId);
                     string hostLogDir = null;
                     hostLogDir = _programmingJobs?.ProgrammingService?.GetPsdzServiceHostLogDir();
                     if (!string.IsNullOrEmpty(hostLogDir))
