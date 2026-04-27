@@ -1780,6 +1780,37 @@ public class PsdzVehicleProxy : IDisposable
         return await Task.Run(() => _programmingJobs.ConnectVehicle(Cts, istaFolder, remoteHost, useIcom, addTimeout)).ConfigureAwait(false);
     }
 
+    public void DisconnectVehicle()
+    {
+        if (Cts != null)
+        {
+            return;
+        }
+
+        if (_programmingJobs.PsdzContext?.Connection == null)
+        {
+            return;
+        }
+
+        Cts = new CancellationTokenSource();
+        DisconnectVehicleTask().ContinueWith(task =>
+        {
+            if (!task.Result)
+            {
+                ReportError("DisconnectVehicle failed");
+            }
+
+            Cts = null;
+            StopTcpListener();
+        });
+    }
+
+    public async Task<bool> DisconnectVehicleTask()
+    {
+        // ReSharper disable once ConvertClosureToMethodGroup
+        return await Task.Run(() => _programmingJobs.DisconnectVehicle(Cts)).ConfigureAwait(false);
+    }
+
     public void ReportError(string msg)
     {
         try
