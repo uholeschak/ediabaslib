@@ -363,6 +363,17 @@ namespace PsdzRpcServer
                 }
 
                 _vehicleProxy = new PsdzVehicleProxy(_programmingJobs);
+                _vehicleProxy.VehicleConnectEvent += (ulong id) =>
+                {
+                    Task.Run(() => _callback.OnVehicleConnect(id)).GetAwaiter().GetResult();
+                    return true;
+                };
+
+                _vehicleProxy.VehicleDisconnectEvent += (ulong id) =>
+                {
+                    Task.Run(() => _callback.OnVehicleDisconnect(id)).GetAwaiter().GetResult();
+                    return true;
+                };
             }
 
             return Task.FromResult(true);
