@@ -16,7 +16,7 @@ namespace PsdzRpcServer.Shared
             SerialValid = false;
             ErrorMessage = string.Empty;
             Request = string.Empty;
-            ResponseList = new List<string>();
+            ResponseList = new List<byte[]>();
         }
 
         public ulong Id { get; set; }
@@ -29,6 +29,6 @@ namespace PsdzRpcServer.Shared
         public bool SerialValid { get; set; }
         public string ErrorMessage { get; set; }
         public string Request { get; set; }
-        public List<string> ResponseList { get; set; }
+        public List<byte[]> ResponseList { get; set; }
     }
 }
