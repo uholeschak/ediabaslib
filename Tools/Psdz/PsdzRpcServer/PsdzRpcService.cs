@@ -408,6 +408,12 @@ namespace PsdzRpcServer
 
         public Task<bool> SetVehicleResponse(PsdzVehicleResponse response)
         {
+            if (_vehicleProxy == null)
+            {
+                return Task.FromResult(false);
+            }
+
+            _vehicleProxy.VehicleResponseReceived(response);
             return Task.FromResult(true);
         }
 
