@@ -1811,6 +1811,46 @@ public class PsdzVehicleProxy : IDisposable
         return await Task.Run(() => _programmingJobs.DisconnectVehicle(Cts)).ConfigureAwait(false);
     }
 
+    public int GetTelSendQueueSize()
+    {
+        if (_enetTcpChannels.Count == 0)
+        {
+            return -1;
+        }
+
+        int queueSize = 0;
+        try
+        {
+            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            {
+                if (enetTcpChannel.Control)
+                {
+                    continue;
+                }
+
+                foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
+                {
+                    if (enetTcpClientData.TcpClientStream == null)
+                    {
+                        continue;
+                    }
+
+                    lock (enetTcpClientData.RecPacketQueue)
+                    {
+                        queueSize += enetTcpClientData.RecPacketQueue.Count;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            log.ErrorFormat("TelSendQueueSizeEvent Exception: {0}", ex.Message);
+            return -1;
+        }
+
+        return queueSize;
+    }
+
     public void ReportError(string msg)
     {
         try

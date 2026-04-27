@@ -732,6 +732,11 @@ namespace PsdzRpcServer
 
         private int TelSendQueueSizeEvent()
         {
+            if (_vehicleProxy != null)
+            {
+                return _vehicleProxy.GetTelSendQueueSize();
+            }
+
             return Task.Run(() => _callback.OnTelSendQueueSize()).GetAwaiter().GetResult();
         }
 
