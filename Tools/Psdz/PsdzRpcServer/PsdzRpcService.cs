@@ -15,6 +15,7 @@ namespace PsdzRpcServer
     {
         private readonly IPsdzRpcServiceCallback _callback;
         private readonly ProgrammingJobs _programmingJobs;
+        private PsdzVehicleProxy _vehicleProxy;
         private CancellationTokenSource _cts;
         private readonly object _ctsLock = new object();
 
@@ -349,6 +350,21 @@ namespace PsdzRpcServer
             }
 
             _programmingJobs.UpdateTargetFa(reset);
+            return Task.FromResult(true);
+        }
+
+        public Task<bool> EnableVehicleProxy()
+        {
+            if (_vehicleProxy == null)
+            {
+                if (IsOperationActive())
+                {
+                    return Task.FromResult(false);
+                }
+
+                _vehicleProxy = new PsdzVehicleProxy(_programmingJobs);
+            }
+
             return Task.FromResult(true);
         }
 
@@ -687,6 +703,12 @@ namespace PsdzRpcServer
                 _cts?.Cancel();
                 _cts?.Dispose();
                 _cts = null;
+            }
+
+            if (_vehicleProxy != null)
+            {
+                _vehicleProxy.Dispose();
+                _vehicleProxy = null;
             }
 
             _programmingJobs.UpdateStatusEvent -= UpdateStatus;
