@@ -690,11 +690,21 @@ namespace PsdzRpcServer
 
         public async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom, int addTimeout)
         {
+            if (_vehicleProxy != null)
+            {
+                return await _vehicleProxy.ConnectVehicleTask(_cts, istaFolder).ConfigureAwait(false);
+            }
+
             return await Task.Run(() => _programmingJobs.ConnectVehicle(_cts, istaFolder, remoteHost, useIcom, addTimeout)).ConfigureAwait(false);
         }
 
         public async Task<bool> DisconnectVehicleTask()
         {
+            if (_vehicleProxy != null)
+            {
+                return await _vehicleProxy.DisconnectVehicleTask(_cts).ConfigureAwait(false);
+            }
+
             return await Task.Run(() => _programmingJobs.DisconnectVehicle(_cts)).ConfigureAwait(false);
         }
 

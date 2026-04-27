@@ -261,31 +261,6 @@ public class PsdzVehicleProxy : IDisposable
         }
     }
 
-    private CancellationTokenSource _cts;
-    public CancellationTokenSource Cts
-    {
-        get
-        {
-            lock (_lockObject)
-            {
-                return _cts;
-            }
-        }
-
-        private set
-        {
-            lock (_lockObject)
-            {
-                if (_cts != null)
-                {
-                    _cts.Dispose();
-                }
-                _cts = value;
-            }
-        }
-
-    }
-
     private bool StartTcpListener()
     {
         try
@@ -1721,42 +1696,38 @@ public class PsdzVehicleProxy : IDisposable
         log.InfoFormat("VehicleThread stopped");
     }
 
-    public void ConnectVehicle(string istaFolder)
+    public async Task<bool> ConnectVehicleTask(CancellationTokenSource cts, string istaFolder)
     {
-        if (Cts != null)
+        try
         {
-            return;
-        }
-
-        if (_programmingJobs.PsdzContext?.Connection != null)
-        {
-            return;
-        }
-
-        if (!StartTcpListener())
-        {
-            return;
-        }
-
-        int diagPort = 0;
-        int controlPort = 0;
-        foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
-        {
-            if (enetTcpChannel.Control)
+            if (_programmingJobs.PsdzContext?.Connection != null)
             {
-                controlPort = enetTcpChannel.ServerPort;
+                return true;
             }
-            else
-            {
-                diagPort = enetTcpChannel.ServerPort;
-            }
-        }
 
-        string remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
-        Cts = new CancellationTokenSource();
-        ConnectVehicleTask(istaFolder, remoteHost, false, AdditionalConnectTimeout).ContinueWith(task =>
-        {
-            if (!task.Result)
+            if (!StartTcpListener())
+            {
+                return false;
+            }
+
+            int diagPort = 0;
+            int controlPort = 0;
+            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            {
+                if (enetTcpChannel.Control)
+                {
+                    controlPort = enetTcpChannel.ServerPort;
+                }
+                else
+                {
+                    diagPort = enetTcpChannel.ServerPort;
+                }
+            }
+
+            string remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
+            bool result = await Task.Run(() => _programmingJobs.ConnectVehicle(cts, istaFolder, remoteHost, false, AdditionalConnectTimeout)).ConfigureAwait(false);
+
+            if (!result)
             {
                 ReportError("ConnectVehicle failed");
                 StopTcpListener();
@@ -1770,45 +1741,41 @@ public class PsdzVehicleProxy : IDisposable
                 }
             }
 
-            Cts = null;
-            return true;
-        });
+            return result;
+        }
+        catch (Exception e)
+        {
+            log.ErrorFormat("ConnectVehicleTask Exception: {0}", e.Message);
+            StopTcpListener();
+            return false;
+        }
     }
 
-    public async Task<bool> ConnectVehicleTask(string istaFolder, string remoteHost, bool useIcom, int addTimeout)
+    public async Task<bool> DisconnectVehicleTask(CancellationTokenSource cts)
     {
-        return await Task.Run(() => _programmingJobs.ConnectVehicle(Cts, istaFolder, remoteHost, useIcom, addTimeout)).ConfigureAwait(false);
-    }
-
-    public void DisconnectVehicle()
-    {
-        if (Cts != null)
+        try
         {
-            return;
-        }
+            if (_programmingJobs.PsdzContext?.Connection == null)
+            {
+                return true;
+            }
 
-        if (_programmingJobs.PsdzContext?.Connection == null)
-        {
-            return;
-        }
+            bool result = await Task.Run(() => _programmingJobs.DisconnectVehicle(cts)).ConfigureAwait(false);
+            StopTcpListener();
 
-        Cts = new CancellationTokenSource();
-        DisconnectVehicleTask().ContinueWith(task =>
-        {
-            if (!task.Result)
+            if (!result)
             {
                 ReportError("DisconnectVehicle failed");
             }
 
-            Cts = null;
+            return result;
+        }
+        catch (Exception e)
+        {
+            log.ErrorFormat("DisconnectVehicleTask Exception: {0}", e.Message);
             StopTcpListener();
-        });
-    }
-
-    public async Task<bool> DisconnectVehicleTask()
-    {
-        // ReSharper disable once ConvertClosureToMethodGroup
-        return await Task.Run(() => _programmingJobs.DisconnectVehicle(Cts)).ConfigureAwait(false);
+            return false;
+        }
     }
 
     public int GetTelSendQueueSize()
