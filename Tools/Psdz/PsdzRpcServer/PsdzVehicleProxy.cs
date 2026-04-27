@@ -906,7 +906,253 @@ public class PsdzVehicleProxy : IDisposable
 
     private void TcpThread()
     {
-        //ToDo: implement TCP thread
+        log.InfoFormat("TcpThread started");
+
+        for (; ; )
+        {
+            WaitHandle[] waitHandles = new WaitHandle[1 + _enetTcpChannels.Count * 2];
+            int index = 0;
+
+            waitHandles[index++] = _tcpThreadWakeEvent;
+            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            {
+                waitHandles[index++] = enetTcpChannel.RecEvent;
+                waitHandles[index++] = enetTcpChannel.SendEvent;
+            }
+
+            WaitHandle.WaitAny(waitHandles, 100, false);
+
+            if (_stopThread)
+            {
+                break;
+            }
+
+            foreach (EnetTcpChannel enetTcpChannel in _enetTcpChannels)
+            {
+                foreach (EnetTcpClientData enetTcpClientData in enetTcpChannel.TcpClientList)
+                {
+                    try
+                    {
+                        if (enetTcpClientData.ConnectFailure)
+                        {
+                            TcpClientDisconnect(enetTcpClientData);
+                        }
+
+                        if (enetTcpChannel.TcpServer.Pending())
+                        {
+                            TcpClientConnect(enetTcpChannel.TcpServer, enetTcpClientData);
+                        }
+
+                        if (!_vehicleThread.IsAlive)
+                        {
+                            TcpClientDisconnect(enetTcpClientData);
+                        }
+
+                        if (enetTcpChannel.Control)
+                        {
+                            byte[] recPacket;
+                            lock (enetTcpClientData.RecQueue)
+                            {
+                                recPacket = GetQueuePacket(enetTcpClientData.RecQueue);
+                            }
+
+                            if (recPacket != null && recPacket.Length >= 6)
+                            {
+                                UInt32 payloadType = ((UInt32)recPacket[4] << 8) | recPacket[5];
+                                if (payloadType == 0x0010)
+                                {   // ignition state
+                                    byte[] statePacket = new byte[6 + 1];
+                                    statePacket[3] = 0x06;    // length
+                                    statePacket[5] = 0x10;    // state
+                                    statePacket[6] = 0x05;    // ignition on
+                                    log.InfoFormat("VehicleThread Send ignition state");
+
+                                    lock (enetTcpClientData.SendQueue)
+                                    {
+                                        foreach (byte stateData in statePacket)
+                                        {
+                                            enetTcpClientData.SendQueue.Enqueue(stateData);
+                                        }
+                                    }
+
+                                    enetTcpChannel.SendEvent.Set();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            byte[] recPacket;
+                            lock (enetTcpClientData.RecQueue)
+                            {
+                                recPacket = GetQueuePacket(enetTcpClientData.RecQueue);
+                            }
+
+                            if (recPacket != null && recPacket.Length >= 6)
+                            {
+                                UInt32 payloadType = ((UInt32)recPacket[4] << 8) | recPacket[5];
+                                if (payloadType == 0x0001)
+                                {
+                                    SendAckPacket(enetTcpClientData, recPacket);
+
+                                    byte[] bmwFastTel = CreateBmwFastTelegram(recPacket);
+                                    byte[] nr78Tel = CreateNr78Tel(bmwFastTel);
+                                    if (bmwFastTel == null || nr78Tel == null)
+                                    {
+                                        log.ErrorFormat("TcpThread BmwFastTel invalid");
+                                    }
+                                    else
+                                    {
+                                        bool funcAddress = IsFunctionalAddress(bmwFastTel);
+                                        List<string> cachedResponseList = null;
+                                        string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
+                                        if (funcAddress)
+                                        {
+                                            ProgrammingJobs.CacheType cacheType = _programmingJobs.CacheResponseType;
+                                            if (cacheType == ProgrammingJobs.CacheType.None)
+                                            {
+                                                log.InfoFormat("TcpThread Caching disabled");
+                                            }
+                                            else
+                                            {
+                                                lock (_lockObject)
+                                                {
+                                                    _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
+                                                }
+
+                                                if (cachedResponseList != null &&
+                                                    cacheType == ProgrammingJobs.CacheType.NoResponse)
+                                                {
+                                                    if (cachedResponseList.Count > 0)
+                                                    {
+                                                        log.InfoFormat("TcpThread Only none response caches are allowed");
+                                                        cachedResponseList = null;
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        string recString = BitConverter.ToString(bmwFastTel).Replace("-", " ");
+                                        if (cachedResponseList != null)
+                                        {
+                                            log.InfoFormat("TcpThread Cache entry found for Data={0}", recString);
+                                            SendEnetResponses(enetTcpClientData, cachedResponseList);
+                                        }
+                                        else
+                                        {
+                                            bool enqueued = false;
+                                            int queueSize;
+                                            lock (enetTcpClientData.RecPacketQueue)
+                                            {
+                                                bool found = false;
+                                                foreach (byte[] queueData in enetTcpClientData.RecPacketQueue)
+                                                {
+                                                    if (queueData.Length == bmwFastTel.Length && queueData.SequenceEqual(bmwFastTel))
+                                                    {
+                                                        found = true;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (!found)
+                                                {
+                                                    enetTcpClientData.RecPacketQueue.Enqueue(bmwFastTel);
+                                                    enqueued = true;
+                                                }
+
+                                                queueSize = enetTcpClientData.RecPacketQueue.Count;
+                                            }
+
+                                            if (enqueued)
+                                            {
+                                                byte sourceAddr = bmwFastTel[1];
+                                                if (!funcAddress)
+                                                {
+                                                    int nr78DictSize;
+                                                    bool keyExists;
+                                                    lock (enetTcpClientData.Nr78Dict)
+                                                    {
+                                                        keyExists = enetTcpClientData.Nr78Dict.ContainsKey(sourceAddr);
+                                                        enetTcpClientData.Nr78Dict[sourceAddr] = new Nr78Data(sourceAddr, nr78Tel, Nr78FirstDelay);
+                                                        nr78DictSize = enetTcpClientData.Nr78Dict.Count;
+                                                    }
+
+                                                    string nr78String = BitConverter.ToString(nr78Tel).Replace("-", " ");
+                                                    log.InfoFormat("TcpThread Added NR78 Overwrite={0}, Nr78Size={1}, Data={2}", keyExists, nr78DictSize, nr78String);
+                                                }
+                                                else
+                                                {
+                                                    log.InfoFormat("TcpThread Not added NR78 functional Addr={0:X02}", sourceAddr);
+                                                }
+
+                                                log.InfoFormat("TcpThread Enqueued QueueSize={0}, Data={1}", queueSize, recString);
+                                                enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                                _vehicleThreadWakeEvent.Set();
+                                            }
+                                            else
+                                            {
+                                                log.InfoFormat("TcpThread Already in queue QueueSize={0}, Data={1}", queueSize, recString);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (enetTcpClientData.TcpClientStream != null)
+                                {
+                                    if ((Stopwatch.GetTimestamp() - enetTcpClientData.LastTcpRecTick) > 10000 * TickResolMs)
+                                    {
+                                        byte[] keepAlivePacket = new byte[6 + 2];
+                                        keepAlivePacket[3] = 0x02;
+                                        keepAlivePacket[5] = 0x12;   // Payoad type: alive check
+                                        keepAlivePacket[6] = 0xF4;
+                                        keepAlivePacket[7] = 0x00;
+
+                                        log.InfoFormat("VehicleThread Send keep alive");
+                                        enetTcpClientData.LastTcpRecTick = Stopwatch.GetTimestamp();
+                                        lock (enetTcpClientData.SendQueue)
+                                        {
+                                            foreach (byte stateData in keepAlivePacket)
+                                            {
+                                                enetTcpClientData.SendQueue.Enqueue(stateData);
+                                            }
+                                        }
+
+                                        enetTcpChannel.SendEvent.Set();
+                                    }
+                                }
+                            }
+
+                            SendNr78Tels(enetTcpClientData);
+                        }
+
+                        if (enetTcpClientData.TcpClientStream != null)
+                        {
+                            byte[] sendData;
+                            lock (enetTcpClientData.SendQueue)
+                            {
+                                sendData = enetTcpClientData.SendQueue.ToArray();
+                                enetTcpClientData.SendQueue.Clear();
+                            }
+
+                            if (sendData.Length > 0)
+                            {
+                                string sendString = BitConverter.ToString(sendData).Replace("-", " ");
+                                log.InfoFormat("TcpThread Sending TCP Data={0}", sendString);
+                                WriteNetworkStream(enetTcpClientData, sendData, 0, sendData.Length);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        log.ErrorFormat("TcpThread Exception: {0}", ex.Message);
+                        enetTcpClientData.ConnectFailure = true;
+                    }
+                }
+            }
+        }
+
+        log.InfoFormat("TcpThread stopped");
     }
 
     public void VehicleResponseDictClear()
