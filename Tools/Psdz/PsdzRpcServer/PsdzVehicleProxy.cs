@@ -242,25 +242,6 @@ public class PsdzVehicleProxy : IDisposable
         }
     }
 
-    private string _detectedVin;
-    public string DetectedVin
-    {
-        get
-        {
-            lock (_lockObject)
-            {
-                return _detectedVin;
-            }
-        }
-        set
-        {
-            lock (_lockObject)
-            {
-                _detectedVin = value;
-            }
-        }
-    }
-
     private bool StartTcpListener()
     {
         try
@@ -1731,14 +1712,6 @@ public class PsdzVehicleProxy : IDisposable
             {
                 ReportError("ConnectVehicle failed");
                 StopTcpListener();
-            }
-            else
-            {
-                PsdzContext psdzContext = _programmingJobs?.PsdzContext;
-                if (psdzContext?.Connection != null)
-                {
-                    DetectedVin = psdzContext?.DetectVehicle?.Vin;
-                }
             }
 
             return result;
