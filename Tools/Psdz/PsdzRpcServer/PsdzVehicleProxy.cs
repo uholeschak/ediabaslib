@@ -129,7 +129,7 @@ public class PsdzVehicleProxy : IDisposable
     private readonly AutoResetEvent _tcpThreadWakeEvent = new AutoResetEvent(false);
     private readonly AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
     private readonly Queue<PsdzVehicleResponse> _vehicleResponses = new Queue<PsdzVehicleResponse>();
-    private readonly Dictionary<string, List<byte[]>> _vehicleResponseDict = new Dictionary<string, List<byte[]>>();
+    private readonly Dictionary<byte[], List<byte[]>> _vehicleResponseDict = new Dictionary<byte[], List<byte[]>>();
 
     public PsdzVehicleProxy(ProgrammingJobs programmingJobs)
     {
@@ -1084,7 +1084,6 @@ public class PsdzVehicleProxy : IDisposable
                                     {
                                         bool funcAddress = IsFunctionalAddress(bmwFastTel);
                                         List<byte[]> cachedResponseList = null;
-                                        string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
                                         if (funcAddress)
                                         {
                                             ProgrammingJobs.CacheType cacheType = _programmingJobs.CacheResponseType;
@@ -1096,7 +1095,7 @@ public class PsdzVehicleProxy : IDisposable
                                             {
                                                 lock (_lockObject)
                                                 {
-                                                    _vehicleResponseDict.TryGetValue(sendDataString, out cachedResponseList);
+                                                    _vehicleResponseDict.TryGetValue(bmwFastTel, out cachedResponseList);
                                                 }
 
                                                 if (cachedResponseList != null &&
@@ -1458,7 +1457,6 @@ public class PsdzVehicleProxy : IDisposable
                     byte serviceResponse = responseData[dataOffsetResponse];
                     if (serviceResponse == (0x10 | 0x40) && responseData.Length == dataOffsetResponse + 6)
                     {
-
                         uint p2Max = 5000;
                         uint p2Start = 10000;
                         responseData[dataOffsetResponse + 2] = (byte)((p2Max >> 8) & 0xFF);
@@ -1560,8 +1558,6 @@ public class PsdzVehicleProxy : IDisposable
 
                             if (VehicleSendEvent != null)
                             {
-                                string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
-
                                 for (int retry = 0; retry < 3; retry++)
                                 {
                                     if (!VehicleSendEvent.Invoke(GetNextPacketId(), bmwFastTel))
@@ -1612,6 +1608,7 @@ public class PsdzVehicleProxy : IDisposable
                                         }
                                         else if (vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
                                         {
+                                            string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
                                             log.ErrorFormat("VehicleThread Vehicle transmit no response for Request={0}", sendDataString);
 
                                             if (funcAddress)
@@ -1619,7 +1616,7 @@ public class PsdzVehicleProxy : IDisposable
                                                 log.InfoFormat("VehicleThread Cache disable Request={0}", sendDataString);
                                                 lock (_lockObject)
                                                 {
-                                                    _vehicleResponseDict[sendDataString] = new List<byte[]>();
+                                                    _vehicleResponseDict[bmwFastTel] = new List<byte[]>();
                                                 }
                                             }
                                         }
@@ -1634,10 +1631,11 @@ public class PsdzVehicleProxy : IDisposable
 
                                             if (funcAddress)
                                             {
+                                                string sendDataString = BitConverter.ToString(bmwFastTel).Replace("-", "");
                                                 log.InfoFormat("VehicleThread Caching Request={0}", sendDataString);
                                                 lock (_lockObject)
                                                 {
-                                                    _vehicleResponseDict[sendDataString] = vehicleResponse.ResponseList;
+                                                    _vehicleResponseDict[bmwFastTel] = vehicleResponse.ResponseList;
                                                 }
                                             }
 
