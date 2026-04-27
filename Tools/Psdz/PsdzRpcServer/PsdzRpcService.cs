@@ -374,6 +374,12 @@ namespace PsdzRpcServer
                     Task.Run(() => _callback.OnVehicleDisconnect(id)).GetAwaiter().GetResult();
                     return true;
                 };
+
+                _vehicleProxy.VehicleSendEvent += (id, data) =>
+                {
+                    Task.Run(() => _callback.OnVehicleSend(id, data)).GetAwaiter().GetResult();
+                    return true;
+                };
             }
 
             return Task.FromResult(true);
