@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using EdiabasLib;
 
 namespace PsdzRpcClient
 {
@@ -34,6 +35,9 @@ namespace PsdzRpcClient
             [Option('i', "vehicleip", Required = false, HelpText = "Vehicle IP address.")]
             public string VehicleIp { get; set; }
 
+            [Option('o', "vehicleproxy", Required = false, HelpText = "Enable vehicle proxy.")]
+            public bool VehicleProxy { get; set; }
+
             [Option('s', "serverexe", Required = false, HelpText = "Server executable path.")]
             public string ServerExe { get; set; }
             
@@ -49,6 +53,7 @@ namespace PsdzRpcClient
 
         static PsdzRpcSwiRegisterEnum selectedRegisterEnum = PsdzRpcSwiRegisterEnum.VehicleModificationCodingConversion;
         static Options.VerbosityOption _verbosity = Options.VerbosityOption.Important;
+        private static EdiabasProxyClient _ediabasProxyClient;
 
         static async Task<int> Main(string[] args)
         {
@@ -56,6 +61,7 @@ namespace PsdzRpcClient
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
             string vehicleIp = string.Empty;
+            bool vehicleProxy = false;
             string serverExe = string.Empty;
             string userName = string.Empty;
             string password = string.Empty;
@@ -73,6 +79,7 @@ namespace PsdzRpcClient
                 .WithParsed<Options>(o =>
                 {
                     vehicleIp = o.VehicleIp;
+                    vehicleProxy = o.VehicleProxy;
                     serverExe = o.ServerExe;
                     userName = o.UserName;
                     password = o.Password;
@@ -401,6 +408,21 @@ namespace PsdzRpcClient
                             Console.WriteLine("Failed to set license valid.");
                         }
                         return 1;
+                    }
+
+                    if (vehicleProxy)
+                    {
+                        _ediabasProxyClient = new EdiabasProxyClient(new EdiabasNet());
+
+                        bool proxyResult = await client.RpcService.EnableVehicleProxy().ConfigureAwait(false);
+                        if (!proxyResult)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Failed to enable vehicle proxy.");
+                            }
+                            return 1;
+                        }
                     }
 
                     Console.WriteLine("License set to valid.");
