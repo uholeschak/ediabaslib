@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using EdiabasLib;
 using HttpMultipartParser;
 using ISimpleHttpListener.Rx.Enum;
 using ISimpleHttpListener.Rx.Model;
@@ -17,7 +18,7 @@ using SimpleHttpListener.Rx.Extension;
 using SimpleHttpListener.Rx.Model;
 using SimpleHttpListener.Rx.Service;
 
-namespace EdiabasLib
+namespace VehicleTestServer
 {
     public class EdiabasTcpServer: IDisposable
     {
