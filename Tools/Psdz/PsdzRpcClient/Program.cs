@@ -413,6 +413,10 @@ namespace PsdzRpcClient
                     if (vehicleProxy)
                     {
                         _ediabasProxyClient = new EdiabasProxyClient(new EdiabasNet());
+                        _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
+                        {
+                            return Task.Run(() => client.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
+                        };
 
                         bool proxyResult = await client.RpcService.EnableVehicleProxy().ConfigureAwait(false);
                         if (!proxyResult)
@@ -634,6 +638,11 @@ namespace PsdzRpcClient
             {
                 Console.WriteLine($"Error: {ex.Message}");
                 return 1;
+            }
+
+            if (_ediabasProxyClient != null)
+            {
+                _ediabasProxyClient.Dispose();
             }
 
             Console.WriteLine("Client stopped.");
