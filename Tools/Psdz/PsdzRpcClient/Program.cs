@@ -352,6 +352,57 @@ namespace PsdzRpcClient
                     });
                 };
 
+                client.CallbackHandler.VehicleConnect += (sender, id) =>
+                {
+                    if (_ediabasProxyClient == null)
+                    {
+                        syncContext.BeginInvoke(async () =>
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Ediabas proxy client is not initialized.");
+                            }
+                        });
+                        return;
+                    }
+
+                    _ediabasProxyClient.VehicleConnect(id);
+                };
+
+                client.CallbackHandler.VehicleDisconnect += (sender, id) =>
+                {
+                    if (_ediabasProxyClient == null)
+                    {
+                        syncContext.BeginInvoke(async () =>
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Ediabas proxy client is not initialized.");
+                            }
+                        });
+                        return;
+                    }
+
+                    _ediabasProxyClient?.VehicleDisconnect(id);
+                };
+
+                client.CallbackHandler.VehicleSend += (sender, sendArgs) =>
+                {
+                    if (_ediabasProxyClient == null)
+                    {
+                        syncContext.BeginInvoke(async () =>
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Ediabas proxy client is not initialized.");
+                            }
+                        });
+                        return;
+                    }
+
+                    _ediabasProxyClient?.VehicleSend(sendArgs.Id, sendArgs.Data);
+                };
+
                 if (string.IsNullOrEmpty(serverExe) || !File.Exists(serverExe))
                 {
                     serverExe = PsdzRpcServerStarter.DetectServerLocation();
