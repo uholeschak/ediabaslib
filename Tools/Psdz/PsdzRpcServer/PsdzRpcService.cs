@@ -268,7 +268,7 @@ namespace PsdzRpcServer
 
         public Task<bool> IsVehicleConnected()
         {
-            bool isConnected = _programmingJobs.PsdzContext?.Connection != null;
+            bool isConnected = IsVehicleConnectedInternal();
             return Task.FromResult(isConnected);
         }
 
@@ -358,6 +358,11 @@ namespace PsdzRpcServer
             if (_vehicleProxy == null)
             {
                 if (IsOperationActive())
+                {
+                    return Task.FromResult(false);
+                }
+
+                if (IsVehicleConnectedInternal())
                 {
                     return Task.FromResult(false);
                 }
@@ -463,12 +468,18 @@ namespace PsdzRpcServer
             return isActive;
         }
 
+        private bool IsVehicleConnectedInternal()
+        {
+            bool isConnected = _programmingJobs.PsdzContext?.Connection != null;
+            return isConnected;
+        }
+
         private List<PsdzRpcOptionItem> GetSelectedOptionsInternal(PsdzDatabase.SwiRegisterEnum? swiRegisterEnum)
         {
             try
             {
                 List<PsdzRpcOptionItem> options = new List<PsdzRpcOptionItem>();
-                if (_programmingJobs.ProgrammingService == null || _programmingJobs.PsdzContext?.Connection == null)
+                if (_programmingJobs.ProgrammingService == null || !IsVehicleConnectedInternal())
                 {
                     return options;
                 }
@@ -674,7 +685,7 @@ namespace PsdzRpcServer
 
         private List<PsdzDatabase.SwiAction> GetSelectedSwiActions()
         {
-            if (_programmingJobs.PsdzContext?.Connection == null || _programmingJobs.SelectedOptions == null)
+            if (!IsVehicleConnectedInternal() || _programmingJobs.SelectedOptions == null)
             {
                 return null;
             }
