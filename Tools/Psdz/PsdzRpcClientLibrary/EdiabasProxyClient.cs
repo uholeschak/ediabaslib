@@ -32,6 +32,9 @@ public class EdiabasProxyClient : IDisposable
         public byte[] Data { get; }
     }
 
+    public delegate bool VehicleResponseDelegate(PsdzVehicleResponse vehicleResponse);
+    public event VehicleResponseDelegate VehicleResponseEvent;
+
     private bool _disposed;
     private EdiabasNet _ediabas;
     private volatile bool _ediabasJobAbort;
@@ -42,10 +45,26 @@ public class EdiabasProxyClient : IDisposable
     private object _requestLock = new object();
     private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
 
+
     public EdiabasProxyClient(EdiabasNet ediabas)
     {
         _ediabas = ediabas;
         _ediabasThreadWakeEvent = new AutoResetEvent(false);
+    }
+
+    public bool VehicleConnect(ulong id)
+    {
+        return EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Connect, id));
+    }
+
+    public bool VehicleDisconnect(ulong id)
+    {
+        return EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Disconnect, id));
+    }
+
+    public bool VehicleSend(ulong id, byte[] data)
+    {
+        return EnqueueVehicleRequest(new VehicleRequest(VehicleRequest.VehicleRequestType.Transmit, id, data));
     }
 
     private bool EnqueueVehicleRequest(VehicleRequest vehicleRequest)
@@ -236,8 +255,9 @@ public class EdiabasProxyClient : IDisposable
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas transmit Exception: {0}", EdiabasNet.GetExceptionText(ex));
                 }
 
                 if (!funcAddress || !dataReceived)
@@ -313,7 +333,7 @@ public class EdiabasProxyClient : IDisposable
                 bool connected = IsEdiabasConnected();
                 vehicleResponse.Connected = connected;
 
-                //SendVehicleResponseThread(vehicleResponse);
+                VehicleResponseEvent?.Invoke(vehicleResponse);
             }
         }
     }
