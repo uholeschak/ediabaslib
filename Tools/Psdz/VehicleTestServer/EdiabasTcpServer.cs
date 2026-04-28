@@ -19,7 +19,7 @@ using SimpleHttpListener.Rx.Service;
 
 namespace EdiabasLib
 {
-    public class EdWebServer: IDisposable
+    public class EdiabasTcpServer: IDisposable
     {
         public delegate void MessageDelegate(string message);
 
@@ -42,7 +42,7 @@ namespace EdiabasLib
             }
         }
 
-        public EdWebServer(EdiabasNet ediabas, MessageDelegate messageHandler)
+        public EdiabasTcpServer(EdiabasNet ediabas, MessageDelegate messageHandler)
         {
             _ediabas = ediabas;
             _ediabas.AbortJobFunc = AbortEdiabasJob;

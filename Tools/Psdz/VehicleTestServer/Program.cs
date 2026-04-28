@@ -59,11 +59,11 @@ namespace VehicleTestServer
             outWriter.WriteLine("Vehicle IP: {0}", vehicleIp);
 
             EdiabasNet ediabas = EdiabasSetup(vehicleIp);
-            EdWebServer edWebServer = new EdWebServer(ediabas, message =>
+            EdiabasTcpServer ediabasTcpServer = new EdiabasTcpServer(ediabas, message =>
             {
                 outWriter.WriteLine(message);
             });
-            edWebServer.StartTcpListener("http://127.0.0.1:8080");
+            ediabasTcpServer.StartTcpListener("http://127.0.0.1:8080");
             outWriter.WriteLine("Press ESC to stop");
             do
             {
@@ -74,7 +74,7 @@ namespace VehicleTestServer
             }
             while (Console.ReadKey(true).Key != ConsoleKey.Escape);
 
-            edWebServer.Dispose();
+            ediabasTcpServer.Dispose();
             return 0;
         }
 
