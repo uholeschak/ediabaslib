@@ -14,4 +14,7 @@
     <PackageReference Include="StreamJsonRpc" Version="2.24.84" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="10.0.7" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\EdiabasLib\EdiabasLib\EdiabasLib.csproj" />
+  </ItemGroup>
 </Project>

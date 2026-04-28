@@ -166,82 +166,6 @@ public class PsdzVehicleProxy : IDisposable
         }
     }
 
-    private string _appId;
-    public string AppId
-    {
-        get
-        {
-            lock (_lockObject)
-            {
-                return _appId;
-            }
-        }
-        set
-        {
-            lock (_lockObject)
-            {
-                _appId = value;
-            }
-        }
-    }
-
-    private int? _connectTimeouts;
-    public int? ConnectTimeouts
-    {
-        get
-        {
-            lock (_lockObject)
-            {
-                return _connectTimeouts;
-            }
-        }
-        set
-        {
-            lock (_lockObject)
-            {
-                _connectTimeouts = value;
-            }
-        }
-    }
-
-    private string _adapterSerial;
-    public string AdapterSerial
-    {
-        get
-        {
-            lock (_lockObject)
-            {
-                return _adapterSerial;
-            }
-        }
-        set
-        {
-            lock (_lockObject)
-            {
-                _adapterSerial = value;
-            }
-        }
-    }
-
-    private bool _adapterSerialValid;
-    public bool AdapterSerialValid
-    {
-        get
-        {
-            lock (_lockObject)
-            {
-                return _adapterSerialValid;
-            }
-        }
-        set
-        {
-            lock (_lockObject)
-            {
-                _adapterSerialValid = value;
-            }
-        }
-    }
-
     private bool StartTcpListener()
     {
         try
@@ -1277,8 +1201,6 @@ public class PsdzVehicleProxy : IDisposable
 
     public bool VehicleConnect()
     {
-        ConnectTimeouts = null;
-
         if (VehicleConnectEvent == null)
         {
             log.ErrorFormat("VehicleConnectEvent is null");
@@ -1288,20 +1210,7 @@ public class PsdzVehicleProxy : IDisposable
         VehicleConnectEvent.Invoke(GetNextPacketId());
 
         PsdzVehicleResponse vehicleResponse = WaitForVehicleResponse();
-        if (vehicleResponse != null)
-        {
-            if (vehicleResponse.ConnectTimeouts.HasValue)
-            {
-                ConnectTimeouts = vehicleResponse.ConnectTimeouts;
-            }
-
-            AppId = vehicleResponse.AppId;
-            AdapterSerial = vehicleResponse.AdapterSerial;
-            AdapterSerialValid = vehicleResponse.SerialValid;
-            log.InfoFormat("VehicleConnect AppId={0}, AdapterSerial={1}, Valid={2}", AppId ?? string.Empty, AdapterSerial ?? string.Empty, AdapterSerialValid);
-        }
-
-        if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid || !vehicleResponse.Connected)
+        if (vehicleResponse == null || !vehicleResponse.Valid || !vehicleResponse.Connected)
         {
             log.ErrorFormat("VehicleConnect Vehicle connect failed");
             return false;
@@ -1320,7 +1229,7 @@ public class PsdzVehicleProxy : IDisposable
 
         VehicleDisconnectEvent.Invoke(GetNextPacketId());
         PsdzVehicleResponse vehicleResponse = WaitForVehicleResponse();
-        if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
+        if (vehicleResponse == null || !vehicleResponse.Valid)
         {
             log.ErrorFormat("VehicleDisconnect Vehicle disconnect failed");
             return false;
@@ -1341,9 +1250,9 @@ public class PsdzVehicleProxy : IDisposable
             {
                 if (vehicleResponse.Id == packetId)
                 {
-                    if (vehicleResponse.Valid || vehicleResponse.Error)
+                    if (vehicleResponse.Valid)
                     {
-                        log.InfoFormat("WaitForVehicleResponse Valid={0}, Error={1}", vehicleResponse.Valid, vehicleResponse.Error);
+                        log.InfoFormat("WaitForVehicleResponse Valid={0}", vehicleResponse.Valid);
                         return vehicleResponse;
                     }
                 }
@@ -1380,7 +1289,7 @@ public class PsdzVehicleProxy : IDisposable
         {
             return;
         }
-        if (string.IsNullOrEmpty(vehicleResponse.Request) || vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
+        if (vehicleResponse.Request == null || vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
         {
             log.ErrorFormat("LogVehicleResponse No Data");
             return;
@@ -1403,7 +1312,7 @@ public class PsdzVehicleProxy : IDisposable
                 }
 
                 StringBuilder sb = new StringBuilder();
-                byte[] requestData = EdiabasNet.HexToByteArray(vehicleResponse.Request);
+                byte[] requestData = vehicleResponse.Request;
                 string requestString = ArrayToString(requestData);
                 sb.Append(requestString);
 
@@ -1443,13 +1352,13 @@ public class PsdzVehicleProxy : IDisposable
             return;
         }
 
-        if (string.IsNullOrEmpty(vehicleResponse.Request) || vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
+        if (vehicleResponse.Request == null || vehicleResponse.ResponseList == null || vehicleResponse.ResponseList.Count == 0)
         {
             log.ErrorFormat("PatchVehicleResponse No Data");
             return;
         }
 
-        byte[] requestData = EdiabasNet.HexToByteArray(vehicleResponse.Request);
+        byte[] requestData = vehicleResponse.Request;
         int dataOffsetRequest = CalculateDataOffset(requestData);
         if (dataOffsetRequest >= 0)
         {
@@ -1596,7 +1505,7 @@ public class PsdzVehicleProxy : IDisposable
                                         log.InfoFormat("VehicleThread NR78 removed: Addr={0:X02}", sourceAddr);
                                     }
 
-                                    if (vehicleResponse == null || vehicleResponse.Error || !vehicleResponse.Valid)
+                                    if (vehicleResponse == null || !vehicleResponse.Valid)
                                     {
                                         log.ErrorFormat("VehicleThread Vehicle transmit failed");
                                     }
@@ -1633,10 +1542,6 @@ public class PsdzVehicleProxy : IDisposable
                                         {
                                             LogVehicleResponse(vehicleResponse);
                                             PatchVehicleResponse(vehicleResponse);
-                                            if (vehicleResponse.ConnectTimeouts.HasValue)
-                                            {
-                                                ConnectTimeouts = vehicleResponse.ConnectTimeouts;
-                                            }
 
                                             if (funcAddress)
                                             {
@@ -1677,7 +1582,6 @@ public class PsdzVehicleProxy : IDisposable
             log.ErrorFormat("VehicleThread Vehicle disconnect failed");
         }
 
-        ConnectTimeouts = null;
         VehicleResponseDictClear();
         CloseVehicleLog();
         log.InfoFormat("VehicleThread stopped");
