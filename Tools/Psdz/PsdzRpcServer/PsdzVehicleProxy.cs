@@ -98,12 +98,10 @@ public class PsdzVehicleProxy : IDisposable
     public delegate bool VehicleConnectDelegate(ulong id);
     public delegate bool VehicleDisconnectDelegate(ulong id);
     public delegate bool VehicleSendDelegate(ulong id, byte[] data);
-    public delegate bool ReportErrorDelegate(string msg);
 
     public event VehicleConnectDelegate VehicleConnectEvent;
     public event VehicleDisconnectDelegate VehicleDisconnectEvent;
     public event VehicleSendDelegate VehicleSendEvent;
-    public event ReportErrorDelegate ReportErrorEvent;
 
     private static readonly long TickResolMs = Stopwatch.Frequency / 1000;
     private const int TcpSendBufferSize = 1400;
@@ -1620,7 +1618,7 @@ public class PsdzVehicleProxy : IDisposable
 
             if (!result)
             {
-                ReportError("ConnectVehicle failed");
+                log.ErrorFormat("ConnectVehicle failed");
                 StopTcpListener();
             }
 
@@ -1648,7 +1646,7 @@ public class PsdzVehicleProxy : IDisposable
 
             if (!result)
             {
-                ReportError("DisconnectVehicle failed");
+                log.ErrorFormat("DisconnectVehicle failed");
             }
 
             return result;
@@ -1699,24 +1697,6 @@ public class PsdzVehicleProxy : IDisposable
         }
 
         return queueSize;
-    }
-
-    public void ReportError(string msg)
-    {
-        try
-        {
-            if (ReportErrorEvent == null)
-            {
-                log.ErrorFormat("ReportError Event is null");
-                return;
-            }
-
-            ReportErrorEvent.Invoke(msg);
-        }
-        catch (Exception ex)
-        {
-            log.ErrorFormat("ReportError Exception: {0}", ex.Message);
-        }
     }
 
     public void Dispose()

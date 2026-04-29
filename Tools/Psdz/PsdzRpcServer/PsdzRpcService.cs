@@ -406,19 +406,6 @@ namespace PsdzRpcServer
                         return false;
                     }
                 };
-
-                _vehicleProxy.ReportErrorEvent += (message) =>
-                {
-                    try
-                    {
-                        Task.Run(() => _callback.OnReportError(message)).GetAwaiter().GetResult();
-                        return true;
-                    }
-                    catch (Exception)
-                    {
-                        return false;
-                    }
-                };
             }
 
             return Task.FromResult(true);

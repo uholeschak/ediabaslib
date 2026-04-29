@@ -305,17 +305,6 @@ namespace PsdzRpcClient
                     });
                 };
 
-                client.CallbackHandler.ReportError += (sender, s) => 
-                {
-                    syncContext.BeginInvoke(() =>
-                    {
-                        if (_verbosity >= Options.VerbosityOption.Error)
-                        {
-                            Console.WriteLine($"Error report: {s}");
-                        }
-                    });
-                };
-
                 client.CallbackHandler.TelSendQueueSize += (sender, queueArgs) =>
                 {
                     queueArgs.Result = -1; // Simulate no queue

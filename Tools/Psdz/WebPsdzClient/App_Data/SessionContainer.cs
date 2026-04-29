@@ -673,7 +673,6 @@ namespace WebPsdzClient.App_Data
             RpcClient.CallbackHandler.UpdateOptionSelections += RpcUpdateOptionSelections;
             RpcClient.CallbackHandler.ShowMessage += RpcShowMessage;
             RpcClient.CallbackHandler.ShowMessageWait += RpcShowMessageWait;
-            RpcClient.CallbackHandler.ReportError += RpcReportError;
             RpcClient.CallbackHandler.TelSendQueueSize += RpcTelSendQueueSize;
             RpcClient.CallbackHandler.ServiceInitialized += RpcServiceInitialized;
 #else
@@ -3479,11 +3478,6 @@ namespace WebPsdzClient.App_Data
             }
         }
 
-        private void RpcReportError(object sender, string message)
-        {
-            log.ErrorFormat("RpcReportError: {0}", message);
-        }
-
         private void RpcTelSendQueueSize(object sender, PsdzRpcClient.TelSendQueueSizeEventArgs queueArgs)
         {
             try
@@ -4143,7 +4137,6 @@ namespace WebPsdzClient.App_Data
                             RpcClient.CallbackHandler.UpdateOptionSelections -= RpcUpdateOptionSelections;
                             RpcClient.CallbackHandler.ShowMessage -= RpcShowMessage;
                             RpcClient.CallbackHandler.ShowMessageWait -= RpcShowMessageWait;
-                            RpcClient.CallbackHandler.ReportError -= RpcReportError;
                             RpcClient.CallbackHandler.TelSendQueueSize -= RpcTelSendQueueSize;
                             RpcClient.CallbackHandler.ServiceInitialized -= RpcServiceInitialized;
                         }
