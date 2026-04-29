@@ -345,7 +345,7 @@ namespace PsdzRpcClient
                 {
                     if (_ediabasProxyClient == null)
                     {
-                        syncContext.BeginInvoke(async () =>
+                        syncContext.BeginInvoke(() =>
                         {
                             if (_verbosity >= Options.VerbosityOption.Error)
                             {
@@ -362,7 +362,7 @@ namespace PsdzRpcClient
                 {
                     if (_ediabasProxyClient == null)
                     {
-                        syncContext.BeginInvoke(async () =>
+                        syncContext.BeginInvoke(() =>
                         {
                             if (_verbosity >= Options.VerbosityOption.Error)
                             {
@@ -379,7 +379,7 @@ namespace PsdzRpcClient
                 {
                     if (_ediabasProxyClient == null)
                     {
-                        syncContext.BeginInvoke(async () =>
+                        syncContext.BeginInvoke(() =>
                         {
                             if (_verbosity >= Options.VerbosityOption.Error)
                             {
@@ -471,6 +471,29 @@ namespace PsdzRpcClient
                         {
                             return Task.Run(() => client.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
                         };
+
+                        _ediabasProxyClient.ErrorMessageEvent += (message) =>
+                        {
+                            syncContext.BeginInvoke(() =>
+                            {
+                                if (_verbosity >= Options.VerbosityOption.Error)
+                                {
+                                    Console.WriteLine($"Proxy error: {message}");
+                                }
+                            });
+                        };
+
+                        _ediabasProxyClient.InfoMessageEvent += (message) =>
+                        {
+                            syncContext.BeginInvoke(() =>
+                            {
+                                if (_verbosity >= Options.VerbosityOption.Info)
+                                {
+                                    Console.WriteLine($"Proxy info: {message}");
+                                }
+                            });
+                        };
+
                         _ediabasProxyClient.StartEdiabasThread();
 
                         bool proxyResult = await client.RpcService.EnableVehicleProxy().ConfigureAwait(false);
