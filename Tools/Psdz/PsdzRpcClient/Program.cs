@@ -53,7 +53,6 @@ namespace PsdzRpcClient
 
         static PsdzRpcSwiRegisterEnum selectedRegisterEnum = PsdzRpcSwiRegisterEnum.VehicleModificationCodingConversion;
         static Options.VerbosityOption _verbosity = Options.VerbosityOption.Important;
-        private static EdiabasProxyClient _ediabasProxyClient;
 
         static async Task<int> Main(string[] args)
         {
@@ -103,7 +102,9 @@ namespace PsdzRpcClient
             }
 
             ShowMessageEventArgs pendingMessage = null;
+            EdiabasProxyClient ediabasProxyClient = null;
             using CancellationTokenSource cts = new CancellationTokenSource();
+            PsdzRpcClient client = new PsdzRpcClient(Console.Out);
 
             try
             {
@@ -115,7 +116,6 @@ namespace PsdzRpcClient
                 };
 
                 SingleThreadSynchronizationContext syncContext = new();
-                using PsdzRpcClient client = new PsdzRpcClient(Console.Out);
 
                 client.CallbackHandler.StartProgrammingCompleted += (s, success) =>
                 {
@@ -343,53 +343,32 @@ namespace PsdzRpcClient
 
                 client.CallbackHandler.VehicleConnect += (sender, id) =>
                 {
-                    if (_ediabasProxyClient == null)
+                    EdiabasProxyClient proxy = ediabasProxyClient;
+                    if (proxy == null || proxy.IsDisposed)
                     {
-                        syncContext.BeginInvoke(() =>
-                        {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                Console.WriteLine("Ediabas proxy client is not initialized.");
-                            }
-                        });
                         return;
                     }
-
-                    _ediabasProxyClient.VehicleConnect(id);
+                    proxy.VehicleConnect(id);
                 };
 
                 client.CallbackHandler.VehicleDisconnect += (sender, id) =>
                 {
-                    if (_ediabasProxyClient == null)
+                    EdiabasProxyClient proxy = ediabasProxyClient;
+                    if (proxy == null || proxy.IsDisposed)
                     {
-                        syncContext.BeginInvoke(() =>
-                        {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                Console.WriteLine("Ediabas proxy client is not initialized.");
-                            }
-                        });
                         return;
                     }
-
-                    _ediabasProxyClient?.VehicleDisconnect(id);
+                    proxy.VehicleDisconnect(id);
                 };
 
                 client.CallbackHandler.VehicleSend += (sender, sendArgs) =>
                 {
-                    if (_ediabasProxyClient == null)
+                    EdiabasProxyClient proxy = ediabasProxyClient;
+                    if (proxy == null || proxy.IsDisposed)
                     {
-                        syncContext.BeginInvoke(() =>
-                        {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                Console.WriteLine("Ediabas proxy client is not initialized.");
-                            }
-                        });
                         return;
                     }
-
-                    _ediabasProxyClient?.VehicleSend(sendArgs.Id, sendArgs.Data);
+                    proxy.VehicleSend(sendArgs.Id, sendArgs.Data);
                 };
 
                 if (string.IsNullOrEmpty(serverExe) || !File.Exists(serverExe))
@@ -466,13 +445,13 @@ namespace PsdzRpcClient
                     if (vehicleProxy)
                     {
                         EdiabasNet ediabasNet = EdiabasSetup(remoteHost);
-                        _ediabasProxyClient = new EdiabasProxyClient(ediabasNet);
-                        _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
+                        ediabasProxyClient = new EdiabasProxyClient(ediabasNet);
+                        ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
                         {
                             return Task.Run(() => client.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
                         };
 
-                        _ediabasProxyClient.ErrorMessageEvent += (message) =>
+                        ediabasProxyClient.ErrorMessageEvent += (message) =>
                         {
                             syncContext.BeginInvoke(() =>
                             {
@@ -483,7 +462,7 @@ namespace PsdzRpcClient
                             });
                         };
 
-                        _ediabasProxyClient.InfoMessageEvent += (message) =>
+                        ediabasProxyClient.InfoMessageEvent += (message) =>
                         {
                             syncContext.BeginInvoke(() =>
                             {
@@ -494,7 +473,7 @@ namespace PsdzRpcClient
                             });
                         };
 
-                        _ediabasProxyClient.StartEdiabasThread();
+                        ediabasProxyClient.StartEdiabasThread();
 
                         bool proxyResult = await client.RpcService.EnableVehicleProxy().ConfigureAwait(false);
                         if (!proxyResult)
@@ -705,12 +684,20 @@ namespace PsdzRpcClient
                 Console.WriteLine($"Error: {ex.Message}");
                 return 1;
             }
-
-            if (_ediabasProxyClient != null)
+            finally
             {
-                _ediabasProxyClient.StopEdiabasThread();
-                _ediabasProxyClient.Dispose();
-                _ediabasProxyClient = null;
+                if (client != null)
+                {
+                    client.Dispose();
+                    client = null;
+                }
+
+                if (ediabasProxyClient != null)
+                {
+                    ediabasProxyClient.StopEdiabasThread();
+                    ediabasProxyClient.Dispose();
+                    ediabasProxyClient = null;
+                }
             }
 
             Console.WriteLine("Client stopped.");

@@ -49,6 +49,7 @@ public class EdiabasProxyClient : IDisposable
     private object _requestLock = new object();
     private Queue<VehicleRequest> _requestQueue = new Queue<VehicleRequest>();
 
+    public bool IsDisposed => _disposed;
 
     public EdiabasProxyClient(EdiabasNet ediabas)
     {
@@ -387,5 +388,4 @@ public class EdiabasProxyClient : IDisposable
             _disposed = true;
         }
     }
-
 }
