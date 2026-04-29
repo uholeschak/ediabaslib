@@ -461,9 +461,22 @@ namespace PsdzRpcClient
                         return 1;
                     }
 
+                    Console.WriteLine("License set to valid.");
+
+                    string remoteHost = vehicleIp;
+                    if (string.IsNullOrEmpty(vehicleIp))
+                    {
+                        remoteHost = vehicleProxy ? EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll : "127.0.0.1";
+                    }
+
+                    if (_verbosity >= Options.VerbosityOption.Important)
+                    {
+                        Console.WriteLine($"Using vehicle IP: {remoteHost}");
+                    }
+
                     if (vehicleProxy)
                     {
-                        EdiabasNet ediabasNet = EdiabasSetup(vehicleIp);
+                        EdiabasNet ediabasNet = EdiabasSetup(remoteHost);
                         _ediabasProxyClient = new EdiabasProxyClient(ediabasNet);
                         _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
                         {
@@ -482,18 +495,6 @@ namespace PsdzRpcClient
                         }
                     }
 
-                    Console.WriteLine("License set to valid.");
-
-                    string remoteHost = "127.0.0.1";
-                    if (!string.IsNullOrEmpty(vehicleIp))
-                    {
-                        remoteHost = vehicleIp;
-                    }
-
-                    if (_verbosity >= Options.VerbosityOption.Important)
-                    {
-                        Console.WriteLine($"Using vehicle IP: {remoteHost}");
-                    }
                     PrintOptions();
 
                     for (;;)
