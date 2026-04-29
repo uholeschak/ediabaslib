@@ -463,7 +463,8 @@ namespace PsdzRpcClient
 
                     if (vehicleProxy)
                     {
-                        _ediabasProxyClient = new EdiabasProxyClient(new EdiabasNet());
+                        EdiabasNet ediabasNet = EdiabasSetup(vehicleIp);
+                        _ediabasProxyClient = new EdiabasProxyClient(ediabasNet);
                         _ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
                         {
                             return Task.Run(() => client.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
@@ -841,6 +842,20 @@ namespace PsdzRpcClient
                 }
                 await Task.Delay(100, ct).ConfigureAwait(false);
             }
+        }
+
+        private static EdiabasNet EdiabasSetup(string vehicleIp)
+        {
+            EdInterfaceEnet edInterfaceEnet = new EdInterfaceEnet(false);
+            EdiabasNet ediabas = new EdiabasNet
+            {
+                EdInterfaceClass = edInterfaceEnet,
+            };
+            edInterfaceEnet.RemoteHost = vehicleIp;
+            edInterfaceEnet.VehicleProtocol = EdInterfaceEnet.ProtocolHsfz;
+            edInterfaceEnet.IcomAllocate = false;
+
+            return ediabas;
         }
     }
 }
