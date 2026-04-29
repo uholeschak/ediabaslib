@@ -33,7 +33,11 @@ public class EdiabasProxyClient : IDisposable
     }
 
     public delegate bool VehicleResponseDelegate(PsdzVehicleResponse vehicleResponse);
+    public delegate void ErrorMessageDelegate(string message);
+    public delegate void InfoMessageDelegate(string message);
     public event VehicleResponseDelegate VehicleResponseEvent;
+    public event ErrorMessageDelegate ErrorMessageEvent;
+    public event InfoMessageDelegate InfoMessageEvent;
 
     private bool _disposed;
     private EdiabasNet _ediabas;
@@ -152,22 +156,23 @@ public class EdiabasProxyClient : IDisposable
                 return false;
             }
 
-            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas connect, Id={0}", id);
+            InfoMessageEvent?.Invoke($"Ediabas connect, Id={id}");
 
             try
             {
                 if (_ediabas.EdInterfaceClass.InterfaceConnect())
                 {
-                    _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Ediabas connected");
+
+                    InfoMessageEvent?.Invoke("Ediabas connected");
                     return true;
                 }
 
-                _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Ediabas connect failed");
+                ErrorMessageEvent?.Invoke("Ediabas connect failed");
                 return false;
             }
             catch (Exception ex)
             {
-                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas connect Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                ErrorMessageEvent?.Invoke($"Ediabas connect Exception: {EdiabasNet.GetExceptionText(ex)}");
                 return false;
             }
         }
@@ -182,7 +187,7 @@ public class EdiabasProxyClient : IDisposable
                 return false;
             }
 
-            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas disconnect, Id={0}", id);
+            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas disconnect, Id={0}", id);
 
             try
             {
