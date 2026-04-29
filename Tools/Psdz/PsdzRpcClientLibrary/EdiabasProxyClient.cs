@@ -83,7 +83,7 @@ public class EdiabasProxyClient : IDisposable
         return true;
     }
 
-    private bool StartEdiabasThread()
+    public bool StartEdiabasThread()
     {
         if (IsEdiabasThreadRunning())
         {
@@ -101,7 +101,7 @@ public class EdiabasProxyClient : IDisposable
         return true;
     }
 
-    private bool StopEdiabasThread()
+    public bool StopEdiabasThread()
     {
         _ediabasJobAbort = true;
         _ediabasThreadWakeEvent.Set();
