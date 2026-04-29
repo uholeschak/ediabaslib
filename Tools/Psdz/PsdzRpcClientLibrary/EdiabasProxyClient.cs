@@ -157,12 +157,10 @@ public class EdiabasProxyClient : IDisposable
             }
 
             InfoMessageEvent?.Invoke($"Ediabas connect, Id={id}");
-
             try
             {
                 if (_ediabas.EdInterfaceClass.InterfaceConnect())
                 {
-
                     InfoMessageEvent?.Invoke("Ediabas connected");
                     return true;
                 }
@@ -187,16 +185,16 @@ public class EdiabasProxyClient : IDisposable
                 return false;
             }
 
-            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas disconnect, Id={0}", id);
+            InfoMessageEvent?.Invoke($"Ediabas disconnect, Id={id}");
 
             try
             {
-                _ediabas.LogString(EdiabasNet.EdLogLevel.Ifh, "Ediabas disconnect");
+                InfoMessageEvent?.Invoke("Ediabas disconnect");
                 return _ediabas.EdInterfaceClass.InterfaceDisconnect();
             }
             catch (Exception ex)
             {
-                _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas disconnect Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                ErrorMessageEvent?.Invoke($"Ediabas disconnect Exception: {EdiabasNet.GetExceptionText(ex)}");
                 return false;
             }
         }
@@ -228,7 +226,7 @@ public class EdiabasProxyClient : IDisposable
             byte[] sendData = requestData;
             bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
 
-            _ediabas?.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas transmit, Id={0}, Func={1}", id, funcAddress);
+            InfoMessageEvent?.Invoke($"Ediabas transmit, Id={id}, Func={funcAddress}");
 
             for (; ; )
             {
@@ -256,13 +254,13 @@ public class EdiabasProxyClient : IDisposable
                     {
                         if (!funcAddress)
                         {
-                            _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "*** No response");
+                            ErrorMessageEvent?.Invoke("*** No response");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    _ediabas.LogFormat(EdiabasNet.EdLogLevel.Ifh, "Ediabas transmit Exception: {0}", EdiabasNet.GetExceptionText(ex));
+                    ErrorMessageEvent?.Invoke($"Ediabas transmit Exception: {EdiabasNet.GetExceptionText(ex)}");
                 }
 
                 if (!funcAddress || !dataReceived)
@@ -305,12 +303,16 @@ public class EdiabasProxyClient : IDisposable
             {
                 PsdzVehicleResponse vehicleResponse = new PsdzVehicleResponse(vehicleRequest.Id);
                 bool valid = true;
+                bool connected = false;
                 switch (vehicleRequest.RequestType)
                 {
                     case VehicleRequest.VehicleRequestType.Connect:
                         {
                             EdiabasDisconnect(vehicleRequest.Id);
-                            bool isConnected = EdiabasConnect(vehicleRequest.Id);
+                            if (EdiabasConnect(vehicleRequest.Id))
+                            {
+                                connected = IsEdiabasConnected();
+                            }
                             break;
                         }
 
@@ -330,12 +332,12 @@ public class EdiabasProxyClient : IDisposable
                             vehicleResponse.Request = requestData;
                             List<byte[]> responseList = EdiabasTransmit(vehicleRequest.Id, requestData);
                             vehicleResponse.ResponseList = responseList;
+                            connected = IsEdiabasConnected();
                             break;
                         }
                 }
 
                 vehicleResponse.Valid = valid;
-                bool connected = IsEdiabasConnected();
                 vehicleResponse.Connected = connected;
 
                 VehicleResponseEvent?.Invoke(vehicleResponse);

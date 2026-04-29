@@ -10,7 +10,6 @@ namespace PsdzRpcServer.Shared
             Id = id;
             Valid = false;
             Connected = false;
-            ErrorMessage = string.Empty;
             Request = Array.Empty<byte>();
             ResponseList = new List<byte[]>();
         }
@@ -18,7 +17,6 @@ namespace PsdzRpcServer.Shared
         public ulong Id { get; set; }
         public bool Valid { get; set; }
         public bool Connected { get; set; }
-        public string ErrorMessage { get; set; }
         public byte[] Request { get; set; }
         public List<byte[]> ResponseList { get; set; }
     }
