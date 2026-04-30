@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using PsdzRpcServer.Shared;
 
 namespace PsdzRpcClient;
@@ -88,11 +89,11 @@ public class EdiabasProxyClient : IDisposable
         return true;
     }
 
-    public bool StartEdiabasThread()
+    public Task<bool> StartEdiabasThread()
     {
         if (IsEdiabasThreadRunning())
         {
-            return true;
+            return Task.FromResult(true);
         }
 
         _ediabasJobAbort = false;
@@ -103,7 +104,7 @@ public class EdiabasProxyClient : IDisposable
             _ediabasThread.Start();
         }
 
-        return true;
+        return Task.FromResult(true);
     }
 
     public bool StopEdiabasThread()

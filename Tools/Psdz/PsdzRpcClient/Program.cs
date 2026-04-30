@@ -473,7 +473,16 @@ namespace PsdzRpcClient
                             });
                         };
 
-                        ediabasProxyClient.StartEdiabasThread();
+                        bool startResult = await ediabasProxyClient.StartEdiabasThread().ConfigureAwait(false);
+                        if (!startResult)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Failed to start Ediabas thread.");
+                            }
+
+                            return 1;
+                        }
 
                         bool proxyResult = await client.RpcService.EnableVehicleProxy().ConfigureAwait(false);
                         if (!proxyResult)
