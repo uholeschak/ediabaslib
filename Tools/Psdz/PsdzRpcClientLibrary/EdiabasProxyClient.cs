@@ -10,7 +10,7 @@ using PsdzRpcServer.Shared;
 
 namespace PsdzRpcClient;
 
-public class EdiabasProxyClient : IDisposable
+public class EdiabasProxyClient : IDisposable, IAsyncDisposable
 {
     private class VehicleRequest
     {
@@ -364,32 +364,48 @@ public class EdiabasProxyClient : IDisposable
 
     protected void Dispose(bool disposing)
     {
-        // Check to see if Dispose has already been called.
         if (!_disposed)
         {
-            // If disposing equals true, dispose all managed
-            // and unmanaged resources.
             if (disposing)
             {
-                // Dispose managed resources.
-                Task.Run(StopEdiabasThread).GetAwaiter().GetResult();
-                if (_ediabasThreadWakeEvent != null)
-                {
-                    _ediabasThreadWakeEvent.Dispose();
-                    _ediabasThreadWakeEvent = null;
-                }
+                // Hier direkt DisposeAsyncCore blockierend aufrufen
+                Task.Run(() => DisposeAsyncCore().AsTask()).GetAwaiter().GetResult();
+            }
+            _disposed = true;
+        }
+    }
 
-                lock (_ediabasLock)
+    public async ValueTask DisposeAsync()
+    {
+        await DisposeAsyncCore().ConfigureAwait(false);
+        // Dispose only unmanaged resources (disposing = false),
+        // managed resources were already handled asynchronously.
+        Dispose(false);
+        GC.SuppressFinalize(this);
+    }
+
+    protected virtual async ValueTask DisposeAsyncCore()
+    {
+        if (!_disposed)
+        {
+            // Async-fähige Ressourcen hier freigeben:
+            await StopEdiabasThread().ConfigureAwait(false);
+
+            if (_ediabasThreadWakeEvent != null)
+            {
+                _ediabasThreadWakeEvent.Dispose();
+                _ediabasThreadWakeEvent = null;
+            }
+
+            lock (_ediabasLock)
+            {
+                if (_ediabas != null)
                 {
-                    if (_ediabas != null)
-                    {
-                        _ediabas.Dispose();
-                        _ediabas = null;
-                    }
+                    _ediabas.Dispose();
+                    _ediabas = null;
                 }
             }
 
-            // Note disposing has been done.
             _disposed = true;
         }
     }

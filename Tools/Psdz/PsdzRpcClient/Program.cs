@@ -704,7 +704,7 @@ namespace PsdzRpcClient
                 if (ediabasProxyClient != null)
                 {
                     await ediabasProxyClient.StopEdiabasThread().ConfigureAwait(false);
-                    ediabasProxyClient.Dispose();
+                    await ediabasProxyClient.DisposeAsync().ConfigureAwait(false);
                     ediabasProxyClient = null;
                 }
             }
