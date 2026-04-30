@@ -364,45 +364,37 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
 
     protected void Dispose(bool disposing)
     {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                // Hier direkt DisposeAsyncCore blockierend aufrufen
-                Task.Run(() => DisposeAsyncCore().AsTask()).GetAwaiter().GetResult();
-            }
-            _disposed = true;
-        }
+        Task.Run(() => DisposeAsyncCore(disposing).AsTask()).GetAwaiter().GetResult();
     }
 
     public async ValueTask DisposeAsync()
     {
-        await DisposeAsyncCore().ConfigureAwait(false);
-        // Dispose only unmanaged resources (disposing = false),
-        // managed resources were already handled asynchronously.
-        Dispose(false);
+        await DisposeAsyncCore(true).ConfigureAwait(false);
         GC.SuppressFinalize(this);
     }
 
-    protected virtual async ValueTask DisposeAsyncCore()
+    protected virtual async ValueTask DisposeAsyncCore(bool disposing)
     {
         if (!_disposed)
         {
-            // Async-fähige Ressourcen hier freigeben:
-            await StopEdiabasThread().ConfigureAwait(false);
-
-            if (_ediabasThreadWakeEvent != null)
+            if (disposing)
             {
-                _ediabasThreadWakeEvent.Dispose();
-                _ediabasThreadWakeEvent = null;
-            }
+                // Async-fähige Ressourcen hier freigeben:
+                await StopEdiabasThread().ConfigureAwait(false);
 
-            lock (_ediabasLock)
-            {
-                if (_ediabas != null)
+                if (_ediabasThreadWakeEvent != null)
                 {
-                    _ediabas.Dispose();
-                    _ediabas = null;
+                    _ediabasThreadWakeEvent.Dispose();
+                    _ediabasThreadWakeEvent = null;
+                }
+
+                lock (_ediabasLock)
+                {
+                    if (_ediabas != null)
+                    {
+                        _ediabas.Dispose();
+                        _ediabas = null;
+                    }
                 }
             }
 
