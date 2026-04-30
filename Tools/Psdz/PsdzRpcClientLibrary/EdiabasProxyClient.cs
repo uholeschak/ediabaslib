@@ -89,11 +89,11 @@ public class EdiabasProxyClient : IDisposable
         return true;
     }
 
-    public Task<bool> StartEdiabasThread()
+    public bool StartEdiabasThread()
     {
         if (IsEdiabasThreadRunning())
         {
-            return Task.FromResult(true);
+            return true;
         }
 
         _ediabasJobAbort = false;
@@ -104,17 +104,21 @@ public class EdiabasProxyClient : IDisposable
             _ediabasThread.Start();
         }
 
-        return Task.FromResult(true);
+        return true;
     }
 
-    public bool StopEdiabasThread()
+    public async Task<bool> StopEdiabasThread()
     {
         _ediabasJobAbort = true;
         _ediabasThreadWakeEvent.Set();
         if (IsEdiabasThreadRunning())
         {
             // ReSharper disable once InconsistentlySynchronizedField
-            _ediabasThread?.Join();
+            Thread thread = _ediabasThread;
+            if (thread != null && thread.IsAlive)
+            {
+                await Task.Run(() => thread.Join()).ConfigureAwait(false);
+            }
             // clear thread pointer
             IsEdiabasThreadRunning();
         }
@@ -368,7 +372,7 @@ public class EdiabasProxyClient : IDisposable
             if (disposing)
             {
                 // Dispose managed resources.
-                StopEdiabasThread();
+                Task.Run(StopEdiabasThread).GetAwaiter().GetResult();
                 if (_ediabasThreadWakeEvent != null)
                 {
                     _ediabasThreadWakeEvent.Dispose();

@@ -473,7 +473,7 @@ namespace PsdzRpcClient
                             });
                         };
 
-                        bool startResult = await ediabasProxyClient.StartEdiabasThread().ConfigureAwait(false);
+                        bool startResult = ediabasProxyClient.StartEdiabasThread();
                         if (!startResult)
                         {
                             if (_verbosity >= Options.VerbosityOption.Error)
@@ -703,7 +703,7 @@ namespace PsdzRpcClient
 
                 if (ediabasProxyClient != null)
                 {
-                    ediabasProxyClient.StopEdiabasThread();
+                    await ediabasProxyClient.StopEdiabasThread().ConfigureAwait(false);
                     ediabasProxyClient.Dispose();
                     ediabasProxyClient = null;
                 }
