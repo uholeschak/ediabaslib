@@ -431,20 +431,27 @@ namespace PsdzRpcClient
 
                     Console.WriteLine("License set to valid.");
 
-                    string remoteHost = vehicleIp;
+                    string connectIp = vehicleIp;
                     if (string.IsNullOrEmpty(vehicleIp))
                     {
-                        remoteHost = vehicleProxy ? EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll : "127.0.0.1";
-                    }
-
-                    if (_verbosity >= Options.VerbosityOption.Important)
-                    {
-                        Console.WriteLine($"Using vehicle IP: {remoteHost}");
+                        connectIp = "127.0.0.1";
                     }
 
                     if (vehicleProxy)
                     {
-                        EdiabasNet ediabasNet = EdiabasSetup(remoteHost);
+                        connectIp = string.Empty;
+                        string proxyIp = vehicleIp;
+                        if (string.IsNullOrEmpty(vehicleIp))
+                        {
+                            proxyIp = EdInterfaceEnet.AutoIp + EdInterfaceEnet.AutoIpAll;
+                        }
+
+                        if (_verbosity >= Options.VerbosityOption.Important)
+                        {
+                            Console.WriteLine($"Using vehicle IP: {proxyIp}");
+                        }
+
+                        EdiabasNet ediabasNet = EdiabasSetup(proxyIp);
                         ediabasProxyClient = new EdiabasProxyClient(ediabasNet);
                         ediabasProxyClient.VehicleResponseEvent += (vehicleResponse) =>
                         {
@@ -559,8 +566,8 @@ namespace PsdzRpcClient
                             {
                                 case ConsoleKey.C:
                                 {
-                                    Console.WriteLine($"Connecting vehicle: {remoteHost}...");
-                                    bool result = await client.RpcService.ConnectVehicle(istaFolder, remoteHost, false).ConfigureAwait(false);
+                                    Console.WriteLine($"Connecting vehicle: {connectIp}...");
+                                    bool result = await client.RpcService.ConnectVehicle(istaFolder, connectIp, false).ConfigureAwait(false);
                                     Console.WriteLine($"Connect = {result}");
                                     break;
                                 }
