@@ -1043,6 +1043,11 @@ public class PsdzVehicleProxy : IDisposable
                                         }
                                         else
                                         {
+                                            if (!funcAddress)
+                                            {
+                                                log.InfoFormat("TcpThread Cache entry not found for Data={0}, CacheSize={1}", recString, _vehicleResponseDict.Count);
+                                            }
+
                                             bool enqueued = false;
                                             int queueSize;
                                             lock (enetTcpClientData.RecPacketQueue)
