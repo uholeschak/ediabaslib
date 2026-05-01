@@ -2,8 +2,11 @@
   "profiles": {
     "PsdzRpcClient": {
       "commandName": "Project",
-      "commandLineArgs": "-i \"127.0.0.1\"",
       "remoteDebugEnabled": false
+    },
+    "PsdzRpcClientProxy": {
+      "commandName": "Project",
+      "commandLineArgs": "--vehicleproxy"
     },
     "VM-WIN11": {
       "commandName": "Project",

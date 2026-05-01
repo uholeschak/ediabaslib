@@ -35,12 +35,12 @@ namespace PsdzRpcClient
             [Option('i', "vehicleip", Required = false, HelpText = "Vehicle IP address.")]
             public string VehicleIp { get; set; }
 
-            [Option('o', "vehicleproxy", Required = false, HelpText = "Enable vehicle proxy.")]
+            [Option('r', "vehicleproxy", Required = false, HelpText = "Enable vehicle proxy.")]
             public bool VehicleProxy { get; set; }
 
             [Option('s', "serverexe", Required = false, HelpText = "Server executable path.")]
             public string ServerExe { get; set; }
-            
+
             [Option('u', "username", Required = false, HelpText = "Username for server authentication.")]
             public string UserName { get; set; }
 
@@ -99,6 +99,18 @@ namespace PsdzRpcClient
             if (hasErrors)
             {
                 return 1;
+            }
+
+            if (!string.IsNullOrEmpty(vehicleIp))
+            {
+                Console.WriteLine("Vehicle IP: {0}", vehicleIp);
+            }
+
+            Console.WriteLine("VehicleProxy: {0}", vehicleProxy);
+
+            if (!string.IsNullOrEmpty(serverExe))
+            {
+                Console.WriteLine("Server executable: {0}", serverExe);
             }
 
             ShowMessageEventArgs pendingMessage = null;
@@ -434,7 +446,7 @@ namespace PsdzRpcClient
                     string connectIp = vehicleIp;
                     if (string.IsNullOrEmpty(vehicleIp))
                     {
-                        connectIp = "127.0.0.1";
+                        connectIp = PsdzRpcServiceConstants.Localhost;
                     }
 
                     if (vehicleProxy)

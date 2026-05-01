@@ -1613,7 +1613,7 @@ public class PsdzVehicleProxy : IDisposable
                 }
             }
 
-            string remoteHost = string.Format(CultureInfo.InvariantCulture, "127.0.0.1:{0}:{1}", diagPort, controlPort);
+            string remoteHost = string.Format(CultureInfo.InvariantCulture, PsdzRpcServiceConstants.Localhost + ":{0}:{1}", diagPort, controlPort);
             bool result = await Task.Run(() => _programmingJobs.ConnectVehicle(cts, istaFolder, remoteHost, false, AdditionalConnectTimeout)).ConfigureAwait(false);
 
             if (!result)

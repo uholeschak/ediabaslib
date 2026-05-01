@@ -10,6 +10,7 @@ namespace PsdzRpcServer.Shared
     {
         public const string PipeName = "PsdzJsonRpcPipe";
         public const string DealerId = "40626";
+        public const string Localhost = "127.0.0.1";
 
         /// <summary>
         /// Berechnet eine Signatur aller Methoden des Interfaces.
