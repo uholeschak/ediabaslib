@@ -2577,7 +2577,7 @@ namespace PsdzClient.Programming
 
                 if (PsdzContext.TalFilterForIndividualDataTal != null)
                 {
-                    log.Info("TalFilterIndividaul:");
+                    log.Info("TalFilterIndividual:");
                     log.Info(PsdzContext.TalFilterForIndividualDataTal.AsXml);
                 }
 
