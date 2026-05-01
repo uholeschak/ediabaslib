@@ -99,9 +99,15 @@ namespace PsdzRpcServer
             CancellationTokenSource cts = CreateCancellationToken();
             StartProgrammingServiceTask(istaFolder).ContinueWith(task =>
             {
-                bool result = TaskCompletedSuccessfully(task) && task.Result;
-                Task.Run(() => _callback.OnStartProgrammingCompleted(result)).GetAwaiter().GetResult();
-                DisposeCancellationToken(cts);
+                try
+                {
+                    bool result = TaskCompletedSuccessfully(task) && task.Result;
+                    Task.Run(() => _callback.OnStartProgrammingCompleted(result)).GetAwaiter().GetResult();
+                }
+                finally
+                {
+                    DisposeCancellationToken(cts);
+                }
             });
 
             return Task.FromResult(true);
@@ -117,9 +123,15 @@ namespace PsdzRpcServer
             CancellationTokenSource cts = CreateCancellationToken();
             StopProgrammingServiceTask(istaFolder, force).ContinueWith(task =>
             {
-                bool result = TaskCompletedSuccessfully(task) && task.Result;
-                Task.Run(() => _callback.OnStopProgrammingCompleted(result)).GetAwaiter().GetResult();
-                DisposeCancellationToken(cts);
+                try
+                {
+                    bool result = TaskCompletedSuccessfully(task) && task.Result;
+                    Task.Run(() => _callback.OnStopProgrammingCompleted(result)).GetAwaiter().GetResult();
+                }
+                finally
+                {
+                    DisposeCancellationToken(cts);
+                }
             });
 
             return Task.FromResult(true);
@@ -135,10 +147,16 @@ namespace PsdzRpcServer
             CancellationTokenSource cts = CreateCancellationToken();
             ConnectVehicleTask(istaFolder, remoteHost, useIcom, addTimeout).ContinueWith(task =>
             {
-                bool result = TaskCompletedSuccessfully(task) && task.Result;
-                string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
-                Task.Run(() => _callback.OnConnectVehicleCompleted(result, vin)).GetAwaiter().GetResult();
-                DisposeCancellationToken(cts);
+                try
+                {
+                    bool result = TaskCompletedSuccessfully(task) && task.Result;
+                    string vin = _programmingJobs.PsdzContext?.DetectVehicle?.Vin;
+                    Task.Run(() => _callback.OnConnectVehicleCompleted(result, vin)).GetAwaiter().GetResult();
+                }
+                finally
+                {
+                    DisposeCancellationToken(cts);
+                }
             });
 
             return Task.FromResult(true);
@@ -154,9 +172,15 @@ namespace PsdzRpcServer
             CancellationTokenSource cts = CreateCancellationToken();
             DisconnectVehicleTask().ContinueWith(task =>
             {
-                bool result = TaskCompletedSuccessfully(task) && task.Result;
-                Task.Run(() => _callback.OnDisconnectVehicleCompleted(result)).GetAwaiter().GetResult();
-                DisposeCancellationToken(cts);
+                try
+                {
+                    bool result = TaskCompletedSuccessfully(task) && task.Result;
+                    Task.Run(() => _callback.OnDisconnectVehicleCompleted(result)).GetAwaiter().GetResult();
+                }
+                finally
+                {
+                    DisposeCancellationToken(cts);
+                }
             });
 
             return Task.FromResult(true);
@@ -173,9 +197,15 @@ namespace PsdzRpcServer
             CancellationTokenSource cts = CreateCancellationToken();
             VehicleFunctionsTask(OperationTypeValue).ContinueWith(task =>
             {
-                bool result = TaskCompletedSuccessfully(task) && task.Result;
-                Task.Run(() => _callback.OnVehicleFunctionsCompleted(result, operationType)).GetAwaiter().GetResult();
-                DisposeCancellationToken(cts);
+                try
+                {
+                    bool result = TaskCompletedSuccessfully(task) && task.Result;
+                    Task.Run(() => _callback.OnVehicleFunctionsCompleted(result, operationType)).GetAwaiter().GetResult();
+                }
+                finally
+                {
+                    DisposeCancellationToken(cts);
+                }
             });
 
             return Task.FromResult(true);
