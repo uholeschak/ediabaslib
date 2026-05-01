@@ -33,12 +33,17 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
         public byte[] Data { get; }
     }
 
+    public enum MessageType
+    {
+        Info,
+        Warning,
+        Error
+    }
+
     public delegate bool VehicleResponseDelegate(PsdzVehicleResponse vehicleResponse);
-    public delegate void ErrorMessageDelegate(string message);
-    public delegate void InfoMessageDelegate(string message);
+    public delegate void MessageDelegate(MessageType messageType, string message);
     public event VehicleResponseDelegate VehicleResponseEvent;
-    public event ErrorMessageDelegate ErrorMessageEvent;
-    public event InfoMessageDelegate InfoMessageEvent;
+    public event MessageDelegate MessageEvent;
 
     private bool _disposed;
     private EdiabasNet _ediabas;
@@ -162,21 +167,21 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
                 return false;
             }
 
-            InfoMessageEvent?.Invoke($"Ediabas connect, Id={id}");
+            MessageEvent?.Invoke(MessageType.Info, $"Ediabas connect, Id={id}");
             try
             {
                 if (_ediabas.EdInterfaceClass.InterfaceConnect())
                 {
-                    InfoMessageEvent?.Invoke("Ediabas connected");
+                    MessageEvent?.Invoke(MessageType.Info, "Ediabas connected");
                     return true;
                 }
 
-                ErrorMessageEvent?.Invoke("Ediabas connect failed");
+                MessageEvent?.Invoke(MessageType.Error, "Ediabas connect failed");
                 return false;
             }
             catch (Exception ex)
             {
-                ErrorMessageEvent?.Invoke($"Ediabas connect Exception: {EdiabasNet.GetExceptionText(ex)}");
+                MessageEvent?.Invoke(MessageType.Error, $"Ediabas connect Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
                 return false;
             }
         }
@@ -191,16 +196,16 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
                 return false;
             }
 
-            InfoMessageEvent?.Invoke($"Ediabas disconnect, Id={id}");
+            MessageEvent?.Invoke(MessageType.Info, $"Ediabas disconnect, Id={id}");
 
             try
             {
-                InfoMessageEvent?.Invoke("Ediabas disconnect");
+                MessageEvent?.Invoke(MessageType.Info, "Ediabas disconnect");
                 return _ediabas.EdInterfaceClass.InterfaceDisconnect();
             }
             catch (Exception ex)
             {
-                ErrorMessageEvent?.Invoke($"Ediabas disconnect Exception: {EdiabasNet.GetExceptionText(ex)}");
+                MessageEvent?.Invoke(MessageType.Error, $"Ediabas disconnect Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
                 return false;
             }
         }
@@ -232,7 +237,7 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
             byte[] sendData = requestData;
             bool funcAddress = (sendData[0] & 0xC0) == 0xC0;     // functional address
 
-            InfoMessageEvent?.Invoke($"Ediabas transmit, Id={id}, Func={funcAddress}");
+            MessageEvent?.Invoke(MessageType.Info, $"Ediabas transmit, Id={id}, Func={funcAddress}");
 
             for (; ; )
             {
@@ -260,13 +265,13 @@ public class EdiabasProxyClient : IDisposable, IAsyncDisposable
                     {
                         if (!funcAddress)
                         {
-                            ErrorMessageEvent?.Invoke("*** No response");
+                            MessageEvent?.Invoke(MessageType.Warning, "*** No response");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    ErrorMessageEvent?.Invoke($"Ediabas transmit Exception: {EdiabasNet.GetExceptionText(ex)}");
+                    MessageEvent?.Invoke(MessageType.Warning, $"Ediabas transmit Exception: {EdiabasNet.GetExceptionText(ex, false, false)}");
                 }
 
                 if (!funcAddress || !dataReceived)

@@ -470,24 +470,32 @@ namespace PsdzRpcClient
                             return Task.Run(() => client.RpcService.SetVehicleResponse(vehicleResponse)).GetAwaiter().GetResult();
                         };
 
-                        ediabasProxyClient.ErrorMessageEvent += (message) =>
+                        ediabasProxyClient.MessageEvent += (messageType, message) =>
                         {
                             syncContext.BeginInvoke(() =>
                             {
-                                if (_verbosity >= Options.VerbosityOption.Error)
+                                switch (messageType)
                                 {
-                                    Console.WriteLine($"Proxy error: {message}");
-                                }
-                            });
-                        };
+                                    case EdiabasProxyClient.MessageType.Info:
+                                        if (_verbosity >= Options.VerbosityOption.Info)
+                                        {
+                                            Console.WriteLine($"Proxy info: {message}");
+                                        }
+                                        break;
 
-                        ediabasProxyClient.InfoMessageEvent += (message) =>
-                        {
-                            syncContext.BeginInvoke(() =>
-                            {
-                                if (_verbosity >= Options.VerbosityOption.Info)
-                                {
-                                    Console.WriteLine($"Proxy info: {message}");
+                                    case EdiabasProxyClient.MessageType.Warning:
+                                        if (_verbosity >= Options.VerbosityOption.Warning)
+                                        {
+                                            Console.WriteLine($"Proxy warning: {message}");
+                                        }
+                                        break;
+
+                                    case EdiabasProxyClient.MessageType.Error:
+                                        if (_verbosity >= Options.VerbosityOption.Error)
+                                        {
+                                            Console.WriteLine($"Proxy error: {message}");
+                                        }
+                                        break;
                                 }
                             });
                         };
