@@ -130,7 +130,7 @@ public class PsdzVehicleProxy : IDisposable
     private readonly AutoResetEvent _tcpThreadWakeEvent = new AutoResetEvent(false);
     private readonly AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
     private readonly Queue<PsdzVehicleResponse> _vehicleResponses = new Queue<PsdzVehicleResponse>();
-    private readonly Dictionary<byte[], List<byte[]>> _vehicleResponseDict = new Dictionary<byte[], List<byte[]>>();
+    private readonly Dictionary<string, List<byte[]>> _vehicleResponseDict = new Dictionary<string, List<byte[]>>();
 
     public PsdzVehicleProxy(ProgrammingJobs programmingJobs)
     {
@@ -1007,6 +1007,7 @@ public class PsdzVehicleProxy : IDisposable
                                     }
                                     else
                                     {
+                                        string recString = ArrayToString(bmwFastTel);
                                         bool funcAddress = IsFunctionalAddress(bmwFastTel);
                                         List<byte[]> cachedResponseList = null;
                                         if (funcAddress)
@@ -1020,7 +1021,7 @@ public class PsdzVehicleProxy : IDisposable
                                             {
                                                 lock (_lockObject)
                                                 {
-                                                    _vehicleResponseDict.TryGetValue(bmwFastTel, out cachedResponseList);
+                                                    _vehicleResponseDict.TryGetValue(recString, out cachedResponseList);
                                                 }
 
                                                 if (cachedResponseList != null &&
@@ -1035,7 +1036,6 @@ public class PsdzVehicleProxy : IDisposable
                                             }
                                         }
 
-                                        string recString = ArrayToString(bmwFastTel);
                                         if (cachedResponseList != null)
                                         {
                                             log.InfoFormat("TcpThread Cache entry found for Data={0}", recString);
@@ -1046,6 +1046,10 @@ public class PsdzVehicleProxy : IDisposable
                                             if (funcAddress)
                                             {
                                                 log.InfoFormat("TcpThread Cache entry not found for Data={0}, CacheSize={1}", recString, _vehicleResponseDict.Count);
+                                                foreach (var kvp in _vehicleResponseDict)
+                                                {
+                                                    log.InfoFormat("TcpThread Cache entry: Key={0}, ValueCount={1}", kvp.Key, kvp.Value.Count);
+                                                }
                                             }
 
                                             bool enqueued = false;
@@ -1537,7 +1541,7 @@ public class PsdzVehicleProxy : IDisposable
                                                 log.InfoFormat("VehicleThread Cache disable Request={0}", sendDataString);
                                                 lock (_lockObject)
                                                 {
-                                                    _vehicleResponseDict[bmwFastTel] = new List<byte[]>();
+                                                    _vehicleResponseDict[sendDataString] = new List<byte[]>();
                                                 }
                                             }
                                         }
@@ -1552,7 +1556,7 @@ public class PsdzVehicleProxy : IDisposable
                                                 log.InfoFormat("VehicleThread Caching Request={0}", sendDataString);
                                                 lock (_lockObject)
                                                 {
-                                                    _vehicleResponseDict[bmwFastTel] = vehicleResponse.ResponseList;
+                                                    _vehicleResponseDict[sendDataString] = vehicleResponse.ResponseList;
                                                 }
                                             }
 
