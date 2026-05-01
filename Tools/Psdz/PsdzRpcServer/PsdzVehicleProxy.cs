@@ -1043,7 +1043,7 @@ public class PsdzVehicleProxy : IDisposable
                                         }
                                         else
                                         {
-                                            if (!funcAddress)
+                                            if (funcAddress)
                                             {
                                                 log.InfoFormat("TcpThread Cache entry not found for Data={0}, CacheSize={1}", recString, _vehicleResponseDict.Count);
                                             }

@@ -666,6 +666,13 @@ namespace PsdzRpcClient
 
                                 case ConsoleKey.T:
                                 {
+                                    bool hasOptionsDict = await client.RpcService.HasOptionsDict().ConfigureAwait(false);
+                                    if (!hasOptionsDict)
+                                    {
+                                        Console.WriteLine("No options dictionary available.");
+                                        break;
+                                    }
+
                                     Console.WriteLine("Building TAL...");
                                     bool result = await client.RpcService.VehicleFunctions(PsdzOperationType.BuildTalModFa).ConfigureAwait(false);
                                     Console.WriteLine($"Build TAL = {result}");
