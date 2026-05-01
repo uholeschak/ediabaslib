@@ -2627,6 +2627,14 @@ namespace PsdzClient.Programming
                 log.Info(psdzFa.AsXml);
                 cts?.Token.ThrowIfCancellationRequested();
 
+                if (PsdzContext.FaTarget == null)
+                {
+                    log.Error("Target FA is null.");
+                    sbResult.AppendLine(Strings.ReadFaFailed);
+                    UpdateStatus(sbResult.ToString());
+                    return false;
+                }
+
                 if (bModifyFa)
                 {
                     IFa ifaActual = ProgrammingUtils.BuildFa(PsdzContext.FaActual);
