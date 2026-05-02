@@ -2,7 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ActiveDebugFramework>net481</ActiveDebugFramework>
-    <ActiveDebugProfile>PsdzRpcClientProxy</ActiveDebugProfile>
+    <ActiveDebugProfile>PsdzRpcClient</ActiveDebugProfile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-windows10.0.26100.0|AnyCPU'">
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
