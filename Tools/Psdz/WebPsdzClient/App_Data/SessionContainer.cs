@@ -607,7 +607,7 @@ namespace WebPsdzClient.App_Data
         private readonly List<EnetTcpChannel> _enetTcpChannels = new List<EnetTcpChannel>();
         private Thread _tcpThread;
         private Thread _vehicleThread;
-        private bool _stopThread;
+        private volatile bool _stopThread;
         private readonly AutoResetEvent _tcpThreadWakeEvent = new AutoResetEvent(false);
         private readonly AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
         private readonly Queue<PsdzVehicleHub.VehicleResponse> _vehicleResponses = new Queue<PsdzVehicleHub.VehicleResponse>();
@@ -1934,6 +1934,12 @@ namespace WebPsdzClient.App_Data
                         log.InfoFormat("WaitForVehicleResponse Wait aborted");
                         return null;
                     }
+                }
+
+                if (_stopThread)
+                {
+                    log.InfoFormat("WaitForVehicleResponse Stopped");
+                    return null;
                 }
 
                 if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
