@@ -1708,6 +1708,22 @@ public class PsdzVehicleProxy : IDisposable
         return queueSize;
     }
 
+    public bool StopThread()
+    {
+        try
+        {
+            CloseVehicleLog();
+            StopTcpListener();
+            log.InfoFormat("StopThread completed successfully");
+        }
+        catch (Exception e)
+        {
+            log.ErrorFormat("StopThread Exception: {0}", e.Message);
+            return false;
+        }
+        return true;
+    }
+
     public void Dispose()
     {
         Dispose(true);
@@ -1730,8 +1746,7 @@ public class PsdzVehicleProxy : IDisposable
             // and unmanaged resources.
             if (disposing)
             {
-                CloseVehicleLog();
-                StopTcpListener();
+                StopThread();
 
                 if (_enetTcpMutex != null)
                 {
