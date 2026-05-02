@@ -104,12 +104,13 @@ namespace PsdzRpcServer
 
         private async Task HandleClientAsync(NamedPipeServerStream pipeServer)
         {
+            PsdzRpcService service = null;
             try
             {
                 using JsonRpc jsonRpc = new JsonRpc(pipeServer);
 
                 IPsdzRpcServiceCallback callback = jsonRpc.Attach<IPsdzRpcServiceCallback>();
-                PsdzRpcService service = new PsdzRpcService(callback, _dealerId);
+                service = new PsdzRpcService(callback, _dealerId);
                 jsonRpc.AddLocalRpcTarget(service);
 
                 jsonRpc.StartListening();
@@ -119,7 +120,8 @@ namespace PsdzRpcServer
             }
             finally
             {
-                pipeServer.Dispose();
+                pipeServer?.Dispose();
+                service?.Dispose();
 
                 int count = Interlocked.Decrement(ref _clientCount);
                 _output?.WriteLine($"Active clients: {count}");
