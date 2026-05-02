@@ -126,7 +126,7 @@ public class PsdzVehicleProxy : IDisposable
     private readonly List<EnetTcpChannel> _enetTcpChannels = new List<EnetTcpChannel>();
     private Thread _tcpThread;
     private Thread _vehicleThread;
-    private bool _stopThread;
+    private volatile bool _stopThread;
     private readonly AutoResetEvent _tcpThreadWakeEvent = new AutoResetEvent(false);
     private readonly AutoResetEvent _vehicleThreadWakeEvent = new AutoResetEvent(false);
     private readonly Queue<PsdzVehicleResponse> _vehicleResponses = new Queue<PsdzVehicleResponse>();
