@@ -805,7 +805,12 @@ namespace PsdzRpcServer
                 _cts = null;
             }
 
-            _vehicleProxy?.StopThread();
+            if (_vehicleProxy != null)
+            {
+                _vehicleProxy.StopThread();
+                _vehicleProxy.Dispose();
+                _vehicleProxy = null;
+            }
 
             _programmingJobs.UpdateStatusEvent -= UpdateStatus;
             _programmingJobs.ProgressEvent -= UpdateProgress;
@@ -814,12 +819,6 @@ namespace PsdzRpcServer
             _programmingJobs.ShowMessageEvent -= ShowMessageEvent;
             _programmingJobs.TelSendQueueSizeEvent -= TelSendQueueSizeEvent;
             _programmingJobs.Dispose();
-
-            if (_vehicleProxy != null)
-            {
-                _vehicleProxy.Dispose();
-                _vehicleProxy = null;
-            }
         }
 
         private static bool TaskCompletedSuccessfully(Task task)
