@@ -1250,7 +1250,7 @@ public class PsdzVehicleProxy : IDisposable
         log.InfoFormat("WaitForVehicleResponse Timeout={0}", timeout);
         ulong packetId = GetPacketId();
         long startTime = Stopwatch.GetTimestamp();
-        for (; ; )
+        for (;;)
         {
             PsdzVehicleResponse vehicleResponse = VehicleResponseGet();
             if (vehicleResponse != null)
@@ -1272,6 +1272,12 @@ public class PsdzVehicleProxy : IDisposable
                     log.InfoFormat("WaitForVehicleResponse Wait aborted");
                     return null;
                 }
+            }
+
+            if (_stopThread)
+            {
+                log.InfoFormat("WaitForVehicleResponse Stopped");
+                return null;
             }
 
             if ((Stopwatch.GetTimestamp() - startTime) > timeout * TickResolMs)
