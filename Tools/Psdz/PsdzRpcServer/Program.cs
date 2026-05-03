@@ -85,6 +85,7 @@ namespace PsdzRpcServer
             Console.WriteLine($"Console available: {consoleAvailable}");
             if (tcpPort.HasValue)
             {
+                keepRunning = true;
                 Console.WriteLine($"TCP port: {tcpPort.Value}");
             }
 
