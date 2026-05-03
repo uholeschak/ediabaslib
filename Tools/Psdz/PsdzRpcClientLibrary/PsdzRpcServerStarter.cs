@@ -22,7 +22,7 @@ public class PsdzRpcServerStarter
         _output = output;
     }
 
-    public async Task<bool> ConnectClient(string serverExe, string serviceName, ProcessWindowStyle windowStyle, PsdzRpcClient client, CancellationTokenSource cts,
+    public async Task<bool> ConnectPipeClient(string serverExe, string serviceName, ProcessWindowStyle windowStyle, PsdzRpcClient client, CancellationTokenSource cts,
             string userName = null, string password = null)
     {
         if (!StartServerIfNeeded(serverExe, serviceName, windowStyle, userName, password))

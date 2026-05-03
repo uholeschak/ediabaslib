@@ -404,7 +404,7 @@ namespace PsdzRpcClient
                 }
 
                 PsdzRpcServerStarter serverStarter = new(Console.Out);
-                bool connected = await serverStarter.ConnectClient(serverExe, null, ProcessWindowStyle.Minimized, client, cts, userName, password).ConfigureAwait(false);
+                bool connected = await serverStarter.ConnectPipeClient(serverExe, null, ProcessWindowStyle.Minimized, client, cts, userName, password).ConfigureAwait(false);
                 if (!connected)
                 {
                     if (_verbosity >= Options.VerbosityOption.Error)
