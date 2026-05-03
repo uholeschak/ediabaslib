@@ -427,7 +427,7 @@ namespace PsdzRpcClient
                 {
                     try
                     {
-                        bool connected = await client.ConnectTcpAsync(tcpHost, tcpPort.Value, syncContext, cts.Token).ConfigureAwait(false);
+                        bool connected = await client.ConnectTcpAsync(tcpHost, tcpPort.Value, null, cts.Token).ConfigureAwait(false);
                         if (!connected)
                         {
                             if (_verbosity >= Options.VerbosityOption.Error)
