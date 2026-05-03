@@ -68,12 +68,6 @@ namespace PsdzRpcClient
                 StartJsonRpc(synchronizationContext);
                 return true;
             }
-            catch (OperationCanceledException)
-            {
-                _tcpClient?.Dispose();
-                _tcpClient = null;
-                throw; // Abbruch weitergeben
-            }
             catch (SocketException ex)
             {
                 _output?.WriteLine($"TCP connect failed: {ex.Message}");

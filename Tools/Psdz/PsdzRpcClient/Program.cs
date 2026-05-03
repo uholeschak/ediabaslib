@@ -425,21 +425,13 @@ namespace PsdzRpcClient
 
                 if (tcpPort.HasValue)
                 {
-                    try
+                    bool connected = await client.ConnectTcpAsync(tcpHost, tcpPort.Value, null, cts.Token).ConfigureAwait(false);
+                    if (!connected)
                     {
-                        bool connected = await client.ConnectTcpAsync(tcpHost, tcpPort.Value, null, cts.Token).ConfigureAwait(false);
-                        if (!connected)
+                        if (_verbosity >= Options.VerbosityOption.Error)
                         {
-                            if (_verbosity >= Options.VerbosityOption.Error)
-                            {
-                                Console.WriteLine("Failed to connect to RPC server via TCP.");
-                            }
-                            return 1;
+                            Console.WriteLine("Failed to connect to RPC server via TCP.");
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.ToString());
                         return 1;
                     }
                 }
