@@ -147,7 +147,7 @@ namespace PsdzRpcClient
                     ctsLocal.Cancel();
                 };
 
-                SingleThreadSynchronizationContext syncContext = new();
+                SingleThreadSynchronizationContext syncContext = new(Console.Out);
 
                 client.CallbackHandler.StartProgrammingCompleted += (s, success) =>
                 {

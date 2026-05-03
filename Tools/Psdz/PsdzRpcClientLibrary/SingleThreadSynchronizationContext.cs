@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,6 +9,12 @@ namespace PsdzRpcClient
     public sealed class SingleThreadSynchronizationContext : SynchronizationContext
     {
         private readonly ConcurrentQueue<(SendOrPostCallback Callback, object State)> _queue = new ();
+        private TextWriter _output;
+
+        public SingleThreadSynchronizationContext(TextWriter output = null)
+        {
+            _output = output;
+        }
 
         public override void Post(SendOrPostCallback d, object state)
         {
@@ -34,7 +41,18 @@ namespace PsdzRpcClient
         /// </summary>
         public void BeginInvoke(Func<Task> asyncAction)
         {
-            Post(async _ => await asyncAction(), null);
+            Post(_ =>
+            {
+                Task task = asyncAction();
+                // Fehler nicht still schlucken
+                task.ContinueWith(t =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        _output?.WriteLine($"BeginInvoke async error: {t.Exception?.GetBaseException().Message}");
+                    }
+                }, TaskContinuationOptions.OnlyOnFaulted);
+            }, null);
         }
 
         /// <summary>
