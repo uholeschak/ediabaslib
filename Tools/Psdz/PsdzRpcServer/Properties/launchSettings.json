@@ -4,6 +4,10 @@
       "commandName": "Project",
       "remoteDebugEnabled": false
     },
+    "PsdzRpcServerTcp": {
+      "commandName": "Project",
+      "commandLineArgs": "-p 10000"
+    },
     "VM-WIN11": {
       "commandName": "Project",
       "remoteDebugEnabled": true,

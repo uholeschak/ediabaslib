@@ -30,6 +30,9 @@ namespace PsdzRpcServer
             [Option('r', "keeprunning", Required = false, HelpText = "Keep running on client disconnect.")]
             public bool KeepRunning { get; set; }
 
+            [Option('p', "port", Required = false, HelpText = "Port for TCP server.")]
+            public int? TcpPort { get; set; }
+
             [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
             public VerbosityOption Verbosity { get; set; }
         }
@@ -43,6 +46,7 @@ namespace PsdzRpcServer
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 #endif
             bool keepRunning = false;
+            int? tcpPort = null;
             bool hasErrors = false;
 
             Parser parser = new Parser(with =>
@@ -57,6 +61,7 @@ namespace PsdzRpcServer
                 .WithParsed<Options>(o =>
                 {
                     keepRunning = o.KeepRunning;
+                    tcpPort = o.TcpPort;
                     _verbosity = o.Verbosity;
                 })
                 .WithNotParsed(errs =>
@@ -78,10 +83,13 @@ namespace PsdzRpcServer
 
             consoleAvailable = IsConsoleAvailable();
             Console.WriteLine($"Console available: {consoleAvailable}");
+            if (tcpPort.HasValue)
+            {
+                Console.WriteLine($"TCP port: {tcpPort.Value}");
+            }
 
             using CancellationTokenSource cts = new CancellationTokenSource();
-            PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out);
-
+            PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, tcpPort);
             try
             {
                 CancellationTokenSource ctsLocal = cts;
