@@ -32,7 +32,7 @@ public class PsdzRpcServerStarter
         }
 
         _output?.WriteLine("Starting PsdzJsonRpcClient...");
-        Task clientTask = client.ConnectAsync(null, cts.Token);
+        Task clientTask = client.ConnectPipeAsync(null, cts.Token);
 
         for (int i = 0; i < 3; i++)
         {
