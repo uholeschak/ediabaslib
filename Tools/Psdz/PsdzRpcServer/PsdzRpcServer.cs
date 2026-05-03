@@ -71,7 +71,7 @@ namespace PsdzRpcServer
 
         private async Task StartTcpAsync(int port, CancellationToken ct)
         {
-            TcpListener listener = new TcpListener(IPAddress.Loopback, port);
+            TcpListener listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
             _output?.WriteLine($"TCP server listening on port {port}...");
             try
