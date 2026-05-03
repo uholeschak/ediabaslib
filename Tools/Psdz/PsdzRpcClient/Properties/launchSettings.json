@@ -8,6 +8,10 @@
       "commandName": "Project",
       "commandLineArgs": "--vehicleproxy"
     },
+    "PsdzRpcClientTcpProxy": {
+      "commandName": "Project",
+      "commandLineArgs": "--vehicleproxy -t 10000"
+    },
     "VM-WIN11": {
       "commandName": "Project",
       "commandLineArgs": "-i \"192.168.150.10\"",
