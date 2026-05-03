@@ -814,12 +814,12 @@ namespace PsdzRpcClient
             {
                 Console.WriteLine("Press Y (Yes) or N (No)...");
             }
-
         }
 
         private static async Task PrintOptionTypes(PsdzRpcClient client)
         {
-            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes().ConfigureAwait(false);
+            // No ConfigureAwait(false) here since we want to continue on the same context to print the options
+            List<PsdzRpcOptionType> optionTypes = await client.RpcService.GetOptionTypes();
             if (optionTypes != null)
             {
                 Console.WriteLine("Available option types:");
