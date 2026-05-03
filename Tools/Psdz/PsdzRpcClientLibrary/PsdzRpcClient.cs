@@ -43,16 +43,44 @@ namespace PsdzRpcClient
         }
 
         /// <summary>Verbindet via TCP (kein automatischer Serverstart erforderlich).</summary>
-        public async Task ConnectTcpAsync(string host, int port, SynchronizationContext synchronizationContext, CancellationToken ct)
+        public async Task<bool> ConnectTcpAsync(string host, int port, SynchronizationContext synchronizationContext, CancellationToken ct)
         {
-            _tcpClient = new TcpClient { NoDelay = true };
+            try
+            {
+                string hostName = string.IsNullOrEmpty(host) ? PsdzRpcServiceConstants.Localhost : host;
+                _tcpClient = new TcpClient { NoDelay = true };
 
-            _output?.WriteLine($"Connecting via TCP to {host}:{port}...");
-            await _tcpClient.ConnectAsync(host, port).ConfigureAwait(false);
-            _stream = _tcpClient.GetStream();
-            _output?.WriteLine("Connected!");
+                _output?.WriteLine($"Connecting via TCP to {hostName}:{port}...");
+#if NET
+                await _tcpClient.ConnectAsync(hostName, port, ct).ConfigureAwait(false);
+#else
+                Task connectTask = _tcpClient.ConnectAsync(hostName, port);
+                Task cancelTask = Task.Delay(Timeout.Infinite, ct);
+                if (await Task.WhenAny(connectTask, cancelTask).ConfigureAwait(false) == cancelTask)
+                {
+                    ct.ThrowIfCancellationRequested();
+                }
+                await connectTask.ConfigureAwait(false);
+#endif
+                _stream = _tcpClient.GetStream();
+                _output?.WriteLine("Connected!");
 
-            StartJsonRpc(synchronizationContext);
+                StartJsonRpc(synchronizationContext);
+                return true;
+            }
+            catch (OperationCanceledException)
+            {
+                _tcpClient?.Dispose();
+                _tcpClient = null;
+                throw; // Abbruch weitergeben
+            }
+            catch (SocketException ex)
+            {
+                _output?.WriteLine($"TCP connect failed: {ex.Message}");
+                _tcpClient?.Dispose();
+                _tcpClient = null;
+                return false;
+            }
         }
 
         private void StartJsonRpc(SynchronizationContext synchronizationContext)

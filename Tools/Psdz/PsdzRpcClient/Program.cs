@@ -38,6 +38,12 @@ namespace PsdzRpcClient
             [Option('r', "vehicleproxy", Required = false, HelpText = "Enable vehicle proxy.")]
             public bool VehicleProxy { get; set; }
 
+            [Option('h', "tcphost", Required = false, HelpText = "TCP server host address.")]
+            public string TcpHost { get; set; }
+
+            [Option('t', "tcpport", Required = false, HelpText = "Port for TCP server.")]
+            public int? TcpPort { get; set; }
+
             [Option('s', "serverexe", Required = false, HelpText = "Server executable path.")]
             public string ServerExe { get; set; }
 
@@ -61,6 +67,8 @@ namespace PsdzRpcClient
 #endif
             string vehicleIp = string.Empty;
             bool vehicleProxy = false;
+            string tcpHost = string.Empty;
+            int? tcpPort = null;
             string serverExe = string.Empty;
             string userName = string.Empty;
             string password = string.Empty;
@@ -79,6 +87,8 @@ namespace PsdzRpcClient
                 {
                     vehicleIp = o.VehicleIp;
                     vehicleProxy = o.VehicleProxy;
+                    tcpHost = o.TcpHost;
+                    tcpPort = o.TcpPort;
                     serverExe = o.ServerExe;
                     userName = o.UserName;
                     password = o.Password;
@@ -107,6 +117,16 @@ namespace PsdzRpcClient
             }
 
             Console.WriteLine("VehicleProxy: {0}", vehicleProxy);
+
+            if (tcpPort.HasValue)
+            {
+                if (!string.IsNullOrEmpty(tcpHost))
+                {
+                    Console.WriteLine("TCP Host: {0}", tcpHost);
+                }
+
+                Console.WriteLine("TCP Port: {0}", tcpPort.Value);
+            }
 
             if (!string.IsNullOrEmpty(serverExe))
             {
@@ -403,15 +423,38 @@ namespace PsdzRpcClient
                     Console.WriteLine($"Using server executable: {serverExe}");
                 }
 
-                PsdzRpcServerStarter serverStarter = new(Console.Out);
-                bool connected = await serverStarter.ConnectPipeClient(serverExe, null, ProcessWindowStyle.Minimized, client, cts, userName, password).ConfigureAwait(false);
-                if (!connected)
+                if (tcpPort.HasValue)
                 {
-                    if (_verbosity >= Options.VerbosityOption.Error)
+                    try
                     {
-                        Console.WriteLine("Failed to connect to RPC server.");
+                        bool connected = await client.ConnectTcpAsync(tcpHost, tcpPort.Value, syncContext, cts.Token).ConfigureAwait(false);
+                        if (!connected)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Failed to connect to RPC server via TCP.");
+                            }
+                            return 1;
+                        }
                     }
-                    return 1;
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.ToString());
+                        return 1;
+                    }
+                }
+                else
+                {
+                    PsdzRpcServerStarter serverStarter = new(Console.Out);
+                    bool connected = await serverStarter.ConnectPipeClient(serverExe, null, ProcessWindowStyle.Minimized, client, cts, userName, password).ConfigureAwait(false);
+                    if (!connected)
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine("Failed to connect to RPC server via pipe.");
+                        }
+                        return 1;
+                    }
                 }
 
                 if (client.RpcService != null)
