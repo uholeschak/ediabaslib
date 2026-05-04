@@ -232,6 +232,8 @@ namespace PsdzClient.Programming
         {
             //[+]_psdzServiceHostWrapper?.Dispose();
             _psdzServiceHostWrapper?.Dispose();
+            //[+]_psdzServiceHostWrapper = null;
+            _psdzServiceHostWrapper = null;
             GC.SuppressFinalize(this);
         }
 
