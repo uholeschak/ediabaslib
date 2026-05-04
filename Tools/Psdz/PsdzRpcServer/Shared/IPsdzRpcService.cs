@@ -9,6 +9,7 @@ namespace PsdzRpcServer.Shared
     [JsonRpcContract, GenerateShape(IncludeMethods = MethodShapeFlags.PublicInstance)]
     public partial interface IPsdzRpcService : IPsdzRpcVehicleService, IDisposable
     {
+        Task<int> GetInterfaceVersion();
         Task<string> GetInterfaceSignature();
         Task<string> GetCallbackInterfaceSignature();
         Task<bool> OperationActive();

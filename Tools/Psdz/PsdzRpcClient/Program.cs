@@ -434,6 +434,22 @@ namespace PsdzRpcClient
                         }
                         return 1;
                     }
+
+                    int localVersion = PsdzRpcServiceConstants.InterfaceVersion;
+                    int remoteVersion = await client.RpcService.GetInterfaceVersion().ConfigureAwait(false);
+                    if (remoteVersion < localVersion)
+                    {
+                        if (_verbosity >= Options.VerbosityOption.Error)
+                        {
+                            Console.WriteLine($"Service interface version mismatch: client={localVersion}, server={remoteVersion}.");
+                        }
+                        return 1;
+                    }
+
+                    if (_verbosity >= Options.VerbosityOption.Important)
+                    {
+                        Console.WriteLine($"Interface version Remote: {remoteVersion}, Local: {localVersion}");
+                    }
                 }
                 else
                 {

@@ -33,6 +33,11 @@ namespace PsdzRpcServer
             _programmingJobs.GenServiceModules = false;
         }
 
+        public Task<int> GetInterfaceVersion()
+        {
+            return Task.FromResult(PsdzRpcServiceConstants.InterfaceVersion);
+        }
+
         public Task<string> GetInterfaceSignature()
         {
             return Task.FromResult(PsdzRpcServiceConstants.ServiceInterfaceSignature);
