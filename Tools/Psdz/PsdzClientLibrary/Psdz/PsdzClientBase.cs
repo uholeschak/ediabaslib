@@ -35,9 +35,15 @@ namespace BMW.Rheingold.Psdz.Client
 			}
 		}
 
-		[PreserveSource(Added = true)]
+        [PreserveSource(Added = true)]
         public void Dispose()
         {
+            if (disposed)
+            {
+                return;
+            }
+
+            disposed = true;
             CloseCachedChannels();
             CloseChannelFactory();
         }
@@ -246,5 +252,8 @@ namespace BMW.Rheingold.Psdz.Client
 		private readonly Queue<TChannel> cachedChannels = new Queue<TChannel>();
 
 		private readonly ChannelFactory<TChannel> channelFactory;
-	}
+
+		[PreserveSource(Added = true)]
+        private bool disposed = false;
+    }
 }
