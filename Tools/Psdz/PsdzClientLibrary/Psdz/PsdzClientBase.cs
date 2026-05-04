@@ -11,8 +11,8 @@ using PsdzClient;
 
 namespace BMW.Rheingold.Psdz.Client
 {
-    [PreserveSource(Removed = true)]
-	abstract class PsdzClientBase<TChannel> where TChannel : class
+    [PreserveSource(Hint = "IDisposable added", Removed = true)]
+	abstract class PsdzClientBase<TChannel> : IDisposable where TChannel : class
 	{
 		protected PsdzClientBase(Binding binding, EndpointAddress remoteAddress) : this(new ChannelFactory<TChannel>(binding, remoteAddress))
 		{
@@ -34,6 +34,30 @@ namespace BMW.Rheingold.Psdz.Client
 				}
 			}
 		}
+
+		[PreserveSource(Added = true)]
+        public void Dispose()
+        {
+            CloseCachedChannels();
+            CloseChannelFactory();
+        }
+
+        [PreserveSource(Added = true)]
+        private void CloseChannelFactory()
+        {
+            if (channelFactory == null) return;
+            try
+            {
+                if (channelFactory.State == CommunicationState.Faulted)
+                    channelFactory.Abort();
+                else
+                    channelFactory.Close();
+            }
+            catch
+            {
+                channelFactory.Abort();
+            }
+        }
 
 		protected async Task<TResult> CallFunctionAsync<TResult>(Func<TChannel, Task<TResult>> func)
 		{
