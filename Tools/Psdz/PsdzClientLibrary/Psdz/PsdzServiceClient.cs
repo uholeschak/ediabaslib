@@ -191,11 +191,36 @@ namespace BMW.Rheingold.Psdz.Client
             psdzProgressListenerDispatcher.Clear();
         }
 
+        [PreserveSource(Added = true)]
+        public void DisposeAllConnections()
+        {
+            connectionFactoryService.Dispose();
+            configurationService.Dispose();
+            connectionManagerService.Dispose();
+            vcmService.Dispose();
+            logicService.Dispose();
+            programmingService.Dispose();
+            ecuService.Dispose();
+            objectBuilderServiceClient.Dispose();
+            talExecutionService.Dispose();
+            logService.Dispose();
+            macrosService.Dispose();
+            individualDataRestoreService.Dispose();
+            secureFeatureActivationService.Dispose();
+            kdsService.Dispose();
+            securityManagementService.Dispose();
+            secureCodingService.Dispose();
+            httpConfigurationService.Dispose();
+            secureDiagnosticsService.Dispose();
+        }
+
         public void Dispose()
         {
             psdzEventService.RemoveAllEventListener();
             CloseAllConnections();
             psdzProgressListenerDispatcher.Clear();
+            //[+]DisposeAllConnections();
+            DisposeAllConnections();
         }
 
         public void RemovePsdzEventListener(IPsdzEventListener psdzEventListener)
