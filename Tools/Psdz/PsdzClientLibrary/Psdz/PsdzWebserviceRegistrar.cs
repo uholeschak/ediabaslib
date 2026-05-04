@@ -361,14 +361,12 @@ namespace BMW.Rheingold.Psdz
         [PreserveSource(Added = true)]
         public static string GetWritableBasePath()
         {
-            // Zuerst ApplicationData versuchen und auf Schreibbarkeit prüfen
             string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             if (!string.IsNullOrEmpty(appData) && IsDirectoryWritable(appData))
             {
                 return appData;
             }
 
-            // CommonApplicationData (C:\ProgramData) - IIS App Pools haben i.d.R. Zugriff
             string commonAppData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
             if (!string.IsNullOrEmpty(commonAppData) && IsDirectoryWritable(commonAppData))
             {
@@ -376,7 +374,6 @@ namespace BMW.Rheingold.Psdz
                 return commonAppData;
             }
 
-            // Letzter Fallback: Temp-Verzeichnis
             string tempPath = Path.GetTempPath();
             Log.Info(Log.CurrentMethod(), "Using TempPath as base path: {0}", tempPath);
             return tempPath;
