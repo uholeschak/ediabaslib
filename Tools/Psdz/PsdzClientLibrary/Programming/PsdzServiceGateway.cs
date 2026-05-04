@@ -230,6 +230,8 @@ namespace PsdzClient.Programming
 
         public void Dispose()
         {
+            //[+]_psdzServiceHostWrapper?.Dispose();
+            _psdzServiceHostWrapper?.Dispose();
             GC.SuppressFinalize(this);
         }
 
