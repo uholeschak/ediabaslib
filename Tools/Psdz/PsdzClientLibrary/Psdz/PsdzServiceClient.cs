@@ -217,10 +217,10 @@ namespace BMW.Rheingold.Psdz.Client
         public void Dispose()
         {
             psdzEventService.RemoveAllEventListener();
-            CloseAllConnections();
-            psdzProgressListenerDispatcher.Clear();
+            //[-]CloseAllConnections();
             //[+]DisposeAllConnections();
             DisposeAllConnections();
+            psdzProgressListenerDispatcher.Clear();
         }
 
         public void RemovePsdzEventListener(IPsdzEventListener psdzEventListener)
