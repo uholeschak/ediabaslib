@@ -8,8 +8,9 @@
       "commandName": "Project",
       "commandLineArgs": "-p 0"
     },
-    "VM-WIN11": {
+    "PsdzRpcServerTcpVM-WIN11": {
       "commandName": "Project",
+      "commandLineArgs": "-p 0",
       "remoteDebugEnabled": true,
       "remoteDebugMachine": "VM-WIN11",
       "authenticationMode": "Windows",
