@@ -49,6 +49,12 @@ namespace PsdzRpcClient
             {
                 string hostName = string.IsNullOrEmpty(host) ? PsdzRpcServiceConstants.Localhost : host;
                 _tcpClient = new TcpClient { NoDelay = true };
+                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+#if NET
+                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime,     10); // First probe
+                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 10); // Time between probes
+                _tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 3);
+#endif
 
                 _output?.WriteLine($"Connecting via TCP to {hostName}:{port}...");
 #if NET
