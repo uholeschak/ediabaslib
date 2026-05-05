@@ -95,12 +95,34 @@ namespace PsdzRpcClient
             RpcService = _jsonRpc.Attach<IPsdzRpcService>();
             _jsonRpc.StartListening();
             ClientConnected?.Invoke(this, true);
+
+            // Periodischer Ping-Task
+            _ = KeepAliveLoopAsync(CancellationToken.None);
         }
 
         private void OnJsonRpcDisconnected(object sender, JsonRpcDisconnectedEventArgs e)
         {
             _output?.WriteLine($"RPC disconnected: {e.Reason} – {e.Description}");
             ClientConnected?.Invoke(this, false);
+        }
+
+        // Periodischer Ping-Task
+        private async Task KeepAliveLoopAsync(CancellationToken ct)
+        {
+            while (!ct.IsCancellationRequested)
+            {
+                try
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(30), ct).ConfigureAwait(false);
+                    await RpcService.PingAsync(ct).ConfigureAwait(false);
+                }
+                catch (Exception ex) when (ex is not OperationCanceledException)
+                {
+                    _output?.WriteLine($"Keep-alive ping failed: {ex.Message}");
+                    ClientConnected?.Invoke(this, false);
+                    break;
+                }
+            }
         }
 
         public void Dispose()

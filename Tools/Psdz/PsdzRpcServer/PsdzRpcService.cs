@@ -48,6 +48,11 @@ namespace PsdzRpcServer
             return Task.FromResult(PsdzRpcServiceConstants.CallbackInterfaceSignature);
         }
 
+        public Task PingAsync(CancellationToken ct = default)
+        {
+            return Task.CompletedTask;
+        }
+
         public Task<bool> OperationActive()
         {
             bool isActive = IsOperationActive();

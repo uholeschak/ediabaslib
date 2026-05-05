@@ -2,6 +2,7 @@
 using StreamJsonRpc;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PsdzRpcServer.Shared
@@ -12,6 +13,7 @@ namespace PsdzRpcServer.Shared
         Task<int> GetInterfaceVersion();
         Task<string> GetInterfaceSignature();
         Task<string> GetCallbackInterfaceSignature();
+        Task PingAsync(CancellationToken ct = default);
         Task<bool> OperationActive();
         Task<bool> IsCancelPossible();
         Task CancelOperation();
