@@ -6,27 +6,30 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole(
-        [Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    Write-Error "This script must be run as Administrator."
-    exit 1
-}
-
-# --- ExecutionPolicy check ---
-$effectivePolicy = Get-ExecutionPolicy
-Write-Host "Effective ExecutionPolicy: $effectivePolicy"
-
-if ($effectivePolicy -eq 'Restricted') {
-    Write-Error "Script execution is disabled. Run the following command first:"
-    Write-Error "Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser"
-    exit 1
-}
-
 # --- Passwort prüfen ---
 if ([string]::IsNullOrWhiteSpace($Password))
 {
     Write-Error "Password must not be empty. Usage: .\CreateCertificates.ps1 -Password 'YourPassword'"
     exit 1
+}
+
+# --- Alte Zertifikate bereinigen ---
+$subjectsToClean = @(
+    @{ Store = "Cert:\CurrentUser\Root"; Subject = "CN=PsdzRpc-CA" },
+    @{ Store = "Cert:\CurrentUser\My";   Subject = "CN=PsdzRpcServer" },
+    @{ Store = "Cert:\CurrentUser\My";   Subject = "CN=PsdzRpcClient" }
+)
+
+foreach ($entry in $subjectsToClean)
+{
+    $existing = Get-ChildItem -Path $entry.Store |
+        Where-Object { $_.Subject -like "*$($entry.Subject)*" }
+
+    foreach ($cert in $existing)
+    {
+        Remove-Item -Path "$($entry.Store)\$($cert.Thumbprint)" -Force
+        Write-Host "Removed old certificate: $($cert.Subject) [$($cert.Thumbprint)]"
+    }
 }
 
 $secPwd = ConvertTo-SecureString -String $Password -Force -AsPlainText
@@ -39,12 +42,12 @@ $ca = New-SelfSignedCertificate `
     -KeyUsageProperty  Sign `
     -KeyLength         4096 `
     -HashAlgorithm     SHA256 `
-    -CertStoreLocation "Cert:\LocalMachine\Root" `
+    -CertStoreLocation "Cert:\CurrentUser\Root" `
     -NotAfter          (Get-Date).AddYears($ValidYears) `
     -FriendlyName      "PsdzRpc CA"
 
-Export-PfxCertificate  -Cert $ca -FilePath "$OutputPath\ca.pfx"          -Password $secPwd | Out-Null
-Export-Certificate     -Cert $ca -FilePath "$OutputPath\ca.crt"           -Type CERT        | Out-Null
+Export-PfxCertificate -Cert $ca -FilePath "$OutputPath\ca.pfx" -Password $secPwd | Out-Null
+Export-Certificate    -Cert $ca -FilePath "$OutputPath\ca.crt" -Type CERT          | Out-Null
 Write-Host "CA created:     $($ca.Thumbprint)"
 
 # --- 2. Server-Zertifikat (signiert von CA) ---
@@ -54,7 +57,7 @@ $server = New-SelfSignedCertificate `
     -KeyUsage          DigitalSignature, KeyEncipherment `
     -KeyLength         2048 `
     -HashAlgorithm     SHA256 `
-    -CertStoreLocation "Cert:\LocalMachine\My" `
+    -CertStoreLocation "Cert:\CurrentUser\My" `
     -NotAfter          (Get-Date).AddYears($ValidYears) `
     -FriendlyName      "PsdzRpc Server" `
     -Signer            $ca
