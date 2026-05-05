@@ -88,7 +88,7 @@ namespace PsdzRpcClient
         {
             _keepAliveCts?.Cancel();
             _keepAliveCts?.Dispose();
-            _keepAliveCts = new CancellationTokenSource(); // NEU
+            _keepAliveCts = new CancellationTokenSource();
 
             _jsonRpc = new JsonRpc(_stream);
             _jsonRpc.AddLocalRpcTarget(CallbackHandler);
@@ -101,13 +101,17 @@ namespace PsdzRpcClient
             _jsonRpc.StartListening();
             ClientConnected?.Invoke(this, true);
 
-            _ = KeepAliveLoopAsync(_keepAliveCts.Token); // Token übergeben
+            _ = KeepAliveLoopAsync(_keepAliveCts.Token);
         }
 
         private void OnJsonRpcDisconnected(object sender, JsonRpcDisconnectedEventArgs e)
         {
-            _output?.WriteLine($"RPC disconnected: {e.Reason} – {e.Description}");
-            _keepAliveCts?.Cancel(); // Loop sofort abbrechen
+            if (e.Reason != DisconnectedReason.LocallyDisposed)
+            {
+                _output?.WriteLine($"RPC disconnected: {e.Reason} – {e.Description}");
+            }
+
+            _keepAliveCts?.Cancel();
             ClientConnected?.Invoke(this, false);
         }
 
