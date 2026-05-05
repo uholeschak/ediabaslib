@@ -14,8 +14,6 @@ namespace PsdzRpcServer
 {
     public class PsdzRpcServer
     {
-        public const int DefaultTcpPort = 31285;
-
         private readonly string _dealerId;
         private readonly TextWriter _output;
         private readonly int? _tcpPort; // null = Pipe, sonst TCP
