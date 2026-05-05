@@ -16,6 +16,7 @@ if ([string]::IsNullOrWhiteSpace($Password))
 # --- Alte Zertifikate bereinigen ---
 $subjectsToClean = @(
     @{ Store = "Cert:\CurrentUser\Root"; Subject = "CN=PsdzRpc-CA" },
+    @{ Store = "Cert:\CurrentUser\My";   Subject = "CN=PsdzRpc-CA" },
     @{ Store = "Cert:\CurrentUser\My";   Subject = "CN=PsdzRpcServer" },
     @{ Store = "Cert:\CurrentUser\My";   Subject = "CN=PsdzRpcClient" }
 )
@@ -35,22 +36,25 @@ foreach ($entry in $subjectsToClean)
 $secPwd = ConvertTo-SecureString -String $Password -Force -AsPlainText
 New-Item -ItemType Directory -Force -Path $OutputPath | Out-Null
 
-# --- 1. CA-Zertifikat ---
+# --- 1. CA-Zertifikat (erst in \My erstellen) ---
 $ca = New-SelfSignedCertificate `
     -Subject           "CN=PsdzRpc-CA, O=EdiabasLib, C=DE" `
     -KeyUsage          CertSign, CRLSign `
     -KeyUsageProperty  Sign `
     -KeyLength         4096 `
     -HashAlgorithm     SHA256 `
-    -CertStoreLocation "Cert:\CurrentUser\Root" `
+    -CertStoreLocation "Cert:\CurrentUser\My" `
     -NotAfter          (Get-Date).AddYears($ValidYears) `
     -FriendlyName      "PsdzRpc CA"
 
-Export-PfxCertificate -Cert $ca -FilePath "$OutputPath\ca.pfx" -Password $secPwd | Out-Null
-Export-Certificate    -Cert $ca -FilePath "$OutputPath\ca.crt" -Type CERT          | Out-Null
+# Nach \Root kopieren (als vertrauenswürdige CA)
+$caStore = New-Object System.Security.Cryptography.X509Certificates.X509Store("Root", "CurrentUser")
+$caStore.Open("ReadWrite")
+$caStore.Add($ca)
+$caStore.Close()
 Write-Host "CA created:     $($ca.Thumbprint)"
 
-# --- 2. Server-Zertifikat (signiert von CA) ---
+# --- 2. Server-Zertifikat (CA muss noch in \My sein!) ---
 $server = New-SelfSignedCertificate `
     -Subject           "CN=PsdzRpcServer, O=EdiabasLib, C=DE" `
     -DnsName           "bmw_coding.holeschak.de", "vm-ista.local.holeschak.de", "localhost", "127.0.0.1" `
@@ -65,7 +69,7 @@ $server = New-SelfSignedCertificate `
 Export-PfxCertificate -Cert $server -FilePath "$OutputPath\server.pfx" -Password $secPwd | Out-Null
 Write-Host "Server created: $($server.Thumbprint)"
 
-# --- 3. Client-Zertifikat (signiert von CA) ---
+# --- 3. Client-Zertifikat (CA muss noch in \My sein!) ---
 $client = New-SelfSignedCertificate `
     -Subject           "CN=PsdzRpcClient, O=EdiabasLib, C=DE" `
     -KeyUsage          DigitalSignature `
@@ -78,6 +82,12 @@ $client = New-SelfSignedCertificate `
 
 Export-PfxCertificate -Cert $client -FilePath "$OutputPath\client.pfx" -Password $secPwd | Out-Null
 Write-Host "Client created: $($client.Thumbprint)"
+
+# --- CA erst jetzt aus \My entfernen ---
+Remove-Item -Path "Cert:\CurrentUser\My\$($ca.Thumbprint)" -Force
+
+Export-PfxCertificate -Cert "Cert:\CurrentUser\Root\$($ca.Thumbprint)" -FilePath "$OutputPath\ca.pfx" -Password $secPwd | Out-Null
+Export-Certificate    -Cert "Cert:\CurrentUser\Root\$($ca.Thumbprint)" -FilePath "$OutputPath\ca.crt" -Type CERT          | Out-Null
 
 Write-Host "`nAll certificates saved to: $OutputPath"
 Write-Host "Password: $Password"
