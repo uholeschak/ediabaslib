@@ -22,10 +22,9 @@ public class PsdzRpcServerStarter
         _output = output;
     }
 
-    public async Task<bool> ConnectPipeClient(string serverExe, string serviceName, ProcessWindowStyle windowStyle, PsdzRpcClient client, CancellationTokenSource cts,
-            string userName = null, string password = null)
+    public async Task<bool> ConnectPipeClient(string serverExe, string serviceName, ProcessWindowStyle windowStyle, PsdzRpcClient client, CancellationTokenSource cts)
     {
-        if (!StartServerIfNeeded(serverExe, serviceName, windowStyle, userName, password))
+        if (!StartServerIfNeeded(serverExe, serviceName, windowStyle))
         {
             _output?.WriteLine("No server available. Exiting.");
             return false;
@@ -44,7 +43,7 @@ public class PsdzRpcServerStarter
             }
 
             _output?.WriteLine("Try to restart server...");
-            if (!StartServerIfNeeded(serverExe, serviceName, windowStyle, userName, password))
+            if (!StartServerIfNeeded(serverExe, serviceName, windowStyle))
             {
                 _output?.WriteLine("No server available. Exiting.");
                 return false;
@@ -79,7 +78,7 @@ public class PsdzRpcServerStarter
     /// Startet den Server-Prozess, falls ein Pfad angegeben ist.
     /// Wartet nur bis der Prozess gestartet ist, nicht bis die Pipe verfügbar ist.
     /// </summary>
-    public bool StartServerIfNeeded(string serverExe, string serviceName, ProcessWindowStyle windowStyle, string userName, string password)
+    public bool StartServerIfNeeded(string serverExe, string serviceName, ProcessWindowStyle windowStyle)
     {
         if (IsPipeAvailable())
         {
@@ -94,7 +93,7 @@ public class PsdzRpcServerStarter
         }
 
         // Fallback: Prozess direkt starten
-        return StartServerProcess(serverExe, windowStyle, userName, password);
+        return StartServerProcess(serverExe, windowStyle);
     }
 
     private bool TryStartWindowsService(string serviceName)
@@ -156,7 +155,7 @@ public class PsdzRpcServerStarter
         }
     }
 
-    private bool StartServerProcess(string serverExe, ProcessWindowStyle windowStyle, string userName, string password)
+    private bool StartServerProcess(string serverExe, ProcessWindowStyle windowStyle)
     {
         if (string.IsNullOrEmpty(serverExe))
         {
@@ -175,7 +174,6 @@ public class PsdzRpcServerStarter
         }
 
         _output?.WriteLine($"Starting server: {serverExeFullPath}");
-        bool hasCredentials = !string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(password);
         ProcessStartInfo processStartInfo = new ProcessStartInfo
         {
             FileName = serverExeFullPath,
@@ -185,12 +183,6 @@ public class PsdzRpcServerStarter
         processStartInfo.UseShellExecute = false;
         processStartInfo.CreateNoWindow = windowStyle == ProcessWindowStyle.Hidden || windowStyle == ProcessWindowStyle.Minimized;
         processStartInfo.LoadUserProfile = true;
-
-        if (hasCredentials)
-        {
-            processStartInfo.UserName = userName;
-            processStartInfo.Password = CreateSecureString(password);
-        }
 
         Process process = Process.Start(processStartInfo);
         if (process == null || process.HasExited)

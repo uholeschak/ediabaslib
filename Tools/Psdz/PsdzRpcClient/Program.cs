@@ -47,12 +47,6 @@ namespace PsdzRpcClient
             [Option('s', "serverexe", Required = false, HelpText = "Server executable path.")]
             public string ServerExe { get; set; }
 
-            [Option('u', "username", Required = false, HelpText = "Username for server authentication.")]
-            public string UserName { get; set; }
-
-            [Option('p', "password", Required = false, HelpText = "Password for server authentication.")]
-            public string Password { get; set; }
-
             [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
             public VerbosityOption Verbosity { get; set; }
         }
@@ -70,8 +64,6 @@ namespace PsdzRpcClient
             string tcpHost = string.Empty;
             int? tcpPort = null;
             string serverExe = string.Empty;
-            string userName = string.Empty;
-            string password = string.Empty;
             bool hasErrors = false;
 
             Parser parser = new Parser(with =>
@@ -90,8 +82,6 @@ namespace PsdzRpcClient
                     tcpHost = o.TcpHost;
                     tcpPort = o.TcpPort;
                     serverExe = o.ServerExe;
-                    userName = o.UserName;
-                    password = o.Password;
                     _verbosity = o.Verbosity;
                 })
                 .WithNotParsed(errs =>
@@ -459,7 +449,7 @@ namespace PsdzRpcClient
                 else
                 {
                     PsdzRpcServerStarter serverStarter = new(Console.Out);
-                    bool connected = await serverStarter.ConnectPipeClient(serverExe, null, ProcessWindowStyle.Minimized, client, cts, userName, password).ConfigureAwait(false);
+                    bool connected = await serverStarter.ConnectPipeClient(serverExe, null, ProcessWindowStyle.Minimized, client, cts).ConfigureAwait(false);
                     if (!connected)
                     {
                         if (_verbosity >= Options.VerbosityOption.Error)
