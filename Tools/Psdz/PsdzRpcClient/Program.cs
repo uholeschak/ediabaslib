@@ -120,6 +120,11 @@ namespace PsdzRpcClient
 
             if (tcpPort.HasValue)
             {
+                if (tcpPort.Value == 0)
+                {
+                    tcpPort = PsdzRpcServiceConstants.DefaultTcpPort;
+                }
+
                 if (!string.IsNullOrEmpty(tcpHost))
                 {
                     Console.WriteLine("TCP Host: {0}", tcpHost);

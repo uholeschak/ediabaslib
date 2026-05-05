@@ -86,6 +86,11 @@ namespace PsdzRpcServer
             if (tcpPort.HasValue)
             {
                 keepRunning = true;
+                if (tcpPort.Value == 0)
+                {
+                    tcpPort = PsdzRpcServiceConstants.DefaultTcpPort;
+                }
+
                 Console.WriteLine($"TCP port: {tcpPort.Value}");
             }
 

@@ -6,7 +6,7 @@
     },
     "PsdzRpcServerTcp": {
       "commandName": "Project",
-      "commandLineArgs": "-t 10000"
+      "commandLineArgs": "-t 0"
     },
     "VM-WIN11": {
       "commandName": "Project",
