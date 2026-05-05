@@ -1,5 +1,5 @@
 param(
-    [string]$OutputPath = "$PSScriptRoot\Certificates",
+    [string]$OutputPath = "$PSScriptRoot\..\Certificates",
     [string]$Password,
     [int]$ValidYears    = 10
 )
@@ -49,8 +49,8 @@ Write-Host "CA created:     $($ca.Thumbprint)"
 
 # --- 2. Server-Zertifikat (signiert von CA) ---
 $server = New-SelfSignedCertificate `
-    -Subject           "CN=localhost, O=EdiabasLib, C=DE" `
-    -DnsName           "localhost", "127.0.0.1" `
+    -Subject           "CN=PsdzRpcServer, O=EdiabasLib, C=DE" `
+    -DnsName           "localhost", "127.0.0.1", "vm-ista.local.holeschak.de" `
     -KeyUsage          DigitalSignature, KeyEncipherment `
     -KeyLength         2048 `
     -HashAlgorithm     SHA256 `
