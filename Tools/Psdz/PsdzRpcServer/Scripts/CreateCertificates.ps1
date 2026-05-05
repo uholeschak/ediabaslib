@@ -1,6 +1,6 @@
 param(
     [string]$OutputPath = "$PSScriptRoot\..\Certificates",
-    [string]$Password,
+    [string]$Password = "BmwCoding12!!",
     [int]$ValidYears    = 10
 )
 
@@ -91,3 +91,32 @@ Export-Certificate    -Cert "Cert:\CurrentUser\Root\$($ca.Thumbprint)" -FilePath
 
 Write-Host "`nAll certificates saved to: $OutputPath"
 Write-Host "Password: $Password"
+
+function Remove-PfxPassword
+{
+    param(
+        [string]$PfxPath,
+        [string]$Password
+    )
+
+    $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new(
+        $PfxPath,
+        $Password,
+        [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
+
+    try
+    {
+        $bytes = $cert.Export([System.Security.Cryptography.X509Certificates.X509ContentType]::Pfx, "")
+        [System.IO.File]::WriteAllBytes($PfxPath, $bytes)
+        Write-Host "Password removed from: $PfxPath"
+    }
+    finally
+    {
+        $cert.Dispose()
+    }
+}
+
+foreach ($pfx in @("ca.pfx", "server.pfx", "client.pfx"))
+{
+    Remove-PfxPassword -PfxPath "$OutputPath\$pfx" -Password $Password
+}
