@@ -30,7 +30,7 @@ namespace PsdzRpcServer
             [Option('r', "keeprunning", Required = false, HelpText = "Keep running on client disconnect.")]
             public bool KeepRunning { get; set; }
 
-            [Option('t', "tcpport", Required = false, HelpText = "Port for TCP server.")]
+            [Option('p', "tcpport", Required = false, HelpText = "Port for TCP server.")]
             public int? TcpPort { get; set; }
 
             [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]

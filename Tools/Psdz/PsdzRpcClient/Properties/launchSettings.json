@@ -10,11 +10,11 @@
     },
     "PsdzRpcClientTcpProxy": {
       "commandName": "Project",
-      "commandLineArgs": "--vehicleproxy -t 0"
+      "commandLineArgs": "--vehicleproxy -p 0"
     },
     "PsdzRpcClientTcpProxyVmIsta": {
       "commandName": "Project",
-      "commandLineArgs": "--vehicleproxy -h vm-ista.local.holeschak.de -t 0"
+      "commandLineArgs": "--vehicleproxy -h vm-ista.local.holeschak.de -p 0"
     },
     "VM-WIN11": {
       "commandName": "Project",

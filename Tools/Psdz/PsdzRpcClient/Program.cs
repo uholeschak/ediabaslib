@@ -41,7 +41,7 @@ namespace PsdzRpcClient
             [Option('h', "tcphost", Required = false, HelpText = "TCP server host address.")]
             public string TcpHost { get; set; }
 
-            [Option('t', "tcpport", Required = false, HelpText = "Port for TCP server.")]
+            [Option('p', "tcpport", Required = false, HelpText = "Port for TCP server.")]
             public int? TcpPort { get; set; }
 
             [Option('s', "serverexe", Required = false, HelpText = "Server executable path.")]
