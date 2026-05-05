@@ -13,8 +13,9 @@ namespace PsdzRpcClient
     {
         private readonly TextWriter _output;
         private Stream _stream;
-        private TcpClient _tcpClient; // nur bei TCP-Verbindung
+        private TcpClient _tcpClient;
         private JsonRpc _jsonRpc;
+        private CancellationTokenSource _keepAliveCts;
 
         public IPsdzRpcService RpcService { get; private set; }
         public event EventHandler<bool> ClientConnected;
@@ -85,6 +86,10 @@ namespace PsdzRpcClient
 
         private void StartJsonRpc(SynchronizationContext synchronizationContext)
         {
+            _keepAliveCts?.Cancel();
+            _keepAliveCts?.Dispose();
+            _keepAliveCts = new CancellationTokenSource(); // NEU
+
             _jsonRpc = new JsonRpc(_stream);
             _jsonRpc.AddLocalRpcTarget(CallbackHandler);
             _jsonRpc.Disconnected += OnJsonRpcDisconnected;
@@ -96,13 +101,13 @@ namespace PsdzRpcClient
             _jsonRpc.StartListening();
             ClientConnected?.Invoke(this, true);
 
-            // Periodischer Ping-Task
-            _ = KeepAliveLoopAsync(CancellationToken.None);
+            _ = KeepAliveLoopAsync(_keepAliveCts.Token); // Token übergeben
         }
 
         private void OnJsonRpcDisconnected(object sender, JsonRpcDisconnectedEventArgs e)
         {
             _output?.WriteLine($"RPC disconnected: {e.Reason} – {e.Description}");
+            _keepAliveCts?.Cancel(); // Loop sofort abbrechen
             ClientConnected?.Invoke(this, false);
         }
 
@@ -113,10 +118,15 @@ namespace PsdzRpcClient
             {
                 try
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(30), ct).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(10), ct).ConfigureAwait(false);
                     await RpcService.PingAsync(ct).ConfigureAwait(false);
                 }
-                catch (Exception ex) when (ex is not OperationCanceledException)
+                catch (OperationCanceledException)
+                {
+                    _output?.WriteLine("Keep-alive loop cancelled.");
+                    break;
+                }
+                catch (Exception ex)
                 {
                     _output?.WriteLine($"Keep-alive ping failed: {ex.Message}");
                     ClientConnected?.Invoke(this, false);
@@ -127,6 +137,10 @@ namespace PsdzRpcClient
 
         public void Dispose()
         {
+            _keepAliveCts?.Cancel(); // Loop abbrechen
+            _keepAliveCts?.Dispose();
+            _keepAliveCts = null;
+
             _jsonRpc?.Dispose();
             _jsonRpc = null;
 
