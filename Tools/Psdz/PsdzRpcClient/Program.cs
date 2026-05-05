@@ -144,6 +144,27 @@ namespace PsdzRpcClient
 
                 SingleThreadSynchronizationContext syncContext = new(Console.Out);
 
+                client.ClientConnected += (s, connected) =>
+                {
+                    syncContext.BeginInvoke(() =>
+                    {
+                        if (connected)
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Important)
+                            {
+                                Console.WriteLine("Client connected to RPC server.");
+                            }
+                        }
+                        else
+                        {
+                            if (_verbosity >= Options.VerbosityOption.Error)
+                            {
+                                Console.WriteLine("Client disconnected from RPC server.");
+                            }
+                        }
+                    });
+                };
+
                 client.CallbackHandler.StartProgrammingCompleted += (s, success) =>
                 {
                     syncContext.BeginInvoke(() =>

@@ -81,15 +81,20 @@ namespace PsdzRpcClient
         {
             _jsonRpc = new JsonRpc(_stream);
             _jsonRpc.AddLocalRpcTarget(CallbackHandler);
+            _jsonRpc.Disconnected += OnJsonRpcDisconnected;
 
             if (synchronizationContext != null)
-            {
                 _jsonRpc.SynchronizationContext = synchronizationContext;
-            }
 
             RpcService = _jsonRpc.Attach<IPsdzRpcService>();
             _jsonRpc.StartListening();
             ClientConnected?.Invoke(this, true);
+        }
+
+        private void OnJsonRpcDisconnected(object sender, JsonRpcDisconnectedEventArgs e)
+        {
+            _output?.WriteLine($"RPC disconnected: {e.Reason} – {e.Description}");
+            ClientConnected?.Invoke(this, false);
         }
 
         public void Dispose()
