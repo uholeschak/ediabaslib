@@ -78,7 +78,8 @@ namespace PsdzRpcServer
         {
             TcpListener listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
-            _output?.WriteLine($"TCP server listening on port {port} {(_serverCert != null ? "(TLS)" : "(plain)")}...");
+            string connectionType = _serverCert != null ? "SSL/TLS" : "plain";
+            _output?.WriteLine($"TCP server listening on port {port} ({connectionType})...");
 
             try
             {
@@ -252,6 +253,12 @@ namespace PsdzRpcServer
             }
 
 #if NET9_0_OR_GREATER
+            string ext = Path.GetExtension(path);
+            if (string.CompareOrdinal(ext, ".pfx") == 0 || string.CompareOrdinal(ext, ".p12") == 0)
+            {
+                return X509CertificateLoader.LoadPkcs12FromFile(path, password: null);
+            }
+
             return X509CertificateLoader.LoadCertificateFromFile(path);
 #else
             return new X509Certificate2(path);

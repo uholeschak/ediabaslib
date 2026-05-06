@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using PsdzRpcServer.Shared;
 using System;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,6 +34,9 @@ namespace PsdzRpcServer
             [Option('p', "tcpport", Required = false, HelpText = "Port for TCP server.")]
             public int? TcpPort { get; set; }
 
+            [Option('s', "ssl", Required = false, HelpText = "Enable SSL for TCP server.")]
+            public bool Ssl { get; set; }
+
             [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
             public VerbosityOption Verbosity { get; set; }
         }
@@ -47,6 +51,7 @@ namespace PsdzRpcServer
 #endif
             bool keepRunning = false;
             int? tcpPort = null;
+            bool ssl = false;
             bool hasErrors = false;
 
             Parser parser = new Parser(with =>
@@ -62,6 +67,7 @@ namespace PsdzRpcServer
                 {
                     keepRunning = o.KeepRunning;
                     tcpPort = o.TcpPort;
+                    ssl = o.Ssl;
                     _verbosity = o.Verbosity;
                 })
                 .WithNotParsed(errs =>
@@ -94,8 +100,31 @@ namespace PsdzRpcServer
                 Console.WriteLine($"TCP port: {tcpPort.Value}");
             }
 
+            string appDir = AppDomain.CurrentDomain.BaseDirectory;
+            string caCertPath = null;
+            string serverPfxPath = null;
+            if (ssl)
+            {
+                Console.WriteLine("SSL enabled");
+
+                string certsPath = Path.Combine(appDir, "Certificates");
+                caCertPath = Path.Combine(certsPath, "ca.crt");
+                serverPfxPath = Path.Combine(certsPath, "server.pfx");
+                if (!File.Exists(caCertPath))
+                {
+                    Console.WriteLine($"CA certificate not found at {caCertPath}");
+                    return 1;
+                }
+
+                if (!File.Exists(serverPfxPath))
+                {
+                    Console.WriteLine($"Server certificate not found at {serverPfxPath}");
+                    return 1;
+                }
+            }
+
             using CancellationTokenSource cts = new CancellationTokenSource();
-            using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, tcpPort);
+            using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, tcpPort, caCertPath, serverPfxPath);
             try
             {
                 CancellationTokenSource ctsLocal = cts;
