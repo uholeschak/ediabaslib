@@ -14,10 +14,10 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Certificates\server.pfx" Link="Certificates\server.pfx" Condition="Exists('Certificates\server.pfx')">
+    <Content Include="..\Certificates\server.pfx" Link="Certificates\server.pfx" Condition="Exists('..\Certificates\server.pfx')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Certificates\ca.crt" Link="Certificates\ca.crt" Condition="Exists('Certificates\ca.crt')">
+    <Content Include="..\Certificates\ca.crt" Link="Certificates\ca.crt" Condition="Exists('..\Certificates\ca.crt')">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
