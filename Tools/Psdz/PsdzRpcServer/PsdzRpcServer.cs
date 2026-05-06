@@ -15,15 +15,16 @@ using System.Threading.Tasks;
 
 namespace PsdzRpcServer
 {
-    public class PsdzRpcServer
+    public class PsdzRpcServer : IDisposable
     {
         private readonly string _dealerId;
         private readonly TextWriter _output;
-        private readonly int? _tcpPort; // null = Pipe, sonst TCP
-        private readonly string _pfxPath;       // NEU
-        private readonly string _caCertPath;    // NEU
+        private readonly int? _tcpPort;
+        private readonly X509Certificate2 _caCert;
+        private readonly X509Certificate2 _serverCert;
         private int _clientCount;
         private bool _hadClients;
+        private bool _disposed;
         private readonly TaskCompletionSource<bool> _allClientsDisconnected = new TaskCompletionSource<bool>();
 
         /// <summary>
@@ -31,13 +32,13 @@ namespace PsdzRpcServer
         /// </summary>
         public Task AllClientsDisconnected => _allClientsDisconnected.Task;
 
-        public PsdzRpcServer(string dealerId, TextWriter output = null, int? tcpPort = null, string pfxPath = null, string caCertPath = null)
+        public PsdzRpcServer(string dealerId, TextWriter output = null, int? tcpPort = null, string caCertPath = null, string serverPfxPath = null)
         {
             _dealerId = dealerId;
             _output = output;
             _tcpPort = tcpPort;
-            _pfxPath = pfxPath;
-            _caCertPath = caCertPath;
+            _caCert = LoadCertificate(caCertPath);
+            _serverCert = LoadCertificate(serverPfxPath);
             _clientCount = 0;
             _hadClients = false;
         }
@@ -75,13 +76,9 @@ namespace PsdzRpcServer
 
         private async Task StartTcpAsync(int port, CancellationToken ct)
         {
-            // Zertifikate laden (nur wenn angegeben)
-            X509Certificate2 serverCert = LoadCertificate(_pfxPath);
-            X509Certificate2 caCert = LoadCertificate(_caCertPath);
-
             TcpListener listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
-            _output?.WriteLine($"TCP server listening on port {port} {(serverCert != null ? "(TLS)" : "(plain)")}...");
+            _output?.WriteLine($"TCP server listening on port {port} {(_serverCert != null ? "(TLS)" : "(plain)")}...");
 
             try
             {
@@ -98,10 +95,10 @@ namespace PsdzRpcServer
                     TcpClient tcpClient = await acceptTask.ConfigureAwait(false);
                     tcpClient.NoDelay = true;
 
-                    if (serverCert != null)
+                    if (_serverCert != null)
                     {
                         // TLS-Handshake als fire-and-forget
-                        _ = AcceptTlsClientAsync(tcpClient, serverCert, caCert);
+                        _ = AcceptTlsClientAsync(tcpClient, _caCert, _serverCert);
                     }
                     else
                     {
@@ -150,8 +147,7 @@ namespace PsdzRpcServer
             }
         }
 
-        private async Task AcceptTlsClientAsync(TcpClient tcpClient,
-            X509Certificate2 serverCert, X509Certificate2 caCert)
+        private async Task AcceptTlsClientAsync(TcpClient tcpClient, X509Certificate2 caCert, X509Certificate2 serverCert)
         {
             SslStream sslStream = null;
             try
@@ -161,7 +157,6 @@ namespace PsdzRpcServer
                     leaveInnerStreamOpen: false,
                     userCertificateValidationCallback: (sender, cert, chain, errors) =>
                         ValidateClientCertificate(cert, caCert));
-
 #if NET
                 await sslStream.AuthenticateAsServerAsync(new SslServerAuthenticationOptions
                 {
@@ -264,5 +259,18 @@ namespace PsdzRpcServer
         }
 
         public int ClientCount => _clientCount;
+
+        public void Dispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
+
+            _serverCert?.Dispose();
+            _caCert?.Dispose();
+        }
     }
 }

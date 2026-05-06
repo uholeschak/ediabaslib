@@ -95,7 +95,7 @@ namespace PsdzRpcServer
             }
 
             using CancellationTokenSource cts = new CancellationTokenSource();
-            PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, tcpPort);
+            using PsdzRpcServer server = new PsdzRpcServer(PsdzRpcServiceConstants.DealerId, Console.Out, tcpPort);
             try
             {
                 CancellationTokenSource ctsLocal = cts;
