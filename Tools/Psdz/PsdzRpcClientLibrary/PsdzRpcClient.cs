@@ -6,6 +6,9 @@ using System.IO.Pipes;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
+using System.Security.Authentication;
 
 namespace PsdzRpcClient
 {
@@ -16,6 +19,8 @@ namespace PsdzRpcClient
         private TcpClient _tcpClient;
         private JsonRpc _jsonRpc;
         private CancellationTokenSource _keepAliveCts;
+        private X509Certificate2 _caCert;
+        private X509Certificate2 _clientCert;
 
         public IPsdzRpcService RpcService { get; private set; }
         public event EventHandler<bool> ClientConnected;
@@ -69,19 +74,89 @@ namespace PsdzRpcClient
                 }
                 await connectTask.ConfigureAwait(false);
 #endif
-                _stream = _tcpClient.GetStream();
-                _output?.WriteLine("Connected!");
+                if (_caCert != null)
+                {
+                    SslStream sslStream = new SslStream(
+                        _tcpClient.GetStream(),
+                        leaveInnerStreamOpen: false,
+                        userCertificateValidationCallback: (sender, cert, chain, errors) =>
+                            ValidateServerCertificate(cert));
+
+#if NET
+                    SslClientAuthenticationOptions options = new SslClientAuthenticationOptions
+                    {
+                        TargetHost                     = hostName,
+                        EnabledSslProtocols            = SslProtocols.Tls12 | SslProtocols.Tls13,
+                        CertificateRevocationCheckMode = X509RevocationMode.NoCheck
+                    };
+
+                    if (_clientCert != null)
+                        options.ClientCertificates = new X509CertificateCollection { _clientCert };
+
+                    await sslStream.AuthenticateAsClientAsync(options).ConfigureAwait(false);
+#else
+                    X509CertificateCollection clientCerts = _clientCert != null
+                        ? new X509CertificateCollection { _clientCert }
+                        : null;
+
+                    await sslStream.AuthenticateAsClientAsync(
+                        targetHost: hostName,
+                        clientCertificates: clientCerts,
+                        enabledSslProtocols: SslProtocols.Tls12 | SslProtocols.Tls13,
+                        checkCertificateRevocation: false).ConfigureAwait(false);
+#endif
+
+                    _stream = sslStream;
+                    _output?.WriteLine("Connected (SSL/TLS)");
+                }
+                else
+                {
+                    _stream = _tcpClient.GetStream();
+                    _output?.WriteLine("Connected (plain)");
+                }
 
                 StartJsonRpc(synchronizationContext);
                 return true;
             }
-            catch (SocketException ex)
+            catch (Exception ex)
             {
                 _output?.WriteLine($"TCP connect failed: {ex.Message}");
                 _tcpClient?.Dispose();
                 _tcpClient = null;
                 return false;
             }
+        }
+
+        // NEU: Zertifikate laden (ca.crt + client.pfx ohne Passwort)
+        public void LoadCertificates(string caCertPath, string clientPfxPath)
+        {
+            _caCert = LoadCertificate(caCertPath);
+            _clientCert = LoadCertificate(clientPfxPath);
+        }
+
+        private static X509Certificate2 LoadCertificate(string path)
+        {
+#if NET9_0_OR_GREATER
+            return X509CertificateLoader.LoadPkcs12FromFile(path, password: null,
+                keyStorageFlags: X509KeyStorageFlags.Exportable);
+#else
+            return new X509Certificate2(path, (string)null, X509KeyStorageFlags.Exportable);
+#endif
+        }
+
+        private bool ValidateServerCertificate(X509Certificate cert)
+        {
+            if (_caCert == null) return true;
+            if (cert == null)    return false;
+
+            X509Chain chain = new X509Chain();
+            chain.ChainPolicy.ExtraStore.Add(_caCert);
+            chain.ChainPolicy.RevocationMode    = X509RevocationMode.NoCheck;
+            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+
+            bool valid = chain.Build(new X509Certificate2(cert));
+            return valid && chain.ChainElements[chain.ChainElements.Count - 1]
+                .Certificate.Thumbprint == _caCert.Thumbprint;
         }
 
         private void StartJsonRpc(SynchronizationContext synchronizationContext)
@@ -153,6 +228,9 @@ namespace PsdzRpcClient
 
             _tcpClient?.Dispose();
             _tcpClient = null;
+
+            _caCert?.Dispose();
+            _clientCert?.Dispose();
 
             RpcService?.Dispose();
             RpcService = null;

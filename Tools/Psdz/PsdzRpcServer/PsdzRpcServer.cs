@@ -4,8 +4,11 @@ using System;
 using System.IO;
 using System.IO.Pipes;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.AccessControl;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +20,8 @@ namespace PsdzRpcServer
         private readonly string _dealerId;
         private readonly TextWriter _output;
         private readonly int? _tcpPort; // null = Pipe, sonst TCP
+        private readonly string _pfxPath;       // NEU
+        private readonly string _caCertPath;    // NEU
         private int _clientCount;
         private bool _hadClients;
         private readonly TaskCompletionSource<bool> _allClientsDisconnected = new TaskCompletionSource<bool>();
@@ -27,11 +32,13 @@ namespace PsdzRpcServer
         public Task AllClientsDisconnected => _allClientsDisconnected.Task;
 
         /// <param name="tcpPort">Wenn angegeben, wird TCP statt Named Pipe verwendet.</param>
-        public PsdzRpcServer(string dealerId, TextWriter output = null, int? tcpPort = null)
+        public PsdzRpcServer(string dealerId, TextWriter output = null, int? tcpPort = null, string pfxPath = null, string caCertPath = null)
         {
             _dealerId = dealerId;
             _output = output;
             _tcpPort = tcpPort;
+            _pfxPath = pfxPath;
+            _caCertPath = caCertPath;
             _clientCount = 0;
             _hadClients = false;
         }
@@ -69,14 +76,18 @@ namespace PsdzRpcServer
 
         private async Task StartTcpAsync(int port, CancellationToken ct)
         {
+            // Zertifikate laden (nur wenn angegeben)
+            X509Certificate2 serverCert = _pfxPath != null ? LoadCertificate(_pfxPath) : null;
+            X509Certificate2 caCert = _caCertPath != null ? LoadCertificate(_caCertPath) : null;
+
             TcpListener listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
-            _output?.WriteLine($"TCP server listening on port {port}...");
+            _output?.WriteLine($"TCP server listening on port {port} {(serverCert != null ? "(TLS)" : "(plain)")}...");
+
             try
             {
                 while (!ct.IsCancellationRequested)
                 {
-                    // TcpListener hat kein natives CancellationToken, daher mit Task.WhenAny abbrechen
                     Task<TcpClient> acceptTask = listener.AcceptTcpClientAsync();
                     Task cancelTask = Task.Delay(Timeout.Infinite, ct);
                     Task completed = await Task.WhenAny(acceptTask, cancelTask).ConfigureAwait(false);
@@ -87,18 +98,23 @@ namespace PsdzRpcServer
 
                     TcpClient tcpClient = await acceptTask.ConfigureAwait(false);
                     tcpClient.NoDelay = true;
-                    OnClientAccepted(tcpClient.GetStream(), tcpClient);
+
+                    if (serverCert != null)
+                    {
+                        // TLS-Handshake als fire-and-forget
+                        _ = AcceptTlsClientAsync(tcpClient, serverCert, caCert);
+                    }
+                    else
+                    {
+                        OnClientAccepted(tcpClient.GetStream(), tcpClient);
+                    }
                 }
-            }
-            catch (OperationCanceledException)
-            {
             }
             finally
             {
                 listener.Stop();
             }
         }
-
         private void OnClientAccepted(Stream stream, IDisposable owner = null)
         {
             int count = Interlocked.Increment(ref _clientCount);
@@ -133,6 +149,60 @@ namespace PsdzRpcServer
                     _allClientsDisconnected.TrySetResult(true);
                 }
             }
+        }
+
+        private async Task AcceptTlsClientAsync(TcpClient tcpClient,
+            X509Certificate2 serverCert, X509Certificate2 caCert)
+        {
+            SslStream sslStream = null;
+            try
+            {
+                sslStream = new SslStream(
+                    tcpClient.GetStream(),
+                    leaveInnerStreamOpen: false,
+                    userCertificateValidationCallback: (sender, cert, chain, errors) =>
+                        ValidateClientCertificate(cert, caCert));
+
+#if NET
+                await sslStream.AuthenticateAsServerAsync(new SslServerAuthenticationOptions
+                {
+                    ServerCertificate              = serverCert,
+                    ClientCertificateRequired      = caCert != null,
+                    EnabledSslProtocols            = SslProtocols.Tls12 | SslProtocols.Tls13,
+                    CertificateRevocationCheckMode = X509RevocationMode.NoCheck
+                }).ConfigureAwait(false);
+#else
+                await sslStream.AuthenticateAsServerAsync(
+                    serverCertificate:          serverCert,
+                    clientCertificateRequired:  caCert != null,
+                    enabledSslProtocols:        SslProtocols.Tls12 | SslProtocols.Tls13,
+                    checkCertificateRevocation: false).ConfigureAwait(false);
+#endif
+
+                _output?.WriteLine("TLS handshake successful.");
+                OnClientAccepted(sslStream, tcpClient);
+            }
+            catch (Exception ex)
+            {
+                _output?.WriteLine($"TLS handshake failed: {ex.Message}");
+                sslStream?.Dispose();
+                tcpClient.Dispose();
+            }
+        }
+
+        private bool ValidateClientCertificate(X509Certificate cert, X509Certificate2 caCert)
+        {
+            if (caCert == null) return true;  // kein mTLS – alles erlauben
+            if (cert == null)  return false;
+
+            X509Chain chain = new X509Chain();
+            chain.ChainPolicy.ExtraStore.Add(caCert);
+            chain.ChainPolicy.RevocationMode    = X509RevocationMode.NoCheck;
+            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+
+            bool valid = chain.Build(new X509Certificate2(cert));
+            return valid && chain.ChainElements[chain.ChainElements.Count - 1]
+                .Certificate.Thumbprint == caCert.Thumbprint;
         }
 
         private NamedPipeServerStream CreatePipeServer()
@@ -177,6 +247,15 @@ namespace PsdzRpcServer
                 inBufferSize: 0,
                 outBufferSize: 0,
                 pipeSecurity);
+#endif
+        }
+
+        private static X509Certificate2 LoadCertificate(string path)
+        {
+#if NET9_0_OR_GREATER
+            return X509CertificateLoader.LoadCertificateFromFile(path);
+#else
+            return new X509Certificate2(path);
 #endif
         }
 
