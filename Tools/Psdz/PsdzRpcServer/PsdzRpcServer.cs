@@ -31,7 +31,6 @@ namespace PsdzRpcServer
         /// </summary>
         public Task AllClientsDisconnected => _allClientsDisconnected.Task;
 
-        /// <param name="tcpPort">Wenn angegeben, wird TCP statt Named Pipe verwendet.</param>
         public PsdzRpcServer(string dealerId, TextWriter output = null, int? tcpPort = null, string pfxPath = null, string caCertPath = null)
         {
             _dealerId = dealerId;
@@ -77,8 +76,8 @@ namespace PsdzRpcServer
         private async Task StartTcpAsync(int port, CancellationToken ct)
         {
             // Zertifikate laden (nur wenn angegeben)
-            X509Certificate2 serverCert = _pfxPath != null ? LoadCertificate(_pfxPath) : null;
-            X509Certificate2 caCert = _caCertPath != null ? LoadCertificate(_caCertPath) : null;
+            X509Certificate2 serverCert = LoadCertificate(_pfxPath);
+            X509Certificate2 caCert = LoadCertificate(_caCertPath);
 
             TcpListener listener = new TcpListener(IPAddress.Any, port);
             listener.Start();
@@ -252,6 +251,11 @@ namespace PsdzRpcServer
 
         private static X509Certificate2 LoadCertificate(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
+
 #if NET9_0_OR_GREATER
             return X509CertificateLoader.LoadCertificateFromFile(path);
 #else

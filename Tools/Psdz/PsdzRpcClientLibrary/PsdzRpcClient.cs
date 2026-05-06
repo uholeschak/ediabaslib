@@ -15,20 +15,22 @@ namespace PsdzRpcClient
     public class PsdzRpcClient : IDisposable
     {
         private readonly TextWriter _output;
+        private readonly X509Certificate2 _caCert;
+        private readonly X509Certificate2 _clientCert;
         private Stream _stream;
         private TcpClient _tcpClient;
         private JsonRpc _jsonRpc;
         private CancellationTokenSource _keepAliveCts;
-        private X509Certificate2 _caCert;
-        private X509Certificate2 _clientCert;
 
         public IPsdzRpcService RpcService { get; private set; }
         public event EventHandler<bool> ClientConnected;
         public PsdzRpcCallbackHandler CallbackHandler { get; } = new PsdzRpcCallbackHandler();
 
-        public PsdzRpcClient(TextWriter output = null)
+        public PsdzRpcClient(TextWriter output = null, string caCertPath = null, string clientPfxPath = null)
         {
             _output = output;
+            _caCert = LoadCertificate(caCertPath);
+            _clientCert = LoadCertificate(clientPfxPath);
         }
 
         /// <summary>Verbindet via Named Pipe (bestehender Server).</summary>
@@ -127,20 +129,16 @@ namespace PsdzRpcClient
             }
         }
 
-        // NEU: Zertifikate laden (ca.crt + client.pfx ohne Passwort)
-        public void LoadCertificates(string caCertPath, string clientPfxPath)
-        {
-            _caCert = LoadCertificate(caCertPath);
-            _clientCert = LoadCertificate(clientPfxPath);
-        }
-
         private static X509Certificate2 LoadCertificate(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                return null;
+            }
 #if NET9_0_OR_GREATER
-            return X509CertificateLoader.LoadPkcs12FromFile(path, password: null,
-                keyStorageFlags: X509KeyStorageFlags.Exportable);
+            return X509CertificateLoader.LoadCertificateFromFile(path);
 #else
-            return new X509Certificate2(path, (string)null, X509KeyStorageFlags.Exportable);
+            return new X509Certificate2(path);
 #endif
         }
 
