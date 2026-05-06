@@ -44,7 +44,10 @@ namespace PsdzRpcClient
             [Option('p', "tcpport", Required = false, HelpText = "Port for TCP server.")]
             public int? TcpPort { get; set; }
 
-            [Option('s', "serverexe", Required = false, HelpText = "Server executable path.")]
+            [Option('s', "ssl", Required = false, HelpText = "Enable SSL for TCP server.")]
+            public bool Ssl { get; set; }
+
+            [Option('x', "serverexe", Required = false, HelpText = "Server executable path.")]
             public string ServerExe { get; set; }
 
             [Option('v', "verbosity", Required = false, HelpText = "Option for message verbosity (Error, Warning, Info, Debug)")]
@@ -63,6 +66,7 @@ namespace PsdzRpcClient
             bool vehicleProxy = false;
             string tcpHost = string.Empty;
             int? tcpPort = null;
+            bool ssl = false;
             string serverExe = string.Empty;
             bool hasErrors = false;
 
@@ -81,6 +85,7 @@ namespace PsdzRpcClient
                     vehicleProxy = o.VehicleProxy;
                     tcpHost = o.TcpHost;
                     tcpPort = o.TcpPort;
+                    ssl = o.Ssl;
                     serverExe = o.ServerExe;
                     _verbosity = o.Verbosity;
                 })
@@ -123,6 +128,29 @@ namespace PsdzRpcClient
                 Console.WriteLine("TCP Port: {0}", tcpPort.Value);
             }
 
+            string appDir = AppDomain.CurrentDomain.BaseDirectory;
+            string caCertPath = null;
+            string clientPfxPath = null;
+            if (ssl)
+            {
+                Console.WriteLine("SSL enabled");
+
+                string certsPath = Path.Combine(appDir, "Certificates");
+                caCertPath = Path.Combine(certsPath, "ca.crt");
+                clientPfxPath = Path.Combine(certsPath, "client.pfx");
+                if (!File.Exists(caCertPath))
+                {
+                    Console.WriteLine($"CA certificate not found at {caCertPath}");
+                    return 1;
+                }
+
+                if (!File.Exists(clientPfxPath))
+                {
+                    Console.WriteLine($"Client certificate not found at {clientPfxPath}");
+                    return 1;
+                }
+            }
+
             if (!string.IsNullOrEmpty(serverExe))
             {
                 Console.WriteLine("Server executable: {0}", serverExe);
@@ -131,7 +159,7 @@ namespace PsdzRpcClient
             ShowMessageEventArgs pendingMessage = null;
             EdiabasProxyClient ediabasProxyClient = null;
             using CancellationTokenSource cts = new CancellationTokenSource();
-            PsdzRpcClient client = new PsdzRpcClient(Console.Out);
+            PsdzRpcClient client = new PsdzRpcClient(Console.Out, caCertPath, clientPfxPath);
 
             try
             {
