@@ -14,6 +14,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Certificates\server.pfx" Link="Certificates\server.pfx" Condition="Exists('Certificates\server.pfx')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Certificates\ca.crt" Link="Certificates\ca.crt" Condition="Exists('Certificates\ca.crt')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="StreamJsonRpc" Version="2.24.84" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="10.0.7" />
