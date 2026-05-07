@@ -9,12 +9,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="..\Certificates\client.pfx" Link="Certificates\client.pfx" Condition="Exists('..\Certificates\client.pfx')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\Certificates\ca.crt" Link="Certificates\ca.crt" Condition="Exists('..\Certificates\ca.crt')">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="..\Certificates\client.pfx" Link="Certificates\client.pfx" Condition="Exists('..\Certificates\client.pfx')" />
+    <EmbeddedResource Include="..\Certificates\ca.crt"     Link="Certificates\ca.crt"     Condition="Exists('..\Certificates\ca.crt')" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.9.1" />

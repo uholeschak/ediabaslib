@@ -9,7 +9,7 @@ namespace PsdzRpcServer.Shared
     {
         public static X509Certificate2 LoadCertificate(string path)
         {
-            if (string.IsNullOrEmpty(path))
+            if (string.IsNullOrEmpty(path) || !File.Exists(path))
             {
                 return null;
             }
@@ -38,9 +38,10 @@ namespace PsdzRpcServer.Shared
             }
 
             using (Stream stream = assembly.GetManifestResourceStream(fullName))
+            using (MemoryStream ms = new MemoryStream())
             {
-                byte[] bytes = new byte[stream.Length];
-                stream.Read(bytes, 0, bytes.Length);
+                stream.CopyTo(ms);
+                byte[] bytes = ms.ToArray();
 
 #if NET9_0_OR_GREATER
                 string ext = Path.GetExtension(resourceName).ToLowerInvariant();

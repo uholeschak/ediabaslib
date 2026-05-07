@@ -138,16 +138,14 @@ namespace PsdzRpcClient
                 string certsPath = Path.Combine(appDir, "Certificates");
                 caCertPath = Path.Combine(certsPath, "ca.crt");
                 clientPfxPath = Path.Combine(certsPath, "client.pfx");
-                if (!File.Exists(caCertPath))
+                if (File.Exists(caCertPath))
                 {
-                    Console.WriteLine($"CA certificate not found at {caCertPath}");
-                    return 1;
+                    Console.WriteLine($"CA certificate found at {caCertPath}");
                 }
 
-                if (!File.Exists(clientPfxPath))
+                if (File.Exists(clientPfxPath))
                 {
-                    Console.WriteLine($"Client certificate not found at {clientPfxPath}");
-                    return 1;
+                    Console.WriteLine($"Client certificate found at {clientPfxPath}");
                 }
             }
 

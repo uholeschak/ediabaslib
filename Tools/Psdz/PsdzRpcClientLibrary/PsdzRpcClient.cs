@@ -32,7 +32,7 @@ namespace PsdzRpcClient
         {
             _output = output;
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            Assembly assembly = Assembly.GetEntryAssembly() ?? Assembly.GetExecutingAssembly();
             if (!string.IsNullOrEmpty(caCertPath))
             {
                 _caCert = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
