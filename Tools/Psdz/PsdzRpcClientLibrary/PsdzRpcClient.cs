@@ -87,8 +87,8 @@ namespace PsdzRpcClient
 #if NET
                     SslClientAuthenticationOptions options = new SslClientAuthenticationOptions
                     {
-                        TargetHost                     = hostName,
-                        EnabledSslProtocols            = SslProtocols.Tls12 | SslProtocols.Tls13,
+                        TargetHost = _caCert != null ? "PsdzRpcServer" : hostName,
+                        EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
                         CertificateRevocationCheckMode = X509RevocationMode.NoCheck
                     };
 
@@ -154,12 +154,24 @@ namespace PsdzRpcClient
             if (_caCert == null) return true;
             if (cert == null)    return false;
 
+            X509Certificate2 cert2 = cert as X509Certificate2;
+            if (cert2 == null) return false;
+
+            // CN des Server-Zertifikats prüfen
+            string expectedCn = "CN=PsdzRpcServer, O=EdiabasLib, C=DE";
+            if (string.Compare(cert2.Subject, expectedCn, StringComparison.OrdinalIgnoreCase) != 0)
+            {
+                _output?.WriteLine($"Server certificate subject mismatch: {cert2.Subject}");
+                return false;
+            }
+
+            // CA-Kette prüfen
             X509Chain chain = new X509Chain();
             chain.ChainPolicy.ExtraStore.Add(_caCert);
             chain.ChainPolicy.RevocationMode    = X509RevocationMode.NoCheck;
             chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
 
-            bool valid = chain.Build(new X509Certificate2(cert));
+            bool valid = chain.Build(cert2);
             return valid && chain.ChainElements[chain.ChainElements.Count - 1]
                 .Certificate.Thumbprint == _caCert.Thumbprint;
         }
