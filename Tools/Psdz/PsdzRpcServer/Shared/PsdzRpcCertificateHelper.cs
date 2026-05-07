@@ -9,49 +9,63 @@ namespace PsdzRpcServer.Shared
     {
         public static X509Certificate2 LoadCertificate(string path)
         {
-            if (string.IsNullOrEmpty(path) || !File.Exists(path))
+            try
+            {
+                if (string.IsNullOrEmpty(path) || !File.Exists(path))
+                {
+                    return null;
+                }
+
+#if NET9_0_OR_GREATER
+                string ext = Path.GetExtension(path);
+                if (string.CompareOrdinal(ext, ".pfx") == 0 || string.CompareOrdinal(ext, ".p12") == 0)
+                {
+                    return X509CertificateLoader.LoadPkcs12FromFile(path, password: null);
+                }
+
+                return X509CertificateLoader.LoadCertificateFromFile(path);
+#else
+                return new X509Certificate2(path);
+#endif
+            }
+            catch (Exception)
             {
                 return null;
             }
-
-#if NET9_0_OR_GREATER
-            string ext = Path.GetExtension(path);
-            if (string.CompareOrdinal(ext, ".pfx") == 0 || string.CompareOrdinal(ext, ".p12") == 0)
-            {
-                return X509CertificateLoader.LoadPkcs12FromFile(path, password: null);
-            }
-
-            return X509CertificateLoader.LoadCertificateFromFile(path);
-#else
-            return new X509Certificate2(path);
-#endif
         }
 
         public static X509Certificate2 LoadEmbeddedCertificate(Assembly assembly, string resourceName)
         {
-            string fullName = Array.Find(assembly.GetManifestResourceNames(),
-                n => n.EndsWith(resourceName, StringComparison.OrdinalIgnoreCase));
-
-            if (fullName == null)
+            try
             {
-                return null;
-            }
+                string fullName = Array.Find(assembly.GetManifestResourceNames(),
+                    n => n.EndsWith(resourceName, StringComparison.OrdinalIgnoreCase));
 
-            using (Stream stream = assembly.GetManifestResourceStream(fullName))
-            using (MemoryStream ms = new MemoryStream())
-            {
-                stream.CopyTo(ms);
-                byte[] bytes = ms.ToArray();
+                if (fullName == null)
+                {
+                    return null;
+                }
+
+                using (Stream stream = assembly.GetManifestResourceStream(fullName))
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    stream.CopyTo(ms);
+                    byte[] bytes = ms.ToArray();
 
 #if NET9_0_OR_GREATER
-                string ext = Path.GetExtension(resourceName).ToLowerInvariant();
-                if (ext == ".pfx" || ext == ".p12")
-                    return X509CertificateLoader.LoadPkcs12(bytes, password: null);
+                    string ext = Path.GetExtension(resourceName).ToLowerInvariant();
+                    if (ext == ".pfx" || ext == ".p12")
+                        return X509CertificateLoader.LoadPkcs12(bytes, password: null);
 
-                return X509CertificateLoader.LoadCertificate(bytes);
+                    return X509CertificateLoader.LoadCertificate(bytes);
 #else
-                return new X509Certificate2(bytes);
+                    return new X509Certificate2(bytes);
 #endif
+                }
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     }

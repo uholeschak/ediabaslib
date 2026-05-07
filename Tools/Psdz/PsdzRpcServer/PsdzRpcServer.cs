@@ -44,12 +44,20 @@ namespace PsdzRpcServer
             {
                 _caCert = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
                           ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(caCertPath));
+                if (_caCert == null)
+                {
+                    throw new InvalidOperationException("Failed to load CA certificate.");
+                }
             }
 
             if (!string.IsNullOrEmpty(serverPfxPath))
             {
                 _serverCert = PsdzRpcCertificateHelper.LoadCertificate(serverPfxPath)
                            ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(assembly, Path.GetFileName(serverPfxPath));
+                if (_serverCert == null)
+                {
+                    throw new InvalidOperationException("Failed to load server certificate.");
+                }
             }
         }
 
