@@ -12,6 +12,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace PsdzRpcServer
 {
@@ -37,8 +38,10 @@ namespace PsdzRpcServer
             _dealerId = dealerId;
             _output = output;
             _tcpPort = tcpPort;
-            _caCert = LoadCertificate(caCertPath);
-            _serverCert = LoadCertificate(serverPfxPath);
+            _caCert     = PsdzRpcCertificateHelper.LoadCertificate(caCertPath)
+                       ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(Assembly.GetExecutingAssembly(), "ca.crt");
+            _serverCert = PsdzRpcCertificateHelper.LoadCertificate(serverPfxPath)
+                       ?? PsdzRpcCertificateHelper.LoadEmbeddedCertificate(Assembly.GetExecutingAssembly(), "server.pfx");
             _clientCount = 0;
             _hadClients = false;
         }
@@ -242,26 +245,6 @@ namespace PsdzRpcServer
                 inBufferSize: 0,
                 outBufferSize: 0,
                 pipeSecurity);
-#endif
-        }
-
-        private static X509Certificate2 LoadCertificate(string path)
-        {
-            if (string.IsNullOrEmpty(path))
-            {
-                return null;
-            }
-
-#if NET9_0_OR_GREATER
-            string ext = Path.GetExtension(path);
-            if (string.CompareOrdinal(ext, ".pfx") == 0 || string.CompareOrdinal(ext, ".p12") == 0)
-            {
-                return X509CertificateLoader.LoadPkcs12FromFile(path, password: null);
-            }
-
-            return X509CertificateLoader.LoadCertificateFromFile(path);
-#else
-            return new X509Certificate2(path);
 #endif
         }
 
