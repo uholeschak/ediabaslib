@@ -88,7 +88,7 @@ namespace PsdzRpcClient
                     SslClientAuthenticationOptions options = new SslClientAuthenticationOptions
                     {
                         TargetHost = _caCert != null ? "PsdzRpcServer" : hostName,
-                        EnabledSslProtocols = SslProtocols.Tls12 | SslProtocols.Tls13,
+                        EnabledSslProtocols = PsdzRpcServiceConstants.DefaultSslProtocols,
                         CertificateRevocationCheckMode = X509RevocationMode.NoCheck
                     };
 
@@ -104,7 +104,7 @@ namespace PsdzRpcClient
                     await sslStream.AuthenticateAsClientAsync(
                         targetHost: hostName,
                         clientCertificates: clientCerts,
-                        enabledSslProtocols: SslProtocols.Tls12 | SslProtocols.Tls13,
+                        enabledSslProtocols: PsdzRpcServiceConstants.DefaultSslProtocols,
                         checkCertificateRevocation: false).ConfigureAwait(false);
 #endif
 

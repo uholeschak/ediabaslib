@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -13,6 +14,7 @@ namespace PsdzRpcServer.Shared
         public const string Localhost = "127.0.0.1";
         public const int InterfaceVersion = 1;
         public const int DefaultTcpPort = 9090;
+        public const SslProtocols DefaultSslProtocols = SslProtocols.Tls13;
 
         /// <summary>
         /// Berechnet eine Signatur aller Methoden des Interfaces.

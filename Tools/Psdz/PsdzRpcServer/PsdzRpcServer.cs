@@ -163,14 +163,14 @@ namespace PsdzRpcServer
                 {
                     ServerCertificate              = serverCert,
                     ClientCertificateRequired      = caCert != null,
-                    EnabledSslProtocols            = SslProtocols.Tls12 | SslProtocols.Tls13,
+                    EnabledSslProtocols            = PsdzRpcServiceConstants.DefaultSslProtocols,
                     CertificateRevocationCheckMode = X509RevocationMode.NoCheck
                 }).ConfigureAwait(false);
 #else
                 await sslStream.AuthenticateAsServerAsync(
                     serverCertificate:          serverCert,
                     clientCertificateRequired:  caCert != null,
-                    enabledSslProtocols:        SslProtocols.Tls12 | SslProtocols.Tls13,
+                    enabledSslProtocols: PsdzRpcServiceConstants.DefaultSslProtocols,
                     checkCertificateRevocation: false).ConfigureAwait(false);
 #endif
 
